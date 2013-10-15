@@ -1,0 +1,208 @@
+Ultimate goals
+--------------
+- creating systems capable to be modified during run-time
+- completely open architecture
+- maximally reusable code        
+- dynamic code without reflection
+
+Version 2.0.0
+-------------
+- migrate existing console samples
+- migrate existing rosetta code samples to lib30
+- simple byte code optimization
+- vmt-less action
+- start the code documentation
+- start developing GUI support, declarative gui description
+- migrate existing GUI samples to lib30
+- gcx alpha
+- migrate upndown to lib30
+- win32 file i/o operations should raise an exception with an error code
+- test compilation with a very long identifier names
+
+Version 2.1.0
+-------------
+- gcx, beta version
+- start migration to Linux
+- new hosting: github?
+
+Version 2.2.0
+-------------
+- start work on visualizer
+
+Version 2.3.0
+-------------
+- start work on eldoc
+
+Version 2.4.0
+-------------
+- basic linux version (only console)
+
+Version 2.x.x
+-------------
+- custom verb dispatching (through implicit adapter)??
+- system'dynamics'tape optimization, currently every object is checked if it is a message,
+  could it be optimized (move the check to the message, the only question how one can
+  check if it is a tape call)?
+- maintenance: review postponed todo
+- ide: make possible to copy content of output
+= dynamic programming: beta
+- maintenance: review known bugs
+- gcx: thread pools
+- elenavm script: make possible to dynamically declare static variable
+- discontinue api2html
+- samples: multi-threading
+- gcx: review primitive code to be ready for gcx / gcxt
+- optimization: increase gc memory?
+- guiopencalc: gui description script (elenascript)
+- gcx: add posibility to view gc statistics
+- elenavm: make sure several applications can work simultaneously
+- guivmconsole
+= vm: full support (console & gui)
+= gcx: full support (including vm & gui)
+= elc linux beta version version (vm, ide, debugger)
+= full bytecode optimization
+= elenavm optimization
+= native code optimization
+= dynamic programming: full support
+- investigate memoryhashtable, the key values should be ordered alphabetically
+- engine: could we get rid of messages mapping table (though it should not increse 
+  the link time)? maybe some numeric value which should be synchronized between modules?
+  the literal string in that case will be defined by subject symbol name (what about
+  private messages in that case?)
+- debugger call list
+- debugger thread list
+- upndown: work on net game
+- eldoc
+- asm2binx should use assembler style comments
+- gcx optimization: is it faster to use bytes instead of bits in write barrier?
+- gcx optimization: should promotion happens less (the object should survive at least
+  two collection?)
+- ide: support call list
+- LibraryManager: should be redisgned in such way, that multiple instances have common
+  library container
+- gcx: try to optimize write barrier supporting code (now it is 11 commands)
+- gcx: full collection prediction: optimistic (in this case we have to control how
+  much left in mg and if no place either tirgger major release or mark the object in
+  write barrier) or pessimistic (major collection fires more often)
+- multi-threading: thread safe static symbols(?), thread pool, mutex(?), semaphors(?)
+- optimization: inline classes should be created immidately in the code and should not
+  have its own reference name
+- memory consuming;think over way how to free some resources, maybe free non used any 
+  more modules?
+- think over how could we minimize the number of duplicated VMTs
+  e.g - every time basic'LiteralType create &length:x is used - a new VMT is created)
+- optimize labYGStart function (reduce number of jumps)
+- alternative vmt subject table with offset to particular subject
+- upndown: game master should work in the separate thread
+- multi-threading elenavm, instance::restart should stop all threads before restarting
+  vm instance
+- upndown - ai
+- gcx: permanent heap, should be always collected(how to promote there)
+- utc / time zone conversion
+- digger
+- biomorph
+- kniffel
+- jitliker: why all addresses are aligned to 8, makes no sense
+- script engine: inline code validator? (to prevent errors like - 'program'output without &nil)
+- optimization: group handlers (group, cast, union and so on)
+- jitloader redesign: special auto-incremental field should be used for generating
+  references, so no need to put into reference mapping dummy names, resolveNewSubject
+  should be redesigned to support this
+- elenavm: redesign debug support: step over the whole statement?
+- mapReferenceKey optimization: could we use last or one before the last?
+  (try to compare the compilation time (e.g. for upndown))
+- start to use build tool to create releases
+- state machine samples
+- ide: implement "find declaration" function
+- usability: warn if vm client is debugged not under vm debug mode
+  IDE should reload all debug info in that case
+- ByteCodeWriter::writeRoleTable should be moved to JITCompiler32
+- optimization: nested in the nested inline class: the current implementation
+  will be optimized only for the first nested class, the second
+  one still hold the object rather then link to the field owner
+- use get_count / get_size for the primitive code requiring object field count 
+  (what about string / array code, code it be leaved like it is for optimization?)
+- advanced byte code optimization / simple native code optimization
+- extending lib25 (some simple classes)
+- make possible to set warning for every module (like pragma in C++)
+- increase elenavm speed (caching, cachetable usage, 10%)
+- increase elena code speed (up to 35%)
+- ide: support thread list
+- f:metamorphose - sample to demostrate the group modification 
+- start x64 support
+- convert elena projects to xml
+- elenasm: try to minimize the memory usage
+- elenasm: try to improve performance
+- native code optimization: reduce branching
+- internal subjects, subjects which could be send only from the particular module
+  (but can be received by any other object)
+- rosetta code: Arithmetic/Complex, Arithmetic/Rational
+- support work windows registry(?)
+- vm script utility: rule generator / verificator
+- it should be possible to reserve but not commit heap for more effective
+  memory usage
+- enhanced IDE
+- train algorithm
+- increase elena code speed (up to 25%)
+- x64 support (code generation)
+- native code optimization
+- optimize jitlinker
+- ide2 wizards: make possible to selected method names from the list
+- f:oolite
+- ide enhancements: add project wizard
+- ide enhancements: make possible to change the module order
+- gcx optimization: could we optimize calculating of header position for compact phase 
+- modify VMT structure to allow optimize the search
+  (VMT should have at the top subject table), or probably VMT
+  should contain only verb handlers and inside the handler it will
+  redirect to the appropriate method 
+- start to create basic unit tests to test lib25
+- flagship project: tiny script language: lika
+- ide2: new file should add default import statements, based on project template
+- gcx: probably page equal to 10h is too small, maybe better to have bigger?
+  (e.g. yg page 10h, and mg - 20?)
+- forward module implementation: is it possible to optimize the implementation?
+  (probably map it only if the reference exists)
+- no need to reserve the place for a role if the class does not use it
+- replace external functions with inline one if is does not call OS routine
+- dsa rules: it should be possible to use syntax to generate source code
+  (compiler compiler mode)
+- ide2: win32 plug-ins
+- full linux support (x64 + x32, console, gui)
+- drop support for #loop
+- advanced native code optimization
+- advanced lib35
+- object should be able to have several data fields (currently only one is supported)
+
+- elt: code generation, it should be possible to create a code based on syntax
+  expression
+- there should be two build mode - release / debug
+- start to use pentium commands
+- error handling
+- start to use GetDateFormatExW (windows server 2003 will not be supported)
+- robust api library
+- major language review
+- ide2: linux plug-in
+- lib25 optimization:the speed should increase on 30%
+- Second public release
+- localization to russian / any other languages
+- IDE features supporting "Active code" concept
+- x64 platform support
+- make possible to external link obj files (c++ compiler)
+- CPU oriented optmization (at least for pentium 4)
+- ide2: attach to another process
+- full x64 support (both code generation + compiler and gui)
+- f:simple basic interpreter
+- is there any way to reduce the number of vmts, dynamic ones
+- lang: generic methods (e.g generic write, generic read - *'read, *'write ...)?
+- Linux full support (elc + elide + elenavm / gui + console)
+- ELENA library: state of art standard libraries, database support
+- state of art IDE
+- two major projects implemented with ELENA: upndown (graphics, ai) and
+  jafm (ide, open architecture)
+- Third public release
+- tune GC, is it enough to survive twice before moving to OG?
+- state of art lib30 (.net as a guide)
+- to optimize access: the classes are stored in the module without namespace (so we could relocate the module without recompiling it) ;
+  what about the links between the module members ? it may compilicate the code
+  

@@ -1,0 +1,14 @@
+[project]
+executable=words.exe
+options=-xembed-
+namespace=words
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+words.l
+
+[forwards]
+'program=words'Program
+

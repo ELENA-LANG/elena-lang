@@ -1,0 +1,131 @@
+[#general#]
+#name=win32'styles
+#shortdescr=Provides the handle styles
+
+[#list#]
+aappendfile
+abutton3d
+aedit3d
+aimagebox
+apaintbox
+apaintboxclass
+areadonlyfile
+asdidialog
+asdiwindow
+asdiwindowclass
+astaticlabel
+paintboxclass
+sdiwindowclass
+
+[areadonlyfile]
+#title=Symbol AReadOnlyFile
+#shortdescr=A read only file style
+#protocol=win32protocol.html#fileattr:fileattr
+#protocol=sysprotocol.html#fileattr:fileattr
+#method=new,literal;Assigns the file name
+#method=<a href="win32scopes.html#dwdesiredaccess">dwdesiredaccess'get</a>,,int;Returns the attribute
+#method=<a href="win32scopes.html#dwsharedmode">dwsharedmode'get</a>,,int;Returns the attribute
+#method=<a href="win32scopes.html#dwcreationdisposition">dwcreationdisposition'get</a>,,int;Returns the attribute
+#method=<a href="win32scopes.html#dwflagsandattributes">dwflagsandattributes'get</a>,,int;Returns the attribute
+#method=<a href="sysscopes.html#filepath">filepath'get</a>,,literal;Returns the file path
+
+[asdiwindow]
+#title=Symbol ASDIWindow
+#shortdescr=An SDI window style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[sdiwindowclass]
+#title=Symbol SDIWindowClass
+#shortdescr=An SDI window class
+#protocol=literal
+
+[asdiwindowclass]
+#title=Symbol ASDIWindowClass
+#shortdescr=An SDI window class style
+#protocol=win32protocol.html#classattr:classattr
+#method=<a href="win32scopes.html#class">win32'brush'get</a>,,int;Returns the class background color
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the class styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,literal;Returns the class name
+
+[asdidialog]
+#title=Symbol ASDIDialog
+#shortdescr=An SDI dialog window style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[aedit3d]
+#title=Symbol AEdit3D
+#shortdescr=An edit control style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[abutton3d]
+#title=Symbol AButton3D
+#shortdescr=A button control style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[astaticlabel]
+#title=Symbol AStaticLabel
+#shortdescr=A static label control style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[aappendfile]
+#title=Symbol AAppendFile
+#shortdescr=An apend file style
+#protocol=win32protocol.html#fileattr:fileattr
+#protocol=sysprotocol.html#fileattr:fileattr
+#method=new,literal;Assigns the file name
+#method=<a href="win32scopes.html#dwdesiredaccess">dwdesiredaccess'get</a>,,int;Returns the attribute
+#method=<a href="win32scopes.html#dwsharedmode">dwsharedmode'get</a>,,int;Returns the attribute
+#method=<a href="win32scopes.html#dwcreationdisposition">dwcreationdisposition'get</a>,,int;Returns the attribute
+#method=<a href="win32scopes.html#dwflagsandattributes">dwflagsandattributes'get</a>,,int;Returns the attribute
+#method=<a href="sysscopes.html#filepath">filepath'get</a>,,literal;Returns the file path
+
+[apaintbox]
+#title=Symbol APaintBox
+#shortdescr=A pain box control style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[aimagebox]
+#title=Symbol AImageBox
+#shortdescr=An image box control style
+#protocol=win32protocol.html#controlattr:controlattr
+#method=<a href="win32scopes.html#handler">win32'control'get</a>,,int;Returns the handler object
+#method=<a href="win32scopes.html#exstyle">win32'exstyle'get</a>,,int;Returns the control extended styles
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the control styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,int;Returns the control class name
+
+[paintboxclass]
+#title=Symbol PaintBoxClass
+#shortdescr=A paint box class
+#protocol=literal
+
+[apaintboxclass]
+#title=Symbol APaintboxClass
+#shortdescr=A paint box class style
+#protocol=win32protocol.html#classattr:classattr
+#method=<a href="win32scopes.html#class">win32'brush'get</a>,,int;Returns the class background color
+#method=<a href="win32scopes.html#style">win32'style'get</a>,,int;Returns the class styles
+#method=<a href="win32scopes.html#class">win32'class'get</a>,,literal;Returns the class name

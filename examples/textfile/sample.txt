@@ -1,0 +1,22 @@
+General patterns:
+-----------------
+- private mesages used for context depended code and for resolving possible 
+  name conflicts between different v-object properties.
+
+- v-object (virtual object) is a collection of the objects working with the same
+  data which could be one of these s-objects or virtual one (like hardware 
+  device). The s-objects could be (and have to be) part of different v-objects.
+
+- v-property (virtual property) is a general (reusable) pattern implementing
+  a particular protocol to work with v-object. V-property could be considered
+  as a high abstract level of s-object interface.
+
+- messages (verbs) are applied to v-properties (nouns). (e.g. instead of
+  combobox::getselectedvalue we have #symbol<selectedvalue>combobox::get).
+
+- v-properties are implemented as parametrized symbols (with one parameter - 
+  s-object)
+
+- v-constructors are parametrized symbols starting with New prefix. They are 
+  used to create the initialized objects.
+

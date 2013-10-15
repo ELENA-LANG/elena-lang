@@ -1,0 +1,11 @@
+[#general#]
+#name=win32'graphics
+#shortdescr=Provides classes that implements the graphical operations
+
+[#list#]
+canvas
+
+[canvas]
+#title=Class Canvas
+#shortdescr=A canvas class
+#parent=elena.html#object:Object

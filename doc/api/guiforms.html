@@ -1,0 +1,412 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 1.5.4: Package gui'forms
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="guiforms-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="custom">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+gui'forms</FONT>
+<BR>
+Class Custom</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<A HREF="guicontrols.html#control">gui'controls'Control</A>
+   |
+   +--<A HREF="guicontrols.html#container">gui'controls'Container</A>
+     |
+     +--<B>gui'forms'custom</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="sysprotocol.html#eventowner">eventowner</A>
+</DT>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A base form
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thecontrols&nbsp;</CODE>
+</TD>
+<TD><CODE>The container controls</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theevents&nbsp;</CODE>
+</TD>
+<TD><CODE>The event controller</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thehandle&nbsp;</CODE>
+</TD>
+<TD><CODE>The control handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theparent&nbsp;</CODE>
+</TD>
+<TD><CODE>The parent container</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="sysscopes.html#events">events'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the event handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">caption'set</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Sets the window caption</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literak">literak</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="sdi">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+gui'forms</FONT>
+<BR>
+Class SDI</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<A HREF="guicontrols.html#control">gui'controls'Control</A>
+   |
+   +--<A HREF="guicontrols.html#container">gui'controls'Container</A>
+     |
+     +--<A HREF="#custom">gui'forms'Custom</A>
+       |
+       +--<B>gui'forms'sdi</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="sysprotocol.html#eventowner">eventowner</A>
+</DT>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A Single Document Interface form
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thecontrols&nbsp;</CODE>
+</TD>
+<TD><CODE>The container controls</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theevents&nbsp;</CODE>
+</TD>
+<TD><CODE>The event controller</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thehandle&nbsp;</CODE>
+</TD>
+<TD><CODE>The control handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theparent&nbsp;</CODE>
+</TD>
+<TD><CODE>The parent container</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="sysscopes.html#events">events'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the event handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">caption'set</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Sets the window caption</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literak">literak</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="sdidialog">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+gui'forms</FONT>
+<BR>
+Class SDI Dialog</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<A HREF="guicontrols.html#control">gui'controls'Control</A>
+   |
+   +--<A HREF="guicontrols.html#container">gui'controls'Container</A>
+     |
+     +--<A HREF="#custom">gui'forms'Custom</A>
+       |
+       +--<A HREF="#sdi">gui'forms'SDI</A>
+         |
+         +--<B>gui'forms'sdidialog</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="sysprotocol.html#eventowner">eventowner</A>
+</DT>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A SDI dialog form
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thecontrols&nbsp;</CODE>
+</TD>
+<TD><CODE>The container controls</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theevents&nbsp;</CODE>
+</TD>
+<TD><CODE>The event controller</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thehandle&nbsp;</CODE>
+</TD>
+<TD><CODE>The control handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theparent&nbsp;</CODE>
+</TD>
+<TD><CODE>The parent container</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="sysscopes.html#events">events'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the event handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">caption'set</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Sets the window caption</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literak">literak</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="guiforms-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>

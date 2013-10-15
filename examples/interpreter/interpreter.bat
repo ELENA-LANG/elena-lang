@@ -1,0 +1,1 @@
+..\..\bin\elt -Linline..\..\bin\scripts\newconsole.vl -Lxcfinterpreter.vl2 -l%1

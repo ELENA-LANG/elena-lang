@@ -1,0 +1,95 @@
+[#general#]
+#name=std'basic'math
+#shortdescr=Provides classes that describe the basic mathematic operations
+
+[#list#]
+abs
+arctan
+cos
+exp
+frac
+int
+ln
+longrounded
+pi
+power
+rounded
+sin
+sqrt
+
+[abs]
+#title=Symbol Abs
+#shortdescr=A property that returns an absolute value.
+#protocol=arithmetic
+#method=new,real,real;Returns an absolute value
+
+[arctan]
+#title=Symbol ArcTan
+#shortdescr=A property that returns an arctangens value.
+#protocol=arithmetic
+#method=new,real,real;Returns an arctangens value.
+
+[cos]
+#title=Symbol Cos
+#shortdescr=A property that returns a cosinus value.
+#protocol=arithmetic
+#method=new,real,real;Returns a cosinus value.
+
+[exp]
+#title=Symbol Exp
+#shortdescr=A property that returns an expanent value.
+#protocol=arithmetic
+#method=new,real,real;Returns an expanent value.
+
+[frac]
+#title=Symbol Frac
+#shortdescr=A property that returns the fractional part of the number.
+#protocol=arithmetic
+#method=new,real,real;Returns the fractional part of the number.
+
+[int]
+#title=Symbol Int
+#shortdescr=A property that returns the integer part of the number.
+#protocol=arithmetic
+#method=new,real,real;Returns the integer part of the number.
+
+[ln]
+#title=Symbol Ln
+#shortdescr=A property that returns the lagorithm value.
+#protocol=arithmetic
+#method=new,real,real;Returns a lagorithm value.
+
+[rounded]
+#title=Symbol Rounded
+#shortdescr=A property that returns the rounded value.
+#protocol=arithmetic
+#method=new,real,int;Returns a rounded value.
+
+[longrounded]
+#title=Symbol LongRounded
+#shortdescr=A property that returns the rounded value.
+#protocol=arithmetic
+#method=new,real,long;Returns a rounded value.
+
+[sin]
+#title=Symbol Sin
+#shortdescr=A property that returns a sinus value.
+#protocol=arithmetic
+#method=new,real,real;Returns a sinus value.
+
+[sqrt]
+#title=Symbol Sqrt
+#shortdescr=A property that returns a square root of the number
+#protocol=arithmetic
+#method=new,real,real;Returns a square root of the number.
+
+[pi]
+#title=Symbol Pi
+#shortdescr=A Pi number
+#method=new,real;A Pi number
+
+[power]
+#title=Symbol Power
+#shortdescr=A property that returns a power
+#protocol=arithmetic
+#method=new,func_argument,real;Returns a exponentiation.

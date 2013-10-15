@@ -1,0 +1,15 @@
+[project]
+executable=textdb.exe
+arguments=db.txt
+options=-xembed-
+namespace=textdb
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+textdb.l
+
+[forwards]
+'program=textdb'Program
+

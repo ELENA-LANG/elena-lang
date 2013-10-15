@@ -1,0 +1,29 @@
+[#general#]
+#name=ext'patterns
+#shortdescr=Provides classes that describe the common patterns
+
+[#list#]
+earraypattern
+eliteralcopy
+printing
+
+[eliteralcopy]
+#title=Symbol ELiteralCopy
+#shortdescr=A sub string copy extension. Should be combined with a literal attribute and a indexer
+#protocol=arraypattern
+#method=new,arraypattern;Extends the creation attributes
+#method=<a href="stddictionary.html#pattern">pattern'proceed</a>,object;Copies the substring to the newly created literal string
+
+[printing]
+#title=Symbol Printing
+#shortdescr=A printing action
+#protocol=action
+#method=proceed,printable;Prints the operand text value on the console
+
+[earraypattern]
+#title=Symbol EArrayPattern
+#shortdescr=An initializing array pattern
+#protocol=arraypattern
+#method=new,arraypattern;Extends the creation attributes
+#method=<a href="stddictionary.html#pattern">pattern'get</a>,,object;Returns the default array itew.<br><b>Should be overriden</b>
+#method=<a href="stddictionary.html#pattern">pattern'proceed</a>,object;Creates the initialized array

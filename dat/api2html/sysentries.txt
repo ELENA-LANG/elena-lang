@@ -1,0 +1,27 @@
+[#general#]
+#name=sys'entries
+#shortdescr=Provides the basic system process patterns.
+
+[#list#]
+commandcycle
+commandlineargmunents
+simple
+system
+
+[simple]
+#title=Symbol Simple
+#shortdescr=A simple program pattern which executes the <b>'program</b> action
+
+[commandlineargmunents]
+#title=Symbol CommandLineArguments
+#shortdescr=A program arguments
+#protocol=indexable
+#method=@,int,literal;Returns the command line argument
+
+[commandcycle]
+#title=Symbol CommandCycle
+#shortdescr=A command cycle program pattern
+
+[system]
+#title=Symbol System
+#shortdescr=A system program pattern which invokes the <b>'system</b> object

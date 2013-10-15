@@ -1,0 +1,1458 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 1.5.4: Package Standard Protocols
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="stdprotocol-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="action">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+action</H2>
+<P>
+An action protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+proceed : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Executes the action</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="arithmetic">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+arithmetic</H2>
+<P>
+An arithmetic protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
++ <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the sum.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+- <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the difference.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+* <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the products</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+/ <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the fraction.</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="arithmetic_variable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+arithmetic_variable</H2>
+<P>
+An arithmetic variable protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&lt;< <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Copies the number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
++= <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Adds an operand to the object.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+-= <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Subtracts the operand from the object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+*= <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Multiplies the object by an operand</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+/= <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Divides the object into an operand</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="array">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+array</H2>
+<P>
+An array protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#array">array'get</a> = <A HREF="stdprotocol.html#array">array</A>
+</TD>
+<TD><CODE>Returns the array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#count">count'get</a> = <A HREF="stdprotocol.html#array">array</A>
+</TD>
+<TD><CODE>Returns the number of array items</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="arraypattern">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+arraypattern</H2>
+arraypattern
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="bool">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+bool</H2>
+<P>
+A bool protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+?</TD>
+<TD><CODE>Succeeds if the object has <b>true</b> value.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+!</TD>
+<TD><CODE>Succeeds if the object has <b>false</b> value.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#bool">bool'and</a> : <A HREF="stdprotocol.html#bool">bool</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns the result of the logical AND operation.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#bool">bool'get</a> = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#bool">bool'or</a> : <A HREF="stdprotocol.html#bool">bool</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Always returns <b>true</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#bool">bool'not</a> = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Always returns <b>false</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#bool">bool'xor</a> : <A HREF="stdprotocol.html#bool">bool</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns the result of the logical XOR operation.</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="bytearray">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+bytearray</H2>
+<P>
+A byte array protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the byte array</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="bytearrapattern">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+bytearrapattern</H2>
+bytearrapattern
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="char">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+char</H2>
+<P>
+A charcter protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#char">char'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the character</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the character code</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="collection">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+collection</H2>
+<P>
+A collection protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
++= <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Adds the item to the collection</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="container">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+container</H2>
+<P>
+A container protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the object content</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'set</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the object content</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'exchange</a> : <A HREF="stdprotocol.html#container">container</A>
+</TD>
+<TD><CODE>Exchanges the content</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'lock</a></TD>
+<TD><CODE>Locks the content</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="enumerable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+enumerable</H2>
+<P>
+An enumerable protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#enum">enum'get</a> = <A HREF="stdprotocol.html#enumerator">enumerator</A>
+</TD>
+<TD><CODE>Returns the object enumerator</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="enumerator">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+enumerator</H2>
+<P>
+An enumerator protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the current item</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'set</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the current item</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#enum">enum'continue</a></TD>
+<TD><CODE>Goes to the next enumerating item</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="factory">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+factory</H2>
+<P>
+An object factory protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+*create <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Creates the object with provided properties</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="func_argument">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+func_argument</H2>
+<P>
+An (X,Y) function argument
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#math">math'x'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns an x argument</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#math">math'y'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns an y argument</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="group">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+group</H2>
+<P>
+A group protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#group">group'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the group collection</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#group">group'set</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the group collection</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="indexable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+indexable</H2>
+<P>
+An indexable protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+@ : <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the item at specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+@ : <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#indexer">indexer</A>
+</TD>
+<TD><CODE>Returns the indexer at specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#indexer">indexer'get</a> = <A HREF="stdprotocol.html#indexer">indexer</A>
+</TD>
+<TD><CODE>Creates the indexer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="indexer">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+indexer</H2>
+<P>
+An indexer protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the indexed object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'set</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the indexed object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#index">index'add</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Adds the offset to the index</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#index">index'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the current index</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#index">index'if</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Fails if the provided index is out of range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#index">index'seek</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the index to the first occurance of the provided parameters or fails</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#index">index'set</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the current index</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#index">index'subtract</a> : <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Subtracts the offset to the index</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#indexer">indexer'get</a> = <A HREF="stdprotocol.html#indexer">indexer</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#proxy">proxy'ifnotnil</a></TD>
+<TD><CODE>Fails if the indexer pointing to nil</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="input">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+input</H2>
+<P>
+An input protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">char'get</a> = <A HREF="stdprotocol.html#char">char</A>
+</TD>
+<TD><CODE>Returns the inputed character</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'get</a> = <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the inputed line</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="inputable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+inputable</H2>
+<P>
+A binary value readable protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#input">input'read</a> : <A HREF="stdprotocol.html#input">input</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Reads the text value from the reader and returns the object containing this value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="int">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+int</H2>
+<P>
+An integer protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the integer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="iterator">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+iterator</H2>
+<P>
+An iterator protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#it">it'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the iterator value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#it">it'ifnotnil</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Fails if the iterator is out of range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#it">it'next</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Makes an iteration step</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="literal">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+literal</H2>
+<P>
+A literal protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#count">count'get</a> = <A HREF="stdprotocol.html#array">array</A>
+</TD>
+<TD><CODE>Returns the string length</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="long">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+long</H2>
+<P>
+A long integer protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'get</a> = <A HREF="stdprotocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the long integer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="magnitude">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+magnitude</H2>
+<P>
+A magnitude protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+== <A HREF="stdprotocol.html#magnitude">magnitude</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns <b>true</b> if the object value is equal to the parameter otherwise <b>false</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+!= <A HREF="stdprotocol.html#magnitude">magnitude</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns <b>true</b> if the object value is not equal to the parameter otherwise <b>false</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&gt; <A HREF="stdprotocol.html#magnitude">magnitude</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns <b>true</b> if the object value is greater than the parameter otherwise <b>false</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&lt; <A HREF="stdprotocol.html#magnitude">magnitude</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns <b>true</b> if the object value is less than the parameter otherwise <b>false</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&gt;= <A HREF="stdprotocol.html#magnitude">magnitude</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns <b>true</b> if the object value is greater or equal to the parameter otherwise <b>false</b>.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&lt;= <A HREF="stdprotocol.html#magnitude">magnitude</A>
+ = <A HREF="stdprotocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns <b>true</b> if the object value is less or equal to the parameter otherwise <b>false</b>.</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="pattern">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+pattern</H2>
+<P>
+A pattern protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run : <A HREF="stdprotocol.html#action">action</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Executes the action</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="printable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+printable</H2>
+<P>
+A printable protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#printer">printer'writeto</a> : <A HREF="stdprotocol.html#printer">printer</A>
+</TD>
+<TD><CODE>Writes the object text represenation to the stream writer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="printer">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+printer</H2>
+<P>
+A text writer protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'write</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Prints the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Prints the literal representation of an integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'write</a> : <A HREF="stdprotocol.html#long">long</A>
+</TD>
+<TD><CODE>Prints the literal representation of a long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Prints the literal representation of a real number value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="reader">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+reader</H2>
+<P>
+A writer protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'read</a> : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Reads the byte array value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'read</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Reads the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'read</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Reads the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'read</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Reads the long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'read</a> : <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Reads the real number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'read</a> : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Reads the variable byte array value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="real">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+real</H2>
+<P>
+A real number protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'get</a> = <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the real number</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="stream">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+stream</H2>
+<P>
+A stream protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#reader">reader'get</a> = <A HREF="stdprotocol.html#reader">reader</A>
+</TD>
+<TD><CODE>Returns the reader</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#writer">writer'get</a> = <A HREF="stdprotocol.html#writer">writer</A>
+</TD>
+<TD><CODE>Returns the writer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="typecaster">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+typecaster</H2>
+<P>
+An object typecasting action protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+of : <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Tries to convert the provide object</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="varbytearray">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+varbytearray</H2>
+<P>
+A variable byte array protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the variable byte array</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="variable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+variable</H2>
+<P>
+A variable protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&lt;< <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Copies the object content</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="writer">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+Standard Protocols</FONT>
+<BR>
+writer</H2>
+<P>
+A writer protocol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'write</a> : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Writes the byte array value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Writes the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'write</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Writes the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Writes the long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'write</a> : <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Writes the real number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'write</a> : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Writes the variable byte array value</CODE>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="stdprotocol-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>

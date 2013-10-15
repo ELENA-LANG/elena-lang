@@ -1,0 +1,155 @@
+define IFFAILED_MESSAGE_ID  0A1000001h
+define RAISE_MESSAGE_ID     0A0000001h
+define EVAL_MESSAGE_ID      085000000h
+define elMessage            00000A000h
+
+procedure core_routines'redirect
+
+  bsredirect
+  throw
+
+end
+
+procedure core_routines'handle_exception
+
+  accloadsi 2
+  mccelse labRaise IFFAILED_MESSAGE_ID
+  mcccopym EVAL_MESSAGE_ID
+  jumpaccn 0
+
+labRaise:
+  mccelse labCall RAISE_MESSAGE_ID
+  throw
+labCall:
+  accloadsi 1
+  bsredirect
+labErr:
+  acccopyn 0
+
+  quitmcc  
+
+end
+
+/*
+procedure symbol
+
+  mccelse labEnd message
+  jumpacc
+labEnd:
+  throw
+*/
+
+procedure core_routines'handle_message
+
+  accloadacci 0
+  mccelseacc labEnd
+  mcccopysubj
+  mccaddm EVAL_MESSAGE_ID
+  accloadsi 1
+  bsredirect
+labEnd:
+  throw
+
+end
+
+procedure core_routines'qualify_message
+
+  mccaddacci 0
+  accloadsi 1
+  jumpaccn 0
+
+end
+
+procedure core_routines'get_property
+
+  pushacci 1
+  accloadacci 0
+  mccelseacci labEnd 0
+  popacc
+  quitn 1
+
+labEnd:
+  throw
+
+end
+
+procedure core_routines'handle_rolebatch
+
+  init
+  pushmcc
+  pushi 0
+
+  pushfi -1
+
+labNext:
+  mcccopyfi 0
+  mcccopyprmfi -1
+
+  accgetfi 1
+  else labEnd
+  callacc 0
+  pushacc
+  incfi 1
+  jump labNext
+
+labEnd:
+  popacc
+  popself
+  quitmcc
+
+end
+
+procedure core_routines'handle_tape
+
+  mccelse labErr EVAL_MESSAGE_ID
+  init
+  open 1
+  pushi 0
+
+labNext:
+  accgetfi 1
+  else labEnd
+  thenflag labMessage elMessage
+  pushacc
+  incfi 1
+  jump labNext
+
+labMessage:
+  mcccopyacci 0
+  accloadsi 0
+  callacc 0
+  pushacc
+  incfi 1
+  jump labNext
+
+labEnd:
+  popacc
+  close
+  popself
+  quitn 1
+
+labErr:
+  throw
+
+end
+
+procedure core_routines'handle_wrap
+
+  pushacci 0
+  accloadacci 1
+  accsavesi 2
+  popacc
+  jumpaccn 0
+
+end
+
+procedure core_routines'handle_pair
+
+  accsavesi 1
+  accloadacci 0
+  bsredirect
+  accloadsi 1
+  accloadacci 1
+  jumpaccn 0
+
+end

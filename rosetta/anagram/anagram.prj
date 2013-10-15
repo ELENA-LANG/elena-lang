@@ -1,0 +1,17 @@
+[project]
+executable=anagram.exe
+options=-xembed-
+namespace=anagram
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+anagram.l
+
+[linker]
+gcsize=1048576
+
+[forwards]
+'program=anagram'program
+

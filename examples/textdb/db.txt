@@ -1,0 +1,11 @@
+Name:Ivanov
+Age:20
+Phone:111222333
+
+Name:Petrov
+Age:30
+Phone:444555666
+
+Name:Sidorov
+Age:40
+Phone:777888999

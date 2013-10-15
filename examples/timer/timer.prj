@@ -1,0 +1,12 @@
+[project]
+executable=timer.exe
+template=win32_gui2
+debuginfo=-1
+warn:unresolved=0
+options=-xembed-
+
+[files]
+timer.l
+
+[forwards]
+'mainwindow=timer'window

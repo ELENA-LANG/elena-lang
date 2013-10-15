@@ -1,0 +1,102 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA IDE common
+//
+//                                              (C)2005-2011, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef idecommonH
+#define idecommonH
+
+#include "common.h"
+
+namespace _GUI_
+{
+
+// --- Project settings ---
+#define IDE_FILES_SECTION                       _T("files")
+#define IDE_FORWARDS_SECTION                    _T("forwards")
+#define IDE_PROJECT_SECTION                     _T("project")
+#define IDE_PACKAGE_SETTING                     _T("namespace")
+#define IDE_TEMPLATE_SETTING                    _T("template")
+#define IDE_COMPILER_OPTIONS                    _T("options")
+#define IDE_EXECUTABLE_SETTING                  _T("executable")
+#define IDE_OUTPUT_SETTING                      _T("output")
+#define IDE_VMPATH_SETTING                      _T("vmpath")
+#define IDE_ARGUMENT_SETTING                    _T("arguments")
+#define IDE_DEBUGINFO_SETTING                   _T("debuginfo")
+
+// --- ELENA IDE Styles ---
+#define SCHEME_COUNT                            2
+
+#define STYLE_KEYWORD                           3
+#define STYLE_COMMENT                           4
+#define STYLE_OPERATOR                          5
+#define STYLE_MESSAGE                           6
+#define STYLE_NUMBER                            7
+#define STYLE_STRING                            8
+#define STYLE_HINT                              9  // !! not used
+#define STYLE_ERROR_LINE                        10
+#define STYLE_TRACE_LINE                        11
+#define STYLE_TRACE                             12
+#define STYLE_BREAKPOINT                        13
+#define STYLE_HIGHLIGHTED_BRACKET               14
+#define STYLE_MAX                               14
+
+// --- UIState ---
+
+enum IDEState
+{
+   uiEmpty         = 0x00,
+   uiFrameShown    = 0x01,
+   uiProjectActive = 0x02,
+   uiIDEBusy       = 0x04,
+   uiDebugging     = 0x08,
+   uiAutoRecompile = 0x10,
+   uiHighlight     = 0x20,
+   uiBracketBold   = 0x40
+};
+
+// --- FrameState ---
+
+enum FrameState
+{
+   editEmpty           = 0x00,
+   editHasDocument     = 0x01,
+   editHasSelection    = 0x02,
+   editCanUndo         = 0x04,
+   editCanRedo         = 0x08,
+   editModifiedMode    = 0x10,
+   editModeChanged     = 0x20,
+   editOverwriteMode   = 0x40
+};
+
+#ifdef _WIN32
+
+#include "eng\messages.h"
+#include "winapi32\winideconst.h"
+
+#elif _LINUX32
+
+#include "eng/messages.h"
+#include "gtk-linux32/gtkideconst.h"
+
+#endif
+
+typedef _ELENA_::String<_text_t, 255> SearchText;
+
+struct SearchOption
+{
+   SearchText text;
+   SearchText newText;
+   bool       matchCase;
+   bool       wholeWord;
+
+   SearchOption()
+   {
+      matchCase = wholeWord = false;
+   }
+};
+
+} // _GUI_
+
+#endif // idecommonH

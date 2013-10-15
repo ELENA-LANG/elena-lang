@@ -1,0 +1,13 @@
+[project]
+executable=arithmeval.exe
+template=win32_console2
+debuginfo=-1
+warn:unresolved=0
+options=-xembed-
+
+[files]
+arithmeval.l
+
+[forwards]
+'entry=arithmeval'program
+

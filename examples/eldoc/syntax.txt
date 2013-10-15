@@ -1,0 +1,21 @@
+MODULE ::
+        ATTR:"<packagesummary>" [DESCRIPTION] "</packagesummary>"
+        ATTR:"<package>" [PACKAGE_NAME] "</package>"
+	SUB:SYMBOLS
+
+
+SYMBOLS ::
+        ATTR: "<summary>" [DESCRIPTION] "</summary>"
+        SUB:#class [CLASSNAME] CLASS
+
+CLASS ::
+        "///" "<summary>" [DESCRIPTION] "</summary>"
+        "#method" [METHOD_NAME] "[" METHOD "]"
+        *
+
+METHOD ::
+        *
+
+SYMBOL ::
+        *
+

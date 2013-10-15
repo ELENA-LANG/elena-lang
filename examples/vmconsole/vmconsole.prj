@@ -1,0 +1,17 @@
+[project]
+executable=vmconsole.exe
+arguments=D:\Alex\elena\examples\interpreter\interpreter2.vl2 D:\Alex\elena\examples\interpreter\test.txt
+vmpath=..\..\bin
+template=win32_vm_console2
+debuginfo=-2
+warn:unresolved=-1
+
+[files]
+vmconsole.l
+
+[forwards]
+'program=sys'system'program
+'program'instance=sys'system'commandcycle
+'program'action=vmconsole'action
+'program'choice=std'basic'integer
+'program'prompt=vmconsole'prompt

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="api2html" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="..\..\..\..\bin\api2html.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\temp" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<Compiler>
+					<Add directory=".." />
+					<Add directory="..\..\..\common" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="default;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-march=pentium2" />
+			<Add option="-O3" />
+			<Add option="-W" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+		</Linker>
+		<Unit filename="..\api2html.cpp" />
+		<Unit filename="..\..\..\common\altstrings.cpp" />
+		<Unit filename="..\..\..\common\altstrings.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\..\..\common\common.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\..\..\common\config.cpp" />
+		<Unit filename="..\..\..\common\config.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\..\..\common\files.cpp" />
+		<Unit filename="..\..\..\common\files.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\..\..\common\lists.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\..\..\common\streams.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\..\..\common\tools.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

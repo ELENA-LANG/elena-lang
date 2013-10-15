@@ -1,0 +1,107 @@
+statement  ::= next;
+statement  ::= prev;
+statement  ::= inc;
+statement  ::= dec;
+statement  ::= out;
+statement  ::= in;
+statement  ::= "[" while;
+statement  ::= idle;
+
+next       ::= ">";
+prev       ::= "<";
+inc        ::= "+";
+dec        ::= "-";
+out        ::= ".";
+in         ::= ",";
+idle       ::= $any;
+
+while      ::= statement while_r;
+
+while_r    ::= "]";
+while_r    ::= statement while_r;
+
+tape       ::= statement statements;
+
+statements ::= statement statements;
+statements ::= $eps;
+
+start      ::= tape;
+
+tape       =>
+              "std'basic'widecharvar" symbolreference // !! temporal
+              // 1: append
+              %new
+              // 2: goto
+              %new
+              // 3: loop
+              %new
+              // 4: object
+              &nil sys'dynamics'groupvariable
+              @copy sp[0]
+              // create a tape ;temporal: argument list should be used instead
+              1024
+              std'basic'newarray
+              // fill a tape; temporal
+              @copy sp[0]
+              std'patterns'it
+              %std'dictionary'content'set
+              &sys'vm'routines'eecho
+              &sys'vm'routines'dummy 0 %eval "std'basic'widecharvar" symbolreference
+              &wrapbatch[4] &wrap[2] &wrap[2]
+              ^run
+              @free 1              
+              // add to the group
+              %sys'dynamics'group_member ^^append
+              @free 1
+              // inc method
+              @copy fp[4]
+              @copy fp[1] dequalifier %append @copy fp[4] 
+              &wrap[2] &wrap[2]
+              %sys'dynamics'group_member ^^append
+              @free 1
+              // goto method
+              @copy fp[4]
+              @copy fp[2] dequalifier %std'dictionary'index'append @copy fp[4] 
+              &wrap[2] &wrap[2]
+              %sys'dynamics'group_member ^^append
+              @free 1
+              // loop method
+              @copy fp[4]
+              @copy fp[3] dequalifier %run &std'patterns'ewhilenotzero @copy fp[4] 
+              &wrap[2] &wrap[2] &wrap[2]
+              %sys'dynamics'group_member ^^append
+              @free 1
+              // 5: append:1
+              %append &sys'vm'routines'eecho &sys'vm'routines'dummy 1 
+              &wrap[2] &wrap[2] &wrap[2]
+              // 6: append:-1
+              %append &sys'vm'routines'eecho &sys'vm'routines'dummy -1 
+              &wrap[2] &wrap[2] &wrap[2]
+              // 7: inc action
+              @copy fp[1] @copy fp[5] &wrap[2]
+              // 8: dec action
+              @copy fp[1] @copy fp[6] &wrap[2]
+              // 9: next action
+              @copy fp[2] @copy fp[5] &wrap[2]
+              // 10: previous action
+              @copy fp[2] @copy fp[6] &wrap[2]
+              // 11: in action
+              %write &sys'vm'routines'eecho 
+              &sys'vm'routines'dummy &nil %get &nil 'program'input &wrapbatch[4]
+              &wrap[2] &wrap[2]
+              // 12: out action
+              %write &nil 'program'output &wrap[2]
+              // build command batch
+              &cast[]
+              $body
+              @copy fp[4]
+              ^ eval;
+
+inc        => @copy fp[7]  += $body;
+dec        => @copy fp[8]  += $body;
+next       => @copy fp[9]  += $body;
+prev       => @copy fp[10] += $body;
+out        => @copy fp[12] += $body;
+in         => @copy fp[11] += $body;
+while      => @copy fp[3] &sys'vm'routines'eecho &sys'vm'routines'dummy &cast[] $body
+              &wrap[2] &wrap[2] &wrap[2] +=;

@@ -1,0 +1,14 @@
+[project]
+executable=binary.exe
+options=-xembed-
+namespace=binary
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+binary.l
+
+[forwards]
+'program=binary'Program
+

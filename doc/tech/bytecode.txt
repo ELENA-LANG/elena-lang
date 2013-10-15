@@ -1,0 +1,308 @@
+
+ELENA byte codes (or ecodes)
+============================
+
+ ELENA virtual machine registers:
+   fp(f) - frame pointer  (positive values - pointing to the current frame, 
+                          negative - to the previous frame)
+   sp(s) - stack pointer  (only positive)
+
+   acc   - accumulator
+
+   mcc   - message accumulator
+
+ ELENA virtual machine variables (located between stack frames)
+   self    - self poniter    (only if it was initialized with enter2 / enter3)
+
+ Legend:
+   i - index
+   n - offset
+   r - reference
+   m - message 
+                              
+ stack commands:
+ ---------------
+ pushi i                    - i  => [sp+1] ; sp++
+
+ pushn n                    - n  => [sp+1] ; sp++
+
+ pushr r                    - r  => [sp+1] ; sp++
+
+ pushfi i                   - [fp+i] => [sp+1] ; sp++
+
+ pushsi i                   - [sp+i] => [sp+1] ; sp++
+
+ pushacc                    - acc => [sp+1] ; sp++
+
+ pushacci i                 - [acc::i] => [sp+1] ; sp++
+
+ pushself                   - self => [sp+1] ; sp++
+ 
+ pushselfi i                - [self::i] => [sp+1] ; sp++ ;
+ 
+ pushfpi i                  - fp+i => [sp+1] ; sp++
+ 
+ x_pushfpi i                - fp+i => [sp+1] ; sp++
+                              ; frame header is not taken into account
+ 
+ pushspi i                  - sp+i => [sp+1] ; sp++
+
+ pushmcc                    - mcc => [sp+1] ; sp++;
+
+ mcccopyprmfi i             - copy the message parameters;
+                              [fp+i]::mcc.param => [sp+1] ; sp++;
+
+ reserve n                  - sp += n;
+ 
+ pop                        - sp--; 
+                              should not affect the command result;
+                              should not affect the message prefix;
+                              x86: should not change EAX
+
+ popn n                     - sp-=n; 
+                              should not affect the command result;
+                              should not affect the message prefix;
+                              x86: should not change EAX
+ 
+ popfi i                    - [fp+i] <= [sp] ; sp--
+ 
+ popsi i                    - [sp+i] <= [sp] ; sp--
+
+ popself                    - restore the last self variable;
+
+ popacc                     - acc <= [sp] ; sp--
+ 
+ popacci i                  - [acc::i] <= [sp] ; sp--;
+                              use GC reference bit masks
+
+ x_popacci i                - [acc::i] <= [sp] ; sp--;
+                              does not use GC reference bit masks
+
+ popselfi i                 - [self::i] <= [sp] ; sp-- ;
+                              use GC reference bit masks
+
+ popmcc                     - mcc <= [sp] ; sp--
+
+ swapsi   i                 - [sp+i] <=> [sp]
+
+ accswapsi i                - [sp+i] <=> acc
+ 
+ calling commands:
+ -----------------
+ callextr r                 - calls the external procedure
+ 
+ callr r                    - calls the procedure;
+                              acc contains the result
+ 
+ rcallm r, m                - calls directly the appropriate method in VMT referred by r
+                              acc contains the result
+              
+ rcalln r, n                - calls directly the appropriate method in VMT referred by r
+                              acc contains the result
+              
+ evalr r                    - evaluate a reference ; if r is a symbol reference
+                              symbol code is executed ; acc contains the result
+
+ bsredirect                 - search acc::VMT for the message in m;
+                              if found jumps to it; binary search is used
+
+ callacc n                  - call acc::VMT[n] method
+
+ jumpacc                    - invoke symbol referred by acc
+
+ jumpaccn                   - redirect to acc::VMT[n] method
+
+ callsi i, n                - redirect to [sp+i]::VMT[n] method
+ 
+ branching commands:
+-------------------
+ jumpr address              - jumps to the address
+
+ jump label                 - jumps to the label
+
+ else label                 - jumps to the label if acc == 0
+
+ then label                 - jumps to the label if acc != 0
+ 
+ elseflag f, label          - jumps to the label if acc.vmt.flag & f != f
+ 
+ thenflag f, label          - jumps to the label if acc.vmt.flag & f == f
+ 
+ thenr r, label             - jumps to the label if acc == r
+
+ elser r, label             - jumps to the label if acc != r
+
+ elsesi i, label            - jumps to the label if acc != [sp+i]
+
+ thensi i, label            - jumps to the label if acc == [sp+i]
+
+ mccelse m, label           - jumps to the label if mcc != m
+
+ mccthen m, label           - jumps to the label if mcc == m
+
+ mccelseacc label           - jumps to the label if mcc != acc
+ 
+ mccthenacc label           - jumps to the label if mcc == acc
+ 
+ mccelseacci i, label       - jumps to the label if mcc != acc[i]
+ 
+ mccthenacci i, label       - jumps to the label if mcc == acc[i]
+ 
+ hook label                 - assign a new exception handler
+                                                
+ unhook                     - remove the current exception handler
+
+ rethrow n                  - remove the current exception handler and
+                              jump to the next exception handler if
+                              sp + n != exception::sp
+
+ register commands:
+ ------------------ 
+ incsi i                    - increment index located in [sp::i]
+
+ incfi i                    - increment index located in [fp::i]
+
+ copyfpi i                  - sp <= fp + i
+ 
+ acccopyself                - self => acc
+                              does not affect m register (EDX)
+
+ x_acccopyfpi i             - fp+i => acc
+                              does not affect m register (EDX)
+                              ; frame header is not taken into account
+           
+ acccopyfpi i               - fp+i => acc
+                              does not affect m register (EDX)
+           
+ acccopyr r                 - r => acc
+
+ acccopyn n                 - n => acc
+ 
+ accaddn n                  - acc + n => acc
+
+ iacccopyr i, r             - r => [acc::i]
+                              ; direct ; where i < 34
+ 
+ iaccfillr i, r             - r => [acc::(0..i)]
+                              ; direct
+
+ accloadacci i              - [acc::i] => acc
+          
+ accloadfi i                - [fp+i] => acc
+
+ accloadsi i                - [sp+i] => acc;
+                              does not affect m register (EDX)
+ 
+ accloadr r                 - [r] => acc
+
+ accloadselfi i             - [self::i] => acc
+
+ accsavefi i                - [fp+i] <= acc 
+ 
+ accsavesi i                - [sp+i] <= acc
+ 
+ x_accsavefi i              - [fp+i] <= acc ; frame header is not taken into account
+ 
+ accsaver r                 - [r] <= acc
+
+ accsaveselfi i             - [self::i] <= acc;
+                              use GC reference bit masks
+
+ accgetsi i                 - self:[sp::i] => acc or zero if out of range
+
+ accgetfi i                 - self:[sp::i] => acc or zero if out of range
+
+ mcccopym m                 - mcc <= m
+ 
+ mcccopysubj                - mcc:subj => mcc
+
+ mccaddm verb               - verb + mcc => mcc
+
+ mcccopysi i                - [sp+i] => mcc
+
+ mcccopyfi i                - [fp+i] => mcc
+
+ mcccopyacci i              - acc:i => mcc
+
+ mccaddacci i               - mcc + acc:i => mcc
+
+ control commands:
+ -----------------                     
+ breakpoint                 - used for debugging
+ 
+ init                       - save the last self, init self with a current one; 
+                              it should be only one command per procedure
+
+ open n                     - save the last frame and open the new frame ; 
+                              init the frame header offset
+                              it should be only one command per procedure ; 
+                              may be preceded by init
+
+ close                      - restore the previous frame ;
+                              should be paired with open
+                              it should be only one command per procedure ; 
+
+ quit                       - terminates the procedure;
+                              
+ quitn                      - terminates the procedure;
+                              clear the stack parameters
+                                                            
+ quitmcc                    - terminates the procedure ; clear the stack parameters, based
+                              on mcc value
+
+ exclude                    - exclude the stack content from managed space
+
+ include                    - restore managed stack
+                              (should be paired with exclude)
+
+ restore n                  - remove the excluded stack
+
+ throw                      - raise an exception (acc contains the exception object)
+
+ memory managing commands:
+ -------------------------
+ createn n, vmt             - create the binary object with the 
+                              specified size ; acc contains the class instance
+                              
+ acccreaten n, vmt          - create the binary object with the 
+                              specified size = acc * n ; out: acc contains the class instance
+ 
+ acccreate vmt              - create the array with the 
+                              specified size = acc ; out: acc contains the class instance
+ 
+ create i, vmt              - create the object with the specified
+                              number of fields;
+                              acc contains the class instance
+
+ accboxn n, vmt            - if acc is local box its content into the object with vmt and size n
+
+ data manipulating commands:
+ -----------------
+ set                        - [sp] => self[acc] ; sp--
+ 
+ get                        - [sp+1] <= self[acc] ; sp++
+ 
+ n_write n                  - [acc] => [self] ; no GC WB 
+
+ writeacc                   - acc => [self] ; no GC WB 
+ 
+ getlen n                   - acc.Length / n => acc
+
+
+
+
+
+
+
+
+ mulity-threading commands:
+ --------------------------
+ trylock n                  - if self::sync is zero => n => self::sync ; acc = 0 ; else acc = 1;
+                              may use postfix commands: else, then
+
+ freelock n                 - self::sync += n
+
+ sptrylock n                - if [sp]::sync is zero => n => [sp]::sync ; acc = 0 ; else acc = 1;
+                              may use postfix commands: else, then
+
+ accfreelock n              - acc::sync += n

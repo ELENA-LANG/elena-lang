@@ -1,0 +1,15 @@
+summing       ::= "+" object  [ ^add(1) ];
+subtracting   ::= "-" object  [ ^subtract(1) ];
+
+operation     ::= summing operation;
+operation     ::= subtracting operation;
+operation     ::= $eps;
+
+expr          ::= object operation;
+
+object        ::= $literal [ $terminal ];
+object        ::= $numeric [ $terminal ];
+
+printing      ::= [ #config vm_console #start system'console ] expr [ ^eval&writeLine(1) ];
+
+start         ::= "?" printing;

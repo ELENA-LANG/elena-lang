@@ -1,0 +1,12 @@
+[#general#]
+#name=ext'gui'dictionary
+#shortdescr=Provides gui control helpers
+
+[#list#]
+eaccessor
+
+[eaccessor]
+#title=Symbol EAccessor
+#shortdescr=A control direct access helper
+#method=@,object,guiprotocol.html#control;Tries to find the control with the provided ID
+#method=new,guiprotocol.html#control;Extends GUI control

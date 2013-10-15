@@ -1,0 +1,31 @@
+#define system.
+
+// --- Sum ---
+
+#class MeanAction : BasePattern
+{
+    #field theValue.
+    #field theCount.
+    
+    #constructor new
+    [
+        theValue := Real new.
+        theCount := Integer new.
+    ]
+
+    #method evaluate : aValue
+    [
+        theCount += 1.
+        
+        theValue += aValue.
+    ]
+
+    #method Number = theValue / theCount.
+}
+
+// --- Program ---
+
+#symbol program =
+[
+    console writeLine:(MeanAction new foreach:(1, 2, 3, 4, 5, 6, 7, 8) Number).
+].

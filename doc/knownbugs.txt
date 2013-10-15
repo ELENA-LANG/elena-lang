@@ -1,0 +1,22 @@
+Samples:
+-------
+
+ELC:
+----
+#00066: error in mg collecting algorithm
+
+Samples:
+--------
+
+LIB:
+----
+
+IDE:                                
+----
+#00043: the number of created handlers increased after each run
+
+Tools: 
+-----
+#00017: ASM2BINX: warn on unresolved labels
+
+(next=#00067)

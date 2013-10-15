@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sg" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../../../../bin/sg.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="../temp" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Option parameters="D:\Alex\PROJECTS\elena.2\dat\sg\syntax.txt" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="../../../../bin/sg.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="../temp" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wno-conversion-null" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-static-libgcc" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="default;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-march=pentium2" />
+			<Add option="-D_WIN32" />
+			<Add option="-D_UNICODE" />
+			<Add option="-DUNICODE" />
+			<Add directory=".." />
+			<Add directory="../../../common" />
+			<Add directory="../../../common/win32" />
+			<Add directory="../../../engine" />
+			<Add directory="../win32" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+			<Add option="-static-libgcc -static-libstdc++" />
+		</Linker>
+		<Unit filename="../../../common/altstrings.cpp" />
+		<Unit filename="../../../common/altstrings.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../common/common.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../common/config.cpp" />
+		<Unit filename="../../../common/config.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../common/dump.cpp" />
+		<Unit filename="../../../common/dump.h" />
+		<Unit filename="../../../common/files.cpp" />
+		<Unit filename="../../../common/files.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../common/lists.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../common/streams.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../common/tools.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../engine/parsertable.cpp" />
+		<Unit filename="../../../engine/parsertable.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../../../engine/textparser.h" />
+		<Unit filename="../../../engine/textsource.cpp" />
+		<Unit filename="../../../engine/textsource.h" />
+		<Unit filename="../sg.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

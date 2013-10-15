@@ -1,0 +1,29 @@
+[#general#]
+#name=sys'events
+#shortdescr=Provides the basic event handle routines.
+
+[#list#]
+controller
+egrouphandler
+ehandler
+
+[ehandler]
+#title=Symbol EHandler
+#shortdescr=An object event handler
+#protocol=group
+#method=+=,action;Assigns the event handler
+#method=new,sysprotocol.html#eventowner,collection;Extends the event owner object
+#method=<a href="stddictionary.html#group">group'get</a>,,object;Returns the group collection
+#method=<a href="stddictionary.html#group">group'set</a>,object;Sets the group collection
+
+[controller]
+#title=Class Controller
+#shortdescr=An event controller
+#parent=elena.html#object:Object
+#field=theevents;Colection of event handlers
+
+[egrouphandler]
+#title=Symbol EGroupHandler
+#shortdescr=An collection event handler
+#method=+=,action;Assigns the event handler
+#method=new,collecton,collection;Extends the event owner collection

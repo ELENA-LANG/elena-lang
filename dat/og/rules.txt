@@ -1,0 +1,11 @@
+pushr   pop    => nop nop;
+pushsi  pop    => nop nop;
+pushfi  pop    => nop nop;
+pop     pop    => nop popn =2;
+popn    pop    => popn +1 nop;
+pop     popn   => nop popn +1;
+pushacc popacc => nop nop;
+pushr   popacc => acccopyr nop;
+pushselfi popacc => accloadselfi nop;
+accloadfi pushacc => pushfi nop;
+acccopyself pushacc => pushself nop;

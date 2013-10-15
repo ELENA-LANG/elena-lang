@@ -1,0 +1,528 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 1.5.4: Package win32'controls
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="win32controls-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="control">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+win32'controls</FONT>
+<BR>
+Class Control</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<B>win32'controls'control</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+<DT>
+<A HREF="win32protocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A control wrapper class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="win32protocol.html#controlhandler">controlhandler</A>
+</TD>
+<TD><CODE>Assigns the control</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#handler">win32'control'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the control object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#hwnd">win32'hwnd'get</a> = <A HREF="win32protocol.html#handle">handle</A>
+</TD>
+<TD><CODE>Returns HWND handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmclose'proceed</a></TD>
+<TD><CODE>WM_CLOSE handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmdestroy'proceed</a></TD>
+<TD><CODE>WM_DESTROY handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'get</a> = <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Gets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="imagebox">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+win32'controls</FONT>
+<BR>
+Class Imagebox</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<A HREF="#control">win32'api'controls'Control</A>
+   |
+   +--<A HREF="#paintbox">win32'api'controls'Paintbox</A>
+     |
+     +--<B>win32'controls'imagebox</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+<DT>
+<A HREF="win32protocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A image box class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="win32protocol.html#controlhandler">controlhandler</A>
+</TD>
+<TD><CODE>Assigns the control</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#handler">win32'control'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the control object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#hwnd">win32'hwnd'get</a> = <A HREF="win32protocol.html#handle">handle</A>
+</TD>
+<TD><CODE>Returns HWND handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmclose'proceed</a></TD>
+<TD><CODE>WM_CLOSE handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmdestroy'proceed</a></TD>
+<TD><CODE>WM_DESTROY handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'get</a> = <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Gets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="paintbox">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+win32'controls</FONT>
+<BR>
+Class Paintbox</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<A HREF="#control">win32'api'controls'Control</A>
+   |
+   +--<B>win32'controls'paintbox</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+<DT>
+<A HREF="win32protocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A paint box class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="win32protocol.html#controlhandler">controlhandler</A>
+</TD>
+<TD><CODE>Assigns the control</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#handler">win32'control'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the control object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#hwnd">win32'hwnd'get</a> = <A HREF="win32protocol.html#handle">handle</A>
+</TD>
+<TD><CODE>Returns HWND handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmclose'proceed</a></TD>
+<TD><CODE>WM_CLOSE handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmdestroy'proceed</a></TD>
+<TD><CODE>WM_DESTROY handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'get</a> = <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Gets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="window">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+win32'controls</FONT>
+<BR>
+Class Window</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<A HREF="#control">win32'api'controls'Control</A>
+   |
+   +--<B>win32'controls'window</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="win32protocol.html#control">control</A>
+</DT>
+<DT>
+<A HREF="guiprotocol.html#control">control</A>
+</DT>
+</DL>
+<P>
+A window wrapper class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="win32protocol.html#controlhandler">controlhandler</A>
+</TD>
+<TD><CODE>Assigns the control</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#handler">win32'control'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the control object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#hwnd">win32'hwnd'get</a> = <A HREF="win32protocol.html#handle">handle</A>
+</TD>
+<TD><CODE>Returns HWND handler</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#hwnd">win32'hwnd'stop</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Exits the main loop</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'open</a></TD>
+<TD><CODE>Opens the window</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">location'set</a> : <A HREF="guicontrols.html#location">location</A>
+</TD>
+<TD><CODE>Sets the window location</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#size">size'set</a> : <A HREF="guicontrols.html#size">size</A>
+</TD>
+<TD><CODE>Sets the window size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmclose'proceed</a></TD>
+<TD><CODE>WM_CLOSE handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="win32scopes.html#wmclose">wmdestroy'proceed</a></TD>
+<TD><CODE>WM_DESTROY handle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#control">control'caption'set</a> : <A HREF="stdprotocol.html#literak">literak</A>
+</TD>
+<TD><CODE>Sets the control caption</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="handlertype">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+win32'controls</FONT>
+<BR>
+Symbol HandlerType</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#factory">factory</A>
+</DT>
+</DL>
+<P>
+A control handler adapter
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="guiscopes.html#style">control'style'create</a> : <A HREF="win32protocol.html#controlattr">controlattr</A>
+ = <A HREF="win32protocol.html#controlhandler">controlhandler</A>
+</TD>
+<TD><CODE>Creates HWND handle</CODE>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="win32controls-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>

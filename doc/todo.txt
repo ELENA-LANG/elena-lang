@@ -1,0 +1,1477 @@
+week x:                
+ 
+
+x  - compiler
+i  - ide
+a  - api
+l  - language                                                                                   
+s  - samples
+f  - flagship project (up to 2)
+t  - tools
+v  - vm script                                          
+
+- dev
+- maint
+- rev
+- opt
+- port
+
+------
+Currently:
+------
+              sdev - rosetta samples              
+                       * arrayconcat
+                       * ...
+<=================>
+
+1.9.9.10
+--------
+
+week2: [22.10]
+               sdev - console samples
+                       * calculator
+                       * interpreter
+
+              sdev - rosetta samples              
+                       * amb
+                       * arithmeval
+
+               sdev - console samples
+                       * migrate trans
+                       * simplify goods (Record.get&Literal implementation)
+                       * words: sort the list
+                       * simplify bsort
+
+              adev - dynamic programming
+                       * deserialize object
+              adev - lib30
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range
+                              
+                       * arrayiterator / array / literalvalue:setat, ... - raise an exception if the index
+                         out of range                       
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       * system'$consolehandler: if the returning handler is -1
+                         the exception should be raised (probably special method attributes like 
+                         invalid_result and exception)
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * system'Array: raise an exception if getAt goes out of range
+                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
+                       * EReflector: raise an exception if NameOf returns zero
+                       * common pattern: append list item separated by comma
+                       * timespan: constructor?
+                       * time: add month, year, hour, ...?
+                       * date: set day???
+                       * date: custom presenter / formatter / custom formatter
+                       * extensions'EIntPresenter / EIntFormatter - can it work both for int and long numbers?
+                       * list / iterators / ... - can commutator be used instead of adapter roles
+
+              sdev - text db
+                       * split method implement
+                       * use multi select statement
+                       * use subjects to return fields                       
+                       * migrate textdb
+
+            smaint - testing
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+
+week3:
+              sdev - vmconsole
+                       * migrate
+
+              sdev - default script
+                       * support basic arithmetic operation (+ - / *)
+                       * implement 2 + 2 * 3
+                       * functions
+
+              sdoc - tutorials
+                       * post sum sample
+
+              sdev - prime project
+                       * open calc : simple inline script to enter and sum two number; think over the most simple script to write quick code
+                       
+              sdev - prime project
+                       * interpreter
+                       * script program - calculator
+                       * eldoc: dynamic parser
+
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+week4:
+            xmaint - gc
+                       * ackerman: test
+                       * anagram: find out why the program fails
+            xmaint - build
+                       * try to automize build process  
+                      
+            smaint - console samples
+                       * test determinant
+            xmaint - compiler
+                       * looks like the operation with console does not work with AMD!!!
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+              xdev - test
+                       * boxing: message target / operand, operator target / operand
+
+                       
+1.9.9.11
+--------
+week1:
+              xdev - open arg
+                       * can be passed further without boxing as open arg parameter
+                       * any other operation should result in boxing
+
+              xdev - multy select statement
+                       * native implementation - using open argument list??
+
+              xdev - generic development              
+                       * custom verb dispatching (see for example stringControl split&by[2])
+
+                       * for loop: review for implementation algorithm can we simplify it??
+
+                       * operator order @ (if make it smaller - the problem with double operator @ <<)
+                       * support several roles in role (e.g. a~role1~role2 eval) ??
+
+                       * several extensions: should it be supported, like in ELENA1.x
+                         (system'dynamic'RoleList)  
+
+                       * should be possible to declare sealed classes
+
+                       * maybe primitive code should use reverse order as well, we could simplify a lot of code
+
+                       * support the following syntax:
+                              #method save:anObject &to:aTarget
+                                  => EAdapter new::anObject.                          
+
+                       * normal operation with data field should be boxed
+                       * could it be possible to hide the inherited methods, so they could be used
+                         only internally by the class (with $super)
+
+                       * dynamic object extending : union, group
+                         
+                       * ecodes: index operation: probably the index should be inverted
+                         before storing in the stack, to avoid the problem with GC for
+                         big enough indexes
+
+                       * resend operator: implement the situation when the target is
+                         not constant
+
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+
+                       * elc:Bytecodewriter::assignResult, should support both outer and normal
+                         field assigning
+                       * remove obsolete method handler code
+                       
+                       * could typed subjects be reserved for every module? So they have the
+                         same ids in every module? (so we could get rid of long list of cached
+                         values)
+                       * loop should contain snop
+
+                       * should be possible to include inline byte code section as well
+                       
+                       * stack allocated variable - try to find situation when overhead will be minimized
+
+                       * hook: maybe offset should exclude call command size, so no need
+                         in adjucment
+
+                       * compileHelperOperation: implement size check for the output parameter
+                       * warn if number of subjects / verbs are overflown
+                       * a lot of operations with intNumber, longNumber and realNumber look
+                         alike, can we try to generalize them?
+
+                       * do not use self in constructor
+
+                       * external call: do not support out'type'xxx:nil parameter, stack allocated one should be used
+                       * hint role should indicate that no need to create a class class??
+
+                       * readonly fields like in C# (some optimization gains?)
+
+                       * local stack allocated variable (#var(type'int)theVal := 2) ; only int, long and real supported ; probably they
+                         all (including implicit ones) should be declared at the method begin, so they will be cleared together
+                         (think over elegant way to remove stack excluding)
+
+                       * warn if system'Object does not contain send method
+
+                       * probably import should work only with system modules?
+
+                       * group object implementation
+                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
+      
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)
+
+                       * loadverb should be not be implemented in elena.h
+                         module
+                       * raise an exception if more than 15 arguments in the method / message                 
+                       
+                       * simplify ansi constants / wideliteral interaction
+                       * type'int (and so on): compiler should garantee that the
+                         object returned / passed with with argument is integer
+                         (warning?)                         
+                       * resend: should inline statement be allowed?
+                       * system'Object - equal - could we implement using ecodes?
+                       
+                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
+
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+
+              xdev - ecode optimization
+                       * system'object output code review (Object.equal)
+                       
+              xdev - simple optimization              
+                       * do not need load acc if it is already in acc (see Object.equal)
+                       * idle copyfpi, before close (see Object.notequal)
+
+                       * if the target is stack allocated, no need to allocate extra space (at least for the single operation)? 
+
+                       * review and optimize dispatching algorithm: $self, field, symbol
+
+                       * optimize type'length virtual operation implementation (we do not need to save it in the stack)
+
+                       * simplify int / long unboxing
+
+                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well
+
+                       * frame check should be possible to turn off
+
+                       * we do not need frame in idle LiteralValue constructor             
+                       * if $self is not used - we should not use init / popself ???
+
+                       * review $ConsoleHandler.new&type'int - simplify the code
+                       * control run &while &loop - support block code as a while parameter
+
+                       * control run &while should be implemented as virtual loop as well
+                       
+                       * win32_console: use primtive type'length instead of type'int to pass the length without creating an integer object
+
+                       * bsredirect: could the number of entries always be even, so no need to take this into acount?
+                       * bsredirect: can we minimize the number of jumps (get rid of successful jump)
+                       
+                       * could we redesign ByteArray primitive operations using only operators?
+
+                       * try to replace some external code with ecodes (e.g getting length / size, and so on)
+
+                       * action symbol - every action symbol should be implement as
+                         symbolloader ? (it is streight forward implementation for stateless, but if the action cotains the outer
+                         links)
+
+                       * primitivie operation - it should be possible to write something like
+                         (see List) theCount := theCount + 1 - the compiler should replace the operation with inline
+                         code without generating a new object each time
+
+                       * compiler should replace and:action / and in virtual statement with
+                         appropriate inline code
+
+                       * it should be possible to turn off control virtualization, direct calls, optimization code, jumps
+
+                       * elc api: optimize core_api'save_widestr
+                       * constructor should return $self, so no need to assign it before exit             
+                       * optimize control run & while virtual implementation
+
+                       * replace enumeration / iteration loops with a virtual expressions
+                       
+                       * operator optimization: to avoid scanning the whole VMT, operator invoke
+                         code could try to search first several entries before going to full search                                      
+
+                       * optimized switch statement implementation (e.g. ordered ??)
+
+                       * optimize !=, <= and >= implementation
+                       * optimize index operation (literal / array) ; indexer should use more optimize algorithm
+                       
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * control operation, if the inline code cannot be implemented,  
+                         the expression should be implemented directly?
+                       * console entry: probably better to use symbol instead direct call
+                       * elc - compileExternalCall: subject references should be resolved
+                         only once, currently it's done several times
+                       * Compiler::compileMessageDispatch - if only message was changed (with the same parameter) - only
+                         message should be changed and resend further
+                       * if the class is sealed, any operation with $self should be implemented directly
+                       * use stack allocated object for the following code                            
+                              theIndex less &type'length::theLiteral  - we do not now theLiteral "type", how could we fix it?
+                       * system library: review all primitive operations - make sure optimized version is used
+                       * control run &each &loop should be implemented as virtual loop as well
+                       * direct message parameters can be used for the following construction if all the parameters of the second message
+                         are constants / locals / fields  
+                               presenterClassFactory new::anObject new:anObject &radix:aRadix.
+                         
+                       * review stack allocated data mechanism, think over more light-weight excluding stack mechanism
+                       * type'length stack allocated variable should be used with bytearray as well
+                       * external call: it should be possible to pass the direct link to the literal string in some cases
+                       * idle copyfpi operation (when esp is not changed) , could we find them out and replace with nop?
+                       * external call, it should be possible to pass the literal length without creating a new object
+                             system'external'kernel32 WriteConsoleW
+                                &type'handle  : theHandler
+                                &type'widestr : aLiteral
+                                &type'int     : (aLiteral Length)
+                                &out'type'int : system'nil              // !! temporally we do not use it
+                                &type'int     : 0
+                                &out'type'int : system'nil.             // !! temporally we do not use it
+                          should be replaced with
+                             system'external'kernel32 WriteConsoleW
+                                &type'handle  : theHandler
+                                &type'widestr : aLiteral
+                                &type'length  :: aLiteral               // - direct code will be used to read the length
+                                &out'type'int : system'nil              
+
+                                &type'int     : 0
+                                &out'type'int : system'nil.             
+                       * review stack frames implementation, we could reverse it, e.g. the managed stack ends with -1, the next
+                         address is either zero (end of the stack) or the pointer to another managed stack frame
+                       * return expression could be compiled without openning / closing frame (if no primitive operations are used, no code blocks)
+                       * "copyfpi fp:0" should be implemented as "mov esp, ebp"
+                       * should for "expr ? !" on both branches the value is checked (used for the case when the returning value is not bool 
+                         - e.g. nil or any other object)
+                       * unused code for EException handler after bsredirect (?? should exception be thrown after it)
+                       * GC: card table scanning; could we optimize it ?
+
+                       * pi (3106)
+
+                       * optimize primitive operation implementation (maybe one of the operand should be already in ACC)      
+                       * operator implementation: review / redesign implementation
+                       * operator implementation: boxing loperand, simplify the code
+                       * code bracket last statement:  acc should be loaded only when it is return expression [ expr ] (without dot)
+                       * no need for boxing if the result is typed constant (e.g a message:2 - no need to box the operand)
+                       * maybe replace { push 0 }n-times, with lea esp, [esp+n], xor ebx, ebx @loop: mov [esi], ebx, sub ecx, 1, jnz @loop
+                         (for long list > 6??)
+                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
+                         better to compare value ?? (if it is true / false constants for example)
+                       * could direct parameter allocation be used for open argument list?
+                       * if acc already contains the required object, do not load it once again: e.g. Object.equal[1]
+
+              xdev - tools                       
+                       * get rid of _T (elc, elt, asm2binx, ecv)
+                       * reuse ecode compiling code (at least string to bytecode routine)
+                       
+              idev - usability
+                       * reimplement cleanUp
+                       * recognize out of memory exception
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * error: more accurate error messages
+
+              idev - debugger
+                       * debugger does not show the stack allocated values : ByteArray.read&type'index&type'length&type'bytearray
+                         (textview)
+                                                                      
+              xdev - elenasm
+                       * ScriptLog: replace $terminal with the actual value
+                       * support trace
+                       * support LALR parser
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
+                       
+week2:
+               sdev - review
+                       * review / simplify code
+
+               adev - api
+                       * review / simplify code
+
+              sdev - rosetta samples              
+                       * implement new samples
+
+week3:
+
+week4:
+              xdoc - api
+                       * start generating api html, using old tool 
+                       
+1.9.9.12
+--------
+week1:
+
+week2:                       
+               adev - LiteralValue / String / TextBuffer
+                       * support appendLine?? (e.g. maybe in extension)
+               sdev - console samples
+                       * datetime - literal presentation, extra space between date and time
+                       * real to literal: tailing space
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+               sdev - console samples
+                       * vmconsole
+2.0.0
+-----
+week1:
+              xdev - generic development
+                       * private class - could we declare one class inside another (so it will be accessible only within its owner)
+
+                       * should code block be called witout the method name e.g. (see Accumulator sample)
+                          x eval:3  <-> x:3
+
+                       * switch to xml config files
+
+                       * asm2binx: correctly map parameters with a stack, should frame setting
+                         and clearing be preprogrammed?
+                       * constant refering to itself in VMT ; currently HOTFIX is implemented ; think over mor elegant way to resolve
+                         that type of situation
+
+              xdev - stack allocated variable
+                       * long
+                       * real
+                       * bytearray
+              xdev - script engine
+                       * refactor / optimize script engine
+
+week2:
+              adev - lib30
+                       * string concatination: review the current solution, can we simplify it?
+                       * $ConsoleReader read &type'widestr &type'length:aLength
+                          - currently additional method is used to pass the type of the parameter to external type,
+                            local variable with provided type should be used instead:
+                                #var(type:widestr) aLiteral := LiteralValue new &type'length:aLength. 
+                       * extensions - review the code, can it be simplified?
+                       * LiteralValue.add - currently three extra new objects are created, try
+                         to optimize
+                       * LiteralValue: compiler should optimize the constructor code, e.g. replace
+                         the actiual operation with optimized versions for string concatination (without actual object creating
+                         or sum operations, if the parameters are primitive types)
+                       * consolereader.readchar: review assembler code, try to simplify it
+                       * comutator: could commutator be used to modify incoming message subject
+                       * TextReader - the current design creates a new literal for each line is read, could we try to reuse it, e.g.
+                         convert to another buffer (it will make three of them ???)
+                       * TextBuffer: optimize: read, get, delete operations, try to minimize new object creation (using stack allocated
+                         objects)                         
+                       * pi sample: iteration algorithm, review existing FOR pattern
+
+week3:
+
+week4:
+            xmaint - code base
+                       * remove src27
+
+            smaint - documentation
+                       * Review code: create a dictionary                       
+
+
+2.0.1
+-----                                                                
+
+2.0.2
+-----                                                                
+                      
+2.0.3
+-----                                                                
+week1:
+              idev - usability
+                       * ide: the files in subfolder should include path in its name?
+              xdev - GCX
+                       * MT: TLS table should be used to store exception information,
+                         rather than global variable like in single thread version
+                       * compile as multi-threading stand-alone
+                       * compile as multi-threading vm client
+
+week2:
+              adev - lib30
+                       * review CoreAPI primitive functions, try to systemize / reduce number of them
+
+
+2.1.0
+-----                                                                
+week1:
+              idev - usability
+                       * it should be possible to change the order of source files in the project
+                       * elide: new window - vmconsole to interact with the code directly                       
+
+
+<================>
+stack:
+                       * accessing self
+
+                         input:  self prop_get write:('program'input get)
+
+                         input:  group of group?
+
+                         group(method(message chain))
+
+                         message chain (a prop_get write:('program'input get))
+                       * input / output using property
+                       * interpreter prototype : input / output, object model
+                       * interpreter prototype: inline script
+                       * interpreter prototype: object yard script
+
+                       * private fields
+                       * reference shortcut
+                       * redesign Compiler class code: three layers: low - bcwriter, middle - (DNode reader), high - object level
+
+                       
+              vdev - interpreter 
+                       * descing script to build the interpreter object - factory?
+                       * implement script to build the interpreter object
+
+                       * test interpreter
+              xdev - script engine
+                       * default.vl2: groups ; batch(?)
+                       * inline script: could we use qualified messages as well?
+              fdev - open calc
+                       * load machine set from grammar file
+                       * load machine set from grammar file (using middle layer)
+                       * replace calc'math'sum with pure dynamic object
+                       * parse number (with grammar)
+                       * sum two numbers
+                       * use default script as a middle layer to parse the number
+                       * do we need elenasm to parse the expression or leave it
+                         like it is
+                       * support basic operations
+                       * support brackets
+                       * redesign calc sample
+                       * redesign calcgui sample
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              fdev - dynamic programming
+                       * two numbers: implement in inline script
+                       * two numbers: use the middle layer to simplify the code ;
+                         create a system which calcualte the sum of two inputed numbers
+                       * make possible to create dynamic property (get and set)
+                       * calc: migrate to lib27           
+
+                       * deserialize
+                       * dynamically modify the code
+                       * implement the sample with self modifying algorithm
+              fdev - vmconsole
+                      * concept: represent dynamic group as a text (serialization)
+                      * concept: view object
+                      * concept: virtual architect
+                      * concept: create dsa rule
+                      * prototype: create print rule
+                      * prototype: display print rule
+                      * prototype: apply print rule
+                      * prototype: save rule
+                      * prototype: load rule
+                      * use vmconsole to develop elcode sample
+            fmaint - upndown
+                       * migrate upndown connection form: extending the controls
+                       * migrate upndown connection form
+                       * migration to lib27
+            xmaint - gct
+                       * write barrier: the problem is there; write barrier contains
+                         the reference to the old YG object, though the object was
+                         promoted to MG                        
+
+                       * mttest: fix GCT
+
+            xmaint - code base
+                       * get rid of comment warnings (starting with !!)
+            xmaint - gc
+                       * fine tuning: currently full collect is happends when MG free size
+                         is less than YG, the best way would be to call it only if MG free
+                         size is less than YG promotion, but in that case we have to check if
+                         in MG enough place to relocate the object ; alternatively we could
+                         promote only the objects in promotion area any other should be
+                         marked in WBar  
+                       * error in mg collection (upndown)
+                       * try to debug with small heap size
+            imaint - ide2
+                      * test with small page size intensive insert / delete operations
+                      * test ide: goto error if the file is not opened
+            xmaint - gcx
+                       * test pi, anagram, notepad, upndown on gcxt platform
+            smaint - upndown
+                       * there was an exception
+                       * find out - vmt: 4598c0
+            imaint - debugger
+                       * cannot debug code containing resend command
+                       * if two variable have the same name (see DateConvertor)
+
+            xmaint - lin27
+                       * convert tailing space when converting 0.0r to the literal
+
+              xdev - elena
+                       * argument list? (quick argument list?)
+              xdev - elenasm
+                       * add paging (for ton mode)
+                       * default.vl2: should be able to mix inline script with 
+                         grammar : [ "&nil 'program'output" "2 ^write" ]
+              xdev - script engine
+                       * argument list:
+                             - &empty 2 %std'dictionary'length &args[] 
+                              - replace &empty with &arg_start?
+                       * test argument list
+
+            xmaint - modules
+                       * currently modules contain the references to built-in objects
+                         even if they do not use them  
+              xdev - char support overhaul
+                       * system should support utf8 files (both compiler and IDE)
+                       * all source code files should be converted to UTF8
+                       * all project files should be converted to UTF8
+                       * UTF8 should be default encoding (for saving)
+              xdev - ELENA.2012
+                       * there should be special flag to indicate validator & dispatcher?
+                       * should it be possible to privide default method argument 
+                         value?
+                       * do we need a constant method handler (code in resolveconstant)?
+                       
+              xdev - optimization
+                       * optimization: nested objects should be allocated after
+                         all its members, so no need to use write barrier
+
+                       * review system code for possible optimization
+
+                       * new rule: pop acccopyr pushacc => acccopyr accsavesi 0
+                       
+                       * jump to another jump should be replaced by a single
+                         jump
+
+                       * optimize the built-in handlers
+                       * unreachable code: review the algorithm with new
+                         ecodes (resend, jumpr)
+
+                       * direct invoke with constants - remove unused mcccopym
+                       * optimize the following commands:
+                             then labEnd
+                             accloadsi 0
+                             then labNotFound
+                             labEnd:
+                             return3
+                             labNotFound:
+                             break3
+                       * if a method do not use $self, probably enter / return
+                         should be skipped ; 
+
+                       * optimize bytecodewriter::sendnextmessage
+                       * could we optimize dispatching algorithm?
+                       * optimize CORE_COPYWSTR (copy dword)
+
+                       * symbol code, simplify simple code if it contains only
+                         one object or only one message call
+
+          xprj    - x project phase4:
+                       * safe points: in method entry (??), is it enough to have
+                         them in external call and loop?
+                       * sync: make sure the object is not a constant
+         adev     - vm tape debugger
+                      * implement breakpoints
+
+          xdev     - dynamic programming
+                       * review dynamic programming samples and try to simplify
+                         them
+                       * review dynamic objects
+                       * review __symbol, probably it could be replaced with
+                         role (e.g. something similar to esymbol)
+
+          xmaint   - elenasm
+                       * there should be constant mapping to resolve all possible constants
+                         including nil, all type of wraps and so on?
+                       * usability: raise the correct error if the verb is not correct(?)
+         idev    - editor
+                       * review undo / redo implementation, should it undo entered
+                         like it is done in VS IDE (undo one line per operation)?
+              xdev - linux elc
+                       * review SG
+                       * migration: parser
+                       * test if wchar16_t compare and greater works
+                       * generate syntax file 
+                       * test parsing
+                       * migration: compiler
+                       * compile lib26
+                       * migration: linker
+                       * compile u_helloworld sample
+                       * implement utf16 upper, lower 
+              idev - linux ide2
+                      * gtktextview: fix scroller implementation
+                      * gtktextview: mouse support
+                      * gtktextview: blink cursor
+                      * migrate gtktextview to gtkmm
+                      * gtktextview: delete / select
+                      * make sure cursor is turned off for not active page 
+                      * display document 
+                      * move toolbar to gtkmm
+                      * switch to gtkmm
+                      * remove unused code in gtkideconst.h (and the file itself if it
+                        is empty)
+
+                      * source file including / excluding
+                      * context menu
+                      * editor settings
+                      * turn on / off syntax highlight
+                      * onTabSizeChange should be called for every document after tab
+                        size is changed
+                      * comment / uncomment
+                      * two color scheme
+                      * listview
+                      * messagelog
+                      * implement lower function
+                      * mouse wheel
+                      * make possible to provide path to vm in IDE
+                      * should be possible to provide path to src folder
+              xdev - elenasm
+                       * it should be possible to save and load DSA grammar
+                       * do we need exchange vm tape command
+              xdev - optimization
+                       * isframerequired should return true if there are sub expression
+                         code (more complicated then: a, a v:b, a v1:b v2:c ...),
+              sdev - rosetta code
+                       * review samples (acc)                     
+                       * review samples (akerman)
+                     
+              adev - lib27
+                       * event_handle: we do not need sender: __control should be used
+                         instead
+                       * editable / readonly combobox
+                       * migrate c_a_g samples: info and save
+                       * win32: __reference'replace should be probably renamed with
+                         __reference'set?
+                       * sub range indexer
+                       * win32'controls'modalwindow: primitive code should be used
+                         to check when the modal loop should be ended
+                       * migrate notepad sample
+                       * append the default extension (see agenda)
+                       * redesign sys'dynamics'broadcast, if we do not need __bcast,
+                         only one group class should exist ; we do not need to create
+                         __cast (or __bcast) if the collection contains only one
+                         element (though, we will need to add some generic code
+                         to ignore broken flow if __bast will be used)
+                       * sys'dates: probably instead of calendar subject we should 
+                         introduce __datetime and __timespan value subjects, which 
+                         should be used for dispatching the operation ; what about save?
+                         should __datetime or __int64 be used?
+                       * redesign sys'dynamics
+                       * sys'dynamics'egroup - make sure [self] is a group
+                       * make possible to scan / it sub range
+                       * it should be possible to work with a collection like
+                         with a normal array, using earray (including indexer - base
+                         method and so on)
+                       * save dialog: the selected extension is not added
+                       * create an array from the collection
+                       * AnsiTextFileWriter: should it be able to write numeric / printable 
+                         value as well (see textbuffer or sys'io'console) 
+                       * should basic data objects support literal'save / numeric'save
+                         as well? 
+            amaint - form events
+                       * key press, key up events
+                       * why onenter / onleave doesn't work for buttons (agenda)
+              adev - usablility
+                       * it should be possible to use It for sub range
+            smaint - matrix sample 
+                       * determinat code should distinguish error from 0 determinant
+                        (in both cases fail is sent)
+              adev - lib27
+                       * migrate date operation / date setting test
+
+          adev - primitives
+                      * EInt32EqualOp: redesign code to compare values without
+                        creating new objects
+                      * EInt32LessOp: redesign code to compare values without
+                        creating new objects
+                      * EInt64EqualOp: redesign code to compare values without
+                        creating new objects
+                      * EInt64LessOp: redesign code to compare values without
+                        creating new objects
+                      * EReal64EqualOp: redesign code to compare values without
+                        creating new objects
+                      * EReal64LessOp: redesign code to compare values without
+                        creating new objects
+                      * ewidecharequalop: redesign code to compare values without
+                        creating new objects
+                      * ewidecharlessop: redesign code to compare values without
+                        creating new objects
+                      * ewidestrequalop: redesign code to compare values without
+                        creating new objects
+                      * ewidestrlessop: redesign code to compare values without
+                        creating new objects
+                      * redesign primitive roles to use primitive code instead of
+                        creating new objects
+                      * widechar add & subtract probably should use special int16
+                        operations to ignore highest 16bits
+
+              sdev - win32 io (text / binary file reader / writer)
+                      * it should be possible to find out why i/o operation fails ;
+                        probably filehandle should keep the last error inside its
+                        body so it will be possible to identify the error
+
+              sdev - rosetta code
+                       * bullscows: use __rolebatch?
+                       * C samples
+                       * Calendar sample
+                       * Calendar - for "real" programmers
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull–Clark subdivision surface              
+                       * Box the compass
+                       * Binary search
+                       * Averages/Root mean square
+                       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+              adev - sys'dates
+                       * refactor: current date/time conversion implementation 
+                         doesn't work; if EDateConvertor returns __int64 (string to date 
+                         conversion)
+                       * convert string to date (using shortdate attribute)
+                       * convert string to time (using time attribute)
+                       * convert string to date / time
+                       * retrieve the current date/time format
+                       * converting string to date using custom pattern
+                       * convert date to literal (different formats, timezones)
+                       * print time span
+          adev     - controls
+                       * make combobox readable (run-time): copy coordinates, size,
+                         combo box items
+          amaint   - form events
+                       * event system: review
+                       * raise gui events for wm_activate, wm_deactivate
+          sdev - pi
+                       * calculate the pi value in the separate thread, so it will be possible
+                         to stop the process
+          sdev - dtcalculator
+                      * differents in seconds, minute, hours between the current date and specified
+                        one
+                      * calculate the number of dates from the year start
+                        and number of months left till the end of the year
+              xprj - x project phase4:
+                       * migrate the threading code
+                       * mttest: open a second thread, wait until the thread calculates
+                         the value and passes it back, and prints the value, should be
+                         possible to stop the second thread
+
+              fdev - gameplay
+                      * network game
+                      * make possible to hide / open table (so the form is expanded
+                        shrinked)
+                      * display the player score in front of the label
+                      * gamemaster should prevent invalid use of joker (for ai)
+                      * play the longest possible game (two players)
+                      * there are too many duplicate code, doing actually the same
+                        passing the event, probably one generic method is required;
+                        think over how to reuse as much as possible
+                      * play game with reduced memory size to watch possible
+                        data leaks
+                      * remove temporal code from core primitives
+                      * check why the game is crashed time to time
+                      * play network, review maintenance, review Stack
+                      * do not display joker dialog on trumpless stage
+                      * test game with two, three, four players
+                      * start to work on tcp/ip connection
+                      * could we think over another architecture which allow
+                        to optimize the property overriding (at the moment too many
+                        proxy objects are created)
+          xmaint  - testing
+                       * start automatic unit tests
+                       * test debugging
+
+            xmaint - elenavm
+                      * if helloworld replace 'entry with 'program the program
+                        raises an exception
+
+            smaint - vmconsole
+                      * find out why vmconsole is broken if unknown reference is used
+
+              vdev - script engine
+                       * maybe it should work as an interpreter so no memory
+                         will be consumed, so no need in any mechanism to release
+                         the memory
+              xdev - middle-layer script
+                       * design middle-layer grammar to simplify the vl2 script
+                         and make it independent from low level grammar structure 
+
+              xdev - engine
+                       * warn on ambiguous subject name
+  
+              idiv - ide2
+                       * debugger: wrap, prop and action group objects should be
+                         presented as an object rather then collection  
+                       * ctrl+number should select based on the page index !?
+                       * make possible to provide file encoding in open / save dialogs
+              xopt - bytecode
+                       * group should be created with two page size from the
+                         beginning (probably some optimization, calculate the total
+                         number and define presumed page size)
+                       * std_alloc, if edi contains the reference to VMT no need to
+                         include it into the managed frame
+                       * optimize the collection creation, no need to assign default
+                         values       
+              idev - debugger
+                       * should debugger display nested class fields?
+                       * debugger may show argument list content
+                       * debugging #if a := p | [ ... ], if p fails the debugger
+                         skips alternative code
+                       * step over symbol with parameter doesn't work
+                       * symbol parameter is not properly shown in watch
+                       *  bcwriter has to exclude the duplicate breakpoints
+                          if they are the same?
+                       * debug built-in handlers
+                       * LIB2 (testcase1 & testcase2) an exception happends time to time
+                         (stack overflow)
+                       * step into "2~evalue == 3", the debug skip end code breakpoint
+                       * display dump content
+                       * should refresh all open nodes after debugger step
+                       * for built-in groups message should be displayed as well
+                         (user friendly name)
+                       * cannot set breakpoint on #shift.
+                       * step into wrap built-in object: if fails, the debugger loses a track
+              xdev - ecv
+                       * should list all vmts / symbols in the module
+              adev - win32
+                       * enum files / folders
+            amaint - sys'io
+                       * support both unicode and ansi files
+              adev - refactoring 
+                       * variant usage: can we told variant adapter what data do we expects?
+                        (e.g return literal and numeric and then depending on write subject
+                        returns data?) 
+              adev - std'basic
+                       * intnumer methods: long'*, real'* should be optimized to make
+                         possible operation with long and real numbers without actually
+                         converting integer to long or real
+              adev - controls
+                       * new symbol clonehandle
+              adev - refactoring 
+                       * migrate notepad sample
+            amaint - ide
+                      * problem with lower function; history list contains
+                        duplicate items (use lower function!?)
+            imaint - linux ide2
+                       * find out there are two columns instead of one in
+                         the search dialog comboboxes
+                       * cursor function is called when the window is closing
+                       * the current doc in window list should be marked
+                       * after several ctrl+tab ide hung up
+                       * ctrl+shift+tab doesn't work
+                       * test syntax highlighting
+                       * fix warning:no scrollable widget
+          xdev  - primitives
+                       * why ebp is saved in mg collection ?
+              xdev - ELENA.2 overhaul
+                       * if nested class has only one method, no need in separate
+                         VMT method handler should be used
+              xdev - engine
+                       * stop support 2008
+              xdev - utf8 / char everywhere
+                       * elenasm: get rid of _T
+          xdev    - compiler
+                      * super in role should point to the role parent? (see upndown'TrickDlg)
+
+          xprj    - gcx
+                       * probably better to use already precalculated and rounded
+                         (to 32) values for heap size(mg + yg, probably better to have
+                         two constants yg_size, mg_size), it will simplify core_init
+                         function (no need to calcuate and round sizes)
+         fmaint   - dsa routine
+                      * try to handle access violation exception?
+                        ( AddVectoredExceptionHandler )
+          xprj    - gc paging redesign
+                       * make sure yg (both halves), mg are aligned to the page size
+                       * make sure all functions / symbols are aligned to 4
+              idev - debugger
+                       * support call list
+                       * support thread list
+                       * debugger should load appropriate dnl modules for
+                         loaded module
+                       * warn if source code is not found by debug controller
+            xmaint - usability
+                       * make sure that collection class is not a structure
+                       * warn if back or fail message is used
+              adev - core
+                       * use core function to worj with ELENA string:
+                         win32'2, win32'3, win32'6, win32'7, win32'8, win32'14, win32'21,
+                         win32'54, win32'66, win32'67, win32'70, win32'83, win32'85,
+                         win32'99, win32'100, extended'3, extended'4, scriptapi'3
+                       * use core function to work with ELENA dump: win32'10, win32'84
+                       * use core function to work with ELENA arrays: win32'55, win32'56
+                       * core functions should be used in the primitive code (e.g core_vm'8)
+          adev     - memory
+                      * search value in the byte array
+          amaint   - gui controls
+                      * should the onchange / onclick be called directly without event
+                        wrapper?
+                      * list box
+          smaint   - notepad
+                      * status bar info: text was changed
+                      * status bar info: cursor coordinate
+              xdev - ELENA.2 overhaul
+                       * currently all built-in classes are registered
+                         in every module, that should be modified, the 
+                         reference should be resolved only if someone
+                         refer to it, modify reference shortcut implementation 
+            xmaint - IDE.2
+                       * all built-in method handler should be implicitly described
+                         in default module, make possible to use ecodes ; only
+                         nested classes should not be compiled in the old style
+
+              xdev - utf8 / char everywhere
+                       * ecv: get rid of _T
+                       * elt: get rid of _T
+              xdev - lists
+                       * develop memory list
+              xprj - x project:
+                       * thread stop should not block another thread from collecting GC
+              xopt - meta data
+                       * optimize access to class meta data to simplify the
+                         access for class fields for xarguments
+              idev - usability
+                       * icon to open project 
+                       * make possible to change the project template path
+                         mapping from IDE
+                       * if no mapping exists ask to provide path and save it
+
+          xdev   - usability
+                       * warn if there are subject name conflicts as a result of
+                         subject import (it has to be possible to turn it off).
+          adev     - win32 events
+                      * mouse events: up
+                      * mouse events: move
+           sdev    - networking
+                      * win32socket
+              xdev - ELENA.2 overhaul
+                       * try to resolve subjects basing only on numeric values
+                       * could every subject provide a separate VMT?, so it will
+                         significanly increase the speed? ; the "normal" VMT may
+                         be followed by subject table, which will short cut the
+                         subject operation search ; there will be a special command
+                         subjsend, which will use the subject table ; test if it
+                         will give some performance gains
+                       * do we need PUSH_EMPTY_MESSAGE_ID?
+              xdev - maint
+                       * turn off trigraph support
+              xdev - utf8 / char everywhere
+                       * get rid of _T operator (and tchar.h module)
+              xdev - engine
+                      * could we use numeric only references to resolve references
+
+          xdev    - jit linker optimization
+                     * add auto-increment field to avoid idle inline class references
+                       and so on
+         ldev      - script engine
+                       * probably there should be special sections containing the temporal
+                         code; it will be cleared after the code will be executed; the debug
+                         section should be either compacted or marked as unused ;
+          xdev    - jit linker optimization
+                     * object size linker option should be cached
+          adev   - form events
+                      * key down
+          sdev     - agenda
+                       * add gender readonly combobox 
+          amaint   - win32
+                      * should be possible to select several files (the primitive code
+                        should be changed to take this into account: copy the result
+                        until 00000000h found)
+         adev     - string support
+                      * string: upper / lower case
+          sdev - bsort
+                      * sort array of literal as well
+                      * could it be resued? check performance time
+              xdev - known bugs
+                       * review known bugs
+            xmaint - known bugs
+                       * migrate the change to asm2binx: make it more compatible to standard assembler language
+                         (mostly comments)
+              xdev - ELENA.2 overhaul
+                       *  optimizie accgetsi
+              xopt - group performance
+                      * compare sending the message to the object with sending the
+                        message to the group containing this object
+          asm2bin - maintenance
+                       * all built-in constants should start with quote, all others
+                         should starts with __
+          idev     - wizard
+                      * create console sample
+
+--------------------------------
+[oooo] Complex System Development:
+--------------------------------
+ 0) Upndown
+    - should we disable minimal tramp suit for joker dialog
+    - add support for tcp/ip mutli player mode
+    - play a basic round with a remote player
+    - add possibility to scroll through the score table
+    - develop ai player (aggresive, cautious)
+    - in ideal solution, game'player'hand'enum may be called only be game master.
+      Main form should be able to call it only for its player
+   - repeat socket read until temporal buffer is not empty (it is possible
+     two simultanius command will be combined on read operation)
+   - the game could not be released from the memory if it waiting for the result;
+     fix it
+   - test if random generator generates actually a random numbers
+   - continue move to ELENA: show the card on the table using the mask to make
+     cards look oval
+   - host panel should display the current IP address
+   - the playground background color should be green
+   - hide the cards when F5 pressed
+   - make not possible to press any key inside edit box of Ordering dialog
+   - unsynchronized prepare command could block the program exit (on close of main
+     window should class onstop application event)
+   - continue move to ELENA: show statistics
+   - continue move to ELENA: load / save game
+   - on connect make sure that clients and the host use the same program version
+   - if makeorder or getcard is failed in gamemaster code it should try to send the
+     command once again
+   - use original colors
+   - disable accept button on start.
+   - disable search button after pressing.
+   - !! check if frmConnector is destroyed and removed from referencepool
+     after game start
+   - close all unused connection after the game start
+   - use buttons with original glyphs
+   - modify the code to make possible any card game
+   - use upndown sample as a testbed for the code optimization
+
+-------------------------------
+[x] ELENA Language Development:
+-------------------------------
+    - issue with super
+    - super variable cannot be used with group objects, could we fix the issue?
+    - is there should be special hints to be thread unsafe?
+
+--------------------------
+[o] ELENA API Development:
+--------------------------
+    - work with windows registry
+    - make possible to truncate existing files
+    - make possible to select system colors / brushes on the gui level
+    - fcomip could be used only for pentium
+    - make possible to execute another exe?
+    - use createcomatibledc for every draw operation looks too expensive;can
+      we modify paintboxhandler / imagehandler to do it only once?
+    - make sure bitmap / hdc are properly released from the memory
+    - for Image / PaintBox handle Paintstruct could be created as local one
+      (no need to keep it on class level)
+    - modify all float-oriented code to be correct, error handling,
+      (should we save the float registers before operations?)
+    - 'value' classes should support: min, max, succ, pred (int32value, real64value, ansichar)
+    - is it possible to automize the process of data transfer over sockets?
+    - database application which manage TODOs and KNOWNBUGs, possible to create
+      what's new automatically, statistics
+    - optimize insert / delete / copysubs to copy dwords rather then bytes / words
+    - automatic code writing / reading from stream
+    - optimize implement integer / longinteger modulus implementation in assembelr
+    - basic'intnumber / longnumber / real should support method "in" to validate range
+    - ext'utilities'Date should contain time in milliseconds since 1 Jan 1900
+      rather then in milisecond since January 1, 1970 (UTC)
+
+-----------------------------
+[o] ELENA Sample Development:
+-----------------------------
+     - TextDB sample: load, save, search, add, delete records
+     - calcgui should provide the list of calculation - in Listbox -> so we could select previous result
+     - calcgui two modes: calculator like and the current one with the list of
+       last operations
+     - calc: make possible to declare constants
+     - continue to work on graph sample: make possible to specify different
+       functions, write your own ones, provide scaling and borders
+     - new sample - expert system (prolog like sample)
+     - new sample - logical game
+    - regional time
+    - examples to work with FileWriter
+
+-------------------------
+[xo] Compiler development:
+-------------------------
+    - weak references
+    - group operation with the objects belonging to the different
+      generations: could it be optimized?
+    - localize elc to russian
+    - get rid of comment warnings (starting with !!)
+    - start to support Pentium commands (IA-32)
+    - two compile mode - debug / release (we actually could have two
+      sets of sections - with and without debug)
+    - compile module only if it was  changed
+    - start to support 64bit platform
+       - probably we need to always use long jumps for bytecode jump command, it will
+         simplify JIT compiler code
+       - local properties
+       - empty methods
+       - methods which returns constant
+       - think over send / index optimization (pairing, pentium commands, size)
+       - try to optimize send routine (the most critical in the system)
+       - cosntant collections / groups / casts
+       - optimize group / annex routine
+       - shl / shr commands considered to be not optimal
+       - if inline object depends only on its class it should be created only once
+         and saved as a hidden object field
+       - reference helper should have a cache of resolved references
+       - support linker map option
+       - make sure hash table is effectively used in parser / compiler / linker
+         (parsetable, module, linker)
+       - super variable could lead to unexpected behaviour if we use dynamic mutation
+         (after super self variable becomes $self one)
+       - support strong references (both protected messages and classes), linker
+         should check if they are valid
+       - Remoting
+
+       - make strong link to the parent class? (!!)
+       - make possible to change basic linker options (opImageBase, and so on)
+       - look like opGCHeapSize and opSizeOfHeapCommit are connected with each other
+       - should codeBase is always 0x1000?; maybe should be customized (see !!
+         remark in linker)
+       - writeNtHeader: stack size and similar parameters is constant; maybe should
+         be possible to customize (see !! remark in linker)
+       - support resources in exe file
+       - could we minimize the number of entries in call stack (direct return
+         from any handler to the called code?)
+
+       - try to optimize the parser table (less number of symbols)
+       - inline classes can be created at the first reference to it and exists
+         until the next GC call.
+       - localization
+       - support the following types of unicode source files:little endian, UTF-8?
+       - new option target CPU: 386 / 686
+       - add new coder: 686Coder whic override x86Coder
+       - optimize the most critical code parts like send / redirect / cast routines
+         using pentium commands
+       - starts to use Pentium commands: we need to introduce the mode for
+         i686 (cmov is not supported for older CPU, so we have to have two
+         set of commands)
+       - get rid of wait command for float-base operations?
+
+       - x64 platform support
+       - try to use pairing instructions
+       - we do not need to check for 'mg -> yg conflict' for newly created
+         objects
+       - MMX, SSE, SSE2 commands; could we start to use these commands?
+       - PREFETCH command could be useful
+       - compiler option which specifies the target CPU
+       - optimize constant implementation (due to gc every integer takes 12 bytes);
+       - try different combinations to speed up : gc and send routines
+    - relative fixup works incorrectly if the reference has an offset
+    - make possible to declare the longest possible identifier with the
+      longest possible namespace
+    - check if Terminal is nsNone and generates the exception
+    - optimize hash table filling for Linker tables
+
+    - optimize the code using profiler
+    - check for memory leaking (either profiler or simple check on the start
+      and on the finish)
+    - optimize hash table filling for ParserTable
+    - check for all invalid / valid combination (russia characters)
+    - check the debugger behavior in the case of system exception
+      (does event EXIT_PROCESS_DEBUG_EVENT occur in this case);
+    - warn if you dynamically override itself (like #symbol my = #annex(my){...})
+
+--------------------
+[o] IDE development:
+--------------------
+    - should search history be saved, where (in the project / ide config / and so on)
+    - implements new features: quick short cut
+    - review known bugs
+    - improve debugger
+    - create simple version of ELENA Code Wizard which add new menu item
+    - continue localization
+    - give more useful error message if forward symbol is not declared
+    - raise an exception if debug module not found by debug controller
+    - debugger should use engine's LibraryManager
+    - review and refactor elc output redirect routine
+    - move fast short cut to autoform plugin
+    - show the list of possible messages
+    - auto add shortcuts
+    - clear keyboard buffer before the program run
+    - auto trim for tailing whitespaces (space and tab) - the idea is not to save
+      whitespace until the user not to insert any character
+    - open all recent files
+    - option to ignore unresolved references warning within the project namespace
+    - display current file encoding in the status bar
+    - ctrl+F8 go to the next statement
+    - call stack window
+    - investigate stepping over / into annex inline symbols (e.g. $createHandle)
+    - prevent from slowing down on the program exit (make possible to inidicate
+      to the sistem that this step is the last in the program)
+    - optimize debugger step collection access (use some kind of hash table,
+      divide the code range into several bands and before direct search use
+      it to narrow collection)
+    - we do not need stop over inline symbols (except at the symbol beginning)
+    - try to deal with the slowing debugger when it goes through the window
+      system code in trap mode (e.g. in case of failed method in GUI application
+      which terminates the application - is it correct?)
+      (try to use breakpoint for any external code call to skip the step mode
+      inside external written code - in fact no sense to do it)
+    - gui applications are not released from the memory after debugging
+    - test Undo / Redo operations for the small capacity (~40 or 50);
+    - test operations with tab both virtual and real;
+    - refactor dialogs module
+    - too many duplicate code in editframe (toLowercase, toUpperCase, trim and
+      so on), could we get rid of it?
+    - maybe use CP_OEMCP then CP_ACP?
+    - optimize (Styler)
+    - check if window child created handles are destroyed (destroy method)
+    - try to use DFA class for IDE sourcedoc class
+    - possible problem when coping ascii text through clipboad - test with russian text
+    - undo in overwrite mode works a bit strange
+    - why if we have an error we do not see the warnings in messages window?
+    - Plugins - and display message when selected
+    - highlight the current line
+    - new ide settings dialog: autocomp
+    - debug watch should be able to display the longest possible identifer
+      with the longest possible type e.g. IDENTIFIER_LEN * 2
+    - show escape symbols
+    - should not be possible close / open / compile project during debug -
+      either break the debug or stop the operation
+    - debugwatch should indicate if the object plays a role (shifted mode)
+    - convert encoding routines
+    - make possible not to load some source files (to simplify the debugging)
+    - before start debugging make sure debug module is up to date
+    - indent / outdent should align the selected code rather then simply
+      move it (like in VS IDE)
+    - find out optimal page size / history buffer capacity
+    - tune up horizontal and vertical scrollers (like it's done in NP++)
+    - set read only (?)
+    - hide status bar (?)
+    - display correct messages when the project is not compiled (missing
+      exe / source files)
+    - save the last active document / cursor position (?)
+    - shows the number of warnings
+    - source code assisten plug-in written with ELENA
+    - configurable styles: colors / fonts
+    - Outlining
+    - Class Wizard
+    - Auto complete?
+    - Code patterns?
+    - Message dictionary
+    - error recovering (several errors)
+    - make possible to change all tabs to spaces
+    - code patterns like in VS (type short cut and press tab-tab)
+    - Print
+    - add Add Watch menu option
+    - full screen mode
+    - "find in files" function
+    - Two editor panels like in NPP
+    - clone current view
+    - macros
+    - autoformat
+    - zoom in / zoom out
+    - try to bring as much functionality as in notepad++
+    - an icon on tab page?
+    - make possible to treat the object as an array of bytes
+    - make sure in the case of crash saveAllAsDraft and saveSettings are called
+    - should we add the path to the recent history right after the project
+      was open (or save the project even the program is crashed)
+    - try to minimize the number of repaint (after pressing F8 repaint is invoked
+      two times instead of one)
+    - find out why sometimes IDE thinks the module files outaged when
+      the project was just compiled
+    - introduce project templates (with basic forwards)
+    - make possible not to close the console window after the program finishing
+    - add the editor option controlling this feature
+    - tips?
+    - new short-cut to got to message / output window
+    - remove the code to import old style project file (project\projecttype)
+    - why we create the string every time in EditFrame::paint function?
+    - do we need now IDE_DEBUGGER_LOADMODULE notification? We are trying to
+      load module every time now
+
+--------------------------
+[oo] Cross-platform support:
+--------------------------
+   - create IDE for Linux
+   - create compiler for Linux
+    - start to port the code to Linux: compilator
+    - start to port the code to Linux: linker
+    - resolve all postponed linux oriented issues (!! todo:linux)
+    - at the moment on every cursor blink the whole screen is redrawn, think over
+      optimization
+
+--------------------------
+Documentation
+--------------------------
+    - describe the recent changes in interactions
+    - blogs: list of tutorials describing how to program in ELENA
+    - rewrite specification page
+
+
+
+    - update script blog posts
+    - new post: sun two numbers (using lx script) 
+    - documentation: vm hook
+
+    - next tutorial blog post: operation with strings
+    - next tutorial blog post: dynamic creating objects
+
+    - publish combination sample after 1.7.6 release
+
+    - describe statemachin on calc sample
+    - new sample to demostrate group objects (publish in code project)
+    - update project web page, get rid of tutorials page, they will be in blog
+    - post tutorial 1: hello world
+    - post what's next: systems with open architecture: dynamic code without reflection
+      (interpreter sample)
+    - full language description
+
+    - rewrite Getting started
+    - blog post: collecting the array / list, array concatenation (after 1.6.7 release)
+    - rosetta code: array concatenation (after 1.6.8)
+    - rosetta code: simple moving average (after 1.6.8)
+    - link to rosetta codein in the project web page / blog
+
+    - blog post: object model: extended version
+
+    - blog post: bsort example (work with arrays)
+    - blog post: open calc
+    - blog post: tiny language, print, argithmetic operations, if, loop
+    - context-dependent roles
+    - continue to desrcibe the language terms
+    - provide samples
+    - rewrite ELENA specification
+    - rewrite tutorials
+    - rewrite ELENA API
+    - localize documentation
+    - review old documentations and copy the actual info
+    - review ELENA API - is there enough info to use the object without looking
+      into source code?
+    - add samples
+    - add long description
+    - create a documentation describing the current Coder implemtation with
+      known restrinction
+    - documentation is not up to date and too laconic
+    - ELENA compiler / language technical documentation should be reviewed
+      and enhanced
+    - creates a documentation describing the handlers and events used by
+      gui package
+    - make possible to provide the symbol parameter protocol for property symbols
+    - add class full descriptions
+    - add class roles
+    - add class events
+    - goes through the public message list and assigns the expected functionality
+    - review that these messages are used in comply with these protocol list
+    - update VMT structure (including hash table) info
+    - provide the full list of language features
+    - re-read / correct ELENA API
+    - API index link to $elena module
+    - Adds the long description to be shown on the main page (shortdescr would be
+      used only in index page)
+    - read, correct and extend API descriptions. (now it's too short)
+    - add new method descriptions for all classes
+    - list of object roles?
+    - code samples?
+    - list the class protocols separated by comma
+    - example of work with arrays
+    - example of work with files
+    - Calculator
+    - Win32Calculator
+     - enhance the SourceForge documentation outlook
+     - continue to formulate ELENA paradigm.
+    - Starts the number of articles about programming with ELENA in Public Forum
+      Programming with ELENA
+    - write the article Power Of VMT
+    - document ELENA syntax
+    - dl, dnl file structure
+    - byte code description
+    - document ELENA byte code
+    - document ELENA internal structures
+    - document ELENA file structures
+
+--------------------------
+Tools
+--------------------------
+    - modify asm2binx to make possible to include inline code
+    - ASM2BINX: clear labelhelper after each entry compiled
+    - ASM2BINX: Warn on unresolved labels
+    - Installation package

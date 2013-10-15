@@ -1,0 +1,17 @@
+[project]
+executable=matrix.exe
+output=obj
+options=-xembed-
+namespace=matrix
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+matrix.l
+
+[forwards]
+'program=extensions'programLoop
+'program'control=matrix'control
+'program'output=matrix'output
+'program'input=extensions'io'consoleEx

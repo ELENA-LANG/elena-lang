@@ -1,0 +1,17 @@
+[project]
+executable=digger.exe
+package=digger
+template=win32_vm_gui2
+debuginfo=-2
+warn:unresolved=0
+vmpath=..\..\bin
+
+[files]
+loader.l
+main.l
+engine.l
+test.l
+
+[forwards]
+'program=digger'main'testprogram
+

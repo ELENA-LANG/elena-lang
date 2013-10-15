@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="elenasrc2/elc/codeblocks/elc_win32.cbp" />
+		<Project filename="elenasrc2/elenasm/codeblocks/elenasm.cbp" />
+		<Project filename="elenasrc2/elenavm/codeblocks/elenavm.cbp" />
+		<Project filename="elenasrc2/tools/elt/codeblocks/elt.cbp" />
+		<Project filename="elenasrc2/ide/codeblocks/elide_win32.cbp" />
+		<Project filename="elenasrc2/tools/asm2bin/codeblocks/asm2bin.cbp" />
+		<Project filename="elenasrc2/tools/sg/codeblocks/sg.cbp" />
+		<Project filename="elenasrc2/tools/ecv/codeblocks/ecv.cbp" />
+		<Project filename="elenasrc2/tools/og/codeblocks/og.cbp" active="1" />
+	</Workspace>
+</CodeBlocks_workspace_file>

@@ -1,0 +1,14 @@
+[project]
+executable=arithmeticint.exe
+options=-xembed-
+namespace=arithmeticint
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+arithmeticint.l
+
+[forwards]
+'program=arithmeticint'program
+

@@ -1,0 +1,109 @@
+[#general#]
+#name=std'collections
+#shortdescr=Provides classes that describe the basic operations with the collections.
+
+[#list#]
+circle
+circleenumerator
+enumerator
+ereadonly
+ereadonlyenumerator
+eindexable
+item
+list
+
+[list]
+#title=Class List
+#shortdescr=A list of objects. 
+#protocol=collection
+#protocol=enumerable
+#protocol=pattern
+#parent=elena.html#object:Object
+#field=thetale;the tale list item
+#field=thetop;the top list item
+#method=+=,object;Adds an item to the collection
+#method=@,int,object;Returns the collection item at the specified position
+#method=@,indexer,object;Returns the indexer at the specified position
+#method=run,action,object;Executes the action for the every collection item
+#method=<a href="stddictionary.html#count">count'get,,int;Returns the number of items
+#method=<a href="stddictionary.html#enum">enum'get</a>,,enumerator;Returns the object enumerator
+#method=<a href="stddictionary.html#indexer">indexer'get</a>,,indexer;Creates the indexer
+
+[enumerator]
+#title=Class Enumerator
+#shortdescr=A list enumerator
+#parent=elena.html#object:Object
+#protocol=enumerator
+#field=thecurrent;The current list item.
+#field=thelist;The assigned list.
+#field=theprevious;The previous list item.
+#method=new,object;Assigns the list
+#method=<a href="stddictionary.html#content">content'get</a>,,object;Returns the current item
+#method=<a href="stddictionary.html#content">content'set</a>,object;Sets the current item
+#method=<a href="stddictionary.html#enum">enum'continue</a>,,;Goes to the next enumerating item
+#method=<a href="stddictionary.html#proxy">proxy'ifnotnil</a>,,;Fails if the indexer pointing to nil
+
+[item]
+#title=Class Item
+#shortdescr=A list item
+#protocol=container
+#parent=elena.html#object:Object
+#field=theobject;The item object
+#field=thenext;The next list item
+#method=new,object;Assigns the item object
+#method=<a href="stddictionary.html#content">content'get</a>,,object;Returns the object content
+#method=<a href="stddictionary.html#content">content'set</a>,object;Sets the object content
+
+[ereadonly]
+#title=Symbol EReadOnly
+#shortdescr=A list read only extension
+#method=+=,object;Always fails
+#method=new,collection;Extends collection
+#method=<a href="stddictionary.html#enum">enum'get</a>,,enumerator;Returns the readonly object enumerator
+
+[ereadonlyenumerator]
+#title=Symbol EReadOnlyEnumerator
+#shortdescr=A list enumerator read only extension
+#method=new,enumerator;Extends collection
+#method=<a href="stddictionary.html#content">content'set</a>,object;Always fails
+
+[eindexable]
+#title=Symbol EIndexable
+#shortdescr=An indexable extension
+#protocol=indexable
+#method=@,int,object;Returns the collection item at the specified position
+#method=new,enumerable;Extends an enumerable object
+#method=<a href="stddictionary.html#indexer">indexer'get</a>,,indexer;Creates the indexer
+
+[circle]
+#title=Class Circle
+#shortdescr=A circled list of objects. 
+#protocol=collection
+#protocol=enumerable
+#protocol=pattern
+#parent=elena.html#object:Object
+#parent=stdcollections.html#list:std'collections'list
+#field=thetale;the tale list item
+#field=thetop;the top list item
+#method=+=,object;Adds an item to the collection
+#method=@,int,object;Returns the collection item at the specified position
+#method=@,indexer,object;Returns the indexer at the specified position
+#method=run,action,object;Executes the action for the every collection item
+#method=<a href="stddictionary.html#count">count'get,,int;Returns the number of items
+#method=<a href="stddictionary.html#enum">enum'get</a>,,enumerator;Returns the object enumerator
+#method=<a href="stddictionary.html#indexer">indexer'get</a>,,indexer;Creates the indexer
+
+[circleenumerator]
+#title=Class CircleEnumerator
+#shortdescr=A circled list enumerator
+#parent=elena.html#object:Object
+#parent=stdcollections.html#enumerator:std'collections'enumerator
+#protocol=enumerator
+#field=thecurrent;The current list item.
+#field=thelist;The assigned list.
+#field=theprevious;The previous list item.
+#method=new,object;Assigns the list
+#method=<a href="stddictionary.html#content">content'get</a>,,object;Returns the current item
+#method=<a href="stddictionary.html#content">content'set</a>,object;Sets the current item
+#method=<a href="stddictionary.html#enum">enum'continue</a>,,;Goes to the next enumerating item
+#method=<a href="stddictionary.html#proxy">proxy'ifnotnil</a>,,;Fails if the indexer pointing to nil

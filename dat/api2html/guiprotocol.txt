@@ -1,0 +1,53 @@
+[#general#]
+#name=GUI Protocols
+#shortdescr=GUI specified Protocols.
+
+[#list#]
+control
+items
+location
+size
+style
+
+[size]
+#shortdescr=A control size.
+#method=<a href="guidictionary.html#size">size'get</a>,,guiprotocol.html#size;Returns itself
+#method=<a href="guidictionary.html#size">size'height'get</a>,,int;Gets the height
+#method=<a href="guidictionary.html#size">size'height'set</a>,int;Sets the height
+#method=<a href="guidictionary.html#size">size'width'get</a>,,int;Gets the width
+#method=<a href="guidictionary.html#size">size'width'set</a>,int;Sets the width
+
+[location]
+#shortdescr=A control location.
+#method=<a href="guidictionary.html#location">location'get</a>,,guiprotocol.html#location;Returns a location
+#method=<a href="guidictionary.html#location">location'x'get</a>,,int;Gets the x coordinate
+#method=<a href="guidictionary.html#location">location'x'set</a>,int;Sets the x coordinate
+#method=<a href="guidictionary.html#location">location'y'get</a>,,int;Gets the y coordinate
+#method=<a href="guidictionary.html#location">location'y'set</a>,int;Sets the y coordinate
+
+[items]
+#shortdescr=A control items protocol.
+#method=<a href="guidictionary.html#control">control'selected'get</a>,,object;Returns a selected item
+#method=<a href="guidictionary.html#control">control'selected'set</a>,,object;Sets a selected item
+
+[control]
+#shortdescr=A control protocol.
+#method=<a href="guidictionary.html#control">control'caption'get</a>,,literal;Gets the control caption
+#method=<a href="guidictionary.html#control">control'caption'set</a>,literal,Sets the control caption
+#method=<a href="guidictionary.html#control">control'close</a>,,;Closes the control
+#method=<a href="guidictionary.html#control">control'enabled'set</a>,bool;Enables or disables the control
+#method=<a href="guidictionary.html#control">control'get</a>,,guiprotocol.html#control;Returns itself
+#method=<a href="guidictionary.html#control">control'items'get</a>,,guiprotocol.html#items;Returns itself
+#method=<a href="guidictionary.html#control">control'open</a>,,;Opens the control
+#method=<a href="guidictionary.html#control">control'refresh</a>,,;Refreshes the control
+#method=<a href="guidictionary.html#control">control'style'get</a>,,guiprotocol.html#style;Returns the control style
+#method=<a href="guidictionary.html#control">control'visible'is</a>,,;Fails if the control is not visible
+#method=<a href="guidictionary.html#location">location'get</a>,,guicontrols.html#location;Gets the control location
+#method=<a href="guidictionary.html#location">location'set</a>,guicontrols.html#location;Sets the control location
+#method=<a href="guidictionary.html##size">size'get</a>,,guicontrols.html#size;Gets the control size
+#method=<a href="guidictionary.html#size">size'set</a>,guicontrols.html#size;Sets the control size
+
+[style]
+#shortdescr=A control style protocol.
+#method=<a href="guidictionary.html#control">control'owner'get</a>,,guiprotocol.html#control;Gets the GUI control
+#method=<a href="guidictionary.html#control">control'parent'get</a>,,guiprotocol.html#control,Gets the control parent

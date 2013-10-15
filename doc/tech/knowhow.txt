@@ -1,0 +1,120 @@
+1) ELENA module structure
+-------------------------
+a) General file structure:
+  +--------------+
+  | module stamp |
+  +--------------+
+  | module name  |
+  +--------------+
+  |  references  |
+  +--------------+
+  |   messages   |
+  +--------------+
+  |  constants   |
+  +--------------+
+  |   sections   |
+  +--------------+
+
+b) module stamp - fixed-size module version signature (do not terminated by zero)
+
+c) module name  - zero terminated module name
+
+d) references   - reference section 
+   +--------------+
+   |    size      |  total section size
+   +--------------+ 
+   |   reference  |
+   |     memory   |
+   |  hash table  |
+
+e) messages
+   +--------------+
+   |    size      |  total section size
+   +--------------+ 
+   |   message    |
+   |   memory     |
+   |  hash table  |
+
+f) constants
+   +--------------+
+   |    size      |  total section size
+   +--------------+ 
+   |   constant   |
+   |    memory    |
+   |  hash table  |
+
+g) sections     - section list      
+
+  <total size>                 
+  {section}
+
+  where section = 
+    <section id>   
+    <section size>   
+    <section body>
+
+    <relocation table size>
+    <reference id>
+    <reference position>
+       ...
+
+2) ELENA Heap
+
+---------------------------------------------------
+   Header  |      YG       |           OG
+---------------------------------------------------
+           | Main | Shadow | PERM |       MG
+---------------------------------------------------
+
+3) VM Table
+
+NOTE: VM Table is empty for stand-alone application
+
++---------------------+
++    Instance Ptr     +    
++---------------------+
++   getClassVMTRef    +
++---------------------+
++    getSymbolRef     +
++---------------------+
++   getClassName      +
++---------------------+
++    Interprete       +
++---------------------+
++    getLastError     +
++---------------------+
+
+4) Object (GC)
++---------------------+
++      Page Size      +    ; if negative: stack allocated
++---------------------+
++       Length        +    ; if negative: data length ; if positive: number of fields
++---------------------+
++    VMT reference    +    
++---------------------+
+
+
+
+5) Object (GCX)
++---------------------+
++      Sync Field     +    
++---------------------+
++      Page Size      +    ; if negative: stack allocated
++---------------------+
++       Length        +    ; if negative: data length ; if positive: number of fields * sizeof(dword)
++---------------------+
++    VMT reference    +    
++---------------------+
+
+
+6) Method Stack
++---------------------+
++         SELF        +    
++---------------------+
++         Param       +    
++---------------------+
++      RET Address    +    
++---------------------+
+                                                   
+method should copy 0 to self if it breaks the flow, otherwise the method result should
+be copied there; 

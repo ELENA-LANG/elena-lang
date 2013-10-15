@@ -1,0 +1,77 @@
+[#general#]
+#name=gui'common
+#shortdescr=Provides basic GUI classes
+
+[#list#]
+itemcollection
+point
+pointvar
+size
+sizevar
+
+[size]
+#title=Class Size
+#shortdescr=A size structure
+#protocol=guiprotocol.html#size:size
+#parent=elena.html#object:object
+#method=<a href="guidictionary.html#size">size'get</a>,,guiprotocol.html#size;Returns itself
+#method=<a href="guiscopes.html#width">size'height'get</a>,,int;Returns the height.<br><b>Should be overridden</b>
+#method=<a href="guiscopes.html#width">size'width'get</a>,,int;Returns the width.<br><b>Should be overridden</b>
+
+[point]
+#title=Class Point
+#shortdescr=A location structure
+#protocol=guiprotocol.html#location:location
+#parent=elena.html#object:object
+#method=+,guiprotocol.html#location,guiprotocol.html#location;Returns the sum of two location
+#method=-,guiprotocol.html#location,guiprotocol.html#location;Returns the difference of two location
+#method=<a href="guidictionary.html#location">location'get</a>,,guiprotocol.html#location;Returns a location
+#method=<a href="guiscopes.html#location">location'x'get</a>,,int;Gets the x coordinate<br><b>Should be overridden</b>
+#method=<a href="guiscopes.html#location">location'y'get</a>,,int;Sets the y coordinate<br><b>Should be overridden</b>
+
+[pointvar]
+#title=Class PointVar
+#shortdescr=A location variable structure
+#protocol=guiprotocol.html#location:location
+#parent=elena.html#object:object
+#parent=guicommon.html#location:gui'common'location
+#method=+,guiprotocol.html#location,guiprotocol.html#location;Returns the sum of two location
+#method=-,guiprotocol.html#location,guiprotocol.html#location;Returns the difference of two location
+#method=<<,guiprotocol.html#location;Copies the operand coordinates
+#method=+=,guiprotocol.html#location;Adds the operand coordinates
+#method=-=,guiprotocol.html#location;Subtracts the operand coordinates
+#method=new,guiprotocol.html#location;Assigns the point fields
+#method=<a href="guidictionary.html#location">location'get</a>,,guiprotocol.html#location;Returns a location
+#method=<a href="guiscopes.html#location">location'x'get</a>,,int;Gets the x coordinate.
+#method=<a href="guiscopes.html#location">location'y'get</a>,,int;Sets the y coordinate.
+
+[size]
+#title=Class Size
+#shortdescr=A size structure
+#protocol=guiprotocol.html#size:size
+#parent=elena.html#object:object
+#parent=guicommon.html#size:gui'common'size
+#method=<<,guiprotocol.html#size;Copies the operand size
+#method=+=,guiprotocol.html#size;Adds the operand size
+#method=-=,guiprotocol.html#size;Subtracts the operand size
+#method=new,guiprotocol.html#size;Assigns the size fields
+#method=<a href="guidictionary.html#size">size'get</a>,,guiprotocol.html#size;Returns itself
+#method=<a href="guiscopes.html#width">size'height'get</a>,,int;Returns the height.
+#method=<a href="guiscopes.html#width">size'width'get</a>,,int;Returns the width.
+
+[itemcollection]
+#title=Class ItemCollection
+#shortdescr=An item collection adapter
+#protocol=indexable
+#protocol=guiprotocol.html#items:items
+#protocol=collection
+#parent=elena.html#object:object
+#field=thecontrol;The item collection owner
+#field=theitems;The item collection
+#method=+=,object;Adds the item to the collection
+#method=@,object,object;Returns the item at specified position
+#method=@,object,indexer;Returns the indexer at specified position
+#method=new,guiprotocol.html#control;Assigns the adapter
+#method=<a href="guidictionary.html#control">control'selected'get</a>,,object;Returns a selected item
+#method=<a href="guidictionary.html#control">control'selected'set</a>,,object;Sets a selected item
+#method=<a href="stddictionary.html#count">count'get</a>,,array;Returns the number of array items

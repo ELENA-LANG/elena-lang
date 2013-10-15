@@ -1,0 +1,105 @@
+[#general#]
+#name=std'dictionary
+#shortdescr=Provides list of message context scopes
+
+[#list#]
+array
+bool
+barray
+char
+content
+control
+count
+enum
+group
+index
+indexer
+input
+int
+it
+literal
+long
+math
+pattern
+printer
+proxy
+reader
+real
+size
+varray
+writer
+
+[int]
+#shortdescr=An int subject.<br>Secondary subjects:high, low, anymask, allmask, mod
+
+[enum]
+#shortdescr=An enum subject
+
+[content]
+#shortdescr=A content subject
+
+[indexer]
+#shortdescr=An indexer subject
+
+[index]
+#shortdescr=An index subject
+
+[proxy]
+#shortdescr=A proxy subject
+
+[it]
+#shortdescr=An iterator subject
+
+[bool]
+#shortdescr=A boolean subject
+
+[group]
+#shortdescr=A group subject
+
+[control]
+#shortdescr=A control subject
+
+[long]
+#shortdescr=A long integer subject.<br>Secondary subjects:high, low, anymask, allmask, mod
+
+[real]
+#shortdescr=A real number subject
+
+[literal]
+#shortdescr=A literal subject
+
+[printer]
+#shortdescr=A printer subject
+
+[input]
+#shortdescr=A input subject
+
+[count]
+#shortdescr=A count subject
+
+[char]
+#shortdescr=A character subject
+
+[pattern]
+#shortdescr=A pattern subject
+
+[math]
+#shortdescr=An math subject.<br>Secondary subjects:x, y, abs
+
+[array]
+#shortdescr=An array subject
+
+[barray]
+#shortdescr=A byte array subject
+
+[varray]
+#shortdescr=A varialbe byte array subject
+
+[reader]
+#shortdescr=A reader subject
+
+[writer]
+#shortdescr=A writer subject
+
+[size]
+#shortdescr=A size subject

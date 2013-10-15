@@ -1,0 +1,707 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 1.5.4: Package std'basic'memory
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="stdmemory-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="bytearray">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Class ByteArray</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<B>std'basic'memory'bytearray</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#bytearray">bytearray</A>
+</DT>
+<DT>
+<A HREF="stdprotocol.html#stream">stream</A>
+</DT>
+</DL>
+<P>
+A byte array
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'get</a> = <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Returns the byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#reader">reader'get</a> = <A HREF="stdprotocol.html#reader">reader</A>
+</TD>
+<TD><CODE>Returns the reader</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#size">size'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the array size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#writer">writer'get</a> = <A HREF="stdprotocol.html#writer">writer</A>
+</TD>
+<TD><CODE>Returns the writer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="bytearrayreader">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Class ByteArrayReader</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<B>std'basic'memory'bytearrayreader</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#reader">reader</A>
+</DT>
+</DL>
+<P>
+A byte array reader
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thearray&nbsp;</CODE>
+</TD>
+<TD><CODE>The byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theoffset&nbsp;</CODE>
+</TD>
+<TD><CODE>The reader offset</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Assigns byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'read</a> : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Reads the byte array value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'read</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Reads the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'read</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Reads the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'read</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Reads the long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'read</a> : <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Reads the real number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'read</a> : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Reads the variable byte array value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="bytearraytype">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Symbol ByteArrayType</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#typecaster">typecaster</A>
+</DT>
+</DL>
+<P>
+A byte array helper.
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+of : <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Tries to return the byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#pattern">pattern'create</a> : <A HREF="stdprotocol.html#bytearrapattern">bytearrapattern</A>
+ = <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Creates the array with the provided size and content</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#size">size'create</a> : <A HREF="stdprotocol.html#int">int</A>
+ = <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Creates the array with the provided size</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="bytearraywriter">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Class ByteArrayWriter</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<B>std'basic'memory'bytearraywriter</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#writer">writer</A>
+</DT>
+</DL>
+<P>
+A byte array writer
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thearray&nbsp;</CODE>
+</TD>
+<TD><CODE>The byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theoffset&nbsp;</CODE>
+</TD>
+<TD><CODE>The reader offset</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Assigns byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'write</a> : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Writes the byte array value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Writes the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'write</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Writes the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Writes the long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'write</a> : <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Writes the real number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'write</a> : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Writes the variable byte array value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="varbytearray">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Class VarByteArray</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<B>std'basic'memory'varbytearray</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#stream">stream</A>
+</DT>
+<DT>
+<A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</DT>
+</DL>
+<P>
+A variable byte array
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clear</TD>
+<TD><CODE>Resets the array length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#count">count'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the allocated length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#count">count'set</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Allocates the buffer size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#reader">reader'get</a> = <A HREF="stdprotocol.html#reader">reader</A>
+</TD>
+<TD><CODE>Returns the reader</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#size">size'get</a> = <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the total array size</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'get</a> = <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Returns the byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#writer">writer'get</a> = <A HREF="stdprotocol.html#writer">writer</A>
+</TD>
+<TD><CODE>Returns the writer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="varbytearrayreader">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Class VarByteArrayReader</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<B>std'basic'memory'varbytearrayreader</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#reader">reader</A>
+</DT>
+</DL>
+<P>
+A variable byte array reader
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Assigns byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'read</a> : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Reads the byte array value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'read</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Reads the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'read</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Reads the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'read</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Reads the long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'read</a> : <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Reads the real number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'read</a> : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Reads the variable byte array value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="varbytearraytype">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Symbol VarByteArrayType</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#typecaster">typecaster</A>
+</DT>
+</DL>
+<P>
+A variable byte array helper.
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+of : <A HREF="stdprotocol.html#object">object</A>
+ = <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Tries to return the byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#pattern">pattern'create</a> : <A HREF="stdprotocol.html#bytearrapattern">bytearrapattern</A>
+ = <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Creates the array with the provided size and content</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#size">size'create</a> : <A HREF="stdprotocol.html#int">int</A>
+ = <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Creates the array with the provided size</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="varbytearraywriter">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+std'basic'memory</FONT>
+<BR>
+Class VarByteArrayWriter</H2>
+<PRE>
+<A HREF="elena.html#object">object</A>
+ |
+ +--<B>std'basic'memory'varbytearraywriter</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#writer">writer</A>
+</DT>
+</DL>
+<P>
+A variable byte array writer
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thearray&nbsp;</CODE>
+</TD>
+<TD><CODE>The byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theoffset&nbsp;</CODE>
+</TD>
+<TD><CODE>The reader offset</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Assigns byte array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#barray">barray'write</a> : <A HREF="stdprotocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Writes the byte array value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#int">int'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Writes the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'write</a> : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Writes the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#long">long'write</a> : <A HREF="stdprotocol.html#int">int</A>
+</TD>
+<TD><CODE>Writes the long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#real">real'write</a> : <A HREF="stdprotocol.html#real">real</A>
+</TD>
+<TD><CODE>Writes the real number value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#varray">varray'write</a> : <A HREF="stdprotocol.html#varbytearray">varbytearray</A>
+</TD>
+<TD><CODE>Writes the variable byte array value</CODE>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="stdmemory-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>

@@ -1,0 +1,9 @@
+[#general#]
+#name=ext'gui'dictionary
+#shortdescr=Provides list of message context scopes
+
+[#list#]
+id
+
+[id]
+#shortdescr=A control ID subject

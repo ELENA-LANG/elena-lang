@@ -1,0 +1,2 @@
+
+#static Test : anObject = anObject.

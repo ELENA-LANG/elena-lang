@@ -1,0 +1,82 @@
+[#general#]
+#name=ext'io
+#shortdescr=Provides the i/o helper classes
+
+[#list#]
+console
+elistprintaction
+elistprinting
+logtextfile
+textfile
+textfileenumerator
+textfilelogwritwer
+textfilereader
+
+
+
+
+[textfileenumerator]
+#title=Class TextFileEnumerator
+#shortdescr=A text file content enumerator
+#protocol=enumerator
+#parent=elena.html#object:Object
+#field=thereader;The text file reader
+#field=theline;The current line
+#method=new,reader;Assigns the reader
+#method=<a href="stddictionary.html#content">content'get</a>,,object;Returns the current line
+#method=<a href="stddictionary.html#enum">enum'continue</a>,,;Reads the next line from the file
+
+[elistprintaction]
+#title=Class EListPrintAction
+#shortdescr=A list printing action extension
+#parent=elena.html#object:Object
+#protocol=action
+#method=new,printer;Extends the printer
+#method=proceed,printable,;Prints the operand, adding the comma for every next call
+
+[elistprinting]
+#title=Symbol EListPrinting
+#shortdescr=An enumerable object printing extension
+#protocol=printable
+#method=new,enumerable;Extends the enumerable object
+#method=<a href="stddictionary.html#printer">printer'writeto</a>,printer;Writes the object text represenation to the stream writer
+
+[console]
+#title=symbol Console
+#shortdescr=A console helper
+#method=<<,printable;Prints the object text value
+#method=>>,inputable,object;Reads a line from the console, copies it to the operand and returns it
+
+[textfilereader]
+#title=Symbol TextFileReader
+#shortdescr=A collection printing extension
+#protocol=input
+#method=new,literal,input;Opens the provided file for reading
+#method=<a href="stddictionary.html#literal">literal'get</a>,,literal;Returns the inputed line
+
+[textfilelogwriter]
+#title=Symbol TextFileLogWriter
+#shortdescr=A collection printing extension
+#protocol=writer
+#method=new,literal,writer;Opens the provided file for writing
+#method=<a href="stddictionary.html#barray">barray'write</a>,bytearray;Writes the byte array value
+#method=<a href="stddictionary.html#int">int'write</a>,int;Writes the integer value
+#method=<a href="stddictionary.html#literal">literal'write</a>,literal;Writes the literal value
+#method=<a href="stddictionary.html#long">long'write</a>,int;Writes the long integer value
+#method=<a href="stddictionary.html#real">real'write</a>,real;Writes the real number value
+#method=<a href="stddictionary.html#varray">varray'write</a>,varbytearray;Writes the variable byte array value
+
+[textfile]
+#title=Symbol TextFile
+#shortdescr=A text file helper
+#protocol=enumerable
+#method=new,literal;Provides the file name
+#method=<a href="stddictionary.html#enum">enum'get</a>,,enumerator;Returns the file content enumerator
+#method=<a href="stddictionary.html#literal">literal'run</a>,action;Executes the action for every file line
+
+[logtextfile]
+#title=Symbol LogTextFile
+#shortdescr=A text file helper
+#protocol=stream
+#method=new,literal;Provides the file name
+#method=<a href="stddictionary.html#writer">writer'get</a>,,writer;Returns the text file writer in an append mode

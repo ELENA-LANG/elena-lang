@@ -1,0 +1,37 @@
+Protocols
+---------
+bool::
+   inverted                       = bool
+
+   then     : action              = object 
+   then     : action &else:action = object
+   else     : action              = object
+   and      : bool                = bool 
+   or       : bool                = bool 
+   xor      : bool                = bool 
+   equal    : bool                = bool
+   notequal : bool                = bool
+
+action::
+   eval
+
+bool_action::
+   eval = bool
+
+enumerator::
+   next = bool
+   get  = object
+
+Properties
+----------
+Literal    = type'widestr
+Enumerator = enumerator
+   
+Signatures
+-----
+&if:bool/bool_action
+&until:bool/bool_action
+&each:enumerator
+&for:variable&from:value&to:value&by:value
+
+

@@ -1,0 +1,388 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 1.5.4: Package ext'io
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="extio-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="console">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+symbol Console</H2>
+<P>
+A console helper
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&lt;< <A HREF="stdprotocol.html#printable">printable</A>
+</TD>
+<TD><CODE>Prints the object text value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+&gt;> <A HREF="stdprotocol.html#inputable">inputable</A>
+ = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Reads a line from the console, copies it to the operand and returns it</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="elistprintaction">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+Class EListPrintAction</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<B>ext'io'elistprintaction</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#action">action</A>
+</DT>
+</DL>
+<P>
+A list printing action extension
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#printer">printer</A>
+</TD>
+<TD><CODE>Extends the printer</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+proceed : <A HREF="stdprotocol.html#printable">printable</A>
+</TD>
+<TD><CODE>Prints the operand, adding the comma for every next call</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="elistprinting">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+Symbol EListPrinting</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#printable">printable</A>
+</DT>
+</DL>
+<P>
+An enumerable object printing extension
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#enumerable">enumerable</A>
+</TD>
+<TD><CODE>Extends the enumerable object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#printer">printer'writeto</a> : <A HREF="stdprotocol.html#printer">printer</A>
+</TD>
+<TD><CODE>Writes the object text represenation to the stream writer</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="logtextfile">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+Symbol LogTextFile</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#stream">stream</A>
+</DT>
+</DL>
+<P>
+A text file helper
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Provides the file name</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#writer">writer'get</a> = <A HREF="stdprotocol.html#writer">writer</A>
+</TD>
+<TD><CODE>Returns the text file writer in an append mode</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="textfile">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+Symbol TextFile</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#enumerable">enumerable</A>
+</DT>
+</DL>
+<P>
+A text file helper
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Provides the file name</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#enum">enum'get</a> = <A HREF="stdprotocol.html#enumerator">enumerator</A>
+</TD>
+<TD><CODE>Returns the file content enumerator</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'run</a> : <A HREF="stdprotocol.html#action">action</A>
+</TD>
+<TD><CODE>Executes the action for every file line</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="textfileenumerator">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+Class TextFileEnumerator</H2>
+<PRE>
+<A HREF="elena.html#object">Object</A>
+ |
+ +--<B>ext'io'textfileenumerator</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#enumerator">enumerator</A>
+</DT>
+</DL>
+<P>
+A text file content enumerator
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+thereader&nbsp;</CODE>
+</TD>
+<TD><CODE>The text file reader</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theline&nbsp;</CODE>
+</TD>
+<TD><CODE>The current line</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#reader">reader</A>
+</TD>
+<TD><CODE>Assigns the reader</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#content">content'get</a> = <A HREF="stdprotocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the current line</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#enum">enum'continue</a></TD>
+<TD><CODE>Reads the next line from the file</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="textfilelogwritwer">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+textfilelogwritwer</H2>
+textfilelogwritwer
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="textfilereader">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+ext'io</FONT>
+<BR>
+Symbol TextFileReader</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="stdprotocol.html#input">input</A>
+</DT>
+</DL>
+<P>
+A collection printing extension
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="stdprotocol.html#literal">literal</A>
+ = <A HREF="stdprotocol.html#input">input</A>
+</TD>
+<TD><CODE>Opens the provided file for reading</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<a href="stddictionary.html#literal">literal'get</a> = <A HREF="stdprotocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the inputed line</CODE>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="extio-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>1.5.4</b></EM>
+</TD>
+</TR>
+</TABLE>

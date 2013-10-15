@@ -1,0 +1,125 @@
+[#general#]
+#name=win32'io
+#shortdescr=Provides classes that implements the input / output operations
+
+[#list#]
+binaryfile
+console
+filereader
+filewriter
+textfile
+textfilebuffer
+textfilereader
+textfilewriter
+stdconsole
+stdinput
+stdoutput
+
+[console]
+#title=Class Console
+#shortdescr=A console class
+#protocol=printer
+#protocol=input
+#parent=elena.html#object:Object
+#field=theinputhandle;The console reader handle
+#field=theoutputhandle;The console writer handle
+#method=<a href="stdscopes.html#char">char'get</a>,,object;Waits for the pressed key and returns the appropriate character
+#method=<a href="stdscopes.html#literal">literal'get</a>,,literal;Returns the inputed line
+#method=<a href="stdscopes.html#literal">literal'write</a>,literal;Prints the literal value
+
+[stdconsole]
+#title=Symbol StdConsole
+#shortdescr=A standard console
+#protocol=printer
+#method=<a href="stdscopes.html#literal">literal'print</a>,literal;Prints the literal value
+
+[stdoutput]
+#title=Symbol StdOutput
+#shortdescr=A standard console output writer
+#protocol=variable
+#method=<<,printable;Writes the object text representation to the stream
+#method=<<,literal;Writes the object text representation to the stream
+#method=<<,int;Writes the object text representation to the stream
+
+[stdinput]
+#title=Symbol StdInput
+#shortdescr=A standard console input reader
+#protocol=reader
+#method=>>,readable,object;Reads the value from the console and returns it
+#method=>>,literal,object;Reads the literal value from the console and returns it
+#method=>>,int,object;Reads the integer value from the console and returns it
+#method=<a href="stdscopes.html#char">char'get</a>,,object;Waits for the pressed key and returns the appropriate character
+
+[filereader]
+#title=Class FileReader
+#shortdescr=A file reader
+#protocol=reader
+#parent=elena.html#object:Object
+#field=thehandle;The file handle
+#method=new,win32protocol.html#handle;Assigns the file handle
+#method=<a href="stdscopes.html#barray">barray'read</a>,bytearray;Reads the byte array value
+#method=<a href="stdscopes.html#int">int'read</a>,int;Reads the integer value
+#method=<a href="stdscopes.html#long">long'read</a>,int;Reads the long integer value
+#method=<a href="stdscopes.html#real">real'read</a>,real;Reads the real number value
+#method=<a href="stdscopes.html#varray">varray'read</a>,varbytearray;Reads the variable byte array value
+
+[filewriter]
+#title=Class FileWriter
+#shortdescr=A file writer
+#protocol=writer
+#parent=elena.html#object:Object
+#field=thehandle;The file handle
+#method=new,win32protocol.html#handle;Assigns the file handle
+#method=<a href="stdscopes.html#barray">barray'write</a>,bytearray;Writes the byte array value
+#method=<a href="stdscopes.html#int">int'write</a>,int;Writes the integer value
+#method=<a href="stdscopes.html#literal">literal'write</a>,literal;Writes the literal value
+#method=<a href="stdscopes.html#long">long'write</a>,int;Writes the long integer value
+#method=<a href="stdscopes.html#real">real'write</a>,real;Writes the real number value
+#method=<a href="stdscopes.html#varray">varray'write</a>,varbytearray;Writes the variable byte array value
+
+[textfilewriter]
+#title=Class TextFileWriter
+#shortdescr=A text file writer
+#protocol=printer
+#parent=elena.html#object:Object
+#field=thebuffer;The writer buffer
+#field=thehandle;The file handle
+#method=new,win32protocol.html#handle;Assigns the file handle
+#method=<a href="stdscopes.html#printer">printer'copy</a>,literal;Prints the literal value
+
+[textfilereader]
+#title=Class TextFileReader
+#shortdescr=A text file reader
+#protocol=input
+#parent=elena.html#object:Object
+#field=thebuffer;The reader buffer
+#field=thehandle;The file handle
+#method=new,win32protocol.html#handle;Assigns the file handle
+#method=<a href="stdscopes.html#literal">literal'get</a>,,literal;Returns the line from the file
+
+[textfilebuffer]
+#title=Class TextFileBuffer
+#shortdescr=A text file reader helper class
+#parent=elena.html#object:Object
+#field=thebuffer;The buffer
+#field=theindex;The current index
+#method=<a href="stdscopes.html#literal">literal'copyto</a>,variable;Appends the buffer content to the string
+#method=<a href="stdscopes.html#value">value'clear</a>,,;Clears the buffer
+
+[binaryfile]
+#title=Symbol StdConsole
+#shortdescr=A standard console
+#protocol=stream
+#method=new,sysprotocol.html#fileattr;Assigns the file handle
+#method=new,win32protocol.html#fileattr;Assigns the file handle
+#method=<a href="stdscopes.html#reader">reader'new</a>,,reader;Returns the reader
+#method=<a href="stdscopes.html#writer">writer'new</a>,,reader;Returns the writer
+
+[textfile]
+#title=Symbol StdConsole
+#shortdescr=A standard console
+#protocol=stream
+#method=new,sysprotocol.html#fileattr;Assigns the file handle
+#method=new,win32protocol.html#fileattr;Assigns the file handle
+#method=<a href="stdscopes.html#reader">reader'new</a>,,reader;Returns the text reader
+#method=<a href="stdscopes.html#writer">writer'new</a>,,reader;Returns the text writer

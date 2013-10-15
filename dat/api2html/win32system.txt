@@ -1,0 +1,16 @@
+[#general#]
+#name=win32'system
+#shortdescr=Provides classes that implement OS-depended routines
+
+[#list#]
+gui
+
+[gui]
+#title=Symbol GUI
+#shortdescr=A GUI system
+#protocol=pattern
+#protocol=sysprotocol.html#eventowner:eventowner
+#method=+=,object,int;Appends the object to the relocation table and returns its index
+#method=-=,object;Excludes the object from the relocation table
+#method=run,operation;Runs the application.Is a starting point of GUI applications
+#method=<a href="sysscopes.html#events">events'get</a>,,object;Returns the event handler

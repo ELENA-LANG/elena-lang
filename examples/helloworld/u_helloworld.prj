@@ -1,0 +1,11 @@
+[project]
+template=console
+executable=u_helloworld.exe
+namespace=u_helloworld
+debuginfo=-1
+
+[files]
+u_helloworld.l
+
+[forwards]
+'program=u_helloworld'Program

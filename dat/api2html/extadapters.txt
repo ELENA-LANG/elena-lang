@@ -1,0 +1,41 @@
+[#general#]
+#name=ext'adapters
+#shortdescr=Provides additional adapter classes.
+
+[#list#]
+einput
+eprinter
+inputadapters
+printadapters
+
+[eprinter]
+#title=Symbol EPrinter
+#shortdescr=A basic value printing adapter
+#protocol=printable
+#method=<a href="stddictionary.html#printer">printer'writeto</a>,printer;Writes the object text represenation to the stream writer
+                        
+[printadapters]          
+#title=Symbol PrintAdapters
+#shortdescr=A printing adapter group object
+#protocol=writer
+#method=<a href="stddictionary.html#int">int'write</a>,int;Writes the integer value
+#method=<a href="stddictionary.html#long">long'write</a>,int;Writes the long integer value
+#method=<a href="stddictionary.html#literal">literal'write</a>,literal;Writes the literal value
+#method=<a href="stddictionary.html#proxy">proxy'write</a>,container;Redirects the message with the container content
+#method=<a href="stddictionary.html#real">real'write</a>,real;Writes the real number value
+
+[ereader]
+#title=Symbol EReader
+#shortdescr=A basic value reading adapter
+#protocol=inputable
+#method=<a href="stddictionary.html#input">input'read</a>,reader,object;Reads the text value from the reader and returns the object containing this value
+
+[inputadapters]          
+#title=Symbol InputAdapters
+#shortdescr=A reading adapter group object
+#protocol=reader
+#method=<a href="stddictionary.html#int">int'read</a>,reader;Reads the integer value and
+#method=<a href="stddictionary.html#literal">literal'read</a>,reader;Reads the literal value
+#method=<a href="stddictionary.html#long">long'read</a>,reader;Reads the long integer value
+#method=<a href="stddictionary.html#proxy">proxy'read</a>,reader;Redirects the message with the container content
+#method=<a href="stddictionary.html#real">real'read</a>,reader;Reads the real number value

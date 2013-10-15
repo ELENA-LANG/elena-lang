@@ -1,0 +1,14 @@
+[project]
+executable=tape_tester.exe
+vmpath=..\..\bin
+namespace=tape_tester
+template=vm_console
+debuginfo=-2
+warn:unresolved=0
+
+[files]
+main.l
+
+[forwards]
+'program=tape_tester'Program
+

@@ -1,0 +1,22 @@
+I) Patterns
+
+<t>'value =
+   ::save(<t>'writer)
+
+<t>'writer =
+   ::<t>'write(<t>) = <t>
+
+<t>'arithmetic =
+    ::add(<t>'value) = <t>
+    ::subtract(<t>'value) = <t>
+    ::multiply(<t>'value) = <t>
+    ::divide(<t>'value) = <t>
+
+II) Common interfaces
+
+III) Interfaces
+
+
+IV) Classes
+
+V) Symbols
