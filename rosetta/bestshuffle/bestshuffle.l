@@ -1,58 +1,56 @@
-#define std'dictionary'*.
-#define std'basic'*.
-#define std'patterns'*.
-#define std'routines'*.
+#define system.
 
-#subject original, shuffled.
+// --- shuffle ---
 
-// --- BestShuffle ---
-
-#symbol BestShuffle : aLiteral =
+#symbol shuffle = &&:aLiteral
 [
-    #var aLength := aLiteral length.
-    #var aShuffled := aLiteral clone.
+    #var aLength := aLiteral Length.
+    #var aShuffled := stringControl toArray:aLiteral.
 
-    It::aShuffled run: aChar =
+    control from:0 &till:aLength &do: &&:i
     [
-        #if (aChar == aLiteral @ aChar index)?
+        #var aChar := aLiteral@i.
+        (aChar == (aShuffled@i)) ?
         [
-            #if It::aShuffled seek: anAltChar =
+            control from:0 &till:aLength &do: &&:j
             [
-                #if Control if:(aChar != anAltChar) if:(anAltChar != aLiteral @ aChar index) if:(aChar != aLiteral @ anAltChar index)
-                [
-                    anAltChar~EContent exchange:aChar.
-
-                    ^ true.
-                ].
+                #var anAltChar := aShuffled@j.
+                (anAltChar != aChar)and:[ anAltChar != aLiteral@i ]and:[aChar != aLiteral@j] ?
+                    [
+                        arrayControl exchange:i &with:j &in:aShuffled.
+                        
+                        #break nil.
+                    ].
             ].
         ].
     ].
 
-    ^ aShuffled.
+    ^ Summing new:(String new) foreach:aShuffled Literal.
 ].
 
 // --- ShuffleScore ---
 
-#symbol ShuffleScore &original:anOriginal &shuffled:aShuffled =
+#symbol scoreShuffle = &&:anOriginal:aShuffled
 [
-    #var aScore := Integer.
+    #var aScore := Integer new.
     
-    It::aShuffled run: aChar = [ #if aChar ifequal:(anOriginal @ aChar index) [ aScore append:1. ]. ].
+    control from:0 &till:(anOriginal Length) &do: &&:i
+        [ (anOriginal @ i) == (aShuffled @ i) ? [ aScore += 1. ]. ].
     
-    ^ aScore.
+    ^ aScore Number.
 ].
 
 // --- Program ---
 
-#symbol Program =
+#symbol program =
 [
-    Scan::("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") run: aWord =
+    control foreach:("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") &do: &&:aWord
     [
-        #var aShuffled := BestShuffle::aWord.
-        
-        'program'output << "The best shuffle of " << aWord << " is " << aShuffled << "(" 
-            << (ShuffleScore &&original:aWord &shuffled:aShuffled) << ")%n".
+        #var aShuffled := shuffle:aWord.
+
+        console write:"The best shuffle of " write:aWord write:" is " write:aShuffled write:"(" 
+            writeLine:(scoreShuffle:aWord:aShuffled).
     ].
-    
-    'program'input get.
+
+    console readChar.
 ].

@@ -1,5 +1,6 @@
 #define system.
 #define system'text.
+#define extensions'text.
 
 // --- ConsoleHelper ---
 
@@ -41,6 +42,11 @@
     #method write : anObject
     [
         system'console write:anObject.
+    ]
+        
+    #method write &type'array : anArray
+    [
+        system'console write:(ListPresenter new:anArray).
     ]
         
     #method write &Line:anObject

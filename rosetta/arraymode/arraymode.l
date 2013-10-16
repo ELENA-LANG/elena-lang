@@ -1,46 +1,43 @@
-#define std'dictionary'*.
-#define std'basic'*.
-#define std'patterns'*.
-#define std'routines'*.
-#define std'collections'*.
+#define system.
+#define system'collections.
+#define extensions'io.
 
 // Averages/Mode
 
-#subject mode.
-
-#symbol ModeValue : anArray =
+#symbol mode = &&:anArray
 [
-    #var aCountMap := Dictionary.
-    Scan::anArray run: anItem =
-        [
-            #if aCountMap@anItem += 1
-            | [
-                aCountMap append &dictionary_key:anItem &content:Integer::1.
-            ].
-        ].
-    
-    aCountMap~esort run: aPair = (aPair former > aPair later).
-    
-    #var aResult := List.
-    
-    #var aMax := aCountMap first_item content.
-    Scan::aCountMap run: anItem =
+    #var aCountMap := Dictionary new &default:0.
+    control foreach:anArray &do: &&:anItem
     [
-        #if (aMax == anItem)?
-            [ aResult += anItem dictionary_key. ].
+        aCountMap @ anItem << ((aCountMap @ anItem) + 1).
     ].
-    
-    ^ aResult.
+
+    listControl sort:aCountMap &with: &&:p:n
+        [ p Value > n Value ].
+
+    #var aResult := List new.
+
+    #var aMax := aCountMap First Value.
+    control foreach:aCountMap &do: &&:anItem
+    [
+        aMax == anItem Value
+            ? [ aResult += anItem Key. ].
+    ].
+
+    ^ listControl toArray:aResult.
 ].
 
-#symbol Program =
+#symbol program =
 [
     #var anArray1 := (1, 1, 2, 4, 4).
     #var anArray2 := (1, 3, 6, 6, 6, 6, 7, 7, 12, 12, 17).
+//    #var anArray3 := (1, "blue", 2, 7.5r, 5, "green", "red", 5, 2, "blue", "white").
     
-    #var aMode1 := ModeValue::anArray1.
-    #var aMode2 := ModeValue::anArray2.
+    #var aMode1 := mode:anArray1.
+    #var aMode2 := mode:anArray2.
+//    #var aMode3 := mode:anArray3.
     
-    'program'output << "mode of (" << anArray1 << ") is (" << aMode1 << ")%n".
-    'program'output << "mode of (" << anArray2 << ") is (" << aMode2 << ")%n".
+    consoleEx write:"mode of (" write::anArray1 write:") is (" write::aMode1 writeLine:")".
+    consoleEx write:"mode of (" write::anArray2 write:") is (" write::aMode2 writeLine:")".
+//    consoleEx write:"mode of (" write::anArray3 write:") is (" write::aMode3 writeLine:")".
 ].

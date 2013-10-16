@@ -827,6 +827,25 @@
         theItems @ anIndex << anObject.
     ]
 
+    #method add : anObject
+        = $self add::anObject.
+        
+    #method add &type'array:anArray
+    [
+        #var aLength1 := $self type'length.
+        #var aLength2 := anArray type'length.
+        
+        #var aRetVal := Array new &type'length:(aLength1 + aLength2).
+        
+        control from:0 &till:aLength1 &do: &&:i
+            [ aRetVal setAt &type'index:i &type'object:(self getAt &type'index:i). ].
+            
+        control from:0 &till:aLength2 &do: &&:j
+            [ aRetVal setAt &type'index:(aLength1 + j) &type'object:(anArray getAt &type'index:j). ].
+            
+        ^ aRetVal.
+    ]
+
     #method type'length = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'object:$self).
 
     #method Count = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'object:$self).

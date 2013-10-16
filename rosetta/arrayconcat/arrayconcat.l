@@ -1,10 +1,9 @@
+#define extensions'io.
 
 #symbol program =
 [
     #var a := (1,2,3).
     #var b := (4,5).
-//    
-//    #var c := a~earrayop add:b.
-//    
-//    'program'output << "(" << a << ") + (" << b << ") = (" << c <<")%n".
+
+    consoleEx write:"(" write::a write:") + (" write::b write:") = (" write::(a + b) writeLine:")".
 ].

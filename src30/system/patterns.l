@@ -138,10 +138,6 @@
         ^ self.
     ]
     
-    #method add : anArray
-    [
-    ]
-    
     #method DeepClone
         = Array new &type'length::self &action: &&:i
             [ (self @ i) Clone ].

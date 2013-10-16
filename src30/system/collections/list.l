@@ -149,6 +149,8 @@
 
     #method Top = theTop.
 
+    #method First = theTop get.
+
     #method Count = theCount Number.
 
     #method Length = theCount Number.
@@ -176,6 +178,15 @@
 
 #class Dictionary : List
 {
+    #field theDefaultValue.
+    
+    #constructor new &default:aValue
+    [
+        theRole := CEmptyList.
+        theCount := Integer new.        
+        theDefaultValue := aValue.
+    ]
+    
     #method $addFirst &Key:aKey &Value:aValue
     [
         theCount << 1.
@@ -194,7 +205,7 @@
     [
         #var anItem := $self~EList seek: &&:x [ x Key == aKey ].
         ^ (nil == anItem)
-            ? [ nil ]
+            ? [ theDefaultValue ]
             ! [ anItem Value ].
     ]
 

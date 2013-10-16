@@ -20,7 +20,7 @@ v  - vm script
 Currently:
 ------
               sdev - rosetta samples              
-                       * arrayconcat
+                       * bestshuffle
                        * ...
 <=================>
 
@@ -37,7 +37,6 @@ week2: [22.10]
                        * arithmeval
 
                sdev - console samples
-                       * migrate trans
                        * simplify goods (Record.get&Literal implementation)
                        * words: sort the list
                        * simplify bsort
@@ -70,12 +69,6 @@ week2: [22.10]
                        * date: custom presenter / formatter / custom formatter
                        * extensions'EIntPresenter / EIntFormatter - can it work both for int and long numbers?
                        * list / iterators / ... - can commutator be used instead of adapter roles
-
-              sdev - text db
-                       * split method implement
-                       * use multi select statement
-                       * use subjects to return fields                       
-                       * migrate textdb
 
             smaint - testing
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
@@ -134,6 +127,8 @@ week1:
                        * native implementation - using open argument list??
 
               xdev - generic development              
+                       * break inside if inside loop - should break loop ??
+
                        * custom verb dispatching (see for example stringControl split&by[2])
 
                        * for loop: review for implementation algorithm can we simplify it??
@@ -370,16 +365,21 @@ week1:
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                        
 week2:
+               adev - api
+                       * it should be possible to compare integer and value - the result is false
+                       * review / simplify code
+
                sdev - review
                        * review / simplify code
 
-               adev - api
-                       * review / simplify code
-
               sdev - rosetta samples              
+                       * review / simplify code
+                       * arraymode: support collection of different types
                        * implement new samples
 
 week3:
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
 
 week4:
               xdoc - api
@@ -393,6 +393,7 @@ week2:
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)
                sdev - console samples
+                       * textdb: dynamically unserialize subject
                        * datetime - literal presentation, extra space between date and time
                        * real to literal: tailing space
                        * matrix: test matrix operations
