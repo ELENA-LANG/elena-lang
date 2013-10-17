@@ -15,7 +15,7 @@
             control from:0 &till:aLength &do: &&:j
             [
                 #var anAltChar := aShuffled@j.
-                (anAltChar != aChar)and:[ anAltChar != aLiteral@i ]and:[aChar != aLiteral@j] ?
+                (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
                     [
                         arrayControl exchange:i &with:j &in:aShuffled.
                         
@@ -49,7 +49,7 @@
         #var aShuffled := shuffle:aWord.
 
         console write:"The best shuffle of " write:aWord write:" is " write:aShuffled write:"(" 
-            writeLine:(scoreShuffle:aWord:aShuffled).
+            write:(scoreShuffle:aWord:aShuffled) writeLine:")".
     ].
 
     console readChar.

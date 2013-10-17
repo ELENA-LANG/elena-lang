@@ -22,7 +22,7 @@ ELC:
 Samples:
 [+] console: datetime, matrix, textdb, translit
 [+] rosseta code: ackermann, anagram, arithmeticint, arithmmean, arrayconcat,
-    arraymode, associatearrays, bestshuffle
+    arraymode, associatearrays, bestshuffle, binary, brackets
 
 ******************************************************************************
                     What's New in 1.9.9.9 (beta)

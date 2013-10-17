@@ -224,6 +224,37 @@ inline core_api'xor (n1:int, n2:int, n3:out int)
 
 end
 
+// ; !n1 => n2
+inline core_api'invert (n1:int, n2:out int)
+
+  pop  eax
+  pop  ecx
+  mov  ebx, [ecx]
+  not  ebx
+  mov  [eax], ebx
+
+end
+
+// ; n1 << n2 => n3
+inline core_api'shift (n1:int, n2:int, n3:out int)
+
+  pop eax
+  pop ecx
+  pop ebx
+  mov ecx, [ecx]
+  mov edx, [ebx]
+  and ecx, ecx
+  jns short lab1
+  neg ecx
+  shl edx, cl
+  jmp short lab2
+lab1:
+  shr edx, cl
+lab2:
+  mov [eax], edx
+
+end
+
 // l1 << l2
 inline core_api'write (l1:out long, l2:long)
 
@@ -801,7 +832,81 @@ inline core_api'xor (l1:long, l2:long, l3:out long)
   xor ecx, esi
   
   mov [eax], ebx
-  mov [eax+4], ecx
+  mov [eax+4], ecx                                                                    
+
+end
+
+// --- LONG_SHIFT (DEST, OFFSET) ---
+
+inline core_api'shift (l1:long, n2:int, l3:out long)
+
+  pop  eax
+  pop  ecx
+  pop  esi
+  mov  ecx, [ecx]
+  mov  ebx, [esi]
+  mov  edx, [esi+4]
+
+  and  ecx, ecx
+  jns  short LR
+  neg  ecx
+
+  cmp  cl, 40h 
+  jae  short lErr
+  cmp  cl, 20h
+  jae  short LL32
+  shld edx, ebx, cl
+  shl  ebx, cl
+  jmp  short lEnd
+
+LL32:
+  mov  edx, ebx
+  xor  ebx, ebx
+  and  cl, 1Fh
+  shl  edx, cl 
+  jmp  short lEnd
+
+LR:
+
+  cmp  cl, 64
+  jae  short lErr
+
+  cmp  cl, 32
+  jae  short LR32
+  shrd ebx, edx, cl
+  sar  edx, cl
+  jmp  short lEnd
+
+LR32:
+  mov  ebx, edx
+  sar  edx, 31
+  and  cl, 31
+  sar  ebx, cl
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  jmp  short lEnd2
+
+lEnd:
+  mov  [eax], edx
+  mov  [eax+4], ebx
+
+lEnd2:
+
+end
+
+// ; !l1 => l2
+inline core_api'invert (n1:long, n2:out long)
+
+  pop  eax
+  pop  ecx
+  mov  ebx, [ecx]
+  mov  edx, [ecx+4]
+  not  ebx
+  not  edx
+  mov  [eax], ebx
+  mov  [eax+4], edx
 
 end
 
@@ -2941,5 +3046,67 @@ lab2:
   xor  ebx, ebx
   mov  word ptr [esi], bx
   pop  eax
+
+end
+
+inline core_api'rnd_init (l1:long)
+
+  sub  esp, 8h
+  mov  eax, esp
+  sub  esp, 10h
+  lea  ebx, [esp]
+  push eax 
+  push ebx
+  push ebx
+  call extern 'dlls'kernel32.GetSystemTime
+  call extern 'dlls'kernel32.SystemTimeToFileTime
+  add  esp, 10h
+  pop  ebx
+  pop  edx
+  pop  eax
+  mov  [eax], ebx
+
+end
+
+inline core_api'rnd_next (l1:long,n2:int,n3:out int)
+
+   mov  ecx, [esp+4]
+   cmp  [ecx], 0
+   jz   short labEnd
+
+   mov  eax, [esp+8]
+   mov  ebx, [eax+4] // NUM.RE
+   mov  esi, [eax]   // NUM.FR
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   mul  esi
+   add  eax, ecx
+   xchg eax, esi
+   mul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, [esp+8]
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx] , esi
+   cdq
+   mov  ecx, [esp+4]
+   mov  ecx, [ecx]
+   idiv ecx
+   mov  eax, [esp]
+   mov  [eax], edx
+labEnd:
+   lea  esp, [esp+12]
+   ret
 
 end

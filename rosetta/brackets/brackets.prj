@@ -1,12 +1,14 @@
 [project]
 executable=brackets.exe
-template=win32_console2
+options=-xembed-
+namespace=brackets
+template=console
 debuginfo=-1
 warn:unresolved=0
-options=-xembed-
 
 [files]
 brackets.l
 
 [forwards]
-'entry=brackets'program
+'program=brackets'program
+

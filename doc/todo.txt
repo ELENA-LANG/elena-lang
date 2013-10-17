@@ -20,8 +20,7 @@ v  - vm script
 Currently:
 ------
               sdev - rosetta samples              
-                       * bestshuffle
-                       * ...
+                       * bestshuffle                       
 <=================>
 
 1.9.9.10
@@ -33,6 +32,8 @@ week2: [22.10]
                        * interpreter
 
               sdev - rosetta samples              
+                       * bullscows 
+                       * ...
                        * amb
                        * arithmeval
 
@@ -348,6 +349,7 @@ week1:
                        * reuse ecode compiling code (at least string to bytecode routine)
                        
               idev - usability
+                       * upper / lower case does not work
                        * reimplement cleanUp
                        * recognize out of memory exception
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)

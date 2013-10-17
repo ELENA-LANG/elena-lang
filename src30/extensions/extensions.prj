@@ -17,4 +17,5 @@ dynamic\interpreter.l
 convertors.l
 math\matrix.l
 math\functions.l
+random.l
 

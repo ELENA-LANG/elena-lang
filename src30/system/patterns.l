@@ -308,3 +308,25 @@
     
     #method => theVariable.
 }
+
+// --- DownCounter ---
+
+#class DownCounter
+{
+    #field theAction.
+    
+    #constructor new : anAction
+    [
+        theAction := anAction.
+    ]
+    
+    #method eval : aCounter
+    [
+        theAction eval:aCounter.
+    ]
+    
+    #method for : aCounter
+    [
+        control from:aCounter &backTo:0 &do:$self.
+    ]
+}

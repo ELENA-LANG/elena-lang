@@ -33,9 +33,20 @@
     #method divide : anOperand = $self divide::anOperand.
 }
 
+// --- IntBaseNumber ---
+
+#class IntBaseNumber : BaseNumber
+{
+    #method and : anOperand = $self and::anOperand.
+    
+    #method or : anOperand = $self or::anOperand.
+    
+    #method xor : anOperand = $self xor::anOperand.
+}
+
 // --- intnumber ---
 
-#class IntNumber : BaseNumber
+#class IntNumber : IntBaseNumber
 {
     #field(type:int)theData.
 
@@ -113,16 +124,21 @@
     #method divide &type'real:anOperand
         = RealNumber new &type'int:$self divide &type'real:anOperand.
 
+    #method shift : anOrder
+        = IntNumber new &type'int:(system'external'CoreAPI shift &type'int:$self &type'int::anOrder).
+
     #method Literal = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:10) &type'int:$self.
 
     #method Negative = 0 - $self.
-    
+
+    #method Inverted = IntNumber new &type'int:(system'external'CoreAPI invert &type'int:$self).
+            
     #method <= &&type'int:$self.
 }
 
 // --- longnumber ---
 
-#class LongNumber : BaseNumber
+#class LongNumber : IntBaseNumber
 {
     #field(type:long)theData.
 
@@ -203,10 +219,15 @@
     #method divide &type'real:anOperand
         = RealNumber new &type'long:$self divide &type'real:anOperand.
 
+    #method shift : anOrder
+        = LongNumber new &type'long:(system'external'CoreAPI shift &type'long:$self &type'int::anOrder).
+
     #method Literal = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:20) &type'long: theData.
 
     #method Negative = 0l - $self.
 
+    #method Inverted = LongNumber new &type'long:(system'external'CoreAPI invert &type'long:$self).
+            
     #method <= &&type'long:$self.
 }
 
@@ -295,6 +316,11 @@
     #constructor new &type'short:aCode
     [
         theData << aCode.
+    ]
+
+    #constructor new &type'widestr:aValue
+    [
+        theData << (aValue getAt:0) type'short.
     ]
 
     #method type'short = $self.
