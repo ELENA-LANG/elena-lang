@@ -9,7 +9,7 @@
 
 #symbol randomBrackets = &&:aLength
 [
-    #var aBrackets := Array new &type'length:aLength &action:[ CharValue new:"[" ] + Array new &type'length:aLength &action:[ CharValue new:"]" ].
+    #var aBrackets := Array new &type'length:aLength &action: &&:i[ CharValue new:"[" ] + Array new &type'length:aLength &action: &&:i[ CharValue new:"]" ].
     
     randomControl randomize:(aLength * 2) &array:aBrackets.
     
@@ -20,7 +20,7 @@
 [
     #var aCounter := Integer new:0.
 
-    control foreach:aLiteral &do: &&:aChar [ aCounter append:(aChar => "[" ? [ 1 ] "]" ? [ -1 ]). ].
+    control foreach:aLiteral &until: &&:aChar [ aCounter append:(aChar => "[" ? [ 1 ] "]" ? [ -1 ]) < 0 ].
 
     ^ (0 == aCounter).
 ].

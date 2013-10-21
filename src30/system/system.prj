@@ -7,10 +7,10 @@ warn:unresolved=0
 
 [files]
 object.l
-groups.l
 control.l
 exceptions.l
 basic.l
+groups.l
 patterns.l
 memory.l
 win32_datetime.l

@@ -3107,6 +3107,5 @@ Lab1:
    mov  [eax], edx
 labEnd:
    lea  esp, [esp+12]
-   ret
 
 end

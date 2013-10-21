@@ -664,29 +664,7 @@ inline void loadVerbs(MessageMap& verbs)
    addVerb(verbs, DELETE_MESSAGE,     DELETE_MESSAGE_ID);
    addVerb(verbs, RUN_MESSAGE,        RUN_MESSAGE_ID);
    addVerb(verbs, INSERT_MESSAGE,     INSERT_MESSAGE_ID);
-   addVerb(verbs, SAVE_MESSAGE,       SAVE_MESSAGE_ID);
-
-//   addVerb(verbs, NEXT_MESSAGE,       NEXT_MESSAGE_ID);
-//   addVerb(verbs, IFEQUAL_MESSAGE,    IFEQUAL_MESSAGE_ID);
-//   addVerb(verbs, IFLESS_MESSAGE,     IFLESS_MESSAGE_ID);
-//   addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
-//   addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
-//   addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
-//   addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
-//   addVerb(verbs, ISNOT_MESSAGE,      ISNOT_MESSAGE_ID);
-//   addVerb(verbs, CLONE_MESSAGE,      CLONE_MESSAGE_ID);
-//   //verbs.add(REWIND_MESSAGE,     REWIND_MESSAGE_ID);
-//   addVerb(verbs, WAIT_MESSAGE,       WAIT_MESSAGE_ID);
-//   addVerb(verbs, LOAD_MESSAGE,       LOAD_MESSAGE_ID);
-//   addVerb(verbs, OPEN_MESSAGE,       OPEN_MESSAGE_ID);
-//   addVerb(verbs, FREE_MESSAGE,       FREE_MESSAGE_ID);
-//   addVerb(verbs, REFRESH_MESSAGE,    REFRESH_MESSAGE_ID);
-//   addVerb(verbs, PROCEED_MESSAGE,    PROCEED_MESSAGE_ID);
-//   //verbs.add(IN_MESSAGE,         IN_MESSAGE_ID);
-//   addVerb(verbs, CREATE_MESSAGE,     CREATE_MESSAGE_ID);
-//   addVerb(verbs, REPLACE_MESSAGE,    REPLACE_MESSAGE_ID);
-//   //verbs.add(INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
-//   addVerb(verbs, BACK_MESSAGE,       BACK_MESSAGE_ID);
+   addVerb(verbs, ITERATE_MESSAGE,    ITERATE_MESSAGE_ID);
 }
 
 } // _ELENA_

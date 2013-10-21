@@ -308,6 +308,9 @@
         theData << 0.
     ]
     
+    #constructor new : aValue
+        <= new::aValue.
+    
     #constructor new &type'int:aCode
     [
         theData << aCode.
@@ -339,6 +342,9 @@
 
     #method less &type'short:anOperand 
         = $self less &type'int:anOperand .
+
+    #method equal &type'widestr:aLiteral
+        = aLiteral equal &type'short:$self.
 
     #method Number = IntNumber new &type'int:theData.
 

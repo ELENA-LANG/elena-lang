@@ -1,37 +1,41 @@
-Protocols
----------
-bool::
-   inverted                       = bool
+Operations
+==========
+equal    : object   => bool
+notequal : object   => bool
+and      : object   => bool
+or       : object   => bool
+xor      : object   => bool
+run      : action  
+iterate  : function
 
+Protocols
+=========
+action::
+   eval   
+
+bool_action::
+   eval                           = bool
+
+function::
+   eval     : object
+
+bool::
    then     : action              = object 
    then     : action &else:action = object
    else     : action              = object
-   and      : bool                = bool 
-   or       : bool                = bool 
-   xor      : bool                = bool 
-   equal    : bool                = bool
-   notequal : bool                = bool
+   and      : bool/bool_action    = bool 
+   or       : bool/bool_action    = bool 
+   xor      : bool/bool_action    = bool 
+   equal    : bool/bool_action    = bool
+   notequal : bool/bool_action    = bool
+   inverted                       = bool
 
-action::
-   eval
+interator::
+   get                            = object
+   next                           = bool
 
-bool_action::
-   eval = bool
-
-enumerator::
-   next = bool
-   get  = object
-
-Properties
-----------
-Literal    = type'widestr
-Enumerator = enumerator
-   
-Signatures
------
-&if:bool/bool_action
-&until:bool/bool_action
-&each:enumerator
-&for:variable&from:value&to:value&by:value
-
-
+Subjects
+========
+if   :bool/bool_action
+until:bool/bool_action
+each :interator

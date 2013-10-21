@@ -69,19 +69,8 @@ namespace _ELENA_
    #define DELETE_MESSAGE_ID       0x002A
    #define DO_MESSAGE_ID           0x002B
    #define INSERT_MESSAGE_ID       0x002C
-   #define SAVE_MESSAGE_ID         0x0006
-//   #define NEXT_MESSAGE_ID         0x001E
-//  // #define IN_MESSAGE_ID           0x0027
-//  // #define CREATE_MESSAGE_ID       0x002A
-//  // #define REWIND_MESSAGE_ID       0x002D
-//  // #define WAIT_MESSAGE_ID         0x002E
-//  // #define LOAD_MESSAGE_ID         0x0030
-//  // #define OPEN_MESSAGE_ID         0x0036
-//  // #define FREE_MESSAGE_ID         0x0038
-//  // #define REFRESH_MESSAGE_ID      0x0039
-//  // #define PROCEED_MESSAGE_ID      0x003B
-//  // #define DISPATCH_MESSAGE_ID     0x003D
-//  // #define REPLACE_MESSAGE_ID      0x003E
+   #define SAVE_MESSAGE_ID         0x002D
+   #define ITERATE_MESSAGE_ID      0x002E
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -332,6 +321,7 @@ namespace _ELENA_
    #define RUN_MESSAGE              "run"
    #define INSERT_MESSAGE           "insert"
    #define SAVE_MESSAGE             "save"
+   #define ITERATE_MESSAGE          "iterate"
 
 //   #define NEXT_MESSAGE             "next"
 

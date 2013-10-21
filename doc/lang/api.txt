@@ -1,22 +1,46 @@
-I) Patterns
+//************************************************************************
+//* Console:                                                             *
+//************************************************************************
+Console write: "Hello World".                                 // output string in console
+Console writeLine: "Hello World".                             // output string in console followed by the line terminator
 
-<t>'value =
-   ::save(<t>'writer)
+//************************************************************************
+//* Assignment:                                                          *
+//************************************************************************
+#var x := 4.                                                  // new variable
+x := 5.                                                       // assignment
+x := Object new.                                              // allocated instance of a class
 
-<t>'writer =
-   ::<t>'write(<t>) = <t>
+//************************************************************************
+//* Constants:                                                           *
+//************************************************************************
+#var b := true.                                               // true constant
+b := false.                                                   // false constant
+b := nil.                                                     // nil object constant
+x := 1.                                                       // integer constants
+x := 3.14r.                                                   // float constants
+x := -1.                                                      // negative constants
+x := "Hello".                                                 // string constant
+x := "I""m here".                                             // single quote escape
+x := symbol.                                                  // symbol constants
+x := (3, 2, 1).                                               // array constants
+x := ("abc", 2, 2.3r).                                        // mixing of types allowed
 
-<t>'arithmetic =
-    ::add(<t>'value) = <t>
-    ::subtract(<t>'value) = <t>
-    ::multiply(<t>'value) = <t>
-    ::divide(<t>'value) = <t>
-
-II) Common interfaces
-
-III) Interfaces
-
-
-IV) Classes
-
-V) Symbols
+//************************************************************************
+//* Booleans:                                                            *
+//************************************************************************
+#var x := 1.
+#var y := 2.
+#var b := (x == y).                                           // equals
+b := (x != y).                                                // not equals
+b := (x equal &type'object: y).                               // identical
+b := (x > y).                                                 // greater than
+b := (x < y).                                                 // less than"
+b := (x >= y).                                                // greater than or equal
+b := (x <= y).                                                // less than or equal
+b := b not.                                                   // boolean not
+b := (x < 5) and: (y > 1).                                    // boolean and
+b := (x < 5) or: (y > 1).                                     // boolean or
+b := (x < 5) and: [y > 1].                                    // boolean and (short-circuit)
+b := (x < 5) or: [y > 1].                                     // boolean or (short-circuit)
+b := (x < 5) xor: (y > 1).                                    // test if one true and other false

@@ -143,6 +143,14 @@
             [ (self @ i) Clone ].
 }
 
+// --- EEnumerator ---
+
+#class(role)EEnumerator
+{
+    #method iterate : aFunction
+        = control while:[ self next ] &do: [ aFunction:self. ].
+}
+
 // --- listControl ---
 
 #symbol listControl =
@@ -327,6 +335,6 @@
     
     #method for : aCounter
     [
-        control from:aCounter &backTo:0 &do:$self.
+        $self~EAction reverse &for:(Integer new) &from:0 &till:aCounter &by:1.
     ]
 }

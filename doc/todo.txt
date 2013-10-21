@@ -19,63 +19,13 @@ v  - vm script
 ------
 Currently:
 ------
-              sdev - rosetta samples              
-                       * bestshuffle                       
+
 <=================>
 
 1.9.9.10
 --------
 
-week2: [22.10]
-               sdev - console samples
-                       * calculator
-                       * interpreter
-
-              sdev - rosetta samples              
-                       * bullscows 
-                       * ...
-                       * amb
-                       * arithmeval
-
-               sdev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * words: sort the list
-                       * simplify bsort
-
-              adev - dynamic programming
-                       * deserialize object
-              adev - lib30
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range
-                              
-                       * arrayiterator / array / literalvalue:setat, ... - raise an exception if the index
-                         out of range                       
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       * system'$consolehandler: if the returning handler is -1
-                         the exception should be raised (probably special method attributes like 
-                         invalid_result and exception)
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * system'Array: raise an exception if getAt goes out of range
-                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
-                       * EReflector: raise an exception if NameOf returns zero
-                       * common pattern: append list item separated by comma
-                       * timespan: constructor?
-                       * time: add month, year, hour, ...?
-                       * date: set day???
-                       * date: custom presenter / formatter / custom formatter
-                       * extensions'EIntPresenter / EIntFormatter - can it work both for int and long numbers?
-                       * list / iterators / ... - can commutator be used instead of adapter roles
-
-            smaint - testing
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
-week3:
+week3: [2.11]
               sdev - vmconsole
                        * migrate
 
@@ -131,6 +81,8 @@ week1:
                        * break inside if inside loop - should break loop ??
 
                        * custom verb dispatching (see for example stringControl split&by[2])
+
+                       * primitive exception handling for the operator e.g. LiteralValue getAt&type'index - index out of the range
 
                        * for loop: review for implementation algorithm can we simplify it??
 
@@ -367,11 +319,63 @@ week1:
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                        
 week2:
-               adev - api
-                       * it should be possible to compare integer and value - the result is false
-                       * review / simplify code
+              adev - lib30
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html: Arithmetic expressions
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+                         
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
 
-               sdev - review
+                              
+                       * arrayiterator / array / literalvalue:setat, ... - raise an exception if the index
+                         out of range                       
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       * system'$consolehandler: if the returning handler is -1
+                         the exception should be raised (probably special method attributes like 
+                         invalid_result and exception)
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * time: add month, year, hour, ...?
+                       * date: set day???
+                       * date: custom presenter / formatter / custom formatter
+                       * extensions'EIntPresenter / EIntFormatter - can it work both for int and long numbers?
+                       * list / iterators / ... - can commutator be used instead of adapter roles
+
+              adev - api                                 
+                       * review / simplify code : system'EAction (iterate&for&from&till&by)
+              sdev - console samples
+                       * calculator
+                       * interpreter
+                       
+              sdev - rosetta samples              
+                       * arrays : simplify
+                       * bullscows 
+                       * ...
+                       * amb
+                       * arithmeval
+
+              sdev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * words: sort the list
+                       * simplify bsort
+
+              adev - dynamic programming
+                       * deserialize object
+
+            smaint - testing
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+              adev - api
+                       * it should be possible to compare integer and value - the result is false
+
+              sdev - review
                        * review / simplify code
 
               sdev - rosetta samples              

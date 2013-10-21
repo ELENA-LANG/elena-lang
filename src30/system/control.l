@@ -25,12 +25,14 @@
     
     xor &action:aBoolExpr = aBoolExpr eval ? [ false ] ! [ true ].
             
+    equal : aBool <= equal::aBool.
+    
     equal &bool:aBool <= equal &type'object:aBool.
             
     equal &action:aBoolExpr 
         = $self equal &bool:(aBoolExpr eval).
             
-    inverted = false.
+    not = false.
 
     Literal = "true".
 
@@ -66,12 +68,14 @@
     
     xor &action:anExpr = anExpr eval ? [ true ] ! [ false ].
 
+    equal : aBool <= equal::aBool.
+    
     equal &bool:aBool <= equal &type'object:aBool.
             
     equal &action:aBoolExpr 
         = $self equal &bool:(aBoolExpr eval).
             
-    inverted = true.
+    not = true.
 
     Literal = "false".
 
@@ -100,7 +104,7 @@
         ].
     ]    
     
-    #method run &each:anEnumerator
+    #method iterate &each:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -110,17 +114,7 @@
         ^ nil.        
     ]
     
-    #method run &for:anIterator
-    [
-        #loop (anIterator next) ?
-        [
-            self eval:anIterator.
-        ].        
-        
-        ^ nil.        
-    ]
-    
-    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
+    #method iterate &for:anIterator &from:aStart &to:anEndValue &by:aStep
     [
         anIterator << aStart.
         
@@ -147,6 +141,20 @@
         
         ^ nil.
     ]    
+    
+    #method reverse &for:anIterator &from:aStart &till:anEndValue &by:aStep
+    [
+        anIterator << anEndValue.
+        
+        #loop (anIterator > aStart) ?
+        [
+            anIterator -= aStep.
+            
+            self eval:anIterator.
+        ].
+        
+        ^ nil.
+    ]    
 }
 
 // --- control ---
@@ -165,7 +173,7 @@
         = anAction~EAction run &if:anExpr | stop.
 
     foreach:anEnumerable &do:anAction
-        = anAction~EAction run &each:(anEnumerable Enumerator) | stop.
+        = anAction~EAction iterate &each:(anEnumerable Enumerator) | stop.
 
     foreach:anEnumerable &until:anAction
     [
@@ -187,16 +195,16 @@
     ]
 
     for:anIterator &do:anAction
-     = anAction~EAction run &for:anIterator | stop.
+     = anAction~EAction iterate &for:anIterator | stop.
 
     for:anIterator &from:aStart &to:anEndValue &by:aStep &do:anAction
-        = anAction~EAction run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
+        = anAction~EAction iterate &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
 
     from:aStart &to:anEndValue &do:anAction
-        = anAction~EAction run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
+        = anAction~EAction iterate &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
             
     from:aStart &till:anEndValue &do:anAction
-        = anAction~EAction run &for:(system'Integer new) &from:aStart &to:(-1 + anEndValue) &by:1 | stop.
+        = anAction~EAction iterate &for:(system'Integer new) &from:aStart &to:(-1 + anEndValue) &by:1 | stop.
             
     for:anIterator &from:aStart &backTo:anEndValue &by:aStep &do:anAction
         = anAction~EAction reverse &for:anIterator &from:anEndValue &to:aStart &by:aStep | stop.

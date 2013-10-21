@@ -4,6 +4,6 @@
 [
     #var anArray := (1, 2, 3).
 
-    control for:(anArray Enumerator) &do: &&:it
-        [ console write:"a[" write:(it Index) write:"]=" writeLine:(it get) ].
+    control from:0 &till:(anArray Count) &do: &&:i
+        [ console write:"a[" write:i write:"]=" writeLine:(anArray@i) ].
 ].

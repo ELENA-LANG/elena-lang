@@ -51,7 +51,7 @@
     #method $readBuffer
         = theOutput indexOf &type'index:0 &type'widechar:10.
 
-    #method EOF = theOpen inverted.
+    #method EOF = theOpen not.
 
     #method readLine
     [

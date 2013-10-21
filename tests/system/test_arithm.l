@@ -328,6 +328,8 @@
 
 #symbol LiteralTest =
 [
+    "abc" getAt:-1.
+    
     #var b1 := "abc" == "abc".
     #var b2 := "ab" == "abc".
     #var b3 := "ba" > "ab".
