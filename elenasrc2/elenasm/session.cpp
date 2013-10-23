@@ -28,8 +28,33 @@ void ScriptLog :: compile(TextReader* source, Terminal* terminal)
    DynamicString<wchar16_t> line;
    MemoryWriter writer(&_log);
    while (source->readString(line, buffer)) {
-      writer.writeWideLiteral(line, line.Length());
+      int offset = 0;
+      int index = line.find('$');
+      while (index != -1) {
+         writer.writeWideLiteral(line + offset, index);
+         if (ConstantIdentifier::compare(line + offset + index, "$terminal")) {
+            writer.writeWideLiteral(terminal->value, getlength(terminal->value));
+            index += 9;
+         }
+         else if (ConstantIdentifier::compare(line + offset + index, "$literal")) {
+            writer.writeWideChar('"');
+            writer.writeWideLiteral(terminal->value, getlength(terminal->value));
+            writer.writeWideChar('"');
+            index += 8;
+         }
+         else {
+            writer.writeWideChar('$');
+            index++;
+         }
+
+         offset += index;
+         index = line.find(offset, '$');
+      }
+
+      writer.writeWideLiteral(line + offset, line.Length() - offset);
    }
+   writer.writeWideChar('\r');
+   writer.writeWideChar('\n');
 }
 
 void* ScriptLog :: generate()

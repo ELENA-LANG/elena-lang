@@ -12,12 +12,12 @@
 
 using namespace _ELENA_;
 
-#define MAX_LINE     256
+#define MAX_LINE           256
+#define ELT_BUILD_NUMBER   2
 
 // global variables
 bool  _running = true;
 //int   _encoding = feAnsi;
-//bool  _tracing = false;
 
 // terminal session
 String<wchar16_t, 1024> _script;
@@ -45,103 +45,12 @@ String<wchar16_t, 1024> _script;
 ////      wprintf(_T("@merge\n"));
 ////   }
 ////}
-//
-//void printTape(void* tape)
-//{
-//   size_t base = (size_t)tape;
-//
-//   ByteArray dump(tape, -1);
-//   MemoryReader reader(&dump);
-//
-//   size_t command = reader.getDWord();
-//   const wchar16_t* prefix = NULL;
-//   bool withRole = false;
-//   while (command != 0) {
-//      size_t param = reader.getDWord();
-//      reader.seek(reader.getDWord());
-//
-//      switch(command) {
-//         //case COPY_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@copy sp[%d] \n"), param);
-//         //   break;
-//         //case GET_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@copy fp[%d] \n"), param);
-//         //   break;
-//         //case CALL_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@call %s\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case VERB_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@verb %s\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case SIGN_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@sign %s\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case PARAM_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@param %d\n"), param);
-//         //   break;
-//         ////case PUSH_TAPE_MESSAGE_ID:
-//         ////   wprintf(_T("@push %s\n"), (const wchar16_t*)(base + param));
-//         ////   break;
-//         //case PUSHS_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@push \"%s\"\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case PUSHN_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@push %s\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case PUSHR_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@push %sr\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case PUSHL_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@push %sl\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case PUSHM_TAPE_MESSAGE_ID:
-//         //case PUSHV_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@push %% %s\n"), (const wchar16_t*)(base + param));
-//         //   break;
-//         //case PREFIX_TAPE_MESSAGE_ID:
-//         //   prefix = (const wchar16_t*)(base + param);
-//         //   break;
-//         //case POP_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@pop %d\n"), param);
-//         //   break;
-//         //case PUSH_EMPTY_MESSAGE_ID:
-//         //   wprintf(_T("@push <empty>\n"));
-//         //   break;
-//         //case NEW_TAPE_MESSAGE_ID:
-//         //   wprintf(_T("@new[%d] %s\n"), param, prefix);
-//         //   prefix = NULL;
-//         //   break;
-//         //case NEW_ARG_MESSAGE_ID:
-//         //   wprintf(_T("@new[] %s\n"), prefix);
-//         //   break;
-//         //case GROUP_TAPE_MESSAGE_ID:
-//         //   printMerge((const wchar16_t*)(base + param));
-//         //   break;
-//         case USE_VM_MESSAGE_ID:
-//            wprintf(_T("@use %s\n"), (const wchar16_t*)(base + param));
-//            break;
-//         case MAP_VM_MESSAGE_ID:
-//            wprintf(_T("@map %s\n"), (const wchar16_t*)(base + param));
-//            break;
-//         case LOAD_VM_MESSAGE_ID:
-//            wprintf(_T("@config %s\n"), (const wchar16_t*)(base + param));
-//            break;
-//         case START_VM_MESSAGE_ID:
-//            wprintf(_T("@start\n"));
-//            break;
-//         //case POP_ROLE_MESSAGE_ID:
-//         //   wprintf(_T("@pop role\n"));
-//         //   withRole = true;
-//         //   break;
-//         default:
-//            printMessage(command, withRole);
-//            withRole = false;
-//            break;
-//      }
-//      command = reader.getDWord();
-//   }
-//}
-//
+
+void printTape(void* tape)
+{
+   wprintf((const wchar16_t*)tape);
+}
+
 ////void split(const TCHAR* p1, const TCHAR* &p2, int& p1_len)
 ////{
 ////   p1_len = 0;
@@ -173,9 +82,11 @@ void printHelp()
 //   printf("-Ninline<script>     - execute an inline script\n");
 //   printf("-mcf                 - set CF parser mode\n");
 //   printf("-moff                - set script mode\n");
-//   printf("-l [name=]<path>             - load a script from file\n");
    printf("-i <script>            - execute inline script\n");
-   printf("-lc [name=]<path>      - generate CF parser from from file\n");
+   printf("-l [name=]<path>       - execute a script from file\n");
+   printf("-lt [name=]<path>      - disassemble a script from file\n");
+   printf("-lc [name=]<path>      - generate CF parser from file\n");
+   printf("-li <path>             - load an inline script from file\n");
    printf("<script>               - execute script\n");
 //   printf("-Lxc<path>          - generate character-oriented CF parser from from file\n");
 //   printf("-lr<path>         - generate LALR parser from from file\n");
@@ -222,6 +133,16 @@ void loadScript(const wchar16_t* line)
 
       line++;
    }
+   else if(line[0]=='i') {
+      grammarName.copy("inline");
+
+      line++;
+   }
+   else if(line[0]=='t') {
+      mode = TRACE_MODE;
+
+      line++;
+   }
    line = trim(line);
 
    int nameIndex = StringHelper::find(line, '=');
@@ -234,13 +155,13 @@ void loadScript(const wchar16_t* line)
    void* tape = TranslateLVMFile(grammarName, line, feAnsi, true, mode);
 
    if (tape != NULL && (size_t)tape != -1) {
-      //if (_tracing) {
-      //   printTape(tape);
-      //}
-      //else {
+      if (mode == TRACE_MODE) {
+         printTape(tape);
+      }
+      else {
          if (InterpretLVM(tape) == 0)
             wprintf(_T("\nFailed:%s"), GetLVMStatus());
-//      }
+      }
 
       FreeLVMTape(tape);
    }
@@ -348,7 +269,7 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line VM terminal %d.%d.0 (C)2011-2013 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+   printf("ELENA command line VM terminal %d.%d.%d (C)2011-2013 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
 //   _grammarName.copy(_T("inline"));
 //
@@ -365,6 +286,10 @@ int main(int argc, char* argv[])
 
             String<wchar_t, 260> param;
             param.copy(argv[i]);
+            // if the parameter is followed by argument
+            if (i + 1 < argc && argv[i+1][0] != '-') {
+               param.append(argv[i + 1]);
+            }
 
             executeCommand(param + 1);
          }

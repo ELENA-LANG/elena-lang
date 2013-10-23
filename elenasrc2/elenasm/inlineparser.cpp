@@ -12,6 +12,7 @@ using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
 #define TERMINAL_KEYWORD      "$terminal"
+#define LITERAL_KEYWORD       "$literal"
 
 // --- verbs ---
 
@@ -184,52 +185,72 @@ void InlineParser :: parseMessage(TextSourceReader& source, wchar16_t* token, Te
 {
    IdentifierString message("0"); 
 
-   LineInfo info;
-   info = source.read(token, IDENTIFIER_LEN);
+   int verbId = 0;
+   LineInfo info = source.read(token, IDENTIFIER_LEN);
    
-   int verbId = mapVerb(token);
+   if (ConstantIdentifier::compare(token, TERMINAL_KEYWORD)) {
+      if (terminal->state != dfaIdentifier)
+         throw EParseError(terminal->col, terminal->row);
+
+      verbId = mapVerb(terminal->value);
+   }
+   else verbId = mapVerb(token);
+
    if (verbId == 0)
       throw EParseError(info.column, info.row);
 
-   message.append('#');
-   message.append(0x20 + verbId);
-
-   info = source.read(token, IDENTIFIER_LEN);
-   while (token[0]!='(') {
-      if (token[0] == '&') {
-         message.append(token);
-      }
-      else throw EParseError(terminal->col, terminal->row);
-
-      info = source.read(token, IDENTIFIER_LEN);
-      message.append(token);
-
-      info = source.read(token, IDENTIFIER_LEN);
+   if (command == DSEND_TAPE_MESSAGE_ID) {
+      _writer.writeCommand(command, verbId);
    }
+   else {
+      message.append('#');
+      message.append(0x20 + verbId);
+
+      info = source.read(token, IDENTIFIER_LEN);
+      while (token[0]!='(') {
+         if (token[0] == '&') {
+            message.append(token);
+         }
+         else throw EParseError(terminal->col, terminal->row);
+
+         info = source.read(token, IDENTIFIER_LEN);
+         message.append(token);
+
+         info = source.read(token, IDENTIFIER_LEN);
+      }
+
+      info = source.read(token, IDENTIFIER_LEN);
+      if (info.state != dfaInteger)
+         throw EParseError(info.column, info.row);
+
+      size_t paramCount = StringHelper::strToInt(token);
+
+      info = source.read(token, IDENTIFIER_LEN);
+      if (token[0] != ')')
+         throw EParseError(terminal->col, terminal->row);
+
+      message[0] = message[0] + paramCount;
+
+      _writer.writeCommand(command, message);
+   }
+}
+
+void InlineParser :: parseDynamicArray(TextSourceReader& source, wchar16_t* token, Terminal* terminal)
+{
+   LineInfo info;
 
    info = source.read(token, IDENTIFIER_LEN);
-   if (info.state != dfaInteger)
-      throw EParseError(info.column, info.row);
 
-   size_t paramCount = StringHelper::strToInt(token);
+   // if it is dynamic message operation
+   if(ConstantIdentifier::compare(token, "^")) {
+      parseMessage(source, token, terminal, DSEND_TAPE_MESSAGE_ID);
+   }
+   else throw EParseError(info.column, info.row);
+}
 
-   info = source.read(token, IDENTIFIER_LEN);
-   if (token[0] != ')')
-      throw EParseError(terminal->col, terminal->row);
-
-   message[0] = message[0] + paramCount;
-
-   _writer.writeCommand(command, message);
-
-   //   if (StringHelper::compare(token, TERMINAL_KEYWORD)) {
-   //      if (terminal->state != dfaIdentifier)
-   //         throw EParseError(terminal->col, terminal->row);
-
-   //      messageId = mapVerb(terminal->value);
-   //   }
-   //   else messageId = mapVerb(token);
-   //}
-   //else throw EParseError(info.column, info.row);
+void InlineParser :: parseVariable(TextSourceReader& source, wchar16_t* token)
+{
+   _writer.writeCommand(PUSH_VAR_MESSAGE_ID, StringHelper::strToInt(token));
 }
 
 void InlineParser :: compile(TextReader* script, Terminal* terminal)
@@ -249,12 +270,12 @@ void InlineParser :: compile(TextReader* script, Terminal* terminal)
       else if(info.state == dfaKeyword) {
          parseVMCommand(source, token + 1);
       }
-//      // if it is a quote
-//      else if(info.state == dfaQuote) {
-//         QuoteTemplate<TempString> quote(info.line);
-//
-//         parseTerminal(quote, dfaQuote, info.row, info.column);
-//      }
+      // if it is a quote
+      else if(info.state == dfaQuote) {
+         QuoteTemplate<TempString> quote(info.line);
+
+         parseTerminal(quote, dfaQuote, info.row, info.column);
+      }
       //else if(ConstantIdentifier::compare(token, "@")) {
       //   parseAction(source, token/*, terminal*/);
       //}
@@ -263,6 +284,15 @@ void InlineParser :: compile(TextReader* script, Terminal* terminal)
 //      }
       else if(ConstantIdentifier::compare(token, "^")) {
          parseMessage(source, token, terminal, SEND_TAPE_MESSAGE_ID);
+      }
+      else if (ConstantIdentifier::compare(token, ".")) {
+         _writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
+      }
+      else if (ConstantIdentifier::compare(token, "(")) {
+         _writer.writeCommand(START_TAPE_MESSAGE_ID);
+      }
+      else if (ConstantIdentifier::compare(token, ")")) {
+         parseDynamicArray(source, token, terminal);
       }
 //      else if(ConstantIdentifier::compare(token, "%")) {
 //         parseMessage(source, token, terminal, PUSHM_TAPE_MESSAGE_ID);
@@ -278,10 +308,16 @@ void InlineParser :: compile(TextReader* script, Terminal* terminal)
       else if (ConstantIdentifier::compare(token, TERMINAL_KEYWORD)) {
          parseTerminal(terminal->value, terminal->state, terminal->row, terminal->col);
       }
+      // if it is a literal terminal symbol
+      else if (ConstantIdentifier::compare(token, LITERAL_KEYWORD)) {
+         _writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, terminal->value);
+      }
+      // if it is a variable
+      // should be the last one
+      else if (token[0] == '$' && isNumeric(token + 1, getlength(token + 1))) {
+         parseVariable(source, token + 1);
+      }
       else parseTerminal(token, info.state, info.row, info.column);
-//   //   else if (StringHelper::compare(token, LITERAL_KEYWORD)) {
-//   //      _writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, terminal->value);
-//   //   }
    }
    while (true);
 }

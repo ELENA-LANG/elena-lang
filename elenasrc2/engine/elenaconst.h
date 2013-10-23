@@ -96,6 +96,7 @@ namespace _ELENA_
    #define PUSHB_TAPE_MESSAGE_ID   0x05EA             // push the symbol reference
    #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
    #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
+   #define DSEND_TAPE_MESSAGE_ID   0x01EC             // send the dynamic message
    #define POP_ROLE_MESSAGE_ID     0x01ED             // use the role
    #define START_TAPE_MESSAGE_ID   0x01EE             // mark the creating object
    #define NEW_TAPE_MESSAGE_ID     0x05EE             // create an object (containing the last n objects)

@@ -511,6 +511,11 @@ public:
       return StringHelper::find(_string, ch, -1);
    }
 
+   int find(int index, T ch)
+   {
+      return StringHelper::find(_string + index, ch, -1);
+   }
+
    bool compare(const wchar16_t* s)
    {
       return StringHelper::compare(_string, s);
@@ -611,7 +616,8 @@ public:
 
    void clear()
    {
-      _string[0] = 0;
+      if (_string)
+         _string[0] = 0;
    }
 
    size_t Length()
@@ -622,6 +628,7 @@ public:
    DynamicString()
    {
       _size = 0;
+      _string = NULL;
    }
    DynamicString(const char* value)
    {

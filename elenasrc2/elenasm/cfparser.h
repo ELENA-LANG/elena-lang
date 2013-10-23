@@ -156,10 +156,11 @@ public:
       rtChomski,
       rtLiteral,
       rtNumeric,
-//      rtReference,
-//      rtIdentifier,
+      rtReference,
+      rtIdentifier,
 //      rtAny,
-      rtEps
+      rtEps,
+      rtEof
    };
 
    // --- Rule ---

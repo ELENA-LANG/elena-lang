@@ -11,9 +11,12 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
+#define REFERENCE_KEYWORD     "$reference"
+#define IDENTIFIER_KEYWORD    "$identifier"
 #define LITERAL_KEYWORD       "$literal"
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
+#define EOF_KEYWORD           "$eof"
 
 // --- ScriptReader :: Reader ---
 
@@ -274,6 +277,84 @@ bool normalNumericApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token,
    return true;
 }
 
+bool normalIdentifierApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaIdentifier)
+      return false;
+
+   return apply(rule, token, reader);
+}
+
+bool normalIdentifierApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaIdentifier)
+      return false;
+
+   Terminal terminal;
+   token.copyTo(&terminal);
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr)
+      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
+
+   return true;
+}
+
+bool normalReferenceApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaFullIdentifier)
+      return false;
+
+   return apply(rule, token, reader);
+}
+
+bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaFullIdentifier)
+      return false;
+
+   Terminal terminal;
+   token.copyTo(&terminal);
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr)
+      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
+
+   return true;
+}
+
+bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   return token.state == dfaEOF;
+}
+
+bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaEOF)
+      return false;
+
+   Terminal terminal;
+   token.copyTo(&terminal);
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
+
+   if (rule.postfixPtr)
+      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
+
+   return true;
+}
+
 bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
 {
    if (applyNonterminal(rule, token, reader)) {
@@ -358,17 +439,20 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtNumeric:
          rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
          break;
-//      case rtReference:
-//         rule.apply = normalReferenceApplyRule;
-//         break;
-//      case rtIdentifier:
-//         rule.apply = normalIdentifierApplyRule;
-//         break;
+      case rtReference:
+         rule.apply = dsaRule ? normalReferenceApplyRuleDSA : normalReferenceApplyRule;
+         break;
+      case rtIdentifier:
+         rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
+         break;
 //      case rtAny:
 //         rule.apply = anyApplyRule;
 //         break;
       case rtEps:
          rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
+         break;
+      case rtEof:
+         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
          break;
    }
 }
@@ -435,15 +519,18 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
       else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
          type = rtEps;
       }
-//      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
-//         type = rtReference;
-//      }
+      else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
+         type = rtEof;
+      }
+      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
+         type = rtReference;
+      }
 //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
 //         type = rtAny;
 //      }
-//      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
-//         type = rtIdentifier;
-//      }
+      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
+         type = rtIdentifier;
+      }
       else if(token.state == dfaQuote) {
          rule.terminal = writeBodyText(token.value);
       }
@@ -550,31 +637,14 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
    size_t startId = mapRuleId(ConstantIdentifier("start"));
 
    reader.read(token);
-   while (token.state != dfaEOF) {
-      // apply rules to build tape
-      bool recognized = false;
 
-      RuleMap::Iterator it = _rules.getIt(startId);
-      while(!it.Eof()) {
-         if (applyRule(*it, token, reader)) {
-            recognized = true;
-            break;
-         }
-         reader.seek(readerRollback);
-         compiler->trim(outputRollback);
+   if (!applyRule(startId, token, reader))
+      throw EParseError(token.column, token.row);
 
-         it = _rules.getNextIt(startId, it);
-      }
-
-      if (!recognized)
-         throw EParseError(token.column, token.row);
-
-      reader.clearCache();
-   }
+   if (token.state != dfaEOF)
+      throw EParseError(token.column, token.row);
 }
 
-//#define LITERAL_KEYWORD       "$literal"
-//
 //// --- InlineScriptParser ---
 //
 //void InlineScriptParser :: parseRole(TextSourceReader& source, wchar16_t* token, Terminal* terminal)
@@ -590,14 +660,4 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
 //   LineInfo info = source.read(token, IDENTIFIER_LEN);
 //
 //   _writer.writeCommand(NEW_TAPE_MESSAGE_ID, token);
-//}
-
-//void InlineScriptParser :: parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token)
-//{
-//   LineInfo info = source.read(token, IDENTIFIER_LEN);
-//
-//   if (info.state == dfaInteger) {
-//      _writer.writeCommand(PUSH_VAR_MESSAGE_ID, StringHelper::strToInt(token));
-//   }
-//   else throw EParseError(info.column, info.row);
 //}

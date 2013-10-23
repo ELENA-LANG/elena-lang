@@ -20,6 +20,10 @@ v  - vm script
 Currently:
 ------
 
+              sdev - prime project : calc
+                       * build object to enter and sum two numbers
+
+
 <=================>
 
 1.9.9.10
@@ -37,8 +41,6 @@ week3: [2.11]
               sdoc - tutorials
                        * post sum sample
 
-              sdev - prime project
-                       * open calc : simple inline script to enter and sum two number; think over the most simple script to write quick code
                        
               sdev - prime project
                        * interpreter
@@ -174,6 +176,9 @@ week1:
 
               xdev - ecode optimization
                        * system'object output code review (Object.equal)
+                       
+              xdev - script support
+                       * should be possible to debug vm scripts
                        
               xdev - simple optimization              
                        * do not need load acc if it is already in acc (see Object.equal)
@@ -312,8 +317,6 @@ week1:
                          (textview)
                                                                       
               xdev - elenasm
-                       * ScriptLog: replace $terminal with the actual value
-                       * support trace
                        * support LALR parser
                        * inline script improve error handling
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
@@ -386,6 +389,9 @@ week2:
 week3:
               sdev - eldoc
                        * review possible solution using script engine to define parsing rules
+
+              sdev - script engine
+                      * trace could print the result directly to console?? (so it will simplify script debugging)
 
 week4:
               xdoc - api

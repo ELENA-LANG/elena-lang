@@ -62,6 +62,8 @@ class InlineParser : public _ScriptCompiler
    void parseVMCommand(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
    //void parseAction(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token/*, Terminal* terminal*/);
    void parseMessage(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, Terminal* terminal, int command);
+   void parseDynamicArray(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, Terminal* terminal);
+   void parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
 
    void parseTerminal(const wchar16_t* token, char state, int row, int column);
 

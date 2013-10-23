@@ -12,8 +12,6 @@
 //using namespace _ELENA_TOOL_;
 //
 //#define BODY_KEYWORD          "$body"
-//#define REFERENCE_KEYWORD     "$reference"
-//#define IDENTIFIER_KEYWORD    "$identifier"
 //#define ANY_KEYWORD           "$any"
 //
 //const int mskUntracable = 0x10000;
@@ -279,52 +277,6 @@
 //}
 //
 //// --- CFPrarser Apply Rules ---
-//
-//bool normalReferenceApplyRule(CFPrarser::Rule& rule, CFPrarser::TokenInfo& token, CFPrarser::CachedScriptReader& reader, _CodeGeneator* compiler)
-//{
-//   if (token.state != dfaFullIdentifier)
-//      return false;
-//
-//   if (rule.dsaRule != 0) {
-//      Terminal terminal;
-//      token.copyTo(&terminal);
-//
-//      rule.applyPrefixDSARule(token.parser, compiler, &terminal);
-//
-//      if (!apply(rule, token, reader, compiler))
-//         throw EInvalidExpression(token.parser->mapRuleName(rule.dsaRule), token.column, token.row);
-//
-//      rule.applyPostfixDSARule(token.parser, compiler, &terminal);
-//   }
-//   else {
-//      if (!apply(rule, token, reader, compiler))
-//         throw EParseError(token.column, token.row);
-//   }
-//   return true;
-//}
-//
-//bool normalIdentifierApplyRule(CFPrarser::Rule& rule, CFPrarser::TokenInfo& token, CFPrarser::CachedScriptReader& reader, _CodeGeneator* compiler)
-//{
-//   if (token.state != dfaIdentifier)
-//      return false;
-//
-//   if (rule.dsaRule != 0) {
-//      Terminal terminal;
-//      token.copyTo(&terminal);
-//
-//      rule.applyPrefixDSARule(token.parser, compiler, &terminal);
-//
-//      if (!apply(rule, token, reader, compiler))
-//         throw EInvalidExpression(token.parser->mapRuleName(rule.dsaRule), token.column, token.row);
-//
-//      rule.applyPostfixDSARule(token.parser, compiler, &terminal);
-//   }
-//   else {
-//      if (!apply(rule, token, reader, compiler))
-//         throw EParseError(token.column, token.row);
-//   }
-//   return true;
-//}
 //
 //bool anyApplyRule(CFPrarser::Rule& rule, CFPrarser::TokenInfo& token, CFPrarser::CachedScriptReader& reader, _CodeGeneator* compiler)
 //{

@@ -166,6 +166,17 @@ inline bool isbetween(int starting, int len , int value)
    return (starting < value && value < starting + len);
 }
 
+inline bool isNumeric(const wchar16_t* s, int length)
+{
+   for (int i = 0 ; i < length ; i++)
+   {
+      if (s[i] < '0' || s[i] > '9')
+         return false;
+   }
+
+   return true;
+}
+
 // --- calcTabShift ---
 
 inline size_t calcTabShift(int col, int tabSize)

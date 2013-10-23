@@ -645,6 +645,34 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             useRole = true;
             level--;
             break;
+         case DSEND_TAPE_MESSAGE_ID:
+            message = encodeMessage(0, param, level - marker);
+
+            // reverse the parameter order
+            if (getParamCount(message) > 0) 
+               reverseArgOrder(ecodes, 1 + getParamCount(message), useRole);
+
+            //mcccopym message
+            //accloadsi 0
+            //callacc 0
+            //pushacc
+
+            ecodes.writeByte(bcMccCopyM);
+            ecodes.writeDWord(MESSAGE_MASK | message);
+
+            if (!useRole) {
+               ecodes.writeByte(bcAccLoadSI);
+               ecodes.writeDWord(0);
+            }
+            else useRole = false;
+
+            ecodes.writeByte(bcCallAcc);
+            ecodes.writeDWord(0);
+            ecodes.writeByte(bcPushAcc);
+
+            level -= getParamCount(message);
+
+            break;
          case SEND_TAPE_MESSAGE_ID:
             message = _linker->parseMessage((wchar16_t*)(base + param));
 
