@@ -1,0 +1,15 @@
+line ::= $eol;
+line ::= [ $literal ] $line line;
+
+field_value ::= ":" line;
+                                                                                                                           
+field_name ::= $identifier;
+
+field ::= [ $2 ] field_name field_value [ $signature ^^set(1) ];
+
+record ::= [ $1 textdb'Record ^new ] field next_field [ ^add(1) ];
+
+next_record ::= $eol record;
+next_record ::= $eof;
+
+start ::= [ system'collections'List ^new ] record next_record;
