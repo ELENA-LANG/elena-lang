@@ -1,7 +1,10 @@
 define IFFAILED_MESSAGE_ID  0A1000001h
 define RAISE_MESSAGE_ID     0A0000001h
 define EVAL_MESSAGE_ID      085000000h
-define elMessage            00000A000h
+define GET_MESSAGE_ID       086000000h
+
+define elSignature          000002000h
+define elMessage            000008000h
 
 procedure core_routines'redirect
 
@@ -151,5 +154,59 @@ procedure core_routines'handle_pair
   accloadsi 1
   accloadacci 1
   jumpaccn 0
+
+end
+
+procedure core_routines'handle_selector
+
+  pushmcc
+  mcccopyverb
+  mccelse labErr GET_MESSAGE_ID
+  popmcc
+  mcccopysubj
+  
+  init
+  open 1
+  pushi 0
+
+labNext:
+  accgetfi 1
+  else labErr
+  thenflag labMessage elSignature
+  incfi 1
+  jump labNext
+  
+labMessage:
+  mccelseacci labContinue 0
+
+labTapeNext:
+  incfi 1
+  accgetfi 1
+  else labTapeEnd
+  thenflag labTapeMessage elMessage
+  thenflag labTapeEnd elSignature
+  pushacc
+  jump labTapeNext
+  
+labTapeMessage:
+  mcccopyacci 0
+  accloadsi 0
+  callacc 0
+  pushacc
+  incfi 1
+  jump labTapeNext
+
+labTapeEnd:
+  popacc
+  close
+  popself
+  quitn 1
+
+labContinue:
+  incfi 1
+  jump labNext
+
+labErr:
+  throw
 
 end

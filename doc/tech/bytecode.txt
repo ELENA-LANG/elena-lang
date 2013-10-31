@@ -216,6 +216,8 @@ ELENA byte codes (or ecodes)
  
  mcccopysubj                - mcc:subj => mcc
 
+ mcccopyverb                - mcc:verb => mcc
+
  mccaddm verb               - verb + mcc => mcc
 
  mcccopysi i                - [sp+i] => mcc

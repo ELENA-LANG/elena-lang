@@ -1261,7 +1261,7 @@ void _ELENA_::compileMccCopyVerb(int opcode, x86JITScope& scope)
 {
    // and edx, VERB_MASK
    scope.code->writeWord(0xE281);
-   scope.code->writeDWord(VERB_MASK);
+   scope.code->writeDWord(VERB_MASK | MESSAGE_MASK);
 }
 
 void _ELENA_::compileMccCopySubj(int opcode, x86JITScope& scope)

@@ -236,14 +236,12 @@ namespace _ELENA_
   // const int elCastGroup           = 0x00000600;
   // const int elUnion               = 0x00000A00;
    const int elMethodHandler       = 0x00001000; 
-  // const int elSubject             = 0x00002000;
-  // const int elSubjectRole         = 0x00003080;
+   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004000;
-  // const int elVerb                = 0x00008000;
-   const int elMessage             = 0x0000A000;
+   const int elMessage             = 0x00008000;
   // const int elDynamicSubjectRole  = 0x0000B080;
   // const int elWithLocker          = 0x00100000;
-
+   
    const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
    const int elDebugReal64         = 0x00020000;
@@ -375,6 +373,7 @@ namespace _ELENA_
    #define HINT_MEM                "mem"
    #define HINT_BYTEARRAY          "bytearray"
    #define HINT_MESSAGE            "message"
+   #define HINT_SIGNATURE          "signature"
    #define HINT_ROLE               "role"
    #define HINT_GROUP              "group"
    #define HINT_SEALED             "sealed"

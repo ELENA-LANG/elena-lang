@@ -17,12 +17,17 @@ ELC:
 
 [LIB]
 [+] extensions'math
+[+] system'dynamic: SelectorTape
 [*] fixed bug: LiteralValue.equal&type'widestr[1]
 
 Samples:
 [+] console: datetime, matrix, textdb, translit
 [+] rosseta code: ackermann, anagram, arithmeticint, arithmmean, arrayconcat,
     arraymode, associatearrays, bestshuffle, binary, brackets
+
+ElenaScript:
+[*] script modified to support basic operations
+[*] opencalc: inline / default scripts
 
 ******************************************************************************
                     What's New in 1.9.9.9 (beta)

@@ -654,6 +654,9 @@ void Compiler::ClassScope :: compileHints(DNode hints)
       else if (ConstIdentifier::compare(terminal, HINT_MESSAGE)) {
          info.header.flags |= elMessage;
       }
+      else if (ConstIdentifier::compare(terminal, HINT_SIGNATURE)) {
+         info.header.flags |= elSignature;
+      }
       else if (ConstIdentifier::compare(terminal, HINT_ROLE)) {
          info.header.flags |= elRole;
       }

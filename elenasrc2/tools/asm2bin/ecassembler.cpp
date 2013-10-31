@@ -146,6 +146,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    else if (token.check(_T("close"))) {
       writeCommand(ByteCommand(bcClose), writer);
    }
+   else if (token.check(_T("copyfpi"))) {
+      compileICommand(bcCopyFPI, token, writer);
+   }
    else if (token.check(_T("else"))) {
       compileJump(bcElse, token, writer, info);
    }
@@ -179,6 +182,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    else if (token.check(_T("mcccopysubj"))) {
       writeCommand(ByteCommand(bcMccCopySubj), writer);
    }
+   else if (token.check(_T("mcccopyverb"))) {
+      writeCommand(ByteCommand(bcMccCopyVerb), writer);
+   }
    else if (token.check(_T("mccelse"))) {
       compileMccJump(bcMccElse, token, writer, info);
    }
@@ -193,6 +199,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    }
    else if (token.check(_T("popacc"))) {
       writeCommand(ByteCommand(bcPopAcc), writer);
+   }
+   else if (token.check(_T("popmcc"))) {
+      writeCommand(ByteCommand(bcPopMcc), writer);
    }
    else if (token.check(_T("popself"))) {
       writeCommand(ByteCommand(bcPopSelf), writer);

@@ -23,7 +23,7 @@ enum ByteCode
    bcPop            = 0x03, 
    bcWriteAcc       = 0x04, 
    bcPushMcc        = 0x05,
-   //bcMccCopyVerb    = 0x06,
+   bcMccCopyVerb    = 0x06,
    bcThrow          = 0x07,
    //bcSNop           = 0x08,
    bcMccCopySubj    = 0x09,

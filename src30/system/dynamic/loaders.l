@@ -7,7 +7,7 @@
 
 // --- Message ---
 
-#class(message) Message
+#class(message,role) Message
 {
     #field(type:int)theMessage.
     
@@ -16,7 +16,7 @@
 
 // --- Signature ---
 
-#class(message) Signature
+#class(signature,role) Signature
 {
     #field(type:int)theSignature.
     
