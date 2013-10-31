@@ -151,6 +151,7 @@ labYGNextFrame:
   mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
   mov  edi, [data : %CORE_GC_TABLE + gc_mg_start]
   sub  ebx, edi                                        // ; we need to check only MG region
+  jz   labWBEnd                                        // ; skip if it is zero
   mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
   shr  ebx, page_size_order
   lea  edi, [edi + elObjectOffset]
@@ -269,11 +270,12 @@ labCollectFrame:
 
 labFullCollect:
   // ====== Major Collection ====
+  push ebp                      // ; save the stack restore-point
 
+  // ; mark both yg and mg objects
   mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
   mov  edx, [data : %CORE_GC_TABLE + gc_mg_current]
 
-  // ; mark both yg and mg objects
   // ; collect roots
   lea  eax, [esp+4]
   mov  ecx, [eax]
@@ -416,9 +418,9 @@ labFixRoot:
 
   // ; clear WBar
   mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_mg_current]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
   xor  eax, eax
-  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
   shr  ecx, page_size_order
 
 labClearWBar:

@@ -16,6 +16,7 @@ ELC:
 [*] some output code optimization
 
 [LIB]
+[-] CRITICAL BUG: fixed bug in GC algorithm
 [+] extensions'math
 [+] system'dynamic: SelectorTape
 [*] fixed bug: LiteralValue.equal&type'widestr[1]

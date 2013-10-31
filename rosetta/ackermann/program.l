@@ -24,8 +24,6 @@
 
 #symbol program =
 [
-    #var n := ackermann:3:5.
-    
     control from:0 &to:3 &do: &&:i
     [
         control from:0 &to:5 &do: &&:j

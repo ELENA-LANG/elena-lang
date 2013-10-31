@@ -20,76 +20,15 @@ v  - vm script
 ------
 Currently:
 ------
-              sdev - open architecture
-                       * build the structure
-                       * build the structure list              
-                       * new sample: script_db (using textdb)
-                       * build the matrix
-
-                       * group object to represent structure: selector tape ??
-
-                       * object serialization / deseialization (to script / from script)
-
-                       * structure: simple code prototype : build structure
-                       * structure: simple script prototype : build structure
-                           <location,size>[<x,y>[1,2],<width,height>[10,20]]
-
-
-                       * code: simple code prototype : extend structure
-                       * code: simple script prototype : extend structure
-
-                       * think over general architecture
-
-
-                       * assemble dynamic structure - should have an open architecture ; 
-                         it should be possible to configurate separate parts and easy to append new ones
-
-                         
-
-
-
-                       * extracter - extract the array into stack
-
-
-
-                       * simple source code prototype
-                       * simple script prototype
-
-              sdev - prime project : calc
-                       * build object to enter and sum two numbers
-
+            xmaint - gc
+                       * fix anagram
 
 <=================>
 
 1.9.9.10
 --------
 
-week3: [2.11]
-              sdev - vmconsole
-                       * migrate
-
-              sdev - default script
-                       * support basic arithmetic operation (+ - / *)
-                       * implement 2 + 2 * 3
-                       * functions
-
-              sdoc - tutorials
-                       * post sum sample
-
-                       
-              sdev - prime project
-                       * interpreter
-                       * script program - calculator
-                       * eldoc: dynamic parser
-
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-week4:
-            xmaint - gc
-                       * ackerman: test
-                       * anagram: find out why the program fails
+week4: [4.11]
             xmaint - build
                        * try to automize build process  
                       
@@ -424,6 +363,43 @@ week2:
                        * implement new samples
 
 week3:
+              sdev - open architecture
+                       * new sample: script_db (using script to parse text file)
+
+                       * structure: simple script prototype : build structure
+                          ?? [ x : 1, y : 2 ].
+                          
+                       * code: simple code prototype : extend structure
+                       * code: simple script prototype : extend structure
+
+                       * build the structure list              
+                       * build the matrix
+                       * object serialization / deseialization (to script / from script)
+
+              sdev - prime project : calc
+                       * build object to enter and sum two numbers
+
+              sdev - vmconsole
+                       * migrate
+
+              sdev - default script
+                       * support basic arithmetic operation (+ - / *)
+                       * implement 2 + 2 * 3
+                       * functions
+
+              sdoc - tutorials
+                       * post sum sample
+
+                       
+              sdev - prime project
+                       * interpreter
+                       * script program - calculator
+                       * eldoc: dynamic parser
+
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
               sdev - eldoc
                        * review possible solution using script engine to define parsing rules
 
@@ -432,8 +408,8 @@ week3:
 
 week4:
               xdoc - api
-                       * start generating api html, using old tool 
-                       
+                       * start generating api html, using old tool                        
+
 1.9.9.12
 --------
 week1:
@@ -449,6 +425,13 @@ week2:
                        * matrix: multiply - should use realnumber rather than real
                sdev - console samples
                        * vmconsole
+
+1.9.9.15
+--------
+week1:
+               xdev - GC
+                       * increase the heap size
+
 2.0.0
 -----
 week1:

@@ -14,7 +14,7 @@ Version 2.0.0
 - start the code documentation
 - start developing GUI support, declarative gui description
 - migrate existing GUI samples to lib30
-- gcx alpha
+- gcx alpha (test with small heap size)
 - migrate upndown to lib30
 - win32 file i/o operations should raise an exception with an error code
 - test compilation with a very long identifier names
