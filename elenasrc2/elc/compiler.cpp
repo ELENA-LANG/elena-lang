@@ -3945,7 +3945,7 @@ void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, Class
    }
    // array
    else if (test(classScope->info.header.flags, elDynamicRole)) {
-      _writer.newDynamicObject(*codeScope.tape, classScope->reference, 2);
+      _writer.newDynamicObject(*codeScope.tape, classScope->reference, 2, scope.moduleScope->nilReference);
    }
    // normal class
    else _writer.newObject(*codeScope.tape, classScope->info.fields.Count(), classScope->reference, scope.moduleScope->nilReference);

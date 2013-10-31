@@ -333,15 +333,17 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
    }  
 }
 
-void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset)
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset, ref_t nilReference)
 {
    // accloadsi offs
    // accloadacci 0
    // acccreate size, vmt
+   // accfillr nil
 
    tape.write(bcAccLoadSI, sizeOffset);
    tape.write(bcAccLoadAccI);
    tape.write(bcAccCreate, reference | mskVMTRef);
+   tape.write(bcAccFillR, nilReference | mskConstantRef);
 }
 
 void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int size, ref_t reference, int sizeOffset, int permanentSize)

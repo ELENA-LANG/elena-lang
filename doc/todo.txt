@@ -20,18 +20,12 @@ v  - vm script
 ------
 Currently:
 ------
-            xmaint - gc
-                       * fix anagram
-
 <=================>
 
 1.9.9.10
 --------
 
 week4: [4.11]
-            xmaint - build
-                       * try to automize build process  
-                      
             smaint - console samples
                        * test determinant
             xmaint - compiler
@@ -425,6 +419,13 @@ week2:
                        * matrix: multiply - should use realnumber rather than real
                sdev - console samples
                        * vmconsole
+
+week3:
+
+week4:
+            xmaint - build
+                       * try to automize build process  
+                      
 
 1.9.9.15
 --------

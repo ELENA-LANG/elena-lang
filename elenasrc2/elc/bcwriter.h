@@ -203,7 +203,7 @@ public:
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
    void newObject(CommandTape& tape, int fieldCount, ref_t reference, ref_t nilReference);
-   void newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset);
+   void newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset, ref_t nilReference);
    void newDynamicStructure(CommandTape& tape, int size, ref_t reference, int sizeOffset, int permanentSize = 0);
 
    void pushObject(CommandTape& tape, ObjectInfo object);

@@ -10,7 +10,7 @@ warn:unresolved=0
 anagram.l
 
 [linker]
-gcsize=1048576
+gcsize=524288
 
 [forwards]
 'program=anagram'program

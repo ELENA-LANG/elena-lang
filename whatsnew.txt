@@ -8,12 +8,14 @@
 ******************************************************************************
 
 ELENA:
+[!] binary incompatible due to critical bug fixes / new ecodes
 [+] open argument list
 [+] stack allocated local variable
 [+] multy-select branching
 
 ELC:
 [*] some output code optimization
+[*] CRITICAL BUG: dynamic array initializing
 
 [LIB]
 [-] CRITICAL BUG: fixed bug in GC algorithm

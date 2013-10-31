@@ -1180,7 +1180,7 @@ void runSession(_Module* module)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-	printf("ELENA command line Elena ByteCode Viewer %d.%d.0 (C)2012-2013 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+	printf("ELENA command line Elena ByteCode Viewer %d.%d.1 (C)2012-2013 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");

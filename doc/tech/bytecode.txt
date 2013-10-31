@@ -183,6 +183,9 @@ ELENA byte codes (or ecodes)
  iacccopyr i, r             - r => [acc::i]
                               ; direct ; where i < 34
  
+ accfillr r                 - r => [acc::(0..n)]
+                              ; direct
+
  iaccfillr i, r             - r => [acc::(0..i)]
                               ; direct
 
@@ -277,6 +280,8 @@ ELENA byte codes (or ecodes)
                               acc contains the class instance
 
  accboxn n, vmt            - if acc is local box its content into the object with vmt and size n
+
+
 
  data manipulating commands:
  -----------------

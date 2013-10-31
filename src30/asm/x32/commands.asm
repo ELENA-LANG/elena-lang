@@ -485,6 +485,20 @@ inline % 0C3h
   
 end
 
+// accfillr (eax - val, ebx - r)
+
+inline % 0C4h
+
+  mov  ecx, [eax - elVMTSizeOffset]
+  mov  ebx, __arg1
+  mov  esi, eax
+labClear:
+  mov  [esi], ebx
+  sub  ecx, 4
+  lea  esi, [esi+4]
+  jnz  short labClear
+
+end
 
 // accloadselfi (__arg1 : index)
 
@@ -516,7 +530,6 @@ inline % 0F1h
 
 end
 
-
 // iaccfillr (eax - val, ebx - r,  __arg1 - count)
 
 inline % 0F3h
@@ -530,7 +543,6 @@ labClear:
   jnz  short labClear
 
 end
-
 
 // acccreaten (eax - size)
 

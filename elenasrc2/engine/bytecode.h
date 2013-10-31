@@ -136,6 +136,7 @@ enum ByteCode
    bcAccGetFI       = 0xC1,
    //bcAccGetAccSI    = 0xC2,
    bcAccCreate      = 0xC3,
+   bcAccFillR       = 0xC4,
    //bcAccMergeR      = 0xC8,
 
    bcElseR          = 0xE0,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
