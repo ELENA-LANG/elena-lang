@@ -43,12 +43,3 @@
         aHandler eval:$self.
     ]
 }
-
-// --- BreakException ---
-
-#class BreakException
-{
-    #field theResult.
-    
-    #method stop = theResult.
-}

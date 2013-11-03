@@ -12,19 +12,13 @@
         theNewLineConstant := system'io'newLine.
     ]
 
-    #method read &Line
-        => theReader.
+    #method read &type'widechar
+        = theReader read &type'widechar.
 
-    #method read &Line:aTarget
-        = aTarget << $self read &Line.
-
-    #method read &Char
-        = theReader read &type'char.
-
-    #method read &Key
+    #method readKey
         = theReader read &type'int.
 
-    #method write &Line : anObject
+    #method writeLine : anObject
     [
         theWriter write::(anObject Literal) write::theNewLineConstant.
         
@@ -38,9 +32,6 @@
         ^ self.
     ]
     
-    #method writeLine : aLine
-        <= write &Line:aLine.
-        
     #method writeLine
     [
         theWriter write::theNewLineConstant.
@@ -49,13 +40,13 @@
     ]
         
     #method readLine
-        = $self read &Line.
+        = theReader read &Line.
         
     #method readLine : aTarget
-        = $self read &Line:aTarget.
+        = aTarget << theReader read &Line.
         
     #method readChar
-        = $self read &Char.
+        = theReader read &type'widechar.
 }
 
 #static console = $Console new &output:system'io'stdConsoleWriter &input:system'io'stdConsoleReader.

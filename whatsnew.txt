@@ -1,8 +1,15 @@
 
                                 ELENA Language 
 
-                                Version 1.9.9.10
+                                Version 1.9.9.11
  
+******************************************************************************
+                    What's New in 1.9.9.11 (beta)
+******************************************************************************
+
+[LIB]
+[!] ELENA API refactored
+
 ******************************************************************************
                     What's New in 1.9.9.10 (beta)
 ******************************************************************************
@@ -15,7 +22,7 @@ ELENA:
 
 ELC:
 [*] some output code optimization
-[*] CRITICAL BUG: dynamic array initializing
+[*] CRITICAL BUG: dynamic array initializing                                               
 
 [LIB]
 [-] CRITICAL BUG: fixed bug in GC algorithm

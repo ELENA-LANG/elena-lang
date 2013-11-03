@@ -5,16 +5,16 @@
 {
     #method equal &type'object : anObject
         = system'external'CoreAPI equal &type'object:$self &type'object:anObject.
-                                                            
+
     #method equal : anObject
         = $self equal &type'object:anObject.
-        
+
     #method notequal : anObject
         = $self equal:anObject not. 
-
-    #method => #inline redirect.    
     
     #method <= &&type'object:$self.
+
+    #method => #inline redirect.    
 }
 
 // --- EException ---
@@ -24,9 +24,18 @@
     #method => #inline handle_exception.
 }
 
+// --- Action wrapper ---
+
 #class Action
 {
     #method <= &&action:$self.
+}
+
+// --- Function wrapper ---
+
+#class Function
+{
+    #method <= &&function:$self.
 }
 
 // --- nil constant ---

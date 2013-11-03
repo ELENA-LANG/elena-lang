@@ -37,7 +37,7 @@
         theEnumerator set:aValue.
     ]
             
-    #method set &Index:anIndex
+    #method set &type'index:anIndex
     [
         theIndex > anIndex ?
         [
@@ -53,19 +53,21 @@
         ].
     ]
     
-    #method Index
+    #method type'index
         = theIndex Number.
+        
+    #method Index => %type'index.
 }
 
 // --- EList ---
 
 #class(role)EList
 {
-    #method run : anAction
-        = control foreach:self &do:anAction.
+    #method run : aFunction
+        = control foreach:self &do:aFunction.
         
-    #method seek : anAction
-        = control foreach:self &until:anAction.
+    #method seek : aFunction
+        = control foreach:self &until:aFunction.
 
     #method Enumerator
         = IndexedListEnumerator new:self.
@@ -89,11 +91,11 @@
     ]
     
     #method Last
-        = self~EList getAt:(self Count - 1).
+        = self~EList getAt:(self type'length - 1).
     
     #method Array
     [
-        ^ system'Array new &type'length:(self Length) &action: &&:anIndex [ self~EList getAt:anIndex ].
+        ^ system'Array new &type'length::self &function: &&:anIndex [ self~EList getAt:anIndex ].
     ]
 }
 
@@ -101,11 +103,11 @@
 
 #class(role) EArray
 {
-    #method set &action:anAction
+    #method set &function:aFunction
     [
         #var anEnumerator := self Enumerator.
         
-        control while:(anEnumerator next) &do:[ anEnumerator set:(anAction eval:(anEnumerator Index)) ].
+        control while:(anEnumerator next) &do:[ anEnumerator set:(aFunction eval:(anEnumerator Index)) ].
     ]
     
     #method exchange:anIndex1:anIndex2
@@ -123,7 +125,7 @@
 
         control while:[ aCurrent next ] &do:
         [
-            aNext set &Index:(aCurrent Index).
+            aNext set &type'index::aCurrent.
             control while:[ aNext next ] &do:
             [
                 aCondition eval:(aCurrent get):(aNext get)
@@ -139,7 +141,7 @@
     ]
     
     #method DeepClone
-        = Array new &type'length::self &action: &&:i
+        = Array new &type'length::self &function: &&:i
             [ (self @ i) Clone ].
 }
 
@@ -147,7 +149,7 @@
 
 #class(role)EEnumerator
 {
-    #method iterate : aFunction
+    #method run : aFunction
         = control while:[ self next ] &do: [ aFunction:self. ].
 }
 
@@ -158,11 +160,11 @@
     foreach:aList &do:anAction
         = aList~EList run:anAction.
         
-    foreach : aList &top:aMaxValue &do:anAction
+    foreach : aList &top:aMaxValue &do:aFunction
     [
         #var aCounter := Integer new::aMaxValue.
         
-        control foreach:aList &until:[ aCounter -= 1. ^ aCounter > -1. ] &do:anAction.
+        control foreach:aList &until:[ aCounter -= 1. ^ aCounter > -1. ] &do:aFunction.
     ]
     
     find:aValue &in:aList
@@ -171,7 +173,7 @@
     seek:aList &for:anAction
         = aList~EList seek:anAction.
         
-    exist:aValue &in:aList
+    ifExist:aValue &in:aList
         = nil != aList~EList seek: &&:x [ aValue equal:x ].
         
     getAt:anIndex &in:aList
@@ -192,9 +194,9 @@
 
 #symbol arrayControl =
 {
-    forEach:anArray &do:anAction
+    forEach:anArray &do:aFunction
     [
-        anArray~EArray set &action:anAction.
+        anArray~EArray set &function:aFunction.
     ]
         
     exchange:anIndex1 &with:anIndex2 &in:anArray
@@ -210,7 +212,7 @@
 
 #class(role)ELiteralOp
 {
-    #method trimStart &type'char:aChar
+    #method trimStart &type'widechar:aChar
     [
         #var theIndex := Integer new.
         control while:[self getAt &type'index:theIndex == aChar ] &do:[ theIndex += 1. ].
@@ -218,7 +220,7 @@
         ^ self delete &type'index:0 &type'length:theIndex.
     ]
     
-    #method split &type'char:aChar
+    #method split &type'widechar:aChar
     [
         #var aList := system'collections'List new.
         #var aStart := 0.
@@ -226,7 +228,7 @@
         
         control do:
         [
-            anIndex := self indexOf &type'char:aChar &type'index:aStart.
+            anIndex := self indexOf &type'index:aStart &type'widechar:aChar.
             (-1 != anIndex) ?
             [
                 aList += self Substring &type'index:aStart &type'length:(anIndex - aStart).
@@ -321,21 +323,21 @@
 
 #class DownCounter
 {
-    #field theAction.
+    #field theFunction.
     
-    #constructor new : anAction
+    #constructor new : aFunction
     [
-        theAction := anAction.
+        theFunction := aFunction.
     ]
     
     #method eval : aCounter
     [
-        theAction eval:aCounter.
+        theFunction eval:aCounter.
     ]
     
     #method for : aCounter
     [
-        $self~EAction reverse &for:(Integer new) &from:0 &till:aCounter &by:1.
+        $self~EFunction reverse &for:(Integer new) &from:0 &till:aCounter &by:1.
     ]
 }
 

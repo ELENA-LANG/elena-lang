@@ -18,11 +18,13 @@
         thePosition write &type'int:0.
     ]
 
-    #method Length = thePosition Number.
+    #method Length => %type'length.
+
+    #method type'length = thePosition Number.
 
     #method type'bytearray = theByteArray.
 
-    #method set &Length:aLength
+    #method set &type'length:aLength
     [
         thePosition write &type'int::aLength.
     ]

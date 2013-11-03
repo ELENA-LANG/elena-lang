@@ -98,8 +98,8 @@ md elenasrc2\elc\linux32
 copy %1\elenasrc2\elc\linux32\*.cpp elenasrc2\elc\linux32
 
 md elenasrc2\elc\vs
-copy %1\elenasrc2\elc\vs\elc9.vcproj elenasrc2\elc\vs
 copy %1\elenasrc2\elc\vs\elc10.vcxproj elenasrc2\elc\vs
+copy %1\elenasrc2\elc\vs\elc11.vcxproj elenasrc2\elc\vs
 
 md elenasrc2\elc\win32 
 copy %1\elenasrc2\elc\win32\*.cpp elenasrc2\elc\win32
@@ -113,8 +113,8 @@ md elenasrc2\elenavm\codeblocks
 copy %1\elenasrc2\elenavm\codeblocks\*.cbp elenasrc2\elenavm\codeblocks
 
 md elenasrc2\elenavm\vs
-copy %1\elenasrc2\elenavm\vs\elenavm.vcproj elenasrc2\elenavm\vs
 copy %1\elenasrc2\elenavm\vs\elenavm.vcxproj elenasrc2\elenavm\vs
+copy %1\elenasrc2\elenavm\vs\elenavm11.vcxproj elenasrc2\elenavm\vs
 
 md elenasrc2\elenavm\win32 
 copy %1\elenasrc2\elenavm\win32\*.cpp elenasrc2\elenavm\win32
@@ -155,8 +155,8 @@ copy %1\elenasrc2\ide\gtk-linux32\*.cpp elenasrc2\ide\gtk-linux32
 copy %1\elenasrc2\ide\gtk-linux32\*.h elenasrc2\ide\gtk-linux32
 
 md elenasrc2\ide\vs
-copy %1\elenasrc2\ide\vs\elide9.vcproj elenasrc2\ide\vs
 copy %1\elenasrc2\ide\vs\elide10.vcxproj elenasrc2\ide\vs
+copy %1\elenasrc2\ide\vs\elide11.vcxproj elenasrc2\ide\vs
 
 md elenasrc2\ide\winapi32 
 copy %1\elenasrc2\ide\winapi32\*.cpp elenasrc2\ide\winapi32 
@@ -176,7 +176,6 @@ copy %1\elenasrc2\elenasm\win32\*.cpp elenasrc2\elenasm\win32
 copy %1\elenasrc2\elenasm\win32\*.h elenasrc2\elenasm\win32
 
 md elenasrc2\elenasm\vs
-copy %1\elenasrc2\elenasm\vs\*.vcproj elenasrc2\elenasm\vs
 copy %1\elenasrc2\elenasm\vs\*.vcxproj elenasrc2\elenasm\vs
 
 md elenasrc2\elenasm\codeblocks 
@@ -192,7 +191,6 @@ md elenasrc2\tools\api2html\codeblocks
 copy %1\elenasrc2\tools\api2html\codeblocks\*.cbp elenasrc2\tools\api2html\codeblocks
 
 md elenasrc2\tools\api2html\vs
-copy %1\elenasrc2\tools\api2html\vs\*.vcproj elenasrc2\tools\api2html\vs
 copy %1\elenasrc2\tools\api2html\vs\*.vcxproj elenasrc2\tools\api2html\vs
 
 md elenasrc2\tools\asm2bin
@@ -203,18 +201,20 @@ md elenasrc2\tools\asm2bin\codeblocks
 copy %1\elenasrc2\tools\asm2bin\codeblocks\*.cbp elenasrc2\tools\asm2bin\codeblocks
 
 md elenasrc2\tools\asm2bin\vs
-copy %1\elenasrc2\tools\asm2bin\vs\*.vcproj elenasrc2\tools\asm2bin\vs
 copy %1\elenasrc2\tools\asm2bin\vs\*.vcxproj elenasrc2\tools\asm2bin\vs
 
 md elenasrc2\tools\sg
 copy %1\elenasrc2\tools\sg\*.cpp elenasrc2\tools\sg
 copy %1\elenasrc2\tools\sg\*.h elenasrc2\tools\sg
+md elenasrc2\tools\sg\win32
+md elenasrc2\tools\sg\linux32
+copy %1\elenasrc2\tools\sg\win32\*.h elenasrc2\tools\sg\win32
+copy %1\elenasrc2\tools\sg\linux32\*.h elenasrc2\tools\sg\linux32
 
 md elenasrc2\tools\sg\codeblocks 
 copy %1\elenasrc2\tools\sg\codeblocks\*.cbp elenasrc2\tools\sg\codeblocks
 
 md elenasrc2\tools\sg\vs
-copy %1\elenasrc2\tools\sg\vs\*.vcproj elenasrc2\tools\sg\vs
 copy %1\elenasrc2\tools\sg\vs\*.vcxproj elenasrc2\tools\sg\vs
 
 md elenasrc2\tools\elt
@@ -222,7 +222,6 @@ copy %1\elenasrc2\tools\elt\*.cpp elenasrc2\tools\elt
 copy %1\elenasrc2\tools\elt\*.h elenasrc2\tools\elt
 
 md elenasrc2\tools\elt\vs
-copy %1\elenasrc2\tools\elt\vs\*.vcproj elenasrc2\tools\elt\vs
 copy %1\elenasrc2\tools\elt\vs\*.vcxproj elenasrc2\tools\elt\vs
 
 md elenasrc2\tools\elt\codeblocks 
@@ -233,7 +232,6 @@ copy %1\elenasrc2\tools\ecv\*.cpp elenasrc2\tools\ecv
 copy %1\elenasrc2\tools\ecv\*.h elenasrc2\tools\ecv
 
 md elenasrc2\tools\ecv\vs
-copy %1\elenasrc2\tools\ecv\vs\*.vcproj elenasrc2\tools\ecv\vs
 copy %1\elenasrc2\tools\ecv\vs\*.vcxproj elenasrc2\tools\ecv\vs
 
 md elenasrc2\tools\ecv\codeblocks 
@@ -247,7 +245,6 @@ md elenasrc2\tools\og\codeblocks
 copy %1\elenasrc2\tools\og\codeblocks\*.cbp elenasrc2\tools\og\codeblocks
 
 md elenasrc2\tools\og\vs
-copy %1\elenasrc2\tools\og\vs\*.vcproj elenasrc2\tools\og\vs
 copy %1\elenasrc2\tools\og\vs\*.vcxproj elenasrc2\tools\og\vs
 
 echo copying examples files
@@ -334,10 +331,8 @@ copy %1\examples\matrix\*.l examples\matrix
 copy %1\examples\matrix\*.prj examples\matrix 
 
 md examples\opencalc
-copy %1\examples\opencalc\*.l examples\opencalc
-copy %1\examples\opencalc\*.prj examples\opencalc
 copy %1\examples\opencalc\*.bat examples\opencalc
-copy %1\examples\opencalc\*.vl2 examples\opencalc
+copy %1\examples\opencalc\*.vl examples\opencalc
 
 md examples\pi
 copy %1\examples\pi\*.l examples\pi

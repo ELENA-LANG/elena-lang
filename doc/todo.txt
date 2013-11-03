@@ -20,26 +20,31 @@ v  - vm script
 ------
 Currently:
 ------
+              xdev - generic development              
+                       * dispatch table
+                           : obj~table add:x1:x2 => obj add&type'x1&type'x2
+
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+
+                       * multiple parameter dispatching
+                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
+
+                       * new verbs: shift(?)
+
+              xdev - generic development              
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+                       * operator order @ (if make it smaller - the problem with double operator @ <<)
+                       * primitive exception handling for the operator e.g. LiteralValue getAt&type'index - index out of the range
+                       * loadverb should be not be implemented in elena.h
+                         module
+
 <=================>
 
-1.9.9.10
---------
-
-week4: [4.11]
-            smaint - console samples
-                       * test determinant
-            xmaint - compiler
-                       * looks like the operation with console does not work with AMD!!!
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-              xdev - test
-                       * boxing: message target / operand, operator target / operand
-
-                       
 1.9.9.11
 --------
-week1:
+week1: [9.11]
               xdev - open arg
                        * can be passed further without boxing as open arg parameter
                        * any other operation should result in boxing
@@ -50,13 +55,8 @@ week1:
               xdev - generic development              
                        * break inside if inside loop - should break loop ??
 
-                       * custom verb dispatching (see for example stringControl split&by[2])
-
-                       * primitive exception handling for the operator e.g. LiteralValue getAt&type'index - index out of the range
-
                        * for loop: review for implementation algorithm can we simplify it??
 
-                       * operator order @ (if make it smaller - the problem with double operator @ <<)
                        * support several roles in role (e.g. a~role1~role2 eval) ??
 
                        * several extensions: should it be supported, like in ELENA1.x
@@ -124,11 +124,6 @@ week1:
                        * group object implementation
                        * using operators with an extension (e.g. anObject~EReflector @ anIndex)
       
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)
-
-                       * loadverb should be not be implemented in elena.h
-                         module
                        * raise an exception if more than 15 arguments in the method / message                 
                        
                        * simplify ansi constants / wideliteral interaction
@@ -270,6 +265,7 @@ week1:
                        * if acc already contains the required object, do not load it once again: e.g. Object.equal[1]
 
               xdev - tools                       
+                       * create missing folders
                        * get rid of _T (elc, elt, asm2binx, ecv)
                        * reuse ecode compiling code (at least string to bytecode routine)
                        
@@ -292,6 +288,12 @@ week1:
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                        
 week2:
+              adev - LIB30 review
+                       * test: system tests
+                       * test: examples
+                       * test: rosetta code examples
+                       * review console read / write operation: complex types
+
               adev - lib30
                        * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
                          out of range
@@ -401,6 +403,17 @@ week3:
                       * trace could print the result directly to console?? (so it will simplify script debugging)
 
 week4:
+            smaint - console samples
+                       * test determinant
+            xmaint - compiler
+                       * looks like the operation with console does not work with AMD!!!
+                       
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+              xdev - test
+                       * boxing: message target / operand, operator target / operand
+
               xdoc - api
                        * start generating api html, using old tool                        
 

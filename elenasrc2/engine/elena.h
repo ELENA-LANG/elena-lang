@@ -664,7 +664,7 @@ inline void loadVerbs(MessageMap& verbs)
    addVerb(verbs, DELETE_MESSAGE,     DELETE_MESSAGE_ID);
    addVerb(verbs, RUN_MESSAGE,        RUN_MESSAGE_ID);
    addVerb(verbs, INSERT_MESSAGE,     INSERT_MESSAGE_ID);
-   addVerb(verbs, ITERATE_MESSAGE,    ITERATE_MESSAGE_ID);
+   addVerb(verbs, RESET_MESSAGE,      RESET_MESSAGE_ID);
 }
 
 } // _ELENA_

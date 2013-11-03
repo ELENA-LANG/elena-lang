@@ -329,6 +329,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule, const 
    realSubject = mapSubject(REAL_SUBJECT);
    referenceSubject = mapSubject(REFERENCE_SUBJECT);
    wideStrSubject = mapSubject(WSTR_SUBJECT);
+   wideChrSubject = mapSubject(WCHAR_SUBJECT);
    dumpSubject = mapSubject(DUMP_SUBJECT);
    handleSubject = mapSubject(HANDLE_SUBJECT);
    lengthSubject = mapSubject(LENGTH_SUBJECT);
@@ -371,6 +372,9 @@ ObjectType Compiler::ModuleScope :: mapSubjectType(ref_t subjRef, bool& out)
       return otLength;
    }
    else if (subjRef == shortSubject) {
+      return otChar;
+   }
+   else if (subjRef == wideChrSubject) {
       return otChar;
    }
    else if (subjRef == indexSubject) {

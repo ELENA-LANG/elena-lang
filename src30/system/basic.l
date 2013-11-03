@@ -316,7 +316,7 @@
         theData << aCode.
     ]
 
-    #constructor new &type'short:aCode
+    #constructor new &type'widechar:aCode
     [
         theData << aCode.
     ]
@@ -326,7 +326,7 @@
         theData << (aValue getAt:0) type'short.
     ]
 
-    #method type'short = $self.
+    #method type'widechar = $self.
 
     #method equal &type'int:anOperand 
         = theData == anOperand.
@@ -337,10 +337,10 @@
     #method notless &type'int:anOperand 
         = theData >= anOperand.
 
-    #method equal &type'short:anOperand 
+    #method equal &type'widechar:anOperand 
         = $self equal &type'int:anOperand .
 
-    #method less &type'short:anOperand 
+    #method less &type'widechar:anOperand 
         = $self less &type'int:anOperand .
 
     #method equal &type'widestr:aLiteral
@@ -352,7 +352,7 @@
 
     #method type'widestr => %Literal. 
 
-    #method <= &&type'short:$self.
+    #method <= &&type'widechar:$self.
 }
 
 // --- emptyliteralvalue ---
@@ -375,7 +375,7 @@
     add &type'widestr : aLiteral
         = aLiteral.
 
-    Literal = $self type'widestr.
+    Literal => %type'widestr.
    
     Length = 0.
    
@@ -394,15 +394,17 @@
         theLiteral := aLiteral.
         theIndex := system'Integer new &type'int:(-1).
     ]
-    
-    #method Index = theIndex Number.
 
-    #method append &Index:anIndex
+    #method Index => %type'index.
+            
+    #method type'index = theIndex Number.
+
+    #method append &type'index:anIndex
     [
         theIndex append::anIndex.
     ]
 
-    #method write &Index:anIndex
+    #method write &type'index:anIndex
     [
         theIndex write::anIndex.
     ]
@@ -461,25 +463,25 @@
     #method add &type'widestr : aLiteral
         = LiteralValue new &type'length:(theData type'length + aLiteral type'length) &type'widestr:theData &type'widestr:aLiteral.
 
-    #method add &type'short : aChar
-        = LiteralValue new &type'length:(theData type'length + 1) &type'widestr:theData &type'widestr:(aChar Literal).
+    #method add &type'widechar : aChar
+        = LiteralValue new &type'length:(theData type'length + 1) &type'widestr:theData &type'widestr::aChar.
 
     #method getAt : aParam
         = $self getAt &type'index::aParam.
 
     #method getAt &type'index:anIndex
-        = CharValue new &type'short:(theData @ anIndex).
+        = CharValue new &type'widechar:(theData @ anIndex).
 
     #method indexOf &type'widestr:aLiteral
         = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:0 &type'widestr:aLiteral).
 
-    #method indexOf &type'widestr:aLiteral &type'index:anIndex
+    #method indexOf &type'index:anIndex &type'widestr:aLiteral
         = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:anIndex &type'widestr:aLiteral).
 
-    #method indexOf &type'char:aChar &type'index:anIndex
+    #method indexOf &type'index:anIndex &type'widechar:aChar
         = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:anIndex &type'short:aChar).
 
-    #method insert &type'widestr:aLiteral &type'index:anIndex
+    #method insert &type'index:anIndex &type'widestr:aLiteral
         = system'external'CoreAPI insert &type'widestr:theData &type'index:anIndex &type'widestr:aLiteral 
             &out'type'widestr:(LiteralValue new &type'length:(theData type'length + aLiteral type'length)).
             
@@ -757,9 +759,9 @@
         theValue := theValue + anOperand.
     ]
     
-    #method insert &type'widestr:aLiteral &type'index:anIndex
+    #method insert &type'index:anIndex &type'widestr:aLiteral
     [
-        theValue := theValue insert &type'widestr:aLiteral &type'index:anIndex.
+        theValue := theValue insert &type'index:anIndex &type'widestr:aLiteral.
     ]
             
     #method delete &type'index:anIndex &type'length:aLength
@@ -792,21 +794,18 @@
         theIndex := Integer new &type'int:-1.
     ]
     
-    #method Index = theIndex Number.
+    #method Index => %type'index.
+    
+    #method type'index = theIndex Number.
 
-    #method set &Index:anIndex
+    #method set &type'index:anIndex
     [
         theIndex write::anIndex.
     ]
     
-    #method append &Index:anIndex
+    #method append &type'index:anIndex
     [
         theIndex append::anIndex.
-    ]
-
-    #method write &Index:anIndex
-    [
-        theIndex write::anIndex.
     ]
 
     #method EOF = theIndex >= theCount.
@@ -836,22 +835,22 @@
     [
     ]
 
-    #constructor new &type'length:aCount &action:anAction
+    #constructor new &type'length:aCount &function:aFunction
     [
         #var anEnumerator := $self Enumerator.
         
-        control while:(anEnumerator next) &do:[ anEnumerator set:(anAction eval:(anEnumerator Index)) ].
+        control while:(anEnumerator next) &do:[ anEnumerator set:(aFunction eval:(anEnumerator Index)) ].
     ]
 
     #method getAt : anIndex
-        = $self getAt &type'index:(anIndex type'int).
+        = $self getAt &type'index::anIndex.
 
     #method getAt &type'index:anIndex
         = theItems @ anIndex.
 
     #method setAt:anIndex:anObject
     [
-        $self setAt &type'index:(anIndex type'int) &type'object:anObject.
+        $self setAt &type'index::anIndex &type'object:anObject.
     ]
     
     #method setAt &type'index:anIndex &type'object:anObject

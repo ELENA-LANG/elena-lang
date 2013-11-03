@@ -36,7 +36,7 @@
             
     #method find &type'widestr:aValue
     [
-        theIndex := theLiteral indexOf &type'widestr::aValue &type'index:theIndex.
+        theIndex := theLiteral indexOf &type'index:theIndex &type'widestr::aValue.
         
         ^ (-1 != theIndex).
     ]

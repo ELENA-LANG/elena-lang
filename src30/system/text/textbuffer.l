@@ -22,15 +22,12 @@
         theBuffer clear.
     ]
 
-    #method Length
-        = theBuffer Length / 2.
+    #method type'length
+        = theBuffer type'length / 2.
 
-    #method set &Length:aLength
-        = $self setLength &type'int::aLength.
-
-    #method setLength &type'int:aLength
+    #method set &type'length:aLength
     [
-        theBuffer set &Length:(2 * aLength).
+        theBuffer set &type'length:(2 * aLength).
     ]
                                     
     #method append : aLine
@@ -39,11 +36,6 @@
     ]
     
     #method append &type'widechar:aChar
-    [
-        $self append &type'widestr:(aChar Literal).
-    ]
-    
-    #method append &type'short:aChar
     [
         $self append &type'widestr:(aChar Literal).
     ]

@@ -82,9 +82,18 @@
     <= &&bool:$self.    
 }.
 
+// --- BreakException ---
+
+#class BreakException
+{
+    #field theResult.
+    
+    #method stop = theResult.
+}
+
 // --- action role class ---
 
-#class EAction
+#class(role) EAction
 {
     #method run &if:aBool
     [
@@ -103,8 +112,14 @@
             self eval.
         ].
     ]    
+}
+
+// --- function role class ---
+
+#class(role) EFunction
+{
     
-    #method iterate &each:anEnumerator
+    #method run &each:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -114,11 +129,25 @@
         ^ nil.        
     ]
     
-    #method iterate &for:anIterator &from:aStart &to:anEndValue &by:aStep
+    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
     [
         anIterator << aStart.
         
         #loop (anIterator <= anEndValue) ?
+        [
+            self eval:anIterator.
+            
+            anIterator += aStep.
+        ].
+        
+        ^ nil.        
+    ]
+    
+    #method run &for:anIterator &from:aStart &till:anEndValue &by:aStep
+    [
+        anIterator << aStart.
+        
+        #loop (anIterator < anEndValue) ?
         [
             self eval:anIterator.
             
@@ -172,43 +201,40 @@
     while:anExpr &do:anAction
         = anAction~EAction run &if:anExpr | stop.
 
-    foreach:anEnumerable &do:anAction
-        = anAction~EAction iterate &each:(anEnumerable Enumerator) | stop.
+    foreach:anEnumerable &do:aFunction
+        = aFunction~EFunction run &each:(anEnumerable Enumerator) | stop.
 
-    foreach:anEnumerable &until:anAction
+    foreach:anEnumerable &until:aFunction
     [
         #var anEnumerator := anEnumerable Enumerator.
         
         ^ control while:[anEnumerator next] &do:
         [
-            anAction eval:(anEnumerator get) ?
+            aFunction eval:(anEnumerator get) ?
                 [ #break anEnumerator get. ].
         ].
     ]
 
-    foreach:anEnumerable &until:aCodition &do:anAction
+    foreach:anEnumerable &until:aCodition &do:aFunction
     [
         #var anEnumerator := anEnumerable Enumerator.
         
         ^ control while:[ anEnumerator next and::aCodition ] 
-            &do:[ anAction eval:(anEnumerator get). ].
+            &do:[ aFunction eval:(anEnumerator get). ].
     ]
 
-    for:anIterator &do:anAction
-     = anAction~EAction iterate &for:anIterator | stop.
+    for:anIterator &from:aStart &to:anEndValue &by:aStep &do:aFunction
+        = aFunction~EFunction run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
 
-    for:anIterator &from:aStart &to:anEndValue &by:aStep &do:anAction
-        = anAction~EAction iterate &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
-
-    from:aStart &to:anEndValue &do:anAction
-        = anAction~EAction iterate &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
+    from:aStart &to:anEndValue &do:aFunction
+        = aFunction~EFunction run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
             
-    from:aStart &till:anEndValue &do:anAction
-        = anAction~EAction iterate &for:(system'Integer new) &from:aStart &to:(-1 + anEndValue) &by:1 | stop.
+    from:aStart &till:anEndValue &do:aFunction
+        = aFunction~EFunction run &for:(system'Integer new) &from:aStart &till:anEndValue &by:1 | stop.
             
-    for:anIterator &from:aStart &backTo:anEndValue &by:aStep &do:anAction
-        = anAction~EAction reverse &for:anIterator &from:anEndValue &to:aStart &by:aStep | stop.
+    for:anIterator &from:aStart &backTo:anEndValue &by:aStep &do:aFunction
+        = aFunction~EFunction reverse &for:anIterator &from:anEndValue &to:aStart &by:aStep | stop.
             
-    from:aStart &backTo:anEndValue &do:anAction
-        = anAction~EAction reverse &for:(system'Integer new) &from:anEndValue &to:aStart &by:1 | stop.
+    from:aStart &backTo:anEndValue &do:aFunction
+        = aFunction~EFunction reverse &for:(system'Integer new) &from:anEndValue &to:aStart &by:1 | stop.
 }.

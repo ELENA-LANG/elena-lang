@@ -1,12 +1,22 @@
 Operations
 ==========
-equal    : object   => bool
-notequal : object   => bool
-and      : object   => bool
-or       : object   => bool
-xor      : object   => bool
-run      : action  
-iterate  : function
+equal      : object   => bool
+notequal   : object   => bool
+less       : object   => bool
+notless    : object   => bool
+greater    : object   => bool
+notgreater : object   => bool
+and        : object   => bool
+or         : object   => bool
+xor        : object   => bool
+add        : object   => object
+subtract   : object   => object
+multiply   : object   => object
+divide     : object   => object
+run                              // execute the action / function in the loop
+reverse                          // execute the action / function in the reverse loop
+indexOf
+read &type'xxx ...
 
 Protocols
 =========
@@ -20,22 +30,30 @@ function::
    eval     : object
 
 bool::
-   then     : action              = object 
-   then     : action &else:action = object
-   else     : action              = object
-   and      : bool/bool_action    = bool 
-   or       : bool/bool_action    = bool 
-   xor      : bool/bool_action    = bool 
-   equal    : bool/bool_action    = bool
-   notequal : bool/bool_action    = bool
-   inverted                       = bool
+   eval &then: action               = object 
+   eval &then: action &else: action = object                                                         
+   eval &else: action               = object
+   and : bool/bool_action           = bool 
+   or : bool/bool_action            = bool 
+   xor : bool/bool_action           = bool 
+   equal : bool/bool_action         = bool
+   notequal : bool/bool_action      = bool                                                                                       
+   not                              = bool
 
 interator::
    get                            = object
+   set : object
    next                           = bool
+   reset                          
 
 Subjects
 ========
 if   :bool/bool_action
 until:bool/bool_action
 each :interator
+
+Signatures
+==========
+&for:variable&from:value&to:value&by:value
+&for:value&from:value&till:value&by:value
+&type'index&xxx

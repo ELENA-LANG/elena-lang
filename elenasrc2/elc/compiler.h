@@ -110,6 +110,7 @@ protected:
       ref_t realSubject;
       ref_t handleSubject;
       ref_t wideStrSubject;
+      ref_t wideChrSubject;
       ref_t dumpSubject;
       ref_t lengthSubject;
       ref_t indexSubject;

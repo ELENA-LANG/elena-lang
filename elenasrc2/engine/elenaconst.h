@@ -70,7 +70,8 @@ namespace _ELENA_
    #define DO_MESSAGE_ID           0x002B
    #define INSERT_MESSAGE_ID       0x002C
    #define SAVE_MESSAGE_ID         0x002D
-   #define ITERATE_MESSAGE_ID      0x002E
+   #define RESET_MESSAGE_ID        0x002E
+   #define SPLIT_MESSAGE_ID        0x002F
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -320,7 +321,8 @@ namespace _ELENA_
    #define RUN_MESSAGE              "run"
    #define INSERT_MESSAGE           "insert"
    #define SAVE_MESSAGE             "save"
-   #define ITERATE_MESSAGE          "iterate"
+   #define RESET_MESSAGE            "reset"
+   #define SPLIT_MESSAGE            "split"
 
 //   #define NEXT_MESSAGE             "next"
 
@@ -437,6 +439,7 @@ namespace _ELENA_
    #define INT_SUBJECT              "type'int"
    #define LONG_SUBJECT             "type'long"
    #define WSTR_SUBJECT             "type'widestr"
+   #define WCHAR_SUBJECT            "type'widechar"
    #define DUMP_SUBJECT             "type'bytearray"
    #define LENGTH_SUBJECT           "type'length"
    #define REAL_SUBJECT             "type'real"

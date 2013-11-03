@@ -51,7 +51,7 @@
         theHandler := aHandler.
     ]
 
-    #method read &type'char
+    #method read &type'widechar
     [
         #var aDump := ByteArray new &type'length:20.
 
@@ -66,7 +66,7 @@
         &until:[(system'external'CoreAPI equal &type'bytearray:aDump &type'index:0 &type'short:1)
                     and:(system'external'CoreAPI equal &type'bytearray:aDump &type'index:4 &type'int:1)].
                     
-        ^ CharValue new &type'short:(system'external'CoreAPI read &type'bytearray:aDump &type'index:14).
+        ^ CharValue new &type'widechar:(system'external'CoreAPI read &type'bytearray:aDump &type'index:14).
     ]
 
     #method read &type'int

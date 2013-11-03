@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 1.9.9.10
+                      ELENA Language Project V. 1.9.9.11
                         (C)2005-2013  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -14,9 +14,8 @@ For more information see at http://elenalang.sourceforge.net/
 
 - Pure polymorphic object oriented language
 - "Horizontal" multiple inheritance
-- Dynamic "class mutation" ("annex / cast" handler)
-- Multiple message dispatch
-- Argument signatures
+- Dynamic "class mutation"
+- Message dispatching
 - ELENA Virtual machine (in developing)
 - Command line 32-bit compiler
 - GUI IDE & Debugger
@@ -92,12 +91,9 @@ http://sourceforge.net/projects/elenalang/forums/forum/581072
 ****************************************************************************
                                                 
 The complete source code of ELENA Standard library could be found
-in the folder <app root>\src.
+in the folder <app root>\src30.
 
-The complete source code of ELENA Standard library 2 could be found
-in the folder <app root>\src2.
-
-The complete source code of ELENA samples could be found
+The source code of ELENA samples could be found
 in the folder <app root>\examples.
 
 ****************************************************************************
