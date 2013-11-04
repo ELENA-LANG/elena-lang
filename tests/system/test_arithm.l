@@ -16,6 +16,22 @@
     XTester ~ %field1 set:1.
 ].
 
+// --- MultiDispatchTest ---
+
+#class DispatchTester
+{
+    #method eval &x:anX &y:anY
+    [
+    ]
+}
+
+#symbol MultiDispatchTest =
+[
+    #var msg := %(&x&y).
+    
+    DispatchTester~msg eval:1:2.
+].
+
 // --- MultySelectTest ---
 
 #symbol MultySelectTest =

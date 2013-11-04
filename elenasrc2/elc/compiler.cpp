@@ -1490,6 +1490,9 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          if (member.nextNode() == nsExpression) {
             return compileGetProperty(member, scope, mode | CTRL_GETPROP_MODE);
          }
+      case nsSignatureReference:
+         result = compileSignatureReference(member, scope, mode);
+         break;
       case nsMessageReference:
          result = compileMessageReference(member, scope, mode);
          break;
@@ -1500,54 +1503,73 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    return result;
 }
 
+ObjectInfo Compiler :: compileSignatureReference(DNode objectNode, CodeScope& scope, int mode)
+{
+   IdentifierString message;
+   ref_t sign_id = 0;
+
+   // reserve place for param counter
+   message.append('0');
+
+   // place dummy verb
+   message.append('#');
+   message.append(0x20);
+
+   if (objectNode == nsSubjectArg) {
+      TerminalInfo subject = objectNode.Terminal();
+
+      message.append('&');
+      message.append(subject);
+   }
+   else {
+      DNode arg = objectNode.firstChild();
+      while (arg == nsSubjectArg) {
+         TerminalInfo subject = arg.Terminal();
+
+         message.append('&');
+         message.append(subject);
+
+         arg = arg.nextNode();
+      }
+   }
+
+   return ObjectInfo(okConstant, otSignature, scope.moduleScope->module->mapReference(message));
+}
+
 ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scope, int mode)
 {
-   ObjectType type = otMessage;
    IdentifierString message;
    TerminalInfo verb = objectNode.Terminal();
-   ref_t verb_id = 0;
-   ref_t sign_id = 0;
-   int count = 0;
 
    // reserve place for param counter
    message.append('0');
 
    DNode arg = objectNode.firstChild();
-   if (verb == tsIdentifier || verb == tsReference) {
-      verb_id = _verbs.get(verb.value);
+   ref_t verb_id = _verbs.get(verb.value);
+   ref_t sign_id = 0;
+   int count = 0;
 
-      if (verb_id == 0) {
-         // if it is stand-alone identifier (subject)
-         // verb is zero
-         // but not a part of GET PROPERTY
-         if (objectNode == nsSubjectArg && !test(mode, CTRL_GETPROP_MODE)) {
-            type = otSignature;
-
-            message.append(verb);
-         }
-         // if followed by argument list - it is a custom verb
-         else if (arg == nsSubjectArg || verb == tsPrivate) {
-            message.append('#');
-            message.append(EVAL_MESSAGE_ID + 0x20);
-            message.append('&');
-            message.append(verb);
-            count++;
-         }
-         // otherwise it is GET message
-         else {
-            type = otMessage;
-            message.append('#');
-            message.append(GET_MESSAGE_ID + 0x20);
-            message.append('&');
-            message.append(verb);
-         }
+   if (verb_id == 0) {
+      // if followed by argument list - it is a custom verb
+      if (arg == nsSubjectArg || verb == tsPrivate) {
+         message.append('#');
+         message.append(EVAL_MESSAGE_ID + 0x20);
+         message.append('&');
+         message.append(verb);
+         count++;
       }
+      // otherwise it is GET message
       else {
          message.append('#');
-         message.append(verb_id + 0x20);
+         message.append(GET_MESSAGE_ID + 0x20);
+         message.append('&');
+         message.append(verb);
       }
    }
-   else type = otSignature;
+   else {
+      message.append('#');
+      message.append(verb_id + 0x20);
+   }
 
    // if it is a generic verb, make sure no parameters are provided
    if ((verb_id == SEND_MESSAGE_ID || verb_id == DISPATCH_MESSAGE_ID) && objectNode.firstChild() == nsSubjectArg) {
@@ -1566,12 +1588,10 @@ ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scop
       arg = arg.nextNode();
    }
 
-   // if it is not a subject
    // define the number of parameters
-   if (type != otSignature)
-      message[0] = message[0] + count;
+   message[0] = message[0] + count;
 
-   return ObjectInfo(okConstant, type, scope.moduleScope->module->mapReference(message));
+   return ObjectInfo(okConstant, otMessage, scope.moduleScope->module->mapReference(message));
 }
 
 ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
@@ -2060,6 +2080,13 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          if (dbloperator)
             node = node.nextNode();
 
+         // if the next operation is exception handler
+         // primitive handler can be used
+         if (node.nextNode() == nsAltMessageOperation) {
+            node = node.nextNode();
+            compilePrimitiveCatch(node, scope);            
+         }
+
          return retVal;
       }
       else {
@@ -2271,8 +2298,11 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    }
 
    bool catchMode = false;
+   ByteCodeIterator try_it;
    if (test(mode, CTRL_TRY_MODE)) {
-      _writer.declareTry(*scope.tape);
+      // HOTFIX : if primitive catch handler can be implemented
+      //          hook should be removed
+      try_it = _writer.declareTry(*scope.tape);
 
        mode &= ~CTRL_TRY_MODE;
    }
@@ -2318,7 +2348,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          }
          currentObject = compileMessage(member, scope, ObjectInfo(okRegister), mode | CTRL_CATCH_MODE);
       }
-      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation) {
+      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation || member == nsL7Operation) {
          currentObject = compileOperator(member, scope, currentObject, mode);
       }
       member = member.nextNode();
@@ -2326,6 +2356,11 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
    if (catchMode) {
       _writer.endCatch(*scope.tape);
+   }
+   else if (!try_it.Eof()) {
+      // HOTFIX : if primitive catch handler can be implemented
+      //          hook should be removed
+      _writer.removeTry(*scope.tape, try_it);
    }
 
    return currentObject;
@@ -3287,6 +3322,7 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
          _writer.getArrayItem(*scope.tape);
 
+
          retVal.kind = okRegister;
          return retVal;
       }
@@ -3334,6 +3370,13 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
    // verify the reference
    if (!validate(*scope.moduleScope->project, scope.moduleScope->module, apiRef | mskNativeCodeRef))
       scope.raiseWarning(wrnUnresovableLink, node.Terminal());
+
+   if (test(mode, CTRL_TRY_MODE)) {
+      mode &= ~CTRL_TRY_MODE;
+
+      node = node.nextNode();
+      compilePrimitiveCatch(node, scope);            
+   }
 
    retVal.kind = okRegister;
 

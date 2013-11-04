@@ -646,6 +646,7 @@ protected:
    ref_t compilePrimitiveParameters(DNode node, CodeScope& scope, ReferenceNs& reference, size_t& paramCount, int mode);
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileSignatureReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);   
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);

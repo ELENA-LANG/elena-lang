@@ -7,6 +7,9 @@
                     What's New in 1.9.9.11 (beta)
 ******************************************************************************
 
+ELENA:
+[!] Exception handling syntax modified
+
 [LIB]
 [!] ELENA API refactored
 

@@ -12,7 +12,7 @@
 [
     control from:-1 &to:10 &do: &&:i
     [
-        console << "%fib(" << i << ")=".
+        console << "fib(" << i << ")=".
         
         console writeLine:(fibo:i) | onInvalidArgumentError: &&:e
             [

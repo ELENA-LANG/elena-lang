@@ -21,22 +21,6 @@ v  - vm script
 Currently:
 ------
               xdev - generic development              
-                       * dispatch table
-                           : obj~table add:x1:x2 => obj add&type'x1&type'x2
-
-                       * custom verb dispatching (see for example stringControl split&by[2])
-                           : intNumber.shift ; stringControl
-
-                       * multiple parameter dispatching
-                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
-
-                       * new verbs: shift(?)
-
-              xdev - generic development              
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-                       * operator order @ (if make it smaller - the problem with double operator @ <<)
-                       * primitive exception handling for the operator e.g. LiteralValue getAt&type'index - index out of the range
                        * loadverb should be not be implemented in elena.h
                          module
 
@@ -420,7 +404,15 @@ week4:
 1.9.9.12
 --------
 week1:
-
+              xdev - generic development              
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+                       * multiple parameter dispatching
+                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
+                       * new verbs: shift(?)
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+                       
 week2:                       
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)

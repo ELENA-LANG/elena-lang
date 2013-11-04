@@ -185,7 +185,7 @@ public:
    void declareElseBlock(CommandTape& tape);
    void declareSwitchBlock(CommandTape& tape);
    void declareSwitchOption(CommandTape& tape);
-   void declareTry(CommandTape& tape);
+   ByteCodeIterator declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
    void declarePrimitiveCatch(CommandTape& tape);
 
@@ -262,6 +262,7 @@ public:
    void commentFrame(ByteCodeIterator it);
 
    void endLabel(CommandTape& tape);
+   void removeTry(CommandTape& tape, ByteCodeIterator& it);
    void endCatch(CommandTape& tape);
    void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);

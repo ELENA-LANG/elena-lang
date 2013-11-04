@@ -3,12 +3,13 @@
 
 #symbol Program =
 [   
+    MultiDispatchTest eval.
+
     XTest eval.
   
     system'console write &Line:"Starting...".    
 
     MultySelectTest eval.
-
     EnumTest eval.    
     TextBufferTest eval.
     BreakTest eval.

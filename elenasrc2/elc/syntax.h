@@ -58,7 +58,7 @@ enum Symbol
    nsBaseClass                  = 0x01023,
    nsConstructor                = 0x01024,
    nsL3Operation                = 0x01025,
-   nsL6Operation                = 0x01026,
+   nsL7Operation                = 0x01026,
    nsRetStatement               = 0x01027,
    nsL5Operation                = 0x01028,
    nsResendExpression           = 0x01029,
@@ -83,6 +83,8 @@ enum Symbol
    nsLastSwitchOption           = 0x0103D,
    nsBiggerSwitchOption         = 0x0103E,
    nsLessSwitchOption           = 0x0103F,
+   nsSignatureReference         = 0x01040,
+   nsL6Operation                = 0x01041,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

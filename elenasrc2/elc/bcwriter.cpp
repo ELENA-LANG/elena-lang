@@ -228,7 +228,7 @@ void ByteCodeWriter :: endSwitchBlock(CommandTape& tape)
    tape.write(bcCopyFPI, bsBranch);
 }
 
-void ByteCodeWriter :: declareTry(CommandTape& tape)
+ByteCodeIterator ByteCodeWriter :: declareTry(CommandTape& tape)
 {
    tape.newLabel();                  // declare end-label
    tape.newLabel();                  // declare alternative-label
@@ -238,6 +238,18 @@ void ByteCodeWriter :: declareTry(CommandTape& tape)
 
    tape.write(bcAccLoadSI);
    tape.write(bcHook, baCurrentLabel);
+
+   return tape.end();
+}
+
+void ByteCodeWriter :: removeTry(CommandTape& tape, ByteCodeIterator& it)
+{
+   if (*it == bcHook) {
+      tape.releaseLabel();
+      tape.releaseLabel();
+
+      (*it).code = bcNone;
+   }
 }
 
 void ByteCodeWriter :: declareCatch(CommandTape& tape)
