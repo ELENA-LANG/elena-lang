@@ -281,7 +281,10 @@ public:
 
    //!! TODO: should be refactored
    void saveOutputResult(CommandTape& tape, int destOffset, int sourOffset);
+   void pushIntParam(CommandTape& tape, ObjectInfo info);
    void saveIntParam(CommandTape& tape, ObjectInfo info);
+   void assignIntParam(CommandTape& tape, ObjectInfo info, int value);
+   void saveLongParam(CommandTape& tape, ObjectInfo info);
    void saveLiteralParam(CommandTape& tape, ObjectInfo info, ref_t functionRef);
    void loadLiteralParam(CommandTape& tape, ref_t offset, ref_t functionRef);
 

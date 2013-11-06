@@ -3,7 +3,7 @@ Samples:
 
 ELC:
 ----
-#00066: error in mg collecting algorithm
+#00067: the operation with console does not work with AMD
 
 Samples:
 --------
@@ -19,4 +19,4 @@ Tools:
 -----
 #00017: ASM2BINX: warn on unresolved labels
 
-(next=#00067)
+(next=#00068)

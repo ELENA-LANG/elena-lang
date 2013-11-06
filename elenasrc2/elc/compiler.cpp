@@ -32,7 +32,7 @@ using namespace _ELENA_;
 #define CTRL_LONG_EXPR        0x00000004
 #define CTRL_REAL_EXPR        0x00000005
 #define CTRL_STR_EXPR         0x00000006
-#define CTRL_BARR_EXPR        0x00000007
+#define CTRL_BARR_EXPR        0x00000010
 #define CTRL_PARAMS_EXPR      0x00000008
 
 // --- Method optimization masks ---
@@ -295,7 +295,10 @@ inline ObjectType ModeToType(int mode)
       case CTRL_STR_EXPR:
          return otLiteral;
       default:
-         return otNone;
+         if (mode >= CTRL_BARR_EXPR) {
+            return otByteArray;
+         }
+         else return otNone;
    }
 }
 
@@ -910,7 +913,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 {
    this->tape = &parent->tape;
    this->level = 0;
-   this->reserved = 0;
+   this->saved = this->reserved = 0;
    this->breakLabel = 0;
 }
 
@@ -926,7 +929,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 {
    this->tape = &((ClassScope*)parent->getScope(slClass))->tape;
    this->level = 0;
-   this->reserved = 0;
+   this->saved = this->reserved = 0;
    this->breakLabel = -1;
 }
 
@@ -935,7 +938,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
 {
    this->tape = parent->tape;
    this->level = parent->level;
-   this->reserved = 0;
+   this->saved = this->reserved = 0;
    this->breakLabel = parent->breakLabel;
 }
 
@@ -944,14 +947,16 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
    Parameter local = locals.get(identifier);
    if (local.reference) {
       if (local.type != otNone) {
-         return ObjectInfo(okLocalAddress, local.type, local.reference);
+         return ObjectInfo(okLocal, local.type, local.reference);
       }
       else return ObjectInfo(okLocal, local.reference);
    }
    else return Scope::mapObject(identifier);
 }
 
-void Compiler::CodeScope :: compileLocalHints(DNode hints, ObjectType& type)
+// Note: size modificator is used only for bytearray
+//       in all other cases it should be zero
+void Compiler::CodeScope :: compileLocalHints(DNode hints, ObjectType& type, int& size)
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
@@ -960,6 +965,22 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ObjectType& type)
          TerminalInfo typeValue = hints.firstChild().Terminal();
          if (ConstIdentifier::compare(typeValue, HINT_INT)) {
             type = otInt;
+         }
+         else if (ConstIdentifier::compare(typeValue, HINT_LONG)) {
+            type = otLong;
+         }
+         else if (ConstIdentifier::compare(typeValue, HINT_REAL)) {
+            type = otReal;
+         }
+         else if (ConstIdentifier::compare(typeValue, HINT_BYTEARRAY)) {
+            type = otByteArray;
+         }
+         else raiseWarning(wrnUnknownHint, terminal);
+      }
+      else if (ConstIdentifier::compare(terminal, HINT_SIZE)) {
+         TerminalInfo sizeValue = hints.firstChild().Terminal();
+         if (type == otByteArray && sizeValue.symbol == tsInteger) {
+            size = StringHelper::strToInt(sizeValue.value);
          }
          else raiseWarning(wrnUnknownHint, terminal);
       }
@@ -1358,9 +1379,14 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
 
 void Compiler :: compileStackAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
 {
-   if (variableInfo.type == otInt && (object.type != otInt || object.type != otIndex)) {
-      _writer.loadObject(*scope.tape, ObjectInfo(okRegisterField, 0));
-      _writer.saveObject(*scope.tape, variableInfo);
+   if (variableInfo.type == otInt && (object.type == otInt || object.type == otIndex)) {
+      _writer.saveIntParam(*scope.tape, variableInfo);
+   }
+   else if (variableInfo.type == otLong && (object.type == otLong)) {
+      _writer.saveLongParam(*scope.tape, variableInfo);
+   }
+   else if (variableInfo.type == otReal && (object.type == otReal)) {
+      _writer.saveLongParam(*scope.tape, variableInfo);
    }
    else scope.raiseError(errInvalidOperation, node.Terminal());
 }
@@ -1369,25 +1395,64 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 {
    if (!scope.locals.exist(node.Terminal())) {
       ObjectType type = otNone;
-      scope.compileLocalHints(hints, type);
+      int size = 0;
+      scope.compileLocalHints(hints, type, size);
 
       int level = scope.newLocal();
+      int mode = definePrimitiveExprPrefix(type, size);
+      
+      if (type != otNone) {
+         ObjectInfo primitive;;
 
-      _writer.declareVariable(*scope.tape, scope.moduleScope->nilReference);
-      _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+         // Note: size modificator is used only for bytearray
+         //       in all other cases it should be zero
+         if (type == otByteArray && size > 0) {
+            mode += size;
+
+            // byte array should start with size field
+            allocatePrimitiveObject(scope, CTRL_INT_EXPR, primitive);
+            _writer.assignIntParam(*scope.tape, primitive, size);
+         }
+   
+         allocatePrimitiveObject(scope, mode & ~CTRL_MASK, primitive);
+
+         // make the reservation permanent
+         scope.saved = scope.reserved;
+
+         _writer.pushObject(*scope.tape, primitive);
+         switch (type)
+         {
+            case otInt:
+               _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), level);
+               break;
+            case otLong:
+               _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
+               break;
+            case otReal:
+               _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
+               break;
+         }
+         
+      }
+      else {
+         _writer.declareVariable(*scope.tape, scope.moduleScope->nilReference);
+         _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+      }
 
       DNode assigning = node.firstChild();
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, definePrimitiveExprPrefix(type));
+      if (assigning != nsNone) {
+         ObjectInfo info = compileExpression(assigning.firstChild(), scope, mode);
 
-      _writer.loadObject(*scope.tape, info);
+         _writer.loadObject(*scope.tape, info);
 
-      scope.mapLocal(node.Terminal(), level, type);
+         scope.mapLocal(node.Terminal(), level, type);
 
-      if (type == otNone) {
-         info = boxObject(scope, info, 0);
-         compileAssignment(node, scope, scope.mapObject(node.Terminal()));
+         if (type == otNone) {
+            info = boxObject(scope, info, 0);
+            compileAssignment(node, scope, scope.mapObject(node.Terminal()));
+         }
+         else compileStackAssignment(node, scope, scope.mapObject(node.Terminal()), info);
       }
-      else compileStackAssignment(node, scope, scope.mapObject(node.Terminal()), info);
    }
    else scope.raiseError(errDuplicatedLocal, node.Terminal());
 }
@@ -2794,7 +2859,7 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
 void Compiler :: compileEndStatement(DNode node, CodeScope& scope)
 {
    if (scope.reserved > 0) {
-      scope.reserved = 0;
+      scope.reserved = scope.saved;
    }
 }
 
@@ -3052,13 +3117,13 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
          ExternalScope::ParamInfo param = externalScope.operands.pop();
 
          if (param.subject == moduleScope->wideStrSubject || param.subject == moduleScope->dumpSubject) {
-            _writer.saveIntParam(*scope.tape, ObjectInfo(okBlockLocal, param.offset));
+            _writer.pushIntParam(*scope.tape, ObjectInfo(okBlockLocal, param.offset));
          }
          else if (param.output) {
-            _writer.saveIntParam(*scope.tape, ObjectInfo(okBlockLocalAddress, param.offset));
+            _writer.pushIntParam(*scope.tape, ObjectInfo(okBlockLocalAddress, param.offset));
          }
          else if (param.subject == moduleScope->intSubject || param.subject == moduleScope->handleSubject) {
-            _writer.saveIntParam(*scope.tape, ObjectInfo(okOuterField, param.offset));
+            _writer.pushIntParam(*scope.tape, ObjectInfo(okOuterField, param.offset));
          }
          count--;
       }
@@ -3147,7 +3212,7 @@ ref_t Compiler :: compilePrimitiveParameters(DNode node, CodeScope& scope, Refer
       //else {
          ObjectInfo target;
          allocatePrimitiveObject(scope, postfix, target);
-         _writer.saveIntParam(*scope.tape, ObjectInfo(okLocalAddress, target.reference));
+         _writer.pushIntParam(*scope.tape, ObjectInfo(okLocalAddress, target.reference));
 
          functionName.append("&out");
          definePrimitiveParameter(scope, functionName, target.type, false);
@@ -3205,8 +3270,10 @@ bool Compiler :: definePrimitiveParameter(CodeScope& scope, IdentifierString& fu
    return true;
 }
 
-int getPrimitiveSize(ObjectType operand)
+int getPrimitiveSize(int mode)
 {
+   ObjectType operand = ModeToType(mode);
+
    switch(operand) {
       case otRef:
       case otInt:
@@ -3217,6 +3284,9 @@ int getPrimitiveSize(ObjectType operand)
       case otLong:
       case otReal:
          return 2;
+      case otByteArray:
+         // byte array size should be alligned to 4
+         return (mode - CTRL_BARR_EXPR + 3) >> 2;
       default:
          return 0;
    }
@@ -3224,11 +3294,10 @@ int getPrimitiveSize(ObjectType operand)
 
 bool Compiler :: allocatePrimitiveObject(CodeScope& scope, int mode, ObjectInfo& exprOperand)
 {
-   exprOperand.type = ModeToType(mode);
-
-   int size = getPrimitiveSize(exprOperand.type);
+   int size = getPrimitiveSize(mode);
    if (size > 0) {
       exprOperand.kind = okLocalAddress;
+      exprOperand.type = ModeToType(mode);
       // the offset should include frame header offset
       exprOperand.reference = -4 - scope.reserved;
 
@@ -3292,7 +3361,7 @@ bool Compiler :: definePrimitiveOperatorArguments(CodeScope& scope, IdentifierSt
          return false;
 
       outOperand.kind = okLocalAddress;
-      _writer.saveIntParam(*scope.tape, outOperand);
+      _writer.pushIntParam(*scope.tape, outOperand);
    }
 
    return true;

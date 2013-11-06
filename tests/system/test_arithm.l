@@ -3,6 +3,18 @@
 #define system'collections.
 #define extensions'text.
 
+#symbol StackAllocatedTest =
+[
+    #var(type:int)n := 3.    
+    n := n + 1.
+    
+    #var(type:long)l := 12345678901234566l.
+    l := l + 1l.
+    
+    #var o := n.
+    #var o2 := l.
+].
+
 #class XTester
 {
     #method set &field1:aField

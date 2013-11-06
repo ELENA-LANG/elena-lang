@@ -20,9 +20,10 @@ v  - vm script
 ------
 Currently:
 ------
+
               xdev - generic development              
-                       * loadverb should be not be implemented in elena.h
-                         module
+                       * local stack allocated variable (#var(type'int)theVal := 2) : bytearray : should start with size
+
 
 <=================>
 
@@ -37,8 +38,6 @@ week1: [9.11]
                        * native implementation - using open argument list??
 
               xdev - generic development              
-                       * break inside if inside loop - should break loop ??
-
                        * for loop: review for implementation algorithm can we simplify it??
 
                        * support several roles in role (e.g. a~role1~role2 eval) ??
@@ -96,11 +95,7 @@ week1: [9.11]
                        * hint role should indicate that no need to create a class class??
 
                        * readonly fields like in C# (some optimization gains?)
-
-                       * local stack allocated variable (#var(type'int)theVal := 2) ; only int, long and real supported ; probably they
-                         all (including implicit ones) should be declared at the method begin, so they will be cleared together
-                         (think over elegant way to remove stack excluding)
-
+                       
                        * warn if system'Object does not contain send method
 
                        * probably import should work only with system modules?
@@ -119,7 +114,7 @@ week1: [9.11]
                        
                        * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
 
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * support: primitive operation int + long, long + int
 
               xdev - ecode optimization
                        * system'object output code review (Object.equal)
@@ -128,9 +123,15 @@ week1: [9.11]
                        * should be possible to debug vm scripts
                        
               xdev - simple optimization              
+                       * probably stack allocated variable should be allocated without filling with zero
+
                        * do not need load acc if it is already in acc (see Object.equal)
                        * idle copyfpi, before close (see Object.notequal)
-
+                       
+                       * review / optimize stack allocating implementing
+                       
+                       * n := n + 1 should not create a new anonimus stack allocated variable
+                                                            
                        * if the target is stack allocated, no need to allocate extra space (at least for the single operation)? 
 
                        * review and optimize dispatching algorithm: $self, field, symbol
@@ -254,13 +255,15 @@ week1: [9.11]
                        * reuse ecode compiling code (at least string to bytecode routine)
                        
               idev - usability
-                       * make possible to select fonr / font size for editor / gui
+                       * primitive variables are not refreshed during debugging
+                       * make possible to select font / font size for editor / gui
 
                        * upper / lower case does not work
                        * reimplement cleanUp
                        * recognize out of memory exception
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
                        * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
 
               idev - debugger
                        * debugger does not show the stack allocated values : ByteArray.read&type'index&type'length&type'bytearray
@@ -287,6 +290,9 @@ week2:
                          
                        * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
 
+                       * start to use stack allocated variables to optimize the code
+
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
                               
                        * arrayiterator / array / literalvalue:setat, ... - raise an exception if the index
                          out of range                       
@@ -404,7 +410,13 @@ week4:
 1.9.9.12
 --------
 week1:
+              xdev - multithreading
+                       * architecture overview
+                       * migrate multy-threading 
+
               xdev - generic development              
+                       * loadverb should be not be implemented in elena.h
+                         module
                        * custom verb dispatching (see for example stringControl split&by[2])
                            : intNumber.shift ; stringControl
                        * multiple parameter dispatching
@@ -431,6 +443,11 @@ week4:
             xmaint - build
                        * try to automize build process  
                       
+1.9.9.13
+--------
+week1:
+              xdev - generic development
+                       * support GUI application
 
 1.9.9.15
 --------

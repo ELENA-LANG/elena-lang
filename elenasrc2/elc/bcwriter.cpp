@@ -1582,7 +1582,51 @@ void ByteCodeWriter :: saveOutputResult(CommandTape& tape, int destOffset, int s
    tape.write(bcXPopAccI);
 }
 
+void ByteCodeWriter :: assignIntParam(CommandTape& tape, ObjectInfo param, int value)
+{
+   // pushn value
+   // accloadfi n
+   // x_popacci
+   tape.write(bcPushN, value);
+   tape.write(bcAccLoadFI, param.reference);
+   tape.write(bcXPopAccI);
+}
+
 void ByteCodeWriter :: saveIntParam(CommandTape& tape, ObjectInfo param)
+{
+   switch (param.kind) {
+      case okLocal:
+         // accloadacci 0
+         // pushacc
+         // accloadfi n
+         // x_popacci
+         tape.write(bcAccLoadAccI);
+         tape.write(bcPushAcc);
+         tape.write(bcAccLoadFI, param.reference);
+         tape.write(bcXPopAccI);
+         break;
+   }
+}
+
+void ByteCodeWriter :: saveLongParam(CommandTape& tape, ObjectInfo param)
+{
+   switch (param.kind) {
+      case okLocal:
+         // pushacci 1
+         // pushacci
+         // accloadfi n
+         // x_popacci
+         // x_popacci 1
+         tape.write(bcPushAccI, 1);
+         tape.write(bcPushAccI);
+         tape.write(bcAccLoadFI, param.reference);
+         tape.write(bcXPopAccI);
+         tape.write(bcXPopAccI, 1);
+         break;
+   }
+}
+
+void ByteCodeWriter :: pushIntParam(CommandTape& tape, ObjectInfo param)
 {
    switch (param.kind) {
       case okLocal:

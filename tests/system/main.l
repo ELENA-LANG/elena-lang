@@ -3,6 +3,9 @@
 
 #symbol Program =
 [   
+    StackAllocatedTest eval.
+
+    BreakTest eval.
     MultiDispatchTest eval.
 
     XTest eval.
@@ -12,7 +15,6 @@
     MultySelectTest eval.
     EnumTest eval.    
     TextBufferTest eval.
-    BreakTest eval.
     ControlTest eval.
     ObjectTest eval.
     LoopTest eval.

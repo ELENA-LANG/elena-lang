@@ -404,10 +404,17 @@ protected:
    struct CodeScope : public Scope
    {
       CommandTape* tape;
+
+      // scope local variables
       LocalMap     locals;
       int          level;
-      int          reserved;
+
+      // scope breakpoint label
       int          breakLabel;
+
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
 
       int newLocal()
       {
@@ -466,7 +473,7 @@ protected:
          return scope ? scope->info.header.flags : 0;
       }
 
-      void compileLocalHints(DNode hints, ObjectType& type);
+      void compileLocalHints(DNode hints, ObjectType& type, int& size);
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
