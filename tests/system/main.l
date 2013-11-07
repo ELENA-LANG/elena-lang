@@ -5,12 +5,12 @@
 [   
     StackAllocatedTest eval.
 
-    BreakTest eval.
-    MultiDispatchTest eval.
-
     XTest eval.
   
     system'console write &Line:"Starting...".    
+
+    BreakTest eval.
+    MultiDispatchTest eval.
 
     MultySelectTest eval.
     EnumTest eval.    

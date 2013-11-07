@@ -51,7 +51,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 53;
+const int gcCommandNumber = 52;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcAccLoadSI, bcCallAcc, bcOpen, bcInit,
@@ -64,7 +64,7 @@ const ByteCommand gcCommands[gcCommandNumber] =
    bcAccGetSI, bcAccGetFI, bcJumpAcc, bcAccFillR,
    bcMccCopyAccI, bcQuitMcc, bcJumpAccN, bcAccSaveSelfI, bcRCallM, 
    bcRCallN, bcSet, bcAccAddN, bcAccSwapSI, bcCallSI,
-   bcMccAddAccI, bcRestore, bcGetLen, bcAccBoxN, bcAccSaveDstSI
+   bcMccAddAccI, bcRestore, bcGetLen, bcAccBoxN
 };
 
 // command table

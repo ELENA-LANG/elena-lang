@@ -9,3 +9,4 @@ pushr   popacc => acccopyr nop;
 pushselfi popacc => accloadselfi nop;
 accloadfi pushacc => pushfi nop;
 acccopyself pushacc => pushself nop;
+reserve =1 accsavesi =0 => pushacc nop;

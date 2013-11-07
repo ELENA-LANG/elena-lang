@@ -9,9 +9,13 @@
 
 ELENA:
 [!] Exception handling syntax modified
+[*] long, real and bytearray variable can be declared as a stack allocated one
 
 [LIB]
 [!] ELENA API refactored
+
+IDE:
+[-] debugger watch: fixed bug with unrefreshed stack allocated variables
 
 ******************************************************************************
                     What's New in 1.9.9.10 (beta)

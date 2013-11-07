@@ -116,124 +116,147 @@ void ECodesAssembler :: compileJump(ByteCode code, TokenInfo& token, MemoryWrite
 void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info)
 {
    bool recognized = true;
-   if (token.check(_T("accloadacci"))) {
-      compileICommand(bcAccLoadAccI, token, writer);
+   ByteCode opcode = ByteCodeCompiler::code(token.value);
+
+   switch (opcode)
+   {
+      case bcNop:
+      case bcBreakpoint:
+      case bcPushSelf:
+      case bcPop:
+      case bcWriteAcc:
+      case bcPushMcc:
+      case bcMccCopyVerb:
+      case bcThrow:
+      case bcMccCopySubj:
+      case bcPushAcc:
+      case bcPopAcc:
+      case bcAccCopySelf:
+      case bcPopMcc:
+      case bcBSRedirect:
+      case bcInit:
+      case bcClose:
+      case bcPopSelf:
+      case bcQuitMcc:
+      case bcJumpAcc:
+      case bcQuit:
+      case bcGet:
+      case bcSet:
+      case bcUnhook:
+      case bcExclude:
+      case bcInclude:
+         writeCommand(ByteCommand(opcode), writer);
+         break;
+      //case bcPushR:
+      //case bcCallExtR:
+      //case bcEvalR:
+      //case bcCallR:
+      //case bcAccLoadR:
+      //case bcAccSaveR:
+      //case bcAccCopyR:
+      //case bcAccFillR:
+      //   break;
+      case bcIncFI:
+      case bcCopyFPI:
+      case bcCallAcc:
+      case bcAccLoadSI:
+      case bcAccSaveSI:
+      case bcPushFI:
+      case bcAccCopyN:
+      case bcAccLoadAccI:
+      case bcAccGetFI:
+      case bcMccCopyAccI:
+      case bcMccCopySI:
+      case bcMccCopyFI:
+      case bcMccAddAccI:
+      case bcPushAccI:
+      case bcMccCopyPrmFI:
+      case bcReserve:
+      case bcPushSelfI:
+      case bcPushSI:
+      case bcPushFPI:
+      case bcXPushFPI:
+      case bcPushSPI:
+      case bcPopSelfI:
+      case bcPopFI:
+      case bcXPopAccI:
+      case bcPopSI:
+      case bcPopAccI:
+      case bcIncSI:
+      case bcAccLoadFI:
+      case bcAccSaveSelfI:
+      case bcAccSaveFI:
+      case bcSwapSI:
+      case bcAccSwapSI:
+      case bcXAccSaveFI:
+      case bcXAccCopyFPI:
+      case bcAccCopyFPI:
+      case bcRethrow:
+      case bcRestore:
+      case bcAccGetSI:
+      case bcAccLoadSelfI:
+         compileICommand(opcode, token, writer);
+         break;
+      case bcOpen:
+      case bcMccAddM:
+      case bcJumpAccN:
+      case bcMccCopyM:
+      case bcPushI:
+      case bcQuitN:
+      case bcPushN:
+      case bcPopN:
+      case bcAccAddN:
+      case bcNWrite:
+      case bcGetLen:
+         compileNCommand(opcode, token, writer);
+         break;
+      case bcHook:
+      case bcJump:
+      case bcElse:
+      case bcThen:
+      case bcMccElseAcc:
+      case bcMccThenAcc:
+         compileJump(opcode, token, writer, info);
+         break;
+      //case bcAccCreate:
+      //   break;
+      //case bcElseR:
+      //case bcThenR:
+      //   break;
+      case bcMccElse:
+      case bcMccThen:
+         compileMccJump(opcode, token, writer, info);
+         break;
+      case bcMccElseAccI:
+      case bcThenFlag:
+      case bcElseSI:
+      case bcThenSI:
+      case bcElseFlag:
+      case bcMccThenAccI:
+         compileNJump(opcode, token, writer, info);
+         break;
+      //case bcCreate:
+      //   break;
+      //case bcCreateN:
+      //   break;
+      //case bcIAccCopyR:
+      //   break;
+      //case bcIAccFillR:
+      //   break;
+      //case bcAccCreateN:
+      //   break;
+      //case bcAccBoxN:
+      //   break;
+      //case bcCallSI:
+      //   break;
+      //case bcRCallN:
+      //   break;
+      //case bcRCallM:
+      //   break;
+   default:
+      recognized = false;
+      break;
    }
-   else if (token.check(_T("acccopyn"))) {
-      compileICommand(bcAccCopyN, token, writer);
-   }
-   else if (token.check(_T("accgetfi"))) {
-      compileICommand(bcAccGetFI, token, writer);
-   }
-   else if (token.check(_T("pushfi"))) {
-      compileICommand(bcPushFI, token, writer);
-   }
-   else if (token.check(_T("accloadsi"))) {
-      compileICommand(bcAccLoadSI, token, writer);
-   }
-   else if (token.check(_T("accsavesi"))) {
-      compileICommand(bcAccSaveSI, token, writer);
-   }
-   else if (token.check(_T("accsavedstsi"))) {
-      compileICommand(bcAccSaveDstSI, token, writer);
-   }
-   else if (token.check(_T("bsredirect"))) {
-      writeCommand(ByteCommand(bcBSRedirect), writer);
-   }  
-   else if (token.check(_T("callacc"))) {
-      compileICommand(bcCallAcc, token, writer);
-   }
-   else if (token.check(_T("close"))) {
-      writeCommand(ByteCommand(bcClose), writer);
-   }
-   else if (token.check(_T("copyfpi"))) {
-      compileICommand(bcCopyFPI, token, writer);
-   }
-   else if (token.check(_T("else"))) {
-      compileJump(bcElse, token, writer, info);
-   }
-   else if (token.check(_T("init"))) {
-      writeCommand(ByteCommand(bcInit), writer);
-   }
-   else if (token.check(_T("incfi"))) {
-      compileICommand(bcIncFI, token, writer);
-   }
-   else if (token.check(_T("jump"))) {
-      compileJump(bcJump, token, writer, info);
-   }
-   else if (token.check(_T("jumpaccn"))) {
-      compileNCommand(bcJumpAccN, token, writer);
-   }
-   else if (token.check(_T("mccaddm"))) {
-      compileNCommand(bcMccAddM, token, writer);
-   }
-   else if (token.check(_T("mcccopyacci"))) {
-      compileICommand(bcMccCopyAccI, token, writer);
-   }
-   else if (token.check(_T("mccaddacci"))) {
-      compileICommand(bcMccAddAccI, token, writer);
-   }
-   else if (token.check(_T("mcccopyfi"))) {
-      compileICommand(bcMccCopyFI, token, writer);
-   }
-   else if (token.check(_T("mcccopym"))) {
-      compileNCommand(bcMccCopyM, token, writer);
-   }
-   else if (token.check(_T("mcccopysubj"))) {
-      writeCommand(ByteCommand(bcMccCopySubj), writer);
-   }
-   else if (token.check(_T("mcccopyverb"))) {
-      writeCommand(ByteCommand(bcMccCopyVerb), writer);
-   }
-   else if (token.check(_T("mccelse"))) {
-      compileMccJump(bcMccElse, token, writer, info);
-   }
-   else if (token.check(_T("mccelseacci"))) {
-      compileNJump(bcMccElseAccI, token, writer, info);
-   }
-   else if (token.check(_T("mccelseacc"))) {
-      compileJump(bcMccElseAcc, token, writer, info);
-   }
-   else if (token.check(_T("open"))) {
-      compileNCommand(bcOpen, token, writer);
-   }
-   else if (token.check(_T("popacc"))) {
-      writeCommand(ByteCommand(bcPopAcc), writer);
-   }
-   else if (token.check(_T("popmcc"))) {
-      writeCommand(ByteCommand(bcPopMcc), writer);
-   }
-   else if (token.check(_T("popself"))) {
-      writeCommand(ByteCommand(bcPopSelf), writer);
-   }
-   else if (token.check(_T("pushacc"))) {
-      writeCommand(ByteCommand(bcPushAcc), writer);
-   }
-   else if (token.check(_T("pushacci"))) {
-      compileICommand(bcPushAccI, token, writer);
-   }
-   else if (token.check(_T("pushmcc"))) {
-      writeCommand(ByteCommand(bcPushMcc), writer);
-   }
-   else if (token.check(_T("mcccopyprmfi"))) {
-      compileICommand(bcMccCopyPrmFI, token, writer);
-   }
-   else if (token.check(_T("pushi"))) {
-      compileNCommand(bcPushI, token, writer);
-   }
-   else if (token.check(_T("quitmcc"))) {
-      writeCommand(ByteCommand(bcQuitMcc), writer);
-   }
-   else if (token.check(_T("quitn"))) {
-      compileNCommand(bcQuitN, token, writer);
-   }
-   else if (token.check(_T("thenflag"))) {
-      compileNJump(bcThenFlag, token, writer, info);
-   }
-   else if (token.check(_T("throw"))) {
-      writeCommand(ByteCommand(bcThrow), writer);
-   }
-   else recognized = false;
 
    if (!recognized) {
       info.labels.add(token.value, writer.Position());

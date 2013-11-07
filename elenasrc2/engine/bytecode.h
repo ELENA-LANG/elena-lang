@@ -95,7 +95,6 @@ enum ByteCode
    bcAccSaveSI      = 0x63,
    bcAccSaveFI      = 0x64,
    bcAccSaveR       = 0x65,
-   bcAccSaveDstSI   = 0x67,
    bcSwapSI         = 0x6C,
    bcAccSwapSI      = 0x6D,
    bcXAccSaveFI     = 0x6F,
@@ -265,6 +264,16 @@ struct ByteCommand
          writer->writeDWord(additional);
       }
    }
+};
+
+// --- ByteCodeCompiler ---
+
+class ByteCodeCompiler
+{
+public:
+   static ByteCode code(const wchar16_t* s);
+
+   static const wchar16_t* decode(ByteCode code, wchar16_t* s);
 };
 
 // --- CommandTape ---

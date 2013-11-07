@@ -53,91 +53,10 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 {
    ByteCodePattern pattern;
 
-   if (StringHelper::compare(info.line, _T("popn"))) {
-      pattern.code = bcPopN;
+   pattern.code = ByteCodeCompiler::code(info.line);
+   if (pattern.code == bcNone) {
+      throw UnknownToken(info);
    }
-   else if (StringHelper::compare(info.line, _T("pop"))) {
-      pattern.code = bcPop;
-   }
-   else if (StringHelper::compare(info.line, _T("popacc"))) {
-      pattern.code = bcPopAcc;
-   }
-   else if (StringHelper::compare(info.line, _T("popsi"))) {
-      pattern.code = bcPopSI;
-   }
-   else if (StringHelper::compare(info.line, _T("nop"))) {
-      pattern.code = bcNop;
-   }
-   else if (StringHelper::compare(info.line, _T("init"))) {
-      pattern.code = bcInit;
-   }
-   else if (StringHelper::compare(info.line, _T("open"))) {
-      pattern.code = bcOpen;
-   }
-   else if (StringHelper::compare(info.line, _T("pushr"))) {
-      pattern.code = bcPushR;
-   }
-   else if (StringHelper::compare(info.line, _T("pushsi"))) {
-      pattern.code = bcPushSI;
-   }
-   else if (StringHelper::compare(info.line, _T("pushfi"))) {
-      pattern.code = bcPushFI;
-   }
-   else if (StringHelper::compare(info.line, _T("pushacc"))) {
-      pattern.code = bcPushAcc;
-   }
-   else if (StringHelper::compare(info.line, _T("pushself"))) {
-      pattern.code = bcPushSelf;
-   }
-   else if (StringHelper::compare(info.line, _T("pushselfi"))) {
-      pattern.code = bcPushSelfI;
-   }
-   ////else if (StringHelper::compare(info.line, _T("mcccopym"))) {
-   ////   pattern.code = bcMccCopyM;
-   ////}
-   else if (StringHelper::compare(info.line, _T("acccopyr"))) {
-      pattern.code = bcAccCopyR;
-   }
-   //else if (StringHelper::compare(info.line, _T("sendvmtr"))) {
-   //   pattern.code = bcSendVMTR;
-   //}
-   //else if (StringHelper::compare(info.line, _T("send"))) {
-   //   pattern.code = bcSend;
-   //}
-   //else if (StringHelper::compare(info.line, _T("rinvokem"))) {
-   //   pattern.code = bcRInvokeM;
-   //}
-   else if (StringHelper::compare(info.line, _T("breakpoint"))) {
-      pattern.code = bcBreakpoint;
-   }
-   //else if (StringHelper::compare(info.line, _T("accloadsi"))) {
-   //   pattern.code = bcAccLoadSI;
-   //}
-   //else if (StringHelper::compare(info.line, _T("else"))) {
-   //   pattern.code = bcElse;
-   //}
-   else if (StringHelper::compare(info.line, _T("accsavesi"))) {
-      pattern.code = bcAccSaveSI;
-   }
-   else if (StringHelper::compare(info.line, _T("accsavefi"))) {
-      pattern.code = bcAccSaveFI;
-   }
-   else if (StringHelper::compare(info.line, _T("accloadfi"))) {
-      pattern.code = bcAccLoadFI;
-   }
-   else if (StringHelper::compare(info.line, _T("accloadselfi"))) {
-      pattern.code = bcAccLoadSelfI;
-   }
-   else if (StringHelper::compare(info.line, _T("acccopyself"))) {
-      pattern.code = bcAccCopySelf;
-   }
-   else if (StringHelper::compare(info.line, _T("quit"))) {
-      pattern.code = bcQuit;
-   }
-   ////else if (StringHelper::compare(info.line, _T("jump"))) {
-   ////   pattern.code = bcJump;
-   ////}
-   else throw UnknownToken(info);
 
    info = source.read(token, IDENTIFIER_LEN);
    // pattern arguments

@@ -25,6 +25,8 @@
 
 #symbol XTest =
 [
+    #var n := Integer new.
+    
     XTester ~ %field1 set:1.
 ].
 

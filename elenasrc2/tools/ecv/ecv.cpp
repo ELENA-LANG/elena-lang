@@ -20,6 +20,7 @@
 #define ROOTPATH_OPTION _T("libpath")
 
 #define MAX_LINE        256
+#define BUILD_VERSION   2
 
 using namespace _ELENA_;
 
@@ -199,284 +200,6 @@ ref_t resolveMessage(_Module* module, const wchar16_t* method)
    return encodeMessage(subject, verb, paramCount);
 }
 
-const wchar16_t* decode(unsigned char code)
-{
-   switch ((ByteCode)code) {
-      case bcNop:
-         return _T("nop");
-      case bcBreakpoint:
-         return _T("breakpoint");
-      case bcPushSelf:
-         return _T("pushself");
-      case bcPop:
-         return _T("pop");
-      case bcWriteAcc:
-         return _T("writeacc");
-      case bcPushMcc:
-         return _T("pushmcc");
-      case bcThrow:
-         return _T("throw");
-      case bcMccCopySubj:
-         return _T("mcccopysubj");
-      case bcPushAcc:
-         return _T("pushacc");
-      case bcPopAcc:
-         return _T("popacc");
-      case bcAccCopySelf:
-         return _T("acccopyself");
-      case bcPopMcc:
-         return _T("popMcc");
-      case bcBSRedirect:
-         return _T("bsredirect");
-      //case bcMccCopyVerb:
-      //   return _T("mcccopyverb");
-      //case bcMccCopyAcc:
-      //   return _T("mcccopyacc");
-      //case bcAccCopyMcc:
-      //   return _T("acccopymcc");
-      //case bcReSend:
-      //   return _T("resend");
-      case bcOpen:
-         return _T("open");
-      case bcInit:
-         return _T("init");
-      case bcClose:
-         return _T("close");
-      case bcPopSelf:
-         return _T("popself");
-      case bcJumpAcc:
-         return _T("jumpacc");
-      //case bcClose:
-      //   return _T("close");
-      case bcQuit:
-         return _T("quit");
-      case bcGet:
-         return _T("get");
-      case bcSet:
-         return _T("set");
-      case bcQuitMcc:
-         return _T("quitmcc");
-      case bcRestore:
-         return _T("restore");
-      case bcUnhook:
-         return _T("unhook");
-      case bcExclude:
-         return _T("exclude");
-      case bcInclude:
-         return _T("include");
-      //case bcAccAddSelf:
-      //   return _T("accaddself");
-      //case bcRedirect:
-      //   return _T("redirect");
-      case bcReserve:
-         return _T("reserve");
-      case bcPushN:
-         return _T("pushn");
-      case bcPushR:
-         return _T("pushr");
-      case bcPushSelfI:
-         return _T("pushselfi");
-      case bcPushAccI:
-         return _T("pushacci");
-      case bcPushI:
-         return _T("pushi");
-      case bcPushFI:
-         return _T("pushfi");
-      case bcMccCopyPrmFI:
-         return _T("mcccopyprmfi");
-      case bcPushSI:
-         return _T("pushsi");
-      case bcPushFPI:
-         return _T("pushfpi");
-      case bcXPushFPI:
-         return _T("x_pushfpi");
-      case bcPushSPI:
-         return _T("pushspi");
-      case bcPopN:
-         return _T("popn");
-      case bcPopSelfI:
-         return _T("popselfi");
-      case bcPopFI:
-         return _T("popfi");
-      case bcXPopAccI:
-         return _T("x_popacci");
-      case bcPopSI:
-         return _T("popsi");
-      case bcPopAccI:
-         return _T("popacci");
-      //case bcAccTryN:
-      //   return _T("acctryn");
-      //case bcAccTryR:
-      //   return _T("acctryr");
-      case bcQuitN:
-         return _T("quitn");
-      case bcCallExtR:
-         return _T("callextr");
-      case bcEvalR:
-         return _T("evalr");
-      case bcCallAcc:
-         return _T("callacc");
-      case bcCallR:
-         return _T("callr");
-      //case bcSendVMTR:
-      //   return _T("sendvmtr");
-      case bcMccCopyAccI:
-         return _T("mcccopyacci");
-      case bcMccCopySI:
-         return _T("mcccopysi");
-      case bcMccCopyFI:
-         return _T("mcccopyfi");
-      case bcMccAddAccI:
-         return _T("mccaddacci");
-      case bcMccCopyM:
-         return _T("mcccopym");
-      case bcMccAddM:
-         return _T("mccaddm");
-      case bcIncSI:
-         return _T("incsi");
-      case bcIncFI:
-         return _T("incfi");
-      //case bcAccInc:
-      //   return _T("accinc");
-      case bcAccLoadR:
-         return _T("accloadr");
-      case bcAccLoadFI:
-         return _T("accloadfi");
-      case bcAccLoadSI:
-         return _T("accloadsi");
-      //case bcAccTestFlagN:
-      //   return _T("acctestflagn");
-      case bcAccSaveSI:
-         return _T("accsavesi");
-      case bcAccSaveFI:
-         return _T("accsavefi");
-      case bcAccSaveSelfI:
-         return _T("accsaveselfi");
-      case bcAccSaveR:
-         return _T("accsaver");
-      case bcAccSaveDstSI:
-         return _T("accsavedstsi");
-      case bcSwapSI:
-         return _T("swapsi");
-      case bcAccSwapSI:
-         return _T("swapsi");
-      case bcXAccSaveFI:
-         return _T("x_accsavefi");
-      case bcCopyFPI:
-         return _T("copyfpi");
-      //case bcAccCopySPI:
-      //return _T("acccopyspi");
-      case bcAccCopyR:
-         return _T("acccopyr");
-      case bcAccCopyN:
-         return _T("acccopyn");
-      case bcAccLoadAccI:
-         return _T("accloadacci");
-      case bcRethrow:
-         return _T("rethrow");
-      //case bcAccCopyM:
-      //   return _T("acccopym");
-      case bcXAccCopyFPI:
-         return _T("x_acccopyfpi");
-      case bcAccCopyFPI:
-         return _T("acccopyfpi");
-      case bcAccAddN:
-         return _T("accaddn");
-      //case bcTryLock:
-      //   return _T("trylock");
-      //case bcFreeLock:
-      //   return _T("freelock");
-      //case bcSPTryLock:
-      //   return _T("sptrylock");
-      //case bcAccFreeLock:
-      //   return _T("accfreelock");
-      case bcJump:
-         return _T("jump");
-      case bcJumpAccN:
-         return _T("jumpaccn");
-      case bcHook:
-         return _T("hook");
-      //case bcJumpR:
-      //   return _T("jumpr");
-      case bcElse:
-         return _T("else");
-      case bcThen:
-         return _T("then");
-      case bcMccElseAcc:
-         return _T("mccelseacc");
-      case bcMccThenAcc:
-         return _T("mccthenacc");
-      case bcNWrite:
-         return _T("nwrite");
-      case bcGetLen:
-         return _T("getlen");
-      case bcAccGetSI:
-         return _T("accgetsi");
-      case bcAccGetFI:
-         return _T("accgetfi");
-      case bcAccCreate:
-         return _T("acccreate");
-      //case bcAccMergeR:
-      //   return _T("accmerger");
-      case bcElseR:
-         return _T("elser");
-      case bcThenR:
-         return _T("thenr");
-      case bcMccElse:
-         return _T("mccelse");
-      case bcMccThen:
-         return _T("mccthen");
-      //case bcMccElseSI:
-      //   return _T("mccelsesi");
-      //case bcMccThenSI:
-      //   return _T("mccthensi");
-      //case bcMccVerbElseSI:
-      //   return _T("mccverbelsesi");
-      //case bcMccVerbThenSI:
-      //   return _T("mccverbthensi");
-      //case bcElseN:
-      //   return _T("elsen");
-      //case bcThenN:
-      //   return _T("thenn");
-      case bcElseSI:
-         return _T("elsesi");
-      case bcThenSI:
-         return _T("thensi");
-      case bcMccElseAccI:
-         return _T("mccelseacci");
-      case bcMccThenAccI:
-         return _T("mccthenacci");
-      case bcElseFlag:
-         return _T("elseflag");
-      case bcThenFlag:
-         return _T("thenflag");
-      case bcAccLoadSelfI:
-         return _T("accloadselfi");
-      case bcCreate:
-         return _T("create");
-      case bcCreateN:
-         return _T("createn");
-      case bcAccCreateN:
-         return _T("acccreaten");
-      case bcAccBoxN:
-         return _T("accboxn");
-      case bcIAccCopyR:
-         return _T("iacccopyr");
-      case bcIAccFillR:
-         return _T("iaccfillr");
-      case bcRCallM:
-         return _T("rcallm");
-      case bcRCallN:
-         return _T("rcalln");
-      case bcCallSI:
-         return _T("callsi");
-      //case bcIAccCopyN:
-      //   return _T("iacccopyn");
-      default:
-         return _T("unknown");
-   }
-}
-
 inline void appendHex32(IdentifierString& command, unsigned int hex)
 {
    unsigned int len = hex / 0x10 + 1;
@@ -592,7 +315,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    int position = codeReader.Position();
    unsigned char code = codeReader.getByte();
 
-   const wchar16_t* opcode = decode(code);
+   wchar16_t opcode[0x30];
+   ByteCodeCompiler::decode((ByteCode)code, opcode);
 
    IdentifierString command;
    while (indent > 0) {
@@ -758,7 +482,6 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPopSI:
       case bcMccCopySI:
       case bcIncSI:
-      case bcAccSaveDstSI:
       case bcAccSwapSI:
          command.append(opcode);
          command.append(_T(" sp["));
@@ -1180,7 +903,7 @@ void runSession(_Module* module)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-	printf("ELENA command line Elena ByteCode Viewer %d.%d.1 (C)2012-2013 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+	printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2012-2013 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");

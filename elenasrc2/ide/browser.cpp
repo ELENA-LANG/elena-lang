@@ -101,9 +101,9 @@ void DebuggerWatch :: write(DebugController* controller, size_t address, const w
       if ((getlength(itemName) > nameLen + 1) &&  StringHelper::compare(itemName, variableName, nameLen)
          && itemName[nameLen] == ' ')
       {
-         if (itemAddress != address) {
+         //if (itemAddress != address) {
             editNode(item, variableName, className, address);
-         }
+         //}
          writeSubWatch(controller, item, address);
          return;
       }

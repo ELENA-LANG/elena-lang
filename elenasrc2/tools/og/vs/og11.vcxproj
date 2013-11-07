@@ -96,6 +96,7 @@
     <ClCompile Include="..\..\..\common\config.cpp" />
     <ClCompile Include="..\..\..\common\dump.cpp" />
     <ClCompile Include="..\..\..\common\files.cpp" />
+    <ClCompile Include="..\..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\..\engine\textsource.cpp" />
     <ClCompile Include="..\og.cpp" />
   </ItemGroup>
@@ -104,6 +105,7 @@
     <ClInclude Include="..\..\..\common\common.h" />
     <ClInclude Include="..\..\..\common\config.h" />
     <ClInclude Include="..\..\..\common\dump.h" />
+    <ClInclude Include="..\..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\..\engine\elena.h" />
     <ClInclude Include="..\..\..\common\files.h" />
     <ClInclude Include="..\..\..\common\lists.h" />
