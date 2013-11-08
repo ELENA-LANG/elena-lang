@@ -445,6 +445,9 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_PROJECT_COMPILE:
          _ide->doCompileProject();
          break;
+      case IDM_PROJECT_CLEAN:
+         _ide->cleanUpProject();
+         break;
       case IDM_DEBUG_RUN:
          _ide->doDebugRun();
          break;
@@ -709,28 +712,28 @@ void WIN32IDE :: cleanUpProject()
       removeFile(targetFile);
    }
    // clean module files
-   _ELENA_::ConfigCategoryIterator it = Project::SourceFiles();
-   _ELENA_::Path modulePath;
-   _ELENA_::ReferenceNs moduleName;
-   while (!it.Eof()) {
-      moduleName.copy(Project::getPackage());
-      moduleName.pathToName(it.key());
 
-      const wchar_t* name = moduleName;
-      const wchar_t* package = Project::getPackage();
-      if (package!=NULL) {
-         name += _ELENA_::getlength(package) + 1;
-      }
+
+   _ELENA_::ConstantIdentifier ext("nl");
+   _ELENA_::ConstantIdentifier d_ext("dnl");
+   _ELENA_::Path rootPath(Project::getPath(), Project::getOutputPath());
+   for (_ELENA_::ConfigCategoryIterator it = Project::SourceFiles() ; !it.Eof() ; it++) {
+      _ELENA_::Path source(rootPath, it.key());
+
+      _ELENA_::Path module;
+      module.copyPath(it.key());
+
+      _ELENA_::ReferenceNs name(Project::getPackage());
+      name.pathToName(module);          // get a full name
+
       // remove module
-      modulePath.copy(Project::getPath());
-      modulePath.combine(Project::getOutputPath());
-      modulePath.nameToPath(name, _T("nl"));
-
-      removeFile(modulePath);
+      module.copy(rootPath);
+      module.nameToPath(name, ext);
+      removeFile(module);
 
       // remove debug info module
-      modulePath.changeExtension(_T("dnl"));
-      removeFile(modulePath);
+      module.changeExtension(d_ext);
+      removeFile(module);
 
       it++;
    }

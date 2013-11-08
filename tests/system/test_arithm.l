@@ -3,10 +3,20 @@
 #define system'collections.
 #define extensions'text.
 
+#class XTester2
+{
+    #method do &type'int:n
+    [
+        #var o := n.
+    ]
+}
+
 #symbol StackAllocatedTest =
 [
     #var(type:int)n := 3.    
     n := n + 1.
+    
+    XTester2 do &type'int:n.
     
     #var(type:long)l := 12345678901234566l.
     l := l + 1l.

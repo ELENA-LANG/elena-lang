@@ -177,6 +177,8 @@ BEGIN
     "S",            IDM_FILE_SAVE,          VIRTKEY, CONTROL
     "S",            IDM_FILE_SAVEALL,       VIRTKEY, SHIFT, CONTROL
     "T",            IDM_EDIT_TRIM,          VIRTKEY, CONTROL
+    "U",             IDM_EDIT_UPPERCASE,     VIRTKEY, CONTROL
+    "U",             IDM_EDIT_LOWERCASE,     VIRTKEY, SHIFT, CONTROL
     "V",            IDM_EDIT_PASTE,         VIRTKEY, CONTROL
     "W",            IDM_FILE_CLOSE,         VIRTKEY, CONTROL
     "W",            IDM_FILE_CLOSEALL,      VIRTKEY, SHIFT, CONTROL

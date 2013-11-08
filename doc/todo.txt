@@ -25,25 +25,10 @@ Currently:
 1.9.9.11
 --------
 week1: [9.11]
-              xdev - script support
-                       * should be possible to debug vm scripts
-                       
               xdev - tools                       
                        * create missing folders
                        * get rid of _T (elc, elt, asm2binx, ecv)
                        
-              idev - usability
-                       * upper / lower case does not work
-                       * reimplement cleanUp
-                       * recognize out of memory exception
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-
-              idev - debugger
-                       * debugger does not show the stack allocated values : ByteArray.read&type'index&type'length&type'bytearray
-                         (textview)
-                                                                      
               xdev - elenasm
                        * support LALR parser
                        * inline script improve error handling
@@ -412,6 +397,15 @@ week1:
                        * could direct parameter allocation be used for open argument list?
                        * review / simplify idle constructor
                        
+              xdev - script support
+                       * should be possible to debug vm scripts
+                       
+              idev - usability
+                       * recognize out of memory exception
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+
 week2:                       
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)

@@ -16,6 +16,8 @@ ELENA:
 
 IDE:
 [-] debugger watch: fixed bug with unrefreshed stack allocated variables
+[-] menu option shortcut fixed:upper / lower case
+[-] menu option fixed:project clean up
 [*] settings: font size can be changed
 
 ******************************************************************************
