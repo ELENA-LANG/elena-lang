@@ -601,7 +601,16 @@ void EditorSettings :: onCreate()
    addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Default"));
    addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Classic"));
 
+   // populate font size combo box
+   _ELENA_::String<wchar16_t, 4> size;
+   for(int i = 8 ; i < 25 ; i++) {
+      size.appendInt(i);
+      addComboBoxItem(IDC_EDITOR_FONTSIZE, size);
+      size.clear();
+   }   
+
    setComboBoxIndex(IDC_EDITOR_COLORSCHEME, Settings::scheme);
+   setComboBoxIndex(IDC_EDITOR_FONTSIZE, Settings::font_size - 8);
 
    setCheckState(IDC_EDITOR_LINENUMBERFLAG, Settings::lineNumberVisible);
    setCheckState(IDC_EDITOR_USETAB, Settings::tabCharUsing);
@@ -619,8 +628,7 @@ void EditorSettings :: onCreate()
    if (!Settings::highlightSyntax)
       enable(IDC_EDITOR_COLORSCHEME, false);
 
-   wchar_t size[3];
-   _ELENA_::StringHelper::intToStr(Settings::tabSize, size, 10);
+   size.appendInt(Settings::tabSize);
    setText(IDC_EDITOR_TABSIZE, size);
 
    setCheckState(IDC_EDITOR_REMEMBERPATH, Settings::lastPathRemember);
@@ -643,6 +651,7 @@ void EditorSettings :: onEditorHighlightSyntaxChanged()
 void EditorSettings :: onOK()
 {
    Settings::scheme = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
+   Settings::font_size = 8 + getComboBoxIndex(IDC_EDITOR_FONTSIZE);
    Settings::lineNumberVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
    Settings::tabCharUsing = getCheckState(IDC_EDITOR_USETAB);
    Settings::highlightSyntax = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);

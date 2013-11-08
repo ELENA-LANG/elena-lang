@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Settings class header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2013, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef settingsH
@@ -32,6 +32,7 @@
 #define OUTPUT_SETTING           _T("compileroutput")
 #define AUTO_RECOMPILE_SETTING   _T("autocomp")
 #define DEBUG_TAPE_SETTING       _T("debugtape")
+#define FONTSIZE_SETTING         _T("font_size")
 
 #define DEFAULT_PROJECT_SETTING  _T("defaultproject")
 
@@ -86,6 +87,7 @@ struct Settings
    static bool debugTape;
 
    static size_t scheme;
+   static size_t font_size;
 
    static _ELENA_::Path defaultProject;
    static _ELENA_::List<_path_t*> defaultFiles;

@@ -25,6 +25,8 @@ protected:
    size_t       _scheme;
    ContextMenu* _contextMenu;
 
+   bool resizeStyles(int size);
+
    virtual int getDocumentTabCount();
    virtual void selectDocumentTab(int index);
    virtual int addDocumentTab(const _path_t* path, Document* doc);   

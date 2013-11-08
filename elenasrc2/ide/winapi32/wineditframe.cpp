@@ -84,12 +84,28 @@ void EditFrame :: renameDocumentTab(int index, const _text_t* newName)
    renameTabView(index, newName);
 }
 
+bool EditFrame :: resizeStyles(int size)
+{
+   bool changed = false;
+   for(int i = 0 ; i <= STYLE_MAX ; i++) {
+      for(int j = 0 ; j < 2 ; j++) {
+         if (_schemes[j][i].size != size) {
+            changed = true;
+            _schemes[j][i].size = size;
+         }
+      }
+   }
+
+   return changed;
+}
 
 void EditFrame :: reloadSettings()
 {
+   bool resized = resizeStyles(Settings::font_size);
+
    if(_child) {
-      if (_scheme != Settings::scheme)
-         ((TextView*)_child)->setStyles(STYLE_MAX + 1, _schemes[Settings::scheme], 15, 20);
+      if (resized || _scheme != Settings::scheme)
+         ((TextView*)_child)->setStyles(STYLE_MAX + 1, _schemes[Settings::scheme], Settings::font_size + 5, 20);
 
       ((TextView*)_child)->applySettings(Settings::tabSize, Settings::tabCharUsing, 
          Settings::lineNumberVisible, Settings::highlightSyntax);

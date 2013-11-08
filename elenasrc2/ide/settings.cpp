@@ -126,6 +126,8 @@ void Paths :: makeRelativePath(Path& path, const _path_t* rootPath)
 
 size_t Settings :: scheme = 0;
 
+size_t Settings :: font_size = 10;
+
 size_t Settings :: tabSize = 4;
 
 bool Settings :: tabCharUsing = false;
@@ -196,6 +198,7 @@ void Settings :: load(_ELENA_::IniConfigFile& config)
    loadSetting(config.getSetting(SETTINGS_SECTION, BRACKETS_SETTING), highlightBrackets);
    loadSetting(config.getSetting(SETTINGS_SECTION, TABSCORE_SETTING), tabWithAboveScore);
    loadSetting(config.getSetting(SETTINGS_SECTION, SCHEME_SETTING), scheme, 0, 1, 0);
+   loadSetting(config.getSetting(SETTINGS_SECTION, FONTSIZE_SETTING), font_size, 8, 24, 10);
 
    loadSection(config.getCategoryIt(SRCPATH_SECTION), packageRoots);
    loadSection(config.getCategoryIt(LIBPATH_SECTION), libraryRoots);
@@ -220,6 +223,7 @@ void Settings :: save(_ELENA_::IniConfigFile& config)
    saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, highlightBrackets, true);
    saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, tabWithAboveScore, true);
    saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, scheme, 0u);
+   saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, font_size, 10u);
 
    saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, tabSize, 4u);
    saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, defaultEncoding, 0);

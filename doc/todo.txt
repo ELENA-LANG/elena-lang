@@ -20,10 +20,6 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - tools                       
-                       * reuse ecode compiling code (at least string to bytecode routine)
-                       * recompile elc / elenavm
-                       * recompile esm module
 <=================>
 
 1.9.9.11
@@ -37,8 +33,6 @@ week1: [9.11]
                        * get rid of _T (elc, elt, asm2binx, ecv)
                        
               idev - usability
-                       * make possible to select font / font size for editor / gui
-
                        * upper / lower case does not work
                        * reimplement cleanUp
                        * recognize out of memory exception

@@ -16,6 +16,7 @@ ELENA:
 
 IDE:
 [-] debugger watch: fixed bug with unrefreshed stack allocated variables
+[*] settings: font size can be changed
 
 ******************************************************************************
                     What's New in 1.9.9.10 (beta)

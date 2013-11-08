@@ -208,6 +208,7 @@
 #define IDD_EDITOR_SETTINGS                     900
 #define IDC_EDITOR_LINENUMBERFLAG               (IDD_EDITOR_SETTINGS + 1)
 #define IDC_EDITOR_COLORSCHEME                  (IDD_EDITOR_SETTINGS + 2)
+#define IDC_EDITOR_FONTSIZE                     (IDD_EDITOR_SETTINGS + 3)
 #define IDC_EDITOR_USETAB                       (IDD_EDITOR_SETTINGS + 4)
 #define IDC_EDITOR_TABSIZE                      (IDD_EDITOR_SETTINGS + 5)
 #define IDC_EDITOR_HIGHLIGHSYNTAXFLAG           (IDD_EDITOR_SETTINGS + 6)
