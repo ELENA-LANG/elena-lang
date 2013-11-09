@@ -3,28 +3,6 @@
 #define system'collections.
 #define extensions'text.
 
-#class XTester2
-{
-    #method do &type'int:n
-    [
-        #var o := n.
-    ]
-}
-
-#symbol StackAllocatedTest =
-[
-    #var(type:int)n := 3.    
-    n := n + 1.
-    
-    XTester2 do &type'int:n.
-    
-    #var(type:long)l := 12345678901234566l.
-    l := l + 1l.
-    
-    #var o := n.
-    #var o2 := l.
-].
-
 #class XTester
 {
     #method set &field1:aField
@@ -63,20 +41,33 @@
     #var n := 3.
     
     n =>
-        1 ? [ console write &Line:"=> operator fails". ]
-        2 ? [ console write &Line:"=> operator fails". ]
-        3 ? [ console write &Line:"=> operator works!". ].
+        1 ? [ console writeLine:"=> operator fails". ]
+        2 ? [ console writeLine:"=> operator fails". ]
+        3 ? [ console writeLine:"=> operator works!". ].
 ].
 
 // --- LocalTest ---
 
+#class LocalTester
+{
+    #method do &type'int:n
+    [
+        #var o := n.
+    ]
+}
+
 #symbol LocalTest =
 [
-    #var(type:int)n := 5.
-
-    n := n + 4.
-            
-    #var nn := n.
+    #var(type:int)n := 3.    
+    n := n + 1.
+    
+    LocalTester do &type'int:n.
+    
+    #var(type:long)l := 12345678901234566l.
+    l := l + 1l.
+    
+    #var o := n.
+    #var o2 := l.
 ].
 
 // --- OpenArgTest ---
@@ -265,15 +256,15 @@
 [
     true ?
     [
-        console write &Line:"? operator works!".
+        console writeLine:"? operator works!".
     ].
     
     false ?
     [
-        console write &Line:"!! ControlTest failed".
+        console writeLine:"!! ControlTest failed".
     ]
     ! [
-        console write &Line:"?-! operator works!".
+        console writeLine:"?-! operator works!".
     ].
 ].
 
@@ -368,8 +359,6 @@
 
 #symbol LiteralTest =
 [
-    "abc" getAt:-1.
-    
     #var b1 := "abc" == "abc".
     #var b2 := "ab" == "abc".
     #var b3 := "ba" > "ab".
@@ -385,10 +374,10 @@
     
     console writeLine.
     
-    #var n := "abcd" indexOf &type'widestr:"bc" &type'index:0.
-    #var n2 := "abcd" indexOf &type'widestr:"bac" &type'index:0.
+    #var n := "abcd" indexOf &type'index:0 &type'widestr:"bc".
+    #var n2 := "abcd" indexOf &type'index:0 &type'widestr:"bac".
     
-    #var s := "acd" insert &type'widestr:"b" &type'index:1.
+    #var s := "acd" insert &type'index:1 &type'widestr:"b".
     #var ls := s Length.
     
     #var s2 := "abbcd" delete &type'index:1 &type'length:1.
@@ -406,7 +395,7 @@
     #var a1 := Array(1,2,3).
     #var n := a1 @ 1.
 
-    #var a2 := Array new &type'length:5 &action: &&:x [ Integer new:x ].
+    #var a2 := Array new &type'length:5 &function: &&:x [ Integer new:x ].
     #var n2 := a2 @ 1.
     a2 setAt:1:-1.
     #var n3 := a2 @ 1.

@@ -49,11 +49,6 @@
         system'console write:(ListPresenter new:anArray).
     ]
         
-    #method write &Line:anObject
-    [
-        system'console write &Line:anObject.
-    ]
-        
     #method writeLine:anObject
     [
         system'console writeLine:anObject.

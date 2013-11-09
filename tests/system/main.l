@@ -3,11 +3,9 @@
 
 #symbol Program =
 [   
-    StackAllocatedTest eval.
-
-    XTest eval.
+    //XTest eval.
   
-    system'console write &Line:"Starting...".    
+    system'console writeLine:"Starting...".    
 
     BreakTest eval.
     MultiDispatchTest eval.

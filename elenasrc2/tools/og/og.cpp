@@ -60,7 +60,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
    info = source.read(token, IDENTIFIER_LEN);
    // pattern arguments
-   if (StringHelper::compare(info.line, _T("+"))) {
+   if (ConstantIdentifier::compare(info.line, "+")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braAdd;
@@ -68,7 +68,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (StringHelper::compare(info.line, _T("-"))) {
+   else if (ConstantIdentifier::compare(info.line, "-")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braAdd;
@@ -76,7 +76,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (StringHelper::compare(info.line, _T("="))) {
+   else if (ConstantIdentifier::compare(info.line, "=")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braValue;
@@ -84,14 +84,14 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   //else if (StringHelper::compare(info.line, _T(":="))) {
-   //   info = source.read(token, IDENTIFIER_LEN, false);
+   else if (ConstantIdentifier::compare(info.line, ":=")) {
+      info = source.read(token, IDENTIFIER_LEN);
 
-   //   pattern.argumentType = braMatch;
-   //   pattern.argument = StringHelper::strToInt(token);
+      pattern.argumentType = braMatch;
+      pattern.argument = StringHelper::strToInt(token);
 
-   //   info = source.read(token, IDENTIFIER_LEN, false);
-   //}
+      info = source.read(token, IDENTIFIER_LEN);
+   }
    //// !! is it used?
    //else if (StringHelper::compare(info.line, _T("<<"))) {
    //   pattern.argumentType = braCopy;

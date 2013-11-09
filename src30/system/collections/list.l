@@ -153,7 +153,7 @@
 
     #method Count = theCount Number.
 
-    #method Length = theCount Number.
+    #method type'length = theCount Number.
 
     #method Enumerator = ListEnumerator new:$self.
 

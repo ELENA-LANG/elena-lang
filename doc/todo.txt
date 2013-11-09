@@ -20,25 +20,18 @@ v  - vm script
 ------
 Currently:
 ------
-<=================>
-
-1.9.9.11
---------
-week1: [9.11]
-              xdev - tools                       
-                       * create missing folders
-                       * get rid of _T (elc, elt, asm2binx, ecv)
-                       
-              xdev - elenasm
-                       * support LALR parser
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
-                       
-week2:
               adev - LIB30 review
+                       * MultySelectTest: failed with external exception
+
                        * test: system tests
                        * test: examples
                        * test: rosetta code examples
+<=================>
+         
+1.9.9.11
+--------
+week2: [17.11]
+              adev - LIB30 review
                        * review console read / write operation: complex types
 
               adev - lib30
@@ -406,6 +399,15 @@ week1:
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
 
+              xdev - tools                       
+                       * create missing folders
+                       * get rid of _T (elc, elt, asm2binx, ecv)
+                       
+              xdev - elenasm
+                       * support LALR parser
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
+                       
 week2:                       
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)
