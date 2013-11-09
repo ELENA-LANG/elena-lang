@@ -282,7 +282,7 @@
           } eval::aChar.
     
     trimStart:aChar &in:aString
-        = aString << aString Literal ~ELiteralOp trimStart &type'char:aChar.
+        = aString << aString Literal ~ELiteralOp trimStart &type'widechar:aChar.
         
     toArray : aLiteral
         = aLiteral~ELiteralOp Array.

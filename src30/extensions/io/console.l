@@ -22,12 +22,12 @@
     #method read : aValue
     [
         (0 == theBuffer Length) ?
-            [ system'console read &Line:theBuffer. ].
+            [ system'console readLine:theBuffer. ].
             
         stringControl trimStart:20h &in:theBuffer.
                
         #var aLiteral := theBuffer Literal.
-        #var anIndex := aLiteral indexOf &type'char:20h &type'index:0.
+        #var anIndex := aLiteral indexOf &type'index:0 &type'widechar:20h.
         
         (-1 == anIndex)
             ? [ aValue << Variant new:theBuffer. theBuffer clear. ]

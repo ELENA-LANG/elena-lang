@@ -9,7 +9,7 @@
 
 #symbol randomBrackets = &&:aLength
 [
-    #var aBrackets := Array new &type'length:aLength &action: &&:i[ CharValue new:"[" ] + Array new &type'length:aLength &action: &&:i[ CharValue new:"]" ].
+    #var aBrackets := Array new &type'length:aLength &function: &&:i[ CharValue new:"[" ] + Array new &type'length:aLength &function: &&:i[ CharValue new:"]" ].
     
     randomControl randomize:(aLength * 2) &array:aBrackets.
     

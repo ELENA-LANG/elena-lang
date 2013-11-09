@@ -13,9 +13,8 @@
 
 #symbol XTest =
 [
-    #var n := Integer new.
-    
-    XTester ~ %field1 set:1.
+    #var aChar := CharValue new &type'int:32.
+    #var s := "      abc"~ELiteralOp trimStart &type'widechar:aChar.
 ].
 
 // --- MultiDispatchTest ---
