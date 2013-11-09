@@ -73,7 +73,7 @@
     ]
 
     #method read &type'index:anIndex
-        <= read &type'index:anIndex &type'length:($self Length - anIndex).
+        <= read &type'index:anIndex &type'length:($self type'length - anIndex).
 
     #method read &type'index:anIndex &type'length:aLength
         = (aLength == 0)

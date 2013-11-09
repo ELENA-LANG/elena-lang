@@ -323,7 +323,7 @@
 
     #constructor new &type'widestr:aValue
     [
-        theData << (aValue getAt:0) type'short.
+        theData << (aValue getAt:0) type'widechar.
     ]
 
     #method type'widechar = $self.
@@ -344,7 +344,7 @@
         = $self less &type'int:anOperand .
 
     #method equal &type'widestr:aLiteral
-        = aLiteral equal &type'short:$self.
+        = aLiteral equal &type'widechar:$self.
 
     #method Number = IntNumber new &type'int:theData.
 
@@ -448,7 +448,7 @@
     #method equal &type'widestr : aLiteral
         = theData == aLiteral.
 
-    #method equal &type'short : aChar
+    #method equal &type'widechar : aChar
         = theData == aChar.
 
     #method less &type'widestr : aLiteral

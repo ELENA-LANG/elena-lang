@@ -23,7 +23,7 @@
     
     #constructor new : aLiteral
     [
-        theIndexer := aLiteral Enumerator write &Index:0.
+        theIndexer := aLiteral Enumerator write &type'index:0.
         theWord := TextBuffer new.
     ]    
     
@@ -52,7 +52,7 @@
                 control while:[ $self~theRole $nextChar ] &do:[].
             ].
         
-        ^ 0 != theWord Length.
+        ^ 0 != theWord type'length.
     ]
     
     #method get = theWord Literal.

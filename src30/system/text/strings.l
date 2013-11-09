@@ -64,7 +64,7 @@
     
     #method insert &type'widestr:aValue
     [
-        theLiteral := theLiteral insert &type'widestr:aValue &type'index:theIndex.
+        theLiteral := theLiteral insert &type'index:theIndex &type'widestr:aValue.
         
         theIndex := theIndex + aValue type'length.
     ]

@@ -20,7 +20,7 @@
     [
         theTotal += 1.
 
-        listControl exist:aWord &in:theList
+        listControl ifExist:aWord &in:theList
             ! [ theList append:aWord. ].
     ]
 

@@ -12,3 +12,6 @@ bin\elc -cexamples\binary\binary.prj
 bin\elc -cexamples\replace\replace.prj
 bin\elc -cexamples\goods\goods.prj
 bin\elc -cexamples\datetime\dtcalculator.prj
+bin\elc -cexamples\textdb\textdb.prj
+bin\elc -cexamples\matrix\matrix.prj
+bin\elc -cexamples\trans\tanslit.prj

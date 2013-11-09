@@ -17,7 +17,7 @@
         aList append:(LiteralValue new &type'length:(anArg Length + 4) &type'widestr:anArg).
     ].
 
-    ^ Array new &type'length:(aList Count) &action: &&:anIndex [ aList~EList getAt:anIndex ].
+    ^ Array new &type'length:(aList Count) &function: &&:anIndex [ aList~EList getAt:anIndex ].
 ].
 
 // --- ProgramLoop ---

@@ -9,8 +9,8 @@
     [
         #var aCount := self type'length.
 
-        ^ Array new &type'length:aCount &action: &&:i
-            [ Array new &type'length:aCount &action: &&:j 
+        ^ Array new &type'length:aCount &function: &&:i
+            [ Array new &type'length:aCount &function: &&:j 
                 [ (self@i@j) + (aMatrix@i@j) ] ].
     ]
     
@@ -18,8 +18,8 @@
     [
         #var aCount := self type'length.
 
-        ^ Array new &type'length:aCount &action: &&:i
-            [ Array new &type'length:aCount &action: &&:j 
+        ^ Array new &type'length:aCount &function: &&:i
+            [ Array new &type'length:aCount &function: &&:j 
                 [ (self@i@j) - (aMatrix@i@j) ] ].
     ]
     
@@ -27,8 +27,8 @@
     [
         #var aCount := self type'length.
 
-        #var aResult := Array new &type'length:aCount &action: &&:i
-            [ Array new &type'length:aCount &action: &&:j [ Real new &type'int:0 ] ].
+        #var aResult := Array new &type'length:aCount &function: &&:i
+            [ Array new &type'length:aCount &function: &&:j [ Real new &type'int:0 ] ].
   
         control from:0 &till:aCount &do: &&:i
         [
@@ -45,7 +45,7 @@
     ]
 
     #method Clone
-        = Array new &type'length::self &action: &&:i
+        = Array new &type'length::self &function: &&:i
             [ (self@i)~EArray DeepClone ].
 
     #method Determinant
@@ -96,7 +96,7 @@
         [
             control foreach:aRow &do: &&:anItem [ anOutput append:(anItem Literal) append:",". ].
             
-            anOutput set &Length:(-1 + anOutput Length).
+            anOutput set &type'length:(-1 + anOutput type'length).
             
             anOutput append:"%n".
         ].
@@ -109,9 +109,9 @@
 
 #symbol matrixControl =
 {
-    new &m:anM &n:anN &action:anAction
-        = Array new &type'length:anM &action: &&:i
-            [ Array new &type'length:anN &action: &&:j [ anAction:i:j ] ].
+    new &m:anM &n:anN &function:anAction
+        = Array new &type'length:anM &function: &&:i
+            [ Array new &type'length:anN &function: &&:j [ anAction:i:j ] ].
             
     sumOf : aMatrix1 : aMatrix2
         = aMatrix1~EMatrix add:aMatrix2.

@@ -251,7 +251,7 @@
         
         control do:
         [
-            anIndex := self indexOf &type'widestr:aValue &type'index:aStart.
+            anIndex := self indexOf &type'index:aStart &type'widestr:aValue.
             (-1 != anIndex) ?
             [
                 aList += self Substring &type'index:aStart &type'length:(anIndex - aStart).

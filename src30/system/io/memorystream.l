@@ -26,7 +26,7 @@
 
     #method set &type'length:aLength
     [
-        thePosition write &type'int::aLength.
+        thePosition write &type'int:aLength.
     ]
 
     #method Size = theByteArray Length.

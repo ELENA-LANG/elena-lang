@@ -25,9 +25,9 @@
         
         self~EList run: &&:item [ theOutput append:(item Literal) append:"," ].
         
-        #var aLength := theOutput Length.
+        #var aLength := theOutput type'length.
         (0 < aLength)
-            ? [ theOutput set &Length:(-1 + aLength). ].
+            ? [ theOutput set &type'length:(-1 + aLength). ].
         
         ^ theOutput Literal.
     ]

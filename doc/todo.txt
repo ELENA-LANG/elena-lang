@@ -21,11 +21,11 @@ v  - vm script
 Currently:
 ------
               adev - LIB30 review
-                       * MultySelectTest: failed with external exception
-
-                       * test: system tests
-                       * test: examples
                        * test: rosetta code examples
+
+              adev - LIB30 review
+                       * test: opencalc
+
 <=================>
          
 1.9.9.11
@@ -65,6 +65,8 @@ week2: [17.11]
                        * date: custom presenter / formatter / custom formatter
                        * extensions'EIntPresenter / EIntFormatter - can it work both for int and long numbers?
                        * list / iterators / ... - can commutator be used instead of adapter roles
+                       * matrix: fix determinant
+                       * rewrite pi sample to use stack allocated variables
 
               adev - api review
                        * review / simplify code : system'EAction (iterate&for&from&till&by)
@@ -165,8 +167,6 @@ week3:
                       * trace could print the result directly to console?? (so it will simplify script debugging)
 
 week4:
-            smaint - console samples
-                       * test determinant
             xmaint - compiler
                        * looks like the operation with console does not work with AMD!!!
                        

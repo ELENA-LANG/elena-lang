@@ -63,7 +63,7 @@
     #var aSize := consoleEx write:"Enter the array size:" readLine:(Integer new).
 
     // 2. Initialize the array
-    #var anArray := Array new &type'length:aSize &action:prompter.
+    #var anArray := Array new &type'length:aSize &function:prompter.
 
     // 3. Sort the array
     sorting sort:anArray.

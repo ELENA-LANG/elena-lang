@@ -734,8 +734,6 @@ void WIN32IDE :: cleanUpProject()
       // remove debug info module
       module.changeExtension(d_ext);
       removeFile(module);
-
-      it++;
    }
 }
 
