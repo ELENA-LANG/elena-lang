@@ -2,6 +2,7 @@
 #define system'collections.
 #define system'text.
 #define extensions'text.
+#define extensions'io.
 
 // --- WordList ---
 
@@ -29,13 +30,15 @@
     #method total_words = theTotal.
 
     #method unique_words = theList Count.
+    
+    #method <= &&type'enumerable:$self.
 }
 
 // --- Program ---
 
 #symbol Program =
 [
-    console writeLine:"Enter the text(to stop press enter two times):".
+    consoleEx writeLine:"Enter the text(to stop press enter two times):".
 
     #var aText := TextBuffer new.
     #var aLine := String new.
@@ -47,9 +50,9 @@
 
     enumControl forEachWord:aText &do: &&:anItem [ aList append:anItem ].
 
-    console write:"There are " write:(aList unique_words) write:" unique words out of " writeLine:(aList total_words).
+    consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)
-        ? [ console write:"the list of unique words:" writeLine:(ListPresenter new:aList) ].
+        ? [ consoleEx writeLine:"the list of unique words:":aList. ].
 
-    console readChar. // wait for any key
+    consoleEx readChar. // wait for any key
 ].

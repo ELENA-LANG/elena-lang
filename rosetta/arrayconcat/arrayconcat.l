@@ -5,5 +5,5 @@
     #var a := (1,2,3).
     #var b := (4,5).
 
-    consoleEx write:"(" write::a write:") + (" write::b write:") = (" write::(a + b) writeLine:")".
+    consoleEx writeLine:"(":a:") + (":b:") = (":(a + b):")".
 ].

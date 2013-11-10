@@ -72,6 +72,7 @@ namespace _ELENA_
    #define SAVE_MESSAGE_ID         0x002D
    #define RESET_MESSAGE_ID        0x002E
    #define SPLIT_MESSAGE_ID        0x002F
+   #define CONVERT_MESSAGE_ID      0x0030
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -323,6 +324,7 @@ namespace _ELENA_
    #define SAVE_MESSAGE             "save"
    #define RESET_MESSAGE            "reset"
    #define SPLIT_MESSAGE            "split"
+   #define CONVERT_MESSAGE          "convert"
 
 //   #define NEXT_MESSAGE             "next"
 

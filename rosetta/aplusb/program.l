@@ -19,8 +19,10 @@ Given 2 integer numbers, A and B. One needs to find their sum.
 
 #symbol program =
 [
-    #var A := consoleEx >> Integer new.
-    #var B := consoleEx >> Integer new.
+    #var A := Integer new.
+    #var B := Integer new.
+    
+    consoleEx readLine:A:B.
 
-    consoleEx << A + B.
+    consoleEx writeLine:(A + B).
 ].

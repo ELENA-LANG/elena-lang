@@ -1,6 +1,7 @@
 summing       ::= "+" object  [ ^add(1) ];
 subtracting   ::= "-" object  [ ^subtract(1) ];
 reading       ::= ">>" expr   [ ^read(1) ] ;
+reading       ::= "=>" expr   [ ^eval&readLine(1) ] ;
 
 next_param    ::= "," param;
 next_param    ::= ")";

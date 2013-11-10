@@ -1538,6 +1538,88 @@ Lab2:
    
 end
 
+// ; l2 => s1
+
+inline core_api'convert (s1:out wstr, l2:long, n3:int)
+
+   pop  ecx
+   pop  eax
+   mov  ecx, [ecx]
+   push edi
+   push ebp
+   push [eax+4]
+   mov  ebp, esp
+   mov  edx, [eax]     // NLO
+   mov  eax, [eax+4]   // NHI
+   push 0
+   or   eax, eax
+   jge  short Lab6
+
+   neg  eax 
+   neg  edx 
+   sbb  eax, 0
+
+Lab6:                 // convert 
+   mov  esi, edx      // NLO
+   mov  edi, eax      // NHI
+
+Lab1:
+   test edi, edi
+   jnz  short labConvert
+   cmp  esi, ecx
+   jb   short Lab5
+
+labConvert:
+   mov  eax, edi      // NHI
+   xor  edx, edx
+   div  ecx
+   mov  ebx, eax
+   mov  eax, esi      // NLO
+   div  ecx
+   mov  edi,ebx 
+   mov  esi,eax
+
+   push edx
+   add  [ebp-4], 1
+   jmp  short Lab1
+
+Lab5:   
+   push esi
+
+   mov  ecx, [ebp-4]
+   add  ecx, 1
+
+   mov  eax, [ebp]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0FDh      // to get "-" after adding 0x30
+   add  ecx, 1
+Lab7:
+   mov  edx, ecx
+   add  ecx, 1    // ;  including trailing zero
+   shl  ecx, 1
+   mov  esi, [ebp+0Ch]
+   neg  ecx
+   mov  [esi-8], ecx
+   mov  ebx, 0FFh
+   mov  ecx, edx
+Lab2:
+   pop  eax
+   add  eax, 30h
+   and  eax, ebx
+   mov  word ptr [esi], ax
+   add  esi, 2
+   sub  ecx, 1
+   jnz  short Lab2
+   xor  eax, eax
+   mov  word ptr [esi], ax
+   lea  esp, [esp+8]
+   pop  ebp
+   pop  edi
+   pop  eax
+   
+end
+
 // r2 >> s1
 inline core_api'convert (s1:out wstr, r2:real, n3:int)
 
@@ -2859,9 +2941,10 @@ inline core_api'find (s1:wstr,n2:index,c3:short,n4:out int)
   pop  eax
   pop  ebx
   mov  ebx, [ebx]
-  pop  edx
-  mov  esi, [esp]
+  mov  edx, [esp]
+  mov  esi, [esp+4]
   mov  ecx, [esi-8]
+  add  esi, [edx]
   add  esi, [edx]
   neg  ecx
 labNext:
@@ -2871,13 +2954,15 @@ labNext:
   lea  esi, [esi+2]
   sub  ecx, 2
   ja   short labNext
-  pop  edx
+  lea  esp, [esp+8]
   mov  esi, -1
   jmp  short labSave
 labFound:
+  pop  ebx
   pop  edx
   sub  esi, edx
   shr  esi, 1
+  add  esi, [ebx]
 labSave:
   mov  [eax], esi
 end
@@ -3107,5 +3192,110 @@ Lab1:
    mov  [eax], edx
 labEnd:
    lea  esp, [esp+12]
+
+end
+
+inline core_api'exp (r1:real,r2:out real)
+
+  mov   eax, [esp+4]
+  fld   qword ptr [eax]   // Src
+
+  fldl2e                  // ->log2(e)
+  fmulp                   // ->log2(e)*Src
+      
+  // the FPU can compute the antilog only with the mantissa
+  // the characteristic of the logarithm must thus be removed
+      
+  fld   st(0)             // copy the logarithm
+  frndint                 // keep only the characteristic
+  fsub  st(1),st(0)       // keeps only the mantissa
+  fxch                    // get the mantissa on top
+
+  f2xm1                   // ->2^(mantissa)-1
+  fld1
+  faddp                   // add 1 back
+
+  // the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // scale it with the characteristic
+      
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return if error
+      
+  // the characteristic is still on the FPU and must be removed
+
+  fstp  st(1)             // get rid of the characteristic
+
+  mov   eax, [esp]
+  fstp  qword ptr [eax]    // store result 
+  jmp   short lEnd
+
+lErr:
+  xor   eax, eax 
+
+lEnd:
+  lea   esp, [esp+8]
+
+end
+
+// --- FLOAT_LN (DEST, SOUR) ---
+
+inline core_api'ln (r1:real,r2:out real)
+
+  mov   eax, [esp+4]
+  fld   qword ptr [eax]  
+
+  fldln2
+  fxch
+  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return error
+
+  mov   eax, [esp]
+  fstp  qword ptr [eax]    // store result 
+  jmp   short lEnd
+
+lErr:
+  xor   eax, eax 
+
+lEnd:
+  lea   esp, [esp+8]
+
+end
+
+inline core_api'round (r1:real,r2:out real)
+
+  mov   eax, [esp+4]
+  fld   qword ptr [eax]  
+
+  fstcw word ptr [esp]    // get current control word
+  mov   ax,[esp]
+  and   ax,0F3FFh         // code it for rounding 
+  push  eax
+  fldcw word ptr [esp]    // change rounding code of FPU to round
+
+  frndint                 // round the number
+  pop   eax               // get rid of last push
+  fldcw word ptr [esp]    // load back the former control word
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  pop   ebx               // clean CPU stack
+  jc    short lErr         // clean-up and return error
+  
+  mov   eax, [esp]
+  fstp  qword ptr [eax]    // store result 
+
+  jmp   short lEnd
+
+lErr:
+  xor   eax, eax
+  ffree st(0)
+
+lEnd:
+  lea   esp, [esp+8]
 
 end

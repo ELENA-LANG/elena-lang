@@ -20,18 +20,27 @@ v  - vm script
 ------
 Currently:
 ------
-              adev - LIB30 review
-                       * test: rosetta code examples
+              adev - sampels
+                      * modified arrayconcat (update rosettacode)
+                      * test arraymode (update rosettacode)
+                      * test aplusb (update rosettacode)
 
-              adev - LIB30 review
-                       * test: opencalc
+              adev - console operations:              
+                        * modify arraymode to use printer helper
+
+                        * write formatted numbers
+                        * write formatted string (with parameters)
 
 <=================>
          
 1.9.9.11
 --------
 week2: [17.11]
-              adev - LIB30 review
+              adev - console operations:
+                       * console read / write with adapter
+                           console write:anObject &with:anAdapter / writeLine:a &with:b
+                             => anObject~anAdapter Literal
+
                        * review console read / write operation: complex types
 
               adev - lib30
@@ -194,6 +203,8 @@ week1:
                        * native implementation - using open argument list??
 
               xdev - generic development              
+                       * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
+
                        * for loop: review for implementation algorithm can we simplify it??
 
                        * support several roles in role (e.g. a~role1~role2 eval) ??
@@ -409,6 +420,11 @@ week1:
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                        
 week2:                       
+              adev - structure
+                      * review / modify API structure
+                      * do we need extensions'text-printings module?
+                      * rename extensions'io-console module?
+                      
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)
                sdev - console samples
@@ -437,6 +453,8 @@ week1:
 week1:
                xdev - GC
                        * increase the heap size
+
+week2:
 
 2.0.0
 -----

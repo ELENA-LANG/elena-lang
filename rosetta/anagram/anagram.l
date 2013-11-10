@@ -6,6 +6,7 @@
 #define system.
 #define system'collections.
 #define extensions'text.
+#define extensions'io.
 
 // --- Normalized ---
 
@@ -37,10 +38,10 @@
 
     listControl sort:aDictionary &with: &&:aFormer:aLater [ aFormer Value Count > aLater Value Count ].
 
-    listControl foreach:aDictionary &top:20 &do: &&:aPair [ console writeLine:(ListPresenter new:(aPair Value)) ].
+    listControl foreach:aDictionary &top:20 &do: &&:aPair [ consoleEx writeLine:(aPair Value) ].
     
     #var anEnd := now.
    
     #var aDiff := anEnd - aStart.
-    console writeLine:"Time elapsed in msec:" write:(aDiff Milliseconds).
+    consoleEx writeLine:"Time elapsed in msec:":(aDiff Milliseconds).
 ].

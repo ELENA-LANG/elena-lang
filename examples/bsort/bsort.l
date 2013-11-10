@@ -8,7 +8,7 @@
 
 #symbol prompter = &&:anIndex
 [
-     consoleEx write:"Enter array[" write:anIndex write:"]:" readLine:(Integer new)
+     consoleEx write:"Enter array[":anIndex:"]:" readLine:(Integer new)
 ].
 
 // --- sorting ---
@@ -69,7 +69,7 @@
     sorting sort:anArray.
 
     // 4. Print the array
-    console writeLine:(ListPresenter new:anArray).
+    consoleEx writeLine:anArray.
 
-    console readChar. // wait for any key
+    consoleEx readChar. // wait for any key
 ].

@@ -37,7 +37,7 @@
     #var aMode2 := mode:anArray2.
 //    #var aMode3 := mode:anArray3.
     
-    consoleEx write:"mode of (" write::anArray1 write:") is (" write::aMode1 writeLine:")".
-    consoleEx write:"mode of (" write::anArray2 write:") is (" write::aMode2 writeLine:")".
+    consoleEx writeLine:"mode of (":anArray1:") is (":aMode1:")".
+    consoleEx writeLine:"mode of (":anArray2:") is (":aMode2:")".
 //    consoleEx write:"mode of (" write::anArray3 write:") is (" write::aMode3 writeLine:")".
 ].

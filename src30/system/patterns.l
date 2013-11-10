@@ -238,7 +238,7 @@
                 aList += self Substring &type'index:aStart &type'length:(self type'length - aStart).
             ].
         ]        
-        &until:[anIndex != -1].
+        &until:[anIndex == -1].
         
         ^ aList~EList Array.
     ]
