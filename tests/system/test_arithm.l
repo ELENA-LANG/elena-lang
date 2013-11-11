@@ -384,7 +384,14 @@
     
     #var s3 := "abcd" Substring &type'index:1 &type'length:2.
     #var ls3 := s3 Length.
+   
+    "abc"getAt:2.
     
+    "abc" getAt:(-1) |
+        onOutOfRangeError: &&:e [ console writeLine:"Negative index is not allowed" ].
+
+    "abc" getAt:4 |
+        onOutOfRangeError: &&:e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 // --- ArrayTest ---
@@ -408,6 +415,13 @@
     a4 setAt:2:3.
     
     a4~EArray sort: &&:aFormer:aNext [ aFormer < aNext ].
+    
+    a4 @ (-1) |
+        onOutOfRangeError: &&:e [ console writeLine:"Negative index is not allowed" ].
+
+    a4 @ 4 |
+        onOutOfRangeError: &&:e [ console writeLine:"Index bigger than length is not allowed" ].
+    
 ].
 
 // --- AltTest ---

@@ -438,7 +438,7 @@
         <= new &type'length::aLiteral &type'widestr:aLiteral.
 
     #constructor new &type'length:aSize &type'widestr:aLiteral1 &type'widestr:aLiteral2
-    [
+    [ 
         theData << aLiteral1.
         theData += aLiteral2.
     ]
@@ -470,7 +470,7 @@
         = $self getAt &type'index::aParam.
 
     #method getAt &type'index:anIndex
-        = CharValue new &type'widechar:(theData @ anIndex).
+        = CharValue new &type'widechar:(theData @ anIndex | raise:(OutOfRangeException new:"An index is out of range")).
 
     #method indexOf &type'widestr:aLiteral
         = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:0 &type'widestr:aLiteral).
@@ -846,7 +846,7 @@
         = $self getAt &type'index::anIndex.
 
     #method getAt &type'index:anIndex
-        = theItems @ anIndex.
+        = theItems @ anIndex | raise:(OutOfRangeException new:"An index is out of range").
 
     #method setAt:anIndex:anObject
     [
@@ -855,7 +855,7 @@
     
     #method setAt &type'index:anIndex &type'object:anObject
     [
-        theItems @ anIndex << anObject.
+        theItems @ anIndex << anObject | raise:(OutOfRangeException new:"An index is out of range").
     ]
 
     #method add : anObject

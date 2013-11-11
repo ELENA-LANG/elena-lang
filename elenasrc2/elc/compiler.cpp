@@ -639,7 +639,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
          else if (test(info.header.flags, elDynamicRole)) {
             int type = getClassType();
             if (type == elDebugArray) {
-               return ObjectInfo(okField, otArray);
+               return ObjectInfo(okField, otArray, -1);
             }
             else return ObjectInfo(okUnknown);
          }

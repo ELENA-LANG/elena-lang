@@ -1329,14 +1329,25 @@ end
 // s1 @ i2
 inline core_api'getAt (s1:wstr, n2:int, ch:out short)
 
-  pop  eax
-  pop  edx
-  pop  esi
-  mov  ebx, [edx]
+  xor  eax, eax
+  mov  esi, [esp+8]
+  mov  ebx, [esp+4]
+  mov  ecx, [esi-8]
+  mov  ebx, [ebx]
+  mov  edx, [esp]
+  test ebx, ebx
+  js   short lEnd
+  neg  ecx
   shl  ebx, 1
-  mov  edx, [esi+ebx]
-  and  edx, 0FFFFh
-  mov  [eax], edx
+  cmp  ebx, ecx
+  jge  short lEnd
+  mov  ecx, [esi+ebx]
+  mov  eax, edx
+  and  ecx, 0FFFFh
+  mov  [eax], ecx
+
+lEnd:
+  lea  esp, [esp+12]
 
 end
 

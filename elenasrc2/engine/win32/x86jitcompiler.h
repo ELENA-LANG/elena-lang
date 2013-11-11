@@ -152,7 +152,6 @@ protected:
    friend void compileElseLocal(int opcode, x86JITScope& scope);
    friend void compileMccCopyAcc(int opcode, x86JITScope& scope);
    friend void compilePopSelf(int opcode, x86JITScope& scope);
-   friend void compileGet(int opcode, x86JITScope& scope);
    friend void compileNWrite(int opcode, x86JITScope& scope);
    friend void compileWriteAcc(int opcode, x86JITScope& scope);
    friend void compileCallSI(int opcode, x86JITScope& scope);
@@ -282,7 +281,6 @@ void compileMccCopySubj(int opcode, x86JITScope& scope);
 void compileElseLocal(int opcode, x86JITScope& scope);
 void compileMccCopyAcc(int opcode, x86JITScope& scope);
 void compilePopSelf(int opcode, x86JITScope& scope);
-void compileGet(int opcode, x86JITScope& scope);
 void compileNWrite(int opcode, x86JITScope& scope);
 void compileWriteAcc(int opcode, x86JITScope& scope);
 void compileCallSI(int opcode, x86JITScope& scope);

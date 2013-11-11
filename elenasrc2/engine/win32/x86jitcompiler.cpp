@@ -51,7 +51,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 52;
+const int gcCommandNumber = 53;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcAccLoadSI, bcCallAcc, bcOpen, bcInit,
@@ -63,8 +63,8 @@ const ByteCommand gcCommands[gcCommandNumber] =
    bcMccCopyFI, bcMccCopyPrmFI, bcIncFI, bcIncSI, 
    bcAccGetSI, bcAccGetFI, bcJumpAcc, bcAccFillR,
    bcMccCopyAccI, bcQuitMcc, bcJumpAccN, bcAccSaveSelfI, bcRCallM, 
-   bcRCallN, bcSet, bcAccAddN, bcAccSwapSI, bcCallSI,
-   bcMccAddAccI, bcRestore, bcGetLen, bcAccBoxN
+   bcRCallN, bcGet, bcSet, bcAccAddN, bcAccSwapSI, 
+   bcCallSI, bcMccAddAccI, bcRestore, bcGetLen, bcAccBoxN
 };
 
 // command table
@@ -74,7 +74,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &compileMccCopyAcc,
 
    &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compilePopSelf, &loadOneByteLOp, &loadOneByteLOp, &compileQuit,
-   &compileGet, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &compileReserve, &compilePush, &compilePush, &compileLoadField, &loadIndexOp, &compilePush, &compilePushF, &compileNop,
    &compileNop, &loadFPOp, &compilePushS, &compileNop, &compileNop, &compilePushFPI, &compileXPushFPI, &loadIndexOp,
@@ -1281,13 +1281,6 @@ void _ELENA_::compilePopSelf(int opcode, x86JITScope& scope)
 {
    // pop edi
    scope.code->writeByte(0x5F);
-}
-
-void _ELENA_::compileGet(int opcode, x86JITScope& scope)
-{
-   // push [edi + eax * 4]
-   scope.code->writeWord(0x34FF);
-   scope.code->writeByte(0x87);
 }
 
 void _ELENA_::compileNWrite(int opcode, x86JITScope& scope)

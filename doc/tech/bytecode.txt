@@ -285,7 +285,7 @@ ELENA byte codes (or ecodes)
 
  data manipulating commands:
  -----------------
- set                        - [sp] => self[acc] ; sp--
+ set                        - [sp] => self[acc] ; sp-- ; if out of range : acc = 0 ; else acc = 1
  
  get                        - [sp+1] <= self[acc] ; sp++
  

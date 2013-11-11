@@ -20,32 +20,12 @@ v  - vm script
 ------
 Currently:
 ------
-              adev - sampels
-                      * modified arrayconcat (update rosettacode)
-                      * test arraymode (update rosettacode)
-                      * test aplusb (update rosettacode)
-
-              adev - console operations:              
-                        * modify arraymode to use printer helper
-
-                        * write formatted numbers
-                        * write formatted string (with parameters)
-
 <=================>
          
 1.9.9.11
 --------
 week2: [17.11]
-              adev - console operations:
-                       * console read / write with adapter
-                           console write:anObject &with:anAdapter / writeLine:a &with:b
-                             => anObject~anAdapter Literal
-
-                       * review console read / write operation: complex types
-
               adev - lib30
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html: Arithmetic expressions
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
                          on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
@@ -78,7 +58,6 @@ week2: [17.11]
                        * rewrite pi sample to use stack allocated variables
 
               adev - api review
-                       * review / simplify code : system'EAction (iterate&for&from&till&by)
                        * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
                        * external call, it should be possible to pass the literal length without creating a new object
                              system'external'kernel32 WriteConsoleW
@@ -103,11 +82,11 @@ week2: [17.11]
                        * interpreter
                        
               sdev - rosetta samples              
+                       * amb
+                       * arithmeval
                        * arrays : simplify
                        * bullscows 
                        * ...
-                       * amb
-                       * arithmeval
 
               sdev - console samples
                        * simplify goods (Record.get&Literal implementation)
@@ -203,7 +182,11 @@ week1:
                        * native implementation - using open argument list??
 
               xdev - generic development              
+                       * why is not possible: "abc"@2 (if both of them primitive constants)
                        * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
+                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
+
+                       * primitive catch, comment useless accloadsi as well
 
                        * for loop: review for implementation algorithm can we simplify it??
 
@@ -413,6 +396,7 @@ week1:
               xdev - tools                       
                        * create missing folders
                        * get rid of _T (elc, elt, asm2binx, ecv)
+                       * asm2binx: lea ebx, [eax * 2] cannot be correctly compiled
                        
               xdev - elenasm
                        * support LALR parser
@@ -425,6 +409,9 @@ week2:
                       * do we need extensions'text-printings module?
                       * rename extensions'io-console module?
                       
+              adev - console operations:
+                       * read / write operation: complex types
+
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)
                sdev - console samples
@@ -435,6 +422,15 @@ week2:
                        * matrix: multiply - should use realnumber rather than real
                sdev - console samples
                        * vmconsole
+              adev - console operations:              
+                        * write formatted numbers
+                        * write formatted string (with parameters)
+              adev - lib30
+                       * bytearray : get / set - outofrange exception
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range (insert, delete, ...)
+
+
 
 week3:
 

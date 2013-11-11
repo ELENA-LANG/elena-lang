@@ -87,20 +87,49 @@ inline % 16h
  
 end
 
+// get
+
+inline % 18h
+   mov  ebx, eax
+   mov  ecx, [edi - 8]
+   shl  ebx, 2
+   xor  esi, esi
+   test ebx, ebx
+   js   short lEnd
+   cmp  ebx, ecx
+   jge  short lEnd
+   mov  esi, [edi + ebx]
+   
+lEnd:
+  push  esi
+
+end
+
 // set
 
 inline % 19h
 
-  pop  ecx
+   pop  esi   
+   mov  ebx, eax
+   mov  ecx, [edi - 8]
+   shl  ebx, 2
+   xor  eax, eax
+   test ebx, ebx
+   js   short lEnd
+   cmp  ebx, ecx
+   jge  short lEnd
 
-  // ; calculate write-barrier address
-  mov  esi, edi
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-  mov  [edi + eax * 4], ecx
-  
+   mov  eax, esi
+    
+   // ; calculate write-barrier address
+   mov  esi, edi
+   sub  esi, [data : %CORE_GC_TABLE + gc_start]
+   mov  edx, [data : %CORE_GC_TABLE + gc_header]
+   shr  esi, page_size_order
+   mov  byte ptr [esi + edx], 1  
+   mov  [edi + ebx], eax
+lEnd:
+
 end
 
 // quitmcc

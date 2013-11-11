@@ -10,9 +10,11 @@
 ELENA:
 [!] Exception handling syntax modified
 [*] long, real and bytearray variable can be declared as a stack allocated one
+[*] get / set opcodes: index range verification added
 
 [LIB]
 [!] ELENA API refactored
+[*] index operations raise an exception if out of range
 
 IDE:
 [-] debugger watch: fixed bug with unrefreshed stack allocated variables
