@@ -44,3 +44,18 @@ b := (x < 5) or: (y > 1).                                     // boolean or
 b := (x < 5) and: [y > 1].                                    // boolean and (short-circuit)
 b := (x < 5) or: [y > 1].                                     // boolean or (short-circuit)
 b := (x < 5) xor: (y > 1).                                    // test if one true and other false
+
+//************************************************************************
+//* Arithmetic expressions:                                              *
+//************************************************************************
+#var x.
+x := 6 + 3.                                                 // addition
+x := 6 - 3.                                                 // subtraction
+x := 6 * 3.                                                 // multiplication
+x := 5 / 3.                                                 // integer divide
+x := extensions'math'modulus:5:3.                           // integer remainder
+x := 5.0r / 3.0r.                                           // division with float result"
+x := -5.                                                    // unary minus
+x := 5 Negative.                                            // negate receiver
+x := 6 * 3.1r.                                              // auto convert to float
+x := extensions'math'power:5.0r:2.0r.                       // power function

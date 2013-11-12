@@ -20,25 +20,18 @@ v  - vm script
 ------
 Currently:
 ------
+              sdev - rosetta samples              
+                       * amb
+
+              sdev - testing
+                       * matrix: fix determinant
+                       
 <=================>
          
 1.9.9.11
 --------
 week2: [17.11]
               adev - lib30
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html: Arithmetic expressions
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-                         
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-
-                       * start to use stack allocated variables to optimize the code
-
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                              
-                       * arrayiterator / array / literalvalue:setat, ... - raise an exception if the index
-                         out of range                       
-                       * system'io'MemoryStream - do not create a new integer after each operation
                        * add program default exception handler: dispatch an exception to
                          the program 
                        * system'$consolehandler: if the returning handler is -1
@@ -46,18 +39,19 @@ week2: [17.11]
                          invalid_result and exception)
                        * system'$consolewriter - the exception should be raised if the operation
                          is unsuccessful
-                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
                        * EReflector: raise an exception if NameOf returns zero
                        * timespan: constructor?
                        * time: add month, year, hour, ...?
                        * date: set day???
                        * date: custom presenter / formatter / custom formatter
-                       * extensions'EIntPresenter / EIntFormatter - can it work both for int and long numbers?
                        * list / iterators / ... - can commutator be used instead of adapter roles
-                       * matrix: fix determinant
-                       * rewrite pi sample to use stack allocated variables
+                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
 
-              adev - api review
+              adev - lib30 optimization
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * start to use stack allocated variables to optimize the code
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
                        * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
                        * external call, it should be possible to pass the literal length without creating a new object
                              system'external'kernel32 WriteConsoleW
@@ -78,20 +72,16 @@ week2: [17.11]
                                 &out'type'int : system'nil.             
 
               sdev - console samples
-                       * calculator
-                       * interpreter
+                       * rewrite pi sample to use stack allocated variables
+                       * simplify goods (Record.get&Literal implementation)
+                       * words: sort the list
+                       * simplify bsort
                        
               sdev - rosetta samples              
-                       * amb
                        * arithmeval
                        * arrays : simplify
                        * bullscows 
                        * ...
-
-              sdev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * words: sort the list
-                       * simplify bsort
 
               adev - dynamic programming
                        * deserialize object
@@ -102,15 +92,18 @@ week2: [17.11]
               adev - api
                        * it should be possible to compare integer and value - the result is false
 
-              sdev - review
-                       * review / simplify code
-
               sdev - rosetta samples              
-                       * review / simplify code
                        * arraymode: support collection of different types
                        * implement new samples
+                       * review / simplify code
+
+              sdev - console samples
+                       * calculator
 
 week3:
+              sdev - samples
+                       * implement interpreter
+
               sdev - open architecture
                        * new sample: script_db (using script to parse text file)
 
@@ -387,6 +380,9 @@ week1:
               xdev - script support
                        * should be possible to debug vm scripts
                        
+              idev - debugger
+                       * it should be still possible to view self / $self if no frame were declared
+
               idev - usability
                        * recognize out of memory exception
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
@@ -426,6 +422,52 @@ week2:
                         * write formatted numbers
                         * write formatted string (with parameters)
               adev - lib30
+                       * implement: extensions'math'power - support integer values as well
+
+                       * implement: integer part of number (1.2r -> 1.0r)
+                       * implement: fractional part of number (1.2r -> 0.2r)
+                       * implement: reciprocal
+                       * implement: square root
+                       * implement: square function
+                       * implement: power function with integer
+                       * implement: exponential
+                       * implement: absolute value
+                       * implement: round
+                       * implement: truncate
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: truncate
+                       * implement: round up
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: natural logarithm
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: convert degrees to radians
+                       * implement: convert radians to degrees
+                       * implement: sine
+                       * implement: cosine
+                       * implement: tangent
+                       * implement: arcsine
+                       * implement: arccosine
+                       * implement: arctangent
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * implement: pi
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html: Arithmetic expressions
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+
                        * bytearray : get / set - outofrange exception
                        * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
                          out of range (insert, delete, ...)

@@ -26,7 +26,7 @@
     [ x~EMathOp mod:y ].
 
 #symbol exp = &&:x
-    [ x~EReal Expr ].
+    [ x~EReal Exp ].
 
 #symbol ln = &&:x
     [ x~EReal Ln ].

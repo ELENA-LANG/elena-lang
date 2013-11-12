@@ -1,119 +1,150 @@
-#define std'dictionary'*.
-#define std'basic'*.
-//#define std'routines'*.
-#define std'patterns'*.
-#define ext'patterns'*.
-
-#define io'* = sys'io'*.
-
-#define factory'* = std'basic'factory'*.
-
-// --- constant forwards ---
-#define(const) control      = std'patterns'control.
-
-#subject $next, $previous, $resetLoop.
+#define system.
+#define extensions'text.
 
 // --- Tape ---
 
-#class TapeIterator
+#class Tape
 {
-    #field thePointer.
     #field theArray.
+    #field thePointer.
 
-    #initializer
+    #constructor new &type'length:aLength
     [
-        thePointer := Integer << 0.
+        thePointer := Integer new:0.
 
-        theArray := NewArray &&pattern:WideCharVar::0 &count:1024 &:factory'epatterninit.
+        theArray := Array new &type'length:aLength &function: &&:n [ Integer new:0 ].
     ]
 
-    #method $next
+    #method type'tape = $self.
+
+    #method append
+    [
+         (theArray@thePointer) += 1.
+    ]
+    
+    #method reduce
+    [
+         (theArray@thePointer) -= 1.
+    ]
+    
+    #method next
     [
         thePointer += 1.
     ]
 
-    #method $previous
+    #method previous
     [
-        #if (thePointer > 0)?
-        [
-            thePointer -= 1.    
-        ].
+        thePointer -= 1.
     ]
-
-    #join theArray@thePointer.
+    
+    #method input
+    [
+        (theArray@thePointer) write &type'int:(console readChar).
+    ]
+    
+    #method output
+    [
+        console write:(CharValue new:(theArray@thePointer)).
+    ]
+    
+    #method get = theArray@thePointer.
 }
 
-// --- FileCharEnumerator ---
+// --- LoopInterpreter ---
 
-#symbol FileCharEnumerator : aFileName =
+#class LoopInterpreter
 {
-    run : anAction
+    #field theLoopBody.
+    #field theTape.
+    
+    #constructor new &tape:aTape
     [
-        ReaderScan &&io'path:aFileName &:io'AReadOnlyTextFile run:
-            aLine = ( Scan::aLine run:anAction).
+        theTape := aTape.
+        theLoopBody := String new.
     ]
-}.
+    
+    #method type'tape = theTape type'tape.
+
+    #method append
+    [
+         theLoopBody += "+".
+    ]
+    
+    #method reduce
+    [
+         theLoopBody += "-".
+    ]
+    
+    #method next
+    [
+         theLoopBody += ">".
+    ]
+
+    #method previous
+    [
+         theLoopBody += "<".
+    ]
+    
+    #method input
+    [
+         theLoopBody += ",".
+    ]
+    
+    #method output
+    [
+         theLoopBody += ".".
+    ]
+    
+    #method run
+    [
+        control while:[0 < theTape get ] &do:
+            [ interpreter'Interpreter new:(theTape type'tape) eval:theLoopBody. ].
+            
+        ^ theTape.
+    ]
+}
 
 // --- Interpreter ---
 
 #class Interpreter
 {
-    #field theTapeIterator.
+    #field theTape.
 
-    #field theLoopTape.
-
-    #role Looping
-    {
-        #method $resetLoop
-        [
-            theLoopTape clear.
-        ]
-
-        #method evaluate : aChar
-        [
-            #if aChar
-            == "]" ? 
-            [
-                #while (0 < theTapeIterator)?
-                    [ Scan::theLoopTape run:Interpreter::theTapeIterator. ].
-
-                #shift.
-            ]
-            | [
-                theLoopTape += WideStrValue::aChar.
-            ].
-        ]
-    }
-    #initializer : aTapeIterator
+    #constructor new : aTape
     [
-        theLoopTape := string.
-        theTapeIterator := aTapeIterator.
+        theTape := aTape.
     ]
 
-    #method evaluate : aChar
+    #method eval : anObject
     [
-        #if aChar
-            ifequal:">"   [ theTapeIterator $next. ]
-            | ifequal:"<" [ theTapeIterator $previous. ]
-            | ifequal:"+" [ theTapeIterator += 1. ]
-            | ifequal:"-" [ theTapeIterator -= 1. ]
-            | ifequal:"." [ 'program'Output << theTapeIterator. ]
-            | ifequal:"," [ 'program'Input get. ]
-            | ifequal:"[" [ #shift Looping. self $resetLoop. ].
+        $self eval::anObject.
+    ]
+        
+    #method eval &type'widestr:aLiteral
+    [
+        control foreach:aLiteral &do:$self.
+    ]
+
+    #method eval &type'widechar:aChar
+    [
+        aChar =>
+            ">" ? [ theTape next ]
+            "<" ? [ theTape previous ]
+            "+" ? [ theTape append ]
+            "-" ? [ theTape reduce ]
+            "." ? [ theTape output. ]
+            "," ? [ theTape input. ]
+            "[" ? [ theTape := LoopInterpreter new &tape:theTape. ]
+            "]" ? [ theTape := theTape run. ].
     ]
 }
 
 // --- Program ---
 
-#symbol Program = 
-{
-    start : Arguments
-    [
-        #if (Arguments count == 1)?
-            [  'program'output << "Please provide the path to the file to interpret". control fail. ].
+#symbol program = 
+[
+    ('program'arguments Count == 1)?
+        [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
     
-        #var aFileName := Arguments@1.
-    
-        FileCharEnumerator::aFileName run:Interpreter::TapeIterator.
-    ]
-}.
+    textFileControl forEachLine:('program'arguments@1) &do:(Interpreter new:(Tape new &type'length:1024)).
+].

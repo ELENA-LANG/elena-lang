@@ -413,10 +413,6 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 
 int main()
 {
-   //__asm {
-   //   lea eax, [eax * 4] // 8D 04 85 00 00 00 00
-   //}
-
    int argc;
    wchar_t **argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
