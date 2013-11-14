@@ -18,4 +18,5 @@ dynamic\scripttools.l
 dynamic\interpreter.l
 math\matrix.l
 random.l
+patterns\combinations.l
 

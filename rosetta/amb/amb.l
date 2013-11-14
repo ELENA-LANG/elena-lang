@@ -1,111 +1,123 @@
-#define std'dictionary'*.
-#define std'patterns'*.
-#define ext'routines'*.
-
-#subject __amb_index, __amb_available.
+#define system.
+#define extensions'patterns.
+#define extensions'io.
 
 // --- Joinable --
 
-#symbol Joinable &former:aFirst &later:aSecond
-    = aFirst @ (aFirst length - 1) == aSecond @ 0.
+#symbol joinable = &&:aFormer:aLater
+    [ (aFormer @ (aFormer type'length - 1)) == (aLater @ 0) ].
 
-// --- AmbIndexer ---
+// --- Activatora ---
 
-#class AmbIndexer (BaseIndexer)
+#class(role)Activator2
 {
-    #field theAmbValue.
-    
-    #initializer : Values
+    #method eval : anArray
     [
-        theAmbValue := Values.
+        ^ self eval:(anArray@0):(anArray@1).
     ]
-     
-    #method index = theAmbValue __amb_index.
-     
-    #method index'write : anIndex
-    [
-        theAmbValue __amb_index'write:anIndex.
-    ]
-
-    #method available'is = theAmbValue __amb_available'is.
-            
-    #method content = theAmbValue.
 }
 
-// --- AmbValue ---
-
-#class AmbValue
+#class(role)Activator3
 {
-    #field theValues.
-    #field theCurrent.
+    #method eval : anArray
+    [
+        ^ self eval:(anArray@0):(anArray@1):(anArray@2).
+    ]
+}
 
-    #role Unassigned
-    {
-        #method __amb_index = 0.
+#class(role)Activator4
+{
+    #method eval : anArray
+    [
+        ^ self eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3).
+    ]
+}
+
+#class(role)Activator5
+{
+    #method eval : anArray
+    [
+        ^ self eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3):(anArray@4).
+    ]
+}
+
+// --- AmbValueCollection ---
+
+#class AmbValueCollection
+{
+    #field theCombinator.
+    #field theRole.
+    
+    #constructor new : aSet1 : aSet2
+    [
+        theRole := Activator2.
+        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2).
+    ]
+    
+    #constructor new : aSet1 : aSet2 : aSet3
+    [
+        theRole := Activator3.
+        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2,aSet3).
+    ]
+    
+    #constructor new : aSet1 : aSet2 : aSet3 : aSet4
+    [
+        theRole := Activator4.
+        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2,aSet3,aSet4).
+    ]
+    
+    #constructor new : aSet1 : aSet2 : aSet3 : aSet4 : aSet5
+    [
+        theRole := Activator5.
+        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2,aSet3,aSet4,aSet5).
+    ]
+    
+    #method seek : aCondition
+    [
+        theCombinator reset.
         
-        #method __amb_index'write : anIndex
+        control while:[ theCombinator next ] &do:
         [
-            theCurrent := theValues indexer.
-            
-            #shift.
-            
-            self __amb_index'write:anIndex.
-        ]
-    }
-    
-    #initializer : Values
-    [
-        theValues := Values.
-        theCurrent := nil.
-        
-        #shift Unassigned.
-    ]
-            
-    #method indexer = AmbIndexer::$self.
-
-    #method __amb_index = theCurrent index.
-
-    #method __amb_available'is = theCurrent available'is.
-
-    #method __amb_index'write : anIndex
-    [
-        theCurrent index'write:anIndex.
+            aCondition~theRole eval:(theCombinator get) ?
+                [ #break nil. ].
+        ].
     ]
     
-    #outer theCurrent content.
+    #method do : aFunction
+    [
+        aFunction~theRole eval:(theCombinator get).
+    ]
 }
 
-// --- AmbOperator ---
+// --- ambOperator ---
 
-#class AmbOperator
+#symbol ambOperator =
 {
-    #method seek : anExpression
-    [
-        (CombinatorWithRepetition::self)~foreach seek: anExpression.
-    ]
-}
+    for : aSet1 : aSet2
+        = AmbValueCollection new:aSet1:aSet2.
+    
+    for : aSet1 : aSet2 : aSet3
+        = AmbValueCollection new:aSet1:aSet2:aSet3.
+    
+    for : aSet1 : aSet2 : aSet3 : aSet4
+        = AmbValueCollection new:aSet1:aSet2:aSet3:aSet4.
+    
+    for : aSet1 : aSet2 : aSet3 : aSet4 : aSet5
+        = AmbValueCollection new:aSet1:aSet2:aSet3:aSet4:aSet5.
+}.
 
 // --- Program ---
 
-#symbol Program1 =
+#symbol program1 =
 [
-    #var A := AmbValue::(1, 2, 3).
-    #var B := AmbValue::(4, 5, 6).
-
-    (A, B)~AmbOperator seek: = (A * B == 8).
-
-    'program'Output << A << "*" << B << "=8".
+    ambOperator for:(1,2,4):(4,5,6) seek: &&:a:b [ a * b == 8 ] do: &&:a:b
+        [ consoleEx writeLine: a : " * " : b : " = 8" ].
 ].
 
-#symbol Program2 =
+#symbol program2 =
 [
-    #var A := AmbValue::("the","that","a").
-    #var B := AmbValue::("frog", "elephant", "thing").
-    #var C := AmbValue::("walked", "treaded", "grows").
-    #var D := AmbValue::("slowly", "quickly").
-    
-    (A, B, C, D)~AmbOperator seek:
-        = (joinable &&former:A &later:B and:(joinable &&former:B &later:C) and:(joinable &&former:C &later:D)).
-    
-    'program'Output << A << " " << B << " " << C << " " << D.
+    ambOperator 
+        for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
+        seek: &&:a:b:c:d [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
+        do: &&:a:b:c:d [ consoleEx writeLine:a:" ":b:" ":c:" ":d. ]
 ].

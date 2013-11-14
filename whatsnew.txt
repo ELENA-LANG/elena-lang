@@ -15,6 +15,7 @@ ELENA:
 [LIB]
 [!] ELENA API refactored
 [*] index operations raise an exception if out of range
+[+] extensions'patterns: CombinatorWithRepetition
 
 IDE:
 [-] debugger watch: fixed bug with unrefreshed stack allocated variables
