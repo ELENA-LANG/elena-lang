@@ -136,7 +136,7 @@
         = literalConvertor convert &type'real::anObject &type'length::aLength &type'length::aDecimalLength.
         
     save : anObject &to:aTarget
-        = aTarget write:(Variant new:anObject).
+        = aTarget write:((Variant new:anObject)~(typeControl eval::aTarget) get).
 }.
 
 // --- value helpers ---

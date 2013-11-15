@@ -1,6 +1,7 @@
 #define system.
 #define system'collections.
 #define system'text.
+#define extensions.
 #define extensions'text.
 #define extensions'io.
 
@@ -51,7 +52,7 @@
             ! [
                 theBM find &type'widestr:";".
                 
-                aVariable << Variant new:(theBM Marked).
+                convertControl save:(theBM Marked) &to:aVariable.
                 
                 theBM mark.
                 

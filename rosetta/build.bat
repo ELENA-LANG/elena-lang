@@ -15,4 +15,4 @@
 ..\bin\elc -cbestshuffle\bestshuffle.prj
 ..\bin\elc -cbitwise\bitwise.prj
 ..\bin\elc -cbrackets\brackets.prj
-
+..\bin\elc -canagram\anagram.prj

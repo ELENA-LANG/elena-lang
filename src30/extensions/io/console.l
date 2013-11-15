@@ -139,18 +139,9 @@
     readLine
         = system'console readLine.
             
-    $save : aTarget : aSource
-    [
-        #var aVal := aSource~(typeControl eval::aTarget) get.
-        
-        aTarget write:aVal.
-    ]
-            
     readLine : anObject
     [
-        #var aVariant := system'console readLine:(Variant new).
-        
-        $self $save:anObject:aVariant.
+        convertControl save:(system'console readLine) &to:anObject.
         
         ^ anObject.
     ]
@@ -163,8 +154,8 @@
         
         #var aParams := stringControl split:aBuffer &by:(CharValue new &type'int:32).
         
-        $self $save:anObject1:(Variant new:(aParams@0)).
-        $self $save:anObject2:(Variant new:(aParams@1)).
+        convertControl save:(aParams@0) &to:anObject1.
+        convertControl save:(aParams@1) &to:anObject2.
     ]
         
     readLine : anObject1 : anObject2 : anObject3
@@ -175,9 +166,9 @@
         
         #var aParams := stringControl split:aBuffer &by:(CharValue new &type'int:32).
         
-        $self $save:anObject1:(Variant new:(aParams@0)).
-        $self $save:anObject2:(Variant new:(aParams@1)).
-        $self $save:anObject3:(Variant new:(aParams@2)).
+        convertControl save:(aParams@0) &to:anObject1.
+        convertControl save:(aParams@1) &to:anObject2.
+        convertControl save:(aParams@2) &to:anObject3.
     ]
         
     readLine : anObject1 : anObject2 : anObject3 : anObject4
@@ -188,10 +179,10 @@
         
         #var aParams := stringControl split:aBuffer &by:(CharValue new &type'int:32).
         
-        $self $save:anObject1:(Variant new:(aParams@0)).
-        $self $save:anObject2:(Variant new:(aParams@1)).
-        $self $save:anObject3:(Variant new:(aParams@2)).
-        $self $save:anObject4:(Variant new:(aParams@3)).
+        convertControl save:(aParams@0) &to:anObject1.
+        convertControl save:(aParams@1) &to:anObject2.
+        convertControl save:(aParams@2) &to:anObject3.
+        convertControl save:(aParams@3) &to:anObject4.
     ]
     
     readChar

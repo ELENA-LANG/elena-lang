@@ -17,6 +17,9 @@ ELENA:
 [*] index operations raise an exception if out of range
 [+] extensions'patterns: CombinatorWithRepetition
 
+Samples:
+[*] matrix: determinant code fixed
+
 IDE:
 [-] debugger watch: fixed bug with unrefreshed stack allocated variables
 [-] menu option shortcut fixed:upper / lower case

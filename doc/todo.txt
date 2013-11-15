@@ -21,10 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30
-                       * console: read number
-
-              sdev - testing
-                       * matrix: fix determinant
+                       * time: add month, year, hour, ...?
 
 <=================>
          
@@ -34,12 +31,7 @@ week2: [17.11]
               sdev - testing
                        * system test
                        * tape test
-                       * samples
-                       * rosetta code samples
                        
-              adev - lib30
-                       * time: add month, year, hour, ...?
-
               adev - lib30
                        * system'$consolehandler: if the returning handler is -1
                          the exception should be raised (probably special method attributes like 
@@ -165,6 +157,10 @@ week4:
 1.9.9.12
 --------
 week1:
+              xdev - generic development              
+                       * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
+                         do we need to return type for every object??
+
               xdev - generic development              
                        * dispatching : return type, could we support additional method or dispatch handler can be used, ...
                          think over type support, we need some generic solution (typecontrol should be declared for every set of
