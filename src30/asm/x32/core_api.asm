@@ -3310,3 +3310,14 @@ lEnd:
   lea   esp, [esp+8]
 
 end
+
+inline core_api'abs (r1:real,r2:out real)
+
+  mov   eax, [esp+4]
+  fld   qword ptr [eax]  
+  fabs
+  pop   eax
+  fstp  qword ptr [eax]    // store result 
+  lea   esp, [esp+4]
+
+end

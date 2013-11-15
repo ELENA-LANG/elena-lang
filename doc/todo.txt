@@ -15,25 +15,32 @@ v  - vm script
 - maint
 - rev
 - opt
-- port
+- port                                                                                                                    
 
 ------
 Currently:
 ------
-              sdev - rosetta samples              
-                       * amb
+              adev - lib30
+                       * console: read number
 
               sdev - testing
                        * matrix: fix determinant
-                       
+
 <=================>
          
 1.9.9.11
 --------
 week2: [17.11]
+              sdev - testing
+                       * system test
+                       * tape test
+                       * samples
+                       * rosetta code samples
+                       
               adev - lib30
-                       * add program default exception handler: dispatch an exception to
-                         the program 
+                       * time: add month, year, hour, ...?
+
+              adev - lib30
                        * system'$consolehandler: if the returning handler is -1
                          the exception should be raised (probably special method attributes like 
                          invalid_result and exception)
@@ -41,15 +48,15 @@ week2: [17.11]
                          is unsuccessful
                        * EReflector: raise an exception if NameOf returns zero
                        * timespan: constructor?
-                       * time: add month, year, hour, ...?
                        * date: set day???
                        * date: custom presenter / formatter / custom formatter
                        * list / iterators / ... - can commutator be used instead of adapter roles
                        * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
+                       * it should be possible to compare integer and value - the result is false
 
               adev - lib30 optimization
                        * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * start to use stack allocated variables to optimize the code
+                       * start to use stack allocated variables to optimize the code : console operation, ...
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
                        * system'io'MemoryStream - do not create a new integer after each operation
                        * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
@@ -89,16 +96,11 @@ week2: [17.11]
             smaint - testing
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object
-              adev - api
-                       * it should be possible to compare integer and value - the result is false
 
               sdev - rosetta samples              
                        * arraymode: support collection of different types
                        * implement new samples
                        * review / simplify code
-
-              sdev - console samples
-                       * calculator
 
 week3:
               sdev - samples
@@ -159,15 +161,36 @@ week4:
 
               xdoc - api
                        * start generating api html, using old tool                        
-
+                                                         
 1.9.9.12
 --------
 week1:
+              xdev - generic development              
+                       * dispatching : return type, could we support additional method or dispatch handler can be used, ...
+                         think over type support, we need some generic solution (typecontrol should be declared for every set of
+                         objects, which is not convenient) ; so maybe better to support type and do all other type of dispatching
+                         automatically , e.g. a write::b is replaced by compiler => a(b type)~write:b.
+
+                       * dispatching variant : a write:(b~(a type)get)
+
+                       * @ and @ << operator parsing show be reviewd, currently it is very complicated:
+                              (a@max_row)@k << tmp
+                       * reimplement Pair (the current code does not work for the following sample: Pair(%Even(2), 2)), where the first object use
+                         redirect handler
+                       * Real new:((lum Even) => true ? [ 1 ] false ? [ -1 ]) (see extensions'math'EMatrix) does not work correctly, it always
+                         return true part, even if the result is false
+
+              xdev - dispatch table
+                       * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
+                         actual message name inside handler : the table is the map between income and outcome message)
+
+
               xdev - multithreading
                        * architecture overview
                        * migrate multy-threading 
 
               xdev - open arg
+                       * can be used with an array as well ?? (see amb sample) ; simplify syntax
                        * can be passed further without boxing as open arg parameter
                        * any other operation should result in boxing
 
@@ -175,10 +198,12 @@ week1:
                        * native implementation - using open argument list??
 
               xdev - generic development              
+                       * amb sample: can it be modified to use open argument list, currently for every number of parameters separate method should be declared
+
                        * why is not possible: "abc"@2 (if both of them primitive constants)
                        * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
                        * why is not possible: "abc"@4 | onOutOfRangeError: ...
-
+                        
                        * primitive catch, comment useless accloadsi as well
 
                        * for loop: review for implementation algorithm can we simplify it??
@@ -400,28 +425,41 @@ week1:
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                        
 week2:                       
+              sdev - rosetta samples              
+                       * amb: test with invalid value
+                       * amb: raise an exception if nothing found
+                       * modify amb operator using open argument list 
+                       * update amb sample on rosetta code site
+
               adev - structure
-                      * review / modify API structure
-                      * do we need extensions'text-printings module?
-                      * rename extensions'io-console module?
+                       * review / modify API structure
+                       * do we need extensions'text-printings module?
+                       * rename extensions'io-console module?
                       
               adev - console operations:
                        * read / write operation: complex types
-
+                       
                adev - LiteralValue / String / TextBuffer
                        * support appendLine?? (e.g. maybe in extension)
                sdev - console samples
+                       * matrix: use Pair in matrix sample
                        * textdb: dynamically unserialize subject
                        * datetime - literal presentation, extra space between date and time
                        * real to literal: tailing space
                        * matrix: test matrix operations
                        * matrix: multiply - should use realnumber rather than real
                sdev - console samples
+                       * calculator
                        * vmconsole
               adev - console operations:              
                         * write formatted numbers
                         * write formatted string (with parameters)
               adev - lib30
+                       * implement extensions'patterns'Combinator 
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
                        * implement: extensions'math'power - support integer values as well
 
                        * implement: integer part of number (1.2r -> 1.0r)
@@ -493,6 +531,12 @@ week1:
                        * increase the heap size
 
 week2:
+
+1.9.9.16
+--------
+week1:
+               xdev - GC
+                       * destructors
 
 2.0.0
 -----

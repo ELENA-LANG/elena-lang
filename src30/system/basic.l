@@ -650,11 +650,16 @@
 
 #class Real : RealNumber
 {
+    #constructor new : aValue
+    [
+        $self << aValue.
+    ]
+    
     #method Number = RealNumber new &type'real:$self.
 
     #method write : anOperand
     [
-        $self write::(anOperand type'real).
+        $self write::anOperand.
     ]
     
     #method append : anOperand
@@ -779,6 +784,32 @@
     #method => theValue.
 }
 
+// --- Boolean ---
+
+#class Boolean
+{
+    #field theValue.
+    
+    #constructor new : aValue
+    [        
+        aValue ? [ theValue := true. ] ! [ theValue := false. ].
+    ]
+
+    #method Value = theValue.
+
+    #method write : aValue
+    [
+        aValue ? [ theValue := true. ] ! [ theValue := false. ].
+    ]
+            
+    #method invert
+    [
+        theValue := theValue not.
+    ]            
+            
+    #method => theValue.
+}
+
 // --- ArrayIterator ---
 
 #class ArrayIterator
@@ -884,7 +915,7 @@
     #method Enumerator = ArrayIterator new &type'array:$self.
 
     #method Clone
-        = Array new &type'length::$self &action: &&:i [ self@i ].
+        = Array new &type'length::$self &function: &&:i [ self@i ].
 
     #method <= &&type'array:$self.
 }
@@ -975,3 +1006,14 @@
         
     #method => theValue.
 }
+
+// --- BasicType ---
+
+#symbol typeControl =
+{
+    eval &type'int : anObject = %type'int.
+    eval &type'real : anObject = %type'real.
+    eval &type'long : anObject = %type'long.
+    eval &type'widestr : anObject = %type'widestr.
+    eval &type'widechar : anObject = %type'widechar.
+}.

@@ -139,8 +139,21 @@
     readLine
         = system'console readLine.
             
+    $save : aTarget : aSource
+    [
+        #var aVal := aSource~(typeControl eval::aTarget) get.
+        
+        aTarget write:aVal.
+    ]
+            
     readLine : anObject
-        = anObject << system'console readLine:(Variant new).
+    [
+        #var aVariant := system'console readLine:(Variant new).
+        
+        $self $save:anObject:aVariant.
+        
+        ^ anObject.
+    ]
         
     readLine : anObject1 : anObject2
     [
@@ -150,8 +163,8 @@
         
         #var aParams := stringControl split:aBuffer &by:(CharValue new &type'int:32).
         
-        anObject1 << Variant new:(aParams@0).
-        anObject2 << Variant new:(aParams@1).
+        $self $save:anObject1:(Variant new:(aParams@0)).
+        $self $save:anObject2:(Variant new:(aParams@1)).
     ]
         
     readLine : anObject1 : anObject2 : anObject3
@@ -162,9 +175,9 @@
         
         #var aParams := stringControl split:aBuffer &by:(CharValue new &type'int:32).
         
-        anObject1 << Variant new:(aParams@0).
-        anObject2 << Variant new:(aParams@1).
-        anObject3 << Variant new:(aParams@2).
+        $self $save:anObject1:(Variant new:(aParams@0)).
+        $self $save:anObject2:(Variant new:(aParams@1)).
+        $self $save:anObject3:(Variant new:(aParams@2)).
     ]
         
     readLine : anObject1 : anObject2 : anObject3 : anObject4
@@ -175,10 +188,10 @@
         
         #var aParams := stringControl split:aBuffer &by:(CharValue new &type'int:32).
         
-        anObject1 << Variant new:(aParams@0).
-        anObject2 << Variant new:(aParams@1).
-        anObject3 << Variant new:(aParams@2).
-        anObject4 << Variant new:(aParams@3).
+        $self $save:anObject1:(Variant new:(aParams@0)).
+        $self $save:anObject2:(Variant new:(aParams@1)).
+        $self $save:anObject3:(Variant new:(aParams@2)).
+        $self $save:anObject4:(Variant new:(aParams@3)).
     ]
     
     readChar

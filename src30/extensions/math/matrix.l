@@ -1,6 +1,12 @@
 #define system.
 #define system'text.
 
+// --- MatrixException ---
+
+#class MatrixException : Exception
+{
+}
+
 // --- EMatrix ---
 
 #class(role) EMatrix
@@ -48,44 +54,85 @@
         = Array new &type'length::self &function: &&:i
             [ (self@i)~EArray DeepClone ].
 
-    #method Determinant
+    #method Decomposed
     [
         #var aCount := self type'length.
+        
+        // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
+        #var even := Boolean new:true.          
 
         // create matrix copy
         #var a := self~EArray DeepClone.
-
-        #var deter := Real new:1.
-
-        control from:0 &till:aCount &do: &&:k
+        
+        // permutation matrix
+        #var pm := Array new &type'length:aCount &function: &&:i [ i ].
+        
+        // each column, j is counter for coulmns
+        #var max_row := Integer new:0.
+        #var max := Real new:0.0r.
+        control from:0 &till:(aCount - 1) &do: &&:j
+        [
+            // find largest value in col j
+            max << (abs:(a@j@j)).
+            max_row << j.
+            
+            control from:(j + 1) &till:aCount &do: &&:i
             [
-                (0.0r == (a@k@k))?
-                [
-                    #var j := control from:k &till:aCount &do: &&:j [ (0.0r != (a@j@k)) ? [ #break j. ] ].
-                    nil == j ?
-                        [ deter << 0. #break deter. ].
-                    
-                    control from:k &till:aCount &do: &&:i
-                    [
-                        #var temp := Real new:(a@j@i).
-                        a@j@i << a@k@i.
-                        a@k@i << temp.
+                #var val := abs:(a@i@j).
+                (val > max)
+                    ? [
+                        max << val.
+                        max_row << i.
                     ].
-    
-                    deter *= -1.
-                ].
-                deter *= a@k@k.
-
-                control from:(k + 1) &till:aCount &do: &&:i
-                [
-                    control from:(k + 1) &till:aCount &do: &&:j
-                    [
-                        a@i@j -= (a@i@k * a@k@j / a@k@k).
-                    ].
-                ].
             ].
             
-        ^ deter.
+            // if largest value not on pivot, swap rows
+            (max_row != j) ?
+            [
+                control from:0 &till:aCount &do: &&:k
+                [ 
+                    #var tmp := a@j@k.
+                    
+                    (a@j) setAt:k:(a@max_row@k).
+                    (a@max_row) setAt:k:tmp.
+                ].
+                    
+                 // switch two rows in permutation matrix
+                 pm~EArray exchange:j:max_row.
+                 
+                 even invert.
+            ].
+                        
+            (0.0r == max)
+                ? [ #throw MatrixException new:"The matrix is singular!". ].
+
+            #var val := a@j@j.
+            control from:(j + 1) &till:aCount &do: &&:i
+            [
+                (a@i)setAt:j:((a@i@j) / val).
+                
+                control from:(j+1) &till:aCount &do: &&:k
+                [
+                    (a@i)setAt:k:((a@i@k) - (a@i@j) * (a@j@k)).
+                ].
+            ]
+        ].
+        
+        ^ Pair(a, %Even(even Value)).
+    ]
+
+    #method Determinant
+    [
+        #var lum := self~EMatrix Decomposed.
+        #var deter := Real new:1.
+
+        (lum Even)
+            ! [ deter *= -1. ].
+        
+        control from:0 &till:(self type'length) &do: &&:i
+            [ deter << deter * (lum@i@i). ].
+            
+       ^ deter.
     ]
             
     #method Literal

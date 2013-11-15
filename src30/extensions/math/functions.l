@@ -1,4 +1,5 @@
 #define system.
+#define extensions.
 
 // --- Operations ---
 
@@ -18,21 +19,27 @@
         
     #method Rounded
         = RealNumber new &type'real:(system'external'CoreAPI round &type'real::self).
+        
+    #method Abs
+        = RealNumber new &type'real:(system'external'CoreAPI abs &type'real::self).
 }
 
 // --- Functions ---
 
 #symbol modulus = &&:x:y
-    [ x~EMathOp mod:y ].
+    [ (extensions'realValue:x)~EMathOp mod:y ].
 
 #symbol exp = &&:x
-    [ x~EReal Exp ].
+    [ (realValue:x)~EReal Exp ].
 
 #symbol ln = &&:x
-    [ x~EReal Ln ].
+    [ (realValue:x)~EReal Ln ].
     
 #symbol power = &&:x:y
-    [ exp:((ln:x) * y) ].
+    [ exp:((ln:(realValue:x)) * y) ].
 
 #symbol round = &&:x
-    [ x~EReal Rounded ].
+    [ (realValue:x)~EReal Rounded ].
+    
+#symbol abs = &&:x
+  [ (realValue:x)~EReal Abs ].

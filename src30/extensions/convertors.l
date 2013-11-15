@@ -1,5 +1,4 @@
 #define system.
-#define extensions'math.
 #define system'text.
 
 // --- convertor helpers ---
@@ -18,6 +17,15 @@
 
 #symbol realConvertor =
 {
+    eval &type'int:aNumber
+        = RealNumber new &type'int:aNumber.
+        
+    eval &type'long:aNumber
+        = RealNumber new &type'long:aNumber.
+        
+    eval &type'real : aNumber
+        = aNumber.
+    
     convert &type'widestr:aLiteral
         = aLiteral~ELiteralConvertor read &type'real.
 }.
@@ -58,8 +66,8 @@
     
     convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
     [
-        #var aPrecision := power:10.0r:aDecimalLength.
-        #var aRounded := (round:(aReal * aPrecision)) / aPrecision.
+        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
+        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.
         
         ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
     ]
@@ -130,3 +138,10 @@
     save : anObject &to:aTarget
         = aTarget write:(Variant new:anObject).
 }.
+
+// --- value helpers ---
+
+#symbol realValue = &&:x
+[
+    realConvertor eval::x
+].

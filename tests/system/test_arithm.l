@@ -2,6 +2,7 @@
 //#define system'dynamic.
 #define system'collections.
 #define extensions'text.
+#define extensions'math.
 
 #class XTester
 {
@@ -13,8 +14,13 @@
 
 #symbol XTest =
 [
-    #var aChar := CharValue new &type'int:32.
-    #var s := "      abc"~ELiteralOp trimStart &type'widechar:aChar.
+    #var m := ((1.0r,2.0r),(3.0r,4.0r)). // 1 * 4 - 2 * 3 = 4 - 6 = -2
+    
+    #var d := m~EMatrix Determinant.
+    
+    
+    #var m2 := ((-2.0r,2.0r,3.0r),(-1.0r, 1.0r,3.0r),(2.0r,0.0r,-1.0r)).
+    #var d2 := m2~EMatrix Determinant.
 ].
 
 // --- MultiDispatchTest ---
