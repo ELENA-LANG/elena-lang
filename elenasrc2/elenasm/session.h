@@ -20,7 +20,7 @@ namespace _ELENA_
 
 // translate attribute constants
 #define TRACE_MODE       0x20000
-//#define SYMBOLIC_MODE    0x00100
+#define SYMBOLIC_MODE    0x00100
 
 const int cnNameLength = 0x20;
 
@@ -128,7 +128,7 @@ class Session
 
    void* translateScript(const wchar16_t* names, TextReader* source);
    void* traceScript(const wchar16_t* names, TextReader* source);
-   void  createCFParser(const wchar16_t* name, TextReader* source/*, bool symbolicMode*/);
+   void  createCFParser(const wchar16_t* name, TextReader* source, bool symbolicMode);
 //   void  createLALRParser(const wchar16_t* name, TextReader* source, bool symbolicMode);
 
    void* translate(const wchar16_t* name, TextReader* source, int mode);

@@ -215,7 +215,7 @@ void generateSuffixLinks(MemoryByteTrie& trie)
 
 int main(int argc, char* argv[])
 {
-   printLine(_T("ELENA command line optimization table generator %d.%d.0 (C)2012 by Alexei Rakov\n"), ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+   printLine(_T("ELENA command line optimization table generator %d.%d.1 (C)2012 by Alexei Rakov\n"), ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
    if (argc != 2) {
       printLine(_T("og <optimization_file>"));
       return 0;

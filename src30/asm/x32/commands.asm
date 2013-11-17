@@ -59,6 +59,26 @@ labFound:
   jmp  ecx
 
 labEnd:
+                                                                
+end
+
+// mccreverse
+
+inline % 10h
+
+  mov ecx, 0Fh
+  and ecx, edx
+  lea esi, [esp + ecx * 4]
+  mov ecx, esp
+
+labNext:
+  mov  ebx, [ecx]  
+  xchg ebx, [esi]
+  mov  [ecx], ebx
+  lea  ecx, [ecx + 4]
+  lea  esi, [esi - 4] 
+  cmp  ecx, esi
+  jl   short labNext
 
 end
 

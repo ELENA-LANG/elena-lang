@@ -143,6 +143,13 @@ void loadScript(const wchar16_t* line)
 
       line++;
    }
+
+   if(line[0]=='x') {
+      mode |= SYMBOLIC_MODE;
+
+      line++;
+   }
+
    line = trim(line);
 
    int nameIndex = StringHelper::find(line, '=');

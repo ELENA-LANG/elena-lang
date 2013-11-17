@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION _T("libpath")
 
 #define MAX_LINE        256
-#define BUILD_VERSION   2
+#define BUILD_VERSION   1
 
 using namespace _ELENA_;
 

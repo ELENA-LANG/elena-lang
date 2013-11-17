@@ -34,6 +34,7 @@ enum ByteCode
    bcBSRedirect     = 0x0E, 
    //bcMccCopyAcc     = 0x0F,
 
+   bcMccReverse     = 0x10,
    bcInit           = 0x12,
    bcPopSelf        = 0x14,
    bcClose          = 0x15,

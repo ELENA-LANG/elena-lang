@@ -145,6 +145,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcUnhook:
       case bcExclude:
       case bcInclude:
+      case bcMccReverse:
          writeCommand(ByteCommand(opcode), writer);
          break;
       //case bcPushR:

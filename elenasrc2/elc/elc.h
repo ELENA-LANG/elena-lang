@@ -19,7 +19,7 @@
 #define RULES_FILE                  _T("rules.dat")
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0002
+#define ELC_BUILD_NUMBER             0x0001
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
@@ -27,8 +27,6 @@
 //#define ELC_PRM_ENTRY               'e'
 //#define ELC_PRM_PACKAGE             'g'+
 //#define ELC_PRM_LIBRARY             'l'
-//#define ELC_PRM_STANDART_LIBRARY     "lstd"
-//#define ELC_PRM_STANDART_LIBRARY_DBG "lstdx"
 //#define ELC_PRM_MAP                 'm'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'

@@ -70,6 +70,7 @@
 #define OPCODE_MCCELSE      "mccelse"
 #define OPCODE_MCCELSEACC   "mccelseacc"
 #define OPCODE_MCCELSEACCI  "mccelseacci"
+#define OPCODE_MCCREVERSE   "mccreverse"
 #define OPCODE_MCCTHEN      "mccthen"
 #define OPCODE_MCCTHENACC   "mccthenacc"
 #define OPCODE_MCCTHENACCI  "mccthenacci"
@@ -795,6 +796,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_MCCELSEACCI)) {
       return bcMccElseAccI;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_MCCREVERSE)) {
+      return bcMccReverse;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_MCCTHEN)) {
       return bcMccThen;
    }
@@ -1127,6 +1131,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
          break;
       case bcMccElseAccI:
          StringHelper::copy(s, OPCODE_MCCELSEACCI, 1 + strlen(OPCODE_MCCELSEACCI));
+         break;
+      case bcMccReverse:
+         StringHelper::copy(s, OPCODE_MCCREVERSE, 1 + strlen(OPCODE_MCCREVERSE));
          break;
       case bcMccThen:
          StringHelper::copy(s, OPCODE_MCCTHEN, 1 + strlen(OPCODE_MCCTHEN));

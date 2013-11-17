@@ -90,6 +90,8 @@
 			<Option link="1" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../../../engine/bytecode.cpp" />
+		<Unit filename="../../../engine/bytecode.h" />
 		<Unit filename="../../../engine/elena.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>

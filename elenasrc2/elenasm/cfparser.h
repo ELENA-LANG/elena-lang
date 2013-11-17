@@ -158,7 +158,7 @@ public:
       rtNumeric,
       rtReference,
       rtIdentifier,
-//      rtAny,
+      rtAny,
       rtEps,
       rtEof
    };

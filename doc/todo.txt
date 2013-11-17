@@ -7,12 +7,12 @@ a  - api
 
 l  - language                                                                                   
 s  - samples
-f  - flagship project (up to 2)                                                                    
+f  - flagship project (up to 2)                                                                                                   
 t  - tools
-v  - vm script                                          
+v  - vm script                                                                                                                                       
 
 - dev
-- maint
+- maint                                                                                                                                          
 - rev
 - opt
 - port                                                                                                                    
@@ -20,143 +20,43 @@ v  - vm script
 ------
 Currently:
 ------
-              adev - lib30
-                       * time: add month, year, hour, ...?
+              xdev - generic development              
+                       * dynamic object implementation (dynamic methods) ; groupstructure - scan the body, if message equal to income one is found           
+                             return the next object ; groupclass - scan the body, if message equal to income one is found, redirect the flow to
+                             the next object, replacing the message to eval
+                             
+                       
+                             GroupStruct(%x, 2, %y, 3) 
+                             GroupClass(%next, &&:x [ self append:1 ], %append, &&:x [
+                             GroupClass(%next, Tape(1,%append))
+
+                       * redesign SelectorTape (is it the same as GroupStruct)?
+
+
+                       * dynamic method code                                                
+                       * group object implementation (group, union, cast)
+                       * rename Pair to Aggregation, where the first one is main object and all the next is extension, it should be possible to switch
+                         second one with the next one 
+
+              xdev - open arg
+                       * 15 indicates open arg, get rid of type'args
+                       * open args are boxed as an array
+                       * it should be possible to pass open arg as normal argument list
+
+                         a msg &:b:c  <- pass as an argument list
+
+                         #method msg &:Args <- declare open arg
+
+                         a msg:Args -> boxing to array
+                         a msg &::Args -> passing open arg list further
+                         a msg::Args -> converting open arg list into normal one
+
 
 <=================>
          
-1.9.9.11
---------
-week2: [17.11]
-              sdev - testing
-                       * system test
-                       * tape test
-                       
-              adev - lib30
-                       * system'$consolehandler: if the returning handler is -1
-                         the exception should be raised (probably special method attributes like 
-                         invalid_result and exception)
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: set day???
-                       * date: custom presenter / formatter / custom formatter
-                       * list / iterators / ... - can commutator be used instead of adapter roles
-                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
-                       * it should be possible to compare integer and value - the result is false
-
-              adev - lib30 optimization
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * external call, it should be possible to pass the literal length without creating a new object
-                             system'external'kernel32 WriteConsoleW
-                                &type'handle  : theHandler
-                                &type'widestr : aLiteral
-                                &type'int     : (aLiteral Length)
-                                &out'type'int : system'nil              // !! temporally we do not use it
-                                &type'int     : 0
-                                &out'type'int : system'nil.             // !! temporally we do not use it
-                          should be replaced with
-                             system'external'kernel32 WriteConsoleW
-                                &type'handle  : theHandler
-                                &type'widestr : aLiteral
-                                &type'length  :: aLiteral               // - direct code will be used to read the length
-                                &out'type'int : system'nil              
-
-                                &type'int     : 0
-                                &out'type'int : system'nil.             
-
-              sdev - console samples
-                       * rewrite pi sample to use stack allocated variables
-                       * simplify goods (Record.get&Literal implementation)
-                       * words: sort the list
-                       * simplify bsort
-                       
-              sdev - rosetta samples              
-                       * arithmeval
-                       * arrays : simplify
-                       * bullscows 
-                       * ...
-
-              adev - dynamic programming
-                       * deserialize object
-
-            smaint - testing
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
-              sdev - rosetta samples              
-                       * arraymode: support collection of different types
-                       * implement new samples
-                       * review / simplify code
-
-week3:
-              sdev - samples
-                       * implement interpreter
-
-              sdev - open architecture
-                       * new sample: script_db (using script to parse text file)
-
-                       * structure: simple script prototype : build structure
-                          ?? [ x : 1, y : 2 ].
-                          
-                       * code: simple code prototype : extend structure
-                       * code: simple script prototype : extend structure
-
-                       * build the structure list              
-                       * build the matrix
-                       * object serialization / deseialization (to script / from script)
-
-              sdev - prime project : calc
-                       * build object to enter and sum two numbers
-
-              sdev - vmconsole
-                       * migrate
-
-              sdev - default script
-                       * support basic arithmetic operation (+ - / *)
-                       * implement 2 + 2 * 3
-                       * functions
-
-              sdoc - tutorials
-                       * post sum sample
-
-                       
-              sdev - prime project
-                       * interpreter
-                       * script program - calculator
-                       * eldoc: dynamic parser
-
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-
-              sdev - script engine
-                      * trace could print the result directly to console?? (so it will simplify script debugging)
-
-week4:
-            xmaint - compiler
-                       * looks like the operation with console does not work with AMD!!!
-                       
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-              xdev - test
-                       * boxing: message target / operand, operator target / operand
-
-              xdoc - api
-                       * start generating api html, using old tool                        
-                                                         
 1.9.9.12
 --------
-week1:
+week1: [26.11]
               xdev - generic development              
                        * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
                          do we need to return type for every object??
@@ -171,8 +71,6 @@ week1:
 
                        * @ and @ << operator parsing show be reviewd, currently it is very complicated:
                               (a@max_row)@k << tmp
-                       * reimplement Pair (the current code does not work for the following sample: Pair(%Even(2), 2)), where the first object use
-                         redirect handler
                        * Real new:((lum Even) => true ? [ 1 ] false ? [ -1 ]) (see extensions'math'EMatrix) does not work correctly, it always
                          return true part, even if the result is false
 
@@ -180,15 +78,17 @@ week1:
                        * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
                          actual message name inside handler : the table is the map between income and outcome message)
 
+              xdev - open arg
+                       * can be passed further without boxing as open arg parameter
+                       * any other operation should result in boxing
 
               xdev - multithreading
                        * architecture overview
                        * migrate multy-threading 
 
-              xdev - open arg
-                       * can be used with an array as well ?? (see amb sample) ; simplify syntax
-                       * can be passed further without boxing as open arg parameter
-                       * any other operation should result in boxing
+              xdev - x64
+                      * think over general architecture
+                      * learn how to create x64 executable
 
               xdev - multy select statement
                        * native implementation - using open argument list??
@@ -264,7 +164,6 @@ week1:
 
                        * probably import should work only with system modules?
 
-                       * group object implementation
                        * using operators with an extension (e.g. anObject~EReflector @ anIndex)
       
                        * raise an exception if more than 15 arguments in the method / message                 
@@ -427,7 +326,71 @@ week2:
                        * modify amb operator using open argument list 
                        * update amb sample on rosetta code site
 
+              adev - lib30
+                       * time: add month, year, hour, ...?
+                       * system'$consolehandler: if the returning handler is -1
+                       * time: add month, year, hour, ...?
+                         invalid_result and exception)
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: set day???
+                       * date: custom presenter / formatter / custom formatter
+                       * list / iterators / ... - can commutator be used instead of adapter roles
+                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
+                       * it should be possible to compare integer and value - the result is false
+
+              adev - lib30 optimization
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * external call, it should be possible to pass the literal length without creating a new object
+                             system'external'kernel32 WriteConsoleW
+                                &type'handle  : theHandler
+                                &type'widestr : aLiteral
+                                &type'int     : (aLiteral Length)
+                                &out'type'int : system'nil              // !! temporally we do not use it
+                                &type'int     : 0
+                                &out'type'int : system'nil.             // !! temporally we do not use it
+                          should be replaced with
+                             system'external'kernel32 WriteConsoleW
+                                &type'handle  : theHandler
+                                &type'widestr : aLiteral
+                                &type'length  :: aLiteral               // - direct code will be used to read the length
+                                &out'type'int : system'nil              
+
+                                &type'int     : 0
+                                &out'type'int : system'nil.             
+
+              sdev - console samples
+                       * rewrite pi sample to use stack allocated variables
+                       * simplify goods (Record.get&Literal implementation)
+                       * words: sort the list
+                       * simplify bsort
+                       
+              sdev - rosetta samples              
+                       * arithmeval
+                       * arrays : simplify
+                       * bullscows 
+                       * ...
+
+              adev - dynamic programming
+                       * deserialize object
+
+            smaint - testing
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+
+              sdev - rosetta samples              
+                       * arraymode: support collection of different types
+                       * implement new samples
+                       * review / simplify code
+            
               adev - structure
+                       * review: move classes to different namespaces for more logical break-down, the sub folders, should be always after the root,
                        * review / modify API structure
                        * do we need extensions'text-printings module?
                        * rename extensions'io-console module?
@@ -506,12 +469,67 @@ week2:
                        * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
                          out of range (insert, delete, ...)
 
-
-
 week3:
+              sdev - open architecture
+                       * dynamic object - implement method
+
+              sdev - samples
+                       * implement interpreter : tape consist of messages which has to be sent to the tape
+                                                                                     
+              sdev - open architecture
+                       * new sample: script_db (using script to parse text file)
+
+                       * structure: simple script prototype : build structure
+                          ?? [ x : 1, y : 2 ].
+                          
+                       * code: simple code prototype : extend structure
+                       * code: simple script prototype : extend structure
+
+                       * build the structure list              
+                       * build the matrix
+                       * object serialization / deseialization (to script / from script)
+
+              sdev - prime project : calc
+                       * build system to enter and sum two numbers rather than directly implement the flow
+
+              sdev - vmconsole
+                       * migrate
+
+              sdev - default script
+                       * support basic arithmetic operation (+ - / *)
+                       * implement 2 + 2 * 3
+                       * functions
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - prime project
+                       * interpreter
+                       * script program - calculator
+                       * eldoc: dynamic parser
+
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                      * trace could print the result directly to console?? (so it will simplify script debugging)
 
 week4:
-            xmaint - build
+              xdoc - api
+                       * start to create api pages
+                                                         
+            xmaint - compiler
+                       * looks like the operation with console does not work with AMD!!!
+                       
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+              xdev - test
+                       * boxing: message target / operand, operator target / operand                       
                        * try to automize build process  
                       
 1.9.9.13

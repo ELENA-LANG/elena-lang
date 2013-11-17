@@ -80,6 +80,8 @@
 			<Option link="1" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../../../engine/bytecode.cpp" />
+		<Unit filename="../../../engine/bytecode.h" />
 		<Unit filename="../../../engine/textparser.h" />
 		<Unit filename="../../../engine/textsource.cpp" />
 		<Unit filename="../../../engine/textsource.h" />

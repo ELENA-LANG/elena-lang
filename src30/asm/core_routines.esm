@@ -104,10 +104,16 @@ end
 
 procedure core_routines'handle_tape
 
+  pushmcc
+  mcccopyverb
   mccelse labErr EVAL_MESSAGE_ID
+  mcccopysi 0
   init
-  open 1
+  open 2
   pushi 0
+
+  mcccopyprmfi -1
+  pushfi -1
 
 labNext:
   accgetfi 1
@@ -119,6 +125,7 @@ labNext:
 
 labMessage:
   mcccopyacci 0
+  mccreverse
   accloadsi 0
   callacc 0
   pushacc
@@ -129,7 +136,8 @@ labEnd:
   popacc
   close
   popself
-  quitn 1
+  popmcc
+  quitmcc
 
 labErr:
   throw

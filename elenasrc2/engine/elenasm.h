@@ -14,6 +14,7 @@
 
 // translate attribute constants
 #define TRACE_MODE       0x20000
+#define SYMBOLIC_MODE    0x00100
 
 extern "C" __declspec(dllimport) void* TranslateLVMTape(const wchar_t* name, const wchar_t* script, int mode);
 

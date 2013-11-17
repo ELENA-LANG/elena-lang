@@ -1089,6 +1089,10 @@ void x86Assembler :: compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWr
 	if (sour.type== x86Helper::otEAX && test(dest.type, x86Helper::otR32)) {
 		code->writeByte(0x90 + (char)dest.type);
 	}
+	else if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32)||test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x87);
+		x86Helper::writeModRM(code, sour, dest);
+	}
 	else token.raiseErr(_T("Invalid command (%d)"));
 }
 

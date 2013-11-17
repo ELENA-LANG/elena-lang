@@ -30,8 +30,8 @@
 #symbol TapeTest =
 [
    #var aTape := Tape(
-       "Hello World", 
        system'console,
+       "Hello World", 
        %(eval&writeLine),
        system'console,
        %(readChar)).

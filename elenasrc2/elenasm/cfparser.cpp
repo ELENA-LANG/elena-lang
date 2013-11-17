@@ -17,6 +17,7 @@ using namespace _ELENA_TOOL_;
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
+#define ANY_KEYWORD           "$any"
 
 // --- ScriptReader :: Reader ---
 
@@ -403,6 +404,34 @@ bool epsApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser:
    return true;
 }
 
+bool anyApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if(token.state == dfaEOF)
+      return false;
+
+   return apply(rule, token, reader);
+}
+
+bool anyApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if(token.state == dfaEOF)
+      return false;
+
+   Terminal terminal;
+   token.copyTo(&terminal);
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
+
+   if (apply(rule, token, reader)) {
+      if (rule.postfixPtr)
+         rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
+
+      return true;
+   }
+   else return false;
+}
+
 size_t CFParser :: writeBodyText(const wchar16_t* text)
 {
    MemoryWriter writer(&_body);
@@ -445,9 +474,9 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtIdentifier:
          rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
          break;
-//      case rtAny:
-//         rule.apply = anyApplyRule;
-//         break;
+      case rtAny:
+         rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
+         break;
       case rtEps:
          rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
          break;
@@ -525,9 +554,9 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
       else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
          type = rtReference;
       }
-//      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
-//         type = rtAny;
-//      }
+      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
+         type = rtAny;
+      }
       else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
          type = rtIdentifier;
       }
