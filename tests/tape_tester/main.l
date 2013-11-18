@@ -15,7 +15,7 @@
     
     #var l := prop~msg get.
     
-    #var aTape := SelectorTape(%X, 2, %Y, 3).
+    #var aTape := Struct(%X, 2, %Y, 3).
     #var x := aTape X.
     #var y := aTape Y.
 ].
@@ -30,8 +30,8 @@
 #symbol TapeTest =
 [
    #var aTape := Tape(
-       system'console,
        "Hello World", 
+       system'console,
        %(eval&writeLine),
        system'console,
        %(readChar)).
@@ -39,8 +39,19 @@
     aTape eval.
 ].
 
+#symbol ClassTest =
+[
+    #var n := Integer new.
+
+    #var g := Class(%(get&next(0)), Tape(%(get&index), 1, tapeControl, %(get(2)), %(append(1))), %(get&index), [ n ]).
+
+    g next.
+].
+
 #symbol Program =
 [   
+    ClassTest eval.
+
     GetPropertyTester eval.
 
     ReflectionTester eval.

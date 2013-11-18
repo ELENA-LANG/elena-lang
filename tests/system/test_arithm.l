@@ -14,7 +14,7 @@
 
 #symbol XTest =
 [
-    XTester set:1:2.
+    #var msg := %(get(2)).
 ].
 
 // --- MultiDispatchTest ---

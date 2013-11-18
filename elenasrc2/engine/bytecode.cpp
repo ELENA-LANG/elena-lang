@@ -118,6 +118,7 @@
 #define OPCODE_WRITEACC     "writeacc"
 #define OPCODE_XACCCOPYFPI  "xacccopyfpi"
 #define OPCODE_XACCSAVEFI   "x_accsavefi"
+#define OPCODE_XMCCCOPYM    "x_mcccopym"
 #define OPCODE_XPOPACCI     "x_popacci"
 #define OPCODE_XPUSHFPI     "x_pushfpi"
 
@@ -940,6 +941,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_XACCSAVEFI)) {
       return bcXAccSaveFI;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_XMCCCOPYM)) {
+      return bcXMccCopyM;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_XPOPACCI)) {
       return bcXPopAccI;
    }
@@ -1272,6 +1276,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
          break;
       case bcXAccSaveFI:
          StringHelper::copy(s, OPCODE_XACCSAVEFI, 1 + strlen(OPCODE_XACCSAVEFI));
+         break;
+      case bcXMccCopyM:
+         StringHelper::copy(s, OPCODE_MCCCOPYM, 1 + strlen(OPCODE_XMCCCOPYM));
          break;
       case bcXPopAccI:
          StringHelper::copy(s, OPCODE_XPOPACCI, 1 + strlen(OPCODE_XPOPACCI));

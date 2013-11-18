@@ -216,9 +216,11 @@ ELENA byte codes (or ecodes)
  accgetfi i                 - self:[sp::i] => acc or zero if out of range
 
  mcccopym m                 - mcc <= m
- 
- mcccopysubj                - mcc:subj => mcc
 
+ x_mcccopym m               - mcc <= m ; parameter count is not affected
+
+ mcccopysubj                - mcc:subj => mcc
+ 
  mcccopyverb                - mcc:verb => mcc
 
  mccaddm verb               - verb + mcc => mcc

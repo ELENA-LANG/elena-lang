@@ -4,6 +4,7 @@ define EVAL_MESSAGE_ID      085000000h
 define GET_MESSAGE_ID       086000000h
 
 define elSignature          000002000h
+define elRole               000004000h
 define elMessage            000008000h
 
 procedure core_routines'redirect
@@ -125,8 +126,12 @@ labNext:
 
 labMessage:
   mcccopyacci 0
-  mccreverse
   accloadsi 0
+
+  elseflag labSkip elRole
+  popacc
+labSkip:
+
   callacc 0
   pushacc
   incfi 1
@@ -212,6 +217,39 @@ labTapeEnd:
 
 labContinue:
   incfi 1
+  jump labNext
+
+labErr:
+  throw
+
+end
+
+procedure core_routines'handle_class
+
+  init
+  pushi 0
+
+labNext:
+  accgetsi 0
+  else labErr
+  thenflag labMessage elMessage
+  incsi 0
+  jump labNext
+
+labMessage:
+  mccelseacci labContinue 0
+
+  incsi 0
+  accgetsi 0
+  else labErr
+
+  pop
+  popself
+  x_mcccopym EVAL_MESSAGE_ID
+  jumpaccn   0
+
+labContinue:
+  incsi 0
   jump labNext
 
 labErr:

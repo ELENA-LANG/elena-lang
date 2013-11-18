@@ -983,7 +983,14 @@
     [
         theValue := aValue.
     ]
-    
+  
+    #method write : aValue
+    [
+        theValue := aValue.
+    ]
+        
+    #method get = theValue.        
+        
     #method append : aValue
     [
         theValue := theValue + aValue.

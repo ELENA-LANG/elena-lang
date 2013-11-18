@@ -80,6 +80,7 @@ enum ByteCode
    bcMccCopyAccI    = 0x47,
    bcMccCopySI      = 0x48,
    bcMccCopyFI      = 0x49,
+   bcXMccCopyM      = 0x4C,
    bcMccAddAccI     = 0x4D,
    bcMccCopyM       = 0x4E,     
    bcMccAddM        = 0x4F,

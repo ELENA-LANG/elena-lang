@@ -202,6 +202,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMccAddM:
       case bcJumpAccN:
       case bcMccCopyM:
+      case bcXMccCopyM:
       case bcPushI:
       case bcQuitN:
       case bcPushN:

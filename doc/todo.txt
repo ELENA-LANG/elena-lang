@@ -20,24 +20,6 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - generic development              
-                       * dynamic object implementation (dynamic methods) ; groupstructure - scan the body, if message equal to income one is found           
-                             return the next object ; groupclass - scan the body, if message equal to income one is found, redirect the flow to
-                             the next object, replacing the message to eval
-                             
-                       
-                             GroupStruct(%x, 2, %y, 3) 
-                             GroupClass(%next, &&:x [ self append:1 ], %append, &&:x [
-                             GroupClass(%next, Tape(1,%append))
-
-                       * redesign SelectorTape (is it the same as GroupStruct)?
-
-
-                       * dynamic method code                                                
-                       * group object implementation (group, union, cast)
-                       * rename Pair to Aggregation, where the first one is main object and all the next is extension, it should be possible to switch
-                         second one with the next one 
-
               xdev - open arg
                        * 15 indicates open arg, get rid of type'args
                        * open args are boxed as an array
@@ -51,6 +33,12 @@ Currently:
                          a msg &::Args -> passing open arg list further
                          a msg::Args -> converting open arg list into normal one
 
+              xdev - generic development              
+                       * group object implementation (group, union, cast)
+                       * rename Pair to Aggregation, where the first one is main object and all the next is extension, it should be possible to switch
+                         second one with the next one 
+                       * elenavm: use reverse instead of set of swaps
+
 
 <=================>
          
@@ -62,6 +50,7 @@ week1: [26.11]
                          do we need to return type for every object??
 
               xdev - generic development              
+                       * it should not be possible to send get-message with several parameters
                        * dispatching : return type, could we support additional method or dispatch handler can be used, ...
                          think over type support, we need some generic solution (typecontrol should be declared for every set of
                          objects, which is not convenient) ; so maybe better to support type and do all other type of dispatching
@@ -471,7 +460,7 @@ week2:
 
 week3:
               sdev - open architecture
-                       * dynamic object - implement method
+                       * implement dynamic property container: set / get
 
               sdev - samples
                        * implement interpreter : tape consist of messages which has to be sent to the tape
@@ -537,6 +526,12 @@ week4:
 week1:
               xdev - generic development
                        * support GUI application
+
+week2:
+
+week3:
+              sdev - open architecture
+                       * review dynamic property container, try to simplify it
 
 1.9.9.15
 --------

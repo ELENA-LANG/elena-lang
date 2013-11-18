@@ -9,7 +9,10 @@
 
 ELENA:
 [!] binary incompatible due to changes in ecodes/API
-[+] new ecodes: mccreverse
+[+] new ecodes: mccreverse, x_mcccopym
+
+[LIB]
+[+] system'dynamic: Class, Struct, tapeControl
 
 ******************************************************************************
                     What's New in 1.9.9.11 (pre release)

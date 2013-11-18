@@ -1,15 +1,45 @@
+// --- ETapeControl --
+
+#symbol tapeControl =
+{
+    // NOTE: in this special case the parameters are not freed from stack
+    get : aParam
+        = aParam.
+        
+    get :aDummy:aParam
+        = aParam.
+        
+    get :aDummy1:aDummy2:aParam
+        = aParam.
+        
+    get :aDummy1:aDummy2:aDummy3:aParam
+        = aParam.
+        
+    get :aDummy1:aDummy2:aDummy3:aDummy4:aParam
+        = aParam.
+}.
+
 // --- Tape ---
 
 #class(group) Tape
 {
-    #field(type:array)theRoles.
+    #field(type:array)theBody.
     
     #method => #inline handle_tape.
 }
 
-// --- SelectorTape ---
+// --- Struct ---
 
-#class SelectorTape : Tape
+#class Struct : Tape
 {
     #method => #inline handle_selector.
+}
+
+// --- Class ---
+
+#class(group) Class
+{
+    #field(type:array)theBody.
+    
+    #method => #inline handle_class.
 }

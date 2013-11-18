@@ -622,9 +622,13 @@ ref_t JITLinker :: parseMessage(const wchar16_t*  reference)
    reference++;
 
    int index = StringHelper::find(reference, '&');
+   //HOTFIX: for generic GET message we have to ignore ampresand
+   if (reference[index + 1] == 0)
+      index = -1;
+
    if (index != -1) {
       //HOTFIX: for GET message we have &&, so the second ampersand should be used
-      if (reference[index + 1]=='&')
+      if (reference[index + 1] == 0 || reference[index + 1]=='&')
          index++;
       
       IdentifierString verb(reference, index);

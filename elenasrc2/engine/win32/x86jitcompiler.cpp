@@ -51,7 +51,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 53;
+const int gcCommandNumber = 54;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcAccLoadSI, bcCallAcc, bcOpen, bcInit,
@@ -64,7 +64,8 @@ const ByteCommand gcCommands[gcCommandNumber] =
    bcAccGetSI, bcAccGetFI, bcJumpAcc, bcAccFillR,
    bcMccCopyAccI, bcQuitMcc, bcJumpAccN, bcAccSaveSelfI, bcRCallM, 
    bcRCallN, bcGet, bcSet, bcAccAddN, bcAccSwapSI, 
-   bcCallSI, bcMccAddAccI, bcRestore, bcGetLen, bcAccBoxN
+   bcCallSI, bcMccAddAccI, bcRestore, bcGetLen, bcAccBoxN,
+   bcMccReverse
 };
 
 // command table
@@ -73,7 +74,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileWriteAcc, &compileMccPush, &compileMccCopyVerb, &loadOneByteOp,
    &loadOneByteOp, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &compileMccCopyAcc,
 
-   &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compilePopSelf, &loadOneByteLOp, &loadOneByteLOp, &compileQuit,
+   &loadOneByteOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compilePopSelf, &loadOneByteLOp, &loadOneByteLOp, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &compileReserve, &compilePush, &compilePush, &compileLoadField, &loadIndexOp, &compilePush, &compilePushF, &compileNop,
@@ -83,7 +84,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &compileQuitN, &loadFPOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &compileNop, &compileNop, &compileSendVMTR, &loadIndexOp,
-   &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileMSet, &compileMAdd,
+   &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileXMSet, &loadIndexOp, &compileMSet, &compileMAdd,
 
    &loadIndexOp, &loadFPOp, &compileAccInc, &compileAccLoadR, &loadFPOp, &loadIndexOp, &compileNop, &compileNop,
    &loadNOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -953,6 +954,16 @@ void _ELENA_::compilePopAcc(int opcode, x86JITScope& scope)
 {
    // pop eax
    scope.code->writeByte(0x58);
+}
+
+void _ELENA_::compileXMSet(int opcode, x86JITScope& scope)
+{
+   // and edx, PARAM_MASK
+   // or  edx, message
+   scope.code->writeWord(0xE281);
+   scope.code->writeDWord(PARAM_MASK);
+   scope.code->writeByte(0xBA);
+   scope.code->writeDWord(scope.resolveMessage(scope.argument));
 }
 
 void _ELENA_::compileMSet(int opcode, x86JITScope& scope)

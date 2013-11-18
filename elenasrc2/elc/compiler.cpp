@@ -1555,6 +1555,11 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          if (member.nextNode() == nsExpression) {
             return compileGetProperty(member, scope, mode | CTRL_GETPROP_MODE);
          }
+         if (_verbs.exist(member.Terminal())) {
+            result = compileMessageReference(member, scope, mode);
+         }
+         else result = compileSignatureReference(member, scope, mode);
+         break;
       case nsSignatureReference:
          result = compileSignatureReference(member, scope, mode);
          break;
@@ -1651,6 +1656,14 @@ ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scop
 
       count++;
       arg = arg.nextNode();
+   }
+
+   if (objectNode.nextNode() == nsSizeValue) {
+      TerminalInfo size = objectNode.nextNode().Terminal();
+      if (size == tsInteger) {
+         count = StringHelper::strToInt(size.value);
+      }
+      else scope.raiseError(errInvalidOperation, size);
    }
 
    // define the number of parameters
@@ -3927,15 +3940,21 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, DNode hints*/)
 
          _writer.loadObject(*codeScope.tape, ObjectInfo(okSelf));
 
+         int stackToFree = scope.parameters.Count() + 1;
+         //HOTFIX: get with several parameters are special case when the stack is not freed
+         if ((scope.message & ~PARAM_MASK) == encodeVerb(GET_MESSAGE_ID)) {
+            stackToFree = 1;
+         }
+
       //   if (scope.testMode(MethodScope::modLock)) {
       //      _writer.endSyncMethod(*codeScope.tape, -1);
       //   }
          if (scope.withBreakHandler) {
-            _writer.exitMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+            _writer.exitMethod(*codeScope.tape, stackToFree, scope.reserved);
             compileBreakHandler(codeScope, 0);
             _writer.endIdleMethod(*codeScope.tape);
          }         
-         else _writer.endMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+         else _writer.endMethod(*codeScope.tape, stackToFree, scope.reserved);
       }
    }
 //   // critical section entry if sync hint declared

@@ -586,6 +586,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       //case bcAccCopyM:
       case bcMccCopyM:
+      case bcXMccCopyM:
       case bcMccAddM:
          command.append(opcode);
          command.append(_T(' '));
