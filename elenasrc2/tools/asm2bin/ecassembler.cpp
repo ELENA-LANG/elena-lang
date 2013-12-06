@@ -46,6 +46,31 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
+void ECodesAssembler :: compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   const wchar16_t* word = token.read();
+   if (token.terminal.state == dfaFullIdentifier) {
+      size_t reference = binary->mapReference(token.value) | mskSymbolRelRef;
+
+      writeCommand(ByteCommand(code, reference), writer);
+   }
+   else if (ConstantIdentifier::compare(word, "const")) {
+      token.read(_T(":"), _T("Invalid operand"));
+      token.read();
+      size_t reference = binary->mapReference(token.value) | mskConstantRef;
+
+      writeCommand(ByteCommand(code, reference), writer);
+   }
+   else if (ConstantIdentifier::compare(word, "class")) {
+      token.read(_T(":"), _T("Invalid operand"));
+      token.read();
+      size_t reference = binary->mapReference(token.value) | mskVMTRef;
+
+      writeCommand(ByteCommand(code, reference), writer);
+   }
+   else throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
+}
+
 void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
 	int n = token.readInteger(constants);
@@ -113,7 +138,7 @@ void ECodesAssembler :: compileJump(ByteCode code, TokenInfo& token, MemoryWrite
    writer.writeDWord(label);
 }
 
-void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info)
+void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary)
 {
    bool recognized = true;
    ByteCode opcode = ByteCodeCompiler::code(token.value);
@@ -122,142 +147,192 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    {
       case bcNop:
       case bcBreakpoint:
-      case bcPushSelf:
+      case bcPushB:
       case bcPop:
-      case bcWriteAcc:
-      case bcPushMcc:
-      case bcMccCopyVerb:
+      //case bcWriteAcc:
+      case bcPushM:
+      //case bcMccCopyVerb:
       case bcThrow:
-      case bcMccCopySubj:
-      case bcPushAcc:
-      case bcPopAcc:
-      case bcAccCopySelf:
-      case bcPopMcc:
+      case bcMCopySubj:
+      case bcPushA:
+      case bcPopA:
+      case bcACopyB:
+      case bcBCopyA:
+      //case bcPopMcc:
       case bcBSRedirect:
-      case bcInit:
-      case bcClose:
-      case bcPopSelf:
-      case bcQuitMcc:
-      case bcJumpAcc:
-      case bcQuit:
+      //case bcClose:
+      case bcPopB:
+      case bcMQuit:
+      //case bcJumpAcc:
+      //case bcQuit:
       case bcGet:
       case bcSet:
-      case bcUnhook:
-      case bcExclude:
-      case bcInclude:
-      case bcMccReverse:
+      //case bcUnhook:
+      //case bcExclude:
+      //case bcInclude:
+      //case bcMccReverse:
+      case bcALoadD:
+      case bcDDec:
+      case bcGetLen:
          writeCommand(ByteCommand(opcode), writer);
          break;
       //case bcPushR:
       //case bcCallExtR:
       //case bcEvalR:
-      //case bcCallR:
+      case bcCallR:
       //case bcAccLoadR:
       //case bcAccSaveR:
-      //case bcAccCopyR:
+      case bcACopyR:
       //case bcAccFillR:
-      //   break;
-      case bcIncFI:
-      case bcCopyFPI:
-      case bcCallAcc:
-      case bcAccLoadSI:
-      case bcAccSaveSI:
+         compileRCommand(opcode, token, writer, binary);
+         break;
+      //case bcIncFI:
+      case bcACopyF:
+      case bcACallVI:
+      case bcALoadSI:
+      case bcASaveSI:
       case bcPushFI:
-      case bcAccCopyN:
-      case bcAccLoadAccI:
-      case bcAccGetFI:
-      case bcMccCopyAccI:
-      case bcMccCopySI:
-      case bcMccCopyFI:
-      case bcMccAddAccI:
-      case bcPushAccI:
-      case bcMccCopyPrmFI:
-      case bcReserve:
-      case bcPushSelfI:
+      //case bcACopyN:
+      case bcALoadAI:
+      //case bcAccGetFI:
+      //case bcMccCopyAccI:
+      //case bcMccCopySI:
+      case bcMLoadFI:
+      case bcMAddAI:
+      case bcPushAI:
+      case bcMSaveParams:
+      //case bcReserve:
+      //case bcPushSelfI:
       case bcPushSI:
-      case bcPushFPI:
-      case bcXPushFPI:
-      case bcPushSPI:
-      case bcPopSelfI:
-      case bcPopFI:
-      case bcXPopAccI:
-      case bcPopSI:
-      case bcPopAccI:
-      case bcIncSI:
-      case bcAccLoadFI:
-      case bcAccSaveSelfI:
-      case bcAccSaveFI:
-      case bcSwapSI:
-      case bcAccSwapSI:
-      case bcXAccSaveFI:
-      case bcXAccCopyFPI:
-      case bcAccCopyFPI:
-      case bcRethrow:
-      case bcRestore:
-      case bcAccGetSI:
-      case bcAccLoadSelfI:
+      //case bcPushFPI:
+      //case bcXPushFPI:
+      //case bcPushSPI:
+      //case bcPopSelfI:
+      //case bcPopFI:
+      //case bcXPopAccI:
+      //case bcPopSI:
+      //case bcPopAccI:
+      //case bcIncSI:
+      //case bcAccLoadFI:
+      //case bcAccSaveSelfI:
+      //case bcAccSaveFI:
+      //case bcSwapSI:
+      //case bcAccSwapSI:
+      //case bcXAccSaveFI:
+      //case bcXAccCopyFPI:
+      case bcACopyS:
+      //case bcAccCopyFPI:
+      //case bcRethrow:
+      //case bcRestore:
+      //case bcAccGetSI:
+      //case bcAccLoadSelfI:
+      case bcDAddAI:
+      case bcDSubAI:
+      case bcDAddSI:
+      case bcDSubSI:
+      case bcDLoadAI:
+      case bcDSaveAI:
+      case bcDLoadSI:
+      case bcDSaveSI:
+      case bcDCopyI:
          compileICommand(opcode, token, writer);
          break;
-      case bcOpen:
-      case bcMccAddM:
-      case bcJumpAccN:
-      case bcMccCopyM:
-      case bcXMccCopyM:
-      case bcPushI:
+      //case bcOpen:
+      case bcMAdd:
+      case bcAJumpVI:
+      case bcMCopy:
+      //case bcXMccCopyM:
       case bcQuitN:
       case bcPushN:
-      case bcPopN:
-      case bcAccAddN:
-      case bcNWrite:
-      case bcGetLen:
+      case bcPopI:
+      //case bcAccAddN:
+      //case bcNWrite:
          compileNCommand(opcode, token, writer);
          break;
-      case bcHook:
+      //case bcHook:
       case bcJump:
-      case bcElse:
-      case bcThen:
-      case bcMccElseAcc:
-      case bcMccThenAcc:
+      //case bcElse:
+      //case bcThen:
+      //case bcMccElseAcc:
+      //case bcMccThenAcc:
+      case bcDElse:
+      case bcDThen:
+      case bcWSTest:
+      case bcBSTest:
+      case bcTest:
          compileJump(opcode, token, writer, info);
          break;
-      //case bcAccCreate:
-      //   break;
-      //case bcElseR:
-      //case bcThenR:
-      //   break;
-      case bcMccElse:
-      case bcMccThen:
+      ////case bcAccCreate:
+      ////   break;
+      ////case bcElseR:
+      ////case bcThenR:
+      ////   break;
+      case bcMElse:
+      case bcMThen:
          compileMccJump(opcode, token, writer, info);
          break;
-      case bcMccElseAccI:
-      case bcThenFlag:
-      case bcElseSI:
-      case bcThenSI:
-      case bcElseFlag:
-      case bcMccThenAccI:
+      //case bcMccElseAccI:
+      //case bcThenFlag:
+      case bcAElseSI:
+      case bcAThenSI:
+      //case bcElseFlag:
+      case bcMElseAI:
+      case bcMThenAI:
          compileNJump(opcode, token, writer, info);
          break;
-      //case bcCreate:
-      //   break;
-      //case bcCreateN:
-      //   break;
-      //case bcIAccCopyR:
-      //   break;
-      //case bcIAccFillR:
-      //   break;
-      //case bcAccCreateN:
-      //   break;
-      //case bcAccBoxN:
-      //   break;
-      //case bcCallSI:
-      //   break;
-      //case bcRCallN:
-      //   break;
-      //case bcRCallM:
-      //   break;
+      ////case bcCreate:
+      ////   break;
+      ////case bcCreateN:
+      ////   break;
+      ////   break;
+      ////case bcIAccFillR:
+      ////   break;
+      ////case bcAccCreateN:
+      ////   break;
+      ////case bcAccBoxN:
+      ////   break;
+      ////case bcCallSI:
+      ////   break;
+      ////case bcRCallN:
+      ////   break;
+      ////case bcRCallM:
+      ////   break;
    default:
       recognized = false;
       break;
+   }
+
+   // check if it is function
+   if (!recognized) {
+      ByteCode code = bcNone;
+      const wchar16_t* func = token.value;
+      if (token.value[0]=='n') {
+         code = bcNFunc;
+         func++;
+      }
+      else if (token.value[0]=='l') {
+         code = bcLFunc;
+         func++;
+      }
+      else if (token.value[0]=='r') {
+         code = bcRFunc;
+         func++;
+      }
+      else if (token.value[0]=='w' && token.value[1]=='s') {
+         code = bcWSFunc;
+         func+=2;
+      }
+      else if (token.value[0]=='b' && token.value[1]=='s') {
+         code = bcBSFunc;
+         func+=2;
+      }
+      if (code != bcNone) {
+         FunctionCode function = ByteCodeCompiler::codeFunction(func);
+         if (function != fnUnknown) {
+            writeCommand(ByteCommand(code, function), writer);
+            recognized = true;
+         }
+      }
    }
 
    if (!recognized) {
@@ -291,7 +366,7 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
    token.read();
       
 	while (!token.check(_T("end"))) {
-      compileCommand(token, writer, info);
+      compileCommand(token, writer, info, binary);
 	}
 }
 

@@ -38,7 +38,7 @@
         
         ^ (aChar == 32)
             ? [ false ]
-            ! [ theWord append &type'widechar:aChar. ^ theIndexer next. ].
+            ! [ theWord append &widechar:aChar. ^ theIndexer next. ].
     ]
     
     #method next
@@ -57,3 +57,4 @@
     
     #method get = theWord Literal.
 }
+

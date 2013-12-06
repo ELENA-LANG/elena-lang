@@ -3,244 +3,132 @@ ELENA byte codes (or ecodes)
 ============================
 
  ELENA virtual machine registers:
-   fp(f) - frame pointer  (positive values - pointing to the current frame, 
-                          negative - to the previous frame)
-   sp(s) - stack pointer  (only positive)
 
-   acc   - accumulator
+   f(p)   - frame pointer  (positive values - pointing to the current frame, 
+                            negative - to the previous frame)
+   s(p)   - stack pointer  (only positive)
 
-   mcc   - message accumulator
+   a(cc)  - accumulator
 
- ELENA virtual machine variables (located between stack frames)
-   self    - self poniter    (only if it was initialized with enter2 / enter3)
+   m(cc)  - message accumulator
+
+   b(ase) -  self
+
+   d(ex)  - index
 
  Legend:
-   i - index
-   n - offset
-   r - reference
-   m - message 
-                              
+   a   - accumulator
+   b   - self
+   d   - index
+   r   - reference
+   i   - index  
+   m   - message 
+   n   - int
+   l   - long
+   rl  - real
+   ws  - wideliteral
+   
  stack commands:
  ---------------
- pushi i                    - i  => [sp+1] ; sp++
+ reserve i                  - sp += n; stack is reserved and cleared with zeros
+ 
+ pusha                      - acc => [sp+1] ; sp++                  
+ 
+ pushb                      - self => [sp+1] ; sp++
+ 
+ pushf i                    - fp+i => [sp+1] ; sp++
+ 
+ xpushf i                   - fp+i => [sp+1] ; sp++
+                              ; frame header is not taken into account
+    
+ pushai i                   - [acc::i] => [sp+1] ; sp++
 
- pushn n                    - n  => [sp+1] ; sp++
-
- pushr r                    - r  => [sp+1] ; sp++
-
+ pushbi i                   - [self::i] => [sp+1] ; sp++ ;
+ 
  pushfi i                   - [fp+i] => [sp+1] ; sp++
-
+ 
  pushsi i                   - [sp+i] => [sp+1] ; sp++
 
- pushacc                    - acc => [sp+1] ; sp++
-
- pushacci i                 - [acc::i] => [sp+1] ; sp++
-
- pushself                   - self => [sp+1] ; sp++
+ pushn n                    - n  => [sp+1] ; sp++
  
- pushselfi i                - [self::i] => [sp+1] ; sp++ ;
- 
- pushfpi i                  - fp+i => [sp+1] ; sp++
- 
- x_pushfpi i                - fp+i => [sp+1] ; sp++
-                              ; frame header is not taken into account
- 
- pushspi i                  - sp+i => [sp+1] ; sp++
+ pushr r                    - r  => [sp+1] ; sp++
 
- pushmcc                    - mcc => [sp+1] ; sp++;
+ pushm                      - mcc => [sp+1] ; sp++;
 
- mcccopyprmfi i             - copy the message parameters;
-                              [fp+i]::mcc.param => [sp+1] ; sp++;
-
- reserve n                  - sp += n;
- 
  pop                        - sp--; 
                               should not affect the command result;
                               should not affect the message prefix;
                               x86: should not change EAX
 
- popn n                     - sp-=n; 
+ popi n                     - sp-=i; 
                               should not affect the command result;
                               should not affect the message prefix;
                               x86: should not change EAX
  
+ popa                       - acc <= [sp] ; sp--
+ 
+ popb                       - restore the last self variable;
+
  popfi i                    - [fp+i] <= [sp] ; sp--
  
  popsi i                    - [sp+i] <= [sp] ; sp--
 
- popself                    - restore the last self variable;
+ popbi i                    - [self::i] <= [sp] ; sp-- ;
+                               use GC reference bit masks
 
- popacc                     - acc <= [sp] ; sp--
+ popai i                    - [acc::i] <= [sp] ; sp--;
+                              use GC reference bit masks
+
+ xpopai                     - [acc:i] <= [sp] ; sp-- ;
+                              direct operation      
  
- popacci i                  - [acc::i] <= [sp] ; sp--;
-                              use GC reference bit masks
-
- x_popacci i                - [acc::i] <= [sp] ; sp--;
-                              does not use GC reference bit masks
-
- popselfi i                 - [self::i] <= [sp] ; sp-- ;
-                              use GC reference bit masks
-
- popmcc                     - mcc <= [sp] ; sp--
+ popm                       - mcc <= [sp] ; sp--
 
  swapsi   i                 - [sp+i] <=> [sp]
 
- accswapsi i                - [sp+i] <=> acc
+ scopyf i                   - sp <= fp + i
  
- calling commands:
- -----------------
- callextr r                 - calls the external procedure
- 
- callr r                    - calls the procedure;
-                              acc contains the result
- 
- rcallm r, m                - calls directly the appropriate method in VMT referred by r
-                              acc contains the result
-              
- rcalln r, n                - calls directly the appropriate method in VMT referred by r
-                              acc contains the result
-              
- evalr r                    - evaluate a reference ; if r is a symbol reference
-                              symbol code is executed ; acc contains the result
 
- bsredirect                 - search acc::VMT for the message in m;
-                              if found jumps to it; binary search is used
-
- callacc n                  - call acc::VMT[n] method
-
- jumpacc                    - invoke symbol referred by acc
-
- jumpaccn                   - redirect to acc::VMT[n] method
-
- callsi i, n                - redirect to [sp+i]::VMT[n] method
- 
- branching commands:
--------------------
- jumpr address              - jumps to the address
-
- jump label                 - jumps to the label
-
- else label                 - jumps to the label if acc == 0
-
- then label                 - jumps to the label if acc != 0
- 
- elseflag f, label          - jumps to the label if acc.vmt.flag & f != f
- 
- thenflag f, label          - jumps to the label if acc.vmt.flag & f == f
- 
- thenr r, label             - jumps to the label if acc == r
-
- elser r, label             - jumps to the label if acc != r
-
- elsesi i, label            - jumps to the label if acc != [sp+i]
-
- thensi i, label            - jumps to the label if acc == [sp+i]
-
- mccelse m, label           - jumps to the label if mcc != m
-
- mccthen m, label           - jumps to the label if mcc == m
-
- mccelseacc label           - jumps to the label if mcc != acc
- 
- mccthenacc label           - jumps to the label if mcc == acc
- 
- mccelseacci i, label       - jumps to the label if mcc != acc[i]
- 
- mccthenacci i, label       - jumps to the label if mcc == acc[i]
- 
+ exception handling:
+ ---------------
  hook label                 - assign a new exception handler
                                                 
  unhook                     - remove the current exception handler
 
- rethrow n                  - remove the current exception handler and
-                              jump to the next exception handler if
-                              sp + n != exception::sp
+ throw                      - raise an exception (acc contains the exception object)
 
- register commands:
- ------------------ 
- incsi i                    - increment index located in [sp::i]
+ calling commands:
+ -----------------
+ bsredirect                 - search acc::VMT for the message in m;
+                              if found jumps to it; binary search is used
 
- incfi i                    - increment index located in [fp::i]
-
- copyfpi i                  - sp <= fp + i
+ callr r                    - calls the procedure;
+                              acc contains the result
  
- acccopyself                - self => acc
-                              does not affect m register (EDX)
-
- x_acccopyfpi i             - fp+i => acc
-                              does not affect m register (EDX)
-                              ; frame header is not taken into account
-           
- acccopyfpi i               - fp+i => acc
-                              does not affect m register (EDX)
-           
- acccopyr r                 - r => acc
-
- acccopyn n                 - n => acc
+ callextr r                 - calls the external procedure
  
- accaddn n                  - acc + n => acc
-
- iacccopyr i, r             - r => [acc::i]
-                              ; direct ; where i < 34
+ acallvi i                  - call acc::VMT[i] method
  
- accfillr r                 - r => [acc::(0..n)]
-                              ; direct
-
- iaccfillr i, r             - r => [acc::(0..i)]
-                              ; direct
-
- accloadacci i              - [acc::i] => acc
-          
- accloadfi i                - [fp+i] => acc
-
- accloadsi i                - [sp+i] => acc;
-                              does not affect m register (EDX)
+ xcallrm r, m               - calls directly the method resolved by JIT by r and m
+                              acc contains the result
+              
+ scallvi i, n               - redirect to [sp+i]::VMT[n] method
  
- accloadr r                 - [r] => acc
-
- accloadselfi i             - [self::i] => acc
-
- accsavefi i                - [fp+i] <= acc 
+ evalr r                    - evaluate a reference ; if r is a symbol reference
+                              symbol code is executed ; acc contains the result
  
- accsavesi i                - [sp+i] <= acc
- 
- x_accsavefi i              - [fp+i] <= acc ; frame header is not taken into account
- 
- accsaver r                 - [r] <= acc
+ quit                       - terminates the procedure;
+                              
+ quitn                      - terminates the procedure;
+                              clear the stack parameters
+                                                            
+ mquit                      - terminates the procedure ; clear the stack parameters, based
+                              on mcc value
 
- accsaveselfi i             - [self::i] <= acc;
-                              use GC reference bit masks
-
- accgetsi i                 - self:[sp::i] => acc or zero if out of range
-
- accgetfi i                 - self:[sp::i] => acc or zero if out of range
-
- mcccopym m                 - mcc <= m
-
- x_mcccopym m               - mcc <= m ; parameter count is not affected
-
- mcccopysubj                - mcc:subj => mcc
- 
- mcccopyverb                - mcc:verb => mcc
-
- mccaddm verb               - verb + mcc => mcc
-
- mcccopysi i                - [sp+i] => mcc
-
- mcccopyfi i                - [fp+i] => mcc
-
- mcccopyacci i              - acc:i => mcc
-
- mccaddacci i               - mcc + acc:i => mcc
 
  control commands:
  -----------------                     
- breakpoint                 - used for debugging
- 
- init                       - save the last self, init self with a current one; 
-                              it should be only one command per procedure
-
- open n                     - save the last frame and open the new frame ; 
+ open i                     - save the last frame and open the new frame ; 
                               init the frame header offset
                               it should be only one command per procedure ; 
                               may be preceded by init
@@ -249,13 +137,7 @@ ELENA byte codes (or ecodes)
                               should be paired with open
                               it should be only one command per procedure ; 
 
- quit                       - terminates the procedure;
-                              
- quitn                      - terminates the procedure;
-                              clear the stack parameters
-                                                            
- quitmcc                    - terminates the procedure ; clear the stack parameters, based
-                              on mcc value
+ breakpoint                 - used for debugging
 
  exclude                    - exclude the stack content from managed space
 
@@ -264,31 +146,416 @@ ELENA byte codes (or ecodes)
 
  restore n                  - remove the excluded stack
 
- throw                      - raise an exception (acc contains the exception object)
+
+
+ register commands:
+ ------------------ 
+ acopyr r                   - r => acc
+ 
+ bcopya                     - acc => self
+
+ acopyb                     - self => acc
+ 
+ acopyf i                   - fp+i => acc
+                              does not affect m register (EDX)           
+ 
+ acopys i                   - sp+i => acc
+                              does not affect m register (EDX)           
+ 
+ axcopyf i                  - fp+i => acc ;
+                              does not affect m register (EDX) ;
+                              frame header is not taken into account
+
+ aloadd                     - [acc::index] => acc
+          
+ aloadai i                  - [acc::i] => acc
+          
+ aloadsi i                  - [sp+i] => acc;
+                               does not affect m register (EDX)
+ 
+ aloadfi i                  - [fp+i] => acc
+
+ aloadbi i                  - [self::i] => acc
+
+ aloadr r                   - [r] => acc
+
+ asaver r                   - [r] <= acc
+
+ asavebi i                  - [self::i] <= acc;
+                               use GC reference bit masks
+
+ asavesi i                  - [sp+i] <= acc
+ 
+ asavefi i                  - [fp+i] <= acc 
+ 
+ aswapsi i                  - [sp+i] <=> acc
+ 
+ dcopyi i                   - i => index
+ 
+ dloadai i                  - [acc:i] => index
+
+ dloadsi i                  - [sp:i] => index
+
+ daddai i                   - index += [acc:i]
+
+ dsubai i                   - index -= [acc:i]
+
+ dsaveai i                  - [acc:i] <= index ;
+                              direct operation      
+ 
+ dsavesi i                  - [sp:i] <= index
+
+ ddec                       - index--
+
+ dinc                       - index++
+ 
+ daddsi n                   - d << d + [sp:i]
+ 
+ dsubsi n                   - d << d - [sp:i]
+ 
+ mcopy                      - m => mcc
+
+ mcopysubj                  - mcc:subj => mcc
+ 
+ madd m                     - m + mcc => mcc
+
+ maddai i                   - mcc + acc:i => mcc
+
+ mloadfi i                  - [fp+i] => mcc
+
+ msaveparams i              - copy the message parameters;
+                              [fp+i]::mcc.param => [sp+1] ; sp++;
+
+
+ branching commands:
+ -------------------
+ jumpr address              - jumps to the address
+
+ jump label                 - jumps to the label
+
+ ajumpvi                    - redirect to acc::VMT[i] method
+  
+ aelse label                - jumps to the label if acc == 0
+
+ athen label                - jumps to the label if acc != 0
+ 
+ athenr r, label            - jumps to the label if acc == r
+ 
+ aelser r, label            - jumps to the label if acc != r
+
+ aelsesi i, label           - jumps to the label if acc != [sp+i]
+
+ athensi i, label           - jumps to the label if acc == [sp+i]
+
+ melse m, label             - jumps to the label if mcc != m
+
+ mthen m, label             - jumps to the label if mcc == m
+
+ delse label                - jumps to the label if index == 0
+
+ dthen label                - jumps to the label if index != 0
+
+ next  i, label             - index++; jumps to the label if index < i
+ 
+ melseai i, label           - jumps to the label if mcc != acc[i]
+ 
+ mthenai i, label           - jumps to the label if mcc == acc[i]
+ 
+ 
+ memory managing commands:
+ -------------------------
+
+ create i, vmt               - create the object with the specified
+                               number of fields;
+                               out: acc contains the class instance
+ 
+ createn n, vmt              - create the binary object with the 
+                               specified size ; acc contains the class instance
+
+ rfcreate vmt                - create the object with size=index and vmt=acc, out : acc  
+
+ bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
+
+ boxn n, vmt                 - if acc is local box its content into the object with vmt and size n
+
+
+ data manipulating commands:
+ -----------------
+ set                         - acc => self[index] ;
+
+ get                         - acc <= self[index] ;
+ 
+ iaxcopyr i, r               - r => [acc::i]
+                               ; direct
+
+ axsetr r                    - r => [acc::index]                              
+                               ; direct
+                                
+ ncopy                       - int:self << int:acc
+
+ ncopystr                    - int:self << str:acc, index = radix, convert to int; out: acc=self, index = 0 if failed
+ 
+ nsave                       - int:[sp] << int:acc
+
+ nload                       - int:[sp] >> int:acc
+
+ nequal                      - int(acc) == int([sp]) ? index=1 : index=0
+
+ nless                       - int(acc) < int([sp]) ? index=1 : index=0
+
+ nnotgreater                 - int(acc) <= int([sp]) ? index=1 : index=0
+ 
+ nadd                        - int(acc) += int([sp])                  
+ 
+ nsub                        - int(acc) -= int([sp])
+ 
+ nmul                        - int(acc) *= int([sp])
+ 
+ ndiv                        - int(acc) /= int([sp])
+                                
+ nand                        - int(acc) && int([sp]) => [acc]
+ 
+ nor                         - int(acc) || int([sp]) => [acc]
+ 
+ nxor                        - int(acc) ^^ int([sp]) => [acc] 
+ 
+ nshift                      - acc <<= index
+
+ nnot                        - ~int(acc) >> acc
+
+ ninc                        - int(acc)++
+ 
+ lcopy                       - long:self << long:acc
+
+ lcopyint                    - long:self << int:acc
+ 
+ lcopystr                    - long:self << str:acc, index = radix, convert to long; out: acc=self, index = 0 if failed
+ 
+ lsave                       - long:[sp] << long:acc
+
+ lload                       - long:[sp] >> long:acc
+
+ lequal                      - long(acc) == long([sp]) ? index=1 : index=0
+ 
+ lless                       - long(acc) < long([sp]) ? index=1 : index=0
+                                                                                                                                                     
+ lnotgreater                 - long(acc) <= long([sp]) ? index=1 : index=0
+ 
+ ladd                        - long(acc) += long([sp])
+ 
+ lsub                        - long(acc) -= long([sp])
+ 
+ lmul                        - long(acc) *= long([sp])
+ 
+ ldiv                        - long(acc) /= long([sp])
+
+ land                        - long(acc) && long([sp]) => [acc]
+ 
+ lor                         - long(acc) || long([sp]) => [acc]
+ 
+ lxor                        - long(acc) ^^ long([sp]) => [acc]
+ 
+ lnot                       - ~long:acc >> acc
+ 
+ lshift                      - acc <<= index
+ 
+ rcopy                       - real:self << real:acc
+ 
+ rcopyint                    - real:self << int:acc
+ 
+ rcopylong                   - real:self << long:acc
+ 
+ rcopystr                    - real:self << str:acc, convert to real; out: acc=self, index = 0 if failed
+ 
+ rload                       - acc << real:[sp]
+ 
+ rsave                       - acc >> real:[sp]
+ 
+ requal                      - long(acc) == long([sp]) ? index=1 : index=0
+ 
+ rless                       - long(acc) < long([sp]) ? index=1 : index=0
+
+ rnotgreater                 - long(acc) <= long([sp]) ? index=1 : index=0
+ 
+ radd                        - real(acc) += real([sp])
+ 
+ rsub                        - real(acc) -= real([sp])
+ 
+ rmul                        - real(acc) *= real([sp])
+ 
+ rdiv                        - real(acc) /= real([sp])
+ 
+ raddint                     - real(acc) += int([sp])
+ 
+ rsubint                      real(acc) -= int([sp])
+ 
+ rmulint                     - real(acc) *= int([sp])
+ 
+ rdivint                     - real(acc) /= int([sp])
+ 
+ raddlong                    - real(acc) += long([sp])
+ 
+ rsublong                    - real(acc) -= long([sp])
+ 
+ rmullong                    - real(acc) *= long([sp])
+ 
+ rdivlong                    - real(acc) /= long([sp])
+ 
+ wsgetlen                    - str(acc).Length >> index
+
+ wssetlen                    - str(acc).Length << index
+
+ wssave                      - save str(acc) in the stack; out : acc - reference to saved
+ 
+ bssave                      - save acc=bytes in the stack, out : acc - reference to saved
+
+ wsload                      - load acc content into [sp]
+ 
+ bsload                      - load acc content into [sp]
+
+ bssetlen                    - bytes(acc).Length << index
+ 
+ bsreserve                   - allocate the space for acc=bytearray
+
+ wsreserve                   - allocate the space for acc=widestr
+
+ wscreate                    - create the object with size=index and vmt=acc, out : acc  
+
+ wscopy                      - self << str:acc
+
+ wscopyint                   - convert int(acc) with base=index into ws(self)
+
+ wscopylong                  - convert long(acc) with base=index into ws(self)
+ 
+ wscopyreal                  - convert real(acc) with len=index into ws(self)
+
+ wscopybuf                   - self << buf(acc:[sp], index) convert utf8 to utf16
+
+ wsequal                     - str(acc) == str([sp]) ? index=1 : index=0
+ 
+ wsless                      - str(acc) < str([sp]) ? index=1 : index=0
+ 
+ wsnotgreater                - str(acc) <= str([sp]) ? index=1 : index=0
+ 
+ wsadd                       - self += ws(acc)
+ 
+ wsgetat                     - str:acc[index] >> short:[sp]
+ 
+ wstest labErr               - 0 < index < str:acc.Length
+
+ wssetat                     - str:self[index] << acc
+
+ wsindexofstr                - search for str=[sp] in acc starting with index, out: index or -1
+
+ wscopystr                   - self << str(acc:[sp], index)
+
+ bsetbuf                     - (self:[sp], index) << acc
+ 
+ bsgetbuf                    - (self:[sp], index) >> acc
+ 
+ bscopystr                   - self << str(acc:[sp], index)
+ 
+ bssetword                   - self:index << word(acc)
+ 
+ bsgetword                   - self:index >> word(acc)
+ 
+ wsaddstr                    - self += str(acc:[sp], index)
+ 
+ test labErr                 - if not 0 < index < acc.Length, jump to the label
+ 
+ getlen                      - acc.Length >> index
+
+ bstest labErr               - 0 < index < buf:acc.Length
+ 
+ bsindexof                   - search for byte=acc in (self:index, [sp]), out: index or -1
+
+ bsindexofword               - search for byte=acc in (self:index, [sp]), out: index or -1
+
+ lrndnew                     - random number init >> long(self)
+ 
+ lrndnext                    - long(self) : index >> acc
+ 
+ rabs                        - self << abs(real:acc)
+
+ rround                      - self << round(real:acc)
+
+ rexp                        - self << exp(real:acc)
+
+ rln                         - self << ln(real:acc)
+ 
+
+                                                                                                      
+
+
+ 
+
+
+
+
+ x_popacci i                - [acc::i] <= [sp] ; sp--;
+                              does not use GC reference bit masks
+
+
+ calling commands:
+ -----------------
+ rcalln r, n                - calls directly the appropriate method in VMT referred by r
+                              acc contains the result
+              
+ jumpacc                    - invoke symbol referred by acc
+
+ branching commands:
+-------------------
+ elseflag f, label          - jumps to the label if acc.vmt.flag & f != f
+ 
+ thenflag f, label          - jumps to the label if acc.vmt.flag & f == f
+ 
+ mccelseacc label           - jumps to the label if mcc != acc
+ 
+ mccthenacc label           - jumps to the label if mcc == acc
+ 
+ register commands:
+ ------------------ 
+ x_acccopyfpi i             - fp+i => acc
+                              does not affect m register (EDX)
+           
+ accfillr r                 - r => [acc::(0..n)]
+                              ; direct
+
+ iaccfillr i, r             - r => [acc::(0..i)]
+                              ; direct
+
+ x_accsavefi i              - [fp+i] <= acc ; frame header is not taken into account
+ 
+ x_mcccopym m               - mcc <= m ; parameter count is not affected
+
+ mcccopyverb                - mcc:verb => mcc
+
+ mcccopysi i                - [sp+i] => mcc
+
+ mcccopyacci i              - acc:i => mcc
+
+
+
+
+
+ init                       - save the last self, init self with a current one; 
+                              it should be only one command per procedure
+
+ rethrow i                  - remove the current exception handler and
+                              jump to the next exception handler if
+                              sp + i != exception::sp
 
  memory managing commands:
  -------------------------
- createn n, vmt             - create the binary object with the 
-                              specified size ; acc contains the class instance
-                              
  acccreaten n, vmt          - create the binary object with the 
                               specified size = acc * n ; out: acc contains the class instance
- 
- acccreate vmt              - create the array with the 
-                              specified size = acc ; out: acc contains the class instance
- 
- create i, vmt              - create the object with the specified
-                              number of fields;
-                              acc contains the class instance
 
- accboxn n, vmt            - if acc is local box its content into the object with vmt and size n
+ accbox vmt                - if acc is local box its content into the object with vmt
 
 
 
  data manipulating commands:
  -----------------
- set                        - [sp] => self[acc] ; sp-- ; if out of range : acc = 0 ; else acc = 1
- 
  get                        - [sp+1] <= self[acc] ; sp++
  
  n_write n                  - [acc] => [self] ; no GC WB 

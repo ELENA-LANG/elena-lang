@@ -86,6 +86,7 @@ enum Symbol
    nsSignatureReference         = 0x01040,
    nsL6Operation                = 0x01041,
    nsSizeValue                  = 0x01042,
+   nsL0Operation                = 0x01043,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

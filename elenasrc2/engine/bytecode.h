@@ -17,190 +17,301 @@ enum ByteCode
 {  
    // commands:
    bcNop            = 0x00,
-
    bcBreakpoint     = 0x01,
-   bcPushSelf       = 0x02,
+   bcPushB          = 0x02,
    bcPop            = 0x03, 
-   bcWriteAcc       = 0x04, 
-   bcPushMcc        = 0x05,
-   bcMccCopyVerb    = 0x06,
+   bcPushM          = 0x05,
    bcThrow          = 0x07,
-   //bcSNop           = 0x08,
-   bcMccCopySubj    = 0x09,
-   bcPushAcc        = 0x0A,
-   bcPopAcc         = 0x0B,
-   bcAccCopySelf    = 0x0C, 
-   bcPopMcc         = 0x0D,
+   bcMCopySubj      = 0x09,
+   bcPushA          = 0x0A,
+   bcPopA           = 0x0B,
+   bcACopyB         = 0x0C,
+   bcPopM           = 0x0D,
    bcBSRedirect     = 0x0E, 
-   //bcMccCopyAcc     = 0x0F,
 
-   bcMccReverse     = 0x10,
-   bcInit           = 0x12,
-   bcPopSelf        = 0x14,
+   bcGetLen         = 0x11,
+   bcBCopyA         = 0x12,
+   bcDDec           = 0x13,
+   bcPopB           = 0x14,
    bcClose          = 0x15,
-   bcJumpAcc        = 0x16,
    bcQuit           = 0x17, 
    bcGet            = 0x18,
    bcSet            = 0x19,
-   bcQuitMcc        = 0x1B,
+   bcDInc           = 0x1A,
+   bcMQuit          = 0x1B,
+   bcALoadD         = 0x1C,
    bcUnhook         = 0x1D,
    bcExclude        = 0x1E, 
    bcInclude        = 0x1F, 
- 
+
    // all 2x command are push ones
    bcReserve        = 0x20,
    bcPushN          = 0x21,
    bcPushR          = 0x22,
-   bcPushSelfI      = 0x23,
-   bcPushAccI       = 0x24,
-   bcPushI          = 0x25,
+   bcPushBI         = 0x23,
+   bcPushAI         = 0x24,
    bcPushFI         = 0x26,
-   bcMccCopyPrmFI   = 0x29,
+   bcMSaveParams    = 0x29,
    bcPushSI         = 0x2A,
-   bcPushFPI        = 0x2D,
-   bcXPushFPI       = 0x2E,
-   bcPushSPI        = 0x2F,
+   bcPushF          = 0x2D,
+   bcXPushF         = 0x2E,
 
    // all 3x commands are pop ones
-   bcPopN           = 0x30,
-   bcPopSelfI       = 0x31,
+   bcPopI           = 0x30,
+   bcPopBI          = 0x31,
    bcPopFI          = 0x32,
-   bcXPopAccI       = 0x33,
+   bcXPopAI         = 0x33,
    bcPopSI          = 0x34,
-   bcPopAccI        = 0x35,
-   //bcAccTryN        = 0x36,
-   //bcAccTryR        = 0x37,
+   bcPopAI          = 0x35,
    bcQuitN          = 0x39, 
 
    bcCallExtR       = 0x40,
    bcEvalR          = 0x41,
-   bcCallAcc        = 0x42,
+   bcACallVI        = 0x42,
    bcCallR          = 0x43,
-   //bcSendVMTR       = 0x46,
-   bcMccCopyAccI    = 0x47,
-   bcMccCopySI      = 0x48,
-   bcMccCopyFI      = 0x49,
-   bcXMccCopyM      = 0x4C,
-   bcMccAddAccI     = 0x4D,
-   bcMccCopyM       = 0x4E,     
-   bcMccAddM        = 0x4F,
+   bcMLoadFI        = 0x49,
+   bcMAddAI         = 0x4D,
+   bcMCopy          = 0x4E,     
+   bcMAdd           = 0x4F,
 
-   bcIncSI          = 0x50,
-   bcIncFI          = 0x51,
-   //bcAccInc         = 0x52,
-   bcAccLoadR       = 0x53,
-   bcAccLoadFI      = 0x54,
-   bcAccLoadSI      = 0x55,
-   //bcAccTestFlagN   = 0x58,
+   bcDLoadSI        = 0x50,
+   bcDSaveSI        = 0x51,
+   bcALoadR         = 0x53,
+   bcALoadFI        = 0x54,
+   bcALoadSI        = 0x55,
+   bcDCopyI         = 0x56,
+   bcDLoadAI        = 0x57,
+   bcDAddAI         = 0x59,
+   bcDSubAI         = 0x5A,
+   bcDAddSI         = 0x5B,
+   bcDSubSI         = 0x5C,
 
-   bcAccSaveSelfI   = 0x61,
-   bcAccSaveSI      = 0x63,
-   bcAccSaveFI      = 0x64,
-   bcAccSaveR       = 0x65,
+   bcASaveBI        = 0x61,
+   bcASaveSI        = 0x63,
+   bcASaveFI        = 0x64,
+   bcASaveR         = 0x65,
+   bcDSaveAI        = 0x67,
    bcSwapSI         = 0x6C,
-   bcAccSwapSI      = 0x6D,
-   bcXAccSaveFI     = 0x6F,
+   bcASwapSI        = 0x6D,
+   bcAXSetR         = 0x6E,
 
-   bcCopyFPI        = 0x72,
-   //bcAccCopySPI     = 0x75,
-   bcAccCopyR       = 0x78,
-   bcAccCopyN       = 0x79,
-   bcAccLoadAccI    = 0x7A,
-   //bcAccCopyM       = 0x7B,
-   bcXAccCopyFPI    = 0x7B,
-   bcAccCopyFPI     = 0x7C,
-   bcAccAddN        = 0x7E,
+   bcSCopyF         = 0x72,
+   bcACopyS         = 0x75,
+   bcACopyR         = 0x78,
+   //bcACopyN         = 0x79,
+   bcALoadAI        = 0x7A,
+   bcAXCopyF        = 0x7B,
+   bcACopyF         = 0x7C,
+   //bcAAdd           = 0x7E,
+   //bcAMul           = 0x7F,
 
-   bcRethrow        = 0x80,
    bcRestore        = 0x82, 
    bcOpen           = 0x88,
 
-   //bcTryLock        = 0x90,
-   //bcFreeLock       = 0x91,
-   //bcSPTryLock      = 0x92,
-   //bcAccFreeLock    = 0x93,
-
    bcJump           = 0xA0,
-   bcJumpAccN       = 0xA1,
-   //bcJumpR          = 0xA3,
-   bcHook           = 0xA8,
-   bcElse           = 0xA9,
-   bcThen           = 0xAA,
-   bcMccElseAcc     = 0xAB,
-   bcMccThenAcc     = 0xAC,
-   //bcElseLocal      = 0xAF,
+   bcAJumpVI        = 0xA1,
+   bcHook           = 0xA6,
+   bcDElse          = 0xA7,
+   bcDThen          = 0xA8,
+   bcAElse          = 0xA9,
+   bcAThen          = 0xAA,
 
-   bcNWrite         = 0xB0,
-   bcGetLen         = 0xB1,
+   bcALoadBI        = 0xCE,
 
-   bcAccGetSI       = 0xC0,
-   bcAccGetFI       = 0xC1,
-   //bcAccGetAccSI    = 0xC2,
-   bcAccCreate      = 0xC3,
-   bcAccFillR       = 0xC4,
-   //bcAccMergeR      = 0xC8,
+   bcFunc           = 0xD0,
+   bcNFunc          = 0xD1,
+   bcLFunc          = 0xD2,
+   bcWSFunc         = 0xD3,
+   bcBSFunc         = 0xD4,
+   bcRFunc          = 0xD5,
+   bcBSTest         = 0xDD,
+   bcTest           = 0xDE,
+   bcWSTest         = 0xDF,
 
-   bcElseR          = 0xE0,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-   bcThenR          = 0xE1,   // though in bytecode section they saved in the correct order (jump arg, label)
-   bcMccElse        = 0xE2, 
-   bcMccThen        = 0xE3,
-   //bcElseN          = 0xE4,
-   //bcThenN          = 0xE5,
-   bcElseSI         = 0xE6,
-   bcThenSI         = 0xE7,
-   //bcMccElseSI      = 0xE8,
-   //bcMccThenSI      = 0xE9,
-   bcMccElseAccI    = 0xEA,
-   bcMccThenAccI    = 0xEB,
-   bcElseFlag       = 0xEC,
-   bcThenFlag       = 0xED,
-   bcAccLoadSelfI   = 0xEE,
+   bcAElseR         = 0xE0,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcAThenR         = 0xE1,   // though in bytecode section they saved in the correct order (jump arg, label)
+   bcMElse          = 0xE2, 
+   bcMThen          = 0xE3,
+   bcAElseSI        = 0xE6,
+   bcAThenSI        = 0xE7,
+   bcMElseAI        = 0xEA,
+   bcMThenAI        = 0xEB,
+   bcNext           = 0xEF,   
 
    bcCreate         = 0xF0,
    bcCreateN        = 0xF1,
-   bcIAccCopyR      = 0xF2,
-   bcIAccFillR      = 0xF3,
-   //bcIAccCopyN      = 0xF4,
-   bcAccCreateN     = 0xF5,
-   bcAccBoxN        = 0xF6,
+   bcIAXCopyR       = 0xF2,
+   bcBoxN           = 0xF6,
+   bcSCallVI        = 0xFC,
+   bcXCallRM        = 0xFE,
 
-   bcCallSI         = 0xFC,
-   bcRCallN         = 0xFD,
-   bcRCallM         = 0xFE,
+
+//   bcWriteAcc       = 0x304, 
+//   bcMccCopyVerb    = 0x306,
+//   //bcSNop           = 0x08,
+//   //bcMccCopyAcc     = 0x0F,
+//
+//   bcMccReverse     = 0x310,
+//   bcJumpAcc        = 0x316,
+
+//   bcPushI          = 0x325,
+//   bcPushSPI        = 0x32F,
+//
+//   //bcAccTryN        = 0x36,
+//   //bcAccTryR        = 0x37,
+//
+//   //bcSendVMTR       = 0x46,
+//   bcMccCopyAccI    = 0x347,
+//   bcMccCopySI      = 0x348,
+//   bcXMccCopyM      = 0x34C,
+//
+//   //bcAccInc         = 0x52,
+//   //bcAccTestFlagN   = 0x58,
+//
+//   bcXAccSaveFI     = 0x6F,
+//
+//   //bcAccCopyM       = 0x7B,
+//
+//   bcRethrow        = 0x80,
+
+//   //bcTryLock        = 0x90,
+//   //bcFreeLock       = 0x91,
+//   //bcSPTryLock      = 0x92,
+//   //bcAccFreeLock    = 0x93,
+//
+   //bcJumpR          = 0xA3,
+//   bcMccElseAcc     = 0xAB,
+//   bcMccThenAcc     = 0xAC,
+//   //bcElseLocal      = 0xAF,
+//
+//   bcNWrite         = 0xB0,
+//
+//   bcAccGetSI       = 0xC0,
+//   bcAccGetFI       = 0xC1,
+//   //bcAccGetAccSI    = 0xC2,
+//   bcAccCreate      = 0xC3,
+//   bcAccFillR       = 0xC4,
+//   //bcAccMergeR      = 0xC8,
+//
+//   //bcElseN          = 0xE4,
+//   //bcThenN          = 0xE5,
+//   //bcMccElseSI      = 0xE8,
+//   //bcMccThenSI      = 0xE9,
+//   bcElseFlag       = 0xEC,
+//   bcThenFlag       = 0xED,
+//
+//   bcIAccFillR      = 0xF3,
+//   //bcIAccCopyN      = 0xF4,
+//
+//   bcRCallN         = 0xFD,
 
    bcReserved       = 0xFF,
 
    // labels
-   blLabelMask     = 0x8000,  // tape label mask
-   blBegin         = 0x8001,  // meta command, declaring the structure
-   blEnd           = 0x8002,  // meta command, closing the structure
-   blLabel         = 0x8003,  // meta command, declaring the label
+   blLabelMask      = 0x8000,  // tape label mask
+   blBegin          = 0x8001,  // meta command, declaring the structure
+   blEnd            = 0x8002,  // meta command, closing the structure
+   blLabel          = 0x8003,  // meta command, declaring the label
 
    // meta commands:
-   bcAllocStack     = 0x101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
-   bcFreeStack      = 0x102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
-   //blHint           = 0x204,  // meta command, compiler hint
+   bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
+   bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
+//   //blHint           = 0x204,  // meta command, compiler hint
 
    // pseudo block commands
-   bcPushBI         = 0x326, 
-   bcAccLoadBI      = 0x354, 
-   bcAccSaveBI      = 0x364, 
-   bcPushBPI        = 0x32E, 
+   bcPushBlockI     = 0x8326, 
+   bcALoadBlockI    = 0x8354, 
+   bcASaveBlockI    = 0x8364, 
+   bcPushBlockPI    = 0x832E, 
+   bcALoadBlockPI   = 0x837C,
 
-   bcMatch          = 0xFFE,  // used in optimization engine
-   bcNone           = 0xFFF,  // used in optimization engine
+   bcMatch          = 0xFFFE,  // used in optimization engine
+   bcNone           = 0xFFFF,  // used in optimization engine
 
-   blDeclare        = 0x120,  // meta command, closing the structure
-   blStatement      = 0x121,
+   blDeclare        = 0x8120,  // meta command, closing the structure
+   blStatement      = 0x8121,
 
    // debug info
-   bdBreakpoint   = 0x401,
-   bdBreakcoord   = 0x402,
-   bdLocal        = 0x403,
-   bdSelf         = 0x404,
-   bdIntLocal     = 0x413,
-   bdLongLocal    = 0x423,
-   bdRealLocal    = 0x433,
+   bdBreakpoint     = 0x8401,
+   bdBreakcoord     = 0x8402,
+   bdLocal          = 0x8403,
+   bdSelf           = 0x8404,
+   bdIntLocal       = 0x8413,
+   bdLongLocal      = 0x8423,
+   bdRealLocal      = 0x8433,
+};
+
+enum TypeCode
+{
+   tRef    = 0,
+   tInt    = 1,
+   tLong   = 2,
+   tStr    = 3,
+   tBytes  = 4,
+   tReal   = 5,
+   tLen    = 6,
+   tShort  = 7,
+   tParams = 8,
+};
+
+enum FunctionCode
+{
+   fnUnknown        = 0x0000,
+   fnCreate         = 0x0004,
+   fnEqual          = 0x0007,
+   fnLess           = 0x0008,
+   fnAnd            = 0x000A,
+   fnOr             = 0x000B,
+   fnXor            = 0x000C,
+   fnNotGreater     = 0x0011,
+   fnAdd            = 0x0013,
+   fnSub            = 0x0014,
+   fnMul            = 0x0015,
+   fnDiv            = 0x0016,
+   fnGetAt          = 0x0017,
+   fnSetAt          = 0x001C,
+   fnCopy           = 0x001F,
+   fnIndexOf        = 0x0027,
+   fnSave           = 0x002D,
+   fnReserve        = 0x0031,
+   fnLoad           = 0x0032,
+   fnShift          = 0x0033,
+   fnNot            = 0x0034,
+   fnInc            = 0x0036,
+   fnAddInt         = 0x0113,
+   fnSubInt         = 0x0114,
+   fnMulInt         = 0x0115,
+   fnDivInt         = 0x0116,
+   fnGetInt         = 0x0117,
+   fnSetInt         = 0x011C,
+   fnCopyInt        = 0x011F,
+   fnAddLong        = 0x0213,
+   fnSubLong        = 0x0214,
+   fnMulLong        = 0x0215,
+   fnDivLong        = 0x0216,
+   fnCopyLong       = 0x021F,
+   fnAddStr         = 0x0313,
+   fnCopyStr        = 0x031F,
+   fnCopyBuf        = 0x041F,
+   fnGetWord        = 0x0717,
+   fnGetBuf         = 0x0417,
+   fnSetBuf         = 0x041C,
+   fnSetWord        = 0x071C,
+   fnIndexOfStr     = 0x0327,
+   fnDeleteStr      = 0x032A,
+   fnSaveStr        = 0x032D,
+   fnLoadStr        = 0x0332,
+   fnIndexOfWord    = 0x0727,
+   fnGetLen         = 0x0606,
+   fnSetLen         = 0x061D,
+   fnCopyReal       = 0x051F,
+
+   fnRndNew         = 0x0681,
+   fnRndNext        = 0x0682,
+   fnLn             = 0x0683,
+   fnExp            = 0x0684,
+   fnAbs            = 0x0685,
+   fnRound          = 0x0686,
 };
 
 enum PseudoArg
@@ -274,8 +385,10 @@ class ByteCodeCompiler
 {
 public:
    static ByteCode code(const wchar16_t* s);
+   static FunctionCode codeFunction(const wchar16_t* s);
 
    static const wchar16_t* decode(ByteCode code, wchar16_t* s);
+   static const wchar16_t* decodeFunction(FunctionCode code, wchar16_t* s);
 };
 
 // --- CommandTape ---
@@ -346,6 +459,7 @@ struct CommandTape
    void import(_Memory* section);
 
    static bool optimizeJumps(CommandTape& tape);
+   static bool import(ByteCommand& command, _Module* sour, _Module* dest);
 
    CommandTape()
    {
@@ -452,4 +566,3 @@ struct TransformTape
 } // _ELENA_
 
 #endif // bytecodeH
-   

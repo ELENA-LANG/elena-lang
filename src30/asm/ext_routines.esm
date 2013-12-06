@@ -1,0 +1,26 @@
+procedure inline'rnd_init
+
+  pushb
+  bcopya
+
+  lrndnew
+
+  popb
+  quitn 1
+
+end
+
+procedure inline'rnd_next
+
+  pushb
+  bcopya
+
+  aloadsi 3
+  dloadai 0
+  aloadsi 4
+  lrndnext  
+
+  popb
+  quitn 3
+
+end

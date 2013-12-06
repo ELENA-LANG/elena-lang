@@ -10,119 +10,186 @@
 // -----------------------------------------------------------------------------
 #include "bytecode.h"
 
-#define OPCODE_ACCADDN      "accaddn"
-#define OPCODE_ACCBOXN      "accboxn"
-#define OPCODE_ACCCOPYFPI   "acccopyfpi"
-#define OPCODE_ACCCOPYN     "acccopyn"
-#define OPCODE_ACCCOPYR     "acccopyr"
-#define OPCODE_ACCCOPYSELF  "acccopyself"
-#define OPCODE_ACCCREATE    "acccreate"
-#define OPCODE_ACCCREATEN   "acccreaten"
-#define OPCODE_ACCGETFI     "accgetfi"
-#define OPCODE_ACCGETSI     "accgetsi"
-#define OPCODE_ACCLOADACCI  "accloadacci"
-#define OPCODE_ACCLOADFI    "accloadfi"
-#define OPCODE_ACCLOADR     "accloadr"
-#define OPCODE_ACCLOADSELFI "accloadselfi"
-#define OPCODE_ACCLOADSI    "accloadsi"
-#define OPCODE_ACCSAVEFI    "accsavefi"
-#define OPCODE_ACCSAVER     "accsaver"
-#define OPCODE_ACCSAVESELFI "accsaveselfi"
-#define OPCODE_ACCSAVESI    "accsavesi"
-#define OPCODE_ACCSWAPSI    "accswapsi"
+#define OPCODE_AADD         "aadd"
+#define OPCODE_ACALLVI      "acallvi"
+#define OPCODE_ACOPYB       "acopyb"
+#define OPCODE_ACOPYF       "acopyf"
+#define OPCODE_ACOPYN       "acopyn"
+#define OPCODE_ACOPYR       "acopyr"
+#define OPCODE_ACOPYS       "acopys"
+//#define OPCODE_ACCCREATE    "acccreate"
+//#define OPCODE_ACCGETFI     "accgetfi"
+//#define OPCODE_ACCGETSI     "accgetsi"
+#define OPCODE_AELSER       "aelser"
+#define OPCODE_AJUMPVI      "ajumpvi"
+#define OPCODE_ALOADAI      "aloadai"
+#define OPCODE_ALOADD       "aloadd"
+#define OPCODE_ALOADFI      "aloadfi"
+#define OPCODE_AMUL         "amul"
+#define OPCODE_AELSE        "aelse"
+#define OPCODE_AELSESI      "aelsesi"
+#define OPCODE_ALOADBI      "aloadbi"
+#define OPCODE_ALOADR       "aloadr"
+#define OPCODE_ASAVER       "asaver"
+#define OPCODE_ATHEN        "athen"
+#define OPCODE_ATHENR       "athenr"
+#define OPCODE_ATHENSI      "athensi"
+#define OPCODE_ALOADSI      "aloadsi"
+#define OPCODE_ASAVEBI      "asavebi"
+#define OPCODE_ASAVEFI      "asavefi"
+#define OPCODE_ASAVESI      "asavesi"
+#define OPCODE_ASWAPSI      "aswapsi"
+#define OPCODE_AXSETR       "axsetr"
+#define OPCODE_BCOPYA       "bcopya"
+#define OPCODE_BOXN         "boxn"
 #define OPCODE_BREAKPOINT   "breakpoint"
 #define OPCODE_BSREDIRECT   "bsredirect"
-#define OPCODE_CALLACC      "callacc"
+#define OPCODE_BSTEST       "bstest"
 #define OPCODE_CALLEXTR     "callextr"
 #define OPCODE_CALLR        "callr"
-#define OPCODE_CALLSI       "callsi"
 #define OPCODE_CLOSE        "close"
-#define OPCODE_COPYFPI      "copyfpi"
 #define OPCODE_CREATE       "create"
 #define OPCODE_CREATEN      "createn"
-#define OPCODE_ELSE         "else"
-#define OPCODE_ELSEFLAG     "elseflag"
-#define OPCODE_ELSESI       "elsesi"
-#define OPCODE_ELSER        "elser"
+#define OPCODE_DADDAI       "daddai"
+#define OPCODE_DADDSI       "daddsi"
+#define OPCODE_DLOADAI      "dloadai"
+#define OPCODE_DLOADSI      "dloadsi"
+#define OPCODE_DCOPYI       "dcopyi"
+#define OPCODE_DCREATE      "dcreate"
+#define OPCODE_DCREATEN     "dcreaten"
+#define OPCODE_DDEC         "ddec"
+#define OPCODE_DELSE        "delse"
+#define OPCODE_DINC         "dinc"
+#define OPCODE_DSAVEAI      "dsaveai"
+#define OPCODE_DSAVESI      "dsavesi"
+#define OPCODE_DSUBAI       "dsubai"
+#define OPCODE_DSUBSI       "dsubsi"
+#define OPCODE_DTHEN        "dthen"
+//#define OPCODE_ELSEFLAG     "elseflag"
 #define OPCODE_EVALR        "evalr"
 #define OPCODE_EXCLUDE      "exclude"
 #define OPCODE_GET          "get"
 #define OPCODE_GETLEN       "getlen"
 #define OPCODE_HOOK         "hook"
-#define OPCODE_IACCCOPYR    "iacccopyr"
-#define OPCODE_IACCFILLR    "iaccfillr"
+#define OPCODE_IAXCOPYR     "iaxcopyr"
+//#define OPCODE_IACCFILLR    "iaccfillr"
 #define OPCODE_INCLUDE      "include"
-#define OPCODE_INIT         "init"
-#define OPCODE_INCFI        "incfi"
-#define OPCODE_INCSI        "incsi"
+//#define OPCODE_INCFI        "incfi"
+//#define OPCODE_INCSI        "incsi"
 #define OPCODE_JUMP         "jump"
-#define OPCODE_JUMPACC      "jumpacc"
-#define OPCODE_JUMPACCN     "jumpaccn"
-#define OPCODE_MCCADDACCI   "mccaddacci"
-#define OPCODE_MCCADDM      "mccaddm"
-#define OPCODE_MCCCOPYACCI  "mcccopyacci"
-#define OPCODE_MCCCOPYFI    "mcccopyfi"
-#define OPCODE_MCCCOPYM     "mcccopym"
-#define OPCODE_MCCCOPYPRMFI "mcccopyprmfi"
-#define OPCODE_MCCCOPYSI    "mcccopysi"
-#define OPCODE_MCCCOPYSUBJ  "mcccopysubj"
-#define OPCODE_MCCCOPYVERB  "mcccopyverb"
-#define OPCODE_MCCELSE      "mccelse"
-#define OPCODE_MCCELSEACC   "mccelseacc"
-#define OPCODE_MCCELSEACCI  "mccelseacci"
-#define OPCODE_MCCREVERSE   "mccreverse"
-#define OPCODE_MCCTHEN      "mccthen"
-#define OPCODE_MCCTHENACC   "mccthenacc"
-#define OPCODE_MCCTHENACCI  "mccthenacci"
+//#define OPCODE_JUMPACC      "jumpacc"
+#define OPCODE_MADDAI       "maddai"
+#define OPCODE_MADD         "madd"
+//#define OPCODE_MCCCOPYACCI  "mcccopyacci"
+#define OPCODE_MCOPY        "mcopy"
+#define OPCODE_MCOPYSUBJ    "mcopysubj"
+//#define OPCODE_MCCCOPYVERB  "mcccopyverb"
+#define OPCODE_MELSE        "melse"
+#define OPCODE_MLOADFI      "mloadfi"
+//#define OPCODE_MCCELSEACC   "mccelseacc"
+#define OPCODE_MELSEAI      "melseai"
+//#define OPCODE_MCCREVERSE   "mccreverse"
+#define OPCODE_MQUIT        "mquit"
+#define OPCODE_MSAVEPARAMS  "msaveparams"
+#define OPCODE_MTHEN        "mthen"
+//#define OPCODE_MCCTHENACC   "mccthenacc"
+//#define OPCODE_MCCTHENACCI  "mccthenacci"
 #define OPCODE_NOP          "nop"
-#define OPCODE_NWRITE       "nwrite"
+#define OPCODE_NEXT         "next"
+//#define OPCODE_NWRITE       "nwrite"
 #define OPCODE_OPEN         "open"
 #define OPCODE_POP          "pop"
-#define OPCODE_POPACC       "popacc"
-#define OPCODE_POPACCI      "popacci"
-#define OPCODE_POPMCC       "popmcc"
+#define OPCODE_POPA         "popa"
+#define OPCODE_POPB         "popb"
+#define OPCODE_POPBI        "popbi"
+#define OPCODE_POPAI        "popai"
+#define OPCODE_POPM          "popm"
 #define OPCODE_POPFI        "popfi"
-#define OPCODE_POPN         "popn"
-#define OPCODE_POPSELF      "popself"
-#define OPCODE_POPSELFI     "popselfi"
+#define OPCODE_POPI         "popi"
 #define OPCODE_POPSI        "popsi"
-#define OPCODE_POPSPI       "popspi"
-#define OPCODE_PUSHACC      "pushacc"
-#define OPCODE_PUSHACCI     "pushacci"
+//#define OPCODE_POPSPI       "popspi"
+#define OPCODE_PUSHA        "pusha"
+#define OPCODE_PUSHAI       "pushai"
+#define OPCODE_PUSHB        "pushb"
+#define OPCODE_PUSHBI       "pushbi"
+#define OPCODE_PUSHF        "pushf"
 #define OPCODE_PUSHFI       "pushfi"
-#define OPCODE_PUSHFPI      "pushfpi"
-#define OPCODE_PUSHI        "pushi"
-#define OPCODE_PUSHMCC      "pushmcc"
+//#define OPCODE_PUSHI        "pushi"
+#define OPCODE_PUSHM        "pushm"
 #define OPCODE_PUSHN        "pushn"
 #define OPCODE_PUSHR        "pushr"
-#define OPCODE_PUSHSELF     "pushself"
-#define OPCODE_PUSHSELFI    "pushselfi"
 #define OPCODE_PUSHSI       "pushsi"
-#define OPCODE_PUSHSPI      "pushspi"
+//#define OPCODE_PUSHSPI      "pushspi"
 #define OPCODE_QUIT         "quit"
 #define OPCODE_QUITN        "quitn"
-#define OPCODE_QUITMCC      "quitmcc"
-#define OPCODE_RCALLM       "rcallm"
-#define OPCODE_RCALLN       "rcalln"
+//#define OPCODE_RCALLN       "rcalln"
 #define OPCODE_RESERVE      "reserve"
 #define OPCODE_RESTORE      "restore"
-#define OPCODE_RETHROW      "rethrow"
+//#define OPCODE_RETHROW      "rethrow"
 #define OPCODE_SET          "set"
+#define OPCODE_SCALLVI      "scallvi"
+#define OPCODE_SCOPYF       "scopyf"
 #define OPCODE_SWAPSI       "swapsi"
-#define OPCODE_THEN         "then"
-#define OPCODE_THENFLAG     "thenflag"
-#define OPCODE_THENR        "thenr"
-#define OPCODE_THENSI       "thensi"
+//#define OPCODE_THENFLAG     "thenflag"
+#define OPCODE_TEST         "test"
 #define OPCODE_THROW        "throw"
 #define OPCODE_UNHOOK       "unhook"
-#define OPCODE_WRITEACC     "writeacc"
-#define OPCODE_XACCCOPYFPI  "xacccopyfpi"
-#define OPCODE_XACCSAVEFI   "x_accsavefi"
-#define OPCODE_XMCCCOPYM    "x_mcccopym"
-#define OPCODE_XPOPACCI     "x_popacci"
-#define OPCODE_XPUSHFPI     "x_pushfpi"
+#define OPCODE_WSTEST       "wstest"
+//#define OPCODE_WRITEACC     "writeacc"
+#define OPCODE_AXCOPYF      "axcopyf"
+//#define OPCODE_XACCSAVEFI   "x_accsavefi"
+//#define OPCODE_XMCCCOPYM    "x_mcccopym"
+#define OPCODE_XCALLRM      "xcallrm"
+#define OPCODE_XPOPAI       "xpopai"
+#define OPCODE_XPUSHF       "xpushf"
 
 #define OPCODE_UNKNOWN      "unknown"
+
+#define FUNC_ABS            "abs"
+#define FUNC_ADD            "add"
+#define FUNC_ADDSTR         "addstr"
+#define FUNC_AND            "and"
+#define FUNC_COPY           "copy"
+#define FUNC_COPYBUF        "copybuf"
+#define FUNC_COPYINT        "copyint"
+#define FUNC_COPYLONG       "copylong"
+#define FUNC_COPYREAL       "copyreal"
+#define FUNC_COPYSTR        "copystr"
+#define FUNC_CREATE         "create"
+#define FUNC_DELETESTR      "deletestr" 
+#define FUNC_DIV            "div"
+#define FUNC_EQUAL          "equal"
+#define FUNC_EXP            "exp"
+#define FUNC_GETAT          "getat"
+#define FUNC_GETBUF         "getbuf"
+#define FUNC_GETINT         "getint"
+#define FUNC_GETLEN         "getlen"
+#define FUNC_GETWORD        "getword"
+#define FUNC_INC            "inc"
+#define FUNC_INDEXOF        "indexof"
+#define FUNC_INDEXOFSTR     "indexofstr"
+#define FUNC_INDEXOFWORD    "indexofword"
+#define FUNC_LESS           "less"
+#define FUNC_LN             "ln"
+#define FUNC_LOAD           "load"
+#define FUNC_LOADSTR        "loadstr"
+#define FUNC_MUL            "mul"
+#define FUNC_NOT            "not"
+#define FUNC_NOTGREATER     "notgreater"
+#define FUNC_OR             "or"
+#define FUNC_RESERVE        "reserve"
+#define FUNC_RNDNEW         "rndnew"
+#define FUNC_RNDNEXT        "rndnext"
+#define FUNC_ROUND          "round"
+#define FUNC_SAVE           "save"
+#define FUNC_SETAT          "setat"
+#define FUNC_SETBUF         "setbuf"
+#define FUNC_SETINT         "setint"
+#define FUNC_SETLEN         "setlen"
+#define FUNC_SETWORD        "setword"
+#define FUNC_SHIFT          "shift"
+#define FUNC_SUB            "sub"
+#define FUNC_XOR            "xor"
 
 using namespace _ELENA_;
 
@@ -131,27 +198,73 @@ inline bool IsJump(ByteCode code)
 {
    switch(code) {
       case bcJump:
-      case bcElse:
-      case bcThen:
-      case bcMccElseAcc:
-      case bcMccThenAcc:
-      case bcElseR:
-      case bcThenR:
-      case bcMccElse:
-      case bcMccThen:
-      case bcElseSI:
-      case bcThenSI:
-      case bcMccElseAccI:
-      case bcMccThenAccI:
-      case bcElseFlag:
-      case bcThenFlag:
-            return true;
+      case bcNext:
+      case bcAElse:
+      case bcAThen:
+      case bcWSTest:
+      case bcBSTest:
+      case bcTest:
+      case bcDElse:
+      case bcDThen:
+//      case bcMccElseAcc:
+//      case bcMccThenAcc:
+      case bcAElseR:
+      case bcAThenR:
+      case bcMElse:
+      case bcMThen:
+      case bcAElseSI:
+      case bcAThenSI:
+      case bcMElseAI:
+//      case bcMccThenAccI:
+//      case bcElseFlag:
+//      case bcThenFlag:
+         return true;
       default:
-            return false;
+         return false;
       }
 }
 
+bool IsRCode(ByteCode code)
+{
+   switch(code) {
+      case bcPushR:
+      case bcEvalR:
+      case bcCallR:
+      case bcALoadR:
+      case bcASaveR:
+      case bcAXSetR:
+      case bcACopyR:
+      case bcCreate:
+      case bcCreateN:
+      case bcIAXCopyR:
+      case bcBoxN:
+      case bcXCallRM:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
+{
+   int mask = ref & mskAnyRef;
+
+   const wchar16_t* referenceName = sour->resolveReference(ref & ~mskAnyRef);
+
+   return dest->mapReference(referenceName) | mask;
+}
+
 // --- CommandTape ---
+
+bool CommandTape :: import(ByteCommand& command, _Module* sour, _Module* dest)
+{
+   if (IsRCode(command.code)) {
+      command.argument = importRef(sour, (ref_t)command.argument, dest);
+
+      return true;
+   }
+   else return false;
+}
 
 void CommandTape :: write(ByteCode code)
 {
@@ -366,20 +479,26 @@ inline void removeIdleJump(ByteCodeIterator it)
    while (true) {
       switch((ByteCode)*it) {
          case bcJump:
-         case bcElse:
-         case bcThen:
-         case bcMccElseAcc:
-         case bcMccThenAcc:
-         case bcElseR:
-         case bcThenR:
-         case bcMccElse:
-         case bcMccThen:
-         case bcElseSI:
-         case bcThenSI:
-         case bcElseFlag:
-         case bcThenFlag:
-         case bcMccElseAccI:
-         case bcMccThenAccI:
+         case bcAElse:
+         case bcAThen:
+         case bcWSTest:
+         case bcBSTest:
+         case bcTest:
+         case bcDElse:
+         case bcDThen:
+//         case bcMccElseAcc:
+//         case bcMccThenAcc:
+         case bcAElseR:
+         case bcAThenR:
+         case bcNext:
+         case bcMElse:
+         case bcMThen:
+         case bcAElseSI:
+         case bcAThenSI:
+//         case bcElseFlag:
+//         case bcThenFlag:
+         case bcMElseAI:
+//         case bcMccThenAccI:
             *it = bcNop;
             return;
       }
@@ -424,29 +543,35 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
       else if (code <= bcReserved && code >= bcNop) {
          switch(code) {
             case bcThrow:
-            case bcJumpAcc:
+            //case bcJumpAcc:
             case bcQuit:
-            case bcQuitMcc:
+            case bcMQuit:
             case bcQuitN:
-            case bcJumpAccN:
+            case bcAJumpVI:
                blocks.add(index + 1, 0);
                break;
             case bcJump:
                blocks.add(index + 1, 0);
-            case bcElse:
-            case bcThen:              
-            case bcMccElseAcc:
-            case bcMccThenAcc:
-            case bcElseR:
-            case bcThenR:     
-            case bcMccElse:
-            case bcMccThen:
-            case bcElseSI:
-            case bcThenSI:
-            case bcMccElseAccI:
-            case bcMccThenAccI:
-            case bcElseFlag:
-            case bcThenFlag:
+            case bcAElse:
+            case bcAThen:              
+            case bcWSTest:
+            case bcBSTest:
+            case bcTest:
+            case bcDElse:
+            case bcDThen:              
+            //case bcMccElseAcc:
+            //case bcMccThenAcc:
+            case bcAElseR:
+            case bcAThenR:     
+            case bcNext:
+            case bcMElse:
+            case bcMThen:
+            case bcAElseSI:
+            case bcAThenSI:
+            case bcMElseAI:
+            //case bcMccThenAccI:
+            //case bcElseFlag:
+            //case bcThenFlag:
             case bcHook:
                addJump((*it).argument, index, labels, jumps, fixes);
                break;
@@ -617,74 +742,113 @@ bool TransformTape :: apply(CommandTape& commandTape)
 
 ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
 {
-   if (ConstantIdentifier::compare(s, OPCODE_ACCADDN)) {
-      return bcAccAddN;
+   //if (ConstantIdentifier::compare(s, OPCODE_AADD)) {
+   //   return bcAAdd;
+   //}
+   //else if (ConstantIdentifier::compare(s, OPCODE_ACOPYN)) {
+   //   return bcACopyN;
+   //}
+   /*else */if (ConstantIdentifier::compare(s, OPCODE_ACALLVI)) {
+      return bcACallVI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCBOXN)) {
-      return bcAccBoxN;
+   else if (ConstantIdentifier::compare(s, OPCODE_ACOPYF)) {
+      return bcACopyF;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCCOPYFPI)) {
-      return bcAccCopyFPI;
+   else if (ConstantIdentifier::compare(s, OPCODE_ACOPYR)) {
+      return bcACopyR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCCOPYN)) {
-      return bcAccCopyN;
+   else if (ConstantIdentifier::compare(s, OPCODE_ACOPYS)) {
+      return bcACopyS;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCCOPYR)) {
-      return bcAccCopyR;
+//   else if (ConstantIdentifier::compare(s, OPCODE_ACCCREATE)) {
+//      return bcAccCreate;
+//   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_ACCGETFI)) {
+//      return bcAccGetFI;
+//   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_ACCGETSI)) {
+//      return bcAccGetSI;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_AJUMPVI)) {
+      return bcAJumpVI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCCREATE)) {
-      return bcAccCreate;
+   else if (ConstantIdentifier::compare(s, OPCODE_ALOADAI)) {
+      return bcALoadAI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCCREATEN)) {
-      return bcAccCreateN;
+   else if (ConstantIdentifier::compare(s, OPCODE_ALOADD)) {
+      return bcALoadD;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCGETFI)) {
-      return bcAccGetFI;
+   else if (ConstantIdentifier::compare(s, OPCODE_ALOADFI)) {
+      return bcALoadFI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCGETSI)) {
-      return bcAccGetSI;
+   else if (ConstantIdentifier::compare(s, OPCODE_AELSE)) {
+      return bcAElse;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCLOADACCI)) {
-      return bcAccLoadAccI;
+   else if (ConstantIdentifier::compare(s, OPCODE_AELSER)) {
+      return bcAElseR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCLOADFI)) {
-      return bcAccLoadFI;
+   else if (ConstantIdentifier::compare(s, OPCODE_AELSESI)) {
+      return bcAElseSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCLOADR)) {
-      return bcAccLoadR;
+   else if (ConstantIdentifier::compare(s, OPCODE_ALOADBI)) {
+      return bcALoadBI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCCOPYSELF)) {
-      return bcAccCopySelf;
+   else if (ConstantIdentifier::compare(s, OPCODE_ALOADR)) {
+      return bcALoadR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCLOADSELFI)) {
-      return bcAccLoadSelfI;
+   else if (ConstantIdentifier::compare(s, OPCODE_ALOADSI)) {
+      return bcALoadSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCLOADSI)) {
-      return bcAccLoadSI;
+   //else if (ConstantIdentifier::compare(s, OPCODE_AMUL)) {
+   //   return bcAMul;
+   //}
+   else if (ConstantIdentifier::compare(s, OPCODE_ASAVER)) {
+      return bcASaveR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCSAVEFI)) {
-      return bcAccSaveFI;
+   else if (ConstantIdentifier::compare(s, OPCODE_ATHEN)) {
+      return bcAThen;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCSAVER)) {
-      return bcAccSaveR;
+   else if (ConstantIdentifier::compare(s, OPCODE_ATHENSI)) {
+      return bcAThenSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCSAVESELFI)) {
-      return bcAccSaveSelfI;
+   else if (ConstantIdentifier::compare(s, OPCODE_AXCOPYF)) {
+      return bcAXCopyF;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCSAVESI)) {
-      return bcAccSaveSI;
+   else if (ConstantIdentifier::compare(s, OPCODE_AXSETR)) {
+      return bcAXSetR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ACCSWAPSI)) {
-      return bcAccSwapSI;
+   else if (ConstantIdentifier::compare(s, OPCODE_ACOPYB)) {
+      return bcACopyB;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_ASAVEBI)) {
+      return bcASaveBI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_ASAVEFI)) {
+      return bcASaveFI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_ASAVESI)) {
+      return bcASaveSI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_ASWAPSI)) {
+      return bcASwapSI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_ATHENR)) {
+      return bcAThenR;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_BOXN)) {
+      return bcBoxN;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_BREAKPOINT)) {
       return bcBreakpoint;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_BCOPYA)) {
+      return bcBCopyA;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_BSREDIRECT)) {
       return bcBSRedirect;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_CALLACC)) {
-      return bcCallAcc;
+   else if (ConstantIdentifier::compare(s, OPCODE_BSTEST)) {
+      return bcBSTest;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_CALLEXTR)) {
       return bcCallExtR;
@@ -692,14 +856,8 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_CALLR)) {
       return bcCallR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_CALLSI)) {
-      return bcCallSI;
-   }
    else if (ConstantIdentifier::compare(s, OPCODE_CLOSE)) {
       return bcClose;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_COPYFPI)) {
-      return bcCopyFPI;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_CREATE)) {
       return bcCreate;
@@ -707,18 +865,48 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_CREATEN)) {
       return bcCreateN;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ELSE)) {
-      return bcElse;
+   else if (ConstantIdentifier::compare(s, OPCODE_DADDAI)) {
+      return bcDAddAI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ELSEFLAG)) {
-      return bcElseFlag;
+   else if (ConstantIdentifier::compare(s, OPCODE_DADDSI)) {
+      return bcDAddSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ELSER)) {
-      return bcElseR;
+   else if (ConstantIdentifier::compare(s, OPCODE_DLOADAI)) {
+      return bcDLoadAI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_ELSESI)) {
-      return bcElseSI;
+   else if (ConstantIdentifier::compare(s, OPCODE_DLOADSI)) {
+      return bcDLoadSI;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_DCOPYI)) {
+      return bcDCopyI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DDEC)) {
+      return bcDDec;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DELSE)) {
+      return bcDElse;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DINC)) {
+      return bcDInc;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DSAVEAI)) {
+      return bcDSaveAI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DSAVESI)) {
+      return bcDSaveSI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DSUBAI)) {
+      return bcDSubAI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DSUBSI)) {
+      return bcDSubSI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DTHEN)) {
+      return bcDThen;
+   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_ELSEFLAG)) {
+//      return bcElseFlag;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_EVALR)) {
       return bcEvalR;
    }
@@ -734,86 +922,86 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_HOOK)) {
       return bcHook;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_IACCCOPYR)) {
-      return bcIAccCopyR;
+   else if (ConstantIdentifier::compare(s, OPCODE_IAXCOPYR)) {
+      return bcIAXCopyR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_IACCFILLR)) {
-      return bcIAccFillR;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_IACCFILLR)) {
+//      return bcIAccFillR;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_INCLUDE)) {
       return bcInclude;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_INCFI)) {
-      return bcIncFI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_INCSI)) {
-      return bcIncSI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_INIT)) {
-      return bcInit;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_INCFI)) {
+//      return bcIncFI;
+//   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_INCSI)) {
+//      return bcIncSI;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_JUMP)) {
       return bcJump;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_JUMPACC)) {
-      return bcJumpAcc;
+//   else if (ConstantIdentifier::compare(s, OPCODE_JUMPACC)) {
+//      return bcJumpAcc;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MADDAI)) {
+      return bcMAddAI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_JUMPACCN)) {
-      return bcJumpAccN;
+   else if (ConstantIdentifier::compare(s, OPCODE_MADD)) {
+      return bcMAdd;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCADDACCI)) {
-      return bcMccAddAccI;
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYACCI)) {
+//      return bcMccCopyAccI;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MCOPY)) {
+      return bcMCopy;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCADDM)) {
-      return bcMccAddM;
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYSI)) {
+//      return bcMccCopySI;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MCOPYSUBJ)) {
+      return bcMCopySubj;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYACCI)) {
-      return bcMccCopyAccI;
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYVERB)) {
+//      return bcMccCopyVerb;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MELSE)) {
+      return bcMElse;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYFI)) {
-      return bcMccCopyFI;
+   else if (ConstantIdentifier::compare(s, OPCODE_MLOADFI)) {
+      return bcMLoadFI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYM)) {
-      return bcMccCopyM;
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCELSEACC)) {
+//      return bcMccElseAcc;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MELSEAI)) {
+      return bcMElseAI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYPRMFI)) {
-      return bcMccCopyPrmFI;
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCREVERSE)) {
+//      return bcMccReverse;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MQUIT)) {
+      return bcMQuit;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYSI)) {
-      return bcMccCopySI;
+   else if (ConstantIdentifier::compare(s, OPCODE_MSAVEPARAMS)) {
+      return bcMSaveParams;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYSUBJ)) {
-      return bcMccCopySubj;
+   else if (ConstantIdentifier::compare(s, OPCODE_MTHEN)) {
+      return bcMThen;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCCOPYVERB)) {
-      return bcMccCopyVerb;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCELSE)) {
-      return bcMccElse;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCELSEACC)) {
-      return bcMccElseAcc;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCELSEACCI)) {
-      return bcMccElseAccI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCREVERSE)) {
-      return bcMccReverse;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHEN)) {
-      return bcMccThen;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHENACC)) {
-      return bcMccThenAcc;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHENACCI)) {
-      return bcMccThenAccI;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHENACC)) {
+//      return bcMccThenAcc;
+//   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHENACCI)) {
+//      return bcMccThenAccI;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_NOP)) {
       return bcNop;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_NWRITE)) {
-      return bcNWrite;
+//   else if (ConstantIdentifier::compare(s, OPCODE_NWRITE)) {
+//      return bcNWrite;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_NEXT)) {
+      return bcNext;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_OPEN)) {
       return bcOpen;
@@ -821,134 +1009,131 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_POP)) {
       return bcPop;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPACC)) {
-      return bcPopAcc;
+   else if (ConstantIdentifier::compare(s, OPCODE_POPA)) {
+      return bcPopA;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPACCI)) {
-      return bcPopAccI;
+   else if (ConstantIdentifier::compare(s, OPCODE_POPAI)) {
+      return bcPopAI;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_POPFI)) {
       return bcPopFI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPMCC)) {
-      return bcPopMcc;
+   else if (ConstantIdentifier::compare(s, OPCODE_POPM)) {
+      return bcPopM;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPN)) {
-      return bcPopN;
+   else if (ConstantIdentifier::compare(s, OPCODE_POPB)) {
+      return bcPopB;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPSELF)) {
-      return bcPopSelf;
+   else if (ConstantIdentifier::compare(s, OPCODE_POPBI)) {
+      return bcPopBI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPSELFI)) {
-      return bcPopSelfI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_POPSI)) {
-      return bcPopSI;
+   else if (ConstantIdentifier::compare(s, OPCODE_POPI)) {
+      return bcPopI;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_POPSI)) {
       return bcPopSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHACC)) {
-      return bcPushAcc;
+//   else if (ConstantIdentifier::compare(s, OPCODE_POPSI)) {
+//      return bcPopSI;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_PUSHA)) {
+      return bcPushA;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHACCI)) {
-      return bcPushAccI;
+   else if (ConstantIdentifier::compare(s, OPCODE_PUSHAI)) {
+      return bcPushAI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_PUSHB)) {
+      return bcPushB;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_PUSHBI)) {
+      return bcPushBI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_PUSHF)) {
+      return bcPushF;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_PUSHFI)) {
       return bcPushFI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHFPI)) {
-      return bcPushFPI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHI)) {
-      return bcPushI;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_PUSHI)) {
+//      return bcPushI;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_PUSHN)) {
       return bcPushN;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_PUSHR)) {
       return bcPushR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHMCC)) {
-      return bcPushMcc;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHSELF)) {
-      return bcPushSelf;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHSELFI)) {
-      return bcPushSelfI;
+   else if (ConstantIdentifier::compare(s, OPCODE_PUSHM)) {
+      return bcPushM;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_PUSHSI)) {
       return bcPushSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_PUSHSPI)) {
-      return bcPushSPI;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_PUSHSPI)) {
+//      return bcPushSPI;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_QUIT)) {
       return bcQuit;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_QUITMCC)) {
-      return bcQuitMcc;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_QUITN)) {
       return bcQuitN;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_RCALLM)) {
-      return bcRCallM;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_RCALLN)) {
-      return bcRCallN;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_RCALLN)) {
+//      return bcRCallN;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_RESERVE)) {
       return bcReserve;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_RESTORE)) {
       return bcRestore;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_RETHROW)) {
-      return bcRethrow;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_RETHROW)) {
+//      return bcRethrow;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_SET)) {
       return bcSet;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_TEST)) {
+      return bcTest;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_WSTEST)) {
+      return bcWSTest;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_SCALLVI)) {
+      return bcSCallVI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_SCOPYF)) {
+      return bcSCopyF;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_SWAPSI)) {
       return bcSwapSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_THEN)) {
-      return bcThen;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_THENFLAG)) {
-      return bcThenFlag;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_THENR)) {
-      return bcThenR;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_THENSI)) {
-      return bcThenSI;
-   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_THENFLAG)) {
+//      return bcThenFlag;
+//   }
    else if (ConstantIdentifier::compare(s, OPCODE_THROW)) {
       return bcThrow;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_UNHOOK)) {
       return bcUnhook;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_WRITEACC)) {
-      return bcWriteAcc;
+//   else if (ConstantIdentifier::compare(s, OPCODE_WRITEACC)) {
+//      return bcWriteAcc;
+//   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_XACCSAVEFI)) {
+//      return bcXAccSaveFI;
+//   }
+//   else if (ConstantIdentifier::compare(s, OPCODE_XMCCCOPYM)) {
+//      return bcXMccCopyM;
+//   }
+   else if (ConstantIdentifier::compare(s, OPCODE_XPOPAI)) {
+      return bcXPopAI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_XACCCOPYFPI)) {
-      return bcXAccCopyFPI;
+   else if (ConstantIdentifier::compare(s, OPCODE_XCALLRM)) {
+      return bcXCallRM;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_XACCSAVEFI)) {
-      return bcXAccSaveFI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_XMCCCOPYM)) {
-      return bcXMccCopyM;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_XPOPACCI)) {
-      return bcXPopAccI;
-   }
-   else if (ConstantIdentifier::compare(s, OPCODE_XPUSHFPI)) {
-      return bcXPushFPI;
+   else if (ConstantIdentifier::compare(s, OPCODE_XPUSHF)) {
+      return bcXPushF;
    }
    else return bcNone;
 }
@@ -956,65 +1141,104 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
 const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
 {
    switch (code) {
-      case bcAccAddN:
-         StringHelper::copy(s, OPCODE_ACCADDN, 1 + strlen(OPCODE_ACCADDN));
+      //case bcAAdd:
+      //   StringHelper::copy(s, OPCODE_AADD, 1 + strlen(OPCODE_AADD));
+      //   break;
+      case bcACallVI:
+         StringHelper::copy(s, OPCODE_ACALLVI, 1 + strlen(OPCODE_ACALLVI));
          break;
-      case bcAccBoxN:
-         StringHelper::copy(s, OPCODE_ACCBOXN, 1 + strlen(OPCODE_ACCBOXN));
+      case bcACopyB:
+         StringHelper::copy(s, OPCODE_ACOPYB, 1 + strlen(OPCODE_ACOPYB));
          break;
-      case bcAccCopyFPI:
-         StringHelper::copy(s, OPCODE_ACCCOPYFPI, 1 + strlen(OPCODE_ACCCOPYFPI));
+      case bcACopyF:
+         StringHelper::copy(s, OPCODE_ACOPYF, 1 + strlen(OPCODE_ACOPYF));
          break;
-      case bcAccCopyN:
-         StringHelper::copy(s, OPCODE_ACCCOPYN, 1 + strlen(OPCODE_ACCCOPYN));
+      //case bcACopyN:
+      //   StringHelper::copy(s, OPCODE_ACOPYN, 1 + strlen(OPCODE_ACOPYN));
+      //   break;
+      case bcACopyR:
+         StringHelper::copy(s, OPCODE_ACOPYR, 1 + strlen(OPCODE_ACOPYR));
          break;
-      case bcAccCopySelf:
-         StringHelper::copy(s, OPCODE_ACCCOPYSELF, 1 + strlen(OPCODE_ACCCOPYSELF));
+      case bcACopyS:
+         StringHelper::copy(s, OPCODE_ACOPYS, 1 + strlen(OPCODE_ACOPYS));
          break;
-      case bcAccCopyR:
-         StringHelper::copy(s, OPCODE_ACCCOPYR, 1 + strlen(OPCODE_ACCCOPYR));
+//      case bcAccCreate:
+//         StringHelper::copy(s, OPCODE_ACCCREATE, 1 + strlen(OPCODE_ACCCREATE));
+//         break;
+//      case bcAccGetFI:
+//         StringHelper::copy(s, OPCODE_ACCGETFI, 1 + strlen(OPCODE_ACCGETFI));
+//         break;
+//      case bcAccGetSI:
+//         StringHelper::copy(s, OPCODE_ACCGETSI, 1 + strlen(OPCODE_ACCGETSI));
+//         break;
+      case bcALoadAI:
+         StringHelper::copy(s, OPCODE_ALOADAI, 1 + strlen(OPCODE_ALOADAI));
          break;
-      case bcAccCreate:
-         StringHelper::copy(s, OPCODE_ACCCREATE, 1 + strlen(OPCODE_ACCCREATE));
+      case bcALoadD:
+         StringHelper::copy(s, OPCODE_ALOADD, 1 + strlen(OPCODE_ALOADD));
          break;
-      case bcAccCreateN:
-         StringHelper::copy(s, OPCODE_ACCCREATEN, 1 + strlen(OPCODE_ACCCREATEN));
+      case bcALoadBI:
+         StringHelper::copy(s, OPCODE_ALOADBI, 1 + strlen(OPCODE_ALOADBI));
          break;
-      case bcAccGetFI:
-         StringHelper::copy(s, OPCODE_ACCGETFI, 1 + strlen(OPCODE_ACCGETFI));
+      case bcALoadFI:
+         StringHelper::copy(s, OPCODE_ALOADFI, 1 + strlen(OPCODE_ALOADFI));
          break;
-      case bcAccGetSI:
-         StringHelper::copy(s, OPCODE_ACCGETSI, 1 + strlen(OPCODE_ACCGETSI));
+      case bcAElse:
+         StringHelper::copy(s, OPCODE_AELSE, 1 + strlen(OPCODE_AELSE));
          break;
-      case bcAccLoadAccI:
-         StringHelper::copy(s, OPCODE_ACCLOADACCI, 1 + strlen(OPCODE_ACCLOADACCI));
+      case bcAElseR:
+         StringHelper::copy(s, OPCODE_AELSER, 1 + strlen(OPCODE_AELSER));
          break;
-      case bcAccLoadFI:
-         StringHelper::copy(s, OPCODE_ACCLOADFI, 1 + strlen(OPCODE_ACCLOADFI));
+      case bcAElseSI:
+         StringHelper::copy(s, OPCODE_AELSESI, 1 + strlen(OPCODE_AELSESI));
          break;
-      case bcAccLoadR:
-         StringHelper::copy(s, OPCODE_ACCLOADR, 1 + strlen(OPCODE_ACCLOADR));
+      case bcAJumpVI:
+         StringHelper::copy(s, OPCODE_AJUMPVI, 1 + strlen(OPCODE_AJUMPVI));
          break;
-      case bcAccLoadSelfI:
-         StringHelper::copy(s, OPCODE_ACCLOADSELFI, 1 + strlen(OPCODE_ACCLOADSELFI));
+      case bcALoadR:
+         StringHelper::copy(s, OPCODE_ALOADR, 1 + strlen(OPCODE_ALOADR));
          break;
-      case bcAccLoadSI:
-         StringHelper::copy(s, OPCODE_ACCLOADSI, 1 + strlen(OPCODE_ACCLOADSI));
+      //case bcAMul:
+      //   StringHelper::copy(s, OPCODE_AMUL, 1 + strlen(OPCODE_AMUL));
+      //   break;
+      case bcASaveR:
+         StringHelper::copy(s, OPCODE_ASAVER, 1 + strlen(OPCODE_ASAVER));
          break;
-      case bcAccSaveFI:
-         StringHelper::copy(s, OPCODE_ACCSAVEFI, 1 + strlen(OPCODE_ACCSAVEFI));
+      case bcAThen:
+         StringHelper::copy(s, OPCODE_ATHEN, 1 + strlen(OPCODE_ATHEN));
          break;
-      case bcAccSaveR:
-         StringHelper::copy(s, OPCODE_ACCSAVER, 1 + strlen(OPCODE_ACCSAVER));
+      case bcAThenR:
+         StringHelper::copy(s, OPCODE_ATHENR, 1 + strlen(OPCODE_ATHENR));
          break;
-      case bcAccSaveSelfI:
-         StringHelper::copy(s, OPCODE_ACCSAVESELFI, 1 + strlen(OPCODE_ACCSAVESELFI));
+      case bcAThenSI:
+         StringHelper::copy(s, OPCODE_ATHENSI, 1 + strlen(OPCODE_ATHENSI));
          break;
-      case bcAccSaveSI:
-         StringHelper::copy(s, OPCODE_ACCSAVESI, 1 + strlen(OPCODE_ACCSAVESI));
+      case bcAXCopyF:
+         StringHelper::copy(s, OPCODE_AXCOPYF, 1 + strlen(OPCODE_AXCOPYF));
          break;
-      case bcAccSwapSI:
-         StringHelper::copy(s, OPCODE_ACCSWAPSI, 1 + strlen(OPCODE_ACCSWAPSI));
+      case bcAXSetR:
+         StringHelper::copy(s, OPCODE_AXSETR, 1 + strlen(OPCODE_AXSETR));
+         break;
+      case bcALoadSI:
+         StringHelper::copy(s, OPCODE_ALOADSI, 1 + strlen(OPCODE_ALOADSI));
+         break;
+      case bcASaveBI:
+         StringHelper::copy(s, OPCODE_ASAVEBI, 1 + strlen(OPCODE_ASAVEBI));
+         break;
+      case bcASaveFI:
+         StringHelper::copy(s, OPCODE_ASAVEFI, 1 + strlen(OPCODE_ASAVEFI));
+         break;
+      case bcASaveSI:
+         StringHelper::copy(s, OPCODE_ASAVESI, 1 + strlen(OPCODE_ASAVESI));
+         break;
+      case bcASwapSI:
+         StringHelper::copy(s, OPCODE_ASWAPSI, 1 + strlen(OPCODE_ASWAPSI));
+         break;
+      case bcBCopyA:
+         StringHelper::copy(s, OPCODE_BCOPYA, 1 + strlen(OPCODE_BCOPYA));
+         break;
+      case bcBoxN:
+         StringHelper::copy(s, OPCODE_BOXN, 1 + strlen(OPCODE_BOXN));
          break;
       case bcBreakpoint:
          StringHelper::copy(s, OPCODE_BREAKPOINT, 1 + strlen(OPCODE_BREAKPOINT));
@@ -1022,8 +1246,8 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcBSRedirect:
          StringHelper::copy(s, OPCODE_BSREDIRECT, 1 + strlen(OPCODE_BSREDIRECT));
          break;
-      case bcCallAcc:
-         StringHelper::copy(s, OPCODE_CALLACC, 1 + strlen(OPCODE_CALLACC));
+      case bcBSTest:
+         StringHelper::copy(s, OPCODE_BSTEST, 1 + strlen(OPCODE_BSTEST));
          break;
       case bcCallExtR:
          StringHelper::copy(s, OPCODE_CALLEXTR, 1 + strlen(OPCODE_CALLEXTR));
@@ -1031,14 +1255,11 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcCallR:
          StringHelper::copy(s, OPCODE_CALLR, 1 + strlen(OPCODE_CALLR));
          break;
-      case bcCallSI:
-         StringHelper::copy(s, OPCODE_CALLSI, 1 + strlen(OPCODE_CALLSI));
+      case bcSCallVI:
+         StringHelper::copy(s, OPCODE_SCALLVI, 1 + strlen(OPCODE_SCALLVI));
          break;
       case bcClose:
          StringHelper::copy(s, OPCODE_CLOSE, 1 + strlen(OPCODE_CLOSE));
-         break;
-      case bcCopyFPI:
-         StringHelper::copy(s, OPCODE_COPYFPI, 1 + strlen(OPCODE_COPYFPI));
          break;
       case bcCreate:
          StringHelper::copy(s, OPCODE_CREATE, 1 + strlen(OPCODE_CREATE));
@@ -1046,18 +1267,48 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcCreateN:
          StringHelper::copy(s, OPCODE_CREATEN, 1 + strlen(OPCODE_CREATEN));
          break;
-      case bcElse:
-         StringHelper::copy(s, OPCODE_ELSE, 1 + strlen(OPCODE_ELSE));
+      case bcDAddAI:
+         StringHelper::copy(s, OPCODE_DADDAI, 1 + strlen(OPCODE_DADDAI));
          break;
-      case bcElseFlag:
-         StringHelper::copy(s, OPCODE_ELSEFLAG, 1 + strlen(OPCODE_ELSEFLAG));
+      case bcDAddSI:
+         StringHelper::copy(s, OPCODE_DADDSI, 1 + strlen(OPCODE_DADDSI));
          break;
-      case bcElseR:
-         StringHelper::copy(s, OPCODE_ELSER, 1 + strlen(OPCODE_ELSER));
+      case bcDLoadAI:
+         StringHelper::copy(s, OPCODE_DLOADAI, 1 + strlen(OPCODE_DLOADAI));
          break;
-      case bcElseSI:
-         StringHelper::copy(s, OPCODE_ELSESI, 1 + strlen(OPCODE_ELSESI));
+      case bcDLoadSI:
+         StringHelper::copy(s, OPCODE_DLOADSI, 1 + strlen(OPCODE_DLOADSI));
          break;
+      case bcDCopyI:
+         StringHelper::copy(s, OPCODE_DCOPYI, 1 + strlen(OPCODE_DCOPYI));
+         break;
+      case bcDDec:
+         StringHelper::copy(s, OPCODE_DDEC, 1 + strlen(OPCODE_DDEC));
+         break;
+      case bcDElse:
+         StringHelper::copy(s, OPCODE_DELSE, 1 + strlen(OPCODE_DELSE));
+         break;
+      case bcDInc:
+         StringHelper::copy(s, OPCODE_DINC, 1 + strlen(OPCODE_DINC));
+         break;
+      case bcDSaveAI:
+         StringHelper::copy(s, OPCODE_DSAVEAI, 1 + strlen(OPCODE_DSAVEAI));
+         break;
+      case bcDSaveSI:
+         StringHelper::copy(s, OPCODE_DSAVESI, 1 + strlen(OPCODE_DSAVESI));
+         break;
+      case bcDSubAI:
+         StringHelper::copy(s, OPCODE_DSUBAI, 1 + strlen(OPCODE_DSUBAI));
+         break;
+      case bcDSubSI:
+         StringHelper::copy(s, OPCODE_DSUBAI, 1 + strlen(OPCODE_DSUBSI));
+         break;
+      case bcDThen:
+         StringHelper::copy(s, OPCODE_DTHEN, 1 + strlen(OPCODE_DTHEN));
+         break;
+//      case bcElseFlag:
+//         StringHelper::copy(s, OPCODE_ELSEFLAG, 1 + strlen(OPCODE_ELSEFLAG));
+//         break;
       case bcEvalR:
          StringHelper::copy(s, OPCODE_EVALR, 1 + strlen(OPCODE_EVALR));
          break;
@@ -1073,134 +1324,140 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcHook:
          StringHelper::copy(s, OPCODE_HOOK, 1 + strlen(OPCODE_HOOK));
          break;
-      case bcIAccCopyR:
-         StringHelper::copy(s, OPCODE_IACCCOPYR, 1 + strlen(OPCODE_IACCCOPYR));
+      case bcIAXCopyR:
+         StringHelper::copy(s, OPCODE_IAXCOPYR, 1 + strlen(OPCODE_IAXCOPYR));
          break;
-      case bcIAccFillR:
-         StringHelper::copy(s, OPCODE_IACCFILLR, 1 + strlen(OPCODE_IACCFILLR));
-         break;
+//      case bcIAccFillR:
+//         StringHelper::copy(s, OPCODE_IACCFILLR, 1 + strlen(OPCODE_IACCFILLR));
+//         break;
       case bcInclude:
          StringHelper::copy(s, OPCODE_INCLUDE, 1 + strlen(OPCODE_INCLUDE));
          break;
-      case bcIncFI:
-         StringHelper::copy(s, OPCODE_INCFI, 1 + strlen(OPCODE_INCFI));
-         break;
-      case bcIncSI:
-         StringHelper::copy(s, OPCODE_INCSI, 1 + strlen(OPCODE_INCSI));
-         break;
-      case bcInit:
-         StringHelper::copy(s, OPCODE_INIT, 1 + strlen(OPCODE_INIT));
-         break;
+//      case bcIncFI:
+//         StringHelper::copy(s, OPCODE_INCFI, 1 + strlen(OPCODE_INCFI));
+//         break;
+//      case bcIncSI:
+//         StringHelper::copy(s, OPCODE_INCSI, 1 + strlen(OPCODE_INCSI));
+//         break;
       case bcJump:
          StringHelper::copy(s, OPCODE_JUMP, 1 + strlen(OPCODE_JUMP));
          break;
-      case bcJumpAcc:
-         StringHelper::copy(s, OPCODE_JUMPACC, 1 + strlen(OPCODE_JUMPACC));
+//      case bcJumpAcc:
+//         StringHelper::copy(s, OPCODE_JUMPACC, 1 + strlen(OPCODE_JUMPACC));
+//         break;
+      case bcMAdd:
+         StringHelper::copy(s, OPCODE_MADD, 1 + strlen(OPCODE_MADD));
          break;
-      case bcJumpAccN:
-         StringHelper::copy(s, OPCODE_JUMPACCN, 1 + strlen(OPCODE_JUMPACCN));
+      case bcMAddAI:
+         StringHelper::copy(s, OPCODE_MADDAI, 1 + strlen(OPCODE_MADDAI));
          break;
-      case bcMccAddAccI:
-         StringHelper::copy(s, OPCODE_MCCADDACCI, 1 + strlen(OPCODE_MCCADDACCI));
+//      case bcMccCopyAccI:
+//         StringHelper::copy(s, OPCODE_MCCCOPYACCI, 1 + strlen(OPCODE_MCCCOPYACCI));
+//         break;
+      case bcMCopy:
+         StringHelper::copy(s, OPCODE_MCOPY, 1 + strlen(OPCODE_MCOPY));
          break;
-      case bcMccAddM:
-         StringHelper::copy(s, OPCODE_MCCADDM, 1 + strlen(OPCODE_MCCADDM));
+//      case bcMccCopySI:
+//         StringHelper::copy(s, OPCODE_MCCCOPYSI, 1 + strlen(OPCODE_MCCCOPYSI));
+//         break;
+      case bcMCopySubj:
+         StringHelper::copy(s, OPCODE_MCOPYSUBJ, 1 + strlen(OPCODE_MCOPYSUBJ));
          break;
-      case bcMccCopyAccI:
-         StringHelper::copy(s, OPCODE_MCCCOPYACCI, 1 + strlen(OPCODE_MCCCOPYACCI));
+//      case bcMccCopyVerb:
+//         StringHelper::copy(s, OPCODE_MCCCOPYVERB, 1 + strlen(OPCODE_MCCCOPYVERB));
+//         break;
+      case bcMElse:
+         StringHelper::copy(s, OPCODE_MELSE, 1 + strlen(OPCODE_MELSE));
          break;
-      case bcMccCopyFI:
-         StringHelper::copy(s, OPCODE_MCCCOPYFI, 1 + strlen(OPCODE_MCCCOPYFI));
+      case bcMLoadFI:
+         StringHelper::copy(s, OPCODE_MLOADFI, 1 + strlen(OPCODE_MLOADFI));
          break;
-      case bcMccCopyM:
-         StringHelper::copy(s, OPCODE_MCCCOPYM, 1 + strlen(OPCODE_MCCCOPYM));
+//      case bcMccElseAcc:
+//         StringHelper::copy(s, OPCODE_MCCELSEACC, 1 + strlen(OPCODE_MCCELSEACC));
+//         break;
+      case bcMElseAI:
+         StringHelper::copy(s, OPCODE_MELSEAI, 1 + strlen(OPCODE_MELSEAI));
          break;
-      case bcMccCopyPrmFI:
-         StringHelper::copy(s, OPCODE_MCCCOPYPRMFI, 1 + strlen(OPCODE_MCCCOPYPRMFI));
+//      case bcMccReverse:
+//         StringHelper::copy(s, OPCODE_MCCREVERSE, 1 + strlen(OPCODE_MCCREVERSE));
+//         break;
+      case bcMQuit:
+         StringHelper::copy(s, OPCODE_MQUIT, 1 + strlen(OPCODE_MQUIT));
          break;
-      case bcMccCopySI:
-         StringHelper::copy(s, OPCODE_MCCCOPYSI, 1 + strlen(OPCODE_MCCCOPYSI));
+      case bcMSaveParams:
+         StringHelper::copy(s, OPCODE_MSAVEPARAMS, 1 + strlen(OPCODE_MSAVEPARAMS));
          break;
-      case bcMccCopySubj:
-         StringHelper::copy(s, OPCODE_MCCCOPYSUBJ, 1 + strlen(OPCODE_MCCCOPYSUBJ));
+      case bcMThen:
+         StringHelper::copy(s, OPCODE_MTHEN, 1 + strlen(OPCODE_MTHEN));
          break;
-      case bcMccCopyVerb:
-         StringHelper::copy(s, OPCODE_MCCCOPYVERB, 1 + strlen(OPCODE_MCCCOPYVERB));
-         break;
-      case bcMccElse:
-         StringHelper::copy(s, OPCODE_MCCELSE, 1 + strlen(OPCODE_MCCELSE));
-         break;
-      case bcMccElseAcc:
-         StringHelper::copy(s, OPCODE_MCCELSEACC, 1 + strlen(OPCODE_MCCELSEACC));
-         break;
-      case bcMccElseAccI:
-         StringHelper::copy(s, OPCODE_MCCELSEACCI, 1 + strlen(OPCODE_MCCELSEACCI));
-         break;
-      case bcMccReverse:
-         StringHelper::copy(s, OPCODE_MCCREVERSE, 1 + strlen(OPCODE_MCCREVERSE));
-         break;
-      case bcMccThen:
-         StringHelper::copy(s, OPCODE_MCCTHEN, 1 + strlen(OPCODE_MCCTHEN));
-         break;
-      case bcMccThenAcc:
-         StringHelper::copy(s, OPCODE_MCCTHENACC, 1 + strlen(OPCODE_MCCTHENACC));
-         break;
-      case bcMccThenAccI:
-         StringHelper::copy(s, OPCODE_MCCTHENACCI, 1 + strlen(OPCODE_MCCTHENACCI));
+//      case bcMccThenAcc:
+//         StringHelper::copy(s, OPCODE_MCCTHENACC, 1 + strlen(OPCODE_MCCTHENACC));
+//         break;
+//      case bcMccThenAccI:
+//         StringHelper::copy(s, OPCODE_MCCTHENACCI, 1 + strlen(OPCODE_MCCTHENACCI));
+//         break;
+      case bcNext:
+         StringHelper::copy(s, OPCODE_NEXT, 1 + strlen(OPCODE_NEXT));
          break;
       case bcNop:
          StringHelper::copy(s, OPCODE_NOP, 1 + strlen(OPCODE_NOP));
          break;
-      case bcNWrite:
-         StringHelper::copy(s, OPCODE_NWRITE, 1 + strlen(OPCODE_NWRITE));
-         break;
+//      case bcNWrite:
+//         StringHelper::copy(s, OPCODE_NWRITE, 1 + strlen(OPCODE_NWRITE));
+//         break;
       case bcOpen:
          StringHelper::copy(s, OPCODE_OPEN, 1 + strlen(OPCODE_OPEN));
          break;
       case bcPop:
          StringHelper::copy(s, OPCODE_POP, 1 + strlen(OPCODE_POP));
          break;
-      case bcPopAcc:
-         StringHelper::copy(s, OPCODE_POPACC, 1 + strlen(OPCODE_POPACC));
+      case bcPopA:
+         StringHelper::copy(s, OPCODE_POPA, 1 + strlen(OPCODE_POPA));
          break;
-      case bcPopAccI:
-         StringHelper::copy(s, OPCODE_POPACCI, 1 + strlen(OPCODE_POPACCI));
+      case bcPopAI:
+         StringHelper::copy(s, OPCODE_POPAI, 1 + strlen(OPCODE_POPAI));
          break;
       case bcPopFI:
          StringHelper::copy(s, OPCODE_POPFI, 1 + strlen(OPCODE_POPFI));
          break;
-      case bcPopN:
-         StringHelper::copy(s, OPCODE_POPN, 1 + strlen(OPCODE_POPN));
+      case bcPopB:
+         StringHelper::copy(s, OPCODE_POPB, 1 + strlen(OPCODE_POPB));
          break;
-      case bcPopMcc:
-         StringHelper::copy(s, OPCODE_POPMCC, 1 + strlen(OPCODE_POPMCC));
+      case bcPopI:
+         StringHelper::copy(s, OPCODE_POPI, 1 + strlen(OPCODE_POPI));
          break;
-      case bcPopSelf:
-         StringHelper::copy(s, OPCODE_POPSELF, 1 + strlen(OPCODE_POPSELF));
+      case bcPopM:
+         StringHelper::copy(s, OPCODE_POPM, 1 + strlen(OPCODE_POPM));
          break;
-      case bcPopSelfI:
-         StringHelper::copy(s, OPCODE_POPSELFI, 1 + strlen(OPCODE_POPSELFI));
+      case bcPopBI:
+         StringHelper::copy(s, OPCODE_POPBI, 1 + strlen(OPCODE_POPBI));
          break;
       case bcPopSI:
          StringHelper::copy(s, OPCODE_POPSI, 1 + strlen(OPCODE_POPSI));
          break;
-      case bcPushAccI:
-         StringHelper::copy(s, OPCODE_PUSHACCI, 1 + strlen(OPCODE_PUSHACCI));
+      case bcPushAI:
+         StringHelper::copy(s, OPCODE_PUSHAI, 1 + strlen(OPCODE_PUSHAI));
          break;
-      case bcPushAcc:
-         StringHelper::copy(s, OPCODE_PUSHACC, 1 + strlen(OPCODE_PUSHACC));
+      case bcPushA:
+         StringHelper::copy(s, OPCODE_PUSHA, 1 + strlen(OPCODE_PUSHA));
+         break;
+      case bcPushB:
+         StringHelper::copy(s, OPCODE_PUSHB, 1 + strlen(OPCODE_PUSHB));
+         break;
+      case bcPushBI:
+         StringHelper::copy(s, OPCODE_PUSHBI, 1 + strlen(OPCODE_PUSHBI));
+         break;
+      case bcPushF:
+         StringHelper::copy(s, OPCODE_PUSHF, 1 + strlen(OPCODE_PUSHF));
          break;
       case bcPushFI:
          StringHelper::copy(s, OPCODE_PUSHFI, 1 + strlen(OPCODE_PUSHFI));
          break;
-      case bcPushFPI:
-         StringHelper::copy(s, OPCODE_PUSHFPI, 1 + strlen(OPCODE_PUSHFPI));
-         break;
-      case bcPushI:
-         StringHelper::copy(s, OPCODE_PUSHI, 1 + strlen(OPCODE_PUSHI));
-         break;
-      case bcPushMcc:
-         StringHelper::copy(s, OPCODE_PUSHMCC, 1 + strlen(OPCODE_PUSHMCC));
+//      case bcPushI:
+//         StringHelper::copy(s, OPCODE_PUSHI, 1 + strlen(OPCODE_PUSHI));
+//         break;
+      case bcPushM:
+         StringHelper::copy(s, OPCODE_PUSHM, 1 + strlen(OPCODE_PUSHM));
          break;
       case bcPushN:
          StringHelper::copy(s, OPCODE_PUSHN, 1 + strlen(OPCODE_PUSHN));
@@ -1208,59 +1465,44 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcPushR:
          StringHelper::copy(s, OPCODE_PUSHR, 1 + strlen(OPCODE_PUSHR));
          break;
-      case bcPushSelf:
-         StringHelper::copy(s, OPCODE_PUSHSELF, 1 + strlen(OPCODE_PUSHSELF));
-         break;
-      case bcPushSelfI:
-         StringHelper::copy(s, OPCODE_PUSHSELFI, 1 + strlen(OPCODE_PUSHSELFI));
-         break;
       case bcPushSI:
          StringHelper::copy(s, OPCODE_PUSHSI, 1 + strlen(OPCODE_PUSHSI));
          break;
-      case bcPushSPI:
-         StringHelper::copy(s, OPCODE_PUSHSPI, 1 + strlen(OPCODE_PUSHSPI));
-         break;
+//      case bcPushSPI:
+//         StringHelper::copy(s, OPCODE_PUSHSPI, 1 + strlen(OPCODE_PUSHSPI));
+//         break;
       case bcQuit:
          StringHelper::copy(s, OPCODE_QUIT, 1 + strlen(OPCODE_QUIT));
          break;
       case bcQuitN:
          StringHelper::copy(s, OPCODE_QUITN, 1 + strlen(OPCODE_QUITN));
          break;
-      case bcQuitMcc:
-         StringHelper::copy(s, OPCODE_QUITMCC, 1 + strlen(OPCODE_QUITMCC));
-         break;
-      case bcRCallM:
-         StringHelper::copy(s, OPCODE_RCALLM, 1 + strlen(OPCODE_RCALLM));
-         break;
-      case bcRCallN:
-         StringHelper::copy(s, OPCODE_RCALLM, 1 + strlen(OPCODE_RCALLN));
-         break;
+//      case bcRCallN:
+//         StringHelper::copy(s, OPCODE_RCALLM, 1 + strlen(OPCODE_RCALLN));
+//         break;
       case bcReserve:
          StringHelper::copy(s, OPCODE_RESERVE, 1 + strlen(OPCODE_RESERVE));
          break;
       case bcRestore:
          StringHelper::copy(s, OPCODE_RESTORE, 1 + strlen(OPCODE_RESTORE));
          break;
-      case bcRethrow:
-         StringHelper::copy(s, OPCODE_RETHROW, 1 + strlen(OPCODE_RETHROW));
-         break;
+      //case bcRethrow:
+      //   StringHelper::copy(s, OPCODE_RETHROW, 1 + strlen(OPCODE_RETHROW));
+      //   break;
       case bcSet:
          StringHelper::copy(s, OPCODE_SET, 1 + strlen(OPCODE_SET));
+         break;
+      case bcSCopyF:
+         StringHelper::copy(s, OPCODE_SCOPYF, 1 + strlen(OPCODE_SCOPYF));
          break;
       case bcSwapSI:
          StringHelper::copy(s, OPCODE_SWAPSI, 1 + strlen(OPCODE_SWAPSI));
          break;
-      case bcThen:
-         StringHelper::copy(s, OPCODE_THEN, 1 + strlen(OPCODE_THEN));
-         break;
-      case bcThenFlag:
-         StringHelper::copy(s, OPCODE_THENFLAG, 1 + strlen(OPCODE_THENFLAG));
-         break;
-      case bcThenR:
-         StringHelper::copy(s, OPCODE_THENR, 1 + strlen(OPCODE_THENR));
-         break;
-      case bcThenSI:
-         StringHelper::copy(s, OPCODE_THENSI, 1 + strlen(OPCODE_THENSI));
+//      case bcThenFlag:
+//         StringHelper::copy(s, OPCODE_THENFLAG, 1 + strlen(OPCODE_THENFLAG));
+//         break;
+      case bcTest:
+         StringHelper::copy(s, OPCODE_TEST, 1 + strlen(OPCODE_TEST));
          break;
       case bcThrow:
          StringHelper::copy(s, OPCODE_THROW, 1 + strlen(OPCODE_THROW));
@@ -1268,23 +1510,329 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcUnhook:
          StringHelper::copy(s, OPCODE_UNHOOK, 1 + strlen(OPCODE_UNHOOK));
          break;
-      case bcWriteAcc:
-         StringHelper::copy(s, OPCODE_WRITEACC, 1 + strlen(OPCODE_WRITEACC));
+//      case bcWriteAcc:
+//         StringHelper::copy(s, OPCODE_WRITEACC, 1 + strlen(OPCODE_WRITEACC));
+//         break;
+//      case bcXAccSaveFI:
+//         StringHelper::copy(s, OPCODE_XACCSAVEFI, 1 + strlen(OPCODE_XACCSAVEFI));
+//         break;
+//      case bcXMccCopyM:
+//         StringHelper::copy(s, OPCODE_MCCCOPYM, 1 + strlen(OPCODE_XMCCCOPYM));
+//         break;
+      case bcWSTest:
+         StringHelper::copy(s, OPCODE_WSTEST, 1 + strlen(OPCODE_WSTEST));
          break;
-      case bcXAccCopyFPI:
-         StringHelper::copy(s, OPCODE_XACCCOPYFPI, 1 + strlen(OPCODE_XACCCOPYFPI));
+      case bcXPopAI:
+         StringHelper::copy(s, OPCODE_XPOPAI, 1 + strlen(OPCODE_XPOPAI));
          break;
-      case bcXAccSaveFI:
-         StringHelper::copy(s, OPCODE_XACCSAVEFI, 1 + strlen(OPCODE_XACCSAVEFI));
+      case bcXPushF:
+         StringHelper::copy(s, OPCODE_XPUSHF, 1 + strlen(OPCODE_XPUSHF));
          break;
-      case bcXMccCopyM:
-         StringHelper::copy(s, OPCODE_MCCCOPYM, 1 + strlen(OPCODE_XMCCCOPYM));
+      case bcXCallRM:
+         StringHelper::copy(s, OPCODE_XCALLRM, 1 + strlen(OPCODE_XCALLRM));
          break;
-      case bcXPopAccI:
-         StringHelper::copy(s, OPCODE_XPOPACCI, 1 + strlen(OPCODE_XPOPACCI));
+      case bcNFunc:
+         StringHelper::copy(s, "n", 2);
          break;
-      case bcXPushFPI:
-         StringHelper::copy(s, OPCODE_XPUSHFPI, 1 + strlen(OPCODE_XPUSHFPI));
+      case bcLFunc:
+         StringHelper::copy(s, "l", 2);
+         break;
+      case bcRFunc:
+         StringHelper::copy(s, "r", 2);
+         break;
+      case bcFunc:
+         StringHelper::copy(s, "rf", 3);
+         break;
+      case bcWSFunc:
+         StringHelper::copy(s, "ws", 3);
+         break;
+      case bcBSFunc:
+         StringHelper::copy(s, "bs", 3);
+         break;
+      default:
+         StringHelper::copy(s, OPCODE_UNKNOWN, 1 + strlen(OPCODE_UNKNOWN));
+   }
+
+   return s;
+}
+
+FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
+{
+   if (ConstantIdentifier::compare(s, FUNC_ABS)) {
+      return fnAbs;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_ADD)) {
+      return fnAdd;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_ADDSTR)) {
+      return fnAddStr;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_AND)) {
+      return fnAnd;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COPY)) {
+      return fnCopy;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COPYBUF)) {
+      return fnCopyBuf;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COPYINT)) {
+      return fnCopyInt;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COPYLONG)) {
+      return fnCopyLong;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COPYREAL)) {
+      return fnCopyReal;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COPYSTR)) {
+      return fnCopyStr;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_CREATE)) {
+      return fnCreate;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_DELETESTR)) {
+      return fnDeleteStr;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_DIV)) {
+      return fnDiv;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_EQUAL)) {
+      return fnEqual;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_EXP)) {
+      return fnExp;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_GETAT)) {
+      return fnGetAt;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_GETBUF)) {
+      return fnGetBuf;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_GETINT)) {
+      return fnGetInt;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_GETLEN)) {
+      return fnGetLen;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_GETWORD)) {
+      return fnGetWord;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_INC)) {
+      return fnInc;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_INDEXOF)) {
+      return fnIndexOf;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_INDEXOFSTR)) {
+      return fnIndexOfStr;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_INDEXOFWORD)) {
+      return fnIndexOfWord;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_LESS)) {
+      return fnLess;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_LN)) {
+      return fnLn;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_LOAD)) {
+      return fnLoad;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_LOADSTR)) {
+      return fnLoadStr;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_MUL)) {
+      return fnMul;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_NOT)) {
+      return fnNot;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_NOTGREATER)) {
+      return fnNotGreater;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_OR)) {
+      return fnOr;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_RESERVE)) {
+      return fnReserve;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_ROUND)) {
+      return fnRound;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_RNDNEW)) {
+      return fnRndNew;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_RNDNEXT)) {
+      return fnRndNext;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SAVE)) {
+      return fnSave;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SETAT)) {
+      return fnSetAt;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SETBUF)) {
+      return fnSetBuf;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SETINT)) {
+      return fnSetInt;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SETLEN)) {
+      return fnSetLen;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SETWORD)) {
+      return fnSetWord;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SHIFT)) {
+      return fnShift;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SUB)) {
+      return fnSub;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_XOR)) {
+      return fnXor;
+   }
+   else return fnUnknown;
+}
+
+const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t* s)
+{
+   switch (code) {
+      case fnAbs:
+         StringHelper::copy(s, FUNC_ABS, 1 + strlen(FUNC_ABS));
+         break;
+      case fnAdd:
+         StringHelper::copy(s, FUNC_ADD, 1 + strlen(FUNC_ADD));
+         break;
+      case fnAddStr:
+         StringHelper::copy(s, FUNC_ADDSTR, 1 + strlen(FUNC_ADDSTR));
+         break;
+      case fnAnd:
+         StringHelper::copy(s, FUNC_AND, 1 + strlen(FUNC_AND));
+         break;
+      case fnCopy:
+         StringHelper::copy(s, FUNC_COPY, 1 + strlen(FUNC_COPY));
+         break;
+      case fnCopyBuf:
+         StringHelper::copy(s, FUNC_COPYBUF, 1 + strlen(FUNC_COPYBUF));
+         break;
+      case fnCopyInt:
+         StringHelper::copy(s, FUNC_COPYINT, 1 + strlen(FUNC_COPYINT));
+         break;
+      case fnCopyLong:
+         StringHelper::copy(s, FUNC_COPYLONG, 1 + strlen(FUNC_COPYLONG));
+         break;
+      case fnCopyReal:
+         StringHelper::copy(s, FUNC_COPYREAL, 1 + strlen(FUNC_COPYREAL));
+         break;
+      case fnCopyStr:
+         StringHelper::copy(s, FUNC_COPYSTR, 1 + strlen(FUNC_COPYSTR));
+         break;
+      case fnCreate:
+         StringHelper::copy(s, FUNC_CREATE, 1 + strlen(FUNC_CREATE));
+         break;
+      case fnDeleteStr:
+         StringHelper::copy(s, FUNC_DELETESTR, 1 + strlen(FUNC_DELETESTR));
+         break;
+      case fnDiv:
+         StringHelper::copy(s, FUNC_DIV, 1 + strlen(FUNC_DIV));
+         break;
+      case fnEqual:
+         StringHelper::copy(s, FUNC_EQUAL, 1 + strlen(FUNC_EQUAL));
+         break;
+      case fnExp:
+         StringHelper::copy(s, FUNC_EXP, 1 + strlen(FUNC_EXP));
+         break;
+      case fnGetAt:
+         StringHelper::copy(s, FUNC_GETAT, 1 + strlen(FUNC_GETAT));
+         break;
+      case fnGetBuf:
+         StringHelper::copy(s, FUNC_GETBUF, 1 + strlen(FUNC_GETBUF));
+         break;
+      case fnGetInt:
+         StringHelper::copy(s, FUNC_GETINT, 1 + strlen(FUNC_GETINT));
+         break;
+      case fnGetLen:
+         StringHelper::copy(s, FUNC_GETLEN, 1 + strlen(FUNC_GETLEN));
+         break;
+      case fnGetWord:
+         StringHelper::copy(s, FUNC_GETWORD, 1 + strlen(FUNC_GETWORD));
+         break;
+      case fnInc:
+         StringHelper::copy(s, FUNC_INC, 1 + strlen(FUNC_INC));
+         break;
+      case fnIndexOf:
+         StringHelper::copy(s, FUNC_INDEXOF, 1 + strlen(FUNC_INDEXOF));
+         break;
+      case fnIndexOfStr:
+         StringHelper::copy(s, FUNC_INDEXOFSTR, 1 + strlen(FUNC_INDEXOFSTR));
+         break;
+      case fnIndexOfWord:
+         StringHelper::copy(s, FUNC_INDEXOFWORD, 1 + strlen(FUNC_INDEXOFWORD));
+         break;
+      case fnLess:
+         StringHelper::copy(s, FUNC_LESS, 1 + strlen(FUNC_LESS));
+         break;
+      case fnLn:
+         StringHelper::copy(s, FUNC_LN, 1 + strlen(FUNC_LN));
+         break;
+      case fnLoad:
+         StringHelper::copy(s, FUNC_LOAD, 1 + strlen(FUNC_LOAD));
+         break;
+      case fnLoadStr:
+         StringHelper::copy(s, FUNC_LOADSTR, 1 + strlen(FUNC_LOADSTR));
+         break;
+      case fnMul:
+         StringHelper::copy(s, FUNC_MUL, 1 + strlen(FUNC_MUL));
+         break;
+      case fnNot:
+         StringHelper::copy(s, FUNC_NOT, 1 + strlen(FUNC_NOT));
+         break;
+      case fnNotGreater:
+         StringHelper::copy(s, FUNC_NOTGREATER, 1 + strlen(FUNC_NOTGREATER));
+         break;
+      case fnOr:
+         StringHelper::copy(s, FUNC_OR, 1 + strlen(FUNC_OR));
+         break;
+      case fnReserve:
+         StringHelper::copy(s, FUNC_RESERVE, 1 + strlen(FUNC_RESERVE));
+         break;
+      case fnRndNew:
+         StringHelper::copy(s, FUNC_RNDNEW, 1 + strlen(FUNC_RNDNEW));
+         break;
+      case fnRndNext:
+         StringHelper::copy(s, FUNC_RNDNEXT, 1 + strlen(FUNC_RNDNEXT));
+         break;
+      case fnRound:
+         StringHelper::copy(s, FUNC_ROUND, 1 + strlen(FUNC_ROUND));
+         break;
+      case fnSave:
+         StringHelper::copy(s, FUNC_SAVE, 1 + strlen(FUNC_SAVE));
+         break;
+      case fnSetAt:
+         StringHelper::copy(s, FUNC_SETAT, 1 + strlen(FUNC_SETAT));
+         break;
+      case fnSetBuf:
+         StringHelper::copy(s, FUNC_SETBUF, 1 + strlen(FUNC_SETBUF));
+         break;
+      case fnSetInt:
+         StringHelper::copy(s, FUNC_SETINT, 1 + strlen(FUNC_SETINT));
+         break;
+      case fnSetLen:
+         StringHelper::copy(s, FUNC_SETLEN, 1 + strlen(FUNC_SETLEN));
+         break;
+      case fnSetWord:
+         StringHelper::copy(s, FUNC_SETWORD, 1 + strlen(FUNC_SETWORD));
+         break;
+      case fnShift:
+         StringHelper::copy(s, FUNC_SHIFT, 1 + strlen(FUNC_SHIFT));
+         break;
+      case fnSub:
+         StringHelper::copy(s, FUNC_SUB, 1 + strlen(FUNC_SUB));
+         break;
+      case fnXor:
+         StringHelper::copy(s, FUNC_XOR, 1 + strlen(FUNC_XOR));
          break;
       default:
          StringHelper::copy(s, OPCODE_UNKNOWN, 1 + strlen(OPCODE_UNKNOWN));

@@ -12,8 +12,8 @@
         theNewLineConstant := system'io'newLine.
     ]
 
-    #method read &type'widechar
-        = theReader read &type'widechar.
+    #method read &widechar
+        = theReader read &widechar.
 
     #method readKey
         = theReader read &type'int.
@@ -46,7 +46,7 @@
         = aTarget << theReader read &Line.
         
     #method readChar
-        = theReader read &type'widechar.
+        = theReader read &widechar.
 }
 
 #static console = $Console new &output:system'io'stdConsoleWriter &input:system'io'stdConsoleReader.

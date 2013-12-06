@@ -488,22 +488,22 @@ bool Instance :: restart(bool debugMode)
 inline void reverseArgOrder(MemoryWriter& ecodes, int count, bool useRole)
 {
    if (useRole) {
-      ecodes.writeByte(bcPushAcc);
+      ecodes.writeByte(bcPushA);
 
       int j = count;
       for(int i = 1 ; i <= count >> 1 ; i++) {
          // accloadsi j
          // accswapssi i
          // accsavesi j
-         ecodes.writeByte(bcAccLoadSI);
+         ecodes.writeByte(bcALoadSI);
          ecodes.writeDWord(j);
-         ecodes.writeByte(bcAccSwapSI);
+         ecodes.writeByte(bcASwapSI);
          ecodes.writeDWord(i);
-         ecodes.writeByte(bcAccSaveSI);
+         ecodes.writeByte(bcASaveSI);
          ecodes.writeDWord(j);
          j--;
       }
-      ecodes.writeByte(bcPopAcc);
+      ecodes.writeByte(bcPopA);
    }
    else {
       int j = count - 1;
@@ -517,11 +517,11 @@ inline void reverseArgOrder(MemoryWriter& ecodes, int count, bool useRole)
             // accloadsi j
             // accswapssi i
             // accsavesi j
-            ecodes.writeByte(bcAccLoadSI);
+            ecodes.writeByte(bcALoadSI);
             ecodes.writeDWord(j);
-            ecodes.writeByte(bcAccSwapSI);
+            ecodes.writeByte(bcASwapSI);
             ecodes.writeDWord(i);
-            ecodes.writeByte(bcAccSaveSI);
+            ecodes.writeByte(bcASaveSI);
             ecodes.writeDWord(j);
          }
          j--;
@@ -561,10 +561,10 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             break;
          case CALL_TAPE_MESSAGE_ID: 
             //callr
-            //pushacc
+            //pusha
             ecodes.writeByte(bcCallR);
             helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskSymbolRef), mskCodeRef);
-            ecodes.writeByte(bcPushAcc);
+            ecodes.writeByte(bcPushA);
             level++;
 
             break;
@@ -634,14 +634,14 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             level++;
             break;
          case POP_TAPE_MESSAGE_ID:
-            //popn param
-            ecodes.writeByte(bcPopN);
+            //popi param
+            ecodes.writeByte(bcPopI);
             ecodes.writeDWord(param);
             level -= param;
             break;
          case POP_ROLE_MESSAGE_ID:
-            //popacc
-            ecodes.writeByte(bcPopAcc);
+            //popa
+            ecodes.writeByte(bcPopA);
             useRole = true;
             level--;
             break;
@@ -652,24 +652,24 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             if (getParamCount(message) > 0) 
                reverseArgOrder(ecodes, 1 + getParamCount(message), useRole);
 
-            //mcccopym message
-            //accloadsi 0
-            //callacc 0
-            //pushacc
+            //mcopy message
+            //aloadsi 0
+            //acallvi 0
+            //pusha
 
-            ecodes.writeByte(bcMccCopyM);
+            ecodes.writeByte(bcMCopy);
             ecodes.writeDWord(MESSAGE_MASK | message);
 
             if (!useRole) {
-               ecodes.writeByte(bcAccLoadSI);
+               ecodes.writeByte(bcALoadSI);
                ecodes.writeDWord(0);
             }
             else useRole = false;
 
-            ecodes.writeByte(bcCallAcc);
+            ecodes.writeByte(bcACallVI);
             ecodes.writeDWord(0);
-            ecodes.writeByte(bcPushAcc);
-
+            ecodes.writeByte(bcPushA);
+            
             level -= getParamCount(message);
 
             break;
@@ -680,23 +680,23 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             if (getParamCount(message) > 0) 
                reverseArgOrder(ecodes, 1 + getParamCount(message), useRole);
 
-            //mcccopym message
-            //accloadsi 0
-            //callacc 0
-            //pushacc
+            //mcopy message
+            //aloadsi 0
+            //acallvi 0
+            //pusha
 
-            ecodes.writeByte(bcMccCopyM);
+            ecodes.writeByte(bcMCopy);
             ecodes.writeDWord(message);
 
             if (!useRole) {
-               ecodes.writeByte(bcAccLoadSI);
+               ecodes.writeByte(bcALoadSI);
                ecodes.writeDWord(0);
             }
             else useRole = false;
 
-            ecodes.writeByte(bcCallAcc);
+            ecodes.writeByte(bcACallVI);
             ecodes.writeDWord(0);
-            ecodes.writeByte(bcPushAcc);
+            ecodes.writeByte(bcPushA);
 
             level -= getParamCount(message);
 
@@ -709,12 +709,12 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
 
             // assign content
             while (level > marker) {
-               ecodes.writeByte(bcXPopAccI);
+               ecodes.writeByte(bcXPopAI);
                level--;
                ecodes.writeDWord(level - marker);
             }
 
-            ecodes.writeByte(bcPushAcc);
+            ecodes.writeByte(bcPushA);
             level++;
 
             break;
@@ -725,10 +725,10 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
    if (_debugMode)
       ecodes.writeByte(bcBreakpoint);
 
-   // popacc
+   // popa
    // close
    // quit
-   ecodes.writeByte(bcPopAcc);
+   ecodes.writeByte(bcPopA);
    ecodes.writeByte(bcClose);
    ecodes.writeByte(bcQuit);
 

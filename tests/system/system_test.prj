@@ -10,5 +10,5 @@ test_arithm.l
 main.l
 
 [forwards]
-'program=system_test'Program
+'program=system_test'program
 'test=system_test'test

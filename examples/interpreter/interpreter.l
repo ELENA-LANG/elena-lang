@@ -125,7 +125,7 @@
         control foreach:aLiteral &do:$self.
     ]
 
-    #method eval &type'widechar:aChar
+    #method eval &widechar:aChar
     [
         aChar =>
             ">" ? [ theTape next ]

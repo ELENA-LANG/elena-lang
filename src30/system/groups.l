@@ -5,17 +5,17 @@
     #field theRole.    
     #field theObject.
     
-    #method => #inline handle_wrap.
+    #method => <handle_wrap>.
 }
 
-// --- Pair ---
+// --- Extension ---
 
-#class(group) Pair
+#class(group) Extension
 {
     #field theExtender.
     #field theObject.
     
-    #method => #inline handle_pair.
+    #method => <handle_pair>.
 }
 
 // --- RoleList ---
@@ -24,5 +24,5 @@
 {
     #field(type:array)theRoles.
     
-    #method => #inline handle_rolebatch.
+    #method => <handle_rolebatch>.
 }

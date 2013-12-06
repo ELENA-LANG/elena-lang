@@ -18,6 +18,12 @@
 
 // --- ConsoleWriter ---
 
+#symbol consoleHelper =
+{
+    _trimLine &type'widestr:anOutput
+        <_console_trimline>.
+}.
+
 #class $ConsoleWriter
 {
     #field theHandler.
@@ -51,7 +57,7 @@
         theHandler := aHandler.
     ]
 
-    #method read &type'widechar
+    #method read &widechar
     [
         #var aDump := ByteArray new &type'length:20.
 
@@ -63,10 +69,12 @@
                 &type'int           : 1
                 &out'type'int       : nil.
         ]
-        &until:[(system'external'CoreAPI equal &type'bytearray:aDump &type'index:0 &type'short:1)
-                    and:(system'external'CoreAPI equal &type'bytearray:aDump &type'index:4 &type'int:1)].
+        &until:[(byteArrayOp equal &type'bytearray:aDump &type'index:0 &type'short:1)
+                    and:(byteArrayOp equal &type'bytearray:aDump &type'index:4 &type'int:1)].
                     
-        ^ CharValue new &type'widechar:(system'external'CoreAPI read &type'bytearray:aDump &type'index:14).
+        #var(type:short)aChar := byteArrayOp read &type'bytearray:aDump &type'index:14.
+                    
+        ^ CharValue new &widechar:aChar.
     ]
 
     #method read &type'int
@@ -81,10 +89,12 @@
                 &type'int           : 1
                 &out'type'int       : nil.
         ]
-        &until:[(system'external'CoreAPI equal &type'bytearray:aDump &type'index:0 &type'short:1)
-                    and:(system'external'CoreAPI equal &type'bytearray:aDump &type'index:4 &type'int:1)].
+        &until:[(byteArrayOp equal &type'bytearray:aDump &type'index:0 &type'short:1)
+                    and:(byteArrayOp equal &type'bytearray:aDump &type'index:4 &type'int:1)].
                     
-        ^ IntNumber new &type'int:(system'external'CoreAPI read &type'bytearray:aDump &type'index:8).
+        #var(type:int)aValue := byteArrayOp read &type'bytearray:aDump &type'index:8.
+                    
+        ^ IntNumber new &type'int:aValue.
     ]
 
     // !! HOTFIX: additional method to pass the literal type
@@ -117,7 +127,7 @@
             
             anOutput := anOutput + aTemp.
         ] 
-        &until:[ system'external'CoreAPI _trimLine &out'type'widestr:anOutput ].
+        &until:[ consoleHelper _trimLine &type'widestr:anOutput ].
         
         ^ anOutput.
     ]

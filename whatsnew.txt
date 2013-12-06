@@ -1,15 +1,17 @@
 
                                 ELENA Language 
 
-                                Version 1.9.9.12
+                                Version 1.9.10
  
 ******************************************************************************
-                    What's New in 1.9.9.12 (pre release)
+                    What's New in 1.9.10 (pre release)
 ******************************************************************************
 
 ELENA:
-[!] binary incompatible due to changes in ecodes/API
-[+] new ecodes: mccreverse, x_mcccopym
+[!] binary incompatible due to changes in ecodes
+[!] ecodes overhaul
+[!] indexer operator syntax modified
+[!] primitive operation overhaul
 
 [LIB]
 [+] system'dynamic: Class, Struct, tapeControl

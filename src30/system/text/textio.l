@@ -1,4 +1,5 @@
 #define system.
+#define system'io.
 
 // --- TextReader ---
 
@@ -49,7 +50,7 @@
     ]
             
     #method $readBuffer
-        = theOutput indexOf &type'index:0 &type'widechar:10.
+        = theOutput indexOf &type'index:0 &widechar:10.
 
     #method EOF = theOpen not.
 
@@ -66,7 +67,7 @@
                     ? [ 
                         aLine := theOutput read &type'index:0 &type'length:(aLength + 1).
                         
-                        system'external'CoreAPI _trimLine &out'type'widestr:aLine.
+                        consoleHelper _trimLine &type'widestr:aLine.
                         
                         theOutput delete &type'index:0 &type'length:(1 + aLength).
                     ]

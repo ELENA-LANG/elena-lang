@@ -212,7 +212,7 @@
 
 #class(role)ELiteralOp
 {
-    #method trimStart &type'widechar:aChar
+    #method trimStart &widechar:aChar
     [
         #var theIndex := Integer new.
         control while:[self getAt &type'index:theIndex == aChar ] &do:[ theIndex += 1. ].
@@ -220,7 +220,7 @@
         ^ self delete &type'index:0 &type'length:theIndex.
     ]
     
-    #method split &type'widechar:aChar
+    #method split &widechar:aChar
     [
         #var aList := system'collections'List new.
         #var aStart := 0.
@@ -228,7 +228,7 @@
         
         control do:
         [
-            anIndex := self indexOf &type'index:aStart &type'widechar:aChar.
+            anIndex := self indexOf &type'index:aStart &widechar:aChar.
             (-1 != anIndex) ?
             [
                 aList += self Substring &type'index:aStart &type'length:(anIndex - aStart).
@@ -278,11 +278,11 @@
         = { 
             eval &type'widestr:aSplitter [ ^ aLiteral~ELiteralOp split &type'widestr:aSplitter. ] 
             
-            eval &type'widechar:aSplitter [ ^ aLiteral~ELiteralOp split &type'widechar:aSplitter. ] 
+            eval &widechar:aSplitter [ ^ aLiteral~ELiteralOp split &widechar:aSplitter. ] 
           } eval::aChar.
     
     trimStart:aChar &in:aString
-        = aString << aString Literal ~ELiteralOp trimStart &type'widechar:aChar.
+        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
         
     toArray : aLiteral
         = aLiteral~ELiteralOp Array.

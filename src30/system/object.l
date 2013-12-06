@@ -4,7 +4,7 @@
 #class Object
 {
     #method equal &type'object : anObject
-        = system'external'CoreAPI equal &type'object:$self &type'object:anObject.
+        <object_equal>.
 
     #method equal : anObject
         = $self equal &type'object:anObject.
@@ -14,14 +14,14 @@
     
     #method <= &&type'object:$self.
 
-    #method => #inline redirect.    
+    #method => <redirect>.
 }
 
 // --- EException ---
 
 #class EException
 {
-    #method => #inline handle_exception.
+    #method => <handle_exception>.
 }
 
 // --- Action wrapper ---

@@ -11,28 +11,29 @@
     #method type'bytearray = $self.
 
     #method write &type'index:anIndex &type'length:aLength &type'bytearray:aDump
-        = system'external'CoreAPI write &out'type'bytearray:theData &type'index:anIndex &type'length:aLength &type'bytearray:aDump 
-            | raise:(InvalidArgumentException new:"Invalid argument").
+        <bs_write>.
 
     #method write &type'index:anIndex &type'widestr:aLiteral
-        = system'external'CoreAPI write &out'type'bytearray:theData &type'index:anIndex &type'widestr:aLiteral
-            | raise:(InvalidArgumentException new:"Invalid argument").
+        <bs_writestr>.
 
     #method read &type'index:anIndex &type'length:aLength &type'bytearray:aDump
-        = system'external'CoreAPI read &type'bytearray:theData &type'index:anIndex &type'length:aLength &out'type'bytearray:aDump 
-            | raise:(InvalidArgumentException new:"Invalid argument").
+        <bs_read>.
 
-    #method indexOf &type'index:anIndex &type'length:aLength &type'byte:aByte
-        = IntNumber new &type'int:(system'external'CoreAPI find &type'bytearray:theData &type'index:anIndex &type'length:aLength &type'byte:aByte).
+    #method indexOf &type'index:anIndex &type'length:aLength &type'byte:aByte &out'type'int:aRetVal
+        <bs_findbyte>.
 
-    #method indexOf &type'index:anIndex &type'length:aLength &type'short:aWord
-        = IntNumber new &type'int:(system'external'CoreAPI find &type'bytearray:theData &type'index:anIndex &type'length:aLength &type'short:aWord).
+    #method indexOf &type'index:anIndex &type'length:aLength &type'short:aWord &out'type'int:aRetVal
+        <bs_findshort>.
 
     #method Length 
-        = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'bytearray:theData).
+        <= type'length.
 
     #method type'length
-        = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'bytearray:theData).
+    [
+        #var(type:int)aLength := theData type'length.
+        
+        ^ IntNumber new &type'int:aLength.
+    ]
 
     #method <= &&type'dump:$self.
 }

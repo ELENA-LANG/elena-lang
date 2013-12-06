@@ -591,6 +591,9 @@ inline int getParamCount(ref_t message)
    ref_t signature;
    decodeMessage(message, signature, verb, paramCount);
 
+   if (paramCount == OPEN_ARG_COUNT)
+      return 0;
+
    return paramCount;
 }
 
@@ -666,6 +669,12 @@ inline void loadVerbs(MessageMap& verbs)
    addVerb(verbs, INSERT_MESSAGE,     INSERT_MESSAGE_ID);
    addVerb(verbs, RESET_MESSAGE,      RESET_MESSAGE_ID);
    addVerb(verbs, CONVERT_MESSAGE,    CONVERT_MESSAGE_ID);
+   addVerb(verbs, FILL_MESSAGE,       FILL_MESSAGE_ID);
+   addVerb(verbs, LOAD_MESSAGE,       LOAD_MESSAGE_ID);
+   addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
+   addVerb(verbs, NOT_MESSAGE,        NOT_MESSAGE_ID);
+   addVerb(verbs, VALIDATE_MESSAGE,   VALIDATE_MESSAGE_ID);
+   addVerb(verbs, INC_MESSAGE,        INC_MESSAGE_ID);
 }
 
 } // _ELENA_

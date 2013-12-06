@@ -15,17 +15,21 @@
     
     #constructor new &type'short:aYear &type'short:aMonth &type'short:aDay &type'short:anHour &type'short:aMinute &type'short:aSecond &type'short:aMillisecond
     [
-        system'external'CoreAPI write &type'bytearray:theData &type'index:0 &type'short:aYear.
-        system'external'CoreAPI write &type'bytearray:theData &type'index:2 &type'short:aMonth.
-        system'external'CoreAPI write &type'bytearray:theData &type'index:6 &type'short:aDay.
-        system'external'CoreAPI write &type'bytearray:theData &type'index:8 &type'short:anHour.
-        system'external'CoreAPI write &type'bytearray:theData &type'index:10 &type'short:aMinute.
-        system'external'CoreAPI write &type'bytearray:theData &type'index:12 &type'short:aSecond.
-        system'external'CoreAPI write &type'bytearray:theData &type'index:14 &type'short:aMillisecond.
+        byteArrayOp write &type'bytearray:theData &type'index:0 &type'short:aYear.
+        byteArrayOp write &type'bytearray:theData &type'index:2 &type'short:aMonth.
+        byteArrayOp write &type'bytearray:theData &type'index:6 &type'short:aDay.
+        byteArrayOp write &type'bytearray:theData &type'index:8 &type'short:anHour.
+        byteArrayOp write &type'bytearray:theData &type'index:10 &type'short:aMinute.
+        byteArrayOp write &type'bytearray:theData &type'index:12 &type'short:aSecond.
+        byteArrayOp write &type'bytearray:theData &type'index:14 &type'short:aMillisecond.
     ]
     
     #method read &type'short &type'index:anIndex
-        = IntNumber new &type'int:(system'external'CoreAPI read &type'bytearray:theData &type'index:anIndex) and &type'int:0FFFFh.
+    [
+        #var(type:short)aValue := byteArrayOp read &type'bytearray:theData &type'index:anIndex.
+        
+        ^ IntNumber new &type'int:aValue.
+    ]
 
     #method win32'FileTime
     [
@@ -218,15 +222,29 @@
         
     new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
     [
+        // HOTFIX: temporally, due to current implementation
+        #var(type:int)aYearWord := 1601 + aYear type'int.
+        #var(type:int)aMonthWord := 1 + aMonth type'int.
+        #var(type:int)aDayWord := 1 + aDay type'int.
+
         #var aSystemStruct := Win32SystemTime new
-            &type'short:(1601 + aYear type'int)
-            &type'short:(1 + aMonth type'int)
-            &type'short:(1 + aDay type'int)
+            &type'short:aYearWord
+            &type'short:aMonthWord
+            &type'short:aDayWord
             &type'short:(anHour type'int)
             &type'short:(aMinute type'int)
             &type'short:(aSecond type'int)
             &type'short:0.
-                    
+                
+//        #var aSystemStruct := Win32SystemTime new
+//            &type'short:(1601 + aYear type'int)
+//            &type'short:(1 + aMonth type'int)
+//            &type'short:(1 + aDay type'int)
+//            &type'short:(anHour type'int)
+//            &type'short:(aMinute type'int)
+//            &type'short:(aSecond type'int)
+//            &type'short:0.
+
         ^ aSystemStruct win32'FileTime.
     ]
 }.

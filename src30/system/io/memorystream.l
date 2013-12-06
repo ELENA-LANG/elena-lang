@@ -49,7 +49,11 @@
         = theByteArray indexOf &type'index:anIndex &type'length:thePosition &type'byte:aByte.
 
     #method indexOf &type'index:anIndex &type'short:aWord
-        = theByteArray indexOf &type'index:anIndex &type'length:thePosition &type'short:aWord.
+    [
+        #var(type:int)anIndex := theByteArray indexOf &type'index:anIndex &type'length:thePosition &type'short:aWord.
+        
+        ^ IntNumber new &type'int:anIndex.
+    ]
 
     #method write &type'bytearray:aDump &type'length:aLength
     [

@@ -34,7 +34,10 @@ enum ObjectKind
    okRegisterField,
    okCurrentMessage,
    okLocalAddress,
-   okBlockLocalAddress
+   okBlockLocalAddress,
+   okBlockOuterField,
+
+   okIdle
 };
 
 enum ObjectType 
@@ -48,10 +51,13 @@ enum ObjectType
 
    otByte,
    otInt,
+   otIntVar,
    otLong,
+   otLongVar,
    otReal,
+   otRealVar,
    otLiteral,
-   otChar,
+   otShort,
    otByteArray,
    otArray,
    otLength,
@@ -172,20 +178,22 @@ public:
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
    void declareGenericAction(CommandTape& tape, ref_t genericMessage, ref_t message);
    void exclude(CommandTape& tape);
    void declareExternalBlock(CommandTape& tape);
    void declareVariable(CommandTape& tape, ref_t nilReference);
    void declareVariable(CommandTape& tape);
+   void declarePrimitiveVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape, bool withStackControl = true);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
    void declareSwitchBlock(CommandTape& tape);
-   void declareSwitchOption(CommandTape& tape);
-   ByteCodeIterator declareTry(CommandTape& tape);
+//   void declareSwitchOption(CommandTape& tape);
+   void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
    void declarePrimitiveCatch(CommandTape& tape);
 
@@ -204,38 +212,42 @@ public:
    void newStructure(CommandTape& tape, int size, ref_t reference);
    void newObject(CommandTape& tape, int fieldCount, ref_t reference, ref_t nilReference);
    void newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset, ref_t nilReference);
-   void newDynamicStructure(CommandTape& tape, int size, ref_t reference, int sizeOffset, int permanentSize = 0);
+   void newByteArray(CommandTape& tape, ref_t reference, int sizeOffset);
+   void newWideLiteral(CommandTape& tape, ref_t reference, int sizeOffset);
 
    void pushObject(CommandTape& tape, ObjectInfo object);
    void swapObject(CommandTape& tape, ObjectKind type, int offset);
    void loadObject(CommandTape& tape, ObjectInfo object);
-   void setObject(CommandTape& type, int value);
-   void saveObjectLength(CommandTape& tape, int size, int modificator, int offset);
+   void selectObject(CommandTape& tape, ObjectInfo object);
+//   void copyPrimitiveValue(CommandTape& type, int value);
    void saveObject(CommandTape& tape, ObjectInfo object);
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool registerMode);
+   void boxArray(CommandTape& tape, ref_t vmtReference);
+
    void popObject(CommandTape& tape, ObjectInfo object);
    void releaseObject(CommandTape& tape, int count = 1);
 
-   void assignLocalObject(CommandTape& tape, int offset);    // light-weight assigning
-   void moveLocalObject(CommandTape& tape, int index);
+//   void moveLocalObject(CommandTape& tape, int index);
 
    void setMessage(CommandTape& tape, ref_t message);
 
-   void sendMessage(CommandTape& tape, int paramCount);
-   void sendMessage(CommandTape& tape, int targetOffset, int paramCount);
-   void sendDirectMessage(CommandTape& tape, int vmtOffset, int paramCount);
-   void sendRoleMessage(CommandTape& tape, int paramCount);
-   void sendRoleMessage(CommandTape& tape, ref_t classRef, int paramCount);
-   void sendSelfMessage(CommandTape& tape, ref_t classRef, ref_t message);
-   void invokeMessage(CommandTape& tape, ref_t reference, ref_t message, int targetOffset);
-   void invokeConstantRoleMessage(CommandTape& tape, ref_t classRef, ref_t messageRef);
+   void callDispatcher(CommandTape& tape, int paramCount);
+   void callDispatcher(CommandTape& tape, int targetOffset, int paramCount);
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+   void callRoleMessage(CommandTape& tape, int paramCount);
+   void callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount);
+   void callResolvedSelfMessage(CommandTape& tape, ref_t classRef, ref_t message);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, int targetOffset);
+   void callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef);
    void dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset, int targetOffset);
    void extendObject(CommandTape& tape, ObjectInfo info);
 
    void redirectVerb(CommandTape& tape, ref_t message);
    void resend(CommandTape& tape, ObjectInfo info);
    void callBack(CommandTape& tape, int subject_id);
-   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);
+//   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);
+   void executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code);
+   void executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
    int declareLabel(CommandTape& tape);
@@ -243,11 +255,11 @@ public:
    void jumpIfEqual(CommandTape& tape, ObjectInfo object);
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t ref);
-   void jumpIfNotEqual(CommandTape& tape, ObjectInfo object);
+//   void jumpIfNotEqual(CommandTape& tape, ObjectInfo object);
    void jump(CommandTape& tape, bool previousLabel = false);
 
-   void setArrayItem(CommandTape& tape);
-   void getArrayItem(CommandTape& tape);
+//   void setArrayItem(CommandTape& tape);
+//   void getArrayItem(CommandTape& tape);
 
    void throwCurrent(CommandTape& tape);
    void breakLoop(CommandTape& tape, int label);
@@ -262,7 +274,6 @@ public:
    void commentFrame(ByteCodeIterator it);
 
    void endLabel(CommandTape& tape);
-   void removeTry(CommandTape& tape, ByteCodeIterator& it);
    void endCatch(CommandTape& tape);
    void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
@@ -279,14 +290,24 @@ public:
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
 
-   //!! TODO: should be refactored
-   void saveOutputResult(CommandTape& tape, int destOffset, int sourOffset);
-   void pushIntParam(CommandTape& tape, ObjectInfo info);
-   void saveIntParam(CommandTape& tape, ObjectInfo info);
-   void assignIntParam(CommandTape& tape, ObjectInfo info, int value);
-   void saveLongParam(CommandTape& tape, ObjectInfo info);
-   void saveLiteralParam(CommandTape& tape, ObjectInfo info, ref_t functionRef);
-   void loadLiteralParam(CommandTape& tape, ref_t offset, ref_t functionRef);
+   void copyInt(CommandTape& tape, ObjectInfo target);
+   void copyInt(CommandTape& tape, ObjectInfo sour, ObjectInfo target);
+   void copyLong(CommandTape& tape, ObjectInfo target);
+
+   void saveStr(CommandTape& tape, bool onlyAllocate);
+   void saveDump(CommandTape& tape, bool onlyAllocate);
+   void setStrLength(CommandTape& tape, ObjectInfo target);
+   void setDumpLength(CommandTape& tape, ObjectInfo target);
+   void loadStr(CommandTape& tape, ObjectInfo source);
+   void loadDump(CommandTape& tape, ObjectInfo source);
+   void loadLiteralLength(CommandTape& tape, ObjectInfo target);
+   void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
+
+//   //!! TODO: should be refactored
+//   void saveOutputResult(CommandTape& tape, int destOffset, int sourOffset);
+//   void pushIntParam(CommandTape& tape, ObjectInfo info);
+//   void saveIntParam(CommandTape& tape, ObjectInfo info);
+//   void saveLongParam(CommandTape& tape, ObjectInfo info);
 
    void flush(CommandTape& tape, _Module* module, _Module* debugModule);
 };

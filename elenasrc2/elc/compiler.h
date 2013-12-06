@@ -110,9 +110,9 @@ protected:
       ref_t realSubject;
       ref_t handleSubject;
       ref_t wideStrSubject;
-      ref_t wideChrSubject;
       ref_t dumpSubject;
       ref_t lengthSubject;
+      ref_t lengthOutSubject;
       ref_t indexSubject;
       ref_t arraySubject;
       ref_t byteSubject;
@@ -128,8 +128,9 @@ protected:
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
 
+      ObjectType mapSubjectType(ref_t subjRef);
       ObjectType mapSubjectType(TerminalInfo identifier, bool& out);
-      ObjectType mapSubjectType(ref_t subjRef, bool& out);
+      ObjectType mapSubjectType(TerminalInfo identifier);
 
       ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -153,8 +154,11 @@ protected:
 
       ref_t mapSubject(const wchar16_t* name)
       {
-         // temporal
-         return module->mapSubject(name, false);
+         if (ConstantIdentifier::compare(name, "out'", 4)) {
+            //!! raise an error
+            return 0;
+         }
+         else return module->mapSubject(name, false);
       }
 
       ref_t mapSubject(const char* name)
@@ -164,10 +168,10 @@ protected:
          return module->mapSubject(wsName, false);
       }
 
-////      bool defineMask(const wchar16_t* mask, const wchar16_t* reference)
-////      {
-////         return symbolNs.aliases.add(mask, reference, true);
-////      }
+//      bool defineMask(const wchar16_t* mask, const wchar16_t* reference)
+//      {
+//         return symbolNs.aliases.add(mask, reference, true);
+//      }
 
       bool defineForward(const wchar16_t* forward, const wchar16_t* referenceName, bool constant)
       {
@@ -196,47 +200,15 @@ protected:
       void raiseWarning(const char* message, TerminalInfo terminal);
 
       ref_t resolveIdentifier(const wchar16_t* name);
-//      ref_t resolveSubject(const wchar16_t* subject);
-//      ref_t resolvePrivateSubject(const wchar16_t* subject);
+////      ref_t resolveSubject(const wchar16_t* subject);
+////      ref_t resolvePrivateSubject(const wchar16_t* subject);
 
-//      ref_t mapMessageSubject(TerminalInfo terminal);
+////      ref_t mapMessageSubject(TerminalInfo terminal);
 
       bool checkGlobalReference(const wchar16_t* referenceName);
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
-      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false)
-      {
-         // if reference is zero the symbol is unknown
-         if (reference == 0) {
-            return ObjectInfo();
-         }
-         else if (reference == controlReference) {
-            return ObjectInfo(okConstant, otControl, reference);
-         }
-         // check if symbol should be treated like constant one
-         else if (symbolHints.exist(reference, okConstant)) {
-            return ObjectInfo(okConstant, reference);
-         }
-         else if (checkState) {
-            ClassInfo info;
-            ref_t r = loadClassInfo(info, module->resolveReference(reference));
-            if (r) {
-               // if it is a stateless class
-               if (test(info.header.flags, elStateless)) {
-                  defineConstant(reference);
-
-                  return ObjectInfo(okConstant, reference);
-               }
-               // if it is a normal class
-               // then the symbol is reference to the class class
-               else if (test(info.header.flags, elStandartVMT) && info.classClassRef != 0) {
-                  return ObjectInfo(okConstant, otClass, reference, info.classClassRef);
-               }
-            }
-         }
-         // otherwise it is a normal one
-         return ObjectInfo(okSymbol, reference);
-      }
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
       ref_t loadClassInfo(ClassInfo& info, const wchar16_t* vmtName);
 
@@ -356,9 +328,9 @@ protected:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-////      const wchar16_t* param;
-////
-////      void compileHints(DNode hints);
+//      const wchar16_t* param;
+//
+//      void compileHints(DNode hints);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -376,12 +348,13 @@ protected:
    // - MethodScope -
    struct MethodScope : public Scope
    {
-      ref_t    message;
-      LocalMap parameters;
-      bool     withBreakHandler;
-      bool     withCustomVerb;
-      int      masks;              // used for ecode optimization
-      int      reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+      ref_t     message;
+      LocalMap  parameters;
+      Parameter outParameter;       // used in out-assignment
+      bool      withBreakHandler;
+      bool      withCustomVerb;
+      int       masks;              // used for ecode optimization
+      int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 
 //      int compileHints(DNode hints);
 
@@ -438,12 +411,12 @@ protected:
          else return parent->getScope(level);
       }
 
-      int getClassType()
-      {
-         ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-
-         return classScope->getClassType();
-      }
+//      int getClassType()
+//      {
+//         ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+//
+//         return classScope->getClassType();
+//      }
 
       //bool testMode(MethodScope::Mode mode)
       //{
@@ -622,6 +595,7 @@ protected:
 
    ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compilePrimitiveLength(CodeScope& scope, ObjectInfo objectInfo, int target);
+   ObjectInfo compilePrimitiveLengthOut(CodeScope& scope, ObjectInfo objectInfo, int target);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, int mode);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
@@ -643,14 +617,12 @@ protected:
    ObjectInfo compileGetProperty(DNode member, CodeScope& scope, int mode, ref_t vmtReference);
    ObjectInfo compileGetProperty(DNode member, CodeScope& scope, int mode);
 
-   //void compileOpenArg(DNode node, CodeScope& scope, int mode);
    void compileMessageParameter(DNode& arg, CodeScope& scope, const wchar16_t* subject, int mode, size_t& count);
 
    void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
    void compilePresavedMessageParameters(DNode node, CodeScope& scope, int& mode);
 
    ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int mode, size_t& spaceToRelease);
-   ref_t compilePrimitiveParameters(DNode node, CodeScope& scope, ReferenceNs& reference, size_t& paramCount, int mode);
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileSignatureReference(DNode objectNode, CodeScope& scope, int mode);
@@ -669,7 +641,7 @@ protected:
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 
    ObjectInfo compileControlVirtualExpression(DNode node, CodeScope& scope, ObjectInfo info, int mode);
-   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, int verb, int subCodeMode);
+   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, int verb, int subCodinteMode);
 
    void compileLoop(DNode node, CodeScope& scope, int mode);
    void compileThrow(DNode node, CodeScope& scope, int mode);
@@ -681,13 +653,10 @@ protected:
    void reserveExternalLiteralParameters(CodeScope& scope, ExternalScope& externalScope);
 
    bool allocatePrimitiveObject(CodeScope& scope, int mode, ObjectInfo& exprOperand);
-   bool definePrimitiveParameter(CodeScope& scope, IdentifierString& functionName, ObjectType& parameter, bool operatorMode);
-   bool definePrimitiveOperatorArguments(CodeScope& scope, IdentifierString& functionName, ObjectInfo& result, ObjectInfo loperand, ObjectInfo roperand, int mode);
+   FunctionCode definePrimitiveOperationCode(CodeScope& scope, int operator_id, ObjectInfo& result, ObjectInfo loperand, ObjectInfo roperand, int mode);
 
-   ObjectInfo compilePrimitiveOperator(DNode& node, CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo r2operand, int mode);
-   ObjectInfo compilePrimitiveOperation(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compilePrimitiveOperator(DNode& node, CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, int mode);
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
-   ObjectInfo compileVMOperation(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);
 
    void compileResend(DNode node, CodeScope& scope);
@@ -735,10 +704,10 @@ protected:
    void createModuleInfo(ModuleScope& scope, const wchar16_t* path, bool withDebugInfo, Map<const wchar16_t*, ModuleInfo>& modules);
 
 public:
-//   void setOptFlag(int flag)
-//   {
-//      _optFlag |= flag;
-//   }
+////   void setOptFlag(int flag)
+////   {
+////      _optFlag |= flag;
+////   }
 
    void loadRules(StreamReader* optimization);
 

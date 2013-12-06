@@ -132,41 +132,6 @@ lbError:
 
 end
 
-procedure core_vm'eval
-
-  mov eax, [esp+4]
-
-  push ebx
-  push ecx
-  push edi
-  push esi
-  push ebp
-
-  call code : "$package'core'openframe"
-
-  // set default exception handler
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  mov  ebx, code : "$package'core_vm'default_handler"
-  mov  [data : %CORE_EXCEPTION_TABLE], ebx
-  
-  mov ebp, esp
-  mov edx, [ebp+20h]
-
-  mov esi, [edx]
-
-  // invoke symbol
-  call eax
-
-  call code : "$package'core'closeframe"
-
-  pop ebp
-  pop esi
-  pop edi
-  pop ecx
-  pop ebx
-  ret
-
-end
 
 procedure core_vm'start_n_eval
 
@@ -216,82 +181,5 @@ procedure core_vm'default_handler
   pop ecx
   pop ebx
   ret
-
-end
-
-inline core_vm'NameOf (p1:ref, n2:int, s3:out wstr)
-
-  mov  eax, [esp+8]
-  call code : "$package'core'getvmt"
-
-  mov  edx, esi
-  call code : "$package'core'getclassname"
-  test eax, eax
-  jz   short labEnd
-
-  pop  edx
-  pop  ecx
-  mov  esi, eax
-  push edx 
-  mov  ecx, [ecx]
-
-labCopy:
-  mov  ebx, [esi]
-  mov  word ptr [edx], bx
-  test ebx, 0FFFFh
-  jz   short labFixLen
-  lea  esi, [esi+2]
-  sub  ecx, 1
-  lea  edx, [edx+2]
-  jnz  short labCopy
-
-labFixLen:
-  mov  eax, edx
-  pop  esi
-  sub  eax, esi
-  
-  call code : "$package'core'set_widestr_len"
-  
-labEnd:
-
-end
-
-inline core_vm'LengthOf (p1:ref, n2:out int)
-
-  mov  esi, [esp+4]
-  call code : "$package'core'getcount"
-  pop  eax
-  mov  [eax], ecx
-  lea  esp, [esp+4]
-
-end
-
-inline core_vm'read (p1:ref, n2:index)
-
-  pop  eax
-  pop  esi
-  mov  edx, [eax]
-  call code : "$package'core'getcount"
-  xor  eax, eax
-  cmp  ecx, edx
-  jl   short labEnd
-  mov  eax, [esi+edx*4]
-
-labEnd:
-  
-end
-
-inline core_vm'interprete (p1:dump)
-
-  pop  edx
-  call code : "$package'core'interprete"
-
-end
-
-inline core_vm'interprete (p1:int)
-
-  pop  edx
-  mov  edx, [edx]
-  call code : "$package'core'interprete"
 
 end

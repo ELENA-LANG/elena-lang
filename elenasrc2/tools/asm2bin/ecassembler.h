@@ -35,12 +35,13 @@ class ECodesAssembler : public Assembler
 
    virtual void compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    virtual void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
+   virtual void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
 
    virtual void compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
    virtual void compileMccJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
    virtual void compileJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
 
-   virtual void compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
+   virtual void compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary);
 
    virtual void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
 

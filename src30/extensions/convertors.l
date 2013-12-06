@@ -39,9 +39,7 @@
     
     convert &type'int:anInteger &type'base:aRadix
     [
-        #var anOutput := LiteralValue new &type'length:20.
-        
-        system'external'CoreAPI convert &out'type'widestr:anOutput &type'int:anInteger &type'int:aRadix.
+        #var anOutput := strOp convert &type'int:anInteger &type'index:aRadix.
         
         ^ anOutput.
     ]
@@ -51,9 +49,7 @@
     
     convert &type'long:aLong &type'base:aRadix
     [
-        #var anOutput := LiteralValue new &type'length:50.
-        
-        system'external'CoreAPI convert &out'type'widestr:anOutput &type'long:aLong &type'int:aRadix.
+        #var anOutput := strOp convert &type'long:aLong &type'index:aRadix.
         
         ^ anOutput.
     ]
@@ -62,7 +58,11 @@
         = aReal Literal.
     
     convert &type'real:aReal &type'length:aLength
-        = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:30) &type'real:aReal &type'int:aLength.
+    [
+        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
+        
+        ^ anOutput.
+    ]
     
     convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
     [
@@ -75,7 +75,7 @@
     convert &type'widestr:aLiteral
         = aLiteral.
 
-    convert &type'widechar:aChar
+    convert &widechar:aChar
         = aChar Literal.
 
     convert &type'enumerable:aList &type'widestr:aSeparator
@@ -97,7 +97,7 @@
     convert &type'array : anArray
         <= convert &type'enumerable:anArray &type'widestr:",".
 
-    convert &type'array:anArray &type'widechar:aSeparator
+    convert &type'array:anArray &widechar:aSeparator
         <= convert &type'enumerable:anArray &type'widestr:aSeparator.
 
     convert &type'reference : anObject

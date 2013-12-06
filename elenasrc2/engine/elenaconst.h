@@ -12,8 +12,8 @@
 namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
-   #define ENGINE_MAJOR_VERSION     0x0006            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0002
+   #define ENGINE_MAJOR_VERSION     0x0007            // ELENA Engine version
+   #define ENGINE_MINOR_VERSION     0x0000
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -23,6 +23,7 @@ namespace _ELENA_
    #define SIGN_MASK               0x00FFFFF0
    #define PARAM_MASK              0x0000000F
    #define MESSAGE_MASK            0x80000000
+   #define OPEN_ARG_COUNT          0x0F
 
    #define SEND_MESSAGE_ID         0x0001
    #define DISPATCH_MESSAGE_ID     0x0002
@@ -73,6 +74,12 @@ namespace _ELENA_
    #define RESET_MESSAGE_ID        0x002E
    #define SPLIT_MESSAGE_ID        0x002F
    #define CONVERT_MESSAGE_ID      0x0030
+   #define FILL_MESSAGE_ID         0x0031
+   #define LOAD_MESSAGE_ID         0x0032
+   #define SHIFT_MESSAGE_ID        0x0033
+   #define NOT_MESSAGE_ID          0x0034
+   #define VALIDATE_MESSAGE_ID     0x0035
+   #define INC_MESSAGE_ID          0x0036
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -276,9 +283,8 @@ namespace _ELENA_
   // --- ELENA core module names ---
    #define CORE_MODULE            "core"          // core GC functionality
    #define COMMAND_MODULE         "commands"      // core command set
-   #define COREAPI_MODULE         "core_api"      // core native api
    #define CORE_VM_MODULE         "core_vm"       // core vm client functionality
-   #define CORE_ROUTINE_MODULE    "core_routines" // core ecode api
+   #define INLINE_MODULE          "inline"        // inline module alias
 
   // --- ELENA verb messages ---
    #define NEW_MESSAGE              "new"
@@ -325,8 +331,12 @@ namespace _ELENA_
    #define RESET_MESSAGE            "reset"
    #define SPLIT_MESSAGE            "split"
    #define CONVERT_MESSAGE          "convert"
-
-//   #define NEXT_MESSAGE             "next"
+   #define FILL_MESSAGE             "fill"
+   #define LOAD_MESSAGE             "load"
+   #define SHIFT_MESSAGE            "shift"
+   #define NOT_MESSAGE              "invert"
+   #define VALIDATE_MESSAGE         "validate"
+   #define INC_MESSAGE              "next"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="
@@ -374,6 +384,7 @@ namespace _ELENA_
    #define HINT_ARRAY              "array"
    #define HINT_REAL               "real"
    #define HINT_LONG               "long"
+   #define HINT_SHORT              "short"
    #define HINT_MEM                "mem"
    #define HINT_BYTEARRAY          "bytearray"
    #define HINT_MESSAGE            "message"
@@ -388,8 +399,6 @@ namespace _ELENA_
    #define STANDARD_MODULE          "system"        // the standard module name
    #define PACKAGE_MODULE           "$package"
    #define EXTERNAL_MODULE          "system'external"
-   #define PRIMITIVE_HELPER         "system'external'CoreAPI"
-   #define VM_HELPER                "system'external'VMAPI"
 
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
@@ -420,16 +429,6 @@ namespace _ELENA_
    #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
    #define GETPROPERTY_CLASS        "system'dynamic'GetProperty"     
 
-   // CORE API
-   #define SAVE_DUMP_FUN            "$package'core'save_dump"
-   #define RESERVE_DUMP_FUN         "$package'core'reserve_dump"
-   #define LOAD_DUMP_FUN            "$package'core'load_dump"
-   #define SAVE_WIDSTR_FUN          "$package'core'save_widestr"
-   #define RESERVE_WIDSTR_FUN       "$package'core'reserve_widestr"
-   #define LOAD_WIDSTR_FUN          "$package'core'load_widestr"
-   #define LOAD_WIDSTRLEN_FUN       "$package'core'load_widestr_len"
-   #define LOAD_DUMPLEN_FUN         "$package'core'load_dump_len"
-
    // predefined signatures
    #define WHILE_SIGNATURE          "while&do"
    #define UNTIL_SIGNATURE          "until"
@@ -441,14 +440,13 @@ namespace _ELENA_
    #define INT_SUBJECT              "type'int"
    #define LONG_SUBJECT             "type'long"
    #define WSTR_SUBJECT             "type'widestr"
-   #define WCHAR_SUBJECT            "type'widechar"
    #define DUMP_SUBJECT             "type'bytearray"
    #define LENGTH_SUBJECT           "type'length"
+   #define OUT_LENGTH_SUBJECT       "type'length&out'type'int"
    #define REAL_SUBJECT             "type'real"
    #define INDEX_SUBJECT            "type'index"
    #define ARRAY_SUBJECT            "type'array"
    #define BYTE_SUBJECT             "type'byte"
-   #define PARAMS_SUBJECT           "type'params"
 
    #define STARTUP_CLASS            "'program"
 

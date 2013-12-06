@@ -5,10 +5,14 @@ template=lib
 debuginfo=-1
 warn:unresolved=0
 
+[primitives]
+inline=..\..\lib30\inline\core_routines.bin
+
 [files]
 object.l
 control.l
 exceptions.l
+primitives.l
 basic.l
 groups.l
 patterns.l
@@ -33,4 +37,5 @@ dynamic\reflection.l
 dynamic\interpreters.l
 win32_app.l
 app.l
+math.l
 

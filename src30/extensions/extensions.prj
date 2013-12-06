@@ -5,6 +5,9 @@ template=lib
 debuginfo=-1
 warn:unresolved=0
 
+[primitives]
+inline=..\..\lib30\inline\ext_routines.bin
+
 [files]
 convertors.l
 math\functions.l

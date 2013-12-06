@@ -1,11 +1,19 @@
 
 // --- Main ---
 
-#symbol Program =
+#symbol program =
 [   
     XTest eval.
-  
+
     system'console writeLine:"Starting...".    
+
+    ControlTest eval.
+    ObjectTest eval.
+    BooleanTest eval.
+    IntegerTest eval.
+    LongTest eval.
+    RealTest eval.
+    LiteralTest eval.
 
     BreakTest eval.
     MultiDispatchTest eval.
@@ -13,17 +21,10 @@
     MultySelectTest eval.
     EnumTest eval.    
     TextBufferTest eval.
-    ControlTest eval.
-    ObjectTest eval.
     LoopTest eval.
-    BooleanTest eval.
-    IntegerTest eval.
-    LongTest eval.
-    RealTest eval.
     ActionTest eval.
     RoleTest eval.
     ConvertorTest eval.
-    LiteralTest eval.
     ArrayTest eval.     
     AltTest eval.
     ExceptionTest eval.
@@ -33,6 +34,6 @@
     GetPropertyTest eval.
     BoxingTest eval.
     OuterFieldTest eval.
-    OpenArgTest eval.
     LocalTest eval.
+//    OpenArgTest eval.
 ].

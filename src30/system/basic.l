@@ -9,15 +9,13 @@
 {
     #method equal : anObject = $self equal::anObject.
     
-    #method notequal : anObject = $self equal::anObject ? [ false ] ! [ true ].
+    #method greater : anObject = anObject less:$self.
     
     #method less : anObject = $self less::anObject.
     
-    #method greater : anObject = anObject less::$self.
-    
     #method notless : anObject = $self notless::anObject.
     
-    #method notgreater : anObject = anObject notless::$self.
+    #method notgreater : anObject = anObject less:$self not.
 }
 
 // --- BaseNumber ---
@@ -125,13 +123,22 @@
         = RealNumber new &type'int:$self divide &type'real:anOperand.
 
     #method shift : anOrder
-        = IntNumber new &type'int:(system'external'CoreAPI shift &type'int:$self &type'int::anOrder).
+    [
+        #var(type:int)retVal := intOp shift &type'int:$self &type'int::anOrder.
+        
+        ^ IntNumber new &type'int:retVal.
+    ]
 
-    #method Literal = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:10) &type'int:$self.
+    #method Literal = strOp convert &type'int:$self.
 
     #method Negative = 0 - $self.
 
-    #method Inverted = IntNumber new &type'int:(system'external'CoreAPI invert &type'int:$self).
+    #method not
+    [
+        #var(type:int)retVal := intOp invert &type'int:$self.
+        
+        ^ IntNumber new &type'int:retVal.
+    ]
             
     #method <= &&type'int:$self.
 }
@@ -220,13 +227,22 @@
         = RealNumber new &type'long:$self divide &type'real:anOperand.
 
     #method shift : anOrder
-        = LongNumber new &type'long:(system'external'CoreAPI shift &type'long:$self &type'int::anOrder).
+    [
+        #var(type:long)aRetVal := intOp shift &type'long:$self &type'int::anOrder.
+        
+        ^ LongNumber new &type'long:aRetVal.
+    ]
 
-    #method Literal = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:20) &type'long: theData.
+    #method Literal = strOp convert &type'long:$self.
 
     #method Negative = 0l - $self.
 
-    #method Inverted = LongNumber new &type'long:(system'external'CoreAPI invert &type'long:$self).
+    #method not
+    [
+        #var(type:long)retVal := intOp invert &type'long:$self.
+        
+        ^ LongNumber new &type'long:retVal.
+    ]
             
     #method <= &&type'long:$self.
 }
@@ -292,7 +308,7 @@
     #method divide &type'int:anOperand
         = $self divide &type'real:(RealNumber new &type'int:anOperand).
 
-    #method Literal = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:30) &type'real:theData &type'int:24.
+    #method Literal = strOp convert &type'real:$self.
     
     #method <= &&type'real:$self.
 }
@@ -316,17 +332,10 @@
         theData << aCode.
     ]
 
-    #constructor new &type'widechar:aCode
-    [
-        theData << aCode.
-    ]
+    #constructor new &widechar:aCode
+        <= new &type'int:aCode.
 
-    #constructor new &type'widestr:aValue
-    [
-        theData << (aValue getAt:0) type'widechar.
-    ]
-
-    #method type'widechar = $self.
+    #method widechar = $self.
 
     #method equal &type'int:anOperand 
         = theData == anOperand.
@@ -337,22 +346,22 @@
     #method notless &type'int:anOperand 
         = theData >= anOperand.
 
-    #method equal &type'widechar:anOperand 
+    #method equal &widechar:anOperand 
         = $self equal &type'int:anOperand .
 
-    #method less &type'widechar:anOperand 
+    #method less &widechar:anOperand 
         = $self less &type'int:anOperand .
 
     #method equal &type'widestr:aLiteral
-        = aLiteral equal &type'widechar:$self.
+        = aLiteral equal &widechar:$self.
 
     #method Number = IntNumber new &type'int:theData.
 
-    #method Literal = system'external'CoreAPI convert &out'type'widestr:(system'LiteralValue new &type'length:1) &type'short:theData.
+    #method Literal = system'LiteralValue new &type'length:1 &widechar:$self.
 
     #method type'widestr => %Literal. 
 
-    #method <= &&type'widechar:$self.
+    #method <= &&widechar:$self.
 }
 
 // --- emptyliteralvalue ---
@@ -376,7 +385,7 @@
         = aLiteral.
 
     Literal => %type'widestr.
-   
+
     Length = 0.
    
     <= &&type'widestr:($self type'widestr).
@@ -411,6 +420,8 @@
 
     #method EOF = theIndex less &type'int:(theLiteral type'length) ? [ false ] ! [ true ].
     
+    #method Available = theIndex less &type'int:(theLiteral type'length).
+    
     #method next
     [
         theIndex append &type'int:1.
@@ -418,7 +429,12 @@
         ^ theIndex less &type'int:(theLiteral type'length).
     ]
     
-    #method get = theLiteral getAt &type'index:theIndex.
+    #method get
+    [
+        #var(type:short)aChar := theLiteral getAt &type'index:theIndex.
+        
+        ^ CharValue new &type'int:aChar.
+    ]
 }
 
 #class LiteralValue : BaseValue
@@ -434,22 +450,22 @@
         theData << aLiteral.
     ]
 
+    #constructor new &type'length:aSize &widechar:aChar
+        <ws_fill>.
+
     #constructor new &type'widestr:aLiteral
         <= new &type'length::aLiteral &type'widestr:aLiteral.
 
     #constructor new &type'length:aSize &type'widestr:aLiteral1 &type'widestr:aLiteral2
-    [ 
-        theData << aLiteral1.
-        theData += aLiteral2.
-    ]
+        <ws_concat>.
 
     #method type'widestr = $self.
 
     #method equal &type'widestr : aLiteral
         = theData == aLiteral.
 
-    #method equal &type'widechar : aChar
-        = theData == aChar.
+    #method equal &widechar : aChar
+        <= equal &type'widestr::aChar.
 
     #method less &type'widestr : aLiteral
         = theData < aLiteral.
@@ -461,45 +477,69 @@
         = $self add::aLiteral.
 
     #method add &type'widestr : aLiteral
-        = LiteralValue new &type'length:(theData type'length + aLiteral type'length) &type'widestr:theData &type'widestr:aLiteral.
+    [
+        #var(type:int)aLen := (theData type'length) + (aLiteral type'length).
+        
+        ^ LiteralValue new &type'length:aLen &type'widestr:theData &type'widestr:aLiteral.
+    ]
 
-    #method add &type'widechar : aChar
+    #method add &widechar : aChar
         = LiteralValue new &type'length:(theData type'length + 1) &type'widestr:theData &type'widestr::aChar.
 
     #method getAt : aParam
-        = $self getAt &type'index::aParam.
+    [
+        #var(type:short)aChar := $self getAt &type'index::aParam.
+        
+        ^ CharValue new &type'int:aChar.
+    ]
 
-    #method getAt &type'index:anIndex
-        = CharValue new &type'widechar:(theData @ anIndex | raise:(OutOfRangeException new:"An index is out of range")).
+    #method getAt &type'index:anIndex &out'type'short:aChar
+        <ws_getat>.
+
+    #method indexOf &type'index:anIndex &type'widestr:aLiteral &out'type'int:aRetVal
+        <ws_indexof>.
 
     #method indexOf &type'widestr:aLiteral
-        = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:0 &type'widestr:aLiteral).
-
+    [
+        #var(type:int)aRetVal := $self indexOf &type'index:0 &type'widestr:aLiteral.
+        
+        ^ IntNumber new &type'int:(aRetVal).
+    ]
+    
     #method indexOf &type'index:anIndex &type'widestr:aLiteral
-        = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:anIndex &type'widestr:aLiteral).
-
-    #method indexOf &type'index:anIndex &type'widechar:aChar
-        = IntNumber new &type'int:(system'external'CoreAPI find &type'widestr:theData &type'index:anIndex &type'short:aChar).
-
+    [
+        #var(type:int)aRetVal := $self indexOf &type'index:anIndex &type'widestr:aLiteral.
+        
+        ^ IntNumber new &type'int:(aRetVal).
+    ]
+    
+    #method indexOf &type'index:anIndex &widechar:aChar
+    [
+        #var(type:int)aRetVal := $self indexOf &type'index:anIndex &type'widestr::aChar.
+        
+        ^ IntNumber new &type'int:(aRetVal).
+     ]
+     
     #method insert &type'index:anIndex &type'widestr:aLiteral
-        = system'external'CoreAPI insert &type'widestr:theData &type'index:anIndex &type'widestr:aLiteral 
-            &out'type'widestr:(LiteralValue new &type'length:(theData type'length + aLiteral type'length)).
-            
+        = strOp insert &type'widestr:$self &type'index:anIndex &type'widestr:aLiteral.
+
     #method delete &type'index:anIndex &type'length:aLength
-        = system'external'CoreAPI delete &type'widestr:theData &type'index:anIndex &type'int:aLength
-            &out'type'widestr:(LiteralValue new &type'length:(theData type'length - aLength)).
+        = strOp delete &type'widestr:$self &type'index:anIndex &type'length:aLength.
 
     #method Substring &type'index:anIndex &type'length:aLength
-        = system'external'CoreAPI substring &type'widestr:$self &type'index:anIndex
-            &out'type'widestr:(LiteralValue new &type'length:aLength).
+        = strOp substring &type'widestr:$self &type'index:anIndex &type'length:aLength.
 
     #method Substring &type'index:anIndex
-        = system'external'CoreAPI substring &type'widestr:$self &type'index:anIndex
-            &out'type'widestr:(LiteralValue new &type'length:(theData type'length - anIndex)).
+        = strOp substring &type'widestr:$self &type'index:anIndex &type'length:(theData type'length - anIndex).
 
     #method Length <= type'length.
 
-    #method type'length = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'widestr:$self).
+    #method type'length
+    [
+        #var(type:int)aLength := theData type'length.
+        
+        ^ IntNumber new &type'int:(aLength).
+    ]
 
     #method Literal = $self.
 
@@ -877,7 +917,7 @@
         = $self getAt &type'index::anIndex.
 
     #method getAt &type'index:anIndex
-        = theItems @ anIndex | raise:(OutOfRangeException new:"An index is out of range").
+        <array_getat>.
 
     #method setAt:anIndex:anObject
     [
@@ -885,9 +925,7 @@
     ]
     
     #method setAt &type'index:anIndex &type'object:anObject
-    [
-        theItems @ anIndex << anObject | raise:(OutOfRangeException new:"An index is out of range").
-    ]
+        <array_setat>.
 
     #method add : anObject
         = $self add::anObject.
@@ -908,9 +946,14 @@
         ^ aRetVal.
     ]
 
-    #method type'length = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'object:$self).
+    #method type'length 
+    [
+        #var(type:int)aLen := arrayOp read &type'length:$self.
+        
+        ^ IntNumber new &type'int:aLen.
+    ]
 
-    #method Count = IntNumber new &type'int:(system'external'CoreAPI lengthOf &type'object:$self).
+    #method Count <= type'length.
 
     #method Enumerator = ArrayIterator new &type'array:$self.
 
@@ -927,13 +970,25 @@
 #class(role) ELiteralConvertor
 {
     #method read &type'int
-        = IntNumber new &type'int:(system'external'CoreAPI toInt &type'widestr::self | raise:(system'FormatException new:"An integer number is not in the correct format")).
+    [
+        #var(type:int)aRetVal := strOp convert &type'widestr::self.
         
+        ^ IntNumber new &type'int:aRetVal.
+    ]
+
     #method read &type'long
-        = LongNumber new &type'long:(system'external'CoreAPI toLong &type'widestr::self | raise:(system'FormatException new:"A long integer number is not in the correct format")).
+    [
+        #var(type:long)aRetVal := strOp convert &type'widestr::self.
         
+        ^ LongNumber new &type'long:aRetVal.
+    ]
+
     #method read &type'real
-        = RealNumber new &type'real:(system'external'CoreAPI toReal &type'widestr::self | raise:(system'FormatException new:"A real number is not in the correct format")).
+    [
+        #var(type:real)aRetVal := strOp convert &type'widestr::self.
+        
+        ^ RealNumber new &type'real:aRetVal.
+    ]
 }
 
 // --- EIntConvertor ---
@@ -1022,5 +1077,5 @@
     eval &type'real : anObject = %type'real.
     eval &type'long : anObject = %type'long.
     eval &type'widestr : anObject = %type'widestr.
-    eval &type'widechar : anObject = %type'widechar.
+    eval &widechar : anObject = %widechar.
 }.

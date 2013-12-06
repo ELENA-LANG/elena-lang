@@ -1,257 +1,61 @@
-1) ELENA API is a set of symbols
+Introduction
 
-   Symbol is a reference to an object / class
-   
-2) Message consists of a verb and a signature. The signature defines role / interface / type of the message operands . It consists of
-   message result subject (it can be omitted) and the operand ones
+ELENA is a general-purpose, object-oriented, polymorphic language with late binding. 
+It promotes more object-oriented program design, reusable and more standardized code. 
 
-3) Operator implementation
-   - an operator implements the appropriate action with its operands, if operands are unknown then the operator is replaced with the
-     appropriate generic message
+Namespaces
 
----
+Any ELENA program or library consists of modules (files with .NL extension) containing 
+classes and symbols. Every class or symbol may be referred by its namespace 
+(or to put it other way around a symbol namespace is a path to the symbol module). 
 
+All source files (files with .L extension) located in the same folder are compiled into 
+the corresponding module. A project file (a file with .PRJ extension) defines the root 
+namespace and the output type (stand-alone executable, VM executable or a library). 
+The project may produce several modules if it contains the files located in sub folders 
+(the new module namespace consists of the root one plus the folder relative path)
 
-1) The qualified subject is used to define the possible operation with the object ; the one starts with type define the primitive object -
-   pure data, the appropriate role is used to work with it
-   
-   Qualified subject garanetee the content by sending the appropriate subject to the object, if the object is unknown or simply passing it
-   if the object was already identified
 
-   alternatively can we use the appropriate role to work with the object ?? 
+Messaging
 
-   what about primitive one ? in this case the reference to the stack is passed
+As in the most of dynamic object-oriented languages the main way to interact with objects 
+in ELENA is sending a message. Unlike others the message name is structured and consists 
+of a verb, a signature and a parameter counter. The verb defines a message action, 
+for example read or write some data. There are only limited set of possible verbs (
+e.g. eval[uate], add, set, get, run, seek and so on). In general the signature is 
+user defined and describes the message parameters. It can be used to define some custom 
+action as well (e.g. writeLine, which in fact is eval&writeLine(1)). If the signature is 
+not provided the message is considered to be generic and can be qualified (for example 
+by dispatching).
 
+If the object wants to handle the message it has to contain the method with the same name. 
+If no method mapping was found the flow is considered to be broken and the control goes to 
+the next alternative flow (exception handler) or the program is stopped.
 
-1) Modules, namespaces
+The simple code to send a message looks like this:
 
-   every class / symbol has a namespace which defines the class location (the module name). The namespace may consist of several parts 
-   (separated by comma) - the module location in the file system 
+    console write:"Hello World".
 
-   private:
-      if the class / symbol starts with '$' symbol it is considered to be private (accessible only in its own module)    
-    
-2) Messages                                                                                           
+Note: "write" is a generic message; a literal constant is a parameter. 
 
-   Message consists of the signature(list of subjects + param count) and verb ; 
-   it is possible to change the message subject (dispatching, message invoking)
+Several messages can be send in one statement, the parameter itself may be result of 
+object interactions:
 
-3) Subjects
+    console write "2 + 2 =" write:(2 add:2).
 
-   Subjects defines the message parameter role: they could be generic, named and typed
-   
-   - generic:
-       it is not neccessary to name the message subjects ; in this case they considered to be named as &param
-  
-       e.g.  x add:y (- add&param) , action eval:x:y  (eval&param&param)
+We could use operators to have the shorter code:
 
-   - named
-       if the parameter should be implicitly named (e.g. to provide its role)
-       
-   - typed
-       if the parameter should have a namespace ; the typed subject should be explicitly declared in the coresponding module
-       
-   - primitives                          
-       (types'xxx) specifies the object "type", they should not be declared, but the list is limited to:
-       int, long, real, short, byte, widestr, bytearray, index, length, reference, widechar
-             
-4) Verbs
+    console << "2+2=" << 2 + 2.
 
-   - custom verb is replaced with the subject plus EVAL message, it can contain several parameters as well
+Note: In most cases "<<" is a synonym to "write" and "+" to "add".
 
-5) Class / Symbol Declarations / Primitive Types / Inline classes / Inline actions (both generic and named) / Messages / Signatures
+Several parameters can be passed in the message as well:
 
-   Class - may have parent or inherit super object system'Object ; could be static or dynamic; "structure", "fieldset" or stateless
+    control foreach: (1,2,3) &do:printingLn.
 
-   Symbol - saved expression (class name is either class class reference or stateless constant)
+Ampersand is used to indicate that the signature has several arguments (subjects). The actual 
+message name is eval&foreach&do(2).
 
-   Primitive - there are several built-in "structure" classes - int, long, real, widechar, wideliteral
+The generic message can have several parameters as well:
 
-   Inline / Nested classes - may have only stateless parent, always define the object
-
-        { add &param:n [ ... ] subtract &param:n [ ... ] }
-
-        MyStateless { add &param:n [ ... ] subtract &param:n [ ... ] }
-
-   
-   Inline Actions: the one method nested class, cannot have a parent
-
-      &&x:x &y:y [ ... ] - named parameter list
-
-      &&x &y [ ... ] unnamed parameter list - <=> &&param:x &param:y
-      
-    Inline Array
-       MyArray ( n1, n2, ... ) 
-
-    Inline Constructor
-       MyInteger [ $self new &type'int:0 ].
-   
-
-     
-6) Constructors
-    constructors are in fact class class methods
-    
-    - "normal": a constructor code automatically creates the object instance (calling default constructor) before executing
-       the constructor code
-
-    - stateless : cannot have a constructor
-    
-    - dynamic : first parameter should always be type'length
-
-7) Methods
-     - code block
-     - ret expression
-
-8) Generic handler / Horizontal inheritance (old annex and union)
-
-     - old annex : #method => expression - redirects to another object (self points to the same object)
-     
-     - old union   : #method => [ ... ] - resend the incoming message to the result of expression, (self and $self points to the result)
-     
-9) Generic dispatching
-     - change signature and send back
-     - change message and send back
-
-12) Interactions
-
-13) Operations
-
-   - normal operator: operators invoke verb handlers 
-
-   - primitive: if both operands are known the operation is replaced with direct code
-
-   - branching
-
-        a == b ? [ .. ]  ! [ .. ]
-
-   - looping
-   
-       [ a > 0 ] run:[ a -= 1 ]
-
-       [ a == 10 ] runUntil:[ a += 1 ]
-
-       MyList~EEnumerable run &each:&&x [ 'program'Output << x ]
-
-       MyIndexer~EIndexable set &each:&&x [ Real new::x ]
-
-       Action dispatch method should redirect to param
-
-
-   - arithmetic
-   - logic
-      (a == 2) and:(b == 2)
-      (a == 2) and: [b == 2]
-
-   - property operation
-        loperand Prop <operator> roperand
-        
-   - index operation
-
-        loperand @ index <operator> roperand
-
-
-         a@2 << b
-   
-14) Dispatching
-   - explicit
-   - implicit
-
-15) Message invoking
-
-     obj ~ einvoker eval:message
-
-
-16) Exception handling
-
-     -  #throw obj
-
-     - a message | onError:[]     
-
-17) Roles
-
-    - obj ~ role message
-
-
-18) Reflection / Dynamic programmings
-
-19) Group objects
-
-
-Patterns:
- - Property implementation
-
-   #class Indexer
-   {
-
-      #method get &Index = theIndex.
-
-      #method set &Index:anIndex
-      [
-         theIndex := anIndex.
-      ]
-   }
-    
-  a) MyIndexer Index := MyIndexer Index + 1.
-
-- Scan indexer
-
-  anArray Indexer ~ EIterator setEach: &&index [ index clone ]
-  
-- Constructors
-
-   MyInteger
-
-
-   #class MyInteger : Integer
-   {
-      #constuctor new &type'int:anInteger
-      [
-          $self << anInteger.
-      ]
-   }
-
-   #class Array
-   {
-      #constructor new &type'length:aLength
-      [
-      ]
-                                   
-      #constructor new &type'length:aLength &forEach:anAction
-      [
-         #var anArray := $self new &type'length:aCount.
-
-         anArray Indexer ~ EIterator set &each:anAction.
-
-          ^ anArray.
-      ]
-   }
-
-- Operators / dispatching
-
-     a == b  => a equal:b
-
-     #class MyInteger
-     {      	
-        #method equal => %equal
-
-        #method <= &type'int:$self
-     }
-
-- Loops
-
-   while loop:
-
-   - [ a += 1 ] eval &while:[ a < 10 ]
-
-   - [ a += 1 ] while:[ a < 10 ]
-   - [ a += 1 ] until:[ a < 10 ]
-   
-   - break implementation
-
-- Boolean operation
-
-   do &if &else
-
-   do &else
-
-   a == true
+    consoleEx writeLine:”a+b=”: (a + b).

@@ -35,7 +35,7 @@
         $self append::aLine.
     ]
     
-    #method append &type'widechar:aChar
+    #method append &widechar:aChar
     [
         $self append &type'widestr:(aChar Literal).
     ]
@@ -62,7 +62,7 @@
 
     ]
 
-    #method indexOf &type'index:aPosition &type'widechar:aChar
+    #method indexOf &type'index:aPosition &widechar:aChar
     [
         #var anIndex := theBuffer indexOf &type'index:(2 * aPosition) &type'short:aChar.
         
@@ -83,7 +83,7 @@
                 
                 theBuffer type'bytearray read &type'index:(anIndex * 2) &type'length:(aLength * 2) &type'bytearray:aLiteral.
                 
-                system'external'CoreAPI refresh &type'widestr:aLiteral.
+                strOp refresh &type'widestr:aLiteral.
                 
                 ^ aLiteral.        
             ].

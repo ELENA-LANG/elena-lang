@@ -18,6 +18,11 @@
 
 #class FormatException : Exception
 {
+    #constructor new
+    [
+        theMessage := "A number is not in the correct format".
+    ]    
+    
     #method onFormatError : aHandler    
     [
         aHandler eval:$self.
@@ -28,6 +33,11 @@
 
 #class OutOfRangeException : Exception
 {
+    #constructor new
+    [
+        theMessage := "An index is out of range".
+    ]    
+    
     #method onOutOfRangeError : aHandler    
     [
         aHandler eval:$self.
@@ -38,6 +48,11 @@
 
 #class InvalidArgumentException : Exception
 {
+    #constructor new
+    [
+        theMessage := "Invalid argument".
+    ]    
+    
     #method onInvalidArgumentError : aHandler    
     [
         aHandler eval:$self.

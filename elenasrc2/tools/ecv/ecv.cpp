@@ -291,6 +291,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    else if (verb == DISPATCH_MESSAGE_ID) {
       command.append(_T("dispatch"));
    }
+   else if (verb == NEWOBJECT_MESSAGE_ID) {
+      command.append(_T("new[0]"));
+   }
    else {
       const wchar16_t* verbName = retrieveKey(_verbs.start(), verb, (const wchar16_t*)NULL);
       command.append(verbName);
@@ -356,76 +359,85 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 
    switch(code)
    {
-      case bcPushFPI:
-      case bcXPushFPI:
-      case bcCopyFPI:
-      case bcXAccCopyFPI:
-      case bcAccCopyFPI:
+      //case bcPushFPI:
+      case bcXPushF:
+      case bcSCopyF:
+      case bcAXCopyF:
+      //case bcAccCopyFPI:
          command.append(opcode);
          command.append(_T(" fp:"));
          command.appendHex(argument);
          break;
-      case bcPushSPI:
+      case bcACopyS:
          command.append(opcode);
          command.append(_T(" sp:"));
          command.appendHex(argument);
          break;
-      case bcElse:
-      case bcThen:
-      case bcMccElseAcc:
-      case bcMccThenAcc:
+      case bcAElse:
+      case bcAThen:
+      //case bcMccElseAcc:
+      //case bcMccThenAcc:
       case bcJump:
       //case bcElseLocal:
          command.append(opcode);
          command.append(_T(' '));
          printLabel(command, position + argument + 5, labels);
          break;
-      case bcMccElse:
-      case bcMccThen:
+      case bcMElse:
+      case bcMThen:
          command.append(opcode);
          command.append(_T(' '));
          printMessage(command, module, argument);
          command.append(_T(' '));
          printLabel(command, position + argument2 + 9, labels);
          break;
-      case bcElseR:
-      case bcThenR:
+      //case bcElseR:
+      //case bcThenR:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   printReference(command, module, argument);
+      //   command.append(_T(' '));
+      //   printLabel(command, position + argument2 + 9, labels);
+      //   break;
+      //case bcThenFlag:
+      //case bcElseFlag:
+      ////case bcElseN:
+      ////case bcThenN:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   command.appendHex(argument);
+      //   command.append(_T(' '));
+      //   printLabel(command, position + argument2 + 9, labels);
+      //   break;
+      //case bcMccElseAccI:
+      //case bcMccThenAccI:
+      //   command.append(opcode);
+      //   command.append(_T(' acc['));
+      //   command.appendHex(argument);
+      //   command.append(_T('] '));
+      //   printLabel(command, position + argument2 + 9, labels);
+      //   break;
+      case bcAElseR:
+      case bcAThenR:
          command.append(opcode);
          command.append(_T(' '));
          printReference(command, module, argument);
          command.append(_T(' '));
          printLabel(command, position + argument2 + 9, labels);
          break;
-      case bcThenFlag:
-      case bcElseFlag:
-      //case bcElseN:
-      //case bcThenN:
-         command.append(opcode);
-         command.append(_T(' '));
-         command.appendHex(argument);
-         command.append(_T(' '));
-         printLabel(command, position + argument2 + 9, labels);
          break;
-      case bcMccElseAccI:
-      case bcMccThenAccI:
-         command.append(opcode);
-         command.append(_T(' acc['));
-         command.appendHex(argument);
-         command.append(_T('] '));
-         printLabel(command, position + argument2 + 9, labels);
-         break;
-      case bcElseSI:
-      case bcThenSI:
-      //case bcMccElseSI:
-      //case bcMccThenSI:
-      //case bcMccVerbElseSI:
-      //case bcMccVerbThenSI:
-         command.append(opcode);
-         command.append(_T(" sp["));
-         command.appendInt(argument);
-         command.append(_T("] "));
-         printLabel(command, position + argument2 + 9, labels);
-         break;
+      //case bcElseSI:
+      //case bcThenSI:
+      ////case bcMccElseSI:
+      ////case bcMccThenSI:
+      ////case bcMccVerbElseSI:
+      ////case bcMccVerbThenSI:
+      //   command.append(opcode);
+      //   command.append(_T(" sp["));
+      //   command.appendInt(argument);
+      //   command.append(_T("] "));
+      //   printLabel(command, position + argument2 + 9, labels);
+      //   break;
       case bcNop:
          printLabel(command, position + argument, labels);
          command.append(_T(':'));
@@ -433,171 +445,183 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(opcode);
          break;
       case bcPushR:
-      case bcAccLoadR:
+      case bcALoadR:
       case bcCallExtR:
       case bcEvalR:
-      case bcCallR:
-      //case bcSendVMTR:
-      case bcAccSaveR:
-      case bcAccCopyR:
-      //case bcAccTryR:
-      //case bcAccMergeR:
-      //case bcJumpR:
+      //case bcCallR:
+      ////case bcSendVMTR:
+      case bcASaveR:
+      case bcACopyR:
+      ////case bcAccTryR:
+      ////case bcAccMergeR:
+      ////case bcJumpR:
          command.append(opcode);
          command.append(_T(' '));
          printReference(command, module, argument);
          break;
       case bcReserve:
-      case bcPushN:
-      case bcPopN:
+      case bcRestore:
+      //case bcPushN:
+      case bcPopI:
       case bcOpen:
       case bcQuitN:
-      case bcAccCreate:
-      //case bcAccTestFlagN:
-      //case bcAccCopyN:
-      case bcAccAddN:
-      case bcGetLen:
-      //case bcAccTryN:
-      //case bcSelfShiftI:
-      //case bcAccShiftI:
-      //case bcTryLock:
-      //case bcFreeLock:
-      //case bcSPTryLock:
-      //case bcAccFreeLock:
-      case bcJumpAccN:
+      //case bcAccCreate:
+      ////case bcAccTestFlagN:
+      ////case bcAccCopyN:
+      //case bcAccAddN:
+      //case bcGetLen:
+      ////case bcAccTryN:
+      ////case bcSelfShiftI:
+      ////case bcAccShiftI:
+      ////case bcTryLock:
+      ////case bcFreeLock:
+      ////case bcSPTryLock:
+      ////case bcAccFreeLock:
+      //case bcJumpAccN:
          command.append(opcode);
          command.append(_T(' '));
          command.appendHex(argument);
          break;
-      //case bcAccInc:
-      case bcPushI:
-         command.append(opcode);
-         command.append(_T(' '));
-         command.appendHex(argument);
-         break;
-      case bcPushSI:
-      case bcAccLoadSI:
-      case bcAccSaveSI:
-      case bcSwapSI:
-      case bcPopSI:
-      case bcMccCopySI:
-      case bcIncSI:
-      case bcAccSwapSI:
+      ////case bcAccInc:
+      //case bcPushI:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   command.appendHex(argument);
+      //   break;
+      //case bcPushSI:
+      case bcALoadSI:
+      case bcASaveSI:
+      //case bcSwapSI:
+      //case bcPopSI:
+      //case bcMccCopySI:
+      //case bcIncSI:
+      //case bcAccSwapSI:
          command.append(opcode);
          command.append(_T(" sp["));
          command.appendInt(argument);
          command.append(_T(']'));
          break;
-      case bcAccGetSI:
-         command.append(opcode);
-         command.append(_T(" acc[sp["));
-         command.appendInt(argument);
-         command.append(_T("]]"));
-         break;
-      case bcAccGetFI:
-         command.append(opcode);
-         command.append(_T(" acc[fp["));
-         command.appendInt(argument);
-         command.append(_T("]]"));
-         break;
+      //case bcAccGetSI:
+      //   command.append(opcode);
+      //   command.append(_T(" acc[sp["));
+      //   command.appendInt(argument);
+      //   command.append(_T("]]"));
+      //   break;
+      //case bcAccGetFI:
+      //   command.append(opcode);
+      //   command.append(_T(" acc[fp["));
+      //   command.appendInt(argument);
+      //   command.append(_T("]]"));
+      //   break;
       case bcPushFI:
-      case bcAccLoadFI:
-      case bcPopFI:
-      case bcIncFI:
-      case bcAccSaveFI:
-      case bcMccCopyFI:
-      case bcMccCopyPrmFI:
-      case bcXAccSaveFI:
+      case bcALoadFI:
+      //case bcPopFI:
+      //case bcIncFI:
+      case bcASaveFI:
+      //case bcMccCopyFI:
+      //case bcMccCopyPrmFI:
+      //case bcXAccSaveFI:
          command.append(opcode);
          command.append(_T(" fp["));
          command.appendInt(argument);
          command.append(_T(']'));
          break;
-      case bcCallAcc:
+      case bcACallVI:
          command.append(opcode);
          command.append(_T(" acc::vmt["));
          command.appendInt(argument);
          command.append(_T(']'));
          break;
-      //case bcPushAccI:
-      //case bcPopAccI:
-      //case bcPop2AccI:
-      case bcAccLoadAccI:
-      case bcMccCopyAccI:
-      case bcMccAddAccI:
+      case bcPushAI:
+      ////case bcPopAccI:
+      case bcXPopAI:
+      ////case bcPop2AccI:
+      //case bcAccLoadAccI:
+      //case bcMccCopyAccI:
+      //case bcMccAddAccI:
+      case bcDSaveAI:
          command.append(opcode);
          command.append(_T(" acc["));
          command.appendInt(argument);
          command.append(_T(']'));
          break;
-      case bcPushSelfI:
-      case bcPopSelfI:
-      case bcAccSaveSelfI:
-      //case bcAccLoadSelfI:
+      //case bcPushSelfI:
+      //case bcPopSelfI:
+      case bcASaveBI:
+      ////case bcAccLoadSelfI:
          command.append(opcode);
          command.append(_T(" self["));
          command.appendInt(argument);
          command.append(_T(']'));
          break;
-      //case bcIAccCopyN:
+      ////case bcIAccCopyN:
+      ////   command.append(opcode);
+      ////   command.append(_T(" acc["));
+      ////   command.appendInt(argument);
+      ////   command.append(_T("], "));
+      ////   command.appendHex(argument2);
+      ////   break;
+      //case bcIAccCopyR:
       //   command.append(opcode);
       //   command.append(_T(" acc["));
       //   command.appendInt(argument);
       //   command.append(_T("], "));
-      //   command.appendHex(argument2);
+      //   printReference(command, module, argument2);
       //   break;
-      case bcIAccCopyR:
-         command.append(opcode);
-         command.append(_T(" acc["));
-         command.appendInt(argument);
-         command.append(_T("], "));
-         printReference(command, module, argument2);
-         break;
-      case bcIAccFillR:
-         command.append(opcode);
-         command.append(_T(' '));
-         command.appendInt(argument);
-         command.append(_T(", "));
-         printReference(command, module, argument2);
-         break;
-      case bcCreate:
-      case bcCreateN:
-      case bcAccCreateN:
-      case bcAccBoxN:
-         command.append(opcode);
-         command.append(_T(' '));
-         command.appendInt(argument);
-         command.append(_T(", "));
-         printReference(command, module, argument2);
-         break;
-      case bcRCallM:
+      //case bcIAccFillR:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   command.appendInt(argument);
+      //   command.append(_T(", "));
+      //   printReference(command, module, argument2);
+      //   break;
+      //case bcCreate:
+      //case bcCreateN:
+      //case bcAccCreateN:
+      //case bcAccBoxN:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   command.appendInt(argument);
+      //   command.append(_T(", "));
+      //   printReference(command, module, argument2);
+      //   break;
+      case bcXCallRM:
          command.append(opcode);
          command.append(_T(' '));
          printReference(command, module, argument);
          command.append(_T(", "));
          printMessage(command, module, argument2);
          break;
-      case bcRCallN:
-         command.append(opcode);
-         command.append(_T(' '));
-         printReference(command, module, argument);
-         command.append(_T(", "));
-         command.appendInt(argument2);
-         break;
-      //case bcAccCopyM:
-      case bcMccCopyM:
-      case bcXMccCopyM:
-      case bcMccAddM:
+      //case bcRCallN:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   printReference(command, module, argument);
+      //   command.append(_T(", "));
+      //   command.appendInt(argument2);
+      //   break;
+      ////case bcAccCopyM:
+      case bcMCopy:
+      //case bcXMccCopyM:
+      //case bcMccAddM:
          command.append(opcode);
          command.append(_T(' '));
          printMessage(command, module, argument);
          break;
-      case bcCallSI:
+      case bcSCallVI:
          command.append(opcode);
-         command.append(_T(' '));
+         command.append(_T(" sp["));
          command.appendInt(argument);
-         command.append(_T(", "));
+         command.append(_T("]::vmt["));
          command.appendInt(argument2);
+         command.append(_T("]"));
+         break;
+      case bcNFunc:
+      case bcLFunc:
+      case bcRFunc:
+      case bcWSFunc:
+         command.append(opcode);
+         ByteCodeCompiler::decodeFunction((FunctionCode)argument, opcode);
+         command.append(opcode);
          break;
       default:
          command.append(opcode);

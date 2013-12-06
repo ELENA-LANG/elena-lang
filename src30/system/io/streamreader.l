@@ -22,7 +22,7 @@
         
         theStream read &type'bytearray:aLiteral &type'length:(aLength * 2).
         
-        system'external'CoreAPI refresh &type'widestr:aLiteral.
+        strOp refresh &type'widestr:aLiteral.
         
         ^ aLiteral.
     ]
@@ -38,7 +38,7 @@
         
         self read &type'bytearray:aLiteral &type'length:(aLength * 2).
         
-        system'external'CoreAPI refresh &type'widestr:aLiteral.
+        strOp refresh &type'widestr:aLiteral.
         
         ^ aLiteral.
     ]

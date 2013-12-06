@@ -7,12 +7,17 @@
     #field(type:long)theData.
     
     #constructor new
-    [
-        system'external'CoreAPI rnd_init &type'long:$self.
-    ]
-    
+        <rnd_init>.
+
+    #method eval &type'int:aMaxValue &type'out:aRetVal
+        <rnd_next>.
+
     #method eval : aMaxValue
-        = IntNumber new &type'int:(system'external'CoreAPI rnd_next &type'long:$self &type'int::aMaxValue).
+    [
+        #var(type:int)aNextValue := $self eval &type'int::aMaxValue.
+        
+        ^ IntNumber new &type'int:aNextValue.
+    ]
 }
 
 // --- randomGenerator ---

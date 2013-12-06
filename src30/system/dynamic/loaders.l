@@ -11,7 +11,7 @@
 {
     #field(type:int)theMessage.
     
-    #method => #inline handle_message.
+    #method => <handle_message>.
 }
 
 // --- Signature ---
@@ -20,7 +20,7 @@
 {
     #field(type:int)theSignature.
     
-    #method => #inline qualify_message.
+    #method => <qualify_message>.
 }
 
 // --- GetProperty ---
@@ -30,5 +30,5 @@
     #field theSubject.
     #field theContent.
     
-    #method => #inline get_property.
+    #method => <get_property>.
 }

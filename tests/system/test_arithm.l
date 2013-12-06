@@ -1,20 +1,61 @@
 #define system.
 //#define system'dynamic.
 #define system'collections.
-#define extensions'text.
-#define extensions'math.
+//#define extensions'text.
+//#define extensions'math.
 
-#class XTester
+//// --- OpenArgTest ---
+//
+//#class OpenArgTester
+//{
+//    #method testBoxing : anArray
+//    [
+//    ]
+//    
+//    #method test :: aParams
+//    [
+//        #var aLength := aParams type'length.
+//        
+//        #var aSecond := aParams@1.
+//        
+//        $self testBoxing:aParams.
+//    ]
+//}
+//
+//#symbol OpenArgTest =
+//[
+//    OpenArgTester test &:1:"a":3.
+//].
+//
+//#class XTester
+//{
+//    #method set:aField:aField2
+//    [
+//        ^ aField.
+//    ]
+//}
+
+#class Test
 {
-    #method set:aField:aField2
+    #method delete &type'index:anIndex &type'length:aLength
     [
-        ^ aField.
+        (anIndex == 0)
+            ? [
+                #var aRightLiteral := $self read &type'index:aLength.
+                
+                $self clear append &type'widestr:aRightLiteral.
+            ]
+            ! [
+                #var aLeftLiteral := $self read &type'index:0 &type'length:anIndex.
+                #var aRightLiteral := $self read &type'index:(anIndex + aLength).
+                
+                $self clear append &type'widestr:aLeftLiteral append &type'widestr:aRightLiteral.                
+            ].
     ]
 }
 
 #symbol XTest =
-[
-    #var msg := %(get(2)).
+[    
 ].
 
 // --- MultiDispatchTest ---
@@ -67,23 +108,6 @@
     
     #var o := n.
     #var o2 := l.
-].
-
-// --- OpenArgTest ---
-
-#class OpenArgTester
-{
-    #method test : aParam &:aParams
-    [
-        #var aLength := aParams type'length.
-        
-        #var aSecond := aParams@1.
-    ]
-}
-
-#symbol OpenArgTest =
-[
-    OpenArgTester test:2 &:(1,"a",3).
 ].
 
 // --- OuterFieldTest ---
@@ -295,6 +319,12 @@
 [
     console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
     console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
+    console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).
+    console write:"(12345679 != 12345678) is " writeLine:(12345678l != 12345679l).
+    console write:"(12345678l < 3) is " writeLine:(12345678l < 3l).
+    console write:"(12345678l > 12345679l) is " writeLine:(12345678l > 12345679l).
+    console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
+    console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
     
     #var n := Long new write::1l.
     n += 2l.
@@ -352,6 +382,8 @@
 [
     #var n := extensions'convertControl toInt:"23".
     #var l := extensions'convertControl toLong:"1234567890123456".
+    #var nn := extensions'convertControl toInt:"-123".
+    #var ll := extensions'convertControl toLong:"-1234567890123456".
 ].
 
 // --- LiteralTest ---
@@ -367,18 +399,18 @@
     #var ll := l Length.
     #var c := (l@2) Literal.
 
-    #var a := l~ELiteralOp Array.
-            
-    system'control foreach:"abc" &do: &&:ch [ console write:ch ].
-    
-    console writeLine.
+//    #var a := l~ELiteralOp Array.
+//            
+//    system'control foreach:"abc" &do: &&:ch [ console write:ch ].
+//    
+//    console writeLine.
     
     #var n := "abcd" indexOf &type'index:0 &type'widestr:"bc".
     #var n2 := "abcd" indexOf &type'index:0 &type'widestr:"bac".
     
     #var s := "acd" insert &type'index:1 &type'widestr:"b".
     #var ls := s Length.
-    
+
     #var s2 := "abbcd" delete &type'index:1 &type'length:1.
     #var ls2 := s2 Length.
     
@@ -401,18 +433,18 @@
     #var a1 := Array(1,2,3).
     #var n := a1 @ 1.
 
+    #var a4 := Array new &type'length:3.
+    a4 setAt:0:2.
+    a4 setAt:1:1.
+    a4 setAt:2:3.
+    
     #var a2 := Array new &type'length:5 &function: &&:x [ Integer new:x ].
     #var n2 := a2 @ 1.
     a2 setAt:1:-1.
     #var n3 := a2 @ 1.
     
-    #var a4 := Array new &type'length:3.
+    a2 setAt:0:2.
     
-    a4@0 << 2.
-    
-    a4 setAt:0:2.
-    a4 setAt:1:1.
-    a4 setAt:2:3.
     
     a4~EArray sort: &&:aFormer:aNext [ aFormer < aNext ].
     
