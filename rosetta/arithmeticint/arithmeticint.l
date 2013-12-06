@@ -1,6 +1,5 @@
 #define system.
 #define extensions'io.
-#define extensions'math.
 
 // --- Program ---
 
@@ -13,5 +12,5 @@
     consoleEx << a << " - " << b << " = " << a - b << "%n".
     consoleEx << a << " * " << b << " = " << a * b << "%n".
     consoleEx << a << " / " << b << " = " << a / b << "%n". // truncates towards 0
-    consoleEx << a << " %% " << b << " = " << (modulus:a:b) << "%n". // matches sign of first operand
+    consoleEx << a << " %% " << b << " = " << (a~EIntNumber mod:b) << "%n". // matches sign of first operand
 ].

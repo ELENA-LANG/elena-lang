@@ -362,15 +362,17 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
 
 void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset, ref_t nilReference)
 {
-   // aloadsi offs
-   // dloadai 0
-   // acopyr vmt
-   // bscreate
+   //   aloadsi offs
+   //   dloadai 0
+   //   acopyr vmt
+   //   bscreate
 
+   //   delse labEnd
    // labNext:
    //   ddec
    //   axsetr r
    //   dthen labNext
+   // labEnd:
 
    tape.write(bcALoadSI, sizeOffset);
    tape.write(bcDLoadAI);
@@ -378,10 +380,14 @@ void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference, int 
    tape.write(bcFunc, fnCreate);
 
    tape.newLabel();
+   tape.newLabel();
+   tape.write(bcDElse, baPreviousLabel);
    tape.setLabel(true);
    tape.write(bcDDec);
    tape.write(bcAXSetR, nilReference | mskConstantRef);
    tape.write(bcDThen, baCurrentLabel);
+   tape.releaseLabel();
+   tape.setLabel();
 }
 
 void ByteCodeWriter :: newByteArray(CommandTape& tape, ref_t reference, int sizeOffset)

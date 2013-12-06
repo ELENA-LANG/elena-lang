@@ -6,7 +6,7 @@
     console write:x write:" and " write:y write:" = " writeLine:(x and:y).
     console write:x write:" or " write:y write:" = " writeLine:(x or:y).
     console write:x write:" xor " write:y write:" = " writeLine:(x xor:y).
-    console write:"not " write:x write:" = " writeLine:(x Inverted).
+    console write:"not " write:x write:" = " writeLine:(x not).
     console write:x write:" shr " write:y write:" = " writeLine:(x shift:y).
     console write:x write:" shl " write:y write:" = " writeLine:(x shift:(y Negative)).
 ].

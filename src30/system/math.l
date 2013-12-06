@@ -1,11 +1,5 @@
 // --- Operations ---
 
-//#class(role)EMathOp
-//{
-//    #method mod : anOperand
-//        = self - (self / anOperand * anOperand).
-//}
-
 #symbol mathOp =
 {
     Exp &type'real:aValue &out'type'real:aRetVal
@@ -20,7 +14,13 @@
     Round &type'real:aValue &out'type'real:aRetVal
         <r_round>.
 }.
-            
+
+#class(role)EIntNumber
+{
+    #method mod : anOperand
+        = self - (self / anOperand * anOperand).
+}
+                                    
 #class(role)EReal
 {
     #method Exp

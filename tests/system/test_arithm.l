@@ -37,8 +37,7 @@
 
 #symbol XTest =
 [    
-    #var c := CharValue new &type'int:43.
-    #var l := LiteralValue new &type'length:1 &widechar:c.
+    #var a := Array new &type'length:0.
 ].
 
 // --- MultiDispatchTest ---

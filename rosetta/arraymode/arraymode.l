@@ -9,7 +9,7 @@
     #var aCountMap := Dictionary new &default:0.
     control foreach:anArray &do: &&:anItem
     [
-        aCountMap @ anItem << ((aCountMap @ anItem) + 1).
+        aCountMap setAt:anItem:(aCountMap@anItem + 1).
     ].
 
     listControl sort:aCountMap &with: &&:p:n

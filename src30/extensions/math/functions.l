@@ -3,9 +3,6 @@
 
 // --- Functions ---
 
-//#symbol modulus = &&:x:y
-//    [ (extensions'realValue:x)~EMathOp mod:y ].
-
 #symbol exp = &&:x
     [ (realValue:x)~EReal Exp ].
 

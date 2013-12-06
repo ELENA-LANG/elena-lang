@@ -21,13 +21,8 @@ v  - vm script
 Currently:
 ------
               xdev - migration
-                        * test rosetta samples
-                        
                         * migrate ereflector, tapeControl, ... 
                         
-                        * migrate system, get rid of CoreAPI
-                        * migrate extensions
-
                         * migrate serializer, interpreter, matrix, random, literalConvertor                                                
                         
                         * migrate tape_test code
@@ -39,7 +34,6 @@ Currently:
                         * compilePrimitiveOperator
                         
               xdev - redesign                                                                             
-                        * test brackets sample, update the rosetta code
 
                         * instead of assignLocalObject - popObject(okRegisterField,... should be used
                         * replace assignIntParam with - declarePrimitiveVariable, loadObject(okLocal, popObject(okRegisterField
