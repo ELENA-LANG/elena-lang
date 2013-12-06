@@ -11,9 +11,10 @@ ELENA:
 [!] binary incompatible due to changes in ecodes
 [!] ecodes overhaul
 [!] indexer operator syntax modified
-[!] primitive operation overhaul
 
 [LIB]
+[-] CRITICAL BUG: fixed bug in GC algorithm
+[!] primitive operation overhaul
 [+] system'dynamic: Class, Struct, tapeControl
 
 ******************************************************************************

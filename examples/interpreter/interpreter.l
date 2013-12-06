@@ -97,6 +97,8 @@
     
     #method run
     [
+        #var s := 2.
+        
         control while:[0 < theTape get ] &do:
             [ interpreter'Interpreter new:(theTape type'tape) eval:theLoopBody. ].
             

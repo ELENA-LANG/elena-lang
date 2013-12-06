@@ -712,8 +712,20 @@ labYGPromMinCopy:
   pop  esi
   pop  ecx
   jmp  labYGPromMinNext
-
+  
 labYGPromMinContinue:
+  // ; bad luck, the referred object cannot be promoted
+  // ; we have to mark in WB card
+  push ecx
+  mov  ecx, [esp+8]
+  // ; get the promoted object (the referree object) address
+  mov  ecx, [ecx]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+  shr  ecx, page_size_order
+  add  ecx, [data : %CORE_GC_TABLE + gc_header]
+  mov  byte ptr [ecx], 1  
+  pop  ecx
+
   // ; update reference
   mov  edi, [eax - elVMTOffset]
   mov  [esi], edi

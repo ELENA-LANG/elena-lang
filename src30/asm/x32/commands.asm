@@ -105,11 +105,11 @@ inline % 19h
    shl  ebx, 2
     
    // ; calculate write-barrier address
-   mov  esi, edi
-   sub  esi, [data : %CORE_GC_TABLE + gc_start]
+   mov  ecx, edi
+   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
    mov  edx, [data : %CORE_GC_TABLE + gc_header]
-   shr  esi, page_size_order
-   mov  byte ptr [esi + edx], 1  
+   shr  ecx, page_size_order
+   mov  byte ptr [ecx + edx], 1  
    mov  [edi + ebx], eax
 lEnd:
 
@@ -907,16 +907,16 @@ end
 // ; ldiv
 inline % 02016h
                
-  mov  ebx, eax        // DVSR
-  mov  esi, [esp]      // DVND
+  mov  ebx, [esp]    // ; DVSR
+  mov  esi, eax      // ; DVND
 
   push eax
   push edi
 
-  push [esi+4]    // DVND hi dword
-  push [esi]      // DVND lo dword
-  push [ebx+4]    // DVSR hi dword
-  push [ebx]      // DVSR lo dword
+  push [esi+4]    // ; DVND hi dword
+  push [esi]      // ; DVND lo dword
+  push [ebx+4]    // ; DVSR hi dword
+  push [ebx]      // ; DVSR lo dword
 
   xor  edi, edi
 

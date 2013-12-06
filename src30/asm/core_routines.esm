@@ -260,6 +260,14 @@ procedure inline'ws_fill
   pushb
   bcopya
   wsgetlen
+
+  // ; set zero at the end
+  pushn 0
+  acopys 0
+  wssetat
+  pop
+
+  // ; fill the literal 
   aloadsi 4
 
 labNext:

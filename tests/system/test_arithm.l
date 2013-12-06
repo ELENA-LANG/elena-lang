@@ -35,27 +35,10 @@
 //    ]
 //}
 
-#class Test
-{
-    #method delete &type'index:anIndex &type'length:aLength
-    [
-        (anIndex == 0)
-            ? [
-                #var aRightLiteral := $self read &type'index:aLength.
-                
-                $self clear append &type'widestr:aRightLiteral.
-            ]
-            ! [
-                #var aLeftLiteral := $self read &type'index:0 &type'length:anIndex.
-                #var aRightLiteral := $self read &type'index:(anIndex + aLength).
-                
-                $self clear append &type'widestr:aLeftLiteral append &type'widestr:aRightLiteral.                
-            ].
-    ]
-}
-
 #symbol XTest =
 [    
+    #var c := CharValue new &type'int:43.
+    #var l := LiteralValue new &type'length:1 &widechar:c.
 ].
 
 // --- MultiDispatchTest ---
@@ -316,7 +299,9 @@
 // --- LongArithmeticTest ---
 
 #symbol LongTest =
-[
+[    
+    #var l := 100000000000000l / 5000000000000l.
+    
     console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
     console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
     console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).

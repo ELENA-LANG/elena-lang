@@ -21,7 +21,6 @@ v  - vm script
 Currently:
 ------
               xdev - migration
-                        * test samples : goods, textdb, datetime, pi, matrix, interpreter
                         * test rosetta samples
                         
                         * migrate ereflector, tapeControl, ... 
@@ -361,6 +360,7 @@ week2:
                        * update amb sample on rosetta code site
 
               adev - lib30
+                       * LiteralValue: comparing with widechar should be done without creating a new literal
                        * LiteralValue: concatenation, probably we need to get rid of concatinating constructor and use strOp for this?
                        * LiteralValue: compare with char without creating a new char?
                        * test str to real conversion (add to conversiontest)
