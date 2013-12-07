@@ -151,16 +151,16 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcPop:
       //case bcWriteAcc:
       case bcPushM:
-      //case bcMccCopyVerb:
+      case bcMCopyVerb:
       case bcThrow:
       case bcMCopySubj:
       case bcPushA:
       case bcPopA:
       case bcACopyB:
       case bcBCopyA:
-      //case bcPopMcc:
+      case bcPopM:
       case bcBSRedirect:
-      //case bcClose:
+      case bcClose:
       case bcPopB:
       case bcMQuit:
       //case bcJumpAcc:
@@ -174,6 +174,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcALoadD:
       case bcDDec:
       case bcGetLen:
+      case bcDInc:
          writeCommand(ByteCommand(opcode), writer);
          break;
       //case bcPushR:
@@ -194,9 +195,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcPushFI:
       //case bcACopyN:
       case bcALoadAI:
-      //case bcAccGetFI:
-      //case bcMccCopyAccI:
-      //case bcMccCopySI:
+      case bcMLoadAI:
+      case bcMLoadSI:
       case bcMLoadFI:
       case bcMAddAI:
       case bcPushAI:
@@ -234,10 +234,12 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcDSaveAI:
       case bcDLoadSI:
       case bcDSaveSI:
+      case bcDLoadFI:
+      case bcDSaveFI:
       case bcDCopyI:
          compileICommand(opcode, token, writer);
          break;
-      //case bcOpen:
+      case bcOpen:
       case bcMAdd:
       case bcAJumpVI:
       case bcMCopy:
@@ -272,10 +274,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          compileMccJump(opcode, token, writer, info);
          break;
       //case bcMccElseAccI:
-      //case bcThenFlag:
+      case bcTestFlag:
       case bcAElseSI:
       case bcAThenSI:
-      //case bcElseFlag:
+      case bcElseFlag:
       case bcMElseAI:
       case bcMThenAI:
          compileNJump(opcode, token, writer, info);

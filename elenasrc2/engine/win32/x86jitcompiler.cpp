@@ -51,7 +51,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 46;
+const int gcCommandNumber = 50;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
@@ -59,10 +59,10 @@ const ByteCommand gcCommands[gcCommandNumber] =
 /*   bcIAccFillR, */bcCreateN, bcPopBI, bcCreate,
    bcALoadBI, bcPushAI, bcCallExtR, bcXPushF, /*bcPushSPI, */
    bcHook, bcPopAI, bcXPopAI, bcInclude, bcExclude, 
-   bcThrow, bcUnhook, //bcRethrow, bcAccCreate, bcMccCopySI, 
+   bcThrow, bcUnhook, /*bcRethrow, bcAccCreate, */bcMLoadSI, 
    bcMLoadFI, bcMSaveParams, bcDLoadSI, bcDSaveSI, 
-   bcDAddSI, bcDSubSI, //bcJumpAcc, bcAccFillR,
-/*   bcMccCopyAccI, */bcMQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
+   bcDAddSI, bcDSubSI, bcDLoadFI, bcDSaveFI, //bcJumpAcc, bcAccFillR,
+   bcMLoadAI, bcMQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
 /*   bcRCallN, */bcGet, bcSet, bcASwapSI, 
    bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcBoxN,
    /*   bcMccReverse,*/ bcAXSetR, bcWSTest, bcTest, bcBSTest
@@ -87,7 +87,7 @@ const FunctionCode gcExtensions[gcExtensionNumber] =
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
-   &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileNop, &compileMccPush, &compileNop, &loadOneByteOp,
+   &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileNop, &compileMccPush, &compileMccCopyVerb, &loadOneByteOp,
    &compileNop, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &compileNop,
 
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopSelf, &loadOneByteLOp, &compileNop, &compileQuit,
@@ -99,11 +99,11 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &loadIndexOp, &compilePopFI, &loadIndexOp, &compilePopSI, &loadIndexOp, &compileNop, &compileNop,
    &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &loadFPOp, &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileMSet, &compileMAdd,
+   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &compileNop, &compileNop, &compileNop, &loadIndexOp,
+   &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileMSet, &compileMAdd,
 
-   &loadIndexOp, &loadIndexOp, &compileNop, &compileAccLoadR, &loadFPOp, &loadIndexOp, &compileDCopyI, &compileDCopyAI,
-   &compileNop, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &compileNop, &compileNop, &compileNop,
+   &loadIndexOp, &loadIndexOp, &loadFPOp, &compileAccLoadR, &loadFPOp, &loadIndexOp, &compileDCopyI, &compileDCopyAI,
+   &compileNop, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
 
    &compileNop, &loadIndexOp, &compileNop, &loadIndexOp, &loadFPOp, &compileAccSaveR, &compileNop, &compileDSaveAI,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp, &loadROp, &compileNop,
@@ -130,7 +130,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileTest, &compileTest, &compileTest,
 
    &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileNop, &compileNop, &compileElseSI, &compileThenSI,
-   &compileNop, &compileNop, &compileMElseAccI, &compileMThenAccI, &compileNop, &compileNop, &compileNop, &compileNext,
+   &compileNop, &compileNop, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
 
    &compileCreate, &compileCreateN, &compileIAccCopyR, &compileNop, &compileNop, &compileNop, &compileAccBoxN, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileCallSI, &compileNop, &compileInvokeVMT, &compileNop,
@@ -210,6 +210,12 @@ inline void compileJumpLess(x86JITScope& scope, int label, bool forwardJump, boo
 {
    // jl   lbEnding
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JL);
+}
+
+inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
 }
 
 void _ELENA_::loadCoreOp(x86JITScope& scope, char* code)
@@ -711,7 +717,7 @@ void _ELENA_::compileTest(int opcode, x86JITScope& scope)
   // test upper boundary
    loadOneByteLOp(opcode, scope);
   // try to use short jump if offset small (< 0x10?)
-   compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+   compileJumpLessOrEqual(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 
 void _ELENA_::compileDThen(int opcode, x86JITScope& scope)
@@ -1365,42 +1371,42 @@ void _ELENA_::compileThenSI(int opcode, x86JITScope& scope)
 //   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
 //   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 //}
-//
-//void _ELENA_::compileElseFlag(int opcode, x86JITScope& scope)
-//{
-//   int flag = scope.argument;
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // mov  ebx, [eax-4]
-//   // test [ebx-8], f
-//   // jz lab
-//
-//   scope.code->writeWord(0x588B);
-//   scope.code->writeByte(0xFC);
-//   scope.code->writeWord(0x43F7);
-//   scope.code->writeByte(0xF8);
-//   scope.code->writeDWord(flag);
-//
-//   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
-//
-//void _ELENA_::compileThenFlag(int opcode, x86JITScope& scope)
-//{
-//   int flag = scope.argument;
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // mov  ebx, [eax-4]
-//   // test [ebx-8], f
-//   // jnz lab
-//
-//   scope.code->writeWord(0x588B);
-//   scope.code->writeByte(0xFC);
-//   scope.code->writeWord(0x43F7);
-//   scope.code->writeByte(0xF8);
-//   scope.code->writeDWord(flag);
-//
-//   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
+
+void _ELENA_::compileElseFlag(int opcode, x86JITScope& scope)
+{
+   int flag = scope.argument;
+   int jumpOffset = scope.tape->getDWord();
+
+   // mov  ebx, [eax-4]
+   // test [ebx-8], f
+   // jz lab
+
+   scope.code->writeWord(0x588B);
+   scope.code->writeByte(0xFC);
+   scope.code->writeWord(0x43F7);
+   scope.code->writeByte(0xF8);
+   scope.code->writeDWord(flag);
+
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
+void _ELENA_::compileThenFlag(int opcode, x86JITScope& scope)
+{
+   int flag = scope.argument;
+   int jumpOffset = scope.tape->getDWord();
+
+   // mov  ebx, [eax-4]
+   // test [ebx-8], f
+   // jnz lab
+
+   scope.code->writeWord(0x588B);
+   scope.code->writeByte(0xFC);
+   scope.code->writeWord(0x43F7);
+   scope.code->writeByte(0xF8);
+   scope.code->writeDWord(flag);
+
+   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
 
 void _ELENA_::compileReserve(int opcode, x86JITScope& scope)
 {
@@ -1437,13 +1443,13 @@ void _ELENA_::compileIndexDec(int opcode, x86JITScope& scope)
 //   //scope.code->writeByte(0xB8);
 //   //scope.code->writeDWord(scope.resolveMessage(scope.argument));
 //}
-//
-//void _ELENA_::compileMccCopyVerb(int opcode, x86JITScope& scope)
-//{
-//   // and edx, VERB_MASK
-//   scope.code->writeWord(0xE281);
-//   scope.code->writeDWord(VERB_MASK | MESSAGE_MASK);
-//}
+
+void _ELENA_::compileMccCopyVerb(int opcode, x86JITScope& scope)
+{
+   // and edx, VERB_MASK
+   scope.code->writeWord(0xE281);
+   scope.code->writeDWord(VERB_MASK | MESSAGE_MASK);
+}
 
 void _ELENA_::compileMccCopySubj(int opcode, x86JITScope& scope)
 {

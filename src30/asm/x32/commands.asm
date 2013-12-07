@@ -230,19 +230,34 @@ inline % 035h
 
 end
 
-// callextr
+// ; callextr
 inline % 040h
 
   call extern __arg1
 
 end
 
-// acallvi (ecx - offset to VMT entry)
+// ; acallvi (ecx - offset to VMT entry)
 inline % 42h
 
   mov  ecx, __arg1
   mov  esi, [eax - 4]
   call [esi + ecx]
+
+end
+
+// ; mloadai (__arg1 - index)
+inline % 47h
+
+  mov  edx, [eax + __arg1]
+
+end
+
+// ; mloadsi
+
+inline % 048h
+
+  mov  edx, [esp + __arg1]
 
 end
 
@@ -278,6 +293,14 @@ inline % 51h
 
 end
 
+// ; dloadfi
+
+inline % 52h
+
+  mov  esi, [ebp + __arg1]
+
+end
+
 // aloadfi
 inline % 54h
 
@@ -303,6 +326,14 @@ end
 inline % 5Ch
 
   sub esi, [esp+__arg1]
+
+end
+
+// ; dsavefi
+
+inline % 5Dh
+
+  mov  [ebp + __arg1], esi
 
 end
 

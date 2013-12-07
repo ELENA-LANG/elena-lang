@@ -399,16 +399,16 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.append(_T(' '));
       //   printLabel(command, position + argument2 + 9, labels);
       //   break;
-      //case bcThenFlag:
-      //case bcElseFlag:
+      case bcTestFlag:
+      case bcElseFlag:
       ////case bcElseN:
       ////case bcThenN:
-      //   command.append(opcode);
-      //   command.append(_T(' '));
-      //   command.appendHex(argument);
-      //   command.append(_T(' '));
-      //   printLabel(command, position + argument2 + 9, labels);
-      //   break;
+         command.append(opcode);
+         command.append(_T(' '));
+         command.appendHex(argument);
+         command.append(_T(' '));
+         printLabel(command, position + argument2 + 9, labels);
+         break;
       //case bcMccElseAccI:
       //case bcMccThenAccI:
       //   command.append(opcode);
@@ -493,8 +493,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcASaveSI:
       //case bcSwapSI:
       //case bcPopSI:
-      //case bcMccCopySI:
-      //case bcIncSI:
+      case bcMLoadSI:
       //case bcAccSwapSI:
          command.append(opcode);
          command.append(_T(" sp["));
@@ -518,9 +517,11 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //case bcPopFI:
       //case bcIncFI:
       case bcASaveFI:
-      //case bcMccCopyFI:
-      //case bcMccCopyPrmFI:
+      case bcMLoadFI:
+      case bcMSaveParams:
       //case bcXAccSaveFI:
+      case bcDLoadFI:
+      case bcDSaveFI:
          command.append(opcode);
          command.append(_T(" fp["));
          command.appendInt(argument);
@@ -537,7 +538,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcXPopAI:
       ////case bcPop2AccI:
       //case bcAccLoadAccI:
-      //case bcMccCopyAccI:
+      case bcMLoadAI:
       //case bcMccAddAccI:
       case bcDSaveAI:
          command.append(opcode);

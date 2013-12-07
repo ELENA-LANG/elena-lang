@@ -1,3 +1,6 @@
+define elMessage            000008000h
+define elRole               000004000h
+
 define NEW_MESSAGE_ID       084000000h
 define IFFAILED_MESSAGE_ID  0A1000001h
 define EVAL_MESSAGE_ID      085000000h
@@ -1044,5 +1047,55 @@ procedure inline'r_round
   
   popb
   quitn 2
+
+end
+
+procedure inline'handle_tape
+
+  pushm
+  mcopyverb
+
+  melse labErr EVAL_MESSAGE_ID
+  mloadsi 0
+  pushb
+  bcopya
+  open 2
+  pushn 0
+
+  msaveparams -1
+  pushfi -1
+
+labNext:
+  acopyb
+  dloadfi 1
+  test labEnd
+  aloadd
+  dinc
+  dsavefi 1
+  testflag labMessage elMessage
+  pusha
+  jump labNext
+
+labMessage:
+  mloadai 0
+  aloadsi 0
+
+  elseflag labSkip elRole
+  popa
+labSkip:
+
+  acallvi 0
+  pusha
+  jump labNext
+
+labEnd:
+  popa
+  close
+  popb
+  popm
+  mquit
+
+labErr:
+  throw
 
 end

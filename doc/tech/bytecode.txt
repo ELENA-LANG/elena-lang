@@ -196,6 +196,8 @@ ELENA byte codes (or ecodes)
 
  dloadsi i                  - [sp:i] => index
 
+ dloadfi i                  - [fp:i] => index
+
  daddai i                   - index += [acc:i]
 
  dsubai i                   - index -= [acc:i]
@@ -204,6 +206,8 @@ ELENA byte codes (or ecodes)
                               direct operation      
  
  dsavesi i                  - [sp:i] <= index
+
+ dsavefi i                  - [fp:i] <= index
 
  ddec                       - index--
 
@@ -217,11 +221,17 @@ ELENA byte codes (or ecodes)
 
  mcopysubj                  - mcc:subj => mcc
  
+ mcopyverb                  - mcc:verb => mcc
+
  madd m                     - m + mcc => mcc
 
  maddai i                   - mcc + acc:i => mcc
 
+ mloadai i                  - acc:i => mcc
+
  mloadfi i                  - [fp+i] => mcc
+
+ mloadsi i                  - [sp+i] => mcc
 
  msaveparams i              - copy the message parameters;
                               [fp+i]::mcc.param => [sp+1] ; sp++;
@@ -260,6 +270,12 @@ ELENA byte codes (or ecodes)
  melseai i, label           - jumps to the label if mcc != acc[i]
  
  mthenai i, label           - jumps to the label if mcc == acc[i]
+ 
+ test labErr                 - if not 0 < index < acc.Length, jump to the label
+ 
+ testflag f, label           - jumps to the label if acc.vmt.flag & f == f
+ 
+ elseflag f, label           - jumps to the label if acc.vmt.flag & f != f
  
  
  memory managing commands:
@@ -461,8 +477,6 @@ ELENA byte codes (or ecodes)
  
  wsaddstr                    - self += str(acc:[sp], index)
  
- test labErr                 - if not 0 < index < acc.Length, jump to the label
- 
  getlen                      - acc.Length >> index
 
  bstest labErr               - 0 < index < buf:acc.Length
@@ -505,10 +519,6 @@ ELENA byte codes (or ecodes)
 
  branching commands:
 -------------------
- elseflag f, label          - jumps to the label if acc.vmt.flag & f != f
- 
- thenflag f, label          - jumps to the label if acc.vmt.flag & f == f
- 
  mccelseacc label           - jumps to the label if mcc != acc
  
  mccthenacc label           - jumps to the label if mcc == acc
@@ -527,12 +537,6 @@ ELENA byte codes (or ecodes)
  x_accsavefi i              - [fp+i] <= acc ; frame header is not taken into account
  
  x_mcccopym m               - mcc <= m ; parameter count is not affected
-
- mcccopyverb                - mcc:verb => mcc
-
- mcccopysi i                - [sp+i] => mcc
-
- mcccopyacci i              - acc:i => mcc
 
 
 

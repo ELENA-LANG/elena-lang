@@ -21,6 +21,7 @@ enum ByteCode
    bcPushB          = 0x02,
    bcPop            = 0x03, 
    bcPushM          = 0x05,
+   bcMCopyVerb      = 0x06,
    bcThrow          = 0x07,
    bcMCopySubj      = 0x09,
    bcPushA          = 0x0A,
@@ -69,6 +70,8 @@ enum ByteCode
    bcEvalR          = 0x41,
    bcACallVI        = 0x42,
    bcCallR          = 0x43,
+   bcMLoadAI        = 0x47,
+   bcMLoadSI        = 0x48,
    bcMLoadFI        = 0x49,
    bcMAddAI         = 0x4D,
    bcMCopy          = 0x4E,     
@@ -76,6 +79,7 @@ enum ByteCode
 
    bcDLoadSI        = 0x50,
    bcDSaveSI        = 0x51,
+   bcDLoadFI        = 0x52,
    bcALoadR         = 0x53,
    bcALoadFI        = 0x54,
    bcALoadSI        = 0x55,
@@ -85,6 +89,7 @@ enum ByteCode
    bcDSubAI         = 0x5A,
    bcDAddSI         = 0x5B,
    bcDSubSI         = 0x5C,
+   bcDSaveFI        = 0x5D,
 
    bcASaveBI        = 0x61,
    bcASaveSI        = 0x63,
@@ -136,6 +141,8 @@ enum ByteCode
    bcAThenSI        = 0xE7,
    bcMElseAI        = 0xEA,
    bcMThenAI        = 0xEB,
+   bcElseFlag       = 0xEC,
+   bcTestFlag       = 0xED,
    bcNext           = 0xEF,   
 
    bcCreate         = 0xF0,
@@ -147,7 +154,6 @@ enum ByteCode
 
 
 //   bcWriteAcc       = 0x304, 
-//   bcMccCopyVerb    = 0x306,
 //   //bcSNop           = 0x08,
 //   //bcMccCopyAcc     = 0x0F,
 //
@@ -161,11 +167,8 @@ enum ByteCode
 //   //bcAccTryR        = 0x37,
 //
 //   //bcSendVMTR       = 0x46,
-//   bcMccCopyAccI    = 0x347,
-//   bcMccCopySI      = 0x348,
 //   bcXMccCopyM      = 0x34C,
 //
-//   //bcAccInc         = 0x52,
 //   //bcAccTestFlagN   = 0x58,
 //
 //   bcXAccSaveFI     = 0x6F,
@@ -197,8 +200,6 @@ enum ByteCode
 //   //bcThenN          = 0xE5,
 //   //bcMccElseSI      = 0xE8,
 //   //bcMccThenSI      = 0xE9,
-//   bcElseFlag       = 0xEC,
-//   bcThenFlag       = 0xED,
 //
 //   bcIAccFillR      = 0xF3,
 //   //bcIAccCopyN      = 0xF4,

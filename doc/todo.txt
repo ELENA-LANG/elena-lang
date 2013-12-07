@@ -21,9 +21,11 @@ v  - vm script
 Currently:
 ------
               xdev - migration
+                        * migrate handle_tape inline code
+
                         * migrate ereflector, tapeControl, ... 
                         
-                        * migrate serializer, interpreter, matrix, random, literalConvertor                                                
+                        * migrate serializer, interpreter                                                
                         
                         * migrate tape_test code
                         * migrate system, get rid of CoreVM

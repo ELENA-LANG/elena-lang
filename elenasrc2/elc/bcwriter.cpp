@@ -1077,14 +1077,14 @@ bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
          case bcPushF:
          case bcPopFI:
          case bcMLoadFI:
-         //case bcIncFI:
+         case bcDLoadFI:
+         case bcDSaveFI:
          case bcALoadFI:
          case bcASaveFI:
          //case bcXAccSaveFI:
          case bcSCopyF:
          case bcACopyF:
          case bcAXCopyF:
-         //case bcAccGetFI:
          case bcUnhook:
          case bcHook:
             return true;
@@ -1669,8 +1669,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
          case bcMElseAI:
          case bcMThenAI:
 ////         case bcElseLocal:
-//         case bcThenFlag:
-//         case bcElseFlag:
+         case bcTestFlag:
+         case bcElseFlag:
 //         case bcMccElseAcc:
 //         case bcMccThenAcc:
          case bcJump:
