@@ -356,6 +356,8 @@ inline TypeCode MapTypeCode(ObjectType type)
       case otReal:
       case otRealVar:
          return TypeCode::tReal;
+      case otParams:
+         return TypeCode::tParams;
       default:
          return TypeCode::tRef;
    }
@@ -1832,6 +1834,7 @@ inline bool checkIfBoxingRequired(ObjectInfo object)
          case otLong:
          case otReal:
          case otShort:
+         case otParams:
             return true;
       }
    }
@@ -1847,13 +1850,13 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
          case otLength:
          case otIndex:
          case otByte:
-            _writer.boxObject(*scope.tape, 1, scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, true);
+            _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, true);
             break;
          case otLong:
-            _writer.boxObject(*scope.tape, 2, scope.moduleScope->mapConstantReference(LONG_CLASS) | mskVMTRef, true);
+            _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(LONG_CLASS) | mskVMTRef, true);
             break;
          case otReal:
-            _writer.boxObject(*scope.tape, 2, scope.moduleScope->mapConstantReference(REAL_CLASS) | mskVMTRef, true);
+            _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(REAL_CLASS) | mskVMTRef, true);
             break;
          case otParams:
             _writer.boxArray(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
@@ -1886,16 +1889,16 @@ ObjectInfo Compiler :: compilePrimitiveLength(CodeScope& scope, ObjectInfo objec
 
       return ObjectInfo(okLocalAddress, target.type, target.reference);
    }
-//   // if literal object is passed as a length argument
-//   else if (objectInfo.type == otParams && mode == CTRL_INT_EXPR) {
-//      ObjectInfo target;
-//      allocatePrimitiveObject(scope, mode, target);
-//
-//      _writer.loadObject(*scope.tape, objectInfo);
-//      _writer.saveObjectLength(*scope.tape, 4, 0, target.reference);
-//
-//      return ObjectInfo(okLocalAddress, target.type, target.reference);
-//   }
+   // if open arg is passed as a length argument
+   else if (objectInfo.type == otParams && mode == TypeCode::tInt) {
+      ObjectInfo target;
+      allocatePrimitiveObject(scope, mode, target);
+
+      _writer.loadObject(*scope.tape, objectInfo);
+      _writer.loadParamsLength(*scope.tape, target);
+
+      return ObjectInfo(okLocalAddress, target.type, target.reference);
+   }
    else return ObjectInfo(okUnknown);
 }
 
@@ -1915,26 +1918,12 @@ ObjectInfo Compiler :: compilePrimitiveLengthOut(CodeScope& scope, ObjectInfo ob
 
       return ObjectInfo(okIdle);
    }
-//   // if bytearray object is passed as a length argument
-//   else if (objectInfo.type == otByteArray && mode == CTRL_INT_EXPR) {
-//      ObjectInfo target;
-//      allocatePrimitiveObject(scope, mode, target);
-//
-//      _writer.loadObject(*scope.tape, objectInfo);
-//      _writer.saveObjectLength(*scope.tape, 1, 0, target.reference);
-//
-//      return ObjectInfo(okLocalAddress, target.type, target.reference);
-//   }
-//   // if literal object is passed as a length argument
-//   else if (objectInfo.type == otParams && mode == CTRL_INT_EXPR) {
-//      ObjectInfo target;
-//      allocatePrimitiveObject(scope, mode, target);
-//
-//      _writer.loadObject(*scope.tape, objectInfo);
-//      _writer.saveObjectLength(*scope.tape, 4, 0, target.reference);
-//
-//      return ObjectInfo(okLocalAddress, target.type, target.reference);
-//   }
+   else if (objectInfo.type == otParams && mode == TypeCode::tInt) {
+      _writer.loadObject(*scope.tape, objectInfo);
+      _writer.loadParamsLength(*scope.tape, ObjectInfo(okCurrent, 0));
+
+      return ObjectInfo(okIdle);
+   }
    else return ObjectInfo(okUnknown);
 }
 
@@ -2179,9 +2168,6 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
 //      // if message has open argument list
       if (arg == nsMessageOpenParameter) {
          arg = arg.firstChild();
-
-         // push terminator
-         _writer.declarePrimitiveVariable(*scope.tape, 0);
 
          while (arg != nsNone) {
             count++;
@@ -3449,7 +3435,6 @@ FunctionCode Compiler :: definePrimitiveOperationCode(CodeScope& scope, int oper
       {
          return (FunctionCode)(operator_id + (rtype << 8));
       }
-      else return (FunctionCode)0;
    }
    else if (IsBranchOperator(operator_id)) {
       result.kind = okRegister;
@@ -3458,7 +3443,6 @@ FunctionCode Compiler :: definePrimitiveOperationCode(CodeScope& scope, int oper
       if (ltype == rtype) {
          return (FunctionCode)operator_id;
       }
-      else return (FunctionCode)0;
    }
    else if (IsExprOperator(operator_id)) {
       if (ltype != MapTypeCode(result.type)) {
@@ -3467,9 +3451,13 @@ FunctionCode Compiler :: definePrimitiveOperationCode(CodeScope& scope, int oper
       if (ltype == rtype) {
          return (FunctionCode)operator_id;
       }
-      else return (FunctionCode)0;
    }
-   else return (FunctionCode)0;
+   else if (operator_id == REFER_MESSAGE_ID) {
+      if (ltype == TypeCode::tParams && rtype == TypeCode::tInt) {
+         return fnGetAt;
+      }
+   }
+   return (FunctionCode)0;
 }
 
 ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, int mode)
@@ -3479,6 +3467,7 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
    bool compareMode = false;
    bool invertMode = false;
    bool copyMode = false;
+   bool referMode = false;
 
    // for variable operator, acc is the source
    if (operator_id == WRITE_MESSAGE_ID) {
@@ -3534,6 +3523,9 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
 
       paramCount++;
    }
+   else if (operator_id == REFER_MESSAGE_ID) {
+      referMode = true;
+   }
 
    FunctionCode functionCode = definePrimitiveOperationCode(scope, operator_id, retVal, loperand, roperand, mode);
    if (functionCode == FunctionCode::fnUnknown)
@@ -3543,6 +3535,9 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
       _writer.executeFunction(*scope.tape, retVal, ObjectInfo(okCurrent), functionCode);
 
       paramCount--;
+   }
+   else if (referMode && functionCode == fnGetAt) {
+      _writer.getOpenParam(*scope.tape);
    }
    else _writer.executeFunction(*scope.tape, retVal, functionCode);
 

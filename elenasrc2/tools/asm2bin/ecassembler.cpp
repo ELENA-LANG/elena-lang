@@ -236,7 +236,6 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcDSaveSI:
       case bcDLoadFI:
       case bcDSaveFI:
-      case bcDCopyI:
          compileICommand(opcode, token, writer);
          break;
       case bcOpen:
@@ -247,8 +246,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcQuitN:
       case bcPushN:
       case bcPopI:
+      case bcDCopy:
       //case bcAccAddN:
-      //case bcNWrite:
          compileNCommand(opcode, token, writer);
          break;
       //case bcHook:

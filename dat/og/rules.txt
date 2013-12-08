@@ -1,9 +1,9 @@
 pushr   pop    => nop nop;
 pushsi  pop    => nop nop;
 pushfi  pop    => nop nop;
-pop     pop    => nop popn =2;
-popn    pop    => popn +1 nop;
-pop     popn   => nop popn +1;
+pop     pop    => nop popi =2;
+popi    pop    => popi +1 nop;
+pop     popi   => nop popi +1;
 pusha   popa   => nop nop;
 pushr   popa   => acopyr nop;
 pushbi  popa   => aloadbi nop;

@@ -4,29 +4,30 @@
 //#define extensions'text.
 //#define extensions'math.
 
-//// --- OpenArgTest ---
-//
-//#class OpenArgTester
-//{
-//    #method testBoxing : anArray
-//    [
-//    ]
-//    
-//    #method test :: aParams
-//    [
-//        #var aLength := aParams type'length.
-//        
-//        #var aSecond := aParams@1.
-//        
-//        $self testBoxing:aParams.
-//    ]
-//}
-//
-//#symbol OpenArgTest =
-//[
-//    OpenArgTester test &:1:"a":3.
-//].
-//
+// --- OpenArgTest ---
+
+#class OpenArgTester
+{
+    #method testBoxing : anArray
+    [
+        #var b := anArray.
+    ]
+    
+    #method test :: aParams
+    [
+        #var aLength := aParams type'length.
+        
+        #var aSecond := aParams@1.
+        
+        $self testBoxing:aParams.
+    ]
+}
+
+#symbol OpenArgTest =
+[
+    OpenArgTester test &:1:"a":3.
+].
+
 //#class XTester
 //{
 //    #method set:aField:aField2
@@ -37,7 +38,6 @@
 
 #symbol XTest =
 [    
-    #var a := Array new &type'length:0.
 ].
 
 // --- MultiDispatchTest ---

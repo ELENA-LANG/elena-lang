@@ -122,7 +122,7 @@ protected:
    friend void compileHook(int opcode, x86JITScope& scope);
    friend void compileCreate(int opcode, x86JITScope& scope);
    friend void compileCreateN(int opcode, x86JITScope& scope);
-   friend void compileAccBoxN(int opcode, x86JITScope& scope);
+   friend void compileBoxN(int opcode, x86JITScope& scope);
    //friend void compileAccCreate(int opcode, x86JITScope& scope);
    friend void compileAccSetR(int opcode, x86JITScope& scope);
    friend void compileAccSetN(int opcode, x86JITScope& scope);
@@ -253,7 +253,7 @@ void compileHook(int opcode, x86JITScope& scope);
 ////void compileAccLoadField(int opcode, x86JITScope& scope);
 void compileCreate(int opcode, x86JITScope& scope);
 void compileCreateN(int opcode, x86JITScope& scope);
-void compileAccBoxN(int opcode, x86JITScope& scope);
+void compileBoxN(int opcode, x86JITScope& scope);
 //void compileAccCreate(int opcode, x86JITScope& scope);
 void compileAccSetR(int opcode, x86JITScope& scope);
 void compileAccSetN(int opcode, x86JITScope& scope);

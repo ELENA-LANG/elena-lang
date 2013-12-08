@@ -41,7 +41,7 @@
 #define OPCODE_ASWAPSI      "aswapsi"
 #define OPCODE_AXSETR       "axsetr"
 #define OPCODE_BCOPYA       "bcopya"
-#define OPCODE_BOXN         "boxn"
+#define OPCODE_BOX          "box"
 #define OPCODE_BREAKPOINT   "breakpoint"
 #define OPCODE_BSREDIRECT   "bsredirect"
 #define OPCODE_BSTEST       "bstest"
@@ -55,7 +55,7 @@
 #define OPCODE_DLOADAI      "dloadai"
 #define OPCODE_DLOADFI      "dloadfi"
 #define OPCODE_DLOADSI      "dloadsi"
-#define OPCODE_DCOPYI       "dcopyi"
+#define OPCODE_DCOPY        "dcopy"
 #define OPCODE_DCREATE      "dcreate"
 #define OPCODE_DCREATEN     "dcreaten"
 #define OPCODE_DDEC         "ddec"
@@ -97,9 +97,9 @@
 #define OPCODE_MTHEN        "mthen"
 //#define OPCODE_MCCTHENACC   "mccthenacc"
 //#define OPCODE_MCCTHENACCI  "mccthenacci"
+#define OPCODE_NBOX         "nbox"
 #define OPCODE_NOP          "nop"
 #define OPCODE_NEXT         "next"
-//#define OPCODE_NWRITE       "nwrite"
 #define OPCODE_OPEN         "open"
 #define OPCODE_POP          "pop"
 #define OPCODE_POPA         "popa"
@@ -138,7 +138,6 @@
 #define OPCODE_THROW        "throw"
 #define OPCODE_UNHOOK       "unhook"
 #define OPCODE_WSTEST       "wstest"
-//#define OPCODE_WRITEACC     "writeacc"
 #define OPCODE_AXCOPYF      "axcopyf"
 //#define OPCODE_XACCSAVEFI   "x_accsavefi"
 //#define OPCODE_XMCCCOPYM    "x_mcccopym"
@@ -167,6 +166,7 @@
 #define FUNC_GETBUF         "getbuf"
 #define FUNC_GETINT         "getint"
 #define FUNC_GETLEN         "getlen"
+#define FUNC_GETLENZ        "getlenz"
 #define FUNC_GETWORD        "getword"
 #define FUNC_INC            "inc"
 #define FUNC_INDEXOF        "indexof"
@@ -175,6 +175,7 @@
 #define FUNC_LESS           "less"
 #define FUNC_LN             "ln"
 #define FUNC_LOAD           "load"
+#define FUNC_LOADNAME       "loadname"
 #define FUNC_LOADSTR        "loadstr"
 #define FUNC_MUL            "mul"
 #define FUNC_NOT            "not"
@@ -240,7 +241,8 @@ bool IsRCode(ByteCode code)
       case bcCreate:
       case bcCreateN:
       case bcIAXCopyR:
-      case bcBoxN:
+      case bcNBox:
+      case bcBox:
       case bcXCallRM:
          return true;
       default:
@@ -838,8 +840,8 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_ATHENR)) {
       return bcAThenR;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_BOXN)) {
-      return bcBoxN;
+   else if (ConstantIdentifier::compare(s, OPCODE_BOX)) {
+      return bcBox;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_BREAKPOINT)) {
       return bcBreakpoint;
@@ -883,8 +885,8 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_DLOADSI)) {
       return bcDLoadSI;
    }
-   else if (ConstantIdentifier::compare(s, OPCODE_DCOPYI)) {
-      return bcDCopyI;
+   else if (ConstantIdentifier::compare(s, OPCODE_DCOPY)) {
+      return bcDCopy;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_DDEC)) {
       return bcDDec;
@@ -1003,12 +1005,12 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
 //   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHENACCI)) {
 //      return bcMccThenAccI;
 //   }
+   else if (ConstantIdentifier::compare(s, OPCODE_NBOX)) {
+      return bcNBox;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_NOP)) {
       return bcNop;
    }
-//   else if (ConstantIdentifier::compare(s, OPCODE_NWRITE)) {
-//      return bcNWrite;
-//   }
    else if (ConstantIdentifier::compare(s, OPCODE_NEXT)) {
       return bcNext;
    }
@@ -1126,9 +1128,6 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_UNHOOK)) {
       return bcUnhook;
    }
-//   else if (ConstantIdentifier::compare(s, OPCODE_WRITEACC)) {
-//      return bcWriteAcc;
-//   }
 //   else if (ConstantIdentifier::compare(s, OPCODE_XACCSAVEFI)) {
 //      return bcXAccSaveFI;
 //   }
@@ -1246,8 +1245,8 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcBCopyA:
          StringHelper::copy(s, OPCODE_BCOPYA, 1 + strlen(OPCODE_BCOPYA));
          break;
-      case bcBoxN:
-         StringHelper::copy(s, OPCODE_BOXN, 1 + strlen(OPCODE_BOXN));
+      case bcBox:
+         StringHelper::copy(s, OPCODE_BOX, 1 + strlen(OPCODE_BOX));
          break;
       case bcBreakpoint:
          StringHelper::copy(s, OPCODE_BREAKPOINT, 1 + strlen(OPCODE_BREAKPOINT));
@@ -1291,8 +1290,8 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcDLoadSI:
          StringHelper::copy(s, OPCODE_DLOADSI, 1 + strlen(OPCODE_DLOADSI));
          break;
-      case bcDCopyI:
-         StringHelper::copy(s, OPCODE_DCOPYI, 1 + strlen(OPCODE_DCOPYI));
+      case bcDCopy:
+         StringHelper::copy(s, OPCODE_DCOPY, 1 + strlen(OPCODE_DCOPY));
          break;
       case bcDDec:
          StringHelper::copy(s, OPCODE_DDEC, 1 + strlen(OPCODE_DDEC));
@@ -1411,15 +1410,15 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
 //      case bcMccThenAccI:
 //         StringHelper::copy(s, OPCODE_MCCTHENACCI, 1 + strlen(OPCODE_MCCTHENACCI));
 //         break;
+      case bcNBox:
+         StringHelper::copy(s, OPCODE_NBOX, 1 + strlen(OPCODE_NBOX));
+         break;
       case bcNext:
          StringHelper::copy(s, OPCODE_NEXT, 1 + strlen(OPCODE_NEXT));
          break;
       case bcNop:
          StringHelper::copy(s, OPCODE_NOP, 1 + strlen(OPCODE_NOP));
          break;
-//      case bcNWrite:
-//         StringHelper::copy(s, OPCODE_NWRITE, 1 + strlen(OPCODE_NWRITE));
-//         break;
       case bcOpen:
          StringHelper::copy(s, OPCODE_OPEN, 1 + strlen(OPCODE_OPEN));
          break;
@@ -1525,9 +1524,6 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcUnhook:
          StringHelper::copy(s, OPCODE_UNHOOK, 1 + strlen(OPCODE_UNHOOK));
          break;
-//      case bcWriteAcc:
-//         StringHelper::copy(s, OPCODE_WRITEACC, 1 + strlen(OPCODE_WRITEACC));
-//         break;
 //      case bcXAccSaveFI:
 //         StringHelper::copy(s, OPCODE_XACCSAVEFI, 1 + strlen(OPCODE_XACCSAVEFI));
 //         break;
@@ -1630,6 +1626,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, FUNC_GETLEN)) {
       return fnGetLen;
    }
+   else if (ConstantIdentifier::compare(s, FUNC_GETLENZ)) {
+      return fnGetLenZ;
+   }
    else if (ConstantIdentifier::compare(s, FUNC_GETWORD)) {
       return fnGetWord;
    }
@@ -1653,6 +1652,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    }
    else if (ConstantIdentifier::compare(s, FUNC_LOAD)) {
       return fnLoad;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_LOADNAME)) {
+      return fnLoadName;
    }
    else if (ConstantIdentifier::compare(s, FUNC_LOADSTR)) {
       return fnLoadStr;
@@ -1771,6 +1773,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
       case fnGetLen:
          StringHelper::copy(s, FUNC_GETLEN, 1 + strlen(FUNC_GETLEN));
          break;
+      case fnGetLenZ:
+         StringHelper::copy(s, FUNC_GETLENZ, 1 + strlen(FUNC_GETLENZ));
+         break;
       case fnGetWord:
          StringHelper::copy(s, FUNC_GETWORD, 1 + strlen(FUNC_GETWORD));
          break;
@@ -1794,6 +1799,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
          break;
       case fnLoad:
          StringHelper::copy(s, FUNC_LOAD, 1 + strlen(FUNC_LOAD));
+         break;
+      case fnLoadName:
+         StringHelper::copy(s, FUNC_LOADNAME, 1 + strlen(FUNC_LOADSTR));
          break;
       case fnLoadStr:
          StringHelper::copy(s, FUNC_LOADSTR, 1 + strlen(FUNC_LOADSTR));

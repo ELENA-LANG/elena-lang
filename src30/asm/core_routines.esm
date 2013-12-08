@@ -31,7 +31,7 @@ procedure inline'n_copystr
   aloadsi 3
   pushb
   bcopya
-  dcopyi 10
+  dcopy 10
   aloadsi 3
   ncopystr
   delse labErr
@@ -52,7 +52,7 @@ procedure inline'l_copystr
   aloadsi 3
   pushb
   bcopya
-  dcopyi 10
+  dcopy 10
   aloadsi 3
   lcopystr
   delse labErr
@@ -73,7 +73,7 @@ procedure inline'r_copystr
   aloadsi 3
   pushb
   bcopya
-  dcopyi 10
+  dcopy 10
   aloadsi 3
   rcopystr
   delse labErr
@@ -92,12 +92,12 @@ end
 procedure inline'ws_copyint
 
   pushb
-  dcopyi 10
+  dcopy 10
   acopyr class : system'LiteralValue
   wscreate
   bcopya
   aloadsi 3
-  dcopyi 10
+  dcopy 10
   wscopyint
   acopyb
   popb
@@ -108,7 +108,7 @@ end
 procedure inline'ws_copyint_radix
 
   pushb
-  dcopyi 10
+  dcopy 10
   acopyr class : system'LiteralValue
   wscreate
   bcopya
@@ -125,14 +125,14 @@ end
 procedure inline'ws_copylong
 
   pushb
-  dcopyi 20
+  dcopy 20
   acopyr class : system'LiteralValue
   wscreate
   bcopya
   aloadsi 4
   dloadai 0
   aloadsi 3
-  dcopyi 10
+  dcopy 10
   wscopylong
   acopyb
   popb
@@ -143,7 +143,7 @@ end
 procedure inline'ws_copylong_radix
 
   pushb
-  dcopyi 20
+  dcopy 20
   acopyr class : system'LiteralValue
   wscreate
   bcopya
@@ -160,12 +160,12 @@ end
 procedure inline'ws_copyreal
 
   pushb
-  dcopyi 30
+  dcopy 30
   acopyr class : system'LiteralValue
   wscreate
   bcopya
   aloadsi 3
-  dcopyi 24
+  dcopy 24
   wscopyreal
   acopyb
   popb
@@ -175,7 +175,7 @@ end
 procedure inline'ws_copyreal_len
 
   pushb
-  dcopyi 30
+  dcopy 30
   acopyr class : system'LiteralValue
   wscreate
   bcopya
@@ -1098,4 +1098,57 @@ labEnd:
 labErr:
   throw
 
+end
+                    
+procedure inline'class_getName
+
+  pushb
+
+  dcopy 255
+  acopyr class : system'LiteralValue
+  wscreate
+  bcopya
+
+  dcopy 255
+  aloadsi 2
+  wsloadname
+  delse labErr
+  wssetlen
+
+  popb
+  quitn 1
+  
+labErr:  
+  callr system'InvalidArgumentException
+  pusha
+  mcopy NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'class_getLen
+
+  aloadsi 2
+  getlen
+  aloadsi 3
+  dsaveai 0
+  quitn 2
+  
+end
+
+procedure inline'class_get                                        
+
+  pushb
+
+  aloadsi 3
+  bcopya
+
+  aloadsi 4
+  dloadai 0
+
+  get
+  popb
+  quitn 3
+  
 end

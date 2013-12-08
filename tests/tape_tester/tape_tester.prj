@@ -2,8 +2,8 @@
 executable=tape_tester.exe
 vmpath=..\..\bin
 namespace=tape_tester
-template=console
-debuginfo=-1
+template=vm_console
+debuginfo=-2
 warn:unresolved=0
 
 [files]

@@ -302,12 +302,8 @@ public:
    void loadDump(CommandTape& tape, ObjectInfo source);
    void loadLiteralLength(CommandTape& tape, ObjectInfo target);
    void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
-
-//   //!! TODO: should be refactored
-//   void saveOutputResult(CommandTape& tape, int destOffset, int sourOffset);
-//   void pushIntParam(CommandTape& tape, ObjectInfo info);
-//   void saveIntParam(CommandTape& tape, ObjectInfo info);
-//   void saveLongParam(CommandTape& tape, ObjectInfo info);
+   void loadParamsLength(CommandTape& tape, ObjectInfo target);
+   void getOpenParam(CommandTape& tape);
 
    void flush(CommandTape& tape, _Module* module, _Module* debugModule);
 };

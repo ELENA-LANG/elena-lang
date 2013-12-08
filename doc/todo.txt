@@ -20,47 +20,11 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - migration
-                        * migrate handle_tape inline code
-
-                        * migrate ereflector, tapeControl, ... 
-                        
-                        * migrate serializer, interpreter                                                
-                        
-                        * migrate tape_test code
-                        * migrate system, get rid of CoreVM
-                        * test operation with stack allocated binaray array
-                        
-              xdev - redesign                                                                             
-                        * copy optimization rules
-                        * compilePrimitiveOperator
-                        
-              xdev - redesign                                                                             
-
-                        * instead of assignLocalObject - popObject(okRegisterField,... should be used
-                        * replace assignIntParam with - declarePrimitiveVariable, loadObject(okLocal, popObject(okRegisterField
-                                                                                        
-              xdev - vm redesign                                                 
-                        * compilePrimitiveLength - uncomment code
-
-                        * core_vm: get rid of classname and other function used in source code 
-                        
               xdev - open arg                                      
-                        * migrate system_test code: OpenArgTest             
-                        * boxing: a msg:Args
+                        * a msg::Args -> converting open arg list into normal one
 
                         * use cases
-                         a msg:Args -> boxing to array
                          a msg &::Args -> passing open arg list further
-                         a msg::Args -> converting open arg list into normal one
-
-
-              xdev - generic development              
-                       * group object implementation (group, union, cast)
-                       * rename Pair to Aggregation, where the first one is main object and all the next is extension, it should be possible to switch
-                         second one with the next one 
-                       * elenavm: use reverse instead of set of swaps
-
 
 <=================>
          
@@ -68,6 +32,11 @@ Currently:
 --------
 week1: [14.12]
               xdev - generic development              
+                       * group object implementation (group, union, cast)
+                       * rename Pair to Aggregation, where the first one is main object and all the next is extension, it should be possible to switch
+                         second one with the next one 
+                       * elenavm: use reverse instead of set of swaps
+
                        * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
                          do we need to return type for every object??
 
@@ -200,6 +169,8 @@ week1: [14.12]
                        * support operation with short:
                            //        #var aSystemStruct := Win32SystemTime new
                            //            &type'short:(1601 + aYear type'int)
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                        
 
               xdev - ecode optimization
                        * we should not load acc if it already holds the correct value (see Object.notequal[1], Object.equal[1])
@@ -503,6 +474,12 @@ week2:
                          out of range (insert, delete, ...)
 
 week3:
+              xdev - migration
+                        * migrate tapeControl, ... 
+                        * migrate interpreter                                                
+                        * migrate tape_test code
+                        * migrate sum script
+
               sdev - open architecture
                        * implement dynamic property container: set / get
 

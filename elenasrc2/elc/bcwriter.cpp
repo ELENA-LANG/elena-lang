@@ -307,7 +307,7 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
 {
    // create fieldCount, vmt
 
-   //   dcopyi 0                       |   { iaxcopyr i, r }n
+   //   dcopy 0                       |   { iaxcopyr i, r }n
    // labNext:
    //   axsetr r
    //   next labNext fieldCount
@@ -351,7 +351,7 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
          tape.write(bcIAXCopyR, 5, nilReference | mskConstantRef);
          break;
       default:
-         tape.write(bcDCopyI, fieldCount);
+         tape.write(bcDCopy, fieldCount);
          tape.newLabel();
          tape.setLabel(true);
          tape.write(bcAXSetR, nilReference | mskConstantRef);
@@ -649,9 +649,11 @@ void ByteCodeWriter :: selectObject(CommandTape& tape, ObjectInfo object)
 
 void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference, bool registerMode)
 {
+   // dcopy n
+   tape.write(bcDCopy, size);
    if (registerMode){
       // boxn 
-      tape.write(bcBoxN, size, vmtReference);
+      tape.write(bcNBox, vmtReference);
    }  
    else {
       // popa
@@ -659,17 +661,17 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       // pusha
 
       tape.write(bcPopA);
-      tape.write(bcBoxN, size, vmtReference);
+      tape.write(bcNBox, vmtReference);
       tape.write(bcPushA);
    }
 }
 
 void ByteCodeWriter :: boxArray(CommandTape& tape, ref_t vmtReference)
 {
-   // pushacc
-   // getlen
-   // acccreate vmt
-   // 
+   // rfgetlenz
+   // box vmt
+   tape.write(bcFunc, fnGetLenZ);
+   tape.write(bcBox, vmtReference);
 }
 
 void ByteCodeWriter :: popObject(CommandTape& tape, ObjectInfo object)
@@ -1744,45 +1746,6 @@ void ByteCodeWriter :: copyLong(CommandTape& tape, ObjectInfo target)
    tape.write(bcPopI, 1);
 }
 
-//void ByteCodeWriter :: saveOutputResult(CommandTape& tape, int destOffset, int sourOffset)
-//{
-//   // pushbi sour
-//   // accloadbi dest
-//   // x_popacci
-//
-//   tape.write(bcPushBI, sourOffset);
-//   tape.write(bcAccLoadBI, destOffset);
-//   tape.write(bcXPopAccI);
-//}
-//
-//void ByteCodeWriter :: saveLongParam(CommandTape& tape, ObjectInfo param)
-//{
-//   switch (param.kind) {
-//      case okLocal:
-//         // pushacci 1
-//         // pushacci
-//         // accloadfi n
-//         // x_popacci
-//         // x_popacci 1
-//         tape.write(bcPushAccI, 1);
-//         tape.write(bcPushAccI);
-//         tape.write(bcAccLoadFI, param.reference);
-//         tape.write(bcXPopAccI);
-//         tape.write(bcXPopAccI, 1);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: pushIntParam(CommandTape& tape, ObjectInfo param)
-//{
-//   switch (param.kind) {
-//      case okCurrent:
-//         // pushspi n
-//
-//         tape.write(bcPushSPI, param.reference);
-//   }
-//}
-
 void ByteCodeWriter :: saveStr(CommandTape& tape, bool onlyAllocate)
 {
    tape.write(bcWSFunc, onlyAllocate ? fnReserve : fnSave);
@@ -1849,4 +1812,29 @@ void ByteCodeWriter :: loadByteArrayLength(CommandTape& tape, ObjectInfo target)
    tape.write(bcBSFunc, fnGetLen);
    loadObject(tape, target);
    tape.write(bcDSaveAI);
+}
+
+void ByteCodeWriter :: loadParamsLength(CommandTape& tape, ObjectInfo target)
+{
+   // rfgetlenz
+   // <load>
+   // dxsaveai 0
+
+   tape.write(bcFunc, fnGetLenZ);
+   loadObject(tape, target);
+   tape.write(bcDSaveAI);
+}
+
+void ByteCodeWriter :: getOpenParam(CommandTape& tape)
+{
+   // pusha
+   // aloadsi 1
+   // dloadai 0
+   // popa
+   // aloadd
+   tape.write(bcPushA);
+   tape.write(bcALoadSI, 1);
+   tape.write(bcDLoadAI);
+   tape.write(bcPopA);
+   tape.write(bcALoadD);
 }

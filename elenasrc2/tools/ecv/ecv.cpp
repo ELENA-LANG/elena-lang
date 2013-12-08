@@ -465,6 +465,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPopI:
       case bcOpen:
       case bcQuitN:
+      case bcDCopy:
       //case bcAccCreate:
       ////case bcAccTestFlagN:
       ////case bcAccCopyN:

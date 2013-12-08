@@ -5,9 +5,11 @@ define CORE_GC_TABLE        02h
 // --- System Core API  --
 define GC_ALLOC	         10001h
 define HOOK              10010h
+define GETCLASSNAME      10011h
 
 // constants
 define elVMTSizeOffset    000Ch
+define elVMTOffset        0004h 
 
 // GC TABLE
 define gc_header             0000h
@@ -19,7 +21,7 @@ define gc_stack_bottom       0034h
 define page_mask        0FFFFFFF0h
 define page_size_order          4h
 define page_ceil               1Bh
-
+                                                                                                   
 // throw
 inline % 7
 
@@ -67,7 +69,11 @@ end
 inline % 11h
 
   mov  esi, [eax-8]
+  cmp  esi, 0
+  jl   short labEnd
   shr  esi, 2
+
+labEnd:
 
 end
 
@@ -442,6 +448,70 @@ inline % 0A6h
   
 end
 
+// ; nbox (esi - size, __arg1 - vmt)
+
+inline % 0B0h
+
+  mov  ebx, esi
+  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]
+  ja   short labSkip                      
+  cmp  eax, esp
+  jb   short labSkip
+
+  push eax
+  mov  ecx, esi
+  add  ebx, page_ceil
+  neg  ecx
+  and  ebx, page_mask  
+  call code : %GC_ALLOC
+  mov  [eax-8], ecx
+  mov  [eax-4], __arg1
+  pop  esi
+  mov  ebx, eax
+labCopy:
+  mov  edx, [esi]
+  mov  [ebx], edx
+  lea  esi, [esi+4]
+  lea  ebx, [ebx+4]
+  add  ecx, 4
+  jnz  short labCopy
+
+labSkip:
+
+end
+
+// ; box (esi - size, __arg1 - vmt)
+
+inline % 0B1h
+
+  mov  ebx, esi
+  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]  
+  ja   short labSkip                      
+  shl  ebx, 2
+  cmp  eax, esp
+  jb   short labSkip
+
+  mov  ecx, ebx
+  push eax
+  add  ebx, page_ceil
+  and  ebx, page_mask  
+  call code : %GC_ALLOC
+  mov  [eax-8], ecx
+  mov  [eax-4], __arg1
+  pop  esi
+  mov  ebx, eax
+labCopy:
+  mov  edx, [esi]
+  mov  [ebx], edx
+  lea  esi, [esi+4]
+  lea  ebx, [ebx+4]
+  sub  ecx, 4
+  jnz  short labCopy
+
+labSkip:
+
+end
+
 // ; aloadbi (__arg1 : index)
 
 inline % 0CEh
@@ -503,37 +573,6 @@ inline % 0F1h
 
 end
 
-// boxn (ebx - size, __arg1 - vmt)
-
-inline % 0F6h
-
-  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]
-  ja   short labSkip
-  cmp  eax, esp
-  jb   short labSkip
-
-  push eax
-  mov  ecx, ebx
-  add  ebx, page_ceil
-  neg  ecx
-  and  ebx, page_mask  
-  call code : %GC_ALLOC
-  mov  [eax-8], ecx
-  mov  [eax-4], __arg1
-  pop  esi
-  mov  ebx, eax
-labCopy:
-  mov  edx, [esi]
-  mov  [ebx], edx
-  lea  esi, [esi+4]
-  lea  ebx, [ebx+4]
-  add  ecx, 4
-  jnz  short labCopy
-
-labSkip:
-
-end
-
 // scallvi (__arg1 : vmt index , ebx - the target)
 
 inline % 0FCh
@@ -552,7 +591,7 @@ inline % 0FEh
 
 end
 
-// rfcreate
+// ; rfcreate
 
 inline % 10004h
 
@@ -571,6 +610,22 @@ inline % 10004h
   shr  esi, 2
 
 end
+
+// ; refgetlenz
+inline % 10688h
+
+  mov  esi, eax
+  lea  esi, [esi-4]
+labNext:
+  lea  esi, [esi+4]
+  cmp  [esi], 0
+  jnz  short labNext
+
+  sub  esi, eax
+  shr  esi, 2
+  
+end
+
 
 // ncopy (src, tgt)
 inline % 101Fh
@@ -2172,6 +2227,41 @@ unpacked:- (52)  // -32
 
 end
 
+// ; wsloadname
+inline % 3687h
+
+  push esi
+  
+  mov  edx, [eax-elVMTOffset]
+  call code : % GETCLASSNAME  
+
+  pop  ecx
+  xor  esi, esi
+
+  test eax, eax
+  jz   short labEnd
+
+  mov  esi, eax
+  mov  edx, edi
+
+labCopy:
+  mov  ebx, [esi]                                                                                           
+  mov  word ptr [edx], bx
+  test ebx, 0FFFFh
+  jz   short labFixLen
+  lea  esi, [esi+2]
+  sub  ecx, 1
+  lea  edx, [edx+2]
+  jnz  short labCopy
+
+labFixLen:
+  mov  esi, edx
+  sub  esi, edi
+  mov  eax, edi
+  
+labEnd:
+
+end
 
 // copy dump from stack
 // in : eax - stack, [esp] - target

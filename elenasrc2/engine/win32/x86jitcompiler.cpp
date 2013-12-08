@@ -26,9 +26,10 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
+#define LOADCLASSNAME        0x10011
 //#define GC_REALLOC         0x10006
 //#define GC_TERMINATOR      0x10007
-//
+
 //#define VM_GET_CLASSNAME   0x30001
 
 // preloaded gc routines
@@ -39,10 +40,10 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 2;
+const int coreFunctionNumber = 3;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK,
+   GC_ALLOC, HOOK, LOADCLASSNAME,
    /*GC_REALLOC,
    CORE_INIT_ROUTINE, CORE_SET_ROUTINE, CORE_OPENFRAME, CORE_CLOSEFRAME, CORE_ALLOC_ROUTINE, CORE_OBJALLOC_ROUTINE,
    THREAD_INIT_ROUTINE, CORE_SEND_ROUTINE, THREAD_CLOSE_ROUTINE, THREAD_OPEN_SAFEREGION, THREAD_CLOSE_SAFEREGION, THREAD_WAIT,
@@ -51,7 +52,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 50;
+const int gcCommandNumber = 51;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
@@ -64,11 +65,12 @@ const ByteCommand gcCommands[gcCommandNumber] =
    bcDAddSI, bcDSubSI, bcDLoadFI, bcDSaveFI, //bcJumpAcc, bcAccFillR,
    bcMLoadAI, bcMQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
 /*   bcRCallN, */bcGet, bcSet, bcASwapSI, 
-   bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcBoxN,
-   /*   bcMccReverse,*/ bcAXSetR, bcWSTest, bcTest, bcBSTest
+   bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcNBox,
+   /*   bcMccReverse,*/ bcAXSetR, bcWSTest, bcTest, bcBSTest,
+   bcBox
 };
 
-const int gcExtensionNumber = 54;
+const int gcExtensionNumber = 56;
 const FunctionCode gcExtensions[gcExtensionNumber] =
 {
    fnCopy, fnReserve, fnSave, fnSetLen, fnLoad, 
@@ -81,7 +83,8 @@ const FunctionCode gcExtensions[gcExtensionNumber] =
    fnSubLong, fnMulLong, fnDivLong, fnInc, fnCopyBuf,
    fnIndexOf, fnIndexOfWord, fnSetWord, fnGetWord, fnGetBuf,
    fnGetInt, fnSetInt, fnRndNew, fnRndNext, fnLn,
-   fnExp, fnAbs, fnRound, fnSetBuf
+   fnExp, fnAbs, fnRound, fnSetBuf, fnLoadName,
+   fnGetLenZ
 };
 
 // command table
@@ -120,7 +123,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileJump, &loadVMTIndexOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileHook, &compileDElse,
    &compileDThen, &compileAElse, &compileAThen, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileBoxN, &loadROp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadROp, &compileNop, &compileNop,
@@ -132,7 +135,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileNop, &compileNop, &compileElseSI, &compileThenSI,
    &compileNop, &compileNop, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
 
-   &compileCreate, &compileCreateN, &compileIAccCopyR, &compileNop, &compileNop, &compileNop, &compileAccBoxN, &compileNop,
+   &compileCreate, &compileCreateN, &compileIAccCopyR, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileCallSI, &compileNop, &compileInvokeVMT, &compileNop,
 };
 
@@ -893,14 +896,8 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 //   }
 //}
 
-void _ELENA_::compileAccBoxN(int opcode, x86JITScope& scope)
+void _ELENA_::compileBoxN(int opcode, x86JITScope& scope)
 {
-   // mov ebx, n
-   scope.code->writeByte(0xBB);
-   scope.code->writeDWord(scope.argument << 2);
-
-   scope.argument = scope.tape->getDWord();
-
    loadROp(opcode, scope);
 }
 

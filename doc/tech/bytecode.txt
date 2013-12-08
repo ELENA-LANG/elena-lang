@@ -190,7 +190,7 @@ ELENA byte codes (or ecodes)
  
  aswapsi i                  - [sp+i] <=> acc
  
- dcopyi i                   - i => index
+ dcopy i                    - i => index
  
  dloadai i                  - [acc:i] => index
 
@@ -292,7 +292,9 @@ ELENA byte codes (or ecodes)
 
  bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
 
- boxn n, vmt                 - if acc is local box its content into the object with vmt and size n
+ nbox vmt                    - if acc is local box its content into the object with vmt and size index
+
+ box vmt                     - if acc is local box its content into the object with vmt and size index
 
 
  data manipulating commands:
@@ -494,14 +496,19 @@ ELENA byte codes (or ecodes)
  rround                      - self << round(real:acc)
 
  rexp                        - self << exp(real:acc)
-
+                                                                                                     
  rln                         - self << ln(real:acc)
  
-
+ wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
                                                                                                       
+ rfgetlenz                   - params(acc).length >> index
+
+
 
 
  
+
+
 
 
 

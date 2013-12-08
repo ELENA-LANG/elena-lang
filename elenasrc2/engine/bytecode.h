@@ -83,7 +83,7 @@ enum ByteCode
    bcALoadR         = 0x53,
    bcALoadFI        = 0x54,
    bcALoadSI        = 0x55,
-   bcDCopyI         = 0x56,
+   bcDCopy          = 0x56,
    bcDLoadAI        = 0x57,
    bcDAddAI         = 0x59,
    bcDSubAI         = 0x5A,
@@ -121,6 +121,9 @@ enum ByteCode
    bcAElse          = 0xA9,
    bcAThen          = 0xAA,
 
+   bcNBox           = 0xB0,
+   bcBox            = 0xB1,
+
    bcALoadBI        = 0xCE,
 
    bcFunc           = 0xD0,
@@ -148,12 +151,10 @@ enum ByteCode
    bcCreate         = 0xF0,
    bcCreateN        = 0xF1,
    bcIAXCopyR       = 0xF2,
-   bcBoxN           = 0xF6,
    bcSCallVI        = 0xFC,
    bcXCallRM        = 0xFE,
 
 
-//   bcWriteAcc       = 0x304, 
 //   //bcSNop           = 0x08,
 //   //bcMccCopyAcc     = 0x0F,
 //
@@ -168,8 +169,6 @@ enum ByteCode
 //
 //   //bcSendVMTR       = 0x46,
 //   bcXMccCopyM      = 0x34C,
-//
-//   //bcAccTestFlagN   = 0x58,
 //
 //   bcXAccSaveFI     = 0x6F,
 //
@@ -186,8 +185,6 @@ enum ByteCode
 //   bcMccElseAcc     = 0xAB,
 //   bcMccThenAcc     = 0xAC,
 //   //bcElseLocal      = 0xAF,
-//
-//   bcNWrite         = 0xB0,
 //
 //   bcAccGetSI       = 0xC0,
 //   bcAccGetFI       = 0xC1,
@@ -313,6 +310,8 @@ enum FunctionCode
    fnExp            = 0x0684,
    fnAbs            = 0x0685,
    fnRound          = 0x0686,
+   fnLoadName       = 0x0687,
+   fnGetLenZ        = 0x0688,
 };
 
 enum PseudoArg

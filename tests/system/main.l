@@ -35,5 +35,5 @@
     BoxingTest eval.
     OuterFieldTest eval.
     LocalTest eval.
-//    OpenArgTest eval.
+    OpenArgTest eval.
 ].

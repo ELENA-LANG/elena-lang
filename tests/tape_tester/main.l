@@ -1,6 +1,6 @@
-//#define system.
+#define system.
 #define system'dynamic.
-//#define extensions'dynamic.
+#define extensions'dynamic.
 
 //// === Roles ===
 //
@@ -19,13 +19,13 @@
 //    #var x := aTape X.
 //    #var y := aTape Y.
 //].
-//
-//#symbol ReflectionTester =
-//[
-//    #var anObject := String new:"abd".
-//
-//    #var aPresentation := anObject~ETextSerializer Serialized.
-//].
+
+#symbol ReflectionTester =
+[
+    #var anObject := String new:"abd".
+
+    #var aPresentation := anObject~ETextSerializer Serialized.
+].
 
 #symbol TapeTest =
 [
@@ -53,7 +53,7 @@
 //    ClassTest eval.
 //
 //    GetPropertyTester eval.
-//
-//    ReflectionTester eval.
+
+    ReflectionTester eval.
     TapeTest eval.
 ].

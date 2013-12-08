@@ -9,6 +9,7 @@ define CORE_VM_TABLE        06h
 // --- System Core API  --
 define GC_ALLOC	         10001h
 define HOOK              10010h
+define GETCLASSNAME      10011h
 
 // GC TABLE
 define gc_header             0000h
@@ -1090,20 +1091,10 @@ labEnd:
 
 end
 
-// get vmt
-// in:  eax - object
-// out: esi - vmt
-procedure core'getvmt
-
-  mov  esi, [eax-elVMTOffset]
-  ret
-
-end
-
 // get class name
 // in:  edx - VMT
 // out: eax - PWSTR
-procedure core'getclassname
+procedure % GETCLASSNAME
 
   mov  esi, data : %CORE_VM_TABLE
   mov  eax, [esi]
