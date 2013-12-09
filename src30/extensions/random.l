@@ -9,7 +9,7 @@
     #constructor new
         <rnd_init>.
 
-    #method eval &type'int:aMaxValue &type'out:aRetVal
+    #method eval &type'int:aMaxValue &out'type'int:aRetVal
         <rnd_next>.
 
     #method eval : aMaxValue

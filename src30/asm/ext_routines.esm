@@ -5,6 +5,7 @@ procedure inline'rnd_init
 
   lrndnew
 
+  acopyb
   popb
   quitn 1
 

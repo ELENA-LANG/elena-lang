@@ -437,63 +437,9 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t*  reference, int mas
       // arrange VMT
       _compiler->compileVMT(vaddress, vmtWriter, header, count, classClassVAddress, _virtualMode);
    }
-//   // if it is a subject handler
-//   else if (test(header.flags, elSubjectRole)) {
-//      // load parent class
-//      void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
-//      void* methodAddress = (void*)((VMTEntry*)parentVMT)->address;
-//
-//      _compiler->compilePseudoVMT(vmtWriter, methodAddress, header.flags, _virtualMode);
-//
-//      // create idle native debug info if debug info enabled
-//      size_t sizePtr = -1;
-//      if (_withDebugInfo) {
-//         createNativeClassDebugInfo(reference, vaddress, sizePtr);
-//
-//         endNativeDebugInfo(sizePtr);
-//      }
-//   }
-//   // if it is a group handler
-//   else if (test(header.flags, elVMTAnyHandler)) {
-//      // create native debug info header if debug info enabled
-//      size_t sizePtr = -1;
-//      if (_withDebugInfo)
-//         createNativeClassDebugInfo(reference, vaddress, sizePtr);
-//
-//      // resolve any handler VMT
-//      void* methodAddress = resolveAnyHandlerVMT(sectionInfo, references, vmtReader);
-//
-//      // compile VMT
-//      _compiler->compilePseudoVMT(vmtWriter, methodAddress, header.flags, _virtualMode);
-//
-//      if (_withDebugInfo)
-//         endNativeDebugInfo(sizePtr);
-//   }
-//   else vaddress = NULL;
 
    return vaddress;
 }
-
-//void* JITLinker :: resolveAnyHandlerVMT(ClassSectionInfo& sectionInfo, References& references, MemoryReader& vmtReader)
-//{
-//   _Memory* codeImage = _loader->getTargetSection(mskClassRef);
-//
-//   // compile any handler
-//   ReferenceHelper refHelper(this, sectionInfo.module, &references);
-//   MemoryWriter    codeWriter(codeImage);
-//   MemoryReader    codeReader(sectionInfo.codeSection);
-//
-//   // read any handler entry
-//   VMTEntry        entry;
-//   vmtReader.read((void*)&entry, sizeof(VMTEntry));
-//
-//   void* vaddress = calculateVAddress(&codeWriter, mskCodeRef);
-//
-//   codeReader.seek(entry.address);
-//   loadMethod(refHelper, codeReader, codeWriter);
-//
-//   return vaddress;
-//}
 
 void* JITLinker :: resolveBytecodeVMTSection(const wchar16_t* reference, int mask, ClassSectionInfo sectionInfo)
 {

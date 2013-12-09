@@ -1,13 +1,13 @@
 // --- Symbol ---
 
-#class(role) Symbol
+#class Symbol
 {
     #field(type:int)theReference.
 }
 
 // --- Message ---
 
-#class(message,role) Message
+#class(message) Message
 {
     #field(type:int)theMessage.
     
@@ -16,7 +16,7 @@
 
 // --- Signature ---
 
-#class(signature,role) Signature
+#class(signature) Signature
 {
     #field(type:int)theSignature.
     

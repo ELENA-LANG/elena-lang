@@ -10,6 +10,7 @@ define CORE_VM_TABLE        06h
 define GC_ALLOC	         10001h
 define HOOK              10010h
 define GETCLASSNAME      10011h
+define INIT_RND          10012h
 
 // GC TABLE
 define gc_header             0000h
@@ -1110,6 +1111,24 @@ procedure % GETCLASSNAME
   lea  esp, [esp+8]  
 
 labEnd:
+  ret
+
+end
+
+procedure % INIT_RND
+
+  sub  esp, 8h
+  mov  eax, esp
+  sub  esp, 10h
+  lea  ebx, [esp]
+  push eax 
+  push ebx
+  push ebx
+  call extern 'dlls'KERNEL32.GetSystemTime
+  call extern 'dlls'KERNEL32.SystemTimeToFileTime
+  add  esp, 10h
+  pop  eax
+  pop  edx
   ret
 
 end

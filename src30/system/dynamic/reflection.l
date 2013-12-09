@@ -1,15 +1,28 @@
 #define system.
 
-// --- EReflector ---
-
-#class(role) EReflector
+#symbol classOp =
 {
-//    #method ClassName
-//        = system'external'VMAPI NameOf &type'object:self &type'int:255 &out'type'widestr:(LiteralValue new &type'length:255). 
-//
-//    #method Count        
-//        = IntNumber new &type'int:(system'external'VMAPI LengthOf &type'object:self).
-//        
-//    #method getAt &type'index:anIndex
-//            = system'external'VMAPI read &type'object:self &type'index:anIndex.
+    getCount &type'object:anObject &out'type'int:aLength
+        <class_getLen>.
+        
+    getAt &type'object:anObject &type'index:anIndex
+        <class_get>.
+}.
+
+// --- EClass ---
+
+#class(role) EClass
+{
+    #method Name
+        <class_getName>.
+
+    #method Count
+    [
+        #var(type:int)aCount := classOp getCount &type'object:self.
+        
+        ^ IntNumber new &type'int:aCount.
+    ]
+
+    #method getAt : anIndex
+        = classOp getAt &type'object:self &type'index::anIndex.
 }

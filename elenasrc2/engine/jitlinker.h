@@ -126,9 +126,6 @@ class JITLinker
 
    ref_t resolveMessage(_Module* module, ref_t reference);
 
-////   void loadSection(_Memory* image, MemoryWriter& writer, _Memory* section, _Module* module);
-//
-//   void* resolveAnyHandlerVMT(ClassSectionInfo& sectionInfo, References& references, MemoryReader& vmtReader);
 //
 //   void* resolveNativeVariable(const wchar16_t*  reference);
    void* resolveNativeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo);

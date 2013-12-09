@@ -2121,7 +2121,11 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
 {
    // if it is a dispatch operation
    if (arg == nsTypedMessageParameter) {
-      _writer.pushObject(*scope.tape, compileObject(arg.firstChild(), scope, mode));
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+      // if it is open argument list
+      if (param.kind == okLocal && param.type == otParams) {
+      }
+      else _writer.pushObject(*scope.tape, param);
    }
    else if (arg == nsMessageParameter) {
       compileDirectMessageParameters(arg.nextNode(), scope, mode);
@@ -4196,6 +4200,10 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
       DNode hints = skipHints(member);
 
       if (member==nsField) {
+         // a role cannot have fields
+         if (test(scope.info.header.flags, elRole))
+            scope.raiseError(errIllegalField, member.Terminal());
+
          // a class with a dynamic length structure must have no fields
          if (test(scope.info.header.flags, elDynamicRole))
             scope.raiseError(errIllegalField, member.Terminal());
@@ -4377,10 +4385,6 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    compileFieldDeclarations(member, scope);
 
-   // define class class name
-   IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
-   classClassName.append(CLASSCLASS_POSTFIX);
-
    // check if the class is stateless
    if (scope.info.fields.Count() == 0
       && !test(scope.info.header.flags, elStructureRole)
@@ -4393,12 +4397,18 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    }
    else scope.info.header.flags &= ~elStateless;
 
-   // if it is super class
-   if (scope.info.header.parentRef == 0) {
-      // super class is class class itself
+   // if it is super class or a role
+   if (scope.info.header.parentRef == 0 || test(scope.info.header.flags, elRole)) {
+      // super class is class class
       scope.info.classClassRef = scope.reference;
    }
-   else scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
+   else {
+      // define class class name
+      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
+      classClassName.append(CLASSCLASS_POSTFIX);
+
+      scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
+   }
 
    compileVMT(member, scope);
 
@@ -4492,8 +4502,8 @@ void Compiler :: compileDeclarations(DNode& member, ModuleScope& scope)
             ClassScope classScope(&scope, reference);
             compileClassDeclaration(member, classScope, hints);
 
-            // compile class class if it is not itself (i.e. it is not super class)
-            if (classScope.info.classClassRef != classScope.reference) {
+            // compile class class if it is not a super class or a role
+            if (classScope.info.classClassRef != classScope.reference && !test(classScope.info.header.flags, elRole)) {
                ClassScope classClassScope(&scope, classScope.info.classClassRef);
                compileClassClassDeclaration(member, classClassScope, classScope);
             }

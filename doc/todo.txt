@@ -20,174 +20,42 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - open arg                                      
-                        * a msg::Args -> converting open arg list into normal one
-
-                        * use cases
-                         a msg &::Args -> passing open arg list further
+              xdev - generic development
+                       * test brackets
 
 <=================>
          
-1.9.9.12
---------
+1.9.10
+------
 week1: [14.12]
               xdev - generic development              
-                       * group object implementation (group, union, cast)
-                       * rename Pair to Aggregation, where the first one is main object and all the next is extension, it should be possible to switch
-                         second one with the next one 
-                       * elenavm: use reverse instead of set of swaps
-
-                       * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
-                         do we need to return type for every object??
-
-              xdev - generic development
-                       * probably boolean nested function should not support $self ?
-                                   [ $self action ] and [ self action ] - should be similar, because it could be implemented directly
-
-                       * the length expression was not calculated correctly in the following code:
-                            LiteralValue new &type'length:(theData type'length + aLiteral type'length) &type'widestr:theData &type'widestr:aLiteral.
-                       * should class symbol always return class class?
-                       * widechar constant
-                       * filling with zero / nil should be done inside constructor
-                       * dispatching : return type, could we support additional method or dispatch handler can be used, ...
-                         think over type support, we need some generic solution (typecontrol should be declared for every set of
-                         objects, which is not convenient) ; so maybe better to support type and do all other type of dispatching
-                         automatically , e.g. a write::b is replaced by compiler => a(b type)~write:b.
-
-                       * dispatching variant : a write:(b~(a type)get)
-
                        * Real new:((lum Even) => true ? [ 1 ] false ? [ -1 ]) (see extensions'math'EMatrix) does not work correctly, it always
                          return true part, even if the result is false
 
-                        * out'type'xxx can be declared but cannot be implicitly passed
-
-                        * write, append, ... operation should be allowed only with $self or out parameter
-                            
               xdev - dispatch table
                        * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
                          actual message name inside handler : the table is the map between income and outcome message)
                          
-              xdev - open arg
-                       * can be passed further without boxing as open arg parameter
-                       * any other operation should result in boxing
-
               xdev - multithreading
                        * architecture overview
                        * migrate multy-threading 
 
               xdev - x64
                       * think over general architecture
-                      * learn how to create x64 executable
+                      * asm2bin64 - compile x64 bit opcodes
+                      * create x64 elena vm
 
               xdev - multy select statement
                        * native implementation - using open argument list??
-
-              xdev - generic development              
-                       * amb sample: can it be modified to use open argument list, currently for every number of parameters separate method should be declared
-
-                       * why is not possible: "abc"@2 (if both of them primitive constants)
-                       * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
-                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
-                        
-                        * constant array symbol (e.g. #symbol BoolValues = (true, false). )
-                        * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                          modify the code, from reading bool values from stack to constant array
-
-                       * for loop: review for implementation algorithm can we simplify it??
-
-                       * support several roles in role (e.g. a~role1~role2 eval) ??
-
-                       * several extensions: should it be supported, like in ELENA1.x
-                         (system'dynamic'RoleList)  
-
-                       * should be possible to declare sealed classes
-
-                       * maybe primitive code should use reverse order as well, we could simplify a lot of code
-
-                       * support the following syntax:
-                              #method save:anObject &to:aTarget
-                                  => EAdapter new::anObject.                          
-
-                       * normal operation with data field should be boxed
-                       * could it be possible to hide the inherited methods, so they could be used
-                         only internally by the class (with $super)
-
-                       * dynamic object extending : union, group
-                         
-                       * resend operator: implement the situation when the target is
-                         not constant
-
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-
-                       * elc:Bytecodewriter::assignResult, should support both outer and normal
-                         field assigning
-                       * remove obsolete method handler code
-                       
-                       * could typed subjects be reserved for every module? So they have the
-                         same ids in every module? (so we could get rid of long list of cached
-                         values)
-                       * loop should contain snop
-
-                       * stack allocated variable - try to find situation when overhead will be minimized
-
-                       * hook: maybe offset should exclude call command size, so no need
-                         in adjucment
-
-                       * compileHelperOperation: implement size check for the output parameter
-                       * warn if number of subjects / verbs are overflown
-                       * a lot of operations with intNumber, longNumber and realNumber look
-                         alike, can we try to generalize them?
-
-                       * do not use self in constructor
-
-                       * external call: do not support out'type'xxx:nil parameter, stack allocated one should be used
-                       * hint role should indicate that no need to create a class class??
-
-                       * readonly fields like in C# (some optimization gains?)
-                       
-                       * warn if system'Object does not contain send method
-
-                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
-      
-                       * raise an exception if more than 14 arguments in the method / message                 
-                       
-                       * simplify ansi constants / wideliteral interaction
-                       * type'int (and so on): compiler should garantee that the
-                         object returned / passed with with argument is integer
-                         (warning?)                         
-                       
-                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
-
-                       * support: primitive operation int + long, long + int
-
-                       * array item set operator a@b := c ???
-
-                       * lcopystr : index should contain radix
-                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
-                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
-                       * ws_indexof: check operations check if index, index + length is not beyond string
-                       * support operation with short:
-                           //        #var aSystemStruct := Win32SystemTime new
-                           //            &type'short:(1601 + aYear type'int)
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
-                        
 
               xdev - ecode optimization
                        * we should not load acc if it already holds the correct value (see Object.notequal[1], Object.equal[1])
                        * system'object output code review (Object.notequal[1])
                        
-              xdev - generic development              
-                       * loadverb should be not be implemented in elena.h
-                         module
-                       * custom verb dispatching (see for example stringControl split&by[2])
-                           : intNumber.shift ; stringControl
-                       * multiple parameter dispatching
-                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
-                       * new verbs: shift(?)
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-
-              xdev - simple optimization              
+              xdev - native code optimization
+                       * review commands
+                       * review core
+              xdev - byte code optimization
                        * review ws_insert function (in assembler), try to simplify it
 
                        * review operation with basic types, simplify them
@@ -318,6 +186,9 @@ week1: [14.12]
                        
 week2:                       
               sdev - samples
+                       * test system
+                       * test tape
+                       * test all samples / rosetta samples
                        * modify samples to comply with the recent changes (get rid of set operator)
                        * modify some rosetta code samples to use consoleEx
               sdev - rosetta samples              
@@ -542,10 +413,141 @@ week4:
                        * boxing: message target / operand, operator target / operand                       
                        * try to automize build process  
                       
-1.9.9.13
---------
+1.9.11
+------
 week1:
-              xdev - generic development
+              xdev - open arg                                      
+                        * a msg::Args -> converting open arg list into normal one
+                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
+                        * use cases
+                         a msg &::Args -> passing open arg list further
+                       * any other operation should result in boxing
+
+
+              xdev - generic development              
+                       * group object implementation (group, union, cast)
+                       * elenavm: use reverse instead of set of swaps
+
+                       * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
+                         do we need to return type for every object??
+                       * probably boolean nested function should not support $self ?
+                                   [ $self action ] and [ self action ] - should be similar, because it could be implemented directly
+
+                       * the length expression was not calculated correctly in the following code:
+                            LiteralValue new &type'length:(theData type'length + aLiteral type'length) &type'widestr:theData &type'widestr:aLiteral.
+                       * widechar constant
+                       * filling with zero / nil should be done inside constructor
+                       * dispatching : return type, could we support additional method or dispatch handler can be used, ...
+                         think over type support, we need some generic solution (typecontrol should be declared for every set of
+                         objects, which is not convenient) ; so maybe better to support type and do all other type of dispatching
+                         automatically , e.g. a write::b is replaced by compiler => a(b type)~write:b.
+
+                       * dispatching variant : a write:(b~(a type)get)
+
+                        * out'type'xxx can be declared but cannot be implicitly passed
+
+                        * write, append, ... operation should be allowed only with $self or out parameter
+                            
+                       * amb sample: can it be modified to use open argument list, currently for every number of parameters separate method should be declared
+
+                       * why is not possible: "abc"@2 (if both of them primitive constants)
+                       * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
+                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
+                        
+                        * constant array symbol (e.g. #symbol BoolValues = (true, false). )
+                        * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                          modify the code, from reading bool values from stack to constant array
+
+                       * for loop: review for implementation algorithm can we simplify it??
+
+                       * support several roles in role (e.g. a~role1~role2 eval) ??
+
+                       * several extensions: should it be supported, like in ELENA1.x
+                         (system'dynamic'RoleList)  
+
+                       * should be possible to declare sealed classes
+
+                       * should class symbol always return class class (exception is role)? 
+                       
+                       * maybe primitive code should use reverse order as well, we could simplify a lot of code
+
+                       * support the following syntax:
+                              #method save:anObject &to:aTarget
+                                  => EAdapter new::anObject.                          
+
+                       * normal operation with data field should be boxed
+                       * could it be possible to hide the inherited methods, so they could be used
+                         only internally by the class (with $super)
+
+                       * dynamic object extending : union, group
+                         
+                       * resend operator: implement the situation when the target is
+                         not constant
+
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+
+                       * elc:Bytecodewriter::assignResult, should support both outer and normal
+                         field assigning
+                       * remove obsolete method handler code
+                       
+                       * could typed subjects be reserved for every module? So they have the
+                         same ids in every module? (so we could get rid of long list of cached
+                         values)
+                       * loop should contain snop
+
+                       * stack allocated variable - try to find situation when overhead will be minimized
+
+                       * hook: maybe offset should exclude call command size, so no need
+                         in adjucment
+
+                       * compileHelperOperation: implement size check for the output parameter
+                       * warn if number of subjects / verbs are overflown
+                       * a lot of operations with intNumber, longNumber and realNumber look
+                         alike, can we try to generalize them?
+
+                       * do not use self in constructor
+
+                       * external call: do not support out'type'xxx:nil parameter, stack allocated one should be used
+                       * hint role should indicate that no need to create a class class??
+
+                       * readonly fields like in C# (some optimization gains?)
+                       
+                       * warn if system'Object does not contain send method
+
+                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
+      
+                       * raise an exception if more than 14 arguments in the method / message                 
+                       
+                       * simplify ansi constants / wideliteral interaction
+                       * type'int (and so on): compiler should garantee that the
+                         object returned / passed with with argument is integer
+                         (warning?)                         
+                       
+                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
+
+                       * support: primitive operation int + long, long + int
+
+                       * array item set operator a@b := c ???
+
+                       * lcopystr : index should contain radix
+                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
+                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
+                       * ws_indexof: check operations check if index, index + length is not beyond string
+                       * support operation with short:
+                           //        #var aSystemStruct := Win32SystemTime new
+                           //            &type'short:(1601 + aYear type'int)
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                        
+                       * loadverb should be not be implemented in elena.h
+                         module
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+                       * multiple parameter dispatching
+                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
+                       * new verbs: shift(?)
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+
                        * support GUI application
 
 week2:
@@ -554,7 +556,7 @@ week3:
               sdev - open architecture
                        * review dynamic property container, try to simplify it
 
-1.9.9.15
+1.9.12
 --------
 week1:
                xdev - GC
@@ -562,7 +564,7 @@ week1:
 
 week2:
 
-1.9.9.16
+1.9.13
 --------
 week1:
                xdev - GC

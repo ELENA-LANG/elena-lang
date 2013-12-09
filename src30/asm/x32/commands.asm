@@ -6,6 +6,7 @@ define CORE_GC_TABLE        02h
 define GC_ALLOC	         10001h
 define HOOK              10010h
 define GETCLASSNAME      10011h
+define INIT_RND          10012h
 
 // constants
 define elVMTSizeOffset    000Ch
@@ -3017,19 +3018,8 @@ end
 // ; lrndnew
 inline % 02681h
 
-  sub  esp, 8h
-  mov  eax, esp
-  sub  esp, 10h
-  lea  ebx, [esp]
-  push eax 
-  push ebx
-  push ebx
-  call extern 'dlls'kernel32.GetSystemTime
-  call extern 'dlls'kernel32.SystemTimeToFileTime
-  add  esp, 10h
-  pop  ebx
-  pop  edx
-  mov  [edi], ebx
+  call code : % INIT_RND
+  mov  [edi], eax
   
 end
 
