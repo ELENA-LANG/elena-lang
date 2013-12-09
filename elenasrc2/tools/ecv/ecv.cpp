@@ -452,6 +452,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       ////case bcSendVMTR:
       case bcASaveR:
       case bcACopyR:
+      case bcNBox:
+      case bcBox:
       ////case bcAccTryR:
       ////case bcAccMergeR:
       ////case bcJumpR:
@@ -489,7 +491,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.append(_T(' '));
       //   command.appendHex(argument);
       //   break;
-      //case bcPushSI:
+      case bcPushSI:
       case bcALoadSI:
       case bcASaveSI:
       //case bcSwapSI:

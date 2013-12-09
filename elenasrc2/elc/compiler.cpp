@@ -1434,15 +1434,15 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
    _writer.declareSwitchBlock(*scope.tape);
 
    if (switchValue.kind == okRegister) {
-      switchValue.kind = okCurrent;
-      switchValue.reference = 0;
-
       _writer.pushObject(*scope.tape, switchValue);
+
+      switchValue.kind = okBlockLocal;
+      switchValue.reference = 1;
    }
 
    DNode option = node.firstChild();
    while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
-      _writer.declareSwitchBlock(*scope.tape);
+      _writer.declareSwitchOption(*scope.tape);
 
       int operator_id = EQUAL_MESSAGE_ID;
       if (option == nsBiggerSwitchOption) {
@@ -2869,7 +2869,12 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
    _writer.loadObject(*scope.tape, info);
 
-   boxObject(scope, ObjectInfo(okRegister, info.type), mode);
+   //!! HOTFIX: to prevent boxing constant ; 
+   // general solution should be used instead
+   if (info.kind != okConstant) {
+      // no need to box constant
+      boxObject(scope, ObjectInfo(okRegister, info.type), mode);
+   }
 
    compileEndStatement(node, scope);
 
@@ -3834,7 +3839,7 @@ void Compiler :: compileAction(DNode node, MethodScope& scope, ref_t actionMessa
 
    // method optimization
    // if self / variables are not used try to comment frame openning / closing
-   if (!test(scope.masks, MTH_FRAME_USED))
+   if (!test(scope.masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
       _writer.commentFrame(codeScope.tape->end());
 }
 
@@ -3927,7 +3932,7 @@ void Compiler :: compileMessageDispatch(DNode node, CodeScope& scope)
 
    // method optimization
    // if self / variables are not used try to comment frame openning / closing
-   if (!test(methodScope->masks, MTH_FRAME_USED))
+   if (!test(methodScope->masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
       _writer.commentFrame(scope.tape->end());
 }
 
@@ -4029,7 +4034,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, DNode hints*/)
 
    // method optimization
    // if self / variables are not used try to comment frame openning / closing
-   if (!test(scope.masks, MTH_FRAME_USED))
+   if (!test(scope.masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
       _writer.commentFrame(codeScope.tape->end());
 }
 
@@ -4110,7 +4115,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
       // method optimization
       // if self / variables are not used try to comment frame openning / closing
-      if (!test(scope.masks, MTH_FRAME_USED))
+      if (!test(scope.masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
          _writer.commentFrame(codeScope.tape->end());
    }
 }

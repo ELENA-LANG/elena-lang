@@ -7,7 +7,6 @@ Ultimate goals
 
 Version 2.0.0
 -------------
-- migrate existing console samples
 - migrate existing rosetta code samples to lib30
 - simple byte code optimization
 - vmt-less action

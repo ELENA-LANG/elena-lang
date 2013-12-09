@@ -192,7 +192,7 @@ public:
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
    void declareSwitchBlock(CommandTape& tape);
-//   void declareSwitchOption(CommandTape& tape);
+   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
    void declarePrimitiveCatch(CommandTape& tape);

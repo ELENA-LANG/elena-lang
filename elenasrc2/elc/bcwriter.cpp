@@ -226,10 +226,10 @@ void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
    tape.newLabel();                  // declare end label
 }
 
-//void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare next option
-//}
+void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
+{
+   tape.newLabel();                  // declare next option
+}
 
 void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
 {

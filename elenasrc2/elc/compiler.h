@@ -16,9 +16,10 @@
 namespace _ELENA_
 {
 
-//// Compiler optimization flags
+// Compiler optimization flags
 //const int optDirectConstant = 0x00000001;
 //const int optJumps          = 0x00000002;
+const int optIdleFrame         = 0x00000003;
 
 // --- Compiler class ---
 class Compiler
@@ -547,8 +548,8 @@ protected:
 
    Unresolveds      _unresolveds;
 
-//   // optimization flags
-//   int _optFlag;
+   // optimization flags
+   int _optFlag;
 
    // optimization rules
    TransformTape _rules;
@@ -704,10 +705,10 @@ protected:
    void createModuleInfo(ModuleScope& scope, const wchar16_t* path, bool withDebugInfo, Map<const wchar16_t*, ModuleInfo>& modules);
 
 public:
-////   void setOptFlag(int flag)
-////   {
-////      _optFlag |= flag;
-////   }
+   void setOptFlag(int flag)
+   {
+      _optFlag |= flag;
+   }
 
    void loadRules(StreamReader* optimization);
 

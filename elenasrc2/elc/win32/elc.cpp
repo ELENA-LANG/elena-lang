@@ -165,13 +165,13 @@ _ELENA_::ConfigCategoryIterator _ELC_::Project :: getCategory(_ELENA_::_ConfigFi
    switch (setting)
    {
    case _ELENA_::opTemplates:
-      return config.getCategoryIt(TEMPLATE_CATEGORY);
+      return config.getCategoryIt(_ELENA_::ConstantIdentifier(TEMPLATE_CATEGORY));
    case _ELENA_::opPrimitives:
-      return config.getCategoryIt(PRIMITIVE_CATEGORY);
+      return config.getCategoryIt(_ELENA_::ConstantIdentifier(PRIMITIVE_CATEGORY));
    case _ELENA_::opSources:
-      return config.getCategoryIt(SOURCE_CATEGORY);
+      return config.getCategoryIt(_ELENA_::ConstantIdentifier(SOURCE_CATEGORY));
    case _ELENA_::opForwards:
-      return config.getCategoryIt(FORWARD_CATEGORY);
+      return config.getCategoryIt(_ELENA_::ConstantIdentifier(FORWARD_CATEGORY));
    default:
       return _ELENA_::ConfigCategoryIterator();
    }
@@ -182,15 +182,15 @@ const _text_t* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_
    switch (setting)
    {
    case _ELENA_::opEntry:
-      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_ENTRY);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_PROJECT_ENTRY));
    case _ELENA_::opNamespace:
-      return config.getSetting(PROJECT_CATEGORY, ELC_NAMESPACE);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_NAMESPACE));
    case _ELENA_::opGCHeapSize:
-      return config.getSetting(LINKER_CATEGORY, ELC_GC_PAGESIZE);
+      return config.getSetting(_ELENA_::ConstantIdentifier(LINKER_CATEGORY), _ELENA_::ConstantIdentifier(ELC_GC_PAGESIZE));
    case _ELENA_::opGCObjectSize:
-      return config.getSetting(LINKER_CATEGORY, ELC_GC_OBJSIZE);
+      return config.getSetting(_ELENA_::ConstantIdentifier(LINKER_CATEGORY), _ELENA_::ConstantIdentifier(ELC_GC_OBJSIZE));
    case _ELENA_::opYGRatio:
-      return config.getSetting(LINKER_CATEGORY, ELC_YG_RATIO);
+      return config.getSetting(_ELENA_::ConstantIdentifier(LINKER_CATEGORY), _ELENA_::ConstantIdentifier(ELC_YG_RATIO));
 //   case _ELENA_::opSizeOfStackReserv:
 //      return config.getSetting(LINKER_CATEGORY, ELC_STACK_RESERV);
 //   case _ELENA_::opSizeOfStackCommit:
@@ -204,37 +204,39 @@ const _text_t* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_
 //   case _ELENA_::opApplicationType:
 //      return config.getSetting(SYSTEM_CATEGORY, ELC_APPTYPE);
    case _ELENA_::opPlatformType:
-      return config.getSetting(PROJECT_CATEGORY, ELC_PLATFORMTYPE);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_PLATFORMTYPE));
    case _ELENA_::opTarget:
-      return config.getSetting(PROJECT_CATEGORY, ELC_TARGET);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_TARGET));
    case _ELENA_::opLibPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_LIB_PATH);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_LIB_PATH));
    case _ELENA_::opOutputPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_OUTPUT_PATH);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_OUTPUT_PATH));
    case _ELENA_::opWarnOnUnresolved:
-      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_UNRESOLVED);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_WARNON_UNRESOLVED));
 //   case _ELENA_::opWarnOnSignature:
 //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
    case _ELENA_::opDebugMode:
-      return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_DEBUGINFO));
    case _ELENA_::opEmbeddedSymbolMode:
-      return config.getSetting(PROJECT_CATEGORY, ELC_SYMBOLINFO);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_SYMBOLINFO));
 //   case _ELENA_::opStarter:
 //      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_ENTRY);
    case _ELENA_::opVMPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_VM_PATH);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_VM_PATH));
 //   case _ELENA_::opJITType:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_JIT);
 //   case _ELENA_::opThreadMax:
 //      return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
-//   case _ELENA_::opL0:
-//      return config.getSetting(COMPILER_CATEGORY, ELC_L0);
+   case _ELENA_::opL0:
+      return config.getSetting(_ELENA_::ConstantIdentifier(COMPILER_CATEGORY), _ELENA_::ConstantIdentifier(ELC_L0));
 //   case _ELENA_::opL1:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
 //   case _ELENA_::opL2:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
+   case _ELENA_::opL3:
+      return config.getSetting(_ELENA_::ConstantIdentifier(COMPILER_CATEGORY), _ELENA_::ConstantIdentifier(ELC_L3));
    case _ELENA_::opTemplate:
-      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
+      return config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_PROJECT_TEMPLATE));
    default:
       return NULL;
    }
@@ -290,7 +292,7 @@ void _ELC_::Project :: loadConfig(const _path_t* path, bool root, bool requiered
       loadCategory(config, _ELENA_::opTemplates, configPath);
 
    // load template
-   _ELENA_::ProjectParam projectTemplate(config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE));
+   _ELENA_::ProjectParam projectTemplate(config.getSetting(_ELENA_::ConstantIdentifier(PROJECT_CATEGORY), _ELENA_::ConstantIdentifier(ELC_PROJECT_TEMPLATE)));
    if (!projectTemplate.isEmpty()) {
       const wchar_t* templateFile = _settings.get(_ELENA_::opTemplates, projectTemplate, DEFAULT_STR);
       if (_ELENA_::emptystr(templateFile)) {
@@ -336,11 +338,12 @@ void _ELC_::Project :: setOption(const _text_t* value)
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
             _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH)));
          }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_OPTOFF)) {
-//            _settings.add(_ELENA_::opL0, 0);
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_OPTOFF)) {
+            _settings.add(_ELENA_::opL0, 0);
 //            _settings.add(_ELENA_::opL1, 0);
 //            _settings.add(_ELENA_::opL2, 0);
-//         }
+            _settings.add(_ELENA_::opL3, 0);
+         }
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_SYMBOLEMBEDOFF)) {
             _settings.add(_ELENA_::opEmbeddedSymbolMode, 0);
          }
@@ -392,7 +395,7 @@ _ELENA_::_JITCompiler* _ELC_::Project :: getJITCompiler()
 
 void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 {
-//   if (project.IntSetting(_ELENA_::opL0) != 0) {
+   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
       // !! temporal: there should be several optimization levels
       _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
       _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
@@ -400,13 +403,16 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
          project.raiseWarning(errInvalidFile, rulesPath);
       }
       else compiler.loadRules(&rulesFile);
-//   }
+   }
 //   if (project.IntSetting(_ELENA_::opL1) != 0) {
 //      compiler.setOptFlag(_ELENA_::optDirectConstant);
 //   }
 //   if (project.IntSetting(_ELENA_::opL2) != 0) {
 //      compiler.setOptFlag(_ELENA_::optJumps);
 //   }
+   if (project.IntSetting(_ELENA_::opL3, -1) != 0) {
+      compiler.setOptFlag(_ELENA_::optIdleFrame);
+   }
 }
 
 // --- Main function ---

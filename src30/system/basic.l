@@ -846,6 +846,12 @@
     [
         theValue := theValue not.
     ]            
+
+    #method equal : aValue
+        => theValue.
+            
+    #method notequal : aValue
+        => theValue.
             
     #method => theValue.
 }

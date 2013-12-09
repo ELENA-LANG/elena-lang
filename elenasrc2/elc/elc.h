@@ -40,47 +40,48 @@
 //#define ELC_PRM_UNICODE             "xunicode"
 #define ELC_PRM_PROJECTPATH         "xpath"
 #define ELC_PRM_CODEPAGE            "xcp"
-//#define ELC_PRM_OPTOFF              "xo-"
+#define ELC_PRM_OPTOFF              "xo-"
 #define ELC_PRM_SYMBOLEMBEDOFF      "xembed-"
 
 // --- ELC config categories ---
-//#define COMPILER_CATEGORY           _T("compiler")
-#define SOURCE_CATEGORY             _T("files")
-#define FORWARD_CATEGORY            _T("forwards")
-#define LINKER_CATEGORY             _T("linker")
-#define PRIMITIVE_CATEGORY          _T("primitives")
-#define PROJECT_CATEGORY            _T("project")
+#define COMPILER_CATEGORY           "compiler"
+#define SOURCE_CATEGORY             "files"
+#define FORWARD_CATEGORY            "forwards"
+#define LINKER_CATEGORY             "linker"
+#define PRIMITIVE_CATEGORY          "primitives"
+#define PROJECT_CATEGORY            "project"
 //#define SYSTEM_CATEGORY             _T("system")
-#define TEMPLATE_CATEGORY           _T("templates")
+#define TEMPLATE_CATEGORY           "templates"
 
 // --- ELC config settings ---
-#define ELC_DEBUGINFO               _T("debuginfo")
-#define ELC_PROJECT_ENTRY           _T("entry")
-#define ELC_TARGET                  _T("executable")
-#define ELC_GC_PAGESIZE             _T("gcsize")
-#define ELC_GC_OBJSIZE              _T("objsize")
+#define ELC_DEBUGINFO               "debuginfo"
+#define ELC_PROJECT_ENTRY           "entry"
+#define ELC_TARGET                  "executable"
+#define ELC_GC_PAGESIZE             "gcsize"
+#define ELC_GC_OBJSIZE              "objsize"
 //#define ELC_HEAP_COMMIT             _T("heapcommit")
 //#define ELC_HEAP_RESERV             _T("heapresrv")
 //#define ELC_JIT                     _T("jit")
 //#define ELC_YG_IMAGEBASE            _T("imagebase")
-#define ELC_LIB_PATH                _T("libpath")
+#define ELC_LIB_PATH                "libpath"
 //#define ELC_SYSTEM_THREADMAX        _T("maxthread")
-#define ELC_OUTPUT_PATH             _T("output")
-#define ELC_NAMESPACE               _T("namespace")
+#define ELC_OUTPUT_PATH             "output"
+#define ELC_NAMESPACE               "namespace"
 //#define ELC_STACK_COMMIT            _T("stackcommit")
 //#define ELC_STACK_RESERV            _T("stackresrv")
 //#define ELC_PROJECT_START           _T("start")
-#define ELC_PROJECT_TEMPLATE        _T("template")
+#define ELC_PROJECT_TEMPLATE        "template"
 //#define ELC_APPTYPE                 _T("apptype")
-#define ELC_PLATFORMTYPE            _T("platform")
-#define ELC_VM_PATH                 _T("vmpath")
-#define ELC_WARNON_UNRESOLVED       _T("warn:unresolved")
+#define ELC_PLATFORMTYPE            "platform"
+#define ELC_VM_PATH                 "vmpath"
+#define ELC_WARNON_UNRESOLVED       "warn:unresolved"
 //#define ELC_WARNON_SIGNATURE        _T("warn:signature")
-#define ELC_YG_RATIO                _T("ygratio")
-//#define ELC_L0                      _T("l0")                // optimization: byte code optimization
+#define ELC_YG_RATIO                "ygratio"
+#define ELC_L0                      "l0"                // optimization: byte code optimization
 //#define ELC_L1                      _T("l1")                // optimization: direct invoke
 //#define ELC_L2                      _T("l2")                // optimization: jumps
-#define ELC_SYMBOLINFO              _T("symbolembed")
+#define ELC_L3                      "l3"                // optimization: idle frame optimization
+#define ELC_SYMBOLINFO              "symbolembed"
 
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2013 by Alex Rakov\n"

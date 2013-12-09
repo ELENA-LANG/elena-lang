@@ -205,10 +205,11 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
    loadIntOption(config, opSizeOfHeapCommit);
    loadAlignedIntOption(config, opImageBase, 0x400000);
 
-//   // load compiler engine options
-//   loadIntOption(config, opL0);
+   // load compiler engine options
+   loadIntOption(config, opL0);
 //   loadIntOption(config, opL1);
 //   loadIntOption(config, opL2);
+   loadIntOption(config, opL3);
 
    // load primitives
    loadCategory(config, opPrimitives, configPath);

@@ -11,6 +11,10 @@ ELENA:
 [!] binary incompatible due to changes in ecodes
 [!] ecodes overhaul
 [!] indexer operator syntax modified
+[-] multi-select operator implementation fixed
+
+ELC:
+[+] new compiler options: optimization on/off
 
 [LIB]
 [-] CRITICAL BUG: fixed bug in GC algorithm

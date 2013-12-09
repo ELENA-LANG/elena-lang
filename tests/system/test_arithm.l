@@ -3,41 +3,15 @@
 #define system'collections.
 //#define extensions'text.
 //#define extensions'math.
-
-// --- OpenArgTest ---
-
-#class OpenArgTester
-{
-    #method testBoxing : anArray
-    [
-        #var b := anArray.
-    ]
-    
-    #method test :: aParams
-    [
-        #var aLength := aParams type'length.
-        
-        #var aSecond := aParams@1.
-        
-        $self testBoxing:aParams.
-    ]
-}
-
-#symbol OpenArgTest =
-[
-    OpenArgTester test &:1:"a":3.
-].
-
-//#class XTester
-//{
-//    #method set:aField:aField2
-//    [
-//        ^ aField.
-//    ]
-//}
+#define extensions.
 
 #symbol XTest =
 [    
+    #var b := Boolean new:true.
+    
+    #var n := Real new:((b Value) => 
+                true ? [ 1 ] 
+                false ? [ 0 ]).
 ].
 
 // --- MultiDispatchTest ---
@@ -108,6 +82,7 @@
     
     #method add &type'int:aValue
     [
+        ^ aValue.
     ]
 }
 
@@ -124,7 +99,7 @@
     BoxingTester add &type'int:(2 + n).
     BoxingTester add :(2 + n).
     
-    BoxingTester add &type'int:(2 + 3 * 4).
+    #var n3 := BoxingTester add &type'int:(2 + 3 * 4).
     BoxingTester add :(2 + 3 * 4).
     
 ].
@@ -537,3 +512,32 @@
     GetPropertyAgent eval:%property(2).
 ].
 
+// --- OpenArgTest ---
+
+#class OpenArgTester
+{
+    #method testBoxing : anArray
+    [
+        #var b := anArray.
+    ]
+    
+//    #method testUnboxing : anArg1 : anArg2 : anArg3
+//    [
+//        #var b := anArg1.
+//    ]
+
+    #method test :: aParams
+    [
+        #var aLength := aParams type'length.
+        
+        #var aSecond := aParams@1.
+        
+        $self testBoxing:aParams.
+//        $self testUnboxing::aParams.
+    ]
+}
+
+#symbol OpenArgTest =
+[
+    OpenArgTester test &:1:"a":3.
+].
