@@ -206,15 +206,15 @@ enum ByteCode
    bcReserved       = 0xFF,
 
    // labels
-   blLabelMask      = 0x8000,  // tape label mask
-   blBegin          = 0x8001,  // meta command, declaring the structure
-   blEnd            = 0x8002,  // meta command, closing the structure
-   blLabel          = 0x8003,  // meta command, declaring the label
+   blLabelMask      = 0xC000,  // tape label mask
+   blBegin          = 0xC001,  // meta command, declaring the structure
+   blEnd            = 0xC002,  // meta command, closing the structure
+   blLabel          = 0xC003,  // meta command, declaring the label
 
    // meta commands:
    bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
    bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
-//   //blHint           = 0x204,  // meta command, compiler hint
+   //blHint           = 0x204,  // meta command, compiler hint
 
    // pseudo block commands
    bcPushBlockI     = 0x8326, 

@@ -26,21 +26,13 @@ Currently:
 ------
 week1: [14.12]
               xdev - byte code optimization
-                       * optimize output code: system'Object, ...
-
-                       * we should not load acc if it already holds the correct value (see Object.notequal[1], Object.equal[1])
-                       
                        * if the target is stack allocated, no need to allocate extra space (at least for the single operation)? 
-
 
                        * we do not need frame in idle LiteralValue constructor             
                        * if $self is not used - we should not use pushb bcopya / popb
 
                        * review $ConsoleHandler.new&type'int - simplify the code
 
-
-              xdev - script support
-+                       * should be possible to debug vm scripts
                        
               idev - debugger
                        * it should be still possible to view self / $self if no frame were declared
@@ -52,9 +44,6 @@ week1: [14.12]
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * multi-select operator debugging - step over does not work
-
-              xdev - elc
-                       * switch configuration manager to utf8, so no need for ConstantIdentifier in the code
 
               xdev - tools                       
                        * asm2binx: mov  ebx, [eax + esi*2] cannot be correctly compiled; used in wsgetat command
@@ -300,6 +289,9 @@ week4:
 1.9.11
 ------
 week1:
+              xdev - elc
+                       * switch configuration manager to utf8, so no need for ConstantIdentifier in the code
+
               xdev - multithreading
                        * architecture overview
                        * migrate multy-threading 
@@ -445,6 +437,8 @@ week1:
                          (see Compiler::compileDispatcher)              
 
                        * support GUI application
+                       * compiler option : switch off jump optimization
+                       * compiler option : switch off direct calls
 
               xdev - multy select statement
                        * native implementation - using open argument list??
@@ -458,6 +452,8 @@ week1:
                        * review core
 
               xdev - byte code optimization
+                       * optimize output code: system'Object.notequal, ...
+
                        * review and optimize dispatching algorithm: $self, field, symbol
 
                        * optimize type'length virtual operation implementation (we do not need to save it in the stack)
@@ -532,6 +528,7 @@ week1:
                        * GC: card table scanning; could we optimize it ?
 
                        * pi (3106)
+                       * anagram (improve current: 153886)
 
                        * operator implementation: boxing loperand, simplify the code
                        * no need for boxing if the result is typed constant (e.g a message:2 - no need to box the operand)
@@ -541,6 +538,9 @@ week1:
                          better to compare value ?? (if it is true / false constants for example)
                        * could direct parameter allocation be used for open argument list?
                        * review / simplify idle constructor
+                       
+              xdev - script support
+                       * should be possible to debug vm scripts
                        
 week2:
 

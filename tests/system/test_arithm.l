@@ -5,6 +5,12 @@
 //#define extensions'math.
 #define extensions.
 
+#class Object
+{
+    #method equal : anObject
+        = $self equal &type'object:anObject.
+}
+
 #symbol XTest =
 [    
     #var b := Boolean new:true.

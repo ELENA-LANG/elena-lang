@@ -16,7 +16,8 @@ using namespace _ELENA_;
 
 // --- Mode constants ---
 #define CTRL_MASK             0xFFC00000
-#define CTRL_ROOT             0x80000000
+#define CTRL_ROOT             0xC0000000
+#define CTRL_ROOTEXPR         0x40000000
 #define CTRL_LOOP             0x20000000
 #define CTRL_TRY_MODE         0x10000000
 #define CTRL_CATCH_MODE       0x08000000
@@ -1603,8 +1604,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 {
    TerminalInfo terminal = node.Terminal();
 
-   recordStep(scope, terminal, dsStep);
-
    ObjectInfo object;
    if (terminal==tsLiteral) {
       object = ObjectInfo(okConstant, otLiteral, scope.moduleScope->module->mapConstant(terminal));
@@ -1657,6 +1656,10 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       case okSymbol:
          scope.moduleScope->validateReference(terminal, object.reference | mskSymbolRef);
    }
+
+   // skip the first breakpoint if it is not a symbol
+   if (object.kind == okSymbol || !test(mode, CTRL_ROOTEXPR))
+      recordStep(scope, terminal, dsStep);
 
    return object;
 }
@@ -3058,7 +3061,7 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
 
       switch(statement) {
          case nsExpression:
-            compileExpression(statement, scope, 0);
+            compileExpression(statement, scope, CTRL_ROOTEXPR);
             break;
          case nsThrow:
             compileThrow(statement, scope, 0);
@@ -3071,7 +3074,7 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
             break;
          case nsRetStatement:
          {
-            compileRetExpression(statement.firstChild(), scope, 0);
+            compileRetExpression(statement.firstChild(), scope, CTRL_ROOTEXPR);
             compileEndStatement(node, scope);
 
             _writer.gotoEnd(*scope.tape, test(mode, CTRL_PREV_EXIT_MODE) ? baPreviousLabel : baCurrentLabel);
