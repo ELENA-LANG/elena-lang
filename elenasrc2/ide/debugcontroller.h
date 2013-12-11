@@ -143,6 +143,7 @@ protected:
    bool              _running;
    bool              _vmHookMode;
    bool              _debugTape;
+   bool              _testMode;    // in test mode $self is shown always
    Path              _debuggee;
    Path              _arguments;
 
@@ -272,6 +273,11 @@ public:
 
    void loadBreakpoints(List<Breakpoint>& breakpoints);
 
+   void setTestMode(bool testMode)
+   {
+      _testMode = testMode;
+   }
+
    DebugController()
       : _modules(NULL, freeobj)
    {
@@ -283,6 +289,7 @@ public:
       _vmDebugSize = 0;
       _vmHookMode = false;
       _debugTape = false;
+      _testMode = false;
    }
 
    virtual ~DebugController() {}

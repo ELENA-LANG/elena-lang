@@ -3,13 +3,14 @@
 // none of which mis-nest. 
 
 #define system.
+#define system'routines.
 #define extensions.
 
 // --- RandomBrackets ---
 
 #symbol randomBrackets = &&:aLength
 [
-    #var aBrackets := Array new &type'length:aLength &function: &&:i[ CharValue new:"[" ] + Array new &type'length:aLength &function: &&:i[ CharValue new:"]" ].
+    #var aBrackets := Array new &type'length:aLength &function: &&:i[ CharValue new:91 ] + Array new &type'length:aLength &function: &&:i[ CharValue new:93 ].
     
     randomControl randomize:(aLength * 2) &array:aBrackets.
     
@@ -27,7 +28,7 @@
 
 // --- Program ---
 
-#symbol program =
+#symbol program =                                             
 [
     control from:0 &till:10 &do: &&:aLength
     [

@@ -14,4 +14,4 @@ matrix.l
 'program=extensions'programLoop
 'program'control=matrix'control
 'program'output=matrix'output
-'program'input=extensions'io'consoleEx
+'program'input=extensions'consoleEx

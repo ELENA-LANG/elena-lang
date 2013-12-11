@@ -1,6 +1,6 @@
 #define system.
+#define system'routines.
 #define system'collections.
-#define extensions'text.
 
 // --- Arguments ---
 
@@ -8,7 +8,7 @@
 [
     #var aList := List new.
     
-    #var anEnumerator := WordEnumerator new:CommandLine.
+    #var anEnumerator := extensions'text'WordEnumerator new:CommandLine.
     // !! temporal : extra space are reserved
     control while:[ anEnumerator next ] &do: 
     [ 

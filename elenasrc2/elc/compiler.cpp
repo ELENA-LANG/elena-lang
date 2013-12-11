@@ -3074,7 +3074,7 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
             break;
          case nsRetStatement:
          {
-            compileRetExpression(statement.firstChild(), scope, CTRL_ROOTEXPR);
+            compileRetExpression(statement.firstChild(), scope, 0);
             compileEndStatement(node, scope);
 
             _writer.gotoEnd(*scope.tape, test(mode, CTRL_PREV_EXIT_MODE) ? baPreviousLabel : baCurrentLabel);

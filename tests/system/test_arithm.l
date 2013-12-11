@@ -5,19 +5,16 @@
 //#define extensions'math.
 #define extensions.
 
-#class Object
+#class XTester
 {
-    #method equal : anObject
-        = $self equal &type'object:anObject.
+    #method add
+    [
+    ]
 }
 
 #symbol XTest =
 [    
-    #var b := Boolean new:true.
-    
-    #var n := Real new:((b Value) => 
-                true ? [ 1 ] 
-                false ? [ 0 ]).
+    XTester add.
 ].
 
 // --- MultiDispatchTest ---

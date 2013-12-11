@@ -1,6 +1,6 @@
 #define system.
+#define extensions.
 #define extensions'text.
-#define extensions'io.
 
 #symbol program =
 [

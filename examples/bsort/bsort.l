@@ -1,8 +1,7 @@
 // --- default namespaces ---
 #define system.
+#define system'routines.
 #define extensions.
-#define extensions'text.
-#define extensions'io.
 
 // --- Prompter ---
 

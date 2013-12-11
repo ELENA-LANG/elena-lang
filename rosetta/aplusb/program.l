@@ -15,7 +15,7 @@ Given 2 integer numbers, A and B. One needs to find their sum.
 */
 
 #define system.
-#define extensions'io.
+#define extensions.
 
 #symbol program =
 [

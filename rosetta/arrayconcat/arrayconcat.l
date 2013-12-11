@@ -1,4 +1,4 @@
-#define extensions'io.
+#define extensions.
 
 #symbol program =
 [

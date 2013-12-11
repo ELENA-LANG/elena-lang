@@ -7,7 +7,7 @@
 
 // --- $ConsoleHandler --
 
-#class $ConsoleHandler : system'Handler
+#class $ConsoleHandler : Handler
 {
     #constructor new &type'int:anAttributes
     [

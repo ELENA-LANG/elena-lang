@@ -2,7 +2,7 @@
 
 // --- default namespaces ---
 #define system.
-#define extensions'io.
+#define extensions.
 #define extensions'math.
 
 // --- factory ---

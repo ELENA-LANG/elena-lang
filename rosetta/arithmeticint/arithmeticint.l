@@ -1,5 +1,5 @@
 #define system.
-#define extensions'io.
+#define extensions.
 
 // --- Program ---
 

@@ -15,4 +15,4 @@ control.l
 'program=extensions'programLoop
 'program'control=datetime'control
 'program'output=datetime'output
-'program'input=extensions'io'consoleEx
+'program'input=extensions'consoleEx

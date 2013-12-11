@@ -1,5 +1,5 @@
 #define system.
-#define extensions'io.
+#define extensions.
 
 #symbol bitwiseTest = &&:x:y
 [

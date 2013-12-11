@@ -803,6 +803,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
    if (_debugger.isStarted()) {
       DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
       int index = 0;
+      bool selfAvailable = false;
       while (lineInfo[index].symbol != dsProcedure) {
          // write self
          if (lineInfo[index].symbol == dsBase) {
@@ -815,6 +816,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
             if (selfPtr != _debugger.Context()->Self()) {
                readObject(watch, _debugger.Context()->Self(), _T("$self"), false);
             }
+            selfAvailable = true;
          }
          else if (lineInfo[index].symbol == dsLocal) {
             // write local variable
@@ -848,6 +850,9 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          }
          index--;
       }
+      // in test mode, show $self always
+      if (_testMode && !selfAvailable)
+         readObject(watch, _debugger.Context()->Self(), _T("$self"), false);
    }
 }
 

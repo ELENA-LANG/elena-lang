@@ -1,3 +1,5 @@
+#define system.
+
 // --- TimeSpan --
 
 #class TimeSpan : BaseNumber

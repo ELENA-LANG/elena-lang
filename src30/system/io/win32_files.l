@@ -21,7 +21,7 @@
 
 // --- FileStream ---
 
-#class FileStream : system'Handler
+#class FileStream : Handler
 {
     #constructor new &type'widestr:aPath &type'int:dwDesiredAccess &type'int:dwShareMode &type'int:dwCreationDisposition &type'int:dwFlagsAndAttributes
     [

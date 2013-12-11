@@ -12,7 +12,7 @@
 ..\bin\elc -cassociativearrays\associativearrays.prj
 ..\bin\elc -cbestshuffle\bestshuffle.prj
 ..\bin\elc -cbinary\binary.prj
-..\bin\elc -cbestshuffle\bestshuffle.prj
+..\bin\elc -camb\amb.prj
 ..\bin\elc -cbitwise\bitwise.prj
 ..\bin\elc -cbrackets\brackets.prj
 ..\bin\elc -canagram\anagram.prj

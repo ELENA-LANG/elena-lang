@@ -1,6 +1,6 @@
 #define system.
-#define extensions'patterns.
-#define extensions'io.
+#define extensions.
+#define extensions'routines.
 
 // --- Joinable --
 

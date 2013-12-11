@@ -1,8 +1,9 @@
 // --- default namespaces ---
 #define system.
+#define system'routines.
 #define system'collections.
+#define extensions.
 #define extensions'text.
-#define extensions'io.
 
 // --- EField ---
 

@@ -8,3 +8,5 @@ pusha   popa   => nop nop;
 pushr   popa   => acopyr nop;
 pushbi  popa   => aloadbi nop;
 reserve :=1 asavesi :=0 => pusha nop;
+aloadfi pusha acopyb => pushfi nop acopyb;
+pusha mcopy breakpoint aloadsi :=0 => pusha mcopy breakpoint nop;
