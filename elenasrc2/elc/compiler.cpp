@@ -2363,7 +2363,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          }
 
          // if it is an operation with nil
-         if ((object.kind == okConstant || object.kind == okSymbol) && object.reference == scope.moduleScope->nilReference) {
+         if ((object.kind == okConstant || object.kind == okSymbol) && object.reference == scope.moduleScope->nilReference && object.type == otNone) {
             if (operator_id == EQUAL_MESSAGE_ID) {
                _writer.compare(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
 

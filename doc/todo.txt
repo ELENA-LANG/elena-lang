@@ -20,18 +20,6 @@ v  - vm script
 ------
 Currently:
 ------
-              adev - structure
-                       * move file: system\patterns.l to system\routines\patterns.l , 
-                                    system\win32_datetime.l to system\calendar\win32_datetime.l
-                                    system\dates.l to system\calendar\dates.l
-                                    system\win32_handler.l to system\io\win32_handler.l
-                                    extensions\io\console.l to extensions\console.l
-                                    extensions\patterns\combinitation.l to extensions\routines\combinitation.l
-
-                       * fixes: arraymode, bestshaffle, brackets, anagram, amb
-
-                       * test textdb, aplusb, amb
-
 <=================>
          
 1.9.10
@@ -114,11 +102,6 @@ week2: [21.12]
               sdev - rosetta samples              
                        * arraymode: support collection of different types
             
-              adev - structure
-                       * review / modify API structure
-                       * do we need extensions'text-printings module?
-                       * rename extensions'io-console module?
-                      
               adev - console operations:
                        * read / write operation: complex types
                        
