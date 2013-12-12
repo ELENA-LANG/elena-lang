@@ -265,6 +265,10 @@ ELENA byte codes (or ecodes)
 
  dthen label                - jumps to the label if index != 0
 
+ delsen n, label            - jumps to the label if index != n
+ 
+ dthenn n, label            - jumps to the label if index == n
+ 
  next  i, label             - index++; jumps to the label if index < i
  
  melseai i, label           - jumps to the label if mcc != acc[i]
@@ -549,33 +553,9 @@ ELENA byte codes (or ecodes)
 
 
 
- init                       - save the last self, init self with a current one; 
-                              it should be only one command per procedure
-
  rethrow i                  - remove the current exception handler and
                               jump to the next exception handler if
                               sp + i != exception::sp
-
- memory managing commands:
- -------------------------
- acccreaten n, vmt          - create the binary object with the 
-                              specified size = acc * n ; out: acc contains the class instance
-
- accbox vmt                - if acc is local box its content into the object with vmt
-
-
-
- data manipulating commands:
- -----------------
- get                        - [sp+1] <= self[acc] ; sp++
- 
- n_write n                  - [acc] => [self] ; no GC WB 
-
- writeacc                   - acc => [self] ; no GC WB 
- 
- getlen n                   - acc.Length / n => acc
-
-
 
 
 

@@ -7,35 +7,10 @@
 //#define extensions'math.
 #define extensions.
 
-#class XTester
-{
-    #method split &widechar:aChar
-    [
-        #var aList := system'collections'List new.
-        #var aStart := 0.
-        #var anIndex := 0.
-        
-        control do:
-        [
-            anIndex := self indexOf &type'index:aStart &widechar:aChar.
-            (-1 != anIndex) ?
-            [
-                aList += self Substring &type'index:aStart &type'length:(anIndex - aStart).
-                aStart := anIndex + 1.
-            ]
-            ! [
-                aList += self Substring &type'index:aStart &type'length:(self type'length - aStart).
-            ].
-        ]        
-        &until:[anIndex == -1].
-        
-        ^ aList~EList Array.
-    ]
-}
-
 #symbol XTest =
 [    
-    #var s := "1 2"~ELiteralOp split &widechar:(CharValue new &type'int:32).
+    #var s := " ".
+    #var b := CharValue new:32 equal:s.
 ].
 
 // --- MultiDispatchTest ---

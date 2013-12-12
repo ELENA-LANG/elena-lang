@@ -140,6 +140,8 @@ enum ByteCode
    bcAThenR         = 0xE1,   // though in bytecode section they saved in the correct order (jump arg, label)
    bcMElse          = 0xE2, 
    bcMThen          = 0xE3,
+   bcDElseN         = 0xE4,
+   bcDThenN         = 0xE5,
    bcAElseSI        = 0xE6,
    bcAThenSI        = 0xE7,
    bcMElseAI        = 0xEA,
@@ -193,8 +195,6 @@ enum ByteCode
 //   bcAccFillR       = 0xC4,
 //   //bcAccMergeR      = 0xC8,
 //
-//   //bcElseN          = 0xE4,
-//   //bcThenN          = 0xE5,
 //   //bcMccElseSI      = 0xE8,
 //   //bcMccThenSI      = 0xE9,
 //

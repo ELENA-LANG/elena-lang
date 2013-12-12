@@ -38,7 +38,7 @@
     #method eval
     [
         control while:theActive &do:
-          [ 'program'output << (theControl << 'program'input). ].        
+          [ 'program'output << (theControl >> 'program'input). ].        
     ]
 }
 

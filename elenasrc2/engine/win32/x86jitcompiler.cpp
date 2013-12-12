@@ -133,7 +133,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadExtensions, &loadExtensions, &loadExtensions, &loadExtensions, &loadExtensions, &loadExtensions, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileTest, &compileTest, &compileTest,
 
-   &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileNop, &compileNop, &compileElseSI, &compileThenSI,
+   &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileElseN, &compileThenN, &compileElseSI, &compileThenSI,
    &compileNop, &compileNop, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
 
    &compileCreate, &compileCreateN, &compileIAccCopyR, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -720,8 +720,13 @@ void _ELENA_::compileTest(int opcode, x86JITScope& scope)
 
   // test upper boundary
    loadOneByteLOp(opcode, scope);
+
   // try to use short jump if offset small (< 0x10?)
-   compileJumpLessOrEqual(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+   if (opcode == bcWSTest) {
+      // for wstest tailing zero should be taken into account
+      compileJumpLessOrEqual(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+   }
+   else compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 
 void _ELENA_::compileDThen(int opcode, x86JITScope& scope)
@@ -1292,29 +1297,29 @@ void _ELENA_::compileThenR(int opcode, x86JITScope& scope)
    compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
-//void _ELENA_::compileElseN(int opcode, x86JITScope& scope)
-//{
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // cmp eax, n
-//   // jz lab
-//
-//   scope.code->writeByte(0x3D);
-//   scope.code->writeDWord(scope.argument);
-//   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
-//
-//void _ELENA_::compileThenN(int opcode, x86JITScope& scope)
-//{
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // cmp eax, n
-//   // jnz lab
-//
-//   scope.code->writeByte(0x3D);
-//   scope.code->writeDWord(scope.argument);
-//   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
+void _ELENA_::compileElseN(int opcode, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp esi, n
+   // jz lab
+
+   scope.code->writeWord(0xFE81);
+   scope.code->writeDWord(scope.argument);
+   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
+void _ELENA_::compileThenN(int opcode, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp esi, n
+   // jnz lab
+
+   scope.code->writeWord(0xFE81);
+   scope.code->writeDWord(scope.argument);
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
 
 void _ELENA_::compileElseSI(int opcode, x86JITScope& scope)
 {

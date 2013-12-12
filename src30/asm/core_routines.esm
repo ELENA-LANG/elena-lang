@@ -442,6 +442,33 @@ procedure inline'ws_subs
 
 end
 
+procedure inline'ws_equalchar
+
+   pushb
+   bcopya
+   wsgetlen
+   delsen labFalse 1
+   pushn 0
+   acopys 0
+   pusha
+   dcopy 0
+   acopyb
+   wsgetat
+   aloadsi 5
+   nequal
+   popi 2
+   delsen labFalse 1
+   acopyr const : system'true
+   popb
+   quitn 2   
+   
+labFalse:
+   acopyr const : system'false
+   popb
+   quitn 2
+
+end
+
 procedure inline'array_getat
 
   pusha

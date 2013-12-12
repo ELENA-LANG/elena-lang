@@ -1656,8 +1656,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
          case bcWSTest:
          case bcBSTest:
          case bcTest:
-//         case bcElseN:
-//         case bcThenN:
+         case bcDElseN:
+         case bcDThenN:
          case bcMElse:
          case bcMThen:
          case bcAElse:

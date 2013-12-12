@@ -35,7 +35,7 @@
 
 #symbol control =
 {
-    write : anInput
+    read : anInput
     [
         #var aChoice := anInput readLine:(Integer new).
         

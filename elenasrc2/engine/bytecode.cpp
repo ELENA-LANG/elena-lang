@@ -60,6 +60,7 @@
 #define OPCODE_DCREATEN     "dcreaten"
 #define OPCODE_DDEC         "ddec"
 #define OPCODE_DELSE        "delse"
+#define OPCODE_DELSEN       "delsen"
 #define OPCODE_DINC         "dinc"
 #define OPCODE_DSAVEAI      "dsaveai"
 #define OPCODE_DSAVEFI      "dsavefi"
@@ -67,6 +68,7 @@
 #define OPCODE_DSUBAI       "dsubai"
 #define OPCODE_DSUBSI       "dsubsi"
 #define OPCODE_DTHEN        "dthen"
+#define OPCODE_DTHENN       "dthenn"
 #define OPCODE_ELSEFLAG     "elseflag"
 #define OPCODE_EVALR        "evalr"
 #define OPCODE_EXCLUDE      "exclude"
@@ -210,6 +212,8 @@ inline bool IsJump(ByteCode code)
       case bcTest:
       case bcDElse:
       case bcDThen:
+      case bcDElseN:
+      case bcDThenN:
 //      case bcMccElseAcc:
 //      case bcMccThenAcc:
       case bcAElseR:
@@ -491,6 +495,8 @@ inline void removeIdleJump(ByteCodeIterator it)
          case bcTest:
          case bcDElse:
          case bcDThen:
+         case bcDElseN:
+         case bcDThenN:
 //         case bcMccElseAcc:
 //         case bcMccThenAcc:
          case bcAElseR:
@@ -564,6 +570,8 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcTest:
             case bcDElse:
             case bcDThen:              
+            case bcDElseN:
+            case bcDThenN:              
             //case bcMccElseAcc:
             //case bcMccThenAcc:
             case bcAElseR:
@@ -894,6 +902,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_DELSE)) {
       return bcDElse;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_DELSEN)) {
+      return bcDElseN;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_DINC)) {
       return bcDInc;
    }
@@ -914,6 +925,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    }
    else if (ConstantIdentifier::compare(s, OPCODE_DTHEN)) {
       return bcDThen;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_DTHENN)) {
+      return bcDThenN;
    }
    else if (ConstantIdentifier::compare(s, OPCODE_ELSEFLAG)) {
       return bcElseFlag;
@@ -1299,6 +1313,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcDElse:
          StringHelper::copy(s, OPCODE_DELSE, 1 + strlen(OPCODE_DELSE));
          break;
+      case bcDElseN:
+         StringHelper::copy(s, OPCODE_DELSEN, 1 + strlen(OPCODE_DELSEN));
+         break;
       case bcDInc:
          StringHelper::copy(s, OPCODE_DINC, 1 + strlen(OPCODE_DINC));
          break;
@@ -1319,6 +1336,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
          break;
       case bcDThen:
          StringHelper::copy(s, OPCODE_DTHEN, 1 + strlen(OPCODE_DTHEN));
+         break;
+      case bcDThenN:
+         StringHelper::copy(s, OPCODE_DTHENN, 1 + strlen(OPCODE_DTHENN));
          break;
       case bcElseFlag:
          StringHelper::copy(s, OPCODE_ELSEFLAG, 1 + strlen(OPCODE_ELSEFLAG));

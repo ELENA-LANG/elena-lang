@@ -465,7 +465,7 @@
         = theData == aLiteral.
 
     #method equal &widechar : aChar
-        <= equal &type'widestr::aChar.
+        <ws_equalchar>.
 
     #method less &type'widestr : aLiteral
         = theData < aLiteral.

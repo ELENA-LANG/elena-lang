@@ -20,6 +20,9 @@ v  - vm script
 ------
 Currently:
 ------
+              adev - lib30
+                       * test str to real conversion (add to conversiontest)
+                       * time: add month, year, hour, ...?
 <=================>
          
 1.9.10
@@ -33,8 +36,6 @@ week2: [21.12]
 
               adev - lib30
                        * LiteralValue: concatenation, probably we need to get rid of concatinating constructor and use strOp for this?
-                       * test str to real conversion (add to conversiontest)
-                       * time: add month, year, hour, ...?
                        * system'$consolehandler: if the returning handler is -1
                        * time: add month, year, hour, ...?
                          invalid_result and exception)
@@ -48,11 +49,9 @@ week2: [21.12]
                        * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
                        * it should be possible to compare integer and value - the result is false
                        * should strOp, intOp moved to corresponding extension classes (either EIntConvertor or EInt, and so on)
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
 
               adev - lib30 optimization
-                       * LiteralValue: compare with char without creating a new char?
-                       * LiteralValue: comparing with widechar should be done without creating a new literal
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
                        * start to use stack allocated variables to optimize the code : console operation, ...
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
                        * system'io'MemoryStream - do not create a new integer after each operation
@@ -115,7 +114,6 @@ week2: [21.12]
                        * matrix: test matrix operations
                        * matrix: multiply - should use realnumber rather than real
                sdev - console samples
-                       * calculator
                        * vmconsole
               adev - console operations:              
                         * write formatted numbers
@@ -177,6 +175,13 @@ week2: [21.12]
                          out of range (insert, delete, ...)
 
 week3:
+              sdev - open architecture
+                       * build dynamic class - several methods
+                       * access parameters
+
+              sdev - calculator
+                       * build state machine using only dynamic object
+
               xdev - migration
                         * migrate tapeControl, ... 
                         * migrate interpreter                                                
@@ -842,9 +847,6 @@ stack:
 [xo] Compiler development:
 -------------------------
     - weak references
-    - group operation with the objects belonging to the different
-      generations: could it be optimized?
-    - localize elc to russian
     - get rid of comment warnings (starting with !!)
     - two compile mode - debug / release (we actually could have two
       sets of sections - with and without debug)
@@ -854,7 +856,6 @@ stack:
        - local properties
        - empty methods
        - methods which returns constant
-       - try to optimize send routine (the most critical in the system)
        - cosntant collections / groups / casts
        - optimize group / annex routine
        - shl / shr commands considered to be not optimal

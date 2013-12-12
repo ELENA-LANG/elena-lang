@@ -149,7 +149,6 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcBreakpoint:
       case bcPushB:
       case bcPop:
-      //case bcWriteAcc:
       case bcPushM:
       case bcMCopyVerb:
       case bcThrow:
@@ -163,37 +162,23 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcClose:
       case bcPopB:
       case bcMQuit:
-      //case bcJumpAcc:
-      //case bcQuit:
       case bcGet:
       case bcSet:
-      //case bcUnhook:
-      //case bcExclude:
-      //case bcInclude:
-      //case bcMccReverse:
       case bcALoadD:
       case bcDDec:
       case bcGetLen:
       case bcDInc:
          writeCommand(ByteCommand(opcode), writer);
          break;
-      //case bcPushR:
-      //case bcCallExtR:
-      //case bcEvalR:
       case bcCallR:
-      //case bcAccLoadR:
-      //case bcAccSaveR:
       case bcACopyR:
-      //case bcAccFillR:
          compileRCommand(opcode, token, writer, binary);
          break;
-      //case bcIncFI:
       case bcACopyF:
       case bcACallVI:
       case bcALoadSI:
       case bcASaveSI:
       case bcPushFI:
-      //case bcACopyN:
       case bcALoadAI:
       case bcMLoadAI:
       case bcMLoadSI:
@@ -201,31 +186,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMAddAI:
       case bcPushAI:
       case bcMSaveParams:
-      //case bcReserve:
-      //case bcPushSelfI:
       case bcPushSI:
-      //case bcPushFPI:
-      //case bcXPushFPI:
-      //case bcPushSPI:
-      //case bcPopSelfI:
-      //case bcPopFI:
-      //case bcXPopAccI:
-      //case bcPopSI:
-      //case bcPopAccI:
-      //case bcIncSI:
-      //case bcAccLoadFI:
-      //case bcAccSaveSelfI:
-      //case bcAccSaveFI:
-      //case bcSwapSI:
-      //case bcAccSwapSI:
-      //case bcXAccSaveFI:
-      //case bcXAccCopyFPI:
       case bcACopyS:
-      //case bcAccCopyFPI:
-      //case bcRethrow:
-      //case bcRestore:
-      //case bcAccGetSI:
-      //case bcAccLoadSelfI:
       case bcDAddAI:
       case bcDSubAI:
       case bcDAddSI:
@@ -242,20 +204,13 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMAdd:
       case bcAJumpVI:
       case bcMCopy:
-      //case bcXMccCopyM:
       case bcQuitN:
       case bcPushN:
       case bcPopI:
       case bcDCopy:
-      //case bcAccAddN:
          compileNCommand(opcode, token, writer);
          break;
-      //case bcHook:
       case bcJump:
-      //case bcElse:
-      //case bcThen:
-      //case bcMccElseAcc:
-      //case bcMccThenAcc:
       case bcDElse:
       case bcDThen:
       case bcWSTest:
@@ -263,41 +218,20 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcTest:
          compileJump(opcode, token, writer, info);
          break;
-      ////case bcAccCreate:
-      ////   break;
-      ////case bcElseR:
-      ////case bcThenR:
-      ////   break;
       case bcMElse:
       case bcMThen:
          compileMccJump(opcode, token, writer, info);
          break;
-      //case bcMccElseAccI:
       case bcTestFlag:
       case bcAElseSI:
       case bcAThenSI:
       case bcElseFlag:
       case bcMElseAI:
       case bcMThenAI:
+      case bcDElseN:
+      case bcDThenN:
          compileNJump(opcode, token, writer, info);
          break;
-      ////case bcCreate:
-      ////   break;
-      ////case bcCreateN:
-      ////   break;
-      ////   break;
-      ////case bcIAccFillR:
-      ////   break;
-      ////case bcAccCreateN:
-      ////   break;
-      ////case bcAccBoxN:
-      ////   break;
-      ////case bcCallSI:
-      ////   break;
-      ////case bcRCallN:
-      ////   break;
-      ////case bcRCallM:
-      ////   break;
    default:
       recognized = false;
       break;

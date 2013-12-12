@@ -17,3 +17,6 @@
     
 #symbol abs = &&:x
   [ (realValue:x)~EReal Abs ].
+
+#symbol modulus = &&:x:y
+    [ x - (x / y * y) ].
