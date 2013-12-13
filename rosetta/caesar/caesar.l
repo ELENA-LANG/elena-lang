@@ -1,12 +1,7 @@
-#define std'dictionary'*.
-#define std'basic'*.
-#define std'patterns'*.
-#define std'routines'strings'*.
-
-#define math'* = std'math'*.
-
-// --- subjects ---
-#subject cipher_key.
+#define system.
+#define system'routines.
+#define extensions.
+#define extensions'math.
 
 // --- Constants ---
 
@@ -17,51 +12,63 @@
 
 // --- Encrypt / Decript ---
 
-#symbol EEncrypt : aKey = 
+#class Encrypting
 {
-    eval : aChar
+    #field theKey.
+    #field theExtendee.
+    
+    #constructor new : aKey &extending:anObject
     [
-        #var anIndex := Letters~eliteralop first_occ'find:aChar.
-        #if (-1) ifless:anIndex
-        [
-            $next eval:(Letters @ (aKey + anIndex)~math'eops math'modulus:26).
-        ]
-        | [
-            anIndex := BigLetters~eliteralop first_occ'find:aChar.
-            #if (-1) ifless:anIndex
-            [
-                $next eval:(BigLetters @ (aKey + anIndex)~math'eops math'modulus:26).
-            ]
-            | [
-                $next eval:aChar.
-            ].
-        ].
+        theKey := aKey.
+        theExtendee := anObject.
     ]
-}.
+    
+    #method eval : aChar
+    [
+        #var anIndex := Letters indexOf &type'index:0 &widechar:aChar.
+        
+        (-1 < anIndex)
+            ? [
+                theExtendee eval:(Letters @ (modulus:(theKey+anIndex):26))
+            ]
+            ! [
+                anIndex := BigLetters indexOf &type'index:0 &widechar:aChar.
+                (-1 < anIndex)
+                    ? [
+                        theExtendee eval:(BigLetters @ (modulus:(theKey+anIndex):26))
+                    ]
+                    ! [
+                        theExtendee eval:aChar.
+                    ].
+            ].
+    ]
+    
+    #method => theExtendee.
+}
 
 // --- Functions ---
 
-#symbol Encrypted &literal:aLiteral &cipher_key:aKey
-    = __group(EEncrypt::aKey, Summing::String) start:Scan::aLiteral.
+#symbol encrypt = &&:aText:aKey
+    [ Encrypting new:aKey &extending:(Summing new:(String new)) foreach:aText Literal ].
 
-#symbol Decrypted &literal:aLiteral &cipher_key:aKey
-    = __group(EEncrypt::(26 - aKey), Summing::String) start:Scan::aLiteral.
+#symbol decrypt = &&:aText:aKey
+    [ Encrypting new:(26 - aKey) &extending:(Summing new:(String new)) foreach:aText Literal ].
 
 // --- Program ---
 
-#symbol Program =
+#symbol program =
 [
     #var anS := TestText.
     
-    'program'output << "Original text :" << anS << "%n".
+    consoleEx writeLine:"Original text:" :anS.
         
-    anS := Encrypted &&literal:anS &cipher_key:Key.
-        
-    'program'output << "Encrypted text:" << anS << "%n".
-        
-    anS := Decrypted &&literal:anS &cipher_key:Key.
-        
-    'program'output << "Decrypted text:" << anS << "%n".
+    anS := encrypt:anS:Key.
 
-    'program'input get.    
+    consoleEx writeLine:"Encrypted text:" :anS.
+
+    anS := decrypt:anS:Key.
+
+    consoleEx writeLine:"Decrypted text:" :anS.
+
+    consoleEx readChar.
 ].

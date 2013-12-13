@@ -35,7 +35,9 @@
                 ]
             ].
             
-        theCurrent := Array new &type'length:theCount &function: &&:i [ (theIndexers@i) get ].
+        aRetVal 
+            ? [ theCurrent := Array new &type'length:theCount &function: &&:i [ (theIndexers@i) get ]. ]
+            ! [ theCurrent := nil. ].
         
         ^ aRetVal.
     ]

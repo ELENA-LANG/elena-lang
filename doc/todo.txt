@@ -20,53 +20,19 @@ v  - vm script
 ------
 Currently:
 ------
-              adev - lib30
-                       * test str to real conversion (add to conversiontest)
-                       * time: add month, year, hour, ...?
+
+              sdev - rosetta samples              
+                       * charmatch 
 <=================>
          
 1.9.10
 ------
-week2: [21.12]                      
-              sdev - rosetta samples              
-                       * amb: test with invalid value
-                       * amb: raise an exception if nothing found
-                       * modify amb operator using open argument list 
-                       * update amb sample on rosetta code site
-
-              adev - lib30
-                       * LiteralValue: concatenation, probably we need to get rid of concatinating constructor and use strOp for this?
-                       * system'$consolehandler: if the returning handler is -1
-                       * time: add month, year, hour, ...?
-                         invalid_result and exception)
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: set day???
-                       * date: custom presenter / formatter / custom formatter
-                       * list / iterators / ... - can commutator be used instead of adapter roles
-                       * system'CharValue : only low word should be copied (either type'short or AND operation should be used)
-                       * it should be possible to compare integer and value - the result is false
-                       * should strOp, intOp moved to corresponding extension classes (either EIntConvertor or EInt, and so on)
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-
-              adev - lib30 optimization
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-
-              sdev - console samples
-                       * rewrite pi sample to use stack allocated variables
-                       * simplify goods (Record.get&Literal implementation)
-                       * words: sort the list
-                       * simplify bsort
-                       
+week2: [18.12]                      
               sdev - rosetta samples              
                        * arithmeval
-                       * arrays : simplify
+                       * combinations 
                        * bullscows 
+                       * arrays : simplify
                        * bullscows: use __rolebatch?
                        * C samples
                        * Calendar sample
@@ -98,6 +64,14 @@ week2: [21.12]
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object
 
+              sdev - routines:
+                       * implement the similar code:
+                         var oddNumber = numbers.Select(x => x).Where(t => t % 2 != 0);
+
+                         foreach:aEnumerable &where:aCondition &do:anAcion
+                       * how to add top and order by conditions??
+
+                       
               sdev - rosetta samples              
                        * arraymode: support collection of different types
             
@@ -175,12 +149,13 @@ week2: [21.12]
                          out of range (insert, delete, ...)
 
 week3:
+              sdev - calculator
+                       * build state machine using only dynamic object
+                       * implement sample using open architecture
+
               sdev - open architecture
                        * build dynamic class - several methods
                        * access parameters
-
-              sdev - calculator
-                       * build state machine using only dynamic object
 
               xdev - migration
                         * migrate tapeControl, ... 
@@ -553,6 +528,34 @@ week1:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        
 week2:
+              sdev - rosetta samples              
+                       * modify amb operator using open argument list 
+                       * update amb sample on rosetta code site
+
+              adev - lib30
+                       * LiteralValue: concatenation, probably we need to get rid of concatinating constructor and use strOp for this?
+                       * system'$consolehandler: if the returning handler is -1
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: custom presenter / formatter / custom formatter
+                       * list / iterators / ... - can commutator be used instead of adapter roles
+                       * it should be possible to compare integer and value - the result is false
+                       * should strOp, intOp moved to corresponding extension classes (either EIntConvertor or EInt, and so on)
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * date - return utc time
+                       
+              adev - lib30 optimization
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+
+              sdev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * words: sort the list
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
 
 week3:
               sdev - open architecture

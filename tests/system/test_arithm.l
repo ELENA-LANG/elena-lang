@@ -7,6 +7,12 @@
 //#define extensions'math.
 #define extensions.
 
+
+#class Selector : BasePattern
+{
+    #method
+}
+
 #symbol XTest =
 [    
     #var s := " ".
@@ -342,6 +348,10 @@
     #var l := extensions'convertControl toLong:"1234567890123456".
     #var nn := extensions'convertControl toInt:"-123".
     #var ll := extensions'convertControl toLong:"-1234567890123456".
+    
+    #var r := extensions'convertControl toReal:"23".
+    #var r2 := extensions'convertControl toReal:"123.456789".
+    #var r3 := extensions'convertControl toReal:"-123.456789".
 ].
 
 // --- LiteralTest ---

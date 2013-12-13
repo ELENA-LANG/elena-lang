@@ -1,13 +1,14 @@
 [project]
 executable=smavg.exe
-template=win32_console2
+options=-xembed-
+namespace=smavg
+template=console
 debuginfo=-1
 warn:unresolved=0
-options=-xembed-
 
 [files]
 smavg.l
 
 [forwards]
-'entry=smavg'program
+'program=smavg'program
 

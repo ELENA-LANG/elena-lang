@@ -158,6 +158,21 @@
 
     #method Enumerator = ListEnumerator new:$self.
 
+    #method removeFirst
+    [
+        theCount =>
+            0 ? [ #throw OutOfRangeException new. ]
+            1 ? [  
+                   theTop := nil.   
+                   theLast := nil.   
+                   theCount << 0. 
+                ]
+            ! [
+                theTop := theTop Next.
+                theCount -= 1.
+            ].
+    ]
+
     #method $addFirst : anObject
     [
         theCount << 1.

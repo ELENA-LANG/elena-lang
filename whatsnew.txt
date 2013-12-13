@@ -22,6 +22,9 @@ ELC:
 [+] system'dynamic: Class, Struct, tapeControl
 [*] new modules: system'calendar, system'routines
 
+Samples:
+[+] rosseta code: median, smavg, caesar
+
 ******************************************************************************
                     What's New in 1.9.9.11 (pre release)
 ******************************************************************************

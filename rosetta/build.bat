@@ -16,3 +16,6 @@
 ..\bin\elc -cbitwise\bitwise.prj
 ..\bin\elc -cbrackets\brackets.prj
 ..\bin\elc -canagram\anagram.prj
+..\bin\elc -cmedian\median.prj
+..\bin\elc -csmavg\smavg.prj
+..\bin\elc -ccaesar\caesar.prj
