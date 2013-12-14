@@ -52,7 +52,7 @@
             &type'int:0
             | raise:(system'FormatException new:"Cannot format date")).
             
-        #var aLiteral := LiteralValue new &type'length:aLength.
+        #var aLiteral := LiteralValue new &type'length:(aLength - 1).
         
         system'external'KERNEL32 GetDateFormatEx
             &type'int:0
@@ -79,7 +79,7 @@
             &type'int:0
             | raise:(system'FormatException new:"Cannot format time")).
                         
-        #var aLiteral := LiteralValue new &type'length:aLength.
+        #var aLiteral := LiteralValue new &type'length:(aLength - 1).
         
         system'external'KERNEL32 GetTimeFormatEx
             &type'int:0

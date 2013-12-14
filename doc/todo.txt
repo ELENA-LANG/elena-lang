@@ -22,15 +22,14 @@ Currently:
 ------
 
               sdev - rosetta samples              
-                       * charmatch 
+                       * arithmeval
+                       * combinations 
 <=================>
          
 1.9.10
 ------
 week2: [18.12]                      
               sdev - rosetta samples              
-                       * arithmeval
-                       * combinations 
                        * bullscows 
                        * arrays : simplify
                        * bullscows: use __rolebatch?
@@ -64,13 +63,6 @@ week2: [18.12]
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object
 
-              sdev - routines:
-                       * implement the similar code:
-                         var oddNumber = numbers.Select(x => x).Where(t => t % 2 != 0);
-
-                         foreach:aEnumerable &where:aCondition &do:anAcion
-                       * how to add top and order by conditions??
-
                        
               sdev - rosetta samples              
                        * arraymode: support collection of different types
@@ -83,8 +75,6 @@ week2: [18.12]
                sdev - console samples
                        * matrix: use Pair in matrix sample
                        * textdb: dynamically unserialize subject
-                       * datetime - literal presentation, extra space between date and time
-                       * real to literal: tailing space
                        * matrix: test matrix operations
                        * matrix: multiply - should use realnumber rather than real
                sdev - console samples
@@ -139,8 +129,11 @@ week2: [18.12]
                        * implement: not-a-number
                        * implement: random number stream (0.0 to 1.0)
                        * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
                        
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html: Arithmetic expressions
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
                          on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
 

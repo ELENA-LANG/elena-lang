@@ -1,22 +1,22 @@
-#define std'dictionary'*.
-#define std'routines'strings'*.
+#define system'routines.
+#define extensions.
 
 // --- Program ---
 
-#symbol Program =
+#symbol program =
 [
-    #if "hello"~eliteralop starting_with'if:"hel"
+    stringControl starting:"hello" &with:"hel" ?
     [
-        'program'output << "hello starts with hel%n".
+        consoleEx writeLine:"hello starts with hel".
     ].
     
-    #if "hello"~eliteralop ending_with'if:"llo"
+    stringControl ending:"hello" &with:"llo" ?
     [
-        'program'output << "hello ends with llo%n".
+        consoleEx writeLine:"hello ends with llo".
     ].
-    
-    #if (-1) ifequal:("hello"~eliteralop first_occ'find:"el")
-    | [
-        'program'output << "hello contains el%n".
+
+    stringControl contain:"el" &in:"hello" ?
+    [
+        consoleEx writeLine:"hello contains el".
     ].
 ].

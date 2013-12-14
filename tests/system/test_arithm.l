@@ -7,16 +7,14 @@
 //#define extensions'math.
 #define extensions.
 
-
-#class Selector : BasePattern
-{
-    #method
-}
-
 #symbol XTest =
 [    
-    #var s := " ".
-    #var b := CharValue new:32 equal:s.
+    #var d := now.
+    #var s2:= dateTimeControl toShortDate:d.
+    #var l2 := s2 Length.
+    
+    #var s := d Literal.
+    #var l := s Length.
 ].
 
 // --- MultiDispatchTest ---

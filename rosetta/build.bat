@@ -19,3 +19,4 @@
 ..\bin\elc -cmedian\median.prj
 ..\bin\elc -csmavg\smavg.prj
 ..\bin\elc -ccaesar\caesar.prj
+..\bin\elc -ccharmatch\charmatch.prj

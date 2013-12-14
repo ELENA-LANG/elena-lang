@@ -40,6 +40,12 @@
     #method or : anOperand = $self or::anOperand.
     
     #method xor : anOperand = $self xor::anOperand.
+    
+    #method allMask : anOperand
+        = $self and:anOperand == anOperand.
+        
+    #method anyMask : anOperand
+        = 0 != $self and:anOperand.
 }
 
 // --- intnumber ---

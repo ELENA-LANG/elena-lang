@@ -223,6 +223,19 @@
             &do:[ aFunction eval:(anEnumerator get). ].
     ]
 
+    foreach:anEnumerable &where:aFilter &do:aFunction
+    [
+        #var anEnumerator := anEnumerable Enumerator.
+        
+        ^ control while:[ anEnumerator next ] &do:
+          [ 
+              #var aCurrent := anEnumerator get.
+          
+              aFilter eval:aCurrent
+                  ? [ aFunction eval:aCurrent. ].             
+          ].
+    ]
+
     for:anIterator &from:aStart &to:anEndValue &by:aStep &do:aFunction
         = aFunction~EFunction run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
 
