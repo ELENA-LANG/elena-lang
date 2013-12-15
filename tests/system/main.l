@@ -3,7 +3,7 @@
 
 #symbol program =
 [   
-    XTest eval.
+//    XTest eval.
 
     system'console writeLine:"Starting...".    
 

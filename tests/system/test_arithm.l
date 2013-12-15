@@ -9,12 +9,6 @@
 
 #symbol XTest =
 [    
-    #var d := now.
-    #var s2:= dateTimeControl toShortDate:d.
-    #var l2 := s2 Length.
-    
-    #var s := d Literal.
-    #var l := s Length.
 ].
 
 // --- MultiDispatchTest ---

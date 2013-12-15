@@ -252,6 +252,12 @@ week1:
                        * any other operation should result in boxing
 
               xdev - generic development              
+                       * check private method declaration ??
+
+                       * role class should not be its own class class (like it is now), super class should be used
+
+                       * role implementation (see arithmeval sample)
+
                        * boxing: should we check for boxing other than local or local address (e.g n type'int should not
                          be boxed) ; probably boxing should be done inside compilePrimitive operation if the target is not typed ; 
                          see compileRetExpression, compilePrimitiveOperator and so on

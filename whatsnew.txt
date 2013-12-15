@@ -23,7 +23,7 @@ ELC:
 [*] new modules: system'calendar, system'routines
 
 Samples:
-[+] rosseta code: median, smavg, caesar, charmatch
+[+] rosseta code: median, smavg, caesar, charmatch, arithmeval
 
 ******************************************************************************
                     What's New in 1.9.9.11 (pre release)

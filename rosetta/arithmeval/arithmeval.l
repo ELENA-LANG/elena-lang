@@ -1,10 +1,5 @@
-#define std'dictionary'*.
-#define std'basic'*.
-#define std'patterns'*.
-#define ext'io'*.
-#define ext'convertors'*.
-
-#subject parse_order.
+#define system.
+#define extensions.
 
 // --- Token ---
 
@@ -12,117 +7,137 @@
 {
     #field theValue.
     
-    #initializer
+    #constructor new
     [
-        theValue := String.
+        theValue := String new.
     ]
     
-    #method parse_order'get = 0.
+    #constructor new : aValue
+    [
+        theValue := String new:aValue.
+    ]
     
-    #method += aChar
+    #method ParseOrder = 0.
+    
+    #method append : aChar
     [
         theValue += aChar.
     ]
     
-    #method + aNode
+    #method add : aNode
     [
         ^ aNode += self.
     ]
-    
-    #method numeric = Real64Value &&literal:theValue &:erealformatter.
+
+    #method Number = convertControl toReal:theValue.    
 }
 
 // --- Node ---
+
+#class(role) ENoneAssigned
+{
+    #method append : anObject
+        => %setLeft.
+}
+
+#class(role) ELeftAssigned
+{
+    #method append : anObject
+        => %setRight.
+}
+
+#class(role) ERightAssigned
+{
+    #method append : anObject
+        => %appendRight.
+}
 
 #class Node
 {
     #field theLeft.
     #field theRight.
+    #field theState.
     
-    #role LeftAssigned
-    {
-        #method += aNode
-        [
-            theRight := aNode.
-            
-            #shift.
-        ]
-    }
-    
-    #role Empty
-    {
-        #method += aNode
-        [
-            theLeft := aNode.
-            
-            #shift LeftAssigned.
-        ]
-    }
-    
-    #initializer
+    #method setRight : aNode
     [
-        #shift Empty.
+        theRight := aNode.
+        
+        theState := ERightAssigned.
+    ]
+    
+    #method setLeft : aNode
+    [
+        theLeft := aNode.
+        
+        theState := ELeftAssigned.
+    ]
+    
+    #constructor new
+    [
+        theState := ENoneAssigned.
     ]
 
-    #method + aNode
-    [
-        #if (self parse_order > aNode parse_order)?
-        [
-            self += aNode.
-        ]
-        | [
-            aNode += self.
-            
-            ^ aNode.
-        ].
-    ]
+    #method add : aNode
+        = (self ParseOrder > aNode ParseOrder)
+            ? [
+                self += aNode.
+                
+                ^ self.
+            ]
+            ! [
+                aNode += self.
+                
+                ^ aNode.
+            ].
         
-    #method += aNode
+    #method appendRight : aNode
     [
-        #if (theRight parse_order > aNode parse_order)?
-        [
+        (theRight ParseOrder > aNode ParseOrder)
+        ? [
             theRight += aNode.
         ]
-        | [
+        ! [
             theRight := aNode += theRight.
         ].        
     ]
+    
+    #method => theState.
 }
 
 // --- SummaryNode
 
-#class SummaryNode (Node)
+#class SummaryNode : Node
 {
-    #method parse_order'get = 2.
+    #method ParseOrder = 2.
     
-    #method numeric = theLeft numeric + theRight numeric.
+    #method Number = theLeft Number + theRight Number.
 }
 
 // --- DifferenceNode ---
 
-#class DifferenceNode (Node)
+#class DifferenceNode : Node
 {
-    #method parse_order'get = 2.
+    #method ParseOrder = 2.
     
-    #method numeric = theLeft numeric - theRight numeric.
+    #method Number = theLeft Number - theRight Number.
 }
 
 // --- ProductNode ---
 
-#class ProductNode (Node)
+#class ProductNode : Node
 {
-    #method parse_order'get = 1.
+    #method ParseOrder = 1.
     
-    #method numeric = theLeft numeric * theRight numeric.
+    #method Number = theLeft Number * theRight Number.
 }
 
 // --- FractionNode ---
 
-#class FractionNode (Node)
+#class FractionNode : Node
 {
-    #method parse_order'get = 1.
+    #method ParseOrder = 1.
     
-    #method numeric = theLeft numeric / theRight numeric.
+    #method Number = theLeft Number / theRight Number.
 }
 
 // --- SubExpression ---
@@ -132,178 +147,195 @@
     #field theParser.
     #field theCounter.
     
-    #role EOF
-    {
-        #method available'is [ control fail. ]
-        
-        #method += aChar [ $self fail. ]
-    }
-    
-    #initializer
+    #constructor new
     [
-        theParser := arithmeval'Parser.
-        theCounter := Integer << 1.
+        theParser := arithmeval'Parser new.
+        theCounter := Integer new:1.
     ]
+
+    #method ParseOrder = 0.
     
-    #method available'is []
-    
-    #method parse_order'get = 0.
-    
-    #method + aNode
+    #method add : aNode
     [
         ^ aNode += self.
     ]
     
-    #method append : aChar
+    #method validate
     [
-        #if control if:(aChar == 41)
-        [
-            theCounter -= 1.
-        ]
-        | if:(aChar == 40)
-        [
-            theCounter += 1.
-        ].
-        
-        #if (theCounter == 0)?
-            [ #shift EOF. ^ $self. ].
-        
-        theParser evaluate:aChar.
+        (theCounter < 0)
+            ? [ #throw Exception new:"Invalid expression". ].
+            
+        ^ (0 == theCounter).
     ]
     
-    #method numeric = theParser numeric.
+    #method append : aChar
+    [
+        aChar =>
+            41 ? [ 
+                theCounter -= 1. 
+            ]
+            40 ? [ theCounter += 1 ]
+            ! [ theParser evaluate:aChar ].
+    ]
+
+    #method Number
+        = $self validate
+            ? [ theParser Number ]
+            ! [ #throw Exception new:"Invalid expression". ].
 }
 
 // ---- Parser ----
 
-#class Parser
+#class(role)EStartState
+{
+    #method eval : aChar
+        => %onStart.
+}
+
+#class(role)EBracketState
+{
+    #method eval : aChar
+        => %onBrackets.
+}
+
+#class(role)EOperatorState
+{
+    #method eval : aChar
+        => %onOperator.
+}
+
+#class(role)ENumberState
+{
+    #method eval : aChar
+        => %onDigit.
+}
+
+#class Parser : system'routines'BasePattern
 {
     #field theToken.
     #field theTopNode.
+    #field theRole.
     
-    #role Brackets
-    {
-        #method evaluate : aChar
-        [
-            theToken += aChar.
-            
-            #if theToken available'is
-            | [
-                #shift.
-            ].
-        ]
-    }
-    
-    #role Start
-    {
-        #method evaluate : aChar
-        [
-            #if (40 == aChar)?
-            [
-                theToken := SubExpression.
+    #method onBrackets : aChar
+    [
+        theToken += aChar.
+                
+        (theToken validate)
+          ? [
+              theRole := ENumberState.
+          ].
+    ]
+
+    #method onStart : aChar
+    [
+        aChar =>
+             40 ? [ // (
+                theToken := SubExpression new.
+                theTopNode := theToken.
+  
+                theRole := EBracketState.
+            ]
+            45 ? [ // -
+                theToken := DifferenceNode new add:(Token new:"0").
+                
                 theTopNode := theToken.
                 
-                #shift Brackets.
+                theRole := EOperatorState.
             ]
-            | [
-                theToken := Token.
+            ! [
+                theToken := Token new.
                 theTopNode := theToken.
+                theRole := ENumberState.
                 
-                theToken += aChar.
-                
-                #shift.
+                $self appendDigit:aChar.                
             ].
-        ]
-    }
-    
-    #role Operator
-    {
-        #method evaluate : aChar
-        [
-            #if Control if:(48 < aChar) if:(58 > aChar)
-            [
-                theToken := (Token += aChar).
-                
-                theTopNode += theToken.
-                
-                #shift.
-            ]
-            | if:(40 == aChar)
-            [
-                theToken := SubExpression.
-                theTopNode += theToken.
-                
-                #shift Brackets.
-            ]
-            | [ $self fail. ].
-        ]
-    }
-    
-    #initializer
-    [
-        #shift Start.
     ]
-    
-    #method numeric = theTopNode numeric.
-    
-    #method evaluate : aChar
+
+    #method onOperator : aChar
     [
-        #if Control if:(48 < aChar) if:(58 > aChar)
-        [
+        aChar =>
+            40 ? [
+                theToken := SubExpression new.
+                theTopNode += theToken.
+                theRole := EBracketState.
+            ]
+            ! [
+                theToken := Token new.
+                theTopNode += theToken.
+                theRole := ENumberState.
+
+                $self appendDigit:aChar.
+            ].
+    ]
+
+    #constructor new
+    [
+        theRole := EStartState.
+    ]
+
+    #method Number = theTopNode Number.
+
+    #method appendDigit : aChar
+    [
+        (aChar >= 48) and:(aChar < 58)
+        ? [
             theToken += aChar.
         ]
-        | if:(42 == aChar)  // *
-        [
-            theTopNode := theTopNode + ProductNode.
-            
-            #shift Operator.
+        ! [
+            #throw Exception new:"Invalid expression".
         ]
-        | if:(47 == aChar)  // /
-        [
-            theTopNode := theTopNode + FractionNode.
-            
-            #shift Operator.
-        ]
-        | if:(43 == aChar)  // +
-        [
-            theTopNode := theTopNode + SummaryNode.
-            
-            #shift Operator.
-        ]
-        | if:(45 == aChar)  // -
-        [
-            theTopNode := theTopNode + DifferenceNode.
-            
-            #shift Operator.
-        ]
-        | if:(40 == aChar)
-        [
-            theToken := SubExpression.
-            theTopNode := theToken.
-            
-            #shift Brackets.
-        ]
-        | [ $self fail. ].
-    ]
-    
-    #method start : aProcess
-    [
-        aProcess run:self.
         
-        ^ self numeric.
     ]
+
+    #method onDigit : aChar
+    [
+        aChar =>
+            40 ? [      // (
+                theToken := SubExpression new.
+                theTopNode := theToken.
+                theRole := EBracketState.
+            ]
+            42 ? [      // *
+                theTopNode := theTopNode + ProductNode new.
+
+                theRole := EOperatorState.
+            ]
+            43 ? [      // +
+                theTopNode := theTopNode + SummaryNode new.
+
+                theRole := EOperatorState.
+            ]
+            45 ? [      // -
+                theTopNode := theTopNode + DifferenceNode new.
+
+                theRole := EOperatorState.
+            ]
+            47 ?       // /
+            [
+                theTopNode := theTopNode + FractionNode new.
+
+                theRole := EOperatorState.
+            ]
+            ! [
+                $self appendDigit:aChar.
+            ].
+    ]
+
+    #method => theRole.
 }
 
-#symbol Program =
+#symbol program =
 [
-    #var aText := String.
-    
-    #while ((Console >> aText) length > 0)?
-    [
-        #var aParser := Parser.
+    #var aText := String new.
 
-        Console << "=" << aParser start:Scan::aText | ^^"Invalid Expression".
-        
-        Console << "%n".
+    control while:(consoleEx readLine:aText Length > 0) &do:
+    [
+        #var aParser := Parser new.
+
+        consoleEx writeLine:"=" :(aParser foreach:aText Number)
+            | ifFailed: 
+                [
+                    consoleEx writeLine:"Invalid Expression".
+                ].
     ].
 ].
