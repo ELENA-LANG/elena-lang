@@ -20,6 +20,7 @@ groups.l
 console.l
 win32_app.l
 app.l
+routines\enumerators.l
 routines\patterns.l
 calendar\win32_datetime.l
 calendar\dates.l
@@ -38,3 +39,4 @@ text\strings.l
 dynamic\loaders.l
 dynamic\reflection.l
 dynamic\interpreters.l
+

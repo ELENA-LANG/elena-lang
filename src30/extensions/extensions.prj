@@ -9,6 +9,7 @@ warn:unresolved=0
 inline=..\..\lib30\inline\ext_routines.bin
 
 [files]
+control.l
 convertors.l
 console.l
 app.l
@@ -22,4 +23,3 @@ dynamic\serializer.l
 dynamic\scripttools.l
 dynamic\interpreter.l
 routines\combinations.l
-

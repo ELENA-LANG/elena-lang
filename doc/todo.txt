@@ -20,128 +20,16 @@ v  - vm script
 ------
 Currently:
 ------
-
-              sdev - rosetta samples              
-                       * arithmeval
-                       * combinations 
+              sdev - api
+                       * create API doc
 <=================>
          
 1.9.10
 ------
 week2: [18.12]                      
-              sdev - rosetta samples              
-                       * bullscows 
-                       * arrays : simplify
-                       * bullscows: use __rolebatch?
-                       * C samples
-                       * Calendar sample
-                       * Calendar - for "real" programmers
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull–Clark subdivision surface              
-                       * Box the compass
-                       * Binary search
-                       * Averages/Root mean square
-                       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              adev - dynamic programming
-                       * deserialize object
-
-            smaint - testing
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
-                       
-              sdev - rosetta samples              
-                       * arraymode: support collection of different types
-            
-              adev - console operations:
-                       * read / write operation: complex types
-                       
-               adev - LiteralValue / String / TextBuffer
-                       * support appendLine?? (e.g. maybe in extension)
-               sdev - console samples
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-               sdev - console samples
-                       * vmconsole
-              adev - console operations:              
-                        * write formatted numbers
-                        * write formatted string (with parameters)
-              adev - lib30
-                       * implement extensions'patterns'Combinator 
-                       * convertor toArray , which converts list to elist wrap or returns itself
-                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       * implement: extensions'math'power - support integer values as well
-
-                       * implement: integer part of number (1.2r -> 1.0r)
-                       * implement: fractional part of number (1.2r -> 0.2r)
-                       * implement: reciprocal
-                       * implement: square root
-                       * implement: square function
-                       * implement: power function with integer
-                       * implement: exponential
-                       * implement: absolute value
-                       * implement: round
-                       * implement: truncate
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: truncate
-                       * implement: round up
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: natural logarithm
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: convert degrees to radians
-                       * implement: convert radians to degrees
-                       * implement: sine
-                       * implement: cosine
-                       * implement: tangent
-                       * implement: arcsine
-                       * implement: arccosine
-                       * implement: arctangent
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
-                       * implement: pi
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
-                       
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-
-                       * bytearray : get / set - outofrange exception
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range (insert, delete, ...)
-
 week3:
+              sdev - script engine
+                       * implement script engine arithm eval sample
               sdev - calculator
                        * build state machine using only dynamic object
                        * implement sample using open architecture
@@ -212,8 +100,8 @@ week4:
               sdev - samples
                        * test system
                        * test tape
-              xdoc - api
-                       * start to create api pages
+                       * test examples
+                       * test rosetta examples
                                                          
             xmaint - compiler
                        * looks like the operation with console does not work with AMD!!!
@@ -517,6 +405,7 @@ week1:
                        * should be possible to debug vm scripts
                        
               idev - debugger
+                       * the same module is opened twice (if it was already opened) - e.g. combinator example (extensions'routines'combinator module)
                        * multi-select operator debugging - step over does not work
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
                        * step over #break / #throw does not work correctly
@@ -555,6 +444,117 @@ week2:
                        * simplify goods (Record.get&Literal implementation)
                        * words: sort the list
                        * rewrite pi sample to use stack allocated variables / parallel calculating
+
+              sdev - rosetta samples              
+                       * bullscows 
+                       * arrays : simplify
+                       * bullscows: use __rolebatch?
+                       * C samples
+                       * Calendar sample
+                       * Calendar - for "real" programmers
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull–Clark subdivision surface              
+                       * Box the compass
+                       * Binary search
+                       * Averages/Root mean square
+                       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
+
+              adev - dynamic programming
+                       * deserialize object
+
+            smaint - testing
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+                       
+              sdev - rosetta samples              
+                       * arraymode: support collection of different types
+            
+              adev - console operations:
+                       * read / write operation: complex types
+                       
+               adev - LiteralValue / String / TextBuffer
+                       * support appendLine?? (e.g. maybe in extension)
+               sdev - console samples
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * vmconsole
+              adev - console operations:              
+                        * write formatted numbers
+                        * write formatted string (with parameters)
+
+              adev - lib30
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       * implement: extensions'math'power - support integer values as well
+
+                       * implement: integer part of number (1.2r -> 1.0r)
+                       * implement: fractional part of number (1.2r -> 0.2r)
+                       * implement: reciprocal
+                       * implement: square root
+                       * implement: square function
+                       * implement: power function with integer
+                       * implement: exponential
+                       * implement: absolute value
+                       * implement: round
+                       * implement: truncate
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: truncate
+                       * implement: round up
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: natural logarithm
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: convert degrees to radians
+                       * implement: convert radians to degrees
+                       * implement: sine
+                       * implement: cosine
+                       * implement: tangent
+                       * implement: arcsine
+                       * implement: arccosine
+                       * implement: arctangent
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * implement: pi
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
+                       
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+
+                       * bytearray : get / set - outofrange exception
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range (insert, delete, ...)
+                       * should control foreach&until be implemented in EFunction?
 
 week3:
               sdev - open architecture

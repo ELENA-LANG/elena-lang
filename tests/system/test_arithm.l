@@ -9,6 +9,9 @@
 
 #symbol XTest =
 [    
+    #var aList := List new append:1 append:2 append:3 append:4 append:5.
+    
+    controlEx foreach:aList &top:3 &do:printingLn.
 ].
 
 // --- MultiDispatchTest ---

@@ -414,6 +414,11 @@
             
     #method type'index = theIndex Number.
 
+    #method reset
+    [
+        theIndex write &type'int:-1.
+    ]
+
     #method append &type'index:anIndex
     [
         theIndex append::anIndex.
@@ -880,6 +885,11 @@
     #method Index => %type'index.
     
     #method type'index = theIndex Number.
+
+    #method reset
+    [
+        theIndex write &type'int:-1.
+    ]
 
     #method set &type'index:anIndex
     [

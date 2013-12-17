@@ -1,35 +1,24 @@
-#define std'dictionary'*.
-#define std'basic'*.
-#define std'patterns'*.
-#define std'collections'*.
-#define std'routines'*.
-#define ext'patterns'*.
-#define ext'routines'*.
-
-#define factory'* = std'basic'factory'*.
-
-//#subject __previous.
+#define system.
+#define extensions.
+#define extensions'routines.
 
 #symbol M = 3.
 #symbol N = 5. 
 
-
 // --- Numbers ---
 
-#symbol Numbers : aN
-    = NewArray &&pattern:(#join(integer::-1) { clone = integer::(self append:1). }) &count:aN &:factory'epatterninit.
+#symbol numbers = &&:anN
+[
+    Array new &type'length:anN &function: &&:anIndex [ Integer new:(anIndex + 1) ]
+].
 
 // --- Program ---
 
-#symbol Program =
+#symbol program =
 [
-    #var aNumbers := Numbers::N.
-    #var aList := List.
-    
-    Repeater::M run: = ( aList += aNumbers ).
-    
-    (Combinator::aList)~foreach run: aList =
+    #var aNumbers := numbers:N.    
+    controlEx for:(Combinator new:(Array new &type'length:M &function: &&:i [ aNumbers ])) &do: &&:aRow
     [
-        'program'output << aList << "%n".
+        consoleEx writeLine:aRow.
     ].
 ].

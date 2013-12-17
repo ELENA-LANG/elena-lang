@@ -40,7 +40,7 @@
 
     listControl sort:aDictionary &with: &&:aFormer:aLater [ aFormer Value Count > aLater Value Count ].
 
-    listControl foreach:aDictionary &top:20 &do: &&:aPair [ consoleEx writeLine:(aPair Value) ].
+    controlEx foreach:aDictionary &top:20 &do: &&:aPair [ consoleEx writeLine:(aPair Value) ].
     
     #var anEnd := now.
    

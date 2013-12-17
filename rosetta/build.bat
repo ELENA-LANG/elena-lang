@@ -21,3 +21,4 @@
 ..\bin\elc -ccaesar\caesar.prj
 ..\bin\elc -ccharmatch\charmatch.prj
 ..\bin\elc -carithmeval\arithmeval.prj
+..\bin\elc -ccombinations\combinations.prj

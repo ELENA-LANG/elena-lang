@@ -117,13 +117,25 @@
 // --- function role class ---
 
 #class(role) EFunction
-{
-    
+{    
     #method run &each:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
             self eval:(anEnumerator get).
+        ].        
+        
+        ^ nil.        
+    ]
+    
+    #method run &each:anEnumerator &where:aConditionFunction
+    [
+        #loop (anEnumerator next) ?
+        [
+            #var anItem := anEnumerator get.
+            
+            aConditionFunction eval:anItem
+                ? [ self eval:anItem. ].
         ].        
         
         ^ nil.        
@@ -214,28 +226,7 @@
                 [ #break anEnumerator get. ].
         ].
     ]
-
-    foreach:anEnumerable &until:aCodition &do:aFunction
-    [
-        #var anEnumerator := anEnumerable Enumerator.
-        
-        ^ control while:[ anEnumerator next and::aCodition ] 
-            &do:[ aFunction eval:(anEnumerator get). ].
-    ]
-
-    foreach:anEnumerable &where:aFilter &do:aFunction
-    [
-        #var anEnumerator := anEnumerable Enumerator.
-        
-        ^ control while:[ anEnumerator next ] &do:
-          [ 
-              #var aCurrent := anEnumerator get.
-          
-              aFilter eval:aCurrent
-                  ? [ aFunction eval:aCurrent. ].             
-          ].
-    ]
-
+    
     for:anIterator &from:aStart &to:anEndValue &by:aStep &do:aFunction
         = aFunction~EFunction run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
 

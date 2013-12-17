@@ -2,63 +2,6 @@
 
 // === helpers ===
 
-// --- IndexedListEnumerator ---
-
-#class IndexedListEnumerator
-{
-    #field theList.
-    #field theEnumerator.
-    #field theIndex.
-    
-    #constructor new : aList
-    [
-        theEnumerator := aList Enumerator.
-        theIndex:= Integer new &type'int:-1.
-    ]
-    
-    #method reset
-    [
-        theIndex << -1.
-        
-        theEnumerator reset.
-    ]
-    
-    #method next
-    [
-        theIndex += 1.
-        
-        ^ theEnumerator next.
-    ] 
-
-    #method get => theEnumerator.
-            
-    #method set : aValue
-    [
-        theEnumerator set:aValue.
-    ]
-            
-    #method set &type'index:anIndex
-    [
-        theIndex > anIndex ?
-        [
-            $self reset.
-        ].
-        
-        control while:[ theIndex < anIndex ] &do:
-        [
-            theEnumerator next
-                ! [ #throw OutOfRangeException new:"Index out of the range". ].
-            
-            theIndex += 1.
-        ].
-    ]
-    
-    #method type'index
-        = theIndex Number.
-        
-    #method Index => %type'index.
-}
-
 // --- EList ---
 
 #class(role)EList
@@ -160,13 +103,6 @@
     foreach:aList &do:anAction
         = aList~EList run:anAction.
         
-    foreach : aList &top:aMaxValue &do:aFunction
-    [
-        #var aCounter := Integer new::aMaxValue.
-        
-        control foreach:aList &until:[ aCounter -= 1. ^ aCounter > -1. ] &do:aFunction.
-    ]
-    
     find:aValue &in:aList
         = aList~EList seek: &&:x [ aValue equal:x ].
         
@@ -286,6 +222,15 @@
         
     toArray : aLiteral
         = aLiteral~ELiteralOp Array.
+        
+    starting : anS &with:aSubS
+        = 0 == anS indexOf &type'index:0 &type'widestr::aSubS.
+        
+    ending : anS &with:aSubS
+        = (anS Length - aSubS Length) == anS indexOf &type'index:0 &type'widestr::aSubS.
+        
+    contain : aSubS &in:anS
+        = -1 != anS indexOf &type'index:0 &type'widestr::aSubS.
 }.
 
 // === patterns ===
