@@ -1,5 +1,0 @@
-[#general#]
-#name=gui'forms
-#shortdescr=Provides basic GUI forms
-
-[#list#]
