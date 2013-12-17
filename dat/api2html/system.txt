@@ -1,0 +1,10 @@
+[#general#]
+#name=system
+#shortdescr=Contains the basic functionality
+
+[#list#]
+Object
+
+[Object]
+#title=Class Object
+#shortdescr=A common ancestor

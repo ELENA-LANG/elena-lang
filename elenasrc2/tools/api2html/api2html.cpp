@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2010, by Alexei Rakov
+//                                              (C)2005-2013, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINVER
@@ -9,98 +9,98 @@
 #endif
 
 #include <windows.h>
-#include "common.h"
 #include "config.h"
+#include "elena.h"
 
-#define TITLE "ELENA Standard Library 1.5.4: Package "
-#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>1.5.4"
+#define TITLE "ELENA Standard Library 2.0: Package "
+#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>2.0"
 
 #define OPERATORS "+-*/=<>?!"
 
 using namespace _ELENA_;
 
-void writeHeader(TextFileWriter& writer, const char* package, const char* packageLink)
+void writeHeader(TextFileWriter& writer, const _text_t* package, const _text_t* packageLink)
 {
-   writer.writeLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\"http://www.w3.org/TR/REC-html40/frameset.dtd\">");
-   writer.writeLine("<HTML>");
-   writer.writeLine("<HEAD>");
-   writer.writeLine("<TITLE>");
-   writer.writeLiteral(TITLE);
-   writer.writeLine(package);
-   writer.writeLine("</TITLE>");
-   writer.writeLine("<meta name=\"collection\" content=\"api\">");
-   writer.writeLine("</HEAD>");
-   writer.writeLine("<BODY BGCOLOR=\"white\">");
+   writer.writeTextNewLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\"http://www.w3.org/TR/REC-html40/frameset.dtd\">");
+   writer.writeTextNewLine("<HTML>");
+   writer.writeTextNewLine("<HEAD>");
+   writer.writeTextNewLine("<TITLE>");
+   writer.writeText(TITLE);
+   writer.writeTextNewLine(package);
+   writer.writeTextNewLine("</TITLE>");
+   writer.writeTextNewLine("<meta name=\"collection\" content=\"api\">");
+   writer.writeTextNewLine("</HEAD>");
+   writer.writeTextNewLine("<BODY BGCOLOR=\"white\">");
 
-   writer.writeLine("<A NAME=\"navbar_top\"><!-- --></A>");
-   writer.writeLine("<TABLE BORDER=\"0\" WIDTH=\"100%\" CELLPADDING=\"1\" CELLSPACING=\"0\">");
-   writer.writeLine("<TR>");
-   writer.writeLine("<TD COLSPAN=2 BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">");
-   writer.writeLine("<A NAME=\"navbar_top_firstrow\"><!-- --></A>");
-   writer.writeLine("<TABLE BORDER=\"0\" CELLPADDING=\"0\" CELLSPACING=\"3\">");
-   writer.writeLine("  <TR ALIGN=\"center\" VALIGN=\"top\">");
-   writer.writeLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"index.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>");
+   writer.writeTextNewLine("<A NAME=\"navbar_top\"><!-- --></A>");
+   writer.writeTextNewLine("<TABLE BORDER=\"0\" WIDTH=\"100%\" CELLPADDING=\"1\" CELLSPACING=\"0\">");
+   writer.writeTextNewLine("<TR>");
+   writer.writeTextNewLine("<TD COLSPAN=2 BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">");
+   writer.writeTextNewLine("<A NAME=\"navbar_top_firstrow\"><!-- --></A>");
+   writer.writeTextNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"0\" CELLSPACING=\"3\">");
+   writer.writeTextNewLine("  <TR ALIGN=\"center\" VALIGN=\"top\">");
+   writer.writeTextNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"index.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>");
    if (!emptystr(packageLink)) {
-      writer.writeLiteral("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\"><A HREF=\"");
-      writer.writeLiteral(packageLink);
-      writer.writeLine("\"><FONT CLASS=\"NavBarFont1\"><B>Package</B></FONT></A>&nbsp;</TD>");
+      writer.writeText("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\"><A HREF=\"");
+      writer.writeText(packageLink);
+      writer.writeTextNewLine("\"><FONT CLASS=\"NavBarFont1\"><B>Package</B></FONT></A>&nbsp;</TD>");
    }
-   else writer.writeLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <FONT CLASS=\"NavBarFont1\">Package</FONT>&nbsp;</TD>");
-   writer.writeLine("  </TR>");
-   writer.writeLine("</TABLE>");
-   writer.writeLine("</TD>");
+   else writer.writeTextNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <FONT CLASS=\"NavBarFont1\">Package</FONT>&nbsp;</TD>");
+   writer.writeTextNewLine("  </TR>");
+   writer.writeTextNewLine("</TABLE>");
+   writer.writeTextNewLine("</TD>");
 
-   writer.writeLine("<TD ALIGN=\"right\" VALIGN=\"top\" ROWSPAN=3><EM><b>");
-   writer.writeLiteral(TITLE2);
-   writer.writeLine("</b></EM>");
-   writer.writeLine("</TD>");
-   writer.writeLine("</TR>");
-   writer.writeLine("</TABLE>");
+   writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" ROWSPAN=3><EM><b>");
+   writer.writeText(TITLE2);
+   writer.writeTextNewLine("</b></EM>");
+   writer.writeTextNewLine("</TD>");
+   writer.writeTextNewLine("</TR>");
+   writer.writeTextNewLine("</TABLE>");
 
-   writer.writeLine("<DL>");
-   writer.writeLine("<HR>");
+   writer.writeTextNewLine("<DL>");
+   writer.writeTextNewLine("<HR>");
 }
 
-void writeSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
+void writeSummaryHeader(TextFileWriter& writer, const _text_t* name, const _text_t* shortDescr)
 {
-   writer.writeLine("<H2>");
-   writer.writeLiteral("Package ");
-   writer.writeLine(name);
-   writer.writeLine("</H2>");
-   writer.writeLine(shortDescr);
-   writer.writeLine("<P>");
+   writer.writeTextNewLine("<H2>");
+   writer.writeText("Package ");
+   writer.writeTextNewLine(name);
+   writer.writeTextNewLine("</H2>");
+   writer.writeTextNewLine(shortDescr);
+   writer.writeTextNewLine("<P>");
 
-   writer.writeLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
-   writer.writeLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLine("<B>Class Summary</B></FONT></TD>");
-   writer.writeLine("</TR>");
+   writer.writeTextNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeTextNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeTextNewLine("<B>Class Summary</B></FONT></TD>");
+   writer.writeTextNewLine("</TR>");
 }
 
-void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const char* name, const char* bodyFileName)
+void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const _text_t* name, const _text_t* bodyFileName)
 {
-   writer.writeLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-   writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
-   writer.writeLiteral(bodyFileName);
-   writer.writeLiteral("#");
-   writer.writeLiteral(name);
-   writer.writeLiteral("\">");
-   writer.writeLiteral(name);
-   writer.writeLine("</A></B></TD>");
-   writer.writeLiteral("<TD>");
-   const char* descr = config.getSetting(name, "#shortdescr", NULL);
+   writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+   writer.writeText("<TD WIDTH=\"15%\"><B><A HREF=\"");
+   writer.writeText(bodyFileName);
+   writer.writeText("#");
+   writer.writeText(name);
+   writer.writeText("\">");
+   writer.writeText(name);
+   writer.writeTextNewLine("</A></B></TD>");
+   writer.writeText("<TD>");
+   const _text_t* descr = config.getSetting(name, _T("#shortdescr"), NULL);
    if (!emptystr(descr)) {
-      writer.writeLiteral(descr);
+      writer.writeText(descr);
    }
-   else writer.writeLiteral(name);
+   else writer.writeText(name);
 
-   writer.writeLiteral("</TD>");
-   writer.writeLine("</TR>");
+   writer.writeText("</TD>");
+   writer.writeTextNewLine("</TR>");
 }
 
 inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 {
-   for(int i = 0 ; i < count ; i++) writer.writeLiteral(s);
+   for(int i = 0 ; i < count ; i++) writer.writeText(s);
 }
 
 inline const char* find(const char* s, char ch)
@@ -109,7 +109,7 @@ inline const char* find(const char* s, char ch)
       return NULL;
    }
    else {
-      int index = String::find(s, ch);
+      int index = StringHelper::find(s, ch);
       if (index==-1)
          index = strlen(s) - 1;
 
@@ -120,7 +120,7 @@ inline const char* find(const char* s, char ch)
 inline void writeLeft(TextFileWriter& writer, const char* s, const char* right)
 {
    if (emptystr(right)) {
-      writer.writeLiteral(s);
+      writer.writeText(s);
    }
    else writer.write(s, right - s - 1);
 }
@@ -129,44 +129,44 @@ void writeLink(TextFileWriter& writer, const char* link, const char* file = NULL
 {
    const char* body = find(link, ':');
 
-   writer.writeLiteral("<A HREF=\"");
+   writer.writeText("<A HREF=\"");
 
-   if (String::find(link, '#') == -1) {
+   if (StringHelper::find(link, '#') == -1) {
       if (!emptystr(file)) {
-         writer.writeLiteral(file);
+         writer.writeText(file);
       }
       writer.writeChar('#');
       writeLeft(writer, link, body);
    }
    else writeLeft(writer, link, body);
 
-   writer.writeLiteral("\">");
+   writer.writeText("\">");
    if (emptystr(body)) {
-      writer.writeLiteral(link);
+      writer.writeText(link);
    }
    else writeLeft(writer, body, find(body, ';'));
 
-   writer.writeLine("</A>");
+   writer.writeTextNewLine("</A>");
 }
 
 void writeParamLink(TextFileWriter& writer, const char* link, const char* right, const char* file)
 {
-   writer.writeLiteral("<A HREF=\"");
+   writer.writeText("<A HREF=\"");
 
-   int pos = String::find(link, '#');
+   int pos = StringHelper::find(link, '#');
 
    if (pos == -1 || pos > (right - link)) {
-      writer.writeLiteral(file);
+      writer.writeText(file);
       writer.writeChar('#');
 	   writeLeft(writer, link, right);
    }
    else {
       writeLeft(writer, link, right);
-	   link += String::find(link, '#') + 1;
+	   link += StringHelper::find(link, '#') + 1;
    }
-   writer.writeLiteral("\">");
+   writer.writeText("\">");
    writeLeft(writer, link, right);
-   writer.writeLine("</A>");
+   writer.writeTextNewLine("</A>");
 }
 
 void writeMessage(TextFileWriter& writer, const char* message)
@@ -179,44 +179,44 @@ void writeMessage(TextFileWriter& writer, const char* message)
       result = descr;
    }
 
-   bool oper = (String::find(OPERATORS, message[0])!=-1);
+   bool oper = (StringHelper::find(OPERATORS, message[0])!=-1);
 
    if (message[0]=='<' && message[1] == 'a') {
       oper = false;
    }
    else if (message[0]=='<') {
-      writer.writeLiteral("&lt;");
+      writer.writeText("&lt;");
       message++;
    }
    else if (message[0]=='>') {
-      writer.writeLiteral("&gt;");
+      writer.writeText("&gt;");
       message++;
    }
    writeLeft(writer, message, parameter);
    if (!emptystr(parameter) && result != parameter && parameter[0] != ',') {
       if (!oper) {
-         writer.writeLiteral(" : ");
+         writer.writeText(" : ");
       }
-      else writer.writeLiteral(" ");
+      else writer.writeText(" ");
       writeParamLink(writer, parameter, result, "stdprotocol.html");
    }
    if (!emptystr(result) && result != descr && result[0] != ';') {
-      writer.writeLiteral(" = ");
+      writer.writeText(" = ");
       writeParamLink(writer, result, descr, "stdprotocol.html");
    }
 }
 
-void writeParents(TextFileWriter& writer, IniConfigFile& config, const char* name,  const char* moduleName)
+void writeParents(TextFileWriter& writer, IniConfigFile& config, const _text_t* name,  const _text_t* moduleName)
 {
-   writer.writeLine("<PRE>");
+   writer.writeTextNewLine("<PRE>");
    int indent = 0;
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (String::compare(it.key(), "#parent")) {
+      if (StringHelper::compare(it.key(), _T("#parent"))) {
          repeatStr(writer, "  ", indent - 1);
-         if (indent > 0) writer.writeLine(" |");
+         if (indent > 0) writer.writeTextNewLine(" |");
          repeatStr(writer, "  ", indent - 1);
-         if (indent > 0) writer.writeLiteral(" +--");
+         if (indent > 0) writer.writeText(" +--");
 
          writeLink(writer, *it);
 
@@ -225,218 +225,218 @@ void writeParents(TextFileWriter& writer, IniConfigFile& config, const char* nam
       it++;
    }
    repeatStr(writer, "  ", indent - 1);
-   writer.writeLine(" |");
+   writer.writeTextNewLine(" |");
    repeatStr(writer, "  ", indent - 1);
-   writer.writeLiteral(" +--<B>");
-   writer.writeLiteral(moduleName);
-   writer.writeLiteral("'");
-   writer.writeLiteral(name);
-   writer.writeLine("</B>");
+   writer.writeText(" +--<B>");
+   writer.writeText(moduleName);
+   writer.writeText("'");
+   writer.writeText(name);
+   writer.writeTextNewLine("</B>");
 
-   writer.writeLine("</PRE>");
+   writer.writeTextNewLine("</PRE>");
 }
 
-void writeProtocols(TextFileWriter& writer, const char* name, IniConfigFile& config)
+void writeProtocols(TextFileWriter& writer, const _text_t* name, IniConfigFile& config)
 {
-   if (!emptystr(config.getSetting(name, "#protocol", NULL))) {
+   if (!emptystr(config.getSetting(name, _T("#protocol"), NULL))) {
       ConfigCategoryIterator it = config.getCategoryIt(name);
-      writer.writeLiteral("<B>All Implemented Protocols:</B>");
-      writer.writeLine("<DL>");
+      writer.writeText("<B>All Implemented Protocols:</B>");
+      writer.writeTextNewLine("<DL>");
       while (!it.Eof()) {
-         if (String::compare(it.key(), "#protocol")) {
-            writer.writeLine("<DT>");
+         if (StringHelper::compare(it.key(), _T("#protocol"))) {
+            writer.writeTextNewLine("<DT>");
             writeLink(writer, *it, "stdprotocol.html");
-            writer.writeLine("</DT>");
+            writer.writeTextNewLine("</DT>");
          }
          it++;
       }
-      writer.writeLine("</DL>");
+      writer.writeTextNewLine("</DL>");
    }
 }
 
-void writeFields(TextFileWriter& writer, IniConfigFile& config, const char* name)
+void writeFields(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
 {
    // field section
-   writer.writeLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLine("<B>Field Summary</B></FONT></TD>");
+   writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeTextNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeTextNewLine("<B>Field Summary</B></FONT></TD>");
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (String::compare(it.key(), "#field")) {
+      if (StringHelper::compare(it.key(), _T("#field"))) {
          const char* descr = find(*it, ';');
-         writer.writeLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-         writer.writeLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-         writer.writeLine("<CODE>");
+         writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
+         writer.writeTextNewLine("<CODE>");
          writeLeft(writer, *it, descr);
-         writer.writeLine("&nbsp;</CODE>");
-         writer.writeLine("</TD>");
-         writer.writeLiteral("<TD><CODE>");
-         writer.writeLiteral(descr);
-         writer.writeLine("</CODE>");
-         writer.writeLine("</TD>");
-         writer.writeLine("</TR>");
+         writer.writeTextNewLine("&nbsp;</CODE>");
+         writer.writeTextNewLine("</TD>");
+         writer.writeText("<TD><CODE>");
+         writer.writeText(descr);
+         writer.writeTextNewLine("</CODE>");
+         writer.writeTextNewLine("</TD>");
+         writer.writeTextNewLine("</TR>");
       }
       it++;
    }
 }
 
-void writeProperties(TextFileWriter& writer, IniConfigFile& config, const char* name)
+void writeProperties(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
 {
    // property section
-   writer.writeLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLine("<B>Property Summary</B></FONT></TD>");
+   writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeTextNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeTextNewLine("<B>Property Summary</B></FONT></TD>");
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (String::compare(it.key(), "#property")) {
+      if (StringHelper::compare(it.key(), _T("#property"))) {
          const char* descr = find(*it, ';');
-         writer.writeLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-         writer.writeLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
+         writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
 
          writeLink(writer, *it, "stdproperties.html");
-         writer.writeLine("</DT>");
+         writer.writeTextNewLine("</DT>");
 
-         writer.writeLiteral("<TD><CODE>");
-         writer.writeLiteral(descr);
-         writer.writeLine("</CODE>");
-         writer.writeLine("</TD>");
-         writer.writeLine("</TR>");
+         writer.writeText("<TD><CODE>");
+         writer.writeText(descr);
+         writer.writeTextNewLine("</CODE>");
+         writer.writeTextNewLine("</TD>");
+         writer.writeTextNewLine("</TR>");
 
       }
       it++;
    }
 }
 
-void writeMethods(TextFileWriter& writer, IniConfigFile& config, const char* name)
+void writeMethods(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
 {
-   if (emptystr(config.getSetting(name, "#method", NULL)))
+   if (emptystr(config.getSetting(name, _T("#method"), NULL)))
       return;
 
    // method section
-   writer.writeLine("<A NAME=\"method_summary\"><!-- --></A>");
+   writer.writeTextNewLine("<A NAME=\"method_summary\"><!-- --></A>");
 
-   writer.writeLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLine("<B>Method Summary</B></FONT></TD>");
-   writer.writeLine("</TR>");
+   writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeTextNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeTextNewLine("<B>Method Summary</B></FONT></TD>");
+   writer.writeTextNewLine("</TR>");
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (String::compare(it.key(), "#method")) {
-         writer.writeLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-         writer.writeLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-         writer.writeLine("<CODE>&nbsp;");
+      if (StringHelper::compare(it.key(), _T("#method"))) {
+         writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
+         writer.writeTextNewLine("<CODE>&nbsp;");
 
          const char* message = *it;
          const char* descr = find(message, ';');
 
          writeMessage(writer, message);
 
-         writer.writeLine("</TD>");
-         writer.writeLiteral("<TD><CODE>");
+         writer.writeTextNewLine("</TD>");
+         writer.writeText("<TD><CODE>");
 
          if (!emptystr(descr)) {
-            writer.writeLiteral(descr);
+            writer.writeText(descr);
          }
-         else writer.writeLiteral("&nbsp;");
-         writer.writeLine("</CODE>");
-         writer.writeLine("</TD>");
-         writer.writeLine("</TR>");
+         else writer.writeText("&nbsp;");
+         writer.writeTextNewLine("</CODE>");
+         writer.writeTextNewLine("</TD>");
+         writer.writeTextNewLine("</TR>");
       }
       it++;
    }
 }
 
-void writeBody(TextFileWriter& writer, IniConfigFile& config, const char* name,  const char* moduleName)
+void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* name,  const _text_t* moduleName)
 {
-   const char* title = config.getSetting(name, "#title", NULL);
+   const _text_t* title = config.getSetting(name, _T("#title"), NULL);
    if (title==NULL)
       title = name;
 
-   writer.writeLiteral("<A NAME=\"");
-   writer.writeLiteral(name);
-   writer.writeLine("\">");
-   writer.writeLine("<HR>");
-   writer.writeLine("<!-- ======== START OF CLASS DATA ======== -->");
-   writer.writeLine("<H2>");
-   writer.writeLine("<FONT SIZE=\"-1\">");
-   writer.writeLiteral(moduleName);
-   writer.writeLine("</FONT>");
-   writer.writeLine("<BR>");
-   writer.writeLiteral(title);
-   writer.writeLine("</H2>");
+   writer.writeText("<A NAME=\"");
+   writer.writeText(name);
+   writer.writeTextNewLine("\">");
+   writer.writeTextNewLine("<HR>");
+   writer.writeTextNewLine("<!-- ======== START OF CLASS DATA ======== -->");
+   writer.writeTextNewLine("<H2>");
+   writer.writeTextNewLine("<FONT SIZE=\"-1\">");
+   writer.writeText(moduleName);
+   writer.writeTextNewLine("</FONT>");
+   writer.writeTextNewLine("<BR>");
+   writer.writeText(title);
+   writer.writeTextNewLine("</H2>");
 
-   if (!emptystr(config.getSetting(name, "#parent", NULL))) {
+   if (!emptystr(config.getSetting(name, _T("#parent"), NULL))) {
       writeParents(writer, config, name, moduleName);
    }
    writeProtocols(writer, name, config);
-   const char* descr = config.getSetting(name, "#shortdescr", NULL);
+   const _text_t* descr = config.getSetting(name, _T("#shortdescr"), NULL);
    if (!emptystr(descr)) {
-      writer.writeLine("<P>");
-      writer.writeLine(descr);
-      writer.writeLine("<P>");
+      writer.writeTextNewLine("<P>");
+      writer.writeTextNewLine(descr);
+      writer.writeTextNewLine("<P>");
    }
-   else writer.writeLine(name);
+   else writer.writeTextNewLine(name);
 
-   writer.writeLine("<P>");
+   writer.writeTextNewLine("<P>");
 
-   writer.writeLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeTextNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
-   if (!emptystr(config.getSetting(name, "#field", NULL))) {
-      writer.writeLine("<!-- =========== FIELD SUMMARY =========== -->");
+   if (!emptystr(config.getSetting(name, _T("#field"), NULL))) {
+      writer.writeTextNewLine("<!-- =========== FIELD SUMMARY =========== -->");
       writeFields(writer, config, name);
    }
 
-   if (!emptystr(config.getSetting(name, "#property", NULL))) {
-      writer.writeLine("<!-- =========== PROPERTY SUMMARY =========== -->");
+   if (!emptystr(config.getSetting(name, _T("#property"), NULL))) {
+      writer.writeTextNewLine("<!-- =========== PROPERTY SUMMARY =========== -->");
       writeProperties(writer, config, name);
    }
 
-   writer.writeLine("<!-- ========== METHOD SUMMARY =========== -->");
+   writer.writeTextNewLine("<!-- ========== METHOD SUMMARY =========== -->");
    writeMethods(writer, config, name);
 
-   writer.writeLine("</TABLE>");
+   writer.writeTextNewLine("</TABLE>");
 }
 
-void writeFooter(TextFileWriter& writer, const char* packageLink)
+void writeFooter(TextFileWriter& writer, const _text_t* packageLink)
 {
-   writer.writeLine("<HR>");
-   writer.writeLine("<A NAME=\"navbar_top\"><!-- --></A>");
-   writer.writeLine("<TABLE BORDER=\"0\" WIDTH=\"100%\" CELLPADDING=\"1\" CELLSPACING=\"0\">");
-   writer.writeLine("<TR>");
-   writer.writeLine("<TD COLSPAN=2 BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">");
-   writer.writeLine("<A NAME=\"navbar_top_firstrow\"><!-- --></A>");
-   writer.writeLine("<TABLE BORDER=\"0\" CELLPADDING=\"0\" CELLSPACING=\"3\">");
-   writer.writeLine("  <TR ALIGN=\"center\" VALIGN=\"top\">");
-   writer.writeLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"index.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>");
+   writer.writeTextNewLine("<HR>");
+   writer.writeTextNewLine("<A NAME=\"navbar_top\"><!-- --></A>");
+   writer.writeTextNewLine("<TABLE BORDER=\"0\" WIDTH=\"100%\" CELLPADDING=\"1\" CELLSPACING=\"0\">");
+   writer.writeTextNewLine("<TR>");
+   writer.writeTextNewLine("<TD COLSPAN=2 BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">");
+   writer.writeTextNewLine("<A NAME=\"navbar_top_firstrow\"><!-- --></A>");
+   writer.writeTextNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"0\" CELLSPACING=\"3\">");
+   writer.writeTextNewLine("  <TR ALIGN=\"center\" VALIGN=\"top\">");
+   writer.writeTextNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"index.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>");
    if (!emptystr(packageLink)) {
-      writer.writeLiteral("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\"><A HREF=\"");
-      writer.writeLiteral(packageLink);
-      writer.writeLine("\"><FONT CLASS=\"NavBarFont1\"><B>Package</B></FONT></A>&nbsp;</TD>");
+      writer.writeText("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\"><A HREF=\"");
+      writer.writeText(packageLink);
+      writer.writeTextNewLine("\"><FONT CLASS=\"NavBarFont1\"><B>Package</B></FONT></A>&nbsp;</TD>");
    }
-   else writer.writeLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <FONT CLASS=\"NavBarFont1\">Package</FONT>&nbsp;</TD>");
-   writer.writeLine("  </TR>");
-   writer.writeLine("</TABLE>");
-   writer.writeLine("</TD>");
+   else writer.writeTextNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <FONT CLASS=\"NavBarFont1\">Package</FONT>&nbsp;</TD>");
+   writer.writeTextNewLine("  </TR>");
+   writer.writeTextNewLine("</TABLE>");
+   writer.writeTextNewLine("</TD>");
 
-   writer.writeLine("<TD ALIGN=\"right\" VALIGN=\"top\" ROWSPAN=3><EM><b>");
-   writer.writeLiteral(TITLE2);
-   writer.writeLine("</b></EM>");
-   writer.writeLine("</TD>");
-   writer.writeLine("</TR>");
-   writer.writeLine("</TABLE>");
+   writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" ROWSPAN=3><EM><b>");
+   writer.writeText(TITLE2);
+   writer.writeTextNewLine("</b></EM>");
+   writer.writeTextNewLine("</TD>");
+   writer.writeTextNewLine("</TR>");
+   writer.writeTextNewLine("</TABLE>");
 }
 
 void writeSummaryFooter(TextFileWriter& writer)
 {
-   writer.writeLine("</TABLE>");
+   writer.writeTextNewLine("</TABLE>");
 }
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line Html Documentation generator (C)2006-08 by Alexei Rakov\n");
+   printf("ELENA command line Html Documentation generator (C)2006-13 by Alexei Rakov\n");
 
    IniConfigFile config(true);
 
@@ -445,26 +445,26 @@ int main(int argc, char* argv[])
       return 0;
    }
 
-   config.load(argv[1], /*CP_OEMCP*/feAnsi); // !! temporal
+   config.load(ConstantIdentifier(argv[1]), /*CP_OEMCP*/feAnsi); // !! temporal
 
    FileName fileName(argv[1]);
-   String name(fileName);
+   IdentifierString name(fileName);
    name.append(".html");
 
-   String summaryname(fileName);
+   IdentifierString summaryname(fileName);
    summaryname.append("-summary");
    summaryname.append(".html");
 
    TextFileWriter bodyWriter(name, feAnsi, false);
    TextFileWriter summaryWriter(summaryname, feAnsi, false);
 
-	const char* package = config.getSetting("#general#", "#name");
-	const char* shortDescr = config.getSetting("#general#", "#shortdescr");
+	const _text_t* package = config.getSetting(_T("#general#"), _T("#name"));
+	const _text_t* shortDescr = config.getSetting(_T("#general#"), _T("#shortdescr"));
 	writeHeader(summaryWriter, package, NULL);
    writeHeader(bodyWriter, package, summaryname);
    writeSummaryHeader(summaryWriter, package, shortDescr);
 
-   ConfigCategoryIterator classNode = config.getCategoryIt("#list#");
+   ConfigCategoryIterator classNode = config.getCategoryIt(_T("#list#"));
    while (!classNode.Eof()) {
       writeSummaryTable(summaryWriter, config, classNode.key(), name);
       writeBody(bodyWriter, config, classNode.key(), package);
