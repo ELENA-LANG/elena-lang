@@ -1,3 +1,112 @@
 [#general#]
 #name=Standard Protocols
 #shortdescr=Standart protocols.
+
+[#list#]
+action
+bool
+bool_action
+bool_function
+enumerable
+enumerator
+function
+numeric_value
+numeric_variable
+object
+type_int
+type_object
+type_widestr
+value
+variable
+
+[object]
+#shortdescr=A common object protocol
+#method=equal,object,bool;Determines whether the specified object is equal to the current object.
+
+[bool]
+#shortdescr=A bool protocol
+#method=and,bool,bool;Executes logical AND operation
+#method=equal,bool,bool;Determines whether the specified object is equal to the current object boolean value.
+#method=not,,bool;Inverts the Boolean value
+#method=or,bool,bool;Executes logical OR operation
+#method=xor,bool,bool;Executes logical XOR operation
+
+[type_object]
+#shortdescr=A type'object protocol
+
+[action]
+#shortdescr=An action protocol
+#method=eval,,;Executes the code
+
+[bool_action]
+#shortdescr=A boolean expression
+#method=eval,,bool;Evaluates boolean expression
+
+[type_int]
+#shortdescr=A type'int protocol
+
+[type_widestr]
+#shortdescr=A type'widestr protocol
+
+[function]
+#shortdescr=A function protocol
+#method=eval,object,object;Executes the function
+
+[enumerator]
+#shortdescr=An enumerator protocol
+#method=get,,object;Returns the current elemement of the collection
+#method=next,,bool;Advances the enumerator to the next element of the collection.
+
+[bool_function]
+#shortdescr=A boolean function
+#method=eval,object,bool;Evaluates boolean expression for the specified parameter
+
+[value]
+#shortdescr=A value protocol
+#method=equal,value,bool;Compares the values
+#method=greater,value,bool;Compares the values
+#method=less,value,bool;Compares the values
+#method=notequal,value,bool;Compares the values
+#method=notgreater,value,bool;Compares the values
+#method=notless,value,bool;Compares the values
+
+[numeric_value]
+#shortdescr=A numeric value protocol
+#method=add,numeric_value,numeric_value;Adds the values
+#method=divide,numeric_value,numeric_value;Divides the values
+#method=equal,value,bool;Compares the values
+#method=greater,value,bool;Compares the values
+#method=less,value,bool;Compares the values
+#method=multiply,numeric_value,numeric_value;Divides the values
+#method=notequal,value,bool;Compares the values
+#method=notgreater,value,bool;Compares the values
+#method=notless,value,bool;Compares the values
+#method=subtract,numeric_value,numeric_value;Subtracts the values
+
+[variable]
+#shortdescr=A variable protocol
+#method=equal,value,bool;Compares the values
+#method=greater,value,bool;Compares the values
+#method=less,value,bool;Compares the values
+#method=notequal,value,bool;Compares the values
+#method=notgreater,value,bool;Compares the values
+#method=notless,value,bool;Compares the values
+#method=write,value;Copies the value
+
+[numeric_variable]
+#shortdescr=A variable protocol
+#method=append,value;Appends the value
+#method=divideInto,value;Divides into the value
+#method=equal,value,bool;Compares the values
+#method=greater,value,bool;Compares the values
+#method=less,value,bool;Compares the values
+#method=multiplyBy,value;Multiplies by the value
+#method=notequal,value,bool;Compares the values
+#method=notgreater,value,bool;Compares the values
+#method=notless,value,bool;Compares the values
+#method=reduce,value;Substracts the value
+#method=write,value;Copies the value
+
+[enumerable]
+#shortdescr=A collection protocol
+#method=Enumerator,,enumerator;Creates the collection enumerator

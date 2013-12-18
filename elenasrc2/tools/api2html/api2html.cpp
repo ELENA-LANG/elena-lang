@@ -103,7 +103,7 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
    for(int i = 0 ; i < count ; i++) writer.writeText(s);
 }
 
-inline const char* find(const char* s, char ch)
+inline const _text_t* find(const _text_t* s, char ch)
 {
    if (emptystr(s)) {
       return NULL;
@@ -111,13 +111,21 @@ inline const char* find(const char* s, char ch)
    else {
       int index = StringHelper::find(s, ch);
       if (index==-1)
-         index = strlen(s) - 1;
+         index = getlength(s) - 1;
 
       return s + index + 1;
    }
 }
 
-inline void writeLeft(TextFileWriter& writer, const char* s, const char* right)
+inline bool exists(const _text_t* s, char ch)
+{
+   if (emptystr(s)) {
+      return false;
+   }
+   else return StringHelper::find(s, ch) != -1;
+}
+
+inline void writeLeft(TextFileWriter& writer, const _text_t* s, const _text_t* right)
 {
    if (emptystr(right)) {
       writer.writeText(s);
@@ -125,9 +133,9 @@ inline void writeLeft(TextFileWriter& writer, const char* s, const char* right)
    else writer.write(s, right - s - 1);
 }
 
-void writeLink(TextFileWriter& writer, const char* link, const char* file = NULL)
+void writeLink(TextFileWriter& writer, const _text_t* link, const _text_t* file = NULL)
 {
-   const char* body = find(link, ':');
+   const _text_t* body = find(link, ':');
 
    writer.writeText("<A HREF=\"");
 
@@ -149,7 +157,7 @@ void writeLink(TextFileWriter& writer, const char* link, const char* file = NULL
    writer.writeTextNewLine("</A>");
 }
 
-void writeParamLink(TextFileWriter& writer, const char* link, const char* right, const char* file)
+void writeParamLink(TextFileWriter& writer, const _text_t* link, const _text_t* right, const _text_t* file)
 {
    writer.writeText("<A HREF=\"");
 
@@ -169,11 +177,39 @@ void writeParamLink(TextFileWriter& writer, const char* link, const char* right,
    writer.writeTextNewLine("</A>");
 }
 
-void writeMessage(TextFileWriter& writer, const char* message)
+void writeSignature(TextFileWriter& writer, const _text_t* parameters)
 {
-   const char* parameter = find(message, ',');
-   const char* result = find(parameter, ',');
-   const char* descr = emptystr(result) ? find(parameter, ';') : find(result, ';');
+   if (parameters[0] != '&') {
+      const _text_t* param = parameters;
+      const _text_t* next_subj = find(param, '&');
+
+      writer.writeText(" : ");
+      writeParamLink(writer, param, next_subj, _T("protocol.html"));
+
+      parameters = next_subj;
+   }
+
+   while (!emptystr(parameters)) {
+      if (parameters[0]!='&')
+         writer.writeText("&");
+
+      const _text_t* subj = parameters;
+      const _text_t* param = find(parameters, ':');
+      const _text_t* next_subj = find(param, '&');
+
+      writeLeft(writer, subj, param);
+      writer.writeText(" : ");
+      writeParamLink(writer, param, next_subj, _T("protocol.html"));
+
+      parameters = next_subj;
+   }
+}
+
+void writeMessage(TextFileWriter& writer, const _text_t* message)
+{
+   const _text_t* parameter = find(message, ',');
+   const _text_t* result = find(parameter, ',');
+   const _text_t* descr = emptystr(result) ? find(parameter, ';') : find(result, ';');
 
    if (emptystr(result)) {
       result = descr;
@@ -195,14 +231,23 @@ void writeMessage(TextFileWriter& writer, const char* message)
    writeLeft(writer, message, parameter);
    if (!emptystr(parameter) && result != parameter && parameter[0] != ',') {
       if (!oper) {
-         writer.writeText(" : ");
+         if (exists(parameter, '&')) {
+            IdentifierString signature(parameter, result - parameter - 1);
+
+            writer.writeText(" ");
+            writeSignature(writer, signature);
+         }
+         else {
+            writer.writeText(" : ");
+
+            writeParamLink(writer, parameter, result, _T("protocol.html"));
+         }
       }
       else writer.writeText(" ");
-      writeParamLink(writer, parameter, result, "stdprotocol.html");
    }
    if (!emptystr(result) && result != descr && result[0] != ';') {
       writer.writeText(" = ");
-      writeParamLink(writer, result, descr, "stdprotocol.html");
+      writeParamLink(writer, result, descr, _T("protocol.html"));
    }
 }
 
@@ -245,7 +290,7 @@ void writeProtocols(TextFileWriter& writer, const _text_t* name, IniConfigFile& 
       while (!it.Eof()) {
          if (StringHelper::compare(it.key(), _T("#protocol"))) {
             writer.writeTextNewLine("<DT>");
-            writeLink(writer, *it, "stdprotocol.html");
+            writeLink(writer, *it, _T("protocol.html"));
             writer.writeTextNewLine("</DT>");
          }
          it++;
@@ -264,7 +309,7 @@ void writeFields(TextFileWriter& writer, IniConfigFile& config, const _text_t* n
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
       if (StringHelper::compare(it.key(), _T("#field"))) {
-         const char* descr = find(*it, ';');
+         const _text_t* descr = find(*it, ';');
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>");
@@ -291,11 +336,11 @@ void writeProperties(TextFileWriter& writer, IniConfigFile& config, const _text_
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
       if (StringHelper::compare(it.key(), _T("#property"))) {
-         const char* descr = find(*it, ';');
+         const _text_t* descr = find(*it, ';');
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
 
-         writeLink(writer, *it, "stdproperties.html");
+         writeLink(writer, *it, _T("properties.html"));
          writer.writeTextNewLine("</DT>");
 
          writer.writeText("<TD><CODE>");
@@ -329,8 +374,8 @@ void writeMethods(TextFileWriter& writer, IniConfigFile& config, const _text_t* 
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>&nbsp;");
 
-         const char* message = *it;
-         const char* descr = find(message, ';');
+         const _text_t* message = *it;
+         const _text_t* descr = find(message, ';');
 
          writeMessage(writer, message);
 

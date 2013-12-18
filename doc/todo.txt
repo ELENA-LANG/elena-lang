@@ -20,14 +20,21 @@ v  - vm script
 ------
 Currently:
 ------
+              sdev - script engine
+                       * ElenaScript: light-weight script to describe the objects, execute operations and so on?
+                       * hello world ElenaScript code
+                       * elenascript should be default one in elt, do we actually need to support different scripts as well?                       
+                       * decision should be made what parser engine should be used, the second one should be removed
+                       * update rosetta sample
               sdev - api
                        * create API doc
+                       * copy protocols to doc\protocols
+                       * do we need t describe intOp, strOp, ... - they are actually private ones
 <=================>
          
 1.9.10
 ------
-week2: [18.12]                      
-week3:
+week3: [31.12]
               sdev - script engine
                        * implement script engine arithm eval sample
               sdev - calculator
@@ -416,6 +423,9 @@ week1:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        
 week2:
+              sdev - api
+                       * support dispatch method
+                       * support redirect method
               sdev - rosetta samples              
                        * modify amb operator using open argument list 
                        * update amb sample on rosetta code site

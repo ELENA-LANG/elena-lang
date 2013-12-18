@@ -1,10 +1,27 @@
 Protocols
 =========
 
+object
+------
+equal : object = bool
+
+bool
+----
+and:bool=bool
+or:bool=bool
+xor:bool=bool
+not = bool
+
+action
+------
+eval
 
 
+Type protocols
+==============
 
-
+type'object
+-----------
 
 
 

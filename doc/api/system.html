@@ -26,6 +26,739 @@ ELENA&nbsp;Standard&nbsp;Library<br>2.0</b></EM>
 </TABLE>
 <DL>
 <HR>
+<A NAME="BaseValue">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class BaseValue</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'BaseValue</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#value">value</A>
+</DT>
+</DL>
+<P>
+A base value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+greater : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notequal : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notgreater : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notless : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="BaseNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class BaseNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<B>system'BaseNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+</DL>
+<P>
+A base numeric value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Adds the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Divides the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Divides the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Subtracts the values</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="BreakException">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class BreakException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'BreakException</B>
+</PRE>
+<P>
+A break exception
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theResult&nbsp;</CODE>
+</TD>
+<TD><CODE></CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+stop</TD>
+<TD><CODE>Returns the result</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="control">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol control</H2>
+<P>
+A control helper symbol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+do : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Executes the action</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+do  : <A HREF="protocol.html#action">action</A>
+&until : <A HREF="protocol.html#bool_action">bool_action</A>
+</TD>
+<TD><CODE>Executes the action until the condition is met</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+for  : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+&from : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&backTo : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&by : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Iterates the function for the specified range [from,to] in the reverse order</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+for  : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+&from : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&to : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&by : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Iterates the function for the specified range [from,to]</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&backTo : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Iterates the function for the specified range [from,to] in the reverse order with step equals to 1.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&till : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Iterates the function for the specified range [from,till) with step equals to 1.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&to : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Iterates the function for the specified range [from,to] with step equals to 1.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the function for each collection member</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
+&until : <A HREF="protocol.html#bool_function">bool_function</A>
+</TD>
+<TD><CODE>Enumerates the collection until the member meet the condition and return it; otherwise, return nil.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+while : <A HREF="protocol.html#bool_action">bool_action</A>
+</TD>
+<TD><CODE>Evaluates the boolean expression while it is true</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+while  : <A HREF="protocol.html#bool_action">bool_action</A>
+&do : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Evaluates action while the boolean expression is true</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="EAction">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class EAction</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'EAction</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#action">action</A>
+</DT>
+</DL>
+<P>
+An action role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &if : <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes the action while the parameter is true</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &until : <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes the action while the parameter is false</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="EFunction">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class EFunction</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'EFunction</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#function">function</A>
+</DT>
+</DL>
+<P>
+A function role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reverse &for : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+&from : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&till : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&by : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Iterates the code for the specified range [till,from) in the reverse order</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reverse &for : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+&from : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&to : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&by : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Iterates the code for the specified range [to,from] in the reverse order</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &each : <A HREF="protocol.html#enumerator">enumerator</A>
+ = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Executes the function code for every enumeration value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &each : <A HREF="protocol.html#enumerator">enumerator</A>
+&where : <A HREF="protocol.html#bool_function">bool_function</A>
+ = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Executes the function code for every enumeration value satisfying the condition</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &for : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+&from : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&till : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&by : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Iterates the code for the specified range [from,till)</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &for : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+&from : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&to : <A HREF="protocol.html#numeric_value">numeric_value</A>
+&by : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Iterates the code for the specified range [from,to]</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="false">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol false</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#object">object</A>
+</DT>
+<DT>
+<A HREF="protocol.html#bool">bool</A>
+</DT>
+</DL>
+<P>
+A false value symbol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation<br/>Always return false</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation with a boolean expression</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+else : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Executes the action;</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Determines whether the specified object is equal to the current object boolean value / expression.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Determines whether the specified object is equal to the current object boolean expression.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &bool : <A HREF="protocol.html#bool">bool</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Determines whether the specified object is equal to the current object boolean value.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Literal = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns literal representation.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+not = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Always returns false.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical OR operation with a boolean expression</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+then : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Always returns nil.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+then  : <A HREF="protocol.html#action">action</A>
+&else : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Executes else-action;</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical XOR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical XOR operation with a boolean expression</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &bool : <A HREF="protocol.html#bool">bool</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical XOR operation with a boolean value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="IntBaseNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class IntBaseNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<B>system'IntBaseNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+</DL>
+<P>
+A base integer value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+allMask : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns true if all the mask bits are set</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Execute bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+anyMask : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns true if any of the mask bits are set</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Execute bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Execute bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="nil">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol nil</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#object">object</A>
+</DT>
+</DL>
+<P>
+A nil value symbol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns true if the specified object is nil; otherwise, false.</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="Object">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -34,12 +767,217 @@ ELENA&nbsp;Standard&nbsp;Library<br>2.0</b></EM>
 system</FONT>
 <BR>
 Class Object</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#object">object</A>
+</DT>
+</DL>
 <P>
 A common ancestor
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &type'object : <A HREF="protocol.html#type_object">type_object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns true if the specified object instances are equal; otherwise, false.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notequal : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns false if the specified object is equal to the current object; otherwise, true.<br/>By default compares the object references.</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="true">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol true</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#object">object</A>
+</DT>
+<DT>
+<A HREF="protocol.html#bool">bool</A>
+</DT>
+</DL>
+<P>
+A true value symbol
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation with a boolean expression</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &bool : <A HREF="protocol.html#bool">bool</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation with a boolean value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation with an integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+else : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Always returns nil.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Determines whether the specified object is equal to the current object boolean value / expression.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Determines whether the specified object is equal to the current object boolean expression.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &bool : <A HREF="protocol.html#bool">bool</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Determines whether the specified object is equal to the current object boolean value.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+not = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Always returns false.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Literal = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns literal representation.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical OR operation<br/>Always return true</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+then : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Executes the action;</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+then  : <A HREF="protocol.html#action">action</A>
+&else : <A HREF="protocol.html#action">action</A>
+</TD>
+<TD><CODE>Executes then-action;</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical XOR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &action : <A HREF="protocol.html#bool_action">bool_action</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical XOR operation with a boolean expression</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &bool : <A HREF="protocol.html#bool">bool</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical XOR operation with a boolean value</CODE>
+</TD>
+</TR>
 </TABLE>
 <HR>
 <A NAME="navbar_top"><!-- --></A>

@@ -3,8 +3,149 @@
 #shortdescr=Contains the basic functionality
 
 [#list#]
+BaseValue
+BaseNumber
+BreakException
+control
+EAction
+EFunction
+false
+IntBaseNumber
+nil
 Object
+true
 
 [Object]
 #title=Class Object
 #shortdescr=A common ancestor
+#protocol=object
+#method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.
+#method=equal,&type'object:type_object,bool;Returns true if the specified object instances are equal; otherwise, false.
+#method=notequal,object,bool;Returns false if the specified object is equal to the current object; otherwise, true.<br/>By default compares the object references.
+
+[nil]
+#title=Symbol nil
+#shortdescr=A nil value symbol
+#protocol=object
+#method=equal,object,bool;Returns true if the specified object is nil; otherwise, false.
+
+[true]
+#title=Symbol true
+#shortdescr=A true value symbol
+#protocol=object
+#protocol=bool
+#method=and,object,bool;Executes logical AND operation
+#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
+#method=and,&bool:bool,bool;Executes logical AND operation with a boolean value
+#method=and,&type'int:type_int,bool;Executes logical AND operation with an integer value
+#method=else,action;Always returns nil.
+#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
+#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current object boolean expression.
+#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
+#method=not,,bool;Always returns false.
+#method=Literal,,type_widestr;Returns literal representation.
+#method=or,object,bool;Executes logical OR operation<br/>Always return true
+#method=then,action;Executes the action;
+#method=then,action&else:action;Executes then-action;
+#method=xor,object,bool;Executes logical XOR operation
+#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
+#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
+
+[false]
+#title=Symbol false
+#shortdescr=A false value symbol
+#protocol=object
+#protocol=bool
+#method=and,object,bool;Executes logical AND operation<br/>Always return false
+#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
+#method=else,action;Executes the action;
+#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
+#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current object boolean expression.
+#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
+#method=Literal,,type_widestr;Returns literal representation.
+#method=not,,bool;Always returns false.
+#method=or,object,bool;Executes logical OR operation
+#method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
+#method=then,action;Always returns nil.
+#method=then,action&else:action;Executes else-action;
+#method=xor,object,bool;Executes logical XOR operation
+#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
+#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
+
+[BreakException]
+#title=Class BreakException
+#shortdescr=A break exception
+#parent=system.html#Object:system'Object
+#field=theResult
+#method=stop,,;Returns the result
+
+[EAction]
+#title=Class EAction
+#shortdescr=An action role
+#parent=system.html#Object:system'Object
+#protocol=action
+#method=run,&if:bool;Executes the action while the parameter is true
+#method=run,&until:bool;Executes the action while the parameter is false
+
+[EFunction]
+#title=Class EFunction
+#shortdescr=A function role
+#parent=system.html#Object:system'Object
+#protocol=function
+#method=reverse,&for:numeric_variable&from:numeric_value&till:numeric_value&by:numeric_value,;Iterates the code for the specified range [till,from) in the reverse order
+#method=reverse,&for:numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value,;Iterates the code for the specified range [to,from] in the reverse order
+#method=run,&each:enumerator,object;Executes the function code for every enumeration value
+#method=run,&each:enumerator&where:bool_function,object;Executes the function code for every enumeration value satisfying the condition
+#method=run,&for:numeric_variable&from:numeric_value&till:numeric_value&by:numeric_value,;Iterates the code for the specified range [from,till)
+#method=run,&for:numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value,;Iterates the code for the specified range [from,to]
+
+[control]
+#title=Symbol control
+#shortdescr=A control helper symbol
+#method=do,action;Executes the action
+#method=do,action&until:bool_action;Executes the action until the condition is met
+#method=for,numeric_variable&from:numeric_value&backTo:numeric_value&by:numeric_value&do:function,;Iterates the function for the specified range [from,to] in the reverse order
+#method=for,numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value&do:function,;Iterates the function for the specified range [from,to]
+#method=from,numeric_value&backTo:numeric_value&do:function,;Iterates the function for the specified range [from,to] in the reverse order with step equals to 1.
+#method=from,numeric_value&till:numeric_value&do:function,;Iterates the function for the specified range [from,till) with step equals to 1.
+#method=from,numeric_value&to:numeric_value&do:function,;Iterates the function for the specified range [from,to] with step equals to 1.
+#method=foreach,enumerable&do:function;Executes the function for each collection member
+#method=foreach,enumerable&until:bool_function,;Enumerates the collection until the member meet the condition and return it; otherwise, return nil.
+#method=while,bool_action;Evaluates the boolean expression while it is true
+#method=while,bool_action&do:action;Evaluates action while the boolean expression is true
+
+[BaseValue]
+#title=Class BaseValue
+#shortdescr=A base value class
+#protocol=value
+#parent=system.html#Object:system'Object
+#method=equal,value,bool;Compares the values
+#method=greater,value,bool;Compares the values
+#method=less,value,bool;Compares the values
+#method=notequal,value,bool;Compares the values
+#method=notgreater,value,bool;Compares the values
+#method=notless,value,bool;Compares the values
+
+[BaseNumber]
+#title=Class BaseNumber
+#shortdescr=A base numeric value class
+#protocol=numeric_value
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#method=add,numeric_value,numeric_value;Adds the values
+#method=divide,numeric_value,numeric_value;Divides the values
+#method=multiply,numeric_value,numeric_value;Divides the values
+#method=subtract,numeric_value,numeric_value;Subtracts the values
+
+[IntBaseNumber]
+#title=Class IntBaseNumber
+#shortdescr=A base integer value class
+#protocol=numeric_value
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#method=allMask,numeric_value,bool;Returns true if all the mask bits are set
+#method=and,numeric_value,numeric_value;Execute bitwise AND operation
+#method=anyMask,numeric_value,bool;Returns true if any of the mask bits are set
+#method=or,numeric_value,numeric_value;Execute bitwise OR operation
+#method=xor,numeric_value,numeric_value;Execute bitwise XOR operation
