@@ -75,34 +75,44 @@ struct Terminal
 class _ScriptCompiler
 {
 public:
-   virtual size_t Position() = 0;
-   virtual void trim(size_t position) = 0;
+   //virtual size_t Position() = 0;
+   //virtual void trim(size_t position) = 0;
 
-   virtual void compile(TextReader* source, Terminal* terminal) = 0;
+   virtual void compile(TextReader* source) = 0;
 
    virtual void* generate() = 0;
 };
 
 // --- ScriptLog ---
 
-class ScriptLog : public _ScriptCompiler
+class ScriptLog //: public _ScriptCompiler
 {
    MemoryDump _log;
 
 public:
-   virtual size_t Position()
+   void write(wchar16_t ch);
+   void write(const wchar16_t* token);
+
+//   virtual size_t Position()
+//   {
+//      return _log.Length();
+//   }
+//
+//   virtual void trim(size_t position)
+//   {
+//      _log.trim(position);
+//   }
+
+   void* getBody() { return _log.get(0); } 
+
+   void clear()
    {
-      return _log.Length();
+      _log.trim(0);
    }
 
-   virtual void trim(size_t position)
-   {
-      _log.trim(position);
-   }
-
-   virtual void compile(TextReader* source, Terminal* terminal);
-
-   virtual void* generate();
+//   virtual void compile(TextReader* source, Terminal* terminal);
+//
+//   virtual void* generate();
 };
 
 // --- Parser ---
@@ -111,7 +121,6 @@ class _Parser
 {
 public:
    virtual void parse(TextReader* script, _ScriptCompiler* compiler) = 0;
-   virtual void generate(TextReader* script) = 0;
 };
 
 typedef Map<const wchar16_t*, _Parser*, true> ParserMap;
@@ -128,8 +137,6 @@ class Session
 
    void* translateScript(const wchar16_t* names, TextReader* source);
    void* traceScript(const wchar16_t* names, TextReader* source);
-   void  createCFParser(const wchar16_t* name, TextReader* source, bool symbolicMode);
-//   void  createLALRParser(const wchar16_t* name, TextReader* source, bool symbolicMode);
 
    void* translate(const wchar16_t* name, TextReader* source, int mode);
 

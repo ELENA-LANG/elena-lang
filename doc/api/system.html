@@ -49,6 +49,7 @@ A base value class
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -135,6 +136,7 @@ A base numeric value class
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -156,7 +158,7 @@ add : <A HREF="protocol.html#numeric_value">numeric_value</A>
 divide : <A HREF="protocol.html#numeric_value">numeric_value</A>
  = <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
-<TD><CODE>Divides the values</CODE>
+<TD><CODE>Divuides the values</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -208,6 +210,7 @@ theResult&nbsp;</CODE>
 <TD><CODE></CODE>
 </TD>
 </TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -235,6 +238,7 @@ A control helper symbol
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -371,6 +375,7 @@ An action role
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -417,6 +422,7 @@ A function role
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -508,6 +514,7 @@ A false value symbol
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -673,6 +680,7 @@ A base integer value class
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -725,6 +733,589 @@ xor : <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="IntNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class IntNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+       |
+       +--<B>system'IntNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_int">type_int</A>
+</DT>
+</DL>
+<P>
+An integer value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Creates the object with zero value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the sum of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the sum of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the result of division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Literal = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns the literal presentation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the product of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the product of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+not = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Bitwise inversion</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notless &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Negative = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Negates the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the result of bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+shift : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Bitwide shift operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the difference of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the difference of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'index = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'int = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="LongNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class LongNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+       |
+       +--<B>system'LongNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_long">type_long</A>
+</DT>
+</DL>
+<P>
+A long integer value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Creates the object with zero value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the sum of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the sum of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the result of division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Literal = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns the literal presentation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the product of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the product of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Negative = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Negates the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+not = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Bitwise inversion</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notless &type'long : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the result of bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+shift : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Bitwide shift operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the difference of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the difference of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'long = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="nil">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -743,6 +1334,7 @@ A nil value symbol
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -777,6 +1369,7 @@ A common ancestor
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -811,6 +1404,201 @@ notequal : <A HREF="protocol.html#object">object</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="RealNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class RealNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+       |
+       +--<B>system'RealNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_real">type_real</A>
+</DT>
+</DL>
+<P>
+A float numeric value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Creates the object with zero value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'long : <A HREF="protocol.html#type_long">type_long</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the sum of numbers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the sum of numbers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the result of the division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the result of division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Literal = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns the literal presentation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notless &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the product of numbers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'int : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the difference of integers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &type'real : <A HREF="protocol.html#type_real">type_real</A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'real = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="true">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -832,6 +1620,7 @@ A true value symbol
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
 <A NAME="method_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">

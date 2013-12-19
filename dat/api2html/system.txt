@@ -11,8 +11,11 @@ EAction
 EFunction
 false
 IntBaseNumber
+IntNumber
+LongNumber
 nil
 Object
+RealNumber
 true
 
 [Object]
@@ -133,7 +136,7 @@ true
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #method=add,numeric_value,numeric_value;Adds the values
-#method=divide,numeric_value,numeric_value;Divides the values
+#method=divide,numeric_value,numeric_value;Divuides the values
 #method=multiply,numeric_value,numeric_value;Divides the values
 #method=subtract,numeric_value,numeric_value;Subtracts the values
 
@@ -149,3 +152,106 @@ true
 #method=anyMask,numeric_value,bool;Returns true if any of the mask bits are set
 #method=or,numeric_value,numeric_value;Execute bitwise OR operation
 #method=xor,numeric_value,numeric_value;Execute bitwise XOR operation
+
+[IntNumber]
+#title=Class IntNumber
+#shortdescr=An integer value class
+#protocol=numeric_value
+#protocol=type_int
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#constructor=new,,type_int;Creates the object with zero value
+#constructor=new,&type'int:type_int,type_int;Creates the object with specified value
+#method=add,&type'int:type_int,type_int;Returns the sum of integers
+#method=add,&type'long:type_long,type_long;Returns the sum of integers
+#method=add,&type'real:type_real,type_real;Returns the sum
+#method=and,&type'int:type_int,type_int;Returns the result of bitwise AND operation
+#method=divide,&type'int:type_int,type_int;Returns the result of integer division
+#method=divide,&type'long:type_long,type_long;Returns the result of integer division
+#method=divide,&type'real:type_real,type_real;Returns the result of division
+#method=equal,&type'int:type_int,bool;Compares the integer value
+#method=equal,&type'long:type_long,bool;Compares the integer value
+#method=less,&type'int:type_int,bool;Compares the integer value
+#method=less,&type'long:type_long,bool;Compares the integer value
+#method=Literal,,type_widestr;Returns the literal presentation
+#method=multiply,&type'int:type_int,type_int;Returns the product of integers
+#method=multiply,&type'long:type_long,type_long;Returns the product of integers
+#method=multiply,&type'real:type_real,type_real;Returns the product
+#method=not,,type_int;Bitwise inversion
+#method=notless,&type'int:type_int,bool;Compares the integer value
+#method=Negative,,type_int;Negates the value
+#method=or,&type'int:type_int,type_int;Returns the result of bitwise OR operation
+#method=shift,type_int,type_int;Bitwide shift operation
+#method=subtract,&type'int:type_int,type_int;Returns the difference of integers
+#method=subtract,&type'long:type_long,type_long;Returns the difference of integers
+#method=subtract,&type'real:type_real,type_real;Returns the difference
+#method=type'index,,type_int;Returns itself
+#method=type'int,,type_int;Returns itself
+#method=xor,&type'int:type_int,type_int;Returns the result of bitwise XOR operation
+
+[LongNumber]
+#title=Class LongNumber
+#shortdescr=A long integer value class
+#protocol=numeric_value
+#protocol=type_long
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#constructor=new,,type_long;Creates the object with zero value
+#constructor=new,&type'int:type_int,type_long;Creates the object with specified value
+#constructor=new,&type'long:type_long,type_long;Creates the object with specified value
+#method=add,&type'int:type_int,type_long;Returns the sum of integers
+#method=add,&type'long:type_long,type_long;Returns the sum of integers
+#method=add,&type'real:type_real,type_real;Returns the sum
+#method=and,&type'long:type_long,type_long;Returns the result of bitwise AND operation
+#method=divide,&type'int:type_int,type_long;Returns the result of integer division
+#method=divide,&type'long:type_long,type_long;Returns the result of integer division
+#method=divide,&type'real:type_real,type_real;Returns the result of division
+#method=equal,&type'int:type_int,bool;Compares the integer value
+#method=equal,&type'long:type_long,bool;Compares the integer value
+#method=less,&type'int:type_int,bool;Compares the integer value
+#method=less,&type'long:type_long,bool;Compares the integer value
+#method=Literal,,type_widestr;Returns the literal presentation
+#method=multiply,&type'int:type_int,type_long;Returns the product of integers
+#method=multiply,&type'long:type_long,type_long;Returns the product of integers
+#method=multiply,&type'real:type_real,type_real;Returns the product
+#method=Negative,,type_long;Negates the value
+#method=not,,type_long;Bitwise inversion
+#method=notless,&type'long:type_int,bool;Compares the integer value
+#method=or,&type'long:type_long,type_long;Returns the result of bitwise OR operation
+#method=shift,type_int,type_long;Bitwide shift operation
+#method=subtract,&type'int:type_int,type_long;Returns the difference of integers
+#method=subtract,&type'long:type_long,type_long;Returns the difference of integers
+#method=subtract,&type'real:type_real,type_real;Returns the difference
+#method=type'long,,type_long;Returns itself
+#method=xor,&type'long:type_long,type_long;Returns the result of bitwise XOR operation
+
+[RealNumber]
+#title=Class RealNumber
+#shortdescr=A float numeric value class
+#protocol=numeric_value
+#protocol=type_real
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#constructor=new,,type_real;Creates the object with zero value
+#constructor=new,&type'int:type_int,type_real;Creates the object with specified value
+#constructor=new,&type'long:type_long,type_real;Creates the object with specified value
+#constructor=new,&type'real:type_real,type_real;Creates the object with specified value
+#method=add,&type'int:type_int,type_real;Returns the sum of numbers
+#method=add,&type'real:type_real,type_real;Returns the sum of numbers
+#method=divide,&type'int:type_int,type_real;Returns the result of the division
+#method=divide,&type'real:type_real,type_real;Returns the result of division
+#method=equal,&type'real:type_real,bool;Compares the integer value
+#method=less,&type'real:type_real,bool;Compares the integer value
+#method=Literal,,type_widestr;Returns the literal presentation
+#method=notless,&type'real:type_real,bool;Compares the integer value
+#method=multiply,&type'int:type_int,type_real;Returns the product of numbers
+#method=multiply,&type'real:type_real,type_real;Returns the product
+#method=subtract,&type'int:type_int,type_real;Returns the difference of integers
+#method=subtract,&type'real:type_real,type_real;Returns the difference
+#method=type'real,,type_real;Returns itself

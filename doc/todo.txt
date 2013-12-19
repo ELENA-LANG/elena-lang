@@ -21,10 +21,19 @@ v  - vm script
 Currently:
 ------
               sdev - script engine
-                       * ElenaScript: light-weight script to describe the objects, execute operations and so on?
+                       * ElenaScript: light-weight script to describe the objects, execute operations and so on;
+                         it should be configurable, it should be relatively easy to extend, limit the language power                         
+
+                         
+                         [ #start ::= "?" system'console.eval&writeLine($literal); ]
+                         ? "Hello World"
+  
+
+                       * elenascript: support ? operator
+
+                       * elenascript should be default one in elt
+                         
                        * hello world ElenaScript code
-                       * elenascript should be default one in elt, do we actually need to support different scripts as well?                       
-                       * decision should be made what parser engine should be used, the second one should be removed
                        * update rosetta sample
               sdev - api
                        * create API doc
@@ -567,6 +576,11 @@ week2:
                        * should control foreach&until be implemented in EFunction?
 
 week3:
+              sdev - script engine
+                       * decision should be made what parser engine should be used, the second one should be removed
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+
               sdev - open architecture
                        * review dynamic property container, try to simplify it
 

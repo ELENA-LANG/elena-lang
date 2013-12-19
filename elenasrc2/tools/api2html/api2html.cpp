@@ -394,6 +394,46 @@ void writeMethods(TextFileWriter& writer, IniConfigFile& config, const _text_t* 
    }
 }
 
+void writeConstructors(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
+{
+   if (emptystr(config.getSetting(name, _T("#constructor"), NULL)))
+      return;
+
+   // method section
+   writer.writeTextNewLine("<A NAME=\"constuctor_summary\"><!-- --></A>");
+
+   writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeTextNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeTextNewLine("<B>Constructor Summary</B></FONT></TD>");
+   writer.writeTextNewLine("</TR>");
+
+   ConfigCategoryIterator it = config.getCategoryIt(name);
+   while (!it.Eof()) {
+      if (StringHelper::compare(it.key(), _T("#constructor"))) {
+         writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
+         writer.writeTextNewLine("<CODE>&nbsp;");
+
+         const _text_t* message = *it;
+         const _text_t* descr = find(message, ';');
+
+         writeMessage(writer, message);
+
+         writer.writeTextNewLine("</TD>");
+         writer.writeText("<TD><CODE>");
+
+         if (!emptystr(descr)) {
+            writer.writeText(descr);
+         }
+         else writer.writeText("&nbsp;");
+         writer.writeTextNewLine("</CODE>");
+         writer.writeTextNewLine("</TD>");
+         writer.writeTextNewLine("</TR>");
+      }
+      it++;
+   }
+}
+
 void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* name,  const _text_t* moduleName)
 {
    const _text_t* title = config.getSetting(name, _T("#title"), NULL);
@@ -438,6 +478,9 @@ void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* nam
       writer.writeTextNewLine("<!-- =========== PROPERTY SUMMARY =========== -->");
       writeProperties(writer, config, name);
    }
+
+   writer.writeTextNewLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
+   writeConstructors(writer, config, name);
 
    writer.writeTextNewLine("<!-- ========== METHOD SUMMARY =========== -->");
    writeMethods(writer, config, name);

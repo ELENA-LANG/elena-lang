@@ -53,36 +53,36 @@ public:
    virtual ~TapeWriter() {}
 };
 
-// --- CFPrarser ---
+// --- ScriptCompiler ---
 
-class InlineParser : public _ScriptCompiler
+class ScriptVMCompiler : public _ScriptCompiler
 {
    TapeWriter _writer;
 
    void parseVMCommand(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
-   //void parseAction(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token/*, Terminal* terminal*/);
-   void parseMessage(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, Terminal* terminal, int command);
-   void parseDynamicArray(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, Terminal* terminal);
-   void parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
+   ////void parseAction(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token/*, Terminal* terminal*/);
+   void parseMessage(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, int command);
+   //void parseDynamicArray(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, Terminal* terminal);
+   //void parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
 
    void parseTerminal(const wchar16_t* token, char state, int row, int column);
 
 public:
-   virtual void compile(TextReader* script, Terminal* terminal);
+   virtual void compile(TextReader* script);
 
    virtual void* generate();
 
-   virtual size_t Position()
-   {
-      return _writer.Position();
-   }
+   //virtual size_t Position()
+   //{
+   //   return _writer.Position();
+   //}
 
-   virtual void trim(size_t position)
-   {
-      _writer.trim(position);
-   }
+   //virtual void trim(size_t position)
+   //{
+   //   _writer.trim(position);
+   //}
 
-   InlineParser()
+   ScriptVMCompiler()
    {
    }
 };

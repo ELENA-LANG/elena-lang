@@ -14,7 +14,9 @@ numeric_value
 numeric_variable
 object
 type_int
+type_long
 type_object
+type_real
 type_widestr
 value
 variable
@@ -44,6 +46,12 @@ variable
 
 [type_int]
 #shortdescr=A type'int protocol
+
+[type_long]
+#shortdescr=A type'long protocol
+
+[type_real]
+#shortdescr=A type'real protocol
 
 [type_widestr]
 #shortdescr=A type'widestr protocol

@@ -27,6 +27,7 @@ public:
    {
       CFParser*        parser;
       _ScriptCompiler* compiler;
+      ScriptLog*       buffer;
 
       char             state;
       const wchar16_t* value;
@@ -53,6 +54,11 @@ public:
          return StringHelper::compare(value, param);
       }
    
+      bool compare(const char* param)
+      {
+         return ConstantIdentifier::compare(value, param);
+      }
+   
       bool compare(size_t param)
       {
          const wchar_t* s = parser->getBodyText(param);
@@ -65,6 +71,33 @@ public:
 //         return parser->getBodyText(param);
 //      }
 
+      void writeLog()
+      {
+         if (state == _ELENA_TOOL_::dfaQuote) {
+            buffer->write('\"');
+            for (size_t i = 0 ; i < getlength(value) ; i++) {
+               buffer->write(value[i]);
+               if (value[i]=='"') {
+                  buffer->write(value[i]);
+               }
+            }
+            buffer->write('\"');
+         }
+         else buffer->write(value);
+      }
+
+      const wchar16_t* getLog()
+      {
+         buffer->write((wchar16_t)0);
+
+         return (const wchar16_t*)buffer->getBody();
+      }
+
+      void clearLog()
+      {
+         buffer->clear();
+      }
+
       void save(TokenInfo& token)
       {
          token.parser = parser;
@@ -75,10 +108,11 @@ public:
          token.state = state;
       }
 
-      TokenInfo(CFParser* parser, _ScriptCompiler* compiler)
+      TokenInfo(CFParser* parser, _ScriptCompiler* compiler, ScriptLog* log)
       {
          this->parser = parser;
          this->compiler = compiler;
+         this->buffer = log;
          row = column = 0;
          value = NULL;
          state = 0;
@@ -150,58 +184,58 @@ public:
       CachedScriptReader(const char** table, TextReader* script);
    };
 
-   enum RuleType
-   {
-      rtNormal,
-      rtChomski,
-      rtLiteral,
-      rtNumeric,
-      rtReference,
-      rtIdentifier,
-      rtAny,
-      rtEps,
-      rtEof
-   };
-
-   // --- Rule ---
-   struct Rule
-   {
-      size_t terminal;    // in chomski form it could be additional nonterminal as well
-      size_t nonterminal;
-
-      size_t prefixPtr;
-      size_t postfixPtr;
-
-      bool(*apply)(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader);
-
-      void applyPrefixDSARule(CFParser* parser, _ScriptCompiler* compiler, Terminal* terminal)
-      {
-         parser->applyDSARule(compiler, prefixPtr, terminal);
-      }
-
-      void applyPostfixDSARule(CFParser* parser, _ScriptCompiler* compiler, Terminal* terminal)
-      {
-         parser->applyDSARule(compiler, postfixPtr, terminal);
-      }
-
-      Rule()
-      {
-         terminal = 0;
-         nonterminal = 0;
-         prefixPtr = 0;
-         postfixPtr = 0;
-      }
-   };
+//   enum RuleType
+//   {
+//      rtNormal,
+//      rtChomski,
+//      rtLiteral,
+//      rtNumeric,
+//      rtReference,
+//      rtIdentifier,
+//      rtAny,
+//      rtEps,
+//      rtEof
+//   };
+//
+//   // --- Rule ---
+//   struct Rule
+//   {
+//      size_t terminal;    // in chomski form it could be additional nonterminal as well
+//      size_t nonterminal;
+//
+//      size_t prefixPtr;
+//      size_t postfixPtr;
+//
+//      bool(*apply)(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader);
+//
+//      void applyPrefixDSARule(CFParser* parser, _ScriptCompiler* compiler, Terminal* terminal)
+//      {
+//         parser->applyDSARule(compiler, prefixPtr, terminal);
+//      }
+//
+//      void applyPostfixDSARule(CFParser* parser, _ScriptCompiler* compiler, Terminal* terminal)
+//      {
+//         parser->applyDSARule(compiler, postfixPtr, terminal);
+//      }
+//
+//      Rule()
+//      {
+//         terminal = 0;
+//         nonterminal = 0;
+//         prefixPtr = 0;
+//         postfixPtr = 0;
+//      }
+//   };
 
    friend struct TokenInfo;
 
-   typedef MemoryMap<size_t, Rule>             RuleMap;
+//   typedef MemoryMap<size_t, Rule>             RuleMap;
    typedef MemoryMap<const wchar16_t*, size_t> NameMap;
 
 protected:
    const char** _dfa;
    NameMap      _names;
-   RuleMap      _rules;
+//   RuleMap      _rules;
    MemoryDump   _body;
 
    size_t mapRuleId(const wchar16_t* name)
@@ -209,25 +243,26 @@ protected:
       return mapKey(_names, name, _names.Count() + 1);
    }
 
-   void defineApplyRule(Rule& rule, RuleType type);
-
-   size_t writeBodyText(const wchar16_t* text);
+//   void defineApplyRule(Rule& rule, RuleType type);
+//
+//   size_t writeBodyText(const wchar16_t* text);
    const wchar16_t* getBodyText(size_t ptr);
 
-   void defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule& rule);
-   void defineDSARule(TokenInfo& token, ScriptReader& reader, size_t& ptr);
+//   void defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule& rule);
+//   void defineDSARule(TokenInfo& token, ScriptReader& reader, size_t& ptr);
+//
+//   void applyDSARule(_ScriptCompiler* compiler, size_t ptr, Terminal* terminal);
 
-   void applyDSARule(_ScriptCompiler* compiler, size_t ptr, Terminal* terminal);
+   void compile(TokenInfo& token, CachedScriptReader& reader);
 
 public:
-   bool applyRule(Rule& rule, TokenInfo& token, CachedScriptReader& reader);
-   bool applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader);
+//   bool applyRule(Rule& rule, TokenInfo& token, CachedScriptReader& reader);
+//   bool applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader);
 
-   virtual void generate(TextReader* script);
    virtual void parse(TextReader* script, _ScriptCompiler* compiler);
 
    CFParser(const char** dfa)
-      : _rules(Rule())
+//      : _rules(Rule())
    {
       _dfa = dfa;
 

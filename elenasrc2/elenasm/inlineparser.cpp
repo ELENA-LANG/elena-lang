@@ -83,7 +83,7 @@ void TapeWriter :: writeCallCommand(const wchar16_t* reference)
 
 // --- InlineParser ---
 
-void InlineParser :: parseVMCommand(TextSourceReader& source, wchar16_t* token)
+void ScriptVMCompiler :: parseVMCommand(TextSourceReader& source, wchar16_t* token)
 {
    LineInfo info;
    if(ConstantIdentifier::compare(token, "start")) {
@@ -97,79 +97,79 @@ void InlineParser :: parseVMCommand(TextSourceReader& source, wchar16_t* token)
       }
       else throw EParseError(info.column, info.row);
    }
-   else if(ConstantIdentifier::compare(token, "map")) {
-      info = source.read(token, IDENTIFIER_LEN);
-
-      IdentifierString forward;
-      if (info.state == dfaFullIdentifier) {
-         forward.append(token);
-
-         info = source.read(token, IDENTIFIER_LEN);
-         if(!ConstantIdentifier::compare(token, "="))
-            throw EParseError(info.column, info.row);
-
-         info = source.read(token, IDENTIFIER_LEN);
-         if (info.state == dfaFullIdentifier) {
-            forward.append('=');
-            forward.append(token);
-            _writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
-         }
-         else throw EParseError(info.column, info.row);
-      }
-      else throw EParseError(info.column, info.row);
-   }
-   else if(ConstantIdentifier::compare(token, "use")) {
-      info = source.read(token, IDENTIFIER_LEN);
-
-      if (info.state == dfaQuote) {
-         QuoteTemplate<TempString> quote(info.line);
-
-         _writer.writeCommand(USE_VM_MESSAGE_ID, quote);
-      }
-      else {
-         Path package;
-         package.append(token);
-
-         info = source.read(token, IDENTIFIER_LEN);
-         if(!ConstantIdentifier::compare(token, "="))
-            throw EParseError(info.column, info.row);
-
-         info = source.read(token, IDENTIFIER_LEN);
-         if (info.state == dfaQuote) {
-            QuoteTemplate<TempString> quote(info.line);
-
-            package.append('=');
-            package.append(quote);
-            _writer.writeCommand(USE_VM_MESSAGE_ID, package);
-         }
-         else throw EParseError(info.column, info.row);
-      }
-   }
-//   else if(ConstantIdentifier::compare(token, "var")) {
-//      parseVariable(source, token);
+//   else if(ConstantIdentifier::compare(token, "map")) {
+//      info = source.read(token, IDENTIFIER_LEN);
+//
+//      IdentifierString forward;
+//      if (info.state == dfaFullIdentifier) {
+//         forward.append(token);
+//
+//         info = source.read(token, IDENTIFIER_LEN);
+//         if(!ConstantIdentifier::compare(token, "="))
+//            throw EParseError(info.column, info.row);
+//
+//         info = source.read(token, IDENTIFIER_LEN);
+//         if (info.state == dfaFullIdentifier) {
+//            forward.append('=');
+//            forward.append(token);
+//            _writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+//         }
+//         else throw EParseError(info.column, info.row);
+//      }
+//      else throw EParseError(info.column, info.row);
 //   }
+//   else if(ConstantIdentifier::compare(token, "use")) {
+//      info = source.read(token, IDENTIFIER_LEN);
+//
+//      if (info.state == dfaQuote) {
+//         QuoteTemplate<TempString> quote(info.line);
+//
+//         _writer.writeCommand(USE_VM_MESSAGE_ID, quote);
+//      }
+//      else {
+//         Path package;
+//         package.append(token);
+//
+//         info = source.read(token, IDENTIFIER_LEN);
+//         if(!ConstantIdentifier::compare(token, "="))
+//            throw EParseError(info.column, info.row);
+//
+//         info = source.read(token, IDENTIFIER_LEN);
+//         if (info.state == dfaQuote) {
+//            QuoteTemplate<TempString> quote(info.line);
+//
+//            package.append('=');
+//            package.append(quote);
+//            _writer.writeCommand(USE_VM_MESSAGE_ID, package);
+//         }
+//         else throw EParseError(info.column, info.row);
+//      }
+//   }
+////   else if(ConstantIdentifier::compare(token, "var")) {
+////      parseVariable(source, token);
+////   }
    else throw EParseError(info.column, info.row);
 }
 
-//void InlineParser :: parseAction(TextSourceReader& source, wchar16_t* token/*, Terminal* terminal*/)
-//{
-//   LineInfo info = source.read(token, IDENTIFIER_LEN);
-//
-//   _writer.writeCommand(PUSHB_TAPE_MESSAGE_ID, token);
-//}
+////void InlineParser :: parseAction(TextSourceReader& source, wchar16_t* token/*, Terminal* terminal*/)
+////{
+////   LineInfo info = source.read(token, IDENTIFIER_LEN);
+////
+////   _writer.writeCommand(PUSHB_TAPE_MESSAGE_ID, token);
+////}
 
-void InlineParser :: parseTerminal(const wchar16_t* token, char state, int row, int column)
+void ScriptVMCompiler :: parseTerminal(const wchar16_t* token, char state, int row, int column)
 {
    switch (state) {
-      case dfaInteger:
-         _writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaReal:
-         _writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaLong:
-         _writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
-         break;
+//      case dfaInteger:
+//         _writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
+//         break;
+//      case dfaReal:
+//         _writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
+//         break;
+//      case dfaLong:
+//         _writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
+//         break;
       case dfaQuote:
          _writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
          break;
@@ -181,28 +181,21 @@ void InlineParser :: parseTerminal(const wchar16_t* token, char state, int row, 
    }
 }
 
-void InlineParser :: parseMessage(TextSourceReader& source, wchar16_t* token, Terminal* terminal, int command)
+void ScriptVMCompiler :: parseMessage(TextSourceReader& source, wchar16_t* token, int command)
 {
    IdentifierString message("0"); 
 
-   int verbId = 0;
    LineInfo info = source.read(token, IDENTIFIER_LEN);
-   
-   if (ConstantIdentifier::compare(token, TERMINAL_KEYWORD)) {
-      if (terminal->state != dfaIdentifier)
-         throw EParseError(terminal->col, terminal->row);
 
-      verbId = mapVerb(terminal->value);
-   }
-   else verbId = mapVerb(token);
+   int verbId = mapVerb(token);
 
    if (verbId == 0)
       throw EParseError(info.column, info.row);
 
-   if (command == DSEND_TAPE_MESSAGE_ID) {
-      _writer.writeCommand(command, verbId);
-   }
-   else {
+//   if (command == DSEND_TAPE_MESSAGE_ID) {
+//      _writer.writeCommand(command, verbId);
+//   }
+//   else {
       message.append('#');
       message.append(0x20 + verbId);
 
@@ -211,7 +204,7 @@ void InlineParser :: parseMessage(TextSourceReader& source, wchar16_t* token, Te
          if (token[0] == '&') {
             message.append(token);
          }
-         else throw EParseError(terminal->col, terminal->row);
+         else throw EParseError(info.column, info.row);
 
          info = source.read(token, IDENTIFIER_LEN);
          message.append(token);
@@ -220,40 +213,63 @@ void InlineParser :: parseMessage(TextSourceReader& source, wchar16_t* token, Te
       }
 
       info = source.read(token, IDENTIFIER_LEN);
-      if (info.state != dfaInteger)
-         throw EParseError(info.column, info.row);
 
-      size_t paramCount = StringHelper::strToInt(token);
+      size_t paramCount = 0;
+      if (token[0]!=')' || info.state == dfaQuote) {
+         while (true) {
+            paramCount++;
 
-      info = source.read(token, IDENTIFIER_LEN);
+            // read argument
+            if(info.state == dfaQuote) {
+               QuoteTemplate<TempString> quote(info.line);
+
+               parseTerminal(quote, dfaQuote, info.row, info.column);
+            }
+            else parseTerminal(token, info.state, info.row, info.column);
+
+            info = source.read(token, IDENTIFIER_LEN);
+            while(token[0] == '.') {
+               parseMessage(source, token, SEND_TAPE_MESSAGE_ID);
+            }
+
+            if(token[0] == ',') {
+               info = source.read(token, IDENTIFIER_LEN);
+            }
+            else break;
+         }
+      }
+//      if (info.state != dfaInteger)
+//         throw EParseError(info.column, info.row);
+//      paramCount = StringHelper::strToInt(token);
+
       if (token[0] != ')')
-         throw EParseError(terminal->col, terminal->row);
+         throw EParseError(info.column, info.row);
 
       message[0] = message[0] + paramCount;
 
       _writer.writeCommand(command, message);
-   }
+//   }
 }
 
-void InlineParser :: parseDynamicArray(TextSourceReader& source, wchar16_t* token, Terminal* terminal)
-{
-   LineInfo info;
+//void InlineParser :: parseDynamicArray(TextSourceReader& source, wchar16_t* token, Terminal* terminal)
+//{
+//   LineInfo info;
+//
+//   info = source.read(token, IDENTIFIER_LEN);
+//
+//   // if it is dynamic message operation
+//   if(ConstantIdentifier::compare(token, "^")) {
+//      parseMessage(source, token, terminal, DSEND_TAPE_MESSAGE_ID);
+//   }
+//   else throw EParseError(info.column, info.row);
+//}
+//
+//void InlineParser :: parseVariable(TextSourceReader& source, wchar16_t* token)
+//{
+//   _writer.writeCommand(PUSH_VAR_MESSAGE_ID, StringHelper::strToInt(token));
+//}
 
-   info = source.read(token, IDENTIFIER_LEN);
-
-   // if it is dynamic message operation
-   if(ConstantIdentifier::compare(token, "^")) {
-      parseMessage(source, token, terminal, DSEND_TAPE_MESSAGE_ID);
-   }
-   else throw EParseError(info.column, info.row);
-}
-
-void InlineParser :: parseVariable(TextSourceReader& source, wchar16_t* token)
-{
-   _writer.writeCommand(PUSH_VAR_MESSAGE_ID, StringHelper::strToInt(token));
-}
-
-void InlineParser :: compile(TextReader* script, Terminal* terminal)
+void ScriptVMCompiler :: compile(TextReader* script)
 {
    TextSourceReader source(4, script);
 
@@ -276,53 +292,54 @@ void InlineParser :: compile(TextReader* script, Terminal* terminal)
 
          parseTerminal(quote, dfaQuote, info.row, info.column);
       }
-      //else if(ConstantIdentifier::compare(token, "@")) {
-      //   parseAction(source, token/*, terminal*/);
-      //}
-//      else if(ConstantIdentifier::compare(token, "~")) {
-//         parseRole(source, token, terminal);
+//      // if it is a quote
+//      //else if(ConstantIdentifier::compare(token, "@")) {
+//      //   parseAction(source, token/*, terminal*/);
+//      //}
+////      else if(ConstantIdentifier::compare(token, "~")) {
+////         parseRole(source, token, terminal);
+////      }
+      else if(ConstantIdentifier::compare(token, ".")) {
+         parseMessage(source, token, SEND_TAPE_MESSAGE_ID);
+      }
+//      else if (ConstantIdentifier::compare(token, "^")) {
+//         _writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
 //      }
-      else if(ConstantIdentifier::compare(token, "^")) {
-         parseMessage(source, token, terminal, SEND_TAPE_MESSAGE_ID);
-      }
-      else if (ConstantIdentifier::compare(token, ".")) {
-         _writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
-      }
-      else if (ConstantIdentifier::compare(token, "(")) {
-         _writer.writeCommand(START_TAPE_MESSAGE_ID);
-      }
-      else if (ConstantIdentifier::compare(token, ")")) {
-         parseDynamicArray(source, token, terminal);
-      }
-//      else if(ConstantIdentifier::compare(token, "%")) {
-//         parseMessage(source, token, terminal, PUSHM_TAPE_MESSAGE_ID);
-//      }
-//      // start the object construction
-//      else if(ConstantIdentifier::compare(token, "{")) {
+//      else if (ConstantIdentifier::compare(token, "(")) {
 //         _writer.writeCommand(START_TAPE_MESSAGE_ID);
 //      }
-//      else if(ConstantIdentifier::compare(token, "}")) {
-//         parseNewObject(source, token, terminal);
+//      else if (ConstantIdentifier::compare(token, ")")) {
+//         parseDynamicArray(source, token, terminal);
 //      }
-      // if it is a terminal symbol
-      else if (ConstantIdentifier::compare(token, TERMINAL_KEYWORD)) {
-         parseTerminal(terminal->value, terminal->state, terminal->row, terminal->col);
-      }
-      // if it is a literal terminal symbol
-      else if (ConstantIdentifier::compare(token, LITERAL_KEYWORD)) {
-         _writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, terminal->value);
-      }
-      // if it is a variable
-      // should be the last one
-      else if (token[0] == '$' && isNumeric(token + 1, getlength(token + 1))) {
-         parseVariable(source, token + 1);
-      }
+////      else if(ConstantIdentifier::compare(token, "%")) {
+////         parseMessage(source, token, terminal, PUSHM_TAPE_MESSAGE_ID);
+////      }
+////      // start the object construction
+////      else if(ConstantIdentifier::compare(token, "{")) {
+////         _writer.writeCommand(START_TAPE_MESSAGE_ID);
+////      }
+////      else if(ConstantIdentifier::compare(token, "}")) {
+////         parseNewObject(source, token, terminal);
+////      }
+//      // if it is a terminal symbol
+//      else if (ConstantIdentifier::compare(token, TERMINAL_KEYWORD)) {
+//         parseTerminal(terminal->value, terminal->state, terminal->row, terminal->col);
+//      }
+//      // if it is a literal terminal symbol
+//      else if (ConstantIdentifier::compare(token, LITERAL_KEYWORD)) {
+//         _writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, terminal->value);
+//      }
+//      // if it is a variable
+//      // should be the last one
+//      else if (token[0] == '$' && isNumeric(token + 1, getlength(token + 1))) {
+//         parseVariable(source, token + 1);
+//      }
       else parseTerminal(token, info.state, info.row, info.column);
    }
    while (true);
 }
 
-void* InlineParser :: generate()
+void* ScriptVMCompiler :: generate()
 {
    _writer.writeEndCommand();
 

@@ -22,49 +22,64 @@ const char* dfaSymbolic[4] =
 
 // --- ScriptLog ---
 
-void ScriptLog :: compile(TextReader* source, Terminal* terminal)
-{
-   _text_t buffer[BLOCK_SIZE];
-   DynamicString<wchar16_t> line;
-   MemoryWriter writer(&_log);
-   while (source->readString(line, buffer)) {
-      int offset = 0;
-      int index = line.find('$');
-      while (index != -1) {
-         writer.writeWideLiteral(line + offset, index);
-         if (ConstantIdentifier::compare(line + offset + index, "$terminal")) {
-            writer.writeWideLiteral(terminal->value, getlength(terminal->value));
-            index += 9;
-         }
-         else if (ConstantIdentifier::compare(line + offset + index, "$literal")) {
-            writer.writeWideChar('"');
-            writer.writeWideLiteral(terminal->value, getlength(terminal->value));
-            writer.writeWideChar('"');
-            index += 8;
-         }
-         else {
-            writer.writeWideChar('$');
-            index++;
-         }
-
-         offset += index;
-         index = line.find(offset, '$');
-      }
-
-      writer.writeWideLiteral(line + offset, line.Length() - offset);
-   }
-   writer.writeWideChar('\r');
-   writer.writeWideChar('\n');
-}
-
-void* ScriptLog :: generate()
+void ScriptLog :: write(wchar16_t ch)
 {
    MemoryWriter writer(&_log);
 
-   writer.writeWideChar(0);
-
-   return _log.extract();
+   writer.writeWideChar(ch);
 }
+
+void ScriptLog :: write(const wchar16_t* token)
+{
+   MemoryWriter writer(&_log);
+
+   writer.writeWideLiteral(token, getlength(token));
+   writer.writeWideChar(' ');
+}
+
+//void ScriptLog :: compile(TextReader* source, Terminal* terminal)
+//{
+//   _text_t buffer[BLOCK_SIZE];
+//   DynamicString<wchar16_t> line;
+//   MemoryWriter writer(&_log);
+//   while (source->readString(line, buffer)) {
+//      int offset = 0;
+//      int index = line.find('$');
+//      while (index != -1) {
+//         writer.writeWideLiteral(line + offset, index);
+//         if (ConstantIdentifier::compare(line + offset + index, "$terminal")) {
+//            writer.writeWideLiteral(terminal->value, getlength(terminal->value));
+//            index += 9;
+//         }
+//         else if (ConstantIdentifier::compare(line + offset + index, "$literal")) {
+//            writer.writeWideChar('"');
+//            writer.writeWideLiteral(terminal->value, getlength(terminal->value));
+//            writer.writeWideChar('"');
+//            index += 8;
+//         }
+//         else {
+//            writer.writeWideChar('$');
+//            index++;
+//         }
+//
+//         offset += index;
+//         index = line.find(offset, '$');
+//      }
+//
+//      writer.writeWideLiteral(line + offset, line.Length() - offset);
+//   }
+//   writer.writeWideChar('\r');
+//   writer.writeWideChar('\n');
+//}
+//
+//void* ScriptLog :: generate()
+//{
+//   MemoryWriter writer(&_log);
+//
+//   writer.writeWideChar(0);
+//
+//   return _log.extract();
+//}
 
 // --- Session ---
 
@@ -79,62 +94,39 @@ Session :: ~Session()
 
 void* Session :: translateScript(const wchar16_t* name, TextReader* source)
 {
-   InlineParser inlineParser;
+   ScriptVMCompiler compiler;
 
-   // if it is a inline parsing mode
-   if (ConstantIdentifier::compare(name, "inline")) {
-      inlineParser.compile(source, NULL);
-   }
-   else {
-      _Parser* parser = _parsers.get(name);
-
-      parser->parse(source, &inlineParser);
-   }
-
-   // the tape should be explicitly releases with FreeLVMTape function
-   return inlineParser.generate();
-}
-
-void* Session :: traceScript(const wchar16_t* name, TextReader* source)
-{
-   ScriptLog log;
-
-   // if it is a inline parsing mode
-   if (ConstantIdentifier::compare(name, "inline")) {
-      log.compile(source, NULL);
-   }
-   else {
-      _Parser* parser = _parsers.get(name);
-
-      parser->parse(source, &log);
-   }
-
-   // the tape should be explicitly releases with FreeLVMTape function
-   return log.generate();
-}
-
-//void Processor :: createLALRParser(const wchar16_t* name, TextReader* source, bool symbolicMode)
-//{
-//   _Parser* parser = _parsers.get(name);
-//   if (parser == NULL) {
-//      parser = new LALRParser(symbolicMode ? dfaSymbolic : NULL);
-//
-//      _parsers.add(name, parser, true);
-//   }
-//
-//   parser->generate(source);
-//}
-
-void Session :: createCFParser(const wchar16_t* name, TextReader* source, bool symbolicMode)
-{
    _Parser* parser = _parsers.get(name);
    if (parser == NULL) {
-      parser = new CFParser(symbolicMode ? dfaSymbolic : NULL);
+      parser = new CFParser(/*symbolicMode ? dfaSymbolic : */NULL);
 
       _parsers.add(name, parser, true);
    }
 
-   parser->generate(source);
+   parser->parse(source, &compiler);
+
+   // the tape should be explicitly releases with FreeLVMTape function
+   return compiler.generate();
+}
+
+void* Session :: traceScript(const wchar16_t* name, TextReader* source)
+{
+   //ScriptLog log;
+
+   //// if it is a inline parsing mode
+   //if (ConstantIdentifier::compare(name, "inline")) {
+   //   log.compile(source, NULL);
+   //}
+   //else {
+   //   _Parser* parser = _parsers.get(name);
+
+   //   parser->parse(source, &log);
+   //}
+
+   //// the tape should be explicitly releases with FreeLVMTape function
+   //return log.generate();
+
+   return NULL; // !! temporal
 }
 
 void* Session :: translate(const wchar16_t* name, TextReader* source, int mode)
@@ -146,20 +138,10 @@ void* Session :: translate(const wchar16_t* name, TextReader* source, int mode)
 
    mode &= MASK_MODE;
 
-   if (mode == CFGRAMMAR_MODE) {
-      createCFParser(name, source, symbolicMode);
-
-      return (void*)-1;
-   }
-   else if (test(mode, TRACE_MODE)) {
-      return traceScript(name, source);
-   }
-//   else if (mode == LALRDSARULE_MODE) {
-//      createLALRParser(names, source, symbolicMode);
-//
-//      return (void*)-1;
-//   }
-   else return translateScript(name, source);
+   //if (test(mode, TRACE_MODE)) {
+   //   return traceScript(name, source);
+   //}
+   return translateScript(name, source);
 }
 
 void* Session :: translate(const wchar16_t* name, const wchar16_t* script, int mode)

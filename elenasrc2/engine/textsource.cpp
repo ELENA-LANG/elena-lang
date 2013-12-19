@@ -15,9 +15,9 @@ using namespace _ELENA_TOOL_;
 
 // --- DFA Table ---
 
-const char* DFA_table[20] =
+const char* DFA_table[21] =
 {
-        ".????????cc??c??????????????????clrbqmlpmmllmtmjeeeeeeeeeelmllllmddddddddddddddddddddddddddm?mld?ddddddddddddddddddddddddddmlmmd",
+        ".????????cc??c??????????????????clrbqmlpmmllmtmjeeeeeeeeeelmllllmddddddddddddddddddddddddddu?uld?ddddddddddddddddddddddddddmlmmd",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbaaaababbbbbbbbbbbbbbbbbbbbbbbbbbaaaab",
         "*********cc*********************c***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapaaaaaaaaddddddddddaaaaaaaddddddddddddddddddddddddddaaaadaddddddddddddddddddddddddddaaaad",
@@ -36,7 +36,8 @@ const char* DFA_table[20] =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqaaaaaaaqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaqaqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaq",
         "?rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrsrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaa----------lalllaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaa----------lalllaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaamamaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 };
 
 // --- TextSourceReader ---

@@ -10,7 +10,6 @@
 
 // translate mode constants
 #define MASK_MODE        0x000FF
-#define CFGRAMMAR_MODE   0x00001
 
 // translate attribute constants
 #define TRACE_MODE       0x20000
