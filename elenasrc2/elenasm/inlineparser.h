@@ -72,15 +72,15 @@ public:
 
    virtual void* generate();
 
-   //virtual size_t Position()
-   //{
-   //   return _writer.Position();
-   //}
+   virtual size_t Position()
+   {
+      return _writer.Position();
+   }
 
-   //virtual void trim(size_t position)
-   //{
-   //   _writer.trim(position);
-   //}
+   virtual void trim(size_t position)
+   {
+      _writer.trim(position);
+   }
 
    ScriptVMCompiler()
    {

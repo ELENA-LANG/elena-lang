@@ -75,9 +75,6 @@ struct Terminal
 class _ScriptCompiler
 {
 public:
-   //virtual size_t Position() = 0;
-   //virtual void trim(size_t position) = 0;
-
    virtual void compile(TextReader* source) = 0;
 
    virtual void* generate() = 0;
@@ -85,7 +82,7 @@ public:
 
 // --- ScriptLog ---
 
-class ScriptLog //: public _ScriptCompiler
+class ScriptLog
 {
    MemoryDump _log;
 
@@ -93,26 +90,24 @@ public:
    void write(wchar16_t ch);
    void write(const wchar16_t* token);
 
-//   virtual size_t Position()
-//   {
-//      return _log.Length();
-//   }
-//
-//   virtual void trim(size_t position)
-//   {
-//      _log.trim(position);
-//   }
+   size_t Position()
+   {
+      return _log.Length();
+   }
+
+   void trim(size_t position)
+   {
+      _log.trim(position);
+   }
 
    void* getBody() { return _log.get(0); } 
+
+   size_t Length() const { return _log.Length(); }
 
    void clear()
    {
       _log.trim(0);
    }
-
-//   virtual void compile(TextReader* source, Terminal* terminal);
-//
-//   virtual void* generate();
 };
 
 // --- Parser ---

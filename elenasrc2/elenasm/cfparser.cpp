@@ -13,7 +13,7 @@ using namespace _ELENA_TOOL_;
 
 //#define REFERENCE_KEYWORD     "$reference"
 //#define IDENTIFIER_KEYWORD    "$identifier"
-//#define LITERAL_KEYWORD       "$literal"
+#define LITERAL_KEYWORD       "$literal"
 //#define NUMERIC_KEYWORD       "$numeric"
 //#define EPS_KEYWORD           "$eps"
 //#define EOF_KEYWORD           "$eof"
@@ -132,121 +132,114 @@ bool CFParser::CachedScriptReader :: read(TokenInfo& token)
 
 // --- CFParser ---
 
-//inline bool apply(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   reader.read(token);
-//   if (rule.nonterminal != 0) {
-//      if(!token.parser->applyRule(rule.nonterminal, token, reader))
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//inline bool applyNonterminal(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader, bool chomski = false)
-//{
-//   if(!token.parser->applyRule(chomski ? rule.terminal : rule.nonterminal, token, reader)) {
-//      return false;
-//   }
-//
-//   return true;
-//}
-//
-//inline bool applyNonterminalDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader, bool chomski = false)
-//{
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if(!token.parser->applyRule(chomski ? rule.terminal : rule.nonterminal, token, reader)) {
-//      return false;
-//   }
-//
-//   return true;
-//}
-//
-//bool normalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state == dfaEOF || !token.compare(rule.terminal))
-//      return false;
-//
-//   return apply(rule, token, reader);
-//}
-//
-//bool normalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state == dfaEOF || !token.compare(rule.terminal))
-//      return false;
-//
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//      
-//   return true;
-//}
-//
-//bool nonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if(applyNonterminal(rule, token, reader)) {
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool nonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if(applyNonterminalDSA(rule, token, reader)) {
-//      if (rule.postfixPtr)
-//         rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool normalLiteralApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaQuote)
-//      return false;
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   return true;
-//}
-//
-//bool normalLiteralApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaQuote)
-//      return false;
-//
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//
-//   return true;
-//}
-//
+inline bool apply(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   reader.read(token);
+   if (rule.nonterminal != 0) {
+      if(!token.parser->applyRule(rule.nonterminal, token, reader))
+         return false;
+   }
+
+   return true;
+}
+
+inline bool applyNonterminal(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader, bool chomski = false)
+{
+   if(!token.parser->applyRule(chomski ? rule.terminal : rule.nonterminal, token, reader)) {
+      return false;
+   }
+
+   return true;
+}
+
+inline bool applyNonterminalDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader, bool chomski = false)
+{
+   Terminal terminal;
+   token.copyTo(&terminal);
+
+   rule.applyPrefixDSARule(token);
+
+   if(!token.parser->applyRule(chomski ? rule.terminal : rule.nonterminal, token, reader)) {
+      return false;
+   }
+
+   return true;
+}
+
+bool normalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state == dfaEOF || !token.compare(rule.terminal))
+      return false;
+
+   return apply(rule, token, reader);
+}
+
+bool normalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state == dfaEOF || !token.compare(rule.terminal))
+      return false;
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token);
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr)
+      rule.applyPostfixDSARule(token);
+      
+   return true;
+}
+
+bool nonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if(applyNonterminal(rule, token, reader)) {
+      return true;
+   }
+   else return false;
+}
+
+bool nonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if(applyNonterminalDSA(rule, token, reader)) {
+      if (rule.postfixPtr)
+         rule.applyPostfixDSARule(token);
+
+      return true;
+   }
+   else return false;
+}
+
+bool normalLiteralApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaQuote)
+      return false;
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   return true;
+}
+
+bool normalLiteralApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaQuote)
+      return false;
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token);
+
+   token.writeLog();
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr)
+      rule.applyPostfixDSARule(token);
+
+   return true;
+}
+
 //bool normalNumericApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
 //{
 //   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
@@ -431,40 +424,40 @@ bool CFParser::CachedScriptReader :: read(TokenInfo& token)
 //   }
 //   else return false;
 //}
-//
-//size_t CFParser :: writeBodyText(const wchar16_t* text)
-//{
-//   MemoryWriter writer(&_body);
-//
-//   size_t position = writer.Position();
-//   writer.writeWideLiteral(text);
-//
-//   return position;
-//}
+
+size_t CFParser :: writeBodyText(const wchar16_t* text)
+{
+   MemoryWriter writer(&_body);
+
+   size_t position = writer.Position();
+   writer.writeWideLiteral(text);
+
+   return position;
+}
 
 const wchar16_t* CFParser :: getBodyText(size_t ptr)
 {
    return (const wchar16_t*)_body.get(ptr);
 }
 
-//void CFParser :: defineApplyRule(Rule& rule, RuleType type)
-//{
-//   bool dsaRule = (rule.postfixPtr != 0) || (rule.prefixPtr != 0);
-//
-//   switch (type) {
-//      case rtNormal:
-//         if (rule.terminal == 0) {
-//            rule.apply = dsaRule ? nonterminalApplyRuleDSA : nonterminalApplyRule;
-//         }
-//         else rule.apply = dsaRule ? normalApplyRuleDSA : normalApplyRule;
-//         break;
+void CFParser :: defineApplyRule(Rule& rule, RuleType type)
+{
+   bool dsaRule = (rule.postfixPtr != 0) || (rule.prefixPtr != 0);
+
+   switch (type) {
+      case rtNormal:
+         if (rule.terminal == 0) {
+            rule.apply = dsaRule ? nonterminalApplyRuleDSA : nonterminalApplyRule;
+         }
+         else rule.apply = dsaRule ? normalApplyRuleDSA : normalApplyRule;
+         break;
 //      case rtChomski:
 //         // in chomski form terminal field contains nonterminal as well
 //         rule.apply = dsaRule ? chomskiApplyRuleDSA : chomskiApplyRule;
 //         break;
-//      case rtLiteral:
-//         rule.apply = dsaRule ? normalLiteralApplyRuleDSA : normalLiteralApplyRule;
-//         break;
+      case rtLiteral:
+         rule.apply = dsaRule ? normalLiteralApplyRuleDSA : normalLiteralApplyRule;
+         break;
 //      case rtNumeric:
 //         rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
 //         break;
@@ -483,89 +476,104 @@ const wchar16_t* CFParser :: getBodyText(size_t ptr)
 //      case rtEof:
 //         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
 //         break;
-//   }
-//}
-//
-//void CFParser :: defineDSARule(TokenInfo& token, ScriptReader& reader, size_t& ptr)
-//{
-//   reader.read(token);
-//
-//   MemoryWriter writer(&_body);
-//
-//   ptr = writer.Position();
-//
-//   wchar_t lastState = 0;
-//   while (!ConstantIdentifier::compare(token.value, "]")) {
-//      if (token.state == dfaQuote) {
-//         writer.writeWideChar('\"');
-//         for (size_t i = 0 ; i < getlength(token.value) ; i++) {
-//            writer.writeWideChar(token.value[i]);
-//            if (token.value[i]=='"') {
-//               writer.writeWideChar(token.value[i]);
-//            }
-//         }
-//         writer.writeWideChar('\"');
-//      }
-//      else if (token.state == dfaEOF) {
-//         throw EParseError(token.column, token.row);
-//      }
-//      else {
-//         writer.writeWideChar(0x20);
-//
-//         writer.writeWideLiteral(token.value, getlength(token.value));
-//      }
-//      lastState = token.state;
-//
-//      reader.read(token);
-//   }
-//
-//   writer.writeWideChar(0);
-//}
-//
-//void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule& rule)
-//{
-//   // read: terminal [nonterminal] ;
-//   // read: nonterminal [nonterminal2] ;
-//
-//   RuleType type = rtNormal;
-//
-//   reader.read(token);
-//
-//   // prefix dsa rule
-//   if (ConstantIdentifier::compare(token.value, "[")) {
-//      defineDSARule(token, reader, rule.prefixPtr);
-//
-//      reader.read(token);
-//   }
-//
-//   if (token.state == dfaQuote || token.state == dfaPrivate) {
-//      if (ConstantIdentifier::compare(token.value, LITERAL_KEYWORD)) {
-//         type = rtLiteral;
-//      }
-//      else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
-//         type = rtNumeric;
-//      }
-//      else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
-//         type = rtEps;
-//      }
-//      else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
-//         type = rtEof;
-//      }
-//      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
-//         type = rtReference;
-//      }
-//      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
-//         type = rtAny;
-//      }
-//      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
-//         type = rtIdentifier;
-//      }
-//      else if(token.state == dfaQuote) {
-//         rule.terminal = writeBodyText(token.value);
-//      }
-//      reader.read(token);
-//   }
-//
+   }
+}
+
+size_t CFParser :: defineDSARule(TokenInfo& token, ScriptReader& reader)
+{
+   const wchar16_t* s = token.getLog();
+   if (!emptystr(s)) {
+      MemoryWriter writer(&_body);
+
+      size_t ptr = writer.Position();
+
+      writer.writeWideLiteral(s);
+
+      token.clearLog();
+
+      return ptr;
+   }
+   else return 0;
+}
+
+size_t CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader)
+{
+   ReferenceNs ns;
+   int   index = 0;
+   do {
+      ns.copy("inline");
+      ns.appendHex(index++);
+
+      if (!_names.exist(ns))
+         break;
+
+   } while (true);
+
+   size_t ruleId = mapRuleId(ns);
+
+   Rule rule;
+
+   defineGrammarRule(token, reader, rule);
+
+   _rules.add(ruleId, rule);
+
+   return ruleId;
+}
+
+void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule& rule)
+{
+   // read: terminal [nonterminal] ;
+   // read: nonterminal [nonterminal2] ;
+
+   RuleType type = rtNormal;
+
+   while (token.value[0] != ';') {
+      if (token.state == dfaQuote) {
+         if (rule.terminal) {
+            rule.nonterminal = defineGrammarRule(token, reader);
+            break;
+         }
+         else rule.terminal = writeBodyText(token.value);
+      }
+      else if (token.state == dfaPrivate) {
+         if (rule.terminal) {
+            rule.nonterminal = defineGrammarRule(token, reader);
+            break;
+         }
+         else {
+            rule.prefixPtr = defineDSARule(token, reader);
+
+            if (ConstantIdentifier::compare(token.value, LITERAL_KEYWORD)) {
+               type = rtLiteral;
+            }
+      //      else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
+      //         type = rtNumeric;
+      //      }
+      //      else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
+      //         type = rtEps;
+      //      }
+      //      else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
+      //         type = rtEof;
+      //      }
+      //      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
+      //         type = rtReference;
+      //      }
+      //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
+      //         type = rtAny;
+      //      }
+      //      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
+      //         type = rtIdentifier;
+      //      }
+         }
+      }
+      else token.writeLog();
+
+      reader.read(token);      
+   }
+
+   rule.postfixPtr = defineDSARule(token, reader);
+
+
 //   if (token.state == dfaIdentifier) {
 //      rule.nonterminal = mapRuleId(token.value);
 //
@@ -578,93 +586,78 @@ const wchar16_t* CFParser :: getBodyText(size_t ptr)
 //         reader.read(token);
 //      }
 //   }
-//
-//   // postfix dsa rule
-//   if (ConstantIdentifier::compare(token.value, "[")) {
-//      defineDSARule(token, reader, rule.postfixPtr);
-//
-//      reader.read(token);
-//   }
-//
-//   if (!ConstantIdentifier::compare(token.value, ";"))
-//      throw EParseError(token.column, token.row);
-//
-//   defineApplyRule(rule, type);
-//}
-//
-//void CFParser :: applyDSARule(_ScriptCompiler* compiler, size_t ptr, Terminal* terminal)
-//{
-//   WideLiteralTextReader subScript(getBodyText(ptr));
-//
-//   compiler->compile(&subScript, terminal);
-//}
 
-//bool CFParser :: applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader)
-//{
-//   size_t readerRollback = reader.Position();
-//   size_t coderRollback = token.compiler->Position();
-//
-//   CFParser::TokenInfo tokenCopy(token);
-//
-//   RuleMap::Iterator it = _rules.getIt(ruleId);
-//   while(!it.Eof()) {
-//      if ((*it).apply(*it, tokenCopy, reader)) {
-//         tokenCopy.save(token);
-//
-//         return true;
-//      }
-//
-//      // roll back
-//      reader.seek(readerRollback);
-//      token.compiler->trim(coderRollback);
-//      token.save(tokenCopy);
-//
-//      it = _rules.getNextIt(ruleId, it);
-//   }
-//
-//   return false;
-//}
+   defineApplyRule(rule, type);
+}
 
-//bool CFParser :: applyRule(Rule& rule, TokenInfo& token, CachedScriptReader& reader)
-//{
-//   if (rule.apply(rule, token, reader)) {
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//void CFParser :: generate(TextReader* script)
-//{
-//   TokenInfo token(this, NULL);
-//   ScriptReader reader(NULL, script);
+void CFParser :: writeDSARule(TokenInfo& token, size_t ptr)
+{
+   token.buffer->write(getBodyText(ptr));
+}
 
-//      if (token.state != dfaIdentifier)
-//         throw EParseError(token.column, token.row);
-//
-//      size_t ruleId = mapRuleId(token.value);
-//
-//      reader.read(token);
-//      if (ConstantIdentifier::compare(token.value, "::=")) {
-//         Rule rule;
-//
-//         defineGrammarRule(token, reader, rule);
-//
-//         _rules.add(ruleId, rule);
-//      }
-//      else throw EParseError(token.column, token.row);
-//}
+bool CFParser :: applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader)
+{
+   size_t readerRollback = reader.Position();
+   size_t coderRollback = token.LogPosition();
 
-void CFParser :: compile(TokenInfo& token, CachedScriptReader& reader)
+   RuleMap::Iterator it = _rules.getIt(ruleId);
+   while(!it.Eof()) {
+      CFParser::TokenInfo tokenCopy(token);
+
+      if ((*it).apply(*it, tokenCopy, reader)) {
+         tokenCopy.save(token);
+
+         return true;
+      }
+
+      // roll back
+      reader.seek(readerRollback);
+      token.trimLog(coderRollback);
+
+      it = _rules.getNextIt(ruleId, it);
+   }
+
+   return false;
+}
+
+bool CFParser :: applyRule(Rule& rule, TokenInfo& token, CachedScriptReader& reader)
+{
+   if (rule.apply(rule, token, reader)) {
+      return true;
+   }
+   else return false;
+}
+
+void CFParser :: compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler)
 {
    while(reader.read(token)) {
       if (token.compare("]]")) {
          return;
       }
+      else if (token.compare("#define")) {
+         reader.read(token);
+
+         if (token.state != dfaIdentifier)
+            throw EParseError(token.column, token.row);
+
+         size_t ruleId = mapRuleId(token.value);
+
+         reader.read(token);
+         if (ConstantIdentifier::compare(token.value, "::=")) {
+            Rule rule;
+
+            reader.read(token);
+            defineGrammarRule(token, reader, rule);
+
+            _rules.add(ruleId, rule);
+         }
+         else throw EParseError(token.column, token.row);
+      }
       // compile the line
       else if (token.compare(";")) {
          WideLiteralTextReader script(token.getLog());
 
-         token.compiler->compile(&script);
+         compiler->compile(&script);
 
          token.clearLog();
       }
@@ -677,13 +670,13 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
    CachedScriptReader reader(_dfa, script);
    ScriptLog log;
 
-   TokenInfo token(this, compiler, &log);
+   TokenInfo token(this, &log);
 
    reader.read(token);
 
    // if it is script derective
    if (token.compare("[[")) {
-      compile(token, reader);
+      compile(token, reader, compiler);
 
       reader.read(token);
    }
@@ -693,27 +686,17 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
    size_t startId = mapRuleId(ConstantIdentifier("start"));
 
    if (token.state != dfaEOF) {
-      //if (!applyRule(startId, token, reader))
-      //   throw EParseError(token.column, token.row);
+      if (!applyRule(startId, token, reader))
+         throw EParseError(token.column, token.row);
 
       if (token.state != dfaEOF)
          throw EParseError(token.column, token.row);
+
+      // compile the body
+      WideLiteralTextReader script(token.getLog());
+
+      compiler->compile(&script);
+
+      token.clearLog();
    }
 }
-
-////// --- InlineScriptParser ---
-////
-////void InlineScriptParser :: parseRole(TextSourceReader& source, wchar16_t* token, Terminal* terminal)
-////{
-////   LineInfo info = source.read(token, IDENTIFIER_LEN);
-////
-////   _writer.writeCallCommand(token);
-////   _writer.writeCommand(POP_ROLE_MESSAGE_ID);
-////}
-////
-////void InlineScriptParser :: parseNewObject(TextSourceReader& source, wchar16_t* token, Terminal* terminal)
-////{
-////   LineInfo info = source.read(token, IDENTIFIER_LEN);
-////
-////   _writer.writeCommand(NEW_TAPE_MESSAGE_ID, token);
-////}

@@ -21,20 +21,7 @@ v  - vm script
 Currently:
 ------
               sdev - script engine
-                       * ElenaScript: light-weight script to describe the objects, execute operations and so on;
-                         it should be configurable, it should be relatively easy to extend, limit the language power                         
-
-                         
-                         [ #start ::= "?" system'console.eval&writeLine($literal); ]
-                         ? "Hello World"
-  
-
-                       * elenascript: support ? operator
-
-                       * elenascript should be default one in elt
-                         
-                       * hello world ElenaScript code
-                       * update rosetta sample
+                       * implement bf interpreter 
               sdev - api
                        * create API doc
                        * copy protocols to doc\protocols
@@ -577,6 +564,7 @@ week2:
 
 week3:
               sdev - script engine
+                       * elenascript should be default one in elt
                        * decision should be made what parser engine should be used, the second one should be removed
                        * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
                          cannot be abused for nasty injection
