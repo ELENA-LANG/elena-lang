@@ -1088,7 +1088,8 @@ procedure inline'handle_tape
   bcopya
   open 2
   pushn 0
-
+  pushn 0
+  
   msaveparams -1
   pushfi -1
 

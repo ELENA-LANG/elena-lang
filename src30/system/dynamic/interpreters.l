@@ -1,8 +1,11 @@
-//// --- ETapeControl --
-//
-//#symbol tapeControl =
-//{
-//    // NOTE: open argument list should be used
+// --- ETapeControl --
+
+#symbol tapeControl =
+{
+    // NOTE: open argument list first argument is the index
+    getAt :: Params
+        = Params@((Params@0) type'int add:1).
+    
 //    get : aParam
 //        = aParam.
 //        
@@ -17,7 +20,7 @@
 //        
 //    get :aDummy1:aDummy2:aDummy3:aDummy4:aParam
 //        = aParam.
-//}.
+}.
 
 // --- Tape ---
 

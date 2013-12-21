@@ -6,15 +6,22 @@
 BaseValue
 BaseNumber
 BreakException
+CharValue
 control
 EAction
 EFunction
+emptyLiteralValue
 false
 IntBaseNumber
+Integer
 IntNumber
+LiteralIterator
+LiteralValue
+Long
 LongNumber
 nil
 Object
+Real
 RealNumber
 true
 
@@ -255,3 +262,165 @@ true
 #method=subtract,&type'int:type_int,type_real;Returns the difference of integers
 #method=subtract,&type'real:type_real,type_real;Returns the difference
 #method=type'real,,type_real;Returns itself
+
+[CharValue]
+#title=Class RealNumber
+#shortdescr=A float numeric value class
+#protocol=value                                                                             
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#constructor=new,,value;Creates the object with zero value
+#constructor=new,object,value;Creates the object with specified value
+#constructor=new,type_int,value;Creates the object with specified numeric value
+#constructor=new,&widechar:value,value;Creates the object with specified value
+#method=widechar,,value;Returns itself
+#method=equal,&type'int:type_int,bool;Compares the value with numeric value
+#method=equal,&widechar:value,bool;Compares the value with value
+#method=less,&type'int:type_int,bool;Compares the value with numeric value
+#method=less,&widechar:value,bool;Compares the value with value
+#method=Literal,,type_widestr;Returns the literal value
+#method=notless,&type'int:type_int,bool;Compares the value with numeric value
+#method=notless,&widechar:value,bool;Compares the value with value
+#method=Number,,type_int;Returns the numeric value
+
+[emptyLiteralValue]
+#title=Symbol emptyLiteralValue
+#shortdescr=An empty literal value
+#protocol=type_widestr
+#method=add,object,type_widestr;Returns the parameter literal value
+#method=add,&type'widestr:type_widestr,type_widestr;Returns the parameter
+#method=equal,&type'widestr:type_widestr,bool;Compares with literal value
+#method=Length,,type_int;Returns 0
+#method=less,&type'widestr:type_widestr,bool;Compares with literal value
+#method=Literal,,type_widestr;Returns empty literal value
+#method=notless,&type'widestr:type_widestr,bool;Compares with literal value
+#method=type'widestr,,type_widestr;Returns empty literal value                                            
+
+[LiteralIterator]
+#title=Class LiteralIterator
+#shortdescr=A literal value iterator
+#parent=system.html#Object:system'Object
+#protocol=enumerator
+#field=theIndex;The current index
+#field=theLiteral;The target
+#constructor=new,&type'widestr:type_widestr,enumerator;Returns the parameter iterator
+#method=append,&type'index:type_int;Increaments the index by specified value
+#method=Available,,bool;Returns false if the index out of range
+#method=get,,value;Returns the current character
+#method=EOF,,bool;Returns true if the index out of range
+#method=Index,,type_int;Returns the index value.
+#method=next,,bool;Goes to the next character and returns true if the index is not out of range
+#method=reset,,;Resets the enumerator
+#method=type'index,,type_int;Returns the index value.
+#method=write,&type'index:type_int;Sets the index by specified value
+
+[LiteralValue]
+#title=Class LiteralValue
+#shortdescr=A wide literal value
+#protocol=enumerable
+#protocol=type_widestr
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#constructor=new,&type'length:type_int,type_widestr;Creates the literal string with specified length
+#constructor=new,&type'length:type_int&type'widestr:type_widestr,type_widestr;Creates the literal string with specified length and copies the parameter value
+#constructor=new,&type'length:type_int&type'widestr:type_widestr&type'widestr:type_widestr,type_widestr;Concatinates the literal values
+#constructor=new,&type'length:type_int&widechar:value,type_widestr;Creates the literal string with specified length fills with spciefied character value
+#method=add,object,type_widestr;Concatinates the values
+#method=add,&type'widestr:type_widestr,type_widestr;Concatinates the values
+#method=add,&widechar:value,type_widestr;Concatinates the values
+#method=delete,&type'index:type_int&type'length:type_int,type_widestr;Deletes the substring from the object and returns the new one
+#method=Enumerator,,enumerator;Returns the object enumerator
+#method=equal,&type'widestr:type_widestr,bool;Compares the values
+#method=equal,&widchar:value,bool;Compares the values
+#method=getAt,object,value;Returns the character with specified index
+#method=getAt,&type'index:type_int&out'type'short:type_short;Copies the character value to the stack allocated variable
+#method=indexOf,&type'index:type_int&type'widestr:type_widestr,type_int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
+#method=indexOf,&type'index:type_int&type'widestr:type_widestr&out'type'int:type_int;Copies the index of the first occurence of the specified substring to the stack allocated variable.<br/>If the substring is not found. returns -1
+#method=indexOf,&type'widestr:type_widestr,type_int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
+#method=insert,&type'index:type_int&type'widestr:type_widestr,type_widestr;Inserts the substring into and returns the new one
+#method=Literal,,type_widestr;Returns itself
+#method=Length,,type_int;Returns the string length
+#method=less,&type'widestr:type_widestr,bool;Compares the values
+#method=less,&widchar:value,bool;Compares the values
+#method=notless,&type'widestr:type_widestr,bool;Compares the values
+#method=Substring,&type'index:type_int,type_widestr;Returns the substring
+#method=Substring,&type'index:type_int&type'length:type_int,type_widestr;Returns the substring
+#method=type'length,,type_int;Returns the string length
+#method=type'widestr,,type_widestr;Returns itself
+
+[Integer]
+#title=Class Integer
+#shortdescr=An integer variable class
+#protocol=type_int
+#protocol=numeric_variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#IntNumber:system'IntNumber
+#constructor=new,numeric_value,numeric_variable;Creates an integer variable with specified value
+#method=append,numeric_value;Appends the integer value
+#method=append,&type'int:type_int;Appends the integer value
+#method=divideInto,numeric_value;Divides into the integer value
+#method=divideInto,&type'int:type_int;Divides into the integer value
+#method=multiplyBy,numeric_value;Multiplies by the integer value
+#method=multiplyBy,&type'int:type_int;Multiplies by the integer value
+#method=Number,,type_int;Returns the integer value
+#method=reduce,numeric_value;Reduces the integer value
+#method=reduce,&type'int:type_int;Reduces the integer value
+#method=write,numeric_value;Copies the integer value
+#method=write,&type'int:type_int;Copies the integer value
+
+[Long]
+#title=Class Long
+#shortdescr=A long integer variable class
+#protocol=type_long
+#protocol=numeric_variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#LongNumber:system'LongNumber
+#method=append,numeric_value;Appends the integer value
+#method=append,&type'int:type_int;Appends the integer value
+#method=append,&type'long:type_long;Appends the integer value
+#method=divideInto,numeric_value;Divides into the integer value
+#method=divideInto,&type'int:type_int;Divides into the integer value
+#method=divideInto,&type'long:type_long;Divides into the integer value
+#method=multiplyBy,numeric_value;Multiplies by the integer value
+#method=multiplyBy,&type'int:type_int;Multiplies by the integer value
+#method=multiplyBy,&type'long:type_long;Multiplies by the integer value
+#method=Number,,type_long;Returns the integer value
+#method=reduce,numeric_value;Reduces the integer value
+#method=reduce,&type'int:type_int;Reduces the integer value
+#method=reduce,&type'long:type_long;Reduces the integer value
+#method=write,numeric_value;Copies the integer value
+#method=write,&type'long:type_long;Copies the integer value
+
+[Real]
+#title=Class Real
+#shortdescr=A real number variable class
+#protocol=type_real
+#protocol=numeric_variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#RealNumber:system'RealNumber
+#constructor=new,numeric_value,numeric_variable;Creates a real number variable with specified value
+#method=append,numeric_value;Appends the numeric value
+#method=append,&type'int:type_int;Appends the integer value
+#method=append,&type'real:type_real;Appends the real number value
+#method=divideInto,numeric_value;Divides into the numeric value
+#method=divideInto,&type'int:type_int;Divides into the integer value
+#method=divideInto,&type'real:type_real;Divides into the numeric real value
+#method=multiplyBy,numeric_value;Multiplies by the numeric value
+#method=multiplyBy,&type'int:type_int;Multiplies by the integer value
+#method=multiplyBy,&type'real:type_real;Multiplies by the real numeric value
+#method=Number,,type_real;Returns the real number value
+#method=reduce,numeric_value;Reduces the numeric value
+#method=reduce,&type'int:type_int;Reduces the integer value
+#method=reduce,&type'real:type_real;Reduces by the real numeric value
+#method=write,numeric_value;Copies the numeric value
+#method=write,&type'real:type_real;Copies the real number value
+#method=write,&type'int:type_int;Copies the integer value

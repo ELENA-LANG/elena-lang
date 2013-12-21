@@ -1,5 +1,5 @@
 #define system.
-//#define system'dynamic.
+#define system'dynamic.
 #define system'routines.
 #define system'collections.
 #define system'calendar.
@@ -8,10 +8,8 @@
 #define extensions.
 
 #symbol XTest =
-[    
-    #var aList := List new append:1 append:2 append:3 append:4 append:5.
-    
-    controlEx foreach:aList &top:3 &do:printingLn.
+[
+    #var o := tapeControl getAt &:2:"a":2:"b".
 ].
 
 // --- MultiDispatchTest ---
@@ -414,9 +412,8 @@
     a4 @ (-1) |
         onOutOfRangeError: &&:e [ console writeLine:"Negative index is not allowed" ].
 
-    a4 @ 4 |
+    a4 @ 3 |
         onOutOfRangeError: &&:e [ console writeLine:"Index bigger than length is not allowed" ].
-    
 ].
 
 // --- AltTest ---

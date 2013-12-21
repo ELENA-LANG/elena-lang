@@ -21,7 +21,8 @@ v  - vm script
 Currently:
 ------
               sdev - script engine
-                       * implement bf interpreter 
+                       * elena: implement bf interpreter
+                       * elenascript: implement bf interpreter
               sdev - api
                        * create API doc
                        * copy protocols to doc\protocols
@@ -43,7 +44,6 @@ week3: [31.12]
 
               xdev - migration
                         * migrate tapeControl, ... 
-                        * migrate interpreter                                                
                         * migrate tape_test code
                         * migrate sum script
 
@@ -143,6 +143,8 @@ week1:
                        * any other operation should result in boxing
 
               xdev - generic development              
+                       * declare a message symbol with open argument list (e.g. current %(getAt(15)) is not good, probably better - %(getAt(..)))
+
                        * check private method declaration ??
 
                        * role class should not be its own class class (like it is now), super class should be used

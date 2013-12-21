@@ -17,6 +17,7 @@ type_int
 type_long
 type_object
 type_real
+type_short
 type_widestr
 value
 variable
@@ -44,17 +45,25 @@ variable
 #shortdescr=A boolean expression
 #method=eval,,bool;Evaluates boolean expression
 
+[type_short]
+#shortdescr=A type'short protocol
+
 [type_int]
 #shortdescr=A type'int protocol
+#method=type'int,,type_int;Returns the integer value
 
 [type_long]
 #shortdescr=A type'long protocol
+#method=type'long,,type_long;Returns the long integer value
 
 [type_real]
 #shortdescr=A type'real protocol
+#method=type'real,,type_real;Returns the real number value
 
 [type_widestr]
 #shortdescr=A type'widestr protocol
+#method=type'length,,type_int;Returns the object length
+#method=type'widestr,,type_widestr;Returns the literal value
 
 [function]
 #shortdescr=A function protocol
@@ -64,6 +73,7 @@ variable
 #shortdescr=An enumerator protocol
 #method=get,,object;Returns the current elemement of the collection
 #method=next,,bool;Advances the enumerator to the next element of the collection.
+#method=reset,,;Resets the enumerator
 
 [bool_function]
 #shortdescr=A boolean function

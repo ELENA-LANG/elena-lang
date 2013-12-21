@@ -722,10 +722,10 @@ void _ELENA_::compileTest(int opcode, x86JITScope& scope)
    loadOneByteLOp(opcode, scope);
 
   // try to use short jump if offset small (< 0x10?)
-   if (opcode == bcWSTest) {
-      // for wstest tailing zero should be taken into account
+   if (opcode == bcWSTest || opcode == bcTest) {
       compileJumpLessOrEqual(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
    }
+   // !! is it really the case for bstest, or it should use jle as well
    else compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 

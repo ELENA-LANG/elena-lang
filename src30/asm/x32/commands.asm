@@ -183,7 +183,7 @@ inline %29h
   and  ecx, 0Fh
   lea  esi, [ebp + __arg1]
   jz   short labEnd
-  lea  esi, [esi + ecx * 4 + 4]
+  lea  esi, [esi + ecx * 4]
 labNext:
   push [esi]
   sub  ecx, 1

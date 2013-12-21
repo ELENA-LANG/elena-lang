@@ -39,6 +39,42 @@
     aTape eval.
 ].
 
+#class Interpreter
+{
+    #field theIndex.
+    #field theValue.
+    
+    #constructor new
+    [
+        theIndex := Integer new.
+        theValue := Integer new.
+    ] 
+    
+    #method next
+    [
+        theIndex += 1.
+    ]
+    
+    #method inc
+    [
+        theValue += 1.
+    ]
+}
+
+#symbol TapeTest2 =
+[
+    #var aTape := Tape(
+        1, tapeControl,
+        %(getAt(15)),
+        %next,
+        %next,
+        %(get&inc(0)),
+        %(get&inc(0))).
+        
+    #var retVal := aTape eval:(Interpreter new).
+        
+].
+
 //#symbol ClassTest =
 //[
 //    #var n := Integer new.
@@ -49,11 +85,12 @@
 //].
 
 #symbol Program =
-[   
+[  
 //    ClassTest eval.
 //
 //    GetPropertyTester eval.
 
-    ReflectionTester eval.
-    TapeTest eval.
+//    ReflectionTester eval.
+//    TapeTest eval.
+    TapeTest2 eval.
 ].
