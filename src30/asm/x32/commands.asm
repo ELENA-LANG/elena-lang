@@ -7,6 +7,7 @@ define GC_ALLOC	         10001h
 define HOOK              10010h
 define GETCLASSNAME      10011h
 define INIT_RND          10012h
+define EVALSCRIPT        10013h
 
 // constants
 define elVMTSizeOffset    000Ch
@@ -2261,6 +2262,13 @@ labFixLen:
   mov  eax, edi
   
 labEnd:
+
+end
+
+// ; bseval
+inline % 4005h
+
+  call code : % EVALSCRIPT
 
 end
 

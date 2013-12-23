@@ -256,6 +256,7 @@ enum FunctionCode
 {
    fnUnknown        = 0x0000,
    fnCreate         = 0x0004,
+   fnEval           = 0x0005,
    fnEqual          = 0x0007,
    fnLess           = 0x0008,
    fnAnd            = 0x000A,
@@ -311,7 +312,7 @@ enum FunctionCode
    fnAbs            = 0x0685,
    fnRound          = 0x0686,
    fnLoadName       = 0x0687,
-   fnGetLenZ        = 0x0688,
+   fnGetLenZ        = 0x0688
 };
 
 enum PseudoArg

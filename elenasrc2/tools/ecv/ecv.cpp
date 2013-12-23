@@ -623,6 +623,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcLFunc:
       case bcRFunc:
       case bcWSFunc:
+      case bcFunc:
          command.append(opcode);
          ByteCodeCompiler::decodeFunction((FunctionCode)argument, opcode);
          command.append(opcode);
@@ -944,7 +945,7 @@ int main(int argc, char* argv[])
    const wchar16_t* rootPath = NULL;
 
    // get viewing module name
-	IdentifierString moduleName(argv[1]);
+   IdentifierString moduleName(argv[1]);
 
    // load config attributes
    IniConfigFile config;

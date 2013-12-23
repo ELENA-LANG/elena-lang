@@ -4,7 +4,12 @@
 {
     // NOTE: open argument list first argument is the index
     getAt :: Params
-        = Params@((Params@0) type'int add:1).
+//        = Params@(() type'int add:1).
+    [
+        #var anIndex := Params@0 + 1.
+        
+        ^ Params@(anIndex type'int).
+    ]    
     
 //    get : aParam
 //        = aParam.

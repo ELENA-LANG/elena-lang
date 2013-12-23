@@ -21,6 +21,8 @@ v  - vm script
 Currently:
 ------
               sdev - script engine
+                       * parse bf sample from code
+
                        * elena: implement bf interpreter
                        * elenascript: implement bf interpreter
               sdev - api
@@ -31,7 +33,7 @@ Currently:
          
 1.9.10
 ------
-week3: [31.12]
+week3: [29.12]
               sdev - script engine
                        * implement script engine arithm eval sample
               sdev - calculator
@@ -105,16 +107,6 @@ week4:
                        * test tape
                        * test examples
                        * test rosetta examples
-                                                         
-            xmaint - compiler
-                       * looks like the operation with console does not work with AMD!!!
-                       
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-              xdev - test
-                       * boxing: message target / operand, operator target / operand                       
-                       * try to automize build process  
                       
 1.9.11
 ------
@@ -136,6 +128,8 @@ week1:
                       * create x64 elena vm
 
               xdev - open arg                                      
+                        * compile tapeControl.getAt.. = Params@((Params@0) type'int add:1).
+
                         * a msg::Args -> converting open arg list into normal one
                         * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                         * use cases
@@ -143,9 +137,19 @@ week1:
                        * any other operation should result in boxing
 
               xdev - generic development              
+                       * it looks like open argument list boxing does not work for elenavm
+
+                       * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
+
+                       * make possible to send exception futher with ifFailed handler
+
                        * declare a message symbol with open argument list (e.g. current %(getAt(15)) is not good, probably better - %(getAt(..)))
 
                        * check private method declaration ??
+
+                       * why dispatching method does not work (system'dynamic'scriptControl)
+                               #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
+                               | raise:(system'FormatException new:($self LastScriptError))).                               
 
                        * role class should not be its own class class (like it is now), super class should be used
 
@@ -573,6 +577,17 @@ week3:
 
               sdev - open architecture
                        * review dynamic property container, try to simplify it
+                                                         
+week4:
+            xmaint - compiler
+                       * looks like the operation with console does not work with AMD!!!
+                       
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+              xdev - test
+                       * boxing: message target / operand, operator target / operand                       
+                       * try to automize build process  
 
 1.9.12
 --------

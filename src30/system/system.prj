@@ -39,4 +39,5 @@ text\strings.l
 dynamic\loaders.l
 dynamic\reflection.l
 dynamic\interpreters.l
+dynamic\script.l
 

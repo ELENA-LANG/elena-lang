@@ -132,7 +132,6 @@ lbError:
 
 end
 
-
 procedure core_vm'start_n_eval
 
   mov eax, [esp+4]
@@ -158,6 +157,42 @@ procedure core_vm'start_n_eval
   call eax
 
   call code : "$package'core'endframe"
+
+  pop ebp
+  pop esi
+  pop edi
+  pop ecx
+  pop ebx
+  ret
+
+end
+
+procedure core_vm'eval
+
+  mov eax, [esp+4]
+
+  push ebx
+  push ecx
+  push edi
+  push esi
+  push ebp
+
+  call code : "$package'core'openframe"
+
+  // set default exception handler
+  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
+  mov  ebx, code : "$package'core_vm'default_handler"
+  mov  [data : %CORE_EXCEPTION_TABLE], ebx
+  
+  mov ebp, esp
+  mov edx, [ebp+20h]
+
+  mov esi, [edx]
+
+  // invoke symbol
+  call eax
+
+  call code : "$package'core'closeframe"
 
   pop ebp
   pop esi

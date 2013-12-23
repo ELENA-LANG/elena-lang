@@ -6,7 +6,18 @@
 #symbol controlEx =
 {
     do:anAction = anAction eval.
-    
+
+    do:anAction &and:aFinalAction
+    [
+        anAction eval | ifFailed: [
+            aFinalAction eval.
+            
+            #throw $self.
+        ].
+        
+        aFinalAction eval.
+    ]
+            
     do:anAction &until:anExpr
         = anAction~EAction run &until:anExpr | stop.
         

@@ -163,6 +163,7 @@
 #define FUNC_DELETESTR      "deletestr" 
 #define FUNC_DIV            "div"
 #define FUNC_EQUAL          "equal"
+#define FUNC_EVAL           "eval"
 #define FUNC_EXP            "exp"
 #define FUNC_GETAT          "getat"
 #define FUNC_GETBUF         "getbuf"
@@ -1631,6 +1632,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, FUNC_EQUAL)) {
       return fnEqual;
    }
+   else if (ConstantIdentifier::compare(s, FUNC_EVAL)) {
+      return fnEval;
+   }
    else if (ConstantIdentifier::compare(s, FUNC_EXP)) {
       return fnExp;
    }
@@ -1777,6 +1781,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
          break;
       case fnEqual:
          StringHelper::copy(s, FUNC_EQUAL, 1 + strlen(FUNC_EQUAL));
+         break;
+      case fnEval:
+         StringHelper::copy(s, FUNC_EVAL, 1 + strlen(FUNC_EVAL));
          break;
       case fnExp:
          StringHelper::copy(s, FUNC_EXP, 1 + strlen(FUNC_EXP));

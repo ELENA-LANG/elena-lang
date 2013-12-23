@@ -507,6 +507,9 @@ ELENA byte codes (or ecodes)
                                                                                                       
  rfgetlenz                   - params(acc).length >> index
 
+ bseval                      - executes VM Script tape in self, acc contains the result
+ 
+
 
 
 

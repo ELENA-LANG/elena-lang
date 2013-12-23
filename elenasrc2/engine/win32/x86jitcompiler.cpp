@@ -28,6 +28,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define HOOK                 0x10010
 #define LOADCLASSNAME        0x10011
 #define INIT_RND             0x10012
+#define EVALSCRIPT           0x10013
 //#define GC_REALLOC         0x10006
 //#define GC_TERMINATOR      0x10007
 
@@ -41,10 +42,10 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 4;
+const int coreFunctionNumber = 5;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK, LOADCLASSNAME, INIT_RND,
+   GC_ALLOC, HOOK, LOADCLASSNAME, INIT_RND, EVALSCRIPT,
    /*GC_REALLOC,
    CORE_INIT_ROUTINE, CORE_SET_ROUTINE, CORE_OPENFRAME, CORE_CLOSEFRAME, CORE_ALLOC_ROUTINE, CORE_OBJALLOC_ROUTINE,
    THREAD_INIT_ROUTINE, CORE_SEND_ROUTINE, THREAD_CLOSE_ROUTINE, THREAD_OPEN_SAFEREGION, THREAD_CLOSE_SAFEREGION, THREAD_WAIT,
@@ -71,7 +72,7 @@ const ByteCommand gcCommands[gcCommandNumber] =
    bcBox
 };
 
-const int gcExtensionNumber = 56;
+const int gcExtensionNumber = 57;
 const FunctionCode gcExtensions[gcExtensionNumber] =
 {
    fnCopy, fnReserve, fnSave, fnSetLen, fnLoad, 
@@ -85,7 +86,7 @@ const FunctionCode gcExtensions[gcExtensionNumber] =
    fnIndexOf, fnIndexOfWord, fnSetWord, fnGetWord, fnGetBuf,
    fnGetInt, fnSetInt, fnRndNew, fnRndNext, fnLn,
    fnExp, fnAbs, fnRound, fnSetBuf, fnLoadName,
-   fnGetLenZ
+   fnGetLenZ, fnEval
 };
 
 // command table

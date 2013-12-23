@@ -1180,3 +1180,15 @@ procedure inline'class_get
   quitn 3
   
 end
+
+procedure inline'vmscript_eval
+
+  aloadsi 2
+  aloadai 0
+  pushb
+  bcopya 
+  bseval
+  popb
+  quitn 2
+    
+end

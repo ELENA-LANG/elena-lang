@@ -2,6 +2,62 @@
 #define system'dynamic.
 #define extensions'dynamic.
 
+// --- Interpreter ---
+
+#class BFTape
+{
+    #field theArray.
+    #field thePointer.
+
+    #constructor new &type'length:aLength
+    [
+        thePointer := Integer new:0.
+
+        theArray := Array new &type'length:aLength &function: &&:n [ Integer new:0 ].
+    ]
+
+    #method type'tape = $self.
+
+    #method append
+    [
+         (theArray@thePointer) += 1.
+    ]
+    
+    #method reduce
+    [
+         (theArray@thePointer) -= 1.
+    ]
+    
+    #method next
+    [
+        thePointer += 1.
+    ]
+
+    #method previous
+    [
+        thePointer -= 1.
+    ]
+    
+    #method input
+    [
+        (theArray@thePointer) write &type'int:(console readChar).
+    ]
+    
+    #method output
+    [
+        console write:(CharValue new:(theArray@thePointer)).
+    ]
+    
+    #method get = theArray@thePointer.
+}
+
+#symbol InterpreterTest =
+[
+//    console readChar.
+    
+    #var l := scriptControl load &path:"D:\Alex\ELENA\tests\tape_tester\helloworld.es".
+].
+
 //// === Roles ===
 //
 //#class(role)EGetProp
@@ -39,42 +95,6 @@
     aTape eval.
 ].
 
-#class Interpreter
-{
-    #field theIndex.
-    #field theValue.
-    
-    #constructor new
-    [
-        theIndex := Integer new.
-        theValue := Integer new.
-    ] 
-    
-    #method next
-    [
-        theIndex += 1.
-    ]
-    
-    #method inc
-    [
-        theValue += 1.
-    ]
-}
-
-#symbol TapeTest2 =
-[
-    #var aTape := Tape(
-        1, tapeControl,
-        %(getAt(15)),
-        %next,
-        %next,
-        %(get&inc(0)),
-        %(get&inc(0))).
-        
-    #var retVal := aTape eval:(Interpreter new).
-        
-].
-
 //#symbol ClassTest =
 //[
 //    #var n := Integer new.
@@ -87,10 +107,9 @@
 #symbol Program =
 [  
 //    ClassTest eval.
-//
 //    GetPropertyTester eval.
 
 //    ReflectionTester eval.
 //    TapeTest eval.
-    TapeTest2 eval.
+    InterpreterTest eval.
 ].

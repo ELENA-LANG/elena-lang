@@ -11,6 +11,7 @@ define GC_ALLOC	         10001h
 define HOOK              10010h
 define GETCLASSNAME      10011h
 define INIT_RND          10012h
+define EVALSCRIPT        10013h
 
 // GC TABLE
 define gc_header             0000h
@@ -1115,6 +1116,28 @@ labEnd:
 
 end
 
+// in:  edi - script
+// out: eax - result
+procedure % EVALSCRIPT
+
+  mov  esi, data : %CORE_VM_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call interpreter (instance, tape)
+  push edi
+  push eax
+  mov  edx, [esi + vm_interprete] 
+  call edx
+  lea  esp, [esp+8]  
+
+labEnd:
+  ret
+
+end
+
 procedure % INIT_RND
 
   sub  esp, 8h
@@ -1147,27 +1170,4 @@ procedure core'set_widestr_len
   mov  eax, esi  
   ret
   
-end
-
-// interprete
-// in:  edx - tape
-// out: eax - result
-procedure core'interprete
-
-  mov  esi, data : %CORE_VM_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call interpreter (instance, tape)
-  push edx
-  push eax
-  mov  edx, [esi + vm_interprete] 
-  call edx
-  lea  esp, [esp+8]  
-
-labEnd:
-  ret
-
 end
