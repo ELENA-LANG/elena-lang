@@ -16,13 +16,21 @@ using namespace _ELENA_TOOL_;
 #define LITERAL_KEYWORD       "$literal"
 //#define NUMERIC_KEYWORD       "$numeric"
 //#define EPS_KEYWORD           "$eps"
-//#define EOF_KEYWORD           "$eof"
+#define EOF_KEYWORD           "$eof"
 //#define ANY_KEYWORD           "$any"
+
+const char* dfaSymbolic[4] =
+{
+        ".????????dd??d??????????????????bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
+        "*********dd**d******************************************************************************************************************"
+};
 
 // --- ScriptReader :: Reader ---
 
-CFParser::ScriptReader::Reader :: Reader(const char** dfa, TextReader* script)
-   : parser(dfa, 4, script)
+CFParser::ScriptReader::Reader :: Reader(TextReader* script)
+   : parser(4, script)
 {
 }
 
@@ -43,8 +51,8 @@ bool CFParser::ScriptReader::Reader :: read()
 
 // --- ScriptReader ---
 
-CFParser::ScriptReader :: ScriptReader(const char** dfa, TextReader* script)
-   : _reader(dfa, script)
+CFParser::ScriptReader :: ScriptReader(TextReader* script)
+   : _reader(script)
 {
 }
 
@@ -78,8 +86,8 @@ bool CFParser::ScriptReader :: read(TokenInfo& token)
 
 // --- CFParser::CachedScriptReader ---
 
-CFParser::CachedScriptReader :: CachedScriptReader(const char** dfa, TextReader* script)
-   : ScriptReader(dfa, script)
+CFParser::CachedScriptReader :: CachedScriptReader(TextReader* script)
+   : ScriptReader(script)
 {
    _position = 0;
 }
@@ -154,9 +162,6 @@ inline bool applyNonterminal(CFParser::Rule& rule, CFParser::TokenInfo& token, C
 
 inline bool applyNonterminalDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader, bool chomski = false)
 {
-   Terminal terminal;
-   token.copyTo(&terminal);
-
    rule.applyPrefixDSARule(token);
 
    if(!token.parser->applyRule(chomski ? rule.terminal : rule.nonterminal, token, reader)) {
@@ -326,29 +331,23 @@ bool normalLiteralApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token,
 //
 //   return true;
 //}
-//
-//bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   return token.state == dfaEOF;
-//}
-//
-//bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaEOF)
-//      return false;
-//
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//
-//   return true;
-//}
-//
+
+bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   return token.state == dfaEOF;
+}
+
+bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if (token.state != dfaEOF)
+      return false;
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token);
+
+   return true;
+}
+
 //bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
 //{
 //   if (applyNonterminal(rule, token, reader)) {
@@ -473,9 +472,9 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
 //      case rtEps:
 //         rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
 //         break;
-//      case rtEof:
-//         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
-//         break;
+      case rtEof:
+         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
+         break;
    }
 }
 
@@ -552,9 +551,9 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
       //      else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
       //         type = rtEps;
       //      }
-      //      else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
-      //         type = rtEof;
-      //      }
+            else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
+               type = rtEof;
+            }
       //      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
       //         type = rtReference;
       //      }
@@ -566,18 +565,13 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
       //      }
          }
       }
-      else token.writeLog();
+      else if (token.state == dfaIdentifier) {
+         if (rule.nonterminal == 0) {
+            rule.prefixPtr = defineDSARule(token, reader);
 
-      reader.read(token);      
-   }
+            rule.nonterminal = mapRuleId(token.value);
+         }
 
-   rule.postfixPtr = defineDSARule(token, reader);
-
-
-//   if (token.state == dfaIdentifier) {
-//      rule.nonterminal = mapRuleId(token.value);
-//
-//      reader.read(token);
 //      if (token.state == dfaIdentifier && rule.terminal == 0) {
 //         type = rtChomski;
 //
@@ -585,7 +579,19 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
 //
 //         reader.read(token);
 //      }
-//   }
+      }
+      else if (token.value[0] == '%' || token.value[0] == '.' || token.value[0] == '&') {
+         // save the next token directly to output
+         token.writeLog();         
+         reader.read(token);
+         token.writeLog();
+      }
+      else token.writeLog();
+
+      reader.read(token);      
+   }
+
+   rule.postfixPtr = defineDSARule(token, reader);
 
    defineApplyRule(rule, type);
 }
@@ -667,7 +673,7 @@ void CFParser :: compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCo
 
 void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
 {
-   CachedScriptReader reader(_dfa, script);
+   CachedScriptReader reader(script);
    ScriptLog log;
 
    TokenInfo token(this, &log);
@@ -679,6 +685,16 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
       compile(token, reader, compiler);
 
       reader.read(token);
+   }
+   // if it is switch derective
+   if (token.compare("@")) {
+      reader.read(token);
+      if (token.compare("@")) {
+         reader.switchDFA(dfaSymbolic);
+
+         reader.read(token);
+      }
+      else throw EParseError(token.column, token.row);
    }
 
    size_t readerRollback = reader.Position();

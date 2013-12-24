@@ -51,6 +51,11 @@ protected:
    }
 
 public:
+   void switchDFA(const char** dfa)
+   {
+      _dfa = dfa;
+   }
+
    _ELENA_::LineInfo read(wchar16_t* token, size_t length);
 
    TextSourceReader(const char** dfa, int tabSize, _ELENA_::TextReader* source);

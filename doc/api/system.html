@@ -26,6 +26,293 @@ ELENA&nbsp;Standard&nbsp;Library<br>2.0</b></EM>
 </TABLE>
 <DL>
 <HR>
+<A NAME="Array">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Array</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'Array</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#enumerable">enumerable</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_array">type_array</A>
+</DT>
+</DL>
+<P>
+An array
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'length : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_array">type_array</A>
+</TD>
+<TD><CODE>Creates the array with specified length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'length : <A HREF="protocol.html#type_int">type_int</A>
+&function : <A HREF="protocol.html#function">function</A>
+ = <A HREF="protocol.html#type_array">type_array</A>
+</TD>
+<TD><CODE>Creates the array with specified length and initializes it with the function</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#type_arraz">type_arraz</A>
+</TD>
+<TD><CODE>Concatinates the arrays</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &type'array : <A HREF="protocol.html#type_array">type_array</A>
+ = <A HREF="protocol.html#type_array">type_array</A>
+</TD>
+<TD><CODE>Concatinates the arrays</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Clone = <A HREF="protocol.html#type_array">type_array</A>
+</TD>
+<TD><CODE>Returns the array length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Count = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the shallow array copy</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Enumerator = <A HREF="protocol.html#enumerator">enumerator</A>
+</TD>
+<TD><CODE>Returns the object enumerator</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+getAt : <A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the array element at the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+getAt &type'index : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the array element at the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+setAt : <A HREF="protocol.html#object:object">object:object</A>
+</TD>
+<TD><CODE>Sets the array element at the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+setAt &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'object : <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the array element at the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'length = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the array length</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ArrayIterator">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ArrayIterator</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'ArrayIterator</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#enumerator">enumerator</A>
+</DT>
+</DL>
+<P>
+An array iterator
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theArray&nbsp;</CODE>
+</TD>
+<TD><CODE>The array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theCount&nbsp;</CODE>
+</TD>
+<TD><CODE>The array length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theIndex&nbsp;</CODE>
+</TD>
+<TD><CODE>The current index</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'array : <A HREF="protocol.html#type_array">type_array</A>
+ = <A HREF="protocol.html#enumerator">enumerator</A>
+</TD>
+<TD><CODE>Returns the parameter iterator</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+append &type'index : <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Increaments the index by specified value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+EOF = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns true if the index out of range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get = <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Returns the current array elemenent</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Index = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the index value.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Goes to the next character and returns true if the index is not out of range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset</TD>
+<TD><CODE>Resets the enumerator</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set &type'index : <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Sets the index by specified value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Sets the current array element</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'index = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the index value.</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="BaseValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -177,6 +464,81 @@ subtract : <A HREF="protocol.html#numeric_value">numeric_value</A>
  = <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
 <TD><CODE>Subtracts the values</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Boolean">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Booleab</H2>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#value">value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#variable">variable</A>
+</DT>
+</DL>
+<P>
+A boolean variable
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#variable">variable</A>
+</TD>
+<TD><CODE>Creates a boolean variable with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+invert</TD>
+<TD><CODE>Inverts the boolean value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Value = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Returns the boolean value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Writes the value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -644,6 +1006,129 @@ run &for : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="EIntConvertor">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class EIntConvertor</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'EIntConvertor</B>
+</PRE>
+<P>
+An integer value convertor role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'widestr : <A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Converts the extended integer value to a literal value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ELiteralConvertor">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ELiteralConvertor</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'ELiteralConvertor</B>
+</PRE>
+<P>
+A literal convertor role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'int : <A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Converts the extended literal value to an integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'long : <A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Converts the extended literal value to a long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'real : <A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Converts the extended literal value to a real numeric value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ELongConvertor">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ELongConvertor</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'ELongConvertor</B>
+</PRE>
+<P>
+A long integer value convertor role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'widestr : <A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Converts the extended long integer value to a literal value</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="emptyLiteralValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -736,6 +1221,41 @@ notless &type'widestr : <A HREF="protocol.html#type_widestr">type_widestr</A>
 type'widestr = <A HREF="protocol.html#type_widestr">type_widestr</A>
 </TD>
 <TD><CODE>Returns empty literal value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ERealConvertor">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ERealConvertor</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'ERealConvertor</B>
+</PRE>
+<P>
+A real numeric value convertor role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'widestr : <A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Converts the extended real number to a literal value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1571,6 +2091,9 @@ Class LiteralValue</H2>
 </DT>
 <DT>
 <A HREF="protocol.html#type_widestr">type_widestr</A>
+</DT>
+<DT>
+<A HREF="protocol.html#value">value</A>
 </DT>
 </DL>
 <P>
@@ -2750,6 +3273,131 @@ type'real = <A HREF="protocol.html#type_real">type_real</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="String">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class String</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<B>system'String</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#enumerable">enumerable</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_widestr">type_widestr</A>
+</DT>
+<DT>
+<A HREF="protocol.html#value">value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#variable">variable</A>
+</DT>
+</DL>
+<P>
+A wide literal variable
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theValue&nbsp;</CODE>
+</TD>
+<TD><CODE>The literal value</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new = <A HREF="protocol.html#variable">variable</A>
+</TD>
+<TD><CODE>Creates an empty literal variable</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#variable">variable</A>
+</TD>
+<TD><CODE>Creates a literal variable with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+append : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Appends the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clear</TD>
+<TD><CODE>Clears the variable value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+delete &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'length : <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Deletes a sub string</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+insert &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'widestr : <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Inserts a sub string</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Writes the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &type'widestr : <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Writes the value</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="true">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -2916,6 +3564,168 @@ xor &bool : <A HREF="protocol.html#bool">bool</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Executes logical XOR operation with a boolean value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Variable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Variable</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'Variable</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#variable">variable</A>
+</DT>
+<DT>
+<A HREF="protocol.html#numeric_variable">numeric_variable</A>
+</DT>
+</DL>
+<P>
+A generic variable
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+</TD>
+<TD><CODE>Creates a variable with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+append : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Appends the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divideInto : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Divides into the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get = <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Returns the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiplyBy : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Multiplies by the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reduce : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Substract the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Writes the value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Variant">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Variant</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#String">system'String</A>
+   |
+   +--<B>system'Variant</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#type_int">type_int</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_long">type_long</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_real">type_real</A>
+</DT>
+<DT>
+<A HREF="protocol.html#type_widestr">type_widestr</A>
+</DT>
+</DL>
+<P>
+A variant
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'int = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Tries to convert the literal value to an integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'long = <A HREF="protocol.html#type_long">type_long</A>
+</TD>
+<TD><CODE>Tries to convert the literal value to a long integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'real = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Tries to convert the literal value to a real numeric value</CODE>
 </TD>
 </TR>
 </TABLE>

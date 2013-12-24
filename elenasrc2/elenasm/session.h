@@ -14,13 +14,9 @@ namespace _ELENA_
 
 // translate mode constants
 #define MASK_MODE        0x000FF
-//#define SCRIPT_MODE      0x00000
-#define CFGRAMMAR_MODE   0x00001
-//#define LALRDSARULE_MODE 0x00002
 
 // translate attribute constants
 #define TRACE_MODE       0x20000
-#define SYMBOLIC_MODE    0x00100
 
 const int cnNameLength = 0x20;
 

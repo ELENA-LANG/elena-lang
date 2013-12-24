@@ -3,14 +3,21 @@
 #shortdescr=Contains the basic functionality
 
 [#list#]
+Array
+ArrayIterator
 BaseValue
 BaseNumber
+Boolean
 BreakException
 CharValue
 control
 EAction
 EFunction
+EIntConvertor
+ELiteralConvertor
+ELongConvertor
 emptyLiteralValue
+ERealConvertor
 false
 IntBaseNumber
 Integer
@@ -23,7 +30,10 @@ nil
 Object
 Real
 RealNumber
+String
 true
+Variable
+Variant
 
 [Object]
 #title=Class Object
@@ -319,6 +329,7 @@ true
 #shortdescr=A wide literal value
 #protocol=enumerable
 #protocol=type_widestr
+#protocol=value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #constructor=new,&type'length:type_int,type_widestr;Creates the literal string with specified length
@@ -424,3 +435,124 @@ true
 #method=write,numeric_value;Copies the numeric value
 #method=write,&type'real:type_real;Copies the real number value
 #method=write,&type'int:type_int;Copies the integer value
+
+[String]
+#title=Class String
+#shortdescr=A wide literal variable
+#protocol=enumerable
+#protocol=type_widestr
+#protocol=value
+#protocol=variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#field=theValue;The literal value
+#constructor=new,,variable;Creates an empty literal variable 
+#constructor=new,value,variable;Creates a literal variable with specified value
+#method=append,value,;Appends the value
+#method=clear,,;Clears the variable value
+#method=delete,&type'index:type_int&type'length:type_int,;Deletes a sub string
+#method=insert,&type'index:type_int&type'widestr:type_widestr,;Inserts a sub string
+#method=write,value,;Writes the value
+#method=write,&type'widestr:type_widestr,;Writes the value
+
+[Boolean]
+#title=Class Booleab
+#shortdescr=A boolean variable
+#protocol=value
+#protocol=variable
+#constructor=new,value,variable;Creates a boolean variable with specified value
+#method=equal,value,bool;Compares the value
+#method=invert,,;Inverts the boolean value
+#method=Value,,bool;Returns the boolean value
+#method=write,value,;Writes the value
+
+[ArrayIterator]
+#title=Class ArrayIterator
+#shortdescr=An array iterator
+#parent=system.html#Object:system'Object
+#protocol=enumerator
+#field=theArray;The array
+#field=theCount;The array length
+#field=theIndex;The current index
+#constructor=new,&type'array:type_array,enumerator;Returns the parameter iterator
+#method=append,&type'index:type_int;Increaments the index by specified value
+#method=EOF,,bool;Returns true if the index out of range
+#method=get,,value;Returns the current array elemenent
+#method=Index,,type_int;Returns the index value.
+#method=next,,bool;Goes to the next character and returns true if the index is not out of range
+#method=reset,,;Resets the enumerator
+#method=set,&type'index:type_int;Sets the index by specified value
+#method=set,value;Sets the current array element
+#method=type'index,,type_int;Returns the index value.
+
+[Array]
+#title=Class Array
+#shortdescr=An array
+#protocol=enumerable
+#protocol=type_array
+#parent=system.html#Object:system'Object
+#constructor=new,&type'length:type_int,type_array;Creates the array with specified length
+#constructor=new,&type'length:type_int&function:function,type_array;Creates the array with specified length and initializes it with the function
+#method=add,object,type_arraz;Concatinates the arrays
+#method=add,&type'array:type_array,type_array;Concatinates the arrays
+#method=Clone,,type_array;Returns the array length
+#method=Count,,type_int;Returns the shallow array copy
+#method=Enumerator,,enumerator;Returns the object enumerator
+#method=getAt,object,object;Returns the array element at the specified position
+#method=getAt,&type'index:type_int,object;Returns the array element at the specified position
+#method=setAt,object:object;Sets the array element at the specified position
+#method=setAt,&type'index:type_int&type'object:object;Sets the array element at the specified position
+#method=type'length,,type_int;Returns the array length
+
+[ELiteralConvertor]
+#title=Class ELiteralConvertor
+#shortdescr=A literal convertor role
+#parent=system.html#Object:system'Object
+#method=read,&type'int,type_int;Converts the extended literal value to an integer value
+#method=read,&type'long,type_long;Converts the extended literal value to a long integer value
+#method=read,&type'real,type_real;Converts the extended literal value to a real numeric value
+
+[EIntConvertor]
+#title=Class EIntConvertor
+#shortdescr=An integer value convertor role
+#parent=system.html#Object:system'Object
+#method=read,&type'widestr,type_widestr;Converts the extended integer value to a literal value
+
+[ELongConvertor]
+#title=Class ELongConvertor
+#shortdescr=A long integer value convertor role
+#parent=system.html#Object:system'Object
+#method=read,&type'widestr,type_widestr;Converts the extended long integer value to a literal value
+
+[ERealConvertor]
+#title=Class ERealConvertor
+#shortdescr=A real numeric value convertor role
+#parent=system.html#Object:system'Object
+#method=read,&type'widestr,type_widestr;Converts the extended real number to a literal value
+
+[Variant]
+#title=Class Variant
+#shortdescr=A variant
+#parent=system.html#Object:system'Object
+#parent=system.html#String:system'String
+#protocol=type_int
+#protocol=type_long
+#protocol=type_real
+#protocol=type_widestr
+#method=type'int,,type_int;Tries to convert the literal value to an integer value
+#method=type'long,,type_long;Tries to convert the literal value to a long integer value
+#method=type'real,,type_real;Tries to convert the literal value to a real numeric value
+
+[Variable]
+#title=Class Variable
+#shortdescr=A generic variable
+#parent=system.html#Object:system'Object
+#protocol=variable
+#protocol=numeric_variable
+#constructor=new,value,numeric_variable;Creates a variable with specified value
+#method=append,value;Appends the value
+#method=divideInto,value;Divides into the value
+#method=get,,value;Returns the value
+#method=multiplyBy,value;Multiplies by the value
+#method=reduce,value;Substract the value
+#method=write,value;Writes the value

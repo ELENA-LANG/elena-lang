@@ -21,7 +21,8 @@ v  - vm script
 Currently:
 ------
               sdev - script engine
-                       * parse bf sample from code
+                       * parse bf sample from code  : reverse order
+                       * parse bf sample from code 
 
                        * elena: implement bf interpreter
                        * elenascript: implement bf interpreter
@@ -569,11 +570,12 @@ week2:
                        * should control foreach&until be implemented in EFunction?
 
 week3:
-              sdev - script engine
+              sdev - script engine              
                        * elenascript should be default one in elt
                        * decision should be made what parser engine should be used, the second one should be removed
                        * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
                          cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
 
               sdev - open architecture
                        * review dynamic property container, try to simplify it

@@ -13,6 +13,7 @@ function
 numeric_value
 numeric_variable
 object
+type_array
 type_int
 type_long
 type_object
@@ -128,3 +129,6 @@ variable
 [enumerable]
 #shortdescr=A collection protocol
 #method=Enumerator,,enumerator;Creates the collection enumerator
+
+[type_array]
+#shortdescr=A type'array protocol

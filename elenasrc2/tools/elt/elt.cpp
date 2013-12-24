@@ -76,22 +76,13 @@ void printHelp()
 {
    printf("-q                   - quit\n");
    printf("-h                   - help\n");
-////   printf("-ton                 - trace mode is on\n");
-////   printf("-toff                - trace mode is off\n");
-////   printf("-n<name>             - set grammar parse mode\n");
-////   printf("-Ninline<script>     - execute an inline script\n");
-////   printf("-mcf                 - set CF parser mode\n");
-////   printf("-moff                - set script mode\n");
-//   printf("-i <script>            - execute inline script\n");
+//   printf("-ton                 - trace mode is on\n");
+//   printf("-toff                - trace mode is off\n");
    printf("-l [name=]<path>       - execute a script from file\n");
 //   printf("-lt [name=]<path>      - disassemble a script from file\n");
 //   printf("-lc [name=]<path>      - generate CF parser from file\n");
 //   printf("-li <path>             - load an inline script from file\n");
-//   printf("<script>               - execute script\n");
-////   printf("-Lxc<path>          - generate character-oriented CF parser from from file\n");
-////   printf("-lr<path>         - generate LALR parser from from file\n");
-////   printf("-lxr<path>         - generate LALR parser from from file\n");
-////   printf("-Linline<path>       - load an inline script from file\n");
+   printf("<script>               - execute script\n");
 }
 
 //void executeScript(const wchar16_t* ruleSetName, const wchar16_t* script, int mode)
@@ -185,45 +176,15 @@ bool executeCommand(const wchar16_t* line/*, int& mode*/)
    else if(line[0] == 'l') {
       loadScript(line + 1);
    }
-//   else if(line[0] == 'i') {
-//      executeScript(ConstIdentifier("inline"), line + 1, 0);
+//   else if(ConstantIdentifier::compare(line, "ton")) {
+//      _tracing = true;
 //   }
-////   else if(ConstantIdentifier::compare(line, "ton")) {
-////      _tracing = true;
-////   }
-////   else if(ConstantIdentifier::compare(line, "toff")) {
-////      _tracing = false;
-////   }
-////   else if(ConstantIdentifier::compare(line, "moff")) {
-////      _mode = 0;
-////   }
-////   else if(ConstantIdentifier::compare(line, "mcf")) {
-////      _mode = CFDSARULE_MODE;
-////   }
-////   else if(ConstantIdentifier::compare(line, "mlalr")) {
-////      _mode = LALRDSARULE_MODE;
-////   }
-////   else if(ConstantIdentifier::compare(line, "Lcf", 3)) {
-////      loadScript(line + 3, CFDSARULE_MODE, _grammarName);
-////   }
-////   else if(ConstantIdentifier::compare(line, "Lxcf", 4)) {
-////      loadScript(line + 4, CFDSARULE_MODE | SYMBOLIC_MODE, _grammarName);
-////   }
-////   else if(ConstantIdentifier::compare(line, "Llalr", 5)) {
-////      loadScript(line + 5, LALRDSARULE_MODE, _grammarName);
-////   }
-////   else if(ConstantIdentifier::compare(line, "Linline", 7)) {
-////      loadScript(line + 7, 0, _T("inline"));
-////   }
-////   else if(ConstantIdentifier::compare(line, "Ninline", 7)) {
-////      executeScript(_T("inline"), line + 7, 0);
-////   }
-////   else if (line[0]=='n') {
-////      _grammarName.copy(line + 1);
-////   }
-////   else if (line[0] == 'l') {
-////      loadScript(line + 1, _mode, _grammarName);
-////   }
+//   else if(ConstantIdentifier::compare(line, "toff")) {
+//      _tracing = false;
+//   }
+//   else if (line[0]=='n') {
+//      _grammarName.copy(line + 1);
+//   }
    else return false;
 
    return true;
@@ -233,7 +194,6 @@ void runSession()
 {
    char                      buffer[MAX_LINE];
    String<wchar_t, MAX_LINE> line;
-//   //int                      mode = 0;
 
    do {
       try {
@@ -250,7 +210,7 @@ void runSession()
             line[getlength(line) - 1] = 0;
 
          if (line[0]=='-') {
-            if(!executeCommand(line + 1/*, mode*/))
+            if(!executeCommand(line + 1))
                printHelp();
          }
          else if (!emptystr(line)){
@@ -269,8 +229,6 @@ int main(int argc, char* argv[])
 {
    printf("ELENA command line VM terminal %d.%d.%d (C)2011-2013 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
-//   _grammarName.copy(_T("inline"));
-//
 //   // load verbs
 //   loadVerbs(_verbs);
 

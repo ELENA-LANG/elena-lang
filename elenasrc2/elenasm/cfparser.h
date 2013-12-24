@@ -151,17 +151,27 @@ public:
          wchar16_t    buffer[IDENTIFIER_LEN + 1];
    
          bool read();
-   
-         Reader(const char** dfa, TextReader* script);
+  
+         void switchDFA(const char** dfa)
+         {
+            parser.switchDFA(dfa);
+         }
+
+         Reader(TextReader* script);
       };
 
    protected:
       Reader     _reader;
 
    public:
+      void switchDFA(const char** dfa)
+      {
+         _reader.switchDFA(dfa);
+      }
+
       virtual bool read(TokenInfo& token);
 
-      ScriptReader(const char** dfa, TextReader* script);
+      ScriptReader(TextReader* script);
    };
 
    // --- CachedScriptReader ---
@@ -192,7 +202,7 @@ public:
    
       virtual bool read(TokenInfo& token);
    
-      CachedScriptReader(const char** table, TextReader* script);
+      CachedScriptReader(TextReader* script);
    };
 
    enum RuleType
@@ -205,7 +215,7 @@ public:
 //      rtIdentifier,
 //      rtAny,
 //      rtEps,
-//      rtEof
+      rtEof
    };
 
    // --- Rule ---
@@ -244,7 +254,6 @@ public:
    typedef MemoryMap<const wchar16_t*, size_t> NameMap;
 
 protected:
-   const char** _dfa;
    NameMap      _names;
    RuleMap      _rules;
    MemoryDump   _body;
@@ -273,11 +282,9 @@ public:
 
    virtual void parse(TextReader* script, _ScriptCompiler* compiler);
 
-   CFParser(const char** dfa)
+   CFParser()
       : _rules(Rule())
    {
-      _dfa = dfa;
-
       // all body pointers should be greater than zero
       _body.writeDWord(0, 0);
    }
