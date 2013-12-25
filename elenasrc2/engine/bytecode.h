@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains common ELENA byte code classes and constants
-//		
+//
 //                                              (C)2009-2013, by Alexei Rakov
 //------------------------------------------------------------------------------
 
@@ -14,12 +14,12 @@ namespace _ELENA_
 
 // --- Byte code command set ---
 enum ByteCode
-{  
+{
    // commands:
    bcNop            = 0x00,
    bcBreakpoint     = 0x01,
    bcPushB          = 0x02,
-   bcPop            = 0x03, 
+   bcPop            = 0x03,
    bcPushM          = 0x05,
    bcMCopyVerb      = 0x06,
    bcThrow          = 0x07,
@@ -28,22 +28,22 @@ enum ByteCode
    bcPopA           = 0x0B,
    bcACopyB         = 0x0C,
    bcPopM           = 0x0D,
-   bcBSRedirect     = 0x0E, 
+   bcBSRedirect     = 0x0E,
 
    bcGetLen         = 0x11,
    bcBCopyA         = 0x12,
    bcDDec           = 0x13,
    bcPopB           = 0x14,
    bcClose          = 0x15,
-   bcQuit           = 0x17, 
+   bcQuit           = 0x17,
    bcGet            = 0x18,
    bcSet            = 0x19,
    bcDInc           = 0x1A,
    bcMQuit          = 0x1B,
    bcALoadD         = 0x1C,
    bcUnhook         = 0x1D,
-   bcExclude        = 0x1E, 
-   bcInclude        = 0x1F, 
+   bcExclude        = 0x1E,
+   bcInclude        = 0x1F,
 
    // all 2x command are push ones
    bcReserve        = 0x20,
@@ -64,7 +64,7 @@ enum ByteCode
    bcXPopAI         = 0x33,
    bcPopSI          = 0x34,
    bcPopAI          = 0x35,
-   bcQuitN          = 0x39, 
+   bcQuitN          = 0x39,
 
    bcCallExtR       = 0x40,
    bcEvalR          = 0x41,
@@ -74,7 +74,7 @@ enum ByteCode
    bcMLoadSI        = 0x48,
    bcMLoadFI        = 0x49,
    bcMAddAI         = 0x4D,
-   bcMCopy          = 0x4E,     
+   bcMCopy          = 0x4E,
    bcMAdd           = 0x4F,
 
    bcDLoadSI        = 0x50,
@@ -110,7 +110,7 @@ enum ByteCode
    //bcAAdd           = 0x7E,
    //bcAMul           = 0x7F,
 
-   bcRestore        = 0x82, 
+   bcRestore        = 0x82,
    bcOpen           = 0x88,
 
    bcJump           = 0xA0,
@@ -138,7 +138,7 @@ enum ByteCode
 
    bcAElseR         = 0xE0,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
    bcAThenR         = 0xE1,   // though in bytecode section they saved in the correct order (jump arg, label)
-   bcMElse          = 0xE2, 
+   bcMElse          = 0xE2,
    bcMThen          = 0xE3,
    bcDElseN         = 0xE4,
    bcDThenN         = 0xE5,
@@ -148,7 +148,7 @@ enum ByteCode
    bcMThenAI        = 0xEB,
    bcElseFlag       = 0xEC,
    bcTestFlag       = 0xED,
-   bcNext           = 0xEF,   
+   bcNext           = 0xEF,
 
    bcCreate         = 0xF0,
    bcCreateN        = 0xF1,
@@ -217,10 +217,10 @@ enum ByteCode
    //blHint           = 0x204,  // meta command, compiler hint
 
    // pseudo block commands
-   bcPushBlockI     = 0x8326, 
-   bcALoadBlockI    = 0x8354, 
-   bcASaveBlockI    = 0x8364, 
-   bcPushBlockPI    = 0x832E, 
+   bcPushBlockI     = 0x8326,
+   bcALoadBlockI    = 0x8354,
+   bcASaveBlockI    = 0x8364,
+   bcPushBlockPI    = 0x832E,
    bcALoadBlockPI   = 0x837C,
 
    bcMatch          = 0xFFFE,  // used in optimization engine
@@ -241,15 +241,15 @@ enum ByteCode
 
 enum TypeCode
 {
-   tRef    = 0,
-   tInt    = 1,
-   tLong   = 2,
-   tStr    = 3,
-   tBytes  = 4,
-   tReal   = 5,
-   tLen    = 6,
-   tShort  = 7,
-   tParams = 8,
+   tcRef    = 0,
+   tcInt    = 1,
+   tcLong   = 2,
+   tcStr    = 3,
+   tcBytes  = 4,
+   tcReal   = 5,
+   tcLen    = 6,
+   tcShort  = 7,
+   tcParams = 8,
 };
 
 enum FunctionCode
@@ -393,7 +393,7 @@ public:
 };
 
 // --- CommandTape ---
-typedef BList<ByteCommand>::Iterator ByteCodeIterator; 
+typedef BList<ByteCommand>::Iterator ByteCodeIterator;
 
 struct CommandTape
 {
@@ -490,7 +490,7 @@ struct ByteCodePattern
 {
    ByteCode        code;
    PatternArgument argumentType;
-   size_t          argument; 
+   size_t          argument;
 
    bool operator ==(ByteCode code) const
    {

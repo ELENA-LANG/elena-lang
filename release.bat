@@ -6,7 +6,10 @@ move %1\dat\sg\syntax.dat %1\bin
 %1\bin\og %1\dat\og\rules.txt
 move %1\dat\og\rules.dat %1\bin
 
-%1\bin\asm2binx %1\src30\asm\core_routines.esm %1\bin\x32
+md lib30
+md lib30\inline
+%1\bin\asm2binx %1\src30\asm\core_routines.esm lib30\inline
+%1\bin\asm2binx %1\src30\asm\ext_routines.esm lib30\inline
 
 %1\bin\asm2binx %1\src30\asm\x32\commands.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core.asm %1\bin\x32
@@ -47,8 +50,7 @@ copy %1\bin\x32\*.bin bin\x32\
 echo copying bin\scripts files
 
 md bin\scripts
-copy %1\bin\scripts\*.vl2 bin\scripts\
-copy %1\bin\scripts\*.vl bin\scripts\
+copy %1\bin\scripts\*.es bin\scripts\
 
 echo copying dat files
 
@@ -318,6 +320,7 @@ copy %1\examples\graphs\*.prj examples\graphs
 md examples\helloworld 
 copy %1\examples\helloworld\*.l examples\helloworld
 copy %1\examples\helloworld\*.prj examples\helloworld
+copy %1\examples\helloworld\*.es examples\helloworld
 
 md examples\interpreter
 copy %1\examples\interpreter\*.l examples\interpreter
