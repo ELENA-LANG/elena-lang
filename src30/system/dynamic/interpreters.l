@@ -2,7 +2,7 @@
 
 #symbol tapeControl =
 {
-    // NOTE: open argument list first argument is the index
+    // NOTE: open argument list first argument is the index, better to have a normal argument and an open argument list
     getAt :: Params
 //        = Params@(() type'int add:1).
     [
@@ -10,6 +10,9 @@
         
         ^ Params@(anIndex type'int).
     ]    
+    
+    getFirst :: Params
+        = Params@1.
     
 //    get : aParam
 //        = aParam.

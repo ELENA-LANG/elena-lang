@@ -47,7 +47,12 @@
     [
         console write:(CharValue new:(theArray@thePointer)).
     ]
-    
+
+    #method run : aLoop
+    [
+        control while:[ 0 < (theArray@thePointer) ] &do: [ aLoop eval:self ].
+    ]
+            
     #method get = theArray@thePointer.
 }
 
@@ -55,7 +60,11 @@
 [
 //    console readChar.
     
-    #var l := scriptControl load &path:"D:\Alex\ELENA\tests\tape_tester\helloworld.es".
+    #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
+    
+    #var aTape := BFTape new &type'length:100.
+    
+    l eval:aTape.
 ].
 
 //// === Roles ===
@@ -95,6 +104,14 @@
     aTape eval.
 ].
 
+//    #var aTape := Tape(
+//        1, tapeControl,
+//        %(getAt(15)),
+//        %next,
+//        %next,
+//        %(get&inc(0)),
+//        %(get&inc(0))).
+        
 //#symbol ClassTest =
 //[
 //    #var n := Integer new.

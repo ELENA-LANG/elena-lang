@@ -17,7 +17,7 @@ using namespace _ELENA_TOOL_;
 //#define NUMERIC_KEYWORD       "$numeric"
 //#define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
-//#define ANY_KEYWORD           "$any"
+#define ANY_KEYWORD           "$any"
 
 const char* dfaSymbolic[4] =
 {
@@ -37,7 +37,7 @@ CFParser::ScriptReader::Reader :: Reader(TextReader* script)
 bool CFParser::ScriptReader::Reader :: read()
 {
    try {
-      token = parser.read(buffer, IDENTIFIER_LEN);
+      token = parser.read(buffer, LINE_LEN);
 
       return (token.state == dfaEOF) ? false : true;
    }
@@ -395,34 +395,31 @@ bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFP
 //
 //   return true;
 //}
-//
-//bool anyApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if(token.state == dfaEOF)
-//      return false;
-//
-//   return apply(rule, token, reader);
-//}
-//
-//bool anyApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if(token.state == dfaEOF)
-//      return false;
-//
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if (apply(rule, token, reader)) {
-//      if (rule.postfixPtr)
-//         rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//
-//      return true;
-//   }
-//   else return false;
-//}
+
+bool anyApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if(token.state == dfaEOF)
+      return false;
+
+   return apply(rule, token, reader);
+}
+
+bool anyApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
+{
+   if(token.state == dfaEOF)
+      return false;
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token);
+
+   if (apply(rule, token, reader)) {
+      if (rule.postfixPtr)
+         rule.applyPostfixDSARule(token);
+
+      return true;
+   }
+   else return false;
+}
 
 size_t CFParser :: writeBodyText(const wchar16_t* text)
 {
@@ -466,9 +463,9 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
 //      case rtIdentifier:
 //         rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
 //         break;
-//      case rtAny:
-//         rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
-//         break;
+      case rtAny:
+         rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
+         break;
 //      case rtEps:
 //         rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
 //         break;
@@ -557,9 +554,9 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
       //      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
       //         type = rtReference;
       //      }
-      //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
-      //         type = rtAny;
-      //      }
+            else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
+               type = rtAny;
+            }
       //      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
       //         type = rtIdentifier;
       //      }

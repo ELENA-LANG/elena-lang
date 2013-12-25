@@ -4,9 +4,10 @@ executable=interpreter.exe
 arguments=sample1.txt
 options=-xembed-
 namespace=interpreter
-template=console
-debuginfo=-1
+template=vm_console
+debuginfo=-2
 warn:unresolved=-1
+vmpath=..\..\bin
 
 [files]
 interpreter.l

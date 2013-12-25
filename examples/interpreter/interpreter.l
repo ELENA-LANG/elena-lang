@@ -3,7 +3,7 @@
 
 // --- Tape ---
 
-#class Tape
+#class BFTape
 {
     #field theArray.
     #field thePointer.
@@ -46,7 +46,12 @@
     [
         console write:(CharValue new:(theArray@thePointer)).
     ]
-    
+
+    #method run : aLoop
+    [
+        control while:[ 0 < (theArray@thePointer) ] &do: [ aLoop eval:self ].
+    ]
+            
     #method get = theArray@thePointer.
 }
 
@@ -95,12 +100,9 @@
          theLoopBody += ".".
     ]
     
-    #method run
+    #method repeatUntil
     [
-        #var s := 2.
-        
-        control while:[0 < theTape get ] &do:
-            [ interpreter'Interpreter new:(theTape type'tape) eval:theLoopBody. ].
+        theTape run: &&:aTape [ interpreter'Interpreter new:aTape eval:theLoopBody ].
             
         ^ theTape.
     ]
@@ -137,7 +139,7 @@
             "." ? [ theTape output. ]
             "," ? [ theTape input. ]
             "[" ? [ theTape := LoopInterpreter new &tape:theTape. ]
-            "]" ? [ theTape := theTape run. ].
+            "]" ? [ theTape := theTape repeatUntil. ].
     ]
 }
 
@@ -148,5 +150,18 @@
     ('program'arguments Count == 1)?
         [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
     
-    textFileControl forEachLine:('program'arguments@1) &do:(Interpreter new:(Tape new &type'length:1024)).
+    textFileControl forEachLine:('program'arguments@1) &do:(Interpreter new:(BFTape new &type'length:1024)).
 ].
+//
+//#symbol program2 =
+//[
+//    ('program'arguments Count == 1)?
+//        [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
+//
+//    system'dynamic'scriptControl load &path:"rules.es".
+//
+//    #var aBFTape := BFTape new &type'length:1024.
+//    #var aSourceTape := system'dynamic'scriptControl load &path:('program'arguments@1).
+//    
+//    aSourceTape eval:aBFTape.
+//].

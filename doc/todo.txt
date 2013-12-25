@@ -20,88 +20,10 @@ v  - vm script
 ------
 Currently:
 ------
-              sdev - script engine
-                       * parse bf sample from code  : reverse order
-                       * parse bf sample from code 
-
-                       * elena: implement bf interpreter
-                       * elenascript: implement bf interpreter
-              sdev - api
-                       * create API doc
-                       * copy protocols to doc\protocols
-                       * do we need t describe intOp, strOp, ... - they are actually private ones
 <=================>
          
 1.9.10
 ------
-week3: [29.12]
-              sdev - script engine
-                       * implement script engine arithm eval sample
-              sdev - calculator
-                       * build state machine using only dynamic object
-                       * implement sample using open architecture
-
-              sdev - open architecture
-                       * build dynamic class - several methods
-                       * access parameters
-
-              xdev - migration
-                        * migrate tapeControl, ... 
-                        * migrate tape_test code
-                        * migrate sum script
-
-              sdev - open architecture
-                       * implement dynamic property container: set / get
-
-              sdev - samples
-                       * implement interpreter : tape consist of messages which has to be sent to the tape
-                                                                                     
-              sdev - open architecture
-                       * new sample: script_db (using script to parse text file)
-
-                       * structure: simple script prototype : build structure
-                          ?? [ x : 1, y : 2 ].
-                          
-                       * code: simple code prototype : extend structure
-                       * code: simple script prototype : extend structure
-
-                       * build the structure list              
-                       * build the matrix
-                       * object serialization / deseialization (to script / from script)
-
-              sdev - prime project : calc
-                       * build system to enter and sum two numbers rather than directly implement the flow
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdev - default script
-                       * support basic arithmetic operation (+ - / *)
-                       * implement 2 + 2 * 3
-                       * functions
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - prime project
-                       * interpreter
-                       * script program - calculator
-                       * eldoc: dynamic parser
-
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                      * trace could print the result directly to console?? (so it will simplify script debugging)
-
 week4:
               sdev - samples
                        * test system
@@ -138,6 +60,8 @@ week1:
                        * any other operation should result in boxing
 
               xdev - generic development              
+                       * it should be possible to combine normal argument with an open argument list (e.g. see system'dynamic'tapeControl)
+
                        * it looks like open argument list boxing does not work for elenavm
 
                        * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
@@ -151,6 +75,11 @@ week1:
                        * why dispatching method does not work (system'dynamic'scriptControl)
                                #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
                                | raise:(system'FormatException new:($self LastScriptError))).                               
+
+                       * test error handling
+                          #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
+                            | raise:(system'FormatException new:($self LastScriptError))).
+            
 
                        * role class should not be its own class class (like it is now), super class should be used
 
@@ -291,6 +220,10 @@ week1:
                        * compiler option : switch off jump optimization
                        * compiler option : switch off direct calls
 
+              xdev - elenasm
+                       * for some strange reader elenasm cannot load - D:\Alex\ELENA\tests\tape_tester\interpreter.es, though 
+                         can load D:\Alex\ELENA\tests\tape_tester\helloworld.es
+
               xdev - multy select statement
                        * native implementation - using open argument list??
 
@@ -427,6 +360,9 @@ week1:
                        
 week2:
               sdev - api
+                       * create API doc
+                       * copy protocols to doc\protocols
+                       * do we need t describe intOp, strOp, ... - they are actually private ones
                        * support dispatch method
                        * support redirect method
               sdev - rosetta samples              
@@ -570,6 +506,76 @@ week2:
                        * should control foreach&until be implemented in EFunction?
 
 week3:
+              sdev - script engine
+                       * parse bf sample from code : show an error (currently it crached)                       
+                       * interpreter: test program2
+                       * elenascript: implement bf interpreter
+                       * implement script engine arithm eval sample
+              sdev - calculator
+                       * build state machine using only dynamic object
+                       * implement sample using open architecture
+
+              sdev - open architecture
+                       * build dynamic class - several methods
+                       * access parameters
+
+              xdev - migration
+                        * migrate tapeControl, ... 
+                        * migrate tape_test code
+                        * migrate sum script
+
+              sdev - open architecture
+                       * implement dynamic property container: set / get
+
+              sdev - samples
+                       * implement interpreter : tape consist of messages which has to be sent to the tape
+                                                                                     
+              sdev - open architecture
+                       * new sample: script_db (using script to parse text file)
+
+                       * structure: simple script prototype : build structure
+                          ?? [ x : 1, y : 2 ].
+                          
+                       * code: simple code prototype : extend structure
+                       * code: simple script prototype : extend structure
+
+                       * build the structure list              
+                       * build the matrix
+                       * object serialization / deseialization (to script / from script)
+
+              sdev - prime project : calc
+                       * build system to enter and sum two numbers rather than directly implement the flow
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdev - default script
+                       * support basic arithmetic operation (+ - / *)
+                       * implement 2 + 2 * 3
+                       * functions
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - prime project
+                       * interpreter
+                       * script program - calculator
+                       * eldoc: dynamic parser
+
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                      * trace could print the result directly to console?? (so it will simplify script debugging)
+
               sdev - script engine              
                        * elenascript should be default one in elt
                        * decision should be made what parser engine should be used, the second one should be removed

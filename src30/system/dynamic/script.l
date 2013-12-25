@@ -21,7 +21,7 @@
     
     load &path:aPath
     [
-        #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
+        #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:-1 &type'int:0
             | raise:(system'FormatException new:($self LastScriptError))).
         
         #var retVal := $self eval &vm_script:aTapePtr.

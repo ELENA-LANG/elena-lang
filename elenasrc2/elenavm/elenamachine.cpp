@@ -543,7 +543,7 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
    // resolve tape
    bool useRole = false;
    int level = 0;
-   int marker = 0;
+   Stack<int> markers;
    size_t message = 0;
    size_t command = reader.getDWord();
    while (command != terminator) {
@@ -557,7 +557,7 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
 
       switch(command) {
          case START_TAPE_MESSAGE_ID:
-            marker = level;
+            markers.push(level);
             break;
          case CALL_TAPE_MESSAGE_ID: 
             //callr
@@ -645,34 +645,34 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             useRole = true;
             level--;
             break;
-         case DSEND_TAPE_MESSAGE_ID:
-            message = encodeMessage(0, param, level - marker);
+         //case DSEND_TAPE_MESSAGE_ID:
+         //   message = encodeMessage(0, param, level - markers.);
 
-            // reverse the parameter order
-            if (getParamCount(message) > 0) 
-               reverseArgOrder(ecodes, 1 + getParamCount(message), useRole);
+         //   // reverse the parameter order
+         //   if (getParamCount(message) > 0) 
+         //      reverseArgOrder(ecodes, 1 + getParamCount(message), useRole);
 
-            //mcopy message
-            //aloadsi 0
-            //acallvi 0
-            //pusha
+         //   //mcopy message
+         //   //aloadsi 0
+         //   //acallvi 0
+         //   //pusha
 
-            ecodes.writeByte(bcMCopy);
-            ecodes.writeDWord(MESSAGE_MASK | message);
+         //   ecodes.writeByte(bcMCopy);
+         //   ecodes.writeDWord(MESSAGE_MASK | message);
 
-            if (!useRole) {
-               ecodes.writeByte(bcALoadSI);
-               ecodes.writeDWord(0);
-            }
-            else useRole = false;
+         //   if (!useRole) {
+         //      ecodes.writeByte(bcALoadSI);
+         //      ecodes.writeDWord(0);
+         //   }
+         //   else useRole = false;
 
-            ecodes.writeByte(bcACallVI);
-            ecodes.writeDWord(0);
-            ecodes.writeByte(bcPushA);
-            
-            level -= getParamCount(message);
+         //   ecodes.writeByte(bcACallVI);
+         //   ecodes.writeDWord(0);
+         //   ecodes.writeByte(bcPushA);
+         //   
+         //   level -= getParamCount(message);
 
-            break;
+         //   break;
          case SEND_TAPE_MESSAGE_ID:
             message = _linker->parseMessage((wchar16_t*)(base + param));
 
@@ -702,6 +702,9 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
 
             break;
          case NEW_TAPE_MESSAGE_ID:
+         {
+            int marker = markers.pop();
+
             // create n, vmt
             ecodes.writeByte(bcCreate);
             ecodes.writeDWord(level - marker);
@@ -718,6 +721,7 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             level++;
 
             break;
+         }
       }
       command = reader.getDWord();
    }

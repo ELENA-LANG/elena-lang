@@ -148,7 +148,7 @@ public:
       {
          SourceReader parser;
          LineInfo     token;
-         wchar16_t    buffer[IDENTIFIER_LEN + 1];
+         wchar16_t    buffer[LINE_LEN + 1];
    
          bool read();
   
@@ -213,7 +213,7 @@ public:
 //      rtNumeric,
 //      rtReference,
 //      rtIdentifier,
-//      rtAny,
+      rtAny,
 //      rtEps,
       rtEof
    };
