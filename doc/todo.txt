@@ -20,26 +20,25 @@ v  - vm script
 ------
 Currently:
 ------
+              xdev - elc / ecv / elt / sg / asm2binx / api2html / ide
+                       * test with russian letters to make sure the code works (elc)
+
+
+
+                       * source / project textreader - by default UTF8
+                       
+                       * get rid of _T / TEXT
+
+
+                       * system should support utf8 files (both compiler and IDE)
+
 <=================>
          
-1.9.10
+1.9.11 
 ------
-week4:
-              sdev - samples
-                       * test system
-                       * test tape
-                       * test examples
-                       * test rosetta examples
-                      
-1.9.11
-------
-week1:
-              xdev - elc
-                       * switch configuration manager to utf8, so no need for ConstantIdentifier in the code
-                       * system should support utf8 files (both compiler and IDE)
-                       * all source code files should be converted to UTF8
+week1: [8.01]
+              xdev - utf-8
                        * all project files should be converted to UTF8
-                       * UTF8 should be default encoding (for saving)
 
               xdev - multithreading
                        * architecture overview
@@ -347,6 +346,13 @@ week1:
               xdev - script support
                        * should be possible to debug vm scripts
                        
+              idev - generic development
+                       * test saving to utf-8
+                       * test saving to utf-16
+                       * test saving to oem
+                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
+                         utf-16 for windows?
+
               idev - debugger
                        * the same module is opened twice (if it was already opened) - e.g. combinator example (extensions'routines'combinator module)
                        * multi-select operator debugging - step over does not work
@@ -357,6 +363,7 @@ week1:
                        * recognize out of memory exception
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
                        
 week2:
               sdev - api
@@ -370,6 +377,7 @@ week2:
                        * update amb sample on rosetta code site
 
               adev - lib30
+                       * win32 file i/o operations should raise an exception with an error code
                        * LiteralValue: concatenation, probably we need to get rid of concatinating constructor and use strOp for this?
                        * system'$consolehandler: if the returning handler is -1
                        * system'$consolewriter - the exception should be raised if the operation

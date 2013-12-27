@@ -78,9 +78,9 @@ namespace _ELENA_
 //}
 //
 //#endif
-//
-//// --- miscellaneous string routines ---
-//
+
+// --- miscellaneous string routines ---
+
 //inline wchar_t wchlwr(wchar_t ch)
 //{
 //   wchar_t temp[2];

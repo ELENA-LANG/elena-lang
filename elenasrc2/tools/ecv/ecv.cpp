@@ -16,8 +16,8 @@
 #include "config.h"
 #include "bytecode.h"
 
-#define PROJECT_SECTION _T("project")
-#define ROOTPATH_OPTION _T("libpath")
+#define PROJECT_SECTION "project"
+#define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
 #define BUILD_VERSION   1
@@ -941,19 +941,19 @@ int main(int argc, char* argv[])
    }
 
    // prepare library manager
-   const wchar16_t* configPath = _T("elc.cfg");
-   const wchar16_t* rootPath = NULL;
+   const char* configPath = "elc.cfg";
+   const char* rootPath = NULL;
 
    // get viewing module name
    IdentifierString moduleName(argv[1]);
 
    // load config attributes
    IniConfigFile config;
-   if (config.load(configPath, feAnsi)) {
+   if (config.load(Path(configPath), feUTF8)) {
       rootPath = config.getSetting(PROJECT_SECTION, ROOTPATH_OPTION, rootPath);
    }
 
-   LibraryManager loader(rootPath, NULL);
+   LibraryManager loader(Path(rootPath), NULL);
    LoadResult result = lrNotFound;
    _Module* module = NULL;
 

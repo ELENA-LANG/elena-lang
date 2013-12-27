@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2013, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef configH
@@ -20,20 +20,20 @@ class IniConfigFile : public _ConfigFile
    ConfigSettings _settings;
 
 public:
-   virtual ConfigCategoryIterator getCategoryIt(const _text_t* name)
+   virtual ConfigCategoryIterator getCategoryIt(const char* name)
    {
       return _settings.getIt(name);
    }
 
-   virtual const _text_t* getSetting(const _text_t* category, const _text_t* key, const _text_t* defaultValue = NULL);
+   virtual const char* getSetting(const char* category, const char* key, const char* defaultValue = NULL);
 
-   void setSetting(const _text_t* category, const _text_t* key, const _text_t* value);
-   void setSetting(const _text_t* category, const _text_t* key, int value);
-   void setSetting(const _text_t* category, const _text_t* key, size_t value);
-   void setSetting(const _text_t* category, const _text_t* key, bool value);
+   void setSetting(const char* category, const char* key, const char* value);
+   void setSetting(const char* category, const char* key, int value);
+   void setSetting(const char* category, const char* key, size_t value);
+   void setSetting(const char* category, const char* key, bool value);
 
-   void clear(const _text_t* category, const _text_t* key);
-   void clear(const _text_t* category);
+   void clear(const char* category, const char* key);
+   void clear(const char* category);
    void clear();
 
    virtual bool load(const _path_t* path, int encoding);

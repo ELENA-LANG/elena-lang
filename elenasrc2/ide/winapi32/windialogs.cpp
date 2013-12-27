@@ -15,6 +15,9 @@ using namespace _GUI_;
 wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0All types\0*.*\0\0");
 wchar_t* FileDialog :: SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
+typedef _ELENA_::String<_text_t, 255> ParamString;
+typedef _ELENA_::String<char, 255> SettingString;
+
 FileDialog :: FileDialog(Control* owner, const wchar_t* filter, const wchar_t* caption, const wchar_t* initialDir)
 {
    _fileName[0] = '\0';
@@ -303,11 +306,13 @@ void ProjectSettingsDialog :: loadTemplateList()
    if (!config.load(configPath, _ELENA_::feAnsi))
       return;
 
-   const _text_t* curTemplate = Project::getTemplate();
+   const char* curTemplate = Project::getTemplate();
 
    int current = 0;
-   for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt(_T("templates")) ; !it.Eof() ; it++, current++) {
-      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, it.key());
+   for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt("templates") ; !it.Eof() ; it++, current++) {
+      ParamString value(it.key());
+
+      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, value);
 
       if (_ELENA_::StringHelper::compare(curTemplate, it.key()))
          setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, current);
@@ -318,12 +323,12 @@ void ProjectSettingsDialog :: onCreate()
 {
    setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
 
-   setText(IDC_SETTINGS_PACKAGE, Project::getPackage());
-   setText(IDC_SETTINGS_TARGET, Project::getTarget());
-   setText(IDC_SETTINGS_OUTPUT, Project::getOutputPath());
-   setText(IDC_SETTINGS_ARGUMENT, Project::getArguments());
-   setText(IDC_SETTINGS_OPTIONS, Project::getOptions());
-   setText(IDC_SETTINGS_VMPATH, Project::getVMPath());
+   setText(IDC_SETTINGS_PACKAGE, ParamString(Project::getPackage()));
+   setText(IDC_SETTINGS_TARGET, ParamString(Project::getTarget()));
+   setText(IDC_SETTINGS_OUTPUT, ParamString(Project::getOutputPath()));
+   setText(IDC_SETTINGS_ARGUMENT, ParamString(Project::getArguments()));
+   setText(IDC_SETTINGS_OPTIONS, ParamString(Project::getOptions()));
+   setText(IDC_SETTINGS_VMPATH, ParamString(Project::getVMPath()));
 
    //setCheckState(IDC_SETTINGS_DEBUG, );
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
@@ -339,7 +344,7 @@ void ProjectSettingsDialog :: onCreate()
    }
    else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
-   setCheckState(IDC_SETTINGS_WARN_REF, Project::getBoolSetting(_T("warn:unresolved")));
+   setCheckState(IDC_SETTINGS_WARN_REF, Project::getBoolSetting("warn:unresolved"));
 
    loadTemplateList();
 
@@ -355,30 +360,30 @@ void ProjectSettingsDialog :: onOK()
       if (_ELENA_::Path::checkExtension(path, NULL)) {
          wcsncat(path, _T(".exe"), 4);
       }
-      Project::setTarget(path);
+      Project::setTarget(SettingString(path));
    }
    else Project::setTarget(NULL);
 
    getText(IDC_SETTINGS_ARGUMENT, (wchar_t**)(&path), MAX_PATH);
-   Project::setArguments(path);
+   Project::setArguments(SettingString(path));
 
    getText(IDC_SETTINGS_OUTPUT, (wchar_t**)(&path), MAX_PATH);
-   Project::setOutputPath(path);
+   Project::setOutputPath(SettingString(path));
 
    getText(IDC_SETTINGS_VMPATH, (wchar_t**)(&path), MAX_PATH);
    if (!_ELENA_::emptystr(path))
-      Project::setVMPath(path);
+      Project::setVMPath(SettingString(path));
 
    getText(IDC_SETTINGS_OPTIONS, (wchar_t**)(&path), MAX_PATH);
-   Project::setOptions(path);
+   Project::setOptions(SettingString(path));
 
    wchar_t name[IDENTIFIER_LEN + 1] ;
    getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), IDENTIFIER_LEN);
-   Project::setPackage(name);
+   Project::setPackage(SettingString(name));
 
    if (getComboBoxIndex(IDC_SETTINGS_TEPMPLATE) != -1) {
       getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), IDENTIFIER_LEN);
-      Project::setTemplate(name);
+      Project::setTemplate(SettingString(name));
    }
 
    int index = getComboBoxIndex(IDC_SETTINGS_DEBUG);
@@ -390,7 +395,7 @@ void ProjectSettingsDialog :: onOK()
    }
    else Project::setDebugMode(_ELENA_::dbmNone);
 
-   Project::setBoolSetting(_T("warn:unresolved"), getCheckState(IDC_SETTINGS_WARN_REF));
+   Project::setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
 }
 
 // --- ProjectForwardsDialog ---
@@ -573,6 +578,8 @@ inline int encodingToIndex(int encoding)
          return 3;
       case _ELENA_::feUTF16:
          return 5;
+      case _ELENA_::feUTF8:
+         return 6;
       default:
          return 4;
    }
@@ -591,6 +598,8 @@ inline int indexToEncoding(int encoding)
          return 1252;
       case 5:
          return _ELENA_::feUTF16;
+      case 6:
+         return _ELENA_::feUTF8;
       default:
          return CP_OEMCP;
    }
@@ -616,12 +625,13 @@ void EditorSettings :: onCreate()
    setCheckState(IDC_EDITOR_USETAB, Settings::tabCharUsing);
    setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, Settings::highlightSyntax);   
 
-   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Ascii"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("ASCII"));
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1250"));
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1251"));
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1252"));
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("OEM"));
-   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Unicode"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-16"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-8"));
 
    setComboBoxIndex(IDC_EDITOR_ENCODING, encodingToIndex(Settings::defaultEncoding));
 
@@ -680,10 +690,10 @@ void DebuggerSettings :: onOK()
    wchar_t path[MAX_PATH + 1];   
 
    getText(IDC_DEBUGGER_SRCPATH, (wchar_t**)(&path), MAX_PATH);
-   Settings::addPackagePath(_T("default"), path);
+   Settings::addPackagePath("default", path);
 
    getText(IDC_DEBUGGER_LIBPATH, (wchar_t**)(&path), MAX_PATH);
-   Settings::addLibraryPath(_T("default"), path);
+   Settings::addLibraryPath("default", path);
 }
 
 // --- GoToLineDialog ---

@@ -133,13 +133,13 @@ bool Path :: create(const char* root, const char* path)
 
 // --- File ---
 
-File :: File(const char* path, const char* mode, int encoding, bool autoDetect)
+File :: File(const char* path, const char* mode, int encoding, bool withBOM)
 {
    _file = fopen(path, mode);
 
    if (isOpened()) {
       _encoding = encoding;
-      if (autoDetect) {
+      if (withBOM) {
          detectEncoding();
       }
    }
@@ -147,13 +147,13 @@ File :: File(const char* path, const char* mode, int encoding, bool autoDetect)
 
 #ifdef _WIN32
 
-File :: File(const wchar_t* path, const wchar_t* mode, int encoding, bool autoDetect)
+File :: File(const wchar_t* path, const wchar_t* mode, int encoding, bool withBOM)
 {
    _file = _wfopen(path, mode);
 
    if (isOpened()) {
       _encoding = encoding;
-      if (autoDetect) {
+      if (withBOM) {
          detectEncoding();
       }
    }
@@ -163,6 +163,28 @@ bool File :: readLine(wchar_t* s, size_t length)
 {
    if (_encoding==feUTF16 || _encoding==feRaw) {
       return (fgetws(s, length, _file) != NULL);
+   }
+   else if (_encoding==feUTF8) {
+      char temp[TEMP_SIZE];
+      size_t count;
+      while (length > 0) {
+         count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+
+         if (fgets(temp, count, _file) == NULL)
+            return false;
+
+         count = strlen(temp);
+         if (count < (TEMP_SIZE - 1)) {
+            StringHelper::copy(s, temp, count);
+            s[count] = 0;
+            break;
+         }
+         else StringHelper::copy(s, temp, count);
+
+         length -= count;
+         s += count;
+      }
+      return true;
    }
    else {
       char temp[TEMP_SIZE];
@@ -192,6 +214,23 @@ bool File :: readLiteral(wchar16_t* s, size_t length, size_t& wasread)
 {
    if (_encoding==feUTF16 || _encoding==feRaw) {
       wasread = fread((char*)s, 2, length, _file);
+      return (wasread > 0);
+   }
+   else if (_encoding==feUTF8) {
+      wasread = 0;
+
+      char temp[0x100];
+      size_t count;
+      while (length > 0) {
+         count = (length > 0x100) ? 0x100 : length;
+
+         fread(temp, 1, count, _file);
+
+         length -= count;
+         StringHelper::copy(s, temp, count);
+         wasread += count;
+         s += count;
+      }
       return (wasread > 0);
    }
    else {
@@ -226,6 +265,23 @@ bool File :: writeLiteral(const wchar16_t* s, size_t length)
 {
    if (_encoding==feUTF16 || _encoding==feRaw) {
       return (fwrite((const char*)s, 2, length, _file) == length);
+   }
+   else if (_encoding==feUTF8) {
+      char temp[TEMP_SIZE * 4];
+      size_t count;
+      while (length > 0) {
+         count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+
+         size_t utfCount = count;
+         StringHelper::copy(temp, s, utfCount);
+
+         if (fwrite(temp, 1, utfCount, _file) <= 0)
+            return false;
+
+         length -= count;
+         s += count;
+      }
+      return true;
    }
    else {
       char temp[TEMP_SIZE];
@@ -282,7 +338,7 @@ bool File :: readLine(char* s, size_t length)
 
 bool File :: writeNewLine()
 {
-   return writeLiteral(_T("\r\n"), 2);
+   return writeLiteral("\r\n", 2);
 }
 
 #else
@@ -397,6 +453,14 @@ void File :: detectEncoding()
    if (signature==0xFEFF) {
       _encoding = feUTF16;
    }
+   else if (signature==0xBBEF) {
+      unsigned char ch;
+      fread(&ch, 1, 1, _file);
+      if (ch==0xBF) {
+         _encoding = feUTF8;
+      }
+      else rewind();
+   }
    else rewind();
 }
 
@@ -459,8 +523,8 @@ void File :: rewind()
 
 // --- TextFileReader ---
 
-TextFileReader :: TextFileReader(const _path_t* path, int encoding, bool autoDetect)
-   : _file(path, _T("rb"), encoding, autoDetect)
+TextFileReader :: TextFileReader(const _path_t* path, int encoding, bool withBOM)
+   : _file(path, _T("rb"), encoding, withBOM)
 {
 }
 
@@ -476,13 +540,13 @@ bool TextFileReader :: read(char* s, size_t length)
 
 // --- FileReader ---
 
-FileReader :: FileReader(const _path_t* path, int encoding, bool autoDetect)
-   : _file(path, _T("rb+"), encoding, autoDetect)
+FileReader :: FileReader(const _path_t* path, int encoding, bool withBOM)
+   : _file(path, _T("rb+"), encoding, withBOM)
 {
 }
 
-FileReader :: FileReader(const _path_t* path, const _path_t* mode, int encoding, bool autoDetect)
-   : _file(path, mode, encoding, autoDetect)
+FileReader :: FileReader(const _path_t* path, const _path_t* mode, int encoding, bool withBOM)
+   : _file(path, mode, encoding, withBOM)
 {
 }
 
@@ -493,8 +557,8 @@ bool FileReader :: read(void* s, size_t length)
 
 // --- FileWriter ---
 
-FileWriter :: FileWriter(const _path_t* path, int encoding, bool autoDetect)
-   : _file(path, _T("wb+"), encoding, autoDetect)
+FileWriter :: FileWriter(const _path_t* path, int encoding, bool withBOM)
+   : _file(path, _T("wb+"), encoding, withBOM)
 {
    if (encoding == feUTF16 && isOpened()) {
       unsigned short signature = 0xFEFF;
@@ -516,12 +580,18 @@ void FileWriter :: align(int alignment)
 
 // --- TextFileWriter ---
 
-TextFileWriter :: TextFileWriter(const _path_t* path, int encoding, bool autoDetect)
-   : _file(path, _T("wb+"), encoding, autoDetect)
+TextFileWriter :: TextFileWriter(const _path_t* path, int encoding, bool withBOM)
+   : _file(path, _T("wb+"), encoding, withBOM)
 {
-   if (encoding == feUTF16 && isOpened()) {
-      unsigned short signature = 0xFEFF;
-      _file.write((void*)&signature, 2);
+   if (withBOM) {
+      if (encoding == feUTF16 && isOpened()) {
+         unsigned short signature = 0xFEFF;
+         _file.write((void*)&signature, 2);
+      }
+      else if (encoding == feUTF8 && isOpened()) {
+         int signature = 0xBFBBEF;
+         _file.write((void*)&signature, 3);
+      }
    }
 }
 

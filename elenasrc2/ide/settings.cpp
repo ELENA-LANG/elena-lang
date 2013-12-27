@@ -19,16 +19,18 @@
 using namespace _GUI_;
 using namespace _ELENA_;
 
+typedef String<char, 255> ParamString;
+
 // --- help functions ---
 
-inline void loadSetting(const _text_t* value, bool& setting)
+inline void loadSetting(const char* value, bool& setting)
 {
    if (value) {
-      setting = _ELENA_::StringHelper::compare(value, _T("-1"));
+      setting = _ELENA_::StringHelper::compare(value, "-1");
    }
 }
 
-inline void loadSetting(const _text_t* value, size_t& setting, size_t minValue, size_t maxValue, size_t defaultValue)
+inline void loadSetting(const char* value, size_t& setting, size_t minValue, size_t maxValue, size_t defaultValue)
 {
    if (value) {
       setting = _ELENA_::StringHelper::strToInt(value);
@@ -37,7 +39,7 @@ inline void loadSetting(const _text_t* value, size_t& setting, size_t minValue, 
    }
 }
 
-inline void loadSetting(const _text_t* value, int& setting)
+inline void loadSetting(const char* value, int& setting)
 {
    if (value) {
       setting = _ELENA_::StringHelper::strToInt(value);
@@ -46,36 +48,39 @@ inline void loadSetting(const _text_t* value, int& setting)
 
 inline void loadSection(ConfigCategoryIterator it, Settings::PathMapping& list)
 {
+   IdentifierString value;
    while (!it.Eof()) {
+      value.copy((char*)*it);
+
       list.erase(it.key());
-      list.add(it.key(), StringHelper::clone((_text_t*)*it), true);
+      list.add(it.key(), value.clone(), true);
 
       it++;
    }
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const _text_t* section, const _text_t* setting, bool value, bool defaultValue)
+inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, bool value, bool defaultValue)
 {
    if (value != defaultValue)
       config.setSetting(section, setting, value);
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const _text_t* section, const _text_t* setting, size_t value, size_t defaultValue)
+inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, size_t value, size_t defaultValue)
 {
    if (value != defaultValue)
       config.setSetting(section, setting, value);
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const _text_t* section, const _text_t* setting, int value, int defaultValue)
+inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, int value, int defaultValue)
 {
    if (value != defaultValue)
       config.setSetting(section, setting, value);
 }
 
-inline void saveSection(_ELENA_::IniConfigFile& config, const _text_t* section, Settings::PathMapping& list)
+inline void saveSection(_ELENA_::IniConfigFile& config, const char* section, Settings::PathMapping& list)
 {
    for(Settings::PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
-      config.setSetting(section, it.key(), *it);
+      config.setSetting(section, it.key(), ParamString(*it));
    }
 }
 
@@ -173,8 +178,8 @@ Settings::PathMapping Settings :: libraryRoots = PathMapping(NULL, freestr);
 
 void Settings :: init(const _path_t* packagePath, const _path_t* libraryPath)
 {
-   packageRoots.add(_T("default"), StringHelper::clone(packagePath));
-   libraryRoots.add(_T("default"), StringHelper::clone(libraryPath));
+   packageRoots.add("default", StringHelper::clone(packagePath));
+   libraryRoots.add("default", StringHelper::clone(libraryPath));
 }
 
 void Settings :: load(_ELENA_::IniConfigFile& config)
@@ -207,7 +212,7 @@ void Settings :: load(_ELENA_::IniConfigFile& config)
 void Settings :: save(_ELENA_::IniConfigFile& config)
 {
    if (!defaultProject.isEmpty() && lastProjectRemember)
-      config.setSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING, defaultProject);
+      config.setSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING, ParamString(defaultProject));
 
    saveSetting(config, SETTINGS_SECTION, TAB_USING_SETTING, tabCharUsing, false);
    saveSetting(config, SETTINGS_SECTION, MAXIMIZED_SETTING, appMaximized, true);
@@ -234,12 +239,12 @@ void Settings :: save(_ELENA_::IniConfigFile& config)
 
 void Settings :: onNewProjectTemplate()
 {
-   const _text_t* projectTemplate = Project::getTemplate();
+   const char* projectTemplate = Project::getTemplate();
 
    // reload package root
    const _path_t* path = packageRoots.get(projectTemplate);
    if (_ELENA_::emptystr(path))
-      path = packageRoots.get(_T("default"));
+      path = packageRoots.get("default");
 
    Paths::packageRoot.copy(path);
    Paths::resolveRelativePath(Paths::packageRoot, Paths::appPath);
@@ -248,7 +253,7 @@ void Settings :: onNewProjectTemplate()
    // reload library root
    path = libraryRoots.get(projectTemplate);
    if (_ELENA_::emptystr(path))
-      path = libraryRoots.get(_T("default"));
+      path = libraryRoots.get("default");
 
    Paths::libraryRoot.copy(path);
    Paths::resolveRelativePath(Paths::libraryRoot, Paths::appPath);
@@ -275,61 +280,61 @@ IniConfigFile Project :: _config = IniConfigFile();
 Path          Project :: _path = Path();
 FileName      Project :: _name = FileName();
 
-const _text_t* Project :: getPackage()
+const char* Project :: getPackage()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_PACKAGE_SETTING);
 }
 
-const _text_t* Project :: getTemplate()
+const char* Project :: getTemplate()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_TEMPLATE_SETTING);
 }
 
-const _text_t* Project :: getOptions()
+const char* Project :: getOptions()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_COMPILER_OPTIONS);
 }
 
-const _text_t* Project :: getTarget()
+const char* Project :: getTarget()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_EXECUTABLE_SETTING);
 }
 
-const _path_t* Project :: getOutputPath()
+const char* Project :: getOutputPath()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_OUTPUT_SETTING);
 }
 
-const _path_t* Project :: getVMPath()
+const char* Project :: getVMPath()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_VMPATH_SETTING);
 }
 
-const _path_t* Project :: getArguments()
+const char* Project :: getArguments()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_ARGUMENT_SETTING);
 }
 
 int Project :: getDebugMode()
 {
-   const _text_t* mode = _config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
-   if (_ELENA_::StringHelper::compare(mode, _T("-1"))) {
+   const char* mode = _config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
+   if (_ELENA_::StringHelper::compare(mode, "-1")) {
       return -1;
    }
-   else if (_ELENA_::StringHelper::compare(mode, _T("-2"))) {
+   else if (_ELENA_::StringHelper::compare(mode, "-2")) {
       return -2;
    }
    else return 0;
 }
 
-bool Project :: getBoolSetting(const _text_t* name)
+bool Project :: getBoolSetting(const char* name)
 {
-   const _text_t* value = _config.getSetting(IDE_PROJECT_SECTION, name);
+   const char* value = _config.getSetting(IDE_PROJECT_SECTION, name);
 
-   return _ELENA_::StringHelper::compare(value, _T("-1"));
+   return _ELENA_::StringHelper::compare(value, "-1");
 }
 
-void Project :: setSectionOption(const _text_t* option, const _text_t* value)
+void Project :: setSectionOption(const char* option, const char* value)
 {
    if (!_ELENA_::emptystr(value)) {
       _config.setSetting(IDE_PROJECT_SECTION, option, value);
@@ -339,37 +344,37 @@ void Project :: setSectionOption(const _text_t* option, const _text_t* value)
    _changed = true;
 }
 
-void Project :: setTarget(const _text_t* target)
+void Project :: setTarget(const char* target)
 {
    setSectionOption(IDE_EXECUTABLE_SETTING, target);
 }
 
-void Project :: setArguments(const _text_t* arguments)
+void Project :: setArguments(const char* arguments)
 {
    setSectionOption(IDE_ARGUMENT_SETTING, arguments);
 }
 
-void Project :: setTemplate(const _text_t* templateName)
+void Project :: setTemplate(const char* templateName)
 {
    setSectionOption(IDE_TEMPLATE_SETTING, templateName);
 }
 
-void Project :: setOutputPath(const _path_t* path)
+void Project :: setOutputPath(const char* path)
 {
    setSectionOption(IDE_OUTPUT_SETTING, path);
 }
 
-void Project :: setVMPath(const _path_t* path)
+void Project :: setVMPath(const char* path)
 {
    setSectionOption(IDE_VMPATH_SETTING, path);
 }
 
-void Project :: setOptions(const _text_t* options)
+void Project :: setOptions(const char* options)
 {
    setSectionOption(IDE_COMPILER_OPTIONS, options);
 }
 
-void Project :: setPackage(const _text_t* package)
+void Project :: setPackage(const char* package)
 {
    setSectionOption(IDE_PACKAGE_SETTING, package);
 }
@@ -384,19 +389,19 @@ void Project:: setDebugMode(int mode)
    _changed = true;
 }
 
-void Project :: setBoolSetting(const _text_t* key, bool value)
+void Project :: setBoolSetting(const char* key, bool value)
 {
-   setSectionOption(key, value ? _T("-1") : _T("0"));
+   setSectionOption(key, value ? "-1" : "0");
 }
 
 void Project :: refresh()
 {
-   const _text_t* projectTemplate = getTemplate();
+   const char* projectTemplate = getTemplate();
 
    // reload package root
    const _path_t* templatePath = Settings::packageRoots.get(projectTemplate);
    if (_ELENA_::emptystr(templatePath))
-      templatePath = Settings::packageRoots.get(_T("default"));
+      templatePath = Settings::packageRoots.get("default");
 
    Paths::packageRoot.copy(templatePath);
    Paths::resolveRelativePath(Paths::packageRoot, Paths::appPath);
@@ -405,7 +410,7 @@ void Project :: refresh()
    // reload library root
    templatePath = Settings::libraryRoots.get(projectTemplate);
    if (_ELENA_::emptystr(templatePath))
-      templatePath = Settings::libraryRoots.get(_T("default"));
+      templatePath = Settings::libraryRoots.get("default");
 
    Paths::libraryRoot.copy(templatePath);
    Paths::resolveRelativePath(Paths::libraryRoot, Paths::appPath);
@@ -416,11 +421,7 @@ bool Project :: open(const _path_t* path)
 {
    _config.clear();
 
-   int encoding = Settings::defaultEncoding;
-   if (encoding == feUTF16)   // !! HOTFIX: it is not possible to open Ansi files if Unicode is a default encoding
-      encoding = 0;
-
-   if (!_config.load(path, encoding))
+   if (!_config.load(path, _ELENA_::feUTF8))
       return false;
 
    rename(path);
@@ -448,7 +449,7 @@ void Project :: save()
    Path cfgPath(_path, _name);
    cfgPath.appendExtension(_T("prj"));
 
-   _config.save(cfgPath, Settings::defaultEncoding);
+   _config.save(cfgPath, _ELENA_::feUTF8);
 
    _changed = false;
 }
@@ -506,7 +507,7 @@ bool Project :: isIncluded(const _path_t* path)
 
    ConfigCategoryIterator it = SourceFiles();
    while (!it.Eof()) {
-      if (StringHelper::compare(relPath, it.key())) {
+      if (ConstantIdentifier::compare(relPath, it.key())) {
          return true;
       }
       it++;
@@ -519,7 +520,9 @@ void Project :: includeSource(const _path_t* path)
    Path relPath(path);
    Paths::makeRelativePath(relPath, _path);
 
-   _config.setSetting(IDE_FILES_SECTION, StringHelper::clone(relPath), DEFAULT_STR);
+   ParamString value(relPath);
+
+   _config.setSetting(IDE_FILES_SECTION, value.clone(), (const char*)NULL);
 
    _changed = true;
 }
@@ -529,7 +532,7 @@ void Project :: excludeSource(const _path_t* path)
    Path relPath(path);
    Paths::makeRelativePath(relPath, _path);
 
-   _config.clear(IDE_FILES_SECTION, relPath);
+   _config.clear(IDE_FILES_SECTION, ParamString(relPath));
 
    _changed = true;
 }
@@ -543,14 +546,14 @@ void Project :: clearForwards()
 
 void Project :: addForward(const _text_t* name, const _text_t* reference)
 {
-   _config.setSetting(IDE_FORWARDS_SECTION, name, reference);
+   _config.setSetting(IDE_FORWARDS_SECTION, ParamString(name), ParamString(reference));
 
    _changed = true;
 }
 
 void Project :: retrievePath(const wchar16_t* name, _ELENA_::Path & path, const _path_t* extension)
 {
-   const _text_t* package = getPackage();
+   IdentifierString package(getPackage());
 
    // if it is the root package
    if (StringHelper::compare(name, package)) {

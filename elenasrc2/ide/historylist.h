@@ -18,8 +18,8 @@ namespace _GUI_
 class RecentList : public MenuHistoryList
 {
 public:
-   void load(_ELENA_::IniConfigFile& file, const _text_t* section);
-   void save(_ELENA_::IniConfigFile& file, const _text_t* section);
+   void load(_ELENA_::IniConfigFile& file, const char* section);
+   void save(_ELENA_::IniConfigFile& file, const char* section);
 
    RecentList(int maxCount, int menuBaseId);
 };

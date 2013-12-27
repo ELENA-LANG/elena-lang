@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2013, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ bool IniConfigFile :: load(const _path_t* path, int encoding)
    if (!reader.isOpened())
       return false;
 
-   _text_t buffer[BLOCK_SIZE];
+   char buffer[BLOCK_SIZE];
    while (reader.readString(line, buffer)) {
       line.trim('\n');
       line.trim('\r');
@@ -54,7 +54,7 @@ bool IniConfigFile :: load(const _path_t* path, int encoding)
 
             _settings.add(key, subKey, line.clone(pos + 1));
          }
-         else _settings.add(key, line, (_text_t*)NULL);
+         else _settings.add(key, line, (char*)NULL);
       }
    }
    return true;
@@ -68,7 +68,7 @@ bool IniConfigFile :: save(const _path_t* path, int encoding)
       return false;
 
    // goes through the section keys
-   _Iterator<ConfigSettings::VItem, _MapItem<const _text_t*, ConfigSettings::VItem>, const _text_t*> it = _settings.start();
+   _Iterator<ConfigSettings::VItem, _MapItem<const char*, ConfigSettings::VItem>, const char*> it = _settings.start();
    while (!it.Eof()) {
       ConfigCategoryIterator cat_it = _settings.getIt(it.key());
       if (!cat_it.Eof()) {
@@ -78,7 +78,7 @@ bool IniConfigFile :: save(const _path_t* path, int encoding)
 
          while (!cat_it.Eof()) {
             writer.writeText(cat_it.key());
-            const _text_t* value = *cat_it;
+            const char* value = *cat_it;
             if (!emptystr(value)) {
                writer.writeText("=");
                writer.writeTextNewLine(value);
@@ -94,43 +94,43 @@ bool IniConfigFile :: save(const _path_t* path, int encoding)
    return true;
 }
 
-void IniConfigFile :: setSetting(const _text_t* category, const _text_t* key, const _text_t* value)
+void IniConfigFile :: setSetting(const char* category, const char* key, const char* value)
 {
    _settings.add(category, key, StringHelper::clone(value));
 }
 
-void IniConfigFile :: setSetting(const _text_t* category, const _text_t* key, int value)
+void IniConfigFile :: setSetting(const char* category, const char* key, int value)
 {
-   String<_text_t, 15> string;
+   String<char, 15> string;
    string.appendInt(value);
 
    _settings.add(category, key, string.clone());
 }
 
-void IniConfigFile :: setSetting(const _text_t* category, const _text_t* key, size_t value)
+void IniConfigFile :: setSetting(const char* category, const char* key, size_t value)
 {
-   String<_text_t, 15> string;
+   String<char, 15> string;
    string.appendInt(value);
 
    _settings.add(category, key, string.clone());
 }
 
-void IniConfigFile :: setSetting(const _text_t* category, const _text_t* key, bool value)
+void IniConfigFile :: setSetting(const char* category, const char* key, bool value)
 {
    _settings.add(category, key, value ? "-1" : "0");
 }
 
-const _text_t* IniConfigFile :: getSetting(const _text_t* category, const _text_t* key, const _text_t* defaultValue)
+const char* IniConfigFile :: getSetting(const char* category, const char* key, const char* defaultValue)
 {
    return _settings.get(category, key, defaultValue);
 }
 
-void IniConfigFile :: clear(const _text_t* category, const _text_t* key)
+void IniConfigFile :: clear(const char* category, const char* key)
 {
 	_settings.clear(category, key);
 }
 
-void IniConfigFile :: clear(const _text_t* category)
+void IniConfigFile :: clear(const char* category)
 {
    _settings.clear(category);
 }

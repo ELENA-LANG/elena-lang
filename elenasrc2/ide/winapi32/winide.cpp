@@ -606,7 +606,7 @@ bool WIN32IDE :: compileProject(int postponedAction)
 
    _ELENA_::Path cmdLine(/*Settings::unicodeELC ? _T("elc.exe -xunicode") : */_T("elc.exe"));
 
-   const wchar_t* options = Project::getOptions();
+   const char* options = Project::getOptions();
    if (!_ELENA_::emptystr(options)) {
       cmdLine.append(' ');
       cmdLine.append(options);

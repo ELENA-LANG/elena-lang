@@ -1,8 +1,15 @@
 
                                 ELENA Language 
 
-                                Version 1.9.10
+                                Version 1.9.11
  
+******************************************************************************
+                    What's New in 1.9.11 (pre release)
+******************************************************************************
+
+ELC:
+[*] configuration / project  files are UTF8 now
+
 ******************************************************************************
                     What's New in 1.9.10 (pre release)
 ******************************************************************************
@@ -24,6 +31,9 @@ ELC:
 
 Samples:
 [+] rosseta code: median, smavg, caesar, charmatch, arithmeval, combinator
+
+Misc:
+[+] Hyperactive ELENA API documentation (see doc\api) is up to date now
 
 ******************************************************************************
                     What's New in 1.9.9.11 (pre release)

@@ -7,7 +7,6 @@ Ultimate goals
 
 Version 2.0.0
 -------------
-- migrate existing rosetta code samples to lib30
 - simple byte code optimization
 - vmt-less action
 - start the code documentation
@@ -15,8 +14,6 @@ Version 2.0.0
 - migrate existing GUI samples to lib30
 - gcx alpha (test with small heap size)
 - migrate upndown to lib30
-- win32 file i/o operations should raise an exception with an error code
-- test compilation with a very long identifier names
 
 Version 2.1.0
 -------------

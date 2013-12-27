@@ -14,12 +14,12 @@
 #include "jitcompiler.h"
 
 // --- ELC default file names ---
-#define DEFAULT_CONFIG              _T("elc.cfg")
-#define SYNTAX_FILE                 _T("syntax.dat")
-#define RULES_FILE                  _T("rules.dat")
+#define DEFAULT_CONFIG              "elc.cfg"
+#define SYNTAX_FILE                 "syntax.dat"
+#define RULES_FILE                  "rules.dat"
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0001
+#define ELC_BUILD_NUMBER             0x0002
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
@@ -116,7 +116,7 @@ class Project : public _ELENA_::Project
    int _tabSize, _encoding;
 
    virtual _ELENA_::ConfigCategoryIterator getCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
-   virtual const _text_t* getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
+   virtual const char* getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
 
 public:
    _ELENA_::Path appPath;
@@ -146,7 +146,7 @@ public:
 
    virtual void loadConfig(const _path_t* path, bool root = false, bool requiered = true);
 
-   void setOption(const _text_t* value);
+   void setOption(const char* value);
 
    virtual int getDefaultEncoding() { return _encoding; }
 

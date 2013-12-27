@@ -68,13 +68,13 @@ public:
    static int find(const wchar_t* s, const wchar_t* subs, int defValue = -1);
    static int findLast(const wchar_t* s, wchar_t c, int defValue = -1);
 
-   static void copy(wchar_t* dest, const wchar_t* sour, int length);
-   static bool copy(wchar_t* dest, const char* sour, int length);
-   static bool copy(char* dest, const wchar_t* sour, int length);
+   static void copy(wchar_t* dest, const wchar_t* sour, size_t length);
+   static bool copy(wchar_t* dest, const char* sour, size_t& length);
+   static bool copy(char* dest, const wchar_t* sour, size_t& length);
 
-   static void append(wchar_t* dest, const wchar_t* sour, int length);
-   static bool append(wchar_t* dest, const char* sour, int length);
-   static bool append(char* dest, const wchar_t* sour, int length);
+   static void append(wchar_t* dest, const wchar_t* sour, size_t length);
+   static bool append(wchar_t* dest, const char* sour, size_t length);
+   static bool append(char* dest, const wchar_t* sour, size_t length);
 
    static void insert(wchar_t* s, int pos, const wchar_t* subs);
    static void move(wchar_t* s1, const wchar_t* s2, size_t length);
@@ -113,8 +113,8 @@ public:
    static int findLast(const unsigned short* s, unsigned short c, int defValue = -1);
 
    static void copy(unsigned short* dest, const unsigned short* sour, int length);
-   static bool copy(unsigned short* dest, const char* sour, size_t length);
-   static bool copy(char* dest, const unsigned short* sour, int length);
+   static bool copy(unsigned short* dest, const char* sour, size_t& length);
+   static bool copy(char* dest, const unsigned short* sour, size_t& length);
 
    static void append(unsigned short* dest, const unsigned short* sour, int length);
    static bool append(unsigned short* dest, const char* sour, int length);
@@ -237,7 +237,6 @@ public:
          _string[0] = 0;
       else if (length < size) {
          copy(s, length);
-         _string[length] = 0;
       }
    }
    void copy(const char* s, size_t length)
@@ -252,7 +251,6 @@ public:
          _string[0] = 0;
       else if (length < size) {
          copy(s, length);
-         _string[length] = 0;
       }
    }
 
@@ -432,6 +430,11 @@ public:
       append(s4);
    }
    String(const wchar16_t* s, size_t length)
+   {
+      copy(s, length);
+      _string[length] = 0;
+   }
+   String(const char* s, size_t length)
    {
       copy(s, length);
       _string[length] = 0;
@@ -642,6 +645,15 @@ public:
 
    ~DynamicString() { if (_size > 0) freestr(_string); }
 };
+
+// --- conversion routines ---
+
+inline void copystr(wchar16_t* d, const char* s)
+{
+   size_t len = strlen(s);
+   StringHelper::copy(d, s, len);
+   d[len] = 0;
+}
 
 } // _ELENA_
 

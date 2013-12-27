@@ -103,7 +103,7 @@ protected:
    ProjectSettings _settings;
 
    virtual ConfigCategoryIterator getCategory(_ConfigFile& config, ProjectSetting setting) = 0;
-   virtual const _text_t* getOption(_ConfigFile& config, ProjectSetting setting) = 0;
+   virtual const char* getOption(_ConfigFile& config, ProjectSetting setting) = 0;
 
    bool loadOption(_ConfigFile& config, ProjectSetting setting);
    void loadIntOption(_ConfigFile& config, ProjectSetting setting);

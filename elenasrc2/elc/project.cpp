@@ -56,7 +56,7 @@ bool Project :: loadOption(_ConfigFile& config, ProjectSetting setting)
 
 void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
 {
-   const _text_t* value = getOption(config, setting);
+   const char* value = getOption(config, setting);
    if (value) {
       _settings.add(setting, StringHelper::strToInt(value));
    }
@@ -64,7 +64,7 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
 
 void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue)
 {
-   const _text_t* value = getOption(config, setting);
+   const char* value = getOption(config, setting);
    if (value) {
       int intValue = StringHelper::strToInt(value);
       if (minValue > intValue)
@@ -78,7 +78,7 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int m
 
 void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment)
 {
-   const _text_t* value = getOption(config, setting);
+   const char* value = getOption(config, setting);
    if (value) {
       _settings.add(setting, align(StringHelper::strToInt(value), alignment));
    }
@@ -86,7 +86,7 @@ void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting
 
 void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
 {
-   const _text_t* value = getOption(config, setting);
+   const char* value = getOption(config, setting);
    if (value) {
       if (StringHelper::strToInt(value) != 0)
          _settings.add(setting, -1);
@@ -95,7 +95,7 @@ void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
 
 bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, const _path_t* rootPath)
 {
-   const _text_t* value = getOption(config, setting);
+   const char* value = getOption(config, setting);
    if (value) {
       Path path(rootPath, value);
 
@@ -114,7 +114,7 @@ void Project :: loadForwardCategory(_ConfigFile& config)
       // copy line key
       key.copy(it.key());
 
-      value.copy((_text_t*)*it);
+      value.copy((char*)*it);
 
       // if it is a wildcard
       if (key[getlength(key) - 1] == '*') {
@@ -142,7 +142,7 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const 
       key.lower();
 
       // copy value or key if the value is absent
-      const _text_t* value = *it;
+      const char* value = *it;
       if (emptystr(value))
          value = it.key();
 
@@ -218,7 +218,6 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
    loadCategory(config, opSources, configPath);
 
    // load forwards
-   //loadCategory(config, opForwards, NULL);
    loadForwardCategory(config);
 }
 

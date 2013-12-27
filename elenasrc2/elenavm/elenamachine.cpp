@@ -15,20 +15,20 @@ using namespace _ELENA_;
 
 #define PMODULE_LEN getlength(PACKAGE_MODULE)
 
-#define PROJECT_CATEGORY            _T("project")
-#define SYSTEM_CATEGORY             _T("system")
-#define LINKER_CATEGORY             _T("linker")
-#define LIBRARY_CATEGORY            _T("library")
-#define TEMPLATE_CATEGORY           _T("templates")
-#define PRIMITIVE_CATEGORY          _T("primitives")
-#define FORWARD_CATEGORY            _T("forwards")
+#define PROJECT_CATEGORY            "project"
+#define SYSTEM_CATEGORY             "system"
+#define LINKER_CATEGORY             "linker"
+#define LIBRARY_CATEGORY            "library"
+#define TEMPLATE_CATEGORY           "templates"
+#define PRIMITIVE_CATEGORY          "primitives"
+#define FORWARD_CATEGORY            "forwards"
 
-#define PROJECT_TEMPLATE            _T("template")
+#define PROJECT_TEMPLATE            "template"
 //#define SYSTEM_MAXTHREAD            _T("maxthread")
-#define LINKER_GCSIZE               _T("gcsize")
-#define LINKER_OBJSIZE              _T("objsize")
-#define LINKER_YGRATIO              _T("ygratio")
-#define LIBRARY_PATH                _T("path")
+#define LINKER_GCSIZE               "gcsize"
+#define LINKER_OBJSIZE              "objsize"
+#define LINKER_YGRATIO              "ygratio"
+#define LIBRARY_PATH                "path"
 
 // --- Wrapper Functions ---
 //
@@ -93,7 +93,7 @@ void InstanceConfig :: loadForwardList(IniConfigFile& config)
    }
 }
 
-void InstanceConfig :: loadList(IniConfigFile& config, const wchar_t* category, const wchar_t* path, Map<const wchar_t*, wchar_t*>* list)
+void InstanceConfig :: loadList(IniConfigFile& config, const char* category, const wchar_t* path, Map<const wchar_t*, wchar_t*>* list)
 {
    String<wchar16_t, 100> key;
 
@@ -152,7 +152,7 @@ void InstanceConfig :: init(const _path_t* configPath, IniConfigFile& config)
    ygRatio = config.getIntSetting(LINKER_CATEGORY, LINKER_YGRATIO, ygRatio);
    objSize = config.getIntSetting(LINKER_CATEGORY, LINKER_OBJSIZE, objSize);
 
-   const _text_t* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
+   const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {
       libPath.copy(configPath);
       libPath.combine(path);

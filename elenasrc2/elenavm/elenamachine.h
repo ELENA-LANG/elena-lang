@@ -63,7 +63,7 @@ struct InstanceConfig
    ForwardMap moduleForwards;
 
    void loadForwardList(IniConfigFile& config);
-   void loadList(IniConfigFile& config, const wchar16_t* category, const _path_t* path, Map<const wchar16_t*, wchar16_t*>* list);
+   void loadList(IniConfigFile& config, const char* category, const _path_t* path, Map<const wchar16_t*, wchar16_t*>* list);
    void init(const _path_t* configPath, IniConfigFile& config);
 
    bool load(const _path_t* path, Templates* templates);

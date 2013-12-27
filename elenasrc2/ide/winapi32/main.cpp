@@ -63,8 +63,9 @@ void loadCommandLine(char* cmdLine, _ELENA_::Path& configPath)
 {
    wchar_t* cmdWLine = (wchar_t*)malloc((strlen(cmdLine) + 1) * 2);
 
-   _ELENA_::StringHelper::copy(cmdWLine, cmdLine, strlen(cmdLine));
-   cmdWLine[strlen(cmdLine)] = 0;
+   size_t len = strlen(cmdLine);
+   _ELENA_::StringHelper::copy(cmdWLine, cmdLine, len);
+   cmdWLine[len] = 0;
 
    int start = 0;
    for (size_t i = 1 ; i <= wcslen(cmdWLine) ; i++) {
@@ -91,11 +92,7 @@ void loadSettings(const _path_t* path, IDE& appWindow)
 {
    _ELENA_::IniConfigFile file;
 
-   int encoding = Settings::defaultEncoding;
-   if (encoding == _ELENA_::feUTF16)   // HOTFIX: it is not possible to open Ansi files if Unicode is a default encoding
-      encoding = _ELENA_::feAnsi;
-
-   if (file.load(path, encoding)) {
+   if (file.load(path, _ELENA_::feUTF8)) {
       Settings::load(file);
 
       appWindow.loadRecentFiles(file);
@@ -113,7 +110,7 @@ void saveSettings(const _path_t* path, IDE& appWindow)
    appWindow.saveRecentFiles(file);
    appWindow.saveRecentProjects(file);
 
-   file.save(path);
+   file.save(path, _ELENA_::feUTF8);
 }
 
 // --- WinMain ---

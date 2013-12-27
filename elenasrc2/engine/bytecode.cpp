@@ -1168,22 +1168,22 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       //   StringHelper::copy(s, OPCODE_AADD, 1 + strlen(OPCODE_AADD));
       //   break;
       case bcACallVI:
-         StringHelper::copy(s, OPCODE_ACALLVI, 1 + strlen(OPCODE_ACALLVI));
+         copystr(s, OPCODE_ACALLVI);
          break;
       case bcACopyB:
-         StringHelper::copy(s, OPCODE_ACOPYB, 1 + strlen(OPCODE_ACOPYB));
+         copystr(s, OPCODE_ACOPYB);
          break;
       case bcACopyF:
-         StringHelper::copy(s, OPCODE_ACOPYF, 1 + strlen(OPCODE_ACOPYF));
+         copystr(s, OPCODE_ACOPYF);
          break;
       //case bcACopyN:
       //   StringHelper::copy(s, OPCODE_ACOPYN, 1 + strlen(OPCODE_ACOPYN));
       //   break;
       case bcACopyR:
-         StringHelper::copy(s, OPCODE_ACOPYR, 1 + strlen(OPCODE_ACOPYR));
+         copystr(s, OPCODE_ACOPYR);
          break;
       case bcACopyS:
-         StringHelper::copy(s, OPCODE_ACOPYS, 1 + strlen(OPCODE_ACOPYS));
+         copystr(s, OPCODE_ACOPYS);
          break;
 //      case bcAccCreate:
 //         StringHelper::copy(s, OPCODE_ACCCREATE, 1 + strlen(OPCODE_ACCCREATE));
@@ -1195,394 +1195,385 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
 //         StringHelper::copy(s, OPCODE_ACCGETSI, 1 + strlen(OPCODE_ACCGETSI));
 //         break;
       case bcALoadAI:
-         StringHelper::copy(s, OPCODE_ALOADAI, 1 + strlen(OPCODE_ALOADAI));
+         copystr(s, OPCODE_ALOADAI);
          break;
       case bcALoadD:
-         StringHelper::copy(s, OPCODE_ALOADD, 1 + strlen(OPCODE_ALOADD));
+         copystr(s, OPCODE_ALOADD);
          break;
       case bcALoadBI:
-         StringHelper::copy(s, OPCODE_ALOADBI, 1 + strlen(OPCODE_ALOADBI));
+         copystr(s, OPCODE_ALOADBI);
          break;
       case bcALoadFI:
-         StringHelper::copy(s, OPCODE_ALOADFI, 1 + strlen(OPCODE_ALOADFI));
+         copystr(s, OPCODE_ALOADFI);
          break;
       case bcAElse:
-         StringHelper::copy(s, OPCODE_AELSE, 1 + strlen(OPCODE_AELSE));
+         copystr(s, OPCODE_AELSE);
          break;
       case bcAElseR:
-         StringHelper::copy(s, OPCODE_AELSER, 1 + strlen(OPCODE_AELSER));
+         copystr(s, OPCODE_AELSER);
          break;
       case bcAElseSI:
-         StringHelper::copy(s, OPCODE_AELSESI, 1 + strlen(OPCODE_AELSESI));
+         copystr(s, OPCODE_AELSESI);
          break;
       case bcAJumpVI:
-         StringHelper::copy(s, OPCODE_AJUMPVI, 1 + strlen(OPCODE_AJUMPVI));
+         copystr(s, OPCODE_AJUMPVI);
          break;
       case bcALoadR:
-         StringHelper::copy(s, OPCODE_ALOADR, 1 + strlen(OPCODE_ALOADR));
+         copystr(s, OPCODE_ALOADR);
          break;
       //case bcAMul:
       //   StringHelper::copy(s, OPCODE_AMUL, 1 + strlen(OPCODE_AMUL));
       //   break;
       case bcASaveR:
-         StringHelper::copy(s, OPCODE_ASAVER, 1 + strlen(OPCODE_ASAVER));
+         copystr(s, OPCODE_ASAVER);
          break;
       case bcAThen:
-         StringHelper::copy(s, OPCODE_ATHEN, 1 + strlen(OPCODE_ATHEN));
+         copystr(s, OPCODE_ATHEN);
          break;
       case bcAThenR:
-         StringHelper::copy(s, OPCODE_ATHENR, 1 + strlen(OPCODE_ATHENR));
+         copystr(s, OPCODE_ATHENR);
          break;
       case bcAThenSI:
-         StringHelper::copy(s, OPCODE_ATHENSI, 1 + strlen(OPCODE_ATHENSI));
+         copystr(s, OPCODE_ATHENSI);
          break;
       case bcAXCopyF:
-         StringHelper::copy(s, OPCODE_AXCOPYF, 1 + strlen(OPCODE_AXCOPYF));
+         copystr(s, OPCODE_AXCOPYF);
          break;
       case bcAXSetR:
-         StringHelper::copy(s, OPCODE_AXSETR, 1 + strlen(OPCODE_AXSETR));
+         copystr(s, OPCODE_AXSETR);
          break;
       case bcALoadSI:
-         StringHelper::copy(s, OPCODE_ALOADSI, 1 + strlen(OPCODE_ALOADSI));
+         copystr(s, OPCODE_ALOADSI);
          break;
       case bcASaveBI:
-         StringHelper::copy(s, OPCODE_ASAVEBI, 1 + strlen(OPCODE_ASAVEBI));
+         copystr(s, OPCODE_ASAVEBI);
          break;
       case bcASaveFI:
-         StringHelper::copy(s, OPCODE_ASAVEFI, 1 + strlen(OPCODE_ASAVEFI));
+         copystr(s, OPCODE_ASAVEFI);
          break;
       case bcASaveSI:
-         StringHelper::copy(s, OPCODE_ASAVESI, 1 + strlen(OPCODE_ASAVESI));
+         copystr(s, OPCODE_ASAVESI);
          break;
       case bcASwapSI:
-         StringHelper::copy(s, OPCODE_ASWAPSI, 1 + strlen(OPCODE_ASWAPSI));
+         copystr(s, OPCODE_ASWAPSI);
          break;
       case bcBCopyA:
-         StringHelper::copy(s, OPCODE_BCOPYA, 1 + strlen(OPCODE_BCOPYA));
+         copystr(s, OPCODE_BCOPYA);
          break;
       case bcBox:
-         StringHelper::copy(s, OPCODE_BOX, 1 + strlen(OPCODE_BOX));
+         copystr(s, OPCODE_BOX);
          break;
       case bcBreakpoint:
-         StringHelper::copy(s, OPCODE_BREAKPOINT, 1 + strlen(OPCODE_BREAKPOINT));
+         copystr(s, OPCODE_BREAKPOINT);
          break;
       case bcBSRedirect:
-         StringHelper::copy(s, OPCODE_BSREDIRECT, 1 + strlen(OPCODE_BSREDIRECT));
+         copystr(s, OPCODE_BSREDIRECT);
          break;
       case bcBSTest:
-         StringHelper::copy(s, OPCODE_BSTEST, 1 + strlen(OPCODE_BSTEST));
+         copystr(s, OPCODE_BSTEST);
          break;
       case bcCallExtR:
-         StringHelper::copy(s, OPCODE_CALLEXTR, 1 + strlen(OPCODE_CALLEXTR));
+         copystr(s, OPCODE_CALLEXTR);
          break;
       case bcCallR:
-         StringHelper::copy(s, OPCODE_CALLR, 1 + strlen(OPCODE_CALLR));
+         copystr(s, OPCODE_CALLR);
          break;
       case bcSCallVI:
-         StringHelper::copy(s, OPCODE_SCALLVI, 1 + strlen(OPCODE_SCALLVI));
+         copystr(s, OPCODE_SCALLVI);
          break;
       case bcClose:
-         StringHelper::copy(s, OPCODE_CLOSE, 1 + strlen(OPCODE_CLOSE));
+         copystr(s, OPCODE_CLOSE);
          break;
       case bcCreate:
-         StringHelper::copy(s, OPCODE_CREATE, 1 + strlen(OPCODE_CREATE));
+         copystr(s, OPCODE_CREATE);
          break;
       case bcCreateN:
-         StringHelper::copy(s, OPCODE_CREATEN, 1 + strlen(OPCODE_CREATEN));
+         copystr(s, OPCODE_CREATEN);
          break;
       case bcDAddAI:
-         StringHelper::copy(s, OPCODE_DADDAI, 1 + strlen(OPCODE_DADDAI));
+         copystr(s, OPCODE_DADDAI);
          break;
       case bcDAddSI:
-         StringHelper::copy(s, OPCODE_DADDSI, 1 + strlen(OPCODE_DADDSI));
+         copystr(s, OPCODE_DADDSI);
          break;
       case bcDLoadAI:
-         StringHelper::copy(s, OPCODE_DLOADAI, 1 + strlen(OPCODE_DLOADAI));
+         copystr(s, OPCODE_DLOADAI);
          break;
       case bcDLoadFI:
-         StringHelper::copy(s, OPCODE_DLOADFI, 1 + strlen(OPCODE_DLOADFI));
+         copystr(s, OPCODE_DLOADFI);
          break;
       case bcDLoadSI:
-         StringHelper::copy(s, OPCODE_DLOADSI, 1 + strlen(OPCODE_DLOADSI));
+         copystr(s, OPCODE_DLOADSI);
          break;
       case bcDCopy:
-         StringHelper::copy(s, OPCODE_DCOPY, 1 + strlen(OPCODE_DCOPY));
+         copystr(s, OPCODE_DCOPY);
          break;
       case bcDDec:
-         StringHelper::copy(s, OPCODE_DDEC, 1 + strlen(OPCODE_DDEC));
+         copystr(s, OPCODE_DDEC);
          break;
       case bcDElse:
-         StringHelper::copy(s, OPCODE_DELSE, 1 + strlen(OPCODE_DELSE));
+         copystr(s, OPCODE_DELSE);
          break;
       case bcDElseN:
-         StringHelper::copy(s, OPCODE_DELSEN, 1 + strlen(OPCODE_DELSEN));
+         copystr(s, OPCODE_DELSEN);
          break;
       case bcDInc:
-         StringHelper::copy(s, OPCODE_DINC, 1 + strlen(OPCODE_DINC));
+         copystr(s, OPCODE_DINC);
          break;
       case bcDSaveAI:
-         StringHelper::copy(s, OPCODE_DSAVEAI, 1 + strlen(OPCODE_DSAVEAI));
+         copystr(s, OPCODE_DSAVEAI);
          break;
       case bcDSaveFI:
-         StringHelper::copy(s, OPCODE_DSAVEFI, 1 + strlen(OPCODE_DSAVEFI));
+         copystr(s, OPCODE_DSAVEFI);
          break;
       case bcDSaveSI:
-         StringHelper::copy(s, OPCODE_DSAVESI, 1 + strlen(OPCODE_DSAVESI));
+         copystr(s, OPCODE_DSAVESI);
          break;
       case bcDSubAI:
-         StringHelper::copy(s, OPCODE_DSUBAI, 1 + strlen(OPCODE_DSUBAI));
+         copystr(s, OPCODE_DSUBAI);
          break;
       case bcDSubSI:
-         StringHelper::copy(s, OPCODE_DSUBAI, 1 + strlen(OPCODE_DSUBSI));
+         copystr(s, OPCODE_DSUBAI);
          break;
       case bcDThen:
-         StringHelper::copy(s, OPCODE_DTHEN, 1 + strlen(OPCODE_DTHEN));
+         copystr(s, OPCODE_DTHEN);
          break;
       case bcDThenN:
-         StringHelper::copy(s, OPCODE_DTHENN, 1 + strlen(OPCODE_DTHENN));
+         copystr(s, OPCODE_DTHENN);
          break;
       case bcElseFlag:
-         StringHelper::copy(s, OPCODE_ELSEFLAG, 1 + strlen(OPCODE_ELSEFLAG));
+         copystr(s, OPCODE_ELSEFLAG);
          break;
       case bcEvalR:
-         StringHelper::copy(s, OPCODE_EVALR, 1 + strlen(OPCODE_EVALR));
+         copystr(s, OPCODE_EVALR);
          break;
       case bcExclude:
-         StringHelper::copy(s, OPCODE_EXCLUDE, 1 + strlen(OPCODE_EXCLUDE));
+         copystr(s, OPCODE_EXCLUDE);
          break;
       case bcGet:
-         StringHelper::copy(s, OPCODE_GET, 1 + strlen(OPCODE_GET));
+         copystr(s, OPCODE_GET);
          break;
       case bcGetLen:
-         StringHelper::copy(s, OPCODE_GETLEN, 1 + strlen(OPCODE_GETLEN));
+         copystr(s, OPCODE_GETLEN);
          break;
       case bcHook:
-         StringHelper::copy(s, OPCODE_HOOK, 1 + strlen(OPCODE_HOOK));
+         copystr(s, OPCODE_HOOK);
          break;
       case bcIAXCopyR:
-         StringHelper::copy(s, OPCODE_IAXCOPYR, 1 + strlen(OPCODE_IAXCOPYR));
+         copystr(s, OPCODE_IAXCOPYR);
          break;
-//      case bcIAccFillR:
-//         StringHelper::copy(s, OPCODE_IACCFILLR, 1 + strlen(OPCODE_IACCFILLR));
-//         break;
       case bcInclude:
-         StringHelper::copy(s, OPCODE_INCLUDE, 1 + strlen(OPCODE_INCLUDE));
+         copystr(s, OPCODE_INCLUDE);
          break;
-//      case bcIncFI:
-//         StringHelper::copy(s, OPCODE_INCFI, 1 + strlen(OPCODE_INCFI));
-//         break;
-//      case bcIncSI:
-//         StringHelper::copy(s, OPCODE_INCSI, 1 + strlen(OPCODE_INCSI));
-//         break;
       case bcJump:
-         StringHelper::copy(s, OPCODE_JUMP, 1 + strlen(OPCODE_JUMP));
+         copystr(s, OPCODE_JUMP);
          break;
 //      case bcJumpAcc:
-//         StringHelper::copy(s, OPCODE_JUMPACC, 1 + strlen(OPCODE_JUMPACC));
+//         copystr(s, OPCODE_JUMPACC, 1 + strlen(OPCODE_JUMPACC));
 //         break;
       case bcMAdd:
-         StringHelper::copy(s, OPCODE_MADD, 1 + strlen(OPCODE_MADD));
+         copystr(s, OPCODE_MADD);
          break;
       case bcMAddAI:
-         StringHelper::copy(s, OPCODE_MADDAI, 1 + strlen(OPCODE_MADDAI));
+         copystr(s, OPCODE_MADDAI);
          break;
       case bcMCopy:
-         StringHelper::copy(s, OPCODE_MCOPY, 1 + strlen(OPCODE_MCOPY));
+         copystr(s, OPCODE_MCOPY);
          break;
       case bcMCopySubj:
-         StringHelper::copy(s, OPCODE_MCOPYSUBJ, 1 + strlen(OPCODE_MCOPYSUBJ));
+         copystr(s, OPCODE_MCOPYSUBJ);
          break;
       case bcMCopyVerb:
-         StringHelper::copy(s, OPCODE_MCOPYVERB, 1 + strlen(OPCODE_MCOPYVERB));
+         copystr(s, OPCODE_MCOPYVERB);
          break;
       case bcMElse:
-         StringHelper::copy(s, OPCODE_MELSE, 1 + strlen(OPCODE_MELSE));
+         copystr(s, OPCODE_MELSE);
          break;
       case bcMLoadAI:
-         StringHelper::copy(s, OPCODE_MLOADAI, 1 + strlen(OPCODE_MLOADAI));
+         copystr(s, OPCODE_MLOADAI);
          break;
       case bcMLoadFI:
-         StringHelper::copy(s, OPCODE_MLOADFI, 1 + strlen(OPCODE_MLOADFI));
+         copystr(s, OPCODE_MLOADFI);
          break;
       case bcMLoadSI:
-         StringHelper::copy(s, OPCODE_MLOADSI, 1 + strlen(OPCODE_MLOADSI));
+         copystr(s, OPCODE_MLOADSI);
          break;
 //      case bcMccElseAcc:
-//         StringHelper::copy(s, OPCODE_MCCELSEACC, 1 + strlen(OPCODE_MCCELSEACC));
+//         copystr(s, OPCODE_MCCELSEACC, 1 + strlen(OPCODE_MCCELSEACC));
 //         break;
       case bcMElseAI:
-         StringHelper::copy(s, OPCODE_MELSEAI, 1 + strlen(OPCODE_MELSEAI));
+         copystr(s, OPCODE_MELSEAI);
          break;
 //      case bcMccReverse:
-//         StringHelper::copy(s, OPCODE_MCCREVERSE, 1 + strlen(OPCODE_MCCREVERSE));
+//         copystr(s, OPCODE_MCCREVERSE, 1 + strlen(OPCODE_MCCREVERSE));
 //         break;
       case bcMQuit:
-         StringHelper::copy(s, OPCODE_MQUIT, 1 + strlen(OPCODE_MQUIT));
+         copystr(s, OPCODE_MQUIT);
          break;
       case bcMSaveParams:
-         StringHelper::copy(s, OPCODE_MSAVEPARAMS, 1 + strlen(OPCODE_MSAVEPARAMS));
+         copystr(s, OPCODE_MSAVEPARAMS);
          break;
       case bcMThen:
-         StringHelper::copy(s, OPCODE_MTHEN, 1 + strlen(OPCODE_MTHEN));
+         copystr(s, OPCODE_MTHEN);
          break;
 //      case bcMccThenAcc:
-//         StringHelper::copy(s, OPCODE_MCCTHENACC, 1 + strlen(OPCODE_MCCTHENACC));
+//         copystr(s, OPCODE_MCCTHENACC, 1 + strlen(OPCODE_MCCTHENACC));
 //         break;
 //      case bcMccThenAccI:
-//         StringHelper::copy(s, OPCODE_MCCTHENACCI, 1 + strlen(OPCODE_MCCTHENACCI));
+//         copystr(s, OPCODE_MCCTHENACCI, 1 + strlen(OPCODE_MCCTHENACCI));
 //         break;
       case bcNBox:
-         StringHelper::copy(s, OPCODE_NBOX, 1 + strlen(OPCODE_NBOX));
+         copystr(s, OPCODE_NBOX);
          break;
       case bcNext:
-         StringHelper::copy(s, OPCODE_NEXT, 1 + strlen(OPCODE_NEXT));
+         copystr(s, OPCODE_NEXT);
          break;
       case bcNop:
-         StringHelper::copy(s, OPCODE_NOP, 1 + strlen(OPCODE_NOP));
+         copystr(s, OPCODE_NOP);
          break;
       case bcOpen:
-         StringHelper::copy(s, OPCODE_OPEN, 1 + strlen(OPCODE_OPEN));
+         copystr(s, OPCODE_OPEN);
          break;
       case bcPop:
-         StringHelper::copy(s, OPCODE_POP, 1 + strlen(OPCODE_POP));
+         copystr(s, OPCODE_POP);
          break;
       case bcPopA:
-         StringHelper::copy(s, OPCODE_POPA, 1 + strlen(OPCODE_POPA));
+         copystr(s, OPCODE_POPA);
          break;
       case bcPopAI:
-         StringHelper::copy(s, OPCODE_POPAI, 1 + strlen(OPCODE_POPAI));
+         copystr(s, OPCODE_POPAI);
          break;
       case bcPopFI:
-         StringHelper::copy(s, OPCODE_POPFI, 1 + strlen(OPCODE_POPFI));
+         copystr(s, OPCODE_POPFI);
          break;
       case bcPopB:
-         StringHelper::copy(s, OPCODE_POPB, 1 + strlen(OPCODE_POPB));
+         copystr(s, OPCODE_POPB);
          break;
       case bcPopI:
-         StringHelper::copy(s, OPCODE_POPI, 1 + strlen(OPCODE_POPI));
+         copystr(s, OPCODE_POPI);
          break;
       case bcPopM:
-         StringHelper::copy(s, OPCODE_POPM, 1 + strlen(OPCODE_POPM));
+         copystr(s, OPCODE_POPM);
          break;
       case bcPopBI:
-         StringHelper::copy(s, OPCODE_POPBI, 1 + strlen(OPCODE_POPBI));
+         copystr(s, OPCODE_POPBI);
          break;
       case bcPopSI:
-         StringHelper::copy(s, OPCODE_POPSI, 1 + strlen(OPCODE_POPSI));
+         copystr(s, OPCODE_POPSI);
          break;
       case bcPushAI:
-         StringHelper::copy(s, OPCODE_PUSHAI, 1 + strlen(OPCODE_PUSHAI));
+         copystr(s, OPCODE_PUSHAI);
          break;
       case bcPushA:
-         StringHelper::copy(s, OPCODE_PUSHA, 1 + strlen(OPCODE_PUSHA));
+         copystr(s, OPCODE_PUSHA);
          break;
       case bcPushB:
-         StringHelper::copy(s, OPCODE_PUSHB, 1 + strlen(OPCODE_PUSHB));
+         copystr(s, OPCODE_PUSHB);
          break;
       case bcPushBI:
-         StringHelper::copy(s, OPCODE_PUSHBI, 1 + strlen(OPCODE_PUSHBI));
+         copystr(s, OPCODE_PUSHBI);
          break;
       case bcPushF:
-         StringHelper::copy(s, OPCODE_PUSHF, 1 + strlen(OPCODE_PUSHF));
+         copystr(s, OPCODE_PUSHF);
          break;
       case bcPushFI:
-         StringHelper::copy(s, OPCODE_PUSHFI, 1 + strlen(OPCODE_PUSHFI));
+         copystr(s, OPCODE_PUSHFI);
          break;
 //      case bcPushI:
-//         StringHelper::copy(s, OPCODE_PUSHI, 1 + strlen(OPCODE_PUSHI));
+//         copystr(s, OPCODE_PUSHI, 1 + strlen(OPCODE_PUSHI));
 //         break;
       case bcPushM:
-         StringHelper::copy(s, OPCODE_PUSHM, 1 + strlen(OPCODE_PUSHM));
+         copystr(s, OPCODE_PUSHM);
          break;
       case bcPushN:
-         StringHelper::copy(s, OPCODE_PUSHN, 1 + strlen(OPCODE_PUSHN));
+         copystr(s, OPCODE_PUSHN);
          break;
       case bcPushR:
-         StringHelper::copy(s, OPCODE_PUSHR, 1 + strlen(OPCODE_PUSHR));
+         copystr(s, OPCODE_PUSHR);
          break;
       case bcPushSI:
-         StringHelper::copy(s, OPCODE_PUSHSI, 1 + strlen(OPCODE_PUSHSI));
+         copystr(s, OPCODE_PUSHSI);
          break;
 //      case bcPushSPI:
-//         StringHelper::copy(s, OPCODE_PUSHSPI, 1 + strlen(OPCODE_PUSHSPI));
+//         copystr(s, OPCODE_PUSHSPI, 1 + strlen(OPCODE_PUSHSPI));
 //         break;
       case bcQuit:
-         StringHelper::copy(s, OPCODE_QUIT, 1 + strlen(OPCODE_QUIT));
+         copystr(s, OPCODE_QUIT);
          break;
       case bcQuitN:
-         StringHelper::copy(s, OPCODE_QUITN, 1 + strlen(OPCODE_QUITN));
+         copystr(s, OPCODE_QUITN);
          break;
 //      case bcRCallN:
-//         StringHelper::copy(s, OPCODE_RCALLM, 1 + strlen(OPCODE_RCALLN));
+//         copystr(s, OPCODE_RCALLM, 1 + strlen(OPCODE_RCALLN));
 //         break;
       case bcReserve:
-         StringHelper::copy(s, OPCODE_RESERVE, 1 + strlen(OPCODE_RESERVE));
+         copystr(s, OPCODE_RESERVE);
          break;
       case bcRestore:
-         StringHelper::copy(s, OPCODE_RESTORE, 1 + strlen(OPCODE_RESTORE));
+         copystr(s, OPCODE_RESTORE);
          break;
       //case bcRethrow:
-      //   StringHelper::copy(s, OPCODE_RETHROW, 1 + strlen(OPCODE_RETHROW));
+      //   copystr(s, OPCODE_RETHROW, 1 + strlen(OPCODE_RETHROW));
       //   break;
       case bcSet:
-         StringHelper::copy(s, OPCODE_SET, 1 + strlen(OPCODE_SET));
+         copystr(s, OPCODE_SET);
          break;
       case bcSCopyF:
-         StringHelper::copy(s, OPCODE_SCOPYF, 1 + strlen(OPCODE_SCOPYF));
+         copystr(s, OPCODE_SCOPYF);
          break;
       case bcSwapSI:
-         StringHelper::copy(s, OPCODE_SWAPSI, 1 + strlen(OPCODE_SWAPSI));
+         copystr(s, OPCODE_SWAPSI);
          break;
       case bcTest:
-         StringHelper::copy(s, OPCODE_TEST, 1 + strlen(OPCODE_TEST));
+         copystr(s, OPCODE_TEST);
          break;
       case bcTestFlag:
-         StringHelper::copy(s, OPCODE_TESTFLAG, 1 + strlen(OPCODE_TESTFLAG));
+         copystr(s, OPCODE_TESTFLAG);
          break;
       case bcThrow:
-         StringHelper::copy(s, OPCODE_THROW, 1 + strlen(OPCODE_THROW));
+         copystr(s, OPCODE_THROW);
          break;
       case bcUnhook:
-         StringHelper::copy(s, OPCODE_UNHOOK, 1 + strlen(OPCODE_UNHOOK));
+         copystr(s, OPCODE_UNHOOK);
          break;
 //      case bcXAccSaveFI:
-//         StringHelper::copy(s, OPCODE_XACCSAVEFI, 1 + strlen(OPCODE_XACCSAVEFI));
+//         copystr(s, OPCODE_XACCSAVEFI, 1 + strlen(OPCODE_XACCSAVEFI));
 //         break;
 //      case bcXMccCopyM:
-//         StringHelper::copy(s, OPCODE_MCCCOPYM, 1 + strlen(OPCODE_XMCCCOPYM));
+//         copystr(s, OPCODE_MCCCOPYM, 1 + strlen(OPCODE_XMCCCOPYM));
 //         break;
       case bcWSTest:
-         StringHelper::copy(s, OPCODE_WSTEST, 1 + strlen(OPCODE_WSTEST));
+         copystr(s, OPCODE_WSTEST);
          break;
       case bcXPopAI:
-         StringHelper::copy(s, OPCODE_XPOPAI, 1 + strlen(OPCODE_XPOPAI));
+         copystr(s, OPCODE_XPOPAI);
          break;
       case bcXPushF:
-         StringHelper::copy(s, OPCODE_XPUSHF, 1 + strlen(OPCODE_XPUSHF));
+         copystr(s, OPCODE_XPUSHF);
          break;
       case bcXCallRM:
-         StringHelper::copy(s, OPCODE_XCALLRM, 1 + strlen(OPCODE_XCALLRM));
+         copystr(s, OPCODE_XCALLRM);
          break;
       case bcNFunc:
-         StringHelper::copy(s, "n", 2);
+         copystr(s, "n");
          break;
       case bcLFunc:
-         StringHelper::copy(s, "l", 2);
+         copystr(s, "l");
          break;
       case bcRFunc:
-         StringHelper::copy(s, "r", 2);
+         copystr(s, "r");
          break;
       case bcFunc:
-         StringHelper::copy(s, "rf", 3);
+         copystr(s, "rf");
          break;
       case bcWSFunc:
-         StringHelper::copy(s, "ws", 3);
+         copystr(s, "ws");
          break;
       case bcBSFunc:
-         StringHelper::copy(s, "bs", 3);
+         copystr(s, "bs");
          break;
       default:
-         StringHelper::copy(s, OPCODE_UNKNOWN, 1 + strlen(OPCODE_UNKNOWN));
+         copystr(s, OPCODE_UNKNOWN);
    }
 
    return s;
@@ -1741,151 +1732,151 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
 {
    switch (code) {
       case fnAbs:
-         StringHelper::copy(s, FUNC_ABS, 1 + strlen(FUNC_ABS));
+         copystr(s, FUNC_ABS);
          break;
       case fnAdd:
-         StringHelper::copy(s, FUNC_ADD, 1 + strlen(FUNC_ADD));
+         copystr(s, FUNC_ADD);
          break;
       case fnAddStr:
-         StringHelper::copy(s, FUNC_ADDSTR, 1 + strlen(FUNC_ADDSTR));
+         copystr(s, FUNC_ADDSTR);
          break;
       case fnAnd:
-         StringHelper::copy(s, FUNC_AND, 1 + strlen(FUNC_AND));
+         copystr(s, FUNC_AND);
          break;
       case fnCopy:
-         StringHelper::copy(s, FUNC_COPY, 1 + strlen(FUNC_COPY));
+         copystr(s, FUNC_COPY);
          break;
       case fnCopyBuf:
-         StringHelper::copy(s, FUNC_COPYBUF, 1 + strlen(FUNC_COPYBUF));
+         copystr(s, FUNC_COPYBUF);
          break;
       case fnCopyInt:
-         StringHelper::copy(s, FUNC_COPYINT, 1 + strlen(FUNC_COPYINT));
+         copystr(s, FUNC_COPYINT);
          break;
       case fnCopyLong:
-         StringHelper::copy(s, FUNC_COPYLONG, 1 + strlen(FUNC_COPYLONG));
+         copystr(s, FUNC_COPYLONG);
          break;
       case fnCopyReal:
-         StringHelper::copy(s, FUNC_COPYREAL, 1 + strlen(FUNC_COPYREAL));
+         copystr(s, FUNC_COPYREAL);
          break;
       case fnCopyStr:
-         StringHelper::copy(s, FUNC_COPYSTR, 1 + strlen(FUNC_COPYSTR));
+         copystr(s, FUNC_COPYSTR);
          break;
       case fnCreate:
-         StringHelper::copy(s, FUNC_CREATE, 1 + strlen(FUNC_CREATE));
+         copystr(s, FUNC_CREATE);
          break;
       case fnDeleteStr:
-         StringHelper::copy(s, FUNC_DELETESTR, 1 + strlen(FUNC_DELETESTR));
+         copystr(s, FUNC_DELETESTR);
          break;
       case fnDiv:
-         StringHelper::copy(s, FUNC_DIV, 1 + strlen(FUNC_DIV));
+         copystr(s, FUNC_DIV);
          break;
       case fnEqual:
-         StringHelper::copy(s, FUNC_EQUAL, 1 + strlen(FUNC_EQUAL));
+         copystr(s, FUNC_EQUAL);
          break;
       case fnEval:
-         StringHelper::copy(s, FUNC_EVAL, 1 + strlen(FUNC_EVAL));
+         copystr(s, FUNC_EVAL);
          break;
       case fnExp:
-         StringHelper::copy(s, FUNC_EXP, 1 + strlen(FUNC_EXP));
+         copystr(s, FUNC_EXP);
          break;
       case fnGetAt:
-         StringHelper::copy(s, FUNC_GETAT, 1 + strlen(FUNC_GETAT));
+         copystr(s, FUNC_GETAT);
          break;
       case fnGetBuf:
-         StringHelper::copy(s, FUNC_GETBUF, 1 + strlen(FUNC_GETBUF));
+         copystr(s, FUNC_GETBUF);
          break;
       case fnGetInt:
-         StringHelper::copy(s, FUNC_GETINT, 1 + strlen(FUNC_GETINT));
+         copystr(s, FUNC_GETINT);
          break;
       case fnGetLen:
-         StringHelper::copy(s, FUNC_GETLEN, 1 + strlen(FUNC_GETLEN));
+         copystr(s, FUNC_GETLEN);
          break;
       case fnGetLenZ:
-         StringHelper::copy(s, FUNC_GETLENZ, 1 + strlen(FUNC_GETLENZ));
+         copystr(s, FUNC_GETLENZ);
          break;
       case fnGetWord:
-         StringHelper::copy(s, FUNC_GETWORD, 1 + strlen(FUNC_GETWORD));
+         copystr(s, FUNC_GETWORD);
          break;
       case fnInc:
-         StringHelper::copy(s, FUNC_INC, 1 + strlen(FUNC_INC));
+         copystr(s, FUNC_INC);
          break;
       case fnIndexOf:
-         StringHelper::copy(s, FUNC_INDEXOF, 1 + strlen(FUNC_INDEXOF));
+         copystr(s, FUNC_INDEXOF);
          break;
       case fnIndexOfStr:
-         StringHelper::copy(s, FUNC_INDEXOFSTR, 1 + strlen(FUNC_INDEXOFSTR));
+         copystr(s, FUNC_INDEXOFSTR);
          break;
       case fnIndexOfWord:
-         StringHelper::copy(s, FUNC_INDEXOFWORD, 1 + strlen(FUNC_INDEXOFWORD));
+         copystr(s, FUNC_INDEXOFWORD);
          break;
       case fnLess:
-         StringHelper::copy(s, FUNC_LESS, 1 + strlen(FUNC_LESS));
+         copystr(s, FUNC_LESS);
          break;
       case fnLn:
-         StringHelper::copy(s, FUNC_LN, 1 + strlen(FUNC_LN));
+         copystr(s, FUNC_LN);
          break;
       case fnLoad:
-         StringHelper::copy(s, FUNC_LOAD, 1 + strlen(FUNC_LOAD));
+         copystr(s, FUNC_LOAD);
          break;
       case fnLoadName:
-         StringHelper::copy(s, FUNC_LOADNAME, 1 + strlen(FUNC_LOADSTR));
+         copystr(s, FUNC_LOADNAME);
          break;
       case fnLoadStr:
-         StringHelper::copy(s, FUNC_LOADSTR, 1 + strlen(FUNC_LOADSTR));
+         copystr(s, FUNC_LOADSTR);
          break;
       case fnMul:
-         StringHelper::copy(s, FUNC_MUL, 1 + strlen(FUNC_MUL));
+         copystr(s, FUNC_MUL);
          break;
       case fnNot:
-         StringHelper::copy(s, FUNC_NOT, 1 + strlen(FUNC_NOT));
+         copystr(s, FUNC_NOT);
          break;
       case fnNotGreater:
-         StringHelper::copy(s, FUNC_NOTGREATER, 1 + strlen(FUNC_NOTGREATER));
+         copystr(s, FUNC_NOTGREATER);
          break;
       case fnOr:
-         StringHelper::copy(s, FUNC_OR, 1 + strlen(FUNC_OR));
+         copystr(s, FUNC_OR);
          break;
       case fnReserve:
-         StringHelper::copy(s, FUNC_RESERVE, 1 + strlen(FUNC_RESERVE));
+         copystr(s, FUNC_RESERVE);
          break;
       case fnRndNew:
-         StringHelper::copy(s, FUNC_RNDNEW, 1 + strlen(FUNC_RNDNEW));
+         copystr(s, FUNC_RNDNEW);
          break;
       case fnRndNext:
-         StringHelper::copy(s, FUNC_RNDNEXT, 1 + strlen(FUNC_RNDNEXT));
+         copystr(s, FUNC_RNDNEXT);
          break;
       case fnRound:
-         StringHelper::copy(s, FUNC_ROUND, 1 + strlen(FUNC_ROUND));
+         copystr(s, FUNC_ROUND);
          break;
       case fnSave:
-         StringHelper::copy(s, FUNC_SAVE, 1 + strlen(FUNC_SAVE));
+         copystr(s, FUNC_SAVE);
          break;
       case fnSetAt:
-         StringHelper::copy(s, FUNC_SETAT, 1 + strlen(FUNC_SETAT));
+         copystr(s, FUNC_SETAT);
          break;
       case fnSetBuf:
-         StringHelper::copy(s, FUNC_SETBUF, 1 + strlen(FUNC_SETBUF));
+         copystr(s, FUNC_SETBUF);
          break;
       case fnSetInt:
-         StringHelper::copy(s, FUNC_SETINT, 1 + strlen(FUNC_SETINT));
+         copystr(s, FUNC_SETINT);
          break;
       case fnSetLen:
-         StringHelper::copy(s, FUNC_SETLEN, 1 + strlen(FUNC_SETLEN));
+         copystr(s, FUNC_SETLEN);
          break;
       case fnSetWord:
-         StringHelper::copy(s, FUNC_SETWORD, 1 + strlen(FUNC_SETWORD));
+         copystr(s, FUNC_SETWORD);
          break;
       case fnShift:
-         StringHelper::copy(s, FUNC_SHIFT, 1 + strlen(FUNC_SHIFT));
+         copystr(s, FUNC_SHIFT);
          break;
       case fnSub:
-         StringHelper::copy(s, FUNC_SUB, 1 + strlen(FUNC_SUB));
+         copystr(s, FUNC_SUB);
          break;
       case fnXor:
-         StringHelper::copy(s, FUNC_XOR, 1 + strlen(FUNC_XOR));
+         copystr(s, FUNC_XOR);
          break;
       default:
-         StringHelper::copy(s, OPCODE_UNKNOWN, 1 + strlen(OPCODE_UNKNOWN));
+         copystr(s, OPCODE_UNKNOWN);
    }
 
    return s;

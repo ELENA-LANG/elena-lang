@@ -158,6 +158,11 @@ public:
       copy(rootPath);
       combine(filePath);
    }
+   Path(const wchar16_t* rootPath, const char* filePath)
+   {
+      copy(rootPath);
+      combine(filePath);
+   }
    Path(const char* rootPath, const char* filePath)
    {
       copy(rootPath);
@@ -249,9 +254,9 @@ public:
    void rewind();
 
 #ifdef _WIN32
-   File(const wchar_t* path, const wchar_t* mode, int encoding, bool autoDetect);
+   File(const wchar_t* path, const wchar_t* mode, int encoding, bool withBOM);
 #endif
-   File(const char* path, const char* mode, int encoding, bool autoDetect);
+   File(const char* path, const char* mode, int encoding, bool withBOM);
    ~File();
 };
 
@@ -288,8 +293,8 @@ public:
    virtual const wchar16_t* getWideLiteral() { return NULL; }
    virtual const char* getLiteral() { return NULL; }
 
-   FileReader(const _path_t* path, int encoding, bool autoDetect);
-   FileReader(const _path_t* path, const _path_t* mode, int encoding, bool autoDetect);
+   FileReader(const _path_t* path, int encoding, bool withBOM);
+   FileReader(const _path_t* path, const _path_t* mode, int encoding, bool withBOM);
 };
 
 // --- FileWriter class ---
@@ -320,7 +325,7 @@ public:
 
    virtual void align(int alignment);
 
-   FileWriter(const _path_t* path, int encoding, bool autoDetect);
+   FileWriter(const _path_t* path, int encoding, bool withBOM);
 };
 
 // --- TextFileReader class ---
@@ -337,7 +342,7 @@ public:
    virtual bool read(wchar16_t* s, size_t length);
    virtual bool read(char* s, size_t length);
 
-   TextFileReader(const _path_t* path, int encoding, bool autoDetect);
+   TextFileReader(const _path_t* path, int encoding, bool withBOM);
 };
 
 // --- TextFileWriter class ---
@@ -356,7 +361,7 @@ public:
 
    virtual bool writeNewLine();
 
-   TextFileWriter(const _path_t* path, int encoding, bool autoDetect);
+   TextFileWriter(const _path_t* path, int encoding, bool withBOM);
 };
 
 } // _ELENA_

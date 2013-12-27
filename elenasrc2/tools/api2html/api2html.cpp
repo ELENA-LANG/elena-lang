@@ -19,7 +19,7 @@
 
 using namespace _ELENA_;
 
-void writeHeader(TextFileWriter& writer, const _text_t* package, const _text_t* packageLink)
+void writeHeader(TextFileWriter& writer, const char* package, const char* packageLink)
 {
    writer.writeTextNewLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\"http://www.w3.org/TR/REC-html40/frameset.dtd\">");
    writer.writeTextNewLine("<HTML>");
@@ -61,7 +61,7 @@ void writeHeader(TextFileWriter& writer, const _text_t* package, const _text_t* 
    writer.writeTextNewLine("<HR>");
 }
 
-void writeSummaryHeader(TextFileWriter& writer, const _text_t* name, const _text_t* shortDescr)
+void writeSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
 {
    writer.writeTextNewLine("<H2>");
    writer.writeText("Package ");
@@ -77,7 +77,7 @@ void writeSummaryHeader(TextFileWriter& writer, const _text_t* name, const _text
    writer.writeTextNewLine("</TR>");
 }
 
-void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const _text_t* name, const _text_t* bodyFileName)
+void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const char* name, const _text_t* bodyFileName)
 {
    writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
    writer.writeText("<TD WIDTH=\"15%\"><B><A HREF=\"");
@@ -88,7 +88,7 @@ void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const _tex
    writer.writeText(name);
    writer.writeTextNewLine("</A></B></TD>");
    writer.writeText("<TD>");
-   const _text_t* descr = config.getSetting(name, _T("#shortdescr"), NULL);
+   const char* descr = config.getSetting(name, "#shortdescr", NULL);
    if (!emptystr(descr)) {
       writer.writeText(descr);
    }
@@ -251,13 +251,13 @@ void writeMessage(TextFileWriter& writer, const _text_t* message)
    }
 }
 
-void writeParents(TextFileWriter& writer, IniConfigFile& config, const _text_t* name,  const _text_t* moduleName)
+void writeParents(TextFileWriter& writer, IniConfigFile& config, const char* name,  const char* moduleName)
 {
    writer.writeTextNewLine("<PRE>");
    int indent = 0;
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), _T("#parent"))) {
+      if (StringHelper::compare(it.key(), "#parent")) {
          repeatStr(writer, "  ", indent - 1);
          if (indent > 0) writer.writeTextNewLine(" |");
          repeatStr(writer, "  ", indent - 1);
@@ -281,14 +281,14 @@ void writeParents(TextFileWriter& writer, IniConfigFile& config, const _text_t* 
    writer.writeTextNewLine("</PRE>");
 }
 
-void writeProtocols(TextFileWriter& writer, const _text_t* name, IniConfigFile& config)
+void writeProtocols(TextFileWriter& writer, const char* name, IniConfigFile& config)
 {
-   if (!emptystr(config.getSetting(name, _T("#protocol"), NULL))) {
+   if (!emptystr(config.getSetting(name, "#protocol", NULL))) {
       ConfigCategoryIterator it = config.getCategoryIt(name);
       writer.writeText("<B>All Implemented Protocols:</B>");
       writer.writeTextNewLine("<DL>");
       while (!it.Eof()) {
-         if (StringHelper::compare(it.key(), _T("#protocol"))) {
+         if (StringHelper::compare(it.key(), "#protocol")) {
             writer.writeTextNewLine("<DT>");
             writeLink(writer, *it, _T("protocol.html"));
             writer.writeTextNewLine("</DT>");
@@ -299,7 +299,7 @@ void writeProtocols(TextFileWriter& writer, const _text_t* name, IniConfigFile& 
    }
 }
 
-void writeFields(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
+void writeFields(TextFileWriter& writer, IniConfigFile& config, const char* name)
 {
    // field section
    writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
@@ -308,7 +308,7 @@ void writeFields(TextFileWriter& writer, IniConfigFile& config, const _text_t* n
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), _T("#field"))) {
+      if (StringHelper::compare(it.key(), "#field")) {
          const _text_t* descr = find(*it, ';');
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
@@ -326,7 +326,7 @@ void writeFields(TextFileWriter& writer, IniConfigFile& config, const _text_t* n
    }
 }
 
-void writeProperties(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
+void writeProperties(TextFileWriter& writer, IniConfigFile& config, const char* name)
 {
    // property section
    writer.writeTextNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
@@ -335,7 +335,7 @@ void writeProperties(TextFileWriter& writer, IniConfigFile& config, const _text_
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), _T("#property"))) {
+      if (StringHelper::compare(it.key(), "#property")) {
          const _text_t* descr = find(*it, ';');
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
@@ -354,9 +354,9 @@ void writeProperties(TextFileWriter& writer, IniConfigFile& config, const _text_
    }
 }
 
-void writeMethods(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
+void writeMethods(TextFileWriter& writer, IniConfigFile& config, const char* name)
 {
-   if (emptystr(config.getSetting(name, _T("#method"), NULL)))
+   if (emptystr(config.getSetting(name, "#method", NULL)))
       return;
 
    // method section
@@ -369,7 +369,7 @@ void writeMethods(TextFileWriter& writer, IniConfigFile& config, const _text_t* 
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), _T("#method"))) {
+      if (StringHelper::compare(it.key(), "#method")) {
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>&nbsp;");
@@ -394,9 +394,9 @@ void writeMethods(TextFileWriter& writer, IniConfigFile& config, const _text_t* 
    }
 }
 
-void writeConstructors(TextFileWriter& writer, IniConfigFile& config, const _text_t* name)
+void writeConstructors(TextFileWriter& writer, IniConfigFile& config, const char* name)
 {
-   if (emptystr(config.getSetting(name, _T("#constructor"), NULL)))
+   if (emptystr(config.getSetting(name, "#constructor", NULL)))
       return;
 
    // method section
@@ -409,7 +409,7 @@ void writeConstructors(TextFileWriter& writer, IniConfigFile& config, const _tex
 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), _T("#constructor"))) {
+      if (StringHelper::compare(it.key(), "#constructor")) {
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>&nbsp;");
@@ -434,9 +434,9 @@ void writeConstructors(TextFileWriter& writer, IniConfigFile& config, const _tex
    }
 }
 
-void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* name,  const _text_t* moduleName)
+void writeBody(TextFileWriter& writer, IniConfigFile& config, const char* name,  const char* moduleName)
 {
-   const _text_t* title = config.getSetting(name, _T("#title"), NULL);
+   const char* title = config.getSetting(name, "#title", NULL);
    if (title==NULL)
       title = name;
 
@@ -453,11 +453,11 @@ void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* nam
    writer.writeText(title);
    writer.writeTextNewLine("</H2>");
 
-   if (!emptystr(config.getSetting(name, _T("#parent"), NULL))) {
+   if (!emptystr(config.getSetting(name, "#parent", NULL))) {
       writeParents(writer, config, name, moduleName);
    }
    writeProtocols(writer, name, config);
-   const _text_t* descr = config.getSetting(name, _T("#shortdescr"), NULL);
+   const char* descr = config.getSetting(name, "#shortdescr", NULL);
    if (!emptystr(descr)) {
       writer.writeTextNewLine("<P>");
       writer.writeTextNewLine(descr);
@@ -469,12 +469,12 @@ void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* nam
 
    writer.writeTextNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
-   if (!emptystr(config.getSetting(name, _T("#field"), NULL))) {
+   if (!emptystr(config.getSetting(name, "#field", NULL))) {
       writer.writeTextNewLine("<!-- =========== FIELD SUMMARY =========== -->");
       writeFields(writer, config, name);
    }
 
-   if (!emptystr(config.getSetting(name, _T("#property"), NULL))) {
+   if (!emptystr(config.getSetting(name, "#property", NULL))) {
       writer.writeTextNewLine("<!-- =========== PROPERTY SUMMARY =========== -->");
       writeProperties(writer, config, name);
    }
@@ -488,7 +488,7 @@ void writeBody(TextFileWriter& writer, IniConfigFile& config, const _text_t* nam
    writer.writeTextNewLine("</TABLE>");
 }
 
-void writeFooter(TextFileWriter& writer, const _text_t* packageLink)
+void writeFooter(TextFileWriter& writer, const char* packageLink)
 {
    writer.writeTextNewLine("<HR>");
    writer.writeTextNewLine("<A NAME=\"navbar_top\"><!-- --></A>");
@@ -539,20 +539,20 @@ int main(int argc, char* argv[])
    IdentifierString name(fileName);
    name.append(".html");
 
-   IdentifierString summaryname(fileName);
+   String<char, 255> summaryname(fileName);
    summaryname.append("-summary");
    summaryname.append(".html");
 
    TextFileWriter bodyWriter(name, feAnsi, false);
-   TextFileWriter summaryWriter(summaryname, feAnsi, false);
+   TextFileWriter summaryWriter(Path(summaryname), feAnsi, false);
 
-	const _text_t* package = config.getSetting(_T("#general#"), _T("#name"));
-	const _text_t* shortDescr = config.getSetting(_T("#general#"), _T("#shortdescr"));
+	const char* package = config.getSetting("#general#", "#name");
+	const char* shortDescr = config.getSetting("#general#", "#shortdescr");
 	writeHeader(summaryWriter, package, NULL);
    writeHeader(bodyWriter, package, summaryname);
    writeSummaryHeader(summaryWriter, package, shortDescr);
 
-   ConfigCategoryIterator classNode = config.getCategoryIt(_T("#list#"));
+   ConfigCategoryIterator classNode = config.getCategoryIt("#list#");
    while (!classNode.Eof()) {
       writeSummaryTable(summaryWriter, config, classNode.key(), name);
       writeBody(bodyWriter, config, classNode.key(), package);

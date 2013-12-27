@@ -11,30 +11,30 @@
 #include "config.h"
 #include "idecommon.h"
 
-#define SETTINGS_SECTION         _T("settings")
-#define SRCPATH_SECTION          _T("srcpath")     // template source paths
-#define LIBPATH_SECTION          _T("libpath")     // template library paths
-#define RECENTFILES_SECTION      _T("recent_files")
-#define RECENTRPOJECTS_SECTION   _T("recent_projects")
+#define SETTINGS_SECTION         "settings"
+#define SRCPATH_SECTION          "srcpath"     // template source paths
+#define LIBPATH_SECTION          "libpath"     // template library paths
+#define RECENTFILES_SECTION      "recent_files"
+#define RECENTRPOJECTS_SECTION   "recent_projects"
 
-#define TAB_SIZE_SETTING         _T("tabsize")
-#define ENCODING_SETTING         _T("encoding")
-#define TAB_USING_SETTING        _T("tabusing")
-#define MAXIMIZED_SETTING        _T("app_maximized")
-#define PATH_REMEMBER_SETTING    _T("remeber_path")
-#define PROJECT_REMEMBER_SETTING _T("remeber_project")
-#define AUTO_DETECTING_SETTING   _T("encoding_detecting")
-#define LINE_NUMBERS_SETTING     _T("linenumbers")
-#define HIGHLIGHT_SETTING        _T("highlightsyntax")
-#define BRACKETS_SETTING         _T("highlightbrackets")
-#define SCHEME_SETTING           _T("scheme")
-#define TABSCORE_SETTING         _T("tabscore")
-#define OUTPUT_SETTING           _T("compileroutput")
-#define AUTO_RECOMPILE_SETTING   _T("autocomp")
-#define DEBUG_TAPE_SETTING       _T("debugtape")
-#define FONTSIZE_SETTING         _T("font_size")
+#define TAB_SIZE_SETTING         "tabsize"
+#define ENCODING_SETTING         "encoding"
+#define TAB_USING_SETTING        "tabusing"
+#define MAXIMIZED_SETTING        "app_maximized"
+#define PATH_REMEMBER_SETTING    "remeber_path"
+#define PROJECT_REMEMBER_SETTING "remeber_project"
+#define AUTO_DETECTING_SETTING   "encoding_detecting"
+#define LINE_NUMBERS_SETTING     "linenumbers"
+#define HIGHLIGHT_SETTING        "highlightsyntax"
+#define BRACKETS_SETTING         "highlightbrackets"
+#define SCHEME_SETTING           "scheme"
+#define TABSCORE_SETTING         "tabscore"
+#define OUTPUT_SETTING           "compileroutput"
+#define AUTO_RECOMPILE_SETTING   "autocomp"
+#define DEBUG_TAPE_SETTING       "debugtape"
+#define FONTSIZE_SETTING         "font_size"
 
-#define DEFAULT_PROJECT_SETTING  _T("defaultproject")
+#define DEFAULT_PROJECT_SETTING  "defaultproject"
 
 namespace _GUI_
 {
@@ -66,7 +66,7 @@ struct Paths
 
 struct Settings
 {
-   typedef _ELENA_::Map<const _path_t*, _path_t*> PathMapping;
+   typedef _ELENA_::Map<const char*, _path_t*> PathMapping;
 
    static size_t tabSize;
    static int    defaultEncoding;
@@ -107,13 +107,13 @@ struct Settings
    static void addSearchHistory(const _text_t* line);
    static void addReplaceHistory(const _text_t* line);
 
-   static void addPackagePath(const _text_t* projectTemplate, const _path_t* path)
+   static void addPackagePath(const char* projectTemplate, const _path_t* path)
    {
       packageRoots.erase(projectTemplate);
       packageRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
    }
 
-   static void addLibraryPath(const _text_t* projectTemplate, const _path_t* path)
+   static void addLibraryPath(const char* projectTemplate, const _path_t* path)
    {
       libraryRoots.erase(projectTemplate);
       libraryRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
@@ -137,17 +137,17 @@ public:
 
    static const _text_t* getName() { return _name; }
    static const _path_t* getPath() { return _path; }
-   static const _text_t* getPackage();
-   static const _text_t* getTemplate();
-   static const _text_t* getOptions();
-   static const _text_t* getTarget();
-   static const _text_t* getOutputPath();
-   static const _text_t* getVMPath();
-   static const _text_t* getArguments();
+   static const char* getPackage();
+   static const char* getTemplate();
+   static const char* getOptions();
+   static const char* getTarget();
+   static const char* getOutputPath();
+   static const char* getVMPath();
+   static const char* getArguments();
 
    static int getDebugMode();
 
-   static bool getBoolSetting(const _text_t* name);
+   static bool getBoolSetting(const char* name);
 
    static _ELENA_::ConfigCategoryIterator SourceFiles()
    {
@@ -159,16 +159,17 @@ public:
       return _config.getCategoryIt(IDE_FORWARDS_SECTION);
    }
 
-   static void setSectionOption(const _text_t* option, const _text_t* value);
-   static void setTarget(const _text_t* target);
-   static void setArguments(const _text_t* target);
-   static void setOutputPath(const _path_t* path);
-   static void setVMPath(const _path_t* path);
-   static void setOptions(const _text_t* options);
-   static void setPackage(const _text_t* package);
-   static void setTemplate(const _text_t* target);
+   static void setSectionOption(const char* option, const char* value);
+   static void setBoolSetting(const char* key, bool value);
+
+   static void setTarget(const char* target);
+   static void setArguments(const char* target);
+   static void setOutputPath(const char* path);
+   static void setVMPath(const char* path);
+   static void setOptions(const char* options);
+   static void setPackage(const char* package);
+   static void setTemplate(const char* target);
    static void setDebugMode(int mode);
-   static void setBoolSetting(const _text_t* key, bool value);
 
    static bool open(const _path_t* path);
    static void refresh();

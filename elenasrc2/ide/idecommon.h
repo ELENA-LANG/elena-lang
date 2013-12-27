@@ -13,17 +13,17 @@ namespace _GUI_
 {
 
 // --- Project settings ---
-#define IDE_FILES_SECTION                       _T("files")
-#define IDE_FORWARDS_SECTION                    _T("forwards")
-#define IDE_PROJECT_SECTION                     _T("project")
-#define IDE_PACKAGE_SETTING                     _T("namespace")
-#define IDE_TEMPLATE_SETTING                    _T("template")
-#define IDE_COMPILER_OPTIONS                    _T("options")
-#define IDE_EXECUTABLE_SETTING                  _T("executable")
-#define IDE_OUTPUT_SETTING                      _T("output")
-#define IDE_VMPATH_SETTING                      _T("vmpath")
-#define IDE_ARGUMENT_SETTING                    _T("arguments")
-#define IDE_DEBUGINFO_SETTING                   _T("debuginfo")
+#define IDE_FILES_SECTION                       "files"
+#define IDE_FORWARDS_SECTION                    "forwards"
+#define IDE_PROJECT_SECTION                     "project"
+#define IDE_PACKAGE_SETTING                     "namespace"
+#define IDE_TEMPLATE_SETTING                    "template"
+#define IDE_COMPILER_OPTIONS                    "options"
+#define IDE_EXECUTABLE_SETTING                  "executable"
+#define IDE_OUTPUT_SETTING                      "output"
+#define IDE_VMPATH_SETTING                      "vmpath"
+#define IDE_ARGUMENT_SETTING                    "arguments"
+#define IDE_DEBUGINFO_SETTING                   "debuginfo"
 
 // --- ELENA IDE Styles ---
 #define SCHEME_COUNT                            2

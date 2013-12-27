@@ -81,11 +81,11 @@ enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
 #endif
 
 // --- Param string template ---
-typedef String<_text_t, 255> Param;
+typedef String<char, 255> Param;
 
 // --- Common mapping type definitions ---
-typedef Dictionary2D<const _text_t*, const _text_t*> ConfigSettings;
-typedef _Iterator<ConfigSettings::VItem, _MapItem<const _text_t*, ConfigSettings::VItem>, const _text_t*> ConfigCategoryIterator;
+typedef Dictionary2D<const char*, const char*> ConfigSettings;
+typedef _Iterator<ConfigSettings::VItem, _MapItem<const char*, ConfigSettings::VItem>, const char*> ConfigCategoryIterator;
 
 // --- Base Config File ---
 class _ConfigFile
@@ -93,22 +93,22 @@ class _ConfigFile
 public:
    virtual bool load(const _path_t* path, int encoding) = 0;
 
-   virtual ConfigCategoryIterator getCategoryIt(const _text_t* name) = 0;
+   virtual ConfigCategoryIterator getCategoryIt(const char* name) = 0;
 
-   virtual const _text_t* getSetting(const _text_t* category, const _text_t* key, const _text_t* defaultValue = NULL) = 0;
-   virtual int getIntSetting(const _text_t* category, const _text_t* key, int defaultValue = 0)
+   virtual const char* getSetting(const char* category, const char* key, const char* defaultValue = NULL) = 0;
+   virtual int getIntSetting(const char* category, const char* key, int defaultValue = 0)
    {
       Param value(getSetting(category, key));
 
       return value.toInt(defaultValue);
    }
 
-   virtual bool getBoolSetting(const _text_t* category, const _text_t* key, bool defaultValue = false)
+   virtual bool getBoolSetting(const char* category, const char* key, bool defaultValue = false)
    {
       Param value(getSetting(category, key));
 
       if (!emptystr(value)) {
-         return value.compare(_T("-1"));
+         return value.compare("-1");
       }
       else return defaultValue;
    }

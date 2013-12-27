@@ -343,15 +343,11 @@ bool IDE :: openFile(const _path_t* path)
       return true;
    }
 
-   int encoding = Settings::defaultEncoding;
-   if (encoding == _ELENA_::feUTF16)   // HOTFIX: it is not possible to open Ansi files if Unicode is a default encoding
-      encoding = _ELENA_::feAnsi;
-
    _GUI_::Text* text = new _GUI_::Text();
-   bool opened = text->load(path, encoding, Settings::autoDetecting);
+   bool opened = text->load(path, Settings::defaultEncoding, Settings::autoDetecting);
    if (opened) {
       _mainFrame->openDocument(path, text,
-         new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), encoding);
+         new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
 
 	   // check if the file belongs to the project
 	   if (Project::isIncluded(path)) {
@@ -397,7 +393,7 @@ bool IDE :: openProject(const _path_t* path)
 //!!temporal
 #ifdef _WIN32
       if (!openFile(sourcePath))
-         MsgBox::showError(_appWindow->getHandle(), ERROR_CANNOT_OPEN_FILE, it.key());
+         MsgBox::showError(_appWindow->getHandle(), ERROR_CANNOT_OPEN_FILE, _ELENA_::ConstantIdentifier(it.key()));
 #endif
 
       it++;
@@ -485,8 +481,8 @@ bool IDE :: startDebugger(bool stepMode)
 {
 //!!temporal
 #ifdef _WIN32
-   const _path_t* target = Project::getTarget();
-   const _path_t* arguments = Project::getArguments();
+   const char* target = Project::getTarget();
+   const char* arguments = Project::getArguments();
 
    if (!_ELENA_::emptystr(target)) {
       _ELENA_::Path exePath(Project::getPath(), target);
@@ -536,7 +532,7 @@ bool IDE :: loadModule(const _text_t* ns, const _path_t* source)
    if (!_debugController->isStarted())
       return false;
 
-   if (_ELENA_::StringHelper::compare(Project::getPackage(), ns)) {
+   if (_ELENA_::ConstantIdentifier::compare(ns, Project::getPackage())) {
       _ELENA_::Path path(Project::getPath(), source);
 
       openFile(path);

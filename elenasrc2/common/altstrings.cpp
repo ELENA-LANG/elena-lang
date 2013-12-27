@@ -13,8 +13,6 @@
 
 using namespace _ELENA_;
 
-#ifndef _WIN32
-
 #include <ctype.h>
 
 // --- Unicode coversion routines ---
@@ -77,10 +75,10 @@ static const char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC 
  * If presented with a length > 4, this returns false.  The Unicode
  * definition of UTF-8 goes up to 4-byte sequences.
  */
-static bool isLegalUTF8(const char* source, int length)
+static bool isLegalUTF8(const unsigned char* source, int length)
 {
-   char a;
-   const char* srcptr = source+length;
+   unsigned char a;
+   const unsigned char* srcptr = source+length;
    switch (length) {
       default:
          return false;
@@ -126,8 +124,6 @@ static bool isLegalUTF8(const char* source, int length)
 
    return true;
 }
-
-#endif
 
 // --- StringHelper ---
 
@@ -199,46 +195,14 @@ bool StringHelper :: greater(const wchar_t* s1, const wchar_t* s2)
    else return (s1 == s2);
 }
 
-void StringHelper :: copy(wchar_t* dest, const wchar_t* sour, int length)
+void StringHelper :: copy(wchar_t* dest, const wchar_t* sour, size_t length)
 {
    wcsncpy(dest, sour, length);
 }
 
-bool StringHelper :: copy(wchar_t* dest, const char* sour, int length)
-{
-   return mbstowcs(dest, sour, length) != 0;
-}
-
-bool StringHelper :: copy(char* dest, const wchar_t* sour, int length)
-{
-   return wcstombs(dest, sour, length) != 0;
-}
-
-void StringHelper :: append(wchar_t* dest, const wchar_t* sour, int length)
+void StringHelper :: append(wchar_t* dest, const wchar_t* sour, size_t length)
 {
    wcsncat(dest, sour, length);
-}
-
-bool StringHelper :: append(wchar_t* dest, const char* sour, int length)
-{
-   size_t current_length = getlength(dest);
-   if (copy(dest + current_length, sour, length)) {
-      dest[current_length + length] = 0;
-
-      return true;
-   }
-   else return false;
-}
-
-bool StringHelper :: append(char* dest, const wchar_t* sour, int length)
-{
-   size_t current_length = getlength(dest);
-   if (copy(dest + current_length, sour, length)) {
-      dest[current_length + length] = 0;
-
-      return true;
-   }
-   else return false;
 }
 
 void StringHelper :: insert(wchar_t* s, int pos, const wchar_t* subs)
@@ -312,7 +276,7 @@ wchar_t* StringHelper :: doubleToStr(double value, int digit, wchar_t* s)
 
    _gcvt(value, digit, temp);
 
-   int length = strlen(temp);
+   size_t length = strlen(temp);
    copy(s, temp, length);
    s[length] = 0;
 
@@ -349,6 +313,163 @@ long long StringHelper :: strToLongLong(const wchar_t* s, int radix)
 double StringHelper :: strToDouble(const wchar_t* s)
 {
    return wcstod(s, NULL);
+}
+
+bool StringHelper :: copy(wchar_t* dest, const char* sour, size_t& length)
+{
+   bool result = true;
+
+   wchar_t* start = dest;
+   const unsigned char* s = (const unsigned char*)sour;
+   const unsigned char* end = s + length;
+   while (end > s) {
+      unsigned int ch = 0;
+      unsigned short extraBytesToRead = trailingBytesForUTF8[*s];
+      if (extraBytesToRead >= length) {
+         result = false;
+         break;
+      }
+       /* Do this check whether lenient or strict */
+       if (!isLegalUTF8(s, extraBytesToRead+1)) {
+           result = false;
+           break;
+       }
+      /*
+      * The cases all fall through. See "Note A" below.
+      */
+      switch (extraBytesToRead) {
+         case 5:
+            ch += *s++;
+            ch <<= 6; /* remember, illegal UTF-8 */
+         case 4:
+            ch += *s++;
+            ch <<= 6; /* remember, illegal UTF-8 */
+         case 3:
+            ch += *s++;
+            ch <<= 6;
+         case 2:
+            ch += *s++;
+            ch <<= 6;
+         case 1:
+            ch += *s++;
+            ch <<= 6;
+         case 0:
+            ch += *s++;
+      }
+      ch -= offsetsFromUTF8[extraBytesToRead];
+
+      if (ch <= UNI_MAX_BMP) { /* Target is a character <= 0xFFFF */
+         /* UTF-16 surrogate values are illegal in UTF-32 */
+         if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_LOW_END) {
+            *dest++ = UNI_REPLACEMENT_CHAR;
+         }
+         else {
+            *dest++ = (unsigned short)ch; /* normal case */
+         }
+      }
+      else if (ch > UNI_MAX_UTF16) {
+         *dest++ = UNI_REPLACEMENT_CHAR;
+      }
+      else {
+         /* target is a character in range 0xFFFF - 0x10FFFF. */
+         ch -= halfBase;
+         *dest++ = (unsigned short)((ch >> halfShift) + UNI_SUR_HIGH_START);
+         *dest++ = (unsigned short)((ch & halfMask) + UNI_SUR_LOW_START);
+      }
+   }
+   length = dest - start;
+   return result;
+}
+
+bool StringHelper :: copy(char* dest, const wchar_t* sour, size_t& length)
+{
+   bool result = true;
+   char* s = dest;
+   const wchar_t* end = sour + length;
+   while (sour < end) {
+      unsigned short bytesToWrite = 0;
+      const unsigned int byteMask = 0xBF;
+      const unsigned int byteMark = 0x80;
+      const unsigned short* oldSource = (unsigned short*)sour; /* In case we have to back up because of target overflow. */
+      unsigned int ch = *sour++;
+      /* If we have a surrogate pair, convert to UTF32 first. */
+      if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END) {
+         /* If the 16 bits following the high surrogate are in the source buffer... */
+         if (sour < end) {
+            unsigned int ch2 = *sour;
+            /* If it's a low surrogate, convert to UTF32. */
+            if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END) {
+               ch = ((ch - UNI_SUR_HIGH_START) << halfShift) + (ch2 - UNI_SUR_LOW_START) + halfBase;
+               ++sour;
+            }
+         }
+         else { /* We don't have the 16 bits following the high surrogate. */
+            --sour; /* return to the high surrogate */
+            result = false;
+            break;
+         }
+      }
+      /* Figure out how many bytes the result will require */
+      if (ch < (unsigned int)0x80) {
+         bytesToWrite = 1;
+      }
+      else if (ch < (unsigned int)0x800) {
+         bytesToWrite = 2;
+      }
+      else if (ch < (unsigned int)0x10000) {
+         bytesToWrite = 3;
+      }
+      else if (ch < (unsigned int)0x110000) {
+         bytesToWrite = 4;
+      }
+      else {
+         bytesToWrite = 3;
+         ch = UNI_REPLACEMENT_CHAR;
+      }
+
+      dest += bytesToWrite;
+      switch (bytesToWrite)
+      { /* note: everything falls through. */
+         case 4:
+            *--dest = (char)((ch | byteMark) & byteMask);
+            ch >>= 6;
+         case 3:
+            *--dest = (char)((ch | byteMark) & byteMask);
+            ch >>= 6;
+         case 2:
+            *--dest = (char)((ch | byteMark) & byteMask);
+            ch >>= 6;
+         case 1:
+            *--dest =  (char)(ch | firstByteMark[bytesToWrite]);
+      }
+      dest += bytesToWrite;
+   }
+
+   length = dest - s;
+
+   return result;
+}
+
+bool StringHelper :: append(wchar_t* dest, const char* sour, size_t length)
+{
+   size_t current_length = getlength(dest);
+   if (copy(dest + current_length, sour, length)) {
+      dest[current_length + length] = 0;
+
+      return true;
+   }
+   else return false;
+}
+
+bool StringHelper :: append(char* dest, const wchar_t* sour, size_t length)
+{
+   size_t current_length = getlength(dest);
+   if (copy(dest + current_length, sour, length)) {
+      dest[current_length + length] = 0;
+
+      return true;
+   }
+   else return false;
 }
 
 #else
@@ -434,19 +555,19 @@ int StringHelper :: findLast(const unsigned short* s, unsigned short c, int defV
    return defValue;
 }
 
-void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, int length)
+void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, size_t length)
 {
    memcpy(dest, sour, length << 1);
 }
 
-void StringHelper :: append(unsigned short* dest, const unsigned short* sour, int length)
+void StringHelper :: append(unsigned short* dest, const unsigned short* sour, size_t length)
 {
    unsigned short* p = dest + getlength(dest);
    for(int i = 0 ; i <= length ; i++)
       *p++ = *sour++;
 }
 
-bool StringHelper :: append(unsigned short* dest, const char* sour, int length)
+bool StringHelper :: append(unsigned short* dest, const char* sour, size_t length)
 {
    size_t current_length = getlength(dest);
    if (copy(dest + current_length, sour, length)) {
@@ -468,20 +589,22 @@ bool StringHelper :: append(char* dest, const unsigned short* sour, int length)
    else return false;
 }
 
-bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t count)
+bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t& length)
 {
    bool result = true;
 
-   const char* end = sour + count;
-   while (end > sour) {
+   unsigned short* start = dest;
+   const unsigned char* s = sour;
+   const unsigned char* end = s + length;
+   while (end > s) {
       unsigned int ch = 0;
-      unsigned short extraBytesToRead = trailingBytesForUTF8[*sour];
+      unsigned short extraBytesToRead = trailingBytesForUTF8[*s];
       if (extraBytesToRead >= count) {
          result = false;
          break;
       }
        /* Do this check whether lenient or strict */
-       if (!isLegalUTF8(sour, extraBytesToRead+1)) {
+       if (!isLegalUTF8(s, extraBytesToRead+1)) {
            result = false;
            break;
        }
@@ -490,22 +613,22 @@ bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t count)
       */
       switch (extraBytesToRead) {
          case 5:
-            ch += *sour++;
+            ch += *s++;
             ch <<= 6; /* remember, illegal UTF-8 */
          case 4:
-            ch += *sour++;
+            ch += *s++;
             ch <<= 6; /* remember, illegal UTF-8 */
          case 3:
-            ch += *sour++;
+            ch += *s++;
             ch <<= 6;
          case 2:
-            ch += *sour++;
+            ch += *s++;
             ch <<= 6;
          case 1:
-            ch += *sour++;
+            ch += *s++;
             ch <<= 6;
          case 0:
-            ch += *sour++;
+            ch += *s++;
       }
       ch -= offsetsFromUTF8[extraBytesToRead];
 
@@ -528,10 +651,12 @@ bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t count)
          *dest++ = (unsigned short)((ch & halfMask) + UNI_SUR_LOW_START);
       }
    }
+   length = dest - start;
+
    return result;
 }
 
-bool StringHelper :: copy(char* dest, const unsigned short* sour, int length)
+bool StringHelper :: copy(char* dest, const unsigned short* sour, size_t& length)
 {
    bool result = true;
    const unsigned short* end = sour + length;
@@ -593,6 +718,8 @@ bool StringHelper :: copy(char* dest, const unsigned short* sour, int length)
       }
       dest += bytesToWrite;
    }
+
+   length = dest - s;
 
    return result;
 }
@@ -906,6 +1033,13 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
 {
    int  rem = 0;
    int  pos = 0;
+   int start = 0;
+   if (n < 0) {
+      start++;
+      n = -n;
+      s[pos++] = '-';
+   }
+
    do
    {
       rem = n % radix;
@@ -938,6 +1072,12 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
    while( n != 0 );
 
    s[pos] = 0;
+   pos--;
+   while (start < pos) {
+      char tmp = s[start];
+      s[start++] = s[pos];
+      s[pos--] = tmp;
+   }
 
    return s;
 }
