@@ -184,13 +184,13 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
    loadBoolOption(config, opWarnOnUnresolved);
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
-   loadOption(config, opVMPath);       // path to virtual machine should be saved as it is because it is relative to the executable path rather then a config one
+   loadOption(config, opVMPath);       // path to virtual machine should be saved as it is, because it is relative to the executable path rather then a config one
    loadOption(config, opTemplate);
    loadBoolOption(config, opEmbeddedSymbolMode);
-//
-//   // load compiler settings
+
+   // load compiler settings
 //   loadOption(config, opJITType);
-//   loadIntOption(config, opThreadMax);
+   loadIntOption(config, opThreadMax, 0, 60);
 
    // load linker settings
    loadIntOption(config, opGCHeapSize);

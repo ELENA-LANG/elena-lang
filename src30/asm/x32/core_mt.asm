@@ -1,10 +1,11 @@
 // --- System Core Data  --
-define CORE_EXCEPTION_TABLE 01h
 define CORE_GC_TABLE        02h
 define CORE_GC_SIZE         03h
 define CORE_STAT_COUNT      04h
 define CORE_STATICROOT      05h
 define CORE_VM_TABLE        06h
+define CORE_TLS_INDEX       07h
+define THREAD_TABLE         08h
 
 // --- System Core API  --
 define GC_ALLOC	         10001h
@@ -13,7 +14,7 @@ define GETCLASSNAME      10011h
 define INIT_RND          10012h
 define EVALSCRIPT        10013h
 
-// GC TABLE
+// GCXT TABLE
 define gc_header             0000h
 define gc_start              0004h
 define gc_yg_start           0008h
@@ -25,15 +26,27 @@ define gc_mg_start           001Ch
 define gc_mg_current         0020h
 define gc_end                0024h
 define gc_promotion          0028h
-define gc_stack_frame        002Ch
-define gc_mg_wbar            0030h
-define gc_stack_bottom       0034h
+define gc_mg_wbar            002Ch
+define gc_lock               0030h
+define gc_signal             0034h
+define tt_ptr                0038h
+define tt_lock               003Ch
+
+// GCXT TLS TABLE
+define gc_stack_frame        0000h
+define gc_stack_bottom       0004h
+define core_catch_addr       0008h
+define core_catch_level      000Ch
+define core_catch_frame      0010h
+define gc_sync_event         0014h
+define gc_mt_flags           0018h
 
 // Object header fields
-define elObjectOffset    000Ch
-define elSizeOffset      000Ch
-define elCountOffset     0008h
-define elVMTOffset       0004h 
+define elObjectOffset        0010h
+define elSyncOffset          0010h
+define elSizeOffset          000Ch
+define elCountOffset         0008h
+define elVMTOffset           0004h 
 
 // Page Size
 define page_size               10h
@@ -56,14 +69,6 @@ define GC_HEAP_ATTRIBUTE 00Dh
 // verbs
 define EXEC_MESSAGE_ID  85000000h
 
-structure % CORE_EXCEPTION_TABLE
-
-  dd 0 // ; core_catch_addr       : +x00   - exception point of return
-  dd 0 // ; core_catch_level      : +x04   - stack level
-  dd 0 // ; core_catch_frame      : +x08   - stack frame pointer
-
-end
-
 structure %CORE_GC_TABLE
 
   dd 0 // ; gc_header             : +00h
@@ -77,9 +82,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_mg_current         : +20h
   dd 0 // ; gc_end                : +24h
   dd 0 // ; gc_promotion          : +28h
-  dd 0 // ; gc_stack_frame        : +2Ch 
-  dd 0 // ; gc_mg_wbar            : +30h
-  dd 0 // ; gc_stack_bottom       : +34h
+  dd 0 // ; gc_mg_wbar            : +2Ch
 
 end
 
@@ -871,15 +874,21 @@ end
 // --- Core API --
 
 procedure core'default_handler
-                                                       
+
+/*                                                       
   mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
   mov  eax, 1                         // exit error code
   push eax
   call extern 'dlls'KERNEL32.ExitProcess     // exit
+*/
 
 end
 
 procedure core'init
+  // GCXT: initialize signal
+  xor  ebx, ebx
+  mov  [data : %CORE_GC_TABLE + gc_signal], ebx
+
   // initialize
   mov  ecx, [data : %CORE_STAT_COUNT]
   mov  edi, data : %CORE_STATICROOT
@@ -957,6 +966,29 @@ labNext:
   mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
   
   mov [data : %CORE_GC_TABLE + gc_stack_bottom], esp
+  
+  // ; GCXT: assign tls entry
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  ecx, fs:[2Ch]
+  mov  esi, [ecx + ebx*4]
+
+  // ; init thread flags  
+  mov  [esi + gc_mt_flags], 0       
+  
+  // ; set thread event handle
+  push 0
+  push 0
+  push 0FFFFFFFFh // -1
+  push 0
+  call extern 'dlls'KERNEL32.CreateEventW  
+  mov  [esi + gc_sync_event], eax     
+
+  mov  eax, data : %THREAD_TABLE
+  mov  [eax], esi       // ; save tls reference 
+
+  // GCXT: init thead table
+  mov  ebx, 1
+  mov  [data : %CORE_GC_TABLE + tt_ptr], ebx // ; set thread table length
 
   ret
 
@@ -1023,6 +1055,7 @@ end
 
 procedure core'console_entry
 
+/*
   call code : "$package'core'init"
   call code : "$package'core'newframe"
 
@@ -1042,6 +1075,7 @@ procedure core'console_entry
   mov  eax, 0                         // exit code
   push eax
   call extern 'dlls'KERNEL32.ExitProcess     // exit
+*/
 
   ret
 

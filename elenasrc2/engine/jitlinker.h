@@ -107,7 +107,6 @@ class JITLinker
    bool           _virtualMode;
    bool           _withDebugInfo;
    void*          _codeBase;
-//   int            _maxThread;          // the maximal number of tread per program; <= 1 means single-threading support
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(const wchar16_t* reference, void* param, size_t& sizePtr);
@@ -159,15 +158,14 @@ public:
 
    ref_t parseMessage(const wchar16_t*  reference);
 
-   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool withDebugInfo/*, int maxThread = 0*/)
+   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool withDebugInfo)
    {
       _loader = loader;
       _compiler = compiler;
       _virtualMode = virtualMode;
       _withDebugInfo = withDebugInfo;
       _codeBase = codeBase;
-//      _maxThread = maxThread;
-//
+
 //      _uniqueID = 0;
    }
 };

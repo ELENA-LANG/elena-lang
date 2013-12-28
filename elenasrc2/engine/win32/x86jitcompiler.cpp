@@ -23,6 +23,8 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define CORE_STAT_COUNT      0x0004
 #define CORE_STATICROOT      0x0005
 #define CORE_VM_TABLE        0x0006
+#define CORE_TLS_INDEX       0x0007
+#define CORE_THREADTABLE     0x0008
 
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
@@ -1688,42 +1690,62 @@ void* x86JITCompiler :: getPreloadedReference(ref_t reference)
    return (void*)_preloaded.get(reference);
 }
 
-////void x86JITCompiler :: compileTLS(_JITLoader* loader/*, bool virtualMode*/)
-////{
-////   MemoryWriter dataWriter(loader->getTargetSection(mskDataRef));
-////
-////   // reserve space for TLS index
-////   int position = dataWriter.Position();
-////   allocateVariable(dataWriter);
-////
-////   // map TLS index
-////   ConstantIdentifier tlsKey(TLS_KEY);
-////
-////   loader->mapReference(tlsKey, (void*)(position | mskDataRef), mskDataRef);
-////   _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
-////
-////   // allocate tls section
-////   MemoryWriter tlsWriter(loader->getTargetSection(mskTLSRef));
-////   tlsWriter.writeDWord(0);   // frame pointer
-////   tlsWriter.writeDWord(0);   // syncronization event
-////   tlsWriter.writeDWord(0);   // thread flags
-////
-////   // map IMAGE_TLS_DIRECTORY
-////   MemoryWriter rdataWriter(loader->getTargetSection(mskRDataRef));
-////   loader->mapReference(tlsKey, (void*)(rdataWriter.Position() | mskRDataRef), mskRDataRef);
-////
-////   // create IMAGE_TLS_DIRECTORY
-////   rdataWriter.writeRef(mskTLSRef, 0);          // StartAddressOfRawData
-////   rdataWriter.writeRef(mskTLSRef, 12);         // EndAddressOfRawData
-////   rdataWriter.writeRef(mskDataRef, position);  // AddressOfIndex
-////   rdataWriter.writeDWord(0);                   // AddressOfCallBacks
-////   rdataWriter.writeDWord(0);                   // SizeOfZeroFill
-////   rdataWriter.writeDWord(0);                   // Characteristics
-////}
+void x86JITCompiler :: compileThreadTable(_JITLoader* loader, int maxThreadNumber)
+{
+   // get target image & resolve virtual address
+   MemoryWriter dataWriter(loader->getTargetSection(mskDataRef));
+
+   // reserve space for the thread table
+   int position = dataWriter.Position();
+   allocateArray(dataWriter, maxThreadNumber);
+
+   // map thread table
+   ConstantIdentifier reference(GC_THREADTABLE);
+
+   loader->mapReference(reference, (void*)(position | mskDataRef), mskDataRef);
+   _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
+}
+
+void x86JITCompiler :: compileTLS(_JITLoader* loader)
+{
+   MemoryWriter dataWriter(loader->getTargetSection(mskDataRef));
+
+   // reserve space for TLS index
+   int position = dataWriter.Position();
+   allocateVariable(dataWriter);
+
+   // map TLS index
+   ConstantIdentifier tlsKey(TLS_KEY);
+
+   loader->mapReference(tlsKey, (void*)(position | mskDataRef), mskDataRef);
+   _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
+
+   // allocate tls section
+   MemoryWriter tlsWriter(loader->getTargetSection(mskTLSRef));
+   tlsWriter.writeDWord(0);   // stack frame pointer
+   tlsWriter.writeDWord(0);   // stack bottom pointer
+   tlsWriter.writeDWord(0);   // catch address
+   tlsWriter.writeDWord(0);   // catch stack level
+   tlsWriter.writeDWord(0);   // catch stack frame
+   tlsWriter.writeDWord(0);   // syncronization event
+   tlsWriter.writeDWord(0);   // thread flags
+
+   // map IMAGE_TLS_DIRECTORY
+   MemoryWriter rdataWriter(loader->getTargetSection(mskRDataRef));
+   loader->mapReference(tlsKey, (void*)(rdataWriter.Position() | mskRDataRef), mskRDataRef);
+
+   // create IMAGE_TLS_DIRECTORY
+   rdataWriter.writeRef(mskTLSRef, 0);          // StartAddressOfRawData
+   rdataWriter.writeRef(mskTLSRef, 12);         // EndAddressOfRawData
+   rdataWriter.writeRef(mskDataRef, position);  // AddressOfIndex
+   rdataWriter.writeDWord(0);                   // AddressOfCallBacks
+   rdataWriter.writeDWord(0);                   // SizeOfZeroFill
+   rdataWriter.writeDWord(0);                   // Characteristics
+}
 
 inline void compileTape(MemoryReader& tapeReader, int endPos, x86JITScope& scope)
 {
-   unsigned char code = 0;
+      unsigned char code = 0;
    while(tapeReader.Position() < endPos) {
       // read bytecode + arguments
       code = tapeReader.getByte();

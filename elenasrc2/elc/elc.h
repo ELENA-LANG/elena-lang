@@ -50,7 +50,7 @@
 #define LINKER_CATEGORY             "linker"
 #define PRIMITIVE_CATEGORY          "primitives"
 #define PROJECT_CATEGORY            "project"
-//#define SYSTEM_CATEGORY             _T("system")
+#define SYSTEM_CATEGORY             "system"
 #define TEMPLATE_CATEGORY           "templates"
 
 // --- ELC config settings ---
@@ -64,7 +64,7 @@
 //#define ELC_JIT                     _T("jit")
 //#define ELC_YG_IMAGEBASE            _T("imagebase")
 #define ELC_LIB_PATH                "libpath"
-//#define ELC_SYSTEM_THREADMAX        _T("maxthread")
+#define ELC_SYSTEM_THREADMAX        "maxthread"
 #define ELC_OUTPUT_PATH             "output"
 #define ELC_NAMESPACE               "namespace"
 //#define ELC_STACK_COMMIT            _T("stackcommit")

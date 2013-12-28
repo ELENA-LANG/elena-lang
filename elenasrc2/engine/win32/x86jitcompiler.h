@@ -196,7 +196,8 @@ public:
    virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code);
    virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data);
 
-//   virtual void compileTLS(_JITLoader* loader);
+   virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber);
+   virtual void compileTLS(_JITLoader* loader);
 
    virtual void embedSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter, _Module* module);
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);

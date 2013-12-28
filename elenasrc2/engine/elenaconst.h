@@ -262,7 +262,7 @@ namespace _ELENA_
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCSize              = 0x00000001;
    const int lnYGRatio             = 0x00000002;
-  // const int lnThreadCount         = 0x00000003;
+   const int lnThreadCount         = 0x00000003;
    const int lnObjectSize          = 0x00000004;
    // used only for VM
    const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
@@ -403,9 +403,9 @@ namespace _ELENA_
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
 
-//  //// #define GC_ROOT                  "$elena'@gcroot"               // static roots
-//  // #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
-//  // #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
+  //// #define GC_ROOT                  "$elena'@gcroot"               // static roots
+   #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
+   #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
 
    // predefined classes
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor

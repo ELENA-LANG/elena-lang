@@ -654,19 +654,19 @@ void* JITLinker :: resolveLoader(const wchar16_t*  reference)
    return vaddress;
 }
 
-////void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
-////{
-////   // get target image & resolve virtual address
-////   MemoryWriter writer(_loader->getTargetSection(mskTLSRef));
-////
-////   size_t vaddress = (_virtualMode ? writer.Position() : (size_t)writer.Address()) | mskTLSRef;
-////
-////   writer.writeDWord(0);
-////
-////   _loader->mapReference(reference, (void*)vaddress, mskTLSRef);
-////
-////   return (void*)vaddress;
-////}
+//void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
+//{
+//   // get target image & resolve virtual address
+//   MemoryWriter writer(_loader->getTargetSection(mskTLSRef));
+//
+//   size_t vaddress = (_virtualMode ? writer.Position() : (size_t)writer.Address()) | mskTLSRef;
+//
+//   writer.writeDWord(0);
+//
+//   _loader->mapReference(reference, (void*)vaddress, mskTLSRef);
+//
+//   return (void*)vaddress;
+//}
 
 void JITLinker :: createNativeDebugInfo(const wchar16_t* reference, void* param, size_t& sizePtr)
 {
@@ -800,23 +800,23 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
    return vaddress;
 }
 
-////void* JITLinker :: resolvePseudoVMT(const wchar_t* reference, void* codeAddress, int flags)
-////{
-////   // get target image & resolve virtual address
-////   _Memory* image = _loader->getTargetSection(mskVMTRef);
-////   MemoryWriter writer(image);
-////
-////   // allocate space and make VTM offset
-////   _compiler->allocateVMT(writer, flags, 1);
-////
-////   void* vaddress = calculateVAddress(&writer, mskRDataRef);
-////
-////   _loader->mapReference(reference, vaddress, mskVMTRef);
-////
-////   _compiler->compilePseudoVMT(writer, codeAddress, 0, flags, _virtualMode);
-////
-////   return vaddress;
-////}
+//void* JITLinker :: resolvePseudoVMT(const wchar_t* reference, void* codeAddress, int flags)
+//{
+//   // get target image & resolve virtual address
+//   _Memory* image = _loader->getTargetSection(mskVMTRef);
+//   MemoryWriter writer(image);
+//
+//   // allocate space and make VTM offset
+//   _compiler->allocateVMT(writer, flags, 1);
+//
+//   void* vaddress = calculateVAddress(&writer, mskRDataRef);
+//
+//   _loader->mapReference(reference, vaddress, mskVMTRef);
+//
+//   _compiler->compilePseudoVMT(writer, codeAddress, 0, flags, _virtualMode);
+//
+//   return vaddress;
+//}
 
 void JITLinker :: prepareCompiler(_Module* core, _Module* commands)
 {

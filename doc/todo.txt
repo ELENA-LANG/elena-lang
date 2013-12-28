@@ -20,34 +20,19 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - elc / ecv / elt / sg / asm2binx / api2html / ide
-                       * test with russian letters to make sure the code works (elc)
+              xdev - multithreading
+                       * migrate core: core'default_handler, core'console_entry                       
 
+              xdev - generic development              
+                       * it should be possible to combine normal argument with an open argument list (e.g. see system'dynamic'tapeControl)
 
-
-                       * source / project textreader - by default UTF8
-                       
-                       * get rid of _T / TEXT
-
-
-                       * system should support utf8 files (both compiler and IDE)
-
-<=================>
+<=================> 
          
 1.9.11 
 ------
 week1: [8.01]
               xdev - utf-8
                        * all project files should be converted to UTF8
-
-              xdev - multithreading
-                       * architecture overview
-                       * migrate multy-threading 
-
-              xdev - x64
-                      * think over general architecture
-                      * asm2bin64 - compile x64 bit opcodes
-                      * create x64 elena vm
 
               xdev - open arg                                      
                         * compile tapeControl.getAt.. = Params@((Params@0) type'int add:1).
@@ -59,8 +44,6 @@ week1: [8.01]
                        * any other operation should result in boxing
 
               xdev - generic development              
-                       * it should be possible to combine normal argument with an open argument list (e.g. see system'dynamic'tapeControl)
-
                        * it looks like open argument list boxing does not work for elenavm
 
                        * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
@@ -231,7 +214,10 @@ week1: [8.01]
                          actual message name inside handler : the table is the map between income and outcome message)
 
               xdev - native code optimization
-                       * review commands
+                       * bssearch : try to optimize the jump command
+                       * bssearch : can we get rid of setncb command, if the number is always even?
+                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
                        * review core
 
               xdev - byte code optimization
@@ -334,7 +320,7 @@ week1: [8.01]
               xdev - tools                       
                        * asm2binx: mov  ebx, [eax + esi*2] cannot be correctly compiled; used in wsgetat command
                        * create missing folders
-                       * get rid of _T (elc, elt, asm2binx, ecv) : move to UTF8
+                       * get rid of _T (elc, elt, asm2binx, ecv) 
                        * asm2binx: lea ebx, [eax * 2] cannot be correctly compiled
                        * asm2binx: lea  ebx, [esi * 2 + 2] cannot be correctly compiled (wscreate)
                        
@@ -608,12 +594,27 @@ week4:
 1.9.12
 --------
 week1:
+              xdev - multithreading
+                       * migrate core: core_alloc, ...
+                       * migrate commands
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+
                xdev - GC
                        * increase the heap size
 
 week2:
 
 1.9.13
+--------
+week1:
+              xdev - x64
+                      * think over general architecture
+                      * asm2bin64 - compile x64 bit opcodes
+                      * create x64 elena vm
+
+1.9.14
 --------
 week1:
                xdev - GC

@@ -36,13 +36,16 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
    _long.copy(LONG_CLASS);
    _real.copy(REAL_CLASS);
 
-   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
-      project->BoolSetting(opDebugMode)/*, project->IntSetting(opThreadMax)*/);
+   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef, project->BoolSetting(opDebugMode));
 
-//   // compile TLS section if it is a multi-threading app
-//   if (_project->IntSetting(opThreadMax) > 1) {
-//      compiler->compileTLS(dynamic_cast<_JITLoader*>(this));
-//   }
+   // compile TLS section if it is a multi-threading app
+   if (_project->IntSetting(opThreadMax) > 1) {
+      compiler->compileTLS(dynamic_cast<_JITLoader*>(this));
+
+      // load GC thread table, should be allocated before static roots
+      // thread table contains TLS reference
+      compiler->compileThreadTable(dynamic_cast<_JITLoader*>(this), _project->IntSetting(opThreadMax));
+   }
 
    // initialize compiler inline code
    linker.prepareCompiler(
@@ -130,8 +133,8 @@ size_t ExecutableImage :: getLinkerConstant(int id)
          return _project->IntSetting(opGCHeapSize);
       case lnYGRatio:
          return _project->IntSetting(opYGRatio);
-      //case lnThreadCount:
-      //   return _project->IntSetting(opThreadMax);
+      case lnThreadCount:
+         return _project->IntSetting(opThreadMax);
       case lnObjectSize:
          return _project->IntSetting(opGCObjectSize);
       default:

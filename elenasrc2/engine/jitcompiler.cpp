@@ -123,10 +123,10 @@ void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
    writer.writeDWord(0);
 }
 
-//void JITCompiler32 :: allocateArray(MemoryWriter& writer, int count)
-//{
-//   writer.writeBytes(0, count * 4);
-//}
+void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
+{
+   writer.writeBytes(0, count * 4);
+}
 
 void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
 {
