@@ -955,8 +955,6 @@ labNext:
   shr  edx, page_size_order
   add  edx, [data : %CORE_GC_TABLE + gc_header]
   mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
-  
-  mov [data : %CORE_GC_TABLE + gc_stack_bottom], esp
 
   ret
 
@@ -964,13 +962,16 @@ end
 
 procedure core'newframe
 
-  pop  edx           // put frame end and move procedure returning address
+  // ; put frame end and move procedure returning address
+  pop  edx           
 
   xor  ebx, ebx
   push ebx                      
   push ebx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp // set stack frame pointer
-
+  // ; set stack frame pointer / bottom stack pointer
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp 
+  mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp
+  
   push edx
 
   ret
@@ -979,42 +980,49 @@ end
 
 procedure core'endframe
 
-  pop  ecx  // save return pointer
-
+  // ; save return pointer
+  pop  ecx  
+  
   xor  edx, edx
   lea  esp, [esp+8]
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
 
-  push ecx   // restore return pointer
+  // ; restore return pointer
+  push ecx   
   ret
 
 end
 
 procedure core'openframe
 
-  pop  ecx  // save return pointer
+  // ; save return pointer
+  pop  ecx  
 
   xor  edi, edi
 
   mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
-  push esi                              // save previous pointer 
-  push edi                              // size field
+  // ; save previous pointer / size field
+  push esi                              
+  push edi                              
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
-
-  push ecx   // restore return pointer
+  
+  // ; restore return pointer
+  push ecx   
   ret
 
 end
 
 procedure core'closeframe
 
-  pop  ecx  // save return pointer
+  // ; save return pointer
+  pop  ecx  
 
   lea  esp, [esp+4]
   pop  edx
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
-
-  push ecx   // restore return pointer
+  
+  // ; restore return pointer
+  push ecx   
   ret
 
 end

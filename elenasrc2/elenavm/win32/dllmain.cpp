@@ -35,7 +35,7 @@ Instance* getCurrentInstance()
 
 EXTERN_DLL_EXPORT int InterpretLVM(void* tape)
 {
-   //getchar();
+//   getchar();
 
    Instance* instance = getCurrentInstance();
    if (instance == NULL)

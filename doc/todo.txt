@@ -20,11 +20,18 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - multithreading
-                       * migrate core: core'default_handler, core'console_entry                       
+              xdev - open arg                                      
+                       * a msg::Args -> converting open arg list into normal one
+                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
+                       * use cases
+                         a msg &::Args -> passing open arg list further
+                       * any other operation should result in boxing
 
-              xdev - generic development              
-                       * it should be possible to combine normal argument with an open argument list (e.g. see system'dynamic'tapeControl)
+              xdev - multithreading
+                       * migrate core: core'openframe, core'newframe, core'closeframe, core'endframe
+                       * migrate core: core'default_handler, core'console_entry                       
+                       * migrate core: init stack bottom for every thread / main thread
+                       * compile simple code (mt_test)
 
 <=================> 
          
@@ -34,18 +41,7 @@ week1: [8.01]
               xdev - utf-8
                        * all project files should be converted to UTF8
 
-              xdev - open arg                                      
-                        * compile tapeControl.getAt.. = Params@((Params@0) type'int add:1).
-
-                        * a msg::Args -> converting open arg list into normal one
-                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
-                        * use cases
-                         a msg &::Args -> passing open arg list further
-                       * any other operation should result in boxing
-
               xdev - generic development              
-                       * it looks like open argument list boxing does not work for elenavm
-
                        * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
 
                        * make possible to send exception futher with ifFailed handler
@@ -201,6 +197,9 @@ week1: [8.01]
                        * support GUI application
                        * compiler option : switch off jump optimization
                        * compiler option : switch off direct calls
+
+              xdev - elenavm
+                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
 
               xdev - elenasm
                        * for some strange reader elenasm cannot load - D:\Alex\ELENA\tests\tape_tester\interpreter.es, though 
@@ -376,6 +375,7 @@ week2:
                        * should strOp, intOp moved to corresponding extension classes (either EIntConvertor or EInt, and so on)
                        * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
                        * date - return utc time
+                       * implement analog of String.Format
                        
               adev - lib30 optimization
                        * start to use stack allocated variables to optimize the code : console operation, ...
@@ -501,6 +501,7 @@ week2:
 
 week3:
               sdev - script engine
+                       * modify system'dynamic'tapeControl to use mixture of arguments and open argument, modify bf code as well
                        * parse bf sample from code : show an error (currently it crached)                       
                        * interpreter: test program2
                        * elenascript: implement bf interpreter

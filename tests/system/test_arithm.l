@@ -7,9 +7,54 @@
 //#define extensions'math.
 #define extensions.
 
+#class XTester
+{
+    #method add &type'int:anN
+    [
+        #var ret := anN.
+        
+        ^ ret.
+    ]
+}
+
 #symbol XTest =
 [
-    #var o := tapeControl getAt &:2:"a":2:"b".
+    #var n := XTester add&type'int:(2+3).
+].
+
+// --- OpenArgTest ---
+
+#class OpenArgTester
+{
+//    #method testUnboxing : anArg1 : anArg2 : anArg3
+//    [
+//        #var b := anArg1.
+//    ]
+
+    #method test : anIndex :: aParams
+        = aParams @ (anIndex type'int).
+    
+    #method test :: aParams
+    [
+        #var aLength := aParams type'length.
+        
+        #var aSecond := aParams@1.
+        
+        $self testBoxing:aParams.
+//        $self testUnboxing::aParams.
+    ]
+    
+    #method testBoxing : anArray
+    [
+        #var b := anArray.
+    ]    
+}
+
+#symbol OpenArgTest =
+[
+    #var aRetVal := OpenArgTester test:1 &:1:"a":3.
+    
+    OpenArgTester test &:1:"a":3.
 ].
 
 // --- MultiDispatchTest ---
@@ -511,34 +556,4 @@
 #symbol GetPropertyTest =
 [
     GetPropertyAgent eval:%property(2).
-].
-
-// --- OpenArgTest ---
-
-#class OpenArgTester
-{
-    #method testBoxing : anArray
-    [
-        #var b := anArray.
-    ]
-    
-//    #method testUnboxing : anArg1 : anArg2 : anArg3
-//    [
-//        #var b := anArg1.
-//    ]
-
-    #method test :: aParams
-    [
-        #var aLength := aParams type'length.
-        
-        #var aSecond := aParams@1.
-        
-        $self testBoxing:aParams.
-//        $self testUnboxing::aParams.
-    ]
-}
-
-#symbol OpenArgTest =
-[
-    OpenArgTester test &:1:"a":3.
 ].

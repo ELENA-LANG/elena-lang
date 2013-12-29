@@ -7,8 +7,14 @@
                     What's New in 1.9.11 (pre release)
 ******************************************************************************
 
+ELENA:
+[+] it is possible to use generic arguments with an open argument list
+
 ELC:
 [*] configuration / project  files are UTF8 now
+
+ELENAVM:
+[-] fixed bug with stack allocated object boxing
 
 ******************************************************************************
                     What's New in 1.9.10 (pre release)

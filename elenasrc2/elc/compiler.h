@@ -356,6 +356,7 @@ protected:
       bool      withCustomVerb;
       int       masks;              // used for ecode optimization
       int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 
 //      int compileHints(DNode hints);
 
@@ -621,7 +622,7 @@ protected:
    void compileMessageParameter(DNode& arg, CodeScope& scope, const wchar16_t* subject, int mode, size_t& count);
 
    void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
-   void compilePresavedMessageParameters(DNode node, CodeScope& scope, int& mode);
+   void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
 
    ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int mode, size_t& spaceToRelease);
 

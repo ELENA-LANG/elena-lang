@@ -929,6 +929,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->withCustomVerb = false;
    this->reserved = 0;
    this->masks = 0;
+   this->rootToFree = 1;
 }
 
 void Compiler::MethodScope :: include()
@@ -2025,12 +2026,31 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
       else verb_id = GET_MESSAGE_ID;
    }
 
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      count++;
+
+      if (arg.firstChild().firstChild() != nsNone)
+         simpleParameters = false;
+
+      arg = arg.nextNode();
+   }
+
    // if it is open argument list
    if (arg == nsMessageOpenParameter) {
+      // if a generic argument is used with an open argument list
+      // special postfix should be used
+      if (count > 0) {
+         if (!first)
+            signature.append('&');
+
+         signature.appendInt(count);
+      }
+
       simpleParameters = false;
 
       // terminator
-      count = 1;
+      count += 1;
 
       arg = arg.firstChild();
       while (arg != nsNone) {
@@ -2042,16 +2062,6 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
       paramCount = OPEN_ARG_COUNT;
    }
    else {
-      // if message has generic argument list
-      while (arg == nsMessageParameter) {
-         count++;
-
-         if (arg.firstChild().firstChild() != nsNone)
-            simpleParameters = false;
-
-         arg = arg.nextNode();
-      }
-
       // if message has named argument list
       while (arg == nsSubjectArg) {
          int modePrefix = 0;
@@ -2162,7 +2172,7 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
    }
 }
 
-void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, int& mode)
+void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, int mode, size_t& stackToFree)
 {
    // if it is a dispatch operation
    if (arg == nsTypedMessageParameter) {
@@ -2172,12 +2182,31 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
    else {
       size_t count = 0;
 
-//      // if message has open argument list
+      // if message has generic argument list
+      while (arg == nsMessageParameter) {
+         count++;
+
+         ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+         _writer.loadObject(*scope.tape, param);
+
+         // box the object if required
+         if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+            boxObject(scope, param, mode);
+         }
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+
+         arg = arg.nextNode();
+      }
+
+      // if message has open argument list
       if (arg == nsMessageOpenParameter) {
          arg = arg.firstChild();
 
+         stackToFree = 1;
          while (arg != nsNone) {
             count++;
+            stackToFree++;
 
             ObjectInfo retVal = compileExpression(arg, scope, 0);
             _writer.loadObject(*scope.tape, retVal);
@@ -2186,27 +2215,8 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
 
             arg = arg.nextNode();
          }
-
-         mode = CTRL_TYPED_MODE | tcParams;
       }
       else {
-         // if message has generic argument list
-         while (arg == nsMessageParameter) {
-            count++;
-
-            ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
-            _writer.loadObject(*scope.tape, param);
-
-            // box the object if required
-            if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
-               boxObject(scope, param, mode);
-            }
-
-            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
-
-            arg = arg.nextNode();
-         }
-
          // if message has named argument list
          while (arg == nsSubjectArg) {
             int modePrefix = mode;
@@ -2262,12 +2272,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
-      compilePresavedMessageParameters(node.firstChild(), scope, mode);
-   }
-
-   // if open argument list was used indicate that extra space should be released after the message call
-   if ((mode & ~CTRL_MASK) == tcParams) {
-      spaceToRelease =  count;
+      compilePresavedMessageParameters(node.firstChild(), scope, mode, spaceToRelease);
    }
 
    return messageRef;
@@ -2507,12 +2512,13 @@ ObjectInfo Compiler :: compileEvalMessage(DNode& node, CodeScope& scope, ObjectI
 
    _writer.declareArgumentList(*scope.tape, count + 1);
    _writer.loadObject(*scope.tape, object);
-
+   
    object = boxObject(scope, object, mode);
 
    _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
-   compilePresavedMessageParameters(node, scope, mode);
+   size_t stackToFree = 0;
+   compilePresavedMessageParameters(node, scope, mode, stackToFree);
 
    // skip all except the last message parameter
    while (node.nextNode() == nsMessageParameter)
@@ -3676,27 +3682,38 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
       else verb_id = GET_MESSAGE_ID;
    }
 
+   // if method has generic (unnamed) argument list
+   while (arg == nsMethodParameter) {
+      int index = 1 + scope.parameters.Count();
+
+      if (scope.parameters.exist(arg.Terminal()))
+         scope.raiseError(errDuplicatedLocal, arg.Terminal());
+
+      scope.parameters.add(arg.Terminal(), Parameter(index, otNone));
+      paramCount++;
+
+      arg = arg.nextNode();
+   }
+
    // if method has an open argument list
    if (arg == nsMethodOpenParameter) {
-      scope.parameters.add(arg.Terminal(), Parameter(1, otParams));
+      scope.parameters.add(arg.Terminal(), Parameter(1 + scope.parameters.Count(), otParams));
 
-      // TO INDICATE OPEN ARGUMENT LIST
+      // if the method contains the generic parameters
+      if (paramCount > 0) {
+         // add the special postfix
+         if (!first)
+            signature.append('&');
+
+         signature.appendInt(paramCount);
+
+         // the generic arguments should be free by the method exit
+         scope.rootToFree += paramCount;
+      }
+      // to indicate open argument list
       paramCount = OPEN_ARG_COUNT;
    }
    else {
-      // if method has generic (unnamed) argument list
-      while (arg == nsMethodParameter) {
-         int index = 1 + scope.parameters.Count();
-
-         if (scope.parameters.exist(arg.Terminal()))
-            scope.raiseError(errDuplicatedLocal, arg.Terminal());
-
-         scope.parameters.add(arg.Terminal(), Parameter(index, otNone));
-         paramCount++;
-
-         arg = arg.nextNode();
-      }
-
       // if method has named argument list
       while (arg == nsSubjectArg) {
          TerminalInfo subject = arg.Terminal();
@@ -4012,7 +4029,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, DNode hints*/)
 
          _writer.loadObject(*codeScope.tape, ObjectInfo(okSelf));
 
-         int stackToFree = paramCount + 1;
+         int stackToFree = paramCount + scope.rootToFree;
 
       //   if (scope.testMode(MethodScope::modLock)) {
       //      _writer.endSyncMethod(*codeScope.tape, -1);

@@ -965,8 +965,6 @@ labNext:
   add  edx, [data : %CORE_GC_TABLE + gc_header]
   mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
   
-  mov [data : %CORE_GC_TABLE + gc_stack_bottom], esp
-  
   // ; GCXT: assign tls entry
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  ecx, fs:[2Ch]
@@ -996,57 +994,28 @@ end
 
 procedure core'newframe
 
-  pop  edx           // put frame end and move procedure returning address
-
-  xor  ebx, ebx
-  push ebx                      
-  push ebx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp // set stack frame pointer
-
-  push edx
-
+  // !!
   ret
 
 end
 
 procedure core'endframe
 
-  pop  ecx  // save return pointer
-
-  xor  edx, edx
-  lea  esp, [esp+8]
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
-
-  push ecx   // restore return pointer
+  // !!
   ret
 
 end
 
 procedure core'openframe
 
-  pop  ecx  // save return pointer
-
-  xor  edi, edi
-
-  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
-  push esi                              // save previous pointer 
-  push edi                              // size field
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
-
-  push ecx   // restore return pointer
+  // !!
   ret
 
 end
 
 procedure core'closeframe
 
-  pop  ecx  // save return pointer
-
-  lea  esp, [esp+4]
-  pop  edx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
-
-  push ecx   // restore return pointer
+  // !!
   ret
 
 end

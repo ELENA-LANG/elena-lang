@@ -103,7 +103,7 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
       key.copy(it.key());
 
       // copy value or key if the value is absent
-      String<wchar16_t, 100> value((_text_t*)*it);
+      String<char, 100> value((char*)*it);
       if(value.isEmpty())
          value.copy(key);
 
@@ -113,7 +113,7 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
 
          list->add(key, StringHelper::clone(filePath));
       }
-      else list->add(key, StringHelper::clone(value));
+      else list->add(key, IdentifierString(value).clone());
 
       it++;
    }
@@ -122,7 +122,7 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
 bool InstanceConfig :: load(const _path_t* path, Templates* templates)
 {
    IniConfigFile config;
-   if (_ELENA_::emptystr(path) || !config.load(path, feAnsi)) {
+   if (_ELENA_::emptystr(path) || !config.load(path, feUTF8)) {
       return false;
    }
 
@@ -892,7 +892,7 @@ bool ELENAMachine::Config :: load(const _path_t* path, Templates* templates)
 
    rootPath.copyPath(path);
 
-   if (_ELENA_::emptystr(path) || !config.load(path, feAnsi)) {
+   if (_ELENA_::emptystr(path) || !config.load(path, feUTF8)) {
       return false;
    }
 
