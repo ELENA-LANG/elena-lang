@@ -110,10 +110,10 @@
 #symbol radixDispatcher = 
 {
     eval &type'int:anInteger
-        = %(&type'int&type'base).
+        = %(type'int&type'base).
         
     eval &type'long:aLong
-        = %(&type'long&type'base).
+        = %(type'long&type'base).
 }.
 
 #symbol convertControl =

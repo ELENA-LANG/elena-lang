@@ -83,7 +83,7 @@ enum Symbol
    nsLastSwitchOption           = 0x0103D,
    nsBiggerSwitchOption         = 0x0103E,
    nsLessSwitchOption           = 0x0103F,
-   nsSignatureReference         = 0x01040,
+   nsVarSizeValue               = 0x01040,
    nsL6Operation                = 0x01041,
    nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,

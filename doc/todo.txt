@@ -20,10 +20,11 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - message references
-                       * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
-                       * declare a message symbol with open argument list (e.g. current %(getAt(15)) is not good, probably better - %(getAt(..)))
-
+              xdev - generic development              
+                       * test error handling
+                          #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
+                            | raise:(system'FormatException new:($self LastScriptError))).
+            
               xdev - multithreading
                        * migrate core: core'openframe, core'newframe, core'closeframe, core'endframe
                        * migrate core: core'default_handler, core'console_entry                       
@@ -35,9 +36,6 @@ Currently:
 1.9.11 
 ------
 week1: [8.01]
-              xdev - utf-8
-                       * all project files should be converted to UTF8
-
               xdev - generic development              
                        * make possible to send exception futher with ifFailed handler
                        
@@ -46,12 +44,7 @@ week1: [8.01]
                        * why dispatching method does not work (system'dynamic'scriptControl)
                                #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
                                | raise:(system'FormatException new:($self LastScriptError))).                               
-
-                       * test error handling
-                          #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
-                            | raise:(system'FormatException new:($self LastScriptError))).
-            
-
+                               
                        * role class should not be its own class class (like it is now), super class should be used
 
                        * role implementation (see arithmeval sample)
@@ -343,6 +336,11 @@ week1: [8.01]
                        * test compilation with a very long identifier names                       
                        
 week2:
+              sdev - testing
+                       * test system
+                       * test basic samples
+                       * test rosetta samples
+
               sdev - api
                        * create API doc
                        * copy protocols to doc\protocols
@@ -493,7 +491,11 @@ week2:
 
 week3:
               sdev - script engine
+                       * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
                        * modify system'dynamic'tapeControl to use mixture of arguments and open argument, modify bf code as well
+
+              sdev - bf sample
+                       * use correct syntax for the message with an open argument
                        * parse bf sample from code : show an error (currently it crached)                       
                        * interpreter: test program2
                        * elenascript: implement bf interpreter
@@ -587,6 +589,9 @@ week4:
 1.9.12
 --------
 week1:
+              xdev - utf-8
+                       * all project files should be converted to UTF8
+
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it?

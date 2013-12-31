@@ -117,6 +117,17 @@ inline bool findSymbol(DNode node, Symbol symbol)
    return false;
 }
 
+inline bool findSymbol(DNode node, Symbol symbol1, Symbol symbol2)
+{
+   while (node != nsNone) {
+      if (node==symbol1 || node==symbol2)
+         return true;
+
+      node = node.nextNode();
+   }
+   return false;
+}
+
 inline DNode goToSymbol(DNode node, Symbol symbol)
 {
    while (node != nsNone) {
@@ -1703,20 +1714,17 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          }
          else result = compileExpression(member, scope, mode & ~CTRL_ROOT);
          break;
-      case nsSubjectArg:
-         if (member.nextNode() == nsExpression) {
-            return compileGetProperty(member, scope, mode | CTRL_GETPROP_MODE);
-         }
-         if (_verbs.exist(member.Terminal())) {
+      case nsMessageReference:
+         // if it is a message
+         if (findSymbol(member.firstChild(), nsSizeValue, nsVarSizeValue)) {
             result = compileMessageReference(member, scope, mode);
          }
+         // if it is a get property
+         else if (findSymbol(member.firstChild(), nsExpression)) {
+            return compileGetProperty(member, scope, mode | CTRL_GETPROP_MODE);
+         }
+         // otherwise it is a singature
          else result = compileSignatureReference(member, scope, mode);
-         break;
-      case nsSignatureReference:
-         result = compileSignatureReference(member, scope, mode);
-         break;
-      case nsMessageReference:
-         result = compileMessageReference(member, scope, mode);
          break;
       default:
          result = compileTerminal(objectNode, scope, mode);
@@ -1737,22 +1745,14 @@ ObjectInfo Compiler :: compileSignatureReference(DNode objectNode, CodeScope& sc
    message.append('#');
    message.append(0x20);
 
-   if (objectNode == nsSubjectArg) {
-      TerminalInfo subject = objectNode.Terminal();
+   DNode arg = objectNode.firstChild();
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
 
       message.append('&');
       message.append(subject);
-   }
-   else {
-      DNode arg = objectNode.firstChild();
-      while (arg == nsSubjectArg) {
-         TerminalInfo subject = arg.Terminal();
 
-         message.append('&');
-         message.append(subject);
-
-         arg = arg.nextNode();
-      }
+      arg = arg.nextNode();
    }
 
    return ObjectInfo(okConstant, otSignature, scope.moduleScope->module->mapReference(message));
@@ -1760,33 +1760,24 @@ ObjectInfo Compiler :: compileSignatureReference(DNode objectNode, CodeScope& sc
 
 ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scope, int mode)
 {
+   DNode arg = objectNode.firstChild();
+   TerminalInfo verb = arg.Terminal();
+
    IdentifierString message;
-   TerminalInfo verb = objectNode.Terminal();
 
    // reserve place for param counter
    message.append('0');
 
-   DNode arg = objectNode.firstChild();
    ref_t verb_id = _verbs.get(verb.value);
    ref_t sign_id = 0;
    int count = 0;
 
+   // if it is not a verb - by default it is EVAL message
    if (verb_id == 0) {
-      // if followed by argument list - it is a custom verb
-      if (arg == nsSubjectArg || verb == tsPrivate) {
-         message.append('#');
-         message.append(EVAL_MESSAGE_ID + 0x20);
-         message.append('&');
-         message.append(verb);
-         count++;
-      }
-      // otherwise it is GET message
-      else {
-         message.append('#');
-         message.append(GET_MESSAGE_ID + 0x20);
-         message.append('&');
-         message.append(verb);
-      }
+      message.append('#');
+      message.append(EVAL_MESSAGE_ID + 0x20);
+      message.append('&');
+      message.append(verb);
    }
    else {
       message.append('#');
@@ -1797,6 +1788,8 @@ ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scop
    if ((verb_id == SEND_MESSAGE_ID || verb_id == DISPATCH_MESSAGE_ID) && objectNode.firstChild() == nsSubjectArg) {
       scope.raiseError(errInvalidOperation, verb);
    }
+
+   arg = arg.nextNode();
 
    // if method has argument list
    while (arg == nsSubjectArg) {
@@ -1810,12 +1803,20 @@ ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scop
       arg = arg.nextNode();
    }
 
-   if (objectNode.nextNode() == nsSizeValue) {
-      TerminalInfo size = objectNode.nextNode().Terminal();
+   if (arg == nsSizeValue) {
+      TerminalInfo size = arg.Terminal();
       if (size == tsInteger) {
          count = StringHelper::strToInt(size.value);
       }
       else scope.raiseError(errInvalidOperation, size);
+   }
+   else if (arg == nsVarSizeValue) {
+      count = OPEN_ARG_COUNT;
+   }
+
+   // if it is a custom verb and param count is zero - treat it like get message
+   if (verb_id== 0 && count == 0) {
+      message[2] += 1;
    }
 
    // define the number of parameters
@@ -2918,7 +2919,7 @@ ObjectInfo Compiler :: compileGetProperty(DNode node, CodeScope& scope, int mode
    saveObject(scope, compileMessageReference(node, scope, mode), mode);
 
    // compile property content
-   saveObject(scope, compileExpression(node.nextNode(), scope, mode), mode);
+   saveObject(scope, compileExpression(goToSymbol(node.firstChild(), nsExpression), scope, mode), mode);
 
    // create the collection
    _writer.newObject(*scope.tape, 2, vmtReference, scope.moduleScope->nilReference);
@@ -3958,43 +3959,47 @@ void Compiler :: compileResend(DNode node, CodeScope& scope)
       else scope.raiseError(errInvalidOperation, node.Terminal());
    }
    // if it is resend to itself
-   // Make sure only verb / custom verb is used
-   else if (node.firstChild() == nsSubjectArg) {
-      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   else if (node.firstChild() == nsMessageReference) {
+      DNode subj = node.firstChild().firstChild();
+      // Make sure only verb / custom verb is used
+      if (subj.nextNode() == nsNone) {
+         MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-      TerminalInfo verb = node.firstChild().Terminal();
-      ref_t verb_id = _verbs.get(verb.value);
-      int sign_id = getSignature(methodScope->message);
-      int paramCount = getParamCount(methodScope->message);
+         TerminalInfo verb = subj.Terminal();
+         ref_t verb_id = _verbs.get(verb.value);
+         int sign_id = getSignature(methodScope->message);
+         int paramCount = getParamCount(methodScope->message);
 
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
 
-      if (verb_id == 0) {
-         verb_id = paramCount == 0 ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
+         if (verb_id == 0) {
+            verb_id = paramCount == 0 ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
 
-         // if it is custom verb
-         // simulate the verb change by creating a new signature
-         IdentifierString newSignature(verb.value);
+            // if it is custom verb
+            // simulate the verb change by creating a new signature
+            IdentifierString newSignature(verb.value);
 
-         if (sign_id != 0) {
-            const wchar16_t* sign = scope.moduleScope->module->resolveSubject(sign_id);
+            if (sign_id != 0) {
+               const wchar16_t* sign = scope.moduleScope->module->resolveSubject(sign_id);
 
-            // ignore the first argument if it is a custom verb
-            if (methodScope->withCustomVerb) {
-               int index = StringHelper::find(sign, '&');
+               // ignore the first argument if it is a custom verb
+               if (methodScope->withCustomVerb) {
+                  int index = StringHelper::find(sign, '&');
 
-               newSignature.append(sign + index);
+                  newSignature.append(sign + index);
+               }
+               else {
+                  newSignature.append('&');
+                  newSignature.append(sign);
+               }
             }
-            else {
-               newSignature.append('&');
-               newSignature.append(sign);
-            }
+
+            _writer.redirectVerb(*scope.tape, encodeMessage(scope.moduleScope->module->mapSubject(newSignature, false),
+               verb_id, paramCount));
          }
-
-         _writer.redirectVerb(*scope.tape, encodeMessage(scope.moduleScope->module->mapSubject(newSignature, false),
-            verb_id, paramCount));
+         else _writer.redirectVerb(*scope.tape, encodeMessage(sign_id, verb_id, paramCount));
       }
-      else _writer.redirectVerb(*scope.tape, encodeMessage(sign_id, verb_id, paramCount));
+      else scope.raiseError(errInvalidOperation, node.Terminal());
    }
    else scope.raiseError(errInvalidOperation, node.Terminal());
 }
