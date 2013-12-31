@@ -56,7 +56,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 51;
+const int gcCommandNumber = 52;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
@@ -71,7 +71,7 @@ const ByteCommand gcCommands[gcCommandNumber] =
 /*   bcRCallN, */bcGet, bcSet, bcASwapSI, 
    bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcNBox,
    /*   bcMccReverse,*/ bcAXSetR, bcWSTest, bcTest, bcBSTest,
-   bcBox
+   bcBox, bcUnbox
 };
 
 const int gcExtensionNumber = 57;
@@ -95,7 +95,7 @@ const FunctionCode gcExtensions[gcExtensionNumber] =
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
    &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileNop, &compileMccPush, &compileMccCopyVerb, &loadOneByteOp,
-   &compileNop, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &compileNop,
+   &compileNop, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &loadNOp,
 
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopSelf, &loadOneByteLOp, &compileNop, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoadD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,

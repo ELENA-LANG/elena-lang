@@ -300,6 +300,8 @@ ELENA byte codes (or ecodes)
 
  box vmt                     - if acc is local box its content into the object with vmt and size index
 
+ unbox                       - copy acc content into the stack where index=size
+
 
  data manipulating commands:
  -----------------
@@ -509,6 +511,8 @@ ELENA byte codes (or ecodes)
 
  bseval                      - executes VM Script tape in self, acc contains the result
  
+
+
 
 
 

@@ -666,12 +666,28 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
    }
 }
 
-void ByteCodeWriter :: boxArray(CommandTape& tape, ref_t vmtReference)
+void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
 {
    // rfgetlenz
    // box vmt
    tape.write(bcFunc, fnGetLenZ);
    tape.write(bcBox, vmtReference);
+}
+
+void ByteCodeWriter :: unboxArgList(CommandTape& tape)
+{
+   // pushn 0
+   // rfgetlenz
+   // unbox
+   // dinc
+   // acopys 0
+   // aloadd
+   tape.write(bcPushN);
+   tape.write(bcFunc, fnGetLenZ);
+   tape.write(bcUnbox);
+   tape.write(bcDInc);
+   tape.write(bcACopyS);
+   tape.write(bcALoadD);
 }
 
 void ByteCodeWriter :: popObject(CommandTape& tape, ObjectInfo object)
@@ -716,6 +732,36 @@ void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
    }
    else if (count > 1)
       tape.write(bcPopI, count);
+}
+
+void ByteCodeWriter :: releaseArgList(CommandTape& tape)
+{
+   // pusha
+   // acopys 1
+   // rfgetlenz
+
+   // ; released
+
+   // labNext:
+   // pop
+   // ddec
+   // dthen labNext
+   // popa
+
+   tape.newLabel();
+
+   tape.write(bcPushA);
+   tape.write(bcACopyS, 1);
+   tape.write(bcFunc, fnGetLenZ);
+
+   tape.setLabel(true);
+
+   tape.write(bcPop);
+   tape.write(bcDDec);
+   tape.write(bcDThen, baCurrentLabel);
+   tape.write(bcPopA);
+
+   tape.releaseLabel();
 }
 
 void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)

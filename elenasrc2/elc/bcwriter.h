@@ -222,10 +222,12 @@ public:
 //   void copyPrimitiveValue(CommandTape& type, int value);
    void saveObject(CommandTape& tape, ObjectInfo object);
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool registerMode);
-   void boxArray(CommandTape& tape, ref_t vmtReference);
+   void boxArgList(CommandTape& tape, ref_t vmtReference);
+   void unboxArgList(CommandTape& tape);
 
    void popObject(CommandTape& tape, ObjectInfo object);
    void releaseObject(CommandTape& tape, int count = 1);
+   void releaseArgList(CommandTape& tape);
 
 //   void moveLocalObject(CommandTape& tape, int index);
 

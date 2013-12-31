@@ -20,12 +20,9 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - open arg                                      
-                       * a msg::Args -> converting open arg list into normal one
-                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
-                       * use cases
-                         a msg &::Args -> passing open arg list further
-                       * any other operation should result in boxing
+              xdev - message references
+                       * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
+                       * declare a message symbol with open argument list (e.g. current %(getAt(15)) is not good, probably better - %(getAt(..)))
 
               xdev - multithreading
                        * migrate core: core'openframe, core'newframe, core'closeframe, core'endframe
@@ -42,12 +39,8 @@ week1: [8.01]
                        * all project files should be converted to UTF8
 
               xdev - generic development              
-                       * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
-
                        * make possible to send exception futher with ifFailed handler
-
-                       * declare a message symbol with open argument list (e.g. current %(getAt(15)) is not good, probably better - %(getAt(..)))
-
+                       
                        * check private method declaration ??
 
                        * why dispatching method does not work (system'dynamic'scriptControl)
@@ -204,7 +197,9 @@ week1: [8.01]
               xdev - elenasm
                        * for some strange reader elenasm cannot load - D:\Alex\ELENA\tests\tape_tester\interpreter.es, though 
                          can load D:\Alex\ELENA\tests\tape_tester\helloworld.es
-
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
+                         
               xdev - multy select statement
                        * native implementation - using open argument list??
 
@@ -220,6 +215,7 @@ week1: [8.01]
                        * review core
 
               xdev - byte code optimization
+                       * for direct call, message is set twice (mov edx, ...)
                        * optimize output code: system'Object.notequal, ...
 
                        * if the target is stack allocated, no need to allocate extra space (at least for the single operation)? 
@@ -323,11 +319,6 @@ week1: [8.01]
                        * asm2binx: lea ebx, [eax * 2] cannot be correctly compiled
                        * asm2binx: lea  ebx, [esi * 2 + 2] cannot be correctly compiled (wscreate)
                        
-              xdev - elenasm
-                       * support LALR parser
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
-                       
               xdev - script support
                        * should be possible to debug vm scripts
                        
@@ -343,6 +334,7 @@ week1: [8.01]
                        * multi-select operator debugging - step over does not work
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
                        * step over #break / #throw does not work correctly
+                       * display open argument list correctly
 
               idev - usability
                        * recognize out of memory exception
@@ -595,6 +587,12 @@ week4:
 1.9.12
 --------
 week1:
+              xdev - open arg                                      
+                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
+                         raise an error ; do we need it?
+
+                       * any other operation should result in boxing
+
               xdev - multithreading
                        * migrate core: core_alloc, ...
                        * migrate commands
@@ -602,6 +600,8 @@ week1:
                        * reimplement thread safe variable, safe points, safe regions
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
 
+              xdev - generic development
+                       * new ecode: released - do we need it, or loop would be enough?
                xdev - GC
                        * increase the heap size
 

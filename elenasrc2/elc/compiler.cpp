@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 
 // --- Mode constants ---
-#define CTRL_MASK             0xFFC00000
+#define CTRL_MASK             0xFFE00000
 #define CTRL_ROOT             0xC0000000
 #define CTRL_ROOTEXPR         0x40000000
 #define CTRL_LOOP             0x20000000
@@ -25,6 +25,7 @@ using namespace _ELENA_;
 #define CTRL_PREV_EXIT_MODE   0x02000000     // used for if-else statement to indicate that the exit label is not the last one
 #define CTRL_DIRECT_PARAM     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define CTRL_GETPROP_MODE     0x00800000     // used in GET PROPERTY expression
+#define CTRL_OARG_UNBOX_MODE  0x00200000     // used to indicate unboxing open argument list
 #define CTRL_TYPEDOUT_MODE    0x00400000
 
 // --- Method optimization masks ---
@@ -125,6 +126,11 @@ inline DNode goToSymbol(DNode node, Symbol symbol)
       node = node.nextNode();
    }
    return node;
+}
+
+inline bool IsArgumentList(ObjectInfo object)
+{
+   return object.type == otParams && object.kind == okLocal;
 }
 
 inline bool IsPrimitiveArray(ObjectType type)
@@ -1863,7 +1869,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
             _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(REAL_CLASS) | mskVMTRef, true);
             break;
          case otParams:
-            _writer.boxArray(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
+            _writer.boxArgList(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
             break;
       }
    }
@@ -2049,14 +2055,22 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
 
       simpleParameters = false;
 
-      // terminator
-      count += 1;
-
       arg = arg.firstChild();
-      while (arg != nsNone) {
-         count++;
+      // check if argument list should be unboxed
+      DNode param = arg.firstChild();
 
-         arg = arg.nextNode();
+      if (arg.nextNode() == nsNone && param.firstChild() == nsNone && IsArgumentList(scope.mapObject(param.Terminal()))) {
+         mode |= CTRL_OARG_UNBOX_MODE;
+      }
+      else {
+         // terminator
+         count += 1;
+
+         while (arg != nsNone) {
+            count++;
+
+            arg = arg.nextNode();
+         }
       }
 
       paramCount = OPEN_ARG_COUNT;
@@ -2234,6 +2248,43 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
    }
 }
 
+void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree)
+{
+   // unbox the argument list
+   DNode arg = goToSymbol(node, nsMessageOpenParameter).firstChild();
+   ObjectInfo list = compileObject(arg.firstChild(), scope, mode);
+   _writer.loadObject(*scope.tape, list);
+
+   // unbox the argument list and return the object saved before the list
+   _writer.unboxArgList(*scope.tape);
+
+   // reserve the place for target and generic message parameters if available and save the target
+   _writer.declareArgumentList(*scope.tape, count + 1);
+   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
+
+   count = 0;
+   // if message has generic argument list
+   arg = node;
+   while (arg == nsMessageParameter) {
+      count++;
+
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+      _writer.loadObject(*scope.tape, param);
+
+      // box the object if required
+      if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+         boxObject(scope, param, mode);
+      }
+
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+
+      arg = arg.nextNode();
+   }
+
+   // indicate that the stack to be freed cannot be defined at compile-time
+   stackToFree = (size_t)-1;
+}
+
 ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int mode, size_t& spaceToRelease)
 {
    size_t count = 0;
@@ -2259,8 +2310,16 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
       _writer.loadObject(*scope.tape, object);
       object = boxObject(scope, object, mode);
-
       _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+   }
+   // if open argument list should be unboxed
+   else if (test(mode, CTRL_OARG_UNBOX_MODE)) {
+      // save the target
+      _writer.loadObject(*scope.tape, object);
+      object = boxObject(scope, object, mode);
+      _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+
+      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~CTRL_OARG_UNBOX_MODE, count, spaceToRelease);
    }
    // otherwise the space should be allocated first,
    // to garantee the correct order of parameter evaluation
@@ -2499,7 +2558,11 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       ObjectInfo retVal = compileMessage(node, scope, object, messageRef, mode);
 
       // it should be removed from the stack
-      _writer.releaseObject(*scope.tape, spaceToRelease);
+      if (spaceToRelease == (size_t)-1) {
+         _writer.releaseArgList(*scope.tape);
+         _writer.releaseObject(*scope.tape);
+      }
+      else _writer.releaseObject(*scope.tape, spaceToRelease);
 
       return retVal;
    }

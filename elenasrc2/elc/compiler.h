@@ -623,6 +623,7 @@ protected:
 
    void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
    void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
+   void compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree);
 
    ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int mode, size_t& spaceToRelease);
 

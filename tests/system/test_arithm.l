@@ -33,9 +33,18 @@
 
     #method test : anIndex :: aParams
         = aParams @ (anIndex type'int).
-    
+
+    #method testUnbox :: aParams
+    [
+        #var n := aParams @ 0.
+        
+        ^ n.
+    ]
+            
     #method test :: aParams
     [
+        #var n := $self testUnbox &:aParams.
+        
         #var aLength := aParams type'length.
         
         #var aSecond := aParams@1.

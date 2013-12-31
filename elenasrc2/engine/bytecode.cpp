@@ -138,6 +138,7 @@
 #define OPCODE_TEST         "test"
 #define OPCODE_TESTFLAG     "testflag"
 #define OPCODE_THROW        "throw"
+#define OPCODE_UNBOX        "unbox"
 #define OPCODE_UNHOOK       "unhook"
 #define OPCODE_WSTEST       "wstest"
 #define OPCODE_AXCOPYF      "axcopyf"
@@ -1140,6 +1141,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_THROW)) {
       return bcThrow;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_UNBOX)) {
+      return bcUnbox;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_UNHOOK)) {
       return bcUnhook;
    }
@@ -1532,6 +1536,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
          break;
       case bcThrow:
          copystr(s, OPCODE_THROW);
+         break;
+      case bcUnbox:
+         copystr(s, OPCODE_UNBOX);
          break;
       case bcUnhook:
          copystr(s, OPCODE_UNHOOK);

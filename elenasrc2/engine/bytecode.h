@@ -29,6 +29,7 @@ enum ByteCode
    bcACopyB         = 0x0C,
    bcPopM           = 0x0D,
    bcBSRedirect     = 0x0E,
+   bcUnbox          = 0x0F,
 
    bcGetLen         = 0x11,
    bcBCopyA         = 0x12,
@@ -158,7 +159,6 @@ enum ByteCode
 
 
 //   //bcSNop           = 0x08,
-//   //bcMccCopyAcc     = 0x0F,
 //
 //   bcMccReverse     = 0x310,
 //   bcJumpAcc        = 0x316,

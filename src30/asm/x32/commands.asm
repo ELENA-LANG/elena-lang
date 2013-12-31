@@ -66,6 +66,19 @@ labEnd:
                                                                 
 end
 
+// ; unbox (esi - size)
+
+inline % 0Fh
+
+   mov  ecx, esi
+labNext:
+   sub  ecx, 1
+   lea  ebx, [eax+ecx*4]
+   push [ebx]
+   jnz  short labNext
+
+end
+
 // getlen
 
 inline % 11h
