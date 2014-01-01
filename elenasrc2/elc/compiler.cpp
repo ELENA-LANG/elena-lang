@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -2607,10 +2607,10 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    else if (object.kind == okExternal) {
       currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
       if (test(mode, CTRL_TRY_MODE)) {
+         // skip error handling for the external operation
          mode &= ~CTRL_TRY_MODE;
 
          member = member.nextNode();
-         compilePrimitiveCatch(member, scope);
       }
       member = member.nextNode();
    }
@@ -3372,6 +3372,10 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
 
    // call the function
    _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
+
+   // error handling should follow the function call immediately
+   if (test(mode, CTRL_TRY_MODE))
+      compilePrimitiveCatch(node.nextNode(), scope);
 
    // save the function result
    if (retVal.kind == okLocalAddress) {

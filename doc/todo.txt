@@ -20,17 +20,6 @@ v  - vm script
 ------
 Currently:
 ------
-              xdev - generic development              
-                       * test error handling
-                          #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
-                            | raise:(system'FormatException new:($self LastScriptError))).
-            
-              xdev - multithreading
-                       * migrate core: core'openframe, core'newframe, core'closeframe, core'endframe
-                       * migrate core: core'default_handler, core'console_entry                       
-                       * migrate core: init stack bottom for every thread / main thread
-                       * compile simple code (mt_test)
-
 <=================> 
          
 1.9.11 
@@ -597,8 +586,12 @@ week1:
                          raise an error ; do we need it?
 
                        * any other operation should result in boxing
-
+            
               xdev - multithreading
+                       * migrate core: core'openframe, core'newframe, core'closeframe, core'endframe
+                       * migrate core: core'default_handler, core'console_entry                       
+                       * migrate core: init stack bottom for every thread / main thread
+                       * compile simple code (mt_test)
                        * migrate core: core_alloc, ...
                        * migrate commands
                        * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration

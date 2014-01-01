@@ -1,4 +1,4 @@
-ELENA Language Project V. 2.0, (C)2005-2013  By Alex Rakov
+ELENA Language Project V. 2.0, (C)2005-2014  By Alex Rakov
 ====
 ELENA is a general-purpose, pure object-oriented language with late binding. It promotes more object-oriented program design, reusable and more standardized code. The package includes compiler, IDE, ELENA libraries and samples
 Currently only Win32-x86 (2000/XP/Vista/7/8) platform is supported.

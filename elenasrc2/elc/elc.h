@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -84,7 +84,7 @@
 #define ELC_SYMBOLINFO              "symbolembed"
 
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2013 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2014 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_COMPILING               "Compiling..."
 #define ELC_LINKING                 "Linking..."

@@ -9,28 +9,10 @@
 
 #class XTester
 {
-    #method type'widestr => %Literal. 
-    
-    #method add &type'int:anN
-    [
-        #var ret := anN.
-        
-        ^ ret.
-    ]
 }
 
 #symbol XTest =
 [
-    #var m1 := %output.
-    #var m2 := %(output&prm).
-    #var m3 := %output(0).
-    #var m4 := %(get&output)(0).
-    #var m5 := %output [ 0 ].
-    #var m6 := %output().
-    
-    #var l := m5 output.
-    
-    #var n := XTester add&type'int:(2+3).
 ].
 
 // --- OpenArgTest ---
