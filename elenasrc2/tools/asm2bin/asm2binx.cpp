@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -17,11 +17,11 @@
 
 #include <windows.h>
 
-#define BUILD_NUMBER 1
+#define BUILD_NUMBER 2
 
 int main(int argc, char* argv[])
 {
-	printf("ELENA command line Simplified Assembler Compiler %d.%d.%d (C)2007-2013 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_NUMBER);
+	printf("ELENA command line Simplified Assembler Compiler %d.%d.%d (C)2007-2014 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_NUMBER);
 
    if (argc<2) {
       printf("asm2bin <file.asm> <output path>");

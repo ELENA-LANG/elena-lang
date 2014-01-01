@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef assemblerH
@@ -38,7 +38,8 @@ struct TokenInfo
 
    void raiseErr(const wchar16_t* err)
    {
-      throw AssemblerException(err, terminal.row);
+      if (!emptystr(err))
+         throw AssemblerException(err, terminal.row);
    }
 
 	bool getInteger(int& integer, Map<const wchar16_t*, size_t>& constants)

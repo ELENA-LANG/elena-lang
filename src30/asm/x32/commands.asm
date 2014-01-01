@@ -50,17 +50,19 @@ labStart:
   cmp  edx, [esi+ecx*8]
   jb   short labSplit
   nop
+  nop
   jz   short labFound
   lea  esi, [esi+ecx*8+8]
   sub  ecx, ebx
   jnz  short labStart
-
+  nop
   nop
   jmp  labEnd
-
+  nop
+  nop
+  nop  
 labFound:
-  mov  ecx, [esi+ecx*8+4] 
-  jmp  ecx
+  jmp  [esi+ecx*8+4]
 
 labEnd:
                                                                 

@@ -9,10 +9,21 @@
 
 #class XTester
 {
+    #method testPrimitive
+    [
+    ]
+    
+    #method test
+    [
+        control do: [ $self testPrimitive ].
+    ]
 }
 
 #symbol XTest =
 [
+    XTester test.
+    
+    { do1 [] do2 [ $self do1 ] } do2.
 ].
 
 // --- OpenArgTest ---

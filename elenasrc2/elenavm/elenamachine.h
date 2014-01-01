@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2013, by Alexei Rakov
+//                                              (C)2009-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -17,7 +17,7 @@
 #define VM_INTERPRET_EXT  _T("$package'core_vm'start_n_eval")
 
 // --- ELENAVM common constants ---
-#define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2013 by Alex Rakov")
+#define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
 #define ELENAVM_BUILD_NUMBER    0x0002             // ELENAVM build version
 

@@ -20,6 +20,13 @@ v  - vm script
 ------
 Currently:
 ------
+              xdev - generic development              
+                       * boxing: should we check for boxing other than local or local address (e.g n type'int should not
+                         be boxed) ; probably boxing should be done inside compilePrimitive operation if the target is not typed ; 
+                         see compileRetExpression, compilePrimitiveOperator and so on
+ 
+                       * why is not possible: "abc"@2 (if both of them primitive constants)
+
 <=================> 
          
 1.9.11 
@@ -30,25 +37,15 @@ week1: [8.01]
                        
                        * check private method declaration ??
 
-                       * why dispatching method does not work (system'dynamic'scriptControl)
-                               #var aTapePtr := IntNumber new &type'int:(system'external'elenasm TranslateLVMFile &type'widestr:"default" &type'widestr:aPath &type'int:0 &type'int:0 &type'int:0
-                               | raise:(system'FormatException new:($self LastScriptError))).                               
-                               
                        * role class should not be its own class class (like it is now), super class should be used
 
                        * role implementation (see arithmeval sample)
 
-                       * boxing: should we check for boxing other than local or local address (e.g n type'int should not
-                         be boxed) ; probably boxing should be done inside compilePrimitive operation if the target is not typed ; 
-                         see compileRetExpression, compilePrimitiveOperator and so on
- 
                        * group object implementation (group, union, cast)
                        * elenavm: use reverse instead of set of swaps
                        
                        * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
                          do we need to return type for every object??
-                       * probably boolean nested function should not support $self ?
-                                   [ $self action ] and [ self action ] - should be similar, because it could be implemented directly
 
                        * the length expression was not calculated correctly in the following code:
                             LiteralValue new &type'length:(theData type'length + aLiteral type'length) &type'widestr:theData &type'widestr:aLiteral.
@@ -71,7 +68,6 @@ week1: [8.01]
                             
                        * amb sample: can it be modified to use open argument list, currently for every number of parameters separate method should be declared
 
-                       * why is not possible: "abc"@2 (if both of them primitive constants)
                        * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
                        * why is not possible: "abc"@4 | onOutOfRangeError: ...
                         
@@ -188,14 +184,7 @@ week1: [8.01]
               xdev - dispatch table
                        * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
                          actual message name inside handler : the table is the map between income and outcome message)
-
-              xdev - native code optimization
-                       * bssearch : try to optimize the jump command
-                       * bssearch : can we get rid of setncb command, if the number is always even?
-                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
-                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
-                       * review core
-
+                         
               xdev - byte code optimization
                        * for direct call, message is set twice (mov edx, ...)
                        * optimize output code: system'Object.notequal, ...
@@ -600,8 +589,15 @@ week1:
 
               xdev - generic development
                        * new ecode: released - do we need it, or loop would be enough?
-               xdev - GC
+              xdev - GC
                        * increase the heap size
+
+              xdev - native code optimization
+                       * bssearch : can we get rid of setncb command, if the number is always even?
+                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review core
+
 
 week2:
 

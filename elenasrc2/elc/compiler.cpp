@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 
 // --- Mode constants ---
-#define CTRL_MASK             0xFFE00000
+#define CTRL_MASK             0xFFF00000
 #define CTRL_ROOT             0xC0000000
 #define CTRL_ROOTEXPR         0x40000000
 #define CTRL_LOOP             0x20000000
@@ -25,8 +25,8 @@ using namespace _ELENA_;
 #define CTRL_PREV_EXIT_MODE   0x02000000     // used for if-else statement to indicate that the exit label is not the last one
 #define CTRL_DIRECT_PARAM     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define CTRL_GETPROP_MODE     0x00800000     // used in GET PROPERTY expression
-#define CTRL_OARG_UNBOX_MODE  0x00200000     // used to indicate unboxing open argument list
 #define CTRL_TYPEDOUT_MODE    0x00400000
+#define CTRL_OARG_UNBOX_MODE  0x00200000     // used to indicate unboxing open argument list
 
 // --- Method optimization masks ---
 #define MTH_FRAME_USED        0x00000001
@@ -1037,6 +1037,22 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 //   }
 }
 
+// --- Compiler::ActionScope ---
+
+Compiler::ActionScope :: ActionScope(ClassScope* parent)
+   : MethodScope(parent)
+{
+}
+
+ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
+{
+   // action does not support this variable
+   if (ConstIdentifier::compare(identifier, THIS_VAR)) {
+      return parent->mapObject(identifier);
+   }
+   else return MethodScope::mapObject(identifier);
+}
+
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(SourceScope* parent)
@@ -1152,7 +1168,11 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
    if (ConstIdentifier::compare(identifier, THIS_VAR)) {
-      return ObjectInfo(okSelf, 0);
+      //return ObjectInfo(okSelf, 0);
+      Outer owner = mapSelf();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference);
    }
    else {
       Outer outer = outers.get(identifier);
@@ -2733,7 +2753,7 @@ void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, bool with
 {
    _writer.declareClass(scope.tape, scope.reference);
 
-   MethodScope methodScope(&scope);
+   ActionScope methodScope(&scope);
    methodScope.message = encodeVerb(SEND_MESSAGE_ID);
 
    ref_t actionMessage = encodeVerb(EVAL_MESSAGE_ID);

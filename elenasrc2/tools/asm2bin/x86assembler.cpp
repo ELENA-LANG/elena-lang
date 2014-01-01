@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -292,7 +292,11 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
 
          operand.offset = (info.parameters.Count() - info.parameters.get(token.value))*4;
       }
-      else token.raiseErr(err);
+      else {
+         token.raiseErr(err);
+
+         return Operand();
+      }
    }
    return operand;
 }
@@ -300,16 +304,16 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
 x86Assembler::Operand x86Assembler :: readOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix)
 {
 	Operand operand = defineOperand(token, info, err);
+   if (operand.type != x86Helper::otUnknown) {
+      operand.type = x86Helper::addPrefix(operand.type, prefix);
 
-   operand.type = x86Helper::addPrefix(operand.type, prefix);
-
-	if (readOffset(token, info, err, operand)) {
       if (readOffset(token, info, err, operand)) {
-         if (readOffset(token, info, err, operand))
-            token.read();
-      }			
-	}
-
+         if (readOffset(token, info, err, operand)) {
+            if (readOffset(token, info, err, operand))
+               token.read();
+         }			
+      }
+   }
 	return operand;
 }
 
@@ -1435,32 +1439,31 @@ void x86Assembler :: compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWri
 
 void x86Assembler :: compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper)
 {
-	token.read();
+   Operand operand = compileOperand(token, info, NULL);
 
-	bool shortJump = false;
-	if (token.check(_T("short"))) {
-		shortJump = true;
-		token.read();
-	}
-   else if (token.check(_T("near"))) {
-      token.raiseErr(_T("Use short prefix instead"));
-   }
-
-   Operand operand = defineRegister(token);
-   if (operand.type != x86Helper::otUnknown) {
+	if (test(operand.type, x86Helper::otR32)||test(operand.type, x86Helper::otM32)) {
       code->writeByte(0xFF);
       x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), operand);
-   }
+	}
    else {
+	   bool shortJump = false;
+	   if (token.check(_T("short"))) {
+		   shortJump = true;
+		   token.read();
+	   }
+      else if (token.check(_T("near"))) {
+         token.raiseErr(_T("Use short prefix instead"));
+      }
+
       // if jump forward
 	   if (!helper.checkDeclaredLabel(token.value)) {
          helper.writeJmpForward(token.value, shortJump);
 	   }
       // if jump backward
 	   else helper.writeJmpBack(token.value, shortJump);
-   }
 
-	token.read();
+      token.read();
+   }
 }
 
 void x86Assembler :: compileLOOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper)
