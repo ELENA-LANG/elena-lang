@@ -14,19 +14,19 @@
 
 using namespace _ELENA_;
 
-// --- Mode constants ---
-#define CTRL_MASK             0xFFF00000
-#define CTRL_ROOT             0xC0000000
-#define CTRL_ROOTEXPR         0x40000000
-#define CTRL_LOOP             0x20000000
-#define CTRL_TRY_MODE         0x10000000
-#define CTRL_CATCH_MODE       0x08000000
-#define CTRL_TYPED_MODE       0x04000000
-#define CTRL_PREV_EXIT_MODE   0x02000000     // used for if-else statement to indicate that the exit label is not the last one
-#define CTRL_DIRECT_PARAM     0x01000000     // indictates that the parameter should be stored directly in reverse order
-#define CTRL_GETPROP_MODE     0x00800000     // used in GET PROPERTY expression
-#define CTRL_TYPEDOUT_MODE    0x00400000
-#define CTRL_OARG_UNBOX_MODE  0x00200000     // used to indicate unboxing open argument list
+// --- Hint constants ---
+#define HINT_MASK             0xFFF00000
+#define HINT_ROOT             0xC0000000
+#define HINT_ROOTEXPR         0x40000000
+#define HINT_LOOP             0x20000000
+#define HINT_TRY              0x10000000
+#define HINT_CATCH            0x08000000
+#define HINT_STACKREF_ALLOWED 0x04000000
+#define HINT_SUBBRANCH        0x02000000     // used for if-else statement to indicate that the exit label is not the last one
+#define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
+#define HINT_GETPROP          0x00800000     // used in GET PROPERTY expression
+#define HINT_STACKREF_ASSIGN  0x04400000     // used to indicate that the target is stack allocated variable
+#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 
 // --- Method optimization masks ---
 #define MTH_FRAME_USED        0x00000001
@@ -270,8 +270,7 @@ inline bool IsPrimitiveOperation(int operator_id, ObjectInfo loperand, ObjectInf
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
-         return (IsPrimitiveDataOperand(loperand.type)) && (IsPrimitiveDataOperand(roperand.type) &&
-            (test(mode, CTRL_TYPEDOUT_MODE) || test(mode, CTRL_TYPED_MODE)));
+         return IsPrimitiveDataOperand(loperand.type) && IsPrimitiveDataOperand(roperand.type);
       case EQUAL_MESSAGE_ID:
       case LESS_MESSAGE_ID:
       case NOTEQUAL_MESSAGE_ID:
@@ -292,53 +291,56 @@ inline bool IsPrimitiveOperation(int operator_id, ObjectInfo loperand, ObjectInf
    }
 }
 
-inline int definePrimitiveExprPrefix(ObjectType type)
+inline bool checkIfBoxingRequired(ObjectInfo object)
+{
+   if (object.kind == okLocal || object.kind == okLocalAddress) {
+      switch(object.type) {
+         case otInt:
+         case otIntVar:
+         case otLength:
+         case otIndex:
+         case otByte:
+         case otLong:
+         case otReal:
+         case otShort:
+         case otParams:
+            return true;
+      }
+   }
+   return false;
+}
+
+inline int defineSubjectHint(ObjectType type)
 {
    switch(type) {
       case otInt:
       case otIntVar:
       case otIndex:
-         return CTRL_TYPED_MODE | tcInt;
+         return HINT_STACKREF_ALLOWED | tcInt;
       case otLong:
       case otLongVar:
-         return CTRL_TYPED_MODE | tcLong;
+         return HINT_STACKREF_ALLOWED | tcLong;
       case otReal:
       case otRealVar:
-         return CTRL_TYPED_MODE | tcReal;
+         return HINT_STACKREF_ALLOWED | tcReal;
       case otLength:
-         return CTRL_TYPED_MODE | tcLen;
+         return HINT_STACKREF_ALLOWED | tcLen;
       case otShort:
-         return CTRL_TYPED_MODE | tcShort;
+         return HINT_STACKREF_ALLOWED | tcShort;
       case otLiteral:
-         return CTRL_TYPED_MODE | tcStr;
+         return HINT_STACKREF_ALLOWED | tcStr;
       case otByteArray:
-         return CTRL_TYPED_MODE | tcBytes;
+         return HINT_STACKREF_ALLOWED | tcBytes;
       case otParams:
-         return CTRL_TYPED_MODE | tcParams;
+         return HINT_STACKREF_ALLOWED | tcParams;
       default:
          return 0;
    }
 }
 
-inline int definePrimitiveExprPrefix(ObjectType type, int mode)
-{
-   if (!test(mode, CTRL_TYPED_MODE)) {
-      return (mode & CTRL_MASK) | definePrimitiveExprPrefix(type);
-   }
-   else return mode;
-}
-
-inline int getTypedOutMode(int mode)
-{
-   if (test(mode, CTRL_TYPEDOUT_MODE)) {
-      return mode & CTRL_TYPEDOUT_MODE | (mode & ~CTRL_MASK);
-   }
-   else return 0;
-}
-
 inline ObjectType ModeToType(int mode)
 {
-   int type = mode & ~CTRL_MASK;
+   int type = mode & ~HINT_MASK;
    switch(type) {
       case tcInt:
          return otInt;
@@ -360,6 +362,31 @@ inline ObjectType ModeToType(int mode)
    }
 }
 
+inline int TypeToMode(ObjectType type)
+{
+   switch(type) {
+      case otShort:
+         return tcShort;
+      case otInt:
+      case otIndex:
+      case otIntVar:
+      case otLength:
+         return tcInt;
+      case otLong:
+      case otLongVar:
+         return tcLong;
+      case otReal:
+      case otRealVar:
+         return tcReal;
+      case otParams:
+         return tcParams;
+      case otByteArray:
+         return tcBytes;
+      default:
+         return tcRef;
+   }
+}
+
 inline TypeCode MapTypeCode(ObjectType type)
 {
    switch(type) {
@@ -376,9 +403,49 @@ inline TypeCode MapTypeCode(ObjectType type)
          return tcReal;
       case otParams:
          return tcParams;
+      case otByteArray:
+         return tcBytes;
       default:
          return tcRef;
    }
+}
+
+inline int defineExpressionType(ObjectType loperand, ObjectType roperand)
+{
+   if (loperand == otInt || loperand == otLength || loperand == otIndex) {
+      switch (roperand) {
+         case otInt:
+         case otLength:
+         case otIndex:
+            return TypeToMode(loperand);
+         case otReal:
+         case otLong:
+            return TypeToMode(roperand);
+      }
+   }
+   else if (loperand == otLong) {
+      switch (roperand) {
+         case otInt:
+         case otLength:
+         case otIndex:
+         case otLong:
+            return TypeToMode(loperand);
+         case otReal:
+            return TypeToMode(roperand);
+      }
+   }
+   else if (loperand == otReal) {
+      switch (roperand) {
+         case otInt:
+         case otIndex:
+         case otLength:
+         case otLong:
+         case otReal:
+            return TypeToMode(roperand);
+      }
+   }
+
+   return 0;
 }
 
 // --- Compiler::ModuleScope ---
@@ -1299,7 +1366,7 @@ ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)
    ModuleScope* moduleScope = scope.moduleScope;
 
    // if it is a root inline expression we could try to name it after the symbol
-   if (test(mode, CTRL_ROOT)) {
+   if (test(mode, HINT_ROOT)) {
       // check if the inline symbol is declared in the symbol
       SymbolScope* symbol = (SymbolScope*)scope.getScope(Scope::slSymbol);
       if (symbol != NULL) {
@@ -1493,7 +1560,10 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
       ObjectInfo optionValue = compileObject(option.firstChild(), scope, 0);
       _writer.loadObject(*scope.tape, optionValue);
-      boxObject(scope, optionValue, 0);
+
+      if (checkIfBoxingRequired(optionValue))
+         boxObject(scope, optionValue, 0);
+
       _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
       _writer.pushObject(*scope.tape, switchValue);
 
@@ -1506,7 +1576,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       DNode thenCode = option.firstChild().nextNode();
 
       if (thenCode.firstChild().nextNode() != nsNone) {
-         compileCode(thenCode, subScope, CTRL_PREV_EXIT_MODE);
+         compileCode(thenCode, subScope, HINT_SUBBRANCH);
       }
       // if it is inline action
       else compileRetExpression(thenCode.firstChild(), scope, 0);
@@ -1564,7 +1634,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       scope.compileLocalHints(hints, type, size);
 
       int level = scope.newLocal();
-      int mode = definePrimitiveExprPrefix(type, size);
+      int typeHint = TypeToMode(type);
 
       if (type != otNone) {
          ObjectInfo primitive;;
@@ -1572,7 +1642,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          // Note: size modificator is used only for bytearray
          //       in all other cases it should be zero
          if (type == otByteArray && size > 0) {
-            mode += size;
+            typeHint += size;
 
             // byte array should start with size field
             allocatePrimitiveObject(scope, tcInt, primitive);
@@ -1581,7 +1651,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             _writer.popObject(*scope.tape, ObjectInfo(okRegisterField));
          }
 
-         allocatePrimitiveObject(scope, mode & ~CTRL_MASK, primitive);
+         allocatePrimitiveObject(scope, typeHint, primitive);
 
          // make the reservation permanent
          scope.saved = scope.reserved;
@@ -1612,7 +1682,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          if (type != otNone) {
             DNode expr = assigning.firstChild();
 
-            ObjectInfo info = compileExpression(expr, scope, mode | CTRL_TYPEDOUT_MODE);
+            ObjectInfo info = compileExpression(expr, scope, typeHint | HINT_STACKREF_ASSIGN);
 
             scope.mapLocal(node.Terminal(), level, type);
 
@@ -1624,12 +1694,13 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          }
          // otherwise, use normal routine
          else {
-            ObjectInfo info = compileExpression(assigning.firstChild(), scope, mode);
+            ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
             _writer.loadObject(*scope.tape, info);
 
             scope.mapLocal(node.Terminal(), level, type);
 
-            info = boxObject(scope, info, 0);
+            if (checkIfBoxingRequired(info))
+               info = boxObject(scope, info, 0);
 
             compileAssignment(node, scope, scope.mapObject(node.Terminal()));
          }
@@ -1696,7 +1767,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    }
 
    // skip the first breakpoint if it is not a symbol
-   if (object.kind == okSymbol || !test(mode, CTRL_ROOTEXPR))
+   if (object.kind == okSymbol || !test(mode, HINT_ROOTEXPR))
       recordStep(scope, terminal, dsStep);
 
    return object;
@@ -1728,11 +1799,11 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
                if (vmtReference == 0)
                   scope.raiseError(errUnknownObject, parentInfo);
 
-               result = compileCollection(member, scope, mode & ~CTRL_ROOT, vmtReference);
+               result = compileCollection(member, scope, mode & ~HINT_ROOT, vmtReference);
             }
-            else result = compileCollection(member, scope, mode & ~CTRL_ROOT);
+            else result = compileCollection(member, scope, mode & ~HINT_ROOT);
          }
-         else result = compileExpression(member, scope, mode & ~CTRL_ROOT);
+         else result = compileExpression(member, scope, mode & ~HINT_ROOT);
          break;
       case nsMessageReference:
          // if it is a message
@@ -1741,7 +1812,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          }
          // if it is a get property
          else if (findSymbol(member.firstChild(), nsExpression)) {
-            return compileGetProperty(member, scope, mode | CTRL_GETPROP_MODE);
+            return compileGetProperty(member, scope, mode | HINT_GETPROP);
          }
          // otherwise it is a singature
          else result = compileSignatureReference(member, scope, mode);
@@ -1853,46 +1924,25 @@ ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
    return object;
 }
 
-inline bool checkIfBoxingRequired(ObjectInfo object)
-{
-   if (object.kind == okLocal || object.kind == okLocalAddress || object.kind == okRegister) {
-      switch(object.type) {
-         case otInt:
-         case otIntVar:
-         case otLength:
-         case otIndex:
-         case otByte:
-         case otLong:
-         case otReal:
-         case otShort:
-         case otParams:
-            return true;
-      }
-   }
-   return false;
-}
-
 ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
 {
-   // boxing should be applied only for type local parameter
-   if (object.kind == okLocal || object.kind == okRegister || object.kind == okCurrent || object.kind == okLocalAddress) {
-      switch(object.type) {
-         case otInt:
-         case otLength:
-         case otIndex:
-         case otByte:
-            _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, true);
-            break;
-         case otLong:
-            _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(LONG_CLASS) | mskVMTRef, true);
-            break;
-         case otReal:
-            _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(REAL_CLASS) | mskVMTRef, true);
-            break;
-         case otParams:
-            _writer.boxArgList(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
-            break;
-      }
+   // NOTE: boxing should be applied only for the typed local parameter
+   switch(object.type) {
+      case otInt:
+      case otLength:
+      case otIndex:
+      case otByte:
+         _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, true);
+         break;
+      case otLong:
+         _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(LONG_CLASS) | mskVMTRef, true);
+         break;
+      case otReal:
+         _writer.boxObject(*scope.tape, 8, scope.moduleScope->mapConstantReference(REAL_CLASS) | mskVMTRef, true);
+         break;
+      case otParams:
+         _writer.boxArgList(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
+         break;
    }
 
    return object;
@@ -1963,15 +2013,15 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, const wch
    if (arg == nsMessageParameter) {
       count++;
 
-      ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~CTRL_DIRECT_PARAM);
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~HINT_DIRECT_ORDER);
 
       _writer.loadObject(*scope.tape, param);
 
       // box the object if required
-      if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+      if (checkIfBoxingRequired(param) && !test(mode, HINT_STACKREF_ALLOWED)) {
          boxObject(scope, param, mode);
       }
-      if (test(mode, CTRL_DIRECT_PARAM)) {
+      if (test(mode, HINT_DIRECT_ORDER)) {
          _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
       }
       else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
@@ -1981,14 +2031,14 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, const wch
    else if (arg == nsTypedMessageParameter) {
       count++;
 
-      ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~CTRL_DIRECT_PARAM);
-      if (IsPrimitiveArray(param.type) && test(mode, CTRL_TYPED_MODE) && (mode & ~CTRL_MASK) == tcLen) {
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~HINT_DIRECT_ORDER);
+      if (IsPrimitiveArray(param.type) && test(mode, HINT_STACKREF_ALLOWED) && (mode & ~HINT_MASK) == tcLen) {
          // if the length can be calculated directly
          param = compilePrimitiveLength(scope, param, tcInt);
          if (param.kind != okUnknown) {
             _writer.loadObject(*scope.tape, param);
 
-            if (test(mode, CTRL_DIRECT_PARAM)) {
+            if (test(mode, HINT_DIRECT_ORDER)) {
                _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
             }
             else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
@@ -2000,7 +2050,7 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, const wch
       _writer.loadObject(*scope.tape, param);
 
       // box the object if required
-      if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+      if (checkIfBoxingRequired(param) && !test(mode, HINT_STACKREF_ALLOWED)) {
          boxObject(scope, param, mode);
       }
 
@@ -2009,7 +2059,7 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, const wch
       // send the subject to the parameter
       _writer.setMessage(*scope.tape, encodeMessage(scope.moduleScope->mapSubject(subject), GET_MESSAGE_ID, 0));
       _writer.callDispatcher(*scope.tape, 0, 0);
-      if (test(mode, CTRL_DIRECT_PARAM)) {
+      if (test(mode, HINT_DIRECT_ORDER)) {
          _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
       }
       else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
@@ -2035,7 +2085,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
       count = 1;
 
       if (arg.firstChild().firstChild() == nsNone)
-         mode |= CTRL_DIRECT_PARAM;
+         mode |= HINT_DIRECT_ORDER;
 
       return encodeMessage(0, verb_id, 0);
    }
@@ -2081,7 +2131,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
       DNode param = arg.firstChild();
 
       if (arg.nextNode() == nsNone && param.firstChild() == nsNone && IsArgumentList(scope.mapObject(param.Terminal()))) {
-         mode |= CTRL_OARG_UNBOX_MODE;
+         mode |= HINT_OARG_UNBOXING;
       }
       else {
          // terminator
@@ -2099,7 +2149,6 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
    else {
       // if message has named argument list
       while (arg == nsSubjectArg) {
-         int modePrefix = 0;
          TerminalInfo subject = arg.Terminal();
 
          if (!first) {
@@ -2108,10 +2157,6 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
          else first = false;
 
          signature.append(subject);
-
-         if (subject == tsReference) {
-            modePrefix = definePrimitiveExprPrefix(scope.moduleScope->mapSubjectType(subject));
-         }
 
          arg = arg.nextNode();
 
@@ -2130,7 +2175,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
 
    // if it is out-assigning
    // out'type'xxx postfix should be added
-   if (test(mode, CTRL_TYPEDOUT_MODE)) {
+   if (test(mode, HINT_STACKREF_ASSIGN)) {
       switch(ModeToType(mode)) {
          case otShort:
             signature.append(ConstantIdentifier("&out'type'short"));
@@ -2147,7 +2192,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
          default:
             // if it was not recognized
             // turn the mode off
-            mode &= ~CTRL_TYPEDOUT_MODE;
+            mode &= ~HINT_STACKREF_ASSIGN;
             break;
       }
    }
@@ -2159,7 +2204,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
    }
 
    if (simpleParameters)
-      mode |= CTRL_DIRECT_PARAM;
+      mode |= HINT_DIRECT_ORDER;
 
    // create a message id
    return encodeMessage(sign_id, verb_id, paramCount);
@@ -2181,7 +2226,7 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
       ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
 
       // box the object if required
-      if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+      if (checkIfBoxingRequired(param) && !test(mode, HINT_STACKREF_ALLOWED)) {
          _writer.loadObject(*scope.tape, param);
 
          boxObject(scope, param, mode);
@@ -2191,11 +2236,11 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
       else _writer.pushObject(*scope.tape, param);
    }
    else if (arg == nsSubjectArg) {
-      int modePrefix = mode;
+      int modePrefix = mode & HINT_MASK;
       TerminalInfo subject = arg.Terminal();
 
       if (subject == tsReference) {
-         modePrefix = definePrimitiveExprPrefix(scope.moduleScope->mapSubjectType(subject), mode);
+         modePrefix |= defineSubjectHint(scope.moduleScope->mapSubjectType(subject));
       }
 
       arg = arg.nextNode();
@@ -2225,7 +2270,7 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
          _writer.loadObject(*scope.tape, param);
 
          // box the object if required
-         if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+         if (checkIfBoxingRequired(param) && !test(mode, HINT_STACKREF_ALLOWED)) {
             boxObject(scope, param, mode);
          }
 
@@ -2245,7 +2290,10 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
 
             ObjectInfo retVal = compileExpression(arg, scope, 0);
             _writer.loadObject(*scope.tape, retVal);
-            boxObject(scope, retVal, mode);
+
+            if (checkIfBoxingRequired(retVal))
+               boxObject(scope, retVal, mode);
+
             _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
 
             arg = arg.nextNode();
@@ -2254,11 +2302,11 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
       else {
          // if message has named argument list
          while (arg == nsSubjectArg) {
-            int modePrefix = mode;
+            int modePrefix = mode & HINT_MASK;
             TerminalInfo subject = arg.Terminal();
 
             if (subject == tsReference) {
-               modePrefix = definePrimitiveExprPrefix(scope.moduleScope->mapSubjectType(subject), mode);
+               modePrefix |= defineSubjectHint(scope.moduleScope->mapSubjectType(subject));
             }
 
             arg = arg.nextNode();
@@ -2293,7 +2341,7 @@ void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, i
       _writer.loadObject(*scope.tape, param);
 
       // box the object if required
-      if (checkIfBoxingRequired(param) && !test(mode, CTRL_TYPED_MODE)) {
+      if (checkIfBoxingRequired(param) && !test(mode, HINT_STACKREF_ALLOWED)) {
          boxObject(scope, param, mode);
       }
 
@@ -2313,10 +2361,10 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
    // if the target is in register or is a symbol, direct message compilation is not possible
    if (object.kind == okRegister || object.kind == okSymbol) {
-      mode &= ~CTRL_DIRECT_PARAM;
+      mode &= ~HINT_DIRECT_ORDER;
    }
    else if (count == 1) {
-      mode |= CTRL_DIRECT_PARAM;
+      mode |= HINT_DIRECT_ORDER;
    }
 
    // if it is primtive get length operation - do nothing
@@ -2326,21 +2374,27 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
    {
    }
    // if only simple arguments are used we could directly save parameters
-   else if (test(mode, CTRL_DIRECT_PARAM)) {
+   else if (test(mode, HINT_DIRECT_ORDER)) {
       compileDirectMessageParameters(node.firstChild(), scope, mode);
 
       _writer.loadObject(*scope.tape, object);
-      object = boxObject(scope, object, mode);
+
+      if (checkIfBoxingRequired(object))
+         object = boxObject(scope, object, mode);
+
       _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
    }
    // if open argument list should be unboxed
-   else if (test(mode, CTRL_OARG_UNBOX_MODE)) {
+   else if (test(mode, HINT_OARG_UNBOXING)) {
       // save the target
       _writer.loadObject(*scope.tape, object);
-      object = boxObject(scope, object, mode);
+
+      if (checkIfBoxingRequired(object))
+         object = boxObject(scope, object, mode);
+
       _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
 
-      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~CTRL_OARG_UNBOX_MODE, count, spaceToRelease);
+      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~HINT_OARG_UNBOXING, count, spaceToRelease);
    }
    // otherwise the space should be allocated first,
    // to garantee the correct order of parameter evaluation
@@ -2348,7 +2402,8 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
       _writer.declareArgumentList(*scope.tape, count + 1);
       _writer.loadObject(*scope.tape, object);
 
-      object = boxObject(scope, object, mode);
+      if (checkIfBoxingRequired(object))
+         object = boxObject(scope, object, mode);
 
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
@@ -2365,13 +2420,13 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
    DNode elsePart = node.select(nsElseOperation);
    if (elsePart != nsNone) {
       _writer.declareThenElseBlock(*scope.tape);
-      compileBranching(node, scope, operator_id, CTRL_PREV_EXIT_MODE);
+      compileBranching(node, scope, operator_id, HINT_SUBBRANCH);
       _writer.declareElseBlock(*scope.tape);
       compileBranching(elsePart, scope, 0, 0); // for optimization, the condition is checked only once
       _writer.endThenBlock(*scope.tape);
    }
-   else if (test(mode, CTRL_LOOP)) {
-      compileBranching(node, scope, operator_id, CTRL_PREV_EXIT_MODE);
+   else if (test(mode, HINT_LOOP)) {
+      compileBranching(node, scope, operator_id, HINT_SUBBRANCH);
       _writer.jump(*scope.tape, true);
    }
    else {
@@ -2402,9 +2457,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
       }
 
-      // if the loperand is primtive data
-      // pass a note to external / primitive routine
-      ObjectInfo operand = compileExpression(node, scope, definePrimitiveExprPrefix(object.type, mode & ~CTRL_TYPEDOUT_MODE));
+      ObjectInfo operand = compileExpression(node, scope, 0);
 
       recordStep(scope, node.Terminal(), dsProcedureStep);
 
@@ -2417,7 +2470,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          if (object.kind == okRegister || object.kind == okSymbol) {
             _writer.loadObject(*scope.tape, operand);
 
-            operand = boxObject(scope, operand, mode);
+            if (checkIfBoxingRequired(operand))
+               operand = boxObject(scope, operand, mode);
 
             _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
 
@@ -2478,7 +2532,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
    int signRef = getSignature(messageRef);
    int paramCount = getParamCount(messageRef);
-   bool catchMode = test(mode, CTRL_CATCH_MODE);
+   bool catchMode = test(mode, HINT_CATCH);
 
    // if it is generic dispatch
    if (paramCount == 0 && node.firstChild() == nsTypedMessageParameter) {
@@ -2558,10 +2612,11 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       else _writer.callDispatcher(*scope.tape, 0, paramCount);
    }
 
-   if (test(mode, CTRL_TYPED_MODE) && getVerb(messageRef) == GET_MESSAGE_ID) {
-      return ObjectInfo(okRegister, scope.moduleScope->mapSubjectType(signRef), paramCount);
+   // the result of get&type'xxx message should be typed
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+      return ObjectInfo(okRegister, scope.moduleScope->mapSubjectType(signRef), 0);
    }
-   else if (test(mode, CTRL_TYPEDOUT_MODE)) {
+   else if (test(mode, HINT_STACKREF_ASSIGN)) {
       // if it is out-assigning
       // the assigning should not be done once again
       return ObjectInfo(okIdle);
@@ -2572,7 +2627,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
 {
    size_t spaceToRelease = 0;
-   ref_t messageRef = compileMessageParameters(node, scope, object, getTypedOutMode(mode), spaceToRelease);
+   ref_t messageRef = compileMessageParameters(node, scope, object, mode, spaceToRelease);
 
    if (spaceToRelease > 0) {
       // if open argument list is used
@@ -2597,7 +2652,8 @@ ObjectInfo Compiler :: compileEvalMessage(DNode& node, CodeScope& scope, ObjectI
    _writer.declareArgumentList(*scope.tape, count + 1);
    _writer.loadObject(*scope.tape, object);
    
-   object = boxObject(scope, object, mode);
+   if (checkIfBoxingRequired(object))
+      object = boxObject(scope, object, mode);
 
    _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
@@ -2626,9 +2682,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    }
    else if (object.kind == okExternal) {
       currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
-      if (test(mode, CTRL_TRY_MODE)) {
+      if (test(mode, HINT_TRY)) {
          // skip error handling for the external operation
-         mode &= ~CTRL_TRY_MODE;
+         mode &= ~HINT_TRY;
 
          member = member.nextNode();
       }
@@ -2636,10 +2692,10 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    }
 
    bool catchMode = false;
-   if (test(mode, CTRL_TRY_MODE)) {
+   if (test(mode, HINT_TRY)) {
       _writer.declareTry(*scope.tape);
 
-      mode &= ~CTRL_TRY_MODE;
+      mode &= ~HINT_TRY;
    }
 
    while (member != nsNone) {
@@ -2659,7 +2715,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       }
       else if (member == nsAssigning) {
          if (currentObject.type != otNone) {
-            ObjectInfo info = compileExpression(member.firstChild(), scope, definePrimitiveExprPrefix(currentObject.type));
+            ObjectInfo info = compileExpression(member.firstChild(), scope, TypeToMode(currentObject.type));
 
             _writer.loadObject(*scope.tape, info);
 
@@ -2669,7 +2725,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             ObjectInfo info = compileExpression(member.firstChild(), scope, 0);
 
             _writer.loadObject(*scope.tape, info);
-            info = boxObject(scope, info, mode);
+
+            if (checkIfBoxingRequired(info))
+               info = boxObject(scope, info, mode);
 
             compileAssignment(member, scope, currentObject);
          }
@@ -2681,7 +2739,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             _writer.declareCatch(*scope.tape);
             catchMode = true;
          }
-         currentObject = compileMessage(member, scope, ObjectInfo(okRegister), mode | CTRL_CATCH_MODE);
+         currentObject = compileMessage(member, scope, ObjectInfo(okRegister), mode | HINT_CATCH);
       }
       else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
          || member == nsL7Operation || member == nsL0Operation)
@@ -2900,7 +2958,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
       compileNestedVMT(node, scope);
    }
-   return compileNestedExpression(node, ownerScope, scope, mode & ~CTRL_ROOT);
+   return compileNestedExpression(node, ownerScope, scope, mode & ~HINT_ROOT);
 }
 
 ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
@@ -2962,12 +3020,8 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
    _writer.loadObject(*scope.tape, info);
 
-   //!! HOTFIX: to prevent boxing constant ;
-   // general solution should be used instead
-   if (info.kind != okConstant) {
-      // no need to box constant
-      boxObject(scope, ObjectInfo(okRegister, info.type), mode);
-   }
+   if (checkIfBoxingRequired(info))
+      boxObject(scope, info, mode);
 
    compileEndStatement(node, scope);
 
@@ -2982,14 +3036,14 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
    ObjectInfo objectInfo;
    if (member==nsObject) {
-      objectInfo = compileObject(member, scope, mode & ~CTRL_TYPEDOUT_MODE);
+      objectInfo = compileObject(member, scope, mode & ~HINT_STACKREF_ASSIGN);
    }
 
    if (member != nsNone) {
       if (findSymbol(member, nsAltMessageOperation)) {
-         objectInfo = compileOperations(member, scope, objectInfo, (mode | CTRL_TRY_MODE) & ~CTRL_ROOT);
+         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY) & ~HINT_ROOT);
       }
-      else objectInfo = compileOperations(member, scope, objectInfo, mode & ~CTRL_ROOT);
+      else objectInfo = compileOperations(member, scope, objectInfo, mode & ~HINT_ROOT);
    }
 
    return objectInfo;
@@ -3151,7 +3205,7 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
 
       switch(statement) {
          case nsExpression:
-            compileExpression(statement, scope, CTRL_ROOTEXPR);
+            compileExpression(statement, scope, HINT_ROOTEXPR);
             break;
          case nsThrow:
             compileThrow(statement, scope, 0);
@@ -3160,14 +3214,14 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
             compileBreak(statement, scope, 0);
             break;
          case nsLoop:
-            compileLoop(statement, scope, CTRL_LOOP);
+            compileLoop(statement, scope, HINT_LOOP);
             break;
          case nsRetStatement:
          {
             compileRetExpression(statement.firstChild(), scope, 0);
             compileEndStatement(node, scope);
 
-            _writer.gotoEnd(*scope.tape, test(mode, CTRL_PREV_EXIT_MODE) ? baPreviousLabel : baCurrentLabel);
+            _writer.gotoEnd(*scope.tape, test(mode, HINT_SUBBRANCH) ? baPreviousLabel : baCurrentLabel);
             break;
          }
          case nsVariable:
@@ -3360,17 +3414,9 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
    // prepare widestr parameters;
    reserveExternalLiteralParameters(scope, externalScope);
 
-   // prepare the function output if required
-   if (test(mode, CTRL_TYPED_MODE)) {
-      // if the output parameter is required
-      switch (mode & ~CTRL_MASK) {
-         case tcInt:
-         case 0:
-         {
-            allocatePrimitiveObject(scope, tcInt, retVal);
-            break;
-         }
-      }
+   // prepare the function output if it is not a single operation
+   if (!test(mode, HINT_ROOT)) {
+      allocatePrimitiveObject(scope, tcInt, retVal);
    }
 
    // save function parameters
@@ -3394,7 +3440,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
    _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
 
    // error handling should follow the function call immediately
-   if (test(mode, CTRL_TRY_MODE))
+   if (test(mode, HINT_TRY))
       compilePrimitiveCatch(node.nextNode(), scope);
 
    // save the function result
@@ -3622,7 +3668,7 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
 
       _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
 
-      if (allocatePrimitiveObject(scope, mode, retVal)) {
+      if (allocatePrimitiveObject(scope, defineExpressionType(loperand.type, roperand.type), retVal)) {
          _writer.loadObject(*scope.tape, retVal);
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
@@ -3668,6 +3714,11 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
 
    if (paramCount > 0)
       _writer.releaseObject(*scope.tape, paramCount);
+
+   // if stack reference is not allowed, box the result of arithmetic operation
+   if (!test(mode, HINT_STACKREF_ALLOWED) && retVal.kind == okLocalAddress) {
+      boxObject(scope, retVal, mode);
+   }
 
    retVal.kind = okRegister;
 
@@ -4556,7 +4607,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, /*DNod
    CodeScope codeScope(&scope);
 
    // compile symbol body
-   _writer.loadObject(*codeScope.tape, compileExpression(expression, codeScope, CTRL_ROOT));
+   _writer.loadObject(*codeScope.tape, compileExpression(expression, codeScope, HINT_ROOT));
 
    _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
 

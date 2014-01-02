@@ -8,7 +8,7 @@
 #define messagesH
 
 // --- Common constants ---
-#define APP_NAME                                _T("ELENA IDE 1.9.9.12")
+#define APP_NAME                                _T("ELENA IDE 1.9.11")
 #define EDITOR_NAME                             _T("ELENA IDE Editor")
 
 // --- UI Messages ---
@@ -108,7 +108,7 @@
 #define GC_OUTOF_MEMORY_EXCEPTION_TEXT          _T("Out of memory at address ")
 
 // --- About dialog ---
-#define APACHE_LICENSE2                         _T("The Apache License V2.0\r\n\r\nCopyright (C) 2005-2013 Alex Rakov\r\n\r\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at:\r\n\r\nhttp://www.apache.org/licenses/LICENSE-2.0\r\n\r\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\r\n\r\nSee the license details in the file doc\\license.txt")
+#define APACHE_LICENSE2                         _T("The Apache License V2.0\r\n\r\nCopyright (C) 2005-2014 Alex Rakov\r\n\r\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at:\r\n\r\nhttp://www.apache.org/licenses/LICENSE-2.0\r\n\r\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\r\n\r\nSee the license details in the file doc\\license.txt")
 #define ELENA_HOMEPAGE _T("http://elenalang.sourceforge.net/")
 #define ELENA_BLOG     _T("http://elenalang.blogspot.com/")
 

@@ -236,6 +236,7 @@
             &type'short:(aSecond type'int)
             &type'short:0.
                 
+                                
 //        #var aSystemStruct := Win32SystemTime new
 //            &type'short:(1601 + aYear type'int)
 //            &type'short:(1 + aMonth type'int)

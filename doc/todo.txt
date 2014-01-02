@@ -21,10 +21,6 @@ v  - vm script
 Currently:
 ------
               xdev - generic development              
-                       * boxing: should we check for boxing other than local or local address (e.g n type'int should not
-                         be boxed) ; probably boxing should be done inside compilePrimitive operation if the target is not typed ; 
-                         see compileRetExpression, compilePrimitiveOperator and so on
- 
                        * why is not possible: "abc"@2 (if both of them primitive constants)
 
 <=================> 
@@ -61,19 +57,21 @@ week1: [8.01]
                         set of commands)
 
                        * dispatching variant : a write:(b~(a type)get)
+             
+                       * @ operator should support primitive implementation if loperand is literal, bytearray or array and roperand is int
 
-                        * out'type'xxx can be declared but cannot be implicitly passed
+                       * out'type'xxx can be declared but cannot be implicitly passed
 
-                        * write, append, ... operation should be allowed only with $self or out parameter
+                       * write, append, ... operation should be allowed only with $self or out parameter
                             
                        * amb sample: can it be modified to use open argument list, currently for every number of parameters separate method should be declared
 
                        * why is not possible: #method readChar => system'console (see extensions'io'consoleEx).                       
                        * why is not possible: "abc"@4 | onOutOfRangeError: ...
                         
-                        * constant array symbol (e.g. #symbol BoolValues = (true, false). )
-                        * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                          modify the code, from reading bool values from stack to constant array
+                       * constant array symbol (e.g. #symbol BoolValues = (true, false). )
+                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                         modify the code, from reading bool values from stack to constant array
 
                        * for loop: review for implementation algorithm can we simplify it??
 
@@ -164,6 +162,8 @@ week1: [8.01]
                        * new verbs: shift(?)
                        * implement dispatching with several parameters
                          (see Compiler::compileDispatcher)              
+
+                       * boxing after primtive operation should be done probably directly, i.e. implicitly create an object (int, long or real)
 
                        * support GUI application
                        * compiler option : switch off jump optimization
@@ -308,6 +308,7 @@ week1: [8.01]
                        * display open argument list correctly
 
               idev - usability
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
@@ -318,6 +319,9 @@ week2:
                        * test system
                        * test basic samples
                        * test rosetta samples
+
+              sdev - system test 
+                       * modify system test, it should raise an exception if any of the tests fails
 
               sdev - api
                        * create API doc
