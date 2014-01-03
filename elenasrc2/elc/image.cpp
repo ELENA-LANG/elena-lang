@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -12,16 +12,16 @@
 using namespace _ELENA_;
 
 // Virtual machine client built-in references
-#define VM_LOADER      _T("$package'core_vm'console_vm_start")
+#define VM_LOADER          "$package'core_vm'console_vm_start"
 
-#define VM_TAPE            _T("'vm_tape")
-#define VM_PATH            _T("'vm_path")
-#define VM_PROCEDURE       _T("'vm_procedure")
-#define VM_DEBUGPROCEDURE  _T("'vm_debugprocedure")
-#define VM_HOOK            _T("'vm_hook")
-#define VM_ERR_DLLLOAD     _T("'vm_dllnotfound")
-#define VM_ERR_DLLINVALID  _T("'vm_dllinvalid")
-#define VM_ERR_ERRPROC     _T("'vm_errproc")
+#define VM_TAPE            "'vm_tape"
+#define VM_PATH            "'vm_path"
+#define VM_PROCEDURE       "'vm_procedure"
+#define VM_DEBUGPROCEDURE  "'vm_debugprocedure"
+#define VM_HOOK            "'vm_hook"
+#define VM_ERR_DLLLOAD     "'vm_dllnotfound"
+#define VM_ERR_DLLINVALID  "'vm_dllinvalid"
+#define VM_ERR_ERRPROC     "'vm_errproc"
 
 // --- ExecutableImage ---
 
@@ -257,10 +257,10 @@ inline ref_t writeLiteral(MemoryWriter& data, const wchar16_t* s)
    return position;
 }
 
-inline ref_t writeAnsiLiteral(MemoryWriter& data, const wchar16_t* s)
+inline ref_t writeAnsiLiteral(MemoryWriter& data, const char* s)
 {
    ref_t position = data.Position();
-   data.writeAsciiLiteral(s);
+   data.writeLiteral(s);
 
    return position;
 }
@@ -307,20 +307,20 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    ReferenceMap consts((size_t)-1);
    VMClientHelper helper(this, &consts);
 
-   consts.add(VM_TAPE, createTape(data, project));
-   consts.add(VM_PATH, writeLiteral(data, _rootPath));
-   consts.add(VM_PROCEDURE, writeAnsiLiteral(data, _T("InterpretLVM")));
-   consts.add(VM_DEBUGPROCEDURE, writeAnsiLiteral(data, _T("SetDebugMode")));
-   consts.add(VM_HOOK, vmHook);
-   consts.add(VM_ERR_ERRPROC, writeAnsiLiteral(data, _T("GetLVMStatus")));
-   consts.add(VM_ERR_DLLLOAD, writeErrorMessage(data, _T("Cannot load "), _rootPath, _T("\n")));
-   consts.add(VM_ERR_DLLINVALID , writeErrorMessage(data, _T("Incorrect elenavm.dll\n")));
+   consts.add(ConstantIdentifier(VM_TAPE), createTape(data, project));
+   consts.add(ConstantIdentifier(VM_PATH), writeLiteral(data, _rootPath));
+   consts.add(ConstantIdentifier(VM_PROCEDURE), writeAnsiLiteral(data, "InterpretLVM"));
+   consts.add(ConstantIdentifier(VM_DEBUGPROCEDURE), writeAnsiLiteral(data, "SetDebugMode"));
+   consts.add(ConstantIdentifier(VM_HOOK), vmHook);
+   consts.add(ConstantIdentifier(VM_ERR_ERRPROC), writeAnsiLiteral(data, "GetLVMStatus"));
+   consts.add(ConstantIdentifier(VM_ERR_DLLLOAD), writeErrorMessage(data, _T("Cannot load "), _rootPath, _T("\n")));
+   consts.add(ConstantIdentifier(VM_ERR_DLLINVALID), writeErrorMessage(data, _T("Incorrect elenavm.dll\n")));
 
    _Memory* section = NULL;
    _Module* module = project->loadPrimitive(CORE_VM_MODULE, false);
    if (module != NULL) {
       //int type = project->IntSetting(opApplicationType, stConsole);
-      ref_t reference = /*type == stGUI ? STD_VM_GUI_LOADER : */module->mapReference(VM_LOADER, true);
+      ref_t reference = /*type == stGUI ? STD_VM_GUI_LOADER : */module->mapReference(ConstantIdentifier(VM_LOADER), true);
       section = module->mapSection(reference | mskNativeCodeRef, true);
    }
    if (section == NULL)

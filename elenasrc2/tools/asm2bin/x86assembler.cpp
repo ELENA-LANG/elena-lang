@@ -69,104 +69,6 @@ int x86Assembler :: readStReg(TokenInfo& token)
 	return index;
 }
 
-bool x86Assembler :: readOffset(TokenInfo& token, ProcedureInfo& info/*, _Module* binary*/, const wchar16_t* err, Operand& operand)
-{
-	Operand disp;
-	token.read();
-	if (token.check(_T("+"))) {
-		token.read();
-		disp = defineOperand(token, info/*, binary*/, err);
-	}
-	else if (token.check(_T("-"))) {
-		token.read();
-		disp = defineOperand(token, info/*, binary*/, err);
-		disp.offset = -disp.offset;
-	}
-   else if(token.value[0]=='-' && (token.terminal.state==dfaInteger || token.terminal.state==dfaHexInteger)) {
-		token.getInteger(disp.offset, constants);
-		setOffsetSize(disp);
-	}
-   // if operand scaled
-   else if (token.check(_T("*"))/* && (char)operand.type==x86Helper::otSIB*/) {
-      token.read();
-      if(token.check(_T("4"))) {
-         operand.type = (OperandType)(operand.type | 0x80000000);
-         return true;
-      }
-      else if(token.check(_T("8"))) {
-         operand.type = (OperandType)(operand.type | 0xC0000000);
-         return true;
-      }
-      else if(token.check(_T("2"))) {
-         operand.type = (OperandType)(operand.type | 0x40000000);
-         return true;
-      }
-      else return false;
-   }
-	else if (operand.ebpReg && operand.type == x86Helper::otDisp32) {
-      operand.type = (OperandType)(operand.type | x86Helper::otM32disp8);
-	   operand.offset = 0;
-	   return false;
-	}
-	else return false;
-
-	if (disp.reference==0) {
-		operand.offset += disp.offset;
-	}
-	else if (operand.reference==0) {
-		operand.offset += disp.offset;
-		operand.reference = disp.reference;
-	}
-	else token.raiseErr(err);
-
-	// !! to deal with the conflict bitween [ebp] and disp32
-	if ((operand.type==x86Helper::otDisp32 || operand.type==x86Helper::otDD || operand.type==x86Helper::otDB)
-      && !operand.ebpReg && (disp.type == x86Helper::otDD || disp.type == x86Helper::otDB))
-   {
-		return true;
-	}
-	else if (test(operand.type, x86Helper::otM32)) {
-		if (disp.type==x86Helper::otDB) {
-			operand.type = (OperandType)(operand.type | x86Helper::otM32disp8);
-			return true;
-		}
-		else if (disp.type==x86Helper::otDD) {
-         operand.type = (OperandType)(operand.type | x86Helper::otM32disp32);
-			return true;
-		}
-		else if (test(disp.type, x86Helper::otR32)) {
-			if (!test(disp.type, x86Helper::otSIB)) {
-				int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
-
-				operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode);
-				return true;
-			}
-		}
-	}
-	else if (test(operand.type, x86Helper::otM8)) {
-		if (disp.type==x86Helper::otDB) {
-			operand.type = (OperandType)(operand.type | x86Helper::otM8disp8);
-			return true;
-		}
-		else if (test(disp.type, x86Helper::otR32)) {
-			if (!test(disp.type, x86Helper::otSIB)) {
-				int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
-
-				operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode);
-				return true;
-			}
-		}
-	}
-	else if (test(operand.type, x86Helper::otM16)) {
-		if (disp.type==x86Helper::otDB) {
-			operand.type = (OperandType)(operand.type | x86Helper::otM16disp8);
-			return true;
-		}
-	}
-	token.raiseErr(err);
-	return false;
-}
-
 x86Assembler::Operand x86Assembler :: defineRegister(TokenInfo& token)
 {
 	if (token.check(_T("eax"))) {
@@ -233,13 +135,13 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
 {
 	Operand operand = defineRegister(token);
    if (operand.type == x86Helper::otUnknown) {
-		if (token.check(_T("("))) {
-			token.read();
-			operand = defineOperand(token, info/*, binary*/, err);
-			readOffset(token, info/*, binary*/, err, operand);
-			token.read(_T(")"), err);
-		}
-		else if (token.getInteger(operand.offset, constants)) {
+		//if (token.check(_T("("))) {
+		//	token.read();
+		//	operand = defineOperand(token, info/*, binary*/, err);
+		//	readOffset(token, info/*, binary*/, err, operand);
+		//	token.read(_T(")"), err);
+		//}
+		/*else*/ if (token.getInteger(operand.offset, constants)) {
 			setOffsetSize(operand);
          // !! HOTFIX: 000000080 constant should be considered as int32 rather then int8
          if (getlength(token.value)==8 && operand.type == x86Helper::otDB) {
@@ -301,17 +203,192 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
    return operand;
 }
 
-x86Assembler::Operand x86Assembler :: readOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix)
+bool x86Assembler :: setOffset(Operand& operand, Operand disp)
+{
+	if (disp.reference==0) {
+		operand.offset += disp.offset;
+	}
+	else if (operand.reference==0) {
+		operand.offset += disp.offset;
+		operand.reference = disp.reference;
+	}
+	else return false;
+
+	if (disp.type==x86Helper::otDB) {
+      if (test(operand.type, x86Helper::otM16)) {
+         operand.type = (OperandType)(operand.type | x86Helper::otM16disp8);
+      }
+		else operand.type = (OperandType)(operand.type | x86Helper::otM32disp8);
+		return true;
+	}
+	else if (disp.type==x86Helper::otDD) {
+      operand.type = (OperandType)(operand.type | x86Helper::otM32disp32);
+		return true;
+	}
+   return false;
+}
+
+x86Assembler::Operand x86Assembler :: defineDisplacement(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err)
+{
+   if (token.check(_T("+"))) {
+      token.read();
+
+      return defineOperand(token, info, err);
+   }
+   else if (token.check(_T("-"))) {
+      token.read();
+
+      Operand disp = defineOperand(token, info, err);
+      if (disp.type == x86Helper::otDD || disp.type == x86Helper::otDB) {
+         disp.offset = -disp.offset;
+
+         return disp;
+      }
+      else token.raiseErr(err);
+   }
+   else if (token.value[0]=='-' && (token.terminal.state==dfaInteger || token.terminal.state==dfaHexInteger)) {
+      Operand disp = defineOperand(token, info, err);
+      if (disp.type == x86Helper::otDD || disp.type == x86Helper::otDB) {
+         return disp;
+      }
+      else token.raiseErr(err);
+   }
+   else if (token.check(_T("*"))) {
+      token.read();
+      if(token.check(_T("4"))) {
+         return Operand(x86Helper::otFactor4);
+      }
+      else if(token.check(_T("8"))) {
+         return Operand(x86Helper::otFactor8);
+      }
+      else if(token.check(_T("2"))) {         
+         return Operand(x86Helper::otFactor2);
+      }
+      else token.raiseErr(err);
+   }
+
+   return Operand();
+}
+
+x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix)
 {
 	Operand operand = defineOperand(token, info, err);
    if (operand.type != x86Helper::otUnknown) {
       operand.type = x86Helper::addPrefix(operand.type, prefix);
 
-      if (readOffset(token, info, err, operand)) {
-         if (readOffset(token, info, err, operand)) {
-            if (readOffset(token, info, err, operand))
+      if (operand.type == x86Helper::otDisp32 && !operand.ebpReg) {
+         token.read();
+         Operand disp = defineDisplacement(token, info, err);
+         if (disp.type == x86Helper::otDD || disp.type == x86Helper::otDB) {
+	         if (disp.reference==0) {
+		         operand.offset += disp.offset;
+	         }
+	         else if (operand.reference==0) {
+		         operand.offset += disp.offset;
+		         operand.reference = disp.reference;
+	         }
+	         else token.raiseErr(err);               
+
+            token.read();
+         }
+         else if (disp.type != x86Helper::otUnknown)
+            token.raiseErr(err);
+
+         // if it is [disp]
+         return operand;
+      }
+      else {
+         token.read();
+
+         Operand disp = defineDisplacement(token, info, err);
+
+         if (disp.type == x86Helper::otDD || disp.type == x86Helper::otDB) {
+            // if it is [r + disp]
+            if(!setOffset(operand, disp))
+               token.raiseErr(err);               
+
+            token.read();
+         }
+         else if (disp.type == x86Helper::otFactor2 || disp.type == x86Helper::otFactor4 || disp.type == x86Helper::otFactor8) {
+            token.read();
+
+            Operand disp2 = defineDisplacement(token, info, err);
+            if (disp2.type == x86Helper::otDD || disp2.type == x86Helper::otDB) {
+               // if it is [r*factor + disp]
+               int sibcode = ((char)x86Helper::otDisp32 + ((char)operand.type << 3)) << 24;
+
+               operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | disp.type | sibcode);
+               operand.offset = disp2.offset;
+               operand.reference = disp2.reference;
+               operand.factorReg = true;
+
                token.read();
-         }			
+            }
+            else if (disp2.type == x86Helper::otUnknown) {
+               // if it is [r*factor]
+               int sibcode = ((char)x86Helper::otDisp32 + ((char)operand.type << 3)) << 24;
+
+               operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | disp.type | sibcode);
+               operand.offset = 0;
+               operand.reference = 0;
+               operand.factorReg = true;
+            }
+            else token.raiseErr(err);
+         }
+         else if (disp.type != x86Helper::otUnknown) {
+            token.read();
+
+            Operand disp2 = defineDisplacement(token, info, err);
+            if (disp2.type == x86Helper::otDD || disp2.type == x86Helper::otDB) {
+               // if it is [r + r + disp]
+               int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
+
+               if(!setOffset(operand, disp2))
+                  token.raiseErr(err);               
+
+               operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode);
+
+               token.read();
+            }
+            else if (disp2.type == x86Helper::otFactor2 || disp2.type == x86Helper::otFactor4 || disp2.type == x86Helper::otFactor8) {
+               token.read();
+
+               Operand disp3 = defineDisplacement(token, info, err);
+               if (disp3.type == x86Helper::otDD || disp3.type == x86Helper::otDB) {
+                  // if it is [r + r*factor + disp]
+                  int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
+
+                  if(!setOffset(operand, disp3))
+                     token.raiseErr(err);               
+
+                  operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode | disp2.type);
+
+                  token.read();
+               }
+               else if (disp3.type == x86Helper::otUnknown) {
+                  // if it is [r + r*factor]
+				      int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
+
+				      operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode | disp2.type);
+               }
+               else token.raiseErr(err);
+            }
+            else if (disp2.type == x86Helper::otUnknown) {
+               // if it is [r + r]
+				   int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
+
+				   operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode);
+            }
+            else token.raiseErr(err);
+         }
+         else {
+            // if it is register disp [r]
+            if (operand.ebpReg && operand.type == x86Helper::otDisp32) {
+               operand.type = (OperandType)(operand.type | x86Helper::otM32disp8);
+	            operand.offset = 0;
+	         }
+            return operand;
+         }
       }
    }
 	return operand;
@@ -319,12 +396,13 @@ x86Assembler::Operand x86Assembler :: readOperand(TokenInfo& token, ProcedureInf
 
 x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix)
 {
-	token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
-
 	token.read();
+   if (token.check(_T("ptr")))
+      token.read();
+
 	if (token.check(_T("["))) {
 	   token.read();
-	   Operand operand = readOperand(token, info, err, prefix);
+	   Operand operand = readDispOperand(token, info, _T("Invalid expression"), prefix);
 	   if(!token.check(_T("]"))) {
           token.raiseErr(_T("']' expected (%d)\n"));
 	   }
@@ -357,7 +435,7 @@ x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, Procedure
 	token.read();
 	if (token.check(_T("["))) {
 		token.read();
-      operand = readOperand(token, info, err, x86Helper::otM32);
+      operand = readDispOperand(token, info, _T("Invalid expression"), x86Helper::otM32);
 
 	   if(!token.check(_T("]"))) {
           token.raiseErr(_T("']' expected (%d)\n"));
@@ -365,24 +443,35 @@ x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, Procedure
 	   else token.read();
 	}
 	else if (token.check(_T("dword"))) {
+	   token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
+
 		operand = readPtrOperand(token, info, err, x86Helper::otM32);
 	}
 	else if (token.check(_T("word"))) {
+	   token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
+
 		operand = readPtrOperand(token, info, err, x86Helper::otM16);
 	}
 	else if (token.check(_T("byte"))) {
+	   token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
+
 		operand = readPtrOperand(token, info, err, x86Helper::otM8);
 	}
    else if (token.check(_T("fs"))) {
       token.read(_T(":"), _T("Column is expected"));
-      operand = compileOperand(token, info, err);
+      operand = readPtrOperand(token, info, err, x86Helper::otM32);
 
       if (operand.prefix != x86Helper::spNone) {
          token.raiseErr(err);
       }
       else operand.prefix = x86Helper::spFS;
    }
-	else operand = readOperand(token, info, err, x86Helper::otNone);
+	else {
+      operand = defineOperand(token, info, err);
+
+      if (operand.type != x86Helper::otUnknown)
+         token.read();
+   }
 
 	return operand;
 }
@@ -1513,7 +1602,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
    }
 	else if (token.check(_T("["))) {
 		token.read();
-		Operand operand = readOperand(token, info, _T("Invalid call target (%d)\n"), x86Helper::otM32);
+		Operand operand = readDispOperand(token, info, _T("Invalid call target (%d)\n"), x86Helper::otM32);
 		if (!token.check(_T("]")))
 			token.raiseErr(_T("']' expected(%d)\n"));
 
@@ -2179,23 +2268,28 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
    while (!token.check(_T("end"))) {
       if (token.check(_T("dd"))) {
          token.read();
-         Operand operand = readOperand(token, info, _T("Invalid constant"), x86Helper::otDD);
+         Operand operand = defineOperand(token, info, _T("Invalid constant"));
          if (operand.type==x86Helper::otDD) {
+            x86Helper::writeImm(&writer, operand);
+         }
+         else if (operand.type==x86Helper::otDB) {
+            operand.type = x86Helper::otDD;
             x86Helper::writeImm(&writer, operand);
          }
          else token.raiseErr(_T("Invalid operand (%d)"));
       }
       else if (token.check(_T("dw"))) {
          token.read();
-         Operand operand = readOperand(token, info, _T("Invalid constant"), x86Helper::otDW);
-         if (operand.type==x86Helper::otDW) {
+         Operand operand = defineOperand(token, info, _T("Invalid constant"));
+         if (operand.type==x86Helper::otDB) {
+            operand.type = x86Helper::otDW;
             x86Helper::writeImm(&writer, operand);
          }
          else token.raiseErr(_T("Invalid operand (%d)"));
       }
       else if (token.check(_T("db"))) {
          token.read();
-         Operand operand = readOperand(token, info, _T("Invalid constant"), x86Helper::otDB);
+         Operand operand = defineOperand(token, info, _T("Invalid constant"));
          if (operand.type==x86Helper::otDB) {
             x86Helper::writeImm(&writer, operand);
          }

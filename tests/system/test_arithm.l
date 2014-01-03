@@ -7,17 +7,26 @@
 //#define extensions'math.
 #define extensions.
 
+#symbol nil =
+{
+    equal : anObject = 
+        anObject equal &type'object:$self.
+}.
+
 #class XTester
 {
-    #method test &type'int:anInt
+    #method test &type'short:aVal
     [
+        #var n := aVal.
     ]
-    
 }
 
 #symbol XTest =
 [
-    #var(type:short)aChar := "abc" getAt &type'index:1.
+    #var aYear := 2001.
+    
+    #var aSystemStruct := XTester test
+        &type'short:(1601 + aYear type'int).
 ].
 
 // --- OpenArgTest ---

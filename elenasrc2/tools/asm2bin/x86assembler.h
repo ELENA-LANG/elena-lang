@@ -80,16 +80,16 @@ protected:
    void readParameterList(TokenInfo& token, ProcedureInfo& info, ReferenceNs& refName);
 
 	int readStReg(TokenInfo& token);
-
-	bool readOffset(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, Operand& operand);
+   bool setOffset(Operand& operand, Operand disp);
 
 	Operand defineRegister(TokenInfo& token);
 	Operand defineOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
+   Operand defineDisplacement(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
 
-   Operand readOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
+   Operand readDispOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
 	Operand readPtrOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
 
-	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
+	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);   
 
 	void compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

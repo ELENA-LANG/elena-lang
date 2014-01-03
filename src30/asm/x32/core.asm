@@ -968,6 +968,7 @@ procedure core'newframe
   xor  ebx, ebx
   push ebx                      
   push ebx
+
   // ; set stack frame pointer / bottom stack pointer
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp 
   mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp

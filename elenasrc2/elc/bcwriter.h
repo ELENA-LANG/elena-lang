@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -261,7 +261,6 @@ public:
    void jump(CommandTape& tape, bool previousLabel = false);
 
 //   void setArrayItem(CommandTape& tape);
-//   void getArrayItem(CommandTape& tape);
 
    void throwCurrent(CommandTape& tape);
    void breakLoop(CommandTape& tape, int label);
@@ -305,7 +304,8 @@ public:
    void loadLiteralLength(CommandTape& tape, ObjectInfo target);
    void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
    void loadParamsLength(CommandTape& tape, ObjectInfo target);
-   void getOpenParam(CommandTape& tape);
+   void getArrayItem(CommandTape& tape);
+   void getLiteralItem(CommandTape& tape, ObjectInfo target);
 
    void flush(CommandTape& tape, _Module* module, _Module* debugModule);
 };

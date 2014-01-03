@@ -33,13 +33,13 @@ define tt_ptr                0038h
 define tt_lock               003Ch
 
 // GCXT TLS TABLE
-define gc_stack_frame        0000h
-define gc_stack_bottom       0004h
-define core_catch_addr       0008h
-define core_catch_level      000Ch
-define core_catch_frame      0010h
-define gc_sync_event         0014h
-define gc_mt_flags           0018h
+define tls_stack_frame       0000h
+define tls_stack_bottom      0004h
+define tls_catch_addr        0008h
+define tls_catch_level       000Ch
+define tls_catch_frame       0010h
+define tls_sync_event        0014h
+define tls_flags             0018h
 
 // Object header fields
 define elObjectOffset        0010h
@@ -109,7 +109,7 @@ labYGCollect:
   push edi                             
 
   // ; lock frame
-  mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]
+  // !! mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]
   mov  edx, eax
   sub  edx, esp
   mov  [eax], edx
@@ -131,7 +131,7 @@ labYGCollect:
   push ecx
 
   // ; save frames
-  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
+  // !! mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
   
 labYGNextFrame:
   mov  eax, [esi+4]
@@ -971,7 +971,7 @@ labNext:
   mov  esi, [ecx + ebx*4]
 
   // ; init thread flags  
-  mov  [esi + gc_mt_flags], 0       
+  // mov  [esi + tls_flags], 0       
   
   // ; set thread event handle
   push 0
@@ -979,14 +979,10 @@ labNext:
   push 0FFFFFFFFh // -1
   push 0
   call extern 'dlls'KERNEL32.CreateEventW  
-  mov  [esi + gc_sync_event], eax     
+  mov  [esi + tls_sync_event], eax     
 
   mov  eax, data : %THREAD_TABLE
   mov  [eax], esi       // ; save tls reference 
-
-  // GCXT: init thead table
-  mov  ebx, 1
-  mov  [data : %CORE_GC_TABLE + tt_ptr], ebx // ; set thread table length
 
   ret
 
@@ -994,30 +990,100 @@ end
 
 procedure core'newframe
 
-  // !!
+  // ; put frame end and move procedure returning address
+  pop  edx           
+
+  // ; GCXT
+  // ; get thread table entry from tls
+  mov  ecx, [data : %CORE_TLS_INDEX]
+  mov  esi, fs:[2Ch]
+  mov  esi, [esi+ecx*4]
+
+  xor  ebx, ebx
+  push ebx                      
+  push ebx
+
+  // ; GCXT
+  // ; set stack frame pointer / bottom stack pointer
+  mov  [esi + tls_stack_frame], esp 
+  mov  [esi + tls_stack_bottom], esp
+  
+  // ; GCXT
+  // ; set thread table length
+  mov  ebx, 1
+  mov  [data : %CORE_GC_TABLE + tt_ptr], ebx   
+  
+  push edx
+
   ret
 
 end
 
 procedure core'endframe
 
-  // !!
+  // ; GCXT: get thread table entry from tls
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  esi, fs:[2Ch]
+  mov  esi, [esi+ebx*4]
+
+  // ; save return pointer
+  pop  ecx  
+  
+  xor  edx, edx
+  lea  esp, [esp+8]
+
+  // ; GCXT
+  mov  [esi + tls_stack_frame], edx
+
+  // ; restore return pointer
+  push ecx   
   ret
 
 end
 
 procedure core'openframe
 
-  // !!
+  // ; GCXT: get thread table entry from tls
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  esi, fs:[2Ch]
+  xor  edi, edi
+  mov  esi, [esi+ebx*4]
+                                        
+  // ; save return pointer
+  pop  ecx  
+
+  // ; GCXT: get thread table entry from tls
+  // ; save previous pointer / size field
+  push [esi + tls_stack_frame]
+  push edi                             
+  mov  [esi + tls_stack_frame], esp
+  
+  // ; restore return pointer
+  push ecx   
   ret
 
 end
 
 procedure core'closeframe
 
-  // !!
-  ret
+  // ; GCXT: get thread table entry from tls
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  esi, fs:[2Ch]
+  xor  edi, edi
+  mov  esi, [esi+ebx*4]
+                                        
+  // ; save return pointer
+  pop  ecx  
 
+  // ; GCXT
+  lea  esp, [esp+4]
+  pop  edx
+  mov  [esi + tls_stack_frame], edx
+  
+  // ; restore return pointer
+  push ecx   
+  ret
+  
 end
 
 // --- API ---

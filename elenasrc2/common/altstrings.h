@@ -315,7 +315,7 @@ public:
 
       StringHelper::doubleToStr(n, 8, _string + pos);
       if (_string[getlength(_string) - 1]=='.')
-         append(_T("0"));
+         append("0");
    }
 
    void appendHex64(long long n)

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -894,6 +894,10 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo info)
          // aloadai i
          tape.write(bcALoadAI, info.reference);
          break;
+      case okRegister:
+         // asavesi 1
+         tape.write(bcASaveSI, 1);
+         break;
    }
    // bsredirect
    // throw
@@ -1055,17 +1059,6 @@ void ByteCodeWriter :: jump(CommandTape& tape, bool previousLabel)
 //   tape.write(bcAccLoadAccI);
 //   tape.write(bcSet);
 //   tape.write(bcAccCopySelf);
-//}
-//
-//void ByteCodeWriter :: getArrayItem(CommandTape& tape)
-//{
-//   // accloadacci
-//   // get
-//   // popacc
-//
-//   tape.write(bcAccLoadAccI);
-//   tape.write(bcGet);
-//   tape.write(bcPopAcc);
 //}
 
 void ByteCodeWriter :: throwCurrent(CommandTape& tape)
@@ -1871,7 +1864,7 @@ void ByteCodeWriter :: loadParamsLength(CommandTape& tape, ObjectInfo target)
    tape.write(bcDSaveAI);
 }
 
-void ByteCodeWriter :: getOpenParam(CommandTape& tape)
+void ByteCodeWriter :: getArrayItem(CommandTape& tape)
 {
    // pusha
    // aloadsi 1
@@ -1883,4 +1876,19 @@ void ByteCodeWriter :: getOpenParam(CommandTape& tape)
    tape.write(bcDLoadAI);
    tape.write(bcPopA);
    tape.write(bcALoadD);
+}
+
+void ByteCodeWriter :: getLiteralItem(CommandTape& tape, ObjectInfo target)
+{
+   // aswapsi 0
+   // dloadai
+   // popa
+   // push <object>
+   // wsgetat
+
+   tape.write(bcASwapSI);
+   tape.write(bcDLoadAI);
+   tape.write(bcPopA);
+   pushObject(tape, target);
+   tape.write(bcWSFunc, fnGetAt);
 }

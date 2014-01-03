@@ -161,6 +161,11 @@ inline bool test(int number, int mask)
    return ((number & mask) == mask);
 }
 
+inline bool test(int number, int mask, int value)
+{
+   return ((number & mask) == value);
+}
+
 inline bool isbetween(int starting, int len , int value)
 {
    return (starting < value && value < starting + len);

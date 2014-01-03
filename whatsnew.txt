@@ -10,14 +10,19 @@
 ELENA:
 [+] new ecodes: unbox, released
 [+] it is possible to use generic arguments with an open argument list
+[*] operations with stack allocated objects refactored
 
 ELC:
 [*] configuration / project  files are UTF8 now
 [*] some native-code optimization
+[*] some byte-code optimization
 [-] fixed bug with external operation error handling
 
 ELENAVM:
 [-] fixed bug with stack allocated object boxing
+
+Tools:
+[*] asm2binx: fixed ModR/M and SIB encoding bug
 
 ******************************************************************************
                     What's New in 1.9.10 (pre release)

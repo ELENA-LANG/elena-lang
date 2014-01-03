@@ -957,7 +957,8 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, const wchar16
 {
    if (lineInfo) {
       if (!StringHelper::compare(_currentModule, moduleName) || StringHelper::compare(_currentSource, sourcePath)) {
-         onLoadModule(moduleName, sourcePath);
+         //!! do we need it at all?
+         //onLoadModule(moduleName, sourcePath);
          _currentModule = moduleName;
          _currentSource = sourcePath;
       }

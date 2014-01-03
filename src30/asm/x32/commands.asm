@@ -23,7 +23,7 @@ define gc_stack_bottom       0034h
 define page_mask        0FFFFFFF0h
 define page_size_order          4h
 define page_ceil               1Bh
-                                                                                                   
+
 // throw
 inline % 7
 
@@ -63,6 +63,7 @@ labStart:
   nop  
 labFound:
   jmp  [esi+ecx*8+4]
+  nop
 
 labEnd:
                                                                 
@@ -146,6 +147,9 @@ inline % 1Bh
   pop  esi
   lea  esp, [esp + ecx * 4 + 4]
   jmp  esi
+  nop
+  nop
+  nop
  
 end
 
@@ -442,10 +446,10 @@ end
 
 inline % 0A1h
 
-  mov  ecx, __arg1
   mov  esi, [eax - 4]
-  mov  esi, [esi + ecx]
-  jmp  esi
+  jmp  [esi + __arg1]
+  nop
+  nop
 
 end
 
@@ -604,6 +608,8 @@ end
 inline % 0FEh
 
    mov  esi, __arg1
+   nop
+   nop
    call esi
 
 end

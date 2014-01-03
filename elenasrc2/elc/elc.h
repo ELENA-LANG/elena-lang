@@ -59,27 +59,27 @@
 #define ELC_TARGET                  "executable"
 #define ELC_GC_PAGESIZE             "gcsize"
 #define ELC_GC_OBJSIZE              "objsize"
-//#define ELC_HEAP_COMMIT             _T("heapcommit")
-//#define ELC_HEAP_RESERV             _T("heapresrv")
-//#define ELC_JIT                     _T("jit")
-//#define ELC_YG_IMAGEBASE            _T("imagebase")
+//#define ELC_HEAP_COMMIT             "heapcommit"
+//#define ELC_HEAP_RESERV             "heapresrv"
+//#define ELC_JIT                     "jit"
+//#define ELC_YG_IMAGEBASE            "imagebase"
 #define ELC_LIB_PATH                "libpath"
 #define ELC_SYSTEM_THREADMAX        "maxthread"
 #define ELC_OUTPUT_PATH             "output"
 #define ELC_NAMESPACE               "namespace"
-//#define ELC_STACK_COMMIT            _T("stackcommit")
-//#define ELC_STACK_RESERV            _T("stackresrv")
-//#define ELC_PROJECT_START           _T("start")
+//#define ELC_STACK_COMMIT            "stackcommit"
+//#define ELC_STACK_RESERV            "stackresrv"
+//#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
-//#define ELC_APPTYPE                 _T("apptype")
+//#define ELC_APPTYPE                 "apptype"
 #define ELC_PLATFORMTYPE            "platform"
 #define ELC_VM_PATH                 "vmpath"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"
-//#define ELC_WARNON_SIGNATURE        _T("warn:signature")
+//#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_RATIO                "ygratio"
 #define ELC_L0                      "l0"                // optimization: byte code optimization
-//#define ELC_L1                      _T("l1")                // optimization: direct invoke
-//#define ELC_L2                      _T("l2")                // optimization: jumps
+//#define ELC_L1                      "l1"                // optimization: direct invoke
+//#define ELC_L2                      "l2"                // optimization: jumps
 #define ELC_L3                      "l3"                // optimization: idle frame optimization
 #define ELC_SYMBOLINFO              "symbolembed"
 

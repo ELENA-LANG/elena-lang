@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA coder opcode helpers
 //		Supported platforms: x86
-//                                              (C)2005-2009, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86helperH
@@ -67,6 +67,10 @@ public:
       otSIB       = 0x00000004,
 
       otDisp32    = 0x00110005,
+
+      otFactor2   = 0x40000000,
+      otFactor4   = 0x80000000,
+      otFactor8   = 0xC0000000
    };
 
    enum SegmentPrefix
@@ -78,6 +82,7 @@ public:
    struct Operand
    {
       bool          ebpReg;		// to resolve conflict between [ebp] and disp32
+      bool          factorReg;   // to implement [r*factor] SIB
       OperandType   type;
 		int           offset;
       size_t        reference;
@@ -86,7 +91,7 @@ public:
       Operand()
       {
          type = otUnknown;
-         ebpReg = false;
+         factorReg = ebpReg = false;
 			reference = offset = 0;
          prefix = spNone;
 
@@ -97,6 +102,7 @@ public:
          this->ebpReg = (this->type==otEBP);
 			this->reference = this->offset = 0;
          this->prefix = spNone;
+         this->factorReg = false;
       }
       Operand(int number)
       {
@@ -104,6 +110,7 @@ public:
          this->ebpReg = (this->type==otEBP);
 			this->reference = this->offset = 0;
          this->prefix = spNone;
+         this->factorReg = false;
       }
    };
 
@@ -202,12 +209,20 @@ public:
       if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8)) {
 	      code->writeByte(dest.offset);
       }
-      else if (test(dest.type, otM32disp32)) {
+      // !! should only otM32 be checked?
+      else if (test(dest.type, otM32disp32) || dest.factorReg) {
 	      if (dest.reference != 0) {
 		      code->writeRef(dest.reference, dest.offset);
 	      }
 	      else code->writeDWord(dest.offset);
       }
+      //// HOTFIX: to distingush between [esp] and disp32
+      //else if (test(dest.type, otM32) && (dest.type != otSPDisp32)) {
+	     // if (dest.reference != 0) {
+		    //  code->writeRef(dest.reference, dest.offset);
+	     // }
+	     // else code->writeDWord(dest.offset);
+      //}
       else if (dest.type==otDisp32) {
 	      if (dest.reference != 0) {
 		      code->writeRef(dest.reference, dest.offset);

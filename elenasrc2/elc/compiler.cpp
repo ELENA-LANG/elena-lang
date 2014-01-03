@@ -293,7 +293,7 @@ inline bool IsPrimitiveOperation(int operator_id, ObjectInfo loperand, ObjectInf
 
 inline bool checkIfBoxingRequired(ObjectInfo object)
 {
-   if (object.kind == okLocal || object.kind == okLocalAddress) {
+   if (object.kind == okLocal || object.kind == okLocalAddress || object.kind == okField) {
       switch(object.type) {
          case otInt:
          case otIntVar:
@@ -405,6 +405,8 @@ inline TypeCode MapTypeCode(ObjectType type)
          return tcParams;
       case otByteArray:
          return tcBytes;
+      case otLiteral:
+         return tcStr;
       default:
          return tcRef;
    }
@@ -1617,6 +1619,9 @@ void Compiler :: compileStackAssignment(DNode node, CodeScope& scope, ObjectInfo
    if (variableInfo.type == otInt && (object.type == otInt || object.type == otIndex)) {
       _writer.copyInt(*scope.tape, variableInfo);
    }
+   else if (variableInfo.type == otShort && (object.type == otShort)) {
+      _writer.copyInt(*scope.tape, variableInfo);
+   }
    else if (variableInfo.type == otLong && (object.type == otLong)) {
       _writer.copyLong(*scope.tape, variableInfo);
    }
@@ -1932,6 +1937,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
       case otLength:
       case otIndex:
       case otByte:
+      case otShort:
          _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, true);
          break;
       case otLong:
@@ -3608,6 +3614,9 @@ FunctionCode Compiler :: definePrimitiveOperationCode(CodeScope& scope, int oper
       if (ltype == tcParams && rtype == tcInt) {
          return fnGetAt;
       }
+      else if (ltype == tcStr && rtype == tcInt) {
+         return fnGetAt;
+      }
    }
    return (FunctionCode)0;
 }
@@ -3677,6 +3686,10 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
    }
    else if (operator_id == REFER_MESSAGE_ID) {
       referMode = true;
+      if (loperand.type == otLiteral) {
+         if (!allocatePrimitiveObject(scope, tcShort, retVal))
+            scope.raiseError(errInvalidOperation, node.Terminal());
+      }
    }
 
    FunctionCode functionCode = definePrimitiveOperationCode(scope, operator_id, retVal, loperand, roperand, mode);
@@ -3688,8 +3701,14 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
 
       paramCount--;
    }
-   else if (referMode && functionCode == fnGetAt) {
-      _writer.getOpenParam(*scope.tape);
+   else if (loperand.type == otParams && functionCode == fnGetAt) {
+      _writer.getArrayItem(*scope.tape);
+   }
+   else if (loperand.type == otLiteral && functionCode == fnGetAt) {
+      _writer.getLiteralItem(*scope.tape, retVal);
+      _writer.popObject(*scope.tape, ObjectInfo(okRegister));
+
+      paramCount--;
    }
    else _writer.executeFunction(*scope.tape, retVal, functionCode);
 
@@ -4030,11 +4049,12 @@ void Compiler :: compileResend(DNode node, CodeScope& scope)
       ObjectInfo target = compileTerminal(node, scope, 0);
       if (target.kind == okConstant || target.kind == okField) {
          _writer.resend(*scope.tape, target);
+
+         return;
       }
-      else scope.raiseError(errInvalidOperation, node.Terminal());
    }
    // if it is resend to itself
-   else if (node.firstChild() == nsMessageReference) {
+   if (node.firstChild() == nsMessageReference) {
       DNode subj = node.firstChild().firstChild();
       // Make sure only verb / custom verb is used
       if (subj.nextNode() == nsNone) {
@@ -4073,10 +4093,23 @@ void Compiler :: compileResend(DNode node, CodeScope& scope)
                verb_id, paramCount));
          }
          else _writer.redirectVerb(*scope.tape, encodeMessage(sign_id, verb_id, paramCount));
+
+         return;
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
    }
-   else scope.raiseError(errInvalidOperation, node.Terminal());
+   // otherwise send again the message to the new target
+   // store the message
+   _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
+   // compile target
+   ObjectInfo target = compileObject(node, scope, HINT_ROOTEXPR);
+   if (checkIfBoxingRequired(target))
+      boxObject(scope, target, 0);
+
+   _writer.loadObject(*scope.tape, target);
+
+   _writer.popObject(*scope.tape, ObjectInfo(okCurrentMessage));
+   _writer.resend(*scope.tape, ObjectInfo(okRegister));
 }
 
 void Compiler :: compileMessageDispatch(DNode node, CodeScope& scope)

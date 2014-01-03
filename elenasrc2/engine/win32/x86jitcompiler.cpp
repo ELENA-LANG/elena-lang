@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1193,10 +1193,6 @@ void _ELENA_::compileAccSaveR(int opcode, x86JITScope& scope)
 void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 {
    int message = scope.resolveMessage(scope.tape->getDWord());
-
-   // mov edx, message
-   scope.code->writeByte(0xBA);
-   scope.code->writeDWord(message);
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
    size_t position = scope.code->Position();
