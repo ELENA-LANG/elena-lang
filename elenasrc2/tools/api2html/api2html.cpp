@@ -19,6 +19,8 @@
 
 using namespace _ELENA_;
 
+typedef String<char, 255> ParamString;
+
 void writeHeader(TextFileWriter& writer, const char* package, const char* packageLink)
 {
    writer.writeTextNewLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\"http://www.w3.org/TR/REC-html40/frameset.dtd\">");
@@ -103,7 +105,7 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
    for(int i = 0 ; i < count ; i++) writer.writeText(s);
 }
 
-inline const _text_t* find(const _text_t* s, char ch)
+inline const char* find(const char* s, char ch)
 {
    if (emptystr(s)) {
       return NULL;
@@ -117,7 +119,7 @@ inline const _text_t* find(const _text_t* s, char ch)
    }
 }
 
-inline bool exists(const _text_t* s, char ch)
+inline bool exists(const char* s, char ch)
 {
    if (emptystr(s)) {
       return false;
@@ -125,7 +127,7 @@ inline bool exists(const _text_t* s, char ch)
    else return StringHelper::find(s, ch) != -1;
 }
 
-inline void writeLeft(TextFileWriter& writer, const _text_t* s, const _text_t* right)
+inline void writeLeft(TextFileWriter& writer, const char* s, const char* right)
 {
    if (emptystr(right)) {
       writer.writeText(s);
@@ -133,9 +135,9 @@ inline void writeLeft(TextFileWriter& writer, const _text_t* s, const _text_t* r
    else writer.write(s, right - s - 1);
 }
 
-void writeLink(TextFileWriter& writer, const _text_t* link, const _text_t* file = NULL)
+void writeLink(TextFileWriter& writer, const char* link, const _text_t* file = NULL)
 {
-   const _text_t* body = find(link, ':');
+   const char* body = find(link, ':');
 
    writer.writeText("<A HREF=\"");
 
@@ -157,7 +159,7 @@ void writeLink(TextFileWriter& writer, const _text_t* link, const _text_t* file 
    writer.writeTextNewLine("</A>");
 }
 
-void writeParamLink(TextFileWriter& writer, const _text_t* link, const _text_t* right, const _text_t* file)
+void writeParamLink(TextFileWriter& writer, const char* link, const char* right, const _text_t* file)
 {
    writer.writeText("<A HREF=\"");
 
@@ -177,11 +179,11 @@ void writeParamLink(TextFileWriter& writer, const _text_t* link, const _text_t* 
    writer.writeTextNewLine("</A>");
 }
 
-void writeSignature(TextFileWriter& writer, const _text_t* parameters)
+void writeSignature(TextFileWriter& writer, const char* parameters)
 {
    if (parameters[0] != '&') {
-      const _text_t* param = parameters;
-      const _text_t* next_subj = find(param, '&');
+      const char* param = parameters;
+      const char* next_subj = find(param, '&');
 
       writer.writeText(" : ");
       writeParamLink(writer, param, next_subj, _T("protocol.html"));
@@ -193,9 +195,9 @@ void writeSignature(TextFileWriter& writer, const _text_t* parameters)
       if (parameters[0]!='&')
          writer.writeText("&");
 
-      const _text_t* subj = parameters;
-      const _text_t* param = find(parameters, ':');
-      const _text_t* next_subj = find(param, '&');
+      const char* subj = parameters;
+      const char* param = find(parameters, ':');
+      const char* next_subj = find(param, '&');
 
       writeLeft(writer, subj, param);
       writer.writeText(" : ");
@@ -205,11 +207,11 @@ void writeSignature(TextFileWriter& writer, const _text_t* parameters)
    }
 }
 
-void writeMessage(TextFileWriter& writer, const _text_t* message)
+void writeMessage(TextFileWriter& writer, const char* message)
 {
-   const _text_t* parameter = find(message, ',');
-   const _text_t* result = find(parameter, ',');
-   const _text_t* descr = emptystr(result) ? find(parameter, ';') : find(result, ';');
+   const char* parameter = find(message, ',');
+   const char* result = find(parameter, ',');
+   const char* descr = emptystr(result) ? find(parameter, ';') : find(result, ';');
 
    if (emptystr(result)) {
       result = descr;
@@ -232,7 +234,7 @@ void writeMessage(TextFileWriter& writer, const _text_t* message)
    if (!emptystr(parameter) && result != parameter && parameter[0] != ',') {
       if (!oper) {
          if (exists(parameter, '&')) {
-            IdentifierString signature(parameter, result - parameter - 1);
+            ParamString signature(parameter, result - parameter - 1);
 
             writer.writeText(" ");
             writeSignature(writer, signature);
@@ -309,7 +311,7 @@ void writeFields(TextFileWriter& writer, IniConfigFile& config, const char* name
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
       if (StringHelper::compare(it.key(), "#field")) {
-         const _text_t* descr = find(*it, ';');
+         const char* descr = find(*it, ';');
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>");
@@ -336,7 +338,7 @@ void writeProperties(TextFileWriter& writer, IniConfigFile& config, const char* 
    ConfigCategoryIterator it = config.getCategoryIt(name);
    while (!it.Eof()) {
       if (StringHelper::compare(it.key(), "#property")) {
-         const _text_t* descr = find(*it, ';');
+         const char* descr = find(*it, ';');
          writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
 
@@ -374,8 +376,8 @@ void writeMethods(TextFileWriter& writer, IniConfigFile& config, const char* nam
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>&nbsp;");
 
-         const _text_t* message = *it;
-         const _text_t* descr = find(message, ';');
+         const char* message = *it;
+         const char* descr = find(message, ';');
 
          writeMessage(writer, message);
 
@@ -414,8 +416,8 @@ void writeConstructors(TextFileWriter& writer, IniConfigFile& config, const char
          writer.writeTextNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
          writer.writeTextNewLine("<CODE>&nbsp;");
 
-         const _text_t* message = *it;
-         const _text_t* descr = find(message, ';');
+         const char* message = *it;
+         const char* descr = find(message, ';');
 
          writeMessage(writer, message);
 
@@ -524,7 +526,7 @@ void writeSummaryFooter(TextFileWriter& writer)
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line Html Documentation generator (C)2006-13 by Alexei Rakov\n");
+   printf("ELENA command line Html Documentation generator (C)2006-14 by Alexei Rakov\n");
 
    IniConfigFile config(true);
 
@@ -533,7 +535,7 @@ int main(int argc, char* argv[])
       return 0;
    }
 
-   config.load(ConstantIdentifier(argv[1]), /*CP_OEMCP*/feAnsi); // !! temporal
+   config.load(ConstantIdentifier(argv[1]), feUTF8);
 
    FileName fileName(argv[1]);
    IdentifierString name(fileName);

@@ -802,6 +802,24 @@ for  : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
+&do : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the function for each collection member</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
+&until : <A HREF="protocol.html#bool_function">bool_function</A>
+</TD>
+<TD><CODE>Enumerates the collection until the member meet the condition and return it; otherwise, return nil.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
 &backTo : <A HREF="protocol.html#numeric_value">numeric_value</A>
 &do : <A HREF="protocol.html#function">function</A>
@@ -827,24 +845,6 @@ from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
 &do : <A HREF="protocol.html#function">function</A>
 </TD>
 <TD><CODE>Iterates the function for the specified range [from,to] with step equals to 1.</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
-&do : <A HREF="protocol.html#function">function</A>
-</TD>
-<TD><CODE>Executes the function for each collection member</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
-&until : <A HREF="protocol.html#bool_function">bool_function</A>
-</TD>
-<TD><CODE>Enumerates the collection until the member meet the condition and return it; otherwise, return nil.</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -1041,6 +1041,41 @@ read &type'widestr : <A HREF="protocol.html#"></A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="EIntNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class EIntNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'EIntNumber</B>
+</PRE>
+<P>
+An integer arithmerical role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+mod : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the remainder after dividing the object by the parameter.</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="ELiteralConvertor">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1221,6 +1256,59 @@ notless &type'widestr : <A HREF="protocol.html#type_widestr">type_widestr</A>
 type'widestr = <A HREF="protocol.html#type_widestr">type_widestr</A>
 </TD>
 <TD><CODE>Returns empty literal value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="EReal">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class EReal</H2>
+<P>
+A real arithmerical role
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Abs = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the absolute value.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Exp = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns e raised to the specified power</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Ln = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the natural logaritm</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Round = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Rounds to the nearest integral value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2803,6 +2891,63 @@ xor &type'long : <A HREF="protocol.html#type_long">type_long</A>
  = <A HREF="protocol.html#type_long">type_long</A>
 </TD>
 <TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="mathOp">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol mathOp</H2>
+<P>
+A mathematical operation helper
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Abs &type'real : <A HREF="protocol.html#type_real">type_real</A>
+&out'type'real : <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Copies the absolute value into the output parameter<br/>Should not be used stand-alone</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Exp &type'real : <A HREF="protocol.html#type_real">type_real</A>
+&out'type'real : <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Copies e raised to the specified power into the output parameter<br/>Should not be used stand-alone</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Ln &type'real : <A HREF="protocol.html#type_real">type_real</A>
+&out'type'real : <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Copies the natural logaritm into the output parameter<br/>Should not be used stand-alone</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Round &type'real : <A HREF="protocol.html#type_real">type_real</A>
+&out'type'real : <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Copies rounded to the nearest integral value into the output parameter<br/>Should not be used stand-alone</CODE>
 </TD>
 </TR>
 </TABLE>

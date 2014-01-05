@@ -23,10 +23,17 @@
 
 #symbol XTest =
 [
-    #var aYear := 2001.
+    #var aBulls := Integer new:0.
+    #var aCows := Integer new:0.
     
-    #var aSystemStruct := XTester test
-        &type'short:(1601 + aYear type'int).
+    ^ aBulls =>
+            -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
+             4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
+             ! [
+                 consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
+                 
+                 ^ true.
+             ].
 ].
 
 // --- OpenArgTest ---

@@ -248,10 +248,8 @@ void ByteCodeWriter :: declareTry(CommandTape& tape)
    tape.newLabel();                  // declare end-label
    tape.newLabel();                  // declare alternative-label
 
-   // aloadsi
    // hook labAlt
 
-   tape.write(bcALoadSI);
    tape.write(bcHook, baCurrentLabel);
 }
 
@@ -1178,12 +1176,10 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    //    popa
    //    throw
    // labEnd
-   //    pop
 
    tape.write(bcPopA);
    tape.write(bcThrow);
    tape.setLabel();
-   tape.write(bcPop);
 }
 
 void ByteCodeWriter :: endPrimitiveCatch(CommandTape& tape)

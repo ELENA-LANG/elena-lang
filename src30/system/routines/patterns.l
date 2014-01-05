@@ -61,6 +61,9 @@
         self setAt:anIndex2:aTemp.
     ]
 
+    #method Subarray &type'index:anIndex &type'length:aLength
+        = Array new &type'length:aLength &function: &&:i [ self@(anIndex + i) ].
+
     #method sort : aCondition
     [
         #var aCurrent := self Enumerator.
@@ -140,8 +143,20 @@
         anArray~EArray exchange:anIndex1:anIndex2.
     ]
     
+    find:aValue &in:anArray
+        = anArray~EList seek: &&:x [ aValue equal:x ].
+        
+    seek:anArray &for:aFunction
+        = anArray~EList seek:aFunction.
+        
+    ifExist:aValue &in:anArray
+        = nil != anArray~EList seek: &&:x [ aValue equal:x ].
+        
     sort : anArray
-        = anArray~EArray sort: &&:aFormer:aLater [ aFormer < aLater ].
+        = anArray~EArray sort: &&:aFormer:aLater [ aFormer < aLater ].        
+        
+    copy : anArray &from:anIndex &length:aLength
+        = anArray~EArray Subarray &type'index::anIndex &type'length:aLength.
 }.
 
 // --- ELiteralOp ---

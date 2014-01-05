@@ -1,14 +1,15 @@
-[project]
-vmpath=..\..\bin
+﻿[project]
 executable=mttest.exe
-template=win32_mt_console2
+vmpath=..\..\bin
+options=-xembed-
+namespace=mttest
+template=console_mt
 debuginfo=-1
 warn:unresolved=0
-options=-xembed-
 
 [files]
 mttest.l
 
 [forwards]
-'program'action=mttest'program
+'program=mttest'program
 

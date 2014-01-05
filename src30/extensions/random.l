@@ -48,5 +48,7 @@
     randomize:aCount &array:anArray
     [
         DownCounter new:Wrap(ERandomizer, anArray) for:aCount.
+        
+        ^ anArray.
     ]
 }.

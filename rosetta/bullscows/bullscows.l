@@ -1,87 +1,77 @@
-#define std'dictionary'*.
-#define std'basic'*.
-#define std'collections'*.
-#define std'patterns'*.
-#define ext'utils'*.
-#define std'routines'arrays'*.
-
-// --- EDigitProp ---
-#class EDigitProp
-{
-    #method get
-    [
-        ^ self numeric - 30h.
-    ]
-}
-
-#symbol Digits : aLiteral
-    = Summing &&var:List &prop:EDigitProp start:Scan::aLiteral.
+#define system.
+#define system'routines.
+#define extensions.
 
 #class GameMaster
 {
     #field theNumbers.
 
-    #initializer
+    #constructor new
     [
         // generate secret number
-        #var aRandomNumbers := Randomized &&base:(1,2,3,4,5,6,7,8,9) &count:9.
+        #var aRandomNumbers := randomControl randomize:9 &array:(1,2,3,4,5,6,7,8,9).
+ 
+        theNumbers := arrayControl copy:aRandomNumbers &from:0 &length:4.
+    ]
+
+    #method ask
+    [
+        #var aRow := consoleEx write:"Your Guess ?" readLine.
         
-        theNumbers := aRandomNumbers~earrayop read &from:0 &to:3 &:esubarray.
+        ^ stringControl toArray:aRow.
     ]
 
     #method proceed : aGuess
     [
-        #if (aGuess count != 4)?
-        [
-            'program'output << "Not a valid guess.%n".
-            
-            ^ $self.
-        ].
+        #var aCows := Integer new:0.
+        #var aBulls := Integer new:0.
 
-        #var aCows := Integer::0.
-        #var aBulls := Integer::0.
-                
-        #if It::aGuess run: aNumber =
-        [
-            // check range
-            Control if:(aNumber > 0) if:(aNumber < 10).
-            
-            // check duplicates
-            #if (aNumber indexer'clone index'append:1)~EIt find:aNumber
-            [
-                control fail.
+        (aGuess Count != 4)
+            ? [ aBulls << -1. ]
+            ! [
+                control from:0 &to:3 &do: &&:i
+                [
+                    #var ch := aGuess@i.
+                    #var aNumber := convertControl toInt:(ch Literal).
+                    
+                    // check range
+                    (aNumber > 0)and:(aNumber < 10)
+                        ! [ #throw InvalidArgumentException new. ].
+                    
+                    // check duplicates
+                    #var duplicate := arrayControl seek:aGuess  &for: &&:x [ (x == ch)and:[ x equal &type'object:ch not ] ].
+                    nil != duplicate ?
+                    [
+                        #throw InvalidArgumentException new.
+                    ].
+                    
+                    (aNumber == (theNumbers@i))
+                        ? [ aBulls += 1. ]
+                        ! [
+                            arrayControl ifExist:aNumber &in:theNumbers
+                                ? [ aCows += 1. ].
+                        ].
+                ]
+                | ifFailed: 
+                [
+                    aBulls << -1.
+                ].
             ].
-            
-            #if Control if:(aNumber == theNumbers@aNumber index)
-            [
-                aBulls += 1.
-            ]
-            | if:(Scan::theNumbers == aNumber)
-            [
-                aCows += 1.
-            ].
-        ]
-        | [
-            'program'output << "Not a valid guess.%n".
-            
-            ^ $self.
-        ].        
-        
-        #if (aBulls == 4)?
-        [
-            'program'output << "%nCongratulations! You have won!".
-            
-            $self fail.
-        ]
-        | [
-            'program'output << "%nYour Score is " << aBulls << " bulls and " << aCows << " cows%n".
-        ].
+
+        ^ aBulls =>
+            -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
+             4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
+             ! [
+                 consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
+                 
+                 ^ true.
+             ].
     ]
 }
 
-#symbol Program =
+#symbol program =
 [
-    #var aGameMaster := GameMaster.
+    #var aGameMaster := GameMaster new.
 
-    #while aGameMaster proceed:Digits::(ext'io'console << "Your Guess ?" >> String).
+    control while:[ aGameMaster proceed:(aGameMaster ask). ].
 ].

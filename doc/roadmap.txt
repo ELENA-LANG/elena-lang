@@ -20,7 +20,6 @@ Version 2.1.0
 - gcx, beta version
 - x64 alpha version
 - start migration to Linux
-- new hosting: github?
 
 Version 2.2.0
 -------------
@@ -50,8 +49,6 @@ Version 2.x.x
 - elenavm script: make possible to dynamically declare static variable
 - discontinue api2html
 - samples: multi-threading
-- gcx: review primitive code to be ready for gcx / gcxt
-- optimization: increase gc memory?
 - guiopencalc: gui description script (elenascript)
 - gcx: add posibility to view gc statistics
 - elenavm: make sure several applications can work simultaneously
@@ -73,7 +70,6 @@ Version 2.x.x
 - upndown: work on net game
 - eldoc
 - asm2binx should use assembler style comments
-- gcx optimization: is it faster to use bytes instead of bits in write barrier?
 - gcx optimization: should promotion happens less (the object should survive at least
   two collection?)
 - ide: support call list
@@ -122,7 +118,6 @@ Version 2.x.x
 - use get_count / get_size for the primitive code requiring object field count 
   (what about string / array code, code it be leaved like it is for optimization?)
 - advanced byte code optimization / simple native code optimization
-- extending lib25 (some simple classes)
 - make possible to set warning for every module (like pragma in C++)
 - increase elenavm speed (caching, cachetable usage, 10%)
 - increase elena code speed (up to 35%)
@@ -170,7 +165,6 @@ Version 2.x.x
 - full linux support (x64 + x32, console, gui)
 - drop support for #loop
 - advanced native code optimization
-- advanced lib35
 - object should be able to have several data fields (currently only one is supported)
 
 - elt: code generation, it should be possible to create a code based on syntax
@@ -182,7 +176,6 @@ Version 2.x.x
 - robust api library
 - major language review
 - ide2: linux plug-in
-- lib25 optimization:the speed should increase on 30%
 - Second public release
 - localization to russian / any other languages
 - IDE features supporting "Active code" concept

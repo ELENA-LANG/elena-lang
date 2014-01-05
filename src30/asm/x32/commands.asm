@@ -28,7 +28,11 @@ define page_ceil               1Bh
 inline % 7
 
   mov  edx, [data : %CORE_EXCEPTION_TABLE]
+  nop
+  nop
   jmp  edx
+  nop
+  nop
 
 end
 

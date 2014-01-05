@@ -1,4 +1,5 @@
 // --- System Core Data  --
+define CORE_EXCEPTION_DUMMI 01h
 define CORE_GC_TABLE        02h
 define CORE_GC_SIZE         03h
 define CORE_STAT_COUNT      04h
@@ -68,6 +69,14 @@ define GC_HEAP_ATTRIBUTE 00Dh
 
 // verbs
 define EXEC_MESSAGE_ID  85000000h
+
+structure % CORE_EXCEPTION_DUMMI
+
+  dd 0 // ; idle
+  dd 0 // ; idle
+  dd 0 // ; idle
+
+end
 
 structure %CORE_GC_TABLE
 
@@ -875,12 +884,16 @@ end
 
 procedure core'default_handler
 
-/*                                                       
-  mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
+  // ; GCXT: get thread table entry from tls
+  mov  ecx, [data : %CORE_TLS_INDEX]
+  mov  esi, fs:[2Ch]
+  mov  esi, [esi+ecx*4]  
+
+  // ; GCXT: terminate process
+  mov  esp, [esi + tls_catch_level]
   mov  eax, 1                         // exit error code
   push eax
   call extern 'dlls'KERNEL32.ExitProcess     // exit
-*/
 
 end
 
@@ -1090,27 +1103,30 @@ end
 
 procedure core'console_entry
 
-/*
   call code : "$package'core'init"
   call code : "$package'core'newframe"
 
-  // set default exception handler
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
+  // ; GCXT: get thread table entry from tls
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  esi, fs:[2Ch]
+  xor  edi, edi
+  mov  esi, [esi+ebx*4]
+
+  // ; GCXT : set default exception handler
+  mov  [esi + tls_catch_level], esp
   mov  ebx, code : "$package'core'default_handler"
-  mov  [data : %CORE_EXCEPTION_TABLE], ebx
+  mov  [esi + tls_catch_addr], ebx
 
   // 'program start
-  xor  edi, edi
   call code : "'program"
   push eax
   mov  edx, EXEC_MESSAGE_ID
   mov  esi, [eax - 4]
   call [esi + 4]
 
-  mov  eax, 0                         // exit code
+  mov  eax, 0                                // exit code
   push eax
   call extern 'dlls'KERNEL32.ExitProcess     // exit
-*/
 
   ret
 

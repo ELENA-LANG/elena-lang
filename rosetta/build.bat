@@ -22,3 +22,4 @@
 ..\bin\elc -ccharmatch\charmatch.prj
 ..\bin\elc -carithmeval\arithmeval.prj
 ..\bin\elc -ccombinations\combinations.prj
+..\bin\elc -cbullscows\bullscows.prj

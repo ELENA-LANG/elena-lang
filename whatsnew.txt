@@ -17,9 +17,13 @@ ELC:
 [*] some native-code optimization
 [*] some byte-code optimization
 [-] fixed bug with external operation error handling
+[-] fixed bug with exception handling sub code
 
 ELENAVM:
 [-] fixed bug with stack allocated object boxing
+
+Samples:
+[+] rosseta code: bullscows
 
 Tools:
 [*] asm2binx: fixed ModR/M and SIB encoding bug
