@@ -20,15 +20,11 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              sdev - rosetta samples              
-                       * Calendar sample
-                       * Calendar - for "real" programmers
 <=================> 
          
 1.9.11 
 ------
-week2: [11.1]
-week3:
+week3: [22.1]
               sdev - samples
                        * test implemented samples
                        * implement calculator both script and code
@@ -161,6 +157,26 @@ week1:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
 
               xdev - generic development              
+                       * cannot declare static array #static arr = (1,2,3) - second time call raises an error
+
+                       * the following code cannot be executed correctly  (calendar)
+                            #var aLiteral := aLine literal.
+                            #var aLength := aLiteral length.        
+                            (aLength < aWidth)
+                                 ? [
+                                       #var aLen := aWidth - aLength.
+                                       #var aLeftLen := aLen / 2.
+                
+                                       self~textOp write:aChar &length:aLeftLen.
+                                       self write::aLiteral.  // !! error raised - for some strange reason it is sent to $self
+                                       self ~textOp write:aChar &length:(aLen - aLeftLen).
+                                  ]
+                                ! [ self write::aLiteral. ].                    
+
+                       * the following code cannot be executed correctly (calendar)
+                           (theLine length < 21)
+                                ? [ theLine~textOp write:" " &length:(21 - theLine length). ].
+
                        * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
 
                        * $self cannot be used inside lambda expression, so how implement recursive expression call ?

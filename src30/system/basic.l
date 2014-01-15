@@ -797,11 +797,21 @@
         aValue ? [ theValue := true. ] ! [ theValue := false. ].
     ]
 
-    #method Value = theValue.
+    #method value = theValue.
 
     #method write : aValue
     [
         aValue ? [ theValue := true. ] ! [ theValue := false. ].
+    ]
+            
+    #method append : aValue
+    [
+        theValue := theValue or:aValue.
+    ]
+            
+    #method multiplyBy : aValue
+    [
+        theValue := theValue and:aValue.
     ]
             
     #method invert

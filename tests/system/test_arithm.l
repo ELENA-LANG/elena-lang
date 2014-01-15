@@ -3,6 +3,7 @@
 #define system'collections.
 #define system'calendar.
 #define extensions.
+#define extensions'math.
 
 #class Tester
 {
@@ -10,7 +11,6 @@
 
 #symbol XTest =
 [
-    consoleEx write:22.
 ].
 
 // --- OpenArgTest ---

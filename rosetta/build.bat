@@ -23,3 +23,4 @@
 ..\bin\elc -carithmeval\arithmeval.prj
 ..\bin\elc -ccombinations\combinations.prj
 ..\bin\elc -cbullscows\bullscows.prj
+..\bin\elc -ccalender\calender.prj

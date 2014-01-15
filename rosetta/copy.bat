@@ -98,3 +98,7 @@ copy %1\charmatch\*.prj charmatch
 md combinations
 copy %1\combinations\*.l combinations
 copy %1\combinations\*.prj combinations
+
+md calendar
+copy %1\calendar\*.l calendar
+copy %1\calendar\*.prj calendar

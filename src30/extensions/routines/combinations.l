@@ -93,10 +93,10 @@
     ]
 }
 
-//// --- ParallelEnumeration ---
-//
-//#class ParallelEnumerator : CombinatorWithRepetition
-//{
-//    #method findNext
-//        = nil == control foreach:theIndexers &until: &&:anIndexer [ anIndexer next not ].
-//}
+// --- ParallelEnumeration ---
+
+#class ParallelEnumerator : CombinatorWithRepetition
+{
+    #method findNext
+        = nil == control foreach:theIndexers &until: anIndexer [ anIndexer next not ].
+}

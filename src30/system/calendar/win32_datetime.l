@@ -231,13 +231,13 @@
         #var(type:int)aDayWord := 1 + aDay int.
 
         #var aSystemStruct := Win32SystemTime new
-            &type'short:aYearWord
-            &type'short:aMonthWord
-            &type'short:aDayWord
-            &type'short:(anHour int)
-            &type'short:(aMinute int)
-            &type'short:(aSecond int)
-            &type'short:0.
+            &short:aYearWord
+            &short:aMonthWord
+            &short:aDayWord
+            &short:(anHour int)
+            &short:(aMinute int)
+            &short:(aSecond int)
+            &short:0.
                 
                                 
 //        #var aSystemStruct := Win32SystemTime new

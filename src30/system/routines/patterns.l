@@ -89,13 +89,13 @@
         ^ self Substring &index:anIndex &length:aLength.
     ]
      
-//    #method trimStart &widechar:aChar
-//    [
-//        #var theIndex := Integer new.
-//        control while:[self getAt &type'index:theIndex == aChar ] &do:[ theIndex += 1. ].
-//        
-//        ^ self delete &type'index:0 &type'length:theIndex.
-//    ]
+    #method trimStart &char:aChar
+    [
+        #var theIndex := Integer new.
+        control while:[self getAt &index:theIndex == aChar ] &do:[ theIndex += 1. ].
+        
+        ^ self delete &index:0 &length:theIndex.
+    ]
     
     #method split &char:aChar
     [
@@ -146,35 +146,57 @@
 
 #class(role)textOp
 {
-//    #method append : aLine &paddingLeft:aWidth &with:aChar
-//    [
-//        #var aLength := aLine Literal type'length.        
-//        (aLength < aWidth)
-//            ? [ self append:aChar &type'length:(aWidth - aLength) ].
-//            
-//        self append::aLine.
-//    ]
-//
-//    #method append : aLine &padding:aWidth &with:aChar
-//    [
-//        #var aLength := aLine Literal type'length.        
-//        (aLength < aWidth)
-//            ? [
-//                #var aLen := aWidth - aLength.
-//                #var aLeftLen := aLen / 2.
-//                
-//                self append:aChar &type'length:aLeftLen append::aLine append:aChar &type'length:(aLen - aLeftLen).
-//            ]
-//            ! [ self append::aLine. ].
-//    ]
-//
-//    #method append : aLine &type'length:aLength
-//    [
-//        control from:0 &till:aLength &do: &&:i
-//        [
-//            self append::aLine.
-//        ].
-//    ]
+    #method write : aLiteral &length:aCounter
+    [
+        #var(type:int)aNumber := aCounter.
+        control while:[aNumber > 0] &do:
+            [ self write:aLiteral. aNumber := aNumber - 1. ].
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &paddingLeft:aWidth &with:aChar
+    [
+        #var aLiteral := aLine literal.
+        #var aLength := aLiteral length.        
+        (aLength < aWidth)
+            ? [ self~textOp write:aChar &length:(aWidth - aLength). ].
+            
+        self write::aLiteral.
+            
+        ^ self.
+    ]
+
+    #method write : aLine &paddingRight:aWidth &with:aChar
+    [
+        #var aLiteral := aLine literal.
+        
+        self write::aLiteral.
+        
+        #var aLength := aLiteral length.        
+        (aLength < aWidth)
+            ? [ self~textOp write:aChar &length:(aWidth - aLength). ].
+            
+        ^ self.            
+    ]
+
+    #method write : aLine &padding:aWidth &with:aChar
+    [
+        #var aLiteral := aLine literal.
+        #var aLength := aLiteral length.        
+        (aLength < aWidth)
+            ? [
+                #var aLen := aWidth - aLength.
+                #var aLeftLen := aLen / 2.
+                
+                self~textOp write:aChar &length:aLeftLen.
+                self write:aLiteral.
+                self ~textOp write:aChar &length:(aLen - aLeftLen).
+            ]
+            ! [ self write::aLiteral. ].
+            
+        ^ self.
+    ]
 }
 
 // --- enumerable ---
