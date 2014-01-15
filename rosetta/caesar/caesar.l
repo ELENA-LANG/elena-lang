@@ -25,14 +25,14 @@
     
     #method eval : aChar
     [
-        #var anIndex := Letters indexOf &type'index:0 &widechar:aChar.
+        #var anIndex := Letters indexOf &index:0 &char:aChar.
         
         (-1 < anIndex)
             ? [
                 theExtendee eval:(Letters @ (modulus:(theKey+anIndex):26))
             ]
             ! [
-                anIndex := BigLetters indexOf &type'index:0 &widechar:aChar.
+                anIndex := BigLetters indexOf &index:0 &char:aChar.
                 (-1 < anIndex)
                     ? [
                         theExtendee eval:(BigLetters @ (modulus:(theKey+anIndex):26))
@@ -48,11 +48,11 @@
 
 // --- Functions ---
 
-#symbol encrypt = &&:aText:aKey
-    [ Encrypting new:aKey &extending:(Summing new:(String new)) foreach:aText Literal ].
+#symbol encrypt = (:aText:aKey)
+    [ Encrypting new:aKey &extending:(Summing new:(String new)) foreach:aText literal ].
 
-#symbol decrypt = &&:aText:aKey
-    [ Encrypting new:(26 - aKey) &extending:(Summing new:(String new)) foreach:aText Literal ].
+#symbol decrypt = (:aText:aKey)
+    [ Encrypting new:(26 - aKey) &extending:(Summing new:(String new)) foreach:aText literal ].
 
 // --- Program ---
 
@@ -60,7 +60,7 @@
 [
     #var anS := TestText.
     
-    consoleEx writeLine:"Original text:" :anS.
+    consoleEx writeLine:"Original text :" :anS.
         
     anS := encrypt:anS:Key.
 

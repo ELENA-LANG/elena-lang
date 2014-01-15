@@ -14,6 +14,8 @@ numeric_value
 numeric_variable
 object
 type_array
+type_byte
+type_bytearray
 type_int
 type_long
 type_object
@@ -123,7 +125,7 @@ variable
 #method=notequal,value,bool;Compares the values
 #method=notgreater,value,bool;Compares the values
 #method=notless,value,bool;Compares the values
-#method=reduce,value;Substracts the value
+#method=reduce,value;Substracts the value                                                           
 #method=write,value;Copies the value
 
 [enumerable]
@@ -132,3 +134,9 @@ variable
 
 [type_array]
 #shortdescr=A type'array protocol
+
+[type_bytearray]
+#shortdescr=A type'bytearray protocol
+
+[type_byte]
+#shortdescr=A type'byte protocol

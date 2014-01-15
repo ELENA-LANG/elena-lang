@@ -215,6 +215,7 @@ public:
    void newByteArray(CommandTape& tape, ref_t reference, int sizeOffset);
    void newWideLiteral(CommandTape& tape, ref_t reference, int sizeOffset);
 
+   void pushObject(ByteCodeIterator bookmark, CommandTape& tape, ObjectInfo object);
    void pushObject(CommandTape& tape, ObjectInfo object);
    void swapObject(CommandTape& tape, ObjectKind type, int offset);
    void loadObject(CommandTape& tape, ObjectInfo object);
@@ -233,7 +234,9 @@ public:
 
    void setMessage(CommandTape& tape, ref_t message);
 
-   void callDispatcher(CommandTape& tape, int paramCount);
+   void typecast(CommandTape& tape, size_t subject_id);
+
+
    void callDispatcher(CommandTape& tape, int targetOffset, int paramCount);
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callRoleMessage(CommandTape& tape, int paramCount);
@@ -242,6 +245,7 @@ public:
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, int targetOffset);
    void callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef);
    void dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset, int targetOffset);
+   void dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset);
    void extendObject(CommandTape& tape, ObjectInfo info);
 
    void redirectVerb(CommandTape& tape, ref_t message);

@@ -1,45 +1,27 @@
 #define system.
 
-// --- IndexedListEnumerator ---
+// --- EnumerableIndexer ---
 
-#class IndexedListEnumerator
+#class EnumerableIndexer
 {
     #field theList.
     #field theEnumerator.
     #field theIndex.
-    
-    #constructor new : aList
-    [
-        theEnumerator := aList Enumerator.
-        theIndex:= Integer new &type'int:-1.
-    ]
-    
-    #method reset
-    [
-        theIndex << -1.
-        
-        theEnumerator reset.
-    ]
-    
-    #method next
-    [
-        theIndex += 1.
-        
-        ^ theEnumerator next.
-    ] 
 
-    #method get => theEnumerator.
-            
-    #method set : aValue
+    #constructor new &enumerable:aList
     [
-        theEnumerator set:aValue.
+        theList := aList.
+        theEnumerator := aList enumerator.
+        
+        theIndex:= Integer new &int:-1.
     ]
-            
-    #method set &type'index:anIndex
+
+    #method goTo &index:anIndex
     [
         theIndex > anIndex ?
         [
-            $self reset.
+            theIndex << -1.
+            theEnumerator := theList enumerator.
         ].
         
         control while:[ theIndex < anIndex ] &do:
@@ -48,13 +30,32 @@
                 ! [ #throw OutOfRangeException new:"Index out of the range". ].
             
             theIndex += 1.
-        ].
+        ].        
+    ]
+
+    #method index = theIndex number.
+    
+    #method set &index:anIndex
+    [
+        self goTo &index:anIndex.        
+    ]
+            
+    #method get
+    [
+        ^ theEnumerator get.
     ]
     
-    #method type'index
-        = theIndex Number.
+    #method set : anObject
+    [
+        theEnumerator set:anObject        
+    ]
+
+    #method next
+    [
+        theIndex += 1.
         
-    #method Index => %type'index.
+        ^ theEnumerator next.
+    ]
 }
 
 // --- TopEnumerator ---
@@ -67,7 +68,7 @@
     
     #constructor new : anEnumerable &max:aMaxValue
     [
-        theEnumerator := anEnumerable Enumerator.
+        theEnumerator := anEnumerable enumerator.
         theCounter := Integer new:aMaxValue.
         theMaxValue := aMaxValue.
     ]

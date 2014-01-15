@@ -5,24 +5,24 @@
 
 // Averages/Mode
 
-#symbol mode = &&:anArray
+#symbol mode = (:anArray)
 [
     #var aCountMap := Dictionary new &default:0.
-    control foreach:anArray &do: &&:anItem
+    control foreach:anArray &do: anItem
     [
-        aCountMap setAt:anItem:(aCountMap@anItem + 1).
+        aCountMap set &key:anItem &value:(aCountMap getAt &key:anItem + 1).
     ].
 
-    listControl sort:aCountMap &with: &&:p:n
-        [ p Value > n Value ].
+    listControl sort:aCountMap &with: (:p:n)
+        [ p value > n value ].
 
     #var aResult := List new.
 
-    #var aMax := aCountMap First Value.
-    control foreach:aCountMap &do: &&:anItem
+    #var aMax := aCountMap First value.
+    control foreach:aCountMap &do: anItem
     [
-        aMax == anItem Value
-            ? [ aResult += anItem Key. ].
+        aMax == anItem value
+            ? [ aResult += anItem key. ].
     ].
 
     ^ listControl toArray:aResult.

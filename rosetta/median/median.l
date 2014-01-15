@@ -2,12 +2,12 @@
 #define system'routines.
 #define extensions.
 #define extensions'math.
-
-#symbol median  = &&:anArray
+ 
+#symbol median  = (:anArray)
 [
-    #var aSorted := arrayControl sort:(anArray Clone).
+    #var aSorted := arrayControl sort:(anArray~indexable array).
 
-    #var aLen := aSorted Count.
+    #var aLen := aSorted length.
     ^ aLen =>
         0 ? [ nil ]
         ! [

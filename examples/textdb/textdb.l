@@ -32,7 +32,7 @@
         thePhone := String new.
     ]
 
-    #method Name = theName Literal.
+    #method Name = theName literal.
     
     #method set &Name:aName
     [
@@ -46,54 +46,54 @@
         theAge << anAge.
     ]
     
-    #method Phone = thePhone Literal.
+    #method Phone = thePhone literal.
     
     #method set &Phone:aPhone
     [
         thePhone << aPhone.
     ]
 
-    #method Literal
+    #method literal
         = String new 
             append:"Name:"
             append:theName
             append:"%n"
             append:"Age:"
-            append:(theAge Literal)
+            append:(theAge literal)
             append:"%n"
             append:"Phone:"
             append:thePhone
             append:"%n"
-            Literal.
+            literal.
 }
 
 // --- Program ---
 
 #symbol Program = 
 [
-    ('program'arguments Count == 1)?
+    ('program'arguments length == 1)?
         [  console << "Please provide the path to the file to view". #throw nil. ].
 
     #var aFileName := 'program'arguments@1.
 
     #var aDB := List new += Record new.
-    textFileControl forEachLine:aFileName &do: &&:aLine
+    textFileControl forEachLine:aFileName &do: aLine
     [
-        (aLine Length == 0)
+        (aLine length == 0)
             ? [ aDB += Record new. ]
             ! [
                 // split record line                    
-                #var aKeyValue := stringControl split:aLine &by:":".
+                #var aKeyValue := literalControl split:aLine &by:":".
                 #var aName  := aKeyValue@0.
                 #var aValue := aKeyValue@1.
 
                 // update field
-                aDB~EList Last ~(aName~EField Unserialized) set:(Variant new:aValue).
+                aDB~enumerable Last ~(aName~EField Unserialized) set:(Variant new:aValue).
             ].
     ].
     
     // print the list
-    aDB~EList run:printingLn.
+    aDB~enumerable run:printingLn.
 
     console readChar.
 ].

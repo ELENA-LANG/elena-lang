@@ -1,13 +1,13 @@
-[project]
+﻿[project]
 debug=interpreter.dm
 executable=interpreter.exe
 arguments=sample1.txt
+vmpath=..\..\bin
 options=-xembed-
 namespace=interpreter
 template=vm_console
 debuginfo=-2
 warn:unresolved=-1
-vmpath=..\..\bin
 
 [files]
 interpreter.l

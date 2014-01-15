@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -76,6 +76,14 @@ void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryW
 	int n = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, n), writer);
+}
+
+void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
+{
+	int n1 = token.readInteger(constants);
+	int n2 = token.readInteger(constants);
+
+   writeCommand(ByteCommand(code, n1, n2), writer);
 }
 
 void ECodesAssembler :: compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info)
@@ -159,6 +167,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcBCopyA:
       case bcPopM:
       case bcBSRedirect:
+      case bcBSGRedirect:
       case bcClose:
       case bcPopB:
       case bcMQuit:
@@ -198,6 +207,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcDSaveSI:
       case bcDLoadFI:
       case bcDSaveFI:
+      case bcPopSI:
          compileICommand(opcode, token, writer);
          break;
       case bcOpen:
@@ -231,6 +241,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcDElseN:
       case bcDThenN:
          compileNJump(opcode, token, writer, info);
+         break;
+      case bcSCallVI:
+         compileNNCommand(opcode, token, writer);
          break;
    default:
       recognized = false;

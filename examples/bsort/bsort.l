@@ -5,7 +5,7 @@
 
 // --- Prompter ---
 
-#symbol prompter = &&:anIndex
+#symbol prompter = (:anIndex)
 [
      consoleEx write:"Enter array[":anIndex:"]:" readLine:(Integer new)
 ].
@@ -28,7 +28,7 @@
 
             (anArray@aCurrent) < (anArray@aMaxChild)
                 ? [
-                    anArray~EArray exchange:aCurrent:aMaxChild.
+                    anArray~indexable exchange:aCurrent:aMaxChild.
 
                     aCurrent := aMaxChild.
                 ]
@@ -38,16 +38,16 @@
 
     sort : anArray
     [
-        #var aLastIndex := anArray Count - 1.
+        #var aLastIndex := anArray length - 1.
         
-        control from:(anArray Count / 2) &backTo:0 &do: &&:anIndex
+        control from:(anArray length / 2) &backTo:0 &do: anIndex
         [
             sorting sort:anArray &from:anIndex &to:aLastIndex
         ].
         
-        control from:aLastIndex &backTo:0 &do: &&:anIndex
+        control from:aLastIndex &backTo:0 &do: anIndex
         [
-            anArray~EArray exchange:anIndex:0.
+            anArray~indexable exchange:anIndex:0.
 
             sorting sort:anArray &from:0 &to:(anIndex - 1).
         ].
@@ -62,13 +62,13 @@
     #var aSize := consoleEx write:"Enter the array size:" readLine:(Integer new).
 
     // 2. Initialize the array
-    #var anArray := Array new &type'length:aSize &function:prompter.
+    #var anArray := arrayControl new &length:aSize &each:prompter.
 
     // 3. Sort the array
     sorting sort:anArray.
 
     // 4. Print the array
-    consoleEx writeLine:anArray.
+    consoleEx writeLine:"Sorted array:":anArray.
 
     consoleEx readChar. // wait for any key
 ].

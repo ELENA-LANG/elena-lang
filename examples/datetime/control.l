@@ -2,19 +2,6 @@
 #define system'calendar.
 #define extensions.
 
-//// --- Action ---
-//
-//#symbol Action : aChoice =
-//[
-//        #if aChoice
-//            == 1 ? [ ^ WideStrValue &&calendar:Now &:elongdateformatter. ]
-//            | == 2 ? [ ^ WideStrValue &&calendar:UTCNow &:elongdateformatter. ]
-//            | == 3 ? [ ^ Now year. ]
-//            | == 4 ? [ ^ WideStrValue &&calendar:Now &:etimeformatter. ]
-//            | == 7 ? [ 'program stop. ^ "Exiting...". ]
-//            | [ ^ "Invalid choice". ].
-//].
-
 // --- Output ---
 
 #symbol output
@@ -30,14 +17,14 @@
 
 #symbol control =
 {
-    write : anInput
+    read : anInput
     [
         #var aChoice := anInput readLine:(Integer new).
         
         ^ aChoice =>
-            1 ? [ now Literal ]
-            2 ? [ utcNow Literal ]
-            3 ? [ now Year Literal ]
+            1 ? [ now literal ]
+            2 ? [ utcNow literal ]
+            3 ? [ now Year literal ]
             4 ? [ dateTimeControl toShortTime:now ]
             7 ? [ 'program stop. ^ emptyLiteralValue. ]
             ! [ "Invalid choice" ].

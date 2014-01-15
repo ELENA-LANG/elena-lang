@@ -16,7 +16,7 @@
         theStream := aStream.
         theEncoder := anEncoder.
         
-        theBuffer := ByteArray new &type'length:64.
+        theBuffer := ByteArray new &length:64.
         theOutput := TextBuffer new.
         theOpen := true.
 
@@ -24,16 +24,16 @@
     ]
     
     #constructor new &path:aPath
-        <= new &stream:(system'io'fileControl openForRead &path:aPath) &encoder:system'io'ansiLiteralEncoder.
+        => &new &stream:(system'io'fileControl openForRead &path:aPath) &encoder:system'io'ansiLiteralEncoder.
 
     #method $readFile
     [
-        theStream read &type'bytearray:theBuffer &type'length:64.
+        theStream read &bytearray:theBuffer &length:64.
         
-        (0 == theBuffer type'length)
+        (0 == theBuffer length)
             ? [ theOpen := false. theStream close. ]
             ! [
-                theOutput append &type'widestr:(theEncoder read &type'bytearray:theBuffer &type'length::theBuffer).
+                theOutput write &literal:(theEncoder read &bytearray:theBuffer &length::theBuffer).
             ].        
     ]
 
@@ -50,9 +50,9 @@
     ]
             
     #method $readBuffer
-        = theOutput indexOf &type'index:0 &widechar:10.
+        = theOutput indexOf &index:0 &char:10.
 
-    #method EOF = theOpen not.
+    #method available = theOpen.
 
     #method readLine
     [
@@ -65,16 +65,16 @@
                                 
                 (0 < aLength)
                     ? [ 
-                        aLine := theOutput read &type'index:0 &type'length:(aLength + 1).
+                        aLine := theOutput Substring &index:0 &length:(aLength + 1).
                         
-                        consoleHelper _trimLine &type'widestr:aLine.
+                        consoleHelper _trimLine &literal:aLine.
                         
-                        theOutput delete &type'index:0 &type'length:(1 + aLength).
+                        theOutput delete &index:0 &length:(1 + aLength).
                     ]
                     ! [
                         theOpen
-                            ? [ theOutput delete &type'index:0 &type'length:(1 + aLength). ]
-                            ! [ aLine := theOutput Literal. theOutput clear. ].                
+                            ? [ theOutput delete &index:0 &length:(1 + aLength). ]
+                            ! [ aLine := theOutput literal. theOutput clear. ].                
                     ].
 //                
 //                ^ aLine.

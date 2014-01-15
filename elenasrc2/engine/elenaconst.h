@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -434,19 +434,18 @@ namespace _ELENA_
    #define UNTIL_SIGNATURE          "until"
 
    // primitive types
-   #define REFERENCE_SUBJECT        "type'object"
-   #define HANDLE_SUBJECT           "type'handle"
-   #define SHORT_SUBJECT            "type'short"
-   #define INT_SUBJECT              "type'int"
-   #define LONG_SUBJECT             "type'long"
-   #define WSTR_SUBJECT             "type'widestr"
-   #define DUMP_SUBJECT             "type'bytearray"
-   #define LENGTH_SUBJECT           "type'length"
-   #define OUT_LENGTH_SUBJECT       "type'length&out'type'int"
-   #define REAL_SUBJECT             "type'real"
-   #define INDEX_SUBJECT            "type'index"
-   #define ARRAY_SUBJECT            "type'array"
-   #define BYTE_SUBJECT             "type'byte"
+   #define INT_SUBJECT              "int"
+   #define LONG_SUBJECT             "long"
+   #define HANDLE_SUBJECT           "handle"
+   #define WSTR_SUBJECT             "literal"
+   #define LENGTH_SUBJECT           "length"
+   #define REAL_SUBJECT             "real"
+   #define SHORT_SUBJECT            "short"
+   #define ARRAY_SUBJECT            "array"
+   #define DUMP_SUBJECT             "bytearray"
+   #define OUT_LENGTH_SUBJECT       "length&out'int"
+   #define INDEX_SUBJECT            "index"
+   #define BYTE_SUBJECT             "byte"
 
    #define STARTUP_CLASS            "'program"
 

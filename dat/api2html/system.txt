@@ -9,31 +9,42 @@ BaseValue
 BaseNumber
 Boolean
 BreakException
+ByteArray
 CharValue
 control
 EAction
 EFunction
 EIntConvertor
+EIntNumber
 ELiteralConvertor
 ELongConvertor
 emptyLiteralValue
+EReal
 ERealConvertor
+Exception
+Extension
 false
+FormatException
 IntBaseNumber
 Integer
 IntNumber
+InvalidArgumentException
 LiteralIterator
 LiteralValue
 Long
 LongNumber
+mathOp
 nil
 Object
+OutOfRangeException
 Real
 RealNumber
+RoleList
 String
 true
 Variable
 Variant
+Wrap
 
 [Object]
 #title=Class Object
@@ -126,11 +137,11 @@ Variant
 #method=do,action&until:bool_action;Executes the action until the condition is met
 #method=for,numeric_variable&from:numeric_value&backTo:numeric_value&by:numeric_value&do:function,;Iterates the function for the specified range [from,to] in the reverse order
 #method=for,numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value&do:function,;Iterates the function for the specified range [from,to]
+#method=foreach,enumerable&do:function;Executes the function for each collection member
+#method=foreach,enumerable&until:bool_function,;Enumerates the collection until the member meet the condition and return it; otherwise, return nil.
 #method=from,numeric_value&backTo:numeric_value&do:function,;Iterates the function for the specified range [from,to] in the reverse order with step equals to 1.
 #method=from,numeric_value&till:numeric_value&do:function,;Iterates the function for the specified range [from,till) with step equals to 1.
 #method=from,numeric_value&to:numeric_value&do:function,;Iterates the function for the specified range [from,to] with step equals to 1.
-#method=foreach,enumerable&do:function;Executes the function for each collection member
-#method=foreach,enumerable&until:bool_function,;Enumerates the collection until the member meet the condition and return it; otherwise, return nil.
 #method=while,bool_action;Evaluates the boolean expression while it is true
 #method=while,bool_action&do:action;Evaluates action while the boolean expression is true
 
@@ -556,3 +567,96 @@ Variant
 #method=multiplyBy,value;Multiplies by the value
 #method=reduce,value;Substract the value
 #method=write,value;Writes the value
+
+[mathOp]
+#title=Symbol mathOp
+#shortdescr=A mathematical operation helper
+#method=Abs,&type'real:type_real&out'type'real:type_real;Copies the absolute value into the output parameter<br/>Should not be used stand-alone
+#method=Exp,&type'real:type_real&out'type'real:type_real;Copies e raised to the specified power into the output parameter<br/>Should not be used stand-alone
+#method=Ln,&type'real:type_real&out'type'real:type_real;Copies the natural logaritm into the output parameter<br/>Should not be used stand-alone
+#method=Round,&type'real:type_real&out'type'real:type_real;Copies rounded to the nearest integral value into the output parameter<br/>Should not be used stand-alone
+#method=Truncate,&type'real:type_real&out'type'real:type_real;Copies the integer part to the output parameter<br/>Should not be used stand-alone
+
+[EIntNumber]
+#title=Class EIntNumber
+#shortdescr=An integer arithmerical role
+#parent=system.html#Object:system'Object
+#method=mod,type_int,type_int;Returns the remainder after dividing the object by the parameter.
+#method=power,type_int,type_int;Returns the power of the operand.
+
+[EReal]
+#title=Class EReal
+#shortdescr=A real arithmerical role
+#method=Abs,,type_real;Returns the absolute value.
+#method=Exp,,type_real;Returns e raised to the specified power
+#method=Frac,,type_real;Returns the fraction part
+#method=Int,,type_real;Returns the integer part
+#method=Ln,,type_real;Returns the natural logaritm
+#method=Round,,type_real;Rounds to the nearest integral value
+
+[ByteArray]
+#title=Class ByteArray
+#shortdescr=A byte array
+#protocol=type_bytearray
+#parent=system.html#Object:system'Object
+#constructor=new,&type'length:type_int,type_bytearray;Creates the byte array with specified length
+#method=indexOf,&type'index:type_int&type'length:type_int&type'byte:type_byte&out'type'int:type_int;Returns the index of the first occurence of the specified byte.<br/>If the substring is not found. returns -1
+#method=indexOf,&type'index:type_int&type'length:type_int&type'short:type_short&out'type'int:type_int;Returns the index of the first occurence of the specified word.<br/>If the substring is not found. returns -1
+#method=Length,,type_int;Returns the byte array length
+#method=read,&type'index:type_int&type'length:type_int&type'bytearray:type_bytearray;Reads the byte array from the specified position
+#method=type'bytearray,,type_bytearray;Returns itself
+#method=type'length,,type_int;Returns the byte array length
+#method=write,&type'index:type_int&type'length:type_int&type'bytearray:type_bytearray;Copies the byte array into specified position
+#method=write,&type'index:type_int&&type'widestr:type_widestr;Copies the string into specified position
+
+[Exception]
+#title=Class Exception
+#shortdescr=An exception base class
+#parent=system.html#Object:system'Object
+#field=theMessage;The exception message
+#constructor=new,type_widestr;Creates an exception with a specified message
+#method=Literal,,type_widestr;Returns the exception literal presentation
+#method=Message,,type_widestr;Returns the exception message
+
+[FormatException]
+#title=Class FormatException
+#shortdescr=A format exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates an exception
+#method=onFormatError,function;Executes the exception handler
+
+[OutOfRangeException]
+#title=Class OutOfRangeException
+#shortdescr=An out of range exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates an exception
+#method=onOutOfRangeError,function;Executes the exception handler
+
+[InvalidArgumentException]
+#title=Class InvalidArgumentException
+#shortdescr=An invalid argument exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates an exception
+#method=onInvalidArgumentError,function;Executes the exception handler
+
+[Wrap]
+#title=Class Wrap
+#shortdescr=A wrap group object
+#parent=system.html#Object:system'Object
+#field=theRole;The wrapper role
+#field=theObject;The wrapper content
+
+[Extension]
+#title=Class Extension
+#shortdescr=An extension group object
+#parent=system.html#Object:system'Object
+#field=theExtender;The extending role
+#field=theObject;The extender content
+
+[RoleList]
+#title=Class RoleList
+#shortdescr=A role list
+#parent=system.html#Object:system'Object

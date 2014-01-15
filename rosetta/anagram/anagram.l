@@ -12,9 +12,9 @@
 
 // --- Normalized ---
 
-#symbol Normalized = &&:aLiteral
+#symbol Normalized = (:aLiteral)
 [
-     ^ Summing new:(String new) foreach:(arrayControl sort:(stringControl toArray:aLiteral)) Literal.
+     ^ Summing new:(String new) foreach:(arrayControl sort:(literalControl toArray:aLiteral)) literal.
 ].
 
 // --- Program ---
@@ -25,22 +25,22 @@
 
     #var aDictionary := Dictionary new.
 
-    textFileControl forEachLine:"unixdict.txt" &do: &&:aWord
+    textFileControl forEachLine:"unixdict.txt" &do: aWord
     [    
-        #var aKey := Normalized eval:aWord.
-        #var anItem := aDictionary @ aKey.
+        #var aKey := Normalized:aWord.
+        #var anItem := aDictionary getAt &key:aKey.
         nil == anItem ?
         [
             anItem := List new.
-            aDictionary setAt:aKey:anItem.
+            aDictionary set &key:aKey &value:anItem.
         ].
     
         anItem += aWord.
     ].
 
-    listControl sort:aDictionary &with: &&:aFormer:aLater [ aFormer Value Count > aLater Value Count ].
+    listControl sort:aDictionary &with: (:aFormer:aLater) [ aFormer value length > aLater value length ].
 
-    controlEx foreach:aDictionary &top:20 &do: &&:aPair [ consoleEx writeLine:(aPair Value) ].
+    controlEx foreach:aDictionary &top:20 &do: aPair [ consoleEx writeLine:(aPair value) ].
     
     #var anEnd := now.
    

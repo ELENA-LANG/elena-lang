@@ -104,7 +104,6 @@ protected:
       ref_t falseReference;
       ref_t controlReference;
 
-      ref_t referenceSubject;
       ref_t shortSubject;
       ref_t intSubject;
       ref_t longSubject;
@@ -600,6 +599,8 @@ protected:
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withSelf);
 
+   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t subject_id);
+
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope);
 
@@ -639,6 +640,7 @@ protected:
    ObjectInfo compileSignatureReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);   
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
+
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
@@ -688,7 +690,7 @@ protected:
 
    void compileSymbolCode(ClassScope& scope);
 
-   void compileActionVMT(DNode node, InlineClassScope& scope, bool withParameters);
+   void compileActionVMT(DNode node, InlineClassScope& scope, DNode argNode);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileAction(DNode member, MethodScope& scope, ref_t actionMessage);

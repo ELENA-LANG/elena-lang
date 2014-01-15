@@ -3,16 +3,16 @@
 
 #class Object
 {
-    #method equal &type'object : anObject
+    #method equal : anObject
         <object_equal>.
 
-    #method equal : anObject
-        = $self equal &type'object:anObject.
-
     #method notequal : anObject
-        = $self equal:anObject not. 
-    
-    #method <= &&type'object:$self.
+        = $self equal:anObject not.
+                        
+    #method equal &object:anObject
+        <object_equal>.
+        
+    #method <= &object:$self.
 
     #method => <redirect>.
 }
@@ -28,20 +28,19 @@
 
 #class Action
 {
-    #method <= &&action:$self.
+    #method <= &action:$self.
 }
 
 // --- Function wrapper ---
 
 #class Function
 {
-    #method <= &&function:$self.
+    #method <= &function:$self.
 }
 
 // --- nil constant ---
 
 #symbol nil =
 {
-    equal : anObject = 
-        anObject equal &type'object:$self.
+    <= &nil:$self.
 }.

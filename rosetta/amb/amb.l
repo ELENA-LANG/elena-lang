@@ -4,8 +4,8 @@
 
 // --- Joinable --
 
-#symbol joinable = &&:aFormer:aLater
-    [ (aFormer @ (aFormer type'length - 1)) == (aLater @ 0) ].
+#symbol joinable = (:aFormer:aLater)
+    [ (aFormer @ (aFormer length - 1)) == (aLater @ 0) ].
 
 // --- Activatora ---
 
@@ -113,16 +113,16 @@
 
 #symbol program1 =
 [
-    ambOperator for:(1,2,4):(4,5,6) seek: &&:a:b [ a * b == 8 ] do: &&:a:b
+    ambOperator for:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
         [ consoleEx writeLine: a : " * " : b : " = 8" ]
-        | onInvalidArgumentError: &&:e [ consoleEx writeLine:"AMB is angry". ].
+        | onInvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
 ].
 
 #symbol program2 =
 [
     ambOperator 
         for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
-        seek: &&:a:b:c:d [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
-        do: &&:a:b:c:d [ consoleEx writeLine:a:" ":b:" ":c:" ":d. ]
-        | onInvalidArgumentError: &&:e [ consoleEx writeLine:"AMB is angry". ].
+        seek: (:a:b:c:d) [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
+        do: (:a:b:c:d) [ consoleEx writeLine:a:" ":b:" ":c:" ":d. ]
+        | onInvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
 ].

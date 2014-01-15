@@ -1,6 +1,6 @@
 #define system.
 #define system'routines.
-#define extensions.
+//#define extensions.
 
 // --- CombinatorWithRepetition ---
 
@@ -12,28 +12,28 @@
     
     #constructor new : aCollection
     [
-        theCount := aCollection type'length.
-        theIndexers := Array new &type'length:theCount &function: &&:i [ aCollection~EList getAt:i Enumerator ].
+        theCount := aCollection length.
+        theIndexers := arrayControl new &length:theCount &each: i [ aCollection getAt:i enumerator ].
         theCurrent := nil.
     ]
     
     #method reset
     [
-        control foreach:theIndexers &do: &&:anIndexer [ anIndexer set &type'index:0. ]. 
+        control foreach:theIndexers &do: anIndexer [ anIndexer set &index:0. ]. 
         theCurrent := nil.
     ]
     
     #method refresh
     [
-        theCurrent := Array new &type'length:theCount &function: &&:i [ (theIndexers@i) get ].
+        theCurrent := arrayControl new &length:theCount &each: i [ (theIndexers@i) get ].
     ]
 
     #method findNext
-        = nil != control foreach:theIndexers &until: &&:anIndexer 
+        = nil != control foreach:theIndexers &until: anIndexer 
         [
             anIndexer next
                 ? [ true ]
-                ! [ anIndexer set &type'index:0. ^ false. ]
+                ! [ anIndexer set &index:0. ^ false. ]
         ].
             
     #method next
@@ -66,12 +66,12 @@
 
     #method reset : anIndex
     [
-        #var aPrevious := Integer new:(theIndexers@anIndex Index).
+        #var aPrevious := Integer new:(theIndexers@anIndex index).
         
-        #var retVal := control from:anIndex &till:theCount &do: &&:i
+        #var retVal := control from:anIndex &till:theCount &do: i
         [
-            theIndexers@i set &type'index:(aPrevious += 1) EOF
-                ? [ #break self. ].            
+            theIndexers@i set &index:(aPrevious += 1) available
+                ! [ #break self. ].            
         ].
         
         ^ nil == retVal.
@@ -92,3 +92,11 @@
             ].
     ]
 }
+
+//// --- ParallelEnumeration ---
+//
+//#class ParallelEnumerator : CombinatorWithRepetition
+//{
+//    #method findNext
+//        = nil == control foreach:theIndexers &until: &&:anIndexer [ anIndexer next not ].
+//}

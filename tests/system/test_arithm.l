@@ -1,39 +1,16 @@
 #define system.
-#define system'dynamic.
 #define system'routines.
 #define system'collections.
 #define system'calendar.
-//#define extensions'text.
-//#define extensions'math.
 #define extensions.
 
-#symbol nil =
+#class Tester
 {
-    equal : anObject = 
-        anObject equal &type'object:$self.
-}.
-
-#class XTester
-{
-    #method test &type'short:aVal
-    [
-        #var n := aVal.
-    ]
 }
 
 #symbol XTest =
 [
-    #var aBulls := Integer new:0.
-    #var aCows := Integer new:0.
-    
-    ^ aBulls =>
-            -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
-             4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
-             ! [
-                 consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
-                 
-                 ^ true.
-             ].
+    consoleEx write:22.
 ].
 
 // --- OpenArgTest ---
@@ -46,7 +23,7 @@
 //    ]
 
     #method test : anIndex :: aParams
-        = aParams @ (anIndex type'int).
+        = aParams @ (anIndex int).
 
     #method testUnbox :: aParams
     [
@@ -59,7 +36,7 @@
     [
         #var n := $self testUnbox &:aParams.
         
-        #var aLength := aParams type'length.
+        #var aLength := aParams length.
         
         #var aSecond := aParams@1.
         
@@ -112,7 +89,7 @@
 
 #class LocalTester
 {
-    #method do &type'int:n
+    #method do &int:n
     [
         #var o := n.
     ]
@@ -123,7 +100,7 @@
     #var(type:int)n := 3.    
     n := n + 1.
     
-    LocalTester do &type'int:n.
+    LocalTester do &int:n.
     
     #var(type:long)l := 12345678901234566l.
     l := l + 1l.
@@ -146,7 +123,7 @@
     [
     ]
     
-    #method add &type'int:aValue
+    #method add &int:aValue
     [
         ^ aValue.
     ]
@@ -159,13 +136,13 @@
     
     BoxingTester add:n.
     BoxingTester add:2.
-    BoxingTester add &type'int:(n + 3 * 4).
-    BoxingTester add &type'int:(2 + 3).
+    BoxingTester add &int:(n + 3 * 4).
+    BoxingTester add &int:(2 + 3).
     BoxingTester add :(2 + 3).
-    BoxingTester add &type'int:(2 + n).
+    BoxingTester add &int:(2 + n).
     BoxingTester add :(2 + n).
     
-    #var n3 := BoxingTester add &type'int:(2 + 3 * 4).
+    #var n3 := BoxingTester add &int:(2 + 3 * 4).
     BoxingTester add :(2 + 3 * 4).
     
 ].
@@ -174,28 +151,28 @@
 [
     #var aList := Dictionary new.
     
-    aList append &Key:1 &Value:"1a".
-    aList append &Key:2 &Value:"2".
+    aList append &key:1 &value:"1a".
+    aList append &key:2 &value:"2".
     
-    aList setAt:1:"1".
+    aList set &key:1 &value:"1".
     
-    #var anN1 := aList@1.
-    #var anN2 := aList@2.
+    #var anN1 := aList getAt &key:1.
+    #var anN2 := aList getAt &key:2.
 ].
 
 #symbol ListTest =
 [
     #var aList := List new append:1 append:2 append:4.
 
-    #var anArray := aList~EList Array.
-            
+    #var anArray := listControl toArray:aList.
+
     #var n1 := listControl find:2 &in:aList.
     #var n2 := listControl find:-1 &in:aList.
 ].
 
 #symbol EnumTest =
 [
-    control foreach:"abc" &do: &&:x
+    control foreach:"abc" &do: (:x)
     [
         console write:x.
     ].
@@ -276,7 +253,7 @@
 
 #symbol ObjectTest =
 [
-    (A == A)and:(A != B)
+    (A == A)and:[A != B]
         ? [ console writeLine:"Reference comparison works" ]
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
@@ -383,36 +360,36 @@
 #symbol ActionTest =
 [
     console write:"Generic ".
-    actionTester testGeneric: &&:x:y [ console write:x writeLine:y. ].
+    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
     
     console write:"Normal ".
-    actionTester testAction: &&line1:aLine1 &line2:aLine2 [ console write:aLine1 writeLine:aLine2. ].
+    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
 ].
 
 // --- Role Tests ---
 
 #symbol Role =
 {
-    Literal = "Role overriding works!".
+    literal = "Role overriding works!".
 }.
 
 #symbol RoleTest =
 [
-    console writeLine:("Role overriding doesn't work!!"~Role Literal).
+    console writeLine:("Role overriding doesn't work!!"~Role literal).
 ].
 
 // --- ConvertorTest ---
 
 #symbol ConvertorTest =
 [
-    #var n := extensions'convertControl toInt:"23".
-    #var l := extensions'convertControl toLong:"1234567890123456".
-    #var nn := extensions'convertControl toInt:"-123".
-    #var ll := extensions'convertControl toLong:"-1234567890123456".
+    #var n := convertor toInt:"23".
+    #var l := convertor toLong:"1234567890123456".
+    #var nn := convertor toInt:"-123".
+    #var ll := convertor toLong:"-1234567890123456".
     
-    #var r := extensions'convertControl toReal:"23".
-    #var r2 := extensions'convertControl toReal:"123.456789".
-    #var r3 := extensions'convertControl toReal:"-123.456789".
+    #var r := convertor toReal:"23".
+    #var r2 := convertor toReal:"123.456789".
+    #var r3 := convertor toReal:"-123.456789".
 ].
 
 // --- LiteralTest ---
@@ -425,34 +402,35 @@
     #var b4 := "ab" < "abc".
     
     #var l := "abc" + "de".
-    #var ll := l Length.
-    #var c := (l@2) Literal.
+    #var ll := l length.
+    #var c := l@2.
 
-//    #var a := l~ELiteralOp Array.
-//            
-//    system'control foreach:"abc" &do: &&:ch [ console write:ch ].
-//    
-//    console writeLine.
-    
-    #var n := "abcd" indexOf &type'index:0 &type'widestr:"bc".
-    #var n2 := "abcd" indexOf &type'index:0 &type'widestr:"bac".
-    
-    #var s := "acd" insert &type'index:1 &type'widestr:"b".
-    #var ls := s Length.
+    #var a := l~enumerable array.
+    #var a2 := l~indexable array.
 
-    #var s2 := "abbcd" delete &type'index:1 &type'length:1.
-    #var ls2 := s2 Length.
+    control foreach:"abc" &do: (:ch) [ console write:ch ].
+
+    console writeLine.
     
-    #var s3 := "abcd" Substring &type'index:1 &type'length:2.
-    #var ls3 := s3 Length.
+    #var n := "abcd" indexOf &index:0 &literal:"bc".
+    #var n2 := "abcd" indexOf &index:0 &literal:"bac".
+    
+    #var s := "acd" insert &index:1 &literal:"b".
+    #var ls := s length.
+
+    #var s2 := "abbcd" delete &index:1 &length:1.
+    #var ls2 := s2 length.
+    
+    #var s3 := "abcd" Substring &index:1 &length:2.
+    #var ls3 := s3 length.
    
     "abc"getAt:2.
     
     "abc" getAt:(-1) |
-        onOutOfRangeError: &&:e [ console writeLine:"Negative index is not allowed" ].
+        onOutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
 
     "abc" getAt:4 |
-        onOutOfRangeError: &&:e [ console writeLine:"Index bigger than length is not allowed" ].
+        onOutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 // --- ArrayTest ---
@@ -462,12 +440,12 @@
     #var a1 := Array(1,2,3).
     #var n := a1 @ 1.
 
-    #var a4 := Array new &type'length:3.
+    #var a4 := Array new &length:3.
     a4 setAt:0:2.
     a4 setAt:1:1.
     a4 setAt:2:3.
     
-    #var a2 := Array new &type'length:5 &function: &&:x [ Integer new:x ].
+    #var a2 := arrayControl new &length:5 &each: x [ Integer new:x ].
     #var n2 := a2 @ 1.
     a2 setAt:1:-1.
     #var n3 := a2 @ 1.
@@ -475,13 +453,13 @@
     a2 setAt:0:2.
     
     
-    a4~EArray sort: &&:aFormer:aNext [ aFormer < aNext ].
+    a4~indexable sort: (:aFormer:aNext)[ aFormer < aNext ].
     
     a4 @ (-1) |
-        onOutOfRangeError: &&:e [ console writeLine:"Negative index is not allowed" ].
+        onOutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
 
     a4 @ 3 |
-        onOutOfRangeError: &&:e [ console writeLine:"Index bigger than length is not allowed" ].
+        onOutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 // --- AltTest ---
@@ -490,8 +468,8 @@
 [
     #var n := 3.
     
-    #var r :=  n type'widestr | Literal.
-    #var r2 :=   n Literal | type'widestr.
+    #var r :=  n length | literal.
+    #var r2 :=   n literal | length.
 ].
 
 // --- LoopTest ---
@@ -531,9 +509,9 @@
 [
     ExecTester break | ifFailed: [ console writeLine:"Throw works!". ].
     
-    ExecTester break | onError: &&:e [ console writeLine:(e Message). ].
+    ExecTester break | onError: e [ console writeLine:(e Message). ].
     
-    ExecTester break2 | onError: &&:e [ console writeLine:(e Message). ] | onError2: &&:e [ console writeLine:(e Message). ].
+    ExecTester break2 | onError: e [ console writeLine:(e Message). ] | onError2: e [ console writeLine:(e Message). ].
 ].
 
 // --- TextBufferTest ---
@@ -541,9 +519,9 @@
 #symbol TextBufferTest =
 [
     #var aBuffer := system'text'TextBuffer new.
-    aBuffer append:"abc".
+    aBuffer write:"abc".
 
-    #var anOutput := aBuffer Literal.
+    #var anOutput := aBuffer literal.
 ].
 
 // --- DateTest ---
@@ -559,7 +537,7 @@
     #var aMinute := aDate Minute.
     #var aSecond := aDate Second.
     
-    #var aRetVal := aDate Literal.
+    #var aRetVal := aDate literal.
 ].
 
 // --- GetPropertyTest ---

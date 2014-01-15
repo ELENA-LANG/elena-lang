@@ -11,7 +11,7 @@
         
     #constructor new &path:aPath
     [
-        thePath := aPath type'widestr.        
+        thePath := aPath literal.        
     ]
     
     #method next
@@ -37,7 +37,7 @@
 #symbol textFileControl =
 {
     forEachLine:aPath &do:anAction
-        = anAction~EFunction run &each:(TextFileEnumerator new &path:aPath).
+        = anAction~functionOp run &for:(TextFileEnumerator new &path:aPath).
 }.
 
 // --- enumControl ---
@@ -45,5 +45,5 @@
 #symbol enumControl =
 {
     forEachWord:aText &do:anAction
-        = anAction~EFunction run &each:(WordEnumerator new:(aText Literal)).
+        = anAction~functionOp run &for:(WordEnumerator new:(aText literal)).
 }.

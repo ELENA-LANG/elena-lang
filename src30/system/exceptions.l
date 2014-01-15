@@ -9,7 +9,7 @@
         theMessage := aMessage.
     ]    
     
-    #method Literal => theMessage.
+    #method literal => theMessage.
     
     #method Message = theMessage.
 }

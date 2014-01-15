@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 executable=amb.exe
 options=-xembed-
 namespace=amb

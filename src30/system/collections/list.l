@@ -37,15 +37,15 @@
     #field theKey.
     #field theValue.
     
-    #constructor new &Key:aKey &Value:anObject
+    #constructor new &key:aKey &value:anObject
     [
         theKey := aKey.
         theValue := anObject.
     ]
     
-    #method Key = theKey.
+    #method key = theKey.
     
-    #method Value = theValue.
+    #method value = theValue.
     
     #method $setValue : aValue
     [
@@ -55,42 +55,22 @@
 
 // --- ListEnumerator ---
 
-#symbol EEnumStart =
-{
-    next
-        => %$start.
-}.
-
-#symbol EEnumNext =
-{
-    next
-        => %$next.
-}.
-
 #class ListEnumerator
 {
     #field theList.
     #field theCurrent.
-    #field theRole.
+    #field theState.
     
-    #constructor new : aList
+    #constructor new &list:aList
     [
         theList := aList.
-        theRole := EEnumStart.
-        theCurrent := nil.
-    ]
-    
-    #method $start
-    [
-        theCurrent := theList Top.
-        theRole := EEnumNext.
         
-        ^ theCurrent != nil.
-    ]    
+        $self reset.
+    ]
 
     #method reset
     [
-        theRole := EEnumStart.
+        theState := %bof.
         theCurrent := nil.
     ]
             
@@ -100,96 +80,122 @@
     [
         theCurrent set:aValue.
     ]
+
+    #method next => theState.
+
+    #method next &bof
+    [
+        theCurrent := theList TopItem.
+        theState := %active.
+        
+        ^ theCurrent != nil.
+    ]
     
-    #method $next
+    #method next &active
     [
         theCurrent := theCurrent Next.
         
-        #var b := nil != theCurrent.
-        
         ^ nil != theCurrent.
     ]
-    
-    #method => theRole.
 }
 
 // --- List ---
-
-#symbol CEmptyList =
-{
-    Count = 0.
-    
-    append : anObject
-        => %$addFirst.
-        
-    append &Key:aKey &Value:aValue
-        => %$addFirst.
-}.
-
-#symbol CList =
-{
-    append : anObject
-        => %$addNext.
-        
-    append &Key:aKey &Value:aValue
-        => %$addNext.
-}.
 
 #class List
 {
     #field theTop.
     #field theLast.
-    #field theRole.
+    #field theState.
     #field theCount.
     
     #constructor new
     [
-        theRole := CEmptyList.
+        theState := %empty.
         theCount := Integer new.
     ]
 
-    #method Top = theTop.
+    #method TopItem = theTop.
 
     #method First = theTop get.
 
-    #method Count = theCount Number.
+    #method length = theCount number.
 
-    #method type'length = theCount Number.
+    #method enumerator = ListEnumerator new &list:$self.
 
-    #method Enumerator = ListEnumerator new:$self.
-
-    #method removeFirst
-    [
-        theCount =>
-            0 ? [ #throw OutOfRangeException new. ]
-            1 ? [  
-                   theTop := nil.   
-                   theLast := nil.   
-                   theCount << 0. 
-                ]
-            ! [
-                theTop := theTop Next.
-                theCount -= 1.
-            ].
-    ]
-
-    #method $addFirst : anObject
+    #method append&empty : anObject
     [
         theCount << 1.
         theTop := ListItem new:anObject.
         theLast := theTop.
-        theRole := CList.
+        theState := %active.
     ]
 
-    #method $addNext : anObject
+    #method append&active : anObject
     [
         theCount += 1.
         theLast := theLast set &Next:(ListItem new:anObject).
     ]
 
-    #method <= &&type'enumerable:$self.
+    #method getItem &index:anIndex
+    [
+        #var(type:int)aCurrentIndex := anIndex.
+        #var anItem := theTop.
+        
+        control while:[aCurrentIndex > 0] &do:
+        [
+            anItem := anItem Next.
+            anItem == nil
+                ? [ #throw OutOfRangeException new. ].
+            
+            aCurrentIndex := aCurrentIndex - 1.
+        ].
+        
+        ^ anItem.
+    ]
+
+    #method getAt : anIndex
+        = $self getItem &index::anIndex get.
+
+    #method getAt : anIndex : anObject
+    [
+        $self getItem &index::anIndex set:anObject.
+    ]
+
+    #method clear
+    [
+        theTop := nil.
+        theLast := nil.
+        theState := %empty.
+        theCount << 0.        
+    ]
+
+    #method remove &index:anIndex
+    [
+        (theTop == nil)
+            ? [ #throw OutOfRangeException new. ].
+        
+        (0 == anIndex)
+            ? [
+                theTop := theTop Next.
+                theTop == nil
+                    ? [ theLast := nil. theState := %empty. ].
+            ]
+            ! [
+                #var aPrevious := $self getItem &index:(anIndex - 1).
+                #var anItem := aPrevious Next.
+                
+                aPrevious set &Next:(anItem Next).
+                
+                anItem equal &object:theLast
+                    ? [ theLast := aPrevious ].
+            ].
+            
+        theCount -= 1.
+    ]
+
+    #method <= &enumerable:$self.
     
-    #method => theRole.
+    #method append : anObject => theState.
 }
 
 #class Dictionary : List
@@ -198,42 +204,30 @@
     
     #constructor new &default:aValue
     [
-        theRole := CEmptyList.
-        theCount := Integer new.        
+        theState := %empty.
+        theCount := Integer new.
         theDefaultValue := aValue.
     ]
-    
-    #method $addFirst &Key:aKey &Value:aValue
-    [
-        theCount << 1.
-        theTop := ListItem new:(KeyValue new &Key:aKey &Value:aValue).
-        theLast := theTop.
-        theRole := CList.
-    ]
 
-    #method $addNext &Key:aKey &Value:aValue
-    [
-        theCount += 1.
-        theLast := theLast set &Next:(ListItem new:(KeyValue new &Key:aKey &Value:aValue)).
-    ]
+    #method getItem &key:aKey
+        = $self~enumerable seek: x [ x key == aKey ].
+        
+    #method append &key:aKey &value:aValue
+        => &append:(KeyValue new &key:aKey &value:aValue).
 
-    #method getAt:aKey
+    #method getAt &key:aKey
     [
-        #var anItem := $self~EList seek: &&:x [ x Key == aKey ].
+        #var anItem := $self getItem &key:aKey.
         ^ (nil == anItem)
             ? [ theDefaultValue ]
-            ! [ anItem Value ].
+            ! [ anItem value ].
     ]
 
-    #method setAt:aKey:aValue
+    #method set &key:aKey &value:aValue
     [
-        #var anItem := $self~EList seek: &&:x [ x Key == aKey ].
+        #var anItem := $self getItem &key:aKey.
         (nil == anItem)
-            ? [
-                $self append &Key:aKey &Value:aValue.
-            ]
-            ! [
-                anItem $setValue:aValue.
-            ].
+            ? [ $self append &key:aKey &value:aValue. ]
+            ! [ anItem $setValue:aValue ].
     ]
 }

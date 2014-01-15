@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2013, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "text.h"
@@ -474,7 +474,7 @@ void Text :: create()
    _rowCount = 0;
 }
 
-bool Text :: load(const _path_t* path, int& encoding, bool autoDetecting)
+bool Text :: load(const _path_t* path, int encoding, bool autoDetecting)
 {
    _ELENA_::FileReader file(path, encoding, autoDetecting);
    encoding = file.getEncoding();

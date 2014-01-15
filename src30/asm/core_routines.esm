@@ -1,9 +1,14 @@
+//        ELENA Language 2.0
+//      inline system library
+
 define elMessage            000008000h
 define elRole               000004000h
 
 define NEW_MESSAGE_ID       084000000h
 define IFFAILED_MESSAGE_ID  0A1000001h
 define EVAL_MESSAGE_ID      085000000h
+define EVAL_MESSAGE_N_ID    085000001h
+define GET_MESSAGE_ID       086000000h
 define RAISE_MESSAGE_ID     0A0000001h
 
 procedure inline'redirect
@@ -286,15 +291,25 @@ end
 
 procedure inline'ws_concat
 
+  pushn 0
+  aloadsi 3  // ; s1
+  wsgetlen
+  dsavesi 0
+  aloadsi 4  // ; s2
+  wsgetlen
+  daddsi 0
+  pop
+  acopyr class : system'LiteralValue
+  wscreate
   pushb
   bcopya
-  aloadsi 4
+  aloadsi 3
   wscopy
-  aloadsi 5
+  aloadsi 4
   wsadd  
   acopyb
   popb
-  quitn 4
+  quitn 3
 
 end
 
@@ -553,9 +568,19 @@ procedure inline'handle_wrap
 
 end
 
-procedure inline'handle_pair
+procedure inline'handle_extension
 
-  asavesi 1
+  pushai  1
+  aloadai 0
+  popsi   2
+  bsredirect
+  aloadsi 1
+  ajumpvi 0
+
+end
+
+procedure inline'handle_groupextension
+
   aloadai 0
   bsredirect
   aloadsi 1
@@ -564,34 +589,31 @@ procedure inline'handle_pair
 
 end
 
-procedure inline'handle_rolebatch
+procedure inline'handle_arrayextension
 
-  pushb
-  bcopya
-  pushm
-  pushn 0
+  pushai  1
+  aloadai 0
+  popsi   2
+  bsgredirect
+  aloadsi 1
+  ajumpvi 0
 
-  pushfi -1
-  acopyf 1
-  
-labNext:
-  dloadai 0
-  test labEnd
+end
 
-  mloadfi 0
-  msaveparams -1
-  
-  get
-  acallvi 0
-  pusha
-  acopyf 1
-  ninc
-  jump labNext
+procedure inline'handle_arraygroupextension
 
-labEnd:
-  popa
-  popb
-  mquit
+  aloadai 0
+  bsgredirect
+  aloadsi 1
+  aloadai 1
+  ajumpvi 0
+
+end
+
+procedure inline'handle_roles
+
+  bsgredirect
+  throw
 
 end
 
@@ -1071,6 +1093,20 @@ procedure inline'r_round
 
   aloadsi 3
   rround
+  
+  popb
+  quitn 2
+
+end
+
+procedure inline'r_truncate
+
+  pushb
+  aloadsi 4
+  bcopya
+
+  aloadsi 3
+  rint
   
   popb
   quitn 2

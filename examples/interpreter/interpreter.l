@@ -1,4 +1,5 @@
 #define system.
+#define system'routines.
 #define extensions'text.
 
 // --- Tape ---
@@ -8,14 +9,14 @@
     #field theArray.
     #field thePointer.
 
-    #constructor new &type'length:aLength
+    #constructor new &length:aLength
     [
         thePointer := Integer new:0.
 
-        theArray := Array new &type'length:aLength &function: &&:n [ Integer new:0 ].
+        theArray := arrayControl new &length:aLength &each: n [ Integer new:0 ].
     ]
 
-    #method type'tape = $self.
+    #method bf_tape = $self.
 
     #method append
     [
@@ -39,7 +40,7 @@
     
     #method input
     [
-        (theArray@thePointer) write &type'int:(console readChar).
+        (theArray@thePointer) write &int:(console readChar).
     ]
     
     #method output
@@ -68,7 +69,7 @@
         theLoopBody := String new.
     ]
     
-    #method type'tape = theTape type'tape.
+    #method bf_tape = theTape bf_tape.
 
     #method append
     [
@@ -102,7 +103,7 @@
     
     #method repeatUntil
     [
-        theTape run: &&:aTape [ interpreter'Interpreter new:aTape eval:theLoopBody ].
+        theTape run: aTape [ interpreter'Interpreter new:aTape eval:theLoopBody ].
             
         ^ theTape.
     ]
@@ -124,12 +125,12 @@
         $self eval::anObject.
     ]
         
-    #method eval &type'widestr:aLiteral
+    #method eval &literal:aLiteral
     [
         control foreach:aLiteral &do:$self.
     ]
 
-    #method eval &widechar:aChar
+    #method eval &char:aChar
     [
         aChar =>
             ">" ? [ theTape next ]
@@ -147,10 +148,10 @@
 
 #symbol program = 
 [
-    ('program'arguments Count == 1)?
+    ('program'arguments length == 1)?
         [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
     
-    textFileControl forEachLine:('program'arguments@1) &do:(Interpreter new:(BFTape new &type'length:1024)).
+    textFileControl forEachLine:('program'arguments@1) &do:(Interpreter new:(BFTape new &length:1024)).
 ].
 //
 //#symbol program2 =

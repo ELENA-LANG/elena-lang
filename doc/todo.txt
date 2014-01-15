@@ -17,176 +17,21 @@ v  - vm script
 - opt
 - port                                                                                                                    
 
-------
+------                                                                                                                  
 Currently:
 ------
-              xdev - multiselect
-                       * fix bug with error handling code, looks like the stack was not proper released (see bulls cows)
-
               sdev - rosetta samples              
-                       * bullscows 
-
+                       * Calendar sample
+                       * Calendar - for "real" programmers
 <=================> 
          
 1.9.11 
 ------
 week2: [11.1]
-              sdev - testing
-                       * test system
-                       * test basic samples
-                       * test rosetta samples
-
-              sdev - system test 
-                       * modify system test, it should raise an exception if any of the tests fails
-
-              sdev - api
-                       * create API doc : memory, ...
-                       * copy protocols to doc\protocols
-                       * do we need intOp, strOp, ... - they are actually private ones
-                       * support dispatch method
-                       * support redirect method
-              sdev - rosetta samples              
-                       * modify amb operator using open argument list 
-                       * update amb sample on rosetta code site
-
-              adev - lib30
-                       * win32 file i/o operations should raise an exception with an error code
-                       * LiteralValue: concatenation, probably we need to get rid of concatinating constructor and use strOp for this?
-                       * system'$consolehandler: if the returning handler is -1
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: custom presenter / formatter / custom formatter
-                       * list / iterators / ... - can commutator be used instead of adapter roles
-                       * it should be possible to compare integer and value - the result is false
-                       * should strOp, intOp moved to corresponding extension classes (either EIntConvertor or EInt, and so on)
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * date - return utc time
-                       * implement analog of String.Format
-                       
-              adev - lib30 optimization
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-
-              sdev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * words: sort the list
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-
-              sdev - rosetta samples              
-                       * arrays : simplify
-                       * bullscows: use __rolebatch?
-                       * C samples
-                       * Calendar sample
-                       * Calendar - for "real" programmers
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull–Clark subdivision surface              
-                       * Box the compass
-                       * Binary search
-                       * Averages/Root mean square
-                       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              adev - dynamic programming
-                       * deserialize object
-
-            smaint - testing
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-                       
-              sdev - rosetta samples              
-                       * arraymode: support collection of different types
-            
-              adev - console operations:
-                       * read / write operation: complex types
-                       
-               adev - LiteralValue / String / TextBuffer
-                       * support appendLine?? (e.g. maybe in extension)
-               sdev - console samples
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-                       * vmconsole
-              adev - console operations:              
-                        * write formatted numbers
-                        * write formatted string (with parameters)
-
-              adev - lib30
-                       * convertor toArray , which converts list to elist wrap or returns itself
-                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       * implement: extensions'math'power - support integer values as well
-
-                       * implement: integer part of number (1.2r -> 1.0r)
-                       * implement: fractional part of number (1.2r -> 0.2r)
-                       * implement: reciprocal
-                       * implement: square root
-                       * implement: square function
-                       * implement: power function with integer
-                       * implement: exponential
-                       * implement: absolute value
-                       * implement: round
-                       * implement: truncate
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: truncate
-                       * implement: round up
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: natural logarithm
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: convert degrees to radians
-                       * implement: convert radians to degrees
-                       * implement: sine
-                       * implement: cosine
-                       * implement: tangent
-                       * implement: arcsine
-                       * implement: arccosine
-                       * implement: arctangent
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
-                       * implement: pi
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
-                       
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-
-                       * bytearray : get / set - outofrange exception
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range (insert, delete, ...)
-                       * should control foreach&until be implemented in EFunction?
-
 week3:
+              sdev - samples
+                       * test implemented samples
+                       * implement calculator both script and code
               sdev - script engine
                        * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
                        * modify system'dynamic'tapeControl to use mixture of arguments and open argument, modify bf code as well
@@ -286,11 +131,17 @@ week4:
 1.9.12
 --------
 week1:
+              xdev - math opcodes
+                       * sin, sqrt, pi, arctan
+
               xdev - break exception
                        * could we use break exception to go from nested code to the parent menthod exit? (see bullscows sample)
 
               xdev - utf-8
                        * all project files should be converted to UTF8
+
+              xdev - dispatching multiply parameters
+                       * think over light-weight dispatching implementation
 
               xdev - dispatch table
                        * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
@@ -310,12 +161,26 @@ week1:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
 
               xdev - generic development              
-                       * stack allocated byte array should not be reserved second time
+                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
 
+                       * $self cannot be used inside lambda expression, so how implement recursive expression call ?
+
+                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
+                         and could be invoked by eval
+
+                       * Object implementation : instead of notequal - implement equal and invert the result ??
+
+                       * it should be possible to assign variable inside nested code, but in this case the change could not be seen outside the nested
+                         code
+
+                       * stack allocated byte array should not be reserved second time
+                       
                        * why is not possible: "abc"@4 | onOutOfRangeError: ...
 
                        * make possible to send exception futher with ifFailed handler
                        
+                       * constant array
+
                        * check private method declaration ??
 
                        * role class should not be its own class class (like it is now), super class should be used
@@ -409,6 +274,8 @@ week1:
                        * type'int (and so on): compiler should garantee that the
                          object returned / passed with with argument is integer
                          (warning?)                         
+
+                       * simplify typecasting should not be done for operations like length, index
                        
                        * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
 
@@ -439,6 +306,21 @@ week1:
                        * compiler option : switch off direct calls
 
                        * new ecode: released - do we need it, or loop would be enough?
+                         
+                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
+                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
+
+                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
+                         (either typed variable or typed expression)
+
+                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
+
+                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
+                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
+
+                       * optimize type cast call (dispatch handler should be used) 
+
+                       * group object role should not have redirect statement
 
               xdev - elenavm
                        * should open / close frame override stack_bottom pointer? looks like it is not necessary
@@ -449,10 +331,18 @@ week1:
                        * inline script improve error handling
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                          
+
+              xdev - compiler optimization                       
+                       * declareArgumentList: may be better to check if the subject is known type before mapping the subject?
+
               xdev - byte code optimization                       
+                        * in in Array.add&array method, declare both length variables as type:int - it crashes
+
+                       * replace enumeration / iteration loops with a virtual expressions
+                       
                        * optimize output code: system'nil.equal : 'aloadfi pusha mcopy' : 'aloadfi pusha ..', and 'pusha ...';
                          the second rule was not recognized                                                                   
- 
+
                        * optimize output code: system'nil.equal, ...
 
                        * if the target is stack allocated, no need to allocate extra space (at least for the single operation)? 
@@ -502,8 +392,6 @@ week1:
                        * elc api: optimize core_api'save_widestr
                        * optimize control run & while virtual implementation
 
-                       * replace enumeration / iteration loops with a virtual expressions
-                       
                        * operator optimization: to avoid scanning the whole VMT, operator invoke
                          code could try to search first several entries before going to full search                                      
 
@@ -548,16 +436,19 @@ week1:
                          better to compare value ?? (if it is true / false constants for example)
                        * could direct parameter allocation be used for open argument list?
                        * review / simplify idle constructor
+                       * boolean inverting opzimizing
                        
               xdev - script support
                        * should be possible to debug vm scripts
                        
               idev - generic development
+                       * upper / lower case should work without selecting as well
                        * test saving to utf-8
                        * test saving to utf-16
                        * test saving to oem
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
                          utf-16 for windows?
+                       * store current encoding for every file
 
               idev - debugger
                        * display open argument list correctly
@@ -591,6 +482,162 @@ week1:
 
 
 week2:
+              sdev - api doc
+                       * create API doc : update to reflect the recent changes
+                       * change api faq
+
+              adev - lib30
+                       * realNumber.get&literal - starting space should be removed
+                       * win32 file i/o operations should raise an exception with an error code
+                       * implement: square function
+                       * implement: square root
+                       * implement: sine
+                       * implement: cosine
+                       * implement: tangent
+                       * implement: arcsine
+                       * implement: arccosine
+                       * implement: arctangent
+                       * implement: reciprocal
+                       * implement: power function with integer
+                       * implement: exponential
+                       * implement: absolute value
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: truncate
+                       * implement: round up
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: natural logarithm
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: convert degrees to radians
+                       * implement: convert radians to degrees
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * implement: pi
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
+
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+
+                       * bytearray : get / set - outofrange exception
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range (insert, delete, ...)
+                       * should control foreach&until be implemented in EFunction?
+                       * implement: extensions'math'power - support integer values as well                       
+
+              sdev - testing
+                       * test system
+                       * test basic samples
+                       * test rosetta samples
+
+              sdev - api
+                       * create API doc : console, ...
+                       * copy protocols to doc\protocols
+                       * do we need intOp, strOp, ... - they are actually private ones
+                       * support dispatch method
+                       * support redirect method
+              sdev - rosetta samples              
+                       * bullscows : count the attempts
+                       * modify amb operator using open argument list 
+                       * update amb sample on rosetta code site
+
+              adev - lib30
+                       * combinators should work both with list and array
+                       * system'$consolehandler: if the returning handler is -1
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: custom presenter / formatter / custom formatter
+                       * list / iterators / ... - can commutator be used instead of adapter roles
+                       * it should be possible to compare integer and value - the result is false
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * date - return utc time
+                       * implement analog of String.Format
+                       * calender: custom formatting
+                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
+                       
+              adev - lib30 optimization
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting)
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
+                       * TextBuffer : redesign delete operation, it should not create new literal classes
+
+              sdev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * words: sort the list
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
+
+              sdev - rosetta samples              
+                       * C samples
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull–Clark subdivision surface              
+                       * Box the compass
+                       * Binary search
+                       * Averages/Root mean square
+                       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
+
+              adev - dynamic programming
+                       * deserialize object
+
+            smaint - testing
+                       * modify system test, it should raise an exception if any of the tests fails
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+                       
+              sdev - rosetta samples              
+                       * arraymode: support collection of different types
+            
+              adev - console operations:
+                       * read / write operation: complex types
+                       
+               adev - LiteralValue / String / TextBuffer
+                       * support appendLine?? (e.g. maybe in extension)
+               sdev - console samples
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * vmconsole
+              adev - console operations:              
+                        * write formatted numbers
+                        * write formatted string (with parameters)
+
 
 1.9.13
 --------
@@ -631,7 +678,6 @@ week1:
 
 week2:
               adev - lib30
-                       * string concatination: review the current solution, can we simplify it?
                        * $ConsoleReader read &type'widestr &type'length:aLength
                           - currently additional method is used to pass the type of the parameter to external type,
                             local variable with provided type should be used instead:
@@ -639,9 +685,6 @@ week2:
                        * extensions - review the code, can it be simplified?
                        * LiteralValue.add - currently three extra new objects are created, try
                          to optimize
-                       * LiteralValue: compiler should optimize the constructor code, e.g. replace
-                         the actiual operation with optimized versions for string concatination (without actual object creating
-                         or sum operations, if the parameters are primitive types)
                        * consolereader.readchar: review assembler code, try to simplify it
                        * comutator: could commutator be used to modify incoming message subject
                        * TextReader - the current design creates a new literal for each line is read, could we try to reuse it, e.g.
@@ -1084,9 +1127,6 @@ Documentation
     - full language description
 
     - rewrite Getting started
-    - blog post: collecting the array / list, array concatenation (after 1.6.7 release)
-    - rosetta code: array concatenation (after 1.6.8)
-    - rosetta code: simple moving average (after 1.6.8)
     - link to rosetta codein in the project web page / blog
 
     - blog post: object model: extended version

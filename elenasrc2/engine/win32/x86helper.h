@@ -247,6 +247,16 @@ public:
       }
    }
 
+   static void writeImm(MemoryWriter* code, Operand sour, bool override)
+   {
+      if (override && sour.type==otDD) {
+         sour.type = otDW;
+
+         writeImm(code, sour);
+      }
+      else writeImm(code, sour);
+   }
+
    static void movMR32disp(MemoryWriter* code, OperandType sour, OperandType dest, int sourOffs)
    {
       Operand sourOp(getOperandType(sour, otM32, sourOffs));

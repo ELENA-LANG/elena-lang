@@ -4,7 +4,7 @@
 
 #symbol program =
 [
-    ('program'arguments Count == 1)?
+    ('program'arguments length == 1)?
         [  console << "Please provide the path to the file to view". #throw BreakException new. ].
 
     #var aFileName := 'program'arguments@1.

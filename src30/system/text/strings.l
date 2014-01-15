@@ -1,4 +1,5 @@
 #define system.
+#define system'routines.
 
 // --- Bookmark ---
 
@@ -15,28 +16,28 @@
         theStart := 0.
     ]
 
-    #constructor new &type'widestr:aText
+    #constructor new &literal:aText
     [
         theLiteral := aText.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #constructor new &type'widestr:aText &type'index:anIndex
+    #constructor new &literal:aText &index:anIndex
     [
         theLiteral := aText.
         theIndex := anIndex.
         theStart := 0.
     ]
 
-    #method find &type'index:anIndex
+    #method find &index:anIndex
     [
         theIndex := anIndex.
     ]
             
-    #method find &type'widestr:aValue
+    #method find &literal:aValue
     [
-        theIndex := theLiteral indexOf &type'index:theIndex &type'widestr::aValue.
+        theIndex := theLiteral indexOf &index:theIndex &literal:aValue.
         
         ^ (-1 != theIndex).
     ]
@@ -55,23 +56,23 @@
     ]
     
     #method append :aValue
-        <= append::aValue.
+        => &append::aValue.
     
-    #method append &type'widestr:aValue
+    #method append &literal:aValue
     [
         theLiteral := theLiteral + aValue.
     ]
     
-    #method insert &type'widestr:aValue
+    #method insert &literal:aValue
     [
-        theLiteral := theLiteral insert &type'index:theIndex &type'widestr:aValue.
+        theLiteral := theLiteral insert &index:theIndex &literal:aValue.
         
-        theIndex := theIndex + aValue type'length.
+        theIndex := theIndex + aValue length.
     ]
     
-    #method delete &type'length:aLength
+    #method delete &length:aLength
     [
-        theLiteral := theLiteral delete &type'index:theIndex &type'length:aLength.
+        theLiteral := theLiteral delete &index:theIndex &length:aLength.
     ]
 
     #method clear
@@ -80,15 +81,15 @@
         theIndex := 0.
         theStart := 0.
     ]
-            
+
     #method Marked
         = (-1 == theIndex)
-            ? [ theLiteral Substring &type'index:theStart ]
-            ! [ theLiteral Substring &type'index:theStart &type'length:(theIndex - theStart) ].
+            ? [ theLiteral~literalOp Substring &index:theStart ]
+            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
     
-    #method Literal = theLiteral.
+    #method literal = theLiteral.
     
-    #method Length => theLiteral.
+    #method length = theLiteral length.
     
-    #method Index = theIndex.
+    #method index = theIndex.
 }

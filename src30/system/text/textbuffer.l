@@ -1,4 +1,5 @@
 #define system. 
+#define system'routines. 
 #define system'io. 
 
 #symbol $TextPageSize = 128.
@@ -18,53 +19,54 @@
 
     #method clear
     [
-        theFreeLength := theBuffer Size / 2.
+        theFreeLength := theBuffer size / 2.
         theBuffer clear.
     ]
 
-    #method type'length
-        = theBuffer type'length / 2.
+    #method length
+        = theBuffer length / 2.
 
-    #method set &type'length:aLength
+    #method set &length:aLength
     [
-        theBuffer set &type'length:(2 * aLength).
+        theBuffer set &length:(2 * aLength).
     ]
                                     
-    #method append : aLine
+    #method write : aLine
     [
-        $self append::aLine.
+        $self write::aLine.
+    ]
+                                    
+    #method write &char:aChar
+    [
+        $self write &literal::aChar.
     ]
     
-    #method append &widechar:aChar
+    #method write &literal:aLiteral
     [
-        $self append &type'widestr:(aChar Literal).
-    ]
-    
-    #method append &type'widestr:aLiteral
-    [
-        #var aLength := aLiteral Length.
+        #var(type:int)aLength := aLiteral length.
 
         (0 == aLength) !
         [
             (theFreeLength < aLength) ? 
             [
-                #var aSizeOffset := (1 + aLength / $TextPageSize) * $TextPageSize.
+                #var(type:int) aSizeOffset := (1 + aLength / $TextPageSize) * $TextPageSize.
 
-                theBuffer expand &type'int:(2 * aSizeOffset).
-
-                theFreeLength := theFreeLength + aSizeOffset.
+                theFreeLength := theFreeLength add &int:aSizeOffset.
+                
+                aSizeOffset := aSizeOffset * 2.
+                
+                theBuffer append &size:aSizeOffset.
             ].
             
-            theBuffer~EStreamWriter write &type'widestr:aLiteral.
+            theBuffer~memoryOp write &literal:aLiteral.
 
-            theFreeLength := theFreeLength - aLength.
+            theFreeLength := theFreeLength subtract &int:aLength.
         ].
-
     ]
 
-    #method indexOf &type'index:aPosition &widechar:aChar
+    #method indexOf &index:aPosition &char:aChar
     [
-        #var anIndex := theBuffer indexOf &type'index:(2 * aPosition) &type'short:aChar.
+        #var(type:int) anIndex := theBuffer indexOf &index:(2 * aPosition) &short:aChar.
         
         (-1 == anIndex) 
             ! [ anIndex := anIndex / 2. ].
@@ -72,38 +74,35 @@
         ^ anIndex.
     ]
 
-    #method read &type'index:anIndex
-        <= read &type'index:anIndex &type'length:($self type'length - anIndex).
-
-    #method read &type'index:anIndex &type'length:aLength
+    #method Substring &index:anIndex &length:aLength
         = (aLength == 0)
             ? [ emptyLiteralValue ]
             ! [
-                #var aLiteral := LiteralValue new &type'length:aLength.
+                #var aLiteral := LiteralValue new &length:aLength.
                 
-                theBuffer type'bytearray read &type'index:(anIndex * 2) &type'length:(aLength * 2) &type'bytearray:aLiteral.
+                theBuffer bytearray read &index:(anIndex * 2) &length:(aLength * 2) &bytearray:aLiteral.
                 
-                strOp refresh &type'widestr:aLiteral.
+                primitive refresh &literal:aLiteral.
                 
                 ^ aLiteral.        
             ].
 
-    #method delete &type'index:anIndex &type'length:aLength
+    #method delete &index:anIndex &length:aLength
     [
         (anIndex == 0)
             ? [
-                #var aRightLiteral := $self read &type'index:aLength.
+                #var aRightLiteral := $self~literalOp Substring &index:aLength.
                 
-                $self clear append &type'widestr:aRightLiteral.
+                $self clear write &literal:aRightLiteral.
             ]
             ! [
-                #var aLeftLiteral := $self read &type'index:0 &type'length:anIndex.
-                #var aRightLiteral := $self read &type'index:(anIndex + aLength).
+                #var aLeftLiteral := $self Substring &index:0 &length:anIndex.
+                #var aRightLiteral := $self~literalOp Substring &index:(anIndex + aLength).
                 
-                $self clear append &type'widestr:aLeftLiteral append &type'widestr:aRightLiteral.                
+                $self clear write &literal:aLeftLiteral write &literal:aRightLiteral.                
             ].
     ]
 
-    #method Literal
-        = theBuffer~EStreamReader read &type'widestr &type'length:(theBuffer Length / 2).
+    #method literal
+        = theBuffer~memoryOp read &literal &length:(theBuffer length / 2).
 }

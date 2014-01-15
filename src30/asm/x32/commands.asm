@@ -73,6 +73,56 @@ labEnd:
                                                                 
 end
 
+// bsgredirect
+
+inline % 10h // (eax - object, edx - message)
+
+  push 0
+  mov  ecx, [eax-8]
+  push 0
+
+labScanStart:
+  mov  [esp+4], eax
+  mov  eax, [eax]
+  mov  [esp], ecx
+
+  mov  esi, [eax-4]
+  xor  ebx, ebx
+  mov  ecx, [esi - elVMTSizeOffset]
+
+labSplit:
+  test ecx, ecx
+  jz   short labNext
+
+labStart:
+  shr  ecx, 1
+  setnc bl
+  cmp  edx, [esi+ecx*8]
+  jb   short labSplit
+  nop
+  nop
+  jz   short labFound
+  lea  esi, [esi+ecx*8+8]
+  sub  ecx, ebx
+  jnz  short labStart
+  nop
+  nop
+  jmp  labNext
+labFound:
+  lea  esp, [esp+8]
+  jmp  [esi+ecx*8+4]
+  nop
+
+labNext:
+  mov  eax, [esp+4]
+  mov  ecx, [esp]
+  lea  eax, [eax+4]
+  sub  ecx, 4
+  jnz  labScanStart
+  lea  esp, [esp+8]
+                                                                
+end
+
 // ; unbox (esi - size)
 
 inline % 0Fh
@@ -3200,14 +3250,48 @@ inline % 05683h
   shr   al,1              // test for invalid operation
   jc    short lErr        // clean-up and return error
 
-  mov   eax, [esp]
-  fstp  qword ptr [eax]    // store result 
+  fstp  qword ptr [edi]    // store result 
   mov   esi, 1
   jmp   short labEnd
 
 lErr:
   ffree st(0)
 
+labEnd:
+
+end
+
+// ; rint
+
+inline % 05689h
+
+  mov   esi, 0
+  fld   qword ptr [eax]
+
+  push  ebx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+  mov   bx, [esp]
+  or    bx,0c00h           // code it for truncating
+  push  ebx
+  fldcw word ptr [esp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   ebx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   ebx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  mov   esi, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
 labEnd:
 
 end

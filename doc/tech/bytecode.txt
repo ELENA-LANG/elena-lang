@@ -101,6 +101,10 @@ ELENA byte codes (or ecodes)
  -----------------
  bsredirect                 - search acc::VMT for the message in m;
                               if found jumps to it; binary search is used
+                              
+ bsgredirect                - foreach o in acc -> search o::VMT for the message in m;
+                              if found jumps to it; if not - goes to the next member
+                              binary search is used
 
  callr r                    - calls the procedure;
                               acc contains the result
@@ -504,6 +508,8 @@ ELENA byte codes (or ecodes)
  rexp                        - self << exp(real:acc)
                                                                                                      
  rln                         - self << ln(real:acc)
+ 
+ rint                        - self << int(real:acc)
  
  wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
                                                                                                       

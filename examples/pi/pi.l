@@ -5,11 +5,11 @@
 
 // x ^ y
 
-#symbol Power = &&:x:y
+#symbol Power = (:x:y)
 [
     #var aResult := Real new::1.
 
-    control from:1 &to:y &do: &&:n [ aResult *= x ] .
+    control from:1 &to:y &do: n [ aResult *= x ] .
 
     ^ aResult.    
 ].
@@ -22,7 +22,7 @@
 
     #var pi := Real new::0.
 
-    control from:0 &to:MAX &do: &&:i
+    control from:0 &to:MAX &do: i
     [
         pi += (Power eval:(-1):i / ((2*i)+1)*4).
     ].

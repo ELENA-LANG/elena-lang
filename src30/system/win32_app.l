@@ -4,11 +4,13 @@
 {
     new
     [
-        #var aCommandLinePtr := IntNumber new &type'int:(system'external'KERNEL32 GetCommandLineW).
-        #var aCommandLineLen := IntNumber new &type'int:(system'external'KERNEL32 lstrlenW &type'int:aCommandLinePtr).
-        #var aCommandLine := system'external'kernel32 lstrcpyW 
-            &out'type'widestr:(LiteralValue new &type'length:aCommandLineLen)
-            &type'int:aCommandLinePtr.
+        #var aCommandLinePtr := IntNumber new &int:(system'external'KERNEL32 GetCommandLineW).
+        #var(type:int)aCommandLineLen := system'external'KERNEL32 lstrlenW &int:aCommandLinePtr.
+        #var aCommandLine := LiteralValue new &length:aCommandLineLen.
+        
+        system'external'kernel32 lstrcpyW 
+            &out'literal:aCommandLine
+            &int:aCommandLinePtr.
             
         ^ aCommandLine.
     ]

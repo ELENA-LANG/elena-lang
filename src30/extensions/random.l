@@ -10,14 +10,14 @@
     #constructor new
         <rnd_init>.
 
-    #method eval &type'int:aMaxValue &out'type'int:aRetVal
+    #method eval &int:aMaxValue &out'int:aRetVal
         <rnd_next>.
 
     #method eval : aMaxValue
     [
-        #var(type:int)aNextValue := $self eval &type'int::aMaxValue.
+        #var(type:int)aNextValue := $self eval &int::aMaxValue.
         
-        ^ IntNumber new &type'int:aNextValue.
+        ^ IntNumber new &int:aNextValue.
     ]
 }
 

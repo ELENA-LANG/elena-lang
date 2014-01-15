@@ -14,10 +14,10 @@
 
     control while:[ aBM find::aSearchText ] &do:
     [
-        aBM delete &type'length::aSearchText insert::aReplaceText.
+        aBM delete &length::aSearchText insert::aReplaceText.
     ].
 
-    console write:"The resulting text:" writeLine:(aBM Literal).
+    console write:"The resulting text:" writeLine:(aBM literal).
 
     console readChar. // wait for any key
 ].

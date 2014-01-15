@@ -5,7 +5,7 @@
 [   
     XTest eval.
 
-    system'console writeLine:"Starting...".    
+    system'console writeLine:"Starting...".
 
     ControlTest eval.
     ObjectTest eval.

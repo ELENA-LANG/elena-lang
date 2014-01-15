@@ -8,20 +8,20 @@
 
 // --- RandomBrackets ---
 
-#symbol randomBrackets = &&:aLength
+#symbol randomBrackets = (:aLength)
 [
-    #var aBrackets := Array new &type'length:aLength &function: &&:i[ CharValue new:91 ] + Array new &type'length:aLength &function: &&:i[ CharValue new:93 ].
+    #var aBrackets := arrayControl new &length:aLength &each: i[ CharValue new:91 ] + arrayControl new &length:aLength &each: i[ CharValue new:93 ].
     
     randomControl randomize:(aLength * 2) &array:aBrackets.
     
-    ^ Summing new:(String new) foreach:aBrackets Literal.
+    ^ Summing new:(String new) foreach:aBrackets literal.
 ].
 
-#symbol isBalanced = &&:aLiteral
+#symbol isBalanced = (:aLiteral)
 [
     #var aCounter := Integer new:0.
 
-    control foreach:aLiteral &until: &&:aChar [ aCounter append:(aChar => "[" ? [ 1 ] "]" ? [ -1 ]) < 0 ].
+    control foreach:aLiteral &until: aChar [ aCounter append:(aChar => "[" ? [ 1 ] "]" ? [ -1 ]) < 0 ].
 
     ^ (0 == aCounter).
 ].
@@ -30,12 +30,12 @@
 
 #symbol program =                                             
 [
-    control from:0 &till:10 &do: &&:aLength
+    control from:0 &till:10 &do: aLength
     [
         #var anStr := randomBrackets:aLength.
         #var balanced := isBalanced:anStr.
 
-        console write:"""" write:anStr write:"""" writeLine:(balanced => true ? [ " is balanced" ] false ? [ " is not balanced" ]).
+        consoleEx writeLine:"""":anStr:"""":(balanced => true ? [ " is balanced" ] false ? [ " is not balanced" ]).
     ].
 
     console readChar.

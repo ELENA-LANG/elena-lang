@@ -1,9 +1,9 @@
-// --- Symbol ---
-
-#class Symbol
-{
-    #field(type:int)theReference.
-}
+//// --- Symbol ---
+//
+//#class Symbol
+//{
+//    #field(type:int)theReference.
+//}
 
 // --- Message ---
 

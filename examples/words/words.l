@@ -26,13 +26,13 @@
             ! [ theList append:aWord. ].
     ]
 
-    #method Enumerator => theList.
+    #method enumerator => theList.
 
     #method total_words = theTotal.
 
-    #method unique_words = theList Count.
+    #method unique_words = theList length.
     
-    #method <= &&type'enumerable:$self.
+    #method <= &enumerable:$self.
 }
 
 // --- Program ---
@@ -45,11 +45,11 @@
     #var aLine := String new.
 
     // read until the empty string is not entered
-    control do:[ aText += console readLine:aLine += " " ] &until:[ aLine Length == 0 ].
+    control do:[ aText << consoleEx readLine:aLine << " " ] &until:[ aLine length == 0 ].
 
     #var aList := WordList new:(List new).
 
-    enumControl forEachWord:aText &do: &&:anItem [ aList append:anItem ].
+    enumControl forEachWord:aText &do: anItem [ aList append:anItem ].
 
     consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)

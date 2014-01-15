@@ -54,7 +54,7 @@
 {
     #field(type:int)theData.
 
-    #constructor new &type'int:anOperand
+    #constructor new &int:anOperand
     [
         theData << anOperand.
     ]
@@ -64,89 +64,89 @@
         theData << 0.
     ]
 
-    #method type'int = $self.
+    #method int = $self.
 
-    #method type'index = $self.
+    #method index = $self.
 
-    #method equal &type'int:anOperand 
+    #method equal &int:anOperand 
         = theData == anOperand.
 
-    #method less &type'int:anOperand
+    #method less &int:anOperand
         = theData < anOperand.
 
-    #method notless &type'int:anOperand
+    #method notless &int:anOperand
         = theData >= anOperand.
 
-    #method add &type'int:anOperand
-        = IntNumber new &type'int:(theData + anOperand).
+    #method add &int:anOperand
+        = IntNumber new &int:(theData + anOperand).
 
-    #method subtract &type'int:anOperand
-        = IntNumber new &type'int:(theData - anOperand).
+    #method subtract &int:anOperand
+        = IntNumber new &int:(theData - anOperand).
 
-    #method multiply &type'int:anOperand
-        = IntNumber new &type'int:(theData * anOperand).
+    #method multiply &int:anOperand
+        = IntNumber new &int:(theData * anOperand).
 
-    #method divide &type'int:anOperand
-        = IntNumber new &type'int:(theData / anOperand).
+    #method divide &int:anOperand
+        = IntNumber new &int:(theData / anOperand).
 
-    #method and &type'int:anOperand
-        = IntNumber new &type'int:(theData ^& anOperand).
+    #method and &int:anOperand
+        = IntNumber new &int:(theData ^& anOperand).
 
-    #method or &type'int:anOperand
-        = IntNumber new &type'int:(theData ^| anOperand).
+    #method or &int:anOperand
+        = IntNumber new &int:(theData ^| anOperand).
 
-    #method xor &type'int:anOperand
-        = IntNumber new &type'int:(theData ^^ anOperand).
+    #method xor &int:anOperand
+        = IntNumber new &int:(theData ^^ anOperand).
 
-    #method equal &type'long:anOperand 
-        = LongNumber new &type'int:$self equal &type'int:anOperand.
+    #method equal &long:anOperand 
+        = LongNumber new &int:$self equal &long:anOperand.
 
-    #method less &type'long:anOperand 
-        = LongNumber new &type'int:$self less &type'int:anOperand.
+    #method less &long:anOperand 
+        = LongNumber new &int:$self less &long:anOperand.
 
-    #method add &type'long:anOperand
-        = LongNumber new &type'int:$self add &type'long:anOperand.
+    #method add &long:anOperand
+        = LongNumber new &int:$self add &long:anOperand.
 
-    #method subtract &type'long:anOperand
-        = LongNumber new &type'int:$self subtract &type'long:anOperand.
+    #method subtract &long:anOperand
+        = LongNumber new &int:$self subtract &long:anOperand.
 
-    #method multiply &type'long:anOperand
-        = LongNumber new &type'int:$self multiply &type'long:anOperand.
+    #method multiply &long:anOperand
+        = LongNumber new &int:$self multiply &long:anOperand.
 
-    #method divide &type'long:anOperand
-        = LongNumber new &type'int:$self divide &type'long:anOperand.
+    #method divide &long:anOperand
+        = LongNumber new &int:$self divide &long:anOperand.
 
-    #method add &type'real:anOperand
-        = RealNumber new &type'int:$self add &type'real:anOperand.
+    #method add &real:anOperand
+        = RealNumber new &int:$self add &real:anOperand.
 
-    #method subtract &type'real:anOperand
-        = RealNumber new &type'int:$self subtract &type'real:anOperand.
+    #method subtract &real:anOperand
+        = RealNumber new &int:$self subtract &real:anOperand.
 
-    #method multiply &type'real:anOperand
-        = RealNumber new &type'int:$self multiply &type'real:anOperand.
+    #method multiply &real:anOperand
+        = RealNumber new &int:$self multiply &real:anOperand.
 
-    #method divide &type'real:anOperand
-        = RealNumber new &type'int:$self divide &type'real:anOperand.
+    #method divide &real:anOperand
+        = RealNumber new &int:$self divide &real:anOperand.
 
     #method shift : anOrder
     [
-        #var(type:int)retVal := intOp shift &type'int:$self &type'int::anOrder.
+        #var(type:int)retVal := primitive shift &int:$self &int::anOrder.
         
-        ^ IntNumber new &type'int:retVal.
+        ^ IntNumber new &int:retVal.
     ]
 
-    #method Literal = strOp convert &type'int:$self.
+    #method literal = primitive toLiteral &int:$self.
 
-    #method Negative = 0 - $self.
+    #method negative = 0 - $self.
 
     #method not
     [
-        #var(type:int)retVal := intOp invert &type'int:$self.
+        #var(type:int)retVal := primitive invert &int:$self.
         
-        ^ IntNumber new &type'int:retVal.
+        ^ IntNumber new &int:retVal.
     ]
-            
-    #method <= &&type'int:$self.
+
+    #method <= &int:$self.
 }
 
 // --- longnumber ---
@@ -160,97 +160,97 @@
         theData << 0l.
     ]
 
-    #constructor new &type'long:anOperand 
+    #constructor new &long:anOperand 
     [
         theData << anOperand.
     ]
 
-    #constructor new &type'int:anOperand 
+    #constructor new &int:anOperand 
     [
         theData << anOperand.
     ]
   
-    #method type'long = $self.
+    #method long = $self.
 
-    #method equal &type'long:anOperand
+    #method equal &long:anOperand
         = theData == anOperand.
 
-    #method less &type'long:anOperand
+    #method less &long:anOperand
         = theData < anOperand.
 
-    #method notless &type'long:anOperand
+    #method notless &long:anOperand
         = theData >= anOperand.
 
-    #method add &type'long:anOperand
-        = LongNumber new &type'long:(theData + anOperand).
+    #method add &long:anOperand
+        = LongNumber new &long:(theData + anOperand).
 
-    #method subtract &type'long:anOperand
-        = LongNumber new &type'long:(theData - anOperand).
+    #method subtract &long:anOperand
+        = LongNumber new &long:(theData - anOperand).
 
-    #method multiply &type'long:anOperand
-        = LongNumber new &type'long:(theData * anOperand).
+    #method multiply &long:anOperand
+        = LongNumber new &long:(theData * anOperand).
 
-    #method divide &type'long:anOperand
-        = LongNumber new &type'long:(theData / anOperand).
+    #method divide &long:anOperand
+        = LongNumber new &long:(theData / anOperand).
 
-    #method and &type'long:anOperand
-        = LongNumber new &type'long:(theData ^& anOperand).
+    #method and &long:anOperand
+        = LongNumber new &long:(theData ^& anOperand).
 
-    #method or &type'long:anOperand
-        = LongNumber new &type'long:(theData ^| anOperand).
+    #method or &long:anOperand
+        = LongNumber new &long:(theData ^| anOperand).
 
-    #method xor &type'long:anOperand
-        = LongNumber new &type'long:(theData ^^ anOperand).
+    #method xor &long:anOperand
+        = LongNumber new &long:(theData ^^ anOperand).
 
-    #method add &type'int:anOperand
-        = $self add &type'long:(LongNumber new &type'int:anOperand).
+    #method add &int:anOperand
+        = $self add &long:(LongNumber new &int:anOperand).
 
-    #method subtract &type'int:anOperand
-        = $self subtract &type'long:(LongNumber new &type'int:anOperand).
+    #method subtract &int:anOperand
+        = $self subtract &long:(LongNumber new &int:anOperand).
 
-    #method multiply &type'int:anOperand
-        = $self multiply &type'long:(LongNumber new &type'int:anOperand).
+    #method multiply &int:anOperand
+        = $self multiply &long:(LongNumber new &int:anOperand).
 
-    #method divide &type'int:anOperand
-        = $self divide &type'long:(LongNumber new &type'int:anOperand).
+    #method divide &int:anOperand
+        = $self divide &long:(LongNumber new &int:anOperand).
 
-    #method equal &type'int:anOperand 
-        = $self equal &type'long:(LongNumber new &type'int:anOperand).
+    #method equal &int:anOperand 
+        = $self equal &long:(LongNumber new &int:anOperand).
 
-    #method less &type'int:anOperand 
-        = $self less &type'long:(LongNumber new &type'int:anOperand).
+    #method less &int:anOperand 
+        = $self less &long:(LongNumber new &int:anOperand).
 
-    #method add &type'real:anOperand
-        = RealNumber new &type'long:$self add &type'real:anOperand.
+    #method add &real:anOperand
+        = RealNumber new &long:$self add &real:anOperand.
 
-    #method subtract &type'real:anOperand
-        = RealNumber new &type'long:$self subtract &type'real:anOperand.
+    #method subtract &real:anOperand
+        = RealNumber new &long:$self subtract &real:anOperand.
 
-    #method multiply &type'real:anOperand
-        = RealNumber new &type'long:$self multiply &type'real:anOperand.
+    #method multiply &real:anOperand
+        = RealNumber new &long:$self multiply &real:anOperand.
 
-    #method divide &type'real:anOperand
-        = RealNumber new &type'long:$self divide &type'real:anOperand.
+    #method divide &real:anOperand
+        = RealNumber new &long:$self divide &real:anOperand.
 
     #method shift : anOrder
     [
-        #var(type:long)aRetVal := intOp shift &type'long:$self &type'int::anOrder.
+        #var(type:long)aRetVal := primitive shift &long:$self &int::anOrder.
         
-        ^ LongNumber new &type'long:aRetVal.
+        ^ LongNumber new &long:aRetVal.
     ]
 
-    #method Literal = strOp convert &type'long:$self.
+    #method literal = primitive toLiteral &long:$self.
 
-    #method Negative = 0l - $self.
+    #method negative = 0l - $self.
 
     #method not
     [
-        #var(type:long)retVal := intOp invert &type'long:$self.
+        #var(type:long)retVal := primitive invert &long:$self.
         
         ^ LongNumber new &type'long:retVal.
     ]
             
-    #method <= &&type'long:$self.
+    #method <= &long:$self.
 }
 
 // --- realNumber ---
@@ -264,59 +264,59 @@
         theData << 0.0r.
     ]
 
-    #constructor new &type'real:anOperand 
+    #constructor new &real:anOperand 
     [
         theData << anOperand.
     ]
   
-    #constructor new &type'int:anOperand 
+    #constructor new &int:anOperand 
     [
         theData << anOperand.
     ]
         
-    #constructor new &type'long:anOperand 
+    #constructor new &long:anOperand 
     [
         theData << anOperand.
     ]
         
-    #method type'real = $self.
+    #method real = $self.
 
-    #method equal &type'real:anOperand
+    #method equal &real:anOperand
         = theData == anOperand.
 
-    #method less &type'real:anOperand
+    #method less &real:anOperand
         = theData < anOperand.
 
-    #method notless &type'real:anOperand
+    #method notless &real:anOperand
         = theData >= anOperand.
 
-    #method add &type'real:anOperand
-        = RealNumber new &type'real:(theData + anOperand).
+    #method add &real:anOperand
+        = RealNumber new &real:(theData + anOperand).
 
-    #method subtract &type'real:anOperand
-        = RealNumber new &type'real:(theData - anOperand).
+    #method subtract &real:anOperand
+        = RealNumber new &real:(theData - anOperand).
 
-    #method multiply &type'real:anOperand
-        = RealNumber new &type'real:(theData * anOperand).
+    #method multiply &real:anOperand
+        = RealNumber new &real:(theData * anOperand).
 
-    #method divide &type'real:anOperand
-        = RealNumber new &type'real:(theData / anOperand).
+    #method divide &real:anOperand
+        = RealNumber new &real:(theData / anOperand).
 
-    #method add &type'int:anOperand
-        = $self add &type'real:(RealNumber new &type'int:anOperand).
+    #method add &int:anOperand
+        = $self add &real:(RealNumber new &int:anOperand).
 
-    #method subtract &type'int:anOperand
-        = $self subtract &type'real:(RealNumber new &type'int:anOperand).
+    #method subtract &int:anOperand
+        = $self subtract &real:(RealNumber new &int:anOperand).
 
-    #method multiply &type'int:anOperand
-        = $self multiply &type'real:(RealNumber new &type'int:anOperand).
+    #method multiply &int:anOperand
+        = $self multiply &real:(RealNumber new &int:anOperand).
 
-    #method divide &type'int:anOperand
-        = $self divide &type'real:(RealNumber new &type'int:anOperand).
+    #method divide &int:anOperand
+        = $self divide &real:(RealNumber new &int:anOperand).
 
-    #method Literal = strOp convert &type'real:$self.
+    #method literal = primitive toLiteral &real:$self.
     
-    #method <= &&type'real:$self.
+    #method <= &real:$self.
 }
 
 // --- CharValue ---
@@ -331,71 +331,46 @@
     ]
     
     #constructor new : aValue
-        <= new::aValue.
+        => &new::aValue.
     
-    #constructor new &type'int:aCode
+    #constructor new &int:aCode
     [
         theData << aCode.
     ]
 
-    #constructor new &widechar:aCode
-        <= new &type'int:aCode.
+    #constructor new &char:aCode
+        => &new &int:aCode.
 
-    #method widechar = $self.
-
-    #method equal &type'int:anOperand 
+    #method equal &int:anOperand 
         = theData == anOperand.
 
-    #method less &type'int:anOperand 
+    #method less &int:anOperand 
         = theData < anOperand.
 
-    #method notless &type'int:anOperand 
+    #method notless &int:anOperand 
         = theData >= anOperand.
 
-    #method equal &widechar:anOperand 
-        = $self equal &type'int:anOperand .
+    #method equal &char:anOperand 
+        = $self equal &int:anOperand .
 
-    #method less &widechar:anOperand 
-        = $self less &type'int:anOperand .
+    #method less &char:anOperand 
+        = $self less &int:anOperand .
 
-    #method equal &type'widestr:aLiteral
-        = aLiteral equal &widechar:$self.
+    #method equal &literal:aLiteral
+        = aLiteral equal &char:$self.
 
-    #method Number = IntNumber new &type'int:theData.
+    #method char = $self.
 
-    #method Literal = system'LiteralValue new &type'length:1 &widechar:$self.
+    #method int = IntNumber new &int:theData.
 
-    #method type'widestr => %Literal. 
+    #method literal = system'LiteralValue new &length:1 &char:$self.
 
-    #method <= &&widechar:$self.
+    #method <= &char:$self.
 }
 
 // --- emptyliteralvalue ---
 
-#symbol emptyLiteralValue =
-{
-    type'widestr = "".
-   
-    equal &type'widestr : aLiteral
-        = 0 equal &type'int:(aLiteral type'length).
-        
-    less &type'widestr : aLiteral
-        = 0 less &type'int:(aLiteral type'length).
-
-    notless &type'widestr : aLiteral
-        = 0 notless &type'int:(aLiteral type'length).
-
-    add : anObject = anObject type'widestr.
-                        
-    add &type'widestr : aLiteral
-        = aLiteral.
-
-    Literal => %type'widestr.
-
-    Length = 0.
-   
-    <= &&type'widestr:($self type'widestr).
-}.
+#symbol emptyLiteralValue = "".
 
 // --- literalvalue ---
 
@@ -404,47 +379,43 @@
     #field theLiteral.
     #field theIndex.
     
-    #constructor new &type'widestr:aLiteral
+    #constructor new &literal:aLiteral
     [
         theLiteral := aLiteral.
-        theIndex := system'Integer new &type'int:(-1).
+        theIndex := system'Integer new &int:(-1).
     ]
 
-    #method Index => %type'index.
-            
-    #method type'index = theIndex Number.
+    #method index = theIndex number.
 
     #method reset
     [
         theIndex write &type'int:-1.
     ]
 
-    #method append &type'index:anIndex
+    #method append &index:anIndex
     [
         theIndex append::anIndex.
     ]
 
-    #method write &type'index:anIndex
+    #method set &index:anIndex
     [
         theIndex write::anIndex.
     ]
 
-    #method EOF = theIndex less &type'int:(theLiteral type'length) ? [ false ] ! [ true ].
-    
-    #method Available = theIndex less &type'int:(theLiteral type'length).
+    #method available = theIndex less &int:(theLiteral length).
     
     #method next
     [
-        theIndex append &type'int:1.
+        theIndex append &int:1.
 
-        ^ theIndex less &type'int:(theLiteral type'length).
+        ^ theIndex less &int:(theLiteral length).
     ]
     
     #method get
     [
-        #var(type:short)aChar := theLiteral getAt &type'index:theIndex.
+        #var(type:short)aChar := theLiteral getAt &index:theIndex.
         
-        ^ CharValue new &type'int:aChar.
+        ^ CharValue new &int:aChar.
     ]
 }
 
@@ -452,111 +423,86 @@
 {
     #field(type:literal)theData.
 
-    #constructor new &type'length:aSize 
+    #constructor new &length:aSize 
     [
     ]
 
-    #constructor new &type'length:aSize &type'widestr:aLiteral
+    #constructor new &length:aSize &literal:aLiteral
     [
         theData << aLiteral.
     ]
 
-    #constructor new &type'length:aSize &widechar:aChar
+    #constructor new &length:aSize &char:aChar
         <ws_fill>.
 
-    #constructor new &type'widestr:aLiteral
-        <= new &type'length::aLiteral &type'widestr:aLiteral.
+    #constructor new &literal:aLiteral
+        => &new &length::aLiteral &literal:aLiteral.
 
-    #constructor new &type'length:aSize &type'widestr:aLiteral1 &type'widestr:aLiteral2
-        <ws_concat>.
+    #method literal = $self.
 
-    #method type'widestr = $self.
-
-    #method equal &type'widestr : aLiteral
+    #method equal &literal : aLiteral
         = theData == aLiteral.
 
-    #method equal &widechar : aChar
+    #method equal &char : aChar
         <ws_equalchar>.
 
-    #method less &type'widestr : aLiteral
+    #method less &literal : aLiteral
         = theData < aLiteral.
 
-    #method notless &type'widestr : aLiteral
+    #method notless &literal : aLiteral
         = theData >= aLiteral.
 
     #method add : aLiteral
         = $self add::aLiteral.
 
-    #method add &type'widestr : aLiteral
-    [
-        #var(type:int)aLen := (theData type'length) + (aLiteral type'length).
-        
-        ^ LiteralValue new &type'length:aLen &type'widestr:theData &type'widestr:aLiteral.
-    ]
+    #method add &literal : aLiteral
+        = primitive concat &literal:$self &literal:aLiteral.
 
-    #method add &widechar : aChar
-        = LiteralValue new &type'length:(theData type'length + 1) &type'widestr:theData &type'widestr::aChar.
+    #method add &char : aChar
+        = primitive concat &literal:$self &literal::aChar.
 
     #method getAt : aParam
     [
-        #var(type:short)aChar := $self getAt &type'index::aParam.
+        #var(type:short)aChar := $self getAt &index::aParam.
         
-        ^ CharValue new &type'int:aChar.
+        ^ CharValue new &int:aChar.
     ]
 
-    #method getAt &type'index:anIndex &out'type'short:aChar
+    #method getAt &index:anIndex &out'short:aChar
         <ws_getat>.
 
-    #method indexOf &type'index:anIndex &type'widestr:aLiteral &out'type'int:aRetVal
+    #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
         <ws_indexof>.
 
-    #method indexOf &type'widestr:aLiteral
+    #method indexOf &index:anIndex &literal:aLiteral
     [
-        #var(type:int)aRetVal := $self indexOf &type'index:0 &type'widestr:aLiteral.
+        #var(type:int)aRetVal := $self indexOf &index:anIndex &literal:aLiteral.
         
-        ^ IntNumber new &type'int:(aRetVal).
+        ^ IntNumber new &int:aRetVal.
     ]
     
-    #method indexOf &type'index:anIndex &type'widestr:aLiteral
-    [
-        #var(type:int)aRetVal := $self indexOf &type'index:anIndex &type'widestr:aLiteral.
-        
-        ^ IntNumber new &type'int:(aRetVal).
-    ]
+    #method indexOf &index:anIndex &char:aChar
+        => &indexOf &index:anIndex &literal::aChar.
     
-    #method indexOf &type'index:anIndex &widechar:aChar
+    #method insert &index:anIndex &literal:aLiteral
+        = primitive insert &literal:$self &index:anIndex &literal:aLiteral.
+
+    #method delete &index:anIndex &length:aLength
+        = primitive delete &literal:$self &index:anIndex &length:aLength.
+
+    #method Substring &index:anIndex &length:aLength
+        = primitive Substring &literal:$self &index:anIndex &length:aLength.
+
+    #method length
     [
-        #var(type:int)aRetVal := $self indexOf &type'index:anIndex &type'widestr::aChar.
+        #var(type:int)aLength := theData length.
         
-        ^ IntNumber new &type'int:(aRetVal).
-     ]
-     
-    #method insert &type'index:anIndex &type'widestr:aLiteral
-        = strOp insert &type'widestr:$self &type'index:anIndex &type'widestr:aLiteral.
-
-    #method delete &type'index:anIndex &type'length:aLength
-        = strOp delete &type'widestr:$self &type'index:anIndex &type'length:aLength.
-
-    #method Substring &type'index:anIndex &type'length:aLength
-        = strOp substring &type'widestr:$self &type'index:anIndex &type'length:aLength.
-
-    #method Substring &type'index:anIndex
-        = strOp substring &type'widestr:$self &type'index:anIndex &type'length:(theData type'length - anIndex).
-
-    #method Length <= type'length.
-
-    #method type'length
-    [
-        #var(type:int)aLength := theData type'length.
-        
-        ^ IntNumber new &type'int:(aLength).
+        ^ IntNumber new &int:aLength.
     ]
 
-    #method Literal = $self.
+    #method enumerator = LiteralIterator new &literal:$self.
 
-    #method Enumerator = LiteralIterator new &type'widestr:$self.
-                                    
-    #method <= &&type'widestr:$self.
+    #method <= &literal:$self.
 }
 
 // === Basic Variable Classes ===
@@ -570,54 +516,54 @@
         $self write::aValue.
     ]
     
-    #method Number = IntNumber new &type'int:$self.
+    #method number = IntNumber new &int:$self.
 
     #method write : anOperand
     [
-        $self write &type'int::anOperand.
+        $self write &int::anOperand.
     ]
     
     #method append : anOperand
     [
-        $self append &type'int::anOperand.
+        $self append &int::anOperand.
     ]
     
     #method reduce : anOperand
     [
-        $self reduce &type'int::anOperand.
+        $self reduce &int::anOperand.
     ]
     
     #method multiplyBy : anOperand
     [
-        $self multiplyBy &type'int::anOperand.
+        $self multiplyBy &int::anOperand.
     ]
     
     #method divideInto : anOperand
     [
-        $self divideInto &type'int::anOperand.
+        $self divideInto &int::anOperand.
     ]
     
-    #method write &type'int:anOperand
+    #method write &int:anOperand
     [
         theData << anOperand.
     ]
     
-    #method append &type'int:anOperand    
+    #method append &int:anOperand    
     [
         theData += anOperand.
     ]
         
-    #method reduce &type'int:anOperand
+    #method reduce &int:anOperand
     [
         theData -= anOperand.
     ]
         
-    #method multiplyBy &type'int:anOperand
+    #method multiplyBy &int:anOperand
     [
         theData *= anOperand.
     ]        
         
-    #method divideInto &type'int:anOperand
+    #method divideInto &int:anOperand
     [
         theData /= anOperand.
     ]
@@ -627,7 +573,7 @@
 
 #class Long : LongNumber
 {
-    #method Number = LongNumber new &type'long:$self.
+    #method number = LongNumber new &long:$self.
 
     #method write : anOperand
     [
@@ -654,47 +600,47 @@
         $self divideInto::anOperand.
     ]
         
-    #method write &type'long:anOperand
+    #method write &long:anOperand
     [
         theData << anOperand.
     ]
     
-    #method append &type'long:anOperand
+    #method append &long:anOperand
     [
         theData += anOperand.
     ]
         
-    #method reduce &type'long:anOperand
+    #method reduce &long:anOperand
     [
         theData -= anOperand.
     ]
         
-    #method multiplyBy &type'long:anOperand
+    #method multiplyBy &long:anOperand
     [
         theData *= anOperand.
     ]        
         
-    #method divideInto &type'long:anOperand
+    #method divideInto &long:anOperand
     [
         theData /= anOperand.
     ]
     
-    #method write &type'int:anOperand
+    #method write &int:anOperand
     [
         theData << anOperand.
     ]
     
-    #method append &type'int:anOperand
-        <= append &type'long:(LongNumber new &type'int:anOperand).
+    #method append &int:anOperand
+        => &append &long:(LongNumber new &int:anOperand).
         
-    #method reduce &type'int:anOperand
-        <= reduce &type'long:(LongNumber new &type'int:anOperand).
+    #method reduce &int:anOperand
+        => &reduce &long:(LongNumber new &int:anOperand).
         
-    #method multiplyBy &type'int:anOperand
-        <= multiplyBy &type'long:(LongNumber new &type'int:anOperand).
+    #method multiplyBy &int:anOperand
+        => &multiplyBy &long:(LongNumber new &int:anOperand).
         
-    #method divideInto &type'int:anOperand
-        <= divideInto &type'long:(LongNumber new &type'int:anOperand).
+    #method divideInto &int:anOperand
+        => &divideInto &long:(LongNumber new &int:anOperand).
 }
 
 // --- Real ---
@@ -706,7 +652,7 @@
         $self << aValue.
     ]
     
-    #method Number = RealNumber new &type'real:$self.
+    #method number = RealNumber new &real:$self.
 
     #method write : anOperand
     [
@@ -733,52 +679,52 @@
         $self divideInto::anOperand.
     ]
     
-    #method write &type'real:anOperand
+    #method write &real:anOperand
     [
         theData << anOperand.
     ]
     
-    #method write &type'int:anOperand
+    #method write &int:anOperand
     [
         theData << anOperand.
     ]
     
-    #method append &type'real:anOperand
+    #method append &real:anOperand
     [
         theData += anOperand.
     ]
         
-    #method append &type'int:anOperand
+    #method append &int:anOperand
     [
         theData += anOperand.
     ]
         
-    #method reduce &type'real:anOperand
+    #method reduce &real:anOperand
     [
         theData -= anOperand.
     ]
         
-    #method reduce &type'int:anOperand
+    #method reduce &int:anOperand
     [
         theData -= anOperand.
     ]
         
-    #method multiplyBy &type'real:anOperand
+    #method multiplyBy &real:anOperand
     [
         theData *= anOperand.
     ]        
         
-    #method multiplyBy &type'int:anOperand
+    #method multiplyBy &int:anOperand
     [
         theData *= anOperand.
     ]        
         
-    #method divideInto &type'real:anOperand
+    #method divideInto &real:anOperand
     [
         theData /= anOperand.
     ]
         
-    #method divideInto &type'int:anOperand
+    #method divideInto &int:anOperand
     [
         theData /= anOperand.
     ]
@@ -797,15 +743,15 @@
             
     #constructor new : aValue
     [
-        theValue := aValue type'widestr.
+        theValue := aValue literal.
     ]
     
     #method write : anOperand
     [
-        theValue := anOperand type'widestr.
+        theValue := anOperand literal.
     ]
     
-    #method write &type'widestr:aLiteral
+    #method write &literal:aLiteral
     [
         theValue := aLiteral.
     ]
@@ -815,22 +761,27 @@
         theValue := theValue + anOperand.
     ]
     
-    #method insert &type'index:anIndex &type'widestr:aLiteral
+    #method append &literal:anOperand
     [
-        theValue := theValue insert &type'index:anIndex &type'widestr:aLiteral.
+        theValue := theValue add &literal:anOperand.
     ]
+    
+//    #method insert &type'index:anIndex &type'widestr:aLiteral
+//    [
+//        theValue := theValue insert &type'index:anIndex &type'widestr:aLiteral.
+//    ]
+//            
+//    #method delete &type'index:anIndex &type'length:aLength
+//    [
+//        theValue := theValue delete &type'index:anIndex &type'length:aLength.
+//    ]
+//                        
+//    #method clear
+//    [
+//        theValue := emptyLiteralValue.
+//    ]
             
-    #method delete &type'index:anIndex &type'length:aLength
-    [
-        theValue := theValue delete &type'index:anIndex &type'length:aLength.
-    ]
-                        
-    #method clear
-    [
-        theValue := emptyLiteralValue.
-    ]
-            
-    #method <= &&type'widestr:theValue.
+    #method <= &literal:theValue.
     
     #method => theValue.
 }
@@ -875,46 +826,44 @@
     #field theIndex.
     #field theCount.
     
-    #constructor new &type'array:anArray
+    #constructor new &array:anArray
     [
         theArray := anArray.
-        theCount := anArray Count.
-        theIndex := Integer new &type'int:-1.
+        theCount := anArray length.
+        theIndex := Integer new &int:-1.
     ]
     
-    #method Index => %type'index.
-    
-    #method type'index = theIndex Number.
+    #method index = theIndex number.
 
     #method reset
     [
-        theIndex write &type'int:-1.
+        theIndex write &int:-1.
     ]
 
-    #method set &type'index:anIndex
+    #method set &index:anIndex
     [
-        theIndex write::anIndex.
+        theIndex write &int:anIndex.
     ]
     
-    #method append &type'index:anIndex
+    #method append &index:anIndex
     [
-        theIndex append::anIndex.
+        theIndex append &int:anIndex.
     ]
 
-    #method EOF = theIndex >= theCount.
-    
+    #method available = theIndex less &int:theCount.
+  
     #method next
     [
-        theIndex append &type'int:1.
+        theIndex append &int:1.
 
-        ^ theIndex less &type'int:theCount.
+        ^ theIndex less &int:theCount.
     ]
 
-    #method get = theArray getAt &type'index:theIndex.
+    #method get = theArray getAt &index:theIndex.
 
     #method set : anObject
     [
-        theArray setAt &type'index:theIndex &type'object:anObject.
+        theArray setAt &index:theIndex &object:anObject.
     ]
 }
 
@@ -924,130 +873,138 @@
 {
     #field(type:array)theItems.
     
-    #constructor new &type'length:aLength
+    #constructor new &length:aLength
     [
-    ]
-
-    #constructor new &type'length:aCount &function:aFunction
-    [
-        #var anEnumerator := $self Enumerator.
-        
-        control while:(anEnumerator next) &do:[ anEnumerator set:(aFunction eval:(anEnumerator Index)) ].
     ]
 
     #method getAt : anIndex
-        = $self getAt &type'index::anIndex.
+        = $self getAt &index::anIndex.
 
-    #method getAt &type'index:anIndex
+    #method getAt &index:anIndex
         <array_getat>.
 
     #method setAt:anIndex:anObject
     [
-        $self setAt &type'index::anIndex &type'object:anObject.
+        $self setAt &index::anIndex &object:anObject.
     ]
     
-    #method setAt &type'index:anIndex &type'object:anObject
+    #method setAt &index:anIndex &object:anObject
         <array_setat>.
 
     #method add : anObject
         = $self add::anObject.
         
-    #method add &type'array:anArray
+    #method add &array:anArray
     [
-        #var aLength1 := $self type'length.
-        #var aLength2 := anArray type'length.
+        #var aLength1 := $self length.
+        #var aLength2 := anArray length.
         
-        #var aRetVal := Array new &type'length:(aLength1 + aLength2).
+        #var aRetVal := Array new &length:(aLength1 + aLength2).
         
-        control from:0 &till:aLength1 &do: &&:i
-            [ aRetVal setAt &type'index:i &type'object:(self getAt &type'index:i). ].
+        control from:0 &till:aLength1 &do: i
+            [ aRetVal setAt &index:i &object:(self getAt &index:i). ].
             
-        control from:0 &till:aLength2 &do: &&:j
-            [ aRetVal setAt &type'index:(aLength1 + j) &type'object:(anArray getAt &type'index:j). ].
+        control from:0 &till:aLength2 &do: j
+            [ aRetVal setAt &index:(aLength1 + j) &object:(anArray getAt &index:j). ].
             
         ^ aRetVal.
     ]
 
-    #method type'length 
+    #method array = $self.
+
+    #method length 
     [
-        #var(type:int)aLen := arrayOp read &type'length:$self.
+        #var(type:int)aLen := primitive readLength &array:$self.
         
-        ^ IntNumber new &type'int:aLen.
+        ^ IntNumber new &int:aLen.
     ]
 
-    #method Count <= type'length.
+    #method enumerator = ArrayIterator new &array:$self.
 
-    #method Enumerator = ArrayIterator new &type'array:$self.
-
-    #method Clone
-        = Array new &type'length::$self &function: &&:i [ self@i ].
-
-    #method <= &&type'array:$self.
+    #method <= &array:$self.
 }
 
 // === Basic Convertors ===
 
-// --- ELiteralConvertor ---
+// --- convertor helpers ---
 
-#class(role) ELiteralConvertor
+#symbol intConvertor =
 {
-    #method read &type'int
+    convert &literal:aLiteral
     [
-        #var(type:int)aRetVal := strOp convert &type'widestr::self.
+        #var(type:int)aRetVal := primitive convert &literal:aLiteral.
         
-        ^ IntNumber new &type'int:aRetVal.
+        ^ IntNumber new &int:aRetVal.
     ]
+    
+    convert &int:anInt
+        = anInt.
+}.
 
-    #method read &type'long
+#symbol longConvertor =
+{
+    convert &literal:aLiteral
     [
-        #var(type:long)aRetVal := strOp convert &type'widestr::self.
+        #var(type:long)aRetVal := primitive convert &literal:aLiteral.
         
-        ^ LongNumber new &type'long:aRetVal.
+        ^ LongNumber new &long:aRetVal.        
     ]
+    
+    convert &long:aLong
+        = aLong.
+}.
 
-    #method read &type'real
+#symbol realConvertor =
+{
+    convert &literal:aLiteral
     [
-        #var(type:real)aRetVal := strOp convert &type'widestr::self.
+        #var(type:real)aRetVal := primitive convert &literal:aLiteral.
         
-        ^ RealNumber new &type'real:aRetVal.
+        ^ RealNumber new &real:aRetVal.
     ]
-}
+    
+    convert &real:aReal
+        = aReal.
+        
+    convert &int:anInt
+        = RealNumber new &int:anInt.
+        
+    convert &long:aLong
+        = RealNumber new &long:aLong.
+}.
 
-// --- EIntConvertor ---
-
-#class(role) EIntConvertor
+#symbol literalConvertor =
 {
-    #method read &type'widestr
-        = self Literal.
-}
-
-// --- ELongConvertor ---
-
-#class(role) ELongConvertor
-{
-    #method read &type'widestr
-        = self Literal.
-}
-
-// --- ERealConvertor ---
-
-#class(role) ERealConvertor
-{
-    #method read &type'widestr
-        = self Literal.
-}
+    convert &int:aNumber
+        = aNumber literal.
+        
+    convert &int:aNumber &base:aRadix
+        = primitive toLiteral &int:aNumber &index::aRadix.
+        
+    convert &long:aNumber
+        = aNumber literal.
+        
+    convert &real:aNumber
+        = aNumber literal.
+        
+    convert &object:anObject
+        = anObject literal.
+        
+    convert &literal:aLiteral
+        = aLiteral.
+}.
 
 // --- Variant ---
 
 #class Variant : String
 {
-    #method type'int = theValue~ELiteralConvertor read &type'int.
+    #method int = intConvertor convert &literal:theValue.
     
-    #method type'long = theValue~ELiteralConvertor read &type'long.
+    #method long = longConvertor convert &literal:theValue.
     
-    #method type'real = theValue~ELiteralConvertor read &type'real.
+    #method real = realConvertor convert &literal:theValue.
     
-    #method type'widestr = theValue.
+    #method literal = theValue.
 }
 
 // === Basic Factory symbols ==
@@ -1090,14 +1047,3 @@
         
     #method => theValue.
 }
-
-// --- BasicType ---
-
-#symbol typeControl =
-{
-    eval &type'int : anObject = %type'int.
-    eval &type'real : anObject = %type'real.
-    eval &type'long : anObject = %type'long.
-    eval &type'widestr : anObject = %type'widestr.
-    eval &widechar : anObject = %widechar.
-}.

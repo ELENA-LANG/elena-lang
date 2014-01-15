@@ -7,8 +7,8 @@ Ultimate goals
 
 Version 2.0.0
 -------------
-- simple byte code optimization
-- vmt-less action
+- simple code optimization (pi < 2s)
+- vmt-less action                 
 - start the code documentation
 - start developing GUI support, declarative gui description
 - migrate existing GUI samples to lib30

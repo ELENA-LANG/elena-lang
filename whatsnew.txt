@@ -18,12 +18,16 @@ ELC:
 [*] some byte-code optimization
 [-] fixed bug with external operation error handling
 [-] fixed bug with exception handling sub code
+[-] fixed bug with control&do&until virtual implementation
+
+[LIB]
+[!] ELENA API refactored and simplified
 
 ELENAVM:
 [-] fixed bug with stack allocated object boxing
 
 Samples:
-[+] rosseta code: bullscows
+[+] rosseta code: bullscows, calendar
 
 Tools:
 [*] asm2binx: fixed ModR/M and SIB encoding bug

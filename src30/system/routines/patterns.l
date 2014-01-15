@@ -1,77 +1,46 @@
 #define system.
 
-// === helpers ===
+// === extensions ===
 
-// --- EList ---
+// --- misc ---
 
-#class(role)EList
+#class(role)misc
 {
-    #method run : aFunction
-        = control foreach:self &do:aFunction.
-        
-    #method seek : aFunction
-        = control foreach:self &until:aFunction.
-
-    #method Enumerator
-        = IndexedListEnumerator new:self.
-
-    #method getAt : anIndex
-    [
-        #var anEnumerator := self Enumerator.
-        
-        control from:0 &to:anIndex &do: &&:n[ anEnumerator next ].
-        
-        ^ anEnumerator get.
-    ]
-    
-    #method setAt : anIndex : aValue
-    [
-        #var anEnumerator := self Enumerator.
-        
-        control from:0 &to:anIndex &do: &&:n[ anEnumerator next ].
-        
-        anEnumerator set:aValue.
-    ]
-    
-    #method Last
-        = self~EList getAt:(self type'length - 1).
-    
-    #method Array
-    [
-        ^ system'Array new &type'length::self &function: &&:anIndex [ self~EList getAt:anIndex ].
-    ]
+    #method back : anObject = anObject.
 }
 
-// --- EArray ---
+// --- indexable ---
 
-#class(role) EArray
+#class(role) indexable
 {
-    #method set &function:aFunction
+    #method set &each:aFunction
     [
-        #var anEnumerator := self Enumerator.
+        #var anEnumerator := self enumerator.
         
-        control while:(anEnumerator next) &do:[ anEnumerator set:(aFunction eval:(anEnumerator Index)) ].
+        control while:(anEnumerator next) &do:[ anEnumerator set:(aFunction eval:(anEnumerator index)) ].
+        
+        ^ self.
     ]
     
     #method exchange:anIndex1:anIndex2
     [
-        #var aTemp := self getAt &type'index::anIndex1.
+        #var aTemp := self getAt &index::anIndex1.
         
-        self setAt:anIndex1:(self getAt &type'index::anIndex2).
+        self setAt:anIndex1:(self getAt &index::anIndex2).
         self setAt:anIndex2:aTemp.
     ]
 
-    #method Subarray &type'index:anIndex &type'length:aLength
-        = Array new &type'length:aLength &function: &&:i [ self@(anIndex + i) ].
+    #method Subarray &index:anIndex &length:aLength
+        = Array new &length:aLength ~indexable set &each: i [ self@(anIndex + i) ].
 
     #method sort : aCondition
     [
-        #var aCurrent := self Enumerator.
-        #var aNext := self Enumerator.
+        #var aCurrent := self enumerator.
+        #var aNext := self enumerator.
 
         control while:[ aCurrent next ] &do:
         [
-            aNext set &type'index::aCurrent.
+            aNext set &index::aCurrent.
             control while:[ aNext next ] &do:
             [
                 aCondition eval:(aCurrent get):(aNext get)
@@ -85,167 +54,297 @@
         
         ^ self.
     ]
-    
-    #method DeepClone
-        = Array new &type'length::self &function: &&:i
-            [ (self @ i) Clone ].
+
+    #method array
+        = Array new &length::self ~indexable set &each: i [ self @ i ].
+
+    #method deepClone
+        = Array new &length::self ~indexable set &each: i
+            [ (self @ i) ~indexable array ].
 }
 
-// --- EEnumerator ---
+// --- literalOp ---
 
-#class(role)EEnumerator
+#class(role)literalOp
+{
+    #method indexOf &literal:aLiteral
+    [
+        #var(type:int)aRetVal := self indexOf &index:0 &literal:aLiteral.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf &index:anIndex &char:aChar
+    [
+        #var(type:int)aRetVal := self indexOf &index:anIndex &literal::aChar.
+        
+        ^ IntNumber new &int:aRetVal.
+     ]
+
+    #method Substring &index:anIndex
+    [
+        #var(type:int)aLength := self length.
+        aLength := aLength - anIndex.
+        
+        ^ self Substring &index:anIndex &length:aLength.
+    ]
+     
+//    #method trimStart &widechar:aChar
+//    [
+//        #var theIndex := Integer new.
+//        control while:[self getAt &type'index:theIndex == aChar ] &do:[ theIndex += 1. ].
+//        
+//        ^ self delete &type'index:0 &type'length:theIndex.
+//    ]
+    
+    #method split &char:aChar
+    [
+        #var aList := system'collections'List new.
+        #var aStart := 0.
+        #var anIndex := 0.
+        
+        control do:
+        [
+            anIndex := self indexOf &index:aStart &char:aChar.
+            (-1 != anIndex) ?
+            [
+                aList += self Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + 1.
+            ]
+            ! [
+                aList += self Substring &index:aStart &length:(self length - aStart).
+            ].
+        ]        
+        &until:[anIndex == -1].
+        
+        ^ aList~indexable array.
+    ]
+    
+    #method split &literal:aValue
+    [
+        #var aList := system'collections'List new.
+        #var aStart := 0.
+        #var anIndex := 0.
+        
+        control do:
+        [
+            anIndex := self indexOf &index:aStart &literal:aValue.
+            (-1 != anIndex) ?
+            [
+                aList += self Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + aValue length.
+            ]
+            ! [
+                aList += self Substring &index:aStart &length:(self length - aStart).
+            ].
+        ]        
+        &until:[anIndex == -1].
+        
+        ^ aList~indexable array.
+    ]
+}
+
+#class(role)textOp
+{
+//    #method append : aLine &paddingLeft:aWidth &with:aChar
+//    [
+//        #var aLength := aLine Literal type'length.        
+//        (aLength < aWidth)
+//            ? [ self append:aChar &type'length:(aWidth - aLength) ].
+//            
+//        self append::aLine.
+//    ]
+//
+//    #method append : aLine &padding:aWidth &with:aChar
+//    [
+//        #var aLength := aLine Literal type'length.        
+//        (aLength < aWidth)
+//            ? [
+//                #var aLen := aWidth - aLength.
+//                #var aLeftLen := aLen / 2.
+//                
+//                self append:aChar &type'length:aLeftLen append::aLine append:aChar &type'length:(aLen - aLeftLen).
+//            ]
+//            ! [ self append::aLine. ].
+//    ]
+//
+//    #method append : aLine &type'length:aLength
+//    [
+//        control from:0 &till:aLength &do: &&:i
+//        [
+//            self append::aLine.
+//        ].
+//    ]
+}
+
+// --- enumerable ---
+
+#class(role)enumerable
 {
     #method run : aFunction
-        = control while:[ self next ] &do: [ aFunction:self. ].
+        = control foreach:self &do:aFunction.
+        
+    #method seek : aFunction
+        = control foreach:self &until:aFunction.
+
+    #method find : aValue
+        = control foreach:self &until: x [ aValue equal:x ].
+        
+    #method getAt : anIndex
+    [
+        #var anEnumerator := self enumerator.
+        
+        control from:0 &to:anIndex &do: n[ anEnumerator next ].
+        
+        ^ anEnumerator get.
+    ]
+    
+    #method setAt : anIndex : aValue
+    [
+        #var anEnumerator := self enumerator.
+        
+        control from:0 &to:anIndex &do: n[ anEnumerator next ].
+        
+        anEnumerator set:aValue.
+    ]
+    
+    #method Last
+        = self~enumerable getAt:(self length - 1).
+    
+    #method array
+    [
+        #var aListIndexer := EnumerableIndexer new &enumerable:self.
+        
+        ^ Array new &length::self ~indexable set &each:anIndex[ aListIndexer set &index:anIndex get ].
+    ]
 }
+
+//// --- EEnumerator ---
+//
+//#class(role)EEnumerator
+//{
+//    #method run : aFunction
+//        = control while:[ self next ] &do: [ aFunction:self. ].
+//}
+
+// === helpers ===
 
 // --- listControl ---
 
 #symbol listControl =
 {
     foreach:aList &do:anAction
-        = aList~EList run:anAction.
-        
+        = aList~enumerable run:anAction.
+
     find:aValue &in:aList
-        = aList~EList seek: &&:x [ aValue equal:x ].
-        
-    seek:aList &for:anAction
-        = aList~EList seek:anAction.
-        
+        = aList~enumerable find:aValue.
+
+    seek:aList &until:anAction
+        = aList~enumerable seek:anAction.
+
     ifExist:aValue &in:aList
-        = nil != aList~EList seek: &&:x [ aValue equal:x ].
+        = nil != aList~enumerable seek: x [ aValue equal:x ].
         
-    getAt:anIndex &in:aList
-        = aList~EList getAt:anIndex.
-        
-    toArray : aList
-        = aList~EList Array.
+//    getAt:anIndex &in:aList
+//        = aList~EList getAt:anIndex.
+//        
+//    toArray : aList
+//        = aList~EList Array.
         
     sort : aList &with:aCondition
     [
-        Wrap(EList, aList)~EArray sort:aCondition.
+        #var aCurrent := EnumerableIndexer new &enumerable:aList.
+        #var aNext := EnumerableIndexer new &enumerable:aList.
+
+        control while:[ aCurrent next ] &do:
+        [
+            aNext set &index::aCurrent.
+            control while:[ aNext next ] &do:
+            [
+                aCondition eval:(aCurrent get):(aNext get)
+                    ! [
+                        #var aTmp := aCurrent get.
+                        aCurrent set:(aNext get).
+                        aNext set:aTmp.
+                    ].
+            ].
+        ].
         
         ^ aList.
     ]    
+
+    sort : aList
+    [
+        listControl sort:aList &with:(:aFormer:aLater) [ aFormer < aLater ].
+        
+        ^ aList.
+    ]
+
+    toArray : anEnumerable
+        = anEnumerable ~enumerable array.
 }.
 
 // --- arrayControl ---
 
 #symbol arrayControl =
 {
-    forEach:anArray &do:aFunction
-    [
-        anArray~EArray set &function:aFunction.
-    ]
+    new &length:aLength &each:aFunction
+        = Array new &length:aLength ~indexable set &each:aFunction.
+    
+    toArray : anIndexable
+        = anIndexable ~indexable array.
+    
+//    forEach:anArray &do:aFunction
+//    [
+//        anArray~EArray set &function:aFunction.
+//    ]
         
     exchange:anIndex1 &with:anIndex2 &in:anArray
     [
-        anArray~EArray exchange:anIndex1:anIndex2.
+        anArray~indexable exchange:anIndex1:anIndex2.
     ]
     
     find:aValue &in:anArray
-        = anArray~EList seek: &&:x [ aValue equal:x ].
-        
-    seek:anArray &for:aFunction
-        = anArray~EList seek:aFunction.
+        = anArray~enumerable seek: x [ aValue equal:x ].
+
+    seek:anArray &until:aFunction
+        = anArray~enumerable seek:aFunction.
         
     ifExist:aValue &in:anArray
-        = nil != anArray~EList seek: &&:x [ aValue equal:x ].
+        = nil != anArray~enumerable seek: x [ aValue equal:x ].
         
     sort : anArray
-        = anArray~EArray sort: &&:aFormer:aLater [ aFormer < aLater ].        
+        = anArray~indexable sort: (:aFormer:aLater) [ aFormer < aLater ].        
         
-    copy : anArray &from:anIndex &length:aLength
-        = anArray~EArray Subarray &type'index::anIndex &type'length:aLength.
+    Subarray : anArray &from:anIndex &length:aLength
+        = anArray~indexable Subarray &index::anIndex &length:aLength.
 }.
 
-// --- ELiteralOp ---
+// --- literalControl ---
 
-#class(role)ELiteralOp
+#symbol literalControl =
 {
-    #method trimStart &widechar:aChar
-    [
-        #var theIndex := Integer new.
-        control while:[self getAt &type'index:theIndex == aChar ] &do:[ theIndex += 1. ].
-        
-        ^ self delete &type'index:0 &type'length:theIndex.
-    ]
-    
-    #method split &widechar:aChar
-    [
-        #var aList := system'collections'List new.
-        #var aStart := 0.
-        #var anIndex := 0.
-        
-        control do:
-        [
-            anIndex := self indexOf &type'index:aStart &widechar:aChar.
-            (-1 != anIndex) ?
-            [
-                aList += self Substring &type'index:aStart &type'length:(anIndex - aStart).
-                aStart := anIndex + 1.
-            ]
-            ! [
-                aList += self Substring &type'index:aStart &type'length:(self type'length - aStart).
-            ].
-        ]        
-        &until:[anIndex == -1].
-        
-        ^ aList~EList Array.
-    ]
-    
-    #method split &type'widestr:aValue
-    [
-        #var aList := system'collections'List new.
-        #var aStart := 0.
-        #var anIndex := 0.
-        
-        control do:
-        [
-            anIndex := self indexOf &type'index:aStart &type'widestr:aValue.
-            (-1 != anIndex) ?
-            [
-                aList += self Substring &type'index:aStart &type'length:(anIndex - aStart).
-                aStart := anIndex + aValue type'length.
-            ]
-            ! [
-                aList += self Substring &type'index:aStart &type'length:(self type'length - aStart).
-            ].
-        ]        
-        &until:[anIndex == -1].
-        
-        ^ aList~EList Array.
-    ]
-    
-    #method Array
-        = self~EList Array.
-}
-
-// --- stringControl ---
-
-#symbol stringControl =
-{
-    split:aLiteral &by:aChar
+    split:aLiteral &by:aSplitter
         = { 
-            eval &type'widestr:aSplitter [ ^ aLiteral~ELiteralOp split &type'widestr:aSplitter. ] 
+            eval &literal:aSplitter [ ^ aLiteral~literalOp split &literal:aSplitter. ] 
             
-            eval &widechar:aSplitter [ ^ aLiteral~ELiteralOp split &widechar:aSplitter. ] 
-          } eval::aChar.
+            eval &char:aSplitter [ ^ aLiteral~literalOp split &char:aSplitter. ] 
+          } eval::aSplitter.
     
-    trimStart:aChar &in:aString
-        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
-        
+//    trimStart:aChar &in:aString
+//        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
+
     toArray : aLiteral
-        = aLiteral~ELiteralOp Array.
-        
+        = aLiteral ~indexable array.
+
     starting : anS &with:aSubS
-        = 0 == anS indexOf &type'index:0 &type'widestr::aSubS.
+        = 0 == anS indexOf &index:0 &literal::aSubS.
         
     ending : anS &with:aSubS
-        = (anS Length - aSubS Length) == anS indexOf &type'index:0 &type'widestr::aSubS.
+        = (anS length - aSubS length) == anS indexOf &index:0 &literal::aSubS.
         
     contain : aSubS &in:anS
-        = -1 != anS indexOf &type'index:0 &type'widestr::aSubS.
+        = -1 != anS indexOf &index:0 &literal::aSubS.
 }.
 
 // === patterns ===
@@ -297,7 +396,7 @@
     
     #method for : aCounter
     [
-        $self~EFunction reverse &for:(Integer new) &from:0 &till:aCounter &by:1.
+        $self~functionOp reverse &for:(Integer new) &from:0 &till:aCounter &by:1.
     ]
 }
 

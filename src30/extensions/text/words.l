@@ -3,18 +3,6 @@
 
 // --- WordEnumerator ---
 
-#symbol CSpaceMode =
-{
-    $nextChar
-        => %$nextSpace.
-}.
-
-#symbol CWordMode =
-{
-    $nextChar
-        => %$nextWord.
-}.
-
 #class WordEnumerator
 {
     #field theIndexer.
@@ -23,38 +11,38 @@
     
     #constructor new : aLiteral
     [
-        theIndexer := aLiteral Enumerator write &type'index:0.
+        theIndexer := aLiteral enumerator set &index:0.
         theWord := TextBuffer new.
     ]    
     
-    #method $nextSpace
+    #method next &space
         = (theIndexer get == 32)
             ? [ theIndexer next ]
-            ! [ theRole := CWordMode. ^ true. ].
+            ! [ theRole := %word. ^ true. ].
     
-    #method $nextWord
+    #method next &word
     [
         #var aChar := theIndexer get.
         
         ^ (aChar == 32)
             ? [ false ]
-            ! [ theWord append &widechar:aChar. ^ theIndexer next. ].
+            ! [ theWord write &char:aChar. ^ theIndexer next. ].
     ]
     
     #method next
     [
         theWord clear.
 
-        (theIndexer EOF)        
-            ! [
-                theRole := CSpaceMode.
+        (theIndexer available)
+            ? [
+                theRole := %space.
         
-                control while:[ $self~theRole $nextChar ] &do:[].
+                control while:[ $self~theRole next ] &do:[].
             ].
-        
-        ^ 0 != theWord type'length.
+
+        ^ 0 != theWord length.
     ]
     
-    #method get = theWord Literal.
+    #method get = theWord literal.
 }
 

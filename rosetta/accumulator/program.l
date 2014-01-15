@@ -14,9 +14,9 @@ ELENA is OO language, so a function is in fact an object
 #define system'dynamic.
 
 #symbol Function = 
-    &&:x [ self append:x ].
+    (:x) [ self append:x ].
 
-#symbol Accumulator = &&:anInitialValue
+#symbol Accumulator = (:anInitialValue)
     [ Wrap(Function, Variable new:anInitialValue) ].
 
 #symbol Program =

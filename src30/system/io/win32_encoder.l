@@ -4,6 +4,6 @@
 
 #symbol ansiLiteralEncoder =
 {
-    read &type'bytearray:aByteArray &type'length:aLength
-        = strOp convert &type'bytearray:aByteArray &type'length:aLength.
+    read &bytearray:aByteArray &length:aLength
+        = primitive toLiteral &bytearray:aByteArray &length:aLength.
 }.

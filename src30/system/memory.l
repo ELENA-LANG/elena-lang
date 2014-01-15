@@ -4,37 +4,34 @@
 {
     #field(type:bytearray)theData.
     
-    #constructor new &type'length : aLength
+    #constructor new &length : aLength
     [
     ]
     
-    #method type'bytearray = $self.
+    #method bytearray = $self.
 
-    #method write &type'index:anIndex &type'length:aLength &type'bytearray:aDump
+    #method write &index:anIndex &length:aLength &bytearray:aDump
         <bs_write>.
 
-    #method write &type'index:anIndex &type'widestr:aLiteral
+    #method write &index:anIndex &literal:aLiteral
         <bs_writestr>.
 
-    #method read &type'index:anIndex &type'length:aLength &type'bytearray:aDump
+    #method read &index:anIndex &length:aLength &bytearray:aDump
         <bs_read>.
 
-    #method indexOf &type'index:anIndex &type'length:aLength &type'byte:aByte &out'type'int:aRetVal
+    #method indexOf &index:anIndex &length:aLength &byte:aByte &out'int:aRetVal
         <bs_findbyte>.
 
-    #method indexOf &type'index:anIndex &type'length:aLength &type'short:aWord &out'type'int:aRetVal
+    #method indexOf &index:anIndex &length:aLength &short:aWord &out'int:aRetVal
         <bs_findshort>.
 
-    #method Length 
-        <= type'length.
-
-    #method type'length
+    #method length
     [
-        #var(type:int)aLength := theData type'length.
+        #var(type:int)aLength := theData length.
         
-        ^ IntNumber new &type'int:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 
-    #method <= &&type'dump:$self.
+    #method <= &bytearray:$self.
 }
 

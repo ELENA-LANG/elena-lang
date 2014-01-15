@@ -9,15 +9,15 @@
     else : aTrueAction = nil.
 
     or : anExpr = $self.
-            
-    and : anExpr <= and::anExpr.
-    
-    xor : anExpr <= xor::anExpr.
+
+    and : anExpr => &and::anExpr.
+
+    xor : anExpr => &xor::anExpr.
 
     and &bool:aBool = aBool.
 
-    and &action:aBoolExpr = aBoolExpr eval.
-    
+    and &action:aBoolExpr = aBoolExpr eval bool.
+
     and &type'int:anInt 
         = 0 != anInt.
                 
@@ -25,18 +25,22 @@
     
     xor &action:aBoolExpr = aBoolExpr eval ? [ false ] ! [ true ].
             
-    equal : aBool <= equal::aBool.
+    equal : aBool => &equal::aBool.
     
-    equal &bool:aBool <= equal &type'object:aBool.
+    equal &bool:aBool = aBool ? [ true ] ! [ false ].
             
     equal &action:aBoolExpr 
-        = $self equal &bool:(aBoolExpr eval).
+        = $self equal &bool::(aBoolExpr eval).
             
     not = false.
 
-    Literal = "true".
+    literal = "true".
+    
+    int = -1.
 
-    <= &&bool:$self.    
+    bool = $self.
+
+    <= &bool:$self.
 }.
 
 // --- false ---
@@ -49,17 +53,17 @@
 
     else : aFalseAction = aFalseAction eval.
 
-    or : anExpr <= or::anExpr.
+    or : anExpr => &or::anExpr.
             
     and : anExpr = $self.
-    
+
     and &action:aBoolExpr = $self.
     
-    xor : anExpr <= xor::anExpr.
+    xor : anExpr => &xor::anExpr.
 
     or &bool:aBool = aBool.
 
-    or &action:aBool = aBool eval.
+    or &action:aBool = aBool eval bool.
         
     or &type'int:anInt 
         = 0 != anInt.
@@ -68,18 +72,22 @@
     
     xor &action:anExpr = anExpr eval ? [ true ] ! [ false ].
 
-    equal : aBool <= equal::aBool.
+    equal : aBool => &equal::aBool.
     
-    equal &bool:aBool <= equal &type'object:aBool.
+    equal &bool:aBool = aBool ? [ false ] ! [ true ].
             
     equal &action:aBoolExpr 
-        = $self equal &bool:(aBoolExpr eval).
+        = $self equal &bool::(aBoolExpr eval).
             
     not = true.
 
-    Literal = "false".
+    literal = "false".
 
-    <= &&bool:$self.    
+    int = 0.
+
+    bool = $self.
+
+    <= &bool:$self.    
 }.
 
 // --- BreakException ---
@@ -93,7 +101,7 @@
 
 // --- action role class ---
 
-#class(role) EAction
+#class(role) actionOp
 {
     #method run &if:aBool
     [
@@ -116,9 +124,9 @@
 
 // --- function role class ---
 
-#class(role) EFunction
+#class(role) functionOp
 {    
-    #method run &each:anEnumerator
+    #method run &for:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -128,7 +136,7 @@
         ^ nil.        
     ]
     
-    #method run &each:anEnumerator &where:aConditionFunction
+    #method run &for:anEnumerator &where:aConditionFunction
     [
         #loop (anEnumerator next) ?
         [
@@ -205,40 +213,40 @@
     do:anAction = anAction eval.
     
     do:anAction &until:anExpr
-        = anAction~EAction run &until:anExpr | stop.
+        = anAction~actionOp run &until:anExpr | stop.
         
     while:anExpr
         = $self while:anExpr &do:[].
 
     while:anExpr &do:anAction
-        = anAction~EAction run &if:anExpr | stop.
+        = anAction~actionOp run &if:anExpr | stop.
 
     foreach:anEnumerable &do:aFunction
-        = aFunction~EFunction run &each:(anEnumerable Enumerator) | stop.
+        = aFunction~functionOp run &for:(anEnumerable enumerator) | stop.
 
     foreach:anEnumerable &until:aFunction
     [
-        #var anEnumerator := anEnumerable Enumerator.
+        #var anEnumerator := anEnumerable enumerator.
         
         ^ control while:[anEnumerator next] &do:
-        [
-            aFunction eval:(anEnumerator get) ?
-                [ #break anEnumerator get. ].
-        ].
+            [
+                aFunction eval:(anEnumerator get) ?
+                    [ #break anEnumerator get. ].
+            ].
     ]
     
     for:anIterator &from:aStart &to:anEndValue &by:aStep &do:aFunction
-        = aFunction~EFunction run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
+        = aFunction~functionOp run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
 
     from:aStart &to:anEndValue &do:aFunction
-        = aFunction~EFunction run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
+        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
             
     from:aStart &till:anEndValue &do:aFunction
-        = aFunction~EFunction run &for:(system'Integer new) &from:aStart &till:anEndValue &by:1 | stop.
+        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &till:anEndValue &by:1 | stop.
             
     for:anIterator &from:aStart &backTo:anEndValue &by:aStep &do:aFunction
-        = aFunction~EFunction reverse &for:anIterator &from:anEndValue &to:aStart &by:aStep | stop.
+        = aFunction~functionOp reverse &for:anIterator &from:anEndValue &to:aStart &by:aStep | stop.
             
     from:aStart &backTo:anEndValue &do:aFunction
-        = aFunction~EFunction reverse &for:(system'Integer new) &from:anEndValue &to:aStart &by:1 | stop.
+        = aFunction~functionOp reverse &for:(system'Integer new) &from:anEndValue &to:aStart &by:1 | stop.
 }.

@@ -1,88 +1,97 @@
-// --- intOp ---
+// --- primitive ---
 
-#symbol intOp =
+#symbol primitive =
 {
-    shift &type'int:aValue &type'int:aShift &out'type'int:aRetVal
+    shift &int:aValue &int:aShift &out'int:aRetVal
         <int_shift>.
         
-    shift &type'long:aValue &type'int:aShift &out'type'long:aRetVal
+    shift &long:aValue &int:aShift &out'long:aRetVal
         <long_shift>.
         
-    invert &type'int:aValue &out'type'int:aRetVal
+    invert &int:aValue &out'int:aRetVal
         <int_not>.
         
-    invert &type'long:aValue &out'type'long:aRetVal
+    invert &long:aValue &out'long:aRetVal
         <long_not>.
-}.
 
-// --- strOp ---
-
-#symbol strOp =
-{
-    convert &type'int:aValue
+    toLiteral &int:aValue
         <ws_copyint>.
          
-    convert &type'int:aValue &type'index:aRadix
+    toLiteral &int:aValue &index:aRadix
         <ws_copyint_radix>.
         
-    convert &type'long:aValue
+    toLiteral &long:aValue
         <ws_copylong>.
-        
-    convert &type'long:aValue &type'index:aRadix
+
+    toLiteral &long:aValue &index:aRadix
         <ws_copylong_radix>.
-        
-    convert &type'real:aValue
-        <ws_copyreal>.
-        
-    convert &type'real:aValue &type'length:aLength
-        <ws_copyreal_len>.
-        
-    convert &type'bytearray:aValue &type'length:aLength
+                
+    toLiteral &bytearray:aValue &length:aLength
         <ws_copybuf>.
         
-    convert &type'widestr:aValue &out'type'int:aRetVal
+    toLiteral &real:aValue
+        <ws_copyreal>.
+        
+    toLiteral &real:aValue &length:aLength
+        <ws_copyreal_len>.
+        
+    concat &literal:s1 &literal:s2
+        <ws_concat>.
+
+    readLength &array:anObject &out'int:aRetVal
+        <array_getlen>.
+        
+    convert &literal:aValue &out'int:aRetVal
         <n_copystr>.
         
-    convert &type'widestr:aValue &out'type'long:aRetVal
+    convert &literal:aValue &out'long:aRetVal
         <l_copystr>.
         
-    convert &type'widestr:aValue &out'type'real:aRetVal
+    convert &literal:aValue &out'real:aRetVal
         <r_copystr>.
         
-    insert &type'widestr:anS &type'index:anIndex &type'widestr:aSubS
+    insert &literal:anS &index:anIndex &literal:aSubS
         <ws_insert>.
         
-    delete &type'widestr:anS &type'index:anIndex &type'length:aLength
+    delete &literal:anS &index:anIndex &length:aLength
         <ws_delete>.
         
-    substring &type'widestr:anS &type'index:anIndex &type'length:aLength
+    Substring &literal:anS &index:anIndex &length:aLength
         <ws_subs>.
         
-    refresh &type'widestr:anS
+    refresh &literal:anS
         <ws_refresh>.
-}.
-
-// --- byteArrayOp ---
-
-#symbol byteArrayOp =
-{
-    equal &type'bytearray:anArray &type'index:anIndex &type'short:aWord
-        <bs_equalword>.
-       
-    equal &type'bytearray:anArray &type'index:anIndex &type'int:aNumber
-        <bs_equalint>.
-       
-    write &type'bytearray:anArray &type'index:anIndex &type'short:aWord
+        
+    write &bytearray:anArray &index:anIndex &short:aWord
         <bs_writeword>.
         
-    read &type'bytearray:anArray &type'index:anIndex &out'type'short:aWord
+    read &bytearray:anArray &index:anIndex &out'short:aWord
         <bs_readword>.
+        
+    equal &bytearray:anArray &index:anIndex &short:aWord
+        <bs_equalword>.
+       
+    equal &bytearray:anArray &index:anIndex &int:aNumber
+        <bs_equalint>.
 }.
 
-// --- arrayOp ---
+// --- mathPrimitive ---
 
-#symbol arrayOp =
+#symbol mathPrimitive =
 {
-    read &type'length:anObject &out'type'int:aRetVal
-        <array_getlen>.
+    Exp &real:aValue &out'real:aRetVal
+        <r_exp>.
+        
+    Ln &real:aValue &out'real:aRetVal
+        <r_ln>.
+        
+    Abs &real:aValue &out'real:aRetVal
+        <r_abs>.
+        
+    Round &real:aValue &out'real:aRetVal
+        <r_round>.
+        
+    Truncate &real:aValue &out'real:aRetVal
+        <r_truncate>.
 }.
+

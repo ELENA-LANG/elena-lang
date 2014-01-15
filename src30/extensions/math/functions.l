@@ -3,20 +3,20 @@
 
 // --- Functions ---
 
-#symbol exp = &&:x
-    [ (realValue:x)~EReal Exp ].
+#symbol exp = (:x)
+    [ (realValue:x)~mathOp Exp ].
 
-#symbol ln = &&:x
-    [ (realValue:x)~EReal Ln ].
+#symbol ln = (:x)
+    [ (realValue:x)~mathOp Ln ].
     
-#symbol power = &&:x:y
+#symbol power = (:x:y)
     [ exp:((ln:(realValue:x)) * y) ].
 
-#symbol round = &&:x
-    [ (realValue:x)~EReal Rounded ].
+#symbol round = (:x)
+    [ (realValue:x)~mathOp Rounded ].
     
-#symbol abs = &&:x
-  [ (realValue:x)~EReal Abs ].
+#symbol abs = (:x)
+  [ (realValue:x)~mathOp Abs ].
 
-#symbol modulus = &&:x:y
+#symbol modulus = (:x:y)
     [ x - (x / y * y) ].

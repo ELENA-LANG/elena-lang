@@ -1,5 +1,26 @@
 #define system.
 
+// --- memoryOp ---
+
+#class(role) memoryOp
+{
+    #method write &literal:aLiteral
+    [
+        self write &bytearray:aLiteral &length:(aLiteral length * 2).
+    ]    
+    
+    #method read &literal &length:aLength
+    [
+        #var aLiteral := LiteralValue new &length:aLength.
+        
+        self read &bytearray:aLiteral &length:(aLength * 2).
+        
+        primitive refresh &literal:aLiteral.
+        
+        ^ aLiteral.
+    ]
+}
+
 // --- MemoryStream ---
 
 #class MemoryStream
@@ -9,63 +30,75 @@
     
     #constructor new &size:aLength
     [
-        theByteArray := ByteArray new &type'length:aLength.
+        theByteArray := ByteArray new &length:aLength.
         thePosition := Integer new.
     ]
 
     #method clear
     [
-        thePosition write &type'int:0.
+        thePosition write &int:0.
     ]
 
-    #method Length => %type'length.
+    #method length = thePosition number.
 
-    #method type'length = thePosition Number.
+    #method bytearray = theByteArray.
 
-    #method type'bytearray = theByteArray.
-
-    #method set &type'length:aLength
+    #method set &length:aLength
     [
-        thePosition write &type'int:aLength.
+        thePosition write &int:aLength.
     ]
 
-    #method Size = theByteArray Length.
+    #method size = theByteArray length.
 
-    #method append &Size:aSize
-    [
-        $self expand::aSize.
-    ]
-
-    #method expand &type'int:aSize
+    #method set &size:aSize
     [
         #var aTemp := theByteArray.
 
-        theByteArray := ByteArray new &type'length:(aSize + aTemp type'length).
+        theByteArray := ByteArray new &length:aSize.
 
-        theByteArray write &type'index:0 &type'length::aTemp &type'bytearray:aTemp.
+        theByteArray write &index:0 &length::aTemp &bytearray:aTemp.
     ]
 
-    #method indexOf &type'index:anIndex &type'byte:aByte
-        = theByteArray indexOf &type'index:anIndex &type'length:thePosition &type'byte:aByte.
-
-    #method indexOf &type'index:anIndex &type'short:aWord
+    #method append &size:aSize
     [
-        #var(type:int)anIndex := theByteArray indexOf &type'index:anIndex &type'length:thePosition &type'short:aWord.
+        #var(type:int)aNewSize := aSize.
+        aNewSize := aNewSize + theByteArray length.
         
-        ^ IntNumber new &type'int:anIndex.
+        $self set &size:aNewSize
     ]
 
-    #method write &type'bytearray:aDump &type'length:aLength
+    #method indexOf &index:anIndex &byte:aByte
     [
-        theByteArray write &type'index:thePosition &type'length:aLength &type'bytearray:aDump.
-
-        thePosition append &type'int:aLength.
-    ]
-
-    #method read &type'bytearray:aDump &type'length:aLength
-    [
-        thePosition reduce &type'int:aLength.
+        #var(type:int)anIndex := theByteArray indexOf &index:anIndex &length:thePosition &byte:aByte.
         
-        theByteArray read &type'index:thePosition &type'length:aLength &type'bytearray:aDump.        
+        ^ IntNumber new &int:anIndex.
+    ]
+
+    #method indexOf &index:anIndex &short:aWord
+    [
+        #var(type:int)anIndex := theByteArray indexOf &index:anIndex &length:thePosition &short:aWord.
+        
+        ^ IntNumber new &int:anIndex.
+    ]
+
+    #method indexOf &index:anIndex &short:aWord &out'int:aRetVal
+    [
+        #var(type:int)anIndex := theByteArray indexOf &index:anIndex &length:thePosition &short:aWord.
+        
+        aRetVal << anIndex.
+    ]
+
+    #method write &bytearray:aDump &length:aLength
+    [
+        theByteArray write &index:thePosition &length:aLength &bytearray:aDump.
+
+        thePosition append &int:aLength.
+    ]
+
+    #method read &bytearray:aDump &length:aLength
+    [
+        thePosition reduce &int:aLength.
+        
+        theByteArray read &index:thePosition &length:aLength &bytearray:aDump.        
     ]
 }

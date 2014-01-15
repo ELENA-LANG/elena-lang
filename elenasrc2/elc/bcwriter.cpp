@@ -440,6 +440,13 @@ inline ref_t defineConstantMask(ObjectType type)
    }
 }
 
+void ByteCodeWriter :: pushObject(ByteCodeIterator bookmark, CommandTape& tape, ObjectInfo object)
+{
+   if (object.kind == okLocal) {
+      tape.insert(bookmark, ByteCommand(bcPushFI, object.reference));
+   }
+}
+
 void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
@@ -778,12 +785,16 @@ void ByteCodeWriter :: callDispatcher(CommandTape& tape, int targetOffset, int p
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-void ByteCodeWriter :: callDispatcher(CommandTape& tape, int paramCount)
+void ByteCodeWriter :: typecast(CommandTape& tape, size_t subject_it)
 {
+   // aloadsi 0
+   // mcopy get&subject
    // acallvi 0
 
-   tape.write(bcACallVI);
-   tape.write(bcFreeStack, 1 + paramCount);
+   tape.write(bcALoadSI);
+   tape.write(bcMCopy, encodeMessage(subject_it, GET_MESSAGE_ID, 0));
+   tape.write(bcACallVI, 0);
+   tape.write(bcFreeStack, 1);
 }
 
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
@@ -854,6 +865,16 @@ void ByteCodeWriter :: dispatchVerb(CommandTape& tape, int verb, int dispatcherO
    tape.write(bcFreeStack, 2);
 }
 
+void ByteCodeWriter :: dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset)
+{
+   // mcopy verb
+   // scallvi dispatcherOffset, 1
+
+   tape.write(bcMCopy, verb);
+   tape.write(bcSCallVI, dispatcherOffset, 1);
+   tape.write(bcFreeStack, 2);
+}
+
 void ByteCodeWriter :: extendObject(CommandTape& tape, ObjectInfo info)
 {
    // bsredirect
@@ -897,9 +918,9 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo info)
          tape.write(bcASaveSI, 1);
          break;
    }
-   // bsredirect
+   // ajumpvi 0
    // throw
-   tape.write(bcBSRedirect);
+   tape.write(bcAJumpVI);
    tape.write(bcThrow);
 }
 

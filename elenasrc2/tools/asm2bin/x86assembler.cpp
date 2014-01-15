@@ -844,7 +844,7 @@ void x86Assembler :: compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWrit
 	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {
 		code->writeByte(0x81);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 1), sour);
-		x86Helper::writeImm(code, dest);
+		x86Helper::writeImm(code, dest, overridden);
 	}
 	else if ((test(sour.type, x86Helper::otR8)||test(sour.type, x86Helper::otM8)) && dest.type==x86Helper::otDB) {
 		code->writeByte(0x80);

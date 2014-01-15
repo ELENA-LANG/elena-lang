@@ -479,7 +479,6 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule, const 
    intSubject = mapSubject(INT_SUBJECT);
    longSubject = mapSubject(LONG_SUBJECT);
    realSubject = mapSubject(REAL_SUBJECT);
-   referenceSubject = mapSubject(REFERENCE_SUBJECT);
    wideStrSubject = mapSubject(WSTR_SUBJECT);
    dumpSubject = mapSubject(DUMP_SUBJECT);
    handleSubject = mapSubject(HANDLE_SUBJECT);
@@ -521,10 +520,7 @@ ObjectType Compiler::ModuleScope :: mapSubjectType(TerminalInfo identifier)
 
 ObjectType Compiler::ModuleScope :: mapSubjectType(ref_t subjRef)
 {
-   if (subjRef == referenceSubject) {
-      return otRef;
-   }
-   else if (subjRef == intSubject) {
+   if (subjRef == intSubject) {
       return otInt;
    }
    else if (subjRef == longSubject) {
@@ -1616,16 +1612,20 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
 
 void Compiler :: compileStackAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
 {
-   if (variableInfo.type == otInt && (object.type == otInt || object.type == otIndex)) {
+   if (variableInfo.type == otInt) {
+      compileTypecast(scope, object, scope.moduleScope->intSubject);
       _writer.copyInt(*scope.tape, variableInfo);
    }
-   else if (variableInfo.type == otShort && (object.type == otShort)) {
+   else if (variableInfo.type == otShort) {
+      compileTypecast(scope, object, scope.moduleScope->intSubject);
       _writer.copyInt(*scope.tape, variableInfo);
    }
-   else if (variableInfo.type == otLong && (object.type == otLong)) {
+   else if (variableInfo.type == otLong) { 
+      compileTypecast(scope, object, scope.moduleScope->longSubject);
       _writer.copyLong(*scope.tape, variableInfo);
    }
-   else if (variableInfo.type == otReal && (object.type == otReal)) {
+   else if (variableInfo.type == otReal) {
+      compileTypecast(scope, object, scope.moduleScope->realSubject);
       _writer.copyLong(*scope.tape, variableInfo);
    }
    else scope.raiseError(errInvalidOperation, node.Terminal());
@@ -1695,6 +1695,10 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             if (info.kind != okIdle)  {
                _writer.loadObject(*scope.tape, info);
                compileStackAssignment(node, scope, scope.mapObject(node.Terminal()), info);
+            }
+            // if the type is specified, check it
+            else if (info.type != otNone && info.type != type) {
+               scope.raiseError(errInvalidOperation, node.Terminal());
             }
          }
          // otherwise, use normal routine
@@ -1792,8 +1796,12 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
             break;
          }
       case nsSubCode:
-      case nsInlineExpression:
+      case nsSubjectArg:
+      case nsMethodParameter:
          result = compileNestedExpression(member, scope, mode);
+         break;
+      case nsInlineExpression:
+         result = compileNestedExpression(objectNode, scope, mode);
          break;
       case nsExpression:
          if (isCollection(member)) {
@@ -1996,20 +2004,20 @@ ObjectInfo Compiler :: compilePrimitiveLengthOut(CodeScope& scope, ObjectInfo ob
       _writer.loadObject(*scope.tape, objectInfo);
       _writer.loadLiteralLength(*scope.tape, ObjectInfo(okCurrent, 0));
 
-      return ObjectInfo(okIdle);
+      return ObjectInfo(okIdle, otInt);
    }
    // if bytearray object is passed as a length argument
    else if (objectInfo.type == otByteArray && mode == tcInt) {
       _writer.loadObject(*scope.tape, objectInfo);
       _writer.loadByteArrayLength(*scope.tape, ObjectInfo(okCurrent, 0));
 
-      return ObjectInfo(okIdle);
+      return ObjectInfo(okIdle, otInt);
    }
    else if (objectInfo.type == otParams && mode == tcInt) {
       _writer.loadObject(*scope.tape, objectInfo);
       _writer.loadParamsLength(*scope.tape, ObjectInfo(okCurrent, 0));
 
-      return ObjectInfo(okIdle);
+      return ObjectInfo(okIdle, otInt);
    }
    else return ObjectInfo(okUnknown);
 }
@@ -2038,20 +2046,6 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, const wch
       count++;
 
       ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~HINT_DIRECT_ORDER);
-      if (IsPrimitiveArray(param.type) && test(mode, HINT_STACKREF_ALLOWED) && (mode & ~HINT_MASK) == tcLen) {
-         // if the length can be calculated directly
-         param = compilePrimitiveLength(scope, param, tcInt);
-         if (param.kind != okUnknown) {
-            _writer.loadObject(*scope.tape, param);
-
-            if (test(mode, HINT_DIRECT_ORDER)) {
-               _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
-            }
-            else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
-
-            return;
-         }
-      }
 
       _writer.loadObject(*scope.tape, param);
 
@@ -2060,11 +2054,8 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, const wch
          boxObject(scope, param, mode);
       }
 
-      _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+      compileTypecast(scope, param, scope.moduleScope->mapSubject(subject));
 
-      // send the subject to the parameter
-      _writer.setMessage(*scope.tape, encodeMessage(scope.moduleScope->mapSubject(subject), GET_MESSAGE_ID, 0));
-      _writer.callDispatcher(*scope.tape, 0, 0);
       if (test(mode, HINT_DIRECT_ORDER)) {
          _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
       }
@@ -2179,21 +2170,21 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
       paramCount = count;
    }
 
-   // if it is out-assigning
+   // if it is out-assigning and is not get message
    // out'type'xxx postfix should be added
-   if (test(mode, HINT_STACKREF_ASSIGN)) {
+   if (test(mode, HINT_STACKREF_ASSIGN) && paramCount > 0 && paramCount != OPEN_ARG_COUNT) {
       switch(ModeToType(mode)) {
          case otShort:
-            signature.append(ConstantIdentifier("&out'type'short"));
+            signature.append(ConstantIdentifier("&out'short"));
             break;
          case otInt:
-            signature.append(ConstantIdentifier("&out'type'int"));
+            signature.append(ConstantIdentifier("&out'int"));
             break;
          case otLong:
-            signature.append(ConstantIdentifier("&out'type'long"));
+            signature.append(ConstantIdentifier("&out'long"));
             break;
          case otReal:
-            signature.append(ConstantIdentifier("&out'type'real"));
+            signature.append(ConstantIdentifier("&out'real"));
             break;
          default:
             // if it was not recognized
@@ -2242,12 +2233,10 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
       else _writer.pushObject(*scope.tape, param);
    }
    else if (arg == nsSubjectArg) {
-      int modePrefix = mode & HINT_MASK;
+      int modePrefix = (mode & HINT_MASK) & ~HINT_STACKREF_ASSIGN;
       TerminalInfo subject = arg.Terminal();
 
-      if (subject == tsReference) {
-         modePrefix |= defineSubjectHint(scope.moduleScope->mapSubjectType(subject));
-      }
+      modePrefix |= defineSubjectHint(scope.moduleScope->mapSubjectType(subject));
 
       arg = arg.nextNode();
 
@@ -2308,12 +2297,10 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
       else {
          // if message has named argument list
          while (arg == nsSubjectArg) {
-            int modePrefix = mode & HINT_MASK;
+            int modePrefix = (mode & HINT_MASK) & ~HINT_STACKREF_ASSIGN;
             TerminalInfo subject = arg.Terminal();
 
-            if (subject == tsReference) {
-               modePrefix |= defineSubjectHint(scope.moduleScope->mapSubjectType(subject));
-            }
+            modePrefix |= defineSubjectHint(scope.moduleScope->mapSubjectType(subject));
 
             arg = arg.nextNode();
 
@@ -2540,9 +2527,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    int paramCount = getParamCount(messageRef);
    bool catchMode = test(mode, HINT_CATCH);
 
-   // if it is generic dispatch
+   // if it is generic dispatch (NOTE: param count is set to zero as the marker)
    if (paramCount == 0 && node.firstChild() == nsTypedMessageParameter) {
-      _writer.dispatchVerb(*scope.tape, messageRef, 1, 0);
+      // HOTFIX : include the parameter
+      _writer.dispatchVerb(*scope.tape, messageRef + 1, 1, 0);
    }
    // if it could be replaced with direct type'length operation
    else if (IsPrimitiveArray(object.type) && messageRef == encodeMessage(scope.moduleScope->lengthSubject, GET_MESSAGE_ID, 0))
@@ -2721,11 +2709,20 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       }
       else if (member == nsAssigning) {
          if (currentObject.type != otNone) {
-            ObjectInfo info = compileExpression(member.firstChild(), scope, TypeToMode(currentObject.type));
 
-            _writer.loadObject(*scope.tape, info);
+            ByteCodeIterator bm = scope.tape->end();
 
-            compileStackAssignment(member, scope, currentObject, info);
+            ObjectInfo info = compileExpression(member.firstChild(), scope, TypeToMode(currentObject.type) | HINT_STACKREF_ASSIGN);
+            if (info.kind != okIdle) {
+               _writer.loadObject(*scope.tape, info);
+
+               compileStackAssignment(member, scope, currentObject, info);
+            }
+            else {
+               // HOTFIX: if assignment was already made inside operation, it should be preceeded by push
+               _writer.pushObject(++bm, *scope.tape, currentObject);
+               _writer.releaseObject(*scope.tape);
+            }
          }
          else {
             ObjectInfo info = compileExpression(member.firstChild(), scope, 0);
@@ -2800,12 +2797,22 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    size_t spaceToRelease = 0;
    ref_t messageRef = compileMessageParameters(node, scope, object, 0, spaceToRelease);
 
-   // if it is a not a constant, compile a role
-   if (role.kind != okConstant)
+   ObjectInfo retVal(okRegister);
+   // if it is dispatching
+   if (node.firstChild() == nsTypedMessageParameter && getParamCount(messageRef) == 0) {
       _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
+      
+      // HOTFIX : include the parameter
+      _writer.dispatchVerb(*scope.tape, messageRef + 1, 1);
+   }
+   else {
+      // if it is a not a constant, compile a role
+      if (role.kind != okConstant)
+         _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
 
-   // send message to the role
-   ObjectInfo retVal = compileMessage(node, scope, role, messageRef, mode);
+      // send message to the role
+      retVal = compileMessage(node, scope, role, messageRef, mode);
+   }
 
    if (spaceToRelease > 0)
       _writer.releaseObject(*scope.tape, spaceToRelease);
@@ -2813,7 +2820,7 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    return retVal;
 }
 
-void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, bool withParameters)
+void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, DNode argNode)
 {
    _writer.declareClass(scope.tape, scope.reference);
 
@@ -2821,10 +2828,9 @@ void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, bool with
    methodScope.message = encodeVerb(SEND_MESSAGE_ID);
 
    ref_t actionMessage = encodeVerb(EVAL_MESSAGE_ID);
-   if (withParameters) {
+   if (argNode != nsNone) {
       // define message parameter
-      DNode args = node.firstChild();
-      actionMessage = declareInlineArgumentList(args, methodScope);
+      actionMessage = declareInlineArgumentList(argNode, methodScope);
 
       node = node.select(nsSubCode);
    }
@@ -2832,7 +2838,7 @@ void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, bool with
    // if it is single expression
    DNode expr = node.firstChild();
    if (expr == nsExpression && expr.nextNode() == nsNone) {
-      if (!withParameters)
+      if (argNode == nsNone)
          actionMessage = encodeVerb(EVAL_MESSAGE_ID);
 
       compileInlineAction(expr, methodScope, actionMessage);
@@ -2943,13 +2949,19 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
    if (node == nsSubCode) {
       compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
 
-      compileActionVMT(node, scope, false);
+      compileActionVMT(node, scope, DNode());
    }
    // if it is an action code block
-   else if (node == nsInlineExpression) {
+   else if (node == nsMethodParameter || node == nsSubjectArg) {
       compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
 
-      compileActionVMT(node, scope, true);
+      compileActionVMT(goToSymbol(node, nsInlineExpression), scope, node);
+   }
+   // if it is a shortcut action code block 
+   else if (node == nsObject) {
+      compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
+
+      compileActionVMT(node.firstChild(), scope, node);
    }
    // if it is inherited symbol expression
    else if (node.Terminal() != nsNone) {
@@ -3018,6 +3030,25 @@ ObjectInfo Compiler :: compileGetProperty(DNode node, CodeScope& scope, int mode
 ObjectInfo Compiler :: compileGetProperty(DNode objectNode, CodeScope& scope, int mode)
 {
    return compileGetProperty(objectNode, scope, mode, scope.moduleScope->mapConstantReference(GETPROPERTY_CLASS));
+}
+
+ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, size_t subject_id)
+{
+   ObjectType type = scope.moduleScope->mapSubjectType(subject_id);
+   // if the object is literal and target is length
+   if (type == otLength && target.type == otLiteral) {
+      return compilePrimitiveLength(scope, target, tcInt);
+   }
+   // if the object type is already known
+   else if (type != otNone && target.type == type) {
+      return target;
+   }
+   else {
+      _writer.pushObject(*scope.tape, target);
+      _writer.typecast(*scope.tape, subject_id);
+
+      return ObjectInfo(okRegister, type);
+   }
 }
 
 ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
@@ -3127,18 +3158,19 @@ ObjectInfo Compiler :: compileControlVirtualExpression(DNode messageNode, CodeSc
 
       CodeScope subScope(&scope);
 
+      DNode cond = condNode.firstChild().firstChild();
       DNode code = loopNode.firstChild().firstChild();
       // check if the loop body can be virtually implemented
       // if it is not possible - leave the procedure
-      if (code != nsSubCode)
+      if (code != nsSubCode || cond != nsSubCode)
          return ObjectInfo();
 
       compileCode(code, subScope);
 
       // condition inline action should be compiled as a normal expression
       //!! temporal: make sure the condition is simple or compile the whole code
-      ObjectInfo cond = compileExpression(condNode.firstChild().firstChild().firstChild(), scope, mode);
-      _writer.loadObject(*scope.tape, cond);
+      ObjectInfo boolExpr = compileExpression(cond.firstChild(), scope, mode);
+      _writer.loadObject(*scope.tape, boolExpr);
 
       _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
       _writer.jumpIfNotEqual(*scope.tape, scope.moduleScope->trueReference);
@@ -3262,16 +3294,15 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
       arg = arg.nextNode();
       if (arg == nsMessageParameter || arg == nsTypedMessageParameter) {
          ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
-         saveObject(scope, info, 0);
 
-         // if it is typed message, subject should be sent to the parameter
          if (arg == nsTypedMessageParameter) {
-            _writer.setMessage(*scope.tape, encodeMessage(param.subject, GET_MESSAGE_ID, 0));
-            _writer.callDispatcher(*scope.tape, 0);
-            _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
-
-            info = ObjectInfo(okSymbol);
+            _writer.loadObject(*scope.tape, info);
+            info = saveObject(scope, compileTypecast(scope, info, param.subject), 0);
          }
+         else {
+            saveObject(scope, info, 0);
+         }
+
 
          // HOTFIX: if it is a literal length output parameter
          // special code should be used to store it
@@ -3436,7 +3467,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
       else if (param.output) {
          _writer.pushObject(*scope.tape, ObjectInfo(okBlockLocalAddress, param.offset));
       }
-      else if (param.subject == moduleScope->intSubject || param.subject == moduleScope->handleSubject) {
+      else if (param.subject == moduleScope->intSubject || param.subject == moduleScope->handleSubject || param.subject == moduleScope->lengthSubject) {
          _writer.pushObject(*scope.tape, ObjectInfo(okBlockOuterField, param.offset));
       }
       count--;
@@ -3677,7 +3708,13 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
 
       _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
 
-      if (allocatePrimitiveObject(scope, defineExpressionType(loperand.type, roperand.type), retVal)) {
+      if (test(mode, HINT_STACKREF_ASSIGN)) {
+         retVal.type = ModeToType(defineExpressionType(loperand.type, roperand.type));
+         retVal.kind = okIdle;
+
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
+      }
+      else if (allocatePrimitiveObject(scope, defineExpressionType(loperand.type, roperand.type), retVal)) {
          _writer.loadObject(*scope.tape, retVal);
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
@@ -3739,7 +3776,9 @@ ObjectInfo Compiler :: compilePrimitiveOperator(DNode& node, CodeScope& scope, i
       boxObject(scope, retVal, mode);
    }
 
-   retVal.kind = okRegister;
+   // if it is assigning expression, the result already in the variable
+   if (retVal.kind != okIdle)
+      retVal.kind = okRegister;
 
    return retVal;
 }
@@ -3767,7 +3806,7 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
    ref_t sign_id = 0;
 
    // if method has generic (unnamed) argument list
-   while (arg == nsMethodParameter) {
+   while (arg == nsMethodParameter || arg == nsObject) {
       TerminalInfo paramName = arg.Terminal();
       int index = 1 + scope.parameters.Count();
       scope.parameters.add(paramName, Parameter(index, otNone));
@@ -3791,7 +3830,7 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
 
       // declare method parameter
       arg = arg.nextNode();
-
+         
       if (arg == nsMethodParameter) {
          // !! check duplicates
 
@@ -3887,9 +3926,8 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
          bool out = false;
          ObjectType type = otNone;
-         if (subject.symbol == tsReference) {
-            type = scope.moduleScope->mapSubjectType(subject, out);
-         }
+         type = scope.moduleScope->mapSubjectType(subject, out);
+
          signature.append(subject);
 
          arg = arg.nextNode();
@@ -3949,15 +3987,17 @@ void Compiler :: compileTransmitor(DNode node, CodeScope& scope)
    }
 }
 
-void Compiler :: compileDispatcher(DNode sign, CodeScope& scope)
+void Compiler :: compileDispatcher(DNode node, CodeScope& scope)
 {
+   DNode sign = node.firstChild();
+
    int parameters = countSymbol(sign, nsMessageParameter);
 
    // if direct dispatching is possible
-   if (parameters == 1 && sign.nextNode() == nsMessageParameter) {
-      ref_t sign_id = encodeMessage(scope.moduleScope->module->mapSubject(sign.Terminal(), false), 0, 1);
+   if (parameters == 1) {
+      ref_t sign_id = encodeMessage(scope.moduleScope->module->mapSubject(node.Terminal(), false), 0, 1);
 
-      DNode paramNode = sign.nextNode().firstChild();
+      DNode paramNode = sign.firstChild();
       // if direct callback is possible
       if (paramNode.nextNode() == nsNone && paramNode.firstChild() == nsNone) {
          ObjectInfo param = compileTerminal(paramNode, scope, 0);
@@ -4014,11 +4054,6 @@ void Compiler :: compileAction(DNode node, MethodScope& scope, ref_t actionMessa
       _writer.endIdleMethod(*codeScope.tape);
    }
    else _writer.endGenericAction(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
-
-   // method optimization
-   // if self / variables are not used try to comment frame openning / closing
-   if (!test(scope.masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
-      _writer.commentFrame(codeScope.tape->end());
 }
 
 void Compiler :: compileInlineAction(DNode node, MethodScope& scope, ref_t actionMessage)
@@ -4044,92 +4079,109 @@ void Compiler :: compileInlineAction(DNode node, MethodScope& scope, ref_t actio
 
 void Compiler :: compileResend(DNode node, CodeScope& scope)
 {
-   // if it is a resend to the constant object / field
-   if (node.firstChild() == nsNone) {
-      ObjectInfo target = compileTerminal(node, scope, 0);
-      if (target.kind == okConstant || target.kind == okField) {
-         _writer.resend(*scope.tape, target);
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-         return;
-      }
-   }
    // if it is resend to itself
-   if (node.firstChild() == nsMessageReference) {
-      DNode subj = node.firstChild().firstChild();
-      // Make sure only verb / custom verb is used
-      if (subj.nextNode() == nsNone) {
-         MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   if (node == nsMessageOperation) {
+      _writer.declareMethod(*scope.tape, methodScope->message, true);
 
-         TerminalInfo verb = subj.Terminal();
-         ref_t verb_id = _verbs.get(verb.value);
-         int sign_id = getSignature(methodScope->message);
-         int paramCount = getParamCount(methodScope->message);
+      compileMessage(node, scope, ObjectInfo(okSelf), 0);
+      compileEndStatement(node, scope);
 
-         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
-
-         if (verb_id == 0) {
-            verb_id = paramCount == 0 ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
-
-            // if it is custom verb
-            // simulate the verb change by creating a new signature
-            IdentifierString newSignature(verb.value);
-
-            if (sign_id != 0) {
-               const wchar16_t* sign = scope.moduleScope->module->resolveSubject(sign_id);
-
-               // ignore the first argument if it is a custom verb
-               if (methodScope->withCustomVerb) {
-                  int index = StringHelper::find(sign, '&');
-
-                  newSignature.append(sign + index);
-               }
-               else {
-                  newSignature.append('&');
-                  newSignature.append(sign);
-               }
-            }
-
-            _writer.redirectVerb(*scope.tape, encodeMessage(scope.moduleScope->module->mapSubject(newSignature, false),
-               verb_id, paramCount));
-         }
-         else _writer.redirectVerb(*scope.tape, encodeMessage(sign_id, verb_id, paramCount));
-
-         return;
-      }
-      else scope.raiseError(errInvalidOperation, node.Terminal());
+      _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
    }
-   // otherwise send again the message to the new target
-   // store the message
-   _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
-   // compile target
-   ObjectInfo target = compileObject(node, scope, HINT_ROOTEXPR);
-   if (checkIfBoxingRequired(target))
-      boxObject(scope, target, 0);
+   else {
+      _writer.declareMethod(*scope.tape, methodScope->message, false);
 
-   _writer.loadObject(*scope.tape, target);
+      // if it is a resend to the constant object / field
+      DNode expr = node.firstChild();
+      if (expr == nsNone) {
+         ObjectInfo target = compileTerminal(node, scope, 0);
+         if (target.kind == okConstant || target.kind == okField) {
+            _writer.resend(*scope.tape, target);
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
+      }
+      //// if it is resend to itself
+      //else if (expr == nsMessageReference) {
+      //   DNode subj = expr.firstChild();
+      //   // Make sure only verb / custom verb is used
+      //   if (subj.nextNode() == nsNone) {
+      //      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-   _writer.popObject(*scope.tape, ObjectInfo(okCurrentMessage));
-   _writer.resend(*scope.tape, ObjectInfo(okRegister));
+      //      TerminalInfo verb = subj.Terminal();
+      //      ref_t verb_id = _verbs.get(verb.value);
+      //      int sign_id = getSignature(methodScope->message);
+      //      int paramCount = getParamCount(methodScope->message);
+
+      //      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
+
+      //      if (verb_id == 0) {
+      //         verb_id = paramCount == 0 ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
+
+      //         // if it is custom verb
+      //         // simulate the verb change by creating a new signature
+      //         IdentifierString newSignature(verb.value);
+
+      //         if (sign_id != 0) {
+      //            const wchar16_t* sign = scope.moduleScope->module->resolveSubject(sign_id);
+
+      //            // ignore the first argument if it is a custom verb
+      //            if (methodScope->withCustomVerb) {
+      //               int index = StringHelper::find(sign, '&');
+
+      //               newSignature.append(sign + index);
+      //            }
+      //            else {
+      //               newSignature.append('&');
+      //               newSignature.append(sign);
+      //            }
+      //         }
+
+      //         _writer.redirectVerb(*scope.tape, encodeMessage(scope.moduleScope->module->mapSubject(newSignature, false),
+      //            verb_id, paramCount));
+      //      }
+      //      else _writer.redirectVerb(*scope.tape, encodeMessage(sign_id, verb_id, paramCount));
+         //}
+      //}
+      //else {
+      //   // otherwise send again the message to the new target
+      //   // store the message
+      //   _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
+      //   // compile target
+      //   ObjectInfo target = compileObject(node, scope, HINT_ROOTEXPR);
+      //   if (checkIfBoxingRequired(target))
+      //      boxObject(scope, target, 0);
+
+      //   _writer.loadObject(*scope.tape, target);
+
+      //   _writer.popObject(*scope.tape, ObjectInfo(okCurrentMessage));
+      //   _writer.resend(*scope.tape, ObjectInfo(okRegister));
+      //}
+      else scope.raiseError(errInvalidOperation, node.Terminal());
+
+      _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
+   }
 }
 
 void Compiler :: compileMessageDispatch(DNode node, CodeScope& scope)
 {
-   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+  // MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-  // int parameters = countSymbol(node, nsMessageParameter);
+  //// int parameters = countSymbol(node, nsMessageParameter);
 
-   _writer.declareMethod(*scope.tape, methodScope->message, true);
+  // _writer.declareMethod(*scope.tape, methodScope->message, true);
 
-   compileMessage(node, scope, ObjectInfo(okSelf), 0);
+  // compileMessage(node, scope, ObjectInfo(okSelf), 0);
 
-   compileEndStatement(node, scope);
+  // compileEndStatement(node, scope);
 
-   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+  // _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 
-   // method optimization
-   // if self / variables are not used try to comment frame openning / closing
-   if (!test(methodScope->masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
-      _writer.commentFrame(scope.tape->end());
+  // // method optimization
+  // // if self / variables are not used try to comment frame openning / closing
+  // if (!test(methodScope->masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
+  //    _writer.commentFrame(scope.tape->end());
 }
 
 void Compiler :: compileBreakHandler(CodeScope& scope, int mode)
@@ -4181,14 +4233,12 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, DNode hints*/)
          importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
          _writer.endIdleMethod(*codeScope.tape);
       }
-      else if (resendBody != nsNone) {
-         _writer.declareMethod(*codeScope.tape, scope.message, false);
-         compileResend(resendBody.firstChild(), codeScope);
-         _writer.endMethod(*codeScope.tape, paramCount + 1, scope.reserved, false);
+      else if (resendBody != nsNone) {         
+         compileResend(resendBody.firstChild(), codeScope);         
       }
       // check if it is dispatch
       else if (dispatchBody != nsNone) {
-         compileMessageDispatch(dispatchBody.firstChild(), codeScope);
+         //compileMessageDispatch(dispatchBody.firstChild(), codeScope);
       }
       else {
          _writer.declareMethod(*codeScope.tape, scope.message);
@@ -4255,10 +4305,10 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    codeScope.tape = &classClassScope.tape;
 
    DNode body = node.select(nsSubCode);
-   DNode dispatch = node.select(nsDispatchExpression);
+   DNode resend = node.select(nsResendExpression);
 
-   if (dispatch != nsNone) {
-      compileMessageDispatch(dispatch.firstChild(), codeScope);
+   if (resend != nsNone) {
+      compileResend(resend.firstChild(), codeScope);
    }
    else {
       _writer.declareMethod(*codeScope.tape, scope.message, false);
@@ -4373,13 +4423,13 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
          {
             MethodScope methodScope(&scope);
 
-            // if it is a didpatcher
-            if (member.firstChild() == nsDispatch) {
-               methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-            }
             // if it is a transmitor
-            else if (member.firstChild() == nsResend) {
+            if (member.firstChild() == nsResend) {
                methodScope.message = encodeVerb(SEND_MESSAGE_ID);
+            }
+            // if it is a type qualifier
+            else if (member.firstChild() == nsDispatch) {
+               methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
             }
             else declareArgumentList(member, methodScope);
 

@@ -21,41 +21,41 @@
 
 // --- FileStream ---
 
-#class FileStream : Handler
+#class FileStream : Handle
 {
-    #constructor new &type'widestr:aPath &type'int:dwDesiredAccess &type'int:dwShareMode &type'int:dwCreationDisposition &type'int:dwFlagsAndAttributes
+    #constructor new &literal:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
     [
         theData << system'external'KERNEL32 CreateFileW
-                      &type'widestr:aPath
-                      &type'int:dwDesiredAccess
-                      &type'int:dwShareMode
-                      &type'int:0
-                      &type'int:dwCreationDisposition
-                      &type'int:dwFlagsAndAttributes
-                      &type'int:0.
+                      &literal:aPath
+                      &int:dwDesiredAccess
+                      &int:dwShareMode
+                      &int:0
+                      &int:dwCreationDisposition
+                      &int:dwFlagsAndAttributes
+                      &int:0.
                       
         (-1 == theData)
             ? [ #throw IOException new:"Cannot open the file". ].
     ]
     
-    #method write &type'bytearray:aDump &type'length:aLength
+    #method write &bytearray:aDump &length:aLength
     [
         system'external'KERNEL32 WriteFile
-            &type'handle    : $self
-            &type'bytearray : aDump
-            &type'int       : aLength
-            &out'type'int   : nil
-            &type'int       : 0.
+            &handle    : $self
+            &bytearray : aDump
+            &int       : aLength
+            &out'int   : nil
+            &int       : 0.
     ]
 
-    #method read &type'bytearray:aDump &type'length:aLength
+    #method read &bytearray:aDump &length:aLength
     [
         system'external'KERNEL32 ReadFile
-            &type'handle        : $self
-            &out'type'bytearray : aDump
-            &type'int           : aLength
-            &out'type'length    : aDump
-            &type'int           : 0.
+            &handle        : $self
+            &out'bytearray : aDump
+            &int           : aLength
+            &out'length    : aDump
+            &int           : 0.
     ]
 }
 
@@ -64,5 +64,5 @@
 #symbol fileControl =
 {
     openForRead &path:aPath
-        = FileStream new &type'widestr::aPath &type'int:$FILE_GENERIC_READ &type'int:$FILE_SHARE_READ &type'int:$OPEN_EXISTING &type'int:0.
+        = FileStream new &literal::aPath &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
 }.

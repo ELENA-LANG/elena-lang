@@ -14,10 +14,10 @@
     [ 
         #var anArg := anEnumerator get.
     
-        aList append:(LiteralValue new &type'length:(anArg Length + 4) &type'widestr:anArg).
+        aList append:(LiteralValue new &length:(anArg length + 4) &literal:anArg).
     ].
 
-    ^ Array new &type'length:(aList Count) &function: &&:anIndex [ aList~EList getAt:anIndex ].
+    ^ arrayControl new &length:(aList length) &each: anIndex [ aList @ anIndex ].
 ].
 
 // --- ProgramLoop ---
@@ -43,7 +43,3 @@
 }
 
 #static programLoop = $ProgramLoop new:'program'control.
-
-
-
-

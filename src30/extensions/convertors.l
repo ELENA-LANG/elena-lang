@@ -2,147 +2,116 @@
 #define system'routines.
 #define system'text.
 
-// --- convertor helpers ---
+// --- literalConvertorEx ---
 
-#symbol intConvertor =
+#static literalConvertorEx
+    = GroupExtension(extensions'literalConvertorExtension, literalConvertor).
+
+// --- literalConvertorExtension ---
+
+#class(role)literalConvertorExtension
 {
-    convert &type'widestr:aLiteral
-        = aLiteral~ELiteralConvertor read &type'int.
-}.
+//    convert &type'real:aReal &type'length:aLength
+//    [
+//        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
+//        
+//        ^ anOutput.
+//    ]
+//    
+//    convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
+//    [
+//        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
+//        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.
+//        
+//        ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
+//    ]
 
-#symbol longConvertor =
-{
-    convert &type'widestr:aLiteral
-        = aLiteral~ELiteralConvertor read &type'long.
-}.
-
-#symbol realConvertor =
-{
-    eval &type'int:aNumber
-        = RealNumber new &type'int:aNumber.
-        
-    eval &type'long:aNumber
-        = RealNumber new &type'long:aNumber.
-        
-    eval &type'real : aNumber
-        = aNumber.
-    
-    convert &type'widestr:aLiteral
-        = aLiteral~ELiteralConvertor read &type'real.
-}.
-
-// --- literalConvertor ---
-
-#symbol literalConvertor =
-{
-    convert &type'int:anInteger
-        = anInteger Literal.
-    
-    convert &type'int:anInteger &type'base:aRadix
-    [
-        #var anOutput := strOp convert &type'int:anInteger &type'index:aRadix.
-        
-        ^ anOutput.
-    ]
-    
-    convert &type'long:aLong
-        = aLong Literal.
-    
-    convert &type'long:aLong &type'base:aRadix
-    [
-        #var anOutput := strOp convert &type'long:aLong &type'index:aRadix.
-        
-        ^ anOutput.
-    ]
-    
-    convert &type'real:aReal
-        = aReal Literal.
-    
-    convert &type'real:aReal &type'length:aLength
-    [
-        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
-        
-        ^ anOutput.
-    ]
-    
-    convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
-    [
-        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
-        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.
-        
-        ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
-    ]
-    
-    convert &type'widestr:aLiteral
-        = aLiteral.
-
-    convert &widechar:aChar
-        = aChar Literal.
-
-    convert &type'enumerable:aList &type'widestr:aSeparator
+    #method convert &enumerable:aList &char:aSeparator
     [
         #var theOutput := TextBuffer new.
         
-        aList~EList run: &&:anItem [ theOutput append:(literalConvertor convert::anItem) append:aSeparator ].
+        aList~enumerable run: anItem [ theOutput write:(literalConvertorEx convert::anItem) write:aSeparator ].
         
-        #var aLength := theOutput type'length.
+        #var aLength := theOutput length.
         (0 < aLength)
-            ? [ theOutput set &type'length:(-1 + aLength). ].
+            ? [ theOutput set &length:(-1 + aLength). ].
         
-        ^ theOutput Literal.
+        ^ theOutput literal.
     ]
 
-    convert &type'enumerable:aList
-        <= convert &type'enumerable:aList &type'widestr:",".
+    #method convert &enumerable:aList
+        = $self convert &enumerable:aList &char:",".
 
-    convert &type'array : anArray
-        <= convert &type'enumerable:anArray &type'widestr:",".
+    #method convert &array : anArray
+        = $self convert &enumerable:anArray &char:",".
 
-    convert &type'array:anArray &widechar:aSeparator
-        <= convert &type'enumerable:anArray &type'widestr:aSeparator.
+    #method convert &array:anArray &char:aSeparator
+        = $self convert &enumerable:anArray &char:aSeparator.
 
-    convert &type'reference : anObject
-        = anObject Literal.
-}.
+    #method convert &object : anObject
+        = anObject literal.
+}
 
 // --- convertControl ---
 
 #symbol radixDispatcher = 
 {
-    eval &type'int:anInteger
-        = %(type'int&type'base).
+    eval &int:anInteger
+        = %(int&base).
         
     eval &type'long:aLong
-        = %(type'long&type'base).
+        = %(long&base).
 }.
 
-#symbol convertControl =
+#symbol typecaster =
+{
+    int:n = self int.
+    
+    long:n = self long.
+    
+    real:n = self real.
+    
+    literal:n = self literal.
+}.
+
+#symbol convertor =
 {
     toInt : anObject
         = intConvertor convert::anObject.
-    
+
     toLong : anObject
         = longConvertor convert::anObject. 
     
     toReal : anObject
         = realConvertor convert::anObject.
-        
+                
     toLiteral:anObject
-        = literalConvertor convert:anObject.
+        = anObject literal | ifFailed:[ literalConvertorEx convert::anObject ].
+//        = anObject literal || ~misc back:(literalConvertorEx convert::anObject).
         
-    toLiteral : anObject &radix:anOrder
-        = literalConvertor~(radixDispatcher eval::anObject) convert:anObject:(anOrder type'int).
+    toLiteral : anObject &base:anOrder
+        = literalConvertor~(radixDispatcher eval::anObject) convert:anObject:(anOrder int).
 
-    toLiteral:anObject &length:aLength &decimals:aDecimalLength
-        = literalConvertor convert &type'real::anObject &type'length::aLength &type'length::aDecimalLength.
-        
+//    toLiteral:anObject &length:aLength &decimals:aDecimalLength
+//        = literalConvertor convert &type'real::anObject &type'length::aLength &type'length::aDecimalLength.
+
     save : anObject &to:aTarget
-        = aTarget write:((Variant new:anObject)~(typeControl eval::aTarget) get).
+        = aTarget write:(anObject~typecaster eval::aTarget).
+        
+    saveVariant : anObject &to:aTarget
+        => &save:(Variant new:anObject) &to:aTarget.
 }.
+
+
 
 // --- value helpers ---
 
-#symbol realValue = &&:x
+#symbol realValue = (:x)
 [
-    realConvertor eval::x
+    realConvertor convert::x
+].
+
+#symbol intValue = (:x)
+[
+    intConvertor convert::x
 ].

@@ -11,14 +11,14 @@
         // generate secret number
         #var aRandomNumbers := randomControl randomize:9 &array:(1,2,3,4,5,6,7,8,9).
  
-        theNumbers := arrayControl copy:aRandomNumbers &from:0 &length:4.
+        theNumbers := arrayControl Subarray:aRandomNumbers &from:0 &length:4.
     ]
 
     #method ask
     [
         #var aRow := consoleEx write:"Your Guess ?" readLine.
         
-        ^ stringControl toArray:aRow.
+        ^ literalControl toArray:aRow.
     ]
 
     #method proceed : aGuess
@@ -26,20 +26,20 @@
         #var aCows := Integer new:0.
         #var aBulls := Integer new:0.
 
-        (aGuess Count != 4)
+        (aGuess length != 4)
             ? [ aBulls << -1. ]
             ! [
-                control from:0 &to:3 &do: &&:i
+                control from:0 &to:3 &do: i
                 [
                     #var ch := aGuess@i.
-                    #var aNumber := convertControl toInt:(ch Literal).
+                    #var aNumber := convertor toInt:(ch literal).
                     
                     // check range
                     (aNumber > 0)and:(aNumber < 10)
                         ! [ #throw InvalidArgumentException new. ].
                     
                     // check duplicates
-                    #var duplicate := arrayControl seek:aGuess  &for: &&:x [ (x == ch)and:[ x equal &type'object:ch not ] ].
+                    #var duplicate := arrayControl seek:aGuess &until: x [ (x == ch)and:[ x equal &object:ch not ] ].
                     nil != duplicate ?
                     [
                         #throw InvalidArgumentException new.

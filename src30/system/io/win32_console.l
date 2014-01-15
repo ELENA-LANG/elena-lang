@@ -5,14 +5,14 @@
 #symbol newLine
     = "%r%n".
 
-// --- $ConsoleHandler --
+// --- $ConsoleHandle --
 
-#class $ConsoleHandler : Handler
+#class $ConsoleHandle : Handle
 {
-    #constructor new &type'int:anAttributes
+    #constructor new &attributes:anAttributes
     [
         theData << system'external'KERNEL32 GetStdHandle 
-                      &type'int        : anAttributes.
+                      &int::anAttributes.
     ]
 }
 
@@ -20,27 +20,27 @@
 
 #symbol consoleHelper =
 {
-    _trimLine &type'widestr:anOutput
+    _trimLine &literal:anOutput
         <_console_trimline>.
 }.
 
 #class $ConsoleWriter
 {
-    #field theHandler.
+    #field theHandle.
     
-    #constructor new &type'handle:aHandler 
+    #constructor new &handle:aHandle
     [
-        theHandler := aHandler.
+        theHandle := aHandle.
     ]
-    
-    #method write &type'widestr : aLiteral
+
+    #method write &literal : aLiteral
     [
         system'external'KERNEL32 WriteConsoleW
-            &type'handle  : theHandler
-            &type'widestr : aLiteral
-            &type'int     : (aLiteral type'length)
-            &type'int     : 0                       // !! temporally we do not use it
-            &type'int     : 0.             
+            &handle  :  theHandle
+            &literal :  aLiteral
+            &length  :: aLiteral
+            &int     :: 0                       // !! temporally we do not use it
+            &int     :: 0.             
 
         // !!check the result of the operation
     ]
@@ -50,69 +50,69 @@
 
 #class $ConsoleReader
 {
-    #field theHandler.
+    #field theHandle.
     
-    #constructor new &type'handle:aHandler 
+    #constructor new &handle:aHandle
     [
-        theHandler := aHandler.
+        theHandle := aHandle.
     ]
 
-    #method read &widechar
+    #method read &char
     [
-        #var aDump := ByteArray new &type'length:20.
+        #var aDump := ByteArray new &length:20.
 
         control do:
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &type'handle        : theHandler
-                &out'type'bytearray : aDump
-                &type'int           : 1
-                &out'type'int       : nil.
+                &handle        : theHandle
+                &out'bytearray : aDump
+                &int           : 1
+                &out'int       : nil.
         ]
-        &until:[(byteArrayOp equal &type'bytearray:aDump &type'index:0 &type'short:1)
-                    and:(byteArrayOp equal &type'bytearray:aDump &type'index:4 &type'int:1)].
+        &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
+                    and:(primitive equal &bytearray:aDump &index:4 &int:1)].
                     
-        #var(type:short)aChar := byteArrayOp read &type'bytearray:aDump &type'index:14.
+        #var(type:short)aChar := primitive read &bytearray:aDump &index:14.
                     
-        ^ CharValue new &widechar:aChar.
+        ^ CharValue new &char:aChar.
     ]
 
-    #method read &type'int
+    #method read &int
     [
-        #var aDump := ByteArray new &type'length:20.
+        #var aDump := ByteArray new &length:20.
 
         control do:
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &type'handle        : theHandler
-                &out'type'bytearray : aDump
-                &type'int           : 1
-                &out'type'int       : nil.
+                &handle        : theHandle
+                &out'bytearray : aDump
+                &int           : 1
+                &out'int       : nil.
         ]
-        &until:[(byteArrayOp equal &type'bytearray:aDump &type'index:0 &type'short:1)
-                    and:(byteArrayOp equal &type'bytearray:aDump &type'index:4 &type'int:1)].
+        &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
+                    and:(primitive equal &bytearray:aDump &index:4 &int:1)].
                     
-        #var(type:int)aValue := byteArrayOp read &type'bytearray:aDump &type'index:8.
+        #var(type:int)aValue := primitive read &bytearray:aDump &index:8.
                     
-        ^ IntNumber new &type'int:aValue.
+        ^ IntNumber new &int:aValue.
     ]
 
     // !! HOTFIX: additional method to pass the literal type
-    #method $read &type'widestr:aLiteral &type'length:aLength
+    #method $read &literal:aLiteral &length:aLength
     [
         system'external'KERNEL32 ReadConsoleW
-            &type'handle      : theHandler
-            &out'type'widestr : aLiteral
-            &type'int         : aLength
-            &out'type'length  : aLiteral
-            &type'int         : 0.
+            &handle       : theHandle
+            &out'literal : aLiteral
+            &int          : aLength
+            &out'length   : aLiteral
+            &int          : 0.
     ]
 
-    #method read &type'widestr &type'length:aLength
+    #method read &literal &length:aLength
     [
-        #var aLiteral := LiteralValue new &type'length:aLength.
+        #var aLiteral := LiteralValue new &length:aLength.
 
-        $self $read &type'widestr:aLiteral &type'length:aLength.
+        $self $read &literal:aLiteral &length:aLength.
         
         ^ aLiteral.
     ]
@@ -123,11 +123,11 @@
         
         control do:
         [
-            #var aTemp := $self read &type'widestr &type'length:64.
+            #var aTemp := $self read &literal &length:64.
             
             anOutput := anOutput + aTemp.
         ] 
-        &until:[ consoleHelper _trimLine &type'widestr:anOutput ].
+        &until:[ consoleHelper _trimLine &literal:anOutput ].
         
         ^ anOutput.
     ]
@@ -135,6 +135,6 @@
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new &type'handle:($ConsoleHandler new &type'int:0FFFFFFF5h).
+#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandle new &attributes:0FFFFFFF5h).
 
-#symbol stdConsoleReader = $ConsoleReader new &type'handle:($ConsoleHandler new &type'int:0FFFFFFF6h).
+#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandle new &attributes:0FFFFFFF6h).

@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2013, by Alexei Rakov
+//                                              (C)2009-2014, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -23,6 +23,7 @@ enum ByteCode
    bcPushM          = 0x05,
    bcMCopyVerb      = 0x06,
    bcThrow          = 0x07,
+   //bcSNop           = 0x08,
    bcMCopySubj      = 0x09,
    bcPushA          = 0x0A,
    bcPopA           = 0x0B,
@@ -31,6 +32,7 @@ enum ByteCode
    bcBSRedirect     = 0x0E,
    bcUnbox          = 0x0F,
 
+   bcBSGRedirect    = 0x10,
    bcGetLen         = 0x11,
    bcBCopyA         = 0x12,
    bcDDec           = 0x13,
@@ -157,52 +159,6 @@ enum ByteCode
    bcSCallVI        = 0xFC,
    bcXCallRM        = 0xFE,
 
-
-//   //bcSNop           = 0x08,
-//
-//   bcMccReverse     = 0x310,
-//   bcJumpAcc        = 0x316,
-
-//   bcPushI          = 0x325,
-//   bcPushSPI        = 0x32F,
-//
-//   //bcAccTryN        = 0x36,
-//   //bcAccTryR        = 0x37,
-//
-//   //bcSendVMTR       = 0x46,
-//   bcXMccCopyM      = 0x34C,
-//
-//   bcXAccSaveFI     = 0x6F,
-//
-//   //bcAccCopyM       = 0x7B,
-//
-//   bcRethrow        = 0x80,
-
-//   //bcTryLock        = 0x90,
-//   //bcFreeLock       = 0x91,
-//   //bcSPTryLock      = 0x92,
-//   //bcAccFreeLock    = 0x93,
-//
-   //bcJumpR          = 0xA3,
-//   bcMccElseAcc     = 0xAB,
-//   bcMccThenAcc     = 0xAC,
-//   //bcElseLocal      = 0xAF,
-//
-//   bcAccGetSI       = 0xC0,
-//   bcAccGetFI       = 0xC1,
-//   //bcAccGetAccSI    = 0xC2,
-//   bcAccCreate      = 0xC3,
-//   bcAccFillR       = 0xC4,
-//   //bcAccMergeR      = 0xC8,
-//
-//   //bcMccElseSI      = 0xE8,
-//   //bcMccThenSI      = 0xE9,
-//
-//   bcIAccFillR      = 0xF3,
-//   //bcIAccCopyN      = 0xF4,
-//
-//   bcRCallN         = 0xFD,
-
    bcReserved       = 0xFF,
 
    // labels
@@ -312,7 +268,8 @@ enum FunctionCode
    fnAbs            = 0x0685,
    fnRound          = 0x0686,
    fnLoadName       = 0x0687,
-   fnGetLenZ        = 0x0688
+   fnGetLenZ        = 0x0688,
+   fnInt            = 0x0689,
 };
 
 enum PseudoArg
@@ -456,6 +413,14 @@ struct CommandTape
    void write(ByteCode code, TapeStructure argument, int additional);
    void write(ByteCommand command);
    void insert(ByteCodeIterator& it, ByteCommand command);
+
+   ByteCommand extract()
+   {
+      ByteCommand command = *tape.end();
+      tape.cut(tape.end());
+
+      return command;
+   }
 
    void import(_Memory* section);
 

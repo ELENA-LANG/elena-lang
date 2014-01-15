@@ -12,8 +12,8 @@
 #class(role)EReader
 {
     #method read : aStream
-        =  convertControl save:(aStream readLine) &to:self
-            | onFormatError: &&:e
+        =  convertor saveVariant:(aStream readLine) &to:self
+            | onFormatError: e
                 [
                     console writeLine:(e Message) readChar.
                     

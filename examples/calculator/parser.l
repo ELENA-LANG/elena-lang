@@ -377,7 +377,7 @@
         theStateMachine := StateMachine new.
     ]
     
-    #method eval &type'widestr:aLiteral
+    #method eval &literal:aLiteral
     [
         theStateMachine clear.
         

@@ -29,28 +29,10 @@
         ^ aNode += self.
     ]
 
-    #method Number = convertControl toReal:theValue.    
+    #method Number = convertor toReal:theValue.    
 }
 
 // --- Node ---
-
-#class(role) ENoneAssigned
-{
-    #method append : anObject
-        => %setLeft.
-}
-
-#class(role) ELeftAssigned
-{
-    #method append : anObject
-        => %setRight.
-}
-
-#class(role) ERightAssigned
-{
-    #method append : anObject
-        => %appendRight.
-}
 
 #class Node
 {
@@ -62,19 +44,19 @@
     [
         theRight := aNode.
         
-        theState := ERightAssigned.
+        theState := %appendRight.
     ]
     
     #method setLeft : aNode
     [
         theLeft := aNode.
         
-        theState := ELeftAssigned.
+        theState := %setRight.
     ]
     
     #constructor new
     [
-        theState := ENoneAssigned.
+        theState := %setLeft.
     ]
 
     #method add : aNode
@@ -100,6 +82,9 @@
             theRight := aNode += theRight.
         ].        
     ]
+    
+    #method append : anObject
+        = $self~theState eval:anObject. 
     
     #method => theState.
 }
@@ -186,35 +171,11 @@
 
 // ---- Parser ----
 
-#class(role)EStartState
-{
-    #method eval : aChar
-        => %onStart.
-}
-
-#class(role)EBracketState
-{
-    #method eval : aChar
-        => %onBrackets.
-}
-
-#class(role)EOperatorState
-{
-    #method eval : aChar
-        => %onOperator.
-}
-
-#class(role)ENumberState
-{
-    #method eval : aChar
-        => %onDigit.
-}
-
 #class Parser : system'routines'BasePattern
 {
     #field theToken.
     #field theTopNode.
-    #field theRole.
+    #field theState.
     
     #method onBrackets : aChar
     [
@@ -222,7 +183,7 @@
                 
         (theToken validate)
           ? [
-              theRole := ENumberState.
+              theState := %onDigit.
           ].
     ]
 
@@ -233,19 +194,19 @@
                 theToken := SubExpression new.
                 theTopNode := theToken.
   
-                theRole := EBracketState.
+                theState := %onBrackets.
             ]
             45 ? [ // -
                 theToken := DifferenceNode new add:(Token new:"0").
                 
                 theTopNode := theToken.
                 
-                theRole := EOperatorState.
+                theState := %onOperator.
             ]
             ! [
                 theToken := Token new.
                 theTopNode := theToken.
-                theRole := ENumberState.
+                theState := %onDigit.
                 
                 $self appendDigit:aChar.                
             ].
@@ -257,12 +218,12 @@
             40 ? [
                 theToken := SubExpression new.
                 theTopNode += theToken.
-                theRole := EBracketState.
+                theState := %onBrackets.
             ]
             ! [
                 theToken := Token new.
                 theTopNode += theToken.
-                theRole := ENumberState.
+                theState := %onDigit.
 
                 $self appendDigit:aChar.
             ].
@@ -270,7 +231,7 @@
 
     #constructor new
     [
-        theRole := EStartState.
+        theState := %onStart.
     ]
 
     #method Number = theTopNode Number.
@@ -293,42 +254,42 @@
             40 ? [      // (
                 theToken := SubExpression new.
                 theTopNode := theToken.
-                theRole := EBracketState.
+                theState := %onBrackets.
             ]
             42 ? [      // *
                 theTopNode := theTopNode + ProductNode new.
 
-                theRole := EOperatorState.
+                theState := %onOperator.
             ]
             43 ? [      // +
                 theTopNode := theTopNode + SummaryNode new.
 
-                theRole := EOperatorState.
+                theState := %onOperator.
             ]
             45 ? [      // -
                 theTopNode := theTopNode + DifferenceNode new.
 
-                theRole := EOperatorState.
+                theState := %onOperator.
             ]
             47 ?       // /
             [
                 theTopNode := theTopNode + FractionNode new.
 
-                theRole := EOperatorState.
+                theState := %onOperator.
             ]
             ! [
                 $self appendDigit:aChar.
             ].
     ]
 
-    #method => theRole.
+    #method eval : aChar = $self~theState eval:aChar.
 }
 
 #symbol program =
 [
     #var aText := String new.
 
-    control while:(consoleEx readLine:aText Length > 0) &do:
+    control while:(consoleEx readLine:aText length > 0) &do:
     [
         #var aParser := Parser new.
 

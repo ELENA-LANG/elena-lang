@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2013, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textH
@@ -250,7 +250,7 @@ public:
    void validateBookmark(TextBookmark& bookmark);
 
    void create();
-   bool load(const _path_t* path, int& encoding, bool autoDetecting);
+   bool load(const _path_t* path, int encoding, bool autoDetecting);
    void save(const _path_t* path, int encoding);
 
    void copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, bool stopOnEOL);

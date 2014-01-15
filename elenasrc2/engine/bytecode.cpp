@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2012, by Alexei Rakov
+//                                                 (C)2009-2014, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -43,6 +43,7 @@
 #define OPCODE_BCOPYA       "bcopya"
 #define OPCODE_BOX          "box"
 #define OPCODE_BREAKPOINT   "breakpoint"
+#define OPCODE_BSGREDIRECT  "bsgredirect"
 #define OPCODE_BSREDIRECT   "bsredirect"
 #define OPCODE_BSTEST       "bstest"
 #define OPCODE_CALLEXTR     "callextr"
@@ -176,6 +177,7 @@
 #define FUNC_INDEXOF        "indexof"
 #define FUNC_INDEXOFSTR     "indexofstr"
 #define FUNC_INDEXOFWORD    "indexofword"
+#define FUNC_INT            "int"
 #define FUNC_LESS           "less"
 #define FUNC_LN             "ln"
 #define FUNC_LOAD           "load"
@@ -859,6 +861,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_BCOPYA)) {
       return bcBCopyA;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_BSGREDIRECT)) {
+      return bcBSGRedirect;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_BSREDIRECT)) {
       return bcBSRedirect;
    }
@@ -1270,6 +1275,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcBreakpoint:
          copystr(s, OPCODE_BREAKPOINT);
          break;
+      case bcBSGRedirect:
+         copystr(s, OPCODE_BSGREDIRECT);
+         break;
       case bcBSRedirect:
          copystr(s, OPCODE_BSREDIRECT);
          break;
@@ -1636,6 +1644,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, FUNC_EXP)) {
       return fnExp;
    }
+   else if (ConstantIdentifier::compare(s, FUNC_INT)) {
+      return fnInt;
+   }
    else if (ConstantIdentifier::compare(s, FUNC_GETAT)) {
       return fnGetAt;
    }
@@ -1815,6 +1826,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
          break;
       case fnIndexOfWord:
          copystr(s, FUNC_INDEXOFWORD);
+         break;
+      case fnInt:
+         copystr(s, FUNC_INT);
          break;
       case fnLess:
          copystr(s, FUNC_LESS);

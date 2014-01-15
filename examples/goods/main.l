@@ -21,9 +21,9 @@
     
     #method Price = thePrice.
 
-    #method Literal
+    #method literal
     [
-        ^ "Name:" + theName + " Price:" + thePrice Literal.
+        ^ "Name:" + theName + " Price:" + thePrice literal.
     ]
 }
 
@@ -40,19 +40,19 @@
 
     #method write : aLiteral
     [
-        (0 == theBM Length)
+        (0 == theBM length)
             ! [ theBM += ";". ].
         
         theBM += aLiteral.
     ]
 
     #method read : aVariable
-        = (0 == theBM Length)
+        = (0 == theBM length)
             ? [ false ]
             ! [
-                theBM find &type'widestr:";".
+                theBM find &literal:";".
                 
-                convertControl save:(theBM Marked) &to:aVariable.
+                convertor saveVariant:(theBM Marked) &to:aVariable.
                 
                 theBM mark.
                 
@@ -64,7 +64,7 @@
 
 #symbol Program = 
 [
-    ('program'arguments Count == 1)?
+    ('program'arguments length == 1)?
         [  console << "Please provide the path to the file to view". #throw BreakException new. ].
 
     #var aFileName := 'program'arguments@1.
@@ -72,7 +72,7 @@
     #var aList := List new.
     #var anAdapter := Adapter new.
 
-    textFileControl forEachLine:aFileName &do: &&:aLine
+    textFileControl forEachLine:aFileName &do: aLine
     [
         anAdapter write:aLine.
 
@@ -83,11 +83,11 @@
         [
             anAdapter read:aPrice.
         
-            aList append:(Record new &Price:(aPrice Number) &Name:(aName Literal)).
+            aList append:(Record new &Price:(aPrice number) &Name:(aName literal)).
         ].
     ].
 
-    aList~EList run:printingLn.
+    aList~enumerable run:printingLn.
 
     console readChar.
 ].

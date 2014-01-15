@@ -482,9 +482,12 @@ void ProjectForwardsDialog :: onCreate()
    _ELENA_::ConfigCategoryIterator forwards = Project::Forwards();
    _ELENA_::String<_text_t, IDENTIFIER_LEN> item;
    while (!forwards.Eof()) {
-      item.copy(forwards.key());
+      ParamString fwd(forwards.key());
+      ParamString value((char*)*forwards);
+
+      item.copy(fwd);
       item.append('=');
-      item.append((wchar_t*)*forwards);
+      item.append(value);
 
       addListItem(IDC_FORWARDS_LIST, item);
 

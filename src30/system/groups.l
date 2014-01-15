@@ -8,21 +8,51 @@
     #method => <handle_wrap>.
 }
 
+// --- Roles ---
+
+#class(group) Roles
+{
+    #field(type:array)theRoles.
+    
+    #method => <handle_roles>.
+}
+
+// --- GroupExtension ---
+
+#class(group) GroupExtension
+{
+    #field theRole.
+    #field theObject.
+    
+    #method => <handle_extension>.
+}
+
+// --- ArrayGroupExtension ---
+
+#class(group) ArrayGroupExtension
+{
+    #field theRoleArray.
+    #field theObject.
+    
+    #method => <handle_arraygroupextension>.
+}
+
 // --- Extension ---
 
 #class(group) Extension
 {
-    #field theExtender.
+    #field theRole.
     #field theObject.
     
-    #method => <handle_pair>.
+    #method => <handle_extension>.
 }
 
-// --- RoleList ---
+// --- ArrayExtension ---
 
-#class(group) RoleList
+#class(group) ArrayExtension
 {
-    #field(type:array)theRoles.
+    #field theRoleArray.
+    #field theObject.
     
-    #method => <handle_rolebatch>.
+    #method => <handle_arrayextension>.
 }

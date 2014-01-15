@@ -587,6 +587,126 @@ stop</TD>
 </TD>
 </TR>
 </TABLE>
+<A NAME="ByteArray">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ByteArray</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'ByteArray</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#type_bytearray">type_bytearray</A>
+</DT>
+</DL>
+<P>
+A byte array
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &type'length : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_bytearray">type_bytearray</A>
+</TD>
+<TD><CODE>Creates the byte array with specified length</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+indexOf &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'length : <A HREF="protocol.html#type_int">type_int</A>
+&type'byte : <A HREF="protocol.html#type_byte">type_byte</A>
+&out'type'int : <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the index of the first occurence of the specified byte.<br/>If the substring is not found. returns -1</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+indexOf &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'length : <A HREF="protocol.html#type_int">type_int</A>
+&type'short : <A HREF="protocol.html#type_short">type_short</A>
+&out'type'int : <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the index of the first occurence of the specified word.<br/>If the substring is not found. returns -1</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Length = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the byte array length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'length : <A HREF="protocol.html#type_int">type_int</A>
+&type'bytearray : <A HREF="protocol.html#type_bytearray">type_bytearray</A>
+</TD>
+<TD><CODE>Reads the byte array from the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'bytearray = <A HREF="protocol.html#type_bytearray">type_bytearray</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+type'length = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the byte array length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'length : <A HREF="protocol.html#type_int">type_int</A>
+&type'bytearray : <A HREF="protocol.html#type_bytearray">type_bytearray</A>
+</TD>
+<TD><CODE>Copies the byte array into specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &type'index : <A HREF="protocol.html#type_int">type_int</A>
+&type'widestr : <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Copies the string into specified position</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="CharValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1075,6 +1195,15 @@ mod : <A HREF="protocol.html#type_int">type_int</A>
 <TD><CODE>Returns the remainder after dividing the object by the parameter.</CODE>
 </TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+power : <A HREF="protocol.html#type_int">type_int</A>
+ = <A HREF="protocol.html#type_int">type_int</A>
+</TD>
+<TD><CODE>Returns the power of the operand.</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="ELiteralConvertor">
 <HR>
@@ -1298,6 +1427,22 @@ Exp = <A HREF="protocol.html#type_real">type_real</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+Frac = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the fraction part</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Int = <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Returns the integer part</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 Ln = <A HREF="protocol.html#type_real">type_real</A>
 </TD>
 <TD><CODE>Returns the natural logaritm</CODE>
@@ -1346,6 +1491,114 @@ read &type'widestr : <A HREF="protocol.html#"></A>
 <TD><CODE>Converts the extended real number to a literal value</CODE>
 </TD>
 </TR>
+</TABLE>
+<A NAME="Exception">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Exception</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'Exception</B>
+</PRE>
+<P>
+An exception base class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theMessage&nbsp;</CODE>
+</TD>
+<TD><CODE>The exception message</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Creates an exception with a specified message</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Literal = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns the exception literal presentation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Message = <A HREF="protocol.html#type_widestr">type_widestr</A>
+</TD>
+<TD><CODE>Returns the exception message</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Extension">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Extension</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'Extension</B>
+</PRE>
+<P>
+An extension group object
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theExtender&nbsp;</CODE>
+</TD>
+<TD><CODE>The extending role</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theObject&nbsp;</CODE>
+</TD>
+<TD><CODE>The extender content</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
 </TABLE>
 <A NAME="false">
 <HR>
@@ -1504,6 +1757,54 @@ xor &bool : <A HREF="protocol.html#bool">bool</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Executes logical XOR operation with a boolean value</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="FormatException">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class FormatException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#Exception">system'Exception</A>
+   |
+   +--<B>system'FormatException</B>
+</PRE>
+<P>
+A format exception
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new</TD>
+<TD><CODE>Creates an exception</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+onFormatError : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the exception handler</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2019,6 +2320,54 @@ xor &type'int : <A HREF="protocol.html#type_int">type_int</A>
  = <A HREF="protocol.html#type_int">type_int</A>
 </TD>
 <TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="InvalidArgumentException">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class InvalidArgumentException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#Exception">system'Exception</A>
+   |
+   +--<B>system'InvalidArgumentException</B>
+</PRE>
+<P>
+An invalid argument exception
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new</TD>
+<TD><CODE>Creates an exception</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+onInvalidArgumentError : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the exception handler</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2950,6 +3299,15 @@ Round &type'real : <A HREF="protocol.html#type_real">type_real</A>
 <TD><CODE>Copies rounded to the nearest integral value into the output parameter<br/>Should not be used stand-alone</CODE>
 </TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Truncate &type'real : <A HREF="protocol.html#type_real">type_real</A>
+&out'type'real : <A HREF="protocol.html#type_real">type_real</A>
+</TD>
+<TD><CODE>Copies the integer part to the output parameter<br/>Should not be used stand-alone</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="nil">
 <HR>
@@ -3036,6 +3394,54 @@ notequal : <A HREF="protocol.html#object">object</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Returns false if the specified object is equal to the current object; otherwise, true.<br/>By default compares the object references.</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="OutOfRangeException">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class OutOfRangeException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#Exception">system'Exception</A>
+   |
+   +--<B>system'OutOfRangeException</B>
+</PRE>
+<P>
+An out of range exception
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new</TD>
+<TD><CODE>Creates an exception</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+onOutOfRangeError : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the exception handler</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -3417,6 +3823,27 @@ type'real = <A HREF="protocol.html#type_real">type_real</A>
 <TD><CODE>Returns itself</CODE>
 </TD>
 </TR>
+</TABLE>
+<A NAME="RoleList">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class RoleList</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'RoleList</B>
+</PRE>
+<P>
+A role list
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
 </TABLE>
 <A NAME="String">
 <HR>
@@ -3873,6 +4300,47 @@ type'real = <A HREF="protocol.html#type_real">type_real</A>
 <TD><CODE>Tries to convert the literal value to a real numeric value</CODE>
 </TD>
 </TR>
+</TABLE>
+<A NAME="Wrap">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class Wrap</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'Wrap</B>
+</PRE>
+<P>
+A wrap group object
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theRole&nbsp;</CODE>
+</TD>
+<TD><CODE>The wrapper role</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theObject&nbsp;</CODE>
+</TD>
+<TD><CODE>The wrapper content</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
 </TABLE>
 <HR>
 <A NAME="navbar_top"><!-- --></A>
