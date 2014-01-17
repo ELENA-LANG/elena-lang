@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2013, by Alexei Rakov
+//                                              (C)2011-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -192,7 +192,12 @@ void ScriptVMCompiler :: parseMessage(TextSourceReader& source, wchar16_t* token
       message.append('#');
       message.append(0x20 + verbId);
    }
-   else message.append(token);
+   else {
+      message.append('#');
+      message.append(EVAL_MESSAGE_ID + 0x20);
+      message.append('&');
+      message.append(token);
+   }
 
    info = source.read(token, LINE_LEN);
    while (token[0]!='(') {
@@ -211,12 +216,32 @@ void ScriptVMCompiler :: parseMessage(TextSourceReader& source, wchar16_t* token
 
    size_t paramCount = 0;
    if (command == PUSHM_TAPE_MESSAGE_ID) {
-      if (info.state != dfaInteger)
-         throw EParseError(info.column, info.row);
+      if (token[0]==')') {
+         paramCount = OPEN_ARG_COUNT;
+      }
+      else {
+         if (info.state != dfaInteger)
+            throw EParseError(info.column, info.row);
 
-      paramCount = StringHelper::strToInt(token);
+         paramCount = StringHelper::strToInt(token);
 
-      info = source.read(token, LINE_LEN);
+         info = source.read(token, LINE_LEN);
+
+         // if it is open argument list preceeded by normal ones
+         if (token[0]==',') {
+            message.append('&');
+            message.appendInt(paramCount);
+
+            paramCount = OPEN_ARG_COUNT;
+
+            info = source.read(token, LINE_LEN);
+         }
+   
+         // if it is a custom verb and param count is zero - treat it like get message
+         if (verbId== 0 && paramCount == 0) {
+            message[2] += 1;
+         }
+      }
    }
    else {
       if (token[0]!=')' || info.state == dfaQuote) {
@@ -272,7 +297,10 @@ void ScriptVMCompiler :: parseNewObject(TextSourceReader& source, wchar16_t* tok
 
 void ScriptVMCompiler :: compile(TextReader* script)
 {
-   TextSourceReader source(4, script);
+   // HOTFIX: override TextReader to read line, instead of all the text
+   LineReader lineReader(script);
+
+   TextSourceReader source(4, &lineReader);
 
    LineInfo info;
    wchar16_t  token[LINE_LEN];

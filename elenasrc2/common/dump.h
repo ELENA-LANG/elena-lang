@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Memory dump
 //		classes.
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DumpH
@@ -123,6 +123,53 @@ public:
    {
       _bytes = (char*)bytes;
       _length = length;
+   }
+};
+
+class LineReader : public TextReader
+{
+   TextReader* _reader;
+
+public:
+   virtual bool read(wchar16_t* s, size_t length)
+   {
+      while (length > 0) {
+         if(!_reader->read(s, 1))
+            return false;
+
+         if (s[0] == '\n') {
+            s[1] = 0;
+            return true;
+         }
+         length--;
+         s++;
+      }
+      s[0] = 0;
+
+      return true;
+   }
+
+   virtual bool read(char* s, size_t length)
+   {
+      while (length > 0) {
+         if(!_reader->read(s, 1))
+            return false;
+
+         if (s[0] == '\n') {
+            s[1] = 0;
+            return true;
+         }
+         length--;
+         s++;
+      }
+      s[0] = 0;
+
+      return true;
+   }
+
+   LineReader(TextReader* reader)
+   {
+      _reader = reader;
    }
 };
 

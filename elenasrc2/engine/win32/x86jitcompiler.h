@@ -110,6 +110,7 @@ protected:
    friend void compileCallR(int opcode, x86JITScope& scope);
    //friend void compileSendVMTR(int opcode, x86JITScope& scope);
    friend void compileMSet(int opcode, x86JITScope& scope);
+   friend void compileMReset(int opcode, x86JITScope& scope);
    //friend void compileXMSet(int opcode, x86JITScope& scope);
    friend void compileMAdd(int opcode, x86JITScope& scope);
    friend void compileAAdd(int opcode, x86JITScope& scope);
@@ -244,6 +245,7 @@ void compileLoadField(int opcode, x86JITScope& scope);
 void compileCallR(int opcode, x86JITScope& scope);
 //void compileSendVMTR(int opcode, x86JITScope& scope);
 void compileMSet(int opcode, x86JITScope& scope);
+void compileMReset(int opcode, x86JITScope& scope);
 //void compileXMSet(int opcode, x86JITScope& scope);
 void compileAccSaveR(int opcode, x86JITScope& scope);
 void compilePopFI(int opcode, x86JITScope& scope);

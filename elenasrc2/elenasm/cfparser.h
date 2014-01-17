@@ -161,7 +161,7 @@ public:
       };
 
    protected:
-      Reader     _reader;
+      Reader _reader;
 
    public:
       void switchDFA(const char** dfa)
@@ -254,9 +254,10 @@ public:
    typedef MemoryMap<const wchar16_t*, size_t> NameMap;
 
 protected:
-   NameMap      _names;
-   RuleMap      _rules;
-   MemoryDump   _body;
+   bool       _symbolMode;
+   NameMap    _names;
+   RuleMap    _rules;
+   MemoryDump _body;
 
    size_t mapRuleId(const wchar16_t* name)
    {
@@ -286,6 +287,7 @@ public:
       : _rules(Rule())
    {
       // all body pointers should be greater than zero
+      _symbolMode = false;
       _body.writeDWord(0, 0);
    }
 };

@@ -153,16 +153,17 @@
     
     textFileControl forEachLine:('program'arguments@1) &do:(Interpreter new:(BFTape new &length:1024)).
 ].
-//
-//#symbol program2 =
-//[
-//    ('program'arguments Count == 1)?
-//        [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
-//
-//    system'dynamic'scriptControl load &path:"rules.es".
-//
-//    #var aBFTape := BFTape new &type'length:1024.
-//    #var aSourceTape := system'dynamic'scriptControl load &path:('program'arguments@1).
-//    
-//    aSourceTape eval:aBFTape.
-//].
+
+#symbol program2 =
+[
+    ('program'arguments length == 1)?
+        [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
+
+    system'dynamic'scriptControl load &path:"rules.es"
+        | ifFailed: [ console writeLine:(system'dynamic'scriptControl LastScriptError). #throw BreakException new. ].
+
+    #var aBFTape := BFTape new &length:1024.
+    #var aSourceTape := system'dynamic'scriptControl load &path:('program'arguments@1).
+    
+    aSourceTape eval:aBFTape.
+].

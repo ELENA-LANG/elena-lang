@@ -274,16 +274,3 @@
 //   if(_table.generate() != 0)
 //      throw EUnrecognizedException();
 //}
-//
-//// --- CFPrarser ---
-//
-//void CFPrarser :: applyPrefixDSARule(size_t ruleKey, _CodeGeneator* compiler, Terminal* terminal)
-//{
-//   (*_dsaRules.getIt(ruleKey)).applyPrefix(compiler, *this, terminal);
-//}
-//
-//void CFPrarser :: applyPostfixDSARule(size_t ruleKey, _CodeGeneator* compiler, Terminal* terminal)
-//{
-//   (*_dsaRules.getIt(ruleKey)).applyPostfix(compiler, *this, terminal);
-//}
-//

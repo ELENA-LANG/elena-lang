@@ -1,7 +1,7 @@
 ﻿[project]
 debug=interpreter.dm
 executable=interpreter.exe
-arguments=sample1.txt
+arguments=sample2.txt
 vmpath=..\..\bin
 options=-xembed-
 namespace=interpreter
@@ -13,5 +13,5 @@ warn:unresolved=-1
 interpreter.l
 
 [forwards]
-'program=interpreter'program
+'program=interpreter'program2
 

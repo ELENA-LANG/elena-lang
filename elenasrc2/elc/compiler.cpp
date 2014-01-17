@@ -1913,6 +1913,14 @@ ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scop
          count = StringHelper::strToInt(size.value);
       }
       else scope.raiseError(errInvalidOperation, size);
+
+      // if it is an open argument preceeded by normal ones
+      if (arg.nextNode() == nsVarSizeValue) {
+         message.append('&');
+         message.appendInt(count);
+
+         count = OPEN_ARG_COUNT;
+      }
    }
    else if (arg == nsVarSizeValue) {
       count = OPEN_ARG_COUNT;

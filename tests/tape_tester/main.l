@@ -1,4 +1,5 @@
 #define system.
+#define system'routines.
 #define system'dynamic.
 #define extensions'dynamic.
 
@@ -7,16 +8,16 @@
 #class BFTape
 {
     #field theArray.
-    #field thePointer.
+    #field thePointer. 
 
-    #constructor new &type'length:aLength
+    #constructor new &length:aLength
     [
         thePointer := Integer new:0.
 
-        theArray := Array new &type'length:aLength &function: &&:n [ Integer new:0 ].
+        theArray := arrayControl new &length:aLength &each: n [ Integer new:0 ].
     ]
 
-    #method type'tape = $self.
+    #method tape = $self.
 
     #method append
     [
@@ -40,7 +41,7 @@
     
     #method input
     [
-        (theArray@thePointer) write &type'int:(console readChar).
+        (theArray@thePointer) write &int:(console readChar).
     ]
     
     #method output
@@ -61,9 +62,9 @@
 //    console readChar.
     
     #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
-    
-    #var aTape := BFTape new &type'length:100.
-    
+
+    #var aTape := BFTape new &length:100.
+
     l eval:aTape.
 ].
 
@@ -83,13 +84,13 @@
 //    #var aTape := Struct(%X, 2, %Y, 3).
 //    #var x := aTape X.
 //    #var y := aTape Y.
-//].
+//].  
 
 #symbol ReflectionTester =
 [
     #var anObject := String new:"abd".
 
-    #var aPresentation := anObject~ETextSerializer Serialized.
+    #var aPresentation := anObject~textserializable literal. 
 ].
 
 #symbol TapeTest =
@@ -97,36 +98,28 @@
    #var aTape := Tape(
        "Hello World", 
        system'console,
-       %(eval&writeLine),
+       %writeLine(1),
        system'console,
-       %(readChar)).
+       %readChar(0)).
 
     aTape eval.
 ].
 
-//    #var aTape := Tape(
-//        1, tapeControl,
-//        %(getAt(15)),
-//        %next,
-//        %next,
-//        %(get&inc(0)),
-//        %(get&inc(0))).
-        
-//#symbol ClassTest =
-//[
-//    #var n := Integer new.
-//
-//    #var g := Class(%(get&next(0)), Tape(%(get&index), 1, tapeControl, %(get(2)), %(append(1))), %(get&index), [ n ]).
-//
-//    g next.
-//].
+#symbol ClassTest =
+[
+    #var n := Integer new.
+
+    #var g := system'dynamic'Class(%next(0), system'dynamic'Tape(1, 1, system'dynamic'tapeControl, %read(1,), %index(0), %append(1)), %index(0), [ n ]).
+
+    g next.
+].
 
 #symbol Program =
-[  
-//    ClassTest eval.
-//    GetPropertyTester eval.
-
-//    ReflectionTester eval.
-//    TapeTest eval.
+[ 
     InterpreterTest eval.
+    
+    ClassTest eval.
+//    GetPropertyTester eval.
+    ReflectionTester eval.
+    TapeTest eval.
 ].

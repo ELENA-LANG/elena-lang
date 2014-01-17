@@ -76,6 +76,7 @@ enum ByteCode
    bcMLoadAI        = 0x47,
    bcMLoadSI        = 0x48,
    bcMLoadFI        = 0x49,
+   bcMReset         = 0x4C,
    bcMAddAI         = 0x4D,
    bcMCopy          = 0x4E,
    bcMAdd           = 0x4F,

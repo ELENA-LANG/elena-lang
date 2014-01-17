@@ -107,7 +107,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &compileNop, &compileNop, &compileNop, &loadIndexOp,
-   &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileMSet, &compileMAdd,
+   &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileMReset, &loadIndexOp, &compileMSet, &compileMAdd,
 
    &loadIndexOp, &loadIndexOp, &loadFPOp, &compileAccLoadR, &loadFPOp, &loadIndexOp, &compileDCopyI, &compileDCopyAI,
    &compileNop, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
@@ -1104,6 +1104,16 @@ void _ELENA_::compileMSet(int opcode, x86JITScope& scope)
 void _ELENA_::compileMAdd(int opcode, x86JITScope& scope)
 {
    // or edx, message
+   scope.code->writeWord(0xCA81);
+   scope.code->writeDWord(scope.resolveMessage(scope.argument));
+}
+
+void _ELENA_::compileMReset(int opcode, x86JITScope& scope)
+{
+   // and edx, PARAM_MASK
+   // or edx, message
+   scope.code->writeWord(0xE281);
+   scope.code->writeDWord(PARAM_MASK);
    scope.code->writeWord(0xCA81);
    scope.code->writeDWord(scope.resolveMessage(scope.argument));
 }

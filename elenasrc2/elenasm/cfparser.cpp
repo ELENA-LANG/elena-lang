@@ -75,7 +75,7 @@ bool CFParser::ScriptReader :: read(TokenInfo& token)
       else token.value = _reader.token.line;
 
       return true;
-   }
+   }  
    else {
       token.state = dfaEOF;
       token.value = NULL;
@@ -596,6 +596,8 @@ void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule&
 void CFParser :: writeDSARule(TokenInfo& token, size_t ptr)
 {
    token.buffer->write(getBodyText(ptr));
+   // HOTFIX: to prevent too long line
+   token.buffer->write('\n'); 
 }
 
 bool CFParser :: applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader)
@@ -673,6 +675,9 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
    CachedScriptReader reader(script);
    ScriptLog log;
 
+   if (_symbolMode)
+      reader.switchDFA(dfaSymbolic);
+
    TokenInfo token(this, &log);
 
    reader.read(token);
@@ -688,6 +693,7 @@ void CFParser :: parse(TextReader* script, _ScriptCompiler* compiler)
       reader.read(token);
       if (token.compare("@")) {
          reader.switchDFA(dfaSymbolic);
+         _symbolMode = true;
 
          reader.read(token);
       }

@@ -1163,6 +1163,31 @@ labErr:
   throw
 
 end
+
+procedure inline'handle_class       
+
+  pushb
+  bcopya
+  dcopy 0
+
+labNext:
+  acopyb
+  test labEnd
+  aloadd
+  dinc
+  elseflag labNext elMessage
+  melseai labNext 0
+  
+  acopyb
+  aloadd
+  mreset EVAL_MESSAGE_ID
+  popb
+  ajumpvi 0
+
+labEnd:
+  throw
+
+end
                     
 procedure inline'class_getName
 
@@ -1205,10 +1230,10 @@ procedure inline'class_get
 
   pushb
 
-  aloadsi 3
+  aloadsi 4
   bcopya
 
-  aloadsi 4
+  aloadsi 3
   dloadai 0
 
   get

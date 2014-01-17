@@ -229,6 +229,8 @@ ELENA byte codes (or ecodes)
 
  madd m                     - m + mcc => mcc
 
+ mreset m                   - m + mcc.param_count => mcc
+
  maddai i                   - mcc + acc:i => mcc
 
  mloadai i                  - acc:i => mcc

@@ -20,36 +20,26 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
+              sdev - calculator
+                       * implement calculator using script only
+                       * implement calculator using dynamic building
+                       
 <=================> 
          
 1.9.11 
 ------
 week3: [22.1]
-              sdev - samples
-                       * test implemented samples
-                       * implement calculator both script and code
-              sdev - script engine
-                       * message reference - it should be similar to the code - e.g. %output instead of %(get&output(0))
-                       * modify system'dynamic'tapeControl to use mixture of arguments and open argument, modify bf code as well
+              xdev - migration
+                        * migrate tape_test code : getpropertytest
 
-              sdev - bf sample
-                       * use correct syntax for the message with an open argument
-                       * parse bf sample from code : show an error (currently it crached)                       
-                       * interpreter: test program2
-                       * elenascript: implement bf interpreter
-                       * implement script engine arithm eval sample
               sdev - calculator
                        * build state machine using only dynamic object
                        * implement sample using open architecture
-
+              sdev - bf sample
+                       * implement bf tape dynamically
               sdev - open architecture
-                       * build dynamic class - several methods
+                       * build dynamic class - several methods                 
                        * access parameters
-
-              xdev - migration
-                        * migrate tapeControl, ... 
-                        * migrate tape_test code
-                        * migrate sum script
 
               sdev - open architecture
                        * implement dynamic property container: set / get
@@ -338,12 +328,15 @@ week1:
 
                        * group object role should not have redirect statement
 
+              xdev - dynamic programming                                             
+                       * implement trace mode
+                       * it should be possible Tape to debug  (see 1.x implementation)
+                       
               xdev - elenavm
                        * should open / close frame override stack_bottom pointer? looks like it is not necessary
 
               xdev - elenasm
-                       * for some strange reader elenasm cannot load - D:\Alex\ELENA\tests\tape_tester\interpreter.es, though 
-                         can load D:\Alex\ELENA\tests\tape_tester\helloworld.es
+                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
                        * inline script improve error handling
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
                          

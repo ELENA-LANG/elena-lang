@@ -1555,6 +1555,8 @@ end
 inline % 3031h
 
   mov  ecx, [eax-8] 
+  sub  ecx, 3
+  and  ecx, 0FFFFFFF4h
 
   add  esp, ecx
   mov  eax, esp
@@ -1567,6 +1569,8 @@ end
 inline % 302Dh
 
   mov  ecx, [eax-8] 
+  sub  ecx, 3
+  and  ecx, 0FFFFFFF4h
 
   add  esp, ecx
   mov  esi, esp
@@ -2373,19 +2377,23 @@ end
 inline % 4031h
 
   mov  ecx, [eax-8] 
-
+  sub  ecx, 3
+  and  ecx, 0FFFFFFF4h
+  
   add  esp, ecx
   mov  eax, esp
 
 end
 
 // copy dump to stack
-// in : eax - literal
+// in : eax - byte array
 // out: eax - stack address
 inline % 402Dh
 
   mov  ecx, [eax-8] 
-
+  sub  ecx, 3
+  and  ecx, 0FFFFFFF4h
+  
   add  esp, ecx
   mov  esi, esp
 

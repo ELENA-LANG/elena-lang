@@ -376,8 +376,8 @@ namespace _ELENA_
    #define HINT_CONSTANT           "const"
    #define HINT_TYPE               "type"              // type / debugger watch hint
    #define HINT_SIZE               "size"
-//  // #define HINT_SAFEPOINT          "safepoint"
-//  // #define HINT_LOCK               "sync"
+  // #define HINT_SAFEPOINT          "safepoint"
+  // #define HINT_LOCK               "sync"
 
    #define HINT_INT                "int"              // debugger watch hint values / field size aliases
    #define HINT_LITERAL            "literal"
@@ -403,7 +403,7 @@ namespace _ELENA_
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
 
-  //// #define GC_ROOT                  "$elena'@gcroot"               // static roots
+  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
 

@@ -103,53 +103,7 @@
 //      mapSymbol(_T("$eps"));
 //   }
 //};
-//
-//// --- CFPrarser ---
-//
-//class CFPrarser : public _Parser
-//{
-//public:
-//   // --- DSARule ---
-//   struct DSARule
-//   {
-//      DSARule()
-//      {
-//      }
-//   };
-//   
-//   friend struct DSARule;
-//
-//protected:
-//   DSARuleMap   _dsaRules;
-//
-//
-//
-//   void defineDSARule(ScriptReader& reader, DSARule& rule);
-//
-//public:
-//   const wchar16_t* mapRuleName(size_t id)
-//   {
-//      return retrieveKey(_names.start(), id, (const wchar16_t*)NULL);
-//   }
-//
-//   bool applyRule(Rule& rule, TokenInfo& token, CachedScriptReader& reader, _CodeGeneator* compiler);
-//   bool applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader, _CodeGeneator* compiler);
-//
-//   virtual void parse(TextReader* script, _CodeGeneator* compiler);
-//
-//   virtual void generate(TextReader* script);
-//
-//   // if dfa is NULL standard DFA is used
-//   CFPrarser(const char** dfa)
-//      : _rules(Rule()), _dsaRules(DSARule())
-//   {
-//      _dfa = dfa;
-//
-//      // all body pointers should be greater than zero
-//      _body.writeDWord(0, 0);
-//   }
-//};
-//
+
 //} // _ELENA_
 //
 //#endif // scriptparserH

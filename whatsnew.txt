@@ -8,7 +8,7 @@
 ******************************************************************************
 
 ELENA:
-[+] new ecodes: unbox, released
+[+] new ecodes: unbox, mreset
 [+] it is possible to use generic arguments with an open argument list
 [*] operations with stack allocated objects refactored
 

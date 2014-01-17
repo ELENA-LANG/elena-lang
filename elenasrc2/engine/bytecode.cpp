@@ -96,6 +96,7 @@
 #define OPCODE_MELSEAI      "melseai"
 //#define OPCODE_MCCREVERSE   "mccreverse"
 #define OPCODE_MQUIT        "mquit"
+#define OPCODE_MRESET       "mreset"
 #define OPCODE_MSAVEPARAMS  "msaveparams"
 #define OPCODE_MTHEN        "mthen"
 //#define OPCODE_MCCTHENACC   "mccthenacc"
@@ -1014,6 +1015,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_MQUIT)) {
       return bcMQuit;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_MRESET)) {
+      return bcMReset;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_MSAVEPARAMS)) {
       return bcMSaveParams;
    }
@@ -1421,6 +1425,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
 //         break;
       case bcMQuit:
          copystr(s, OPCODE_MQUIT);
+         break;
+      case bcMReset:
+         copystr(s, OPCODE_MRESET);
          break;
       case bcMSaveParams:
          copystr(s, OPCODE_MSAVEPARAMS);
