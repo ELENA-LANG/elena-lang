@@ -766,20 +766,20 @@
         theValue := theValue add &literal:anOperand.
     ]
     
-//    #method insert &type'index:anIndex &type'widestr:aLiteral
-//    [
-//        theValue := theValue insert &type'index:anIndex &type'widestr:aLiteral.
-//    ]
-//            
-//    #method delete &type'index:anIndex &type'length:aLength
-//    [
-//        theValue := theValue delete &type'index:anIndex &type'length:aLength.
-//    ]
-//                        
-//    #method clear
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
+    #method insert &index:anIndex &literal:aLiteral
+    [
+        theValue := theValue insert &index:anIndex &literal:aLiteral.
+    ]
+            
+    #method delete &index:anIndex &length:aLength
+    [
+        theValue := theValue delete &index:anIndex &length:aLength.
+    ]
+                        
+    #method clear
+    [
+        theValue := emptyLiteralValue.
+    ]
             
     #method <= &literal:theValue.
     

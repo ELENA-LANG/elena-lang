@@ -68,23 +68,23 @@
     l eval:aTape.
 ].
 
-//// === Roles ===
-//
-//#class(role)EGetProp
-//{
-//}
-//
-//#symbol GetPropertyTester =
-//[
-//    #var msg := %Length.
-//    #var prop := %Length(3).
-//    
-//    #var l := prop~msg get.
-//    
-//    #var aTape := Struct(%X, 2, %Y, 3).
-//    #var x := aTape X.
-//    #var y := aTape Y.
-//].  
+// === Roles ===
+
+#class(role)EGetProp
+{
+}
+
+#symbol GetPropertyTester =
+[
+    #var subj := %length.
+    #var prop := %length [ 3 ].
+    
+    #var l := prop~subj get.
+
+    #var aTape := Struct(%X, 2, %Y, 3).
+    #var x := aTape X.
+    #var y := aTape Y.
+].  
 
 #symbol ReflectionTester =
 [
@@ -119,7 +119,7 @@
     InterpreterTest eval.
     
     ClassTest eval.
-//    GetPropertyTester eval.
+    GetPropertyTester eval.
     ReflectionTester eval.
     TapeTest eval.
 ].

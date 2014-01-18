@@ -148,6 +148,8 @@ enum ByteCode
    bcDThenN         = 0xE5,
    bcAElseSI        = 0xE6,
    bcAThenSI        = 0xE7,
+   bcMElseVerb      = 0xE8,
+   bcMThenVerb      = 0xE9,
    bcMElseAI        = 0xEA,
    bcMThenAI        = 0xEB,
    bcElseFlag       = 0xEC,

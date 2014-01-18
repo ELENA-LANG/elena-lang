@@ -259,6 +259,7 @@ void ScriptVMCompiler :: parseMessage(TextSourceReader& source, wchar16_t* token
             info = source.read(token, LINE_LEN);
             while(token[0] == '.') {
                parseMessage(source, token, SEND_TAPE_MESSAGE_ID);
+               info = source.read(token, LINE_LEN);
             }
 
             if(token[0] == ',') {

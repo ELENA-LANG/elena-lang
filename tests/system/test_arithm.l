@@ -11,7 +11,8 @@
 
 #symbol XTest =
 [
-    CommandLine
+    #var aTape := system'dynamic'Struct(%X, 2, %Y, 3).
+    #var x := aTape Y.
 ].
 
 // --- OpenArgTest ---

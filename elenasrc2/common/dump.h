@@ -133,9 +133,11 @@ class LineReader : public TextReader
 public:
    virtual bool read(wchar16_t* s, size_t length)
    {
+      const wchar16_t* start = s;
+      bool read = false;
       while (length > 0) {
          if(!_reader->read(s, 1))
-            return false;
+            break;
 
          if (s[0] == '\n') {
             s[1] = 0;
@@ -146,7 +148,7 @@ public:
       }
       s[0] = 0;
 
-      return true;
+      return s != start;
    }
 
    virtual bool read(char* s, size_t length)

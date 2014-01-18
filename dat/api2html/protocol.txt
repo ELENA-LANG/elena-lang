@@ -4,24 +4,23 @@
 
 [#list#]
 action
+array
 bool
 bool_action
 bool_function
+byte
+bytearray
 enumerable
 enumerator
 function
+int
+literal
+long
 numeric_value
 numeric_variable
 object
-type_array
-type_byte
-type_bytearray
-type_int
-type_long
-type_object
-type_real
-type_short
-type_widestr
+real
+short
 value
 variable
 
@@ -37,9 +36,6 @@ variable
 #method=or,bool,bool;Executes logical OR operation
 #method=xor,bool,bool;Executes logical XOR operation
 
-[type_object]
-#shortdescr=A type'object protocol
-
 [action]
 #shortdescr=An action protocol
 #method=eval,,;Executes the code
@@ -48,25 +44,25 @@ variable
 #shortdescr=A boolean expression
 #method=eval,,bool;Evaluates boolean expression
 
-[type_short]
-#shortdescr=A type'short protocol
+[short]
+#shortdescr=A short protocol
 
-[type_int]
-#shortdescr=A type'int protocol
-#method=type'int,,type_int;Returns the integer value
+[int]
+#shortdescr=An int protocol
+#method=int,,int;Returns the integer value
 
-[type_long]
+[long]
 #shortdescr=A type'long protocol
-#method=type'long,,type_long;Returns the long integer value
+#method=long,,long;Returns the long integer value
 
-[type_real]
-#shortdescr=A type'real protocol
-#method=type'real,,type_real;Returns the real number value
+[real]
+#shortdescr=A real protocol
+#method=real,,real;Returns the real number value
 
-[type_widestr]
-#shortdescr=A type'widestr protocol
-#method=type'length,,type_int;Returns the object length
-#method=type'widestr,,type_widestr;Returns the literal value
+[literal]
+#shortdescr=A literal protocol
+#method=length,,int;Returns the object length
+#method=literal,,literal;Returns the literal value
 
 [function]
 #shortdescr=A function protocol
@@ -132,11 +128,11 @@ variable
 #shortdescr=A collection protocol
 #method=Enumerator,,enumerator;Creates the collection enumerator
 
-[type_array]
-#shortdescr=A type'array protocol
+[array]
+#shortdescr=A array protocol
 
-[type_bytearray]
-#shortdescr=A type'bytearray protocol
+[bytearray]
+#shortdescr=A bytearray protocol
 
-[type_byte]
-#shortdescr=A type'byte protocol
+[byte]
+#shortdescr=A byte protocol

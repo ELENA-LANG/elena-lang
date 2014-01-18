@@ -137,7 +137,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileTest, &compileTest, &compileTest,
 
    &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileElseN, &compileThenN, &compileElseSI, &compileThenSI,
-   &compileNop, &compileNop, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
+   &compileMElseVerb, &compileMThenVerb, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
 
    &compileCreate, &compileCreateN, &compileIAccCopyR, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileCallSI, &compileNop, &compileInvokeVMT, &compileNop,
@@ -788,6 +788,46 @@ void _ELENA_::compileMElse(int opcode, x86JITScope& scope)
 
    // cmp edx, message
    scope.code->writeWord(0xFA81);
+   scope.code->writeDWord(message);
+
+  // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIf is called
+   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+}
+
+void _ELENA_::compileMThenVerb(int opcode, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+   int message = scope.resolveMessage(scope.argument);
+
+   // mov ebx, edx
+   // and ebx, ~SUBJ_MASK
+   // cmp ebx, message
+
+   scope.code->writeWord(0xDA8B);
+   scope.code->writeWord(0xE381);
+   scope.code->writeDWord(~SIGN_MASK);
+   scope.code->writeWord(0xFB81);
+   scope.code->writeDWord(message);
+
+   // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+}
+
+void _ELENA_::compileMElseVerb(int opcode, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+   int message = scope.resolveMessage(scope.argument);
+
+   // mov ebx, edx
+   // and ebx, ~SUBJ_MASK
+   // cmp ebx, message
+
+   scope.code->writeWord(0xDA8B);
+   scope.code->writeWord(0xE381);
+   scope.code->writeDWord(~SIGN_MASK);
+   scope.code->writeWord(0xFB81);
    scope.code->writeDWord(message);
 
   // try to use short jump if offset small (< 0x10?)

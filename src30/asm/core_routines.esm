@@ -1,6 +1,7 @@
 //        ELENA Language 2.0
 //      inline system library
 
+define elSubject            000002000h
 define elMessage            000008000h
 define elRole               000004000h
 
@@ -1183,6 +1184,32 @@ labNext:
   mreset EVAL_MESSAGE_ID
   popb
   ajumpvi 0
+
+labEnd:
+  throw
+
+end
+
+procedure inline'handle_selector
+
+  melseverb labEnd GET_MESSAGE_ID
+  pushb
+  mcopysubj
+  bcopya
+  dcopy 0
+
+labNext:
+  acopyb
+  test labEnd
+  aloadd
+  dinc
+  elseflag labNext elSubject
+  melseai labNext 0
+  
+  acopyb
+  aloadd
+  popb
+  quitn 1
 
 labEnd:
   throw

@@ -1195,7 +1195,7 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ObjectType& type, int
       else if (ConstIdentifier::compare(terminal, HINT_SIZE)) {
          TerminalInfo sizeValue = hints.firstChild().Terminal();
          if (type == otByteArray && sizeValue.symbol == tsInteger) {
-            size = StringHelper::strToInt(sizeValue.value);
+            size = align(StringHelper::strToInt(sizeValue.value), 4);
          }
          else raiseWarning(wrnUnknownHint, terminal);
       }

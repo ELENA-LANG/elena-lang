@@ -13,6 +13,7 @@ ELENA:
 [*] operations with stack allocated objects refactored
 
 ELC:
+[!] fixed critical bug in external call routine
 [*] configuration / project  files are UTF8 now
 [*] some native-code optimization
 [*] some byte-code optimization

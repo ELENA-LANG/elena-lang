@@ -208,13 +208,13 @@ public:
    enum RuleType
    {
       rtNormal,
-//      rtChomski,
+      rtChomski,
       rtLiteral,
-//      rtNumeric,
+      rtNumeric,
 //      rtReference,
 //      rtIdentifier,
       rtAny,
-//      rtEps,
+      rtEps,
       rtEof
    };
 

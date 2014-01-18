@@ -231,6 +231,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          break;
       case bcMElse:
       case bcMThen:
+      case bcMElseVerb:
+      case bcMThenVerb:
          compileMccJump(opcode, token, writer, info);
          break;
       case bcTestFlag:

@@ -90,6 +90,8 @@ protected:
    friend void compileDThen(int opcode, x86JITScope& scope);
    friend void compileMElse(int opcode, x86JITScope& scope);
    friend void compileMThen(int opcode, x86JITScope& scope);
+   friend void compileMElseVerb(int opcode, x86JITScope& scope);
+   friend void compileMThenVerb(int opcode, x86JITScope& scope);
    //friend void compileMElseSI(int opcode, x86JITScope& scope);
    //friend void compileMThenSI(int opcode, x86JITScope& scope);
    friend void compileMElseAccI(int opcode, x86JITScope& scope);
@@ -271,6 +273,8 @@ void compileAAdd(int opcode, x86JITScope& scope);
 void compileAMul(int opcode, x86JITScope& scope);
 void compileMElse(int opcode, x86JITScope& scope);
 void compileMThen(int opcode, x86JITScope& scope);
+void compileMElseVerb(int opcode, x86JITScope& scope);
+void compileMThenVerb(int opcode, x86JITScope& scope);
 //void compileMElseSI(int opcode, x86JITScope& scope);
 //void compileMThenSI(int opcode, x86JITScope& scope);
 //void compileMVerbElseSI(int opcode, x86JITScope& scope);

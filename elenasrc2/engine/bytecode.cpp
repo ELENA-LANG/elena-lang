@@ -89,6 +89,7 @@
 #define OPCODE_MCOPYSUBJ    "mcopysubj"
 #define OPCODE_MCOPYVERB    "mcopyverb"
 #define OPCODE_MELSE        "melse"
+#define OPCODE_MELSEVERB    "melseverb"
 #define OPCODE_MLOADAI      "mloadai"
 #define OPCODE_MLOADFI      "mloadfi"
 #define OPCODE_MLOADSI      "mloadsi"
@@ -99,6 +100,7 @@
 #define OPCODE_MRESET       "mreset"
 #define OPCODE_MSAVEPARAMS  "msaveparams"
 #define OPCODE_MTHEN        "mthen"
+#define OPCODE_MTHENVERB    "mthenverb"
 //#define OPCODE_MCCTHENACC   "mccthenacc"
 //#define OPCODE_MCCTHENACCI  "mccthenacci"
 #define OPCODE_NBOX         "nbox"
@@ -225,6 +227,8 @@ inline bool IsJump(ByteCode code)
       case bcAThenR:
       case bcMElse:
       case bcMThen:
+      case bcMElseVerb:
+      case bcMThenVerb:
       case bcAElseSI:
       case bcAThenSI:
       case bcMElseAI:
@@ -509,6 +513,8 @@ inline void removeIdleJump(ByteCodeIterator it)
          case bcNext:
          case bcMElse:
          case bcMThen:
+         case bcMElseVerb:
+         case bcMThenVerb:
          case bcAElseSI:
          case bcAThenSI:
          case bcElseFlag:
@@ -584,6 +590,8 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcNext:
             case bcMElse:
             case bcMThen:
+            case bcMElseVerb:
+            case bcMThenVerb:
             case bcAElseSI:
             case bcAThenSI:
             case bcMElseAI:
@@ -994,6 +1002,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_MELSE)) {
       return bcMElse;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_MELSEVERB)) {
+      return bcMElseVerb;
+   }
    else if (ConstantIdentifier::compare(s, OPCODE_MLOADAI)) {
       return bcMLoadAI;
    }
@@ -1023,6 +1034,9 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    }
    else if (ConstantIdentifier::compare(s, OPCODE_MTHEN)) {
       return bcMThen;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_MTHENVERB)) {
+      return bcMThenVerb;
    }
 //   else if (ConstantIdentifier::compare(s, OPCODE_MCCTHENACC)) {
 //      return bcMccThenAcc;
@@ -1405,6 +1419,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
       case bcMElse:
          copystr(s, OPCODE_MELSE);
          break;
+      case bcMElseVerb:
+         copystr(s, OPCODE_MELSEVERB);
+         break;
       case bcMLoadAI:
          copystr(s, OPCODE_MLOADAI);
          break;
@@ -1434,6 +1451,9 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
          break;
       case bcMThen:
          copystr(s, OPCODE_MTHEN);
+         break;
+      case bcMThenVerb:
+         copystr(s, OPCODE_MTHENVERB);
          break;
 //      case bcMccThenAcc:
 //         copystr(s, OPCODE_MCCTHENACC, 1 + strlen(OPCODE_MCCTHENACC));

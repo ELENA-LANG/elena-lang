@@ -20,100 +20,8 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              sdev - calculator
-                       * implement calculator using script only
-                       * implement calculator using dynamic building
-                       
 <=================> 
          
-1.9.11 
-------
-week3: [22.1]
-              xdev - migration
-                        * migrate tape_test code : getpropertytest
-
-              sdev - calculator
-                       * build state machine using only dynamic object
-                       * implement sample using open architecture
-              sdev - bf sample
-                       * implement bf tape dynamically
-              sdev - open architecture
-                       * build dynamic class - several methods                 
-                       * access parameters
-
-              sdev - open architecture
-                       * implement dynamic property container: set / get
-
-              sdev - samples
-                       * implement interpreter : tape consist of messages which has to be sent to the tape
-                                                                                     
-              sdev - open architecture
-                       * new sample: script_db (using script to parse text file)
-
-                       * structure: simple script prototype : build structure
-                          ?? [ x : 1, y : 2 ].
-                          
-                       * code: simple code prototype : extend structure
-                       * code: simple script prototype : extend structure
-
-                       * build the structure list              
-                       * build the matrix
-                       * object serialization / deseialization (to script / from script)
-
-              sdev - prime project : calc
-                       * build system to enter and sum two numbers rather than directly implement the flow
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdev - default script
-                       * support basic arithmetic operation (+ - / *)
-                       * implement 2 + 2 * 3
-                       * functions
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - prime project
-                       * interpreter
-                       * script program - calculator
-                       * eldoc: dynamic parser
-
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                      * trace could print the result directly to console?? (so it will simplify script debugging)
-
-              sdev - script engine              
-                       * elenascript should be default one in elt
-                       * decision should be made what parser engine should be used, the second one should be removed
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-
-              sdev - open architecture
-                       * review dynamic property container, try to simplify it
-                                                         
-week4:
-            xmaint - compiler
-                       * looks like the operation with console does not work with AMD!!!
-                       
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-              xdev - test
-                       * boxing: message target / operand, operator target / operand                       
-                       * try to automize build process  
-
 1.9.12
 --------
 week1:
@@ -328,6 +236,9 @@ week1:
 
                        * group object role should not have redirect statement
 
+                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
+                         byte array used?
+
               xdev - dynamic programming                                             
                        * implement trace mode
                        * it should be possible Tape to debug  (see 1.x implementation)
@@ -492,10 +403,11 @@ week1:
 
 week2:
               sdev - api doc
-                       * create API doc : update to reflect the recent changes
+                       * create API doc
                        * change api faq
 
-              adev - lib30
+              adev - lib30                                        
+                       * Struct : check if the income message is "get"
                        * realNumber.get&literal - starting space should be removed
                        * win32 file i/o operations should raise an exception with an error code
                        * implement: square function
@@ -647,6 +559,82 @@ week2:
                         * write formatted numbers
                         * write formatted string (with parameters)
 
+week3:
+              sdev - calculator
+                       * implement calculator using script only
+                       * implement calculator using dynamic building
+                       * build state machine using only dynamic object
+                       * implement sample using open architecture
+              sdev - bf sample
+                       * implement bf tape dynamically
+              sdev - open architecture
+                       * build dynamic class - several methods                 
+                       * access parameters
+
+              sdev - open architecture
+                       * implement dynamic property container: set / get
+
+              sdev - open architecture
+                       * new sample: script_db (using script to parse text file)
+
+                       * structure: simple script prototype : build structure
+                          ?? [ x : 1, y : 2 ].
+                          
+                       * code: simple code prototype : extend structure
+                       * code: simple script prototype : extend structure
+
+                       * build the structure list              
+                       * build the matrix
+                       * object serialization / deseialization (to script / from script)
+
+              sdev - prime project : calc
+                       * build system to enter and sum two numbers rather than directly implement the flow
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdev - default script
+                       * support basic arithmetic operation (+ - / *)
+                       * implement 2 + 2 * 3
+                       * functions
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - prime project
+                       * script program - calculator
+                       * eldoc: dynamic parser
+
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                      * trace could print the result directly to console?? (so it will simplify script debugging)
+
+              sdev - script engine              
+                       * elenascript should be default one in elt
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
+
+              sdev - open architecture
+                       * review dynamic property container, try to simplify it
+                                                         
+week4:
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+              xdev - test
+                       * boxing: message target / operand, operator target / operand                       
+                       * try to automize build process  
 
 1.9.13
 --------

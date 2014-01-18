@@ -3,7 +3,6 @@ Samples:
 
 ELC:
 ----
-#00067: the operation with console does not work with AMD
 
 Samples:
 --------

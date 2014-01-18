@@ -18,7 +18,7 @@
 
     and &action:aBoolExpr = aBoolExpr eval bool.
 
-    and &type'int:anInt 
+    and &int:anInt 
         = 0 != anInt.
                 
     xor &bool:aBool = aBool ? [ false ] ! [ true ].
@@ -65,7 +65,7 @@
 
     or &action:aBool = aBool eval bool.
         
-    or &type'int:anInt 
+    or &int:anInt 
         = 0 != anInt.
                 
     xor &bool:aBool = aBool ? [ true ] ! [ false ].

@@ -13,14 +13,14 @@
 using namespace _ELENA_;
 
 #define MAX_LINE           256
-#define ELT_BUILD_NUMBER   3
+#define ELT_BUILD_NUMBER   4
 
 // global variables
 bool  _running = true;
 //int   _encoding = feAnsi;
 
-//// terminal session
-//String<wchar16_t, 1024> _script;
+// terminal session
+String<wchar16_t, 1024> _script;
 
 //MessageMap _verbs;
 //
@@ -85,34 +85,34 @@ void printHelp()
    printf("<script>               - execute script\n");
 }
 
-//void executeScript(const wchar16_t* ruleSetName, const wchar16_t* script, int mode)
-//{
-//   void* tape = TranslateLVMTape(ruleSetName, script, mode);
-//   if (tape == NULL || (size_t)tape == -1) {
-//      const wchar16_t* error = GetLSMStatus();
-//      if (!emptystr(error)) {
-//         wprintf(_T("\nFailed:%s"), error);
-//      }
-//      return;
-//   }
-//   /*if (!_tracing)*/else {
-//      if (InterpretLVM(tape) == 0)
-//         wprintf(_T("\nFailed:%s"), GetLVMStatus());
-//   }
-////   else printTape(tape);
-//
-//   FreeLVMTape(tape);
-//}
-//
-//void newScriptLine( const wchar16_t* grammarName, const wchar16_t* line, int mode)
-//{
-//   _script.append(line);
-//   if (line[getlength(line) - 1]!='_') {
-//      executeScript(grammarName, _script, mode);
-//      _script.clear();
-//   }
-//   else _script.append(_T("\r\n"));
-//}
+void executeScript(const wchar16_t* ruleSetName, const wchar16_t* script, int mode)
+{
+   void* tape = TranslateLVMTape(ruleSetName, script, mode);
+   if (tape == NULL || (size_t)tape == -1) {
+      const wchar16_t* error = GetLSMStatus();
+      if (!emptystr(error)) {
+         wprintf(_T("\nFailed:%s"), error);
+      }
+      return;
+   }
+   /*if (!_tracing)*/else {
+      if (InterpretLVM(tape) == 0)
+         wprintf(_T("\nFailed:%s"), GetLVMStatus());
+   }
+//   else printTape(tape);
+
+   FreeLVMTape(tape);
+}
+
+void newScriptLine( const wchar16_t* grammarName, const wchar16_t* line, int mode)
+{
+   _script.append(line);
+   if (line[getlength(line) - 1]!='_') {
+      executeScript(grammarName, _script, mode);
+      _script.clear();
+   }
+   else _script.append(_T("\r\n"));
+}
 
 void loadScript(const wchar16_t* line)
 {
@@ -214,7 +214,7 @@ void runSession()
                printHelp();
          }
          else if (!emptystr(line)){
-            //newScriptLine(ConstantIdentifier("default"), line, 0);
+            newScriptLine(ConstantIdentifier("default"), line, 0);
          }
          else printHelp();
       }
