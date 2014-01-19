@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //                                              (C)2001-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
@@ -1027,6 +1027,11 @@ void StringHelper :: trim(char* s, char ch)
 int StringHelper :: strToInt(const char* s)
 {
    return atoi(s);
+}
+
+long StringHelper :: strToLong(const char* s, int radix)
+{
+   return strtol(s, NULL, radix);
 }
 
 char* StringHelper :: intToStr(int n, char* s, int radix)

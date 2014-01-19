@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA Project interface.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -59,6 +59,14 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
    const char* value = getOption(config, setting);
    if (value) {
       _settings.add(setting, StringHelper::strToInt(value));
+   }
+}
+
+void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
+{
+   const char* value = getOption(config, setting);
+   if (value) {
+      _settings.add(setting, StringHelper::strToLong(value, 16));
    }
 }
 
@@ -193,9 +201,9 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
    loadIntOption(config, opThreadMax, 0, 60);
 
    // load linker settings
-   loadIntOption(config, opGCHeapSize);
+   loadHexOption(config, opGCMGSize);
    loadIntOption(config, opGCObjectSize);
-   loadIntOption(config, opYGRatio, 10, 60);
+   loadHexOption(config, opGCYGSize);
 //   loadIntOption(config, opApplicationType);
    loadIntOption(config, opPlatformType);
 

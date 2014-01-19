@@ -203,7 +203,6 @@ inline % 1Bh
   jmp  esi
   nop
   nop
-  nop
  
 end
 
@@ -3301,5 +3300,55 @@ lErr:
   ffree st(1)
   
 labEnd:
+
+end
+
+// ; rsin
+
+inline % 0568Ah
+
+  fld   qword ptr [eax]  
+  fsin
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rcose
+
+inline % 0568Bh
+
+  fld   qword ptr [eax]  
+  fcos
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rarctan
+
+inline % 0568Ch
+
+  fld   qword ptr [eax]  
+  fld1
+  fpatan                  // i.e. arctan(Src/1)
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rsqrt
+
+inline % 0568Dh
+
+  fld   qword ptr [eax]  
+  fsqrt
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rpi
+
+inline % 0568Eh
+
+  fldpi
+  fstp  qword ptr [edi]    // store result 
 
 end

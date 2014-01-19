@@ -12,6 +12,7 @@
 
 #define OPCODE_AADD         "aadd"
 #define OPCODE_ACALLVI      "acallvi"
+
 #define OPCODE_ACOPYB       "acopyb"
 #define OPCODE_ACOPYF       "acopyf"
 #define OPCODE_ACOPYN       "acopyn"
@@ -158,12 +159,14 @@
 #define FUNC_ADD            "add"
 #define FUNC_ADDSTR         "addstr"
 #define FUNC_AND            "and"
+#define FUNC_ARCTAN         "arctan"
 #define FUNC_COPY           "copy"
 #define FUNC_COPYBUF        "copybuf"
 #define FUNC_COPYINT        "copyint"
 #define FUNC_COPYLONG       "copylong"
 #define FUNC_COPYREAL       "copyreal"
 #define FUNC_COPYSTR        "copystr"
+#define FUNC_COS            "cos"
 #define FUNC_CREATE         "create"
 #define FUNC_DELETESTR      "deletestr" 
 #define FUNC_DIV            "div"
@@ -190,6 +193,7 @@
 #define FUNC_NOT            "not"
 #define FUNC_NOTGREATER     "notgreater"
 #define FUNC_OR             "or"
+#define FUNC_PI             "pi"
 #define FUNC_RESERVE        "reserve"
 #define FUNC_RNDNEW         "rndnew"
 #define FUNC_RNDNEXT        "rndnext"
@@ -200,7 +204,9 @@
 #define FUNC_SETINT         "setint"
 #define FUNC_SETLEN         "setlen"
 #define FUNC_SETWORD        "setword"
+#define FUNC_SIN            "sin"
 #define FUNC_SHIFT          "shift"
+#define FUNC_SQRT           "sqrt"
 #define FUNC_SUB            "sub"
 #define FUNC_XOR            "xor"
 
@@ -1635,6 +1641,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, FUNC_AND)) {
       return fnAnd;
    }
+   else if (ConstantIdentifier::compare(s, FUNC_ARCTAN)) {
+      return fnArcTan;
+   }
    else if (ConstantIdentifier::compare(s, FUNC_COPY)) {
       return fnCopy;
    }
@@ -1649,6 +1658,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    }
    else if (ConstantIdentifier::compare(s, FUNC_COPYREAL)) {
       return fnCopyReal;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_COS)) {
+      return fnCos;
    }
    else if (ConstantIdentifier::compare(s, FUNC_COPYSTR)) {
       return fnCopyStr;
@@ -1731,6 +1743,9 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, FUNC_OR)) {
       return fnOr;
    }
+   else if (ConstantIdentifier::compare(s, FUNC_PI)) {
+      return fnPi;
+   }
    else if (ConstantIdentifier::compare(s, FUNC_RESERVE)) {
       return fnReserve;
    }
@@ -1761,8 +1776,14 @@ FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, FUNC_SETWORD)) {
       return fnSetWord;
    }
+   else if (ConstantIdentifier::compare(s, FUNC_SIN)) {
+      return fnSin;
+   }
    else if (ConstantIdentifier::compare(s, FUNC_SHIFT)) {
       return fnShift;
+   }
+   else if (ConstantIdentifier::compare(s, FUNC_SQRT)) {
+      return fnSqrt;
    }
    else if (ConstantIdentifier::compare(s, FUNC_SUB)) {
       return fnSub;
@@ -1788,6 +1809,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
       case fnAnd:
          copystr(s, FUNC_AND);
          break;
+      case fnArcTan:
+         copystr(s, FUNC_ARCTAN);
+         break;
       case fnCopy:
          copystr(s, FUNC_COPY);
          break;
@@ -1805,6 +1829,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
          break;
       case fnCopyStr:
          copystr(s, FUNC_COPYSTR);
+         break;
+      case fnCos:
+         copystr(s, FUNC_COS);
          break;
       case fnCreate:
          copystr(s, FUNC_CREATE);
@@ -1884,6 +1911,9 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
       case fnOr:
          copystr(s, FUNC_OR);
          break;
+      case fnPi:
+         copystr(s, FUNC_PI);
+         break;
       case fnReserve:
          copystr(s, FUNC_RESERVE);
          break;
@@ -1914,8 +1944,14 @@ const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t
       case fnSetWord:
          copystr(s, FUNC_SETWORD);
          break;
+      case fnSin:
+         copystr(s, FUNC_SIN);
+         break;
       case fnShift:
          copystr(s, FUNC_SHIFT);
+         break;
+      case fnSqrt:
+         copystr(s, FUNC_SQRT);
          break;
       case fnSub:
          copystr(s, FUNC_SUB);

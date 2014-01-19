@@ -19,7 +19,7 @@
 #define RULES_FILE                  "rules.dat"
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0003
+#define ELC_BUILD_NUMBER             0x0004
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
@@ -57,7 +57,7 @@
 #define ELC_DEBUGINFO               "debuginfo"
 #define ELC_PROJECT_ENTRY           "entry"
 #define ELC_TARGET                  "executable"
-#define ELC_GC_PAGESIZE             "gcsize"
+#define ELC_MG_SIZE                 "mgsize"
 #define ELC_GC_OBJSIZE              "objsize"
 //#define ELC_HEAP_COMMIT             "heapcommit"
 //#define ELC_HEAP_RESERV             "heapresrv"
@@ -76,7 +76,7 @@
 #define ELC_VM_PATH                 "vmpath"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
-#define ELC_YG_RATIO                "ygratio"
+#define ELC_YG_SIZE                 "ygsize"
 #define ELC_L0                      "l0"                // optimization: byte code optimization
 //#define ELC_L1                      "l1"                // optimization: direct invoke
 //#define ELC_L2                      "l2"                // optimization: jumps

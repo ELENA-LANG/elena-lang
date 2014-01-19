@@ -56,8 +56,8 @@ define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
 
 // CORE GC SIZE
-define gcs_HeapSize	0000h
-define gcs_YGRatio	0004h
+define gcs_MGSize	0000h
+define gcs_YGSize	0004h
 
 // CORE VM TABLE
 define vm_Instance      0000h
@@ -902,7 +902,7 @@ procedure core'init
   xor  ebx, ebx
   mov  [data : %CORE_GC_TABLE + gc_signal], ebx
 
-  // initialize
+  // ; initialize
   mov  ecx, [data : %CORE_STAT_COUNT]
   mov  edi, data : %CORE_STATICROOT
   test ecx, ecx
@@ -916,61 +916,63 @@ clear:
   jnz  short clear
 
 labNext:
+  // ;calculate total heap size
+  // ; mg size
+  mov  edi, [data : %CORE_GC_SIZE]             
+  and  edi, 0FFFFFF80h     // align to 128
+  mov  eax, edi
+  
+  // ; yg size
+  mov  esi, [data : %CORE_GC_SIZE + gcs_YGSize]
+  and  esi, 0FFFFFF80h    // align to 128
+  add  eax, esi
+  add  eax, esi
+  
+  // ; add header
+  mov  ebx, eax
+  shl  eax, page_size_order   
+  shl  ebx, 2
+  push ebx
+  add  eax, ebx
 
-  // calculate total heap size
-  mov  ebx, [data : %CORE_GC_SIZE]
-  and  ebx, 0FFFFFF80h     // align to 128
-
-  mov  ecx, ebx
-  mov  eax, ebx
-  shl  ebx, page_size_order   
-  shl  eax, 2              
-  push ebx                // save size 
-  mov  edx, ebx            
-  add  ebx, eax           // add heap header  
-
-  xor  edx, edx
-  mov  ecx, 100           // calculate yg heap size
-  div  ecx
-  mov  ecx, [data : %CORE_GC_SIZE + gcs_YGRatio]
-  mul  ecx
-
-  and  eax, 0FFFFFF80h    // align to 128
-  push eax                // save yg size
-
-  push ebx                // create heap
+  // ; create heap
+  push eax                
   push GC_HEAP_ATTRIBUTE
   call extern 'dlls'KERNEL32.GetProcessHeap
   push eax 
   call extern 'dlls'KERNEL32.HeapAlloc
 
-  mov  [data : %CORE_GC_TABLE + gc_header], eax
-  mov  ecx, [data : %CORE_GC_SIZE]
-  shl  ecx, 2              
-  add  eax, ecx           // skip header
+  shl  esi, page_size_order
+  shl  edi, page_size_order
 
+  // ; initialize gc table
+  pop  ecx
+  mov  [data : %CORE_GC_TABLE + gc_header], eax
+
+  // ; skip header
+  add  eax, ecx           
+
+  // ; initialize yg
   mov  [data : %CORE_GC_TABLE + gc_start], eax
   mov  [data : %CORE_GC_TABLE + gc_yg_start], eax
   mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
   mov  [data : %CORE_GC_TABLE + gc_promotion], eax
 
-  pop  edx                // get yg size 
-  pop  ebx                // get total size 
-  add  ebx, eax
+  // ; initialize gc end
+  mov  ecx, edi
+  add  ecx, esi
+  add  ecx, esi
   mov  [data : %CORE_GC_TABLE + gc_end], ebx
   
-  shr  edx, 1             // halve yg size
-  and  edx, page_mask     
-
-  add  eax, edx
+  add  eax, esi
   mov  [data : %CORE_GC_TABLE + gc_yg_end], eax
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax
 
-  add  eax, edx
+  add  eax, esi
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], eax
   mov  [data : %CORE_GC_TABLE + gc_mg_start], eax
   mov  [data : %CORE_GC_TABLE + gc_mg_current], eax
-
+  
   // ; initialize wbar start
   mov  edx, [data : %CORE_GC_TABLE + gc_mg_start]
   sub  edx, [data : %CORE_GC_TABLE + gc_start]

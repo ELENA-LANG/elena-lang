@@ -129,10 +129,10 @@ ClassSectionInfo ExecutableImage :: getClassSectionInfo(const wchar16_t* referen
 size_t ExecutableImage :: getLinkerConstant(int id)
 {
    switch (id) {
-      case lnGCSize:
-         return _project->IntSetting(opGCHeapSize);
-      case lnYGRatio:
-         return _project->IntSetting(opYGRatio);
+      case lnGCMGSize:
+         return _project->IntSetting(opGCMGSize);
+      case lnGCYGSize:
+         return _project->IntSetting(opGCYGSize);
       case lnThreadCount:
          return _project->IntSetting(opThreadMax);
       case lnObjectSize:

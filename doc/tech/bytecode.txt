@@ -267,6 +267,10 @@ ELENA byte codes (or ecodes)
 
  mthen m, label             - jumps to the label if mcc == m
 
+ melseverb m, label         - jumps to the label if mcc.verb != m
+
+ mthenverb m, label         - jumps to the label if mcc.verb == m
+
  delse label                - jumps to the label if index == 0
 
  dthen label                - jumps to the label if index != 0
@@ -513,78 +517,18 @@ ELENA byte codes (or ecodes)
  
  rint                        - self << int(real:acc)
  
+ rcos                        - self << cos(real:acc)
+ 
+ rsin                        - self << sin(real:acc)
+ 
+ rarctan                     - self << argtan(real:acc)
+ 
+ rsqrt                       - self << sqrt(real:acc)
+ 
+ rpi                         - self << pi
+ 
  wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
                                                                                                       
  rfgetlenz                   - params(acc).length >> index
 
  bseval                      - executes VM Script tape in self, acc contains the result
- 
-
-
-
-
-
-
- 
-
-
-
-
-
-
- x_popacci i                - [acc::i] <= [sp] ; sp--;
-                              does not use GC reference bit masks
-
-
- calling commands:
- -----------------
- rcalln r, n                - calls directly the appropriate method in VMT referred by r
-                              acc contains the result
-              
- jumpacc                    - invoke symbol referred by acc
-
- branching commands:
--------------------
- mccelseacc label           - jumps to the label if mcc != acc
- 
- mccthenacc label           - jumps to the label if mcc == acc
- 
- register commands:
- ------------------ 
- x_acccopyfpi i             - fp+i => acc
-                              does not affect m register (EDX)
-           
- accfillr r                 - r => [acc::(0..n)]
-                              ; direct
-
- iaccfillr i, r             - r => [acc::(0..i)]
-                              ; direct
-
- x_accsavefi i              - [fp+i] <= acc ; frame header is not taken into account
- 
- x_mcccopym m               - mcc <= m ; parameter count is not affected
-
-
-
-
-
- rethrow i                  - remove the current exception handler and
-                              jump to the next exception handler if
-                              sp + i != exception::sp
-
-
-
-
-
-
- mulity-threading commands:
- --------------------------
- trylock n                  - if self::sync is zero => n => self::sync ; acc = 0 ; else acc = 1;
-                              may use postfix commands: else, then
-
- freelock n                 - self::sync += n
-
- sptrylock n                - if [sp]::sync is zero => n => [sp]::sync ; acc = 0 ; else acc = 1;
-                              may use postfix commands: else, then
-
- accfreelock n              - acc::sync += n

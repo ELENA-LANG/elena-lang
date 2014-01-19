@@ -3,7 +3,7 @@
 //
 //		This header contains String classes declarations
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef altstringsH
@@ -171,6 +171,7 @@ public:
    static void trim(char* s, char c);
 
    static int strToInt(const char* s);
+   static long strToLong(const char* s, int radix);
 
    static char* intToStr(int n, char* s, int radix);
 };

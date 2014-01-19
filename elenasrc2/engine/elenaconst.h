@@ -260,8 +260,8 @@ namespace _ELENA_
    const int elDebugBytes          = 0x00070000;
 
   // --- ELENA Linker / ELENA VM constants ---
-   const int lnGCSize              = 0x00000001;
-   const int lnYGRatio             = 0x00000002;
+   const int lnGCMGSize            = 0x00000001;
+   const int lnGCYGSize            = 0x00000002;
    const int lnThreadCount         = 0x00000003;
    const int lnObjectSize          = 0x00000004;
    // used only for VM

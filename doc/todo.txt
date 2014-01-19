@@ -25,9 +25,6 @@ Currently:
 1.9.12
 --------
 week1:
-              xdev - math opcodes
-                       * sin, sqrt, pi, arctan
-
               xdev - break exception
                        * could we use break exception to go from nested code to the parent menthod exit? (see bullscows sample)
 
@@ -56,6 +53,16 @@ week1:
 
               xdev - generic development              
                        * cannot declare static array #static arr = (1,2,3) - second time call raises an error
+
+                       * the following code break the compilation:
+                             #symbol GetWindowsVersion =
+                                 system'external'KERNEL32 GetVersion &out'int:(IntNumber new).
+
+                       * the following code break the compilation:
+                             #symbol GetWindowsVersion =
+                             [
+                                 #var  n := system'external'KERNEL32 GetVersion &out'int:(IntNumber new).
+                             ].                             
 
                        * the following code cannot be executed correctly  (calendar)
                             #var aLiteral := aLine literal.
@@ -100,6 +107,8 @@ week1:
                        * role class should not be its own class class (like it is now), super class should be used
 
                        * role implementation (see arithmeval sample)
+
+                       * external call : ^ system'external'KERNEL32 GetVersion  - auto create the result
 
                        * group object implementation (group, union, cast)
                        * elenavm: use reverse instead of set of swaps
@@ -238,6 +247,8 @@ week1:
 
                        * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
                          byte array used?
+
+                       * elena opcodes : extension - think over extension set implementation (current is not efficient)
 
               xdev - dynamic programming                                             
                        * implement trace mode
@@ -383,9 +394,6 @@ week1:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
                        
-              xdev - GC
-                       * increase the heap size
-
               xdev - native code optimization
                        * bssearch : can we get rid of setncb command, if the number is always even?
                        * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
@@ -407,6 +415,7 @@ week2:
                        * change api faq
 
               adev - lib30                                        
+                       * implement intnumber - highword, lowword, lowbyte, highbyte
                        * Struct : check if the income message is "get"
                        * realNumber.get&literal - starting space should be removed
                        * win32 file i/o operations should raise an exception with an error code
@@ -639,6 +648,9 @@ week4:
 1.9.13
 --------
 week1:
+              xdev - GC
+                       * heap mg size should reserved but not committed and can grow
+                       * out of memory exception should be correctly raised
               xdev - x64
                       * think over general architecture
                       * asm2bin64 - compile x64 bit opcodes

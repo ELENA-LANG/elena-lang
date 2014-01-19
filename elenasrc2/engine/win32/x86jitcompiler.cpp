@@ -74,7 +74,7 @@ const ByteCommand gcCommands[gcCommandNumber] =
    bcBox, bcUnbox, bcBSGRedirect
 };
 
-const int gcExtensionNumber = 58;
+const int gcExtensionNumber = 63;
 const FunctionCode gcExtensions[gcExtensionNumber] =
 {
    fnCopy, fnReserve, fnSave, fnSetLen, fnLoad, 
@@ -88,7 +88,8 @@ const FunctionCode gcExtensions[gcExtensionNumber] =
    fnIndexOf, fnIndexOfWord, fnSetWord, fnGetWord, fnGetBuf,
    fnGetInt, fnSetInt, fnRndNew, fnRndNext, fnLn,
    fnExp, fnAbs, fnRound, fnSetBuf, fnLoadName,
-   fnGetLenZ, fnEval, fnInt
+   fnGetLenZ, fnEval, fnInt, fnSin, fnCos, 
+   fnArcTan, fnSqrt, fnPi
 };
 
 // command table
@@ -1643,8 +1644,8 @@ void x86JITCompiler :: prepareCoreData(_ReferenceHelper& helper, _Memory* data, 
 
    // GC SIZE Table
    _preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
-   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCSize));
-   rdataWriter.writeDWord(helper.getLinkerConstant(lnYGRatio));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
 
    // load GC static root
    _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));

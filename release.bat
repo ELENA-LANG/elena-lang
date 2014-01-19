@@ -327,7 +327,7 @@ copy %1\examples\interpreter\*.l examples\interpreter
 copy %1\examples\interpreter\*.prj examples\interpreter
 copy %1\examples\interpreter\*.txt examples\interpreter
 copy %1\examples\interpreter\*.bat examples\interpreter
-copy %1\examples\interpreter\*.vl2 examples\interpreter
+copy %1\examples\interpreter\*.es examples\interpreter
 
 md examples\matrix 
 copy %1\examples\matrix\*.l examples\matrix 

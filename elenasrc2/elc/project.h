@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the base class implementing
 //      ELENA Project interface.
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef projectH
@@ -46,14 +46,14 @@ enum ProjectSetting
    opSectionAlignment      = 0x0021,
    opFileAlignment         = 0x0022,
    opApplicationType       = 0x0023,      // defines the application type: console or GUI
-   opGCHeapSize            = 0x0024,
+   opGCMGSize              = 0x0024,
    opGCObjectSize          = 0x0025,
    opSizeOfStackReserv     = 0x0026,
    opSizeOfStackCommit     = 0x0027,
    opSizeOfHeapReserv      = 0x0028,
    opSizeOfHeapCommit      = 0x0029,
    opPlatformType          = 0x002A,      // defines the project platform type: stand-alone or VM client
-   opYGRatio               = 0x002B,
+   opGCYGSize              = 0x002B,
 
    // compiler engine options
    opWarnOnUnresolved      = 0x0041,
@@ -108,6 +108,7 @@ protected:
    bool loadOption(_ConfigFile& config, ProjectSetting setting);
    void loadIntOption(_ConfigFile& config, ProjectSetting setting);
    void loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue);
+   void loadHexOption(_ConfigFile& config, ProjectSetting setting);
    void loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment);
    void loadBoolOption(_ConfigFile& config, ProjectSetting setting);
    bool loadPathOption(_ConfigFile& config, ProjectSetting setting, const _path_t* path);

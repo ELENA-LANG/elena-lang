@@ -273,6 +273,11 @@ enum FunctionCode
    fnLoadName       = 0x0687,
    fnGetLenZ        = 0x0688,
    fnInt            = 0x0689,
+   fnSin            = 0x068A,
+   fnCos            = 0x068B,
+   fnArcTan         = 0x068C,
+   fnSqrt           = 0x068D,
+   fnPi             = 0x068E,
 };
 
 enum PseudoArg
@@ -417,13 +422,13 @@ struct CommandTape
    void write(ByteCommand command);
    void insert(ByteCodeIterator& it, ByteCommand command);
 
-   ByteCommand extract()
-   {
-      ByteCommand command = *tape.end();
-      tape.cut(tape.end());
-
-      return command;
-   }
+//   ByteCommand extract()
+//   {
+//      ByteCommand command = *tape.end();
+//      tape.cut(tape.end());
+//
+//      return command;
+//   }
 
    void import(_Memory* section);
 
