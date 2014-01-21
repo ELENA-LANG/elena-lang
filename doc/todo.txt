@@ -23,20 +23,25 @@ Currently:
 <=================> 
          
 1.9.12
---------
-week1:
-              xdev - break exception
-                       * could we use break exception to go from nested code to the parent menthod exit? (see bullscows sample)
+------
+week1 [26.01]:
+              xdev - multithreading
+                       * compile commands_mt
+                       * compile system_test with mt
+                       * compile pi with mt
+                       * compile anagram with mt
+                       * new thread
+                       * static object should be thread safe
+              xdev - generic development              
+                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
 
               xdev - utf-8
                        * all project files should be converted to UTF8
 
-              xdev - dispatching multiply parameters
-                       * think over light-weight dispatching implementation
-
               xdev - dispatch table
                        * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
                          actual message name inside handler : the table is the map between income and outcome message)
+                       * think over light-weight dispatching implementation
                          
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
@@ -45,46 +50,14 @@ week1:
                        * any other operation should result in boxing
             
               xdev - multithreading
-                       * migrate core: core_alloc, ...
-                       * migrate commands
                        * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
                        * reimplement thread safe variable, safe points, safe regions
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
 
               xdev - generic development              
-                       * cannot declare static array #static arr = (1,2,3) - second time call raises an error
+                       * widechar constant
 
-                       * the following code break the compilation:
-                             #symbol GetWindowsVersion =
-                                 system'external'KERNEL32 GetVersion &out'int:(IntNumber new).
-
-                       * the following code break the compilation:
-                             #symbol GetWindowsVersion =
-                             [
-                                 #var  n := system'external'KERNEL32 GetVersion &out'int:(IntNumber new).
-                             ].                             
-
-                       * the following code cannot be executed correctly  (calendar)
-                            #var aLiteral := aLine literal.
-                            #var aLength := aLiteral length.        
-                            (aLength < aWidth)
-                                 ? [
-                                       #var aLen := aWidth - aLength.
-                                       #var aLeftLen := aLen / 2.
-                
-                                       self~textOp write:aChar &length:aLeftLen.
-                                       self write::aLiteral.  // !! error raised - for some strange reason it is sent to $self
-                                       self ~textOp write:aChar &length:(aLen - aLeftLen).
-                                  ]
-                                ! [ self write::aLiteral. ].                    
-
-                       * the following code cannot be executed correctly (calendar)
-                           (theLine length < 21)
-                                ? [ theLine~textOp write:" " &length:(21 - theLine length). ].
-
-                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
-
-                       * $self cannot be used inside lambda expression, so how implement recursive expression call ?
+                       * virtual control.do(1) implementation ; support break exception
 
                        * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
                          and could be invoked by eval
@@ -108,15 +81,12 @@ week1:
 
                        * role implementation (see arithmeval sample)
 
-                       * external call : ^ system'external'KERNEL32 GetVersion  - auto create the result
-
                        * group object implementation (group, union, cast)
                        * elenavm: use reverse instead of set of swaps
                        
                        * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
                          do we need to return type for every object??
 
-                       * widechar constant
                        * filling with zero / nil should be done inside constructor
                        * dispatching : return type, could we support additional method or dispatch handler can be used, ...
                          think over type support, we need some generic solution (typecontrol should be declared for every set of
@@ -270,9 +240,6 @@ week1:
                         * in in Array.add&array method, declare both length variables as type:int - it crashes
 
                        * replace enumeration / iteration loops with a virtual expressions
-                       
-                       * optimize output code: system'nil.equal : 'aloadfi pusha mcopy' : 'aloadfi pusha ..', and 'pusha ...';
-                         the second rule was not recognized                                                                   
 
                        * optimize output code: system'nil.equal, ...
 

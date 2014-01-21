@@ -92,6 +92,10 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_end                : +24h
   dd 0 // ; gc_promotion          : +28h
   dd 0 // ; gc_mg_wbar            : +2Ch
+  dd 0 // ; gc_lock               : +30h
+  dd 0 // ; gc_signal             : +34h
+  dd 0 // ; tt_ptr                : +38h
+  dd 0 // ; tt_lock               : +3Ch
 
 end
 
@@ -101,6 +105,15 @@ end
 // in: ecx - counter ; ebx - size ; out: eax - created object ; edi contains the object or zero ; ecx is not used but its value saved
 procedure %GC_ALLOC
 
+  // ; GCXT: set lock
+labStart:
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[esi], edx
+  jnz  short labWait
+
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
   mov  esi, ebx
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
@@ -109,16 +122,34 @@ procedure %GC_ALLOC
   jae  short labYGCollect
   mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], esi
+  
+  // ; GCXT: clear sync field
+  mov  [eax], 0 
+  mov  edx, 0FFFFFFFFh
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
   lea  eax, [eax + elObjectOffset]
+  
+  // ; GCXT: free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
   ret
 
 labYGCollect:
 
-  // ; save registers
-  push edi                             
+  // ; GCXT: find the current thread entry
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
 
-  // ; lock frame
-  // !! mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]
+  // ; GCXT: save registers
+  push edi
+  mov  eax, [edx+eax*4]
+
+  // ; GCXT: lock frame
+  // ; get current thread event
+  mov  esi, [eax + tls_sync_event]         
+  // ; get current frame
+  mov  eax, [eax + tls_stack_frame]           
   mov  edx, eax
   sub  edx, esp
   mov  [eax], edx
@@ -126,12 +157,98 @@ labYGCollect:
   push ecx
   push ebx
   push ebp
+
+  // ; === GCXT: safe point ===
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  // ; if it is a collecting thread, starts the GC
+  test edx, edx                       
+  jz   short labConinue
+  // ; otherwise eax contains the collecting thread event
+
+  // ; signal the collecting thread that it is stopped
+  push 0FFFFFFFFh // -1
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  push edx
+  push esi
+
+  // ; signal the collecting thread that it is stopped
+  call extern 'dlls'kernel32.SetEvent
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  // ; stop until GC is ended
+  call extern 'dlls'kernel32.WaitForSingleObject
+
+  // ; restore registers and try again
+  pop  ebp
+  pop  ebx
+  pop  ecx
+  pop  edi
+
+  jmp  labStart
+
+labConinue:
+
+  mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
+  mov  ebp, esp
+
+  // ; === thread synchronization ===
+
+  // ; create list of threads need to be stopped
+  mov  eax, esi
+  mov  edi, [data : %CORE_GC_TABLE + tt_ptr]
+  // ; get tls entry address  
+  mov  esi, data : %THREAD_TABLE             
+labNext:
+  mov  edx, [esi]
+  push [edx+4]
+  test [edx+8], 1
+  jnz  short labSkipReset 
+  cmp  [edx+4], eax
+  jz   short labSkipSave
+  push [edx+4]
+labSkipSave:
+  // ; reset all signal events
+  call extern 'dlls'kernel32.ResetEvent      
+labSkipReset:
+  lea  esi, [esi+4]
+  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+  sub  edi, 1
+  jnz  short labNext
+
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  mov  ebx, [data : %CORE_GC_TABLE + tt_ptr]
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
+  mov  ecx, esp
+  sub  ebx, 1
+  jz   short labSkipWait
+
+  // ; wait until they all stopped
+  push 0FFFFFFFFh // -1
+  push 0FFFFFFFFh // -1
+  push ecx
+  push ebx
+  call extern 'dlls'kernel32.WaitForMultipleObjects
+
+  // ; remove list
+  mov  esp, ebp     
+
+labSkipWait:
+  // ==== GCXT end ==============
   
   // ; create set of roots
   mov  ebp, esp
   xor  ecx, ecx
   push ecx
-  push ecx
+  push ecx                                                              
 
   // ; save static roots
   mov  esi, data : %CORE_STATICROOT
@@ -139,8 +256,17 @@ labYGCollect:
   push esi
   push ecx
 
-  // ; save frames
-  // !! mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
+  // ; == GCXT: save frames ==
+  mov  ebx, [data : %CORE_GC_TABLE + tt_ptr]
+
+labYGNextThread:  
+  sub  ebx, 1
+  mov  eax, data : %THREAD_TABLE
+  mov  [esp], ecx                  // !! do we need this?
+  // ; get tls entry address
+  mov  esi, [eax+ebx*4]            
+  // ; get the top frame pointer
+  mov  esi, [esi + tls_stack_frame]                  
   
 labYGNextFrame:
   mov  eax, [esi+4]
@@ -151,7 +277,11 @@ labYGNextFrame:
   mov  esi, eax
   test esi, esi
   jnz  short labYGNextFrame
-
+  
+  test ebx, ebx
+  jnz  short labYGNextThread
+  // ; == GCXT: end ==
+  
   // ; check if major collection should be performed
   mov  edx, [data : %CORE_GC_TABLE + gc_end]
   mov  ebx, [data : %CORE_GC_TABLE + gc_yg_end]
@@ -272,15 +402,27 @@ labCollectFrame:
   // ; restore registers
   pop  ebp
   pop  ebx
-  pop  ecx
-  pop  edi
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
   mov  [eax], ebx
   add  ebx, eax
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ebx
-  lea  eax, [eax + elObjectOffset]
+  lea  edi, [eax + elObjectOffset]
+
+  // ; GCXT: signal the collecting thread that GC is ended
+  // ; should it be placed into critical section?
+  xor  ecx, ecx
+  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  // ; clear thread signal var
+  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
+  push esi
+  call extern 'dlls'kernel32.SetEvent 
+
+  mov  eax, edi
+  pop  ecx
+  pop  edi  
+
   ret
 
 labFullCollect:
@@ -448,8 +590,6 @@ labClearWBar:
   mov  esp, [esp]
   pop  ebp
   pop  ebx
-  pop  ecx
-  pop  edi 
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
@@ -459,7 +599,20 @@ labClearWBar:
   cmp  ebx, edx
   jae  short labError2
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ebx
-  lea  eax, [eax + elObjectOffset]
+  lea  edi, [eax + elObjectOffset]
+
+  // ; GCXT: signal the collecting thread that GC is ended
+  // ; should it be placed into critical section?
+  xor  ecx, ecx
+  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  // ; clear thread signal var
+  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
+  push esi
+  call extern 'dlls'kernel32.SetEvent 
+
+  mov  eax, edi
+  pop  ecx
+  pop  edi  
   ret
 
 labError:
@@ -512,12 +665,17 @@ labYGCheck:
   // ; save previous ecx field
   push ecx
 
+  // ; === GCXT: Copy Object Header ===
   // ; copy object size
-  mov  [ebp], edi
+  mov  [ebp+4], edi
 
+  // ; copy sync field
+  mov  ecx, [eax - elSyncOffset]
+  mov  [ebp], ecx
+  
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 8], ecx
+  mov  [ebp + 0Ch], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
@@ -639,12 +797,17 @@ labYGPromMinBegin:
   // ; save previous ecx field
   push ecx
 
+  // ; === GCXT: Copy Object Header ===
   // ; copy object size
-  mov  [ebp], edi
+  mov  [ebp + 4], edi
 
+  // ; copy sync field
+  mov  ecx, [eax - elSyncOffset]
+  mov  [ebp], ecx
+  
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 8], ecx
+  mov  [ebp + 0Ch], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
@@ -959,10 +1122,11 @@ labNext:
   mov  [data : %CORE_GC_TABLE + gc_promotion], eax
 
   // ; initialize gc end
-  mov  ecx, edi
+  mov  ecx, eax
   add  ecx, esi
   add  ecx, esi
-  mov  [data : %CORE_GC_TABLE + gc_end], ebx
+  add  ecx, edi
+  mov  [data : %CORE_GC_TABLE + gc_end], ecx
   
   add  eax, esi
   mov  [data : %CORE_GC_TABLE + gc_yg_end], eax

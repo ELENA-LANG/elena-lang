@@ -210,7 +210,7 @@
 
 #symbol control =
 {
-    do:anAction = anAction eval.
+    do:anAction = anAction eval | stop.
     
     do:anAction &until:anExpr
         = anAction~actionOp run &until:anExpr | stop.

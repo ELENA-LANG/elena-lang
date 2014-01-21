@@ -5,6 +5,13 @@
 #define extensions.
 #define extensions'math.
 
+
+#symbol nil =
+{
+    equal : anObject = 
+        anObject equal &object:$self.
+}.
+
 #class Tester
 {
 }
@@ -182,6 +189,16 @@
 
 #symbol BreakTest =
 [
+    #var a := 2.
+    #var n := control do:
+    [
+       (a == 1) ? [ #break "a". ].
+
+       (a == 2) ? [ #break "b". ].
+
+       ^ nil.
+    ].    
+    
     control while:[true] &do:
     [
         true ? [

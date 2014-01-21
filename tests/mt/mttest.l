@@ -96,9 +96,9 @@
 ////    aThread1 wait &stopped.
 ////    aThread2 wait &stopped.   
 ////]. 
-////
-////#symbol TestCase3 =>
-////[
+//
+//#symbol TestCase3 =>
+//[
 ////    #var aTest := SyncTest.
 ////  
 ////    #var aThread1 := ThreadControl run: => (aTest eval:"Thread 1%n").
@@ -106,11 +106,17 @@
 ////
 ////    aThread1 wait &stopped.
 ////    aThread2 wait &stopped.   
-////]. 
+//]. 
+
+#symbol NewThreadTest =
+[
+////    #var aThread1 := ThreadControl run: => (aTest eval:"Thread 1%n").
+////    aThread1 wait &stopped.
+].
 
 #symbol program =
 [
     system'console writeLine:"mt testing...".
     
-//    TestCase1.
+    NewThreadTest eval.
 ].

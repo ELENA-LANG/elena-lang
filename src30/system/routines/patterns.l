@@ -190,7 +190,7 @@
                 #var aLeftLen := aLen / 2.
                 
                 self~textOp write:aChar &length:aLeftLen.
-                self write:aLiteral.
+                self write::aLiteral.
                 self ~textOp write:aChar &length:(aLen - aLeftLen).
             ]
             ! [ self write::aLiteral. ].

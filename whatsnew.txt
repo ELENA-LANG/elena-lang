@@ -12,6 +12,8 @@ ELENA:
 
 ELC:
 [*] heap size is tuned
+[-] bug fix: length boxing, long static array implementation, break statement
+[-] byte code optimization routine fixed
 
 ******************************************************************************
                     What's New in 1.9.11 (pre release)

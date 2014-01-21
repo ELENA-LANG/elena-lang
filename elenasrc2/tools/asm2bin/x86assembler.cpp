@@ -162,6 +162,7 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
             operand.type = x86Helper::otDD;
             operand.reference = info.binary->mapReference(structRef) | mskNativeDataRef;
          }
+
       }
 		else if (token.check(_T("const"))) {
          token.read(_T(":"), err);
@@ -469,8 +470,15 @@ x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, Procedure
 	else {
       operand = defineOperand(token, info, err);
 
-      if (operand.type != x86Helper::otUnknown)
+      if (operand.type != x86Helper::otUnknown) {
          token.read();
+
+         if (token.check(_T("+"))) {
+            operand.offset += token.readInteger(constants);
+
+            token.read();
+         }
+      }
    }
 
 	return operand;

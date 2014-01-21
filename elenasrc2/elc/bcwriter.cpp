@@ -354,6 +354,7 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
          tape.setLabel(true);
          tape.write(bcAXSetR, nilReference | mskConstantRef);
          tape.write(bcNext, baCurrentLabel, fieldCount);
+         tape.releaseLabel();
          break;
    }  
 }

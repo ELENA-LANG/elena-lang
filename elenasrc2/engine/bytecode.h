@@ -522,7 +522,7 @@ struct TransformTape
    bool apply(CommandTape& tape);
    void transform(ByteCodeIterator& trans_it, Node replacement);
 
-   Node makeStep(Node& step, ByteCommand& command);
+   bool makeStep(Node& step, ByteCommand& command);
 
    void load(StreamReader* optimization)
    {

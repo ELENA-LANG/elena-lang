@@ -720,7 +720,7 @@ void TransformTape :: transform(ByteCodeIterator& trans_it, Node replacement)
    }
 }
 
-TransformTape::Node TransformTape :: makeStep(Node& step, ByteCommand& command)
+bool TransformTape :: makeStep(Node& step, ByteCommand& command)
 {
    Node::ChildEnumerator child = step.Children();
    Node defaultNode(&trie);
@@ -728,18 +728,31 @@ TransformTape::Node TransformTape :: makeStep(Node& step, ByteCommand& command)
    while (!child.Eof()) {
       Node current = child.Node();
       if (current.Value() == command) {
-         return current;
+         step = current;
+
+         return true;
       }
-      else if (current.Value().code == bcMatch)
-         return current;
+      else if (current.Value().code == bcMatch) {
+         step = current;
+
+         return true;
+      }
 
       child++;
    }
 
    if (defaultNode != step) {
-      return makeStep(defaultNode, command);
+      step = defaultNode;
+
+      return makeStep(step, command);
    }
-   else return defaultNode;
+
+   return false;
+}
+
+inline bool matchable(ByteCodeIterator& it)
+{
+   return test(*it, blLabelMask) || (*it < bcReserved && *it > bcNop);
 }
 
 bool TransformTape :: apply(CommandTape& commandTape)
@@ -750,17 +763,26 @@ bool TransformTape :: apply(CommandTape& commandTape)
    Node current(&trie);
    while (!it.Eof()) {
       // skip meta commands (except labels)
-      if (test(*it, blLabelMask) || (*it < bcReserved && *it > bcNop)) {
-         current = makeStep(current, *it);
+      if (matchable(it)) {
+         // make first step
+         if (makeStep(current, *it)) {
+            it++;
 
-         // check if the end node is reached
-         if (current.Value().code == bcMatch) {
-            ByteCodeIterator trans_it = it;
+            ByteCodeIterator word_it = it;
+            while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it))) {
+               // check if the end node is reached
+               if (current.Value().code == bcMatch) {
+                  it = word_it;
 
-            transform(--trans_it, current.FirstNode());
+                  transform(--word_it, current.FirstNode());
 
-            applied = true;
-            current = Node(&trie);
+                  applied = true;
+                  current = Node(&trie);
+
+                  break;
+               }
+               else word_it++;
+            }
          }
          else it++;
       }

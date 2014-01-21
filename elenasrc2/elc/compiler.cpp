@@ -1771,8 +1771,16 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    switch (object.kind) {
       case okUnknown:
          scope.raiseError(errUnknownObject, terminal);
+         break;
       case okSymbol:
          scope.moduleScope->validateReference(terminal, object.reference | mskSymbolRef);
+         break;
+      case okExternal:
+         // external call cannot be used inside symbol
+         if (test(mode, HINT_ROOT))
+            scope.raiseError(errInvalidSymbolExpr, node.Terminal());
+
+         break;
    }
 
    // skip the first breakpoint if it is not a symbol
@@ -3051,7 +3059,14 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, size
    else if (type != otNone && target.type == type) {
       return target;
    }
+   // if length is assigned to int
+   else if (type == otInt && target.type == otLength) {
+      return target;
+   }
    else {
+      if (checkIfBoxingRequired(target))
+         boxObject(scope, target, 0);
+
       _writer.pushObject(*scope.tape, target);
       _writer.typecast(*scope.tape, subject_id);
 
@@ -3203,9 +3218,7 @@ void Compiler :: compileBreak(DNode node, CodeScope& scope, int mode)
    //scope codeScope.breakLabel
 
    ObjectInfo retVal = compileExpression(node.firstChild(), scope, mode);
-   if (retVal.kind != okRegister) {
-      _writer.popObject(*scope.tape, ObjectInfo(okRegister));
-   }
+   _writer.loadObject(*scope.tape, retVal);
 
    _writer.breakLoop(*scope.tape, scope.breakLabel);
 
