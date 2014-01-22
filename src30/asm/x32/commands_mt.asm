@@ -1,6 +1,8 @@
 // --- System Core Data  --
 define CORE_EXCEPTION_TABLE 01h
 define CORE_GC_TABLE        02h
+define CORE_TLS_INDEX       07h
+define THREAD_TABLE         08h
 
 // --- System Core API  --
 define GC_ALLOC	         10001h
@@ -10,11 +12,12 @@ define INIT_RND          10012h
 define EVALSCRIPT        10013h
 
 // constants
-define elObjectOffset        0010h
-define elSyncOffset          0010h
-define elSizeOffset          000Ch
-define elCountOffset         0008h
-define elVMTOffset           0004h 
+define elObjectOffset     0010h
+define elSyncOffset       0010h
+define elSizeOffset       000Ch
+define elCountOffset      0008h
+define elVMTOffset        0004h 
+define elVMTSizeOffset    000Ch
 
 // GC TABLE
 define gc_header             0000h
@@ -35,7 +38,11 @@ define page_ceil               1Bh
 // throw
 inline % 7
 
-  mov  edx, [data : %CORE_EXCEPTION_TABLE]
+  // ; GCXT: get current thread frame
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  ecx, fs:[2Ch]
+  mov  ebx, [ecx+ebx*4]
+  mov  edx, [ebx + tls_catch_addr]
   nop
   nop
   jmp  edx
@@ -558,9 +565,14 @@ end
 
 inline % 0B0h
 
-  mov  ebx, esi
-  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]
+  // ; GCXT: get current thread frame
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  ecx, fs:[2Ch]
+  mov  ebx, [ecx+ebx*4]
+
+  cmp  eax, [ebx + tls_stack_bottom]
   ja   short labSkip                      
+  mov  ebx, esi         
   cmp  eax, esp
   jb   short labSkip
 
@@ -590,9 +602,14 @@ end
 
 inline % 0B1h
 
-  mov  ebx, esi
-  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]  
+  // ; GCXT: get current thread frame
+  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  ecx, fs:[2Ch]
+  mov  ebx, [ecx+ebx*4]
+
+  cmp  eax, [ebx + tls_stack_bottom]
   ja   short labSkip                      
+  mov  ebx, esi
   shl  ebx, 2
   cmp  eax, esp
   jb   short labSkip

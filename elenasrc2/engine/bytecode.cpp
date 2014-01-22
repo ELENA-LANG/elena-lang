@@ -78,6 +78,9 @@
 #define OPCODE_GETLEN       "getlen"
 #define OPCODE_HOOK         "hook"
 #define OPCODE_IAXCOPYR     "iaxcopyr"
+#define OPCODE_IAXLOADBI    "iaxloadbi"
+#define OPCODE_IAXLOADFI    "iaxloadfi"
+#define OPCODE_IAXLOADSI    "iaxloadsi"
 //#define OPCODE_IACCFILLR    "iaccfillr"
 #define OPCODE_INCLUDE      "include"
 //#define OPCODE_INCFI        "incfi"
@@ -994,6 +997,15 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    else if (ConstantIdentifier::compare(s, OPCODE_IAXCOPYR)) {
       return bcIAXCopyR;
    }
+   else if (ConstantIdentifier::compare(s, OPCODE_IAXLOADBI)) {
+      return bcIAXLoadBI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_IAXLOADFI)) {
+      return bcIAXLoadFI;
+   }
+   else if (ConstantIdentifier::compare(s, OPCODE_IAXLOADSI)) {
+      return bcIAXLoadSI;
+   }
 //   else if (ConstantIdentifier::compare(s, OPCODE_IACCFILLR)) {
 //      return bcIAccFillR;
 //   }
@@ -1419,6 +1431,15 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
          break;
       case bcIAXCopyR:
          copystr(s, OPCODE_IAXCOPYR);
+         break;
+      case bcIAXLoadBI:
+         copystr(s, OPCODE_IAXLOADBI);
+         break;
+      case bcIAXLoadFI:
+         copystr(s, OPCODE_IAXLOADFI);
+         break;
+      case bcIAXLoadSI:
+         copystr(s, OPCODE_IAXLOADSI);
          break;
       case bcInclude:
          copystr(s, OPCODE_INCLUDE);

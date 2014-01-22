@@ -5,13 +5,6 @@
 #define extensions.
 #define extensions'math.
 
-
-#symbol nil =
-{
-    equal : anObject = 
-        anObject equal &object:$self.
-}.
-
 #class Tester
 {
 }

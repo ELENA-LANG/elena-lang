@@ -140,7 +140,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileElseN, &compileThenN, &compileElseSI, &compileThenSI,
    &compileMElseVerb, &compileMThenVerb, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
 
-   &compileCreate, &compileCreateN, &compileIAccCopyR, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileCreate, &compileCreateN, &compileIAccCopyR, &compileIAccCopyFI, &compileIAccCopySI, &compileIAccCopyBI, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileCallSI, &compileNop, &compileInvokeVMT, &compileNop,
 };
 
@@ -1280,17 +1280,48 @@ void _ELENA_::compileIAccCopyR(int opcode, x86JITScope& scope)
    scope.writeReference(*scope.code, reference, 0);
 }
 
-//void _ELENA_::compileIAccCopyN(int opcode, x86JITScope& scope)
-//{
-//   ref_t value = scope.tape->getDWord();
-//
-//   // mov ebx, n
-//   // mov [eax + arg], ebx
-//   scope.code->writeByte(0xBB);
-//   scope.code->writeDWord(value);
-//   scope.code->writeWord(0x9889);
-//   scope.code->writeDWord(scope.argument << 2);
-//}
+void _ELENA_::compileIAccCopyFI(int opcode, x86JITScope& scope)
+{
+   ref_t offs = scope.tape->getDWord();
+
+   // mov ebx, [ebp + off]
+   // mov [eax + arg], ebx
+
+   scope.code->writeWord(0x9D8B);
+   if (scope.argument < 0) {
+      scope.code->writeDWord(scope.prevFSPOffs - (scope.argument << 2));
+   }
+   else {
+      scope.code->writeDWord(-(scope.argument << 2));
+   }
+   scope.code->writeWord(0x9889);
+   scope.code->writeDWord(offs << 2);
+}
+
+void _ELENA_::compileIAccCopySI(int opcode, x86JITScope& scope)
+{
+   ref_t offs = scope.tape->getDWord();
+
+   // mov ebx, [esp + off]
+   // mov [eax + arg], ebx
+   scope.code->writeWord(0x9C8B);
+   scope.code->writeByte(0x24);
+   scope.code->writeDWord(scope.argument << 2);
+   scope.code->writeWord(0x9889);
+   scope.code->writeDWord(offs << 2);
+}
+
+void _ELENA_::compileIAccCopyBI(int opcode, x86JITScope& scope)
+{
+   ref_t offs = scope.tape->getDWord();
+
+   // mov ebx, [edi + off]
+   // mov [eax + arg], ebx
+   scope.code->writeWord(0x9F8B);
+   scope.code->writeDWord(scope.argument << 2);
+   scope.code->writeWord(0x9889);
+   scope.code->writeDWord(offs << 2);
+}
 
 void _ELENA_::compileAccCopySPI(int opcode, x86JITScope& scope)
 {

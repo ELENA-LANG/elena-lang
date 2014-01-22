@@ -403,7 +403,7 @@ x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, Procedure
 
 	if (token.check(_T("["))) {
 	   token.read();
-	   Operand operand = readDispOperand(token, info, _T("Invalid expression"), prefix);
+	   Operand operand = readDispOperand(token, info, _T("Invalid expression (%d)"), prefix);
 	   if(!token.check(_T("]"))) {
           token.raiseErr(_T("']' expected (%d)\n"));
 	   }
@@ -436,7 +436,7 @@ x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, Procedure
 	token.read();
 	if (token.check(_T("["))) {
 		token.read();
-      operand = readDispOperand(token, info, _T("Invalid expression"), x86Helper::otM32);
+      operand = readDispOperand(token, info, _T("Invalid expression (%d)"), x86Helper::otM32);
 
 	   if(!token.check(_T("]"))) {
           token.raiseErr(_T("']' expected (%d)\n"));

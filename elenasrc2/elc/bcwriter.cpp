@@ -611,6 +611,25 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
 //   tape.write(bcPopSI, index);
 //}
 
+void ByteCodeWriter :: saveRegister(CommandTape& tape, ObjectInfo object, int fieldOffset)
+{
+   switch (object.kind) {
+      case okLocal:
+      case okVSelf:
+         // iaxloadfi
+         tape.write(bcIAXLoadFI, object.reference, fieldOffset);
+         break;
+      case okCurrent:
+         // aixloadsi
+         tape.write(bcIAXLoadSI, object.reference, fieldOffset);
+         break;
+      case okField:
+         // aixloadbi
+         tape.write(bcIAXLoadSI, object.reference, fieldOffset);
+         break;
+   }
+}
+
 void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {

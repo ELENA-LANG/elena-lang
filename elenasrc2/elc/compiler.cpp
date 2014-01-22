@@ -1026,52 +1026,6 @@ void Compiler::MethodScope :: include()
    else (*it) = true;
 }
 
-//int Compiler::MethodScope :: compileHints(DNode hints)
-//{
-//   int mode = 0;
-//
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      //if (ConstIdentifier::compare(terminal, HINT_PRIMITIVE)) {
-//      //   if (mode != 0) {
-//      //      raiseWarning(wrnInvalidHint, terminal);
-//      //   }
-//      //   else mode |= CTRL_HINT_PRIMITIVE;
-//      //}
-//      //else if (ConstIdentifier::compare(terminal, HINT_INTERNAL)) {
-//      //   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-//      //   if (!test(classScope->info.header.flags, elStructureRole) || mode != 0) {
-//      //      raiseWarning(wrnInvalidHint, terminal);
-//      //   }
-//      //   else {
-//      //      mode = mapInternalReference(hints.select(nsHintValue).Terminal());
-//
-//      //      mode |= CTRL_HINT_INTERNAL;
-//      //   }
-//      //}
-//      //else if (ConstIdentifier::compare(terminal, HINT_EXTERNAL)) {
-//      //   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-//      //   if (!test(classScope->info.header.flags, elStructureRole) || mode != 0) {
-//      //      raiseWarning(wrnInvalidHint, terminal);
-//      //   }
-//      //   else {
-//      //      mode = mapExternalReference(hints.select(nsHintValue).Terminal());
-//
-//      //      mode |= CTRL_HINT_EXTERNAL;
-//      //   }
-//      //}
-////      else if (ConstIdentifier::compare(terminal, HINT_LOCK)) {
-////         mode |= modLock;
-////      }
-//      /*else */raiseWarning(wrnUnknownHint, hints.Terminal());
-//
-//      hints = hints.nextNode();
-//   }
-//
-//   return mode;
-//}
-
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 {
    if (ConstIdentifier::compare(identifier, THIS_VAR)) {
@@ -2881,22 +2835,7 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
    _writer.declareClass(scope.tape, scope.reference);
 
    DNode member = node.firstChild();
-//   if (member == nsActionExpression) {
-//      // if it is an action symbol with a parameter
-//      compileVMT(node, scope);
-//   }
-//   else if (node == nsOverride) {
-//      compileVMT(member, scope);
-//
-//      // compile extender
-//      scope.info.header.flags |= elVMTAnyHandler;
-//
-//      // for any handler message id is 0
-//      MethodScope methodScope(&scope, TERMINAL_MESSAGE_ID);
-//
-//      compileRedirectMethod(member.firstChild(), methodScope, etOverride, false);
-//   }
-   /*else */compileVMT(member, scope);
+   compileVMT(member, scope);
 
    _writer.endClass(scope.tape);
 
@@ -2921,6 +2860,23 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       return ObjectInfo(okConstant, scope.reference);
    }
    else {
+      int presaved = 0;
+
+      // unbox all typed variables
+      Map<const wchar16_t*, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         if (checkIfBoxingRequired(info)) {
+            _writer.loadObject(*ownerScope.tape, info);
+            boxObject(ownerScope, info, 0);
+            _writer.pushObject(*ownerScope.tape, ObjectInfo(okRegister));
+            presaved++;
+         }
+
+         outer_it++;
+      }
+
       // dynamic binary symbol
       if (test(scope.info.header.flags, elStructureRole)) {
          _writer.newStructure(*ownerScope.tape, scope.info.size, scope.reference);
@@ -2931,22 +2887,32 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       // dynamic normal symbol
       else _writer.newObject(*ownerScope.tape, scope.info.fields.Count(), scope.reference, scope.moduleScope->nilReference);
 
-      Map<const wchar16_t*, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      outer_it = scope.outers.start();
+      int toFree = 0;
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
          //NOTE: info should be either fields or locals
-         // if outerfield is used, the accumulator should be preserved
          if (info.kind == okOuterField) {
+            // if outerfield is used, the accumulator should be preserved
             _writer.pushObject(*ownerScope.tape, ObjectInfo(okRegister));
             _writer.pushObject(*ownerScope.tape, info);
             _writer.popObject(*ownerScope.tape, ObjectInfo(okRegister));
+            _writer.popObject(*ownerScope.tape, ObjectInfo(okRegisterField, (*outer_it).reference));
          }
-         else _writer.pushObject(*ownerScope.tape, info);
-         _writer.popObject(*ownerScope.tape, ObjectInfo(okRegisterField, (*outer_it).reference));
+         else if (info.kind == okLocal || info.kind == okField) {
+            if (checkIfBoxingRequired(info)) {
+               _writer.saveRegister(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
+               toFree++;
+            }
+            else _writer.saveRegister(*ownerScope.tape, info, (*outer_it).reference);
+         }
+         else _writer.saveRegister(*ownerScope.tape, info, (*outer_it).reference);
 
          outer_it++;
       }
+
+      _writer.releaseObject(*ownerScope.tape, toFree);
 
       return ObjectInfo(okRegister);
    }
@@ -2979,14 +2945,14 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
       compileActionVMT(node.firstChild(), scope, node);
    }
-   // if it is inherited symbol expression
+   // if it is inherited nested class
    else if (node.Terminal() != nsNone) {
 	   // inherit parent
       compileParentDeclaration(node, scope);
 
       compileNestedVMT(node.firstChild(), scope);
    }
-   // if it is normal symbol expression
+   // if it is normal nested class
    else {
       compileParentDeclaration(DNode(), scope);
 

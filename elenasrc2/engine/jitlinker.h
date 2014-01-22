@@ -125,7 +125,6 @@ class JITLinker
 
    ref_t resolveMessage(_Module* module, ref_t reference);
 
-//
 //   void* resolveNativeVariable(const wchar16_t*  reference);
    void* resolveNativeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo);
@@ -136,9 +135,7 @@ class JITLinker
 //   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(const wchar16_t*  reference, const wchar16_t* vmt);
    void* resolveLoader(const wchar16_t*  reference);
-////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
-
-////   void* resolvePseudoVMT(const wchar_t* reference, void* codeRef, int flags);
+//   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
    void prepareCompiler(_Module* core, _Module* commands);

@@ -8,7 +8,7 @@
 ******************************************************************************
 
 ELENA:
-[+] new ecodes: sqrt, cos, sin, pi, arctan
+[+] new ecodes: sqrt, cos, sin, pi, arctan, iaxloadfi, iaxloadsi, iaxloadbi
 
 ELC:
 [*] heap size is tuned

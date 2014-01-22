@@ -222,6 +222,7 @@ public:
    void selectObject(CommandTape& tape, ObjectInfo object);
 //   void copyPrimitiveValue(CommandTape& type, int value);
    void saveObject(CommandTape& tape, ObjectInfo object);
+   void saveRegister(CommandTape& tape, ObjectInfo object, int fieldOffset);
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool registerMode);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape);

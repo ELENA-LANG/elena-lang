@@ -159,6 +159,10 @@ enum ByteCode
    bcCreate         = 0xF0,
    bcCreateN        = 0xF1,
    bcIAXCopyR       = 0xF2,
+   bcIAXLoadFI      = 0xF3,
+   bcIAXLoadSI      = 0xF4,
+   bcIAXLoadBI      = 0xF5,
+
    bcSCallVI        = 0xFC,
    bcXCallRM        = 0xFE,
 
