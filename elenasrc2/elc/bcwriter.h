@@ -201,6 +201,7 @@ public:
    void declareLocalIntInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalLongInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareStatement(CommandTape& tape);

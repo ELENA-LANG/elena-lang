@@ -1186,7 +1186,6 @@ void _ELENA_::compileAMul(int opcode, x86JITScope& scope)
 void _ELENA_::compilePopN(int opcode, x86JITScope& scope)
 {
    // lea esp, [esp + level * 4]
-
    x86Helper::leaRM32disp(
       scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
 }
@@ -1823,7 +1822,7 @@ void x86JITCompiler :: compileTLS(_JITLoader* loader)
 
 inline void compileTape(MemoryReader& tapeReader, int endPos, x86JITScope& scope)
 {
-      unsigned char code = 0;
+   unsigned char code = 0;
    while(tapeReader.Position() < endPos) {
       // read bytecode + arguments
       code = tapeReader.getByte();
@@ -1864,6 +1863,8 @@ void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tap
    // ; exit the procedure
    // ret
    codeWriter.writeByte(0xC3);  
+
+   alignCode(&codeWriter, 0x04, true);
 }
 
 void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
@@ -1875,6 +1876,8 @@ void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
    size_t endPos = tapeReader.Position() + codeSize;
 
    compileTape(tapeReader, endPos, scope);
+
+   alignCode(&codeWriter, 0x04, true);
 }
 
 void x86JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)

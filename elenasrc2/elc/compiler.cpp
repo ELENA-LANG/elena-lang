@@ -1352,6 +1352,9 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
          case otRealVar:
             _writer.declareLocalRealInfo(*tape, it.key(), -2 - (*it).reference);
             break;
+         case otParams:
+            _writer.declareLocalParamsInfo(*tape, it.key(), -2 - (*it).reference);
+            break;
          default:
             _writer.declareLocalInfo(*tape, it.key(), -2 - (*it).reference);
       }

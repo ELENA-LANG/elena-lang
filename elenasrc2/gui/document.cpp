@@ -663,6 +663,16 @@ void Document :: copySelection(_text_t* text)
    }
 }
 
+void Document :: copyText(_text_t* text, int length)
+{
+   if (length==0)  {
+      text[0] = 0;
+   }
+   else {
+      _text->copyTo(_caret, text, length);
+   }
+}
+
 void Document :: tabbing(_text_t space, size_t count, bool indent)
 {
    _text->validateBookmark(_caret);
@@ -871,6 +881,17 @@ void Document :: toUppercase()
 
       _ELENA_::freestr(buffer);
    }
+   else {
+      _text_t buffer[2];
+      copyText(buffer, 1);
+
+      if (_ELENA_::StringHelper::find(WHITESPACE, buffer[0])==-1) {
+         _ELENA_::StringHelper::upper(buffer);
+
+         eraseChar(false);
+         insertChar(buffer[0], 1);
+      }
+   }
 }
 
 void Document :: toLowercase()
@@ -886,7 +907,17 @@ void Document :: toLowercase()
 
       _ELENA_::freestr(buffer);
    }
+   else {
+      _text_t buffer[2];
+      copyText(buffer, 1);
 
+      if (_ELENA_::StringHelper::find(WHITESPACE, buffer[0])==-1) {
+         _ELENA_::StringHelper::lower(buffer);
+
+         eraseChar(false);
+         insertChar(buffer[0], 1);
+      }
+   }
 }
 void Document :: swap()
 {

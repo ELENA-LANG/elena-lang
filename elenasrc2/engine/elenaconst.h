@@ -184,6 +184,7 @@ namespace _ELENA_
       dsIntLocal                = 0x0105,
       dsLongLocal               = 0x0205,
       dsRealLocal               = 0x0305,
+      dsParamsLocal             = 0x0405,
 
       dsDebugMask               = 0x00F0,
       dsDebugTypeMask           = 0x0FFF,

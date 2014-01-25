@@ -1276,9 +1276,10 @@ procedure core'console_entry
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  esi, fs:[2Ch]
   xor  edi, edi
-  mov  esi, [esi+ebx*4]
+  mov  esi, [esi+ebx*4]                 
 
   // ; GCXT : set default exception handler
+  mov  [esi + tls_catch_frame], ebp
   mov  [esi + tls_catch_level], esp
   mov  ebx, code : "$package'core'default_handler"
   mov  [esi + tls_catch_addr], ebx

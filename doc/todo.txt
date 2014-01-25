@@ -25,39 +25,8 @@ Currently:
 1.9.12
 ------
 week1 [26.01]:
-              xdev - multithreading
-                       * compile commands_mt
-                       * compile system_test with mt
-                       * compile pi with mt
-                       * compile anagram with mt
-                       * new thread
-                       * static object should be thread safe
               xdev - generic development              
-                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
-
-              xdev - utf-8
-                       * all project files should be converted to UTF8
-
-              xdev - dispatch table
-                       * review : leight-weight role implentation (see ListEnumerator); can we use redirect handler for switch ?? (e.g. calculate the
-                         actual message name inside handler : the table is the map between income and outcome message)
-                       * think over light-weight dispatching implementation
-                         
-              xdev - open arg                                      
-                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
-                         raise an error ; do we need it?
-
-                       * any other operation should result in boxing
-            
-              xdev - multithreading
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-
-              xdev - generic development              
-                       * widechar constant
-
-                       * virtual control.do(1) implementation ; support break exception
+                       * widechar constant 
 
                        * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
                          and could be invoked by eval
@@ -73,62 +42,32 @@ week1 [26.01]:
 
                        * make possible to send exception futher with ifFailed handler
                        
-                       * constant array
-
                        * check private method declaration ??
 
                        * role class should not be its own class class (like it is now), super class should be used
 
-                       * role implementation (see arithmeval sample)
-
                        * group object implementation (group, union, cast)
                        * elenavm: use reverse instead of set of swaps
                        
-                       * types : there should be limited set of types supported by language, no extension should be done beyond system namespace;
-                         do we need to return type for every object??
-
                        * filling with zero / nil should be done inside constructor
-                       * dispatching : return type, could we support additional method or dispatch handler can be used, ...
-                         think over type support, we need some generic solution (typecontrol should be declared for every set of
-                         objects, which is not convenient) ; so maybe better to support type and do all other type of dispatching
-                         automatically , e.g. a write::b is replaced by compiler => a(b type)~write:b.
+                       * special symbol which could return the object "type" (e.g. react on dispatch method and store the message subject)
 
-                      * starts to use Pentium commands: we need to introduce the mode for
-                        i686 (cmov is not supported for older CPU, so we have to have two
-                        set of commands)
-
-                       * dispatching variant : a write:(b~(a type)get)
-             
                        * @ operator should support primitive implementation if loperand is array, bytearray and roperand is int
 
-                       * out'type'xxx can be declared but cannot be implicitly passed
+                       * out'xxx can be declared but cannot be implicitly passed
 
                        * write, append, ... operation should be allowed only with $self or out parameter
                             
-                       * amb sample: can it be modified to use open argument list, currently for every number of parameters separate method should be declared
-
-                       * constant array symbol (e.g. #symbol BoolValues = (true, false). )
                        * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
                          modify the code, from reading bool values from stack to constant array
-
-                       * support several roles in role (e.g. a~role1~role2 eval) ??
-
-                       * several extensions: should it be supported, like in ELENA1.x
-                         (system'dynamic'RoleList)  
 
                        * should be possible to declare sealed classes
 
                        * should class symbol always return class class (exception is role)? 
 
-                       * support the following syntax:
-                              #method save:anObject &to:aTarget
-                                  => EAdapter new::anObject.                          
-
                        * could it be possible to hide the inherited methods, so they could be used
                          only internally by the class (with $super)
 
-                       * dynamic object extending : union, group
-                         
                        * resend operator: implement the situation when the target is
                          not constant
 
@@ -136,7 +75,6 @@ week1 [26.01]:
 
                        * elc:Bytecodewriter::assignResult, should support both outer and normal
                          field assigning
-                       * remove obsolete method handler code
                        
                        * could typed subjects be reserved for every module? So they have the
                          same ids in every module? (so we could get rid of long list of cached
@@ -153,7 +91,7 @@ week1 [26.01]:
 
                        * do not use self in constructor
 
-                       * external call: do not support out'type'xxx:nil parameter, stack allocated one should be used
+                       * external call: do not support out'xxx:nil parameter, stack allocated one should be used
                        * hint role should indicate that no need to create a class class??
 
                        * readonly fields like in C# (some optimization gains?)
@@ -164,15 +102,9 @@ week1 [26.01]:
       
                        * raise an exception if more than 14 arguments in the method / message                 
                        
-                       * type'int (and so on): compiler should garantee that the
-                         object returned / passed with with argument is integer
-                         (warning?)                         
-
                        * simplify typecasting should not be done for operations like length, index
                        
                        * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
-
-                       * support: primitive operation int + long, long + int
 
                        * array item set operator a@b := c ???
 
@@ -188,13 +120,11 @@ week1 [26.01]:
                            : intNumber.shift ; stringControl
                        * multiple parameter dispatching
                             : LiteralValue.indexOf&type'index&type'widestr, ByteArray
-                       * new verbs: shift(?)
                        * implement dispatching with several parameters
                          (see Compiler::compileDispatcher)              
 
                        * boxing after primtive operation should be done probably directly, i.e. implicitly create an object (int, long or real)
 
-                       * support GUI application
                        * compiler option : switch off jump optimization
                        * compiler option : switch off direct calls
 
@@ -213,12 +143,15 @@ week1 [26.01]:
 
                        * optimize type cast call (dispatch handler should be used) 
 
-                       * group object role should not have redirect statement
+                       * role should not have redirect statement
 
                        * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
                          byte array used?
-
+                         
                        * elena opcodes : extension - think over extension set implementation (current is not efficient)
+
+                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
+                       * constant array
 
               xdev - dynamic programming                                             
                        * implement trace mode
@@ -230,18 +163,17 @@ week1 [26.01]:
               xdev - elenasm
                        * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
                        * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                       
-                         
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
 
               xdev - compiler optimization                       
                        * declareArgumentList: may be better to check if the subject is known type before mapping the subject?
 
               xdev - byte code optimization                       
-                        * in in Array.add&array method, declare both length variables as type:int - it crashes
+                       * optimize output code: system'true ...
 
                        * replace enumeration / iteration loops with a virtual expressions
 
-                       * optimize output code: system'nil.equal, ...
+                       * virtual control.do(1) implementation ; support break exception
 
                        * if the target is stack allocated, no need to allocate extra space (at least for the single operation)? 
 
@@ -250,7 +182,7 @@ week1 [26.01]:
 
                        * review and optimize dispatching algorithm: $self, field, symbol
 
-                       * optimize type'length virtual operation implementation (we do not need to save it in the stack)
+                       * optimize length virtual operation implementation (we do not need to save it in the stack)
 
                        * for loop: review for implementation algorithm can we simplify it??
 
@@ -261,8 +193,6 @@ week1 [26.01]:
                        * ret expression: two breakpoints: maybe better to check for the tape to get rid of two breakpoint in row? 
 
                        * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well
-
-                       * probably stack allocated variable should be allocated without filling with zero
 
                        * review / optimize stack allocating implementing
                        
@@ -340,19 +270,9 @@ week1 [26.01]:
                        * should be possible to debug vm scripts
                        
               idev - generic development
-                       * upper / lower case should work without selecting as well
-                       * test saving to utf-8
-                       * test saving to utf-16
-                       * test saving to oem
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
                          utf-16 for windows?
                        * store current encoding for every file
-
-              idev - debugger
-                       * display open argument list correctly
-                       * multi-select operator debugging - step over does not work
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * step over #break / #throw does not work correctly
 
               idev - usability
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
@@ -361,12 +281,6 @@ week1 [26.01]:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
                        
-              xdev - native code optimization
-                       * bssearch : can we get rid of setncb command, if the number is always even?
-                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
-                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
-                       * review core
-
               xdev - tools                       
                        * asm2binx: create missing folders
                        * create missing folders
@@ -382,6 +296,9 @@ week2:
                        * change api faq
 
               adev - lib30                                        
+                       * extension : support several roles
+                       * support GUI application
+                                          
                        * implement intnumber - highword, lowword, lowbyte, highbyte
                        * Struct : check if the income message is "get"
                        * realNumber.get&literal - starting space should be removed
@@ -424,7 +341,8 @@ week2:
                        * implement: bit at position (0|1)
                        * implement: position of highest bit set
                        * implement: test if all bits set in mask clear in receiver
-
+                       * support: primitive operation int + long, long + int
+                       
                        * convertor toArray , which converts list to elist wrap or returns itself
                          (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
                        * add program default exception handler: dispatch an exception to
@@ -605,6 +523,12 @@ week3:
                        * review dynamic property container, try to simplify it
                                                          
 week4:
+            xmaint - utf-8
+                       * all project files should be converted to UTF8
+                       * test saving to utf-8
+                       * test saving to utf-16
+                       * test saving to oem
+                       
               xdoc - blog
                        * publish the post about hello world script example (both interactive and tape, store the tape into the global
                          variable, visualize it content, execute it)
@@ -615,13 +539,44 @@ week4:
 1.9.13
 --------
 week1:
+              xdev - open arg                                      
+                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
+                         raise an error ; do we need it?
+
+                       * any other operation should result in boxing
+            
+              xdev - generic development              
+                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
+
+              xdev - multithreading       
+                       * compile pi with mt
+                       * compile anagram with mt
+                       * new thread
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
                        * out of memory exception should be correctly raised
+              xdev - native code optimization
+                       * starts to use Pentium commands: we need to introduce the mode for
+                         i686 (cmov is not supported for older CPU, so we have to have two
+                         set of commands)
+                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review commands : use conditional moving
+                       * review core
               xdev - x64
                       * think over general architecture
                       * asm2bin64 - compile x64 bit opcodes
                       * create x64 elena vm
+
+              idev - debugger
+                       * multi-select operator debugging - step over does not work
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * step over #break / #throw does not work correctly
 
 1.9.14
 --------

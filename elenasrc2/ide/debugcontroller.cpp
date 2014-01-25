@@ -310,7 +310,9 @@ bool DebugController :: loadSymbolDebugInfo(const wchar16_t* reference, StreamRe
             }
             else level--;
          }
-         else if (info.symbol == dsField || info.symbol == dsLocal || info.symbol == dsIntLocal || info.symbol == dsLongLocal || info.symbol == dsRealLocal) {
+         else if (info.symbol == dsField || info.symbol == dsLocal || info.symbol == dsIntLocal || info.symbol == dsLongLocal 
+            || info.symbol == dsRealLocal || info.symbol == dsParamsLocal)
+         {
             // replace field name reference with the name
             stringReader.seek(info.addresses.symbol.nameRef);
 
@@ -798,6 +800,45 @@ void DebugController :: readLocalReal(_DebuggerWatch* watch, ref_t address, cons
    else watch->write(this, address, name, _T("<nil>"));
 }
 
+void DebugController :: readParams(_DebuggerWatch* watch, ref_t address, const wchar16_t* name, bool ignoreInline)
+{
+   if (address != 0) {
+
+      String<_text_t, 255> index;
+      for (int i = 0 ; i < 255 ; i++)  {
+         index.copy(name);
+         index.append(_T("["));
+         index.appendInt(i);
+         index.append(_T("]"));
+
+         size_t memberPtr = 0;
+         getValue(address, (char*)&memberPtr, 4);
+         // break if zero is found
+         if (memberPtr == 0)
+            break;
+
+         int flags = 0;
+         const wchar16_t* className = NULL;
+         DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
+         if (item) {
+            watch->write(this, memberPtr, index, className);
+         }
+         //// if unknown check if it is a dynamic subject
+         //else if (test(flags, elDynamicSubjectRole)) {
+         //   watch->write(this, memberPtr, index, _T("<subject>"));
+         //}
+         //// if unknown check if it is a group object
+         //else if (test(flags, elGroup)) {
+         //   watch->write(this, memberPtr, index, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
+         //}
+         else watch->write(this, memberPtr, index, _T("<unknown>"));
+
+         address += 4;
+      }
+   }
+   else watch->write(this, address, name, _T("<nil>"));
+}
+
 void DebugController :: readAutoContext(_DebuggerWatch* watch)
 {
    if (_debugger.isStarted()) {
@@ -838,6 +879,11 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
             readLocalReal(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef, false);
          }  
+         else if (lineInfo[index].symbol == dsParamsLocal) {
+            // write stack allocated local variable
+            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readParams(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef, false);
+         }
          else if (lineInfo[index].symbol == dsMessage) {
             // write local variable
             int message = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);

@@ -1529,8 +1529,8 @@ void IDE :: onFrameChange(FrameState state)
    _appMenu->enableItemById(IDM_EDIT_DELETE, hasSelection);
    _appMenu->enableItemById(IDM_EDIT_UNDO, canUndo);
    _appMenu->enableItemById(IDM_EDIT_REDO, canRedo);
-   _appMenu->enableItemById(IDM_EDIT_UPPERCASE, hasSelection);
-   _appMenu->enableItemById(IDM_EDIT_LOWERCASE, hasSelection);
+   _appMenu->enableItemById(IDM_EDIT_UPPERCASE, hasDocument);
+   _appMenu->enableItemById(IDM_EDIT_LOWERCASE, hasDocument);
    _appMenu->enableItemById(IDM_EDIT_COMMENT, hasSelection);
    _appMenu->enableItemById(IDM_EDIT_UNCOMMENT, hasSelection);
 

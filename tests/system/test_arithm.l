@@ -7,10 +7,21 @@
 
 #class Tester
 {
+    #method idle []
+    #method idle2 []
+    #method idle3 []
 }
    
 #symbol XTest =
 [
+    #var o := Tester.
+    
+    o equal:nil.
+    o idle.
+    
+    #var r := Real new.
+    
+    r write &real:2.
 ].
 
 // --- OpenArgTest ---

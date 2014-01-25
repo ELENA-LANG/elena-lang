@@ -184,6 +184,7 @@ protected:
    void readLocalInt(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
    void readLocalLong(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
    void readLocalReal(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
+   void readParams(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
 
    const char* getValue(size_t address, char* value, size_t length);
    const wchar_t* getValue(size_t address, wchar16_t* value, size_t length);

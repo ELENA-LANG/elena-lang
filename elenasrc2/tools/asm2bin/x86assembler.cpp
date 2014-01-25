@@ -2250,6 +2250,22 @@ void x86Assembler :: compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryW
 	else token.raiseErr(_T("Invalid command (%d)"));
 }
 
+void x86Assembler :: compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix)
+{
+	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+
+	checkComma(token);
+
+	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+
+	if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32) || test(dest.type, x86Helper::otM32) )) {
+      code->writeByte(0x0F);
+      code->writeByte(0x40 + postfix);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr(_T("Invalid command (%d)"));
+}
+
 void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mask)
 {
 	token.read();
@@ -2353,6 +2369,22 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
       prefix.clear();
       return true;
    }
+	else if (token.check(_T("cmovle"))) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JLE);
+      return true;
+	}
+	else if (token.check(_T("cmovl"))) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JL);
+      return true;
+	}
+	else if (token.check(_T("cmovg"))) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JG);
+      return true;
+	}
+	else if (token.check(_T("cmovge"))) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JGE);
+      return true;
+	}
    else return false;
 }
 bool x86Assembler :: compileCommandD(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
@@ -2826,6 +2858,10 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 	}
 	else if (token.check(_T("setc"))) {
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JB);
+      return true;
+	}
+	else if (token.check(_T("setg"))) {
+		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JG);
       return true;
 	}
 	else if (token.check(_T("setnc"))) {

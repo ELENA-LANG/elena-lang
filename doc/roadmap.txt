@@ -20,6 +20,7 @@ Version 2.1.0
 - gcx, beta version
 - x64 alpha version
 - start migration to Linux
+- x86 native code: optimize with pentium pro commands
 
 Version 2.2.0
 -------------

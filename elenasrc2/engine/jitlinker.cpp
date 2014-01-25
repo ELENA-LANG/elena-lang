@@ -396,8 +396,6 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t*  reference, int mas
 
    // if it is a standard VMT
    if (test(header.flags, elStandartVMT)) {
-   //   bool withAnyHandler = test(header.flags, elVMTAnyHandler);
-
       size_t position = vmtWriter.Position();
 
       // load parent class

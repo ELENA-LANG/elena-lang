@@ -201,6 +201,7 @@ protected:
    void compileFLDLN2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
+   void compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
 
    bool compileCommandA(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandB(TokenInfo& token);

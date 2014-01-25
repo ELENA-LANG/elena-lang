@@ -134,6 +134,11 @@ void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, const wchar_t* lo
    tape.write(bdRealLocal, (ref_t)localName, level);
 }
 
+void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, const wchar_t* localName, int level)
+{
+   tape.write(bdParamsLocal, (ref_t)localName, level);
+}
+
 void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
    tape.write(bdSelf, -2, level);
@@ -1191,6 +1196,7 @@ void ByteCodeWriter :: commentFrame(ByteCodeIterator it)
          case bdIntLocal:
          case bdLongLocal:
          case bdRealLocal:
+         case bdParamsLocal:
             (*it).code = bcNop;
       }
 
@@ -1692,6 +1698,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
             break;
          case bdRealLocal:
             writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
+            break;
+         case bdParamsLocal:
+            writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
          case bdSelf:
             writeSelfLocal(debug, debugStrings, (*it).additional - frameLevel);

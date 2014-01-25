@@ -64,9 +64,9 @@ labStart:
   jmp  labEnd
   nop
   nop
-  nop  
 labFound:
   jmp  [esi+ecx*8+4]
+  nop
   nop
 
 labEnd:
@@ -501,6 +501,8 @@ inline % 0A1h
 
   mov  esi, [eax - 4]
   jmp  [esi + __arg1]
+  nop
+  nop
   nop
   nop
 

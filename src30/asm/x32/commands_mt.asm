@@ -79,9 +79,9 @@ labStart:
   jmp  labEnd
   nop
   nop
-  nop  
 labFound:
   jmp  [esi+ecx*8+4]
+  nop
   nop
 
 labEnd:
@@ -546,19 +546,19 @@ inline % 0A6h
 
   // ; GCXT: get current thread frame
   mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
+  mov  edx, fs:[2Ch]
+  mov  ebx, [edx+ebx*4]
 
   call code : %HOOK
   push ebp
-  push  [ebx + tls_catch_addr]
-  mov  edx, [ebx + tls_stack_frame]
+  push [ebx + tls_catch_addr]
+  mov  edx, [ebx + tls_catch_frame]
   push [ebx + tls_catch_frame]
   push [ebx + tls_catch_level]  
   mov  [ebx + tls_catch_addr], ecx
-  mov  [ebx + tls_stack_frame], esp
+  mov  [ebx + tls_catch_level], esp
   mov  [ebx + tls_catch_frame], edx
-  
+
 end
 
 // ; nbox (esi - size, __arg1 - vmt)

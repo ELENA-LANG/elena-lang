@@ -200,6 +200,7 @@ enum ByteCode
    bdIntLocal       = 0x8413,
    bdLongLocal      = 0x8423,
    bdRealLocal      = 0x8433,
+   bdParamsLocal      = 0x8443,
 };
 
 enum TypeCode

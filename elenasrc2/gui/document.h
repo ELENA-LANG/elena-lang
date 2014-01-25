@@ -277,6 +277,7 @@ public:
    virtual void resize(Point size);
 
    void copySelection(_text_t* text);
+   void copyText(_text_t* text, int length);
 
    void insertLine(const _text_t* text, int length);
    virtual void insertNewLine();

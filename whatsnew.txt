@@ -15,6 +15,9 @@ ELC:
 [-] bug fix: length boxing, long static array implementation, break statement
 [-] byte code optimization routine fixed
 
+IDE:
+[+] debugger watch: open argument list
+
 ******************************************************************************
                     What's New in 1.9.11 (pre release)
 ******************************************************************************
