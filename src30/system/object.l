@@ -19,7 +19,7 @@
 
 // --- EException ---
 
-#class(role) EException
+#class EException
 {
     #method => <handle_exception>.
 }

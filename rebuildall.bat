@@ -17,3 +17,4 @@ bin\elc -cexamples\matrix\matrix.prj
 bin\elc -cexamples\trans\tanslit.prj
 bin\elc -cexamples\interpreter\interpreter.prj
 bin\elc -cexamples\calculator\calc.prj
+bin\elc -cexamples\agenda\agenda.prj

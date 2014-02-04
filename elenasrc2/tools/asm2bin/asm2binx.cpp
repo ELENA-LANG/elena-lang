@@ -48,6 +48,8 @@ int main(int argc, char* argv[])
       return -1;
    }
 
+   _ELENA_::Path::create(NULL, target);
+
 	try {
       if (esmMode) {
 	      _ELENA_::ECodesAssembler	assembler;

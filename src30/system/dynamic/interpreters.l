@@ -21,12 +21,12 @@
     #method => <handle_tape>.
 }
 
-//// --- Struct ---
-//
-//#class Struct : Tape
-//{
-//    #method => <handle_selector>.
-//}
+// --- Struct ---
+
+#class Struct : Tape
+{
+    #method => <handle_selector>.
+}
 
 // --- Class ---
 

@@ -44,6 +44,11 @@
 
         // !!check the result of the operation
     ]
+    
+    #method close
+    [
+        theHandle close.
+    ]
 }
 
 // --- ConsoleReader ---
@@ -60,6 +65,7 @@
     #method read &char
     [
         #var aDump := ByteArray new &length:20.
+        #var(type:int)aNumberRead.
 
         control do:
         [
@@ -67,12 +73,13 @@
                 &handle        : theHandle
                 &out'bytearray : aDump
                 &int           : 1
-                &out'int       : nil.
+                &out'int       : aNumberRead.
         ]
         &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
                     and:(primitive equal &bytearray:aDump &index:4 &int:1)].
                     
-        #var(type:short)aChar := primitive read &bytearray:aDump &index:14.
+        #var(type:short)aChar.
+        primitive read &bytearray:aDump &index:14 &out'short:aChar.
                     
         ^ CharValue new &char:aChar.
     ]
@@ -87,7 +94,7 @@
                 &handle        : theHandle
                 &out'bytearray : aDump
                 &int           : 1
-                &out'int       : nil.
+                &int           : 0.
         ]
         &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
                     and:(primitive equal &bytearray:aDump &index:4 &int:1)].
@@ -102,7 +109,7 @@
     [
         system'external'KERNEL32 ReadConsoleW
             &handle       : theHandle
-            &out'literal : aLiteral
+            &out'literal  : aLiteral
             &int          : aLength
             &out'length   : aLiteral
             &int          : 0.
@@ -130,6 +137,11 @@
         &until:[ consoleHelper _trimLine &literal:anOutput ].
         
         ^ anOutput.
+    ]
+    
+    #method close
+    [
+        theHandle close.
     ]
 }
 

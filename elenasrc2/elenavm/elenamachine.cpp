@@ -25,9 +25,9 @@ using namespace _ELENA_;
 
 #define PROJECT_TEMPLATE            "template"
 //#define SYSTEM_MAXTHREAD            _T("maxthread")
-#define LINKER_GCSIZE               "gcsize"
+#define LINKER_MGSIZE               "mgsize"
 #define LINKER_OBJSIZE              "objsize"
-#define LINKER_YGRATIO              "ygratio"
+#define LINKER_YGSIZE               "ygsize"
 #define LIBRARY_PATH                "path"
 
 // --- Wrapper Functions ---
@@ -148,8 +148,8 @@ void InstanceConfig :: init(const _path_t* configPath, IniConfigFile& config)
 {
    // compiler options
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
-   pageSize = config.getIntSetting(LINKER_CATEGORY, LINKER_GCSIZE, pageSize);
-   ygRatio = config.getIntSetting(LINKER_CATEGORY, LINKER_YGRATIO, ygRatio);
+   mgSize = config.getIntSetting(LINKER_CATEGORY, LINKER_MGSIZE, mgSize);
+   ygSize = config.getIntSetting(LINKER_CATEGORY, LINKER_YGSIZE, ygSize);
    objSize = config.getIntSetting(LINKER_CATEGORY, LINKER_OBJSIZE, objSize);
 
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
@@ -260,10 +260,10 @@ const wchar16_t* Instance :: resolveForward(const wchar16_t* forward)
 size_t Instance :: getLinkerConstant(int id)
 {
    switch (id) {
-      case lnGCSize:
-         return _config.pageSize;
-      case lnYGRatio:
-         return _config.ygRatio;
+      case lnGCMGSize:
+         return _config.mgSize;
+      case lnGCYGSize:
+         return _config.ygSize;
       //case lnThreadCount:
       //   return (size_t)_config.maxThread;
       case lnObjectSize:

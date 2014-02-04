@@ -54,7 +54,8 @@ define vm_interprete    000Ch
 define GC_HEAP_ATTRIBUTE 00Dh
 
 // verbs
-define EXEC_MESSAGE_ID  85000000h
+define EXEC_MESSAGE_ID  085000000h
+define START_MESSAGE_ID 0B7000000h
 
 structure % CORE_EXCEPTION_TABLE
 
@@ -1048,6 +1049,32 @@ procedure core'console_entry
   call code : "'program"
   push eax
   mov  edx, EXEC_MESSAGE_ID
+  mov  esi, [eax - 4]
+  call [esi + 4]
+
+  mov  eax, 0                         // exit code
+  push eax
+  call extern 'dlls'KERNEL32.ExitProcess     // exit
+
+  ret
+
+end
+
+procedure core'gui_entry
+
+  call code : "$package'core'init"
+  call code : "$package'core'newframe"
+
+  // set default exception handler
+  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
+  mov  ebx, code : "$package'core'default_handler"
+  mov  [data : %CORE_EXCEPTION_TABLE], ebx
+
+  // 'program start
+  xor  edi, edi
+  call code : "'program"
+  push eax
+  mov  edx, START_MESSAGE_ID
   mov  esi, [eax - 4]
   call [esi + 4]
 

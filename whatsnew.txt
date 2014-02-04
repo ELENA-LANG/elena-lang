@@ -14,9 +14,13 @@ ELC:
 [*] heap size is tuned
 [-] bug fix: length boxing, long static array implementation, break statement
 [-] byte code optimization routine fixed
+[+] support GUI application (alpha)
 
 IDE:
 [+] debugger watch: open argument list
+
+[LIB]
+[+] new package: forms
 
 ******************************************************************************
                     What's New in 1.9.11 (pre release)

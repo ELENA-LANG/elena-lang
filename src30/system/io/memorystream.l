@@ -76,16 +76,15 @@
 
     #method indexOf &index:anIndex &short:aWord
     [
-        #var(type:int)anIndex := theByteArray indexOf &index:anIndex &length:thePosition &short:aWord.
+        #var(type:int)anIndex.
+        theByteArray indexOf &index:anIndex &length:thePosition &short:aWord &out'int:anIndex.
         
         ^ IntNumber new &int:anIndex.
     ]
 
     #method indexOf &index:anIndex &short:aWord &out'int:aRetVal
-    [
-        #var(type:int)anIndex := theByteArray indexOf &index:anIndex &length:thePosition &short:aWord.
-        
-        aRetVal << anIndex.
+    [  
+        theByteArray indexOf &index:anIndex &length:thePosition &short:aWord &out'int:aRetVal.
     ]
 
     #method write &bytearray:aDump &length:aLength

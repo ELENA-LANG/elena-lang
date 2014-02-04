@@ -25,7 +25,7 @@
 #define ELC_PRM_CONFIG              'c'
 #define ELC_PRM_DEBUGINFO           'd'
 //#define ELC_PRM_ENTRY               'e'
-//#define ELC_PRM_PACKAGE             'g'+
+//#define ELC_PRM_PACKAGE             'g'
 //#define ELC_PRM_LIBRARY             'l'
 //#define ELC_PRM_MAP                 'm'
 #define ELC_PRM_OUTPUT_PATH         'o'
@@ -71,7 +71,7 @@
 //#define ELC_STACK_RESERV            "stackresrv"
 //#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
-//#define ELC_APPTYPE                 "apptype"
+#define ELC_APPTYPE                 "apptype"
 #define ELC_PLATFORMTYPE            "platform"
 #define ELC_VM_PATH                 "vmpath"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"

@@ -201,8 +201,8 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_COMMIT);
 //   case _ELENA_::opImageBase:
 //      return config.getSetting(LINKER_CATEGORY, ELC_YG_IMAGEBASE);
-//   case _ELENA_::opApplicationType:
-//      return config.getSetting(SYSTEM_CATEGORY, ELC_APPTYPE);
+   case _ELENA_::opApplicationType:
+      return config.getSetting(SYSTEM_CATEGORY, ELC_APPTYPE);
    case _ELENA_::opPlatformType:
       return config.getSetting(PROJECT_CATEGORY, ELC_PLATFORMTYPE);
    case _ELENA_::opTarget:

@@ -80,6 +80,7 @@ namespace _ELENA_
    #define NOT_MESSAGE_ID          0x0034
    #define VALIDATE_MESSAGE_ID     0x0035
    #define INC_MESSAGE_ID          0x0036
+   #define START_MESSAGE_ID        0x0037
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -338,6 +339,7 @@ namespace _ELENA_
    #define NOT_MESSAGE              "invert"
    #define VALIDATE_MESSAGE         "validate"
    #define INC_MESSAGE              "next"
+   #define START_MESSAGE            "start"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="

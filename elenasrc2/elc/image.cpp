@@ -13,6 +13,7 @@ using namespace _ELENA_;
 
 // Virtual machine client built-in references
 #define VM_LOADER          "$package'core_vm'console_vm_start"
+#define VM_GUI_LOADER      "$package'core_vm'gui_vm_start"
 
 #define VM_TAPE            "'vm_tape"
 #define VM_PATH            "'vm_path"
@@ -224,7 +225,7 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, con
 
    if (!emptystr(value1)) {
       tape.writeWideLiteral(value1, getlength(value1));
-      tape.writeWideLiteral(_T("="), 1);
+      tape.writeWideChar('=');
    }
    if (!emptystr(value2)) {
       tape.writeWideLiteral(value2);
@@ -274,7 +275,15 @@ inline ref_t writeErrorMessage(MemoryWriter& data, const wchar16_t* s)
    return position;
 }
 
-inline ref_t writeErrorMessage(MemoryWriter& data, const wchar16_t* s1, const wchar16_t* s2, const wchar16_t* s3)
+inline ref_t writeErrorMessage(MemoryWriter& data, const char* s)
+{
+   String<wchar16_t, 255> message;
+   message.copy(s);
+
+   return writeErrorMessage(data, message);
+}
+
+inline ref_t writeErrorMessage(MemoryWriter& data, const char* s1, const wchar16_t* s2, const char* s3)
 {
    String<wchar16_t, 255> message;
    message.copy(s1);
@@ -291,7 +300,7 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
 
    // setup virtual machine path
    _rootPath.copy(project->StrSetting(opVMPath));
-   _rootPath.combine(_T("elenavm.dll"));
+   _rootPath.combine("elenavm.dll");
 
    MemoryWriter   data(&_data);
    MemoryWriter   code(&_text);
@@ -313,14 +322,14 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    consts.add(ConstantIdentifier(VM_DEBUGPROCEDURE), writeAnsiLiteral(data, "SetDebugMode"));
    consts.add(ConstantIdentifier(VM_HOOK), vmHook);
    consts.add(ConstantIdentifier(VM_ERR_ERRPROC), writeAnsiLiteral(data, "GetLVMStatus"));
-   consts.add(ConstantIdentifier(VM_ERR_DLLLOAD), writeErrorMessage(data, _T("Cannot load "), _rootPath, _T("\n")));
-   consts.add(ConstantIdentifier(VM_ERR_DLLINVALID), writeErrorMessage(data, _T("Incorrect elenavm.dll\n")));
+   consts.add(ConstantIdentifier(VM_ERR_DLLLOAD), writeErrorMessage(data, "Cannot load ", _rootPath, "\n"));
+   consts.add(ConstantIdentifier(VM_ERR_DLLINVALID), writeErrorMessage(data, "Incorrect elenavm.dll\n"));
 
    _Memory* section = NULL;
    _Module* module = project->loadPrimitive(CORE_VM_MODULE, false);
    if (module != NULL) {
-      //int type = project->IntSetting(opApplicationType, stConsole);
-      ref_t reference = /*type == stGUI ? STD_VM_GUI_LOADER : */module->mapReference(ConstantIdentifier(VM_LOADER), true);
+      int type = project->IntSetting(opApplicationType, stConsole);
+      ref_t reference = module->mapReference(ConstantIdentifier(type == stGUI ? VM_GUI_LOADER : VM_LOADER), true);
       section = module->mapSection(reference | mskNativeCodeRef, true);
    }
    if (section == NULL)

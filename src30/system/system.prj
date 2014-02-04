@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 output=..\..\lib30
 namespace=system
 template=lib
@@ -40,4 +40,7 @@ dynamic\loaders.l
 dynamic\reflection.l
 dynamic\interpreters.l
 dynamic\script.l
+winforms\win32_handles.l
+winforms\win32_factories.l
+winforms\win32_app.l
 

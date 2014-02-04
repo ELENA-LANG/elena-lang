@@ -56,7 +56,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 53;
+const int gcCommandNumber = 54;
 const ByteCommand gcCommands[gcCommandNumber] =
 {
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
@@ -71,7 +71,7 @@ const ByteCommand gcCommands[gcCommandNumber] =
 /*   bcRCallN, */bcGet, bcSet, bcASwapSI, 
    bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcNBox,
    /*   bcMccReverse,*/ bcAXSetR, bcWSTest, bcTest, bcBSTest,
-   bcBox, bcUnbox, bcBSGRedirect
+   bcBox, bcUnbox, bcBSGRedirect, bcIAXLoadB
 };
 
 const int gcExtensionNumber = 63;
@@ -95,7 +95,7 @@ const FunctionCode gcExtensions[gcExtensionNumber] =
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
-   &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileNop, &compileMccPush, &compileMccCopyVerb, &loadOneByteOp,
+   &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileDCopyA, &compileMccPush, &compileMccCopyVerb, &loadOneByteOp,
    &compileNop, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &loadNOp,
 
    &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopSelf, &loadOneByteLOp, &compileNop, &compileQuit,
@@ -114,7 +114,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
 
    &compileNop, &loadIndexOp, &compileNop, &loadIndexOp, &loadFPOp, &compileAccSaveR, &compileNop, &compileDSaveAI,
-   &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp, &loadROp, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp, &loadROp, &loadIndexOp,
 
    &compileNop, &compileNop, &compileSPSetF, &compileNop, &compileNop, &compileAccCopySPI, &compileNop, &compileNop,
    &compileAccSetR, &compileAccSetN, &compileAccCopyAccI, &compileXAccCopyFPI, &compileAccCopyFPI, &compileNop, &compileAAdd, &compileAMul,
@@ -1024,6 +1024,12 @@ void _ELENA_::compileALoadD(int opcode, x86JITScope& scope)
    // mov eax, [eax + esi*4]
    scope.code->writeWord(0x048B);
    scope.code->writeByte(0xB0);
+}
+
+void _ELENA_::compileDCopyA(int opcode, x86JITScope& scope)
+{
+   // mov edx, eax
+   scope.code->writeWord(0xD08B);
 }
 
 void _ELENA_::compileAccSetN(int opcode, x86JITScope& scope)

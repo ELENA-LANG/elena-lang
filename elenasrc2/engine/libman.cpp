@@ -15,6 +15,8 @@ using namespace _ELENA_;
 
 #define PMODULE_LEN getlength(PACKAGE_MODULE)
 
+const wchar16_t _nl_message[] = {'n','l',0};
+
 //inline const TCHAR* getName(const TCHAR* name, const TCHAR* package)
 //{
 //   if (name[0]=='$')
@@ -59,7 +61,7 @@ _Module* LibraryManager :: loadModule(const wchar16_t* package, LoadResult& resu
    _Module* module = _modules.get(package);
    if (!module) {
       Path path;
-      nameToPath(package, path, _T("nl"));
+      nameToPath(package, path, _nl_message);
 
       FileReader  reader(path, feRaw, false);
       if (!readOnly) {

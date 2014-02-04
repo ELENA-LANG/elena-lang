@@ -59,6 +59,7 @@ namespace _ELENA_
    #define errInvalidSync           "%s(%d:%d): error 140: The method %s cannot have a sync hint\n"
    #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
    #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
+   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
    #define errInternalError         "internal error 599"

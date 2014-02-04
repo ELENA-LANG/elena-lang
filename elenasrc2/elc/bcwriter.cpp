@@ -488,6 +488,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          // pusha
          tape.write(bcPushA);
          break;
+      case okRegisterField:
+         // pushai reference
+         tape.write(bcPushAI, object.reference);
+         break;
       case okVSelf:
 //      case otVNext:
          // pushfi -(param_count + 1)  ; nagative means relative to the previous stack frame
@@ -629,8 +633,13 @@ void ByteCodeWriter :: saveRegister(CommandTape& tape, ObjectInfo object, int fi
          tape.write(bcIAXLoadSI, object.reference, fieldOffset);
          break;
       case okField:
+      case okOuter:
          // aixloadbi
-         tape.write(bcIAXLoadSI, object.reference, fieldOffset);
+         tape.write(bcIAXLoadBI, object.reference, fieldOffset);
+         break;
+      case okSelf:
+         // aixloadb
+         tape.write(bcIAXLoadB, fieldOffset);
          break;
    }
 }
@@ -638,6 +647,10 @@ void ByteCodeWriter :: saveRegister(CommandTape& tape, ObjectInfo object, int fi
 void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
+      case okIndex:
+         // dxcopya
+         tape.write(bcDXCopyA);
+         break;
       case okLocal:
          // asavefi index
          tape.write(bcASaveFI, object.reference);
@@ -1081,6 +1094,12 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef)
 {
    // athenr then-end, r
    tape.write(bcAThenR, baCurrentLabel, comparingRef | mskConstantRef);
+}
+
+void ByteCodeWriter :: jumpIfNotEqualN(CommandTape& tape, int value)
+{
+   // dthenn then-end, value
+   tape.write(bcDElseN, baCurrentLabel, value);
 }
 
 //void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ObjectInfo object)

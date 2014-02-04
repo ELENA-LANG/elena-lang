@@ -11,6 +11,8 @@
 #include "parser.h"
 #include "errors.h"
 
+const wchar16_t _eof_message[] = {'<','e','n','d',' ','o','f',' ','f','i','l','e','>',0};
+
 using namespace _ELENA_ ;
 
 // --- SyntaxError ---
@@ -65,7 +67,7 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
          break;
       case dfaEOF:
          terminal.symbol = tsEof;
-         terminal.value = _T("<end of file>");
+         terminal.value = _eof_message;
          break;
       case dfaIdentifier:
          terminal.symbol = tsIdentifier;

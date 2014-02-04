@@ -239,8 +239,8 @@ int Linker :: countSections(Image& image)
 
 void Linker :: writeDOSStub(FileWriter* file)
 {
-   Path stubPath(_project->StrSetting(opAppPath), _T("winstub.ex_"));
-   FileReader stub(stubPath, _T("rb"), feRaw, false);
+   Path stubPath(_project->StrSetting(opAppPath), "winstub.ex_");
+   FileReader stub(stubPath, L"rb", feRaw, false);
 
    if (stub.isOpened()) {
       file->read(&stub, stub.Length());

@@ -50,8 +50,8 @@ struct InstanceConfig
 {
    // options
 //   int maxThread;
-   int pageSize;
-   int ygRatio;
+   int mgSize;
+   int ygSize;
    int objSize;
 
    // paths
@@ -72,16 +72,16 @@ struct InstanceConfig
       : primitives(NULL, freestr), forwards(NULL, freestr)
    {
       //maxThread = 1;
-      pageSize = 0x10;
-      ygRatio = 10;
+      mgSize = 20000;
+      ygSize = 4000;
       objSize = 0x0C;
    }
    InstanceConfig(InstanceConfig& parent)
       : primitives(NULL, freestr), forwards(NULL, freestr), moduleForwards(NULL, freestr)
    {
       //maxThread = parent.maxThread;
-      pageSize = parent.pageSize;
-      ygRatio = parent.ygRatio;
+      mgSize = parent.mgSize;
+      ygSize = parent.ygSize;
       objSize = parent.objSize;
 
       // copy paths

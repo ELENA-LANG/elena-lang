@@ -20,6 +20,7 @@ enum ByteCode
    bcBreakpoint     = 0x01,
    bcPushB          = 0x02,
    bcPop            = 0x03,
+   bcDXCopyA        = 0x04,
    bcPushM          = 0x05,
    bcMCopyVerb      = 0x06,
    bcThrow          = 0x07,
@@ -103,6 +104,7 @@ enum ByteCode
    bcSwapSI         = 0x6C,
    bcASwapSI        = 0x6D,
    bcAXSetR         = 0x6E,
+   bcIAXLoadB       = 0x6F,
 
    bcSCopyF         = 0x72,
    bcACopyS         = 0x75,

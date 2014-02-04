@@ -524,7 +524,7 @@ void File :: rewind()
 // --- TextFileReader ---
 
 TextFileReader :: TextFileReader(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, _T("rb"), encoding, withBOM)
+   : _file(path, L"rb", encoding, withBOM)
 {
 }
 
@@ -541,7 +541,7 @@ bool TextFileReader :: read(char* s, size_t length)
 // --- FileReader ---
 
 FileReader :: FileReader(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, _T("rb+"), encoding, withBOM)
+   : _file(path, L"rb+", encoding, withBOM)
 {
 }
 
@@ -558,7 +558,7 @@ bool FileReader :: read(void* s, size_t length)
 // --- FileWriter ---
 
 FileWriter :: FileWriter(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, _T("wb+"), encoding, withBOM)
+   : _file(path, L"wb+", encoding, withBOM)
 {
    if (encoding == feUTF16 && isOpened()) {
       unsigned short signature = 0xFEFF;
@@ -581,7 +581,7 @@ void FileWriter :: align(int alignment)
 // --- TextFileWriter ---
 
 TextFileWriter :: TextFileWriter(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, _T("wb+"), encoding, withBOM)
+   : _file(path, L"wb+", encoding, withBOM)
 {
    if (withBOM) {
       if (encoding == feUTF16 && isOpened()) {

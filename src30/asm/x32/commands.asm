@@ -476,6 +476,14 @@ inline % 6Eh
 
 end
 
+// iaxloadb
+
+inline % 6Fh
+
+   mov  [eax+__arg1], edi
+
+end
+
 // restore
 
 inline % 82h

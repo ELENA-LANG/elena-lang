@@ -36,6 +36,7 @@ enum ObjectKind
    okLocalAddress,
    okBlockLocalAddress,
    okBlockOuterField,
+   okIndex,
 
    okIdle
 };
@@ -58,6 +59,7 @@ enum ObjectType
    otRealVar,
    otLiteral,
    otShort,
+   otShortVar,
    otByteArray,
    otArray,
    otLength,
@@ -263,6 +265,7 @@ public:
    void jumpIfEqual(CommandTape& tape, ObjectInfo object);
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t ref);
+   void jumpIfNotEqualN(CommandTape& tape, int value);
 //   void jumpIfNotEqual(CommandTape& tape, ObjectInfo object);
    void jump(CommandTape& tape, bool previousLabel = false);
 

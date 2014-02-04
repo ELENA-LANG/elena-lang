@@ -66,7 +66,8 @@
 
     #method indexOf &index:aPosition &char:aChar
     [
-        #var(type:int) anIndex := theBuffer indexOf &index:(2 * aPosition) &short:aChar.
+        #var(type:int) anIndex.
+        theBuffer indexOf &index:(2 * aPosition) &short:aChar &out'int:anIndex.
         
         (-1 == anIndex) 
             ! [ anIndex := anIndex / 2. ].

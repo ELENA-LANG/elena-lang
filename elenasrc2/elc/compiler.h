@@ -130,7 +130,6 @@ protected:
 
       ObjectType mapSubjectType(ref_t subjRef);
       ObjectType mapSubjectType(TerminalInfo identifier, bool& out);
-      ObjectType mapSubjectType(TerminalInfo identifier);
 
       ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -154,11 +153,7 @@ protected:
 
       ref_t mapSubject(const wchar16_t* name)
       {
-         if (ConstantIdentifier::compare(name, "out'", 4)) {
-            //!! raise an error
-            return 0;
-         }
-         else return module->mapSubject(name, false);
+         return module->mapSubject(name, false);
       }
 
       ref_t mapSubject(const char* name)
@@ -512,27 +507,26 @@ protected:
    {
       struct ParamInfo
       {
-         int    output;       // 0 - normal, -1 - output, -2 self output, -3 literal length output, -4 dump length output
-         ref_t  subject;
-         ref_t  index;
-         ref_t  offset;
+         ref_t      subject;
+         ObjectInfo info;
+         bool       output;
 
          ParamInfo()
          {
-            output = offset = subject = 0;
+            subject = 0;
+            output = false;
          }
       };
 
       struct OutputInfo
       {
-         int subject;
-         int offset;
-         int target;
-         int type;
+         int        subject;
+         int        offset;
+         ObjectInfo target;
 
          OutputInfo()
          {
-            type = offset = target= subject = 0;
+            offset = subject = 0;
          }
       };
 
@@ -662,6 +656,7 @@ protected:
    void compileBreakHandler(CodeScope& scope, int mode);
 
    void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
+   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
    void reserveExternalOutputParameters(CodeScope& scope, ExternalScope& externalScope);
    void reserveExternalLiteralParameters(CodeScope& scope, ExternalScope& externalScope);
 

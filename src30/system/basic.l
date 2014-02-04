@@ -130,7 +130,8 @@
 
     #method shift : anOrder
     [
-        #var(type:int)retVal := primitive shift &int:$self &int::anOrder.
+        #var(type:int)retVal.
+        primitive shift &int:$self &int::anOrder &out'int:retVal.
         
         ^ IntNumber new &int:retVal.
     ]
@@ -141,7 +142,8 @@
 
     #method not
     [
-        #var(type:int)retVal := primitive invert &int:$self.
+        #var(type:int)retVal.
+        primitive invert &int:$self &out'int:retVal.
         
         ^ IntNumber new &int:retVal.
     ]
@@ -413,7 +415,8 @@
     
     #method get
     [
-        #var(type:short)aChar := theLiteral getAt &index:theIndex.
+        #var(type:short)aChar.
+        theLiteral getAt &index:theIndex &out'short:aChar.
         
         ^ CharValue new &int:aChar.
     ]
@@ -463,7 +466,8 @@
 
     #method getAt : aParam
     [
-        #var(type:short)aChar := $self getAt &index::aParam.
+        #var(type:short)aChar.
+        $self getAt &index::aParam &out'short:aChar.
         
         ^ CharValue new &int:aChar.
     ]
@@ -476,9 +480,10 @@
 
     #method indexOf &index:anIndex &literal:aLiteral
     [
-        #var(type:int)aRetVal := $self indexOf &index:anIndex &literal:aLiteral.
+        #var(type:int)aRetVal.
+        $self indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ aRetVal.
     ]
     
     #method indexOf &index:anIndex &char:aChar
@@ -924,9 +929,10 @@
 
     #method length 
     [
-        #var(type:int)aLen := primitive readLength &array:$self.
+        #var(type:int)aLen.
+        primitive readLength &array:$self &out'int:aLen.
         
-        ^ IntNumber new &int:aLen.
+        ^ aLen.
     ]
 
     #method enumerator = ArrayIterator new &array:$self.
@@ -942,7 +948,8 @@
 {
     convert &literal:aLiteral
     [
-        #var(type:int)aRetVal := primitive convert &literal:aLiteral.
+        #var(type:int)aRetVal.
+        primitive convert &literal:aLiteral &out'int:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -955,7 +962,8 @@
 {
     convert &literal:aLiteral
     [
-        #var(type:long)aRetVal := primitive convert &literal:aLiteral.
+        #var(type:long)aRetVal.
+        primitive convert &literal:aLiteral &out'long:aRetVal.
         
         ^ LongNumber new &long:aRetVal.        
     ]
@@ -968,7 +976,8 @@
 {
     convert &literal:aLiteral
     [
-        #var(type:real)aRetVal := primitive convert &literal:aLiteral.
+        #var(type:real)aRetVal.
+        primitive convert &literal:aLiteral &out'real:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]

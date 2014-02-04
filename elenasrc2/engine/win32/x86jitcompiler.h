@@ -180,6 +180,7 @@ protected:
    friend void compileDSubAI(int opcode, x86JITScope& scope);
    friend void compileDSaveAI(int opcode, x86JITScope& scope);
    friend void compileALoadD(int opcode, x86JITScope& scope);
+   friend void compileDCopyA(int opcode, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -335,6 +336,7 @@ void compileDSubAI(int opcode, x86JITScope& scope);
 void compileDSaveAI(int opcode, x86JITScope& scope);
 void compileALoadD(int opcode, x86JITScope& scope);
 void loadFunction(int opcode, x86JITScope& scope);
+void compileDCopyA(int opcode, x86JITScope& scope);
 
 } // _ELENA_
 

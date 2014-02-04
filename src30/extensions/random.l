@@ -15,7 +15,8 @@
 
     #method eval : aMaxValue
     [
-        #var(type:int)aNextValue := $self eval &int::aMaxValue.
+        #var(type:int)aNextValue.
+        $self eval &int::aMaxValue &out'int:aNextValue.
         
         ^ IntNumber new &int:aNextValue.
     ]

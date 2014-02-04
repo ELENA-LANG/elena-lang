@@ -196,6 +196,8 @@ ELENA byte codes (or ecodes)
  
  dcopy i                    - i => index
  
+ dxcopya                    - acc => index
+ 
  dloadai i                  - [acc:i] => index
 
  dloadsi i                  - [sp:i] => index
@@ -319,7 +321,19 @@ ELENA byte codes (or ecodes)
 
  get                         - acc <= self[index] ;
  
- iaxcopyr i, r               - r => [acc::i]
+ iaxcopyr i, r               - r => [acc::i]               
+                               ; direct
+
+ iaxloadfi i1, i2            - [fp+i1] => [acc::i2]
+                               ; direct
+                               
+ iaxloadsi i1, i2            - [sp+i1] => [acc::i2]
+                               ; direct
+
+ iaxloadbi i1, i2            - [self::i1] => [acc::i2]
+                               ; direct
+
+ iaxloadb i                  - self => [acc::i]
                                ; direct
 
  axsetr r                    - r => [acc::index]                              

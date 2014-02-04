@@ -685,7 +685,7 @@ void JITLinker :: createNativeSymbolDebugInfo(const wchar16_t* reference, size_t
 
    MemoryWriter writer(debug);
    // start with # to distinguish the symbol debug info from the class one
-   writer.writeWideChar(_T('#'));
+   writer.writeWideChar('#');
    writer.writeWideLiteral(reference);
 
    sizePtr = writer.Position();

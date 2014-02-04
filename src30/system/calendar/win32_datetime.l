@@ -26,7 +26,8 @@
     
     #method read &short &index:anIndex
     [
-        #var(type:short)aValue := primitive read &bytearray:theData &index:anIndex.
+        #var(type:short)aValue.
+        primitive read &bytearray:theData &index:anIndex &out'short:aValue.
         
         ^ IntNumber new &int:aValue.
     ]
@@ -35,14 +36,14 @@
     [
         #var aRetVal := LongNumber new.
         
-        LongNumber new &long:(system'external'KERNEL32 SystemTimeToFileTime &bytearray:theData &out'bytearray:aRetVal).
+        system'external'KERNEL32 SystemTimeToFileTime &bytearray:theData &out'bytearray:aRetVal.
         
         ^ aRetVal.
     ]    
     
     #method read &date &literal &int:Flags
     [
-        #var aLength := IntNumber new &int:(system'external'KERNEL32 GetDateFormatEx
+        #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
             &int:Flags
             &bytearray:theData
@@ -50,7 +51,7 @@
             &int:0
             &int:0
             &int:0
-            | raise:(system'FormatException new:"Cannot format date")).
+            | raise:(system'FormatException new:"Cannot format date").
             
         #var aLiteral := LiteralValue new &length:(aLength - 1).
         
@@ -69,7 +70,7 @@
     
     #method read &time &literal &int:Flags
     [
-        #var aLength := IntNumber new &int:(system'external'KERNEL32 GetTimeFormatEx
+        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
             &int:Flags
             &bytearray:theData
@@ -77,7 +78,7 @@
             &int:0
             &int:0
             &int:0
-            | raise:(system'FormatException new:"Cannot format time")).
+            | raise:(system'FormatException new:"Cannot format time").
                         
         #var aLiteral := LiteralValue new &length:(aLength - 1).
         
@@ -238,8 +239,7 @@
             &short:(aMinute int)
             &short:(aSecond int)
             &short:0.
-                
-                                
+                                                
 //        #var aSystemStruct := Win32SystemTime new
 //            &type'short:(1601 + aYear type'int)
 //            &type'short:(1 + aMonth type'int)
