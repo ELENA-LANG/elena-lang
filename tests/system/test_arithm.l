@@ -7,39 +7,11 @@
 
 #class Tester
 {
-    #field theIndexers.
-    #field theCurrent.
-    #field theCount.
-    
-    #method refresh
-    [
-        theCurrent := arrayControl new &length:theCount &each: i [ (theIndexers@i) get ].
-    ]
 }
    
 #symbol XTest =
 [
-    #var aLiteral := "ab".
-    #var aLength := 2.
-    #var aShuffled := literalControl toArray:aLiteral.
-
-    control from:0 &till:aLength &do: i
-    [
-        #var aChar := aLiteral@i.
-        (aChar == (aShuffled@i)) ?
-        [
-            control from:0 &till:aLength &do: j
-            [
-                #var anAltChar := aShuffled@j.
-                (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
-                    [
-                        arrayControl exchange:i &with:j &in:aShuffled.
-                        
-                        #break nil.
-                    ].
-            ].
-        ].
-    ].].
+].
 
 // --- OpenArgTest ---
 

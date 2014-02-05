@@ -13,31 +13,29 @@ BreakException
 ByteArray
 CharValue
 control
-EIntConvertor
-EIntNumber
-ELiteralConvertor
-ELongConvertor
 emptyLiteralValue
-EReal
-ERealConvertor
 Exception
 Extension
 false
 functionOp
 FormatException
 IntBaseNumber
+intConvertor
 Integer
 IntNumber
 InvalidArgumentException
+literalConvertor
 LiteralIterator
 LiteralValue
 Long
+longConvertor
 LongNumber
 mathOp
 nil
 Object
 OutOfRangeException
 Real
+realConvertor
 RealNumber
 RoleList
 String
@@ -69,6 +67,7 @@ Wrap
 #method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
 #method=and,&bool:bool,bool;Executes logical AND operation with a boolean value
 #method=and,&int:int,bool;Executes logical AND operation with an integer value
+#method=bool,,bool;Returns itself.
 #method=else,action;Always returns nil.
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
 #method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current object boolean expression.
@@ -90,13 +89,14 @@ Wrap
 #protocol=bool
 #method=and,object,bool;Executes logical AND operation<br/>Always return false
 #method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
+#method=bool,,bool;Returns itself.
 #method=else,action;Executes the action;
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
 #method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current object boolean expression.
 #method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
 #method=int,,int;Returns numeric value.
 #method=literal,,literal;Returns literal representation.
-#method=not,,bool;Always returns false.
+#method=not,,bool;Always returns true.
 #method=or,object,bool;Executes logical OR operation
 #method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
 #method=then,action;Always returns nil.
@@ -209,11 +209,11 @@ Wrap
 #method=multiply,&int:int,int;Returns the product of integers
 #method=multiply,&long:long,long;Returns the product of integers
 #method=multiply,&real:real,real;Returns the product
+#method=negative,,int;Negates the value
 #method=not,,int;Bitwise inversion
 #method=notless,&int:int,bool;Compares the integer value
-#method=negative,,int;Negates the value
 #method=or,&int:int,int;Returns the result of bitwise OR operation
-#method=shift,int,int;Bitwide shift operation
+#method=shift,int,int;Bitwise shift operation
 #method=subtract,&int:int,int;Returns the difference of integers
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
@@ -252,7 +252,7 @@ Wrap
 #method=not,,long;Bitwise inversion
 #method=notless,&long:int,bool;Compares the integer value
 #method=or,&long:long,long;Returns the result of bitwise OR operation
-#method=shift,int,long;Bitwide shift operation
+#method=shift,int,long;Bitwise shift operation
 #method=subtract,&int:int,long;Returns the difference of integers
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
@@ -345,9 +345,10 @@ Wrap
 #constructor=new,&length:int,literal;Creates the literal string with specified length
 #constructor=new,&length:int&literal:literal,literal;Creates the literal string with specified length and copies the parameter value
 #constructor=new,&length:int&char:value,literal;Creates the literal string with specified length fills with spciefied character value
+#constructor=new,&literal:literal,literal;Creates the literal string copy
+#method=add,&char:value,literal;Concatinates the values
 #method=add,object,literal;Concatinates the values
 #method=add,&literal:literal,literal;Concatinates the values
-#method=add,&char:value,literal;Concatinates the values
 #method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
 #method=enumerator,,enumerator;Returns the object enumerator
 #method=equal,&literal:literal,bool;Compares the values
@@ -357,7 +358,7 @@ Wrap
 #method=indexOf,&index:int&literal:literal,int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
 #method=indexOf,&index:int&literal:literal&out'int:int;Copies the index of the first occurence of the specified substring to the stack allocated variable.<br/>If the substring is not found. returns -1
 #method=indexOf,&index:int&char:value,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
-#method=insert,&type'index:int&literal:literal,literal;Inserts the substring into and returns the new one
+#method=insert,&index:int&literal:literal,literal;Inserts the substring into and returns the new one
 #method=length,,int;Returns the string length
 #method=literal,,literal;Returns itself
 #method=less,&literal:literal,bool;Compares the values
@@ -467,6 +468,7 @@ Wrap
 #protocol=value
 #protocol=variable
 #constructor=new,value,variable;Creates a boolean variable with specified value
+#method=append,value,bool;Executes logical OR operation
 #method=equal,value,bool;Compares the value
 #method=invert,,;Inverts the boolean value
 #method=value,,bool;Returns the boolean value
@@ -483,7 +485,7 @@ Wrap
 #constructor=new,&array:array,enumerator;Returns the parameter iterator
 #method=append,&index:int;Increaments the index by specified value
 #method=available,,bool;Returns true if the index is inside the range
-#method=get,,value;Returns the current array elemenent
+#method=get,,value;Returns the current array element
 #method=index,,int;Returns the index value.
 #method=next,,bool;Goes to the next character and returns true if the index is not out of range
 #method=reset,,;Resets the enumerator
@@ -497,11 +499,72 @@ Wrap
 #protocol=array
 #parent=system.html#Object:system'Object
 #constructor=new,&length:int,array;Creates the array with specified length
-#method=add,object,type_array;Concatinates the arrays
-#method=add,&array:type_array,type_array;Concatinates the arrays
-#method=Enumerator,,enumerator;Returns the object enumerator
+#method=add,object,array;Concatinates the arrays
+#method=add,&array:array,array;Concatinates the arrays
+#method=array,,array;Returns itself
+#method=enumerator,,enumerator;Returns the object enumerator
 #method=getAt,object,object;Returns the array element at the specified position
 #method=getAt,&index:int,object;Returns the array element at the specified position
 #method=length,,int;Returns the array length
 #method=setAt,object:object;Sets the array element at the specified position
 #method=setAt,&index:int&object:object;Sets the array element at the specified position
+
+[intConvertor]
+#title=Symbol intConvertor
+#shortdescr=An integer convertor
+#method=convert,&int:int,int;Returns the parameter
+#method=convert,&literal:literal,int;Converts the literal value to the integer number
+
+[longConvertor]
+#title=Symbol longConvertor
+#shortdescr=A long integer convertor
+#method=convert,&literal:literal,long;Converts the literal value to the integer number
+#method=convert,&long:long,long;Returns the parameter
+
+[realConvertor]
+#title=Symbol realConvertor
+#shortdescr=A real number convertor
+#method=convert,&int:int,real;Converts the integer value to the real number
+#method=convert,&literal:literal,real;Converts the literal value to the real number
+#method=convert,&long:long,real;Converts the integer value to the real number
+#method=convert,&real:real,real;Returns the parameter
+
+[literalConvertor]
+#title=Symbol literalConvertor
+#shortdescr=A literal convertor
+#method=convert,&int:int,literal;Converts the parameter to the literal value
+#method=convert,&int:int&base:int,literal;Converts the parameter to the literal value with the provided radix
+#method=convert,&literal:literal,literal;Returns the parameter
+#method=convert,&long:long,literal;Converts the parameter to the literal value
+#method=convert,&object:object,literal;Converts the parameter to the literal value
+#method=convert,&real:real,literal;Converts the parameter to the literal value
+
+[Variant]
+#title=Class Variant
+#shortdescr=A variable literal
+#protocol=enumerable
+#protocol=literal
+#protocol=int
+#protocol=long
+#protocol=real
+#protocol=variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#String:system'String
+#field=theValue;The literal value
+#method=int,,int;Tries to convert the value to the integer number
+#method=long,,long;Tries to convert the value to the integer number
+#method=real,,real;Tries to convert the value to the real number
+
+[Variable]
+#title=Class Variable
+#shortdescr=A variable
+#protocol=variable
+#parent=system.html#Object:system'Object
+#constructor=new,numeric_value,variable;Creates the variable
+#method=append,numeric_value;Appends the value
+#method=divideInto,numeric_value;Divides into the value
+#method=get,,numeric_value;Returns the object
+#method=multiplyBy,numeric_value;Multiplies by the value
+#method=reduce,numeric_value;Subtructs the value
+#method=write,numeric_value;Assigns the variable

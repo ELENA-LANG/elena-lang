@@ -126,7 +126,7 @@ variable
 
 [enumerable]
 #shortdescr=A collection protocol
-#method=Enumerator,,enumerator;Creates the collection enumerator
+#method=enumerator,,enumerator;Creates the collection enumerator
 
 [array]
 #shortdescr=A array protocol

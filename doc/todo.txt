@@ -20,36 +20,18 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              adev - gui
-                       * class function
-
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
-                         
-                       * out prefix should not be used implicitly, does not support out'literal for external call, the result should be stored
-                         into temporal bytearray ; 
-
-                       * external call should support boolean operation
-                       * optimize main loop implementation
-                       * support GUI mode
+              adev - lib30                                        
+                       * realNumber.get&literal - starting space should be removed (e.g. accumulator)
 <=================> 
                                
 1.9.12
 ------
 week2: [13.02]
-              xdev - samples:
-                       * test: interpreter (both script and code)
-
               sdev - api doc
-                       * create API doc
+                       * create API doc : mathOp
                        * change api faq
 
-              adev - gui
-                       * support GUI application
-
               adev - lib30                                        
-                       * realNumber.get&literal - starting space should be removed (e.g. accumulator)
-                                                                                     
                        * $ConsoleReader.read&char(0) - use stack allocated dump
 
                        * extension : support several roles
@@ -209,6 +191,9 @@ week2: [13.02]
                         * write formatted string (with parameters)
 
 week3:
+              xdev - samples:
+                       * test: interpreter (both script and code)
+
               sdev - tape
                        * test tape test
               sdev - calculator
@@ -467,6 +452,16 @@ week1:
                        
               xdev - tools                       
                        * get rid of _T (elenavm, elt, asm2binx, ecv) 
+
+week2:
+              adev - gui
+                       * class function
+                       * eventhandle group object
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * support GUI mode
+                       * support GUI application
+
 
 1.9.14
 --------

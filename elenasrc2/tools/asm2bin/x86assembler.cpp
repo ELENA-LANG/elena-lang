@@ -219,7 +219,11 @@ bool x86Assembler :: setOffset(Operand& operand, Operand disp)
       if (test(operand.type, x86Helper::otM16)) {
          operand.type = (OperandType)(operand.type | x86Helper::otM16disp8);
       }
+      else if (test(operand.type, x86Helper::otM8)) {
+         operand.type = (OperandType)(operand.type | x86Helper::otM8disp8);
+      }
 		else operand.type = (OperandType)(operand.type | x86Helper::otM32disp8);
+
 		return true;
 	}
 	else if (disp.type==x86Helper::otDD) {

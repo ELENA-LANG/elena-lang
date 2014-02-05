@@ -200,7 +200,7 @@ void writeSignature(TextFileWriter& writer, const char* parameters)
       const char* next_subj = find(param, '&');
 
       writeLeft(writer, subj, param);
-      writer.writeText(" : ");
+      writer.writeText(":");
       writeParamLink(writer, param, next_subj, _T("protocol.html"));
 
       parameters = next_subj;
