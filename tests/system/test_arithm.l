@@ -11,6 +11,12 @@
    
 #symbol XTest =
 [
+    #var n := 012345678h.
+    
+    #var hw := n~intOp HiWord.
+    #var lw := n~intOp LoWord.
+    #var hb := n~intOp HiByte.
+    #var lb := n~intOp LoByte.
 ].
 
 // --- OpenArgTest ---

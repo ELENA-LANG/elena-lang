@@ -20,6 +20,7 @@ IDE:
 
 [LIB]
 [+] new package: forms
+[+] system: intOp
 
 ******************************************************************************
                     What's New in 1.9.11 (pre release)

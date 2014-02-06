@@ -68,11 +68,15 @@
     read &bytearray:anArray &index:anIndex &out'short:aWord
         <bs_readword>.
         
+//    read &bytearray:anArray &index:anIndex &out'byte:aWord
+//        <bs_readbyte>.
+        
     equal &bytearray:anArray &index:anIndex &short:aWord
         <bs_equalword>.
        
     equal &bytearray:anArray &index:anIndex &int:aNumber
         <bs_equalint>.
+        
 }.
 
 // --- mathPrimitive ---

@@ -21,22 +21,21 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * realNumber.get&literal - starting space should be removed (e.g. accumulator)
+                       * implement intnumber - highword, lowword, lowbyte, highbyte
 <=================> 
                                
 1.9.12
 ------
 week2: [13.02]
               sdev - api doc
-                       * create API doc : mathOp
+                       * create API doc : ByteArray
                        * change api faq
+                       * copy protocols to doc\protocols
+                       * support dispatch method
+                       * support redirect method
 
               adev - lib30                                        
-                       * $ConsoleReader.read&char(0) - use stack allocated dump
-
                        * extension : support several roles
-                                          
-                       * implement intnumber - highword, lowword, lowbyte, highbyte
                        * Struct : check if the income message is "get"
                        * win32 file i/o operations should raise an exception with an error code
                        * implement: square function
@@ -100,14 +99,7 @@ week2: [13.02]
                        * test basic samples
                        * test rosetta samples
 
-              sdev - api
-                       * create API doc : console, ...
-                       * copy protocols to doc\protocols
-                       * do we need intOp, strOp, ... - they are actually private ones
-                       * support dispatch method
-                       * support redirect method
               sdev - rosetta samples              
-                       * fix calendar
                        * bullscows : count the attempts
                        * modify amb operator using open argument list 
                        * update amb sample on rosetta code site
@@ -120,7 +112,6 @@ week2: [13.02]
                        * EReflector: raise an exception if NameOf returns zero
                        * timespan: constructor?
                        * date: custom presenter / formatter / custom formatter
-                       * list / iterators / ... - can commutator be used instead of adapter roles
                        * it should be possible to compare integer and value - the result is false
                        * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
                        * date - return utc time
@@ -129,6 +120,7 @@ week2: [13.02]
                        * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
                        
               adev - lib30 optimization
+                       * $ConsoleReader.read&char(0) - use stack allocated dump
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting)
                        * start to use stack allocated variables to optimize the code : console operation, ...
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
@@ -281,6 +273,10 @@ week4:
 1.9.13
 --------
 week1:
+              xdev - generic development              
+                       * review opcode matrix, think over extension simplification
+                       * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
+
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it?

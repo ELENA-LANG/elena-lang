@@ -23,6 +23,7 @@ IntBaseNumber
 intConvertor
 Integer
 IntNumber
+intOp
 InvalidArgumentException
 literalConvertor
 LiteralIterator
@@ -541,7 +542,7 @@ Wrap
 
 [Variant]
 #title=Class Variant
-#shortdescr=A variable literal
+#shortdescr=A variable literal       
 #protocol=enumerable
 #protocol=literal
 #protocol=int
@@ -568,3 +569,24 @@ Wrap
 #method=multiplyBy,numeric_value;Multiplies by the value
 #method=reduce,numeric_value;Subtructs the value
 #method=write,numeric_value;Assigns the variable
+
+[mathOp]
+#title=Class mathOp
+#shortdescr=Mathematical operations
+#parent=system.html#Object:system'Object
+#method=Abs,,real;Returns the absolute value
+#method=Exp,,real;Returns e raised to the specified power.                 
+#method=Frac,,real;Returns the fraction part of the number.
+#method=Int,,real;Returns the integer part of the number
+#method=Ln,,real;Returns the natural (base e) logarithm of a specified number.
+#method=mod,int,int;Returns the remainder
+#method=Rounded,,real;Rounds the real number to the nearest integer value.
+
+[intOp]
+#title=Class intOp
+#shortdescr=an Integer operations
+#parent=system.html#Object:system'Object
+#method=HiByte,,int;Returns the high byte
+#method=HiWord,,int;Returns the high word
+#method=LoByte,,int;Returns the low byte
+#method=LoWord,,int;Returns the low word

@@ -909,20 +909,6 @@ while  : <A HREF="protocol.html#bool_action">bool_action</A>
 </TD>
 </TR>
 </TABLE>
-<A NAME="EIntNumber">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-EIntNumber</H2>
-EIntNumber
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
-</TABLE>
 <A NAME="emptyLiteralValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1009,20 +995,6 @@ notless &literal:<A HREF="protocol.html#literal">literal</A>
 <TD><CODE>Compares with literal value</CODE>
 </TD>
 </TR>
-</TABLE>
-<A NAME="EReal">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-EReal</H2>
-EReal
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
 </TABLE>
 <A NAME="Exception">
 <HR>
@@ -1887,6 +1859,64 @@ xor &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#int">int</A>
 </TD>
 <TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="intOp">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class intOp</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'intOp</B>
+</PRE>
+<P>
+an Integer operations
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+HiByte = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the high byte</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+HiWord = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the high word</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+LoByte = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the low byte</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+LoWord = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the low word</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2856,12 +2886,81 @@ xor &long:<A HREF="protocol.html#long">long</A>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-mathOp</H2>
-mathOp
+Class mathOp</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'mathOp</B>
+</PRE>
+<P>
+Mathematical operations
+<P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Abs = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the absolute value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Exp = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns e raised to the specified power.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Frac = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the fraction part of the number.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Int = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the integer part of the number</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Ln = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the natural (base e) logarithm of a specified number.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+mod : <A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the remainder</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Rounded = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Rounds the real number to the nearest integer value.</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="nil">
 <HR>
