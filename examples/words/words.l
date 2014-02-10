@@ -53,7 +53,7 @@
 
     consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)
-        ? [ consoleEx writeLine:"the list of unique words:":aList. ].
+        ? [ consoleEx writeLine:"the list of unique words:":(listControl sort:aList). ].
 
     consoleEx readChar. // wait for any key
 ].

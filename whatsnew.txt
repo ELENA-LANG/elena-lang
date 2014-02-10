@@ -12,7 +12,8 @@ ELENA:
 
 ELC:
 [*] heap size is tuned
-[-] bug fix: length boxing, long static array implementation, break statement, wscopyreal
+[-] bug fix: length boxing, long static array implementation, break statement, wscopyreal,
+             object constructor implementation
 [-] byte code optimization routine fixed
 
 IDE:

@@ -2133,7 +2133,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
          if (arg == nsMessageParameter || arg == nsTypedMessageParameter) {
             count++;
 
-            if (arg.firstChild().firstChild() != nsNone)
+            if (arg.firstChild().firstChild() != nsNone || arg == nsTypedMessageParameter)
                simpleParameters = false;
 
             arg = arg.nextNode();

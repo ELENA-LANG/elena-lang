@@ -5,6 +5,7 @@
 #class GameMaster
 {
     #field theNumbers.
+    #field theAttempt.
 
     #constructor new
     [
@@ -12,11 +13,12 @@
         #var aRandomNumbers := randomControl randomize:9 &array:(1,2,3,4,5,6,7,8,9).
  
         theNumbers := arrayControl Subarray:aRandomNumbers &from:0 &length:4.
+        theAttempt := Integer new:1.
     ]
 
     #method ask
     [
-        #var aRow := consoleEx write:"Your Guess ?" readLine.
+        #var aRow := consoleEx write:"Your Guess #":theAttempt:" ?" readLine.
         
         ^ literalControl toArray:aRow.
     ]
@@ -62,6 +64,8 @@
             -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
              4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
              ! [
+                 theAttempt += 1.
+                 
                  consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
                  
                  ^ true.

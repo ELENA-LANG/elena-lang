@@ -367,6 +367,10 @@
         
     contain : aSubS &in:anS
         = -1 != anS indexOf &index:0 &literal::aSubS.
+        
+    sort : aList
+    [
+    ]
 }.
 
 // === patterns ===

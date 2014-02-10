@@ -18,7 +18,8 @@
 
     #method length
     [
-        #var(type:int)aCount := classControl readLength &object:self.
+        #var(type:int)aCount.
+        classControl readLength &object:self &out'int:aCount.
         
         ^ IntNumber new &int:aCount.
     ]

@@ -13,5 +13,5 @@ warn:unresolved=-1
 interpreter.l
 
 [forwards]
-'program=interpreter'program2
+'program=interpreter'program
 
