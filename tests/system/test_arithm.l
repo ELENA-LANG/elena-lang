@@ -11,6 +11,8 @@
    
 #symbol XTest =
 [
+    #var(type:int)n := 3.    
+    #var(type:short)aCh << "abc" getAt &index:1.
 ].
 
 // --- OpenArgTest ---

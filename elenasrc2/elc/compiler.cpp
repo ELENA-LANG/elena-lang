@@ -1638,11 +1638,9 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 
       DNode assigning = node.firstChild();
       if (assigning != nsNone) {
-         // if it is stack allocated variable
-         if (type != otNone) {
-            DNode expr = assigning.firstChild();
-
-            ObjectInfo info = compileExpression(expr, scope, typeHint | HINT_STACKREF_ASSIGN);
+         // if it is stack allocated variable assigning expression
+         if (type != otNone && assigning == nsCopying) {
+            ObjectInfo info = compileExpression(assigning, scope, typeHint | HINT_STACKREF_ASSIGN);
 
             scope.mapLocal(node.Terminal(), level, type);
 
@@ -1658,7 +1656,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          }
          // otherwise, use normal routine
          else {
-            ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
+            ObjectInfo info = compileExpression(assigning.firstChild(), scope, typeHint);
             _writer.loadObject(*scope.tape, info);
 
             scope.mapLocal(node.Terminal(), level, type);
@@ -1666,7 +1664,10 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             if (checkIfBoxingRequired(info))
                info = boxObject(scope, info, 0);
 
-            compileAssignment(node, scope, scope.mapObject(node.Terminal()));
+            if (type != otNone) {
+               compileStackAssignment(node, scope, scope.mapObject(node.Terminal()), info);
+            }
+            else compileAssignment(node, scope, scope.mapObject(node.Terminal()));
          }
       }
       else scope.mapLocal(node.Terminal(), level, type);
@@ -2140,6 +2141,34 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
          }
       }
       paramCount = count;
+   }
+
+   // if it is out-assigning
+   // out'type'xxx postfix should be added
+   if (test(mode, HINT_STACKREF_ASSIGN)) {
+      switch(ModeToType(mode)) {
+         case otShort:
+            signature.append(ConstantIdentifier("&out'short"));
+            paramCount++;
+            break;
+         case otInt:
+            signature.append(ConstantIdentifier("&out'int"));
+            paramCount++;
+            break;
+         case otLong:
+            signature.append(ConstantIdentifier("&out'long"));
+            paramCount++;
+            break;
+         case otReal:
+            signature.append(ConstantIdentifier("&out'real"));
+            paramCount++;
+            break;
+         default:
+            // if it was not recognized
+            // turn the mode off
+            mode &= ~HINT_STACKREF_ASSIGN;
+            break;
+      }
    }
 
    // if signature is presented

@@ -66,7 +66,7 @@ void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
 {
    const char* value = getOption(config, setting);
    if (value) {
-      _settings.add(setting, StringHelper::strToLong(value, 16));
+      _settings.add(setting, (int)StringHelper::strToLong(value, 16));
    }
 }
 
@@ -305,7 +305,7 @@ void Project :: saveModule(_Module* module, const _path_t* extension)
    Path::create(outputPath, path);
 
    FileWriter writer(path, feRaw, false);
-   if(!module->save(writer)) 
+   if(!module->save(writer))
       raiseError(getLoadError(lrCannotCreate), (const _path_t*)path);
 }
 

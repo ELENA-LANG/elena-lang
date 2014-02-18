@@ -20,121 +20,136 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              sdev - rosetta samples              
-                       * Conway's Game of Life : create an inter-linked space matrix (currently it does not work properly)
-                       * Conway's Game of Life
+              xdev - generic development              
+                       * it should be possible to assign variable inside nested code, but in this case the change could not be seen outside the nested
+                         code
 
-              sdev - default script
-                       * support basic arithmetic operation (+ - / *)
-                       * implement 2 + 2 * 3
+                       * widechar constant 
+
+                       * check private method declaration ??
+                       
 <=================> 
-                               
-1.9.12
-------
-week3: [20.02]
-              sdev - calculator
-                       * implement calculator using script only
-                       * implement calculator using dynamic building
-                       * build state machine using only dynamic object
-                       * implement sample using open architecture
-              sdev - bf sample
-                       * implement bf tape dynamically
-              sdev - open architecture
-                       * build dynamic class - several methods                 
-                       * access parameters
-
-              sdev - open architecture
-                       * implement dynamic property container: set / get
-
-              sdev - open architecture
-                       * new sample: script_db (using script to parse text file)
-
-                       * structure: simple script prototype : build structure
-                          ?? [ x : 1, y : 2 ].
-                          
-                       * code: simple code prototype : extend structure
-                       * code: simple script prototype : extend structure
-
-                       * build the structure list              
-                       * build the matrix
-                       * object serialization / deseialization (to script / from script)
-
-              sdev - prime project : calc
-                       * build system to enter and sum two numbers rather than directly implement the flow
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdev - default script
-                       * functions
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - prime project
-                       * script program - calculator
-                       * eldoc: dynamic parser
-
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                      * trace could print the result directly to console?? (so it will simplify script debugging)
-
-              sdev - script engine              
-                       * elenascript should be default one in elt
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-
-              sdev - open architecture
-                       * review dynamic property container, try to simplify it
-                                                         
-week4:
-            xmaint - utf-8
-                       * all project files should be converted to UTF8
-                       * test saving to utf-8
-                       * test saving to utf-16
-                       * test saving to oem
-                       
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-              xdev - test
-                       * boxing: message target / operand, operator target / operand                       
-                       * try to automize build process  
-
-1.9.13
+1.9.13 [4.3]
 --------
 week1:
               xdev - generic development              
+                       * role class should not be its own class class (like it is now), super class should be used
+                       
+                       * should class symbol always return class class (exception is role)? 
+                         
+                       * resend operator: implement the situation when the target is
+                         not constant
+
+                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
+                         and could be invoked by eval
+
+                       * Object implementation : instead of notequal - implement equal and invert the result ??
+
+                       * stack allocated byte array should not be reserved second time
+                       
+                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
+
+                       * group object implementation (group, union, cast)
+                       * elenavm: use reverse instead of set of swaps
+                       
+                       * special symbol which could return the object "type" (e.g. react on dispatch method and store the message subject)
+
+                       * @ operator should support primitive implementation if loperand is array, bytearray and roperand is int
+
+                       * write, append, ... operation should be allowed only with $self or out parameter
+                            
+                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                         modify the code, from reading bool values from stack to constant array
+                         
+                       * should be possible to declare sealed classes
+
+                       * could it be possible to hide the inherited methods, so they could be used
+                         only internally by the class (with $super)
+
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+                       * loop should contain snop
+
+                       * hook: maybe offset should exclude call command size, so no need
+                         in adjucment
+                         
+                       * compileHelperOperation: implement size check for the output parameter
+                       * warn if number of subjects / verbs are overflown
+
+                       * do not use self in constructor? or self should be equal to $self ? (e.g. gameoflife'Space.new)
+
+                       * hint role should indicate that no need to create a class class??
+
+                       * readonly fields like in C# (some optimization gains?)
+                       
+                       * warn if system'Object does not contain send method
+
+                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
+      
+                       * raise an exception if more than 14 arguments in the method / message                 
+                       
+                       * simplify typecasting should not be done for operations like length, index
+                       
+                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
+
+                       * array item set operator a@b := c ???
+
+                       * lcopystr : index should contain radix
+                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
+                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
+                       * ws_indexof: check operations check if index, index + length is not beyond string
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                        
+                       * loadverb should be not be implemented in elena.h
+                         module
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+                       * multiple parameter dispatching
+                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+
+                       * boxing after primtive operation should be done probably directly, i.e. implicitly create an object (int, long or real)
+
+                       * compiler option : switch off jump optimization
+                       * compiler option : switch off direct calls
+
+                       * new ecode: released - do we need it, or loop would be enough?
+                         
+                       * type enforcing : compiler should generate a warning if out'xx is not local variable 
+
+                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
+                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
+
+                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
+                         (either typed variable or typed expression)
+
+                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
+
+                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
+                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
+
+                       * optimize type cast call (dispatch handler should be used) 
+
+                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
+                         byte array used?
+                         
+                       * elena opcodes : extension - think over extension set implementation (current is not efficient)
+
+                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
+                       * constant array
+                       * make possible to send exception futher with ifFailed handler
+                       
                        * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?
                        * review opcode matrix, think over extension simplification
                        * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
+                       
+                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
 
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it?
 
                        * any other operation should result in boxing
-            
-              xdev - generic development              
-                       * try to figure out how to write this expression in a single line
- 
-                         #var(type:int)aRetVal := primitive convert &literal:aLiteral &out'int.
-                         #var(type:int)aRetVal << primitive convert &literal:aLiteral.                         
-                         
-                       * review the code to use this statement
-
-                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
 
               xdev - multithreading       
                        * compile pi with mt
@@ -293,6 +308,18 @@ week1:
                        * get rid of _T (elenavm, elt, asm2binx, ecv) 
 
 week2:
+              xdev - code review
+                      * use simplified stack allocating syntax
+
+                      * helloworld
+                      * sum
+                      * bsort
+                      * words
+                      * textview
+                      * pi
+                      * samples ...
+                      * rosetta samples ...
+            
               adev - gui
                        * class function
                        * eventhandle group object
@@ -446,6 +473,65 @@ week2:
                        * calender: custom formatting
                        * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
 
+week3:
+              sdev - rosetta samples              
+                       * Conway's Game of Life : create an inter-linked space matrix (currently it does not work properly)
+                       * Conway's Game of Life
+
+              sdev - calculator
+                       * review
+
+              sdev - prime project
+                       * game of life
+                       * upndown
+                       * script program - calculator
+                       * eldoc: dynamic parser
+
+              sdev - default script
+                       * how could it be used?
+                       * support code execution
+                       * suppoer method call
+                       * support variables
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                       * trace could print the result directly to console?? (so it will simplify script debugging)
+                       * elenascript should be default one in elt
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
+                                                         
+week4:
+            xmaint - utf-8
+                       * all project files should be converted to UTF8
+                       * test saving to utf-8
+                       * test saving to utf-16
+                       * test saving to oem
+                       
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+              xdev - test
+                       * boxing: message target / operand, operator target / operand                       
+                       * try to automize build process  
+
+
 1.9.14
 --------
 week1:
@@ -454,120 +540,6 @@ week1:
                        
               xdev - multy select statement
                        * native implementation - using open argument list??
-                       
-              xdev - generic development              
-                       * it should be possible to assign variable inside nested code, but in this case the change could not be seen outside the nested
-                         code
-
-                       * widechar constant 
-
-                       * check private method declaration ??
-                       
-                       * role class should not be its own class class (like it is now), super class should be used
-                       
-                       * should class symbol always return class class (exception is role)? 
-                         
-                       * resend operator: implement the situation when the target is
-                         not constant
-
-                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
-                         and could be invoked by eval
-
-                       * Object implementation : instead of notequal - implement equal and invert the result ??
-
-                       * stack allocated byte array should not be reserved second time
-                       
-                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
-
-                       * group object implementation (group, union, cast)
-                       * elenavm: use reverse instead of set of swaps
-                       
-                       * special symbol which could return the object "type" (e.g. react on dispatch method and store the message subject)
-
-                       * @ operator should support primitive implementation if loperand is array, bytearray and roperand is int
-
-                       * write, append, ... operation should be allowed only with $self or out parameter
-                            
-                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                         modify the code, from reading bool values from stack to constant array
-                         
-                       * should be possible to declare sealed classes
-
-                       * could it be possible to hide the inherited methods, so they could be used
-                         only internally by the class (with $super)
-
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-                       * loop should contain snop
-
-                       * hook: maybe offset should exclude call command size, so no need
-                         in adjucment
-                         
-                       * compileHelperOperation: implement size check for the output parameter
-                       * warn if number of subjects / verbs are overflown
-
-                       * do not use self in constructor? or self should be equal to $self ? (e.g. gameoflife'Space.new)
-
-                       * hint role should indicate that no need to create a class class??
-
-                       * readonly fields like in C# (some optimization gains?)
-                       
-                       * warn if system'Object does not contain send method
-
-                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
-      
-                       * raise an exception if more than 14 arguments in the method / message                 
-                       
-                       * simplify typecasting should not be done for operations like length, index
-                       
-                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
-
-                       * array item set operator a@b := c ???
-
-                       * lcopystr : index should contain radix
-                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
-                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
-                       * ws_indexof: check operations check if index, index + length is not beyond string
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
-                        
-                       * loadverb should be not be implemented in elena.h
-                         module
-                       * custom verb dispatching (see for example stringControl split&by[2])
-                           : intNumber.shift ; stringControl
-                       * multiple parameter dispatching
-                            : LiteralValue.indexOf&type'index&type'widestr, ByteArray
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-
-                       * boxing after primtive operation should be done probably directly, i.e. implicitly create an object (int, long or real)
-
-                       * compiler option : switch off jump optimization
-                       * compiler option : switch off direct calls
-
-                       * new ecode: released - do we need it, or loop would be enough?
-                         
-                       * type enforcing : compiler should generate a warning if out'xx is not local variable 
-
-                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
-                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
-
-                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
-                         (either typed variable or typed expression)
-
-                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
-
-                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
-                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
-
-                       * optimize type cast call (dispatch handler should be used) 
-
-                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
-                         byte array used?
-                         
-                       * elena opcodes : extension - think over extension set implementation (current is not efficient)
-
-                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
-                       * constant array
-                       * make possible to send exception futher with ifFailed handler
                        
               idev - generic development
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
@@ -581,6 +553,25 @@ week1:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
                        
+
+1.9.15
+--------
+week1:
+
+1.9.16
+--------
+
+week1:
+1.9.17
+--------
+
+week1:
+1.9.18
+--------
+week1:
+              xdev - generic development              
+                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?
+                       * review opcode matrix, think over extension simplification
 
 2.0.0
 -----

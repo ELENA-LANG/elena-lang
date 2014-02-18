@@ -1,5 +1,6 @@
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
+bin\elc -csrc30\forms\forms.prj
 bin\elc -cexamples\helloworld\u_helloworld.prj
 bin\elc -cexamples\helloworld\helloworld.prj
 bin\elc -cexamples\sum\intsum.prj

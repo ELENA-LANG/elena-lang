@@ -87,6 +87,7 @@ enum Symbol
    nsL6Operation                = 0x01041,
    nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
+   nsCopying                    = 0x01044,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

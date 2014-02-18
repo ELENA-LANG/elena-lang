@@ -54,6 +54,7 @@ __define VARSIZE_VALUE          4160
 __define L6_OPERATION           4161
 __define SIZE_VALUE             4162
 __define L0_OPERATION           4163
+__define COPYING                4164
 
 // error rules
 __define DECLARATION_END_EXPECTED	16384
@@ -331,6 +332,9 @@ BREAK_EXPRESSION ->
 ASSIGNING ->
 	:= EXPRESSION
 
+COPYING ->
+        << OBJECT MESSAGE
+
 SWITCHING ->
 	OPTION NEXT_OPTION
 	| > BIGGER_OPTION NEXT_OPTION
@@ -363,6 +367,7 @@ VARIABLE ->
 
 VARIABLE_R ->
 	ASSIGNING
+        | COPYING
 	| eps
 	
 EXTENSION ->

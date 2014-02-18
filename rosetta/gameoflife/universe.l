@@ -78,41 +78,17 @@
         theBottomRight := theTopLeft add &width:w &height:h.
     ]
 
-    #constructor new &space:aSpace &x:x &y:y &width:w &height:h &north:aNorth &south:aSouth
-    [
-        theSpace := aSpace.
-        theNorth := aNorth.
-        theSouth := aSouth.
-        
-        theTopLeft := Point new &x:x &y:y.
-        theBottomRight := theTopLeft add &width:w &height:h.
-    ]
-
-    #constructor new &space:aSpace &x:x &y:y &width:w &height:h &east:anEast &west:aWest
-    [
-        theSpace := aSpace.
-        theEast := anEast.
-        theWest := aWest.
-        
-        theTopLeft := Point new &x:x &y:y.
-        theBottomRight := theTopLeft add &width:w &height:h.
-    ]
-
-    #constructor new &space:aSpace &x:x &y:y &width:w &height:h &nothEast:aNorthEast &southWest:aSouthWest
-    [
-        theSpace := aSpace.
-        theNorthEast := aNorthEast.
-        theSouthWest := aSouthWest.
-        
-        theTopLeft := Point new &x:x &y:y.
-        theBottomRight := theTopLeft add &width:w &height:h.
-    ]
-
-    #constructor new &space:aSpace &x:x &y:y &width:w &height:h &northWest:aNorthWest &southEast:aSouthEast
+    #constructor new &space:aSpace &x:x &y:y &width:w &height:h &north:aNorth &northEast:aNorthEast &east:anEast &southEast:aSouthEast &south:aSouth &southWest:aSouthWest &west:aWest &northWest:aNorthWest
     [
         theSpace := aSpace.
         theNorthWest := aNorthWest.
+        theNorth := aNorth.
+        theNorthEast := aNorthEast.
+        theEast := anEast.
         theSouthEast := aSouthEast.
+        theSouth := aSouth.
+        theSouthWest := aSouthWest.
+        theWest := aWest.
         
         theTopLeft := Point new &x:x &y:y.
         theBottomRight := theTopLeft add &width:w &height:h.
@@ -144,58 +120,114 @@
         theObjects append:anObject.
     ]
 
-    #method append &northWest : anObject
-    [
-        theNorthWest := theSpace create &scope &xy::anObject &southEast:$self.
-            
-        theNorthWest append:anObject.
-    ]    
+//    #method append &northWest : anObject
+//    [
+//        theNorthWest := theSpace create &scope &xy::anObject &southEast:$self.
+//            
+//        theNorthWest append:anObject.
+//    ]    
 
     #method append &north : anObject
     [
-        theNorth := theSpace create &scope &xy::anObject &south:$self.
-            
+        theNorth := theSpace create &scope &xy::anObject 
+            &north:theNorth 
+            &northEast:(theNorth east) 
+            &east:theNorthEast 
+            &southEast:theEast 
+            &south:$self 
+            &southWest:theWest 
+            &west:theNorthWest 
+            &northWest:(theNorth west).
+                
         theNorth append:anObject.
     ]    
 
     #method append &northEast : anObject
     [
-        theNorthEast := theSpace create &scope &xy::anObject &southWest:$self.
-            
+        theNorthEast := theSpace create &scope &xy::anObject 
+            &north:theNorthEast
+            &northWest:(theNorthEast east) 
+            &east:(theNorthEast southEast) 
+            &southEast:(theEast northEast)
+            &south:theEast
+            &southWest:$self
+            &west:theNorthWest 
+            &northWest:(theNorthEast west).
+
         theNorthEast append:anObject.
     ]    
 
     #method append &east : anObject
     [
-        theEast := theSpace create &scope &xy::anObject &west:$self.
+        theEast := theSpace create &scope &xy::anObject 
+            &north:theNorthEast
+            &northWest:(theNorthEast east) 
+            &east:theEast
+            &southEast:(theEast northEast)
+            &south:theSouthEast
+            &southWest:theSouth
+            &west:$self 
+            &northWest:theNorth.
             
         theEast append:anObject.
     ]    
 
     #method append &southEast : anObject
     [
-        theSouthEast := theSpace create &scope &xy::anObject &northWest:$self.
+        theSouthEast := theSpace create &scope &xy::anObject 
+            &north:theEast
+            &northWest:(theSouthEast east) 
+            &east:theSouthEast
+            &southEast:(theEast north)
+            &south:(theSouthEast southWest)
+            &southWest:(theSouth south)
+            &west:theSouth 
+            &northWest:$self.
             
         theSouthEast append:anObject.
     ]    
 
     #method append &south : anObject
     [
-        theSouth := theSpace create &scope &xy::anObject &north:$self.
+        theSouth := theSpace create &scope &xy::anObject 
+            &north:$self
+            &northWest:theEast
+            &east:theSouthEast
+            &southEast:(theSouth east)
+            &south:theSouth
+            &southWest:(theSouth west)
+            &west:theSouthWest 
+            &northWest:theWest.
             
         theSouth append:anObject.
     ]    
 
     #method append &southWest : anObject
     [
-        theSouthWest := theSpace create &scope &xy::anObject &northEast:self.
+        theSouthWest := theSpace create &scope &xy::anObject 
+            &north:theWest
+            &northWest:$self
+            &east:theSouth
+            &southEast:(theSouthWest east)
+            &south:theSouthWest
+            &southWest:(theSouthWest west)
+            &west:(theWest southWest)
+            &northWest:(theWest west).
             
         theSouthWest append:anObject.
     ]    
 
     #method append &west : anObject
     [
-        theWest := theSpace create &scope &xy::anObject &east:$self.
+        theWest := theSpace create &scope &xy::anObject 
+            &north:theNorthWest
+            &northWest:theNorth
+            &east:$self
+            &southEast:theSouth
+            &south:theSouthWest
+            &southWest:(theWest south)
+            &west:theWest
+            &northWest:(theWest north).
             
         theWest append:anObject.
     ]    
@@ -257,33 +289,13 @@
     [
         theScale := aScale int.
         theScope := Scope new &space:$self &x:0 &y:0 &width:theScale &height:theScale.
-        
+
         control foreach:theObjects &do: anObject [ $self append &cell:anObject ].
     ]
 
-    #method create &scope &xy:aPoint &north:aNorth
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &north:aNorth &south::aNorth.
-
-    #method create &scope &xy:aPoint &south:aSouth
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &north::aSouth &south:aSouth.
-
-    #method create &scope &xy:aPoint &east:anEast
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &east:anEast &west::anEast.
-
-    #method create &scope &xy:aPoint &west:aWest
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &east::aWest &west:aWest.
-
-    #method create &scope &xy:aPoint &northWest:aNorthWest
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &northWest:aNorthWest &southEast::aNorthWest.
-
-    #method create &scope &xy:aPoint &northEast:aNorthEast
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &northEast:aNorthEast &southWest::aNorthEast.
-
-    #method create &scope &xy:aPoint &southWest:aSouthWest
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &southWest:aSouthWest &northEast::aSouthWest.
-
-    #method create &scope &xy:aPoint &southEast:aSouthEast
-        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale &northWest::aSouthEast &southEast:aSouthEast.
+    #method create &scope &xy:aPoint &north:aNorth &northEast:aNorthEast &east:anEast &southEast:aSouthEast &south:aSouth &southWest:aSouthWest &west:aWest &northWest:aNorthWest
+        = Scope new &space:$self &x:(aPoint x / theScale * theScale) &y:(aPoint y / theScale * theScale) &width:theScale &height:theScale 
+            &north:aNorth &northEast:aNorthEast &east:anEast &southEast:aSouthEast &south:aSouth &southWest:aSouthWest &west:aWest &northWest:aNorthWest.
     
     #method append &cell:anObject
     [
