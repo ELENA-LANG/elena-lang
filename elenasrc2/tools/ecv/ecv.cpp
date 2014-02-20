@@ -978,7 +978,7 @@ int main(int argc, char* argv[])
    }
    else wprintf(_T("%s module loaded\n"), (const wchar16_t*)moduleName);
 
-   loadVerbs(_verbs);
+   ByteCodeCompiler::loadVerbs(_verbs);
 
    runSession(module);
 

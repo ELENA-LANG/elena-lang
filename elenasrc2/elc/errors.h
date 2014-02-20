@@ -91,6 +91,7 @@ namespace _ELENA_
    #define wrnUnknownSignature      "%s(%d:%d): warning 411: Unknown signature '%s'"
    #define wrnObsolete              "%s(%d:%d): warning 412: Obsolete language construction near '%s'"
    #define wrnUnknownModule         "%s(%d:%d): warning 413: Unknown module '%s'\n"
+   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
 
 } // _ELENA_
 

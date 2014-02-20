@@ -11,3 +11,5 @@ reserve :=1 asavesi :=0 => pusha nop;
 pushn asavesi :=0 => pusha nop;
 aloadfi pusha acopyb => pushfi nop acopyb;
 pusha mcopy breakpoint aloadsi :=0 => pusha mcopy breakpoint nop;
+pushm acopyr popm => nop acopyr nop;
+pushm aloadai popm => nop aloadai nop;

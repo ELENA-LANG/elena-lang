@@ -357,6 +357,9 @@ struct ByteCommand
 class ByteCodeCompiler
 {
 public:
+   static void loadVerbs(MessageMap& verbs);
+   static void loadOperators(MessageMap& operators);
+
    static ByteCode code(const wchar16_t* s);
    static FunctionCode codeFunction(const wchar16_t* s);
 

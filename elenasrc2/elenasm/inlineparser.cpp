@@ -7,6 +7,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "inlineparser.h"
+#include "bytecode.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -21,7 +22,7 @@ static MessageMap _verbs;
 int mapVerb(const wchar16_t* literal)
 {
    if (_verbs.Count() == 0) {
-      loadVerbs(_verbs);
+      ByteCodeCompiler::loadVerbs(_verbs);
    }
 
    return _verbs.get(literal);

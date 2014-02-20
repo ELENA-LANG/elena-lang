@@ -253,7 +253,7 @@ public:
    void extendObject(CommandTape& tape, ObjectInfo info);
 
    void redirectVerb(CommandTape& tape, ref_t message);
-   void resend(CommandTape& tape, ObjectInfo info);
+   void resend(CommandTape& tape);
    void callBack(CommandTape& tape, int subject_id);
 //   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);
    void executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code);

@@ -664,6 +664,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcASaveSI, object.reference);
          break;
       case okField:
+      case okOuter:
          // asavebi index
          tape.write(bcASaveBI, object.reference);  
          break;
@@ -940,22 +941,8 @@ void ByteCodeWriter :: extendObject(CommandTape& tape, ObjectInfo info)
    tape.write(bcAJumpVI);
 }
 
-void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo info)
+void ByteCodeWriter :: resend(CommandTape& tape)
 {
-   switch(info.kind) {
-      case okConstant:
-         // acopyr r
-         tape.write(bcACopyR, info.reference | defineConstantMask(info.type));
-         break;
-      case okField:
-         // aloadai i
-         tape.write(bcALoadAI, info.reference);
-         break;
-      case okRegister:
-         // asavesi 1
-         tape.write(bcASaveSI, 1);
-         break;
-   }
    // ajumpvi 0
    // throw
    tape.write(bcAJumpVI);

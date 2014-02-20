@@ -629,8 +629,8 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
       ClassInfo info;
       ref_t r = loadClassInfo(info, module->resolveReference(reference));
       if (r) {
-         // if it is a stateless class
-         if (test(info.header.flags, elStateless)) {
+         // if it is a role class
+         if (test(info.header.flags, elRole)) {
             defineConstant(reference);
 
             return ObjectInfo(okConstant, reference);
@@ -1243,37 +1243,11 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 Compiler :: Compiler(StreamReader* syntax)
    : _parser(syntax), _verbs(0), _unresolveds(Unresolved(), NULL)
 {
-   loadVerbs(_verbs);
-   loadOperators(_operators);
+   ByteCodeCompiler::loadVerbs(_verbs);
+   ByteCodeCompiler::loadOperators(_operators);
 
 //   // default settings
 //   _optFlag = 0;
-}
-
-void Compiler :: loadOperators(MessageMap& operators)
-{
-   addVerb(operators, ADD_OPERATOR, ADD_MESSAGE_ID);
-   addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
-   addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
-   addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
-   addVerb(operators, IF_OPERATOR, IF_MESSAGE_ID);
-   addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
-   addVerb(operators, EQUAL_OPERATOR, EQUAL_MESSAGE_ID);
-   addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_MESSAGE_ID);
-   addVerb(operators, LESS_OPERATOR, LESS_MESSAGE_ID);
-   addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);
-   addVerb(operators, NOTLESS_OPERATOR, NOTLESS_MESSAGE_ID);
-   addVerb(operators, NOTGREATER_OPERATOR, NOTGREATER_MESSAGE_ID);
-   addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);
-   addVerb(operators, OR_OPERATOR, OR_MESSAGE_ID);
-   addVerb(operators, XOR_OPERATOR, XOR_MESSAGE_ID);
-   addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
-   addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
-   addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
-   addVerb(operators, INCREASE_OPERATOR, INCREASE_MESSAGE_ID);
-   addVerb(operators, SEPARATE_OPERATOR, SEPARATE_MESSAGE_ID);
-   addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
-   addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
 }
 
 void Compiler :: loadRules(StreamReader* optimization)
@@ -1556,9 +1530,10 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
    if (object.type == otNone && (object.kind == okLocal || object.kind == okField)) {
       _writer.saveObject(*scope.tape, object);
    }
-   //else if ((object.type == otOuterField)) {
-   //   _writer.assignObject(*scope.tape, object);
-   //}
+   else if ((object.kind == okOuter)) {
+      scope.raiseWarning(wrnOuterAssignment, node.Terminal());
+      _writer.saveObject(*scope.tape, object);
+   }
    else if (object.kind == okUnknown) {
       scope.raiseError(errUnknownObject, node.Terminal());
    }
@@ -4094,76 +4069,41 @@ void Compiler :: compileResend(DNode node, CodeScope& scope)
       _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
    }
    else {
-      _writer.declareMethod(*scope.tape, methodScope->message, false);
-
-      // if it is a resend to the constant object / field
-      DNode expr = node.firstChild();
-      if (expr == nsNone) {
+      // try to implement light-weight resend operation
+      if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
          ObjectInfo target = compileTerminal(node, scope, 0);
          if (target.kind == okConstant || target.kind == okField) {
-            _writer.resend(*scope.tape, target);
+            _writer.declareMethod(*scope.tape, methodScope->message, false);
+
+            if (target.kind == okField) {
+               _writer.loadObject(*scope.tape, ObjectInfo(okRegisterField, target.reference));
+            }
+            else _writer.loadObject(*scope.tape, target);
+
+            _writer.resend(*scope.tape);
+
+            _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
          }
-         else scope.raiseError(errInvalidOperation, node.Terminal());
+
+         return;
       }
-      //// if it is resend to itself
-      //else if (expr == nsMessageReference) {
-      //   DNode subj = expr.firstChild();
-      //   // Make sure only verb / custom verb is used
-      //   if (subj.nextNode() == nsNone) {
-      //      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-      //      TerminalInfo verb = subj.Terminal();
-      //      ref_t verb_id = _verbs.get(verb.value);
-      //      int sign_id = getSignature(methodScope->message);
-      //      int paramCount = getParamCount(methodScope->message);
+      _writer.declareMethod(*scope.tape, methodScope->message, true);
 
-      //      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
+      _writer.pushObject(*scope.tape, ObjectInfo(okVSelf));
+      _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
 
-      //      if (verb_id == 0) {
-      //         verb_id = paramCount == 0 ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
+      ObjectInfo target = compileObject(node, scope, 0);
+      if (checkIfBoxingRequired(target))
+         boxObject(scope, target, 0);
 
-      //         // if it is custom verb
-      //         // simulate the verb change by creating a new signature
-      //         IdentifierString newSignature(verb.value);
+      _writer.loadObject(*scope.tape, target);
 
-      //         if (sign_id != 0) {
-      //            const wchar16_t* sign = scope.moduleScope->module->resolveSubject(sign_id);
+      _writer.popObject(*scope.tape, ObjectInfo(okCurrentMessage));
 
-      //            // ignore the first argument if it is a custom verb
-      //            if (methodScope->withCustomVerb) {
-      //               int index = StringHelper::find(sign, '&');
+      _writer.callRoleMessage(*scope.tape, getParamCount(methodScope->message));
 
-      //               newSignature.append(sign + index);
-      //            }
-      //            else {
-      //               newSignature.append('&');
-      //               newSignature.append(sign);
-      //            }
-      //         }
-
-      //         _writer.redirectVerb(*scope.tape, encodeMessage(scope.moduleScope->module->mapSubject(newSignature, false),
-      //            verb_id, paramCount));
-      //      }
-      //      else _writer.redirectVerb(*scope.tape, encodeMessage(sign_id, verb_id, paramCount));
-         //}
-      //}
-      //else {
-      //   // otherwise send again the message to the new target
-      //   // store the message
-      //   _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
-      //   // compile target
-      //   ObjectInfo target = compileObject(node, scope, HINT_ROOTEXPR);
-      //   if (checkIfBoxingRequired(target))
-      //      boxObject(scope, target, 0);
-
-      //   _writer.loadObject(*scope.tape, target);
-
-      //   _writer.popObject(*scope.tape, ObjectInfo(okCurrentMessage));
-      //   _writer.resend(*scope.tape, ObjectInfo(okRegister));
-      //}
-      else scope.raiseError(errInvalidOperation, node.Terminal());
-
-      _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
+      _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
    }
 }
 
