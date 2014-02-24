@@ -5,19 +5,39 @@
 #define extensions.
 #define extensions'math.
 
-#class Tester
+#class(role) Tester
 {
+    #method save &int:sour &to:aDest
+        = aDest.
+
+    #method save &long:sour &to:aDest
+        = aDest.
+        
+    #method save:sour &to:dest
+    [
+//        self~Dispatcher(%int,%(int&to),%long,%(long&to)) eval:sour:dest.
+        
+        self~({ eval &int:o = %(int&to). eval &long:o = %(long&to). } eval::sour) save:sour:dest.
+        
+//        self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
+    ]
+    
+    #method test
+    [
+        #var(type:int)n := 2.
+        
+        n := n + 1.
+    ]
 }
-   
+
 #symbol XTest =
-[
-    #var(type:int)n := 3.    
-    #var(type:short)aCh << "abc" getAt &index:1.
+[ 
+    Tester test.
 ].
 
 // --- OpenArgTest ---
 
-#class OpenArgTester
+#class(role) OpenArgTester
 {
 //    #method testUnboxing : anArg1 : anArg2 : anArg3
 //    [
@@ -61,7 +81,7 @@
 
 // --- MultiDispatchTest ---
 
-#class DispatchTester
+#class(role) DispatchTester
 {
     #method eval &x:anX &y:anY
     [
@@ -89,7 +109,7 @@
 
 // --- LocalTest ---
 
-#class LocalTester
+#class(role) LocalTester
 {
     #method do &int:n
     [
@@ -119,7 +139,7 @@
     { eval : n [ i << n. ] } eval:3.
 ].
 
-#class BoxingTester
+#class(role) BoxingTester
 {
     #method add : aValue
     [
@@ -239,7 +259,7 @@
     ]
 }
 
-#class ExecTester
+#class(role) ExecTester
 {
     #method do : anAction [ anAction eval. ]
 
@@ -554,7 +574,7 @@
 
 // --- GetPropertyTest ---
 
-#class GetPropertyAgent
+#class(role) GetPropertyAgent
 {
     #method eval : aGetProperty
     [

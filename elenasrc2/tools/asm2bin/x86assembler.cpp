@@ -1636,6 +1636,9 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       if (token.check(_T("%"))) {
          ref = token.readInteger(constants) | mskPreloadRelCodeRef;
       }
+      else if (token.check(ARGUMENT1)) {
+         ref = -1;
+      }
       else if (token.terminal.state==dfaQuote) {
          IdentifierString funRef(token.terminal.line + 1, token.terminal.length-2);
          if (StringHelper::find(funRef, ConstantIdentifier(PACKAGE_MODULE)) == 0) {
@@ -1645,14 +1648,6 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       }
          
       code->writeRef(ref, 0);
-      // else if (token.check(ARGUMENT1)) {
-		   //code->writeByte(0xE8);
-      //    code->writeRef(-1, 0);
-      // }
-      // else if (token.check(ARGUMENT2)) {
-		   //code->writeByte(0xE8);
-      //    code->writeRef(-2, 0);
-      // }
    }
    // if jump forward
    else if (!helper.checkDeclaredLabel(token.value)) {

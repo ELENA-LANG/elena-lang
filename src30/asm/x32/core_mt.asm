@@ -149,10 +149,8 @@ labYGCollect:
   // ; get current thread event
   mov  esi, [eax + tls_sync_event]         
   // ; get current frame
-  mov  eax, [eax + tls_stack_frame]           
-  mov  edx, eax
-  sub  edx, esp
-  mov  [eax], edx
+  mov  edx, [eax + tls_stack_frame]
+  mov  [edx], esp
 
   push ecx
   push ebx
@@ -272,8 +270,8 @@ labYGNextFrame:
   mov  eax, [esi+4]
   mov  ecx, [esi]
   sub  esi, ecx
-  push esi
   push ecx
+  push esi
   mov  esi, eax
   test esi, esi
   jnz  short labYGNextFrame

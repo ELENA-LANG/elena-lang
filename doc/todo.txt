@@ -20,67 +20,16 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              xdev - generic development                                                                          
-                       * could it be possible to hide the inherited methods, so they could be used
-                         only internally by the class (with $super)
+              xdev - byte code optimization                       
+                       * optimize output code: system'object,...
 
-                       * compileHelperOperation: implement size check for the output parameter
-
-                       * do not use self in constructor? or self should be equal to $self ? (e.g. gameoflife'Space.new)
-
-                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
-                         byte array used?
-                       * constant array
-                       * make possible to send exception futher with ifFailed handler
-                         
 <=================> 
-1.9.13 [11.3]
+1.9.13 [4.3]
 --------
 week1:
-              xdev - open arg                                      
-                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
-                         raise an error ; do we need it?
-
-                       * any other operation should result in boxing
-
-              xdev - multithreading       
-                       * compile pi with mt
-                       * compile anagram with mt
-                       * new thread
-                       * static object should be thread safe
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-
-              xdev - dynamic programming                                             
-                       * implement trace mode
-                       * it should be possible Tape to debug  (see 1.x implementation)
-                       
-              xdev - elenavm
-                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
-                       * elenavm: use reverse instead of set of swaps
-                       
-              xdev - elenasm
-                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-
-              xdev - compiler optimization                       
-                       * declareArgumentList: may be better to check if the subject is known type before mapping the subject?
-                       
-              xdev - external routine:
-                       * if bytearray subject is used for literal - use temporal buffer
-
               xdev - byte code optimization                       
-                       * simplify stack frame excluding
-
-                       * simplify external call
-
-                       * there should be difference between reserve and n pushn 0, the first one should be used only for stack allocated
-                         variables and do not clear the stack 
-
-                       * optimize output code: system'true ...
-
+                       * optimize output code: system'object,...
+                       
                        * replace enumeration / iteration loops with a virtual expressions
 
                        * virtual control.do(1) implementation ; support break exception
@@ -97,6 +46,8 @@ week1:
                        * for loop: review for implementation algorithm can we simplify it??
 
                        * simplify int / long unboxing
+
+                       * can we simplify "exclude reserve n include" with "excluden n"                       
 
                        * stack allocated variable - try to minimize the overhead
                        
@@ -141,7 +92,6 @@ week1:
                        * console entry: probably better to use symbol instead direct call
                        * Compiler::compileMessageDispatch - if only message was changed (with the same parameter) - only
                          message should be changed and resend further
-                       * if the class is sealed, any operation with $self should be implemented directly
                        * use stack allocated object for the following code                            
                               theIndex less &type'length::theLiteral  - we do not now theLiteral "type", how could we fix it?
                        * control run &each &loop should be implemented as virtual loop as well
@@ -151,8 +101,6 @@ week1:
                          
                        * review stack allocated data mechanism, think over more light-weight excluding stack mechanism
                        * idle copyfpi operation (when esp is not changed) , could we find them out and replace with nop?
-                       * review stack frames implementation, we could reverse it, e.g. the managed stack ends with -1, the next
-                         address is either zero (end of the stack) or the pointer to another managed stack frame
                        * return expression could be compiled without openning / closing frame (if no primitive operations are used, no code blocks)
                        * "copyfpi fp:0" should be implemented as "mov esp, ebp"
 
@@ -181,6 +129,12 @@ week1:
                        * compiler option : switch off jump optimization
                        * compiler option : switch off direct calls
                        * optimize type cast call (dispatch handler should be used) 
+                       * if the class is sealed, any operation with $self should be implemented directly (as internal)
+                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
+                         byte array used?
+                       * simplify external call
+                       * could we somehow store tls table address?
+                       * if no calls / GC operation do not use stack frame excluding
                                                                                               
               xdev - script support
                        * should be possible to debug vm scripts
@@ -441,7 +395,7 @@ week4:
                        * boxing: message target / operand, operator target / operand                       
                        * try to automize build process  
 
-
+                       
 1.9.14
 --------
 week1:
@@ -449,6 +403,23 @@ week1:
                        * destructors
                        
               xdev - generic development                            
+                       * ecode extention : redesign current implementation ; there should be primitive data extensions, and normal ones
+                         so no need to support all possible combinations
+
+                       * new ecode - openthread
+
+                       * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
+                         $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
+
+                       * there should be difference between reserve and n pushn 0, the first one should be used only for stack allocated
+                         variables and do not clear the stack 
+
+                       * private method declaration / call implement
+
+                       * constant array
+
+                       * make possible to send exception futher with ifFailed handler
+
                        * multiple parameter dispatching
                              save&to => save&int&to | save&long&to ; 
                              can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
@@ -462,8 +433,6 @@ week1:
                        * should be possible to declare sealed classes
 
                        * widechar constant : special symbol or we could use literal constant with length=1
-
-                       * check private method declaration ??
 
                        * role class should not be its own class class (like it is now), super class should be used
                        
@@ -505,6 +474,7 @@ week1:
                        * review opcode matrix, think over extension simplification
                        * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
                        * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
+                       * it should be possible to override external call - so for corevm, coremt we could contain only modified code  
                        * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
 
               xdev - multy select statement
@@ -522,12 +492,45 @@ week1:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
                        
+              xdev - multithreading       
+                       * thread test : start new thread
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+                       * compile pi with mt
+                       * compile anagram with mt
+
+              xdev - dynamic programming                                             
+                       * implement trace mode
+                       * it should be possible Tape to debug  (see 1.x implementation)
+                       
+              xdev - elenavm
+                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
+                       * elenavm: use reverse instead of set of swaps
+
+              xdev - compiler optimization                       
+                       * declareArgumentList: may be better to check if the subject is known type before mapping the subject?
+                       
+              xdev - external routine:
+                       * if bytearray subject is used for literal - use temporal buffer
+                                              
 1.9.15
 --------
 week1:
+              xdev - open arg                                      
+                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
+                         raise an error ; do we need it?
+
+                       * any other operation should result in boxing
 
 1.9.16
 --------
+              xdev - elenasm
+                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
+
 
 week1:
 1.9.17

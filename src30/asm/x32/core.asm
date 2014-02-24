@@ -107,13 +107,11 @@ labYGCollect:
   push edi                             
 
   // ; lock frame
-  mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]
-  mov  edx, eax
-  sub  edx, esp
-  mov  [eax], edx
+  mov  edx, [data : %CORE_GC_TABLE + gc_stack_frame]
+  mov  [edx], esp
 
   push ecx
-  push ebx
+  push ebx                        
   push ebp
   
   // ; create set of roots
@@ -128,15 +126,15 @@ labYGCollect:
   push esi
   push ecx
 
-  // ; save frames
+  // ; collect frames
   mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
   
 labYGNextFrame:
   mov  eax, [esi+4]
   mov  ecx, [esi]
   sub  esi, ecx
-  push esi
   push ecx
+  push esi
   mov  esi, eax
   test esi, esi
   jnz  short labYGNextFrame

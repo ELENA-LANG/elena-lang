@@ -42,12 +42,7 @@ inline % 7
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
-  mov  edx, [ebx + tls_catch_addr]
-  nop
-  nop
-  jmp  edx
-  nop
-  nop
+  jmp  [ebx + tls_catch_addr]
 
 end
 
@@ -249,11 +244,9 @@ inline % 1Eh
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
-  mov  ebx, [ebx + tls_stack_frame]
-  mov  ecx, ebx
   // ; lock managed stack frame
-  sub  ecx, esp
-  mov  [ebx], ecx              
+  mov  ecx, [ebx + tls_stack_frame]
+  mov  [ecx], esp
 
 end
 
@@ -264,12 +257,13 @@ inline % 1Fh
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
-  mov  esi, [ebx + tls_stack_frame]
-  push esi                              // save previous pointer 
-  push 0                                // size field
+  // ; save previous pointer 
+  push [ebx + tls_stack_frame]
+  // ; size field
+  push 0                                
   mov  [ebx + tls_stack_frame], esp
 
-end
+end                                                                            
 
 // pushai
 inline % 24h
@@ -349,9 +343,8 @@ end
 // ; acallvi (ecx - offset to VMT entry)
 inline % 42h
 
-  mov  ecx, __arg1
   mov  esi, [eax - 4]
-  call [esi + ecx]
+  call [esi + __arg1]
 
 end
 
@@ -524,8 +517,8 @@ inline % 82h
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
-  mov  [ebx + tls_stack_frame], edx
   lea  esp, [esp + __arg1]
+  mov  [ebx + tls_stack_frame], edx
 
 end
 
@@ -708,19 +701,15 @@ end
 
 inline % 0FCh
 
-  mov  ecx, __arg1
   mov  esi, [ebx - 4]
-  call [esi + ecx]
+  call [esi + __arg1]
   
 end
 
 // xcallrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh
 
-   mov  esi, __arg1
-   nop
-   nop
-   call esi
+   call __arg1
 
 end
 

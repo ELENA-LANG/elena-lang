@@ -27,12 +27,7 @@ define page_ceil               1Bh
 // throw
 inline % 7
 
-  mov  edx, [data : %CORE_EXCEPTION_TABLE]
-  nop
-  nop
-  jmp  edx
-  nop
-  nop
+  jmp  [data : %CORE_EXCEPTION_TABLE]
 
 end
 
@@ -226,18 +221,18 @@ end
 inline % 1Eh
 
   mov  ebx, [data : %CORE_GC_TABLE + gc_stack_frame]
-  mov  ecx, ebx
-  sub  ecx, esp
-  mov  [ebx], ecx              // lock managed stack frame
+  // ; lock managed stack frame          
+  mov  [ebx], esp     
 
 end
 
 // include
 inline % 1Fh
 
-  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
-  push esi                              // save previous pointer 
-  push 0                                // size field
+  // ; save previous pointer 
+  push [data : %CORE_GC_TABLE + gc_stack_frame]                  
+  // ; size field
+  push 0                                
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
 
 end
@@ -320,9 +315,8 @@ end
 // ; acallvi (ecx - offset to VMT entry)
 inline % 42h
 
-  mov  ecx, __arg1
   mov  esi, [eax - 4]
-  call [esi + ecx]
+  call [esi + __arg1]
 
 end
 
@@ -489,9 +483,9 @@ end
 inline % 82h
 
   lea  esp, [esp+4]
-  pop  edx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
+  pop  ebx
   lea  esp, [esp + __arg1]
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], ebx
 
 end
 
@@ -661,19 +655,15 @@ end
 
 inline % 0FCh
 
-  mov  ecx, __arg1
   mov  esi, [ebx - 4]
-  call [esi + ecx]
+  call [esi + __arg1]
   
 end
 
 // xcallrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh
 
-   mov  esi, __arg1
-   nop
-   nop
-   call esi
+   call code : __arg1
 
 end
 

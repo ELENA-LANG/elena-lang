@@ -176,8 +176,9 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 
          (*image)[offset] = getVMTMethodAddress(refVAddress, messageID);
          if (_virtualMode) {
-            image->addReference(mskCodeRef, offset);
+            image->addReference(mskRelCodeRef, offset);
          }
+         else (*image)[offset] -= ((size_t)image->get(0));
       }
       // otherwise
       else {   
