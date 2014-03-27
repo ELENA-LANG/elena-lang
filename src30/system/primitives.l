@@ -1,3 +1,4 @@
+
 // --- primitive ---
 
 #symbol primitive =
@@ -76,7 +77,6 @@
        
     equal &bytearray:anArray &index:anIndex &int:aNumber
         <bs_equalint>.
-        
 }.
 
 // --- mathPrimitive ---

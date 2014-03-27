@@ -235,7 +235,7 @@ protected:
    virtual void compileStructure(TokenInfo& token, _Module* binary, int mask);
 
 public:
-	virtual void compile(TextReader* reader, const _path_t* outputPath);
+	virtual void compile(TextReader* reader, const tchar_t* outputPath);
 
 	x86Assembler()
 	{

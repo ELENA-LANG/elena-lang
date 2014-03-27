@@ -1,19 +1,25 @@
 
                                 ELENA Language 
 
-                                Version 1.9.13
+                                Version 1.9.14
  
 ******************************************************************************
-                    What's New in 1.9.13 (pre release)
+                    What's New in 1.9.14 (pre release)
 ******************************************************************************
 
 ELENA:
-[*] simplified data assiging syntax
+[*] operator implemenation refactored
+[+] new statement : #use
+[+] new method hint : extension
+
+ELC:
+[*] codebase refactored
+[*] some native-code optimization   
 
 ******************************************************************************
                     What's New in 1.9.12 (pre release)
 ******************************************************************************
-
+                                   
 ELENA:
 [+] new ecodes: sqrt, cos, sin, pi, arctan, iaxloadfi, iaxloadsi, iaxloadbi
 
@@ -42,7 +48,7 @@ ELENA:
 ELC:
 [!] fixed critical bug in external call routine
 [*] configuration / project  files are UTF8 now
-[*] some native-code optimization
+[*] some native-code optimization   
 [*] some byte-code optimization
 [-] fixed bug with external operation error handling
 [-] fixed bug with exception handling sub code

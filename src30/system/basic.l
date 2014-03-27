@@ -48,7 +48,7 @@
         = 0 != $self and:anOperand.
 }
 
-// --- intnumber ---
+// --- IntNumber ---
 
 #class IntNumber : IntBaseNumber
 {
@@ -236,7 +236,8 @@
 
     #method shift : anOrder
     [
-        #var(type:long)aRetVal := primitive shift &long:$self &int::anOrder.
+        #var(type:long)aRetVal.
+        primitive shift &long:$self &int::anOrder &out'long:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
     ]
@@ -247,7 +248,8 @@
 
     #method not
     [
-        #var(type:long)retVal := primitive invert &long:$self.
+        #var(type:long)retVal.
+        primitive invert &long:$self &out'long:retVal.
         
         ^ LongNumber new &type'long:retVal.
     ]
@@ -332,6 +334,11 @@
         theData << 0.
     ]
     
+    #constructor new &short:aCode
+    [
+        theData << aCode.
+    ]
+
     #constructor new : aValue
         => &new::aValue.
     

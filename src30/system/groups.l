@@ -47,12 +47,12 @@
     #method => <handle_extension>.
 }
 
-// --- ArrayExtension ---
-
-#class(group) ArrayExtension
-{
-    #field theRoleArray.
-    #field theObject.
-    
-    #method => <handle_arrayextension>.
-}
+//// --- ArrayExtension ---
+//
+//#class(group) ArrayExtension
+//{
+//    #field theRoleArray.
+//    #field theObject.
+//    
+//    #method => <handle_arrayextension>.
+//}

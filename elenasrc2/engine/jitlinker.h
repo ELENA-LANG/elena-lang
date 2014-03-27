@@ -75,10 +75,7 @@ class JITLinker
       }
 
       virtual SectionInfo getSection(ref_t reference, _Module* module);
-      virtual SectionInfo getPredefinedSection(ref_t reference)
-      {
-         return SectionInfo(_module, _module->mapSection(reference, true));
-      }
+      virtual SectionInfo getPredefinedCommand(ref_t reference);
 
       virtual void* getVAddress(MemoryWriter& writer, int mask)
       {
@@ -135,10 +132,10 @@ class JITLinker
 //   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(const wchar16_t*  reference, const wchar16_t* vmt);
    void* resolveLoader(const wchar16_t*  reference);
-//   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
+////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
-   void prepareCompiler(_Module* core, _Module* commands);
+   void prepareCompiler();
 
    void* resolve(const wchar16_t* reference, int mask, bool silentMode);
 

@@ -49,24 +49,24 @@ struct Paths
    static _ELENA_::Path libraryRoot;
    static _ELENA_::Path lastPath;
 
-   static void init(const _path_t* appPath, const _path_t* defaultPath);
+   static void init(const tchar_t* appPath, const tchar_t* defaultPath);
 
-   static void setLibraryRoot(const _path_t* libraryPath);
+   static void setLibraryRoot(const tchar_t* libraryPath);
 
-   static void resolveRelativePath(_ELENA_::Path& path, const _path_t* rootPath);
+   static void resolveRelativePath(_ELENA_::Path& path, const tchar_t* rootPath);
    static void resolveRelativePath(_ELENA_::Path& path)
    {
       resolveRelativePath(path, defaultPath);
    }
 
-   static void makeRelativePath(_ELENA_::Path& path, const _path_t* rootPath);
+   static void makeRelativePath(_ELENA_::Path& path, const tchar_t* rootPath);
 };
 
 // --- Settings ---
 
 struct Settings
 {
-   typedef _ELENA_::Map<const char*, _path_t*> PathMapping;
+   typedef _ELENA_::Map<const char*, tchar_t*> PathMapping;
 
    static size_t tabSize;
    static int    defaultEncoding;
@@ -90,30 +90,30 @@ struct Settings
    static size_t font_size;
 
    static _ELENA_::Path defaultProject;
-   static _ELENA_::List<_path_t*> defaultFiles;
+   static _ELENA_::List<tchar_t*> defaultFiles;
 
-   static _ELENA_::List<_text_t*> searchHistory;
-   static _ELENA_::List<_text_t*> replaceHistory;
+   static _ELENA_::List<tchar_t*> searchHistory;
+   static _ELENA_::List<tchar_t*> replaceHistory;
 
    static PathMapping packageRoots;
    static PathMapping libraryRoots;
 
-   static void init(const _path_t* packagePath, const _path_t* libraryPath);
+   static void init(const tchar_t* packagePath, const tchar_t* libraryPath);
    static void load(_ELENA_::IniConfigFile& config);
    static void save(_ELENA_::IniConfigFile& config);
 
    static void onNewProjectTemplate();
 
-   static void addSearchHistory(const _text_t* line);
-   static void addReplaceHistory(const _text_t* line);
+   static void addSearchHistory(const tchar_t* line);
+   static void addReplaceHistory(const tchar_t* line);
 
-   static void addPackagePath(const char* projectTemplate, const _path_t* path)
+   static void addPackagePath(const char* projectTemplate, const tchar_t* path)
    {
       packageRoots.erase(projectTemplate);
       packageRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
    }
 
-   static void addLibraryPath(const char* projectTemplate, const _path_t* path)
+   static void addLibraryPath(const char* projectTemplate, const tchar_t* path)
    {
       libraryRoots.erase(projectTemplate);
       libraryRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
@@ -135,8 +135,8 @@ public:
    static bool isChanged() { return _changed; }
    static bool isUnnamed() { return _name.isEmpty(); }
 
-   static const _text_t* getName() { return _name; }
-   static const _path_t* getPath() { return _path; }
+   static const tchar_t* getName() { return _name; }
+   static const tchar_t* getPath() { return _path; }
    static const char* getPackage();
    static const char* getTemplate();
    static const char* getOptions();
@@ -171,23 +171,23 @@ public:
    static void setTemplate(const char* target);
    static void setDebugMode(int mode);
 
-   static bool open(const _path_t* path);
+   static bool open(const tchar_t* path);
    static void refresh();
    static void reset();
    static void save();
 
-   static void rename(const _path_t* path);
+   static void rename(const tchar_t* path);
 
    static void retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name);
 
-   static bool isIncluded(const _path_t* path);
-   static void includeSource(const _path_t* path);
-   static void excludeSource(const _path_t* path);
+   static bool isIncluded(const tchar_t* path);
+   static void includeSource(const tchar_t* path);
+   static void excludeSource(const tchar_t* path);
 
    static void clearForwards();
-   static void addForward(const _text_t* name, const _text_t* reference);
+   static void addForward(const tchar_t* name, const tchar_t* reference);
 
-   static void retrievePath(const wchar16_t* reference, _ELENA_::Path & path, const _path_t* extension);
+   static void retrievePath(const wchar16_t* reference, _ELENA_::Path & path, const tchar_t* extension);
 };
 
 } // _GUI_

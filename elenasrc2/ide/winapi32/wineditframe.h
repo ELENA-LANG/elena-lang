@@ -29,9 +29,9 @@ protected:
 
    virtual int getDocumentTabCount();
    virtual void selectDocumentTab(int index);
-   virtual int addDocumentTab(const _path_t* path, Document* doc);   
+   virtual int addDocumentTab(const tchar_t* path, Document* doc);   
    virtual void eraseDocumentTab(int index);
-   virtual void renameDocumentTab(int index, const _text_t* newName);
+   virtual void renameDocumentTab(int index, const tchar_t* newName);
 
 public:
    virtual void onTabChange(int);

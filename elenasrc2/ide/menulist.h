@@ -25,10 +25,10 @@ protected:
 
    bool   _withSeparator;
 
-   _ELENA_::List<_text_t*> _list;
+   _ELENA_::List<tchar_t*> _list;
 
-   int getIndex(const _text_t* item);
-   bool erase(const _text_t* item);
+   int getIndex(const tchar_t* item);
+   bool erase(const tchar_t* item);
    void eraseLast();
 
 public:
@@ -37,8 +37,8 @@ public:
       _menu = menu;
    }
 
-   const _text_t* get(int id);
-   void add(const _text_t* item);
+   const tchar_t* get(int id);
+   void add(const tchar_t* item);
 
    void refresh();
 

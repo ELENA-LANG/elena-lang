@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 #define CAPTION_LEN  512
 
-typedef String<_text_t, CAPTION_LEN> CaptionString;
+typedef String<tchar_t, CAPTION_LEN> CaptionString;
 
 #ifdef _WIN32
 // --- DebuggerWatch ---
@@ -35,7 +35,7 @@ void DebuggerWatch :: clear()
 //   node.appendHex(address);
 //}
 
-TreeViewItem DebuggerWatch :: addNode(const _text_t* variableName, const _text_t* className, size_t address)
+TreeViewItem DebuggerWatch :: addNode(const tchar_t* variableName, const tchar_t* className, size_t address)
 {
    if (className[0]=='<') {
       CaptionString node(variableName, _T(" = "), className);
@@ -53,7 +53,7 @@ TreeViewItem DebuggerWatch :: addNode(const _text_t* variableName, const _text_t
    }
 }
 
-void DebuggerWatch :: editNode(TreeViewItem node, const _text_t* variableName, const _text_t* className, size_t address)
+void DebuggerWatch :: editNode(TreeViewItem node, const tchar_t* variableName, const tchar_t* className, size_t address)
 {
    if (className[0]=='<') {
       CaptionString name(variableName, _T(" = "), className);
@@ -130,7 +130,7 @@ void DebuggerWatch :: write(DebugController* controller, const wchar16_t* value)
    _browser->clear(_root);
 
    bool     renamed = false;
-   _text_t  caption[CAPTION_LEN + 1];
+   tchar_t  caption[CAPTION_LEN + 1];
    _browser->getCaption(_root, caption, CAPTION_LEN);
 
    // cut the value from the caption if any
@@ -173,7 +173,7 @@ void DebuggerWatch :: write(DebugController* controller, const char* value)
 
 void DebuggerWatch :: write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, int value)
 {
-   String<_text_t, 20> number;
+   String<tchar_t, 20> number;
    number.append('<');
    if (Settings::hexNumberMode) {
       number.appendHex(value);
@@ -187,7 +187,7 @@ void DebuggerWatch :: write(_ELENA_::DebugController* controller, size_t address
 
 void DebuggerWatch :: write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, double value)
 {
-   String<_text_t, 20> number;
+   String<tchar_t, 20> number;
    number.append('<');
    number.appendDouble(value);
    number.append('>');
@@ -197,7 +197,7 @@ void DebuggerWatch :: write(_ELENA_::DebugController* controller, size_t address
 
 void DebuggerWatch :: write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, long long value)
 {
-   String<_text_t, 20> number;
+   String<tchar_t, 20> number;
    number.append('<');
    if (Settings::hexNumberMode) {
       number.appendHex64(value);
@@ -211,7 +211,7 @@ void DebuggerWatch :: write(_ELENA_::DebugController* controller, size_t address
 
 void DebuggerWatch :: write(DebugController* controller, int value)
 {
-   String<_text_t, 20> number;
+   String<tchar_t, 20> number;
    if (Settings::hexNumberMode) {
       number.appendHex(value);
       number.append('h');
@@ -223,7 +223,7 @@ void DebuggerWatch :: write(DebugController* controller, int value)
 
 void DebuggerWatch :: write(DebugController* controller, long long value)
 {
-   String<_text_t, 20> number;
+   String<tchar_t, 20> number;
    if (Settings::hexNumberMode) {
       number.appendHex64(value);
       number.append('h');
@@ -235,7 +235,7 @@ void DebuggerWatch :: write(DebugController* controller, long long value)
 
 void DebuggerWatch :: write(DebugController* controller, double value)
 {
-   String<_text_t, 20> number;
+   String<tchar_t, 20> number;
    number.appendDouble(value);
 
    write(controller, number);
@@ -248,7 +248,7 @@ void DebuggerWatch :: refresh(_ELENA_::DebugController* controller)
 
 // --- DebuggerAutoWatch ---
 
-TreeViewItem DebuggerAutoWatch :: addNode(const _text_t* variableName, const _text_t* className, size_t address)
+TreeViewItem DebuggerAutoWatch :: addNode(const tchar_t* variableName, const tchar_t* className, size_t address)
 {
    TreeViewItem item = DebuggerWatch::addNode(variableName, className, address);
 
@@ -257,7 +257,7 @@ TreeViewItem DebuggerAutoWatch :: addNode(const _text_t* variableName, const _te
    return item;
 }
 
-void DebuggerAutoWatch :: editNode(TreeViewItem node, const _text_t* variableName, const _text_t* className, size_t address)
+void DebuggerAutoWatch :: editNode(TreeViewItem node, const tchar_t* variableName, const tchar_t* className, size_t address)
 {
    DebuggerWatch::editNode(node, variableName, className, address);
 

@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Win32
-//                                              (C)2005-2011, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef linkerH
@@ -37,53 +37,60 @@ class Linker
 {
    typedef Map<const wchar16_t*, ReferenceMap*>  ImportTable;
 
-   Project*         _project;
+   struct ImageInfo
+   {
+      Project*     project;
+      Image*       image;
+      bool         withDebugInfo;
 
-   // Import table
-   ImportTable      _importTable;   
+      // Import table
+      ImportTable  importTable;   
 
-   // image base addresses
-   ImageBaseMap     _map;
+      // image base addresses
+      ImageBaseMap map;
 
-   // Linker target image properties
-   int _headerSize, _imageSize;
-   int _entryPoint; 
+      // Linker target image properties
+      int  headerSize, imageSize;
+      int  entryPoint; 
 
-   bool _withDebugInfo;
+      ImageInfo(Project* project, Image* image)
+         : importTable(NULL, freeobj)
+      {
+         this->project = project;
+         this->image = image;
+         this->entryPoint = 0;
+         this->headerSize = imageSize = 0;
+         this->withDebugInfo = project->BoolSetting(opDebugMode);
+      }
+   };
 
-   int countSections(Image& image);
+   int countSections(Image* image);
 
-   int fillImportTable(Image& image);
-   void createImportTable(Image& image);
+   int fillImportTable(ImageInfo& info);
+   void createImportTable(ImageInfo& info);
 
-   void mapImage(Image& image);
-   void fixImage(Image& image);
+   void mapImage(ImageInfo& info);
+   void fixImage(ImageInfo& info);
 
-   void writeDOSStub(FileWriter* file);
+   void writeDOSStub(Project* project, FileWriter* file);
    void writeHeader(FileWriter* file, short characteristics, int sectionCount);
-   void writeNTHeader(Image& image, FileWriter* file, ref_t tls_directory);
+   void writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_directory);
 
    void writeSectionHeader(FileWriter* file, const char* name, Section* section, int& tblOffset, 
                            int alignment, int sectionAlignment, int vaddress, int characteristics);
    void writeBSSSectionHeader(FileWriter* file, const char* name, size_t size, 
                               int sectionAlignment,  int vaddress, int characteristics);
    void writeSection(FileWriter* file, Section* section, int alignment);
-   void writeSections(Image& image, FileWriter* file);
+   void writeSections(ImageInfo& info, FileWriter* file);
 
-   bool createExecutable(Image& image, const _path_t* exePath, ref_t tls_directory);
-   bool createDebugFile(Image& image, const _path_t* debugFilePath);
+   bool createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory);
+   bool createDebugFile(ImageInfo& info, const tchar_t* debugFilePath);
 
 public:
-   void run(Image& image, ref_t tls_directory);
+   void run(Project& project, Image& image, ref_t tls_directory);
 
-   Linker(Project* project)
-      : _importTable(NULL, freeobj)
+   Linker()
    {
-      _project = project;
-
-      _entryPoint = 0;
-      _headerSize = _imageSize = 0;
-      _withDebugInfo = project->BoolSetting(opDebugMode);
    }
 };
 

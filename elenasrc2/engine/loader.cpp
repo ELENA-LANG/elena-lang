@@ -115,7 +115,7 @@ void* _ImageLoader :: resolveReference(const wchar16_t* reference, size_t mask)
 // --- Image ---
 
 Image :: Image(bool standAlone)
-   : _tls(0), _debug(0)
+   : _tls(0)//, _debug(0)
 {
    // put signature
    MemoryWriter writer(&_data);

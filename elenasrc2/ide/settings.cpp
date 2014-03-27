@@ -96,7 +96,7 @@ Path Paths :: libraryRoot = Path();
 
 Path Paths :: lastPath = Path();
 
-void Paths :: init(const _path_t* appPath, const _path_t* defaultPath)
+void Paths :: init(const tchar_t* appPath, const tchar_t* defaultPath)
 {
    Paths::appPath.copy(appPath);
 
@@ -104,14 +104,14 @@ void Paths :: init(const _path_t* appPath, const _path_t* defaultPath)
    Paths::lastPath.copy(defaultPath);
 }
 
-void Paths :: setLibraryRoot(const _path_t* libraryPath)
+void Paths :: setLibraryRoot(const tchar_t* libraryPath)
 {
    Paths::libraryRoot.copy(libraryPath);
    resolveRelativePath(libraryRoot, appPath);
    Paths::libraryRoot.lower();
 }
 
-void Paths :: resolveRelativePath(Path& path, const _path_t* rootPath)
+void Paths :: resolveRelativePath(Path& path, const tchar_t* rootPath)
 {
    if (isPathRelative(path)) {
       Path fullPath(rootPath);
@@ -122,7 +122,7 @@ void Paths :: resolveRelativePath(Path& path, const _path_t* rootPath)
    canonicalize(path);
 }
 
-void Paths :: makeRelativePath(Path& path, const _path_t* rootPath)
+void Paths :: makeRelativePath(Path& path, const tchar_t* rootPath)
 {
    makePathRelative(path, rootPath);
 }
@@ -167,16 +167,16 @@ bool Settings :: testMode = false;
 
 Path Settings :: defaultProject = Path();
 
-List<_path_t*> Settings :: defaultFiles = List<_path_t*>(NULL, freestr);
+List<tchar_t*> Settings :: defaultFiles = List<tchar_t*>(NULL, freestr);
 
-List<_text_t*> Settings :: searchHistory = List<_text_t*>(NULL, freestr);
-List<_text_t*> Settings :: replaceHistory = List<_text_t*>(NULL, freestr);
+List<tchar_t*> Settings :: searchHistory = List<tchar_t*>(NULL, freestr);
+List<tchar_t*> Settings :: replaceHistory = List<tchar_t*>(NULL, freestr);
 
 Settings::PathMapping Settings :: packageRoots = PathMapping(NULL, freestr);
 
 Settings::PathMapping Settings :: libraryRoots = PathMapping(NULL, freestr);
 
-void Settings :: init(const _path_t* packagePath, const _path_t* libraryPath)
+void Settings :: init(const tchar_t* packagePath, const tchar_t* libraryPath)
 {
    packageRoots.add("default", StringHelper::clone(packagePath));
    libraryRoots.add("default", StringHelper::clone(libraryPath));
@@ -242,7 +242,7 @@ void Settings :: onNewProjectTemplate()
    const char* projectTemplate = Project::getTemplate();
 
    // reload package root
-   const _path_t* path = packageRoots.get(projectTemplate);
+   const tchar_t* path = packageRoots.get(projectTemplate);
    if (_ELENA_::emptystr(path))
       path = packageRoots.get("default");
 
@@ -260,15 +260,15 @@ void Settings :: onNewProjectTemplate()
    Paths::libraryRoot.lower();
 }
 
-void Settings :: addSearchHistory(const _text_t* line)
+void Settings :: addSearchHistory(const tchar_t* line)
 {
-   if (retrieve(searchHistory.start(), line, (const _text_t*)NULL) == NULL)
+   if (retrieve(searchHistory.start(), line, (const tchar_t*)NULL) == NULL)
       searchHistory.add(StringHelper::clone(line));
 }
 
-void Settings :: addReplaceHistory(const _text_t* line)
+void Settings :: addReplaceHistory(const tchar_t* line)
 {
-   if (retrieve(replaceHistory.start(), line, (const _text_t*)NULL) == NULL)
+   if (retrieve(replaceHistory.start(), line, (const tchar_t*)NULL) == NULL)
       replaceHistory.add(StringHelper::clone(line));
 }
 
@@ -399,7 +399,7 @@ void Project :: refresh()
    const char* projectTemplate = getTemplate();
 
    // reload package root
-   const _path_t* templatePath = Settings::packageRoots.get(projectTemplate);
+   const tchar_t* templatePath = Settings::packageRoots.get(projectTemplate);
    if (_ELENA_::emptystr(templatePath))
       templatePath = Settings::packageRoots.get("default");
 
@@ -417,7 +417,7 @@ void Project :: refresh()
    Paths::libraryRoot.lower();
 }
 
-bool Project :: open(const _path_t* path)
+bool Project :: open(const tchar_t* path)
 {
    _config.clear();
 
@@ -454,7 +454,7 @@ void Project :: save()
    _changed = false;
 }
 
-void Project :: rename(const _path_t* path)
+void Project :: rename(const tchar_t* path)
 {
    _name.copyName(path);
    _path.copyPath(path);
@@ -467,7 +467,7 @@ void Project :: rename(const _path_t* path)
 
 void Project :: retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name)
 {
-   const _path_t* root = _path;
+   const tchar_t* root = _path;
    int rootLength = getlength(root);
 
    Path fullPath;
@@ -500,7 +500,7 @@ void Project :: retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name)
    }
 }
 
-bool Project :: isIncluded(const _path_t* path)
+bool Project :: isIncluded(const tchar_t* path)
 {
    Path relPath(path);
    Paths::makeRelativePath(relPath, _path);
@@ -515,7 +515,7 @@ bool Project :: isIncluded(const _path_t* path)
    return false;
 }
 
-void Project :: includeSource(const _path_t* path)
+void Project :: includeSource(const tchar_t* path)
 {
    Path relPath(path);
    Paths::makeRelativePath(relPath, _path);
@@ -527,7 +527,7 @@ void Project :: includeSource(const _path_t* path)
    _changed = true;
 }
 
-void Project :: excludeSource(const _path_t* path)
+void Project :: excludeSource(const tchar_t* path)
 {
    Path relPath(path);
    Paths::makeRelativePath(relPath, _path);
@@ -544,14 +544,14 @@ void Project :: clearForwards()
    _changed = true;
 }
 
-void Project :: addForward(const _text_t* name, const _text_t* reference)
+void Project :: addForward(const tchar_t* name, const tchar_t* reference)
 {
    _config.setSetting(IDE_FORWARDS_SECTION, ParamString(name), ParamString(reference));
 
    _changed = true;
 }
 
-void Project :: retrievePath(const wchar16_t* name, _ELENA_::Path & path, const _path_t* extension)
+void Project :: retrievePath(const wchar16_t* name, _ELENA_::Path & path, const tchar_t* extension)
 {
    IdentifierString package(getPackage());
 

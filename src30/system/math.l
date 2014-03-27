@@ -4,44 +4,50 @@
 {
     #method Exp
     [
-        #var(type:real)theRetVal := mathPrimitive Exp &real::self.
+        #var(type:real)aRetVal.
+        mathPrimitive Exp &real::self &out'real:aRetVal.
         
-        ^ RealNumber new &real:theRetVal.
+        ^ RealNumber new &real:aRetVal.
     ]
     
     #method Ln
     [
-        #var(type:real)theRetVal := mathPrimitive Ln &real::self.
+        #var(type:real)aRetVal.
+        mathPrimitive Ln &real::self &out'real:aRetVal.
         
-        ^ RealNumber new &real:theRetVal.
+        ^ RealNumber new &real:aRetVal.
     ]
 
     #method Rounded
     [
-        #var(type:real)theRetVal := mathPrimitive Round &real::self.
+        #var(type:real)aRetVal.
+        mathPrimitive Round &real::self &out'real:aRetVal.
         
-        ^ RealNumber new &real:theRetVal.
+        ^ RealNumber new &real:aRetVal.
     ]
 
     #method Int
     [
-        #var(type:real)theRetVal := mathPrimitive Truncate &real::self.
+        #var(type:real)aRetVal.
+        mathPrimitive Truncate &real::self &out'real:aRetVal.
         
-        ^ RealNumber new &real:theRetVal.        
+        ^ RealNumber new &real:aRetVal.
     ]
 
     #method Frac
     [
-        #var(type:real)theRetVal := mathPrimitive Truncate &real::self.
+        #var(type:real)aRetVal.
+        mathPrimitive Truncate &real::self &out'real:aRetVal.
         
-        ^ RealNumber new &real:(self real - theRetVal).
+        ^ RealNumber new &real:(self real - aRetVal).
     ]
     
     #method Abs
     [
-        #var(type:real)theRetVal := mathPrimitive Abs &real::self.
+        #var(type:real)aRetVal.
+        mathPrimitive Abs &real::self &out'real:aRetVal.
         
-        ^ RealNumber new &real:theRetVal.
+        ^ RealNumber new &real:aRetVal.
     ]
 
     #method mod : anOperand

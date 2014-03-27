@@ -62,9 +62,9 @@
         theHandle := aHandle.
     ]
 
-    #method read &char
+    #method read &out'short:aChar
     [
-        #var aDump := ByteArray new &length:20.
+        #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
 
         control do:
@@ -77,35 +77,32 @@
         ]
         &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
                     and:(primitive equal &bytearray:aDump &index:4 &int:1)].
-                    
-        #var(type:short)aChar.
+
         primitive read &bytearray:aDump &index:14 &out'short:aChar.
-                    
-        ^ CharValue new &char:aChar.
     ]
 
-    #method read &int
-    [
-        #var aDump := ByteArray new &length:20.
-
-        control do:
-        [
-            system'external'KERNEL32 ReadConsoleInputW
-                &handle        : theHandle
-                &out'bytearray : aDump
-                &int           : 1
-                &int           : 0.
-        ]
-        &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
-                    and:(primitive equal &bytearray:aDump &index:4 &int:1)].
-                    
-        #var(type:int)aValue := primitive read &bytearray:aDump &index:8.
-                    
-        ^ IntNumber new &int:aValue.
-    ]
+//    #method read &int
+//    [
+//        #var aDump := ByteArray new &length:20.
+//
+//        control do:
+//        [
+//            system'external'KERNEL32 ReadConsoleInputW
+//                &handle        : theHandle
+//                &out'bytearray : aDump
+//                &int           : 1
+//                &int           : 0.
+//        ]
+//        &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
+//                    and:(primitive equal &bytearray:aDump &index:4 &int:1)].
+//                    
+//        #var(type:int)aValue := primitive read &bytearray:aDump &index:8.
+//                    
+//        ^ IntNumber new &int:aValue.
+//    ]
 
     // !! HOTFIX: additional method to pass the literal type
-    #method $read &literal:aLiteral &length:aLength
+    #method $read &out'literal:aLiteral &length:aLength
     [
         system'external'KERNEL32 ReadConsoleW
             &handle       : theHandle
@@ -119,7 +116,7 @@
     [
         #var aLiteral := LiteralValue new &length:aLength.
 
-        $self $read &literal:aLiteral &length:aLength.
+        $self $read &out'literal:aLiteral &length:aLength.
         
         ^ aLiteral.
     ]
@@ -127,7 +124,7 @@
     #method read &Line
     [
         #var anOutput := emptyLiteralValue.
-        
+
         control do:
         [
             #var aTemp := $self read &literal &length:64.
@@ -135,7 +132,7 @@
             anOutput := anOutput + aTemp.
         ] 
         &until:[ consoleHelper _trimLine &literal:anOutput ].
-        
+
         ^ anOutput.
     ]
     

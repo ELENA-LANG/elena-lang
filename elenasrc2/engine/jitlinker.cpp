@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -39,6 +39,11 @@ SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* m
    const wchar16_t* referenceName = module->resolveReference(reference & ~mskAnyRef);
 
    return _owner->_loader->getSectionInfo(referenceName, reference & mskAnyRef);
+}
+
+SectionInfo JITLinker::ReferenceHelper :: getPredefinedCommand(ref_t reference)
+{
+   return _owner->_loader->getPredefinedSectionInfo(reference, 0);
 }
 
 ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* module)
@@ -178,7 +183,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          if (_virtualMode) {
             image->addReference(mskRelCodeRef, offset);
          }
-         else (*image)[offset] -= ((size_t)image->get(0));
+         else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
       }
       // otherwise
       else {   
@@ -208,6 +213,7 @@ void* JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& r
    }
    else return NULL;
 }
+
 void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References& references)
 {
    void* vaddress = getVMTAddress(module, reference, references);
@@ -308,19 +314,19 @@ void* JITLinker :: resolveNativeSection(const wchar16_t*  reference, int mask, S
    return vaddress;
 }
 
-//void* JITLinker :: resolveNativeVariable(const wchar16_t*  reference)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskDataRef);
-//   MemoryWriter writer(image);
-//
-//   _compiler->allocateVariable(writer);
-//
-//   void* vaddress = calculateVAddress(&writer, mskDataRef);
-//   _loader->mapReference(reference, vaddress, mskDataRef);
-//
-//   return vaddress;
-//}
+////void* JITLinker :: resolveNativeVariable(const wchar16_t*  reference)
+////{
+////   // get target image & resolve virtual address
+////   _Memory* image = _loader->getTargetSection(mskDataRef);
+////   MemoryWriter writer(image);
+////
+////   _compiler->allocateVariable(writer);
+////
+////   void* vaddress = calculateVAddress(&writer, mskDataRef);
+////   _loader->mapReference(reference, vaddress, mskDataRef);
+////
+////   return vaddress;
+////}
 
 void* JITLinker :: resolveBytecodeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo)
 {
@@ -365,7 +371,7 @@ void* JITLinker :: resolveBytecodeSection(const wchar16_t*  reference, int mask,
    return vaddress;
 }
 
-void* JITLinker :: createBytecodeVMTSection(const wchar16_t*  reference, int mask, ClassSectionInfo sectionInfo, References& references)
+void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask, ClassSectionInfo sectionInfo, References& references)
 {
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
@@ -798,27 +804,24 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
    return vaddress;
 }
 
-void JITLinker :: prepareCompiler(_Module* core, _Module* commands)
+void JITLinker :: prepareCompiler()
 {
    References      references(RefInfo(0, NULL));
-   ReferenceHelper coreHelper(this, core, &references);
-   ReferenceHelper commandHelper(this, commands, &references);
+   ReferenceHelper helper(this, NULL, &references);
 
    // preload core data
    _Memory* data = _loader->getTargetSection(mskDataRef);
    _Memory* rdata = _loader->getTargetSection(mskRDataRef);
    _Memory* sdata = _loader->getTargetSection(mskStatRef);
-   _compiler->prepareCoreData(coreHelper, data, rdata, sdata);
+   _compiler->prepareCoreData(helper, data, rdata, sdata);
 
-   // load VM table
-   _compiler->prepareVMData(coreHelper, data);
-
-   // preload core code
-   _Memory* code = _loader->getTargetSection(mskCodeRef);
-   _compiler->prepareCore(coreHelper, code);
+//   // load VM table
+//   _compiler->prepareVMData(coreHelper, data);
 
    // preload compiler command set
-   _compiler->prepareCommandSet(commandHelper, code);
+   _Memory* code = _loader->getTargetSection(mskCodeRef);
+
+   _compiler->prepareCommandSet(helper, code);
 
    // fix not loaded references
    fixReferences(references, code);

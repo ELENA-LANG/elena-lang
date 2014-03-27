@@ -8,6 +8,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "image.h"
+#include "errors.h"
 
 using namespace _ELENA_;
 
@@ -39,19 +40,17 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef, project->BoolSetting(opDebugMode));
 
-   // compile TLS section if it is a multi-threading app
-   if (_project->IntSetting(opThreadMax) > 1) {
-      compiler->compileTLS(dynamic_cast<_JITLoader*>(this));
-
-      // load GC thread table, should be allocated before static roots
-      // thread table contains TLS reference
-      compiler->compileThreadTable(dynamic_cast<_JITLoader*>(this), _project->IntSetting(opThreadMax));
-   }
+//   // compile TLS section if it is a multi-threading app
+//   if (_project->IntSetting(opThreadMax) > 1) {
+//      compiler->compileTLS(dynamic_cast<_JITLoader*>(this));
+//
+//      // load GC thread table, should be allocated before static roots
+//      // thread table contains TLS reference
+//      compiler->compileThreadTable(dynamic_cast<_JITLoader*>(this), _project->IntSetting(opThreadMax));
+//   }
 
    // initialize compiler inline code
-   linker.prepareCompiler(
-      project->loadPrimitive(CORE_MODULE, false),
-      project->loadPrimitive(COMMAND_MODULE, false));
+   linker.prepareCompiler();
 
    // load starting symbol (it shouldn't be forward)
    const wchar16_t* entry = project->StrSetting(opEntry);
@@ -112,6 +111,23 @@ SectionInfo ExecutableImage :: getSectionInfo(const wchar16_t* reference, size_t
    return sectionInfo;
 }
 
+SectionInfo ExecutableImage :: getPredefinedSectionInfo(ref_t reference, size_t mask)
+{
+   SectionInfo sectionInfo;
+
+   sectionInfo.module = _project->resolvePredefined(reference);
+   if (sectionInfo.module == NULL) {
+      throw InternalError(errCommandSetAbsent);
+   }
+   else sectionInfo.section = sectionInfo.module->mapSection(reference | mask, true);
+
+   if (sectionInfo.section == NULL) {
+      throw InternalError(errCommandSetAbsent);
+   }
+
+   return sectionInfo;
+}
+
 ClassSectionInfo ExecutableImage :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask)
 {
    ClassSectionInfo sectionInfo;
@@ -134,8 +150,8 @@ size_t ExecutableImage :: getLinkerConstant(int id)
          return _project->IntSetting(opGCMGSize);
       case lnGCYGSize:
          return _project->IntSetting(opGCYGSize);
-      case lnThreadCount:
-         return _project->IntSetting(opThreadMax);
+//      case lnThreadCount:
+//         return _project->IntSetting(opThreadMax);
       case lnObjectSize:
          return _project->IntSetting(opGCObjectSize);
       default:
@@ -293,7 +309,7 @@ inline ref_t writeErrorMessage(MemoryWriter& data, const char* s1, const wchar16
    return writeErrorMessage(data, message);
 }
 
-VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const _path_t* appPath)
+VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const tchar_t* appPath)
    : Image(false), _exportReferences((size_t)-1)
 {
    _project = project;
@@ -325,11 +341,13 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    consts.add(ConstantIdentifier(VM_ERR_DLLLOAD), writeErrorMessage(data, "Cannot load ", _rootPath, "\n"));
    consts.add(ConstantIdentifier(VM_ERR_DLLINVALID), writeErrorMessage(data, "Incorrect elenavm.dll\n"));
 
+   int type = project->IntSetting(opApplicationType, stConsole);
+
+   ref_t reference = 0;
+   _Module* module = project->resolveModule(ReferenceNs(type == stGUI ? VM_GUI_LOADER : VM_LOADER), reference, true);
    _Memory* section = NULL;
-   _Module* module = project->loadPrimitive(CORE_VM_MODULE, false);
-   if (module != NULL) {
-      int type = project->IntSetting(opApplicationType, stConsole);
-      ref_t reference = module->mapReference(ConstantIdentifier(type == stGUI ? VM_GUI_LOADER : VM_LOADER), true);
+
+   if (module != NULL) {      
       section = module->mapSection(reference | mskNativeCodeRef, true);
    }
    if (section == NULL)

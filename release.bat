@@ -10,6 +10,7 @@ md lib30
 md lib30\inline
 %1\bin\asm2binx %1\src30\asm\core_routines.esm lib30\inline
 %1\bin\asm2binx %1\src30\asm\ext_routines.esm lib30\inline
+%1\bin\asm2binx %1\src30\asm\operators.esm lib30\inline
 
 %1\bin\asm2binx %1\src30\asm\x32\commands.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core.asm %1\bin\x32

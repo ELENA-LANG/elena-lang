@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef configH
@@ -36,9 +36,9 @@ public:
    void clear(const char* category);
    void clear();
 
-   virtual bool load(const _path_t* path, int encoding);
-   virtual bool save(const _path_t* path, int encoding);
-   virtual bool save(const _path_t* path)
+   virtual bool load(const tchar_t* path, int encoding);
+   virtual bool save(const tchar_t* path, int encoding);
+   virtual bool save(const tchar_t* path)
    {
       return save(path, 0);
    }

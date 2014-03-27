@@ -228,7 +228,7 @@ inline void canonicalize(_ELENA_::Path& path)
    path.copy(p);
 }
 
-inline void makePathRelative(_ELENA_::Path& path, const _path_t* rootPath)
+inline void makePathRelative(_ELENA_::Path& path, const tchar_t* rootPath)
 {
    wchar_t tmpPath[MAX_PATH];
 

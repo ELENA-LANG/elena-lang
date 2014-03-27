@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -86,7 +86,7 @@ public:
    virtual _Memory* getTargetDebugSection() = 0;
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask) = 0;
-
+   virtual SectionInfo getPredefinedSectionInfo(ref_t reference, size_t mask) = 0;
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
@@ -163,7 +163,7 @@ public:
    }
 };
 
-typedef ConstantIdentifier ConstIdentifier;
+//typedef ConstantIdentifier ConstIdentifier;
 
 // --- ReferenceNs ---
 
@@ -176,7 +176,7 @@ public:
       return StringHelper::compare(reference, ns, length) && reference[length] == '\'';
    }
 
-   void pathToName(const _path_t* path)
+   void pathToName(const tchar_t* path)
    {
       while (!emptystr(path)) {
          if (!emptystr(_string)) {
@@ -427,6 +427,7 @@ struct ClassInfo
    size_t      size;           // Object size
    ref_t       classClassRef;  // reference to class class VMT 
    MethodMap   methods;
+   MethodMap   extensions;
    FieldMap    fields;
 
    void save(StreamWriter* writer)
@@ -436,6 +437,7 @@ struct ClassInfo
       writer->writeDWord(classClassRef);
       methods.write(writer);
       fields.write(writer);
+      extensions.write(writer);
    }
 
    void load(StreamReader* reader)
@@ -445,10 +447,11 @@ struct ClassInfo
       classClassRef = reader->getDWord();
       methods.read(reader);
       fields.read(reader);
+      extensions.read(reader);
    }
 
    ClassInfo()
-      : fields(-1), methods(false)
+      : fields(-1), methods(false), extensions(false)
    {
       header.flags = 0;
    }

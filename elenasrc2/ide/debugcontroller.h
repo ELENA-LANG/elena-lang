@@ -158,7 +158,7 @@ protected:
    bool loadSymbolDebugInfo(const wchar16_t* reference, StreamReader& addressReader);
    bool loadTapeDebugInfo(StreamReader& reader, size_t size);
 
-   bool loadDebugData(const _path_t* path);
+   bool loadDebugData(const tchar_t* path);
    bool loadDebugData(StreamReader& reader);
 
    _Module* getDebugModule(size_t address);
@@ -174,7 +174,7 @@ protected:
    DebugLineInfo* getNextStep(DebugLineInfo* step);
    DebugLineInfo* getEndStep(DebugLineInfo* step);
 
-   size_t findNearestAddress(_Module* module, const _path_t* path, size_t row, size_t col);
+   size_t findNearestAddress(_Module* module, const tchar_t* path, size_t row, size_t col);
 
    void readFields(_DebuggerWatch* watch, DebugLineInfo* self, size_t address);
    void readList(_DebuggerWatch* watch, int* list, int length);
@@ -264,9 +264,9 @@ public:
       showCurrentModule(lineInfo, moduleName, sourcePath);
    }
 
-   bool start(const _path_t* programPath, const _path_t* arguments, DebugMode debugMode, List<Breakpoint>& _breakpoints);
+   bool start(const tchar_t* programPath, const tchar_t* arguments, DebugMode debugMode, List<Breakpoint>& _breakpoints);
    void run();
-   void runToCursor(const _path_t* name, const _path_t* path, int col, int row);
+   void runToCursor(const tchar_t* name, const tchar_t* path, int col, int row);
    void stepOver();
    void stepInto();
    void stepOverLine();

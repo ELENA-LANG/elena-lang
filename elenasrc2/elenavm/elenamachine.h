@@ -63,10 +63,10 @@ struct InstanceConfig
    ForwardMap moduleForwards;
 
    void loadForwardList(IniConfigFile& config);
-   void loadList(IniConfigFile& config, const char* category, const _path_t* path, Map<const wchar16_t*, wchar16_t*>* list);
-   void init(const _path_t* configPath, IniConfigFile& config);
+   void loadList(IniConfigFile& config, const char* category, const tchar_t* path, Map<const wchar16_t*, wchar16_t*>* list);
+   void init(const tchar_t* configPath, IniConfigFile& config);
 
-   bool load(const _path_t* path, Templates* templates);
+   bool load(const tchar_t* path, Templates* templates);
 
    InstanceConfig()
       : primitives(NULL, freestr), forwards(NULL, freestr)
@@ -110,7 +110,7 @@ class ELENAMachine
 protected:
    struct Config : InstanceConfig
    {
-      bool load(const _path_t* path, Templates* templates);
+      bool load(const tchar_t* path, Templates* templates);
    };
 
    Path _rootPath;
@@ -120,10 +120,10 @@ public:
    Templates templates;
    Config    config;
 
-   const _path_t* getRootPath() { return _rootPath; }
+   const tchar_t* getRootPath() { return _rootPath; }
 //   void setLibPath(const TCHAR* path);    // !! temporal
 
-   ELENAMachine(const _path_t* rootPath);
+   ELENAMachine(const tchar_t* rootPath);
    virtual ~ELENAMachine()
    {
    }
@@ -150,7 +150,7 @@ protected:
          return _instance->getLinkerConstant(constant);
       }
 
-      virtual SectionInfo getPredefinedSection(ref_t reference) { return SectionInfo(); }
+      virtual SectionInfo getPredefinedCommand(ref_t reference) { return SectionInfo(); }
       virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
 
       virtual void* getVAddress(MemoryWriter& writer, int mask) { return NULL; }
@@ -211,10 +211,11 @@ protected:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask);
+   virtual SectionInfo getPredefinedSectionInfo(ref_t reference, size_t mask);
 
    bool initLoader(InstanceConfig& config);
 
-   void setPackagePath(const wchar16_t* package, const _path_t* path);
+   void setPackagePath(const wchar16_t* package, const tchar_t* path);
    void setPackagePath(const wchar16_t* line);
 
    bool loadTemplate(const wchar16_t* name);
@@ -226,7 +227,7 @@ protected:
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
-   void printInfo(const _text_t* s, ...);
+   void printInfo(const tchar_t* s, ...);
 
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;

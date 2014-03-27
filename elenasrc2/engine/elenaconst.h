@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0007            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0000
+   #define ENGINE_MINOR_VERSION     0x0001
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -142,7 +142,7 @@ namespace _ELENA_
       mskSymbolRelRef        = 0x32000000,   // symbol code
       mskVMTRef              = 0x41000000,   // class VMT
       mskClassRef            = 0x11000000,   // class code
-      mskClassRelRef         = 0x31000000,   // class relative code
+//      mskClassRelRef         = 0x31000000,   // class relative code
       mskStatSymbolRef       = 0x82000000,   // reference to static symbol
 
       mskVMTEntryOffset      = 0x43000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
@@ -154,7 +154,7 @@ namespace _ELENA_
       mskInt64Ref            = 0x04000000,   // reference to constant 64bit integer number
       mskRealRef             = 0x05000000,   // reference to constant real number
       mskMessage             = 0x06000000,   // message constant
-      mskLinkerConstant      = 0x07000000,   // linker constant
+//      mskLinkerConstant      = 0x07000000,   // linker constant
       mskSymbolLoaderRef     = 0x08000000,   // reference to symbol loader
       mskSignature           = 0x09000000,   // message signature constant
       mskPreloaded           = 0x0C000000,   // prelooded mask, should be used in combination with image mask
@@ -238,21 +238,23 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-   const int elClassClass          = 0x00000010;
-  // const int elVMTWithRoles        = 0x00000020;
-  // const int elVMTAnyHandler       = 0x00000040;
+//   const int elClassClass          = 0x00000010;
+//  // const int elVMTWithRoles        = 0x00000020;
+//  // const int elVMTAnyHandler       = 0x00000040;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000100;
    const int elGroup               = 0x00000200;
-  // const int elCastGroup           = 0x00000600;
-  // const int elUnion               = 0x00000A00;
-   const int elMethodHandler       = 0x00001000; 
+//  // const int elCastGroup           = 0x00000600;
+//  // const int elUnion               = 0x00000A00;
+//   const int elMethodHandler       = 0x00001000; 
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004000;
    const int elMessage             = 0x00008000;
   // const int elDynamicSubjectRole  = 0x0000B080;
-  // const int elWithLocker          = 0x00100000;
-   
+   const int elConstantSymbol      = 0x00000082;
+   const int elOperation           = 0x00204000;
+   //const int elWithLocker          = 0x00100000;
+
    const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
    const int elDebugReal64         = 0x00020000;
@@ -264,7 +266,7 @@ namespace _ELENA_
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
    const int lnGCYGSize            = 0x00000002;
-   const int lnThreadCount         = 0x00000003;
+//   const int lnThreadCount         = 0x00000003;
    const int lnObjectSize          = 0x00000004;
    // used only for VM
    const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
@@ -277,16 +279,17 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.6.0"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.6.0"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!6.00"         // the language version
+   #define ELENA_SIGNITURE          "ELENA.7.1"       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "ELENAVMC.7.1"    // the ELENAVM client
+   #define MODULE_SIGNATURE         "EN!7.01"         // the language version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---
-   #define CORE_MODULE            "core"          // core GC functionality
-   #define COMMAND_MODULE         "commands"      // core command set
-   #define CORE_VM_MODULE         "core_vm"       // core vm client functionality
-   #define INLINE_MODULE          "inline"        // inline module alias
+   //#define CORE_MODULE            "core"          // core GC functionality
+   #define COMMANDSET_MODULE        "commands"      // core predefined command set
+   #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
+   #define INLINE_MODULE            "inline"        // inline module alias
+   #define OPERATION_MODULE         "operators"     // operator module alias
 
   // --- ELENA verb messages ---
    #define NEW_MESSAGE              "new"
@@ -369,11 +372,13 @@ namespace _ELENA_
    #define SELF_VAR                "self"             // the current object group
    #define THIS_VAR                "$self"            // the current class instance
    #define SUPER_VAR               "$super"           // the predecessor class
-  // #define NEXT_VAR                "$next"            // the next group member
+//  // #define NEXT_VAR                "$next"            // the next group member
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
+   #define EXTENSION_POSTFIX        "#extensions"
+   #define OPERATION_POSTFIX        "#operations"
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
@@ -381,6 +386,7 @@ namespace _ELENA_
    #define HINT_SIZE               "size"
   // #define HINT_SAFEPOINT          "safepoint"
   // #define HINT_LOCK               "sync"
+   #define HINT_EXTENSION          "extension"
 
    #define HINT_INT                "int"              // debugger watch hint values / field size aliases
    #define HINT_LITERAL            "literal"
@@ -388,11 +394,12 @@ namespace _ELENA_
    #define HINT_REAL               "real"
    #define HINT_LONG               "long"
    #define HINT_SHORT              "short"
-   #define HINT_MEM                "mem"
+//   #define HINT_MEM                "mem"
    #define HINT_BYTEARRAY          "bytearray"
    #define HINT_MESSAGE            "message"
    #define HINT_SIGNATURE          "signature"
    #define HINT_ROLE               "role"
+   #define HINT_OPERATION          "operation"
    #define HINT_GROUP              "group"
    #define HINT_SEALED             "sealed"
    
@@ -406,9 +413,9 @@ namespace _ELENA_
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
 
-  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
-   #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
-   #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
+//  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
+//   #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
+//   #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
 
    // predefined classes
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor
@@ -437,6 +444,7 @@ namespace _ELENA_
    #define UNTIL_SIGNATURE          "until"
 
    // primitive types
+   #define REF_SUBJECT              "ref"
    #define INT_SUBJECT              "int"
    #define LONG_SUBJECT             "long"
    #define HANDLE_SUBJECT           "handle"
@@ -446,9 +454,9 @@ namespace _ELENA_
    #define SHORT_SUBJECT            "short"
    #define ARRAY_SUBJECT            "array"
    #define DUMP_SUBJECT             "bytearray"
-   #define OUT_LENGTH_SUBJECT       "length&out'int"
+//   #define OUT_LENGTH_SUBJECT       "length&out'int"
    #define INDEX_SUBJECT            "index"
-   #define BYTE_SUBJECT             "byte"
+//   #define BYTE_SUBJECT             "byte"
 
    #define STARTUP_CLASS            "'program"
 

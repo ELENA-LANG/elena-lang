@@ -4,51 +4,49 @@
 
 [#list#]
 actionOp
-Array
-ArrayIterator
 BaseValue
 BaseNumber
 Boolean
 BreakException
-ByteArray
 CharValue
+console
 control
 emptyLiteralValue
 Exception
-Extension
 false
-functionOp
 FormatException
+Integer
 IntBaseNumber
 intConvertor
-Integer
 IntNumber
-intOp
 InvalidArgumentException
-literalConvertor
 LiteralIterator
 LiteralValue
 Long
 longConvertor
 LongNumber
-mathOp
 nil
 Object
 OutOfRangeException
 Real
 realConvertor
 RealNumber
-RoleList
 String
 true
 Variable
 Variant
-Wrap
+
+[console]
+#title=Symbol console
+#shortdescr=A console
+#method=readChar,,char;	Reads the next character from the standard input stream.
+#method=write,literal;Writes the specified literal value to the standard output stream.
+#method=writeLine,literal;Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+#method=readLine,,literal;Reads the next line of characters from the standard input stream.
 
 [Object]
 #title=Class Object
 #shortdescr=A common ancestor
-#protocol=object
 #method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.
 #method=equal,&object:object,bool;Returns true if the specified object instances are equal; otherwise, false.
 #method=notequal,object,bool;Returns false if the specified object is equal to the current object; otherwise, true.<br/>By default compares the object references.
@@ -56,133 +54,38 @@ Wrap
 [nil]
 #title=Symbol nil
 #shortdescr=A nil value symbol
-#protocol=object
-#method=equal,object,bool;Returns true if the specified object is nil; otherwise, false.
 
-[true]
-#title=Symbol true
-#shortdescr=A true value symbol
-#protocol=object
-#protocol=bool
-#method=and,object,bool;Executes logical AND operation
-#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
-#method=and,&bool:bool,bool;Executes logical AND operation with a boolean value
-#method=and,&int:int,bool;Executes logical AND operation with an integer value
-#method=bool,,bool;Returns itself.
-#method=else,action;Always returns nil.
-#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
-#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current object boolean expression.
-#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
-#method=int,,int;Returns numeric value.
-#method=literal,,literal;Returns literal representation.
-#method=not,,bool;Always returns false.
-#method=or,object,bool;Executes logical OR operation<br/>Always return true
-#method=then,action;Executes the action;
-#method=then,action&else:action;Executes then-action;
-#method=xor,object,bool;Executes logical XOR operation
-#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
-#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
-
-[false]
-#title=Symbol false
-#shortdescr=A false value symbol
-#protocol=object
-#protocol=bool
-#method=and,object,bool;Executes logical AND operation<br/>Always return false
-#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
-#method=bool,,bool;Returns itself.
-#method=else,action;Executes the action;
-#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
-#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current object boolean expression.
-#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
-#method=int,,int;Returns numeric value.
-#method=literal,,literal;Returns literal representation.
-#method=not,,bool;Always returns true.
-#method=or,object,bool;Executes logical OR operation
-#method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
-#method=then,action;Always returns nil.
-#method=then,action&else:action;Executes else-action;
-#method=xor,object,bool;Executes logical XOR operation
-#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
-#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
-
-[BreakException]
-#title=Class BreakException
-#shortdescr=A break exception
-#parent=system.html#Object:system'Object
-#field=theResult
-#method=stop,,;Returns the result
-
-[actionOp]
-#title=Class actionOp
-#shortdescr=An action role
-#parent=system.html#Object:system'Object
-#protocol=action
-#method=run,&if:bool;Executes the action while the parameter is true
-#method=run,&until:bool;Executes the action while the parameter is false
-
-[functionOp]
-#title=Class functionOp
-#shortdescr=A function role
-#parent=system.html#Object:system'Object
-#protocol=function
-#method=reverse,&for:numeric_variable&from:numeric_value&till:numeric_value&by:numeric_value,;Iterates the code for the specified range [till,from) in the reverse order
-#method=reverse,&for:numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value,;Iterates the code for the specified range [to,from] in the reverse order
-#method=run,&for:enumerator,object;Executes the function code for every enumeration value
-#method=run,&for:enumerator&where:bool_function,object;Executes the function code for every enumeration value satisfying the condition
-#method=run,&for:numeric_variable&from:numeric_value&till:numeric_value&by:numeric_value,;Iterates the code for the specified range [from,till)
-#method=run,&for:numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value,;Iterates the code for the specified range [from,to]
-
-[control]
-#title=Symbol control
-#shortdescr=A control helper symbol
-#method=do,action;Executes the action
-#method=do,action&until:bool_action;Executes the action until the condition is met
-#method=for,numeric_variable&from:numeric_value&backTo:numeric_value&by:numeric_value&do:function,;Iterates the function for the specified range [from,to] in the reverse order
-#method=for,numeric_variable&from:numeric_value&to:numeric_value&by:numeric_value&do:function,;Iterates the function for the specified range [from,to]
-#method=foreach,enumerable&do:function;Executes the function for each collection member
-#method=foreach,enumerable&until:bool_function,;Enumerates the collection until the member meet the condition and return it; otherwise, return nil.
-#method=from,numeric_value&backTo:numeric_value&do:function,;Iterates the function for the specified range [from,to] in the reverse order with step equals to 1.
-#method=from,numeric_value&till:numeric_value&do:function,;Iterates the function for the specified range [from,till) with step equals to 1.
-#method=from,numeric_value&to:numeric_value&do:function,;Iterates the function for the specified range [from,to] with step equals to 1.
-#method=while,bool_action;Evaluates the boolean expression while it is true
-#method=while,bool_action&do:action;Evaluates action while the boolean expression is true
-
-[BaseValue]
-#title=Class BaseValue
-#shortdescr=A base value class
+[LiteralValue]
+#title=Class LiteralValue
+#shortdescr=A wide literal value
+#protocol=enumerable
+#protocol=literal
 #protocol=value
 #parent=system.html#Object:system'Object
-#method=equal,value,bool;Compares the values
-#method=greater,value,bool;Compares the values
-#method=less,value,bool;Compares the values
-#method=notequal,value,bool;Compares the values
-#method=notgreater,value,bool;Compares the values
-#method=notless,value,bool;Compares the values
-
-[BaseNumber]
-#title=Class BaseNumber
-#shortdescr=A base numeric value class
-#protocol=numeric_value
-#parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
-#method=add,numeric_value,numeric_value;Adds the values
-#method=divide,numeric_value,numeric_value;Divuides the values
-#method=multiply,numeric_value,numeric_value;Divides the values
-#method=subtract,numeric_value,numeric_value;Subtracts the values
-
-[IntBaseNumber]
-#title=Class IntBaseNumber
-#shortdescr=A base integer value class
-#protocol=numeric_value
-#parent=system.html#Object:system'Object
-#parent=system.html#BaseValue:system'BaseValue
-#parent=system.html#BaseNumber:system'BaseNumber
-#method=allMask,numeric_value,bool;Returns true if all the mask bits are set
-#method=and,numeric_value,numeric_value;Execute bitwise AND operation
-#method=anyMask,numeric_value,bool;Returns true if any of the mask bits are set
-#method=or,numeric_value,numeric_value;Execute bitwise OR operation
-#method=xor,numeric_value,numeric_value;Execute bitwise XOR operation
+#constructor=new,&length:int,literal;Creates the literal string with specified length
+#constructor=new,&length:int&literal:literal,literal;Creates the literal string with specified length and copies the parameter value
+#constructor=new,&length:int&char:value,literal;Creates the literal string with specified length fills with spciefied character value
+#constructor=new,&literal:literal,literal;Creates the literal string copy
+#method=add,&char:value,literal;Concatinates the values
+#method=add,object,literal;Concatinates the values
+#method=add,&literal:literal,literal;Concatinates the values
+#method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
+#method=enumerator,,enumerator;Returns the object enumerator
+#method=equal,&literal:literal,bool;Compares the values
+#method=equal,&char:value,bool;Compares the values
+#method=getAt,object,value;Returns the character with specified index
+#method=getAt,&index:int&out'short:short;Copies the character value to the stack allocated variable
+#method=indexOf,&index:int&literal:literal,int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
+#method=indexOf,&index:int&literal:literal&out'int:int;Copies the index of the first occurence of the specified substring to the stack allocated variable.<br/>If the substring is not found. returns -1
+#method=indexOf,&index:int&char:value,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
+#method=insert,&index:int&literal:literal,literal;Inserts the substring into and returns the new one
+#method=length,,int;Returns the string length
+#method=literal,,literal;Returns itself
+#method=less,&literal:literal,bool;Compares the values
+#method=less,&char:value,bool;Compares the values
+#method=notless,&literal:literal,bool;Compares the values
+#method=Substring,&index:int&length:int,literal;Returns the substring
 
 [IntNumber]
 #title=Class IntNumber
@@ -221,6 +124,174 @@ Wrap
 #method=index,,int;Returns itself
 #method=int,,int;Returns itself
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
+
+[CharValue]
+#title=Class CharValue
+#shortdescr=A character symbol
+#protocol=value                                                                             
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#constructor=new,,value;Creates the object with zero value
+#constructor=new,object,value;Creates the object with specified value
+#constructor=new,int,value;Creates the object with specified numeric value
+#method=char,,value;Returns itself
+#method=equal,&int:int,bool;Compares the value with numeric value
+#method=equal,&char:value,bool;Compares the value with value
+#method=int,,int;Returns the numeric value
+#method=less,&int:int,bool;Compares the value with numeric value
+#method=less,&char:value,bool;Compares the value with value
+#method=literal,,literal;Returns the literal value
+#method=notless,&int:int,bool;Compares the value with numeric value
+#method=notless,&widechar:value,bool;Compares the value with value
+
+[control]
+#title=Symbol control
+#shortdescr=A control helper symbol
+#method=do,action&until:bool_expr;Executes the action until the condition is met
+
+[actionOp]
+#title=Class actionOp
+#shortdescr=An action role
+#parent=system.html#Object:system'Object
+#protocol=action
+#method=run,&if:bool_expr;Executes the action while the parameter is true
+#method=run,&until:bool_expr;Executes the action while the parameter is false
+
+[true]
+#title=Symbol true
+#shortdescr=A true value symbol
+#protocol=bool
+#method=and,object,bool;Executes logical AND operation
+#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
+#method=and,&bool:bool,bool;Executes logical AND operation with a boolean value
+#method=and,&int:int,bool;Executes logical AND operation with an integer value
+#method=bool,,bool;Returns itself.
+#method=else,action;Always returns nil.
+#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
+#method=int,,int;Returns numeric value.
+#method=literal,,literal;Returns literal representation.
+#method=not,,bool;Always returns false.
+#method=or,object,bool;Executes logical OR operation<br/>Always return true
+#method=then,action;Executes the action;
+#method=then,action&else:action;Executes then-action;
+#method=xor,object,bool;Executes logical XOR operation
+#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
+#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
+
+[false]
+#title=Symbol false
+#shortdescr=A false value symbol
+#protocol=bool
+#method=and,object,bool;Executes logical AND operation<br/>Always return false
+#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
+#method=bool,,bool;Returns itself.
+#method=else,action;Executes the action;
+#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
+#method=int,,int;Returns numeric value.
+#method=literal,,literal;Returns literal representation.
+#method=not,,bool;Always returns true.
+#method=or,object,bool;Executes logical OR operation
+#method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
+#method=then,action;Always returns nil.
+#method=then,action&else:action;Executes else-action;
+#method=xor,object,bool;Executes logical XOR operation
+#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
+#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
+
+[Integer]
+#title=Class Integer
+#shortdescr=An integer variable class
+#protocol=int
+#parent=system.html#Object:system'Object
+#parent=system.html#IntNumber:system'IntNumber
+#constructor=new,,numeric_variable;Creates an integer variable
+#method=append,numeric_value;Appends the integer value
+#method=append,&int:int;Appends the integer value
+#method=divideInto,numeric_value;Divides into the integer value
+#method=divideInto,&int:int;Divides into the integer value
+#method=multiplyBy,numeric_value;Multiplies by the integer value
+#method=multiplyBy,&int:int;Multiplies by the integer value
+#method=number,,int;Returns the integer value
+#method=reduce,numeric_value;Reduces the integer value
+#method=reduce,&int:int;Reduces the integer value
+#method=write,numeric_value;Copies the integer value
+#method=write,&int:int;Copies the integer value
+
+[BreakException]
+#title=Class BreakException
+#shortdescr=A break exception
+#parent=system.html#Object:system'Object
+#field=theResult
+#method=stop,,;Returns the result
+
+[emptyLiteralValue]
+#title=Symbol emptyLiteralValue
+#shortdescr=An empty literal value
+#protocol=literal
+#method=add,object,literal;Returns the parameter literal value
+#method=add,&literal:literal,literal;Returns the parameter
+#method=equal,&literal:literal,bool;Compares with literal value
+#method=length,,int;Returns 0
+#method=less,&literal:literal,bool;Compares with literal value
+#method=literal,,literal;Returns empty literal value
+#method=notless,&literal:literal,bool;Compares with literal value
+
+[String]
+#title=Class String
+#shortdescr=A wide literal variable
+#protocol=enumerable
+#protocol=literal
+#protocol=value
+#protocol=variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#field=theValue;The literal value
+#constructor=new,,variable;Creates an empty literal variable 
+#constructor=new,value,variable;Creates a literal variable with specified value
+#method=append,value,;Appends the value
+#method=clear,,;Clears the variable value
+#method=delete,&index:int&length:int,;Deletes a sub string
+#method=insert,&index:int&literal:literal,;Inserts a sub string
+#method=write,value,;Writes the value
+#method=write,&literal:literal,;Writes the value
+
+[Variant]
+#title=Class Variant
+#shortdescr=A basic type variant class
+#protocol=enumerable
+#protocol=variant
+#protocol=variable
+#parent=system.html#Object:system'Object
+#parent=system.html#String:system'String
+#field=theValue;The literal value
+#method=int,,int;Tries to convert the value to the integer number
+#method=long,,long;Tries to convert the value to the integer number
+#method=real,,real;Tries to convert the value to the real number
+
+[Exception]
+#title=Class Exception
+#shortdescr=A basic exception
+#parent=system.html#Object:system'Object
+#field=theMessage
+#constructor=new,literal;Creates the exception with the provided message
+#method=literal,,literal;Returns the message
+#method=Messages,,literal;Returns the message
+
+[FormatException]
+#title=Class FormatException
+#shortdescr=A conversion exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#method=onFormatError,function;Executes the exception handling code
+
+[InvalidArgumentException]
+#title=Class InvalidArgumentException
+#shortdescr=An out of range argument exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#method=onInvalidArgumentError,function;Executes the exception handling code
 
 [LongNumber]
 #title=Class LongNumber
@@ -287,37 +358,41 @@ Wrap
 #method=subtract,&real:real,real;Returns the difference
 #method=real,,real;Returns itself
 
-[CharValue]
-#title=Class CharValue
-#shortdescr=A character symbol
-#protocol=value                                                                             
+[BaseValue]
+#title=Class BaseValue
+#shortdescr=A base value class
+#protocol=value
+#parent=system.html#Object:system'Object
+#method=equal,value,bool;Compares the values
+#method=greater,value,bool;Compares the values
+#method=less,value,bool;Compares the values
+#method=notequal,value,bool;Compares the values
+#method=notgreater,value,bool;Compares the values
+#method=notless,value,bool;Compares the values
+
+[BaseNumber]
+#title=Class BaseNumber
+#shortdescr=A base numeric value class
+#protocol=numeric_value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
-#constructor=new,,value;Creates the object with zero value
-#constructor=new,object,value;Creates the object with specified value
-#constructor=new,int,value;Creates the object with specified numeric value
-#constructor=new,&char:value,value;Creates the object with specified value
-#method=char,,value;Returns itself
-#method=equal,&int:int,bool;Compares the value with numeric value
-#method=equal,&char:value,bool;Compares the value with value
-#method=int,,int;Returns the numeric value
-#method=less,&int:int,bool;Compares the value with numeric value
-#method=less,&char:value,bool;Compares the value with value
-#method=literal,,literal;Returns the literal value
-#method=notless,&int:int,bool;Compares the value with numeric value
-#method=notless,&widechar:value,bool;Compares the value with value
+#method=add,numeric_value,numeric_value;Adds the values
+#method=divide,numeric_value,numeric_value;Divuides the values
+#method=multiply,numeric_value,numeric_value;Divides the values
+#method=subtract,numeric_value,numeric_value;Subtracts the values
 
-[emptyLiteralValue]
-#title=Symbol emptyLiteralValue
-#shortdescr=An empty literal value
-#protocol=literal
-#method=add,object,literal;Returns the parameter literal value
-#method=add,&literal:literal,literal;Returns the parameter
-#method=equal,&literal:literal,bool;Compares with literal value
-#method=length,,int;Returns 0
-#method=less,&literal:literal,bool;Compares with literal value
-#method=literal,,literal;Returns empty literal value
-#method=notless,&literal:literal,bool;Compares with literal value
+[IntBaseNumber]
+#title=Class IntBaseNumber
+#shortdescr=A base integer value class
+#protocol=numeric_value
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#method=allMask,numeric_value,bool;Returns true if all the mask bits are set
+#method=and,numeric_value,numeric_value;Execute bitwise AND operation
+#method=anyMask,numeric_value,bool;Returns true if any of the mask bits are set
+#method=or,numeric_value,numeric_value;Execute bitwise OR operation
+#method=xor,numeric_value,numeric_value;Execute bitwise XOR operation
 
 [LiteralIterator]
 #title=Class LiteralIterator
@@ -334,181 +409,6 @@ Wrap
 #method=next,,bool;Goes to the next character and returns true if the index is not out of range
 #method=set,&index:int;Sets the index by specified value
 #method=reset,,;Resets the enumerator
-
-[LiteralValue]
-#title=Class LiteralValue
-#shortdescr=A wide literal value
-#protocol=enumerable
-#protocol=literal
-#protocol=value
-#parent=system.html#Object:system'Object
-#parent=system.html#BaseValue:system'BaseValue
-#constructor=new,&length:int,literal;Creates the literal string with specified length
-#constructor=new,&length:int&literal:literal,literal;Creates the literal string with specified length and copies the parameter value
-#constructor=new,&length:int&char:value,literal;Creates the literal string with specified length fills with spciefied character value
-#constructor=new,&literal:literal,literal;Creates the literal string copy
-#method=add,&char:value,literal;Concatinates the values
-#method=add,object,literal;Concatinates the values
-#method=add,&literal:literal,literal;Concatinates the values
-#method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
-#method=enumerator,,enumerator;Returns the object enumerator
-#method=equal,&literal:literal,bool;Compares the values
-#method=equal,&char:value,bool;Compares the values
-#method=getAt,object,value;Returns the character with specified index
-#method=getAt,&index:int&out'short:short;Copies the character value to the stack allocated variable
-#method=indexOf,&index:int&literal:literal,int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
-#method=indexOf,&index:int&literal:literal&out'int:int;Copies the index of the first occurence of the specified substring to the stack allocated variable.<br/>If the substring is not found. returns -1
-#method=indexOf,&index:int&char:value,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
-#method=insert,&index:int&literal:literal,literal;Inserts the substring into and returns the new one
-#method=length,,int;Returns the string length
-#method=literal,,literal;Returns itself
-#method=less,&literal:literal,bool;Compares the values
-#method=less,&char:value,bool;Compares the values
-#method=notless,&literal:literal,bool;Compares the values
-#method=Substring,&index:int&length:int,literal;Returns the substring
-
-[Integer]
-#title=Class Integer
-#shortdescr=An integer variable class
-#protocol=int
-#protocol=numeric_variable
-#parent=system.html#Object:system'Object
-#parent=system.html#BaseValue:system'BaseValue
-#parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
-#parent=system.html#IntNumber:system'IntNumber
-#constructor=new,numeric_value,numeric_variable;Creates an integer variable with specified value
-#method=append,numeric_value;Appends the integer value
-#method=append,&int:int;Appends the integer value
-#method=divideInto,numeric_value;Divides into the integer value
-#method=divideInto,&int:int;Divides into the integer value
-#method=multiplyBy,numeric_value;Multiplies by the integer value
-#method=multiplyBy,&int:int;Multiplies by the integer value
-#method=number,,int;Returns the integer value
-#method=reduce,numeric_value;Reduces the integer value
-#method=reduce,&int:int;Reduces the integer value
-#method=write,numeric_value;Copies the integer value
-#method=write,&int:int;Copies the integer value
-
-[Long]
-#title=Class Long
-#shortdescr=A long integer variable class
-#protocol=long
-#protocol=numeric_variable
-#parent=system.html#Object:system'Object
-#parent=system.html#BaseValue:system'BaseValue
-#parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
-#parent=system.html#LongNumber:system'LongNumber
-#method=append,numeric_value;Appends the integer value
-#method=append,&int:int;Appends the integer value
-#method=append,&long:long;Appends the integer value
-#method=divideInto,numeric_value;Divides into the integer value
-#method=divideInto,&int:int;Divides into the integer value
-#method=divideInto,&long:long;Divides into the integer value
-#method=multiplyBy,numeric_value;Multiplies by the integer value
-#method=multiplyBy,&int:int;Multiplies by the integer value
-#method=multiplyBy,&long:long;Multiplies by the integer value
-#method=number,,long;Returns the integer value
-#method=reduce,numeric_value;Reduces the integer value
-#method=reduce,&int:int;Reduces the integer value
-#method=reduce,&long:long;Reduces the integer value
-#method=write,numeric_value;Copies the integer value
-#method=write,&long:long;Copies the integer value
-
-[Real]
-#title=Class Real
-#shortdescr=A real number variable class
-#protocol=real
-#protocol=numeric_variable
-#parent=system.html#Object:system'Object
-#parent=system.html#BaseValue:system'BaseValue
-#parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
-#parent=system.html#RealNumber:system'RealNumber
-#constructor=new,numeric_value,numeric_variable;Creates a real number variable with specified value
-#method=append,numeric_value;Appends the numeric value
-#method=append,&int:int;Appends the integer value
-#method=append,&real:real;Appends the real number value
-#method=divideInto,numeric_value;Divides into the numeric value
-#method=divideInto,&int:int;Divides into the integer value
-#method=divideInto,&real:real;Divides into the numeric real value
-#method=multiplyBy,numeric_value;Multiplies by the numeric value
-#method=multiplyBy,&int:int;Multiplies by the integer value
-#method=multiplyBy,&real:real;Multiplies by the real numeric value
-#method=number,,real;Returns the real number value
-#method=reduce,numeric_value;Reduces the numeric value
-#method=reduce,&int:int;Reduces the integer value
-#method=reduce,&real:real;Reduces by the real numeric value
-#method=write,numeric_value;Copies the numeric value
-#method=write,&real:real;Copies the real number value
-#method=write,&int:int;Copies the integer value
-
-[String]
-#title=Class String
-#shortdescr=A wide literal variable
-#protocol=enumerable
-#protocol=literal
-#protocol=value
-#protocol=variable
-#parent=system.html#Object:system'Object
-#parent=system.html#BaseValue:system'BaseValue
-#field=theValue;The literal value
-#constructor=new,,variable;Creates an empty literal variable 
-#constructor=new,value,variable;Creates a literal variable with specified value
-#method=append,value,;Appends the value
-#method=clear,,;Clears the variable value
-#method=delete,&index:int&length:int,;Deletes a sub string
-#method=insert,&index:int&literal:literal,;Inserts a sub string
-#method=write,value,;Writes the value
-#method=write,&literal:literal,;Writes the value
-
-[Boolean]
-#title=Class Booleab
-#shortdescr=A boolean variable
-#protocol=value
-#protocol=variable
-#constructor=new,value,variable;Creates a boolean variable with specified value
-#method=append,value,bool;Executes logical OR operation
-#method=equal,value,bool;Compares the value
-#method=invert,,;Inverts the boolean value
-#method=value,,bool;Returns the boolean value
-#method=write,value,;Writes the value
-
-[ArrayIterator]
-#title=Class ArrayIterator
-#shortdescr=An array iterator
-#parent=system.html#Object:system'Object
-#protocol=enumerator
-#field=theArray;The array
-#field=theCount;The array length
-#field=theIndex;The current index
-#constructor=new,&array:array,enumerator;Returns the parameter iterator
-#method=append,&index:int;Increaments the index by specified value
-#method=available,,bool;Returns true if the index is inside the range
-#method=get,,value;Returns the current array element
-#method=index,,int;Returns the index value.
-#method=next,,bool;Goes to the next character and returns true if the index is not out of range
-#method=reset,,;Resets the enumerator
-#method=set,&index:int;Sets the index by specified value
-#method=set,value;Sets the current array element
-
-[Array]
-#title=Class Array
-#shortdescr=An array
-#protocol=enumerable
-#protocol=array
-#parent=system.html#Object:system'Object
-#constructor=new,&length:int,array;Creates the array with specified length
-#method=add,object,array;Concatinates the arrays
-#method=add,&array:array,array;Concatinates the arrays
-#method=array,,array;Returns itself
-#method=enumerator,,enumerator;Returns the object enumerator
-#method=getAt,object,object;Returns the array element at the specified position
-#method=getAt,&index:int,object;Returns the array element at the specified position
-#method=length,,int;Returns the array length
-#method=setAt,object:object;Sets the array element at the specified position
-#method=setAt,&index:int&object:object;Sets the array element at the specified position
 
 [intConvertor]
 #title=Symbol intConvertor
@@ -540,22 +440,71 @@ Wrap
 #method=convert,&object:object,literal;Converts the parameter to the literal value
 #method=convert,&real:real,literal;Converts the parameter to the literal value
 
-[Variant]
-#title=Class Variant
-#shortdescr=A variable literal       
-#protocol=enumerable
-#protocol=literal
-#protocol=int
-#protocol=long
+[Real]
+#title=Class Real
+#shortdescr=A real number variable class
 #protocol=real
-#protocol=variable
+#protocol=numeric_variable
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
-#parent=system.html#String:system'String
-#field=theValue;The literal value
-#method=int,,int;Tries to convert the value to the integer number
-#method=long,,long;Tries to convert the value to the integer number
-#method=real,,real;Tries to convert the value to the real number
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#RealNumber:system'RealNumber
+#constructor=new,numeric_value,numeric_variable;Creates a real number variable with specified value
+#method=append,numeric_value;Appends the numeric value
+#method=append,&int:int;Appends the integer value
+#method=append,&real:real;Appends the real number value
+#method=divideInto,numeric_value;Divides into the numeric value
+#method=divideInto,&int:int;Divides into the integer value
+#method=divideInto,&real:real;Divides into the numeric real value
+#method=multiplyBy,numeric_value;Multiplies by the numeric value
+#method=multiplyBy,&int:int;Multiplies by the integer value
+#method=multiplyBy,&real:real;Multiplies by the real numeric value
+#method=number,,real;Returns the real number value
+#method=reduce,numeric_value;Reduces the numeric value
+#method=reduce,&int:int;Reduces the integer value
+#method=reduce,&real:real;Reduces by the real numeric value
+#method=write,numeric_value;Copies the numeric value
+#method=write,&real:real;Copies the real number value
+#method=write,&int:int;Copies the integer value
+
+[Long]
+#title=Class Long
+#shortdescr=A long integer variable class
+#protocol=long
+#protocol=numeric_variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#LongNumber:system'LongNumber
+#method=append,numeric_value;Appends the integer value
+#method=append,&int:int;Appends the integer value
+#method=append,&long:long;Appends the integer value
+#method=divideInto,numeric_value;Divides into the integer value
+#method=divideInto,&int:int;Divides into the integer value
+#method=divideInto,&long:long;Divides into the integer value
+#method=multiplyBy,numeric_value;Multiplies by the integer value
+#method=multiplyBy,&int:int;Multiplies by the integer value
+#method=multiplyBy,&long:long;Multiplies by the integer value
+#method=number,,long;Returns the integer value
+#method=reduce,numeric_value;Reduces the integer value
+#method=reduce,&int:int;Reduces the integer value
+#method=reduce,&long:long;Reduces the integer value
+#method=write,numeric_value;Copies the integer value
+#method=write,&long:long;Copies the integer value
+
+[Boolean]
+#title=Class Booleab
+#shortdescr=A boolean variable
+#protocol=value
+#protocol=variable
+#constructor=new,value,variable;Creates a boolean variable with specified value
+#method=append,value,bool;Executes logical OR operation
+#method=equal,value,bool;Compares the value
+#method=invert,,;Inverts the boolean value
+#method=value,,bool;Returns the boolean value
+#method=write,value,;Writes the value
 
 [Variable]
 #title=Class Variable
@@ -570,23 +519,10 @@ Wrap
 #method=reduce,numeric_value;Subtructs the value
 #method=write,numeric_value;Assigns the variable
 
-[mathOp]
-#title=Class mathOp
-#shortdescr=Mathematical operations
+[OutOfRangeException]
+#title=Class OutOfRangeException
+#shortdescr=An out of range exception
 #parent=system.html#Object:system'Object
-#method=Abs,,real;Returns the absolute value
-#method=Exp,,real;Returns e raised to the specified power.                 
-#method=Frac,,real;Returns the fraction part of the number.
-#method=Int,,real;Returns the integer part of the number
-#method=Ln,,real;Returns the natural (base e) logarithm of a specified number.
-#method=mod,int,int;Returns the remainder
-#method=Rounded,,real;Rounds the real number to the nearest integer value.
-
-[intOp]
-#title=Class intOp
-#shortdescr=an Integer operations
-#parent=system.html#Object:system'Object
-#method=HiByte,,int;Returns the high byte
-#method=HiWord,,int;Returns the high word
-#method=LoByte,,int;Returns the low byte
-#method=LoWord,,int;Returns the low word
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#method=onOutOfRangeError,function;Executes the exception handling code

@@ -27,213 +27,137 @@ ELENA byte codes (or ecodes)
    l   - long
    rl  - real
    ws  - wideliteral
-   
+
+ 
  stack commands:
  ---------------
- reserve i                  - sp += n; stack is reserved and cleared with zeros
- 
- pusha                      - acc => [sp+1] ; sp++                  
- 
- pushb                      - self => [sp+1] ; sp++
- 
- pushf i                    - fp+i => [sp+1] ; sp++
- 
- xpushf i                   - fp+i => [sp+1] ; sp++
-                              ; frame header is not taken into account
-    
- pushai i                   - [acc::i] => [sp+1] ; sp++
-
- pushbi i                   - [self::i] => [sp+1] ; sp++ ;
- 
- pushfi i                   - [fp+i] => [sp+1] ; sp++
- 
- pushsi i                   - [sp+i] => [sp+1] ; sp++
-
- pushn n                    - n  => [sp+1] ; sp++
- 
- pushr r                    - r  => [sp+1] ; sp++
-
- pushm                      - mcc => [sp+1] ; sp++;
-
  pop                        - sp--; 
-                              should not affect the command result;
-                              should not affect the message prefix;
-                              x86: should not change EAX
-
- popi n                     - sp-=i; 
                               should not affect the command result;
                               should not affect the message prefix;
                               x86: should not change EAX
  
  popa                       - acc <= [sp] ; sp--
  
- popb                       - restore the last self variable;
-
- popfi i                    - [fp+i] <= [sp] ; sp--
- 
- popsi i                    - [sp+i] <= [sp] ; sp--
-
- popbi i                    - [self::i] <= [sp] ; sp-- ;
-                               use GC reference bit masks
-
  popai i                    - [acc::i] <= [sp] ; sp--;
                               use GC reference bit masks
 
- xpopai                     - [acc:i] <= [sp] ; sp-- ;
-                              direct operation      
+ popb                       - restore the last self variable;
+ 
+ popbi i                    - [self::i] <= [sp] ; sp-- ;
+                               use GC reference bit masks
+ 
+ popfi i                    - [fp+i] <= [sp] ; sp--
+
+ popi n                     - sp-=i; 
+                              should not affect the command result;
+                              should not affect the message prefix;
+                              x86: should not change EAX
  
  popm                       - mcc <= [sp] ; sp--
+ 
+ popsi i                    - [sp+i] <= [sp] ; sp--
 
+ pusha                      - acc => [sp+1] ; sp++                  
+    
+ pushai i                   - [acc::i] => [sp+1] ; sp++
+ 
+ pushb                      - self => [sp+1] ; sp++
+ 
+ pushbi i                   - [self::i] => [sp+1] ; sp++ ;
+ 
+ pushf i                    - fp+i => [sp+1] ; sp++
+ 
+ pushfi i                   - [fp+i] => [sp+1] ; sp++
+
+ pushm                      - mcc => [sp+1] ; sp++;
+ 
+ pushn n                    - n  => [sp+1] ; sp++
+ 
+ pushr r                    - r  => [sp+1] ; sp++
+ 
+ pushsi i                   - [sp+i] => [sp+1] ; sp++
+
+ reserve i                  - sp += n; stack is reserved and cleared with zeros
+ 
  swapsi   i                 - [sp+i] <=> [sp]
-
- scopyf i                   - sp <= fp + i
  
-
- exception handling:
- ---------------
- hook label                 - assign a new exception handler
-                                                
- unhook                     - remove the current exception handler
-
- throw                      - raise an exception (acc contains the exception object)
-
- calling commands:
- -----------------
- bsredirect                 - search acc::VMT for the message in m;
-                              if found jumps to it; binary search is used
-                              
- bsgredirect                - foreach o in acc -> search o::VMT for the message in m;
-                              if found jumps to it; if not - goes to the next member
-                              binary search is used
-
- callr r                    - calls the procedure;
-                              acc contains the result
- 
- callextr r                 - calls the external procedure
- 
- acallvi i                  - call acc::VMT[i] method
- 
- xcallrm r, m               - calls directly the method resolved by JIT by r and m
-                              acc contains the result
-              
- scallvi i, n               - redirect to [sp+i]::VMT[n] method
- 
- evalr r                    - evaluate a reference ; if r is a symbol reference
-                              symbol code is executed ; acc contains the result
- 
- quit                       - terminates the procedure;
-                              
- quitn                      - terminates the procedure;
-                              clear the stack parameters
-                                                            
- mquit                      - terminates the procedure ; clear the stack parameters, based
-                              on mcc value
-
-
- control commands:
- -----------------                     
- open i                     - save the last frame and open the new frame ; 
-                              init the frame header offset
-                              it should be only one command per procedure ; 
-                              may be preceded by init
-
- close                      - restore the previous frame ;
-                              should be paired with open
-                              it should be only one command per procedure ; 
-
- breakpoint                 - used for debugging
-
- exclude                    - exclude the stack content from managed space
-
- include                    - restore managed stack
-                              (should be paired with exclude)
-
- restore n                  - remove the excluded stack
-
-
+ xpopai                     - [acc:i] <= [sp] ; sp-- ;
+                              direct operation       
 
  register commands:
- ------------------ 
- acopyr r                   - r => acc
- 
- bcopya                     - acc => self
-
+ ------------------            
  acopyb                     - self => acc
  
  acopyf i                   - fp+i => acc
                               does not affect m register (EDX)           
  
+ acopyr r                   - r => acc
+
  acopys i                   - sp+i => acc
                               does not affect m register (EDX)           
  
- axcopyf i                  - fp+i => acc ;
-                              does not affect m register (EDX) ;
-                              frame header is not taken into account
+ aloadai i                  - [acc::i] => acc
+ 
+ aloadbi i                  - [self::i] => acc
 
  aloadd                     - [acc::index] => acc
           
- aloadai i                  - [acc::i] => acc
-          
- aloadsi i                  - [sp+i] => acc;
-                               does not affect m register (EDX)
- 
  aloadfi i                  - [fp+i] => acc
-
- aloadbi i                  - [self::i] => acc
 
  aloadr r                   - [r] => acc
 
- asaver r                   - [r] <= acc
-
+ aloadsi i                  - [sp+i] => acc;
+                               does not affect m register (EDX)
+ 
  asavebi i                  - [self::i] <= acc;
                                use GC reference bit masks
-
- asavesi i                  - [sp+i] <= acc
  
  asavefi i                  - [fp+i] <= acc 
  
+ asaver r                   - [r] <= acc
+ 
+ asavesi i                  - [sp+i] <= acc
+
  aswapsi i                  - [sp+i] <=> acc
  
+ bcopya                     - acc => self
+ 
+ daddai i                   - index += [acc:i]
+ 
+ daddsi n                   - d << d + [sp:i]
+
  dcopy i                    - i => index
  
- dxcopya                    - acc => index
- 
- dloadai i                  - [acc:i] => index
-
- dloadsi i                  - [sp:i] => index
-
- dloadfi i                  - [fp:i] => index
-
- daddai i                   - index += [acc:i]
-
- dsubai i                   - index -= [acc:i]
-
- dsaveai i                  - [acc:i] <= index ;
-                              direct operation      
- 
- dsavesi i                  - [sp:i] <= index
-
- dsavefi i                  - [fp:i] <= index
-
  ddec                       - index--
 
  dinc                       - index++
  
- daddsi n                   - d << d + [sp:i]
+ dloadai i                  - [acc:i] => index
+ 
+ dloadfi i                  - [fp:i] => index
+
+ dloadsi i                  - [sp:i] => index
+ 
+ dsaveai i                  - [acc:i] <= index ;
+                              direct operation      
+ 
+ dsavefi i                  - [fp:i] <= index
+
+ dsavesi i                  - [sp:i] <= index
+
+ dsubai i                   - index -= [acc:i]
  
  dsubsi n                   - d << d - [sp:i]
- 
- mcopy                      - m => mcc
 
+ madd m                     - m + mcc => mcc
+ 
+ maddai i                   - mcc + acc:i => mcc
+
+ mcopy                      - m => mcc
+ 
  mcopysubj                  - mcc:subj => mcc
  
  mcopyverb                  - mcc:verb => mcc
-
- madd m                     - m + mcc => mcc
-
- mreset m                   - m + mcc.param_count => mcc
-
- maddai i                   - mcc + acc:i => mcc
 
  mloadai i                  - acc:i => mcc
 
@@ -241,87 +165,159 @@ ELENA byte codes (or ecodes)
 
  mloadsi i                  - [sp+i] => mcc
 
+ msaveai                    - mcc => [acc:i]
+ 
  msaveparams i              - copy the message parameters;
                               [fp+i]::mcc.param => [sp+1] ; sp++;
 
 
- branching commands:
- -------------------
- jumpr address              - jumps to the address
+ msetverb m                 - m.verb + mcc.subj + m.param_count => mcc
+ 
+ mreset m                   - m + mcc.param_count => mcc
 
- jump label                 - jumps to the label
+ scopyf i                   - sp <= fp + i
+ 
+ 
+ control commands:
+ -----------------                     
+ breakpoint                 - used for debugging
 
- ajumpvi                    - redirect to acc::VMT[i] method
+ close                      - restore the previous frame ;
+                              should be paired with open
+                              it should be only one command per procedure ; 
+
+ exclude                    - exclude the stack content from managed space
+
+ include                    - restore managed stack
+                              (should be paired with exclude)
+
+ open i                     - save the last frame and open the new frame ; 
+                              init the frame header offset
+                              it should be only one command per procedure ; 
+
+ 
+ calling commands:
+ -----------------  
+ acallvi i                  - call acc::VMT[i] method
+
+ bsredirect                 - search acc::VMT for the message in m;
+                              if found jumps to it; binary search is used
+                              
+ bsgredirect                - foreach o in acc -> search o::VMT for the message in m;
+                              if found jumps to it; if not - goes to the next member
+                              binary search is used
   
+ callextr r                 - calls the external procedure
+              
+ callr r                    - calls the procedure;
+                              acc contains the result
+ 
+ evalr r                    - evaluate a reference ; if r is a symbol reference
+                              symbol code is executed ; acc contains the result
+ 
+ scallvi i, n               - redirect to [sp+i]::VMT[n] method
+ 
+ quit                       - terminates the procedure;
+                              
+ quitn                      - terminates the procedure;
+                              clear the stack parameters
+
+ xcallrm r, m               - calls directly the method resolved by JIT by r and m
+                              acc contains the result
+
+
+ branching commands:
+ ------------------- 
  aelse label                - jumps to the label if acc == 0
+
+ aelser r, label            - jumps to the label if acc != r
+
+ aelsesi i, label           - jumps to the label if acc != [sp+i]
+
+ ajumpvi i                  - redirect to acc::VMT[i] method
 
  athen label                - jumps to the label if acc != 0
  
  athenr r, label            - jumps to the label if acc == r
  
- aelser r, label            - jumps to the label if acc != r
-
- aelsesi i, label           - jumps to the label if acc != [sp+i]
-
  athensi i, label           - jumps to the label if acc == [sp+i]
+
+ bstest labErr               - 0 < index < buf:acc.Length
+ 
+ delse label                - jumps to the label if index == 0
+ 
+ delsen n, label            - jumps to the label if index != n
+ 
+ dthen label                - jumps to the label if index != 0
+ 
+ dthenn n, label            - jumps to the label if index == n
+  
+ elseflag f, label           - jumps to the label if acc.vmt.flag & f != f
+ 
+ jumpr address              - jumps to the address
+
+ jump label                 - jumps to the label
 
  melse m, label             - jumps to the label if mcc != m
 
- mthen m, label             - jumps to the label if mcc == m
-
- melseverb m, label         - jumps to the label if mcc.verb != m
-
- mthenverb m, label         - jumps to the label if mcc.verb == m
-
- delse label                - jumps to the label if index == 0
-
- dthen label                - jumps to the label if index != 0
-
- delsen n, label            - jumps to the label if index != n
- 
- dthenn n, label            - jumps to the label if index == n
- 
- next  i, label             - index++; jumps to the label if index < i
- 
  melseai i, label           - jumps to the label if mcc != acc[i]
  
+ melseverb m, label         - jumps to the label if mcc.verb != m
+ 
+ mthen m, label             - jumps to the label if mcc == m
+ 
  mthenai i, label           - jumps to the label if mcc == acc[i]
+
+ mthenverb m, label         - jumps to the label if mcc.verb == m
+ 
+ next  i, label             - index++; jumps to the label if index < i
  
  test labErr                 - if not 0 < index < acc.Length, jump to the label
  
  testflag f, label           - jumps to the label if acc.vmt.flag & f == f
  
- elseflag f, label           - jumps to the label if acc.vmt.flag & f != f
+ wstest labErr               - 0 < index < str:acc.Length
  
+
+ exception handling:
+ --------------- 
+ hook label                 - assign a new exception handler
+
+ throw                      - raise an exception (acc contains the exception object)
+
+ unhook                     - remove the current exception handler
+
  
  memory managing commands:
  -------------------------
+ box vmt                     - if acc is local box its content into the object with vmt and size index
 
  create i, vmt               - create the object with the specified
                                number of fields;
                                out: acc contains the class instance
- 
+
  createn n, vmt              - create the binary object with the 
                                specified size ; acc contains the class instance
 
- rfcreate vmt                - create the object with size=index and vmt=acc, out : acc  
-
- bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
-
  nbox vmt                    - if acc is local box its content into the object with vmt and size index
-
- box vmt                     - if acc is local box its content into the object with vmt and size index
-
+ 
  unbox                       - copy acc content into the stack where index=size
-
+ 
 
  data manipulating commands:
- -----------------
- set                         - acc => self[index] ;
-
- get                         - acc <= self[index] ;
+ -----------------  
+ axcopyr r                   - r => [acc::index]                              
+                               ; direct
  
+ get                         - acc <= self[index] ;
+
  iaxcopyr i, r               - r => [acc::i]               
+                               ; direct
+
+ iaxloadb i                  - self => [acc::i]
+                               ; direct
+                                
+ iaxloadbi i1, i2            - [self::i1] => [acc::i2]
                                ; direct
 
  iaxloadfi i1, i2            - [fp+i1] => [acc::i2]
@@ -330,22 +326,83 @@ ELENA byte codes (or ecodes)
  iaxloadsi i1, i2            - [sp+i1] => [acc::i2]
                                ; direct
 
- iaxloadbi i1, i2            - [self::i1] => [acc::i2]
-                               ; direct
+ set                         - acc => self[index] ;
 
- iaxloadb i                  - self => [acc::i]
-                               ; direct
+ 
 
- axsetr r                    - r => [acc::index]                              
-                               ; direct
-                                
+
+
+
+
+
+
+
+
+   
+ stack commands:
+ ---------------
+ xpushf i                   - fp+i => [sp+1] ; sp++
+                              ; frame header is not taken into account
+ 
+
+ exception handling:
+ ---------------
+ 
+ calling commands:
+ -----------------
+ callr r                    - calls the procedure;
+                              acc contains the result
+                                                            
+ mquit                      - terminates the procedure ; clear the stack parameters, based
+                              on mcc value
+
+ 
+ control commands:
+ -----------------                     
+ restore n                  - remove the excluded stack
+
+
+
+ register commands:
+ ------------------ 
+ acopyr r                   - r => acc
+ 
+ axcopyf i                  - fp+i => acc ;
+                              does not affect m register (EDX) ;
+                              frame header is not taken into account
+
+ dxcopya                    - acc => index
+ 
+ dxsavefi i                 - [fp:i] <= index
+                              ; frame header is not taken into account
+
+ branching commands:
+ -------------------
+ 
+ memory managing commands:
+ -------------------------
+
+ refcreate                   - create the object with size=index and vmt=acc, out : acc  
+
+ bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
+
+ wscreate                    - create the object with size=index and vmt=acc, out : acc  
+
+
+ data manipulating commands:
+ -----------------
+          
+ extension commands:
+ -----------------
  ncopy                       - int:self << int:acc
+
+ ncopyword                   - int:self << word:acc
 
  ncopystr                    - int:self << str:acc, index = radix, convert to int; out: acc=self, index = 0 if failed
  
- nsave                       - int:[sp] << int:acc
-
  nload                       - int:[sp] >> int:acc
+
+ nsave                       - int:[sp] << int:acc
 
  nequal                      - int(acc) == int([sp]) ? index=1 : index=0
 
@@ -354,6 +411,7 @@ ELENA byte codes (or ecodes)
  nnotgreater                 - int(acc) <= int([sp]) ? index=1 : index=0
  
  nadd                        - int(acc) += int([sp])                  
+
  
  nsub                        - int(acc) -= int([sp])
  
@@ -366,22 +424,22 @@ ELENA byte codes (or ecodes)
  nor                         - int(acc) || int([sp]) => [acc]
  
  nxor                        - int(acc) ^^ int([sp]) => [acc] 
- 
+
  nshift                      - acc <<= index
 
  nnot                        - ~int(acc) >> acc
-
- ninc                        - int(acc)++
  
+ ninc                        - int(acc)++
+
  lcopy                       - long:self << long:acc
 
  lcopyint                    - long:self << int:acc
  
  lcopystr                    - long:self << str:acc, index = radix, convert to long; out: acc=self, index = 0 if failed
- 
- lsave                       - long:[sp] << long:acc
 
  lload                       - long:[sp] >> long:acc
+
+ lsave                       - long:[sp] << long:acc
 
  lequal                      - long(acc) == long([sp]) ? index=1 : index=0
  
@@ -402,7 +460,7 @@ ELENA byte codes (or ecodes)
  lor                         - long(acc) || long([sp]) => [acc]
  
  lxor                        - long(acc) ^^ long([sp]) => [acc]
- 
+
  lnot                       - ~long:acc >> acc
  
  lshift                      - acc <<= index
@@ -414,10 +472,6 @@ ELENA byte codes (or ecodes)
  rcopylong                   - real:self << long:acc
  
  rcopystr                    - real:self << str:acc, convert to real; out: acc=self, index = 0 if failed
- 
- rload                       - acc << real:[sp]
- 
- rsave                       - acc >> real:[sp]
  
  requal                      - long(acc) == long([sp]) ? index=1 : index=0
  
@@ -450,34 +504,22 @@ ELENA byte codes (or ecodes)
  rdivlong                    - real(acc) /= long([sp])
  
  wsgetlen                    - str(acc).Length >> index
-
+ 
  wssetlen                    - str(acc).Length << index
 
- wssave                      - save str(acc) in the stack; out : acc - reference to saved
- 
- bssave                      - save acc=bytes in the stack, out : acc - reference to saved
-
- wsload                      - load acc content into [sp]
- 
- bsload                      - load acc content into [sp]
-
- bssetlen                    - bytes(acc).Length << index
- 
- bsreserve                   - allocate the space for acc=bytearray
-
- wsreserve                   - allocate the space for acc=widestr
-
- wscreate                    - create the object with size=index and vmt=acc, out : acc  
-
  wscopy                      - self << str:acc
-
+ 
  wscopyint                   - convert int(acc) with base=index into ws(self)
 
  wscopylong                  - convert long(acc) with base=index into ws(self)
  
  wscopyreal                  - convert real(acc) with len=index into ws(self)
-
+ 
  wscopybuf                   - self << buf(acc:[sp], index) convert utf8 to utf16
+
+ wssave                      - save str(acc) in the stack; out : acc - reference to saved
+
+ wsreserve                   - allocate the space for acc=widestr
 
  wsequal                     - str(acc) == str([sp]) ? index=1 : index=0
  
@@ -489,15 +531,25 @@ ELENA byte codes (or ecodes)
  
  wsgetat                     - str:acc[index] >> short:[sp]
  
- wstest labErr               - 0 < index < str:acc.Length
-
  wssetat                     - str:self[index] << acc
 
  wsindexofstr                - search for str=[sp] in acc starting with index, out: index or -1
 
  wscopystr                   - self << str(acc:[sp], index)
+ 
+ wsaddstr                    - self += str(acc:[sp], index)
+ 
+ wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
+ 
+ wsload                      - load acc content into [sp]
+ 
+ bsload                      - load acc content into [sp]
 
- bsetbuf                     - (self:[sp], index) << acc
+ bssave                      - save acc=bytes in the stack, out : acc - reference to saved
+
+ bsreserve                   - allocate the space for acc=bytearray 
+
+ bssetbuf                    - (self:[sp], index) << acc
  
  bsgetbuf                    - (self:[sp], index) >> acc
  
@@ -507,16 +559,18 @@ ELENA byte codes (or ecodes)
  
  bsgetword                   - self:index >> word(acc)
  
- wsaddstr                    - self += str(acc:[sp], index)
- 
- getlen                      - acc.Length >> index
-
- bstest labErr               - 0 < index < buf:acc.Length
- 
  bsindexof                   - search for byte=acc in (self:index, [sp]), out: index or -1
 
  bsindexofword               - search for byte=acc in (self:index, [sp]), out: index or -1
 
+ bseval                      - executes VM Script tape in self, acc contains the result
+ 
+ bssetlen                    - bytes(acc).Length << index
+
+ bsgetlen                    - bytes(acc).Length >> index
+
+ getlen                      - acc.Length >> index
+ 
  lrndnew                     - random number init >> long(self)
  
  lrndnext                    - long(self) : index >> acc
@@ -540,9 +594,6 @@ ELENA byte codes (or ecodes)
  rsqrt                       - self << sqrt(real:acc)
  
  rpi                         - self << pi
- 
- wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
                                                                                                       
- rfgetlenz                   - params(acc).length >> index
-
- bseval                      - executes VM Script tape in self, acc contains the result
+ refgetlenz                  - params(acc).length >> index
+ 

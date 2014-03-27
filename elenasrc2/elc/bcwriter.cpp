@@ -27,15 +27,18 @@ void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 
 // --- ByteCodeWriter ---
 
-void ByteCodeWriter :: declareModule(_Module* debugModule, const wchar16_t* path)
+ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, const wchar16_t* path)
 {
    if (debugModule != NULL) {
       MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
 
-      _sourceRef = debugStringWriter.Position();
+      ref_t sourceRef = debugStringWriter.Position();
 
       debugStringWriter.writeWideLiteral(path);
+
+      return sourceRef;
    }
+   else return 0;
 }
 
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeType scope*/)
@@ -80,7 +83,7 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool with
    if (withNewFrame) {
       tape.write(bcPushB);
       tape.write(bcBCopyA);
-      tape.write(bcOpen, 1);
+      tape.write(bcOpen, 2);
    }
    tape.newLabel();     // declare exit point
 }
@@ -100,7 +103,7 @@ void ByteCodeWriter :: declareGenericAction(CommandTape& tape, ref_t genericMess
    tape.write(bcMElse, baFirstLabel, message);
    tape.write(bcPushB);
    tape.write(bcBCopyA);
-   tape.write(bcOpen, 1);
+   tape.write(bcOpen, 2);
 }
 
 void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
@@ -169,11 +172,11 @@ void ByteCodeWriter :: declareVariable(CommandTape& tape, ref_t nilReference)
    tape.write(bcPushR, nilReference | mskConstantRef);
 }
 
-void ByteCodeWriter :: declareVariable(CommandTape& tape)
-{
-   // pushn 0
-   tape.write(bcPushN, 0);
-}
+//void ByteCodeWriter :: declareVariable(CommandTape& tape)
+//{
+//   // pushn 0
+//   tape.write(bcPushN, 0);
+//}
 
 void ByteCodeWriter :: declarePrimitiveVariable(CommandTape& tape, int value)
 {
@@ -293,10 +296,10 @@ void ByteCodeWriter :: newFrame(CommandTape& tape)
 {
    //   pushb
    //   bcopya
-   //   open 1
+   //   open 2
    tape.write(bcPushB);
    tape.write(bcBCopyA);
-   tape.write(bcOpen, 1);
+   tape.write(bcOpen, 2);
 }
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
@@ -312,7 +315,7 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
 
    //   dcopy 0                       |   { iaxcopyr i, r }n
    // labNext:
-   //   axsetr r
+   //   axcopyr r
    //   next labNext fieldCount
 
    tape.write(bcCreate, fieldCount, reference | mskVMTRef);
@@ -357,7 +360,7 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
          tape.write(bcDCopy, 0);
          tape.newLabel();
          tape.setLabel(true);
-         tape.write(bcAXSetR, nilReference | mskConstantRef);
+         tape.write(bcAXCopyR, nilReference | mskConstantRef);
          tape.write(bcNext, baCurrentLabel, fieldCount);
          tape.releaseLabel();
          break;
@@ -369,7 +372,7 @@ void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference, int 
    //   aloadsi offs
    //   dloadai 0
    //   acopyr vmt
-   //   bscreate
+   //   refcreate
 
    //   delse labEnd
    // labNext:
@@ -381,14 +384,14 @@ void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference, int 
    tape.write(bcALoadSI, sizeOffset);
    tape.write(bcDLoadAI);
    tape.write(bcACopyR, reference | mskVMTRef);
-   tape.write(bcFunc, fnCreate);
+   tape.write(bcFunc, fnRefCreate);
 
    tape.newLabel();
    tape.newLabel();
    tape.write(bcDElse, baPreviousLabel);
    tape.setLabel(true);
    tape.write(bcDDec);
-   tape.write(bcAXSetR, nilReference | mskConstantRef);
+   tape.write(bcAXCopyR, nilReference | mskConstantRef);
    tape.write(bcDThen, baCurrentLabel);
    tape.releaseLabel();
    tape.setLabel();
@@ -404,7 +407,7 @@ void ByteCodeWriter :: newByteArray(CommandTape& tape, ref_t reference, int size
    tape.write(bcALoadSI, sizeOffset);
    tape.write(bcDLoadAI);
    tape.write(bcACopyR, reference | mskVMTRef);
-   tape.write(bcBSFunc, fnCreate);
+   tape.write(bcFunc, fnBSCreate);
 }
 
 void ByteCodeWriter :: newWideLiteral(CommandTape& tape, ref_t reference, int sizeOffset)
@@ -417,7 +420,7 @@ void ByteCodeWriter :: newWideLiteral(CommandTape& tape, ref_t reference, int si
    tape.write(bcALoadSI, sizeOffset);
    tape.write(bcDLoadAI);
    tape.write(bcACopyR, reference | mskVMTRef);
-   tape.write(bcWSFunc, fnCreate);
+   tape.write(bcFunc, fnWSCreate);
 }
 
 inline ref_t defineConstantMask(ObjectType type)
@@ -446,12 +449,12 @@ inline ref_t defineConstantMask(ObjectType type)
    }
 }
 
-void ByteCodeWriter :: pushObject(ByteCodeIterator bookmark, CommandTape& tape, ObjectInfo object)
-{
-   if (object.kind == okLocal) {
-      tape.insert(bookmark, ByteCommand(bcPushFI, object.reference));
-   }
-}
+//void ByteCodeWriter :: pushObject(ByteCodeIterator bookmark, CommandTape& tape, ObjectInfo object)
+//{
+//   if (object.kind == okLocal) {
+//      tape.insert(bookmark, ByteCommand(bcPushFI, object.reference));
+//   }
+//}
 
 void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
 {
@@ -470,10 +473,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
          if (object.type == otParams) {
             // pushf i
-            tape.write(bcPushF, object.reference);
+            tape.write(bcPushFrame, object.reference);
          }
-         // pushfi index
-         else tape.write(bcPushFI, object.reference);
+         // pushlocal index
+         else tape.write(bcPushFrameI, object.reference);
          break;
       case okBlockLocal:
          // pushblocki index
@@ -495,7 +498,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okVSelf:
 //      case otVNext:
          // pushfi -(param_count + 1)  ; nagative means relative to the previous stack frame
-         tape.write(bcPushFI, object.reference);
+         tape.write(bcPushFrameI, object.reference);
          break;
       case okSelf:
       case okSuper:
@@ -528,8 +531,8 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcPushM);      
          break;
       case okLocalAddress:
-         // xpushf n
-         tape.write(bcXPushF, object.reference);
+         // pushf n
+         tape.write(bcPushF, object.reference);
          break;
       case okBlockLocalAddress:
          // pushblockpi n
@@ -548,11 +551,11 @@ void ByteCodeWriter :: swapObject(CommandTape& tape, ObjectKind kind, int offset
    }
 }
 
-//void ByteCodeWriter :: copyPrimitiveValue(CommandTape& tape, int value)
-//{
-//   // acopyn
-//   tape.write(bcACopyN, value);
-//}
+////void ByteCodeWriter :: copyPrimitiveValue(CommandTape& tape, int value)
+////{
+////   // acopyn
+////   tape.write(bcACopyN, value);
+////}
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
 {
@@ -576,10 +579,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okVSelf:
          if (object.type == otParams) {
             // acopyf index
-            tape.write(bcACopyF, object.reference);
+            tape.write(bcACopyFrame, object.reference);
          }
          // aloadfi index
-         else tape.write(bcALoadFI, object.reference);
+         else tape.write(bcALoadFrameI, object.reference);
          break;
       case okRegisterField:
          // aloadai   
@@ -600,8 +603,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcALoadAI, object.extraparam);
          break;
       case okLocalAddress:
-         // axccopyf n
-         tape.write(bcAXCopyF, object.reference);
+         // acopyf n
+         tape.write(bcACopyF, object.reference);
          break;
       case okBlockLocal:
          // aloadblocki n
@@ -625,20 +628,20 @@ void ByteCodeWriter :: saveRegister(CommandTape& tape, ObjectInfo object, int fi
    switch (object.kind) {
       case okLocal:
       case okVSelf:
-         // iaxloadfi
-         tape.write(bcIAXLoadFI, object.reference, fieldOffset);
+         // ialoadfi
+         tape.write(bcIAXLoadFrameI, object.reference, fieldOffset);
          break;
       case okCurrent:
-         // aixloadsi
+         // ailoadsi
          tape.write(bcIAXLoadSI, object.reference, fieldOffset);
          break;
       case okField:
       case okOuter:
-         // aixloadbi
+         // ailoadbi
          tape.write(bcIAXLoadBI, object.reference, fieldOffset);
          break;
       case okSelf:
-         // aixloadb
+         // ailoadb
          tape.write(bcIAXLoadB, fieldOffset);
          break;
    }
@@ -647,13 +650,13 @@ void ByteCodeWriter :: saveRegister(CommandTape& tape, ObjectInfo object, int fi
 void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
-      case okIndex:
-         // dxcopya
-         tape.write(bcDXCopyA);
-         break;
+      //case okIndex:
+      //   // dxcopya
+      //   tape.write(bcDXCopyA);
+      //   break;
       case okLocal:
-         // asavefi index
-         tape.write(bcASaveFI, object.reference);
+         // asaveframei index
+         tape.write(bcASaveFrameI, object.reference);
          break;
       case okBlockLocal:
          // accsaveblocki index
@@ -664,16 +667,16 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcASaveSI, object.reference);
          break;
       case okField:
-      case okOuter:
+//      case okOuter:
          // asavebi index
          tape.write(bcASaveBI, object.reference);  
          break;
       case okLocalAddress:
          // pusha
-         // axcopyf
+         // acopyf
          // xpopai 
          tape.write(bcPushA);
-         tape.write(bcAXCopyF, object.reference);
+         tape.write(bcACopyF, object.reference);
          tape.write(bcXPopAI);
          break;
    }
@@ -714,7 +717,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
 {
    // rfgetlenz
    // box vmt
-   tape.write(bcFunc, fnGetLenZ);
+   tape.write(bcFunc, fnRefGetLenZ);
    tape.write(bcBox, vmtReference);
 }
 
@@ -727,7 +730,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    // acopys 0
    // aloadd
    tape.write(bcPushN);
-   tape.write(bcFunc, fnGetLenZ);
+   tape.write(bcFunc, fnRefGetLenZ);
    tape.write(bcUnbox);
    tape.write(bcDInc);
    tape.write(bcACopyS);
@@ -772,7 +775,7 @@ void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 {
    // popi n
    if (count == 1) {      
-      tape.write(bcPop);      
+      tape.write(bcPop);
    }
    else if (count > 1)
       tape.write(bcPopI, count);
@@ -783,6 +786,7 @@ void ByteCodeWriter :: releaseArgList(CommandTape& tape)
    // pusha
    // acopys 1
    // rfgetlenz
+   // popa
 
    // ; released
 
@@ -790,20 +794,19 @@ void ByteCodeWriter :: releaseArgList(CommandTape& tape)
    // pop
    // ddec
    // dthen labNext
-   // popa
 
    tape.newLabel();
 
    tape.write(bcPushA);
    tape.write(bcACopyS, 1);
-   tape.write(bcFunc, fnGetLenZ);
+   tape.write(bcFunc, fnRefGetLenZ);
+   tape.write(bcPopA);
 
    tape.setLabel(true);
 
    tape.write(bcPop);
    tape.write(bcDDec);
    tape.write(bcDThen, baCurrentLabel);
-   tape.write(bcPopA);
 
    tape.releaseLabel();
 }
@@ -814,28 +817,6 @@ void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)
    tape.write(bcMCopy, message);
 }
 
-void ByteCodeWriter :: callDispatcher(CommandTape& tape, int targetOffset, int paramCount)
-{
-   // aloadsi n
-   // acallvi 0
-
-   tape.write(bcALoadSI, targetOffset);
-   tape.write(bcACallVI);
-   tape.write(bcFreeStack, 1 + paramCount);
-}
-
-void ByteCodeWriter :: typecast(CommandTape& tape, size_t subject_it)
-{
-   // aloadsi 0
-   // mcopy get&subject
-   // acallvi 0
-
-   tape.write(bcALoadSI);
-   tape.write(bcMCopy, encodeMessage(subject_it, GET_MESSAGE_ID, 0));
-   tape.write(bcACallVI, 0);
-   tape.write(bcFreeStack, 1);
-}
-
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
 {
    // acallvi offs
@@ -844,14 +825,14 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-void ByteCodeWriter :: callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount)
-{
-   // acopyr ref
-   // acallvi 0
-   tape.write(bcACopyR, classRef | mskConstantRef);
-   tape.write(bcACallVI);
-   tape.write(bcFreeStack, 1 + paramCount);
-}
+//void ByteCodeWriter :: callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount)
+//{
+//   // acopyr ref
+//   // acallvi 0
+//   tape.write(bcACopyR, classRef | mskConstantRef);
+//   tape.write(bcACallVI);
+//   tape.write(bcFreeStack, 1 + paramCount);
+//}
 
 void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
 {
@@ -860,49 +841,23 @@ void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-void ByteCodeWriter :: callResolvedSelfMessage(CommandTape& tape, ref_t classRef, ref_t message)
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
 {
-   int paramCount = getParamCount(message);
-
-   // acopyb
-   // xcallrm ref, m
-
-   tape.write(bcACopyB);
-   tape.write(bcXCallRM, classRef | mskVMTEntryOffset, message);
-   tape.write(bcFreeStack, 1 + paramCount);
-}
-
-void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, int targetOffset)
-{
-   // aloadsi targetOffset
    // xcallrm r, m
 
-   tape.write(bcALoadSI, targetOffset);
    tape.write(bcXCallRM, reference | mskVMTEntryOffset, message);
 
    tape.write(bcFreeStack, 1 + getParamCount(message));
 }
 
-void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef)
-{
-   // acopyr ref
-   // xcallrm rref, m
-   tape.write(bcACopyR, classRef | mskConstantRef);
-   tape.write(bcXCallRM, classRef | mskVMTRef, messageRef);
-   tape.write(bcFreeStack, 1 + getParamCount(messageRef));
-}
-
-void ByteCodeWriter :: dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset, int targetOffset)
-{
-   // mcopy verb
-   // aloadsi targetOffset
-   // scallvi dispatcherOffset, 1
-
-   tape.write(bcMCopy, verb);
-   tape.write(bcALoadSI, targetOffset);
-   tape.write(bcSCallVI, dispatcherOffset, 1);
-   tape.write(bcFreeStack, 2);
-}
+//void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef)
+//{
+//   // acopyr ref
+//   // xcallrm rref, m
+//   tape.write(bcACopyR, classRef | mskConstantRef);
+//   tape.write(bcXCallRM, classRef | mskVMTRef, messageRef);
+//   tape.write(bcFreeStack, 1 + getParamCount(messageRef));
+//}
 
 void ByteCodeWriter :: dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset)
 {
@@ -949,13 +904,13 @@ void ByteCodeWriter :: resend(CommandTape& tape)
    tape.write(bcThrow);
 }
 
-void ByteCodeWriter :: redirectVerb(CommandTape& tape, ref_t message)
-{
-   // mcopy
-   // ajumpvi
-   tape.write(bcMCopy, message);
-   tape.write(bcAJumpVI);
-}
+//void ByteCodeWriter :: redirectVerb(CommandTape& tape, ref_t message)
+//{
+//   // mcopy
+//   // ajumpvi
+//   tape.write(bcMCopy, message);
+//   tape.write(bcAJumpVI);
+//}
 
 void ByteCodeWriter :: callBack(CommandTape& tape, int sign_id)
 {
@@ -980,90 +935,68 @@ void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, 
 //   tape.write(bcFreeStack, paramCount);
 //}
 
-void ByteCodeWriter :: executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code)
-{
-   if (lparam.kind == okCurrent) {
-      // nload / lload / rload / ...
-      // pop
-      executeFunction(tape, target, fnLoad);
-      tape.write(bcPop);
-   }
-
-   switch (target.type)
-   {
-      case otInt:
-      case otIntVar:
-      case otLength:
-      case otIndex:
-         tape.write(bcNFunc, code);
-         break;
-      case otLong:
-      case otLongVar:
-         tape.write(bcLFunc, code);
-         break;
-      case otReal:
-      case otRealVar:
-         tape.write(bcRFunc, code);
-         break;
-      case otLiteral:
-         tape.write(bcWSFunc, code);
-         break;
-      case otByteArray:
-         tape.write(bcBSFunc, code);
-         break;
-   }
-}
+//void ByteCodeWriter :: executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code)
+//{
+//   //if (lparam.kind == okCurrent) {
+//   //   // nload / lload / rload / ...
+//   //   // pop
+//   //   executeFunction(tape, target, fnLoad);
+//   //   tape.write(bcPop);
+//   //}
+//
+//   //switch (target.type)
+//   //{
+//   //   case otInt:
+//   //   case otIntVar:
+//   //   case otLength:
+//   //   case otIndex:
+//   //      tape.write(bcNFunc, code);
+//   //      break;
+//   //   case otLong:
+//   //   case otLongVar:
+//   //      tape.write(bcLFunc, code);
+//   //      break;
+//   //   case otReal:
+//   //   case otRealVar:
+//   //      tape.write(bcRFunc, code);
+//   //      break;
+//   //   case otLiteral:
+//   //      tape.write(bcWSFunc, code);
+//   //      break;
+//   //   case otByteArray:
+//   //      tape.write(bcBSFunc, code);
+//   //      break;
+//   //}
+//}
 
 void ByteCodeWriter :: executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code)
 {
-   switch (target.type)
-   {
-      case otInt:
-      case otIntVar:
-      case otLength:
-      case otIndex:
-         tape.write(bcNFunc, code);
-         break;
-      case otLong:
-      case otLongVar:
-         tape.write(bcLFunc, code);
-         break;
-      case otReal:
-      case otRealVar:
-         tape.write(bcRFunc, code);
-         break;
-      case otLiteral:
-         tape.write(bcWSFunc, code);
-         break;
-      case otByteArray:
-         tape.write(bcBSFunc, code);
-         break;
-   }
+   tape.write(bcFunc, code); 
 }
 
-void ByteCodeWriter :: compare(CommandTape& tape, ref_t trueRetVal, ref_t falseRetVal)
-{
-   int labEnd = tape.newLabel();
-   int labFalse = tape.newLabel();
-
-   // popa
-   // aelsesi labFalse 0
-   // acopyr true
-   // jump labEnd
-   // labFalse:
-   // acopyr false
-   // labEnd:
-   // pop
-
-   tape.write(bcPopA);
-   tape.write(bcAElseSI, baCurrentLabel, 0);
-   tape.write(bcACopyR, trueRetVal | mskConstantRef);
-   tape.write(bcJump, labEnd);
-   tape.setLabel();
-   tape.write(bcACopyR, falseRetVal | mskConstantRef);
-   tape.setLabel();
-   tape.write(bcPop);
-}
+//void ByteCodeWriter :: compare(CommandTape& tape, ref_t trueRetVal, ref_t falseRetVal)
+//{
+//   int labEnd = tape.newLabel();
+//   int labFalse = tape.newLabel();
+//
+//   // popa
+//   // aelsesi labFalse 0
+//   // acopyr true
+//   // jump labEnd
+//   // labFalse:
+//   // acopyr false
+//   // labEnd:
+//   // pop
+//
+//   tape.write(bcPopA);
+//   tape.write(bcAElseSI, baCurrentLabel, 0);
+//   tape.write(bcACopyR, trueRetVal | mskConstantRef);
+//   tape.write(bcJump, labEnd);
+//   tape.setLabel();
+//   tape.write(bcACopyR, falseRetVal | mskConstantRef);
+//   tape.setLabel();
+//   tape.write(bcPop);
+//}
 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
 {
@@ -1071,11 +1004,11 @@ void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
    tape.write(bcAElseR, baCurrentLabel, comparingRef | mskConstantRef);
 }
 
-void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ObjectInfo object)
-{
-   // aelser then-end, r
-   tape.write(bcAElseR, baCurrentLabel, object.reference | defineConstantMask(object.type));
-}
+//void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ObjectInfo object)
+//{
+//   // aelser then-end, r
+//   tape.write(bcAElseR, baCurrentLabel, object.reference | defineConstantMask(object.type));
+//}
 
 void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef)
 {
@@ -1089,11 +1022,11 @@ void ByteCodeWriter :: jumpIfNotEqualN(CommandTape& tape, int value)
    tape.write(bcDElseN, baCurrentLabel, value);
 }
 
-//void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ObjectInfo object)
-//{
-//   // thenr then-end, r
-//   tape.write(bcThenR, baCurrentLabel, object.reference | defineConstantMask(object.type));
-//}
+////void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ObjectInfo object)
+////{
+////   // thenr then-end, r
+////   tape.write(bcThenR, baCurrentLabel, object.reference | defineConstantMask(object.type));
+////}
 
 void ByteCodeWriter :: jump(CommandTape& tape, bool previousLabel)
 {
@@ -1101,15 +1034,15 @@ void ByteCodeWriter :: jump(CommandTape& tape, bool previousLabel)
    tape.write(bcJump, previousLabel ? baPreviousLabel : baCurrentLabel);
 }
 
-//void ByteCodeWriter :: setArrayItem(CommandTape& tape)
-//{
-//   // accloadacci
-//   // set
-//   // acccopyself
-//   tape.write(bcAccLoadAccI);
-//   tape.write(bcSet);
-//   tape.write(bcAccCopySelf);
-//}
+////void ByteCodeWriter :: setArrayItem(CommandTape& tape)
+////{
+////   // accloadacci
+////   // set
+////   // acccopyself
+////   tape.write(bcAccLoadAccI);
+////   tape.write(bcSet);
+////   tape.write(bcAccCopySelf);
+////}
 
 void ByteCodeWriter :: throwCurrent(CommandTape& tape)
 {
@@ -1163,21 +1096,29 @@ bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
    while (*it != blBegin || ((*it).argument != bsMethod))  {
       switch(*it) {
          case bcPushFI:
-         case bcMSaveParams:
-         case bcXPushF:
+         //case bcMSaveParams:
          case bcPushF:
          case bcPopFI:
-         case bcMLoadFI:
-         case bcDLoadFI:
-         case bcDSaveFI:
+         //case bcMLoadFI:
+         //case bcDLoadFI:
+         //case bcDSaveFI:
          case bcALoadFI:
          case bcASaveFI:
-         //case bcXAccSaveFI:
          case bcSCopyF:
          case bcACopyF:
-         case bcAXCopyF:
          case bcUnhook:
          case bcHook:
+         case bcFrameMask:
+         case bcPushFrameI:
+         case bcPushFrame:
+         case bcALoadFrameI:
+         case bcASaveFrameI:
+         case bcACopyFrame:
+         case bcPushBlockI:
+         case bcALoadBlockI:
+         case bcASaveBlockI:
+         case bcPushBlockPI:
+         case bcALoadBlockPI:
             return true;
       }
 
@@ -1185,6 +1126,24 @@ bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
    }
    return false;
 }
+
+//bool ByteCodeWriter :: checkIfBaseUsed(ByteCodeIterator it)
+//{
+//   while (*it != blBegin || ((*it).argument != bsMethod))  {
+//      switch(*it) {
+//         case bcGet:
+//         case bcSet:
+//         case bcPushBI:
+//         case bcPopBI:
+//         case bcASaveBI:
+//         case bcIAXLoadB:
+//            return true;
+//      }
+//
+//      it--;
+//   }
+//   return false;
+//}
 
 void ByteCodeWriter :: commentFrame(ByteCodeIterator it)
 {
@@ -1210,6 +1169,25 @@ void ByteCodeWriter :: commentFrame(ByteCodeIterator it)
    }
 }
 
+//void ByteCodeWriter :: commentBase(ByteCodeIterator it)
+//{
+//   // make sure the frame is not used in the code
+//   if (checkIfBaseUsed(it))
+//      return;
+//
+//   while (*it != blBegin || ((*it).argument != bsMethod))  {
+//      // comment operations with stack
+//      switch(*it) {
+//         case bcPushB:
+//         case bcPopB:
+//         case bcBCopyA:
+//            (*it).code = bcNop;
+//      }
+//
+//      it--;
+//   }
+//}
+
 void ByteCodeWriter :: nextCatch(CommandTape& tape)
 {
    //   athen labEnd
@@ -1219,7 +1197,7 @@ void ByteCodeWriter :: nextCatch(CommandTape& tape)
    tape.write(bcALoadSI);
 }
 
-void ByteCodeWriter :: endLabel(CommandTape& tape)
+void ByteCodeWriter :: setLabel(CommandTape& tape)
 {
    tape.setLabel();   
 }
@@ -1369,9 +1347,9 @@ void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* debug, ref_t source
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSelfLocal(MemoryWriter* debug, MemoryWriter* debugStrings, int level)
+void ByteCodeWriter :: writeSelfLocal(Scope& scope, int level)
 {
-   if (!debug)
+   if (!scope.debug)
       return;
 
    DebugLineInfo info;
@@ -1379,7 +1357,7 @@ void ByteCodeWriter :: writeSelfLocal(MemoryWriter* debug, MemoryWriter* debugSt
    info.symbol = dsBase;
    info.addresses.local.level = level;
 
-   debug->write((char*)&info, sizeof(DebugLineInfo));
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
 void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
@@ -1389,41 +1367,27 @@ void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeLocal(MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* localName, int level, int frameLevel)
+void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel)
 {
-   if (!debug)
-      return;
-
-   DebugLineInfo info;
-
-   if (level < 0)
-      level -= frameLevel;
-
-   info.symbol = dsLocal;
-   info.addresses.local.nameRef = debugStrings->Position();
-   info.addresses.local.level = level;
-
-
-   debugStrings->writeWideLiteral(localName);
-   debug->write((char*)&info, sizeof(DebugLineInfo));
+   writeLocal(scope, localName, level, dsLocal, frameLevel);
 }
 
-void ByteCodeWriter :: writeLocal(MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel)
+void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel)
 {
-   if (!debug)
+   if (!scope.debug)
       return;
+
+   DebugLineInfo info;
 
    if (level < 0)
       level -= frameLevel;
 
-   DebugLineInfo info;
    info.symbol = symbol;
-   info.addresses.local.nameRef = debugStrings->Position();
+   info.addresses.local.nameRef = scope.debugStrings->Position();
    info.addresses.local.level = level;
 
-   debugStrings->writeWideLiteral(localName);
-
-   debug->write((char*)&info, sizeof(DebugLineInfo));
+   scope.debugStrings->writeWideLiteral(localName);
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
 void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug)
@@ -1506,10 +1470,14 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule)
+void ByteCodeWriter :: compileSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
+
+   Scope scope;
+   scope.sourceRef = sourceRef;
+   scope.code = &codeWriter;
 
    // create debug info if debugModule available
    if (debugModule) {
@@ -1517,14 +1485,17 @@ void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Modul
       MemoryWriter debugWriter(debugModule->mapSection(DEBUG_LINEINFO_ID, false));
       MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
 
+      scope.debugStrings = &debugStringWriter;
+      scope.debug = &debugWriter;
+
       // save symbol debug line info
       writeSymbolDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef));
 
-      writeProcedure(it, &codeWriter, &debugWriter, &debugStringWriter);
+      compileProcedure(it, scope);
 
       writeDebugInfoStopper(&debugWriter);
    }
-   else writeProcedure(it, &codeWriter);
+   else compileProcedure(it, scope);
 }
 
 void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
@@ -1534,17 +1505,17 @@ void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: flush(CommandTape& tape, _Module* module, _Module* debugModule)
+void ByteCodeWriter :: compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef)
 {
    ByteCodeIterator it = tape.start();
    while (!it.Eof()) {
       if (*it == blBegin) {
          ref_t reference = (*it).additional;
          if ((*it).Argument() == bsClass) {
-            writeClass(reference, ++it, module, debugModule);
+            compileClass(reference, ++it, module, debugModule, sourceRef);
          }
-         /*else */if ((*it).Argument() == bsSymbol) {
-            writeSymbol(reference, ++it, module, debugModule);
+         else if ((*it).Argument() == bsSymbol) {
+            compileSymbol(reference, ++it, module, debugModule, sourceRef);
          }
 //         else if ((*it).Argument() == bsHandler) {
 //            writeClassHandler(reference, ++it, module, debugModule);
@@ -1557,7 +1528,7 @@ void ByteCodeWriter :: flush(CommandTape& tape, _Module* module, _Module* debugM
    }
 }
 
-void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule)
+void ByteCodeWriter :: compileClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskClassRef, false));
@@ -1579,23 +1550,31 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
 
    vmtWriter.write((void*)&info.header, sizeof(ClassHeader));  // header
 
+   Scope scope;
+   scope.sourceRef = sourceRef;
+   scope.code = &codeWriter;
+   scope.vmt = &vmtWriter;
+
    // create debug info if debugModule available
    if (debugModule) {
       MemoryWriter debugWriter(debugModule->mapSection(DEBUG_LINEINFO_ID, false));
       MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
 
+      scope.debugStrings = &debugStringWriter;
+      scope.debug = &debugWriter;
+
      // save class debug info
       writeClassDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef), info.header.flags);
       writeFieldDebugInfo(info.fields, &debugWriter, &debugStringWriter);
 
-      writeVMT(classPosition, &vmtWriter, &codeWriter, it, &debugWriter, &debugStringWriter);
+      compileVMT(classPosition, it, scope);
 
       writeDebugInfoStopper(&debugWriter);
    }
-   else writeVMT(classPosition, &vmtWriter, &codeWriter, it, NULL, NULL);
+   else compileVMT(classPosition, it, scope);
 }
 
-void ByteCodeWriter :: writeVMT(size_t classPosition, MemoryWriter* vmtWriter, MemoryWriter* codeWriter, ByteCodeIterator& it, MemoryWriter* debug, MemoryWriter* debugStrings)
+void ByteCodeWriter :: compileVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope)
 {
    while (!it.Eof() && (*it) != blEnd) {
       switch (*it)
@@ -1603,26 +1582,26 @@ void ByteCodeWriter :: writeVMT(size_t classPosition, MemoryWriter* vmtWriter, M
          case blBegin:
             // create VMT entry
             if ((*it).Argument() == bsMethod) {
-               vmtWriter->writeDWord((*it).additional);                     // Message ID
-               vmtWriter->writeDWord(codeWriter->Position());               // Method Address
+               scope.vmt->writeDWord((*it).additional);                     // Message ID
+               scope.vmt->writeDWord(scope.code->Position());               // Method Address
 
-               writeProcedure(++it, codeWriter, debug, debugStrings);
+               compileProcedure(++it, scope);
             }
             break;
       };
       it++;
    }
    // save the real section size
-   (*vmtWriter->Memory())[classPosition - 4] = vmtWriter->Position() - classPosition;
+   (*scope.vmt->Memory())[classPosition - 4] = scope.vmt->Position() - classPosition;
 }
 
-void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, MemoryWriter* debug, MemoryWriter* debugStrings)
+void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
 {
-   if (debug)
-      writeProcedureDebugInfo(debug, _sourceRef);
+   if (scope.debug)
+      writeProcedureDebugInfo(scope.debug, scope.sourceRef);
 
-   code->writeDWord(0);                                // write size place holder
-   size_t procPosition = code->Position();
+   scope.code->writeDWord(0);                                // write size place holder
+   size_t procPosition = scope.code->Position();
 
    Map<int, int> labels;
    Map<int, int> fwdJumps;
@@ -1631,32 +1610,42 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
    int level = 1;
    int stackLevel = 0;
    int frameLevel = 0;
+   bool importMode = false;
    while (!it.Eof() && level > 0) {
-      // find out if it is a push / pop command
+      if (!importMode) {
+         // convert pseudo commands
+         if (test((*it).code, bcPrefix, bcFrameMask)) {
+            if ((*it).argument < 0) {
+               (*it).argument -= frameLevel;
+            }
+            (*it).code = (ByteCode)((int)((*it).code) & ~bcFrameMask);
+         }
 
-      int hibyte = *it & 0xFFFFFFF0;
-      if (hibyte == 0) {
-         if (*it == bcPushA || *it == bcPushB || *it == bcPushM)
-            hibyte = bcReserve;
-         else if (*it == bcPop || *it == bcPopA || *it == bcPopM)
-            hibyte = bcPopI;
-      }
+         // find out if it is a push / pop command
+         int hibyte = *it & 0xFFFFFFF0;
+         if (hibyte == 0) {
+            if (*it == bcPushA || *it == bcPushB || *it == bcPushM)
+               hibyte = bcReserve;
+            else if (*it == bcPop || *it == bcPopA || *it == bcPopM)
+               hibyte = bcPopI;
+         }
 
-      // calculate stack level
-      // if it is a push command
-      if(*it == bcAllocStack) {
-         stackLevel += (*it).argument;
-      }
-      else if (hibyte == bcReserve) {
-         stackLevel += (*it == bcReserve) ? (*it).argument : 1;
-      }
-      // if it is a pop command
-      else if (hibyte == bcPopI || *it == bcFreeStack || *it == bcPopB) {
-         stackLevel -= (*it == bcPopI || *it == bcFreeStack) ? (*it).argument : 1;
+         // calculate stack level
+         // if it is a push command
+         if(*it == bcAllocStack) {
+            stackLevel += (*it).argument;
+         }
+         else if (hibyte == bcReserve) {
+            stackLevel += (*it == bcReserve) ? (*it).argument : 1;
+         }
+         // if it is a pop command
+         else if (hibyte == bcPopI || *it == bcFreeStack || *it == bcPopB) {
+            stackLevel -= (*it == bcPopI || *it == bcFreeStack) ? (*it).argument : 1;
 
-         // clear previous stack level bookmarks when they are no longer valid
-         while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
-            stackLevels.pop();
+            // clear previous stack level bookmarks when they are no longer valid
+            while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
+               stackLevels.pop();
+         }
       }
 
       // save command
@@ -1670,13 +1659,16 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
             break;
          case blBegin:
             level++;
+            // for import code, turn off stack auto tracking
+            if ((*it).argument == bsImport)
+               importMode = true;
             break;
          case blLabel:
-            fixJumps(code->Memory(), code->Position(), fwdJumps, (*it).argument);
-            labels.add((*it).argument, code->Position());
+            fixJumps(scope.code->Memory(), scope.code->Position(), fwdJumps, (*it).argument);
+            labels.add((*it).argument, scope.code->Position());
 
             // JIT compiler interprets nop command as a label mark
-            code->writeByte(bcNop);
+            scope.code->writeByte(bcNop);
 
             break;
          case blDeclare:
@@ -1686,61 +1678,64 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
             break;
          case blEnd:
             level--;
+            // for import code, turn off stack auto tracking
+            if ((*it).argument == bsImport)
+               importMode = false;
             break;
          case blStatement:
             // generate debug exception only if debug info enabled
-            if (debug)
-               writeNewStatement(debug);
+            if (scope.debug)
+               writeNewStatement(scope.debug);
 
             break;
          case bdLocal:
-            writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, frameLevel);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, frameLevel);
             break;
          case bdIntLocal:
-            writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
             break;
          case bdLongLocal:
-            writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
             break;
          case bdRealLocal:
-            writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
             break;
          case bdParamsLocal:
-            writeLocal(debug, debugStrings, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
          case bdSelf:
-            writeSelfLocal(debug, debugStrings, (*it).additional - frameLevel);
+            writeSelfLocal(scope, (*it).additional - frameLevel);
             break;
          case bcBreakpoint:
             // generate debug exception only if debug info enabled
-            if (debug) {
-               (*it).save(code);
+            if (scope.debug) {
+               (*it).save(scope.code);
 
                if(peekNext(it) == bdBreakpoint)
-                  writeBreakpoint(++it, debug);
+                  writeBreakpoint(++it, scope.debug);
             }
             break;
          case bcOpen:
             frameLevel = (*it).argument;
             stackLevel = 0;
-            (*it).save(code);
+            (*it).save(scope.code);
             break;
          case bcPushBlockI:
          case bcALoadBlockI:
          case bcASaveBlockI:
          case bcPushBlockPI:
          case bcALoadBlockPI:
-            (*it).save(code, true);
-            code->writeDWord(stackLevels.peek() + (*it).argument);
+            (*it).save(scope.code, true);
+            scope.code->writeDWord(stackLevels.peek() + (*it).argument);
             break;
          case bcSCopyF:
-            (*it).save(code, true);
+            (*it).save(scope.code, true);
             if ((*it).argument == bsBranch) {
                stackLevel = stackLevels.peek();
             }
             else stackLevel = (*it).additional;
 
-            code->writeDWord(stackLevel);
+            scope.code->writeDWord(stackLevel);
             break;
          case bcAElseR:
          case bcAThenR:
@@ -1759,38 +1754,33 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
          case bcDThen:
          case bcAElseSI:
          case bcAThenSI:
-////         case bcMccElseSI:
-////         case bcMccThenSI:
          case bcMElseAI:
          case bcMThenAI:
-////         case bcElseLocal:
          case bcTestFlag:
          case bcElseFlag:
-//         case bcMccElseAcc:
-//         case bcMccThenAcc:
          case bcJump:
          case bcHook:
          case bcNext:
-            (*it).save(code, true);
+            (*it).save(scope.code, true);
             
             if ((*it).code >= 0xE0)
-               code->writeDWord((*it).additional);
+               scope.code->writeDWord((*it).additional);
 
             // if forward jump, it should be resolved later
             if (!labels.exist((*it).argument)) {
-               fwdJumps.add((*it).argument, code->Position());
+               fwdJumps.add((*it).argument, scope.code->Position());
                // put jump offset place holder
-               code->writeDWord(0);
+               scope.code->writeDWord(0);
             }
             // if backward jump
-            else code->writeDWord(labels.get((*it).argument) - code->Position() - 4);
+            else scope.code->writeDWord(labels.get((*it).argument) - scope.code->Position() - 4);
 
             break;
          case bdBreakpoint:
          case bdBreakcoord:
             break; // bdBreakcoord & bdBreakpoint should be ingonored if they are not paired with bcBreakpoint         
          default:
-            (*it).save(code);
+            (*it).save(scope.code);
             break;
       }
       if (level == 0)
@@ -1798,56 +1788,34 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, MemoryWriter* code, 
       it++;
    }
    // save the real procedure size
-   (*code->Memory())[procPosition - 4] = code->Position() - procPosition;
+   (*scope.code->Memory())[procPosition - 4] = scope.code->Position() - procPosition;
 
    // add debug end line info
-   if (debug)
-      writeDebugInfoStopper(debug);
+   if (scope.debug)
+      writeDebugInfoStopper(scope.debug);
 }
 
-void ByteCodeWriter :: copyInt(CommandTape& tape, ObjectInfo sour, ObjectInfo target)
+void ByteCodeWriter :: copyInt(CommandTape& tape)
 {
-   //  <push target>
    //  nsave
-   //  popi 1
-
-   loadObject(tape, sour);
-   pushObject(tape, target);
-   tape.write(bcNFunc, fnSave);
-   tape.write(bcPopI, 1);
-}
-
-void ByteCodeWriter :: copyInt(CommandTape& tape, ObjectInfo target)
-{
-   //  <push>
-   //  nsave
-   //  popi 1
-
-   pushObject(tape, target);
-   tape.write(bcNFunc, fnSave);
-   tape.write(bcPopI, 1);
+   tape.write(bcFunc, fnNSave);
 }
 
 void ByteCodeWriter :: copyLong(CommandTape& tape, ObjectInfo target)
 {
-   //  <push>
    //  lsave
-   //  popi 1
-
-   pushObject(tape, target);
-   tape.write(bcLFunc, fnSave);
-   tape.write(bcPopI, 1);
+   tape.write(bcFunc, fnLSave);
 }
 
 void ByteCodeWriter :: saveStr(CommandTape& tape, bool onlyAllocate)
 {
-   tape.write(bcWSFunc, onlyAllocate ? fnReserve : fnSave);
+   tape.write(bcFunc, onlyAllocate ? fnWSReserve : fnWSSave);
 }
 
-void ByteCodeWriter :: saveDump(CommandTape& tape, bool onlyAllocate)
-{
-   tape.write(bcBSFunc, onlyAllocate ? fnReserve : fnSave);
-}
+//void ByteCodeWriter :: saveDump(CommandTape& tape, bool onlyAllocate)
+//{
+//   tape.write(bcFunc, onlyAllocate ? fnBSReserve : fnBSSave);
+//}
 
 void ByteCodeWriter :: setStrLength(CommandTape& tape, ObjectInfo target)
 {
@@ -1858,7 +1826,7 @@ void ByteCodeWriter :: setStrLength(CommandTape& tape, ObjectInfo target)
 
    loadObject(tape, target);
 
-   tape.write(bcWSFunc, fnSetLen);
+   tape.write(bcFunc, fnWSSetLen);
 }
 
 void ByteCodeWriter :: setDumpLength(CommandTape& tape, ObjectInfo target)
@@ -1870,20 +1838,19 @@ void ByteCodeWriter :: setDumpLength(CommandTape& tape, ObjectInfo target)
 
    loadObject(tape, target);
 
-   tape.write(bcBSFunc, fnSetLen);
+   tape.write(bcFunc, fnBSSetLen);
 }
 
-void ByteCodeWriter :: loadStr(CommandTape& tape, ObjectInfo source)
+void ByteCodeWriter :: loadStr(CommandTape& tape)
 {
-   loadObject(tape, source);
-   tape.write(bcWSFunc, fnLoad);
+   tape.write(bcFunc, fnWSLoad);
 }
 
-void ByteCodeWriter :: loadDump(CommandTape& tape, ObjectInfo source)
-{
-   loadObject(tape, source);
-   tape.write(bcBSFunc, fnLoad);
-}
+//void ByteCodeWriter :: loadDump(CommandTape& tape, ObjectInfo source)
+//{
+//   loadObject(tape, source);
+//   tape.write(bcFunc, fnBSLoad);
+//}
 
 void ByteCodeWriter :: loadLiteralLength(CommandTape& tape, ObjectInfo target)
 {
@@ -1891,7 +1858,7 @@ void ByteCodeWriter :: loadLiteralLength(CommandTape& tape, ObjectInfo target)
    // <load>
    // dxsaveai 0
 
-   tape.write(bcWSFunc, fnGetLen);
+   tape.write(bcFunc, fnWSGetLen);
    loadObject(tape, target);
    tape.write(bcDSaveAI);
 }
@@ -1902,7 +1869,7 @@ void ByteCodeWriter :: loadByteArrayLength(CommandTape& tape, ObjectInfo target)
    // <load>
    // dxsaveai 0
 
-   tape.write(bcBSFunc, fnGetLen);
+   tape.write(bcFunc, fnBSGetLen);
    loadObject(tape, target);
    tape.write(bcDSaveAI);
 }
@@ -1913,7 +1880,7 @@ void ByteCodeWriter :: loadParamsLength(CommandTape& tape, ObjectInfo target)
    // <load>
    // dxsaveai 0
 
-   tape.write(bcFunc, fnGetLenZ);
+   tape.write(bcFunc, fnRefGetLenZ);
    loadObject(tape, target);
    tape.write(bcDSaveAI);
 }
@@ -1932,17 +1899,17 @@ void ByteCodeWriter :: getArrayItem(CommandTape& tape)
    tape.write(bcALoadD);
 }
 
-void ByteCodeWriter :: getLiteralItem(CommandTape& tape, ObjectInfo target)
-{
-   // aswapsi 0
-   // dloadai
-   // popa
-   // push <object>
-   // wsgetat
-
-   tape.write(bcASwapSI);
-   tape.write(bcDLoadAI);
-   tape.write(bcPopA);
-   pushObject(tape, target);
-   tape.write(bcWSFunc, fnGetAt);
-}
+//void ByteCodeWriter :: getLiteralItem(CommandTape& tape, ObjectInfo target)
+//{
+//   // aswapsi 0
+//   // dloadai
+//   // popa
+//   // push <object>
+//   // wsgetat
+//
+//   tape.write(bcASwapSI);
+//   tape.write(bcDLoadAI);
+//   tape.write(bcPopA);
+//   pushObject(tape, target);
+//   tape.write(bcFunc, fnWSGetAt);
+//}+

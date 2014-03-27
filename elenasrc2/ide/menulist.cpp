@@ -21,10 +21,10 @@ MenuHistoryList :: MenuHistoryList(int maxCount, int menuBaseId, bool withSepara
    _withSeparator = withSeparator;
 }
 
-int MenuHistoryList :: getIndex(const _text_t* item)
+int MenuHistoryList :: getIndex(const tchar_t* item)
 {
    int index = 0;
-   List<_text_t*>::Iterator it = _list.start();
+   List<tchar_t*>::Iterator it = _list.start();
    while (!it.Eof()) {
       if (StringHelper::compare(item, *it)) {
          return index;
@@ -36,9 +36,9 @@ int MenuHistoryList :: getIndex(const _text_t* item)
    return -1;
 }
 
-bool MenuHistoryList :: erase(const _text_t* item)
+bool MenuHistoryList :: erase(const tchar_t* item)
 {
-   List<_text_t*>::Iterator it = _list.start();
+   List<tchar_t*>::Iterator it = _list.start();
    while (!it.Eof()) {
       if (StringHelper::compare(item, *it)) {
          _list.cut(it);
@@ -56,16 +56,16 @@ void MenuHistoryList :: eraseLast()
    _list.cut(_list.end());
 }
 
-const _text_t* MenuHistoryList :: get(int id)
+const tchar_t* MenuHistoryList :: get(int id)
 {
-   _ELENA_::List<_text_t*>::Iterator it = _list.get(id - _menuBaseId - 1);
+   _ELENA_::List<tchar_t*>::Iterator it = _list.get(id - _menuBaseId - 1);
 
    return !it.Eof() ? *it : NULL;
 }
 
-void MenuHistoryList :: add(const _text_t* item)
+void MenuHistoryList :: add(const tchar_t* item)
 {
-   _text_t* itemCopy = StringHelper::clone(item);
+   tchar_t* itemCopy = StringHelper::clone(item);
 
    erase(item);
 
@@ -111,7 +111,7 @@ void MenuHistoryList :: refresh()
 
    Path caption;
    int index = 1;
-   List<_text_t*>::Iterator it = _list.start();
+   List<tchar_t*>::Iterator it = _list.start();
    while (!it.Eof()) {
       caption.clear();
 

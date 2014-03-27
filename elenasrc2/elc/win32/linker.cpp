@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Win32
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -81,38 +81,38 @@ ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
 
 // --- Linker ---
 
-void Linker :: mapImage(Image& image)
+void Linker :: mapImage(ImageInfo& info)
 {
-   _map.base = _project->IntSetting(opImageBase, IMAGE_BASE);
+   info.map.base = info.project->IntSetting(opImageBase, IMAGE_BASE);
 
-   int alignment = _project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
 
-   _map.code = 0x1000;               // code section should always be first
-   _map.rdata = align(_map.code + getSize(image.getTextSection()), alignment);
-   _map.bss = align(_map.rdata + getSize(image.getRDataSection()), alignment);
-   _map.stat = align(_map.bss + getSize(image.getBSSSection()), alignment);
-   _map.tls = align(_map.stat + getSize(image.getStatSection()), alignment);
-   _map.import = align(_map.tls + getSize(image.getTLSSection()), alignment);
+   info.map.code = 0x1000;               // code section should always be first
+   info.map.rdata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
+   info.map.bss = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+   info.map.stat = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
+   info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
+   info.map.import = align(info.map.tls + getSize(info.image->getTLSSection()), alignment);
 
-   _imageSize = align(_map.import + getSize(image.getImportSection()), alignment);
+   info.imageSize = align(info.map.import + getSize(info.image->getImportSection()), alignment);
 }
 
-int Linker :: fillImportTable(Image& image)
+int Linker :: fillImportTable(ImageInfo& info)
 {
    int count = 0;
 
-   ReferenceMap::Iterator it = image.getExternalIt();
+   ReferenceMap::Iterator it = info.image->getExternalIt();
    while (!it.Eof()) {
       String<wchar_t, MAX_PATH> external(it.key());
 
       const wchar16_t* function = external + external.findLast('.') + 1;
       Path dll(external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
 
-      ReferenceMap* functions = _importTable.get(dll);
+      ReferenceMap* functions = info.importTable.get(dll);
       if (functions==NULL) {
          functions = new ReferenceMap(0);
 
-         _importTable.add(dll, functions);
+         info.importTable.add(dll, functions);
       }
       functions->add(function, *it);
 
@@ -122,37 +122,35 @@ int Linker :: fillImportTable(Image& image)
    return count;
 }
 
-void Linker :: createImportTable(Image& image)
+void Linker :: createImportTable(ImageInfo& info)
 {
-   ConstantIdentifier dllExt("dll");
-
-   size_t count = fillImportTable(image);
-   Section* import = image.getImportSection();
+   size_t count = fillImportTable(info);
+   Section* import = info.image->getImportSection();
 
    MemoryWriter writer(import);
 
    // reference to the import section
    ref_t importRef = (count + 1) | mskImportRef;
-   _map.importMapping.add(importRef, 0);
+   info.map.importMapping.add(importRef, 0);
 
    MemoryWriter tableWriter(import);
    writer.writeBytes(0, (count + 1) * 20);               // fill import table
    MemoryWriter fwdWriter(import);
-   writer.writeBytes(0, (_importTable.Count()+count)*4);  // fill forward table
+   writer.writeBytes(0, (info.importTable.Count()+count)*4);  // fill forward table
    MemoryWriter lstWriter(import);
-   writer.writeBytes(0, (_importTable.Count()+count)*4);  // fill import list
+   writer.writeBytes(0, (info.importTable.Count()+count)*4);  // fill import list
 
-   ImportTable::Iterator dll = _importTable.start();
+   ImportTable::Iterator dll = info.importTable.start();
    while (!dll.Eof()) {
       tableWriter.writeRef(importRef, lstWriter.Position());              // OriginalFirstThunk
       tableWriter.writeDWord((int)time(NULL));                            // TimeDateStamp
       tableWriter.writeDWord(-1);                                         // ForwarderChain
       tableWriter.writeRef(importRef, import->Length());                  // Name
       const wchar16_t* dllname = dll.key();
-      if (!Path::checkExtension(dllname, dllExt)) {
+      if (!Path::checkExtension(dllname, _T("dll"))) {
          writer.writeAsciiLiteral(dllname, getlength(dllname));
          writer.writeChar('.');
-         writer.writeAsciiLiteral(dllExt);
+         writer.writeAsciiLiteral(_T("dll"));
       }
       else writer.writeAsciiLiteral(dllname);
       tableWriter.writeRef(importRef, fwdWriter.Position());              // ForwarderChain
@@ -160,7 +158,7 @@ void Linker :: createImportTable(Image& image)
       // fill OriginalFirstThunk & ForwarderChain
       ReferenceMap::Iterator fun = (*dll)->start();
       while (!fun.Eof()) {
-         _map.importMapping.add(*fun, fwdWriter.Position());
+         info.map.importMapping.add(*fun, fwdWriter.Position());
 
          fwdWriter.writeRef(importRef, import->Length());
          lstWriter.writeRef(importRef, import->Length());
@@ -177,75 +175,75 @@ void Linker :: createImportTable(Image& image)
    }
 }
 
-void Linker :: fixImage(Image& image)
+void Linker :: fixImage(ImageInfo& info)
 {
-   Section* text = image.getTextSection();
-   Section* rdata = image.getRDataSection();
-   Section* bss = image.getBSSSection();
-   Section* stat = image.getStatSection();
-   Section* tls = image.getTLSSection();
-   Section* import = image.getImportSection();
+   Section* text = info.image->getTextSection();
+   Section* rdata = info.image->getRDataSection();
+   Section* bss = info.image->getBSSSection();
+   Section* stat = info.image->getStatSection();
+   Section* tls = info.image->getTLSSection();
+   Section* import = info.image->getImportSection();
 
-  // fix up text section
-   text->fixupReferences(&_map, reallocate);
+  // fix up text reallocate
+   text->fixupReferences(&info.map, reallocate);
 
   // fix up rdata section
-   rdata->fixupReferences(&_map, reallocate);
+   rdata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
-   bss->fixupReferences(&_map, reallocate);
+   bss->fixupReferences(&info.map, reallocate);
 
   // fix up stat section
-   stat->fixupReferences(&_map, reallocate);
+   stat->fixupReferences(&info.map, reallocate);
 
   // fix up tls section
-   tls->fixupReferences(&_map, reallocate);
+   tls->fixupReferences(&info.map, reallocate);
 
   // fix up import section
-   import->fixupReferences(&_map, reallocateImport);
+   import->fixupReferences(&info.map, reallocateImport);
 
   // fix up debug info if enabled
-   if (_withDebugInfo) {
-      Section* debug = image.getDebugSection();
+   if (info.withDebugInfo) {
+      Section* debug = info.image->getDebugSection();
 
-      debug->fixupReferences(&_map, reallocate);
+      debug->fixupReferences(&info.map, reallocate);
    }
 }
 
-int Linker :: countSections(Image& image)
+int Linker :: countSections(Image* image)
 {
    int count = 0;
 
-   if (getSize(image.getTextSection()))
+   if (getSize(image->getTextSection()))
       count++;
 
-   if (getSize(image.getRDataSection()))
+   if (getSize(image->getRDataSection()))
       count++;
 
-   if (getSize(image.getBSSSection()))
+   if (getSize(image->getBSSSection()))
       count++;
 
-   if (getSize(image.getStatSection()))
+   if (getSize(image->getStatSection()))
       count++;
 
-   if (getSize(image.getTLSSection()))
+   if (getSize(image->getTLSSection()))
       count++;
 
-   if (getSize(image.getImportSection()))
+   if (getSize(image->getImportSection()))
       count++;
 
    return count;
 }
 
-void Linker :: writeDOSStub(FileWriter* file)
+void Linker :: writeDOSStub(Project* project, FileWriter* file)
 {
-   Path stubPath(_project->StrSetting(opAppPath), "winstub.ex_");
-   FileReader stub(stubPath, L"rb", feRaw, false);
+   Path stubPath(project->StrSetting(opAppPath), "winstub.ex_");
+   FileReader stub(stubPath, _T("rb"), feRaw, false);
 
    if (stub.isOpened()) {
       file->read(&stub, stub.Length());
    }
-   else _project->raiseError(errInvalidFile, (const wchar16_t*)stubPath);
+   else project->raiseError(errInvalidFile, (const tchar_t*)stubPath);
 }
 
 void Linker :: writeHeader(FileWriter* file, short characteristics, int sectionCount)
@@ -266,24 +264,24 @@ void Linker :: writeHeader(FileWriter* file, short characteristics, int sectionC
    file->write(&header, IMAGE_SIZEOF_FILE_HEADER);
 }
 
-void Linker :: writeNTHeader(Image& image, FileWriter* file, ref_t tls_directory)
+void Linker :: writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_directory)
 {
    IMAGE_OPTIONAL_HEADER   header;
 
    header.Magic = IMAGE_NT_OPTIONAL_HDR32_MAGIC;
    header.MajorLinkerVersion = 1;                                              // not used
    header.MinorLinkerVersion = 0;
-   header.SizeOfCode = getSize(image.getTextSection());
-   header.SizeOfInitializedData = getSize(image.getRDataSection()) + getSize(image.getImportSection())/* + getSize(image.getTLSSection())*/;
-   header.SizeOfUninitializedData = getSize(image.getBSSSection()) + getSize(image.getStatSection());
+   header.SizeOfCode = getSize(info.image->getTextSection());
+   header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
+   header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
 
-   header.AddressOfEntryPoint = _map.code + _entryPoint;
-   header.BaseOfCode = _map.code;
-   header.BaseOfData = _map.rdata;
+   header.AddressOfEntryPoint = info.map.code + info.entryPoint;
+   header.BaseOfCode = info.map.code;
+   header.BaseOfData = info.map.rdata;
 
-   header.ImageBase = _project->IntSetting(opImageBase, IMAGE_BASE);
-   header.SectionAlignment = _project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-   header.FileAlignment = _project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
+   header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
 
    header.MajorOperatingSystemVersion = MAJOR_OS;
    header.MinorOperatingSystemVersion = MINOR_OS;
@@ -295,10 +293,10 @@ void Linker :: writeNTHeader(Image& image, FileWriter* file, ref_t tls_directory
    header.Win32VersionValue = 0;                                               // ??
    #endif
 
-   header.SizeOfImage = _imageSize;
-   header.SizeOfHeaders = _headerSize;
+   header.SizeOfImage = info.imageSize;
+   header.SizeOfHeaders = info.headerSize;
    header.CheckSum = 0;                                                        // For EXE file
-   switch (_project->IntSetting(opApplicationType, stConsole))
+   switch (info.project->IntSetting(opApplicationType, stConsole))
    {
       case stGUI:
          header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
@@ -312,10 +310,10 @@ void Linker :: writeNTHeader(Image& image, FileWriter* file, ref_t tls_directory
    header.DllCharacteristics = 0;                                              // For EXE file
    header.LoaderFlags = 0;                                                     // not used
 
-   header.SizeOfStackReserve = _project->IntSetting(opSizeOfStackReserv, 0x100000); // !! explicit constant name
-   header.SizeOfStackCommit = _project->IntSetting(opSizeOfStackCommit, 0x1000);    // !! explicit constant name
-   header.SizeOfHeapReserve = _project->IntSetting(opSizeOfHeapReserv, 0x100000);   // !! explicit constant name
-   header.SizeOfHeapCommit = _project->IntSetting(opSizeOfHeapCommit, 0x10000);     // !! explicit constant name
+   header.SizeOfStackReserve = info.project->IntSetting(opSizeOfStackReserv, 0x100000); // !! explicit constant name
+   header.SizeOfStackCommit = info.project->IntSetting(opSizeOfStackCommit, 0x1000);    // !! explicit constant name
+   header.SizeOfHeapReserve = info.project->IntSetting(opSizeOfHeapReserv, 0x100000);   // !! explicit constant name
+   header.SizeOfHeapCommit = info.project->IntSetting(opSizeOfHeapCommit, 0x10000);     // !! explicit constant name
 
    header.NumberOfRvaAndSizes = IMAGE_NUMBEROF_DIRECTORY_ENTRIES;
    for (unsigned long i = 0 ; i < header.NumberOfRvaAndSizes ; i++) {
@@ -323,14 +321,14 @@ void Linker :: writeNTHeader(Image& image, FileWriter* file, ref_t tls_directory
       header.DataDirectory[i].Size = 0;
    }
    //if (_sections.exist(IMPORT_SECTION)) { // !! temporal
-      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress = _map.import;
-      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = getSize(image.getImportSection());
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress = info.map.import;
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = getSize(info.image->getImportSection());
    //}
    
    // IMAGE_DIRECTORY_ENTRY_TLS
    if (tls_directory != 0xFFFFFFFF) {
-      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = _map.rdata + tls_directory;
-      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = getSize(image.getTLSSection());
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = info.map.rdata + tls_directory;
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = getSize(info.image->getTLSSection());
    }
    file->write((char*)&header, IMAGE_SIZEOF_NT_OPTIONAL_HEADER);
 }
@@ -386,55 +384,55 @@ void Linker :: writeSection(FileWriter* file, Section* section, int alignment)
    file->align(alignment);
 }
 
-void Linker :: writeSections(Image& image, FileWriter* file)
+void Linker :: writeSections(ImageInfo& info, FileWriter* file)
 {
-   int tblOffset = _headerSize;
-   int alignment = _project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
-   int sectionAlignment = _project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+   int tblOffset = info.headerSize;
+   int alignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
+   int sectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
 
-   writeSectionHeader(file, TEXT_SECTION, image.getTextSection(), tblOffset, alignment, sectionAlignment,
-      _map.code, IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ);
+   writeSectionHeader(file, TEXT_SECTION, info.image->getTextSection(), tblOffset, alignment, sectionAlignment,
+      info.map.code, IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ);
 
-   int rdataSize = getSize(image.getRDataSection());
+   int rdataSize = getSize(info.image->getRDataSection());
    if (rdataSize > 0) {
-      writeSectionHeader(file, RDATA_SECTION, image.getRDataSection(), tblOffset, alignment, sectionAlignment,
-         _map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
+      writeSectionHeader(file, RDATA_SECTION, info.image->getRDataSection(), tblOffset, alignment, sectionAlignment,
+         info.map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
    }
-   int bssSize = getSize(image.getBSSSection());
+   int bssSize = getSize(info.image->getBSSSection());
    if (bssSize > 0) {
       writeBSSSectionHeader(file, BSS_SECTION, bssSize, sectionAlignment,
-         _map.bss, IMAGE_SCN_CNT_UNINITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
+         info.map.bss, IMAGE_SCN_CNT_UNINITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
    }
 
-   int statSize = getSize(image.getStatSection());
+   int statSize = getSize(info.image->getStatSection());
    if (statSize > 0) {
       writeBSSSectionHeader(file, DATA_SECTION, statSize, sectionAlignment,
-         _map.stat, IMAGE_SCN_CNT_UNINITIALIZED_DATA |IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
+         info.map.stat, IMAGE_SCN_CNT_UNINITIALIZED_DATA |IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
    }
 
-   int tlsSize = getSize(image.getTLSSection());
+   int tlsSize = getSize(info.image->getTLSSection());
    if (tlsSize > 0) {
-      writeSectionHeader(file, TLS_SECTION, image.getTLSSection(), tblOffset, alignment, sectionAlignment,
-         _map.tls, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
+      writeSectionHeader(file, TLS_SECTION, info.image->getTLSSection(), tblOffset, alignment, sectionAlignment,
+         info.map.tls, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
    }
 
-   writeSectionHeader(file, IMPORT_SECTION, image.getImportSection(), tblOffset, alignment, sectionAlignment,
-      _map.import, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
+   writeSectionHeader(file, IMPORT_SECTION, info.image->getImportSection(), tblOffset, alignment, sectionAlignment,
+      info.map.import, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
 
    file->align(alignment);
 
-   writeSection(file, image.getTextSection(), alignment);
+   writeSection(file, info.image->getTextSection(), alignment);
 
    if (rdataSize > 0)
-      writeSection(file, image.getRDataSection(), alignment);
+      writeSection(file, info.image->getRDataSection(), alignment);
 
    if (tlsSize > 0)
-      writeSection(file, image.getTLSSection(), alignment);
+      writeSection(file, info.image->getTLSSection(), alignment);
 
-   writeSection(file, image.getImportSection(), alignment);
+   writeSection(file, info.image->getImportSection(), alignment);
 }
 
-bool Linker :: createExecutable(Image& image, const _path_t* exePath, ref_t tls_directory)
+bool Linker :: createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory)
 {
    // create a full path (including none existing directories)
    Path dirPath;
@@ -446,40 +444,40 @@ bool Linker :: createExecutable(Image& image, const _path_t* exePath, ref_t tls_
    if (!executable.isOpened())
       return false;
 
-   writeDOSStub(&executable);
+   writeDOSStub(info.project, &executable);
 
    executable.writeDWord((int)IMAGE_NT_SIGNATURE);
 
-   int sectionCount = countSections(image);
+   int sectionCount = countSections(info.image);
 
-   _headerSize = executable.Length();
-   _headerSize += IMAGE_SIZEOF_FILE_HEADER + IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
+   info.headerSize = executable.Length();
+   info.headerSize += IMAGE_SIZEOF_FILE_HEADER + IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
 
-   _headerSize += IMAGE_SIZEOF_SECTION_HEADER * sectionCount;
-   _headerSize = align(_headerSize, _project->IntSetting(opFileAlignment, FILE_ALIGNMENT));
+   info.headerSize += IMAGE_SIZEOF_SECTION_HEADER * sectionCount;
+   info.headerSize = align(info.headerSize, info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT));
 
    writeHeader(&executable, IMAGE_FILE_EXECUTABLE_IMAGE, sectionCount);
-   writeNTHeader(image, &executable, tls_directory);
-   writeSections(image, &executable);
+   writeNTHeader(info, &executable, tls_directory);
+   writeSections(info, &executable);
 
    return true;
 }
 
-bool Linker :: createDebugFile(Image& image, const _path_t* debugFilePath)
+bool Linker :: createDebugFile(ImageInfo& info, const tchar_t* debugFilePath)
 {
    FileWriter	debugFile(debugFilePath, feRaw, false);
 
    if (!debugFile.isOpened())
       return false;
 
-   Section*	debugInfo = image.getDebugSection();
+   Section*	debugInfo = info.image->getDebugSection();
 
    // signature
    debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
 
    // save entry point
-   ref_t imageBase = _project->IntSetting(opImageBase, IMAGE_BASE);
-   ref_t entryPoint = _map.code + _map.base + image.getDebugEntryPoint();
+   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
 
    debugFile.writeDWord(entryPoint);
 
@@ -490,27 +488,29 @@ bool Linker :: createDebugFile(Image& image, const _path_t* debugFilePath)
    return true;
 }
 
-void Linker :: run(Image& image, ref_t tls_directory)
+void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 {
-   _entryPoint = image.getEntryPoint();
+   ImageInfo info(&project, &image);
 
-   createImportTable(image);
-   mapImage(image);
-   fixImage(image);
+   info.entryPoint = image.getEntryPoint();
 
-   const wchar16_t* path = _project->StrSetting(opTarget);
+   createImportTable(info);
+   mapImage(info);
+   fixImage(info);
+
+   Path path(project.StrSetting(opTarget));
 
    if (emptystr(path))
-      _project->raiseError(errEmptyTarget);
+      throw InternalError(errEmptyTarget);
 
-   if (!createExecutable(image, path, tls_directory))
-      _project->raiseError(errCannotCreate, path);
+   if (!createExecutable(info, path, tls_directory))
+      project.raiseError(errCannotCreate, path);
 
-   if (_withDebugInfo) {
+   if (info.withDebugInfo) {
       Path debugPath(path);
-      debugPath.changeExtension(ConstantIdentifier("dn"));
+      debugPath.changeExtension(_T("dn"));
 
-      if (!createDebugFile(image, debugPath))
-         _project->raiseError(errCannotCreate, (const wchar16_t*)debugPath);
+      if (!createDebugFile(info, debugPath))
+         info.project->raiseError(errCannotCreate, (const wchar16_t*)debugPath);
    }
 }

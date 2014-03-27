@@ -101,7 +101,7 @@ void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
    }
 }
 
-bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, const _path_t* rootPath)
+bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, const tchar_t* rootPath)
 {
    const char* value = getOption(config, setting);
    if (value) {
@@ -137,11 +137,38 @@ void Project :: loadForwardCategory(_ConfigFile& config)
    }
 }
 
-void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const _path_t* path)
+void Project :: loadPrimitiveCategory(_ConfigFile& config, const tchar_t* path)
 {
    ProjectParam param;
    ProjectParam key;
-   _text_t*    dummy = NULL;
+
+   ConfigCategoryIterator it = getCategory(config, opPrimitives);
+   while (!it.Eof()) {
+      // copy line key
+      key.copy(it.key());
+      key.lower();
+
+      // copy value or key if the value is absent
+      const char* value = *it;
+      if (emptystr(value))
+         value = it.key();
+
+      // add path if provided
+      Path filePath(path);
+      filePath.combine(value);
+      filePath.lower();
+
+      // duplicates should be allowed to implement routine overriding
+      _loader.addPrimitiveAlias(key, filePath, true);
+
+      it++;
+   }
+}
+
+void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* path)
+{
+   ProjectParam param;
+   ProjectParam key;
 
    ConfigCategoryIterator it = getCategory(config, setting);
    while (!it.Eof()) {
@@ -173,7 +200,7 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const 
    }
 }
 
-void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
+void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
 {
 //   // load entry symbol
 //   const _text_t* entry = getOption(config, opStarter);
@@ -198,7 +225,7 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
 
    // load compiler settings
 //   loadOption(config, opJITType);
-   loadIntOption(config, opThreadMax, 0, 60);
+//   loadIntOption(config, opThreadMax, 0, 60);
 
    // load linker settings
    loadHexOption(config, opGCMGSize);
@@ -218,9 +245,10 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
 //   loadIntOption(config, opL1);
 //   loadIntOption(config, opL2);
    loadIntOption(config, opL3);
-
-   // load primitives
-   loadCategory(config, opPrimitives, configPath);
+   
+   // load primitive aliases
+   // duplicates should be allowed to implement routine overriding
+   loadPrimitiveCategory(config, configPath);
 
    // load sources
    loadCategory(config, opSources, configPath);
@@ -229,12 +257,12 @@ void Project :: loadConfig(_ConfigFile& config, const _path_t* configPath)
    loadForwardCategory(config);
 }
 
-void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
-{
-   ReferenceNs fwd(forward);
-
-   _settings.add(opForwards, fwd, StringHelper::clone(reference));
-}
+//void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
+//{
+//   ReferenceNs fwd(forward);
+//
+//   _settings.add(opForwards, fwd, StringHelper::clone(reference));
+//}
 
 _Module* Project :: loadModule(const wchar16_t* package, bool silentMode)
 {
@@ -250,27 +278,7 @@ _Module* Project :: loadModule(const wchar16_t* package, bool silentMode)
    else return module;
 }
 
-_Module* Project :: loadPrimitive(const wchar16_t* package, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = NULL;
-   const _path_t* path = _settings.get(opPrimitives, package, (const _path_t*)NULL);
-   if (path) {
-      _loader.addPrimitiveAlias(package, path);
-      module = _loader.loadPrimitive(package, result);
-   }
-   else result = lrNotFound;
-
-   if (result != lrSuccessful) {
-      if (!silentMode)
-         raiseError(getLoadError(result), path);
-
-      return NULL;
-   }
-   else return module;
-}
-
-_Module* Project :: createModule(const _path_t* sourcePath)
+_Module* Project :: createModule(const tchar_t* sourcePath)
 {
    Path modulePath;
    modulePath.copyPath(sourcePath);
@@ -295,7 +303,7 @@ _Module* Project :: createDebugModule(const wchar_t* name)
    return new Module(name);
 }
 
-void Project :: saveModule(_Module* module, const _path_t* extension)
+void Project :: saveModule(_Module* module, const tchar_t* extension)
 {
    const wchar16_t* name = module->Name();
    Path path;
@@ -306,7 +314,7 @@ void Project :: saveModule(_Module* module, const _path_t* extension)
 
    FileWriter writer(path, feRaw, false);
    if(!module->save(writer))
-      raiseError(getLoadError(lrCannotCreate), (const _path_t*)path);
+      raiseError(getLoadError(lrCannotCreate), (const tchar_t*)path);
 }
 
 const wchar16_t* Project :: resolveForward(const wchar16_t* forward)
@@ -341,20 +349,8 @@ _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& referen
 
    LoadResult result = lrNotFound;
    _Module* module = NULL;
-   if (ConstIdentifier::compare(referenceName, PACKAGE_MODULE, PMODULE_LEN) && referenceName[PMODULE_LEN]=='\'') {
+   if (ConstantIdentifier::compare(referenceName, PACKAGE_MODULE, PMODULE_LEN) && referenceName[PMODULE_LEN]=='\'') {
       module = _loader.resolvePrimitive(referenceName, result, reference);
-      if (result == lrNotFound) {
-         NamespaceName package(referenceName + PMODULE_LEN + 1);
-
-         // add alias to loader
-         const _path_t* path = _settings.get(opPrimitives, package, (const _path_t*)NULL);
-         if (path) {
-            _loader.addPrimitiveAlias(package, path);
-
-            // try to resolve once again
-            module = _loader.resolvePrimitive(referenceName, result, reference);
-         }
-      }
    }
    else module = _loader.resolveModule(referenceName, result, reference);
 
@@ -366,4 +362,20 @@ _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& referen
    }
    else return module;
 
+}
+
+_Module* Project :: resolvePredefined(ref_t reference, bool silentMode)
+{
+   ConstantIdentifier packageName(COMMANDSET_MODULE);
+
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.resolvePredefined(packageName, reference, result);
+
+   if (result != lrSuccessful) {
+      if (!silentMode)
+         raiseError(getLoadError(result), packageName);
+
+      return NULL;
+   }
+   else return module;
 }

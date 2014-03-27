@@ -119,7 +119,7 @@
             ]
         ].
         
-        ^ Extension(a, %Even[ even Value ]).
+        ^ Extension(a, %Even[ even value ]).
     ]
 
     #method Determinant

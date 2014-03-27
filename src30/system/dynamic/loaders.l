@@ -23,6 +23,13 @@
     #method => <qualify_message>.
 }
 
+// --- DispatchSubject ---
+
+#class DispatchSubject : Signature
+{
+    #constructor => <new_signature>.
+}
+
 // --- GetProperty ---
 
 #class GetProperty

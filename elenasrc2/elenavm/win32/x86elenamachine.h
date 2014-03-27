@@ -19,7 +19,7 @@ namespace _ELENA_
 
 class x86Instance : public Instance
 {
-   const _path_t* _rootPath;
+   const tchar_t* _rootPath;
 
    x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess;
 
@@ -71,7 +71,7 @@ public:
       _instances.erase(processID);
    }
 
-   x86ELENAMachine(const _path_t* rootPath);
+   x86ELENAMachine(const tchar_t* rootPath);
 };
 
 } // _ELENA_

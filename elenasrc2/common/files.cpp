@@ -13,13 +13,13 @@
 #ifdef _WIN32
 
 #include <windows.h>
-#include <direct.h>
-#include <io.h>
+//#include <direct.h>
+//#include <io.h>
 
 #else
 
-#include <unistd.h>
-#include <sys/stat.h>
+//#include <unistd.h>
+//#include <sys/stat.h>
 
 #endif
 
@@ -67,7 +67,7 @@ bool Path :: isRelative(const char* path, size_t length)
    else return false;
 }
 
-bool Path :: create(const wchar_t* root, const wchar_t* path)
+bool Path :: create(const tchar_t* root, const tchar_t* path)
 {
    Path dirPath;
    dirPath.copyPath(path);
@@ -157,6 +157,14 @@ File :: File(const wchar_t* path, const wchar_t* mode, int encoding, bool withBO
          detectEncoding();
       }
    }
+}
+
+bool File :: readLine(char* s, size_t length)
+{
+   if (_encoding >= feUTF8) {
+      return (fgets(s, length, _file) != NULL);
+   }
+   else return false; // !! temporal
 }
 
 bool File :: readLine(wchar_t* s, size_t length)
@@ -326,14 +334,6 @@ bool File :: writeLiteral(const char* s, size_t length)
 
       return false; // !! temporal
    }
-}
-
-bool File :: readLine(char* s, size_t length)
-{
-   if (_encoding >= feUTF8) {
-      return (fgets(s, length, _file) != NULL);
-   }
-   else return false; // !! temporal
 }
 
 bool File :: writeNewLine()
@@ -523,8 +523,8 @@ void File :: rewind()
 
 // --- TextFileReader ---
 
-TextFileReader :: TextFileReader(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, L"rb", encoding, withBOM)
+TextFileReader :: TextFileReader(const tchar_t* path, int encoding, bool withBOM)
+   : _file(path, _T("rb"), encoding, withBOM)
 {
 }
 
@@ -540,12 +540,12 @@ bool TextFileReader :: read(char* s, size_t length)
 
 // --- FileReader ---
 
-FileReader :: FileReader(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, L"rb+", encoding, withBOM)
+FileReader :: FileReader(const tchar_t* path, int encoding, bool withBOM)
+   : _file(path, _T("rb+"), encoding, withBOM)
 {
 }
 
-FileReader :: FileReader(const _path_t* path, const _path_t* mode, int encoding, bool withBOM)
+FileReader :: FileReader(const tchar_t* path, const tchar_t* mode, int encoding, bool withBOM)
    : _file(path, mode, encoding, withBOM)
 {
 }
@@ -557,8 +557,8 @@ bool FileReader :: read(void* s, size_t length)
 
 // --- FileWriter ---
 
-FileWriter :: FileWriter(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, L"wb+", encoding, withBOM)
+FileWriter :: FileWriter(const tchar_t* path, int encoding, bool withBOM)
+   : _file(path, _T("wb+"), encoding, withBOM)
 {
    if (encoding == feUTF16 && isOpened()) {
       unsigned short signature = 0xFEFF;
@@ -580,8 +580,8 @@ void FileWriter :: align(int alignment)
 
 // --- TextFileWriter ---
 
-TextFileWriter :: TextFileWriter(const _path_t* path, int encoding, bool withBOM)
-   : _file(path, L"wb+", encoding, withBOM)
+TextFileWriter :: TextFileWriter(const tchar_t* path, int encoding, bool withBOM)
+   : _file(path, _T("wb+"), encoding, withBOM)
 {
    if (withBOM) {
       if (encoding == feUTF16 && isOpened()) {

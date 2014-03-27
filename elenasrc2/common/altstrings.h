@@ -46,134 +46,117 @@ inline static size_t getlength(const char* s)
 class StringHelper
 {
 public:
+   static wchar16_t* w_allocate(size_t size);
+   static wchar16_t* w_reallocate(wchar_t* s, size_t size);
 
-#ifdef _WIN32
-   static wchar_t* allocateText(size_t size)
-   {
-      return w_allocate(size);
-   }
+   static tchar_t* allocateText(size_t size);
 
-   static wchar_t* w_allocate(size_t size);
-   static wchar_t* w_reallocate(wchar_t* s, size_t size);
+   static void copy(char* dest, const char* sour, int length);
+   static bool copy(wchar16_t* dest, const char* sour, size_t& length);
+   static void copy(wchar16_t* dest, const wchar16_t* sour, size_t length);
+   static bool copy(char* dest, const wchar16_t* sour, size_t& length);
 
-   static wchar_t* clone(const wchar_t* s);
+   static wchar16_t* clone(const wchar16_t* s);
    static char* clone(const char* s);
 
-   static bool compare(const wchar_t* s1, const wchar_t* s2);
-   static bool compare(const wchar_t* s1, const wchar_t* s2, size_t length);
-   static bool greater(const wchar_t* s1, const wchar_t* s2);
-   static bool greater(const wchar_t* s1, const wchar_t* s2, size_t length);
+   static void move(wchar16_t* s1, const wchar16_t* s2, size_t length);
 
-   static int find(const wchar_t* s, wchar_t c, int defValue = -1);
-   static int find(const wchar_t* s, const wchar_t* subs, int defValue = -1);
-   static int findLast(const wchar_t* s, wchar_t c, int defValue = -1);
+   static void insert(wchar16_t* s, int pos, const wchar16_t* subs);
 
-   static void copy(wchar_t* dest, const wchar_t* sour, size_t length);
-   static bool copy(wchar_t* dest, const char* sour, size_t& length);
-   static bool copy(char* dest, const wchar_t* sour, size_t& length);
+   static void append(char* dest, const char* sour, int length);
+   static void append(wchar16_t* dest, const wchar16_t* sour, size_t length);
+   static bool append(wchar16_t* dest, const char* sour, size_t length);
+   static bool append(char* dest, const wchar16_t* sour, size_t length);
 
-   static void append(wchar_t* dest, const wchar_t* sour, size_t length);
-   static bool append(wchar_t* dest, const char* sour, size_t length);
-   static bool append(char* dest, const wchar_t* sour, size_t length);
+   static wchar16_t  lower(wchar16_t s);
+   static wchar16_t* lower(wchar16_t* s);
+   static char* lower(char* s);
+   static wchar16_t* upper(wchar16_t* s);
+   static char* upper(char* s);
 
-   static void insert(wchar_t* s, int pos, const wchar_t* subs);
-   static void move(wchar_t* s1, const wchar_t* s2, size_t length);
+   static void trim(char* s, char c);
 
-   static wchar_t* lower(wchar_t* s);
-   static wchar_t  lower(wchar_t s);
-   static wchar_t* upper(wchar_t* s);
+   static bool compare(const wchar16_t* s1, const wchar16_t* s2);
+   static bool compare(const wchar16_t* s1, const wchar16_t* s2, size_t length);
+   static bool compare(const char* s1, const char* s2);
+   static bool compare(const char* s1, const char* s2, size_t length);
 
-   static void trim(wchar_t* s, wchar_t c);
+   static bool greater(const wchar16_t* s1, const wchar16_t* s2);
+   static bool greater(const wchar16_t* s1, const wchar16_t* s2, size_t length);
+   static bool greater(const char* s1, const char* s2);
+   static bool greater(const char* s1, const char* s2, size_t length);
 
-   static wchar_t* intToStr(int n, wchar_t* s, int radix);
-   static wchar_t* longlongToStr(long long n, wchar_t* s, int radix);
-   static wchar_t* doubleToStr(double value, int digit, wchar_t* s);
+   static int find(const wchar16_t* s, const wchar16_t* subs, int defValue = -1);
+   static int find(const char* s, char c, int defValue = -1);
+   static int find(const wchar16_t* s, wchar_t c, int defValue = -1);
+   static int findLast(const wchar16_t* s, wchar16_t c, int defValue = -1);
+   static int findLast(const char* s, char c, int defValue = -1);
 
-   static int strToInt(const wchar_t* s);
-   static long strToLong(const wchar_t* s, int radix);
-   static long long strToLongLong(const wchar_t* s, int radix);
-   static double strToDouble(const wchar_t* s);
+   static int strToInt(const wchar16_t* s);
+   static int strToInt(const char* s);
 
-#else
-   static char* allocateText(size_t size)
-   {
-      return allocate(size);
-   }
+   static wchar16_t* intToStr(int n, wchar16_t* s, int radix);
+   static char* intToStr(int n, char* s, int radix);
 
-   static unsigned short* w_allocate(size_t size);
-   static unsigned short* w_reallocate(const unsigned short* s, size_t size);
+   static long strToLong(const wchar16_t* s, int radix);
+   static long strToLong(const char* s, int radix);
 
-   static bool compare(const unsigned short* s1, const unsigned short* s2);
-   static bool compare(const unsigned short* s1, const unsigned short* s2, size_t length);
+   static long long strToLongLong(const wchar16_t* s, int radix);
 
-   static bool greater(const unsigned short* s1, const unsigned short* s2);
-   static bool greater(const unsigned short* s1, const unsigned short* s2, size_t length);
+   static double strToDouble(const wchar16_t* s);
 
-   static int find(const unsigned short* s, unsigned short c, int defValue = -1);
-   static int findLast(const unsigned short* s, unsigned short c, int defValue = -1);
+//#ifdef _WIN32
+//   static void trim(wchar_t* s, wchar_t c);
 
-   static void copy(unsigned short* dest, const unsigned short* sour, int length);
-   static bool copy(unsigned short* dest, const char* sour, size_t& length);
-   static bool copy(char* dest, const unsigned short* sour, size_t& length);
+   static wchar_t* longlongToStr(long long n, wchar16_t* s, int radix);
+   static wchar_t* doubleToStr(double value, int digit, wchar16_t* s);
 
-   static void append(unsigned short* dest, const unsigned short* sour, int length);
-   static bool append(unsigned short* dest, const char* sour, int length);
-   static bool append(char* dest, const unsigned short* sour, int length);
-
-   static void move(unsigned short* s1, const unsigned short* s2, size_t length);
-
-   static unsigned short* clone(const unsigned short* s);
-   static char* clone(const char* s);
-
-   static unsigned short* lower(unsigned short* s);
-   static unsigned short lower(unsigned short s);
-   static unsigned short* upper(unsigned short* s);
-
-//   static void append(unsigned short* dest, const unsigned short* sour, int length);
+//#else
 //
-//   static bool convertMultiByteToWide(const char* sour, unsigned short* dest, size_t count);
-
-   static void trim(unsigned short* s, unsigned short c);
-
-   static long strToLong(const unsigned short* s, int radix);
-   static int strToInt(const unsigned short* s);
-
-   static unsigned short* intToStr(int n, unsigned short* s, int radix);
-   static unsigned short* longlongToStr(long long n, unsigned short* s, int radix);
-   static unsigned short* doubleToStr(double value, int digit, unsigned short* s);
-
-#endif
+//   static unsigned short* w_allocate(size_t size);
+//   static unsigned short* w_reallocate(const unsigned short* s, size_t size);
+//
+//   static int find(const unsigned short* s, unsigned short c, int defValue = -1);
+//
+//   static void copy(unsigned short* dest, const unsigned short* sour, int length);
+//   static bool copy(unsigned short* dest, const char* sour, size_t& length);
+//   static bool copy(char* dest, const unsigned short* sour, size_t& length);
+//
+//   static void append(unsigned short* dest, const unsigned short* sour, int length);
+//   static bool append(unsigned short* dest, const char* sour, int length);
+//   static bool append(char* dest, const unsigned short* sour, int length);
+//
+//   static void move(unsigned short* s1, const unsigned short* s2, size_t length);
+//
+//   static unsigned short* clone(const unsigned short* s);
+//   static char* clone(const char* s);
+//
+//   static unsigned short* lower(unsigned short* s);
+//   static unsigned short lower(unsigned short s);
+//   static unsigned short* upper(unsigned short* s);
+//
+////   static void append(unsigned short* dest, const unsigned short* sour, int length);
+////
+////   static bool convertMultiByteToWide(const char* sour, unsigned short* dest, size_t count);
+//
+//   static void trim(unsigned short* s, unsigned short c);
+//
+//   static long strToLong(const unsigned short* s, int radix);
+//
+//   static unsigned short* intToStr(int n, unsigned short* s, int radix);
+//   static unsigned short* longlongToStr(long long n, unsigned short* s, int radix);
+//   static unsigned short* doubleToStr(double value, int digit, unsigned short* s);
+//
+//#endif
    static wchar16_t* cloneLowered(const wchar16_t* s)
    {
       return lower(clone(s));
    }
 
-   static char* allocate(size_t size);
-   static char* reallocate(char* s, size_t size);
-
-   static void move(char* s1, const char* s2, size_t length);
-
-   static bool compare(const char* s1, const char* s2);
-   static bool compare(const char* s1, const char* s2, size_t length);
-   static bool greater(const char* s1, const char* s2);
-   static bool greater(const char* s1, const char* s2, size_t length);
-
-   static int find(const char* s, char c, int defValue = -1);
-   static int findLast(const char* s, char c, int defValue = -1);
-
-   static void copy(char* dest, const char* sour, int length);
-
-   static void append(char* dest, const char* sour, int length);
-
-   static char* lower(char* s);
-   static char* upper(char* s);
-
-   static void trim(char* s, char c);
-
-   static int strToInt(const char* s);
-   static long strToLong(const char* s, int radix);
-
-   static char* intToStr(int n, char* s, int radix);
+//   static char* allocate(size_t size);
+//   static char* reallocate(char* s, size_t size);
+//
+//   static void move(char* s1, const char* s2, size_t length);
 };
 
 // --- String ---
@@ -198,11 +181,6 @@ public:
 
    bool isEmpty() const { return emptystr(_string); }
 
-//   bool compare(const wchar_t* s)
-//   {
-//      return String::compare(_string, s);
-//   }
-
    int findLast(T ch)
    {
       return StringHelper::findLast(_string, ch, -1);
@@ -218,13 +196,13 @@ public:
       return StringHelper::compare(_string, s);
    }
 
-   void replaceAll(T oldCh, T newCh, int index)
-   {
-      for (size_t i = index ; i < getlength(_string) ; i++) {
-         if (_string[i] == oldCh)
-            _string[i] = newCh;
-      }
-   }
+//   void replaceAll(T oldCh, T newCh, int index)
+//   {
+//      for (size_t i = index ; i < getlength(_string) ; i++) {
+//         if (_string[i] == oldCh)
+//            _string[i] = newCh;
+//      }
+//   }
 
    void copy(const wchar16_t* s, size_t length)
    {
@@ -350,10 +328,10 @@ public:
       StringHelper::trim(_string, ch);
    }
 
-   static char* clone(const char* s)
-   {
-      return StringHelper::clone(s);
-   }
+//   static char* clone(const char* s)
+//   {
+//      return StringHelper::clone(s);
+//   }
 
    T* clone()
    {
@@ -450,11 +428,11 @@ protected:
    T*     _string;
    size_t _size;
 
-   void assignOrCopy(const wchar16_t* value, wchar16_t* &ptr, size_t& size)
-   {
-      ptr = (wchar16_t*)value;
-      size = 0;
-   }
+//   void assignOrCopy(const wchar16_t* value, wchar16_t* &ptr, size_t& size)
+//   {
+//      ptr = (wchar16_t*)value;
+//      size = 0;
+//   }
 
    void create(wchar16_t*, size_t size)
    {

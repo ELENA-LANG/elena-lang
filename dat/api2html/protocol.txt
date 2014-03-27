@@ -4,52 +4,61 @@
 
 [#list#]
 action
-array
 bool
 bool_action
-bool_function
-byte
-bytearray
-enumerable
-enumerator
+bool_expr
+char
 function
 int
 literal
 long
 numeric_value
-numeric_variable
-object
 real
-short
 value
 variable
+variant
 
-[object]
-#shortdescr=A common object protocol
-#method=equal,object,bool;Determines whether the specified object is equal to the current object.
+[literal]
+#shortdescr=A literal protocol
+#method=length,,int;Returns the object length
+#method=literal,,literal;Returns the literal value
 
-[bool]
-#shortdescr=A bool protocol
-#method=and,bool,bool;Executes logical AND operation
-#method=equal,bool,bool;Determines whether the specified object is equal to the current object boolean value.
-#method=not,,bool;Inverts the Boolean value
-#method=or,bool,bool;Executes logical OR operation
-#method=xor,bool,bool;Executes logical XOR operation
+[int]
+#shortdescr=An int protocol
+#method=int,,int;Returns the integer value
 
 [action]
 #shortdescr=An action protocol
 #method=eval,,;Executes the code
 
+[char]
+#shortdescr=A char protocol
+#method=int,,int;Returns the integer value
+#method=literal,,literal;Returns the literal value
+
+[bool_expr]
+#shortdescr=A bool expression protocol
+#protocol=bool
+#protocol=bool_action
+
+[bool]
+#shortdescr=A bool protocol
+#method=and,bool,bool;Executes logical AND operation
+#method=or,bool,bool;Executes logical OR operation
+#method=xor,bool,bool;Executes logical XOR operation
+
 [bool_action]
 #shortdescr=A boolean expression
 #method=eval,,bool;Evaluates boolean expression
 
-[short]
-#shortdescr=A short protocol
+[variant]
+#shortdescr=A variant
+#method=int,,int;Returns the integer presentation
+#method=literal,,literal;Returns the literal presentation
 
-[int]
-#shortdescr=An int protocol
-#method=int,,int;Returns the integer value
+[variable]
+#shortdescr=A variable protocol
+#method=write,value;Copies the value
 
 [long]
 #shortdescr=A type'long protocol
@@ -59,24 +68,9 @@ variable
 #shortdescr=A real protocol
 #method=real,,real;Returns the real number value
 
-[literal]
-#shortdescr=A literal protocol
-#method=length,,int;Returns the object length
-#method=literal,,literal;Returns the literal value
-
 [function]
 #shortdescr=A function protocol
 #method=eval,object,object;Executes the function
-
-[enumerator]
-#shortdescr=An enumerator protocol
-#method=get,,object;Returns the current elemement of the collection
-#method=next,,bool;Advances the enumerator to the next element of the collection.
-#method=reset,,;Resets the enumerator
-
-[bool_function]
-#shortdescr=A boolean function
-#method=eval,object,bool;Evaluates boolean expression for the specified parameter
 
 [value]
 #shortdescr=A value protocol
@@ -99,40 +93,3 @@ variable
 #method=notgreater,value,bool;Compares the values
 #method=notless,value,bool;Compares the values
 #method=subtract,numeric_value,numeric_value;Subtracts the values
-
-[variable]
-#shortdescr=A variable protocol
-#method=equal,value,bool;Compares the values
-#method=greater,value,bool;Compares the values
-#method=less,value,bool;Compares the values
-#method=notequal,value,bool;Compares the values
-#method=notgreater,value,bool;Compares the values
-#method=notless,value,bool;Compares the values
-#method=write,value;Copies the value
-
-[numeric_variable]
-#shortdescr=A variable protocol
-#method=append,value;Appends the value
-#method=divideInto,value;Divides into the value
-#method=equal,value,bool;Compares the values
-#method=greater,value,bool;Compares the values
-#method=less,value,bool;Compares the values
-#method=multiplyBy,value;Multiplies by the value
-#method=notequal,value,bool;Compares the values
-#method=notgreater,value,bool;Compares the values
-#method=notless,value,bool;Compares the values
-#method=reduce,value;Substracts the value                                                           
-#method=write,value;Copies the value
-
-[enumerable]
-#shortdescr=A collection protocol
-#method=enumerator,,enumerator;Creates the collection enumerator
-
-[array]
-#shortdescr=A array protocol
-
-[bytearray]
-#shortdescr=A bytearray protocol
-
-[byte]
-#shortdescr=A byte protocol

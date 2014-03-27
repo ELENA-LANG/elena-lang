@@ -7,6 +7,7 @@ warn:unresolved=0
 
 [primitives]
 inline=..\..\lib30\inline\core_routines.bin
+operators=..\..\lib30\inline\operators.bin
 
 [files]
 object.l

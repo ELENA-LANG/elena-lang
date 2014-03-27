@@ -15,7 +15,7 @@ using namespace _GUI_;
 wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0All types\0*.*\0\0");
 wchar_t* FileDialog :: SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
-typedef _ELENA_::String<_text_t, 255> ParamString;
+typedef _ELENA_::String<tchar_t, 255> ParamString;
 typedef _ELENA_::String<char, 255> SettingString;
 
 FileDialog :: FileDialog(Control* owner, const wchar_t* filter, const wchar_t* caption, const wchar_t* initialDir)
@@ -110,7 +110,7 @@ int MsgBox :: showError(const wchar_t* message, const wchar_t* param)
 
 int MsgBox :: showError(HWND owner, const wchar_t* message, const wchar_t* param)
 {
-   _ELENA_::String<_text_t, 255> string(message);
+   _ELENA_::String<tchar_t, 255> string(message);
    string.append(param);
 
    return show(owner, string, MB_OK | MB_ICONERROR);
@@ -123,7 +123,7 @@ int MsgBox :: showQuestion(HWND owner, const wchar_t* message)
 
 int MsgBox :: showQuestion(HWND owner, const wchar_t* message, const wchar_t* param)
 {
-   _ELENA_::String<_text_t, 255> string(message);
+   _ELENA_::String<tchar_t, 255> string(message);
    string.append(param);
 
    return show(owner, string, MB_YESNOCANCEL | MB_ICONQUESTION);
@@ -131,7 +131,7 @@ int MsgBox :: showQuestion(HWND owner, const wchar_t* message, const wchar_t* pa
 
 int MsgBox :: showQuestion(HWND owner, const wchar_t* message, const wchar_t* param1, const wchar_t* param2)
 {
-   _ELENA_::String<_text_t, 255> string(message);
+   _ELENA_::String<tchar_t, 255> string(message);
    string.append(param1);
    string.append(param2);
 
@@ -208,10 +208,10 @@ void Dialog :: setText(int id, const wchar_t* text)
 
 void Dialog :: setIntText(int id, int value)
 {
-   _ELENA_::String<_text_t, 15> s;
+   _ELENA_::String<tchar_t, 15> s;
    s.appendInt(value);
 
-   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)((const _text_t*)s));
+   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)((const tchar_t*)s));
 }
 
 void Dialog :: setCheckState(int id, bool value)
@@ -480,7 +480,7 @@ void ProjectForwardsDialog :: deleteItem()
 void ProjectForwardsDialog :: onCreate()
 {
    _ELENA_::ConfigCategoryIterator forwards = Project::Forwards();
-   _ELENA_::String<_text_t, IDENTIFIER_LEN> item;
+   _ELENA_::String<tchar_t, IDENTIFIER_LEN> item;
    while (!forwards.Eof()) {
       ParamString fwd(forwards.key());
       ParamString value((char*)*forwards);
@@ -501,8 +501,8 @@ void ProjectForwardsDialog :: onOK()
       Project::clearForwards();
 
       int count = getListCount(IDC_FORWARDS_LIST);
-      _text_t item[IDENTIFIER_LEN * 2 + 1];
-      _ELENA_::String<_text_t, IDENTIFIER_LEN> name;
+      tchar_t item[IDENTIFIER_LEN * 2 + 1];
+      _ELENA_::String<tchar_t, IDENTIFIER_LEN> name;
       for (int i = 0 ; i < count ; i++) {
          getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
 

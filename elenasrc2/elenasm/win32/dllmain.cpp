@@ -27,7 +27,7 @@ EXTERN_DLL_EXPORT void* TranslateLVMTape(const wchar16_t* name, const wchar16_t*
    return session->translate(name, script, mode);
 }
 
-EXTERN_DLL_EXPORT void* TranslateLVMFile(const wchar16_t* name, const wchar16_t* path, int encoding, bool autoDetect, int mode)
+EXTERN_DLL_EXPORT void* TranslateLVMFile(const wchar16_t* name,   const wchar16_t* path, int encoding, bool autoDetect, int mode)
 {
    _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
    

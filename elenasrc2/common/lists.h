@@ -437,11 +437,11 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    }
 };
 
-struct _IntItem
-{
-   size_t key;
-   size_t value;
-};
+//struct _IntItem
+//{
+//   size_t key;
+//   size_t value;
+//};
 
 // --- Iterator template ---
 
@@ -1726,7 +1726,7 @@ public:
       return false;
    }
 
-   ref_t storeKey(size_t position, ref_t key)
+   size_t storeKey(size_t position, size_t key)
    {
       return key;
    }
@@ -1743,7 +1743,7 @@ public:
       else return key;
    }
 
-   const wchar16_t* storeKey(size_t position, const char* key)
+   const char* storeKey(size_t position, const char* key)
    {
       if (KeyStored) {
          size_t keyPos = _buffer.Length();
@@ -3075,7 +3075,6 @@ public:
       }
       else return defaultValue;
    }
-
 
    void clear(Key key, SubKey subKey)
    {

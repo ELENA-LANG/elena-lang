@@ -17,26 +17,26 @@ using namespace _GUI_;
 
 // --- Lexical DFA Table ---
 
-const _text_t lexStart        = 'a';
-const _text_t lexCommentStart = 'b';
-const _text_t lexKeyword      = 'c';
-const _text_t lexOperator     = 'd';
-const _text_t lexBrackets     = 'e';
-const _text_t lexObject       = 'f';
-const _text_t lexCloseBracket = 'g';
-const _text_t lexStick        = 'h';
-const _text_t lexDigit        = 'i';
-const _text_t lexHint         = 'j';
-const _text_t lexMessage      = 'k';
-const _text_t lexLookahead    = 'l';
-const _text_t lexLineComment  = 'm';
-const _text_t lexComment      = 'n';
-const _text_t lexComment2     = 'o';
-const _text_t lexQuote        = 'p';
-const _text_t lexQuote2       = 'q';
-const _text_t lexHint2        = 'r';
+const tchar_t lexStart        = 'a';
+const tchar_t lexCommentStart = 'b';
+const tchar_t lexKeyword      = 'c';
+const tchar_t lexOperator     = 'd';
+const tchar_t lexBrackets     = 'e';
+const tchar_t lexObject       = 'f';
+const tchar_t lexCloseBracket = 'g';
+const tchar_t lexStick        = 'h';
+const tchar_t lexDigit        = 'i';
+const tchar_t lexHint         = 'j';
+const tchar_t lexMessage      = 'k';
+const tchar_t lexLookahead    = 'l';
+const tchar_t lexLineComment  = 'm';
+const tchar_t lexComment      = 'n';
+const tchar_t lexComment2     = 'o';
+const tchar_t lexQuote        = 'p';
+const tchar_t lexQuote2       = 'q';
+const tchar_t lexHint2        = 'r';
 
-const _text_t* lexDFA[] =
+const tchar_t* lexDFA[] =
 {
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
@@ -58,12 +58,12 @@ const _text_t* lexDFA[] =
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfjgddjddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
 };
 
-_text_t makeStep(_text_t ch, _text_t state)
+tchar_t makeStep(tchar_t ch, tchar_t state)
 {
-   return (_text_t)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
+   return (tchar_t)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
 }
 
-size_t defineStyle(_text_t state, size_t style)
+size_t defineStyle(tchar_t state, size_t style)
 {
    switch (state) {
       case lexStart:
@@ -316,7 +316,7 @@ void IDE :: start()
       openProject(Settings::defaultProject);
 
    // open default files
-   _ELENA_::List<_path_t*>::Iterator it = Settings::defaultFiles.start();
+   _ELENA_::List<tchar_t*>::Iterator it = Settings::defaultFiles.start();
    while (!it.Eof()) {
       openFile(*it);
 
@@ -332,7 +332,7 @@ void IDE :: exit()
       _appWindow->exit();
 }
 
-bool IDE :: openFile(const _path_t* path)
+bool IDE :: openFile(const tchar_t* path)
 {
    //!!temporal
    #ifdef _WIN32
@@ -365,7 +365,7 @@ bool IDE :: openFile(const _path_t* path)
    #endif
 }
 
-bool IDE :: openProject(const _path_t* path)
+bool IDE :: openProject(const tchar_t* path)
 {
    if (!closeAll())
       return false;
@@ -407,7 +407,7 @@ bool IDE :: closeFile(int index)
 {
 //!!temporal
 #ifdef _WIN32
-   const _path_t* path = _mainFrame->getDocumentPath(index);
+   const tchar_t* path = _mainFrame->getDocumentPath(index);
 
    if (_mainFrame->isDocumentModified()) {
       int result = MsgBox::showQuestion(_appWindow->getHandle(), QUESTION_SAVE_FILECHANGES, path);
@@ -448,9 +448,9 @@ bool IDE :: closeAll(bool closeProject)
    return closeProject ? doCloseProject() : true;
 }
 
-void IDE :: setCaption(const _text_t* projectName)
+void IDE :: setCaption(const tchar_t* projectName)
 {
-   _ELENA_::String<_text_t, 0x100> title(APP_NAME);
+   _ELENA_::String<tchar_t, 0x100> title(APP_NAME);
    if (!_ELENA_::emptystr(projectName)) {
       title.append(_T(" - ["));
       title.append(projectName);
@@ -463,7 +463,7 @@ void IDE :: setCaption(const _text_t* projectName)
 #endif
 }
 
-void IDE :: renameFileAs(int index, const _path_t* newPath, const _path_t* oldPath, bool included)
+void IDE :: renameFileAs(int index, const tchar_t* newPath, const tchar_t* oldPath, bool included)
 {
 //!!temporal
 #ifdef _WIN32
@@ -525,7 +525,7 @@ bool IDE :: startDebugger(bool stepMode)
 #endif
 }
 
-bool IDE :: loadModule(const _text_t* ns, const _path_t* source)
+bool IDE :: loadModule(const tchar_t* ns, const tchar_t* source)
 {
 //!!temporal
 #ifdef _WIN32
@@ -538,7 +538,7 @@ bool IDE :: loadModule(const _text_t* ns, const _path_t* source)
       openFile(path);
    }
    else {
-      _ELENA_::Path path((const _path_t*)Paths::packageRoot);
+      _ELENA_::Path path((const tchar_t*)Paths::packageRoot);
       path.combine(ns, _ELENA_::StringHelper::find(ns, '\'', _ELENA_::getlength(ns)));
       path.combine(source);
 
@@ -548,7 +548,7 @@ bool IDE :: loadModule(const _text_t* ns, const _path_t* source)
    return true;
 }
 
-bool IDE :: loadTemporalModule(const _text_t* name, int param)
+bool IDE :: loadTemporalModule(const tchar_t* name, int param)
 {
 //!!temporal
 #ifdef _WIN32
@@ -571,7 +571,7 @@ bool IDE :: loadTemporalModule(const _text_t* name, int param)
    doc->eraseChar(false);
 
    // insert temporal content
-   const _text_t* source = _debugController->getTemporalSource(param);
+   const tchar_t* source = _debugController->getTemporalSource(param);
    doc->insertLine(source, _ELENA_::getlength(source));
 
    doc->status.modifiedMode = false;
@@ -601,7 +601,7 @@ void IDE :: refreshDebugStatus()
 {
 #ifdef _WIN32
    if (Settings::testMode)  {
-      _ELENA_::String<_text_t, 15> address(_T("@"));
+      _ELENA_::String<tchar_t, 15> address(_T("@"));
       address.appendHex(_debugController->getEIP());
       _statusBar->setText(4, address);
    }
@@ -679,7 +679,7 @@ void IDE :: highlightMessage(MessageBookmark* bookmark)
    #endif
 }
 
-bool IDE :: toggleBreakpoint(const _text_t* module, const _path_t* path, size_t row, Document* doc)
+bool IDE :: toggleBreakpoint(const tchar_t* module, const tchar_t* path, size_t row, Document* doc)
 {
 //!!temporal
 #ifdef _WIN32
@@ -740,7 +740,7 @@ void IDE :: clearBreakpoints()
 
 void IDE :: doCreateFile()
 {
-   _ELENA_::String<_text_t, 30> path(_T("unnamed"));
+   _ELENA_::String<tchar_t, 30> path(_T("unnamed"));
    path.appendInt(_unnamedIndex++);
 
    _GUI_::Text* text = new _GUI_::Text();
@@ -757,7 +757,7 @@ void IDE :: doCreateFile()
    onChange();
 }
 
-void IDE :: doCreateTempFile(const _text_t* name)
+void IDE :: doCreateTempFile(const tchar_t* name)
 {
    _GUI_::Text* text = new _GUI_::Text();
    text->create();
@@ -836,7 +836,7 @@ void IDE :: doCloseAllButActive()
 
 void IDE :: doSelectFile(int optionID)
 {
-   const _path_t* path = _recentFiles.get(optionID);
+   const tchar_t* path = _recentFiles.get(optionID);
    if(openFile(path)) {
       _recentFiles.add(path);
 
@@ -846,7 +846,7 @@ void IDE :: doSelectFile(int optionID)
 
 void IDE :: doSelectProject(int optionID)
 {
-   const _path_t* path = _recentProjects.get(optionID);
+   const tchar_t* path = _recentProjects.get(optionID);
    if(openProject(path)) {
       _recentProjects.add(path);
 
@@ -868,9 +868,9 @@ void IDE :: doOpenFile()
 #ifdef _WIN32
    FileDialog dialog(_appWindow, FileDialog::SourceFilter, OPEN_FILE_CAPTION, Paths::lastPath);
 
-   _ELENA_::List<_path_t*> files(NULL, _ELENA_::freestr);
+   _ELENA_::List<tchar_t*> files(NULL, _ELENA_::freestr);
    if (dialog.openFiles(files)) {
-      _ELENA_::List<_path_t*>::Iterator it = files.start();
+      _ELENA_::List<tchar_t*>::Iterator it = files.start();
       while (!it.Eof()) {
          if (openFile(*it))
             _recentFiles.add(*it);
@@ -887,7 +887,7 @@ void IDE :: doOpenProject()
 //!!temporal
 #ifdef _WIN32
    FileDialog dialog(_appWindow, FileDialog::ProjectFilter, OPEN_PROJECT_CAPTION, Paths::lastPath);
-   const _path_t* path = dialog.openFile();
+   const tchar_t* path = dialog.openFile();
    if (path) {
       if (openProject(path))
          _recentProjects.add(path);
@@ -1267,7 +1267,7 @@ void IDE :: doShowDebugWatch(bool visible)
 #endif
 }
 
-bool findBracket(Text* text, TextBookmark& bookmark, _text_t starting, _text_t ending, bool forward)
+bool findBracket(Text* text, TextBookmark& bookmark, tchar_t starting, tchar_t ending, bool forward)
 {
    // define the upper / lower border of bracket search
    int frameY = 0;
@@ -1276,7 +1276,7 @@ bool findBracket(Text* text, TextBookmark& bookmark, _text_t starting, _text_t e
 
    int counter = 0;
    while (true) {
-      _text_t ch = text->getChar(bookmark);
+      tchar_t ch = text->getChar(bookmark);
       if (ch == starting)
          counter++;
       else if (ch == ending) {
@@ -1305,7 +1305,7 @@ void IDE :: doHighlightBrackets(Document* doc)
    Text* text = doc->getText();
    TextBookmark caret = doc->getCurrentTextBookmark();
 
-   _text_t current_ch = text->getChar(caret);
+   tchar_t current_ch = text->getChar(caret);
 
    int pos = _ELENA_::StringHelper::find(OPENING_BRACKET, current_ch, -1);
    if (pos != -1) {
@@ -1362,7 +1362,7 @@ void IDE :: doInclude()
    if (_mainFrame->getCurrentDocumentIndex() != -1) {
       _mainFrame->markDocumentAsIncluded();
 
-      const _path_t* path = _mainFrame->getDocumentPath(-1);
+      const tchar_t* path = _mainFrame->getDocumentPath(-1);
       Project::includeSource(path);
    }
    onDocIncluded();
@@ -1373,7 +1373,7 @@ void IDE :: doExclude()
    if (_mainFrame->getCurrentDocumentIndex() != -1) {
       _mainFrame->markDocumentAsExcluded();
 
-      const _path_t* path = _mainFrame->getDocumentPath(-1);
+      const tchar_t* path = _mainFrame->getDocumentPath(-1);
       Project::excludeSource(path);
    }
    onDocIncluded();
@@ -1559,7 +1559,7 @@ void IDE :: onFrameChange(FrameState state)
       }
 
       if (_lastCaret != caret) {
-         _ELENA_::String<_text_t, 30> line(_T("Ln "));
+         _ELENA_::String<tchar_t, 30> line(_T("Ln "));
          line.appendInt(caret.y + 1);
          line.append(_T(" Col "));
          line.appendInt(caret.x + 1);
@@ -1716,7 +1716,7 @@ void IDE :: onCompilationStart()
 #endif
 }
 
-void IDE :: onCompilationEnd(const _text_t* message, bool successful)
+void IDE :: onCompilationEnd(const tchar_t* message, bool successful)
 {
    if (!successful) {
       _state &= ~(uiIDEBusy | uiAutoRecompile);
@@ -1789,7 +1789,7 @@ void IDE :: onDebuggerStop(bool broken)
 #endif
 }
 
-void IDE :: onDebuggerStep(const wchar16_t* ns, const _text_t* source, HighlightInfo info)
+void IDE :: onDebuggerStep(const wchar16_t* ns, const tchar_t* source, HighlightInfo info)
 {
    #ifdef _WIN32
    if (!loadModule(ns, source)) {
@@ -1807,7 +1807,7 @@ void IDE :: onDebuggerStep(const wchar16_t* ns, const _text_t* source, Highlight
 #endif
 }
 
-void IDE :: onDebuggerCheckPoint(const _text_t* message)
+void IDE :: onDebuggerCheckPoint(const tchar_t* message)
 {
    _statusBar->setText(0, message);
 }

@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA LibraryManager.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,8 +14,6 @@
 using namespace _ELENA_;
 
 #define PMODULE_LEN getlength(PACKAGE_MODULE)
-
-const wchar16_t _nl_message[] = {'n','l',0};
 
 //inline const TCHAR* getName(const TCHAR* name, const TCHAR* package)
 //{
@@ -35,7 +33,7 @@ LibraryManager :: LibraryManager()
 {
 }
 
-LibraryManager :: LibraryManager(const _path_t* path, const wchar16_t* package)
+LibraryManager :: LibraryManager(const tchar_t* path, const wchar16_t* package)
    : _rootPath(path), _package(package), _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr)
 {
 }
@@ -61,7 +59,7 @@ _Module* LibraryManager :: loadModule(const wchar16_t* package, LoadResult& resu
    _Module* module = _modules.get(package);
    if (!module) {
       Path path;
-      nameToPath(package, path, _nl_message);
+      nameToPath(package, path, _T("nl"));
 
       FileReader  reader(path, feRaw, false);
       if (!readOnly) {
@@ -82,39 +80,81 @@ _Module* LibraryManager :: loadModule(const wchar16_t* package, LoadResult& resu
    return module;
 }
 
-_Module* LibraryManager :: loadPrimitive(const wchar16_t* package, LoadResult& result)
-{   
-   _Module* binary = _binaries.get(package);
-   if (!binary) {
-      const _path_t* path = _binaryAliases.get(package);
+bool LibraryManager :: loadPrimitive(const wchar16_t* package, LoadResult& result)
+{
+   result = lrNotFound;
 
-      if (path) {
-         FileReader reader(path, feRaw, false);
+   AliasMap::Iterator it = _binaryAliases.getIt(package);
+   while (!it.Eof() && StringHelper::compare(it.key(), package)) {
+      FileReader reader(*it, feRaw, false);
 
-         binary = new ROModule(reader, result);
-         if(result!=lrSuccessful) {
-            delete binary;
+      _Module* binary = new ROModule(reader, result);
+      _binaries.add(package, binary);
 
-            return NULL;
-         }
-         _binaries.add(package, binary);
+      if(result!=lrSuccessful) {
+         return false;
       }
-      else result = lrNotFound;
-   }
-   else result = lrSuccessful;
 
-   return binary;
+      it++;
+   }
+               
+   return result == lrSuccessful;
 }
 
 _Module* LibraryManager :: resolvePrimitive(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
 {
    NamespaceName package(referenceName + PMODULE_LEN + 1);
+   
+   ModuleMap::Iterator it = _binaries.getIt(package);
+   // load modules if it is first time usage
+   if (it.Eof()) {
+      if(!loadPrimitive(package, result)) {
+         reference = 0;
 
-   _Module* binary = loadPrimitive(package, result);
+         return NULL;
+      }
 
-   reference = binary ? binary->mapReference(referenceName, true) : 0;
+      it = _binaries.getIt(package);
+   }
+   else result = lrSuccessful;
+
+   _Module* binary = NULL;
+   while (!it.Eof() && StringHelper::compare(it.key(), package)) {
+      ref_t currentRef = (*it)->mapReference(referenceName, true);
+      if (currentRef) {
+         binary = *it;
+         reference = currentRef;
+      }
+      else result = lrNotFound;
+
+      it++;
+   }
 
    return binary;
+}
+
+_Module* LibraryManager :: resolvePredefined(const wchar16_t* package, ref_t reference, LoadResult& result)
+{
+   ModuleMap::Iterator it = _binaries.getIt(package);
+   // load modules if it is first time usage
+   if (it.Eof()) {
+      if(!loadPrimitive(package, result))
+         return NULL;
+
+      it = _binaries.getIt(package);
+   }
+   else result = lrSuccessful;
+
+   _Module* last = NULL;
+   while (!it.Eof() && StringHelper::compare(it.key(), package)) {
+      _Memory* current = (*it)->mapSection(reference, true);
+      if (current)
+         last = *it;
+
+      it++;
+   }
+
+   return last;
 }
 
 _Module* LibraryManager :: resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)

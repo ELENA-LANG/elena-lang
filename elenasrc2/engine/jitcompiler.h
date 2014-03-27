@@ -20,7 +20,7 @@ class _ReferenceHelper
 {
 public:
    virtual ref_t getLinkerConstant(ref_t constant) = 0;
-   virtual SectionInfo getPredefinedSection(ref_t reference) = 0;
+   virtual SectionInfo getPredefinedCommand(ref_t reference) = 0;
    virtual SectionInfo getSection(ref_t reference, _Module* module = NULL) = 0;
 
    virtual void* getVAddress(MemoryWriter& writer, int mask) = 0;
@@ -47,11 +47,10 @@ class _JITCompiler
 {
 public:
    virtual void prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata) = 0;
-   virtual void prepareCore(_ReferenceHelper& helper, _Memory* code) = 0;
    virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code) = 0;
 
-   // should be called only for VM
-   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data) = 0;
+//   // should be called only for VM
+//   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data) = 0;
 
 ////   virtual int writeInteger(MemoryWriter& writer, int value);
 ////   virtual int writeString(MemoryWriter& writer, const TCHAR* string);
@@ -64,15 +63,15 @@ public:
    virtual void compileReal64(MemoryWriter* writer, double number) = 0;
    virtual void compileWideLiteral(MemoryWriter* writer, const wchar_t* value) = 0;
 
-   virtual void compileTLS(_JITLoader* loader) = 0;
-   virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber) = 0;
+//   virtual void compileTLS(_JITLoader* loader) = 0;
+//   virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber) = 0;
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
 
    // return VMT field position
    virtual void allocateVariable(MemoryWriter& writer) = 0;
-   virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;
+//   virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;
 
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength) = 0;
@@ -106,7 +105,7 @@ public:
    virtual void compileWideLiteral(MemoryWriter* writer, const wchar16_t* value);
 
    virtual void allocateVariable(MemoryWriter& writer);
-   virtual void allocateArray(MemoryWriter& writer, size_t count);
+//   virtual void allocateArray(MemoryWriter& writer, size_t count);
 
    // return VMT field position
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);

@@ -119,7 +119,7 @@ bool x86Process :: read(size_t position, void* s, size_t length)
    else return false;
 }
 
-bool x86Process :: exportFunction(const _path_t* rootPath, size_t position, const wchar16_t* dllName, const wchar16_t* funName)
+bool x86Process :: exportFunction(const tchar_t* rootPath, size_t position, const wchar16_t* dllName, const wchar16_t* funName)
 {
    HMODULE handle = ::LoadLibrary(dllName);
    // if dll is not found, use root path

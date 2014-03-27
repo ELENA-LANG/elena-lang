@@ -16,7 +16,7 @@ WindowList :: WindowList(int maxCount, int menuBaseId)
 {
 }
 
-void WindowList :: add(const _text_t* item)
+void WindowList :: add(const tchar_t* item)
 {
    if (emptystr(item))
       return;
@@ -36,7 +36,7 @@ void WindowList :: add(const _text_t* item)
 #endif
 }
 
-void WindowList :: remove(const _text_t* item)
+void WindowList :: remove(const tchar_t* item)
 {
 #ifdef _WIN32
    if (erase(item))

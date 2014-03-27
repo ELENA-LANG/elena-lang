@@ -16,7 +16,7 @@ RecentList :: RecentList(int maxCount, int menuBaseId)
 
 void RecentList :: load(IniConfigFile& file, const char* section)
 {
-   String<_text_t, 255> param;
+   String<tchar_t, 255> param;
    for(ConfigCategoryIterator it = file.getCategoryIt(section) ; !it.Eof() ; it++) {
       param.copy(it.key());
 
@@ -29,7 +29,7 @@ void RecentList :: save(IniConfigFile& file, const char* section)
    String<char, 255> param;
 
    file.clear(section);
-   for(List<_text_t*>::Iterator it = _list.start() ; !it.Eof() ; it++) {
+   for(List<tchar_t*>::Iterator it = _list.start() ; !it.Eof() ; it++) {
       param.copy(*it);
 
       file.setSetting(section, param, (const char*)NULL);

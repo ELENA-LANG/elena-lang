@@ -38,8 +38,8 @@ enum ProjectSetting
    opVMPath                = 0x000B,
    opTemplate              = 0x000C,
    opEmbeddedSymbolMode    = 0x000D,
-//   opJITType               = 0x0012,
-   opThreadMax             = 0x0013,
+////   opJITType               = 0x0012,
+//   opThreadMax             = 0x0013,
 
    // linker options
    opImageBase             = 0x0020,
@@ -111,9 +111,10 @@ protected:
    void loadHexOption(_ConfigFile& config, ProjectSetting setting);
    void loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment);
    void loadBoolOption(_ConfigFile& config, ProjectSetting setting);
-   bool loadPathOption(_ConfigFile& config, ProjectSetting setting, const _path_t* path);
-   void loadCategory(_ConfigFile& config, ProjectSetting setting, const _path_t* configPath);
+   bool loadPathOption(_ConfigFile& config, ProjectSetting setting, const tchar_t* path);
+   void loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* configPath);
 
+   void loadPrimitiveCategory(_ConfigFile& config, const tchar_t* configPath);
    void loadForwardCategory(_ConfigFile& config);
 
 public:
@@ -160,19 +161,19 @@ public:
 //      return _settings.getIt(opPrimitives);
 //   }
 
-   virtual void printInfo(const char* msg) = 0;
+//   virtual void printInfo(const char* msg) = 0;
    virtual void printInfo(const char* msg, const wchar16_t* value) = 0;
 
-   virtual void raiseError(const char* msg) = 0;
-   virtual void raiseError(const char* msg, const _path_t* path, int row, int column, const _text_t* terminal = NULL) = 0;
-   virtual void raiseError(const char* msg, const char* value) = 0;  // !! temporal??
+//   virtual void raiseError(const char* msg) = 0;
+   virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
+//   virtual void raiseError(const char* msg, const char* value) = 0;  // !! temporal??
    virtual void raiseError(const char* msg, const wchar16_t* value) = 0;
 
-   virtual void raiseWarning(const char* msg, const _path_t* path, int row, int column, const _text_t* terminal = NULL) = 0;
-   virtual void raiseWarning(const char* msg, const _path_t* path) = 0;
+   virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
+   virtual void raiseWarning(const char* msg, const tchar_t* path) = 0;
 
-   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
-   virtual void loadConfig(_ConfigFile& config, const _path_t* configPath);
+//   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
+   virtual void loadConfig(_ConfigFile& config, const tchar_t* configPath);
 
    virtual void initLoader()
    {
@@ -189,27 +190,21 @@ public:
    virtual const wchar16_t* resolveForward(const wchar16_t* forward);
    virtual const wchar16_t* resolveForward(const char* forward)
    {
-      return resolveForward(IdentifierString(forward));
+      return resolveForward(ConstantIdentifier(forward));
    }
 
    // loader
    virtual _Module* loadModule(const wchar16_t* package, bool silentMode);
-   virtual _Module* loadPrimitive(const wchar16_t* package, bool silentMode);
 
-//   virtual _Module* loadModule(const char* package, bool silentMode)
-//   {
-//      IdentifierString name(package);
-//
-//      return loadModule(name, silentMode);
-//   }
-   virtual _Module* loadPrimitive(const char* package, bool silentMode)
+   virtual _Module* loadModule(const char* package, bool silentMode)
    {
       IdentifierString name(package);
 
-      return loadPrimitive(name, silentMode);
+      return loadModule(name, silentMode);
    }
 
    virtual _Module* resolveModule(const wchar16_t* referenceName, ref_t& reference, bool silentMode = false);
+   virtual _Module* resolvePredefined(ref_t reference, bool silentMode = false);
 
    bool HasWarnings() const { return _hasWarning; }
 
@@ -226,10 +221,10 @@ public:
       else return false;
    }
 
-   virtual _Module* createModule(const _path_t* sourcePath);
+   virtual _Module* createModule(const tchar_t* sourcePath);
    virtual _Module* createDebugModule(const wchar_t* name);
 
-   virtual void saveModule(_Module* module, const _path_t* extension);
+   virtual void saveModule(_Module* module, const tchar_t* extension);
 
    Project();
    virtual ~Project() {}

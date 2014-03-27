@@ -3,6 +3,8 @@
 
 #class Object
 {
+    #method => <redirect>.
+    
     #method equal : anObject
         <object_equal>.
 
@@ -11,10 +13,8 @@
                         
     #method equal &object:anObject
         <object_equal>.
-        
-    #method <= &object:$self.
 
-    #method => <redirect>.
+    #method <= &object:$self.
 }
 
 // --- EException ---

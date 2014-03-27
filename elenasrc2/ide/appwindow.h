@@ -116,8 +116,8 @@ protected:
 
       size_t proceed(size_t position, LexicalInfo& info);
 
-      IDELexicalStyler(IDE* ide, Text* text, int defaultStyle, _text_t lookaheadState, _text_t startState,
-                        _text_t(* makeStep)(_text_t ch, _text_t state), size_t(* defineStyle)(_text_t state, size_t style))
+      IDELexicalStyler(IDE* ide, Text* text, int defaultStyle, tchar_t lookaheadState, tchar_t startState,
+                        tchar_t(* makeStep)(tchar_t ch, tchar_t state), size_t(* defineStyle)(tchar_t state, size_t style))
          : LexicalStyler(text, defaultStyle, lookaheadState, startState, makeStep, defineStyle)
       {
          _bracketHighlighting = false;
@@ -200,13 +200,13 @@ protected:
 
    void exit();
 
-   bool openFile(const _path_t* path);
-   void renameFileAs(int index, const _path_t* newPath, const _path_t* oldPath, bool included);
-   bool openProject(const _path_t* path);
+   bool openFile(const tchar_t* path);
+   void renameFileAs(int index, const tchar_t* newPath, const tchar_t* oldPath, bool included);
+   bool openProject(const tchar_t* path);
    bool closeFile(int index);
    bool closeAll(bool closeProject = true);
 
-   void setCaption(const _text_t* projectName);
+   void setCaption(const tchar_t* projectName);
 
    void showProjectSettings();
    void showProjectForwards();
@@ -216,10 +216,10 @@ protected:
    void runToCursor();
    void refreshDebugStatus();
 
-   bool toggleBreakpoint(const _text_t* module, const _path_t* path, size_t row, Document* doc);
+   bool toggleBreakpoint(const tchar_t* module, const tchar_t* path, size_t row, Document* doc);
 
    void doCreateFile();
-   void doCreateTempFile(const _text_t* name);
+   void doCreateTempFile(const tchar_t* name);
    void doOpenFile();
    bool doSave(bool saveAsMode);
    bool doSave(int docIndex, bool saveAsMode);
@@ -426,15 +426,15 @@ protected:
 
 public:
    virtual void onCompilationStart();
-   virtual void onCompilationEnd(const _text_t* message, bool successful);
+   virtual void onCompilationEnd(const tchar_t* message, bool successful);
    virtual void onAutoCompilationEnd()
    {
       _state &= ~uiAutoRecompile;
    }
 
    virtual void onDebuggerStart();
-   virtual void onDebuggerStep(const wchar16_t* ns, const _text_t* source, HighlightInfo info);
-   virtual void onDebuggerCheckPoint(const _text_t* message);
+   virtual void onDebuggerStep(const wchar16_t* ns, const tchar_t* source, HighlightInfo info);
+   virtual void onDebuggerCheckPoint(const tchar_t* message);
    virtual void onDebuggerStop(bool broken);
 
    virtual bool onClose();
@@ -451,8 +451,8 @@ public:
       _recentProjects.load(file, RECENTRPOJECTS_SECTION);
       _recentProjects.refresh();
    }
-   bool loadModule(const _text_t* name, const _path_t* sourcePath);
-   bool loadTemporalModule(const _text_t* name, int param);
+   bool loadModule(const tchar_t* name, const tchar_t* sourcePath);
+   bool loadTemporalModule(const tchar_t* name, int param);
 
    void saveRecentFiles(_ELENA_::IniConfigFile& file)
    {

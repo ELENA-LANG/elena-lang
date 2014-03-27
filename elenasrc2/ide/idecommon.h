@@ -82,7 +82,7 @@ enum FrameState
 
 #endif
 
-typedef _ELENA_::String<_text_t, 255> SearchText;
+typedef _ELENA_::String<tchar_t, 255> SearchText;
 
 struct SearchOption
 {

@@ -79,7 +79,7 @@ void EditFrame :: eraseDocumentTab(int index)
    eraseTabView(index);
 }
 
-void EditFrame :: renameDocumentTab(int index, const _text_t* newName)
+void EditFrame :: renameDocumentTab(int index, const tchar_t* newName)
 {
    renameTabView(index, newName);
 }

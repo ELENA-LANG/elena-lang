@@ -77,7 +77,7 @@ void InstanceConfig :: loadForwardList(IniConfigFile& config)
       key.copy(it.key());
 
       // if it is a wildcard
-      String<wchar16_t, 100> value((_text_t*)*it);
+      String<wchar16_t, 100> value((tchar_t*)*it);
       if (key[getlength(key) - 1] == '*') {
          NamespaceName alias(key);
          NamespaceName module(value);
@@ -119,7 +119,7 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
    }
 }
 
-bool InstanceConfig :: load(const _path_t* path, Templates* templates)
+bool InstanceConfig :: load(const tchar_t* path, Templates* templates)
 {
    IniConfigFile config;
    if (_ELENA_::emptystr(path) || !config.load(path, feUTF8)) {
@@ -144,7 +144,7 @@ bool InstanceConfig :: load(const _path_t* path, Templates* templates)
    return true;
 }
 
-void InstanceConfig :: init(const _path_t* configPath, IniConfigFile& config)
+void InstanceConfig :: init(const tchar_t* configPath, IniConfigFile& config)
 {
    // compiler options
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
@@ -283,7 +283,7 @@ size_t Instance :: getLinkerConstant(int id)
    }
 }
 
-void Instance :: printInfo(const _text_t* msg, ...)
+void Instance :: printInfo(const tchar_t* msg, ...)
 {
    va_list argptr;
    va_start(argptr, msg);
@@ -347,7 +347,7 @@ SectionInfo Instance :: getSectionInfo(const wchar16_t* reference, size_t mask)
 
    LoadResult result;
    ref_t      referenceID = 0;
-   if (ConstIdentifier::compare(reference, PACKAGE_MODULE, PMODULE_LEN)) {
+   if (ConstantIdentifier::compare(reference, PACKAGE_MODULE, PMODULE_LEN)) {
       sectionInfo.module = _loader.resolvePrimitive(reference, result, referenceID);
    }
    else sectionInfo.module = resolveModule(reference, result, referenceID);
@@ -355,6 +355,23 @@ SectionInfo Instance :: getSectionInfo(const wchar16_t* reference, size_t mask)
 
    if (sectionInfo.section == NULL) {
       throw JITUnresolvedException(reference);
+   }
+
+   return sectionInfo;
+}
+
+SectionInfo Instance :: getPredefinedSectionInfo(ref_t reference, size_t mask)
+{
+   SectionInfo sectionInfo;
+
+   ConstantIdentifier packageName(COMMANDSET_MODULE);
+
+   LoadResult result = lrNotFound;
+   sectionInfo.module = _loader.resolvePredefined(packageName, reference, result);
+   sectionInfo.section = sectionInfo.module ? sectionInfo.module->mapSection(reference | mask, true) : NULL;
+
+   if (sectionInfo.section == NULL) {
+      throw InternalError("Internal error");
    }
 
    return sectionInfo;
@@ -453,24 +470,8 @@ bool Instance :: restart(bool debugMode)
       getTargetDebugSection()->write(4, &dummy, 4);
    }
 
-   // load core modules
-   LoadResult result;
-   _Module* core = _loader.loadPrimitive(ConstantIdentifier(CORE_MODULE), result);
-   if (result != lrSuccessful) {
-      setStatus(_T("Cannot load "), ConstantIdentifier(CORE_MODULE));
-
-      return false;
-   }
-
-   _Module* commands = _loader.loadPrimitive(ConstantIdentifier(COMMAND_MODULE), result);
-   if (result != lrSuccessful) {
-      setStatus(_T("Cannot load "), ConstantIdentifier(COMMAND_MODULE));
-
-      return false;
-   }
-
    // load predefined code
-   _linker->prepareCompiler(core, commands);
+   _linker->prepareCompiler();
 
    // initialize GC
    _Entry entry;
@@ -750,7 +751,7 @@ bool Instance :: loadTemplate(const wchar16_t* name)
    return initLoader(_config);
 }
 
-void Instance :: setPackagePath(const wchar16_t* package, const _path_t* path)
+void Instance :: setPackagePath(const wchar16_t* package, const tchar_t* path)
 {
    _loader.setPackage(package, path);
 }
@@ -885,7 +886,7 @@ int Instance :: interprete(void* tape, const wchar16_t* interpreter)
 
 // --- ELENAMachine::Config ---
 
-bool ELENAMachine::Config :: load(const _path_t* path, Templates* templates)
+bool ELENAMachine::Config :: load(const tchar_t* path, Templates* templates)
 {
    IniConfigFile config;
    _ELENA_::Path rootPath;
@@ -908,7 +909,7 @@ bool ELENAMachine::Config :: load(const _path_t* path, Templates* templates)
 
 // --- ELENAMachine ---
 
-ELENAMachine :: ELENAMachine(const _path_t* rootPath)
+ELENAMachine :: ELENAMachine(const tchar_t* rootPath)
    : templates(NULL, freestr), _rootPath(rootPath)
 {
    Path configPath(rootPath, _T("elenavm.cfg"));

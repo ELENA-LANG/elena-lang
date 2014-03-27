@@ -1,0 +1,12 @@
+[#general#]
+#name=extensions
+#shortdescr=Contains the functionality extensions
+
+[#list#]
+convertor
+
+[convertor]
+#title=Symbol control
+#shortdescr=A control helper symbol
+#method=save,object&to:variable;Converts the object value to the variable type and saves it
+#method=saveVariant,variant&to:variable;Converts the object value to the variable basic type and saves it

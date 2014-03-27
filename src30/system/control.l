@@ -214,7 +214,7 @@
     
     do:anAction &until:anExpr
         = anAction~actionOp run &until:anExpr | stop.
-        
+
     while:anExpr
         = $self while:anExpr &do:[].
 

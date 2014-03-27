@@ -88,7 +88,7 @@ void loadCommandLine(char* cmdLine, _ELENA_::Path& configPath)
 
 // --- loadSettings ---
 
-void loadSettings(const _path_t* path, IDE& appWindow)
+void loadSettings(const tchar_t* path, IDE& appWindow)
 {
    _ELENA_::IniConfigFile file;
 
@@ -102,7 +102,7 @@ void loadSettings(const _path_t* path, IDE& appWindow)
 
 // --- saveSettings ---
 
-void saveSettings(const _path_t* path, IDE& appWindow)
+void saveSettings(const tchar_t* path, IDE& appWindow)
 {
    _ELENA_::IniConfigFile file;
 

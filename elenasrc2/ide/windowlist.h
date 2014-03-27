@@ -18,8 +18,8 @@ namespace _GUI_
 class WindowList : public MenuHistoryList
 {
 public:
-   void add(const _text_t* item);
-   void remove(const _text_t* item);
+   void add(const tchar_t* item);
+   void remove(const tchar_t* item);
 
    WindowList(int maxCount, int menuBaseId);
 };

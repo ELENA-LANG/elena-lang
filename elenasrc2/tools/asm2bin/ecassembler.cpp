@@ -153,8 +153,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 
    switch (opcode)
    {
-      case bcNop:
-      case bcBreakpoint:
+      //case bcNop:
+      //case bcBreakpoint:
       case bcPushB:
       case bcPop:
       case bcPushM:
@@ -181,9 +181,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          break;
       case bcCallR:
       case bcACopyR:
+      case bcPushR:
          compileRCommand(opcode, token, writer, binary);
          break;
-      case bcACopyF:
+      //case bcACopyF:
       case bcACallVI:
       case bcALoadSI:
       case bcASaveSI:
@@ -192,6 +193,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMLoadAI:
       case bcMLoadSI:
       case bcMLoadFI:
+      case bcMSaveAI:
       case bcMAddAI:
       case bcPushAI:
       case bcMSaveParams:
@@ -211,9 +213,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          compileICommand(opcode, token, writer);
          break;
       case bcOpen:
-      case bcMAdd:
+      //case bcMAdd:
       case bcAJumpVI:
       case bcMCopy:
+      case bsMSetVerb:
       case bcMReset:
       case bcQuitN:
       case bcPushN:
@@ -236,9 +239,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          compileMccJump(opcode, token, writer, info);
          break;
       case bcTestFlag:
+      case bcElseFlag:
       case bcAElseSI:
       case bcAThenSI:
-      case bcElseFlag:
       case bcMElseAI:
       case bcMThenAI:
       case bcDElseN:
@@ -255,34 +258,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 
    // check if it is function
    if (!recognized) {
-      ByteCode code = bcNone;
-      const wchar16_t* func = token.value;
-      if (token.value[0]=='n') {
-         code = bcNFunc;
-         func++;
-      }
-      else if (token.value[0]=='l') {
-         code = bcLFunc;
-         func++;
-      }
-      else if (token.value[0]=='r') {
-         code = bcRFunc;
-         func++;
-      }
-      else if (token.value[0]=='w' && token.value[1]=='s') {
-         code = bcWSFunc;
-         func+=2;
-      }
-      else if (token.value[0]=='b' && token.value[1]=='s') {
-         code = bcBSFunc;
-         func+=2;
-      }
-      if (code != bcNone) {
-         FunctionCode function = ByteCodeCompiler::codeFunction(func);
-         if (function != fnUnknown) {
-            writeCommand(ByteCommand(code, function), writer);
-            recognized = true;
-         }
+      FunctionCode function = ByteCodeCompiler::codeFunction(token.value);
+      if (function != fnUnknown) {
+         writeCommand(ByteCommand(bcFunc, function), writer);
+         recognized = true;
       }
    }
 

@@ -43,6 +43,7 @@ public:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask);
+   virtual SectionInfo getPredefinedSectionInfo(ref_t reference, size_t mask);
 
    virtual _Memory* getTargetDebugSection()
    {
@@ -110,7 +111,7 @@ public:
       return 0; // !! temporal
    }
 
-   VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const _path_t* appPath);
+   VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const tchar_t* appPath);
 };
 
 } // _ELENA_

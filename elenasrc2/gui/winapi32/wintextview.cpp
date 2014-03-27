@@ -536,7 +536,7 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
       wchar_t buffer[0x100];
       int   length = 0;
 
-      _ELENA_::LiteralWriter<_text_t> writer(buffer, 0xFF);
+      _ELENA_::LiteralWriter<tchar_t> writer(buffer, 0xFF);
       Document::Reader reader(_document);
       
       reader.readFirst(writer, 0xFF);

@@ -26,7 +26,7 @@ MessageLog :: MessageLog(Control* owner)
 #endif
 }
 
-void MessageLog :: addMessage(const _text_t* message, const _text_t* file, const _text_t* row, const _text_t* col)
+void MessageLog :: addMessage(const tchar_t* message, const tchar_t* file, const tchar_t* row, const tchar_t* col)
 {
 #ifdef _WIN32
    MessageBookmark* bookmark = new MessageBookmark(file, col, row);

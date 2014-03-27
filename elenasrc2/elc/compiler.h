@@ -42,10 +42,10 @@ protected:
       }
    };
 
-////   typedef Map<const wchar16_t*, const wchar16_t*, false> NamespaceMaskMap;
-   typedef Map<const wchar16_t*, ref_t, false>          ForwardMap;
-   typedef Map<const wchar16_t*, Parameter, false>      LocalMap;
-////   typedef Map<const wchar16_t*, ref_t>                 SubjectMap;
+//   typedef Map<const wchar16_t*, const wchar16_t*, false> NamespaceMaskMap;
+   typedef Map<const wchar16_t*, ref_t, false>      ForwardMap;
+   typedef Map<const wchar16_t*, Parameter, false>  LocalMap;
+   typedef Map<ref_t, ref_t>                        SubjectMap;
 
    // InheritResult
    enum InheritResult
@@ -60,7 +60,7 @@ protected:
 
    struct Unresolved
    {
-      const _path_t* fileName;
+      const tchar_t* fileName;
       ref_t          reference;
       _Module*       module;
       size_t         row;
@@ -70,7 +70,7 @@ protected:
       {
          reference = 0;
       }
-      Unresolved(const _path_t* fileName, ref_t reference, _Module* module, size_t row, size_t col)
+      Unresolved(const tchar_t* fileName, ref_t reference, _Module* module, size_t row, size_t col)
       {
          this->fileName = fileName;
          this->reference = reference;
@@ -89,7 +89,8 @@ protected:
       _Module*       module;
       _Module*       debugModule;
 
-      const _path_t* sourcePath;
+      const tchar_t* sourcePath;
+      ref_t          sourcePathRef;
 
       // default namespaces
       List<const wchar16_t*>  defaultNs;
@@ -97,6 +98,7 @@ protected:
 
       // symbol hints
       Map<ref_t, ObjectKind>  symbolHints;
+      SubjectMap              extensions; 
 
       // cached values
       ref_t nilReference;
@@ -112,10 +114,10 @@ protected:
       ref_t wideStrSubject;
       ref_t dumpSubject;
       ref_t lengthSubject;
-      ref_t lengthOutSubject;
+//      ref_t lengthOutSubject;
       ref_t indexSubject;
       ref_t arraySubject;
-      ref_t byteSubject;
+//      ref_t byteSubject;
 
       ref_t whileSignRef;
       ref_t untilSignRef;
@@ -133,11 +135,13 @@ protected:
 
       ObjectInfo mapObject(TerminalInfo identifier);
 
-      ObjectInfo mapReference(const wchar16_t* reference, bool existing = false);
+      ref_t mapReference(const wchar16_t* reference, bool existing = false);
+
+      ObjectInfo mapReferenceInfo(const wchar16_t* reference, bool existing = false);
 
       ref_t mapConstantReference(const char* name)
       {
-         IdentifierString wsName(name);
+         ConstantIdentifier wsName(name);
 
          return module->mapReference(wsName);
       }
@@ -170,7 +174,7 @@ protected:
 
       bool defineForward(const wchar16_t* forward, const wchar16_t* referenceName, bool constant)
       {
-         ObjectInfo info = mapReference(referenceName, false);
+         ObjectInfo info = mapReferenceInfo(referenceName, false);
 
          if (constant)
             defineConstant(info.reference);
@@ -194,13 +198,14 @@ protected:
       void raiseError(const char* message, TerminalInfo terminal);
       void raiseWarning(const char* message, TerminalInfo terminal);
 
+      bool checkReference(const wchar16_t* referenceName);
+
       ref_t resolveIdentifier(const wchar16_t* name);
 ////      ref_t resolveSubject(const wchar16_t* subject);
 ////      ref_t resolvePrivateSubject(const wchar16_t* subject);
 
 ////      ref_t mapMessageSubject(TerminalInfo terminal);
 
-      bool checkGlobalReference(const wchar16_t* referenceName);
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
@@ -210,9 +215,9 @@ protected:
       void validateReference(TerminalInfo terminal, ref_t reference);
 //      void validateForwards();
 
-      void init(_Module* module, _Module* debugModule, const _path_t* sourcePath);
+      void init(_Module* module, _Module* debugModule);
 
-      ModuleScope(Project* project, Unresolveds* forwardsUnresolved);
+      ModuleScope(Project* project, const tchar_t* sourcePath, Unresolveds* forwardsUnresolved);
    };
 
    // - Scope -
@@ -314,7 +319,7 @@ protected:
          info.save(&metaWriter);
 
          // create byte code sections
-         writer.flush(tape, moduleScope->module, moduleScope->debugModule);
+         writer.compile(tape, moduleScope->module, moduleScope->debugModule, moduleScope->sourcePathRef);
       }
 
       ClassScope(ModuleScope* parent, ref_t reference);
@@ -345,14 +350,13 @@ protected:
    {
       ref_t     message;
       LocalMap  parameters;
-      Parameter outParameter;       // used in out-assignment
       bool      withBreakHandler;
       bool      withCustomVerb;
       int       masks;              // used for ecode optimization
       int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 
-//      int compileHints(DNode hints);
+      int compileHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -363,6 +367,7 @@ protected:
       }
 
       void include();
+      void includeExtension();
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -405,6 +410,21 @@ protected:
          locals.add(local, Parameter(level, type));
       }
 
+      int newSpace(size_t size)
+      {
+         int retVal = reserved;
+
+         reserved += size;
+
+         // the offset should include frame header offset
+         return -4 - retVal;
+      }
+
+      void freeSpace()
+      {
+         reserved = saved;
+      }
+
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -415,26 +435,26 @@ protected:
          else return parent->getScope(level);
       }
 
-//      int getClassType()
-//      {
-//         ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+////      int getClassType()
+////      {
+////         ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+////
+////         return classScope->getClassType();
+////      }
 //
-//         return classScope->getClassType();
-//      }
-
-      //bool testMode(MethodScope::Mode mode)
-      //{
-      //   MethodScope* scope = (MethodScope*)getScope(slMethod);
-
-      //   return scope ? scope->testMode(mode) : false;
-      //}
-
-//      int getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
+//      //bool testMode(MethodScope::Mode mode)
+//      //{
+//      //   MethodScope* scope = (MethodScope*)getScope(slMethod);
 //
-//         return scope ? scope->message : 0;
-//      }
+//      //   return scope ? scope->testMode(mode) : false;
+//      //}
+//
+////      int getMessageID()
+////      {
+////         MethodScope* scope = (MethodScope*)getScope(slMethod);
+////
+////         return scope ? scope->message : 0;
+////      }
 
       ref_t getClassRefId(bool ownerClass = true)
       {
@@ -490,13 +510,13 @@ protected:
          else return Scope::getScope(level);
       }
 
-//      void mapOuterField(const wchar16_t* name, ObjectInfo object)
-//      {
-//         int offset = info.fields.Count();
-//
-//         info.fields.add(name, offset);
-//         outers.add(name, Outer(offset, object));
-//      }
+      void mapOuterField(const wchar16_t* name, ObjectInfo object)
+      {
+         int offset = info.fields.Count();
+
+         info.fields.add(name, offset);
+         outers.add(name, Outer(offset, object));
+      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -548,8 +568,6 @@ protected:
    MessageMap     _operators;                        // list of operators
 //   MessageMap       _obsolete;                       // list of obsolete messages
 
-   Unresolveds      _unresolveds;
-
    // optimization flags
    int _optFlag;
 
@@ -561,7 +579,7 @@ protected:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-   void loadOperators(MessageMap& operators);
+//   void loadOperators(MessageMap& operators);
 
    void recordStep(CodeScope& scope, TerminalInfo terminal, int stepType)
    {
@@ -599,8 +617,8 @@ protected:
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope);
 
    ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compilePrimitiveLength(CodeScope& scope, ObjectInfo objectInfo, int target);
-   ObjectInfo compilePrimitiveLengthOut(CodeScope& scope, ObjectInfo objectInfo, int target);
+   ObjectInfo compilePrimitiveLength(CodeScope& scope, ObjectInfo objectInfo);
+//   ObjectInfo compilePrimitiveLengthOut(CodeScope& scope, ObjectInfo objectInfo, int target);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, int mode);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
@@ -609,6 +627,7 @@ protected:
       int dummy = 0;
       return mapMessage(node, scope, paramCount, dummy);
    }
+   bool mapOperator(ModuleScope& scope, ReferenceNs& message, ref_t operand_id, ObjectInfo loperand, ObjectInfo roperand);
 
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
@@ -660,17 +679,15 @@ protected:
    void reserveExternalOutputParameters(CodeScope& scope, ExternalScope& externalScope);
    void reserveExternalLiteralParameters(CodeScope& scope, ExternalScope& externalScope);
 
-   bool allocatePrimitiveObject(CodeScope& scope, int mode, ObjectInfo& exprOperand);
-   FunctionCode definePrimitiveOperationCode(CodeScope& scope, int operator_id, ObjectInfo& result, ObjectInfo loperand, ObjectInfo roperand, int mode);
+   void reserveSpace(CodeScope& scope, int size);
 
-   ObjectInfo compilePrimitiveOperator(DNode& node, CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, int mode);
+   bool allocatePrimitiveObject(CodeScope& scope, int mode, ObjectInfo& exprOperand);
+
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);
 
    void compileResend(DNode node, CodeScope& scope);
-   void compileMessageDispatch(DNode node, CodeScope& scope);
-
-   void compileEndStatement(DNode node, CodeScope& scope);
+//   void compileMessageDispatch(DNode node, CodeScope& scope);
 
    void compileCode(DNode node, CodeScope& scope, int mode = 0);
 
@@ -679,7 +696,7 @@ protected:
 
    void compileDispatcher(DNode node, CodeScope& scope);
    void compileTransmitor(DNode node, CodeScope& scope);
-   void compileMethod(DNode node, MethodScope& scope/*, DNode hints*/);
+   void compileMethod(DNode node, MethodScope& scope, DNode hints);
    void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
 
@@ -695,21 +712,22 @@ protected:
    void compileFieldDeclarations(DNode& member, ClassScope& scope);
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileSymbolDeclaration(DNode node, SymbolScope& scope, /*DNode hints, */bool isStatic);
+   void compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNode hints*/, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
    void compileForward(DNode node, ModuleScope& scope, DNode hints);
+   void compileUsage(DNode& member, ModuleScope& scope);
 
    void compileDeclarations(DNode& member, ModuleScope& scope);
    void compileIncludeSection(DNode& node, ModuleScope& scope);
 
    virtual void compileModule(DNode node, ModuleScope& scope);
 
-   void compile(const _path_t* source, MemoryDump* buffer, ModuleScope& scope);
+   void compile(const tchar_t* source, MemoryDump* buffer, ModuleScope& scope);
 
    bool validate(Project& project, _Module* module, int reference);
-   void validateUnresolved(Project& project);
+   void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
-   void createModuleInfo(ModuleScope& scope, const wchar16_t* path, bool withDebugInfo, Map<const wchar16_t*, ModuleInfo>& modules);
+   void createModuleInfo(ModuleScope& scope, const tchar_t* path, bool withDebugInfo, Map<const wchar16_t*, ModuleInfo>& modules);
 
 public:
    void setOptFlag(int flag)

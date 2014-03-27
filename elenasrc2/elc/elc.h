@@ -19,7 +19,7 @@
 #define RULES_FILE                  "rules.dat"
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0004
+#define ELC_BUILD_NUMBER             0x0001
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
@@ -37,7 +37,7 @@
 #define ELC_W_WEAKUNRESOLVED        "wwun"
 #define ELC_PRM_EXTRA               'x'
 #define ELC_PRM_TABSIZE             "xtab"
-//#define ELC_PRM_UNICODE             "xunicode"
+////#define ELC_PRM_UNICODE             "xunicode"
 #define ELC_PRM_PROJECTPATH         "xpath"
 #define ELC_PRM_CODEPAGE            "xcp"
 #define ELC_PRM_OPTOFF              "xo-"
@@ -61,15 +61,15 @@
 #define ELC_GC_OBJSIZE              "objsize"
 //#define ELC_HEAP_COMMIT             "heapcommit"
 //#define ELC_HEAP_RESERV             "heapresrv"
-//#define ELC_JIT                     "jit"
-//#define ELC_YG_IMAGEBASE            "imagebase"
+////#define ELC_JIT                     "jit"
+////#define ELC_YG_IMAGEBASE            "imagebase"
 #define ELC_LIB_PATH                "libpath"
-#define ELC_SYSTEM_THREADMAX        "maxthread"
+//#define ELC_SYSTEM_THREADMAX        "maxthread"
 #define ELC_OUTPUT_PATH             "output"
 #define ELC_NAMESPACE               "namespace"
-//#define ELC_STACK_COMMIT            "stackcommit"
-//#define ELC_STACK_RESERV            "stackresrv"
-//#define ELC_PROJECT_START           "start"
+////#define ELC_STACK_COMMIT            "stackcommit"
+////#define ELC_STACK_RESERV            "stackresrv"
+////#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
 #define ELC_APPTYPE                 "apptype"
 #define ELC_PLATFORMTYPE            "platform"
@@ -107,9 +107,6 @@ namespace _ELC_
 // --- ELC type definitions ---
 typedef _ELENA_::IniConfigFile ElcConfigFile;
 
-// --- PrintableValue ---
-typedef _ELENA_::String<wchar_t, 255> PrintableValue;
-
 // --- Command Line Project ---
 class Project : public _ELENA_::Project
 {
@@ -121,32 +118,32 @@ class Project : public _ELENA_::Project
 public:
    _ELENA_::Path appPath;
 
-   _ELENA_::_JITCompiler* getJITCompiler();
+   _ELENA_::_JITCompiler* createJITCompiler();
 
-   virtual void printInfo(const char* msg);
+//   virtual void printInfo(const char* msg);
    virtual void printInfo(const char* msg, const wchar16_t* param);
-   virtual void printInfo(const wchar16_t* msg); // !! temporal
+//   virtual void printInfo(const wchar16_t* msg); // !! temporal
 
    virtual void raiseError(const char* msg);
-   virtual void raiseError(const char* msg, const _path_t* path, int row, int column, const wchar16_t* terminal);
-   virtual void raiseError(const char* msg, const char* value);   // !! temporal??
+   virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
+//   virtual void raiseError(const char* msg, const char* value);   // !! temporal??
    virtual void raiseError(const char* msg, const wchar16_t* value);
 
-   void raiseErrorIf(bool throwExecption, const char* msg, const _path_t* path);
+   void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path);
 
-   virtual void raiseWarning(const char* msg, const _path_t* path, int row, int column, const wchar16_t* terminal);
-   virtual void raiseWarning(const char* msg, const _path_t* path);
+   virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
+   virtual void raiseWarning(const char* msg, const tchar_t* path);
 
-   void addSource(const _path_t* path);
+   void addSource(const tchar_t* path);
 
-   virtual void loadConfig(_ELENA_::_ConfigFile& config, const _path_t* configPath)
+   virtual void loadConfig(_ELENA_::_ConfigFile& config, const tchar_t* configPath)
    {
       _ELENA_::Project::loadConfig(config, configPath);
    }
 
-   virtual void loadConfig(const _path_t* path, bool root = false, bool requiered = true);
+   virtual void loadConfig(const tchar_t* path, bool root = false, bool requiered = true);
 
-   void setOption(const char* value);
+   void setOption(const tchar_t* value);
 
    virtual int getDefaultEncoding() { return _encoding; }
 

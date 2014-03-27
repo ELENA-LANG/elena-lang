@@ -21,10 +21,10 @@ class SourceDoc : public Document
       idRight
    };
 
-   IndentDirection IsAutoIndent(_text_t ch);
+   IndentDirection IsAutoIndent(tchar_t ch);
 
-   _text_t getCurrentChar();
-   const _text_t* getCurrentLine(int disp, size_t& length);
+   tchar_t getCurrentChar();
+   const tchar_t* getCurrentLine(int disp, size_t& length);
 
 public:
    virtual void insertNewLine();

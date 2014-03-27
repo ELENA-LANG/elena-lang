@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   1
+#define BUILD_VERSION   2
 
 using namespace _ELENA_;
 
@@ -359,10 +359,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 
    switch(code)
    {
-      //case bcPushFPI:
-      case bcXPushF:
+      case bcPushF:
       case bcSCopyF:
-      case bcAXCopyF:
       //case bcAccCopyFPI:
          command.append(opcode);
          command.append(_T(" fp:"));
@@ -399,8 +397,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.append(_T(' '));
       //   printLabel(command, position + argument2 + 9, labels);
       //   break;
-      case bcTestFlag:
-      case bcElseFlag:
+      //case bcTestFlag:
+      //case bcElseFlag:
       ////case bcElseN:
       ////case bcThenN:
          command.append(opcode);
@@ -426,8 +424,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printLabel(command, position + argument2 + 9, labels);
          break;
          break;
-      case bcAElseSI:
-      case bcAThenSI:
+      //case bcAElseSI:
+      //case bcAThenSI:
       ////case bcMccElseSI:
       ////case bcMccThenSI:
       ////case bcMccVerbElseSI:
@@ -463,7 +461,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcReserve:
       case bcRestore:
-      //case bcPushN:
+      case bcPushN:
       case bcPopI:
       case bcOpen:
       case bcQuitN:
@@ -496,7 +494,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcASaveSI:
       //case bcSwapSI:
       //case bcPopSI:
-      case bcMLoadSI:
+      //case bcMLoadSI:
       //case bcAccSwapSI:
          command.append(opcode);
          command.append(_T(" sp["));
@@ -520,11 +518,11 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //case bcPopFI:
       //case bcIncFI:
       case bcASaveFI:
-      case bcMLoadFI:
-      case bcMSaveParams:
+      //case bcMLoadFI:
+      //case bcMSaveParams:
       //case bcXAccSaveFI:
-      case bcDLoadFI:
-      case bcDSaveFI:
+      //case bcDLoadFI:
+      //case bcDSaveFI:
          command.append(opcode);
          command.append(_T(" fp["));
          command.appendInt(argument);
@@ -541,7 +539,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcXPopAI:
       ////case bcPop2AccI:
       //case bcAccLoadAccI:
-      case bcMLoadAI:
+      //case bcMLoadAI:
       //case bcMccAddAccI:
       case bcDSaveAI:
          command.append(opcode);
@@ -619,12 +617,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument2);
          command.append(_T("]"));
          break;
-      case bcNFunc:
-      case bcLFunc:
-      case bcRFunc:
-      case bcWSFunc:
       case bcFunc:
-         command.append(opcode);
          ByteCodeCompiler::decodeFunction((FunctionCode)argument, opcode);
          command.append(opcode);
          break;

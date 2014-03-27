@@ -22,12 +22,12 @@ const wchar16_t* _EditFrame :: getDocumentPath(int index)
    return _ELENA_::retrieveKey(_mappings.start(), index, DEFAULT_STR);
 }
 
-int _EditFrame :: getDocumentIndex(const _path_t* path)
+int _EditFrame :: getDocumentIndex(const tchar_t* path)
 {
    return _mappings.get(path);
 }
 
-void _EditFrame :: selectDocument(const _text_t* path)
+void _EditFrame :: selectDocument(const tchar_t* path)
 {
    selectDocumentTab(_mappings.get(path));
 }
@@ -45,7 +45,7 @@ Document* _EditFrame :: getDocument(int index)
    else return *_documents.get(index);
 }
 
-Document* _EditFrame :: openDocument(const _text_t* path, Text* text, _GUI_::LexicalStyler* styler, int encoding)
+Document* _EditFrame :: openDocument(const tchar_t* path, Text* text, _GUI_::LexicalStyler* styler, int encoding)
 {
    _GUI_::Document* doc = new _GUI_::SourceDoc(text, styler, encoding);
 
@@ -57,9 +57,9 @@ Document* _EditFrame :: openDocument(const _text_t* path, Text* text, _GUI_::Lex
    return doc;
 }
 
-void _EditFrame :: renameDocument(int index, const _path_t* path)
+void _EditFrame :: renameDocument(int index, const tchar_t* path)
 {
-   const _path_t* oldPath = _ELENA_::retrieveKey(_mappings.start(), index, DEFAULT_STR);
+   const tchar_t* oldPath = _ELENA_::retrieveKey(_mappings.start(), index, DEFAULT_STR);
 
    _mappings.erase(oldPath);
    _mappings.add(path, index);
@@ -73,7 +73,7 @@ void _EditFrame :: closeDocument(int index)
 
    _documents.cut(_documents.get(index));
 
-   const _path_t* path = _ELENA_::retrieveKey(_mappings.start(), index, DEFAULT_STR);
+   const tchar_t* path = _ELENA_::retrieveKey(_mappings.start(), index, DEFAULT_STR);
    _mappings.erase(path);
 
    DocMapping::Iterator it = _mappings.start();
@@ -108,7 +108,7 @@ bool _EditFrame :: isDocumentUnnamed(int index)
    return doc ? doc->status.unnamed : false;
 }
 
-void _EditFrame :: saveDocument(const _path_t* path, int index)
+void _EditFrame :: saveDocument(const tchar_t* path, int index)
 {
    Document* doc = getDocument(index);
    if (doc) {

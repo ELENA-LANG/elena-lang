@@ -74,7 +74,7 @@ enum Symbol
    nsThrow                      = 0x01034,
    nsImport                     = 0x01035,
    nsResend                     = 0x01036,
-   nsDispatchExpression         = 0x01037,
+//   nsDispatchExpression         = 0x01037,
    nsBreak                      = 0x01038,
    nsMethodOpenParameter        = 0x01039,
    nsMessageOpenParameter       = 0x0103A,
@@ -87,7 +87,7 @@ enum Symbol
    nsL6Operation                = 0x01041,
    nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
-   nsCopying                    = 0x01044,
+   nsUsage                      = 0x01044,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               
@@ -97,10 +97,10 @@ enum Symbol
    nsErrMessageExpected             = 0x04005,
 };
 
-inline bool ifAny(Symbol target, Symbol value1, Symbol value2)
-{
-   return target == value1 || target == value2;
-}
+//inline bool ifAny(Symbol target, Symbol value1, Symbol value2)
+//{
+//   return target == value1 || target == value2;
+//}
 
 } // _ELENA_
 

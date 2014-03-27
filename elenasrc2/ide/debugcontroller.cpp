@@ -172,7 +172,7 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
    return NULL;
 }
 
-size_t DebugController :: findNearestAddress(_Module* module, const _path_t* path, size_t row, size_t col)
+size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* path, size_t row, size_t col)
 {
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
    _Memory* strings = module->mapSection(DEBUG_STRINGS_ID, true);
@@ -245,7 +245,7 @@ bool DebugController :: start()
    return _debugger.isStarted();
 }
 
-bool  DebugController :: loadDebugData(const _path_t* path)
+bool  DebugController :: loadDebugData(const tchar_t* path)
 {
    clearDebugInfo();
 
@@ -437,7 +437,7 @@ void DebugController :: clearBreakpoints()
    _debugger.clearBreakpoints();
 }
 
-bool DebugController :: start(const _path_t* programPath, const _path_t* arguments, DebugMode debugMode, List<Breakpoint>& breakpoints)
+bool DebugController :: start(const tchar_t* programPath, const tchar_t* arguments, DebugMode debugMode, List<Breakpoint>& breakpoints)
 {
    _currentModule = NULL;
    _started = false;
@@ -483,7 +483,7 @@ void DebugController :: run()
    _debugger.activate();
 }
 
-void DebugController :: runToCursor(const _path_t* name, const _path_t* path, int col, int row)
+void DebugController :: runToCursor(const tchar_t* name, const tchar_t* path, int col, int row)
 {
    if (_running || !_debugger.isStarted())
       return;
@@ -679,7 +679,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
 
 void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
 {
-   String<_text_t, 10> index;
+   String<tchar_t, 10> index;
    for (int i = 0 ; i < length ; i++)  {
       index.copy(_T("["));
       index.appendInt(i);
@@ -710,7 +710,7 @@ void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
 
 void DebugController :: readMessage(_DebuggerWatch* watch, ref_t reference)
 {
-   String<_text_t, 20> messageValue(_T("<"));
+   String<tchar_t, 20> messageValue(_T("<"));
    messageValue.appendHex(reference);
    messageValue.append(_T('>'));
 
@@ -804,7 +804,7 @@ void DebugController :: readParams(_DebuggerWatch* watch, ref_t address, const w
 {
    if (address != 0) {
 
-      String<_text_t, 255> index;
+      String<tchar_t, 255> index;
       for (int i = 0 ; i < 255 ; i++)  {
          index.copy(name);
          index.append(_T("["));
@@ -974,7 +974,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
             length >>= 2;
             readList(watch, list, length);
          }
-         else if (ConstIdentifier::compare(className, NIL_CLASS)) {
+         else if (ConstantIdentifier::compare(className, NIL_CLASS)) {
             watch->write(this, _T("<nil>"));
          }
          else readFields(watch, info, selfPtr);

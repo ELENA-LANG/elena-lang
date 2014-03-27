@@ -10,7 +10,7 @@ using namespace _GUI_;
 
 // --- SourceDoc ---
 
-SourceDoc::IndentDirection SourceDoc :: IsAutoIndent(_text_t ch)
+SourceDoc::IndentDirection SourceDoc :: IsAutoIndent(tchar_t ch)
 {
    if (ch == '[' || ch == '{')
       return idRight;
@@ -20,10 +20,10 @@ SourceDoc::IndentDirection SourceDoc :: IsAutoIndent(_text_t ch)
    else return idNone;
 }
 
-_text_t SourceDoc :: getCurrentChar()
+tchar_t SourceDoc :: getCurrentChar()
 {
    size_t length = 0;
-   const _text_t* line = NULL;
+   const tchar_t* line = NULL;
 
    TextBookmark bm = _caret;
    // return current or previous if EOL
@@ -38,7 +38,7 @@ _text_t SourceDoc :: getCurrentChar()
    return (length > 0) ? line[0] : 0;
 }
 
-const _text_t* SourceDoc :: getCurrentLine(int disp, size_t& length)
+const tchar_t* SourceDoc :: getCurrentLine(int disp, size_t& length)
 {
    TextBookmark bm = _caret;
    bm.moveTo(0, _caret.getRow());
@@ -56,7 +56,7 @@ void SourceDoc :: insertNewLine()
 {
    int disp = 0;
    size_t length = 0;
-   const _text_t* line = getCurrentLine(0, length);
+   const tchar_t* line = getCurrentLine(0, length);
    while (length > 0) {
       IndentDirection dir = IsAutoIndent(getCurrentChar());
       for (int i = 0 ; i < length ; i++) {

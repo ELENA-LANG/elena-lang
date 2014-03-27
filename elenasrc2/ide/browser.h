@@ -27,8 +27,8 @@ protected:
    size_t          _objectAddress;
    size_t          _deepLevel;
 
-   virtual TreeViewItem addNode(const _text_t* variableName, const _text_t* className, size_t address);
-   virtual void editNode(TreeViewItem node, const _text_t* variableName, const _text_t* className, size_t address);
+   virtual TreeViewItem addNode(const tchar_t* variableName, const tchar_t* className, size_t address);
+   virtual void editNode(TreeViewItem node, const tchar_t* variableName, const tchar_t* className, size_t address);
 
    virtual void refreshNode(TreeViewItem) {}
 
@@ -69,8 +69,8 @@ class DebuggerAutoWatch : public DebuggerWatch
 {
    _ELENA_::Map<int, bool> _items;
 
-   virtual TreeViewItem addNode(const _text_t* variableName, const _text_t* className, size_t address);
-   virtual void editNode(TreeViewItem node, const _text_t* variableName, const _text_t* className, size_t address);
+   virtual TreeViewItem addNode(const tchar_t* variableName, const tchar_t* className, size_t address);
+   virtual void editNode(TreeViewItem node, const tchar_t* variableName, const tchar_t* className, size_t address);
    virtual void refreshNode(TreeViewItem);
 
    virtual void writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address);

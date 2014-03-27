@@ -13,7 +13,7 @@
 
 using namespace _ELENA_;
 
-#include <ctype.h>
+//#include <ctype.h>
 
 // --- Unicode coversion routines ---
 
@@ -139,180 +139,9 @@ wchar_t* StringHelper :: w_reallocate(wchar_t* s, size_t size)
    return (wchar_t*)realloc(s, size << 1);
 }
 
-wchar_t* StringHelper :: clone(const wchar_t* s)
+wchar_t* StringHelper :: allocateText(size_t size)
 {
-   return wcsdup(s);
-}
-
-int StringHelper :: find(const wchar_t* s, wchar_t c, int defValue)
-{
-   const wchar_t* p = wcschr(s, c);
-   if (p==NULL) {
-      return defValue;
-   }
-   else return p - s;
-}
-
-int StringHelper :: find(const wchar_t* s, const wchar_t* subs, int defValue)
-{
-   const wchar_t* p = wcsstr(s, subs);
-   if (p==NULL) {
-      return defValue;
-   }
-   else return p - s;
-}
-
-int StringHelper :: findLast(const wchar_t* s, wchar_t c, int defValue)
-{
-   const wchar_t* p = wcsrchr(s, c);
-   if (p==NULL) {
-      return defValue;
-   }
-   else return p - s;
-}
-
-bool StringHelper :: compare(const wchar_t* s1, const wchar_t* s2)
-{
-   if (s1 && s2) return (wcscmp(s1, s2)==0);
-   else return (s1 == s2);
-}
-
-bool StringHelper :: compare(const wchar_t* s1, const wchar_t* s2, size_t n)
-{
-   if (s1 && s2) return (wcsncmp(s1, s2, n)==0);
-   else return (n > 0);
-}
-
-bool StringHelper :: greater(const wchar_t* s1, const wchar_t* s2, size_t n)
-{
-   if (s1 && s2) return (wcsncmp(s1, s2, n) > 0);
-   else return (n > 0);
-}
-
-bool StringHelper :: greater(const wchar_t* s1, const wchar_t* s2)
-{
-   if (s1 && s2) return (wcscmp(s1, s2) > 0);
-   else return (s1 == s2);
-}
-
-void StringHelper :: copy(wchar_t* dest, const wchar_t* sour, size_t length)
-{
-   wcsncpy(dest, sour, length);
-}
-
-void StringHelper :: append(wchar_t* dest, const wchar_t* sour, size_t length)
-{
-   wcsncat(dest, sour, length);
-}
-
-void StringHelper :: insert(wchar_t* s, int pos, const wchar_t* subs)
-{
-   size_t len = getlength(subs);
-
-   //s[getlength(s) + len + 1] = 0;
-   for (int i = getlength(s) ; i >= pos ; i--) {
-      s[i+len] = s[i];
-   }
-   wcsncpy(s + pos, subs, len);
-}
-
-void StringHelper :: move(wchar_t* s1, const wchar_t* s2, size_t length)
-{
-   memmove(s1, s2, length << 1);
-}
-
-wchar_t* StringHelper :: lower(wchar_t* s)
-{
-   return wcslwr(s);
-}
-
-wchar_t StringHelper :: lower(wchar_t ch)
-{
-   wchar_t s[2];
-   s[0] = ch;
-   s[1] = 0;
-
-   wcslwr(s);
-   return s[0];
-}
-
-wchar_t* StringHelper :: upper(wchar_t* s)
-{
-   return wcsupr(s);
-}
-
-void StringHelper :: trim(wchar_t* s, wchar_t ch)
-{
-   size_t length = getlength(s);
-   while (length > 0 && s[length - 1] == ch) {
-      s[length - 1] = 0;
-      length = getlength(s);
-   }
-}
-
-int StringHelper :: strToInt(const wchar_t* s)
-{
-   return _wtoi(s);
-}
-
-long StringHelper :: strToLong(const wchar_t* s, int radix)
-{
-   return wcstoul(s, NULL, radix);
-}
-
-wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
-{
-   return _itow(n, s, radix);
-}
-
-wchar_t* StringHelper :: longlongToStr(long long n, wchar_t* s, int radix)
-{
-   return _i64tow(n, s, radix);
-}
-
-wchar_t* StringHelper :: doubleToStr(double value, int digit, wchar_t* s)
-{
-   char temp[20];
-
-   _gcvt(value, digit, temp);
-
-   size_t length = strlen(temp);
-   copy(s, temp, length);
-   s[length] = 0;
-
-   return s;
-}
-
-long long StringHelper :: strToLongLong(const wchar_t* s, int radix)
-{
-   long long number = 0;
-
-   wchar_t dump[10];
-   int length = getlength(s);
-   while (length > 9) {
-      wcsncpy(dump, (wchar_t*)s, 9);
-      dump[9] = 0;
-
-      long long temp = strToLong(dump, radix);
-      for (int i = 0 ; i < (length - 9) ; i++) {
-         temp *= radix;
-      }
-      number += temp;
-
-      length -= 9;
-      s += 9;
-   }
-   wcsncpy(dump, s, length);
-   dump[length] = 0;
-   long long temp = strToLong(dump, radix);
-   number += temp;
-
-   return number;
-}
-
-double StringHelper :: strToDouble(const wchar_t* s)
-{
-   return wcstod(s, NULL);
+   return w_allocate(size);
 }
 
 bool StringHelper :: copy(wchar_t* dest, const char* sour, size_t& length)
@@ -379,6 +208,11 @@ bool StringHelper :: copy(wchar_t* dest, const char* sour, size_t& length)
    }
    length = dest - start;
    return result;
+}
+
+void StringHelper :: copy(wchar_t* dest, const wchar_t* sour, size_t length)
+{
+   wcsncpy(dest, sour, length);
 }
 
 bool StringHelper :: copy(char* dest, const wchar_t* sour, size_t& length)
@@ -450,6 +284,16 @@ bool StringHelper :: copy(char* dest, const wchar_t* sour, size_t& length)
    return result;
 }
 
+wchar_t* StringHelper :: clone(const wchar_t* s)
+{
+   return wcsdup(s);
+}
+
+void StringHelper :: append(wchar_t* dest, const wchar_t* sour, size_t length)
+{
+   wcsncat(dest, sour, length);
+}
+
 bool StringHelper :: append(wchar_t* dest, const char* sour, size_t length)
 {
    size_t current_length = getlength(dest);
@@ -472,6 +316,167 @@ bool StringHelper :: append(char* dest, const wchar_t* sour, size_t length)
    else return false;
 }
 
+wchar_t* StringHelper :: lower(wchar_t* s)
+{
+   return wcslwr(s);
+}
+
+wchar_t* StringHelper :: upper(wchar_t* s)
+{
+   return wcsupr(s);
+}
+
+bool StringHelper :: compare(const wchar_t* s1, const wchar_t* s2)
+{
+   if (s1 && s2) return (wcscmp(s1, s2)==0);
+   else return (s1 == s2);
+}
+
+bool StringHelper :: compare(const wchar_t* s1, const wchar_t* s2, size_t n)
+{
+   if (s1 && s2) return (wcsncmp(s1, s2, n)==0);
+   else return (n > 0);
+}
+
+bool StringHelper :: greater(const wchar_t* s1, const wchar_t* s2, size_t n)
+{
+   if (s1 && s2) return (wcsncmp(s1, s2, n) > 0);
+   else return (n > 0);
+}
+
+bool StringHelper :: greater(const wchar_t* s1, const wchar_t* s2)
+{
+   if (s1 && s2) return (wcscmp(s1, s2) > 0);
+   else return (s1 == s2);
+}
+
+int StringHelper :: find(const wchar_t* s, const wchar_t* subs, int defValue)
+{
+   const wchar_t* p = wcsstr(s, subs);
+   if (p==NULL) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+int StringHelper :: find(const wchar_t* s, wchar_t c, int defValue)
+{
+   const wchar_t* p = wcschr(s, c);
+   if (p==NULL) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+int StringHelper :: findLast(const wchar_t* s, wchar_t c, int defValue)
+{
+   const wchar_t* p = wcsrchr(s, c);
+   if (p==NULL) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+int StringHelper :: strToInt(const wchar_t* s)
+{
+   return _wtoi(s);
+}
+
+long StringHelper :: strToLong(const wchar_t* s, int radix)
+{
+   return wcstoul(s, NULL, radix);
+}
+
+long long StringHelper :: strToLongLong(const wchar_t* s, int radix)
+{
+   long long number = 0;
+
+   wchar_t dump[10];
+   int length = getlength(s);
+   while (length > 9) {
+      wcsncpy(dump, (wchar_t*)s, 9);
+      dump[9] = 0;
+
+      long long temp = strToLong(dump, radix);
+      for (int i = 0 ; i < (length - 9) ; i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 9;
+      s += 9;
+   }
+   wcsncpy(dump, s, length);
+   dump[length] = 0;
+   long long temp = strToLong(dump, radix);
+   number += temp;
+
+   return number;
+}
+
+double StringHelper :: strToDouble(const wchar_t* s)
+{
+   return wcstod(s, NULL);
+}
+
+wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
+{
+   return _itow(n, s, radix);
+}
+
+void StringHelper :: move(wchar_t* s1, const wchar_t* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
+
+void StringHelper :: insert(wchar_t* s, int pos, const wchar_t* subs)
+{
+   size_t len = getlength(subs);
+
+   //s[getlength(s) + len + 1] = 0;
+   for (int i = getlength(s) ; i >= pos ; i--) {
+      s[i+len] = s[i];
+   }
+   wcsncpy(s + pos, subs, len);
+}
+
+wchar_t* StringHelper :: doubleToStr(double value, int digit, wchar_t* s)
+{
+   char temp[20];
+
+   _gcvt(value, digit, temp);
+
+   size_t length = strlen(temp);
+   copy(s, temp, length);
+   s[length] = 0;
+
+   return s;
+}
+
+wchar_t* StringHelper :: longlongToStr(long long n, wchar_t* s, int radix)
+{
+   return _i64tow(n, s, radix);
+}
+
+wchar_t StringHelper :: lower(wchar_t ch)
+{
+   wchar_t s[2];
+   s[0] = ch;
+   s[1] = 0;
+
+   wcslwr(s);
+   return s[0];
+}
+
+//void StringHelper :: trim(wchar_t* s, wchar_t ch)
+//{
+//   size_t length = getlength(s);
+//   while (length > 0 && s[length - 1] == ch) {
+//      s[length - 1] = 0;
+//      length = getlength(s);
+//   }
+//}
+
 #else
 
 unsigned short* StringHelper :: w_allocate(size_t size)
@@ -484,109 +489,9 @@ unsigned short* StringHelper :: w_reallocate(unsigned short* s, size_t size)
    return (unsigned short*)realloc(s, size << 1);
 }
 
-bool StringHelper :: compare(const unsigned short* s1, const unsigned short* s2)
+char* StringHelper :: allocateText(size_t size)
 {
-   if (s1 && s2) {
-      while (*s1 || *s2) {
-         if (*s1++ != *s2++)
-            return false;
-      }
-      return true;
-   }
-   else return (s1 == s2);
-}
-
-bool StringHelper :: compare(const unsigned short* s1, const unsigned short* s2, size_t n)
-{
-   if (s1 && s2) {
-      while (n > 0) {
-         if (*s1++ != *s2++)
-            return false;
-
-         n--;
-      }
-      return true;
-   }
-   else return (n > 0);
-}
-
-bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2, size_t n)
-{
-   if (s1 && s2) {
-      while (*s1 && *s1 == *s2) {
-         s1++;
-         s2++;
-      }
-      return *s1 > *s2;
-   }
-   else return (n > 0);
-}
-
-bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2)
-{
-   return greater(s1, s2, getlength(s1) + 1);
-}
-
-int StringHelper :: find(const unsigned short* s, unsigned short c, int defValue)
-{
-   const unsigned short* p = s;
-
-   while(*p) {
-      if (*p == c)
-         return p - s;
-
-      p++;
-   }
-
-   return defValue;
-}
-
-int StringHelper :: findLast(const unsigned short* s, unsigned short c, int defValue)
-{
-   const unsigned short* p = s + getlength(s);
-
-   while(p > s) {
-      if (*p == c)
-         return p - s;
-
-      p--;
-   }
-
-   return defValue;
-}
-
-void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, size_t length)
-{
-   memcpy(dest, sour, length << 1);
-}
-
-void StringHelper :: append(unsigned short* dest, const unsigned short* sour, size_t length)
-{
-   unsigned short* p = dest + getlength(dest);
-   for(int i = 0 ; i <= length ; i++)
-      *p++ = *sour++;
-}
-
-bool StringHelper :: append(unsigned short* dest, const char* sour, size_t length)
-{
-   size_t current_length = getlength(dest);
-   if (copy(dest + current_length, sour, length)) {
-      dest[current_length + length] = 0;
-
-      return true;
-   }
-   else return false;
-}
-
-bool StringHelper :: append(char* dest, const unsigned short* sour, int length)
-{
-   size_t current_length = getlength(dest);
-   if (copy(dest + current_length, sour, length)) {
-      dest[current_length + length] = 0;
-
-      return true;
-   }
-   else return false;
+   return allocate(size);
 }
 
 bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t& length)
@@ -654,6 +559,11 @@ bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t& length
    length = dest - start;
 
    return result;
+}
+
+void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, size_t length)
+{
+   memcpy(dest, sour, length << 1);
 }
 
 bool StringHelper :: copy(char* dest, const unsigned short* sour, size_t& length)
@@ -724,36 +634,95 @@ bool StringHelper :: copy(char* dest, const unsigned short* sour, size_t& length
    return result;
 }
 
-void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
+void StringHelper :: append(unsigned short* dest, const unsigned short* sour, size_t length)
 {
-   memmove(s1, s2, length << 1);
+   unsigned short* p = dest + getlength(dest);
+   for(int i = 0 ; i <= length ; i++)
+      *p++ = *sour++;
 }
 
-unsigned short* StringHelper :: w_clone(const unsigned short* s)
+bool StringHelper :: append(unsigned short* dest, const char* sour, size_t length)
 {
-   size_t length = getlength(s) + 1;
-   unsigned short* dup = allocate((unsigned short*)NULL, length);
-   copy(dup, s, length);
+   size_t current_length = getlength(dest);
+   if (copy(dest + current_length, sour, length)) {
+      dest[current_length + length] = 0;
 
-   return dup;
+      return true;
+   }
+   else return false;
 }
 
-unsigned short* StringHelper :: w_clone(const char* s)
+bool StringHelper :: append(char* dest, const unsigned short* sour, int length)
 {
-   size_t length = strlen(s) + 1;
-   unsigned short* dup = allocate((unsigned short*)NULL, length);
-   copy(dup, s, length);
+   size_t current_length = getlength(dest);
+   if (copy(dest + current_length, sour, length)) {
+      dest[current_length + length] = 0;
 
-   return dup;
+      return true;
+   }
+   else return false;
 }
 
-char* StringHelper :: clone(const unsigned short* s)
+bool StringHelper :: compare(const unsigned short* s1, const unsigned short* s2)
 {
-   size_t length = getlength(s) + 1;
-   char* dup = allocate((char*)NULL, length);
-   copy(dup, s, length);
+   if (s1 && s2) {
+      while (*s1 || *s2) {
+         if (*s1++ != *s2++)
+            return false;
+      }
+      return true;
+   }
+   else return (s1 == s2);
+}
 
-   return dup;
+bool StringHelper :: compare(const unsigned short* s1, const unsigned short* s2, size_t n)
+{
+   if (s1 && s2) {
+      while (n > 0) {
+         if (*s1++ != *s2++)
+            return false;
+
+         n--;
+      }
+      return true;
+   }
+   else return (n > 0);
+}
+
+bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2, size_t n)
+{
+   if (s1 && s2) {
+      while (*s1 && *s1 == *s2) {
+         s1++;
+         s2++;
+      }
+      return *s1 > *s2;
+   }
+   else return (n > 0);
+}
+
+bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2)
+{
+   return greater(s1, s2, getlength(s1) + 1);
+}
+
+int StringHelper :: find(const unsigned short* s, unsigned short c, int defValue)
+{
+   const unsigned short* p = s;
+
+   while(*p) {
+      if (*p == c)
+         return p - s;
+
+      p++;
+   }
+
+   return defValue;
+}
+
+int StringHelper :: findLast(const unsigned short* s, unsigned short c, int defValue)
+{
+   const unsigned short* p = s + getlength(s);
 }
 
 unsigned short* StringHelper :: lower(unsigned short* s)
@@ -765,9 +734,14 @@ unsigned short* StringHelper :: lower(unsigned short* s)
    return s;
 }
 
-unsigned short StringHelper :: lower(unsigned short c)
-{
-   return tolower(c); // !! temporal: currently only ascii symbols are handled
+   while(p > s) {
+      if (*p == c)
+         return p - s;
+
+      p--;
+   }
+
+   return defValue;
 }
 
 unsigned short* StringHelper :: upper(unsigned short* s)
@@ -777,15 +751,6 @@ unsigned short* StringHelper :: upper(unsigned short* s)
       s++;
    }
    return s;
-}
-
-void StringHelper :: trim(unsigned short* s, unsigned short ch)
-{
-   size_t length = getlength(s);
-   while (length > 0 && s[length - 1] == ch) {
-      s[length - 1] = 0;
-      length = getlength(s);
-   }
 }
 
 int StringHelper :: strToInt(const unsigned short* s)
@@ -853,6 +818,52 @@ unsigned short* intToStr(int n, unsigned short* s, int radix)
    return s;
 }
 
+void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
+
+//unsigned short* StringHelper :: w_clone(const unsigned short* s)
+//{
+//   size_t length = getlength(s) + 1;
+//   unsigned short* dup = allocate((unsigned short*)NULL, length);
+//   copy(dup, s, length);
+//
+//   return dup;
+//}
+//
+//unsigned short* StringHelper :: w_clone(const char* s)
+//{
+//   size_t length = strlen(s) + 1;
+//   unsigned short* dup = allocate((unsigned short*)NULL, length);
+//   copy(dup, s, length);
+//
+//   return dup;
+//}
+//
+//char* StringHelper :: clone(const unsigned short* s)
+//{
+//   size_t length = getlength(s) + 1;
+//   char* dup = allocate((char*)NULL, length);
+//   copy(dup, s, length);
+//
+//   return dup;
+//}
+
+unsigned short StringHelper :: lower(unsigned short c)
+{
+   return tolower(c); // !! temporal: currently only ascii symbols are handled
+}
+
+//void StringHelper :: trim(unsigned short* s, unsigned short ch)
+//{
+//   size_t length = getlength(s);
+//   while (length > 0 && s[length - 1] == ch) {
+//      s[length - 1] = 0;
+//      length = getlength(s);
+//   }
+//}
+
 unsigned short* StringHelper :: doubleToStr(double value, int digit, unsigned short* s)
 {
    //!! temporal
@@ -909,14 +920,19 @@ unsigned short* StringHelper :: longlongToStr(long long n, unsigned short* s, in
 
 #endif
 
-char* StringHelper :: allocate(size_t size)
+void StringHelper :: copy(char* dest, const char* sour, int length)
 {
-   return (char*)malloc(size);
+   strncpy(dest, sour, length);
 }
 
-char* StringHelper :: reallocate(char* s, size_t size)
+char* StringHelper :: lower(char* s)
 {
-   return (char*)realloc(s, size);
+   return strlwr(s);
+}
+
+char* StringHelper :: upper(char* s)
+{
+   return strupr(s);
 }
 
 char* StringHelper :: clone(const char* s)
@@ -924,9 +940,36 @@ char* StringHelper :: clone(const char* s)
    return strdup(s);
 }
 
-void StringHelper :: move(char* s1, const char* s2, size_t length)
+void StringHelper :: append(char* dest, const char* sour, int length)
 {
-   memmove(s1, s2, length);
+   strncat(dest, sour, length);
+}
+
+void StringHelper :: trim(char* s, char ch)
+{
+   size_t length = getlength(s);
+   while (length > 0 && s[length - 1] == ch) {
+      s[length - 1] = 0;
+      length = getlength(s);
+   }
+}
+
+int StringHelper :: find(const char* s, char c, int defValue)
+{
+   const char* p = strchr(s, c);
+   if (p==NULL) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+int StringHelper :: findLast(const char* s, char c, int defValue)
+{
+   const char* p = strrchr(s, c);
+   if (p==NULL) {
+      return defValue;
+   }
+   else return p - s;
 }
 
 bool StringHelper :: compare(const char* s1, const char* s2)
@@ -951,77 +994,6 @@ bool StringHelper :: greater(const char* s1, const char* s2)
 {
    if (s1 && s2) return (strcmp(s1, s2) > 0);
    else return (s1 == s2);
-}
-
-int StringHelper :: find(const char* s, char c, int defValue)
-{
-   const char* p = strchr(s, c);
-   if (p==NULL) {
-      return defValue;
-   }
-   else return p - s;
-}
-
-int StringHelper :: findLast(const char* s, char c, int defValue)
-{
-   const char* p = strrchr(s, c);
-   if (p==NULL) {
-      return defValue;
-   }
-   else return p - s;
-}
-
-void StringHelper :: copy(char* dest, const char* sour, int length)
-{
-   strncpy(dest, sour, length);
-}
-
-void StringHelper :: append(char* dest, const char* sour, int length)
-{
-   strncat(dest, sour, length);
-}
-
-#ifdef _WIN32
-
-char* StringHelper :: lower(char* s)
-{
-   return strlwr(s);
-}
-
-char* StringHelper :: upper(char* s)
-{
-   return strupr(s);
-}
-
-#else
-
-char* StringHelper :: lower(char* s)
-{
-   while (*s) {
-      *s = tolower((unsigned char) *s);
-      s++;
-   }
-   return s;
-}
-
-char* StringHelper :: upper(char* s)
-{
-   while (*s) {
-      *s = toupper((unsigned char) *s);
-      s++;
-   }
-   return s;
-}
-
-#endif
-
-void StringHelper :: trim(char* s, char ch)
-{
-   size_t length = getlength(s);
-   while (length > 0 && s[length - 1] == ch) {
-      s[length - 1] = 0;
-      length = getlength(s);
-   }
 }
 
 int StringHelper :: strToInt(const char* s)
@@ -1086,3 +1058,42 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
 
    return s;
 }
+
+//char* StringHelper :: allocate(size_t size)
+//{
+//   return (char*)malloc(size);
+//}
+//
+//char* StringHelper :: reallocate(char* s, size_t size)
+//{
+//   return (char*)realloc(s, size);
+//}
+//
+//void StringHelper :: move(char* s1, const char* s2, size_t length)
+//{
+//   memmove(s1, s2, length);
+//}
+//
+//#ifdef _WIN32
+//
+//#else
+//
+//char* StringHelper :: lower(char* s)
+//{
+//   while (*s) {
+//      *s = tolower((unsigned char) *s);
+//      s++;
+//   }
+//   return s;
+//}
+//
+//char* StringHelper :: upper(char* s)
+//{
+//   while (*s) {
+//      *s = toupper((unsigned char) *s);
+//      s++;
+//   }
+//   return s;
+//}
+//
+//#endif

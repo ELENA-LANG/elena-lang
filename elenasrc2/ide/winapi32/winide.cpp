@@ -149,7 +149,7 @@ void MainWindow :: _onNotify(NMHDR* notification)
          break;
       case IDM_DEBUGGER_EXCEPTION:
       {
-         _ELENA_::String<_text_t, 255> message(_T("Exception "));
+         _ELENA_::String<tchar_t, 255> message(_T("Exception "));
          message.appendHex(((Message2NMHDR*)notification)->param2);
          message.append(_T(": "));
          message.append(((Message2NMHDR*)notification)->message);

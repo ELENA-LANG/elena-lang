@@ -49,12 +49,12 @@ class LexicalStyler : public _TextWatcher
 
    // Lexical parser states
    int     _defaultStyle;
-   _text_t _lookaheadState;
-   _text_t _startState;
+   tchar_t _lookaheadState;
+   tchar_t _startState;
 
    // Lexical parser functions
-   _text_t(* _makeStep)   (_text_t ch, _text_t state);
-   size_t (* _defineStyle)(_text_t state, size_t style);
+   tchar_t(* _makeStep)   (tchar_t ch, tchar_t state);
+   size_t (* _defineStyle)(tchar_t state, size_t style);
 
    int retrievePosition(size_t position)
    {
@@ -70,11 +70,11 @@ class LexicalStyler : public _TextWatcher
       parse();
    }
 
-   virtual void onInsert(size_t, size_t, const _text_t* )
+   virtual void onInsert(size_t, size_t, const tchar_t* )
    {
    }
 
-   virtual void onErase(size_t, size_t, const _text_t*)
+   virtual void onErase(size_t, size_t, const tchar_t*)
    {
    }
 
@@ -93,8 +93,8 @@ public:
    {
    }
 
-   LexicalStyler(Text* text, int defaultStyle, _text_t lookaheadState, _text_t startState, 
-      _text_t(* makeStep)(_text_t ch, _text_t state), size_t(* defineStyle)(_text_t state, size_t style));
+   LexicalStyler(Text* text, int defaultStyle, tchar_t lookaheadState, tchar_t startState, 
+      tchar_t(* makeStep)(tchar_t ch, tchar_t state), size_t(* defineStyle)(tchar_t state, size_t style));
 };
 
 // --- Document ---
@@ -201,8 +201,8 @@ protected:
    size_t        _maxColumn;
 
    virtual void onUpdate(size_t position);
-   virtual void onInsert(size_t position, size_t length, const _text_t* line);
-   virtual void onErase(size_t position, size_t length, const _text_t* line);
+   virtual void onInsert(size_t position, size_t length, const tchar_t* line);
+   virtual void onErase(size_t position, size_t length, const tchar_t* line);
 
    int defineStyle(Reader& reader);
 
@@ -226,7 +226,7 @@ public:
    int getRowCount() const { return _text->getRowCount(); }
    int getMaxColumn() const { return _maxColumn; }
 
-   bool findLine(const _text_t* text, bool matchCase, bool wholeWord);
+   bool findLine(const tchar_t* text, bool matchCase, bool wholeWord);
 
    virtual bool canUndo();
    virtual bool canRedo();
@@ -276,20 +276,20 @@ public:
 
    virtual void resize(Point size);
 
-   void copySelection(_text_t* text);
-   void copyText(_text_t* text, int length);
+   void copySelection(tchar_t* text);
+   void copyText(tchar_t* text, int length);
 
-   void insertLine(const _text_t* text, int length);
+   void insertLine(const tchar_t* text, int length);
    virtual void insertNewLine();
-   void insertChar(_text_t ch)
+   void insertChar(tchar_t ch)
    {
       insertChar(ch, 1);
    }
-   void insertChar(_text_t ch, int number);
+   void insertChar(tchar_t ch, int number);
 
    void eraseChar(bool moveback);
 
-   virtual void tabbing(_text_t space, size_t count, bool indent);
+   virtual void tabbing(tchar_t space, size_t count, bool indent);
 
    void trim();
    void duplicateLine();
@@ -304,7 +304,7 @@ public:
    virtual void undo();
    virtual void redo();
 
-   void save(const _path_t* path);
+   void save(const tchar_t* path);
 
    bool addMarker(HighlightInfo info, int bandStyle, int style, bool withCursor = true)
    {

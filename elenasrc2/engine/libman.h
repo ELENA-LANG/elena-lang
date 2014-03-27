@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA Library manager.
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef libmanH
@@ -16,7 +16,7 @@ namespace _ELENA_
 
 class LibraryManager
 {
-   typedef Map<const wchar16_t*, _path_t*> AliasMap;
+   typedef Map<const wchar16_t*, tchar_t*> AliasMap;
 
    Path              _rootPath;
    IdentifierString  _package;
@@ -28,13 +28,13 @@ class LibraryManager
    AliasMap          _binaryAliases;
 
 public:
-   const _path_t* getRootPath() const { return _rootPath; }
+   const tchar_t* getRootPath() const { return _rootPath; }
 
-   void setRootPath(const _path_t* root)
+   void setRootPath(const tchar_t* root)
    {
       _rootPath.copy(root);
    }
-   void setPackage(const wchar16_t* package, const _path_t* path)
+   void setPackage(const wchar16_t* package, const tchar_t* path)
    {
       _package.copy(package);
       _packagePath.copy(path);
@@ -44,7 +44,7 @@ public:
       _package.copy(package);
    }
 
-   void nameToPath(const wchar16_t* moduleName, Path& path, const _path_t* extension)
+   void nameToPath(const wchar16_t* moduleName, Path& path, const tchar_t* extension)
    {
 //      bool isStandard = ConstantIdentifier::compare(moduleName, STANDARD_MODULE);
 
@@ -61,27 +61,26 @@ public:
       }
    }
 
-   const _path_t* getPrimitiveAlias(const wchar16_t* alias)
+   void addPrimitiveAlias(const wchar16_t* alias, const tchar_t* path, bool duplicateAllowed = false)
    {
-      return _binaryAliases.get(alias);
-   }
+      if (!duplicateAllowed)
+         _binaryAliases.erase(alias);
 
-   void addPrimitiveAlias(const wchar16_t* alias, const _path_t* path)
-   {
-      _binaryAliases.erase(alias);
       _binaryAliases.add(alias, StringHelper::clone(path));
    }
+
+   bool loadPrimitive(const wchar16_t* package, LoadResult& result);
 
    _Module* createModule(const wchar16_t* package, LoadResult& result);
 
    _Module* loadModule(const wchar16_t* package, LoadResult& result, bool readOnly = true);
-   _Module* loadPrimitive(const wchar16_t* package, LoadResult& result);
 
    _Module* resolvePrimitive(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
    _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
+   _Module* resolvePredefined(const wchar16_t* package, ref_t reference, LoadResult& result);
 
    LibraryManager();
-   LibraryManager(const _path_t* root, const wchar16_t* package);
+   LibraryManager(const tchar_t* root, const wchar16_t* package);
    virtual ~LibraryManager() {}
 };
 

@@ -1,6 +1,7 @@
 #define system.
 #define system'routines.
 #define system'text.
+#define system'dynamic.
 
 // --- literalConvertorEx ---
 
@@ -63,17 +64,6 @@
         = %(long&base).
 }.
 
-#symbol typecaster =
-{
-    int:n = self int.
-    
-    long:n = self long.
-    
-    real:n = self real.
-    
-    literal:n = self literal.
-}.
-
 #symbol convertor =
 {
     toInt : anObject
@@ -96,12 +86,11 @@
 //        = literalConvertor convert &type'real::anObject &type'length::aLength &type'length::aDecimalLength.
 
     save : anObject &to:aTarget
-        = aTarget write:(anObject~typecaster eval::aTarget).
-        
+        = aTarget write:(anObject~(DispatchSubject new::aTarget) get).
+
     saveVariant : anObject &to:aTarget
         => &save:(Variant new:anObject) &to:aTarget.
 }.
-
 
 
 // --- value helpers ---

@@ -10,6 +10,9 @@
 
 using namespace _ELENA_;
 
+// --- Param string template ---
+typedef String<char, 255> UTF8String;
+
 // --- IniConfigFile ---
 
 IniConfigFile :: IniConfigFile()
@@ -21,16 +24,16 @@ IniConfigFile :: IniConfigFile(bool allowDuplicates)
 {
 }
 
-bool IniConfigFile :: load(const _path_t* path, int encoding)
+bool IniConfigFile :: load(const tchar_t* path, int encoding)
 {
-   Param line, key, subKey;
+   UTF8String line, key, subKey;
    TextFileReader reader(path, encoding, true);
 
    if (!reader.isOpened())
       return false;
 
    char buffer[BLOCK_SIZE];
-   while (reader.readString(line, buffer)) {
+   while (reader.readLine(line, buffer)) {
       line.trim('\n');
       line.trim('\r');
       line.trim(' ');
@@ -60,7 +63,7 @@ bool IniConfigFile :: load(const _path_t* path, int encoding)
    return true;
 }
 
-bool IniConfigFile :: save(const _path_t* path, int encoding)
+bool IniConfigFile :: save(const tchar_t* path, int encoding)
 {
    TextFileWriter  writer(path, encoding, true);
 

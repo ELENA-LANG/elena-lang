@@ -16,15 +16,15 @@ namespace _ELENA_
 
 // --- Path ---
 
-class Path : public String<_path_t, LOCAL_PATH_LENGTH>
+class Path : public String<tchar_t, LOCAL_PATH_LENGTH>
 {
 public:
-   static bool create(const _path_t* root, const _path_t* path);
+   static bool create(const tchar_t* root, const tchar_t* path);
 
    static bool isRelative(const wchar16_t* path, size_t length);
    static bool isRelative(const char* path, size_t length);
 
-   static bool checkExtension(const _path_t*  path, const _path_t* extension)
+   static bool checkExtension(const tchar_t*  path, const tchar_t* extension)
    {
       int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
 
@@ -92,7 +92,7 @@ public:
       else clear();
    }
 
-   void copySubPath(const wchar16_t* path)
+   void copySubPath(const tchar_t* path)
    {
       int pos = StringHelper::find(path, PATH_SEPARATOR);
       if (pos > 0) {
@@ -101,7 +101,7 @@ public:
       else clear();
    }
 
-   void appendExtension(const _path_t* extension)
+   void appendExtension(const tchar_t* extension)
    {
       if(!emptystr(extension)) {
          append('.');
@@ -109,7 +109,7 @@ public:
       }
    }
 
-   void nameToPath(const wchar16_t* name, const _path_t* extension)
+   void nameToPath(const wchar16_t* name, const tchar_t* extension)
    {
       while (true) {
          int pos = StringHelper::find(name, '\'');
@@ -125,9 +125,9 @@ public:
       appendExtension(extension);
    }
 
-   void changeExtension(const _path_t* extension)
+   void changeExtension(const tchar_t* extension)
    {
-      const _path_t* path = _string;
+      const tchar_t* path = _string;
       int namepos = findLast(PATH_SEPARATOR) + 1;
       int index = StringHelper::findLast(path + namepos, '.');
       if (index >= 0) {
@@ -137,7 +137,7 @@ public:
       append(extension);
    }
 
-   _path_t* clone()
+   tchar_t* clone()
    {
       return StringHelper::clone(_string);
    }
@@ -183,7 +183,7 @@ public:
 
 // --- FileNameTemplate ---
 
-class FileName : public String<_path_t, LOCAL_PATH_LENGTH>
+class FileName : public String<tchar_t, LOCAL_PATH_LENGTH>
 {
 public:
    void copyName(const char* path)
@@ -293,8 +293,8 @@ public:
    virtual const wchar16_t* getWideLiteral() { return NULL; }
    virtual const char* getLiteral() { return NULL; }
 
-   FileReader(const _path_t* path, int encoding, bool withBOM);
-   FileReader(const _path_t* path, const _path_t* mode, int encoding, bool withBOM);
+   FileReader(const tchar_t* path, int encoding, bool withBOM);
+   FileReader(const tchar_t* path, const tchar_t* mode, int encoding, bool withBOM);
 };
 
 // --- FileWriter class ---
@@ -325,7 +325,7 @@ public:
 
    virtual void align(int alignment);
 
-   FileWriter(const _path_t* path, int encoding, bool withBOM);
+   FileWriter(const tchar_t* path, int encoding, bool withBOM);
 };
 
 // --- TextFileReader class ---
@@ -342,7 +342,7 @@ public:
    virtual bool read(wchar16_t* s, size_t length);
    virtual bool read(char* s, size_t length);
 
-   TextFileReader(const _path_t* path, int encoding, bool withBOM);
+   TextFileReader(const tchar_t* path, int encoding, bool withBOM);
 };
 
 // --- TextFileWriter class ---
@@ -361,7 +361,7 @@ public:
 
    virtual bool writeNewLine();
 
-   TextFileWriter(const _path_t* path, int encoding, bool withBOM);
+   TextFileWriter(const tchar_t* path, int encoding, bool withBOM);
 };
 
 } // _ELENA_

@@ -87,7 +87,7 @@ void* CustomTabBar :: getTabParam(int index)
    return (void*)tie.lParam;
 }
 
-void CustomTabBar :: addTab(int index, const _text_t* name, void* param)
+void CustomTabBar :: addTab(int index, const tchar_t* name, void* param)
 {
    TCITEM tie;
    tie.mask = TCIF_TEXT | TCIF_IMAGE | TCIF_PARAM;
@@ -123,13 +123,13 @@ void CustomTabBar :: deleteTab(int index)
    ::SendMessage(_handle, TCM_DELETEITEM, index, 0);  
 }
 
-void CustomTabBar :: renameTab(int index, const _text_t* newName)
+void CustomTabBar :: renameTab(int index, const tchar_t* newName)
 {
    // rename tab caption
    TCITEM tie;
    tie.mask = TCIF_TEXT | TCIF_IMAGE;
    tie.iImage = -1;
-   tie.pszText = (_text_t*)newName;
+   tie.pszText = (tchar_t*)newName;
 
    ::SendMessage(_handle, TCM_SETITEM, index, (LPARAM)&tie);
 }

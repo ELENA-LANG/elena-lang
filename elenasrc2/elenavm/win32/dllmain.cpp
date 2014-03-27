@@ -35,7 +35,7 @@ Instance* getCurrentInstance()
 
 EXTERN_DLL_EXPORT int InterpretLVM(void* tape)
 {
-//   getchar();
+   //getchar();
 
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
@@ -80,7 +80,7 @@ EXTERN_DLL_EXPORT const wchar16_t* GetLVMStatus()
 
 // --- initmachine ---
 
-void initMachine(const _path_t* rootPath)
+void initMachine(const tchar_t* rootPath)
 {
    machine = new x86ELENAMachine(rootPath);
 }

@@ -21,9 +21,9 @@ namespace _ELENA_
 class SyntaxError : _Exception
 {
 public:
-   const char*    error; 
-   const _text_t* token;
-   int            column, row;
+   const char*      error; 
+   const wchar16_t* token;
+   int              column, row;
 
    SyntaxError(int column, int row, const wchar16_t* token);
    SyntaxError(int column, int row, const wchar16_t* token, const char* error);

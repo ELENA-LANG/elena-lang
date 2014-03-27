@@ -16,10 +16,10 @@ namespace _GUI_
 
 struct MessageBookmark
 {
-   _path_t* file;
+   tchar_t* file;
    size_t   col, row;
 
-   MessageBookmark(const _text_t* file, const _text_t* col, const _text_t* row)
+   MessageBookmark(const tchar_t* file, const tchar_t* col, const tchar_t* row)
    {
       this->file = _ELENA_::StringHelper::clone(file);
       this->col = _ELENA_::StringHelper::strToInt(col);
@@ -42,7 +42,7 @@ public:
 
    MessageBookmark* getBookmark(int index) { return _bookmarks.get(index); }
 
-   void addMessage(const _text_t* message, const _text_t* file, const _text_t* row, const _text_t* col);
+   void addMessage(const tchar_t* message, const tchar_t* file, const tchar_t* row, const tchar_t* col);
 
    virtual void clear();
 
