@@ -424,12 +424,12 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printLabel(command, position + argument2 + 9, labels);
          break;
          break;
-      //case bcAElseSI:
-      //case bcAThenSI:
-      ////case bcMccElseSI:
-      ////case bcMccThenSI:
-      ////case bcMccVerbElseSI:
-      ////case bcMccVerbThenSI:
+      case bcAElseSI:
+      case bcAThenSI:
+      //case bcMccElseSI:
+      //case bcMccThenSI:
+      //case bcMccVerbElseSI:
+      //case bcMccVerbThenSI:
          command.append(opcode);
          command.append(_T(" sp["));
          command.appendInt(argument);
@@ -446,7 +446,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcALoadR:
       case bcCallExtR:
       case bcEvalR:
-      //case bcCallR:
+      case bcCallR:
       ////case bcSendVMTR:
       case bcASaveR:
       case bcACopyR:

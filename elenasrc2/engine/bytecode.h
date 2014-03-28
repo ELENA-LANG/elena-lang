@@ -50,7 +50,7 @@ enum ByteCode
    bcInclude        = 0x1F,
 
    // all 2x command are push ones
-   bcReserve        = 0x20,
+   bcReserve        = 0x20,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
    bcPushN          = 0x21,
    bcPushR          = 0x22,
    bcPushBI         = 0x23,

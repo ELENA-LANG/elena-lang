@@ -20,92 +20,14 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
+              xdev - byte code optimization                       
+                       * get rid of two breakpoints
+                       * optimize output code: system'object.notequal
 <=================> 
 1.9.14 [3.4]
 --------
 week1:
-               xdev - GC
-                       * destructors
-                       
-              xdev - generic development                            
-                       * new ecode - openthread
-
-                       * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
-                         $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
-
-                       * there should be difference between reserve and n pushn 0, the first one should be used only for stack allocated
-                         variables and do not clear the stack 
-
-                       * private method declaration / call implement
-
-                       * constant array
-
-                       * make possible to send exception futher with ifFailed handler
-
-                       * multiple parameter dispatching
-                             save&to => save&int&to | save&long&to ; 
-                             can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
-                             
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-
-                       * custom verb dispatching (see for example stringControl split&by[2])
-                           : intNumber.shift ; stringControl
-
-                       * should be possible to declare sealed classes
-
-                       * get rid of predefined subjects - they all should be declared in the source code, no compiler dependency
-
-                       * widechar constant : special symbol or we could use literal constant with length=1
-
-                       * role class should not be its own class class (like it is now), super class should be used
-                       
-                       * Object implementation : instead of notequal - implement equal and invert the result ??
-
-                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
-
-                       * special symbol which could return the object "type" (e.g. react on dispatch method and store the message subject)
-                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
-                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
-                             
-                       * group object implementation (group, union, cast)
-                       
-                       * @ operator should support primitive implementation if loperand is array, bytearray and roperand is int
-                       
-                       * write, append, ... operation should be allowed only with $self or out parameter
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-                       * loop should contain snop
-                       * warn if number of subjects / verbs are overflown
-                       * readonly fields like in C# (some optimization gains?)
-                       * warn if system'Object does not contain send method
-                       * raise an exception if more than 14 arguments in the method / message                                        
-                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
-                       * array item set operator a@b := c ???
-                       * lcopystr : index should contain radix
-                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
-                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
-                       * ws_indexof: check operations check if index, index + length is not beyond string
-                       * new ecode: released - do we need it, or loop would be enough?
-                       * type enforcing : compiler should generate a warning if out'xx is not local variable 
-                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
-                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
-                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
-                         (either typed variable or typed expression)
-                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
-                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
-                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
-                       * elena opcodes : extension - think over extension set implementation (current is not efficient)
-                       * review opcode matrix, think over extension simplification
-                       * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
-                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
-                       * it should be possible to override external call - so for corevm, coremt we could contain only modified code  
-                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
-                       * refactore Compiler::definePrimitiveOperationCode
-                       * out'literal - literal is a constant , so maybe better to use out'bytearray?
-                       * it should be possible to override operator implementation with extension methods
-                       
               xdev - byte code optimization                       
-                       * primitive stack allocating should be done with add esp, ...
                        * simplify primitive byte array allocating (store the size directly during space allocating)
 
                        * class class symbol should be called directly for private classes as well
@@ -113,7 +35,7 @@ week1:
                        * optimize : = constant
                        * optimize : = $self
 
-                       * optimize output code: system'true.else,...
+                       * optimize output code: system'object...
             
                        * get rid of two breakpoints
 
@@ -538,6 +460,80 @@ week4:
 1.9.15
 --------
 week1:
+               xdev - GC
+                       * destructors
+                       
+              xdev - generic development                            
+                       * new ecode - openthread
+
+                       * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
+                         $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
+
+                       * private method declaration / call implement
+
+                       * constant array
+
+                       * make possible to send exception futher with ifFailed handler
+
+                       * multiple parameter dispatching
+                             save&to => save&int&to | save&long&to ; 
+                             can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
+                             
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+
+                       * should be possible to declare sealed classes
+
+                       * get rid of predefined subjects - they all should be declared in the source code, no compiler dependency
+
+                       * widechar constant : special symbol or we could use literal constant with length=1
+
+                       * role class should not be its own class class (like it is now), super class should be used
+                       
+                       * Object implementation : instead of notequal - implement equal and invert the result ??
+
+                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
+
+                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
+                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
+                             
+                       * group object implementation (group, union, cast)
+                       
+                       * @ operator should support primitive implementation if loperand is array, bytearray and roperand is int
+                       
+                       * write, append, ... operation should be allowed only with $self or out parameter
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+                       * loop should contain snop
+                       * warn if number of subjects / verbs are overflown
+                       * readonly fields like in C# (some optimization gains?)
+                       * warn if system'Object does not contain send method
+                       * raise an exception if more than 14 arguments in the method / message                                        
+                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
+                       * array item set operator a@b := c ???
+                       * lcopystr : index should contain radix
+                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
+                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
+                       * ws_indexof: check operations check if index, index + length is not beyond string
+                       * new ecode: released - do we need it, or loop would be enough?
+                       * type enforcing : compiler should generate a warning if out'xx is not local variable 
+                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
+                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
+                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
+                         (either typed variable or typed expression)
+                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
+                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
+                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
+                       * review opcode matrix, think over extension simplification
+                       * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
+                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
+                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
+                       * refactore Compiler::definePrimitiveOperationCode
+                       * out'literal - literal is a constant , so maybe better to use out'bytearray?
+                       * it should be possible to override operator implementation with extension methods
+                       
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it?

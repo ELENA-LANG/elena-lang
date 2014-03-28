@@ -7,10 +7,23 @@
 
 #class(role) XTester
 {
+    #method from:aStart &to:anEndValue &do:aFunction
+        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
+        
+    #method call:n:m
+    [
+       #var k := n.
+    ]
 }
 
 #symbol XTest =
 [
+    XTester call:3:4.
+    
+    control from:0 &to:2 &do: i
+    [
+        
+    ].
 ].
 
 //// --- OpenArgTest ---
@@ -191,36 +204,36 @@
 ////        ].
 ////    ].
 ////].
-////
-////#class A
-////{
-////}
-////
-////#class B
-////{
-////}
-////
-////#symbol actionTester =
-////{
-////    testGeneric : anAction
-////    [
-////        anAction eval:"Action Test":" passed".
-////    ]
-////    
-////    testAction : anAction
-////    [
-////        anAction eval &line1:"Action Test" &line2:" passed".
-////    ]
-////}.
-////
-////#class MyException : Exception
-////{
-////    #method onError : aHandler
-////    [
-////        aHandler eval:$self.
-////    ]
-////}
-////
+
+#class A
+{
+}
+
+#class B
+{
+}
+
+#symbol actionTester =
+{
+    testGeneric : anAction
+    [
+        anAction eval:"Action Test":" passed".
+    ]
+    
+    testAction : anAction
+    [
+        anAction eval &line1:"Action Test" &line2:" passed".
+    ]
+}.
+
+//#class MyException : Exception
+//{
+//    #method onError : aHandler
+//    [
+//        aHandler eval:$self.
+//    ]
+//}
+//
 ////#class MyException2 : Exception
 ////{
 ////    #method onError2 : aHandler
@@ -252,14 +265,14 @@
 ////        #throw MyException2 new:"OnError2 handler works".
 ////    ]
 ////}
-////
-////#symbol ObjectTest =
-////[
-////    (A == A)and:[A != B]
-////        ? [ console writeLine:"Reference comparison works" ]
-////        ! [ console writeLine:"!! ObjectTest failed" ].
-////].
-////
+
+#symbol ObjectTest =
+[
+    (A == A)and:[A != B]
+        ? [ console writeLine:"Reference comparison works" ]
+        ! [ console writeLine:"!! ObjectTest failed" ].
+].
+
 ////// --- BooleanTest ---
 ////
 ////#symbol BooleanTest =
@@ -356,18 +369,18 @@
 ////    (n == 1.0r) ?
 ////        [ console writeLine:"Real operators are working". ].
 ////].
-////
-////// --- Action Test ---
-////
-////#symbol ActionTest =
-////[
-////    console write:"Generic ".
-////    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
-////    
-////    console write:"Normal ".
-////    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
-////].
-////
+
+// --- Action Test ---
+
+#symbol ActionTest =
+[
+    console write:"Generic ".
+    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
+    
+    console write:"Normal ".
+    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
+].
+
 ////// --- Role Tests ---
 ////
 ////#symbol Role =

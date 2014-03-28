@@ -77,7 +77,8 @@ ELENA byte codes (or ecodes)
  
  pushsi i                   - [sp+i] => [sp+1] ; sp++
 
- reserve i                  - sp += n; stack is reserved and cleared with zeros
+ reserve i                  - sp += n; stack is reserved ; 
+                              NOTE: it is not cleared with zeros, could lead to bugs with GC
  
  swapsi   i                 - [sp+i] <=> [sp]
  
@@ -195,6 +196,8 @@ ELENA byte codes (or ecodes)
                               init the frame header offset
                               it should be only one command per procedure ; 
 
+ restore n                  - remove the excluded stack
+
  
  calling commands:
  -----------------  
@@ -215,6 +218,9 @@ ELENA byte codes (or ecodes)
  evalr r                    - evaluate a reference ; if r is a symbol reference
                               symbol code is executed ; acc contains the result
  
+ mquit                      - terminates the procedure ; clear the stack parameters, based
+                              on mcc value
+
  scallvi i, n               - redirect to [sp+i]::VMT[n] method
  
  quit                       - terminates the procedure;
@@ -328,57 +334,6 @@ ELENA byte codes (or ecodes)
 
  set                         - acc => self[index] ;
 
- 
-
-
-
-
-
-
-
-
-
-   
- stack commands:
- ---------------
- xpushf i                   - fp+i => [sp+1] ; sp++
-                              ; frame header is not taken into account
- 
-
- exception handling:
- ---------------
- 
- calling commands:
- -----------------
- callr r                    - calls the procedure;
-                              acc contains the result
-                                                            
- mquit                      - terminates the procedure ; clear the stack parameters, based
-                              on mcc value
-
- 
- control commands:
- -----------------                     
- restore n                  - remove the excluded stack
-
-
-
- register commands:
- ------------------ 
- acopyr r                   - r => acc
- 
- axcopyf i                  - fp+i => acc ;
-                              does not affect m register (EDX) ;
-                              frame header is not taken into account
-
- dxcopya                    - acc => index
- 
- dxsavefi i                 - [fp:i] <= index
-                              ; frame header is not taken into account
-
- branching commands:
- -------------------
- 
  memory managing commands:
  -------------------------
 

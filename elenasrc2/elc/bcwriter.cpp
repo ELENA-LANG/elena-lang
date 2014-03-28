@@ -162,8 +162,11 @@ void ByteCodeWriter :: declareStatement(CommandTape& tape)
 
 void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
 {
-   // reserve n
-   tape.write(bcReserve, count);
+   // { pushn 0 } n
+   for(int i = 0 ; i < count ; i++)
+      tape.write(bcPushN, 0);
+
+   //tape.write(bcReserve, count);
 }
 
 void ByteCodeWriter :: declareVariable(CommandTape& tape, ref_t nilReference)
@@ -825,15 +828,6 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-//void ByteCodeWriter :: callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount)
-//{
-//   // acopyr ref
-//   // acallvi 0
-//   tape.write(bcACopyR, classRef | mskConstantRef);
-//   tape.write(bcACallVI);
-//   tape.write(bcFreeStack, 1 + paramCount);
-//}
-
 void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
 {
    // acallvi 0
@@ -849,15 +843,6 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
 
    tape.write(bcFreeStack, 1 + getParamCount(message));
 }
-
-//void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef)
-//{
-//   // acopyr ref
-//   // xcallrm rref, m
-//   tape.write(bcACopyR, classRef | mskConstantRef);
-//   tape.write(bcXCallRM, classRef | mskVMTRef, messageRef);
-//   tape.write(bcFreeStack, 1 + getParamCount(messageRef));
-//}
 
 void ByteCodeWriter :: dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset)
 {
@@ -904,14 +889,6 @@ void ByteCodeWriter :: resend(CommandTape& tape)
    tape.write(bcThrow);
 }
 
-//void ByteCodeWriter :: redirectVerb(CommandTape& tape, ref_t message)
-//{
-//   // mcopy
-//   // ajumpvi
-//   tape.write(bcMCopy, message);
-//   tape.write(bcAJumpVI);
-//}
-
 void ByteCodeWriter :: callBack(CommandTape& tape, int sign_id)
 {
    // madd subject_id
@@ -933,40 +910,6 @@ void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, 
 //
 //   tape.write(embedded ? bcEvalR : bcCallR, reference | mskNativeCodeRef);
 //   tape.write(bcFreeStack, paramCount);
-//}
-
-//void ByteCodeWriter :: executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code)
-//{
-//   //if (lparam.kind == okCurrent) {
-//   //   // nload / lload / rload / ...
-//   //   // pop
-//   //   executeFunction(tape, target, fnLoad);
-//   //   tape.write(bcPop);
-//   //}
-//
-//   //switch (target.type)
-//   //{
-//   //   case otInt:
-//   //   case otIntVar:
-//   //   case otLength:
-//   //   case otIndex:
-//   //      tape.write(bcNFunc, code);
-//   //      break;
-//   //   case otLong:
-//   //   case otLongVar:
-//   //      tape.write(bcLFunc, code);
-//   //      break;
-//   //   case otReal:
-//   //   case otRealVar:
-//   //      tape.write(bcRFunc, code);
-//   //      break;
-//   //   case otLiteral:
-//   //      tape.write(bcWSFunc, code);
-//   //      break;
-//   //   case otByteArray:
-//   //      tape.write(bcBSFunc, code);
-//   //      break;
-//   //}
 //}
 
 void ByteCodeWriter :: executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code)
@@ -1096,12 +1039,12 @@ bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
    while (*it != blBegin || ((*it).argument != bsMethod))  {
       switch(*it) {
          case bcPushFI:
-         //case bcMSaveParams:
+         case bcMSaveParams:
          case bcPushF:
          case bcPopFI:
-         //case bcMLoadFI:
-         //case bcDLoadFI:
-         //case bcDSaveFI:
+         case bcMLoadFI:
+         case bcDLoadFI:
+         case bcDSaveFI:
          case bcALoadFI:
          case bcASaveFI:
          case bcSCopyF:
@@ -1367,21 +1310,17 @@ void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel)
+void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level)
 {
-   writeLocal(scope, localName, level, dsLocal, frameLevel);
+   writeLocal(scope, localName, level, dsLocal);
 }
 
-void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel)
+void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol)
 {
    if (!scope.debug)
       return;
 
    DebugLineInfo info;
-
-   if (level < 0)
-      level -= frameLevel;
-
    info.symbol = symbol;
    info.addresses.local.nameRef = scope.debugStrings->Position();
    info.addresses.local.level = level;
@@ -1595,6 +1534,40 @@ void ByteCodeWriter :: compileVMT(size_t classPosition, ByteCodeIterator& it, Sc
    (*scope.vmt->Memory())[classPosition - 4] = scope.vmt->Position() - classPosition;
 }
 
+void ByteCodeWriter :: transform(ByteCodeIterator& it)
+{
+   int frameLevel = 0;
+   while (!it.Eof()) {
+      if (test((*it).code, bcPrefix, bcFrameMask)) {
+         if ((*it).argument < 0) {
+            (*it).argument -= frameLevel;
+         }
+         (*it).code = (ByteCode)((int)((*it).code) & ~bcFrameMask);
+      }
+      switch (*it) {
+         case blBegin:
+            if ((*it).Argument() == bsMethod) {
+               frameLevel = 0;
+            }
+            break;
+         case bcOpen:
+            frameLevel = (*it).argument;
+            break;
+         case bdLocal:
+         case bdIntLocal:
+         case bdLongLocal:
+         case bdRealLocal:
+         case bdParamsLocal:
+         case bdSelf:
+            if ((*it).additional < 0) {
+               (*it).additional -= frameLevel;
+            }
+            break;
+      }
+      it++;
+   }
+}
+
 void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
 {
    if (scope.debug)
@@ -1609,18 +1582,9 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
 
    int level = 1;
    int stackLevel = 0;
-   int frameLevel = 0;
    bool importMode = false;
    while (!it.Eof() && level > 0) {
       if (!importMode) {
-         // convert pseudo commands
-         if (test((*it).code, bcPrefix, bcFrameMask)) {
-            if ((*it).argument < 0) {
-               (*it).argument -= frameLevel;
-            }
-            (*it).code = (ByteCode)((int)((*it).code) & ~bcFrameMask);
-         }
-
          // find out if it is a push / pop command
          int hibyte = *it & 0xFFFFFFF0;
          if (hibyte == 0) {
@@ -1688,24 +1652,6 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
                writeNewStatement(scope.debug);
 
             break;
-         case bdLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, frameLevel);
-            break;
-         case bdIntLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
-            break;
-         case bdLongLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
-            break;
-         case bdRealLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
-            break;
-         case bdParamsLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
-            break;
-         case bdSelf:
-            writeSelfLocal(scope, (*it).additional - frameLevel);
-            break;
          case bcBreakpoint:
             // generate debug exception only if debug info enabled
             if (scope.debug) {
@@ -1715,8 +1661,25 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
                   writeBreakpoint(++it, scope.debug);
             }
             break;
+         case bdLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional);
+            break;
+         case bdIntLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal);
+            break;
+         case bdLongLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal);
+            break;
+         case bdRealLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal);
+            break;
+         case bdParamsLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal);
+            break;
+         case bdSelf:
+            writeSelfLocal(scope, (*it).additional);
+            break;         
          case bcOpen:
-            frameLevel = (*it).argument;
             stackLevel = 0;
             (*it).save(scope.code);
             break;
@@ -1912,4 +1875,4 @@ void ByteCodeWriter :: getArrayItem(CommandTape& tape)
 //   tape.write(bcPopA);
 //   pushObject(tape, target);
 //   tape.write(bcFunc, fnWSGetAt);
-//}+
+//}

@@ -167,8 +167,8 @@ class ByteCodeWriter
    }
 
    void writeNewStatement(MemoryWriter* debug);
-   void writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel);
-   void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeLocal(Scope& scope, const wchar16_t* localName, int level);
+   void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol);
    void writeSelfLocal(Scope& scope, int level);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
@@ -323,6 +323,7 @@ public:
 //   void getLiteralItem(CommandTape& tape, ObjectInfo target);
 
    void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
+   void transform(ByteCodeIterator& it);
 };
 
 } // _ELENA_

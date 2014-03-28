@@ -121,57 +121,6 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileCallSI, &compileNop, &compileInvokeVMT, &compileNop,
 };
 
-//void (*commands[0x100])(int opcode, x86JITScope& scope) =
-//{
-//   &compileNop, &compileBreakpoint, &compilePushSelf, &compilePop, &compileDCopyA, &compileMccPush, &compileMccCopyVerb, &loadOneByteOp,
-//   &compileNop, &compileMccCopySubj, &compilePushAcc, &compilePopAcc, &compileAccLoadSelf, &compileMccPop, &loadOneByteOp, &loadNOp,
-//
-//   &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopSelf, &loadOneByteLOp, &compileNop, &compileQuit,
-//   &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoadD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-//
-//   &compileReserve, &compilePush, &compilePush, &compileLoadField, &loadIndexOp, &compileNop, &compilePushF, &compileNop,
-//   &compileNop, &loadFPOp, &compilePushS, &compileNop, &compileNop, &compilePushFPI, &compileXPushFPI, &compileNop,
-//
-//   &compilePopN, &loadIndexOp, &compilePopFI, &loadIndexOp, &compilePopSI, &loadIndexOp, &compileNop, &compileNop,
-//   &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &compileNop, &compileNop, &compileNop, &loadIndexOp,
-//   &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileMReset, &loadIndexOp, &compileMSet, &compileMAdd,
-//
-//   &loadIndexOp, &loadIndexOp, &loadFPOp, &compileAccLoadR, &loadFPOp, &loadIndexOp, &compileDCopyI, &compileDCopyAI,
-//   &compileNop, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
-//
-//   &compileNop, &loadIndexOp, &compileNop, &loadIndexOp, &loadFPOp, &compileAccSaveR, &compileNop, &compileDSaveAI,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp, &loadROp, &loadIndexOp,
-//
-//   &compileNop, &compileNop, &compileSPSetF, &compileNop, &compileNop, &compileAccCopySPI, &compileNop, &compileNop,
-//   &compileAccSetR, &compileAccSetN, &compileAccCopyAccI, &compileXAccCopyFPI, &compileAccCopyFPI, &compileNop, &compileAAdd, &compileAMul,
-//
-//   &compileNop, &compileNop, &loadIndexOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileOpen, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileJump, &loadVMTIndexOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileHook, &compileDElse,
-//   &compileDThen, &compileAElse, &compileAThen, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileBoxN, &loadROp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadROp, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileNop,
-//
-//   &loadExtensions, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileTest, &compileTest, &compileTest,
-//
-//   &compileElseR, &compileThenR, &compileMElse, &compileMThen, &compileElseN, &compileThenN, &compileElseSI, &compileThenSI,
-//   &compileMElseVerb, &compileMThenVerb, &compileMElseAccI, &compileMThenAccI, &compileElseFlag, &compileThenFlag, &compileNop, &compileNext,
-//
-//   &compileCreate, &compileCreateN, &compileIAccCopyR, &compileIAccCopyFI, &compileIAccCopySI, &compileIAccCopyBI, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileCallSI, &compileNop, &compileInvokeVMT, &compileNop,
-//};
-
 const int gcExtensionNumber = EXTENSION_COUNT;
 
 // --- x86JITCompiler commands ---
@@ -1209,9 +1158,13 @@ void _ELENA_::compileMReset(int opcode, x86JITScope& scope)
 
 void _ELENA_::compilePopN(int opcode, x86JITScope& scope)
 {
-   // lea esp, [esp + level * 4]
-   x86Helper::leaRM32disp(
-      scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
+   // add esp, arg
+   scope.code->writeWord(0xC481);
+   scope.code->writeDWord(scope.argument << 2);
+
+   //// lea esp, [esp + level * 4]
+   //x86Helper::leaRM32disp(
+   //   scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
 }
 
 //void _ELENA_::compileSendVMTR(int opcode, x86JITScope& scope)
@@ -1512,10 +1465,14 @@ void _ELENA_::compileThenFlag(int opcode, x86JITScope& scope)
 
 void _ELENA_::compileReserve(int opcode, x86JITScope& scope)
 {
-   for(int i = 0 ; i < scope.argument ; i++) {
-      // push 0
-      scope.code->writeWord(0x006A);
-   }
+   // sub esp, count
+   scope.code->writeWord(0xEC81);
+   scope.code->writeDWord(scope.argument << 2);
+
+   //for(int i = 0 ; i < scope.argument ; i++) {
+   //   // push 0
+   //   scope.code->writeWord(0x006A);
+   //}
 }
 
 ////void _ELENA_::compileAccInc(int opcode, x86JITScope& scope)

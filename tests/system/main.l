@@ -5,10 +5,10 @@
 [   
     XTest eval.
 
-//    system'console writeLine:"Starting...".
-//
+    system'console writeLine:"Starting...".
+
 //    ControlTest eval.
-//    ObjectTest eval.
+    ObjectTest eval.
 //    BooleanTest eval.
     IntegerTest eval.
 //    LongTest eval.
@@ -22,7 +22,7 @@
 //    EnumTest eval.    
 //    TextBufferTest eval.
 //    LoopTest eval.
-//    ActionTest eval.
+    ActionTest eval.
 //    RoleTest eval.
 //    ConvertorTest eval.
     ArrayTest eval.     

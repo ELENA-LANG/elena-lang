@@ -7,7 +7,6 @@ pop     popi   => nop popi +1;
 pusha   popa   => nop nop;
 pushr   popa   => acopyr nop;
 pushbi  popa   => aloadbi nop;
-reserve :=1 asavesi :=0 => pusha nop;
 pushn asavesi :=0 => pusha nop;
-aloadfi pusha acopyb => pushfi nop acopyb;
 pusha mcopy breakpoint aloadsi :=0 => pusha mcopy breakpoint nop;
+asavesi := 0 mcopy breakpoint aloadsi :=0 => asavesi mcopy breakpoint nop;
