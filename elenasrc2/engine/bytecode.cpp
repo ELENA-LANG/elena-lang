@@ -216,6 +216,16 @@ void CommandTape :: write(ByteCode code, PseudoArg argument, int additional)
    write(ByteCommand(code, resolvePseudoArg(argument), additional));
 }
 
+void CommandTape :: write(ByteCode code, int argument, Predicate predicate)
+{
+   write(ByteCommand(code, argument, 0, predicate));
+}
+
+void CommandTape :: write(ByteCode code, int argument, int additional, Predicate predicate)
+{
+   write(ByteCommand(code, argument, additional, predicate));
+}
+
 void CommandTape :: write(ByteCommand command)
 {
    tape.add(command);

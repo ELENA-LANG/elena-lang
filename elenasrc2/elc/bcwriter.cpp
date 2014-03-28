@@ -149,10 +149,13 @@ void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
-   tape.write(bcBreakpoint);
+   // prevent breakpoint duplication
+   if (*tape.end() != bdBreakcoord && *tape.end() != bcBreakpoint) {
+      tape.write(bcBreakpoint);
 
-   tape.write(bdBreakpoint, stepType, row);
-   tape.write(bdBreakcoord, disp, length);
+      tape.write(bdBreakpoint, stepType, row);
+      tape.write(bdBreakcoord, disp, length);
+   }
 }
 
 void ByteCodeWriter :: declareStatement(CommandTape& tape)
@@ -476,14 +479,14 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
          if (object.type == otParams) {
             // pushf i
-            tape.write(bcPushFrame, object.reference);
+            tape.write(bcPushF, object.reference, bpFrame);
          }
-         // pushlocal index
-         else tape.write(bcPushFrameI, object.reference);
+         // pushfi index
+         else tape.write(bcPushFI, object.reference, bpFrame);
          break;
       case okBlockLocal:
-         // pushblocki index
-         tape.write(bcPushBlockI, object.reference);
+         // pushfi index
+         tape.write(bcPushFI, object.reference, bpBlock);
          tape.write(bcAllocStack, 1);
          break;
       case okCurrent:
@@ -501,7 +504,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okVSelf:
 //      case otVNext:
          // pushfi -(param_count + 1)  ; nagative means relative to the previous stack frame
-         tape.write(bcPushFrameI, object.reference);
+         tape.write(bcPushFI, object.reference, bpFrame);
          break;
       case okSelf:
       case okSuper:
@@ -523,10 +526,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcPushAI, object.extraparam);
          break;
       case okBlockOuterField:
-         // accloadblocki n
+         // aloadfi n
          // pushai offset
 
-         tape.write(bcALoadBlockI, object.reference);
+         tape.write(bcALoadFI, object.reference, bpBlock);
          tape.write(bcPushAI, object.extraparam);
          break;
       case okCurrentMessage:
@@ -539,7 +542,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          break;
       case okBlockLocalAddress:
          // pushblockpi n
-         tape.write(bcPushBlockPI, object.reference);
+         tape.write(bcPushF, object.reference, bpBlock);
          break;
    }
 }
@@ -582,10 +585,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okVSelf:
          if (object.type == otParams) {
             // acopyf index
-            tape.write(bcACopyFrame, object.reference);
+            tape.write(bcACopyF, object.reference, bpFrame);
          }
          // aloadfi index
-         else tape.write(bcALoadFrameI, object.reference);
+         else tape.write(bcALoadFI, object.reference, bpFrame);
          break;
       case okRegisterField:
          // aloadai   
@@ -610,12 +613,12 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcACopyF, object.reference);
          break;
       case okBlockLocal:
-         // aloadblocki n
-         tape.write(bcALoadBlockI, object.reference);
+         // aloadfi n
+         tape.write(bcALoadFI, object.reference, bpBlock);
          break;
       case okBlockLocalAddress:
-         // aloadblockpi n
-         tape.write(bcALoadBlockPI, object.reference);
+         // acopyf n
+         tape.write(bcACopyF, object.reference, bpBlock);
          break;
    }
 }
@@ -632,7 +635,7 @@ void ByteCodeWriter :: saveRegister(CommandTape& tape, ObjectInfo object, int fi
       case okLocal:
       case okVSelf:
          // ialoadfi
-         tape.write(bcIAXLoadFrameI, object.reference, fieldOffset);
+         tape.write(bcIAXLoadFI, object.reference, fieldOffset, bpFrame);
          break;
       case okCurrent:
          // ailoadsi
@@ -658,12 +661,12 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
       //   tape.write(bcDXCopyA);
       //   break;
       case okLocal:
-         // asaveframei index
-         tape.write(bcASaveFrameI, object.reference);
+         // asavefi index
+         tape.write(bcASaveFI, object.reference, bpFrame);
          break;
       case okBlockLocal:
-         // accsaveblocki index
-         tape.write(bcASaveBlockI, object.reference);
+         // accsavefi index
+         tape.write(bcASaveFI, object.reference, bpBlock);
          break;
       case okCurrent:
          // asavesi index
@@ -1051,17 +1054,6 @@ bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
          case bcACopyF:
          case bcUnhook:
          case bcHook:
-         case bcFrameMask:
-         case bcPushFrameI:
-         case bcPushFrame:
-         case bcALoadFrameI:
-         case bcASaveFrameI:
-         case bcACopyFrame:
-         case bcPushBlockI:
-         case bcALoadBlockI:
-         case bcASaveBlockI:
-         case bcPushBlockPI:
-         case bcALoadBlockPI:
             return true;
       }
 
@@ -1310,15 +1302,19 @@ void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level)
+void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel)
 {
-   writeLocal(scope, localName, level, dsLocal);
+   writeLocal(scope, localName, level, dsLocal, frameLevel);
 }
 
-void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol)
+void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel)
 {
    if (!scope.debug)
       return;
+
+   if (level < 0) {
+      level -= frameLevel;
+   }
 
    DebugLineInfo info;
    info.symbol = symbol;
@@ -1534,40 +1530,6 @@ void ByteCodeWriter :: compileVMT(size_t classPosition, ByteCodeIterator& it, Sc
    (*scope.vmt->Memory())[classPosition - 4] = scope.vmt->Position() - classPosition;
 }
 
-void ByteCodeWriter :: transform(ByteCodeIterator& it)
-{
-   int frameLevel = 0;
-   while (!it.Eof()) {
-      if (test((*it).code, bcPrefix, bcFrameMask)) {
-         if ((*it).argument < 0) {
-            (*it).argument -= frameLevel;
-         }
-         (*it).code = (ByteCode)((int)((*it).code) & ~bcFrameMask);
-      }
-      switch (*it) {
-         case blBegin:
-            if ((*it).Argument() == bsMethod) {
-               frameLevel = 0;
-            }
-            break;
-         case bcOpen:
-            frameLevel = (*it).argument;
-            break;
-         case bdLocal:
-         case bdIntLocal:
-         case bdLongLocal:
-         case bdRealLocal:
-         case bdParamsLocal:
-         case bdSelf:
-            if ((*it).additional < 0) {
-               (*it).additional -= frameLevel;
-            }
-            break;
-      }
-      it++;
-   }
-}
-
 void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
 {
    if (scope.debug)
@@ -1580,6 +1542,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
    Map<int, int> fwdJumps;
    Stack<int>    stackLevels;                          // scope stack levels
 
+   int frameLevel = 0;
    int level = 1;
    int stackLevel = 0;
    bool importMode = false;
@@ -1662,34 +1625,52 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             }
             break;
          case bdLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, frameLevel);
             break;
          case bdIntLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
             break;
          case bdLongLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
             break;
          case bdRealLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
             break;
          case bdParamsLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal);
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
          case bdSelf:
-            writeSelfLocal(scope, (*it).additional);
+            writeSelfLocal(scope, (*it).additional - frameLevel);
             break;         
          case bcOpen:
+            frameLevel = (*it).argument;
             stackLevel = 0;
             (*it).save(scope.code);
             break;
-         case bcPushBlockI:
-         case bcALoadBlockI:
-         case bcASaveBlockI:
-         case bcPushBlockPI:
-         case bcALoadBlockPI:
+         case bcPushFI:
+         case bcPushF:
+         case bcALoadFI:
+         case bcASaveFI:
+         case bcACopyF:
             (*it).save(scope.code, true);
-            scope.code->writeDWord(stackLevels.peek() + (*it).argument);
+            if ((*it).predicate == bpBlock) {
+               scope.code->writeDWord(stackLevels.peek() + (*it).argument);
+            }
+            else if ((*it).predicate == bpFrame && (*it).argument < 0) {
+               scope.code->writeDWord((*it).argument - frameLevel);
+            }            
+            else scope.code->writeDWord((*it).argument);
+            break;
+         case bcIAXLoadFI:
+            (*it).save(scope.code, true);
+            if ((*it).predicate == bpBlock) {
+               scope.code->writeDWord(stackLevels.peek() + (*it).argument);
+            }
+            else if ((*it).predicate == bpFrame && (*it).argument < 0) {
+               scope.code->writeDWord((*it).argument - frameLevel);
+            }
+            else scope.code->writeDWord((*it).argument);
+            scope.code->writeDWord((*it).additional);
             break;
          case bcSCopyF:
             (*it).save(scope.code, true);

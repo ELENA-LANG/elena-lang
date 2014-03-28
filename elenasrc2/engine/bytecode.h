@@ -177,23 +177,6 @@ enum ByteCode
    bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
    //blHint           = 0x204,  // meta command, compiler hint
 
-   // pseudo block commands
-   bcPushBlockI     = 0x8326,
-   bcALoadBlockI    = 0x8354,
-   bcASaveBlockI    = 0x8364,
-   bcPushBlockPI    = 0x832D,
-   bcALoadBlockPI   = 0x837C,
-
-   // pseudo local commands
-   bcPrefix         = 0xFF00,
-   bcFrameMask      = 0x8800,
-   bcPushFrameI     = 0x8826,
-   bcPushFrame      = 0x882D,
-   bcALoadFrameI    = 0x8854,
-   bcASaveFrameI    = 0x8864,
-   bcACopyFrame     = 0x887C,
-   bcIAXLoadFrameI  = 0x88F3,
-
    bcMatch          = 0xFFFE,  // used in optimization engine
    bcNone           = 0xFFFF,  // used in optimization engine
 
@@ -332,6 +315,13 @@ enum PseudoArg
    baPrev2Label    = 4, // before previous
 };
 
+enum Predicate
+{
+   bpNone  = 0,
+   bpFrame = 1,
+   bpBlock = 2
+};
+
 enum TapeStructure
 {
    bsNone        = 0x0,
@@ -344,9 +334,10 @@ enum TapeStructure
 
 struct ByteCommand
 {
-   ByteCode code;
-   int      argument;
-   int      additional;
+   ByteCode  code;
+   int       argument;
+   int       additional;
+   Predicate predicate;
 
    int Argument() const { return argument; }
 
@@ -357,24 +348,35 @@ struct ByteCommand
       code = bcNop;
       argument = 0;
       additional = 0;
+      predicate = bpNone;
    }
    ByteCommand(ByteCode code)
    {
       this->code = code;
       this->argument = 0;
       this->additional = 0;
+      this->predicate = bpNone;
    }
    ByteCommand(ByteCode code, int argument)
    {
       this->code = code;
       this->argument = argument;
       this->additional = 0;
+      this->predicate = bpNone;
    }
    ByteCommand(ByteCode code, int argument, int additional)
    {
       this->code = code;
       this->argument = argument;
       this->additional = additional;
+      this->predicate = bpNone;
+   }
+   ByteCommand(ByteCode code, int argument, int additional, Predicate predicate)
+   {
+      this->code = code;
+      this->argument = argument;
+      this->additional = additional;
+      this->predicate = predicate;
    }
 
    void save(MemoryWriter* writer, bool commandOnly = false)
@@ -466,6 +468,8 @@ struct CommandTape
    void write(ByteCode code, int argument, int additional);
    void write(ByteCode code, PseudoArg argument, int additional);
    void write(ByteCode code, TapeStructure argument, int additional);
+   void write(ByteCode code, int argument, int additional, Predicate predicate);
+   void write(ByteCode code, int argument, Predicate predicate);
    void write(ByteCommand command);
    void insert(ByteCodeIterator& it, ByteCommand command);
 

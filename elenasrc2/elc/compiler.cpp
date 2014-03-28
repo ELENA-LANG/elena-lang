@@ -2723,8 +2723,6 @@ void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, DNode arg
    }
    else scope.info.header.flags &= ~elStateless;
 
-   _writer.transform(scope.tape.start());
-
    // optimize
    optimizeTape(scope.tape);
 
@@ -2746,8 +2744,6 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
       scope.info.header.flags |= elStateless;
    }
    else scope.info.header.flags &= ~elStateless;
-   
-   _writer.transform(scope.tape.start());
 
    // optimize
    optimizeTape(scope.tape);
@@ -4279,8 +4275,6 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    _writer.loadObject(symbolScope.tape, ObjectInfo(okConstant, otClass, scope.reference));
    _writer.endSymbol(symbolScope.tape);
 
-   _writer.transform(symbolScope.tape.start());
-
    // create byte code sections
    _writer.compile(symbolScope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
@@ -4363,8 +4357,6 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
 
    _writer.endClass(classClassScope.tape);
 
-   _writer.transform(classClassScope.tape.start());
-
    // optimize
    optimizeTape(classClassScope.tape);
 
@@ -4420,8 +4412,6 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    // compile explicit symbol
    compileSymbolCode(scope);
 
-   _writer.transform(scope.tape.start());
-
    // optimize
    optimizeTape(scope.tape);
 
@@ -4452,8 +4442,6 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNod
       _writer.endStaticSymbol(scope.tape, scope.reference);
    }
    else _writer.endSymbol(scope.tape);
-
-   _writer.transform(scope.tape.start());
 
    // optimize
    optimizeTape(scope.tape);

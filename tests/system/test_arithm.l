@@ -5,25 +5,17 @@
 #define extensions.
 #define extensions'math.
 
-#class(role) XTester
+#class(role)XTester
 {
-    #method from:aStart &to:anEndValue &do:aFunction
-        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
-        
-    #method call:n:m
-    [
-       #var k := n.
-    ]
+    #method notequal : anObject
+        = $self equal:anObject not.
 }
 
 #symbol XTest =
 [
-    XTester call:3:4.
+    #var a := 2.
     
-    control from:0 &to:2 &do: i
-    [
-        
-    ].
+    a != 3.
 ].
 
 //// --- OpenArgTest ---
