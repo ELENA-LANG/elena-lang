@@ -1381,6 +1381,8 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       CodeScope subScope(&scope);
       DNode thenCode = option.firstChild().nextNode();
 
+      _writer.declareBlock(*scope.tape);
+
       if (thenCode.firstChild().nextNode() != nsNone) {
          compileCode(thenCode, subScope, HINT_SUBBRANCH);
       }
@@ -1394,6 +1396,9 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
    if (option == nsLastSwitchOption) {
       CodeScope subScope(&scope);
       DNode thenCode = option.firstChild();
+
+      _writer.declareBlock(*scope.tape);
+
       if (thenCode.firstChild().nextNode() != nsNone) {
          compileCode(thenCode, subScope);
       }
@@ -2985,6 +2990,8 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, int ve
 
       _writer.jumpIfEqual(*scope.tape, (verb == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
    }
+
+   _writer.declareBlock(*scope.tape);
 
    CodeScope subScope(&scope);
    DNode thenCode = thenNode.firstChild().firstChild();

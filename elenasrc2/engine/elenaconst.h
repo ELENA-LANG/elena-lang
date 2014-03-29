@@ -181,6 +181,7 @@ namespace _ELENA_
       dsConstructor             = 0x0008,
       dsStack                   = 0x0009,
       dsStatement               = 0x000A,
+      dsVirtualBlock            = 0x000B,
       dsEnd                     = 0x000F,
       dsIntLocal                = 0x0105,
       dsLongLocal               = 0x0205,

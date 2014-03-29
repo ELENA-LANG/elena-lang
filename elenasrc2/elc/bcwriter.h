@@ -167,6 +167,7 @@ class ByteCodeWriter
    }
 
    void writeNewStatement(MemoryWriter* debug);
+   void writeNewBlock(MemoryWriter* debug);
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel);
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel);
    void writeSelfLocal(Scope& scope, int level);
@@ -218,6 +219,7 @@ public:
    void declareSelfInfo(CommandTape& tape, int level);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareStatement(CommandTape& tape);
+   void declareBlock(CommandTape& tape);
 
    void nextCatch(CommandTape& tape);
 

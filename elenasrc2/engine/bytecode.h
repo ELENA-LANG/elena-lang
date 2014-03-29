@@ -181,7 +181,8 @@ enum ByteCode
    bcNone           = 0xFFFF,  // used in optimization engine
 
    blDeclare        = 0x8120,  // meta command, closing the structure
-   blStatement      = 0x8121,
+   blStatement      = 0x8121,  // meta command, declaring statement
+   blBlock          = 0x8122,  // meta command, declaring sub code
 
    // debug info
    bdBreakpoint     = 0x8401,

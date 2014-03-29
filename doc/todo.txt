@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               idev - debugger
-                       * multi-select operator debugging - step over does not work
+                       * step over #break / #throw does not work correctly
 
 <=================> 
 1.9.14 [3.4]
@@ -33,10 +33,6 @@ week1:
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
-
-              idev - debugger
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * step over #break / #throw does not work correctly
                        
 week2:
               adev - lib30                                      
@@ -65,36 +61,6 @@ week2:
                        * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
                          cases
 
-              sdev - rosetta samples              
-                       * Call a function
-                       * Call an object method
-                       * Canny edge detector
-                       * Carmichael 3 strong pseudoprimes
-                       * Casting out nines
-                       * modify amb operator using open argument list 
-                       * arraymode: support collection of different types
-                       * update amb sample on rosetta code site
-                       * C samples
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull–Clark subdivision surface              
-                       * Box the compass
-                       * Binary search
-                       * Averages/Root mean square
-                       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-                       
               adev - lib30 optimization
                        * $ConsoleReader.read&char(0) - use stack allocated dump
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting)
@@ -220,6 +186,34 @@ week3:
               sdev - rosetta samples              
                        * Conway's Game of Life : create an inter-linked space matrix (currently it does not work properly)
                        * Conway's Game of Life
+                       * Call a function
+                       * Call an object method
+                       * Canny edge detector
+                       * Carmichael 3 strong pseudoprimes
+                       * Casting out nines
+                       * modify amb operator using open argument list 
+                       * arraymode: support collection of different types
+                       * update amb sample on rosetta code site
+                       * C samples
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull–Clark subdivision surface              
+                       * Box the compass
+                       * Binary search
+                       * Averages/Root mean square
+                       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
 
               sdev - calculator
                        * review
@@ -529,6 +523,9 @@ week1:
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
                          utf-16 for windows?
                        * store current encoding for every file
+
+              idev - debugger
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
                       
 1.9.16
 --------

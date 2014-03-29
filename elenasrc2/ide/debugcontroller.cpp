@@ -146,7 +146,17 @@ DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step)
 {
    if (step->symbol != dsEnd && step->symbol != dsEOP) {
       DebugLineInfo* next = &step[1];
-      while ((next->symbol & dsDebugMask) != dsStep) {
+      int level = 0;
+      while (level > 0 || (next->symbol & dsDebugMask) != dsStep) {
+         switch (next->symbol) {
+            case dsVirtualBlock:
+               level++;
+               break;
+            case dsEOP:
+            case dsVirtualEnd:
+               level--;
+               break;
+         }
          next = &next[1];
       }
 
@@ -160,7 +170,20 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
    if (step->symbol != dsEnd) {
       DebugLineInfo* next = &step[1];
       // go to the end of statement or procedure
-      while (next->symbol != dsStatement && next->symbol != dsVirtualEnd && next->symbol != dsEnd) {
+      int level = 0;
+      while (level > 0 || next->symbol != dsStatement) {
+         switch (next->symbol) {
+            case dsVirtualBlock:
+               level++;
+               break;
+            case dsEOP:
+            case dsVirtualEnd:
+            case dsEnd:
+               level--;
+               if (level < 0)
+                  break;
+               break;
+         }
          next = &next[1];
       }
 

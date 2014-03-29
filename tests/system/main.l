@@ -7,7 +7,7 @@
 
     system'console writeLine:"Starting...".
 
-//    ControlTest eval.
+    ControlTest eval.
     ObjectTest eval.
 //    BooleanTest eval.
     IntegerTest eval.
@@ -17,11 +17,11 @@
 //
 //    BreakTest eval.
 //    MultiDispatchTest eval.
-//
-//    MultySelectTest eval.
+
+    MultySelectTest eval.
 //    EnumTest eval.    
 //    TextBufferTest eval.
-//    LoopTest eval.
+    LoopTest eval.
     ActionTest eval.
 //    RoleTest eval.
 //    ConvertorTest eval.

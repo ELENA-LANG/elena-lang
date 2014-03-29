@@ -7,15 +7,16 @@
 
 #class(role)XTester
 {
-    #method notequal : anObject
-        = $self equal:anObject not.
 }
 
 #symbol XTest =
 [
-    #var a := 2.
+    #var n := 3.
     
-    a != 3.
+    n =>
+        1 ? [ console writeLine:"=> operator fails". ]
+        2 ? [ console writeLine:"=> operator fails". ]
+        3 ? [ console writeLine:"=> operator works!". ].
 ].
 
 //// --- OpenArgTest ---
@@ -69,19 +70,19 @@
 ////    
 ////    DispatchTester~msg eval:1:2.
 ////].
-////
-////// --- MultySelectTest ---
-////
-////#symbol MultySelectTest =
-////[
-////    #var n := 3.
-////    
-////    n =>
-////        1 ? [ console writeLine:"=> operator fails". ]
-////        2 ? [ console writeLine:"=> operator fails". ]
-////        3 ? [ console writeLine:"=> operator works!". ].
-////].
-////
+
+// --- MultySelectTest ---
+
+#symbol MultySelectTest =
+[
+    #var n := 3.
+    
+    n =>
+        1 ? [ console writeLine:"=> operator fails". ]
+        2 ? [ console writeLine:"=> operator fails". ]
+        3 ? [ console writeLine:"=> operator works!". ].
+].
+
 ////// --- LocalTest ---
 ////
 ////#class(role) LocalTester
@@ -279,24 +280,24 @@
 ////    console write:"(false != false) is " writeLine:(b2 != b2).
 ////    console write:"(false != true) is " writeLine:(b2 != b1).
 ////].
-////
-////// --- ControlTest ---
-////
-////#symbol ControlTest =
-////[
-////    true ?
-////    [
-////        console writeLine:"? operator works!".
-////    ].
-////    
-////    false ?
-////    [
-////        console writeLine:"!! ControlTest failed".
-////    ]
-////    ! [
-////        console writeLine:"?-! operator works!".
-////    ].
-////].
+
+// --- ControlTest ---
+
+#symbol ControlTest =
+[
+    true ?
+    [
+        console writeLine:"? operator works!".
+    ].
+    
+    false ?
+    [
+        console writeLine:"!! ControlTest failed".
+    ]
+    ! [
+        console writeLine:"?-! operator works!".
+    ].
+].
 
 // --- IntArithmeticTest ---
 
@@ -478,38 +479,38 @@
 ////    #var r :=  n length | literal.
 ////    #var r2 :=   n literal | length.
 ////].
-////
-////// --- LoopTest ---
-////
-////#symbol LoopTest =
-////[
-////    #var i := 5.
-////        
-////    console writeLine:"Loop running...".
-////    #loop (i > 0) ?
-////    [
-////        console writeLine:i.
-////        
-////        i := i - 1.
-////    ].
-////  
-////    #var j := Integer new.
-////    control while: [j < 5] &do:
-////    [
-////        console writeLine:j.
-////        
-////        j += 1.
-////    ].
-////    
-////    control do:
-////    [
-////        console writeLine:j.
-////        
-////        j -= 1.
-////    ]
-////    &until:[j == 0].
-////].
-////
+
+// --- LoopTest ---
+
+#symbol LoopTest =
+[
+    #var i := 5.
+        
+    console writeLine:"Loop running...".
+    #loop (i > 0) ?
+    [
+        console writeLine:i.
+        
+        i := i - 1.
+    ].
+  
+    #var j := Integer new.
+    control while: [j < 5] &do:
+    [
+        console writeLine:j.
+        
+        j += 1.
+    ].
+    
+    control do:
+    [
+        console writeLine:j.
+        
+        j -= 1.
+    ]
+    &until:[j == 0].
+].
+
 ////// --- ExceptionTest ---
 ////
 ////#symbol ExceptionTest =

@@ -16,6 +16,9 @@ ELC:
 [*] codebase refactored
 [*] some native-code optimization   
 
+IDE:
+[*] "step over line"/"step over" implementations are improved
+
 ******************************************************************************
                     What's New in 1.9.12 (pre release)
 ******************************************************************************

@@ -163,6 +163,11 @@ void ByteCodeWriter :: declareStatement(CommandTape& tape)
    tape.write(blStatement);
 }
 
+void ByteCodeWriter :: declareBlock(CommandTape& tape)
+{
+   tape.write(blBlock);
+}
+
 void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
 {
    // { pushn 0 } n
@@ -1302,6 +1307,13 @@ void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
+void ByteCodeWriter :: writeNewBlock(MemoryWriter* debug)
+{
+   DebugLineInfo symbolInfo(dsVirtualBlock, 0, 0, 0);
+
+   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
 void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel)
 {
    writeLocal(scope, localName, level, dsLocal, frameLevel);
@@ -1613,6 +1625,12 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             // generate debug exception only if debug info enabled
             if (scope.debug)
                writeNewStatement(scope.debug);
+
+            break;
+         case blBlock:
+            // generate debug exception only if debug info enabled
+            if (scope.debug)
+               writeNewBlock(scope.debug);
 
             break;
          case bcBreakpoint:
