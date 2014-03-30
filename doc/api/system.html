@@ -59,7 +59,7 @@ An action role
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-run &if:<A HREF="protocol.html#bool">bool</A>
+run &if:<A HREF="protocol.html#bool_expr">bool_expr</A>
 </TD>
 <TD><CODE>Executes the action while the parameter is true</CODE>
 </TD>
@@ -67,7 +67,7 @@ run &if:<A HREF="protocol.html#bool">bool</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-run &until:<A HREF="protocol.html#bool">bool</A>
+run &until:<A HREF="protocol.html#bool_expr">bool_expr</A>
 </TD>
 <TD><CODE>Executes the action while the parameter is false</CODE>
 </TD>
@@ -111,7 +111,7 @@ An array
 new &length:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#array">array</A>
 </TD>
-<TD><CODE>Creates the array with specified length</CODE>
+<TD><CODE>Creates the array with the specified length</CODE>
 </TD>
 </TR>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -123,7 +123,7 @@ new &length:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add : <A HREF="protocol.html#object">object</A>
+add : <A HREF="protocol.html#array">array</A>
  = <A HREF="protocol.html#array">array</A>
 </TD>
 <TD><CODE>Concatinates the arrays</CODE>
@@ -151,16 +151,16 @@ array = <A HREF="protocol.html#array">array</A>
 <CODE>&nbsp;
 enumerator = <A HREF="protocol.html#enumerator">enumerator</A>
 </TD>
-<TD><CODE>Returns the object enumerator</CODE>
+<TD><CODE>Returns the array enumerator</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-getAt : <A HREF="protocol.html#object">object</A>
+getAt : <A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Returns the array element at the specified position</CODE>
+<TD><CODE>Returns the specified array member</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -169,7 +169,7 @@ getAt : <A HREF="protocol.html#object">object</A>
 getAt &index:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Returns the array element at the specified position</CODE>
+<TD><CODE>Returns the specified array member</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -183,18 +183,19 @@ length = <A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-setAt : <A HREF="protocol.html#object:object">object:object</A>
+setAt : <A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Sets the array element at the specified position</CODE>
+<TD><CODE>Sets the specified array member</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
 setAt &index:<A HREF="protocol.html#int">int</A>
-&object:<A HREF="protocol.html#object">object</A>
+ = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Sets the array element at the specified position</CODE>
+<TD><CODE>Sets the specified array member</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -230,7 +231,7 @@ An array iterator
 <CODE>
 theArray&nbsp;</CODE>
 </TD>
-<TD><CODE>The array</CODE>
+<TD><CODE>The target</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -283,7 +284,7 @@ append &index:<A HREF="protocol.html#int">int</A>
 <CODE>&nbsp;
 available = <A HREF="protocol.html#bool">bool</A>
 </TD>
-<TD><CODE>Returns true if the index is inside the range</CODE>
+<TD><CODE>Returns false if the index out of range</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -291,7 +292,7 @@ available = <A HREF="protocol.html#bool">bool</A>
 <CODE>&nbsp;
 get = <A HREF="protocol.html#value">value</A>
 </TD>
-<TD><CODE>Returns the current array element</CODE>
+<TD><CODE>Returns the current member</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -313,8 +314,9 @@ next = <A HREF="protocol.html#bool">bool</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-reset</TD>
-<TD><CODE>Resets the enumerator</CODE>
+set : <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets the current array member</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -328,9 +330,8 @@ set &index:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-set : <A HREF="protocol.html#value">value</A>
-</TD>
-<TD><CODE>Sets the current array element</CODE>
+reset</TD>
+<TD><CODE>Resets the enumerator</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -495,8 +496,11 @@ subtract : <A HREF="protocol.html#numeric_value">numeric_value</A>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-Class Booleab</H2>
+Class Boolean</H2>
 <B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#bool">bool</A>
+</DT>
 <DT>
 <A HREF="protocol.html#value">value</A>
 </DT>
@@ -553,6 +557,24 @@ equal : <A HREF="protocol.html#value">value</A>
 <CODE>&nbsp;
 invert</TD>
 <TD><CODE>Inverts the boolean value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiplyBy : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notequal : <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -617,20 +639,6 @@ stop</TD>
 </TD>
 </TR>
 </TABLE>
-<A NAME="ByteArray">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-ByteArray</H2>
-ByteArray
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
-</TABLE>
 <A NAME="CharValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -665,7 +673,7 @@ A character symbol
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-new = <A HREF="protocol.html#value">value</A>
+new = <A HREF="protocol.html#char">char</A>
 </TD>
 <TD><CODE>Creates the object with zero value</CODE>
 </TD>
@@ -674,7 +682,7 @@ new = <A HREF="protocol.html#value">value</A>
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
 new : <A HREF="protocol.html#object">object</A>
- = <A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#char">char</A>
 </TD>
 <TD><CODE>Creates the object with specified value</CODE>
 </TD>
@@ -682,8 +690,8 @@ new : <A HREF="protocol.html#object">object</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-new : <A HREF="protocol.html#int">int</A>
- = <A HREF="protocol.html#value">value</A>
+new &char:<A HREF="protocol.html#char">char</A>
+ = <A HREF="protocol.html#char">char</A>
 </TD>
 <TD><CODE>Creates the object with specified numeric value</CODE>
 </TD>
@@ -691,10 +699,19 @@ new : <A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-new &char:<A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#value">value</A>
+new &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#char">char</A>
 </TD>
-<TD><CODE>Creates the object with specified value</CODE>
+<TD><CODE>Creates the object with specified numeric value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#char">char</A>
+</TD>
+<TD><CODE>Creates the object with specified numeric value</CODE>
 </TD>
 </TR>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -714,6 +731,15 @@ char = <A HREF="protocol.html#value">value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+equal &char:<A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value with value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 equal &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
@@ -723,7 +749,7 @@ equal &int:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-equal &char:<A HREF="protocol.html#value">value</A>
+equal &literal:<A HREF="protocol.html#literal">literal</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Compares the value with value</CODE>
@@ -782,6 +808,60 @@ notless &widechar:<A HREF="protocol.html#value">value</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="console">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol console</H2>
+<P>
+A console
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+readChar = <A HREF="protocol.html#char">char</A>
+</TD>
+<TD><CODE>	Reads the next character from the standard input stream.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Writes the specified literal value to the standard output stream.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+writeLine : <A HREF="protocol.html#literal;Writes the specified literal value">literal;Writes the specified literal value</A>
+ = <A HREF="protocol.html# followed by the current line terminator, to the standard output stream."> followed by the current line terminator, to the standard output stream.</A>
+</TD>
+<TD><CODE>Writes the specified literal value, followed by the current line terminator, to the standard output stream.</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+readLine = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Reads the next line of characters from the standard input stream.</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="control">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -814,7 +894,7 @@ do : <A HREF="protocol.html#action">action</A>
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
 do  : <A HREF="protocol.html#action">action</A>
-&until:<A HREF="protocol.html#bool_action">bool_action</A>
+&until:<A HREF="protocol.html#bool_expr">bool_expr</A>
 </TD>
 <TD><CODE>Executes the action until the condition is met</CODE>
 </TD>
@@ -822,25 +902,25 @@ do  : <A HREF="protocol.html#action">action</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-for  : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
-&from:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&backTo:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&by:<A HREF="protocol.html#numeric_value">numeric_value</A>
+for  : <A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&backTo:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
-<TD><CODE>Iterates the function for the specified range [from,to] in the reverse order</CODE>
+<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-for  : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
-&from:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&to:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&by:<A HREF="protocol.html#numeric_value">numeric_value</A>
+for  : <A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&to:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
-<TD><CODE>Iterates the function for the specified range [from,to]</CODE>
+<TD><CODE>Executes the function for every value in the specified range</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -849,7 +929,7 @@ for  : <A HREF="protocol.html#numeric_variable">numeric_variable</A>
 foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
-<TD><CODE>Executes the function for each collection member</CODE>
+<TD><CODE>Executes the function for every member of the enumerable object</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -858,54 +938,44 @@ foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
 foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
 &until:<A HREF="protocol.html#bool_function">bool_function</A>
 </TD>
-<TD><CODE>Enumerates the collection until the member meet the condition and return it; otherwise, return nil.</CODE>
+<TD><CODE>Executes the function until the condition is true</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
-&backTo:<A HREF="protocol.html#numeric_value">numeric_value</A>
+from  : <A HREF="protocol.html#value">value</A>
+&till:<A HREF="protocol.html#value">value</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
-<TD><CODE>Iterates the function for the specified range [from,to] in the reverse order with step equals to 1.</CODE>
+<TD><CODE>Executes the function for every value in the specified range</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
-&till:<A HREF="protocol.html#numeric_value">numeric_value</A>
+from  : <A HREF="protocol.html#value">value</A>
+&to:<A HREF="protocol.html#value">value</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
-<TD><CODE>Iterates the function for the specified range [from,till) with step equals to 1.</CODE>
+<TD><CODE>Executes the function for every value in the specified range</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-from  : <A HREF="protocol.html#numeric_value">numeric_value</A>
-&to:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&do:<A HREF="protocol.html#function">function</A>
+while : <A HREF="protocol.html#bool_expr">bool_expr</A>
 </TD>
-<TD><CODE>Iterates the function for the specified range [from,to] with step equals to 1.</CODE>
+<TD><CODE>Checks the condition until it is true</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-while : <A HREF="protocol.html#bool_action">bool_action</A>
-</TD>
-<TD><CODE>Evaluates the boolean expression while it is true</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-while  : <A HREF="protocol.html#bool_action">bool_action</A>
+while  : <A HREF="protocol.html#bool_expr">bool_expr</A>
 &do:<A HREF="protocol.html#action">action</A>
 </TD>
-<TD><CODE>Evaluates action while the boolean expression is true</CODE>
+<TD><CODE>Executes the action while the condition is true</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1003,26 +1073,65 @@ notless &literal:<A HREF="protocol.html#literal">literal</A>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-Exception</H2>
-Exception
+Class Exception</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'Exception</B>
+</PRE>
+<P>
+A basic exception
+<P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+theMessage&nbsp;</CODE>
+</TD>
+<TD><CODE></CODE>
+</TD>
+</TR>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Creates the exception with the provided message</CODE>
+</TD>
+</TR>
 <!-- ========== METHOD SUMMARY =========== -->
-</TABLE>
-<A NAME="Extension">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-Extension</H2>
-Extension
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+literal = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the message</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Messages = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the message</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="false">
 <HR>
@@ -1033,9 +1142,6 @@ system</FONT>
 <BR>
 Symbol false</H2>
 <B>All Implemented Protocols:</B><DL>
-<DT>
-<A HREF="protocol.html#object">object</A>
-</DT>
 <DT>
 <A HREF="protocol.html#bool">bool</A>
 </DT>
@@ -1101,7 +1207,7 @@ equal : <A HREF="protocol.html#object">object</A>
 equal &action:<A HREF="protocol.html#bool_action">bool_action</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
-<TD><CODE>Determines whether the specified object is equal to the current object boolean expression.</CODE>
+<TD><CODE>Determines whether the specified object is equal to the current boolean expression.</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -1158,6 +1264,24 @@ or &action:<A HREF="protocol.html#bool_action">bool_action</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+or &bool:<A HREF="protocol.html#bool">bool</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical OR operation with a boolean value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Executes logical OR operation with a numeric value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 then : <A HREF="protocol.html#action">action</A>
 </TD>
 <TD><CODE>Always returns nil.</CODE>
@@ -1200,6 +1324,54 @@ xor &bool:<A HREF="protocol.html#bool">bool</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="FormatException">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class FormatException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#Exception">system'Exception</A>
+   |
+   +--<B>system'FormatException</B>
+</PRE>
+<P>
+A conversion exception
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new</TD>
+<TD><CODE>Creates the exception</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+onFormatError : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the exception handling code</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="functionOp">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1233,23 +1405,25 @@ A function role
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-reverse &for:<A HREF="protocol.html#numeric_variable">numeric_variable</A>
-&from:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&till:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&by:<A HREF="protocol.html#numeric_value">numeric_value</A>
+reverse &for:<A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&till:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Iterates the code for the specified range [till,from) in the reverse order</CODE>
+<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-reverse &for:<A HREF="protocol.html#numeric_variable">numeric_variable</A>
-&from:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&to:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&by:<A HREF="protocol.html#numeric_value">numeric_value</A>
+reverse &for:<A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&to:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Iterates the code for the specified range [to,from] in the reverse order</CODE>
+<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -1258,7 +1432,7 @@ reverse &for:<A HREF="protocol.html#numeric_variable">numeric_variable</A>
 run &for:<A HREF="protocol.html#enumerator">enumerator</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Executes the function code for every enumeration value</CODE>
+<TD><CODE>Executes the function for every enumeration item</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -1268,45 +1442,192 @@ run &for:<A HREF="protocol.html#enumerator">enumerator</A>
 &where:<A HREF="protocol.html#bool_function">bool_function</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Executes the function code for every enumeration value satisfying the condition</CODE>
+<TD><CODE>Executes the function for every enumeration item when the condition is true</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-run &for:<A HREF="protocol.html#numeric_variable">numeric_variable</A>
-&from:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&till:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&by:<A HREF="protocol.html#numeric_value">numeric_value</A>
+run &for:<A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&backTo:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Iterates the code for the specified range [from,till)</CODE>
+<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-run &for:<A HREF="protocol.html#numeric_variable">numeric_variable</A>
-&from:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&to:<A HREF="protocol.html#numeric_value">numeric_value</A>
-&by:<A HREF="protocol.html#numeric_value">numeric_value</A>
+run &for:<A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&till:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Iterates the code for the specified range [from,to]</CODE>
+<TD><CODE>Executes the function for every value in the specified range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &for:<A HREF="protocol.html#variable">variable</A>
+&from:<A HREF="protocol.html#value">value</A>
+&to:<A HREF="protocol.html#value">value</A>
+&by:<A HREF="protocol.html#value">value</A>
+ = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Executes the function for every value in the specified range</CODE>
 </TD>
 </TR>
 </TABLE>
-<A NAME="FormatException">
+<A NAME="Integer">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-FormatException</H2>
-FormatException
+Class Integer</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
+       |
+       +--<A HREF="system.html#IntNumber">system'IntNumber</A>
+         |
+         +--<B>system'Integer</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#int">int</A>
+</DT>
+<DT>
+<A HREF="protocol.html#numeric_variable">numeric_variable</A>
+</DT>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+</DL>
+<P>
+An integer variable class
+<P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#numeric_variable">numeric_variable</A>
+</TD>
+<TD><CODE>Creates an integer variable</CODE>
+</TD>
+</TR>
 <!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+append : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Appends the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+append &int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Appends the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divideInto : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Divides into the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divideInto &int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Divides into the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiplyBy : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Multiplies by the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiplyBy &int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Multiplies by the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+number = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reduce : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Reduces the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reduce &int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Reduces the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Copies the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Copies the integer value</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="IntBaseNumber">
 <HR>
@@ -1427,150 +1748,6 @@ convert &literal:<A HREF="protocol.html#literal">literal</A>
 </TD>
 </TR>
 </TABLE>
-<A NAME="Integer">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-Class Integer</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
- |
- +--<A HREF="system.html#BaseValue">system'BaseValue</A>
-   |
-   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
-     |
-     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
-       |
-       +--<A HREF="system.html#IntNumber">system'IntNumber</A>
-         |
-         +--<B>system'Integer</B>
-</PRE>
-<B>All Implemented Protocols:</B><DL>
-<DT>
-<A HREF="protocol.html#int">int</A>
-</DT>
-<DT>
-<A HREF="protocol.html#numeric_variable">numeric_variable</A>
-</DT>
-</DL>
-<P>
-An integer variable class
-<P>
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new : <A HREF="protocol.html#numeric_value">numeric_value</A>
- = <A HREF="protocol.html#numeric_variable">numeric_variable</A>
-</TD>
-<TD><CODE>Creates an integer variable with specified value</CODE>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-append : <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Appends the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-append &int:<A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Appends the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-divideInto : <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Divides into the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-divideInto &int:<A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Divides into the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-multiplyBy : <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Multiplies by the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-multiplyBy &int:<A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Multiplies by the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-number = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-reduce : <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Reduces the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-reduce &int:<A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Reduces the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write : <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Copies the integer value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write &int:<A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Copies the integer value</CODE>
-</TD>
-</TR>
-</TABLE>
 <A NAME="IntNumber">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1586,7 +1763,7 @@ Class IntNumber</H2>
    |
    +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
      |
-     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
        |
        +--<B>system'IntNumber</B>
 </PRE>
@@ -1716,6 +1893,22 @@ equal &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+index = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+int = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 less &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
@@ -1839,84 +2032,10 @@ subtract &real:<A HREF="protocol.html#real">real</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-index = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns itself</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-int = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns itself</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
 xor &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#int">int</A>
 </TD>
 <TD><CODE>Returns the result of bitwise XOR operation</CODE>
-</TD>
-</TR>
-</TABLE>
-<A NAME="intOp">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-Class intOp</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
- |
- +--<B>system'intOp</B>
-</PRE>
-<P>
-an Integer operations
-<P>
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-HiByte = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns the high byte</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-HiWord = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns the high word</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-LoByte = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns the low byte</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-LoWord = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns the low word</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1927,12 +2046,46 @@ LoWord = <A HREF="protocol.html#int">int</A>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-InvalidArgumentException</H2>
-InvalidArgumentException
+Class InvalidArgumentException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#Exception">system'Exception</A>
+   |
+   +--<B>system'InvalidArgumentException</B>
+</PRE>
+<P>
+An out of range argument exception
+<P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new</TD>
+<TD><CODE>Creates the exception</CODE>
+</TD>
+</TR>
 <!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+onInvalidArgumentError : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the exception handling code</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="literalConvertor">
 <HR>
@@ -2007,6 +2160,61 @@ convert &real:<A HREF="protocol.html#real">real</A>
  = <A HREF="protocol.html#literal">literal</A>
 </TD>
 <TD><CODE>Converts the parameter to the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Converts the integer value to the literal value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &int:<A HREF="protocol.html#int">int</A>
+&base:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Converts the integer value to the literal value with the specified base</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &literal:<A HREF="protocol.html#literal">literal</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Converts the literal value to the real number</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &literal:<A HREF="protocol.html#literal">literal</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the parameter</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Converts the integer value to the literal one</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Converts the real value to the literal one</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2214,7 +2422,7 @@ new &literal:<A HREF="protocol.html#literal">literal</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &char:<A HREF="protocol.html#value">value</A>
+add : <A HREF="protocol.html#object">object</A>
  = <A HREF="protocol.html#literal">literal</A>
 </TD>
 <TD><CODE>Concatinates the values</CODE>
@@ -2223,7 +2431,7 @@ add &char:<A HREF="protocol.html#value">value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add : <A HREF="protocol.html#object">object</A>
+add &char:<A HREF="protocol.html#value">value</A>
  = <A HREF="protocol.html#literal">literal</A>
 </TD>
 <TD><CODE>Concatinates the values</CODE>
@@ -2259,7 +2467,7 @@ enumerator = <A HREF="protocol.html#enumerator">enumerator</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-equal &literal:<A HREF="protocol.html#literal">literal</A>
+equal &char:<A HREF="protocol.html#value">value</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Compares the values</CODE>
@@ -2268,7 +2476,7 @@ equal &literal:<A HREF="protocol.html#literal">literal</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-equal &char:<A HREF="protocol.html#value">value</A>
+equal &literal:<A HREF="protocol.html#literal">literal</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Compares the values</CODE>
@@ -2401,7 +2609,7 @@ Class Long</H2>
    |
    +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
      |
-     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
        |
        +--<A HREF="system.html#LongNumber">system'LongNumber</A>
          |
@@ -2542,6 +2750,14 @@ write : <A HREF="protocol.html#numeric_value">numeric_value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+write &int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Copies the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 write &long:<A HREF="protocol.html#long">long</A>
 </TD>
 <TD><CODE>Copies the integer value</CODE>
@@ -2602,7 +2818,7 @@ Class LongNumber</H2>
    |
    +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
      |
-     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
        |
        +--<B>system'LongNumber</B>
 </PRE>
@@ -2767,6 +2983,14 @@ literal = <A HREF="protocol.html#literal">literal</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+long = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 multiply &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#long">long</A>
 </TD>
@@ -2864,101 +3088,10 @@ subtract &real:<A HREF="protocol.html#real">real</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-long = <A HREF="protocol.html#long">long</A>
-</TD>
-<TD><CODE>Returns itself</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
 xor &long:<A HREF="protocol.html#long">long</A>
  = <A HREF="protocol.html#long">long</A>
 </TD>
 <TD><CODE>Returns the result of bitwise XOR operation</CODE>
-</TD>
-</TR>
-</TABLE>
-<A NAME="mathOp">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-Class mathOp</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
- |
- +--<B>system'mathOp</B>
-</PRE>
-<P>
-Mathematical operations
-<P>
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Abs = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Returns the absolute value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Exp = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Returns e raised to the specified power.</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Frac = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Returns the fraction part of the number.</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Int = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Returns the integer part of the number</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Ln = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Returns the natural (base e) logarithm of a specified number.</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-mod : <A HREF="protocol.html#int">int</A>
- = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns the remainder</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Rounded = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Rounds the real number to the nearest integer value.</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2970,11 +3103,6 @@ Rounded = <A HREF="protocol.html#real">real</A>
 system</FONT>
 <BR>
 Symbol nil</H2>
-<B>All Implemented Protocols:</B><DL>
-<DT>
-<A HREF="protocol.html#object">object</A>
-</DT>
-</DL>
 <P>
 A nil value symbol
 <P>
@@ -2982,20 +3110,6 @@ A nil value symbol
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-equal : <A HREF="protocol.html#object">object</A>
- = <A HREF="protocol.html#bool">bool</A>
-</TD>
-<TD><CODE>Returns true if the specified object is nil; otherwise, false.</CODE>
-</TD>
-</TR>
 </TABLE>
 <A NAME="Object">
 <HR>
@@ -3005,11 +3119,6 @@ equal : <A HREF="protocol.html#object">object</A>
 system</FONT>
 <BR>
 Class Object</H2>
-<B>All Implemented Protocols:</B><DL>
-<DT>
-<A HREF="protocol.html#object">object</A>
-</DT>
-</DL>
 <P>
 A common ancestor
 <P>
@@ -3057,12 +3166,46 @@ notequal : <A HREF="protocol.html#object">object</A>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-OutOfRangeException</H2>
-OutOfRangeException
+Class OutOfRangeException</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#Exception">system'Exception</A>
+   |
+   +--<B>system'OutOfRangeException</B>
+</PRE>
+<P>
+An out of range exception
+<P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new</TD>
+<TD><CODE>Creates the exception</CODE>
+</TD>
+</TR>
 <!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+onOutOfRangeError : <A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the exception handling code</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="Real">
 <HR>
@@ -3079,11 +3222,9 @@ Class Real</H2>
    |
    +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
      |
-     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
+     +--<A HREF="system.html#RealNumber">system'RealNumber</A>
        |
-       +--<A HREF="system.html#RealNumber">system'RealNumber</A>
-         |
-         +--<B>system'Real</B>
+       +--<B>system'Real</B>
 </PRE>
 <B>All Implemented Protocols:</B><DL>
 <DT>
@@ -3320,9 +3461,7 @@ Class RealNumber</H2>
    |
    +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
      |
-     +--<A HREF="system.html#BaseNumber">system'BaseIntNumber</A>
-       |
-       +--<B>system'RealNumber</B>
+     +--<B>system'RealNumber</B>
 </PRE>
 <B>All Implemented Protocols:</B><DL>
 <DT>
@@ -3500,20 +3639,6 @@ real = <A HREF="protocol.html#real">real</A>
 </TD>
 </TR>
 </TABLE>
-<A NAME="RoleList">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-RoleList</H2>
-RoleList
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
-</TABLE>
 <A NAME="String">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -3600,6 +3725,14 @@ append : <A HREF="protocol.html#value">value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+append &literal:<A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Appends the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 clear</TD>
 <TD><CODE>Clears the variable value</CODE>
 </TD>
@@ -3648,9 +3781,6 @@ system</FONT>
 <BR>
 Symbol true</H2>
 <B>All Implemented Protocols:</B><DL>
-<DT>
-<A HREF="protocol.html#object">object</A>
-</DT>
 <DT>
 <A HREF="protocol.html#bool">bool</A>
 </DT>
@@ -3734,7 +3864,7 @@ equal : <A HREF="protocol.html#object">object</A>
 equal &action:<A HREF="protocol.html#bool_action">bool_action</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
-<TD><CODE>Determines whether the specified object is equal to the current object boolean expression.</CODE>
+<TD><CODE>Determines whether the specified object is equal to the current boolean expression.</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -3839,7 +3969,7 @@ Class Variable</H2>
 </PRE>
 <B>All Implemented Protocols:</B><DL>
 <DT>
-<A HREF="protocol.html#variable">variable</A>
+<A HREF="protocol.html#numeric_variable">numeric_variable</A>
 </DT>
 </DL>
 <P>
@@ -3939,23 +4069,14 @@ Class Variant</H2>
 <A HREF="protocol.html#enumerable">enumerable</A>
 </DT>
 <DT>
-<A HREF="protocol.html#literal">literal</A>
-</DT>
-<DT>
-<A HREF="protocol.html#int">int</A>
-</DT>
-<DT>
-<A HREF="protocol.html#long">long</A>
-</DT>
-<DT>
-<A HREF="protocol.html#real">real</A>
+<A HREF="protocol.html#variant">variant</A>
 </DT>
 <DT>
 <A HREF="protocol.html#variable">variable</A>
 </DT>
 </DL>
 <P>
-A variable literal
+A basic type variant class
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
@@ -4002,20 +4123,6 @@ real = <A HREF="protocol.html#real">real</A>
 <TD><CODE>Tries to convert the value to the real number</CODE>
 </TD>
 </TR>
-</TABLE>
-<A NAME="Wrap">
-<HR>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system</FONT>
-<BR>
-Wrap</H2>
-Wrap
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<!-- ========== METHOD SUMMARY =========== -->
 </TABLE>
 <HR>
 <A NAME="navbar_top"><!-- --></A>

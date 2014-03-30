@@ -4,6 +4,8 @@
 
 [#list#]
 actionOp
+Array
+ArrayIterator
 BaseValue
 BaseNumber
 Boolean
@@ -15,11 +17,13 @@ emptyLiteralValue
 Exception
 false
 FormatException
+functionOp
 Integer
 IntBaseNumber
 intConvertor
 IntNumber
 InvalidArgumentException
+literalConvertor
 LiteralIterator
 LiteralValue
 Long
@@ -67,13 +71,13 @@ Variant
 #constructor=new,&length:int&literal:literal,literal;Creates the literal string with specified length and copies the parameter value
 #constructor=new,&length:int&char:value,literal;Creates the literal string with specified length fills with spciefied character value
 #constructor=new,&literal:literal,literal;Creates the literal string copy
-#method=add,&char:value,literal;Concatinates the values
 #method=add,object,literal;Concatinates the values
+#method=add,&char:value,literal;Concatinates the values
 #method=add,&literal:literal,literal;Concatinates the values
 #method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
 #method=enumerator,,enumerator;Returns the object enumerator
-#method=equal,&literal:literal,bool;Compares the values
 #method=equal,&char:value,bool;Compares the values
+#method=equal,&literal:literal,bool;Compares the values
 #method=getAt,object,value;Returns the character with specified index
 #method=getAt,&index:int&out'short:short;Copies the character value to the stack allocated variable
 #method=indexOf,&index:int&literal:literal,int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
@@ -95,7 +99,7 @@ Variant
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
 #constructor=new,,int;Creates the object with zero value
 #constructor=new,&int:int,int;Creates the object with specified value
 #method=add,&int:int,int;Returns the sum of integers
@@ -107,6 +111,8 @@ Variant
 #method=divide,&real:real,real;Returns the result of division
 #method=equal,&int:int,bool;Compares the integer value
 #method=equal,&long:long,bool;Compares the integer value
+#method=index,,int;Returns itself
+#method=int,,int;Returns itself
 #method=less,&int:int,bool;Compares the integer value
 #method=less,&long:long,bool;Compares the integer value
 #method=literal,,literal;Returns the literal presentation
@@ -121,8 +127,6 @@ Variant
 #method=subtract,&int:int,int;Returns the difference of integers
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
-#method=index,,int;Returns itself
-#method=int,,int;Returns itself
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 
 [CharValue]
@@ -131,12 +135,15 @@ Variant
 #protocol=value                                                                             
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
-#constructor=new,,value;Creates the object with zero value
-#constructor=new,object,value;Creates the object with specified value
-#constructor=new,int,value;Creates the object with specified numeric value
+#constructor=new,,char;Creates the object with zero value
+#constructor=new,object,char;Creates the object with specified value
+#constructor=new,&char:char,char;Creates the object with specified numeric value
+#constructor=new,&int:int,char;Creates the object with specified numeric value
+#constructor=new,&short:short,char;Creates the object with specified numeric value
 #method=char,,value;Returns itself
-#method=equal,&int:int,bool;Compares the value with numeric value
 #method=equal,&char:value,bool;Compares the value with value
+#method=equal,&int:int,bool;Compares the value with numeric value
+#method=equal,&literal:literal,bool;Compares the value with value
 #method=int,,int;Returns the numeric value
 #method=less,&int:int,bool;Compares the value with numeric value
 #method=less,&char:value,bool;Compares the value with value
@@ -147,7 +154,16 @@ Variant
 [control]
 #title=Symbol control
 #shortdescr=A control helper symbol
+#method=do,action;Executes the action
 #method=do,action&until:bool_expr;Executes the action until the condition is met
+#method=for,variable&from:value&backTo:value&by:value&do:function;Executes the function for every value in the specified range in the reverse order
+#method=for,variable&from:value&to:value&by:value&do:function;Executes the function for every value in the specified range
+#method=foreach,enumerable&do:function;Executes the function for every member of the enumerable object
+#method=foreach,enumerable&until:bool_function;Executes the function until the condition is true
+#method=from,value&till:value&do:function;Executes the function for every value in the specified range
+#method=from,value&to:value&do:function;Executes the function for every value in the specified range
+#method=while,bool_expr;Checks the condition until it is true
+#method=while,bool_expr&do:action;Executes the action while the condition is true
 
 [actionOp]
 #title=Class actionOp
@@ -168,6 +184,8 @@ Variant
 #method=bool,,bool;Returns itself.
 #method=else,action;Always returns nil.
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
+#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current boolean expression.
+#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
 #method=int,,int;Returns numeric value.
 #method=literal,,literal;Returns literal representation.
 #method=not,,bool;Always returns false.
@@ -187,11 +205,15 @@ Variant
 #method=bool,,bool;Returns itself.
 #method=else,action;Executes the action;
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
+#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current boolean expression.
+#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
 #method=int,,int;Returns numeric value.
 #method=literal,,literal;Returns literal representation.
 #method=not,,bool;Always returns true.
 #method=or,object,bool;Executes logical OR operation
 #method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
+#method=or,&bool:bool,bool;Executes logical OR operation with a boolean value
+#method=or,&int:int,bool;Executes logical OR operation with a numeric value
 #method=then,action;Always returns nil.
 #method=then,action&else:action;Executes else-action;
 #method=xor,object,bool;Executes logical XOR operation
@@ -202,9 +224,14 @@ Variant
 #title=Class Integer
 #shortdescr=An integer variable class
 #protocol=int
+#protocol=numeric_variable
+#protocol=numeric_value
 #parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
 #parent=system.html#IntNumber:system'IntNumber
-#constructor=new,,numeric_variable;Creates an integer variable
+#constructor=new,int,numeric_variable;Creates an integer variable
 #method=append,numeric_value;Appends the integer value
 #method=append,&int:int;Appends the integer value
 #method=divideInto,numeric_value;Divides into the integer value
@@ -249,6 +276,7 @@ Variant
 #constructor=new,,variable;Creates an empty literal variable 
 #constructor=new,value,variable;Creates a literal variable with specified value
 #method=append,value,;Appends the value
+#method=append,&literal:literal,;Appends the value
 #method=clear,,;Clears the variable value
 #method=delete,&index:int&length:int,;Deletes a sub string
 #method=insert,&index:int&literal:literal,;Inserts a sub string
@@ -262,6 +290,7 @@ Variant
 #protocol=variant
 #protocol=variable
 #parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#String:system'String
 #field=theValue;The literal value
 #method=int,,int;Tries to convert the value to the integer number
@@ -301,7 +330,7 @@ Variant
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
 #constructor=new,,long;Creates the object with zero value
 #constructor=new,&int:int,long;Creates the object with specified value
 #constructor=new,&long:long,long;Creates the object with specified value
@@ -317,6 +346,7 @@ Variant
 #method=less,&int:int,bool;Compares the integer value
 #method=less,&long:long,bool;Compares the integer value
 #method=literal,,literal;Returns the literal presentation
+#method=long,,long;Returns itself
 #method=multiply,&int:int,long;Returns the product of integers
 #method=multiply,&long:long,long;Returns the product of integers
 #method=multiply,&real:real,real;Returns the product
@@ -328,7 +358,6 @@ Variant
 #method=subtract,&int:int,long;Returns the difference of integers
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
-#method=long,,long;Returns itself
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
 
 [RealNumber]
@@ -339,7 +368,6 @@ Variant
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
 #constructor=new,,real;Creates the object with zero value
 #constructor=new,&int:int,real;Creates the object with specified value
 #constructor=new,&long:long,real;Creates the object with specified value
@@ -448,7 +476,6 @@ Variant
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
 #parent=system.html#RealNumber:system'RealNumber
 #constructor=new,numeric_value,numeric_variable;Creates a real number variable with specified value
 #method=append,numeric_value;Appends the numeric value
@@ -476,7 +503,7 @@ Variant
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
-#parent=system.html#BaseNumber:system'BaseIntNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
 #parent=system.html#LongNumber:system'LongNumber
 #method=append,numeric_value;Appends the integer value
 #method=append,&int:int;Appends the integer value
@@ -492,24 +519,28 @@ Variant
 #method=reduce,&int:int;Reduces the integer value
 #method=reduce,&long:long;Reduces the integer value
 #method=write,numeric_value;Copies the integer value
+#method=write,&int:int;Copies the integer value
 #method=write,&long:long;Copies the integer value
 
 [Boolean]
-#title=Class Booleab
+#title=Class Boolean
 #shortdescr=A boolean variable
+#protocol=bool
 #protocol=value
 #protocol=variable
 #constructor=new,value,variable;Creates a boolean variable with specified value
 #method=append,value,bool;Executes logical OR operation
 #method=equal,value,bool;Compares the value
 #method=invert,,;Inverts the boolean value
+#method=multiplyBy,value,bool;Executes logical AND operation
+#method=notequal,value,bool;Compares the value
 #method=value,,bool;Returns the boolean value
 #method=write,value,;Writes the value
 
 [Variable]
 #title=Class Variable
 #shortdescr=A variable
-#protocol=variable
+#protocol=numeric_variable
 #parent=system.html#Object:system'Object
 #constructor=new,numeric_value,variable;Creates the variable
 #method=append,numeric_value;Appends the value
@@ -526,3 +557,61 @@ Variant
 #parent=system.html#Exception:system'Exception
 #constructor=new,,;Creates the exception
 #method=onOutOfRangeError,function;Executes the exception handling code
+
+[functionOp]
+#title=Class functionOp
+#shortdescr=A function role
+#parent=system.html#Object:system'Object
+#protocol=function
+#method=reverse,&for:variable&from:value&till:value&by:value,object;Executes the function for every value in the specified range in the reverse order
+#method=reverse,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified range in the reverse order
+#method=run,&for:enumerator,object;Executes the function for every enumeration item
+#method=run,&for:enumerator&where:bool_function,object;Executes the function for every enumeration item when the condition is true
+#method=run,&for:variable&from:value&backTo:value&by:value,object;Executes the function for every value in the specified range in the reverse order
+#method=run,&for:variable&from:value&till:value&by:value,object;Executes the function for every value in the specified range
+#method=run,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified range
+
+[ArrayIterator]
+#title=Class ArrayIterator
+#shortdescr=An array iterator
+#parent=system.html#Object:system'Object
+#protocol=enumerator
+#field=theArray;The target
+#field=theCount;The array length
+#field=theIndex;The current index
+#constructor=new,&array:array,enumerator;Returns the parameter iterator
+#method=append,&index:int;Increaments the index by specified value
+#method=available,,bool;Returns false if the index out of range
+#method=get,,value;Returns the current member
+#method=index,,int;Returns the index value.
+#method=next,,bool;Goes to the next character and returns true if the index is not out of range
+#method=set,object;Sets the current array member
+#method=set,&index:int;Sets the index by specified value
+#method=reset,,;Resets the enumerator
+
+[Array]
+#title=Class Array
+#shortdescr=An array
+#parent=system.html#Object:system'Object
+#protocol=enumerable
+#protocol=array
+#constructor=new,&length:int,array;Creates the array with the specified length
+#method=add,array,array;Concatinates the arrays
+#method=add,&array:array,array;Concatinates the arrays
+#method=array,,array;Returns itself
+#method=enumerator,,enumerator;Returns the array enumerator
+#method=getAt,int,object;Returns the specified array member
+#method=getAt,&index:int,object;Returns the specified array member
+#method=length,,int;Returns the array length
+#method=setAt,int,object;Sets the specified array member
+#method=setAt,&index:int,object;Sets the specified array member
+
+[literalConvertor]
+#title=Symbol literalConvertor
+#shortdescr=A literal convertor
+#method=convert,&int:int,literal;Converts the integer value to the literal value
+#method=convert,&int:int&base:int,literal;Converts the integer value to the literal value with the specified base
+#method=convert,&literal:literal,real;Converts the literal value to the real number
+#method=convert,&literal:literal,literal;Returns the parameter
+#method=convert,&long:long,literal;Converts the integer value to the literal one
+#method=convert,&real:real,literal;Converts the real value to the literal one

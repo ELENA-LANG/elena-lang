@@ -4,16 +4,22 @@
 
 [#list#]
 action
+array
 bool
 bool_action
 bool_expr
+bool_function
 char
+enumerable
+enumerator
 function
 int
 literal
 long
 numeric_value
+numeric_variable
 real
+short
 value
 variable
 variant
@@ -93,3 +99,30 @@ variant
 #method=notgreater,value,bool;Compares the values
 #method=notless,value,bool;Compares the values
 #method=subtract,numeric_value,numeric_value;Subtracts the values
+
+[enumerator]
+#shortdescr=An enumerator protocol
+#method=get,,object;Returns the current item
+#method=next,,bool;Goes to the next enumeration item
+
+[bool_function]
+#shortdescr=A boolean function
+#method=eval,object,bool;Evaluates the object and returns the boolean value
+
+[enumerable]
+#shortdescr=An enumerable protocol
+#method=enumerator,,enumerator;Returns the object enumerator
+
+[short]
+#shortdescr=A short integer protocol
+
+[numeric_variable]
+#shortdescr=A numeric variable protocol
+#method=append,value;Copies the value
+#method=divideInto,value;Copies the value
+#method=multiplyBy,value;Copies the value
+#method=reduce,value;Copies the value
+#method=write,value;Copies the value
+
+[array]
+#shortdescr=An array protocol

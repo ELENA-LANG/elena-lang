@@ -1,0 +1,19 @@
+[#general#]
+#name=system'dynamic
+#shortdescr=Contains classes supporting run-time code evaluation
+
+[#list#]
+DispatchSubject
+Signature
+
+[Signature]
+#title=Class Signature
+#shortdescr=A signature role
+#parent=system.html#Object:system'Object
+
+[DispatchSubject]
+#title=Class DispatchSubject
+#shortdescr=A dispatch subject 
+#parent=system.html#Object:system'Object
+#parent=system_dynamic.html#DispatchSubject:system'dynamic'Signature
+#constructor=new,object,object;Copies the parameter dispatch subject

@@ -20,21 +20,13 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              idev - debugger
-                       * step over #break / #throw does not work correctly
-
 <=================> 
-1.9.14 [3.4]
+1.9.14 
 --------
-week1:
-              idev - usability
-                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
-                       * recognize out of memory exception
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-                       * test compilation with a very long identifier names                       
-                       
-week2:
+week2: [8.4]
+              sdev - api doc
+                       * create API : system(math.l)
+
               adev - lib30                                      
                        * test interpreter
                        * test all rosetta samples
@@ -49,7 +41,13 @@ week2:
                        * support GUI mode
                        * support GUI application
 
-              adev - lib30                                      
+              adev - lib30
+                       * review system.Object
+                       * review lib30
+
+              arev - lib30                                      
+                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object
+
                        * better to use console, no need for consoleEx
                        * it should be possible to use convertor for other types as well
 
@@ -99,7 +97,7 @@ week2:
                        * write formatted string (with parameters)
 
               sdev - api doc
-                       * create API doc : ByteArray
+                       * create API doc
                        * change api faq
                        * copy protocols to doc\protocols
                        * support dispatch method
@@ -525,8 +523,16 @@ week1:
                        * store current encoding for every file
 
               idev - debugger
+                       * step over #break / #throw does not work correctly
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                      
+
+              idev - usability
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
+                       * recognize out of memory exception
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
+                                             
 1.9.16
 --------
               xdev - elenasm
