@@ -815,8 +815,8 @@ void JITLinker :: prepareCompiler()
    _Memory* sdata = _loader->getTargetSection(mskStatRef);
    _compiler->prepareCoreData(helper, data, rdata, sdata);
 
-//   // load VM table
-//   _compiler->prepareVMData(coreHelper, data);
+   // load VM table
+   _compiler->prepareVMData(helper, data);
 
    // preload compiler command set
    _Memory* code = _loader->getTargetSection(mskCodeRef);

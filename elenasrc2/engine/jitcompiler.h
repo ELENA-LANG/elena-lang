@@ -49,12 +49,12 @@ public:
    virtual void prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata) = 0;
    virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code) = 0;
 
-//   // should be called only for VM
-//   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data) = 0;
+   // should be called only for VM
+   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data) = 0;
 
-////   virtual int writeInteger(MemoryWriter& writer, int value);
-////   virtual int writeString(MemoryWriter& writer, const TCHAR* string);
-////   virtual int writeAnsiString(MemoryWriter& writer, const TCHAR* string);
+//   virtual int writeInteger(MemoryWriter& writer, int value);
+//   virtual int writeString(MemoryWriter& writer, const TCHAR* string);
+//   virtual int writeAnsiString(MemoryWriter& writer, const TCHAR* string);
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 

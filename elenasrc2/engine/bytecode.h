@@ -302,10 +302,11 @@ enum FunctionCode
    fnBSLoad         = 0x0066,
    fnBSGetInt       = 0x0067,
    fnNCopyWord      = 0x0068,
-   fnGetAt          = 0x0069, 
+   fnLoadClass      = 0x0069,
+   fnIndexOfMsg     = 0x006A,
 };
 
-#define EXTENSION_COUNT 0x69
+#define EXTENSION_COUNT 0x6B
 
 enum PseudoArg
 {

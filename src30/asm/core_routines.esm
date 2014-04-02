@@ -1123,6 +1123,16 @@ procedure inline'class_get
   quitn 3
   
 end
+
+procedure inline'class_getClass
+
+  pushb
+  bcopya
+  loadclass
+  popb
+  quitn 1
+
+end
                     
 procedure inline'class_getName
 
@@ -1260,5 +1270,25 @@ procedure inline'handle_wrap
   asavesi 2
   popa
   ajumpvi 0
+
+end
+
+procedure inline'class_indexOfMsg
+
+  pushb
+  bcopya
+  aloadsi 3   // ; get message
+  mloadai 0   // ; load message id
+  acopyb
+  indexofmsg
+  dthenn labFalse 0FFFFFFFFh
+  acopyr  const : system'true
+  popb
+  quitn 2
+
+labFalse:
+  acopyr  const : system'false
+  popb
+  quitn 2
 
 end

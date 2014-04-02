@@ -22,13 +22,13 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define CORE_GC_SIZE         0x0003
 #define CORE_STAT_COUNT      0x0004
 #define CORE_STATICROOT      0x0005
-//#define CORE_VM_TABLE        0x0006
+#define CORE_VM_TABLE        0x0006
 //#define CORE_TLS_INDEX       0x0007
 //#define CORE_THREADTABLE     0x0008
 
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
-//#define LOADCLASSNAME        0x10011
+#define LOADCLASSNAME        0x10011
 //#define INIT_RND             0x10012
 //#define EVALSCRIPT           0x10013
 ////#define GC_REALLOC         0x10006
@@ -44,10 +44,10 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 2;
+const int coreFunctionNumber = 3;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK, //LOADCLASSNAME, INIT_RND, EVALSCRIPT,
+   GC_ALLOC, HOOK, LOADCLASSNAME, //INIT_RND, EVALSCRIPT,
 };
 
 // preloaded gc commands
@@ -1657,19 +1657,19 @@ void x86JITCompiler :: prepareCoreData(_ReferenceHelper& helper, _Memory* data, 
    rdataWriter.writeDWord(0);
 }
 
-//void x86JITCompiler :: prepareVMData(_ReferenceHelper& helper, _Memory* data)
-//{
-//   MemoryWriter writer(data);
-//
-//   // VM TABLE
-//   _preloaded.add(CORE_VM_TABLE, helper.getVAddress(writer, mskDataRef));
-//
-//   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
-//   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSymbol));
-//   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadName));
-//   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_Interprete));
-////   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
-//}
+void x86JITCompiler :: prepareVMData(_ReferenceHelper& helper, _Memory* data)
+{
+   MemoryWriter writer(data);
+
+   // VM TABLE
+   _preloaded.add(CORE_VM_TABLE, helper.getVAddress(writer, mskDataRef));
+
+   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
+   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSymbol));
+   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadName));
+   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_Interprete));
+//   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
+}
 
 void x86JITCompiler :: prepareCommandSet(_ReferenceHelper& helper, _Memory* code)
 {

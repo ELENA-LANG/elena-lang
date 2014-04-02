@@ -16,6 +16,12 @@
     #method Name
         <class_getName>.
 
+    #method Class
+        <class_getClass>.
+
+    #method respondsTo &message:aMessage
+        <class_indexOfMsg>.
+
     #method length
     [
         #var(type:int)aCount.

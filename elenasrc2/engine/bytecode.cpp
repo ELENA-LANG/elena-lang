@@ -76,7 +76,8 @@ const char* _fnExtensions[EXTENSION_COUNT] =
    "wsaddstr", "wsloadname", "bssetbuf", "bsgetbuf", "bscopystr", "bssetword", "bsgetword", "bsindexof",
    "bsindexofword", "bseval", "lrndnew", "lrndnext", "rabs", "rround", "rexp", "rln", "rint", "rcos",
    "rsin", "rarctan", "rsqrt", "rpi", "refgetlenz", "refcreate", "bscreate", "nsave", "lsave", "wssave",
-   "wsreserve", "bssave", "bsreserve", "bsgetlen", "bssetlen", "wsload", "bsload", "bsgetint", "ncopyword"
+   "wsreserve", "bssave", "bsreserve", "bsgetlen", "bssetlen", "wsload", "bsload", "bsgetint", "ncopyword",
+   "loadclass", "indexofmsg"
 };
 
 using namespace _ELENA_;

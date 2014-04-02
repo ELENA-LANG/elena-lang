@@ -1,4 +1,4 @@
-week x:                
+3week x:                
  
 
 x  - compiler
@@ -20,40 +20,20 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
+              adev - lib30
+                       * reflection : load class / constant / symbol by name
+                       * load class / symbol by name
+
 <=================> 
 1.9.14 
 --------
 week2: [8.4]
-              sdev - api doc
-                       * create API : system(math.l)
-
-              adev - lib30                                      
-                       * test interpreter
-                       * test all rosetta samples
-                       * test system tests
-                       * test dynamic tests
-            
-              adev - gui
-                       * class function
-                       * eventhandle group object
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
-                       * support GUI mode
-                       * support GUI application
-
-              adev - lib30
-                       * review system.Object
-                       * review lib30
-
-              arev - lib30                                      
-                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object
-
+              arev - lib30 review
+                       * review rosetta samples
+                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                       
                        * better to use console, no need for consoleEx
                        * it should be possible to use convertor for other types as well
-
-                       * review binary sample
-                       * review samples
-                       * review rosetta samples
+                       * should clone be part of object protocol?                                                  
                          
               adev - lib30                                        
                        * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
@@ -97,6 +77,7 @@ week2: [8.4]
                        * write formatted string (with parameters)
 
               sdev - api doc
+                       * create API : system(math.l)
                        * create API doc
                        * change api faq
                        * copy protocols to doc\protocols
@@ -181,6 +162,12 @@ week2: [8.4]
                          and could be invoked by eval
 
 week3:
+              sdev - lib30                                      
+                       * test interpreter
+                       * test all rosetta samples
+                       * test system tests
+                       * test dynamic tests
+            
               sdev - rosetta samples              
                        * Conway's Game of Life : create an inter-linked space matrix (currently it does not work properly)
                        * Conway's Game of Life
@@ -362,6 +349,8 @@ week1:
                        * out'literal - literal is a constant , so maybe better to use out'bytearray?
                        * it should be possible to override operator implementation with extension methods
 
+                       * think over reflection implementtion for static linked executable
+
                        * optimize output code: system'true
                        
               xdev - open arg                                      
@@ -532,6 +521,34 @@ week1:
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
+
+week2:
+              adev - lib30
+                       * classOp : test if object is class or subclass of
+
+                       * test if object is nil
+                       * test if number is zero
+                       * test if number is positive
+                       * test if number is greater than zero
+                       * test if number is negative
+                       * test if number is even
+                       * test if number is odd
+                       * test if literal constant
+                       * test if object is integer
+                       * test if object is float
+                       * test if object is number
+                       * test if upper case character
+                       * test if lower case character
+              
+              adev - gui
+                       * general architecture
+                       * class function
+                       * eventhandle group object
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * support GUI mode
+                       * support GUI application
+
                                              
 1.9.16
 --------

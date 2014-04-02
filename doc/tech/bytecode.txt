@@ -298,6 +298,8 @@ ELENA byte codes (or ecodes)
  -------------------------
  box vmt                     - if acc is local box its content into the object with vmt and size index
 
+ bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
+
  create i, vmt               - create the object with the specified
                                number of fields;
                                out: acc contains the class instance
@@ -307,7 +309,11 @@ ELENA byte codes (or ecodes)
 
  nbox vmt                    - if acc is local box its content into the object with vmt and size index
  
+ refcreate                   - create the object with size=index and vmt=acc, out : acc  
+
  unbox                       - copy acc content into the stack where index=size
+
+ wscreate                    - create the object with size=index and vmt=acc, out : acc  
  
 
  data manipulating commands:
@@ -337,18 +343,14 @@ ELENA byte codes (or ecodes)
  memory managing commands:
  -------------------------
 
- refcreate                   - create the object with size=index and vmt=acc, out : acc  
-
- bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
-
- wscreate                    - create the object with size=index and vmt=acc, out : acc  
-
 
  data manipulating commands:
  -----------------
           
  extension commands:
  -----------------
+ indexofmsg                  - search for mcc in acc:VMT; out: index or -1
+
  ncopy                       - int:self << int:acc
 
  ncopyword                   - int:self << word:acc
@@ -360,7 +362,7 @@ ELENA byte codes (or ecodes)
  nsave                       - int:[sp] << int:acc
 
  nequal                      - int(acc) == int([sp]) ? index=1 : index=0
-
+                                                                                         
  nless                       - int(acc) < int([sp]) ? index=1 : index=0
 
  nnotgreater                 - int(acc) <= int([sp]) ? index=1 : index=0
@@ -393,6 +395,8 @@ ELENA byte codes (or ecodes)
  lcopystr                    - long:self << str:acc, index = radix, convert to long; out: acc=self, index = 0 if failed
 
  lload                       - long:[sp] >> long:acc
+
+ loadclass                   - self.VMT >> acc
 
  lsave                       - long:[sp] << long:acc
 
@@ -551,4 +555,5 @@ ELENA byte codes (or ecodes)
  rpi                         - self << pi
                                                                                                       
  refgetlenz                  - params(acc).length >> index
+
  

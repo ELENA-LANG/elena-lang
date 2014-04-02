@@ -202,7 +202,7 @@ public:
 
    virtual void prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata);
    virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code);
-//   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data);
+   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data);
 
 //   virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber);
 //   virtual void compileTLS(_JITLoader* loader);

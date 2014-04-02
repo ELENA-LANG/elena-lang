@@ -22,6 +22,12 @@ define gc_stack_frame        002Ch
 define gc_mg_wbar            0030h
 define gc_stack_bottom       0034h
 
+// CORE VM TABLE
+define vm_Instance      0000h
+define vm_loadSymbol    0004h
+define vm_loadName      0008h
+define vm_interprete    000Ch
+
 // Object header fields
 define elObjectOffset    000Ch
 define elSizeOffset      000Ch
@@ -849,6 +855,29 @@ procedure %HOOK
                           
   add  ecx, [esp]
   sub  ecx, 5             // ; call command size should be excluded
+  ret
+
+end
+
+// get class name
+// in:  edx - VMT
+// out: eax - PWSTR
+procedure % GETCLASSNAME
+
+  mov  esi, data : %CORE_VM_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadClassName (instance, object)
+  push edx
+  push eax
+  mov  edx, [esi + vm_loadName] 
+  call edx
+  lea  esp, [esp+8]  
+
+labEnd:
   ret
 
 end
@@ -4163,11 +4192,37 @@ inline % 167h
   
 end
 
-// ncopyword (src, tgt)
+// ; ncopyword (src, tgt)
 inline % 168h
 
   mov  ebx, [eax]
   and  ebx, 0FFFFh
   mov  [edi], ebx
     
+end
+
+// ; loadclass
+inline % 169h
+
+  mov  eax, [edi - elVMTOffset]
+
+end
+
+// ; indexofmsg
+inline % 16Ah
+
+  mov  esi, [eax - elVMTOffset]
+  xor  ebx, ebx
+  mov  ecx, [esi - elVMTSizeOffset]
+labNext:
+  cmp  edx, [esi+ebx*8]
+  jz   short labFound
+  add  ebx, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  ebx, -1
+
+labFound:
+  mov   esi, ebx
+
 end

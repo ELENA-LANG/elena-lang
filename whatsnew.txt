@@ -11,6 +11,7 @@ ELENA:
 [*] operator implemenation refactored
 [+] new statement : #use
 [+] new method hint : extension
+[+] new ecodes: loadclass, indexofmsg
 
 ELC:
 [*] codebase refactored
@@ -18,6 +19,9 @@ ELC:
 
 IDE:
 [*] "step over line"/"step over" implementations are improved
+
+[LIB]
+[+] new functionality:system'dynamic'classOp
 
 ******************************************************************************
                     What's New in 1.9.12 (pre release)

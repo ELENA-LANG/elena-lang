@@ -13,10 +13,8 @@
 [
     #var n := 3.
     
-    n =>
-        1 ? [ console writeLine:"=> operator fails". ]
-        2 ? [ console writeLine:"=> operator fails". ]
-        3 ? [ console writeLine:"=> operator works!". ].
+    #var b := n~system'dynamic'classOp respondsTo &message:%add(1).
+    #var b2 := n~system'dynamic'classOp respondsTo &message:%new(1).
 ].
 
 //// --- OpenArgTest ---
