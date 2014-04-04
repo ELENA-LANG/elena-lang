@@ -77,7 +77,7 @@ const char* _fnExtensions[EXTENSION_COUNT] =
    "bsindexofword", "bseval", "lrndnew", "lrndnext", "rabs", "rround", "rexp", "rln", "rint", "rcos",
    "rsin", "rarctan", "rsqrt", "rpi", "refgetlenz", "refcreate", "bscreate", "nsave", "lsave", "wssave",
    "wsreserve", "bssave", "bsreserve", "bsgetlen", "bssetlen", "wsload", "bsload", "bsgetint", "ncopyword",
-   "loadclass", "indexofmsg"
+   "loadclass", "indexofmsg", "wseval", "ncall"
 };
 
 using namespace _ELENA_;

@@ -1,5 +1,4 @@
-3week x:                
- 
+week x:                 
 
 x  - compiler
 i  - ide
@@ -21,147 +20,12 @@ v  - vm script
 Currently:
 ------
               adev - lib30
-                       * reflection : load class / constant / symbol by name
-                       * load class / symbol by name
+                       * test system'dynamic'Symbol
 
 <=================> 
 1.9.14 
 --------
-week2: [8.4]
-              arev - lib30 review
-                       * review rosetta samples
-                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                       
-                       * better to use console, no need for consoleEx
-                       * it should be possible to use convertor for other types as well
-                       * should clone be part of object protocol?                                                  
-                         
-              adev - lib30                                        
-                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
-                         cases
-
-              adev - lib30 optimization
-                       * $ConsoleReader.read&char(0) - use stack allocated dump
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting)
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
-                       * TextBuffer : redesign delete operation, it should not create new literal classes
-                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                         modify the code, from reading bool values from stack to constant array
-                         
-              sdev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-                       * vmconsole
-
-              adev - dynamic programming
-                       * deserialize object
-
-            smaint - testing
-                       * modify system test, it should raise an exception if any of the tests fails
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-                       
-               adev - LiteralValue / String / TextBuffer
-                       * support appendLine?? (e.g. maybe in extension)
-
-               adev - console operations:              
-                       * read / write operation: complex types
-                       * write formatted numbers
-                       * write formatted string (with parameters)
-
-              sdev - api doc
-                       * create API : system(math.l)
-                       * create API doc
-                       * change api faq
-                       * copy protocols to doc\protocols
-                       * support dispatch method
-                       * support redirect method
-
-              adev - lib30                                                                  
-                       * convertor.saveVariant&to reimplement to support any possible "type" conversions
-
-                       * extension : support several roles
-                       * Struct : check if the income message is "get"
-                       * win32 file i/o operations should raise an exception with an error code
-                       * implement: square function
-                       * implement: square root
-                       * implement: sine
-                       * implement: cosine
-                       * implement: tangent
-                       * implement: arcsine
-                       * implement: arccosine
-                       * implement: arctangent
-                       * implement: reciprocal
-                       * implement: power function with integer
-                       * implement: exponential
-                       * implement: absolute value
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: truncate
-                       * implement: round up
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: natural logarithm
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: convert degrees to radians
-                       * implement: convert radians to degrees
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
-                       * implement: pi
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
-                       * support: primitive operation int + long, long + int
-                       
-                       * convertor toArray , which converts list to elist wrap or returns itself
-                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-
-                       * bytearray : get / set - outofrange exception
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range (insert, delete, ...)
-                       * should control foreach&until be implemented in EFunction?
-                       * implement: extensions'math'power - support integer values as well                       
-                       * combinators should work both with list and array
-                       * system'$consolehandler: if the returning handler is -1
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: custom presenter / formatter / custom formatter
-                       * it should be possible to compare integer and value - the result is false
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * date - return utc time
-                       * implement analog of String.Format
-                       * calender: custom formatting
-                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
-                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
-                         and could be invoked by eval
-
-week3:
+week3: [19.4]
               sdev - lib30                                      
                        * test interpreter
                        * test all rosetta samples
@@ -169,8 +33,6 @@ week3:
                        * test dynamic tests
             
               sdev - rosetta samples              
-                       * Conway's Game of Life : create an inter-linked space matrix (currently it does not work properly)
-                       * Conway's Game of Life
                        * Call a function
                        * Call an object method
                        * Canny edge detector
@@ -205,9 +67,9 @@ week3:
 
               sdev - prime project
                        * game of life
+                       * eldoc: dynamic parser
                        * upndown
                        * script program - calculator
-                       * eldoc: dynamic parser
 
               sdev - default script
                        * how could it be used?
@@ -254,6 +116,7 @@ week4:
                        * publish the post about hello world script example (both interactive and tape, store the tape into the global
                          variable, visualize it content, execute it)
               xdev - test
+                       * test binary sample with big numbers, see Alexander email
                        * test #var(type:long)a := 2.
                        * test operation with stack allocated binaray array (write / read / length / getAt)
                        * boxing: message target / operand, operator target / operand                       
@@ -358,6 +221,8 @@ week1:
                          raise an error ; do we need it?
                          
               xdev - byte code optimization                       
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
+
                        * any other operation should result in boxing
                        * simplify primitive byte array allocating (store the size directly during space allocating)
 
@@ -523,7 +388,7 @@ week1:
                        * test compilation with a very long identifier names                       
 
 week2:
-              adev - lib30
+              adev - lib30                                        
                        * classOp : test if object is class or subclass of
 
                        * test if object is nil
@@ -539,7 +404,149 @@ week2:
                        * test if object is number
                        * test if upper case character
                        * test if lower case character
-              
+
+                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
+                         cases
+
+              arev - lib30 review
+                       * review rosetta samples
+                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
+                       * better to use console, no need for consoleEx
+                       * it should be possible to use convertor for other types as well
+                       * should clone be part of object protocol?                                                  
+                       * mathOp.mod - should be applied only for the integer numbers, may be it should not be part of the role. 
+                       * mathOp : is it possible to make it more generic, so it could work with integer number as well
+                                                
+              adev - lib30 optimization
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
+                       * TextBuffer : redesign delete operation, it should not create new literal classes
+                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                         modify the code, from reading bool values from stack to constant array
+
+              srev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * vmconsole
+
+              adev - dynamic programming
+                       * deserialize object
+                       
+               adev - LiteralValue / String / TextBuffer
+                       * support appendLine?? (e.g. maybe in extension)
+
+            smaint - testing
+                       * modify system test, it should raise an exception if any of the tests fails
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+
+               adev - console operations:  
+                       * read / write operation: complex types
+                       * write formatted numbers
+                       * write formatted string (with parameters)
+                       
+              adev - lib30                                                                  
+                       * convertor.saveVariant&to reimplement to support any possible "type" conversions
+
+                       * extension : support several roles
+                       * Struct : check if the income message is "get"
+                       * win32 file i/o operations should raise an exception with an error code
+                       * implement: square function
+                       * implement: square root
+                       * implement: sine
+                       * implement: cosine
+                       * implement: tangent
+                       * implement: arcsine
+                       * implement: arccosine
+                       * implement: arctangent
+                       * implement: reciprocal
+                       * implement: power function with integer
+                       * implement: exponential
+                       * implement: absolute value
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: truncate
+                       * implement: round up
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: natural logarithm
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: convert degrees to radians
+                       * implement: convert radians to degrees
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * implement: pi
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
+                       * support: primitive operation int + long, long + int
+                       
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+
+                       * bytearray : get / set - outofrange exception
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range (insert, delete, ...)
+                       * should control foreach&until be implemented in EFunction?
+                       * implement: extensions'math'power - support integer values as well                       
+                       * combinators should work both with list and array
+                       * system'$consolehandler: if the returning handler is -1
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: custom presenter / formatter / custom formatter
+                       * it should be possible to compare integer and value - the result is false
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * date - return utc time
+                       * implement analog of String.Format
+                       * calender: custom formatting
+                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
+                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
+                         and could be invoked by eval
+
+              sdev - api doc
+                       * create API : system(exceptions.l)
+                       * it should be listed extensions per supported protocol
+                       * create API doc
+                       * change api faq
+                       * copy protocols to doc\protocols
+                       * support dispatch method
+                       * support redirect method
+                                             
+1.9.16
+--------
+week1:
+              xdev - elenasm
+                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
+     
+week2:
               adev - gui
                        * general architecture
                        * class function
@@ -549,16 +556,6 @@ week2:
                        * support GUI mode
                        * support GUI application
 
-                                             
-1.9.16
---------
-              xdev - elenasm
-                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-
-
-week1:
 1.9.17
 --------
 

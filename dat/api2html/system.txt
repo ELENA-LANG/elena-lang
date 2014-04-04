@@ -10,6 +10,7 @@ BaseValue
 BaseNumber
 Boolean
 BreakException
+ByteArray
 CharValue
 console
 control
@@ -29,6 +30,7 @@ LiteralValue
 Long
 longConvertor
 LongNumber
+mathOp
 nil
 Object
 OutOfRangeException
@@ -615,3 +617,29 @@ Variant
 #method=convert,&literal:literal,literal;Returns the parameter
 #method=convert,&long:long,literal;Converts the integer value to the literal one
 #method=convert,&real:real,literal;Converts the real value to the literal one
+
+[mathOp]
+#title=Class mathOp
+#shortdescr=A Real number mathematical operation extension
+#parent=system.html#Object:system'Object
+#method=Abs,,real;Returns the absolute value of the object
+#method=Exp,,real;Returns the exponent of the object
+#method=Frac,,real;Returns the fractional part
+#method=Int,,real;Returns the integer part
+#method=Ln,,real;Returns the natural logarithm of the object
+#method=mod,real,real;Returns the remained of the division
+#method=Rounded,,real;Rounds the object
+
+[ByteArray]
+#title=Class ByteArray
+#shortdescr=A byte array
+#parent=system.html#Object:system'Object
+#protocol=bytearray
+#constructor=new,&length:int,bytearray;Creates the byte array with the specified length
+#method=bytearray,,bytearray;Returns itself
+#method=indexOf,&index:int&length:int&byte:byte&out'int:int;Returns the index of the first occurence of the specified byte starting from the index.<br/>If the substring is not found. returns -1
+#method=indexOf,&index:int&length:int&ahort:short&out'int:int;Returns the index of the first occurence of the specified word starting from the index.<br/>If the substring is not found. returns -1
+#method=length,,int;Returns the byte array length
+#method=read,&index:int&length:int&bytearray:bytearray;Copies a sub array to the provided one at the specified position
+#method=write,&index:int&length:int&bytearray:bytearray;Copies the byte array at the specified position
+#method=write,&index:int&literal:literal;Copies the literal value at the specified position

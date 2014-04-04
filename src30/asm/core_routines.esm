@@ -1292,3 +1292,37 @@ labFalse:
   quitn 2
 
 end
+
+procedure inline'symbol_new
+
+  pushb
+  aloadsi 3   // ; read aName parameter
+  bcopya
+  wseval
+  aelse labError
+  pusha
+  acopyr class : system'dynamic'Symbol
+  dcopy 4
+  bscreate
+  nload
+  pop  
+  popb
+  quitn 2
+
+labError:
+  callr system'InvalidArgumentException
+  pusha
+  mcopy NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'symbol_redirect
+
+  pushm
+  ncall
+  popm
+  ajumpvi 0
+
+end

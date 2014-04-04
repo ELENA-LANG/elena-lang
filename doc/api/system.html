@@ -639,6 +639,118 @@ stop</TD>
 </TD>
 </TR>
 </TABLE>
+<A NAME="ByteArray">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ByteArray</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'ByteArray</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#bytearray">bytearray</A>
+</DT>
+</DL>
+<P>
+A byte array
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &length:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Creates the byte array with the specified length</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+bytearray = <A HREF="protocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+indexOf &index:<A HREF="protocol.html#int">int</A>
+&length:<A HREF="protocol.html#int">int</A>
+&byte:<A HREF="protocol.html#byte">byte</A>
+&out'int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the index of the first occurence of the specified byte starting from the index.<br/>If the substring is not found. returns -1</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+indexOf &index:<A HREF="protocol.html#int">int</A>
+&length:<A HREF="protocol.html#int">int</A>
+&ahort:<A HREF="protocol.html#short">short</A>
+&out'int:<A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the index of the first occurence of the specified word starting from the index.<br/>If the substring is not found. returns -1</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+length = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the byte array length</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read &index:<A HREF="protocol.html#int">int</A>
+&length:<A HREF="protocol.html#int">int</A>
+&bytearray:<A HREF="protocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Copies a sub array to the provided one at the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &index:<A HREF="protocol.html#int">int</A>
+&length:<A HREF="protocol.html#int">int</A>
+&bytearray:<A HREF="protocol.html#bytearray">bytearray</A>
+</TD>
+<TD><CODE>Copies the byte array at the specified position</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &index:<A HREF="protocol.html#int">int</A>
+&literal:<A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Copies the literal value at the specified position</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="CharValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -3092,6 +3204,89 @@ xor &long:<A HREF="protocol.html#long">long</A>
  = <A HREF="protocol.html#long">long</A>
 </TD>
 <TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="mathOp">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class mathOp</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'mathOp</B>
+</PRE>
+<P>
+A Real number mathematical operation extension
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Abs = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the absolute value of the object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Exp = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the exponent of the object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Frac = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the fractional part</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Int = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the integer part</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Ln = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the natural logarithm of the object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+mod : <A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the remained of the division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Rounded = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Rounds the object</CODE>
 </TD>
 </TR>
 </TABLE>

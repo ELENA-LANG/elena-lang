@@ -499,6 +499,8 @@ ELENA byte codes (or ecodes)
  wsaddstr                    - self += str(acc:[sp], index)
  
  wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
+
+ wseval                      - load symbol by name into acc ; str(self) => acc
  
  wsload                      - load acc content into [sp]
  
@@ -556,4 +558,5 @@ ELENA byte codes (or ecodes)
                                                                                                       
  refgetlenz                  - params(acc).length >> index
 
+ ncall                       - call symbol:acc
  

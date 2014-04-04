@@ -50,6 +50,7 @@ define HOOK              10010h
 define GETCLASSNAME      10011h
 define INIT_RND          10012h
 define EVALSCRIPT        10013h
+define LOADSYMBOL        10014h
 
 structure % CORE_EXCEPTION_TABLE
 
@@ -859,9 +860,9 @@ procedure %HOOK
 
 end
 
-// get class name
-// in:  edx - VMT
-// out: eax - PWSTR
+// ; get class name
+// ; in:  edx - VMT
+// ; out: eax - PWSTR
 procedure % GETCLASSNAME
 
   mov  esi, data : %CORE_VM_TABLE
@@ -879,6 +880,29 @@ procedure % GETCLASSNAME
 
 labEnd:
   ret
+
+end
+
+// ; load symbol
+// ; in : edx - symbol name
+// ; out : eax - reference
+procedure % LOADSYMBOL
+
+  mov  esi, data : %CORE_VM_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call GetSymbolRef (instance, name)
+  push edx
+  push eax
+  mov  edx, [esi + vm_loadSymbol] 
+  call edx
+  lea  esp, [esp+8]  
+
+labEnd:
+  ret  
 
 end
 
@@ -4224,5 +4248,20 @@ labNext:
 
 labFound:
   mov   esi, ebx
+
+end
+
+// ; wseval
+inline % 16Bh
+
+  mov  edx, edi
+  call code : % LOADSYMBOL
+
+end
+
+// ; ncall
+inline % 16Ch
+
+  jmp [eax]
 
 end

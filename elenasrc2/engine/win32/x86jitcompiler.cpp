@@ -31,10 +31,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define LOADCLASSNAME        0x10011
 //#define INIT_RND             0x10012
 //#define EVALSCRIPT           0x10013
-////#define GC_REALLOC         0x10006
-////#define GC_TERMINATOR      0x10007
-//
-////#define VM_GET_CLASSNAME   0x30001
+#define LOADSYMBOL           0x10014
 
 // preloaded gc routines
 const int coreVariableNumber = 2;

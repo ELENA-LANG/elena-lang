@@ -9,6 +9,7 @@ bool
 bool_action
 bool_expr
 bool_function
+bytearray
 char
 enumerable
 enumerator
@@ -126,3 +127,7 @@ variant
 
 [array]
 #shortdescr=An array protocol
+
+[bytearray]
+#shortdescr=A bytearray protocol
+#method=bytearray,,bytearray;Returns the byte array

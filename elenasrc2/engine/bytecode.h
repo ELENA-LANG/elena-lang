@@ -304,9 +304,11 @@ enum FunctionCode
    fnNCopyWord      = 0x0068,
    fnLoadClass      = 0x0069,
    fnIndexOfMsg     = 0x006A,
+   fnWSEval         = 0x006B,
+   fnNCall          = 0x006C,
 };
 
-#define EXTENSION_COUNT 0x6B
+#define EXTENSION_COUNT 0x6D
 
 enum PseudoArg
 {

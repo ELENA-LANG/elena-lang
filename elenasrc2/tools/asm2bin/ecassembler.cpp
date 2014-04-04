@@ -225,6 +225,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          compileNCommand(opcode, token, writer);
          break;
       case bcJump:
+      case bcAElse:
+      case bcAThen:
       case bcDElse:
       case bcDThen:
       case bcWSTest:
