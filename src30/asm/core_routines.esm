@@ -1296,16 +1296,18 @@ end
 procedure inline'symbol_new
 
   pushb
-  aloadsi 3   // ; read aName parameter
+  pusha
+  aloadsi 4   // ; read aName parameter
   bcopya
   wseval
   aelse labError
-  pusha
-  acopyr class : system'dynamic'Symbol
-  dcopy 4
-  bscreate
-  nload
+
+  popb
+  pusha  
+  acopys 0
+  ncopy
   pop  
+  acopyb
   popb
   quitn 2
 

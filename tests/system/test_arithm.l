@@ -11,10 +11,7 @@
 
 #symbol XTest =
 [
-    #var n := 3.
-    
-    #var b := n~system'dynamic'classOp respondsTo &message:%add(1).
-    #var b2 := n~system'dynamic'classOp respondsTo &message:%new(1).
+    system'dynamic'Symbol new &literal:"system'Integer".
 ].
 
 //// --- OpenArgTest ---

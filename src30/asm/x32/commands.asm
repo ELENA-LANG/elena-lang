@@ -4262,6 +4262,6 @@ end
 // ; ncall
 inline % 16Ch
 
-  jmp [eax]
+  call [eax]
 
 end

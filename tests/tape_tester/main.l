@@ -1,6 +1,6 @@
 #define system.
 //#define system'routines.
-//#define system'dynamic.
+#define system'dynamic.
 #define extensions'dynamic.
 
 //// --- Interpreter ---
@@ -91,6 +91,9 @@
     #var anObject := String new:"abd".
 
     #var aPresentation := anObject~textserializable literal. 
+    
+    #var aClass := Symbol new &literal:"system'Integer".
+    #var anInstance := aClass new.
 ].
 
 //#symbol TapeTest =
