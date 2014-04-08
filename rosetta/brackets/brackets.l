@@ -30,8 +30,6 @@
 
 #symbol program =                                             
 [
-    #var anStr := randomBrackets:1.
-    
     control from:0 &till:10 &do: aLength
     [
         #var anStr := randomBrackets:aLength.

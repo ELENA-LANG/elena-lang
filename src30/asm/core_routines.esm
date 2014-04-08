@@ -606,11 +606,11 @@ procedure inline'object_equal
   aloadsi 1
   athensi labTrue 2
   acopyr const : system'false
-  quitn 1
+  quitn 2
   
 labTrue:
   acopyr const : system'true
-  quitn 1
+  quitn 2
 
 end
 

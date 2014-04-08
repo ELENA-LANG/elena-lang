@@ -19,9 +19,9 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              sdev - lib30                                      
-                       * fix calendar
-            
+              sdev - prime project
+                       * game of life
+
 <=================> 
 1.9.14 
 --------
@@ -58,9 +58,6 @@ week3: [19.4]
 
               sdev - calculator
                        * review
-
-              sdev - prime project
-                       * game of life
 
               sdev - default script
                        * how could it be used?
@@ -224,6 +221,7 @@ week1:
 
                        * optimize : = constant
                        * optimize : = $self
+                       * optimize - operation with nil (==, !=)
 
                        * optimize output code: system'object...
 
@@ -383,6 +381,8 @@ week1:
 
 week2:
               adev - lib30                                        
+                       * DownCounter - should goes till 0 or 1 ? (if till 0, then modify once again brackets sample)
+
                        * classOp : test if object is class or subclass of
 
                        * test if object is nil
