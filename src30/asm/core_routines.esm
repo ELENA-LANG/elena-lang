@@ -1174,8 +1174,8 @@ procedure inline'handle_tape
   pushn 0
   pushn 0
   
-  msaveparams -1
-  pushfi -1
+  msaveparams -4
+  pushfi -4
 
 labNext:
   acopyb
@@ -1327,4 +1327,16 @@ procedure inline'symbol_redirect
   popm
   ajumpvi 0
 
+end
+
+procedure inline'vmscript_eval
+
+  aloadsi 2
+  aloadai 0
+  pushb
+  bcopya 
+  bseval
+  popb
+  quitn 2
+    
 end

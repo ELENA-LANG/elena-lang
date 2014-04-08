@@ -462,7 +462,7 @@ RESEND ->
 	
 OBJECT ->
 	identifier OBJECT_BODY
-	| reference
+	| reference OBJECT_BODY
 	| private
 	| integer
 	| hex

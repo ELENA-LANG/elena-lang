@@ -12,14 +12,14 @@
 
 #class(role)literalConvertorExtension
 {
-//    convert &type'real:aReal &type'length:aLength
+//    #method convert &type'real:aReal &type'length:aLength
 //    [
 //        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
 //        
 //        ^ anOutput.
 //    ]
 //    
-//    convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
+//    #method convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
 //    [
 //        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
 //        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.

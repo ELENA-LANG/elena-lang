@@ -422,7 +422,7 @@
     
     #method for : aCounter
     [
-        $self~functionOp reverse &for:(Integer new) &from:0 &till:aCounter &by:1.
+        $self~functionOp reverse &for:(Integer new) &from:1 &till:aCounter &by:1.
     ]
 }
 

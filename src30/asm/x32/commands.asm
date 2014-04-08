@@ -906,6 +906,46 @@ labEnd:
 
 end
 
+// in:  edi - script
+// out: eax - result
+procedure % EVALSCRIPT
+
+  mov  esi, data : %CORE_VM_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call interpreter (instance, tape)
+  push edi
+  push eax
+  mov  edx, [esi + vm_interprete] 
+  call edx
+  lea  esp, [esp+8]  
+
+labEnd:
+  ret
+
+end
+
+procedure % INIT_RND
+
+  sub  esp, 8h
+  mov  eax, esp
+  sub  esp, 10h
+  lea  ebx, [esp]
+  push eax 
+  push ebx
+  push ebx
+  call extern 'dlls'KERNEL32.GetSystemTime
+  call extern 'dlls'KERNEL32.SystemTimeToFileTime
+  add  esp, 10h
+  pop  eax
+  pop  edx
+  ret
+
+end
+
 // ; ==== Command Set ==
 
 // ; throw

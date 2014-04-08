@@ -19,19 +19,13 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              adev - lib30
-                       * test system'dynamic'Symbol
-
+              sdev - lib30                                      
+                       * fix calendar
+            
 <=================> 
 1.9.14 
 --------
 week3: [19.4]
-              sdev - lib30                                      
-                       * test interpreter
-                       * test all rosetta samples
-                       * test system tests
-                       * test dynamic tests
-            
               sdev - rosetta samples              
                        * Call a function
                        * Call an object method
@@ -67,9 +61,6 @@ week3: [19.4]
 
               sdev - prime project
                        * game of life
-                       * eldoc: dynamic parser
-                       * upndown
-                       * script program - calculator
 
               sdev - default script
                        * how could it be used?
@@ -115,7 +106,10 @@ week4:
               xdoc - blog
                        * publish the post about hello world script example (both interactive and tape, store the tape into the global
                          variable, visualize it content, execute it)
+            smaint - bugs
+                       * RandomGenerator.eval:0 - returns unpredicted value
               xdev - test
+                       * fix interpreter.bat
                        * test binary sample with big numbers, see Alexander email
                        * test #var(type:long)a := 2.
                        * test operation with stack allocated binaray array (write / read / length / getAt)
@@ -409,6 +403,7 @@ week2:
                          cases
 
               arev - lib30 review
+                       * review api30 : intNumber
                        * review rosetta samples
                        * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
                        * better to use console, no need for consoleEx
@@ -537,6 +532,12 @@ week2:
                        * copy protocols to doc\protocols
                        * support dispatch method
                        * support redirect method
+
+week3:
+              sdev - prime project
+                       * eldoc: dynamic parser
+                       * upndown
+                       * script program - calculator
                                              
 1.9.16
 --------

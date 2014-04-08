@@ -3514,6 +3514,9 @@ inline void copySubject(ReferenceNs& signature, ObjectType type, bool varOperati
       case otLiteral:
          signature.append(WSTR_SUBJECT);
          break;
+      case otParams:
+         signature.append(PARAMS_SUBJECT);
+         break;
       default:
          signature.append(REF_SUBJECT);
          break;

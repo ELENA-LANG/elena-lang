@@ -29,8 +29,8 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
 #define LOADCLASSNAME        0x10011
-//#define INIT_RND             0x10012
-//#define EVALSCRIPT           0x10013
+#define INIT_RND             0x10012
+#define EVALSCRIPT           0x10013
 #define LOADSYMBOL           0x10014
 
 // preloaded gc routines
@@ -41,10 +41,10 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 3;
+const int coreFunctionNumber = 6;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK, LOADCLASSNAME, //INIT_RND, EVALSCRIPT,
+   GC_ALLOC, HOOK, LOADCLASSNAME, INIT_RND, EVALSCRIPT, LOADSYMBOL
 };
 
 // preloaded gc commands

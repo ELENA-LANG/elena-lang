@@ -196,3 +196,37 @@ procedure core'endframe
   ret
 
 end
+
+procedure core'openframe
+
+  // ; save return pointer
+  pop  ecx  
+
+  xor  edi, edi
+
+  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
+  // ; save previous pointer / size field
+  push esi                              
+  push edi                              
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+  
+  // ; restore return pointer
+  push ecx   
+  ret
+
+end
+
+procedure core'closeframe
+
+  // ; save return pointer
+  pop  ecx  
+
+  lea  esp, [esp+4]
+  pop  edx
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
+  
+  // ; restore return pointer
+  push ecx   
+  ret
+
+end

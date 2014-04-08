@@ -543,3 +543,13 @@ procedure operators'writeliteral_literal
   wscopy
 
 end
+
+procedure operators'getAtparams_int
+
+   aloadsi 1
+   dloadai 0
+   popa
+   aloadd
+   pop
+
+end

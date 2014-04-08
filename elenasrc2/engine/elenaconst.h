@@ -458,6 +458,7 @@ namespace _ELENA_
 //   #define OUT_LENGTH_SUBJECT       "length&out'int"
    #define INDEX_SUBJECT            "index"
 //   #define BYTE_SUBJECT             "byte"
+   #define PARAMS_SUBJECT           "params"
 
    #define STARTUP_CLASS            "'program"
 
