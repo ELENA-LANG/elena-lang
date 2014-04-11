@@ -1,1 +1,1 @@
-..\..\bin\elt rule.es -l%1
+..\..\bin\elt -lrules.es -l%1

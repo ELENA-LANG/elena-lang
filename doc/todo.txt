@@ -19,15 +19,7 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-            smaint - bugs
-                       * RandomGenerator.eval:0 - returns unpredicted value
-
 <=================> 
-1.9.14 
---------
-week4:
-              xdev - test
-                       * fix interpreter.bat
 
 1.9.15
 --------
@@ -492,6 +484,9 @@ week3:
                        * support code execution
                        * suppoer method call
                        * support variables
+
+              sdev - interpreter
+                       * fix interpreter.bat (should start vm somehow)                       
 
               fdev - virtual workshop
                        * create a new object interactively

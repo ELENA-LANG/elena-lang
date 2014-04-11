@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line DSA script terminal main file
-//                                              (C)2011-2013, by Alexei Rakov
+//                                              (C)2011-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -13,7 +13,7 @@
 using namespace _ELENA_;
 
 #define MAX_LINE           256
-#define ELT_BUILD_NUMBER   4
+#define ELT_BUILD_NUMBER   1
 
 // global variables
 bool  _running = true;
@@ -78,11 +78,11 @@ void printHelp()
    printf("-h                   - help\n");
 //   printf("-ton                 - trace mode is on\n");
 //   printf("-toff                - trace mode is off\n");
-   printf("-l [name=]<path>       - execute a script from file\n");
+   printf("-l [name=]<path>     - execute a script from file\n");
 //   printf("-lt [name=]<path>      - disassemble a script from file\n");
 //   printf("-lc [name=]<path>      - generate CF parser from file\n");
 //   printf("-li <path>             - load an inline script from file\n");
-   printf("<script>               - execute script\n");
+   printf("<script>             - execute script\n");
 }
 
 void executeScript(const wchar16_t* ruleSetName, const wchar16_t* script, int mode)
@@ -227,7 +227,7 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line VM terminal %d.%d.%d (C)2011-2013 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
+   printf("ELENA command line VM terminal %d.%d.%d (C)2011-2014 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
 //   // load verbs
 //   loadVerbs(_verbs);

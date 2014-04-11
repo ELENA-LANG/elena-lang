@@ -3802,8 +3802,9 @@ end
 // ; lrndnext
 inline % 14Fh
 
+   xor  edx, edx
    mov  ecx, esi
-   cmp  ecx, 0
+   cmp  ecx, edx
    jz   short labEnd
 
    push eax
@@ -3837,8 +3838,8 @@ Lab1:
    pop  ecx
    idiv ecx
    pop  eax
-   mov  [eax], edx
 labEnd:
+   mov  [eax], edx
 
 end
 

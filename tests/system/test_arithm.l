@@ -11,7 +11,6 @@
 
 #symbol XTest =
 [
-    XTester write &literal:"1".
 ].
 
 // --- OpenArgTest ---
