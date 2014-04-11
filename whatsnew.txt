@@ -11,7 +11,7 @@ ELENA:
 [*] operator implemenation refactored
 [+] new statement : #use
 [+] new method hint : extension
-[+] new ecodes: loadclass, indexofmsg
+[+] new ecodes: loadclass, indexofmsg, wseval
 
 ELC:
 [*] codebase refactored
@@ -21,7 +21,10 @@ IDE:
 [*] "step over line"/"step over" implementations are improved
 
 [LIB]
+[+] system'dynamic: Symbol
 [+] new functionality:system'dynamic'classOp
+[-] fixed bug:system'primitive.toLiteral&int&index (e.g. binary sample with 1234567)
+[-] fixed bug:system'text'TextBuffer.write&literal (e.g. matrix sample, identity matrix with size >= 18)
 
 ******************************************************************************
                     What's New in 1.9.12 (pre release)

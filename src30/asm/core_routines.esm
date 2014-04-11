@@ -255,7 +255,7 @@ end
 procedure inline'ws_copyint_radix
 
   pushb
-  dcopy 10
+  dcopy 32
   acopyr class : system'LiteralValue
   wscreate
   bcopya
@@ -272,7 +272,7 @@ end
 procedure inline'ws_copylong
 
   pushb
-  dcopy 20
+  dcopy 64
   acopyr class : system'LiteralValue
   wscreate
   bcopya

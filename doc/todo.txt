@@ -19,100 +19,16 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              sdev - prime project
-                       * game of life
+            smaint - bugs
+                       * RandomGenerator.eval:0 - returns unpredicted value
 
 <=================> 
 1.9.14 
 --------
-week3: [19.4]
-              sdev - rosetta samples              
-                       * Call a function
-                       * Call an object method
-                       * Canny edge detector
-                       * Carmichael 3 strong pseudoprimes
-                       * Casting out nines
-                       * modify amb operator using open argument list 
-                       * arraymode: support collection of different types
-                       * update amb sample on rosetta code site
-                       * C samples
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull–Clark subdivision surface              
-                       * Box the compass
-                       * Binary search
-                       * Averages/Root mean square
-                       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              sdev - calculator
-                       * review
-
-              sdev - default script
-                       * how could it be used?
-                       * support code execution
-                       * suppoer method call
-                       * support variables
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                       * trace could print the result directly to console?? (so it will simplify script debugging)
-                       * elenascript should be default one in elt
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-                                                         
 week4:
-            xmaint - ide
-                       * test creating project
-                       * test changing project
-
-            xmaint - utf-8
-                       * all project files should be converted to UTF8
-                       * test saving to utf-8
-                       * test saving to utf-16
-                       * test saving to oem
-                       
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-            smaint - bugs
-                       * RandomGenerator.eval:0 - returns unpredicted value
               xdev - test
                        * fix interpreter.bat
-                       * test binary sample with big numbers, see Alexander email
-                       * test #var(type:long)a := 2.
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
-                       * boxing: message target / operand, operator target / operand                       
-                       * try to automize build process  
-                                              
+
 1.9.15
 --------
 week1:
@@ -535,10 +451,94 @@ week2:
 
 week3:
               sdev - prime project
+                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
+                         for all neighbours)
+                         
+              sdev - rosetta samples              
+                       * Call a function
+                       * Call an object method
+                       * Canny edge detector
+                       * Carmichael 3 strong pseudoprimes
+                       * Casting out nines
+                       * modify amb operator using open argument list 
+                       * arraymode: support collection of different types
+                       * update amb sample on rosetta code site
+                       * C samples
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull–Clark subdivision surface              
+                       * Box the compass
+                       * Binary search
+                       * Averages/Root mean square
+                       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
+
+              sdev - calculator
+                       * review
+
+              sdev - default script
+                       * how could it be used?
+                       * support code execution
+                       * suppoer method call
+                       * support variables
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                       * trace could print the result directly to console?? (so it will simplify script debugging)
+                       * elenascript should be default one in elt
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
+                                                         
+              sdev - prime project
                        * eldoc: dynamic parser
                        * upndown
                        * script program - calculator
+                                              
+week4:
+            xmaint - utf-8
+                       * all project files should be converted to UTF8
+                       * test saving to utf-8
+                       * test saving to utf-16
+                       * test saving to oem
+                       
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
                                              
+              xdev - test
+                       * test #var(type:long)a := 2.
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                       * boxing: message target / operand, operator target / operand                       
+                       * try to automize build process  
+
 1.9.16
 --------
 week1:

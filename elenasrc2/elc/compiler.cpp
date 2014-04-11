@@ -965,7 +965,8 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
 {
    this->tape = parent->tape;
    this->level = parent->level;
-   this->saved = this->reserved = 0;
+   this->saved = parent->saved;
+   this->reserved = parent->reserved;
    this->breakLabel = parent->breakLabel;
 }
 
