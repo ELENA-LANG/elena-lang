@@ -37,14 +37,14 @@ int _registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
 
 int registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
 {
-   if (ConstIdentifier::compare(symbol, "||")) {
-      return _registerSymbol(table, ConstIdentifier("|"), new_id);
+   if (ConstantIdentifier::compare(symbol, "||")) {
+      return _registerSymbol(table, ConstantIdentifier("|"), new_id);
    }
-   else if (ConstIdentifier::compare(symbol, "&|")) {
-      return _registerSymbol(table, ConstIdentifier("||"), new_id);
+   else if (ConstantIdentifier::compare(symbol, "&|")) {
+      return _registerSymbol(table, ConstantIdentifier("||"), new_id);
    }
-   else if (ConstIdentifier::compare(symbol, "-->")) {
-      return _registerSymbol(table, ConstIdentifier("->"), new_id);
+   else if (ConstantIdentifier::compare(symbol, "-->")) {
+      return _registerSymbol(table, ConstantIdentifier("->"), new_id);
    }
    else return _registerSymbol(table, symbol, new_id);
 }
@@ -80,14 +80,14 @@ int main(int argc, char* argv[])
       int              rule_len = 0;
       bool             arrayCheck = false;
 
-      table.registerSymbol(ParserTable::nsEps, ConstIdentifier("eps"));
+      table.registerSymbol(ParserTable::nsEps, ConstantIdentifier("eps"));
 
       while (true) {
          info = source.read(token, IDENTIFIER_LEN);
 
          if (info.state == dfaEOF) break;
 
-         if (ConstIdentifier::compare(token, "__define")) {
+         if (ConstantIdentifier::compare(token, "__define")) {
             source.read(token, IDENTIFIER_LEN);
 
             wchar16_t number[10];
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
             registerSymbol(table, token, StringHelper::strToInt(number));
          }
-         else if (ConstIdentifier::compare(token, "->") && !arrayCheck) {
+         else if (ConstantIdentifier::compare(token, "->") && !arrayCheck) {
             if (rule_len > 2) {
                table.registerRule(rule[0], rule + 1, rule_len - 2);
 
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
             }
             arrayCheck = true;
          }
-         else if (ConstIdentifier::compare(token, "|") && rule_len != 1) {
+         else if (ConstantIdentifier::compare(token, "|") && rule_len != 1) {
             arrayCheck = false;
             table.registerRule(rule[0], rule + 1, rule_len - 1);
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
          else {
             arrayCheck = false;
             rule[rule_len++] = registerSymbol(table, token, last_id + 1);
-            if (ConstIdentifier::compare(token, "|"))
+            if (ConstantIdentifier::compare(token, "|"))
                source.read(token, IDENTIFIER_LEN);
          }
       }
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
 
       printLine("saving...\n");
 
-      path.changeExtension(ConstIdentifier("dat"));
+      path.changeExtension(ConstantIdentifier("dat"));
 
       FileWriter file(path, feRaw, false);
       table.save(&file);

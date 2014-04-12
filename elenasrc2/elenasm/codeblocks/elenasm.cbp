@@ -65,6 +65,8 @@
 		<Unit filename="../../common/lists.h" />
 		<Unit filename="../../common/streams.h" />
 		<Unit filename="../../common/tools.h" />
+		<Unit filename="../../engine/bytecode.cpp" />
+		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/parsertable.cpp" />
 		<Unit filename="../../engine/parsertable.h" />
 		<Unit filename="../../engine/textparser.h" />

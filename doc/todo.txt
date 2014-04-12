@@ -19,11 +19,35 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
+              xdev - linux
+                       * template platform : win32_console stand-alone, win32_console vm client, win32_console multi-threading stand-alone
+                                                linux32 console stand-alone
+                                          
+                           xxxdcbaa  - aa : win32 / linux32 ; b - stand-alone / vm client ; c - console / windows ; d - single thread / multy thread
+
+                           system/platform, apptype - no longer supported
+
+                       * general architecture review
 <=================> 
 
-1.9.15
+1.9.15 [26.4]
 --------
 week1:
+              xdev - linux
+                       * linux linker
+                       * linux console operations
+                       * linux file operations
+                       * linux date / time operations
+                       * port elc to linux
+                       * port asm2binx to linux
+                       * port elenavm to linux
+                       * port elide to linux
+                       * port sg to linux
+                       * port ecv to linux
+                       * port og to linux
+                       * port elenasm to linux
+                       * port elt to linux
+
               xdev - multithreading       
                        * migrate primitive code : move all platform related code to commands
 

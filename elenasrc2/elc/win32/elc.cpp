@@ -197,10 +197,8 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_COMMIT);
 //   case _ELENA_::opImageBase:
 //      return config.getSetting(LINKER_CATEGORY, ELC_YG_IMAGEBASE);
-   case _ELENA_::opApplicationType:
-      return config.getSetting(SYSTEM_CATEGORY, ELC_APPTYPE);
-   case _ELENA_::opPlatformType:
-      return config.getSetting(PROJECT_CATEGORY, ELC_PLATFORMTYPE);
+   case _ELENA_::opPlatform:
+      return config.getSetting(SYSTEM_CATEGORY, ELC_PLATFORMTYPE);
    case _ELENA_::opTarget:
       return config.getSetting(PROJECT_CATEGORY, ELC_TARGET);
    case _ELENA_::opLibPath:
@@ -467,7 +465,7 @@ int main()
       }
 
       // Linking..
-      if (project.IntSetting(_ELENA_::opPlatformType) == _ELENA_::ptStandalone) {
+      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32Console) {
          print(ELC_LINKING);
 
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
@@ -482,7 +480,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      else if (project.IntSetting(_ELENA_::opPlatformType) == _ELENA_::ptElenaVM) {
+      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMWin32Console) {
          print(ELC_LINKING);
 
          if (_ELENA_::emptystr(project.StrSetting(_ELENA_::opVMPath)))

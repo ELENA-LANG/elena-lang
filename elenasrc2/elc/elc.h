@@ -37,7 +37,6 @@
 #define ELC_W_WEAKUNRESOLVED        "wwun"
 #define ELC_PRM_EXTRA               'x'
 #define ELC_PRM_TABSIZE             "xtab"
-////#define ELC_PRM_UNICODE             "xunicode"
 #define ELC_PRM_PROJECTPATH         "xpath"
 #define ELC_PRM_CODEPAGE            "xcp"
 #define ELC_PRM_OPTOFF              "xo-"
@@ -71,7 +70,6 @@
 ////#define ELC_STACK_RESERV            "stackresrv"
 ////#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
-#define ELC_APPTYPE                 "apptype"
 #define ELC_PLATFORMTYPE            "platform"
 #define ELC_VM_PATH                 "vmpath"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"

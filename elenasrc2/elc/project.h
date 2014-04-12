@@ -38,21 +38,19 @@ enum ProjectSetting
    opVMPath                = 0x000B,
    opTemplate              = 0x000C,
    opEmbeddedSymbolMode    = 0x000D,
-////   opJITType               = 0x0012,
 //   opThreadMax             = 0x0013,
 
    // linker options
    opImageBase             = 0x0020,
    opSectionAlignment      = 0x0021,
    opFileAlignment         = 0x0022,
-   opApplicationType       = 0x0023,      // defines the application type: console or GUI
    opGCMGSize              = 0x0024,
    opGCObjectSize          = 0x0025,
    opSizeOfStackReserv     = 0x0026,
    opSizeOfStackCommit     = 0x0027,
    opSizeOfHeapReserv      = 0x0028,
    opSizeOfHeapCommit      = 0x0029,
-   opPlatformType          = 0x002A,      // defines the project platform type: stand-alone or VM client
+   opPlatform              = 0x002A,      // defines the project platform type
    opGCYGSize              = 0x002B,
 
    // compiler engine options

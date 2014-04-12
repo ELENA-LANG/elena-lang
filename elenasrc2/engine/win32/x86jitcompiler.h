@@ -164,7 +164,6 @@ protected:
    friend void compileQuit(int opcode, x86JITScope& scope);
    friend void compileQuitN(int opcode, x86JITScope& scope);
    friend void compileMCopyVerb(int opcode, x86JITScope& scope);
-   friend void compileMOp(int opcode, x86JITScope& scope);
    friend void compileMCopySubj(int opcode, x86JITScope& scope);
 //   //friend void compileElseLocal(int opcode, x86JITScope& scope);
 //   //friend void compileMccCopyAcc(int opcode, x86JITScope& scope);
@@ -221,8 +220,8 @@ public:
 // --- compiler friend functions---
 inline void writePreloadedReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 void loadCoreOp(x86JITScope& scope, char* code);
-//void loadFunction(int opcode, x86JITScope& scope);
-//void loadExtensions(int opcode, x86JITScope& scope);
+void loadFunction(int opcode, x86JITScope& scope);
+void loadExtensions(int opcode, x86JITScope& scope);
 void loadCode(int opcode, x86JITScope& scope);
 void loadOneByteLOp(int opcode, x86JITScope& scope);
 void loadOneByteOp(int opcode, x86JITScope& scope);
@@ -233,8 +232,8 @@ void loadFPOp(int opcode, x86JITScope& scope);
 void loadROp(int opcode, x86JITScope& scope);
 void compileNop(int opcode, x86JITScope& scope);
 void compileBreakpoint(int opcode, x86JITScope& scope);
-//void compileAElse(int opcode, x86JITScope& scope);
-//void compileAThen(int opcode, x86JITScope& scope);
+void compileAElse(int opcode, x86JITScope& scope);
+void compileAThen(int opcode, x86JITScope& scope);
 void compileTest(int opcode, x86JITScope& scope);
 void compileDElse(int opcode, x86JITScope& scope);
 void compileDThen(int opcode, x86JITScope& scope);
@@ -245,7 +244,7 @@ void compileOpen(int opcode, x86JITScope& scope);
 void compilePush(int opcode, x86JITScope& scope);
 void compilePushF(int opcode, x86JITScope& scope);
 //void compileXPushFPI(int opcode, x86JITScope& scope);
-void compilePushF(int opcode, x86JITScope& scope);
+void compilePushFI(int opcode, x86JITScope& scope);
 void compilePushS(int opcode, x86JITScope& scope);
 void compilePushB(int opcode, x86JITScope& scope);
 void compilePushBI(int opcode, x86JITScope& scope);
@@ -258,7 +257,7 @@ void compileASaveR(int opcode, x86JITScope& scope);
 void compilePopFI(int opcode, x86JITScope& scope);
 void compilePopSI(int opcode, x86JITScope& scope);
 void compileSCopyF(int opcode, x86JITScope& scope);
-//void compileJump(int opcode, x86JITScope& scope);
+void compileJump(int opcode, x86JITScope& scope);
 void compileHook(int opcode, x86JITScope& scope);
 //////void compileAccLoadField(int opcode, x86JITScope& scope);
 void compileCreate(int opcode, x86JITScope& scope);
@@ -336,8 +335,8 @@ void compileDAddAI(int opcode, x86JITScope& scope);
 void compileDSubAI(int opcode, x86JITScope& scope);
 void compileDSaveAI(int opcode, x86JITScope& scope);
 void compileALoadD(int opcode, x86JITScope& scope);
-//void loadFunction(int opcode, x86JITScope& scope);
 //void compileDCopyA(int opcode, x86JITScope& scope);
+void compileMOp(int opcode, x86JITScope& scope);
 
 } // _ELENA_
 

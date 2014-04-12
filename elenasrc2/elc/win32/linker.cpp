@@ -296,12 +296,12 @@ void Linker :: writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_direct
    header.SizeOfImage = info.imageSize;
    header.SizeOfHeaders = info.headerSize;
    header.CheckSum = 0;                                                        // For EXE file
-   switch (info.project->IntSetting(opApplicationType, stConsole))
+   switch (info.project->IntSetting(opPlatform, ptWin32Console) & mtUIMask)
    {
-      case stGUI:
+      case mtGUI:
          header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
          break;
-      case stConsole:
+      case mtCUI:
       default:
          header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
          break;

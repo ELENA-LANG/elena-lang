@@ -341,10 +341,10 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    consts.add(ConstantIdentifier(VM_ERR_DLLLOAD), writeErrorMessage(data, "Cannot load ", _rootPath, "\n"));
    consts.add(ConstantIdentifier(VM_ERR_DLLINVALID), writeErrorMessage(data, "Incorrect elenavm.dll\n"));
 
-   int type = project->IntSetting(opApplicationType, stConsole);
+   int type = project->IntSetting(opPlatform, ptWin32Console);
 
    ref_t reference = 0;
-   _Module* module = project->resolveModule(ReferenceNs(type == stGUI ? VM_GUI_LOADER : VM_LOADER), reference, true);
+   _Module* module = project->resolveModule(ReferenceNs(test(type, mtUIMask, mtGUI) ? VM_GUI_LOADER : VM_LOADER), reference, true);
    _Memory* section = NULL;
 
    if (module != NULL) {      

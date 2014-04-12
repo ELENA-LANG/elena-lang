@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef streamsH
@@ -104,26 +104,6 @@ public:
    bool readChar(char& ch)
    {
       return read(&ch, 1);
-   }
-
-   template<class String> bool readString(String& s, size_t length)
-   {
-      s.clear();
-
-      wchar_t buffer[BLOCK_SIZE];
-      size_t size = BLOCK_SIZE;
-      while (length > 0) {
-         if (length < size) {
-            size = length;
-         }
-         if (!readLiteral(buffer, size))
-            return false;
-
-         s.append(buffer, size);
-
-         length -= size;
-      }
-      return true;
    }
 
    template<class String> bool readWideString(String& s)
@@ -487,67 +467,67 @@ public:
 
 typedef LiteralTextReader<wchar16_t> WideLiteralTextReader;
 
-//////// --- LiteralReader ---
-//////
-//////class LiteralReader : public StreamReader
-//////{
-//////   const wchar_t* _text;
-//////   size_t       _offset;
-//////
-//////public:
-//////   virtual bool Eof() { return getlength(_text) == _offset; }
-//////
-//////   virtual size_t Position() { return _offset; }
-//////
-//////   virtual bool seek(size_t position)
-//////   {
-//////      _offset = position;
-//////
-//////      return true;
-//////   }
-//////
-//////   virtual const wchar_t* getLiteral()
-//////   {
-//////      const wchar_t* s = _text + _offset;
-//////
-//////      _offset += getlength(s) + 1;
-//////
-//////      return s;
-//////   }
-//////
-//////   virtual bool read(void* s, size_t length)
-//////   {
-//////      return false;
-//////   }
-//////
-////////   bool readLiteral(char*, size_t)
-////////   {
-////////      return false;
-////////   }
-////////
-////////   int readDWord()
-////////   {
-////////      int dword = 0;
-////////      void* p = (void*)(_text + _offset);
-////////      memcpy(&dword, p, 4);
-////////      _offset += 2;
-////////
-////////      return dword;
-////////   }
-//////
-//////   LiteralReader(const wchar_t* text)
-//////   {
-//////      _text = text;
-//////	  _offset = 0;
-//////   }
-//////   LiteralReader(const wchar_t* text, int offset)
-//////   {
-//////      _text = text;
-//////	  _offset = offset;
-//////   }
-//////
-//////   virtual ~LiteralReader() {}
-//////};
+//// --- LiteralReader ---
+//
+//class LiteralReader : public StreamReader
+//{
+//   const wchar_t* _text;
+//   size_t       _offset;
+//
+//public:
+//   virtual bool Eof() { return getlength(_text) == _offset; }
+//
+//   virtual size_t Position() { return _offset; }
+//
+//   virtual bool seek(size_t position)
+//   {
+//      _offset = position;
+//
+//      return true;
+//   }
+//
+//   virtual const wchar_t* getLiteral()
+//   {
+//      const wchar_t* s = _text + _offset;
+//
+//      _offset += getlength(s) + 1;
+//
+//      return s;
+//   }
+//
+//   virtual bool read(void* s, size_t length)
+//   {
+//      return false;
+//   }
+//
+////   bool readLiteral(char*, size_t)
+////   {
+////      return false;
+////   }
+////
+////   int readDWord()
+////   {
+////      int dword = 0;
+////      void* p = (void*)(_text + _offset);
+////      memcpy(&dword, p, 4);
+////      _offset += 2;
+////
+////      return dword;
+////   }
+//
+//   LiteralReader(const wchar_t* text)
+//   {
+//      _text = text;
+//	  _offset = 0;
+//   }
+//   LiteralReader(const wchar_t* text, int offset)
+//   {
+//      _text = text;
+//	  _offset = offset;
+//   }
+//
+//   virtual ~LiteralReader() {}
+//};
 
 // --- MemoryReader ---
 

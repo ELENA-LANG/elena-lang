@@ -1,8 +1,15 @@
 
                                 ELENA Language 
 
-                                Version 1.9.14
+                                Version 1.9.15
  
+******************************************************************************
+                    What's New in 1.9.15 (pre release)
+******************************************************************************
+
+ELC:
+[!] project configuration modified to support multiply platforms
+
 ******************************************************************************
                     What's New in 1.9.14 (pre release)
 ******************************************************************************
@@ -16,6 +23,7 @@ ELENA:
 ELC:
 [*] codebase refactored
 [*] some native-code optimization   
+[-] fixed ecode: lrndnext
 
 IDE:
 [*] "step over line"/"step over" implementations are improved

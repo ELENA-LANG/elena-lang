@@ -231,8 +231,7 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
    loadHexOption(config, opGCMGSize);
    loadIntOption(config, opGCObjectSize);
    loadHexOption(config, opGCYGSize);
-   loadIntOption(config, opApplicationType);
-   loadIntOption(config, opPlatformType);
+   loadIntOption(config, opPlatform);
 
    loadIntOption(config, opSizeOfStackReserv);
    loadIntOption(config, opSizeOfStackCommit);

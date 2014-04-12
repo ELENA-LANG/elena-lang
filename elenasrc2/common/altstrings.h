@@ -46,6 +46,9 @@ inline static size_t getlength(const char* s)
 class StringHelper
 {
 public:
+   static char* allocate(size_t size);
+   static char* reallocate(char* s, size_t size);
+
    static wchar16_t* w_allocate(size_t size);
    static wchar16_t* w_reallocate(wchar_t* s, size_t size);
 
@@ -153,9 +156,6 @@ public:
       return lower(clone(s));
    }
 
-//   static char* allocate(size_t size);
-//   static char* reallocate(char* s, size_t size);
-//
 //   static void move(char* s1, const char* s2, size_t length);
 };
 

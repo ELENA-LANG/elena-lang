@@ -207,18 +207,30 @@ namespace _ELENA_
       lrCannotCreate
    };
 
-  // --- ELENA Subsystem Types ---
-   enum SystemType {
-      stLibrary = 0x0000,
-      stConsole = 0x0001,
-      stGUI     = 0x0002,
-   };
+  // --- ELENA Platform type ---
+   enum PlatformType {
+      // masks
+      mtPlatformMask     = 0x000FF, 
+      mtWin32            = 0x00001,
+      mtLinux32          = 0x00002,
 
-  // --- ELENA Project Types ---
-   enum ProjectType {
-      ptLibrary    = 0x0000,
-      ptStandalone = 0x0001,  // stand-alone execuable
-      ptElenaVM    = 0x0002   // ElenaVM client execuable
+      mtTargetMask       = 0x00F00, 
+      mtStandalone       = 0x00000,
+      mtVMClient         = 0x00100,
+
+      mtUIMask           = 0x0F000, 
+      mtCUI              = 0x00000,
+      mtGUI              = 0x01000,
+
+      mtThreadMask       = 0xF0000,
+      mtSingleThread     = 0x00000,
+      mtMultyThread      = 0x10000,
+
+      ptLibrary          = 0x00000,
+      ptWin32Console     = 0x00001,
+      ptVMWin32GUI       = 0x01001,
+      ptVMWin32Console   = 0x00101,
+      ptVMWin32ConsoleMT = 0x10101,
    };
 
   // --- ELENA Debug Mode ---

@@ -127,6 +127,16 @@ static bool isLegalUTF8(const unsigned char* source, int length)
 
 // --- StringHelper ---
 
+char* StringHelper :: allocate(size_t size)
+{
+   return (char*)malloc(size);
+}
+
+char* StringHelper :: reallocate(char* s, size_t size)
+{
+   return (char*)realloc(s, size);
+}
+
 #ifdef _WIN32
 
 wchar_t* StringHelper :: w_allocate(size_t size)
@@ -1059,16 +1069,6 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
    return s;
 }
 
-//char* StringHelper :: allocate(size_t size)
-//{
-//   return (char*)malloc(size);
-//}
-//
-//char* StringHelper :: reallocate(char* s, size_t size)
-//{
-//   return (char*)realloc(s, size);
-//}
-//
 //void StringHelper :: move(char* s1, const char* s2, size_t length)
 //{
 //   memmove(s1, s2, length);
