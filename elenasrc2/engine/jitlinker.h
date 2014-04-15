@@ -75,7 +75,7 @@ class JITLinker
       }
 
       virtual SectionInfo getSection(ref_t reference, _Module* module);
-      virtual SectionInfo getPredefinedCommand(ref_t reference);
+      virtual SectionInfo getPredefinedSection(const wchar16_t* package, ref_t reference);
 
       virtual void* getVAddress(MemoryWriter& writer, int mask)
       {

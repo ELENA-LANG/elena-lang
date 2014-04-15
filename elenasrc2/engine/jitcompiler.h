@@ -20,7 +20,7 @@ class _ReferenceHelper
 {
 public:
    virtual ref_t getLinkerConstant(ref_t constant) = 0;
-   virtual SectionInfo getPredefinedCommand(ref_t reference) = 0;
+   virtual SectionInfo getPredefinedSection(const wchar16_t* package, ref_t reference) = 0;
    virtual SectionInfo getSection(ref_t reference, _Module* module = NULL) = 0;
 
    virtual void* getVAddress(MemoryWriter& writer, int mask) = 0;

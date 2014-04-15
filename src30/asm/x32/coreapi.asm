@@ -24,3 +24,23 @@ procedure coreapi'console_entry
   ret
 
 end
+
+procedure coreapi'vm_console_entry
+
+  push ebx
+  push ecx
+  push edi
+  push esi
+  push ebp
+
+  call code : "$package'core'init"
+
+  pop  ebp
+  pop  esi
+  pop  edi
+  pop  ecx
+  pop  ebx
+                                                           
+  ret
+
+end

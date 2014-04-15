@@ -41,9 +41,9 @@ SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* m
    return _owner->_loader->getSectionInfo(referenceName, reference & mskAnyRef);
 }
 
-SectionInfo JITLinker::ReferenceHelper :: getPredefinedCommand(ref_t reference)
+SectionInfo JITLinker::ReferenceHelper :: getPredefinedSection(const wchar16_t* package, ref_t reference)
 {
-   return _owner->_loader->getPredefinedSectionInfo(reference, 0);
+   return _owner->_loader->getPredefinedSectionInfo(package, reference, 0);
 }
 
 ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* module)

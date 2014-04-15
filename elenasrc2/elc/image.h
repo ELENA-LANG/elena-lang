@@ -43,7 +43,7 @@ public:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask);
-   virtual SectionInfo getPredefinedSectionInfo(ref_t reference, size_t mask);
+   virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask);
 
    virtual _Memory* getTargetDebugSection()
    {

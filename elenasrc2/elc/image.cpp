@@ -111,11 +111,11 @@ SectionInfo ExecutableImage :: getSectionInfo(const wchar16_t* reference, size_t
    return sectionInfo;
 }
 
-SectionInfo ExecutableImage :: getPredefinedSectionInfo(ref_t reference, size_t mask)
+SectionInfo ExecutableImage :: getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask)
 {
    SectionInfo sectionInfo;
 
-   sectionInfo.module = _project->resolvePredefined(reference);
+   sectionInfo.module = _project->resolvePredefined(package, reference);
    if (sectionInfo.module == NULL) {
       throw InternalError(errCommandSetAbsent);
    }

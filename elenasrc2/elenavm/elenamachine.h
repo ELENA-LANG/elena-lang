@@ -11,7 +11,7 @@
 #include "config.h"
 #include "libman.h"
 
-#define VM_INIT           _T("$package'core'vm_console_entry")
+#define VM_INIT           _T("$package'coreapi'vm_console_entry")
 
 #define VM_INTERPRET      _T("$package'core_vm'eval")
 #define VM_INTERPRET_EXT  _T("$package'core_vm'start_n_eval")
@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x0001             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0002             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -150,7 +150,7 @@ protected:
          return _instance->getLinkerConstant(constant);
       }
 
-      virtual SectionInfo getPredefinedCommand(ref_t reference) { return SectionInfo(); }
+      virtual SectionInfo getPredefinedSection(const wchar16_t* pacjage, ref_t reference) { return SectionInfo(); }
       virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
 
       virtual void* getVAddress(MemoryWriter& writer, int mask) { return NULL; }
@@ -211,7 +211,7 @@ protected:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask);
-   virtual SectionInfo getPredefinedSectionInfo(ref_t reference, size_t mask);
+   virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask);
 
    bool initLoader(InstanceConfig& config);
 

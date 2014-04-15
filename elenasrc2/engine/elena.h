@@ -86,7 +86,7 @@ public:
    virtual _Memory* getTargetDebugSection() = 0;
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask) = 0;
-   virtual SectionInfo getPredefinedSectionInfo(ref_t reference, size_t mask) = 0;
+   virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask) = 0;
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;

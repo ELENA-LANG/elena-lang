@@ -298,7 +298,7 @@ namespace _ELENA_
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---
-   //#define CORE_MODULE            "core"          // core GC functionality
+   #define CORE_MODULE              "core"          // core GC functionality
    #define COMMANDSET_MODULE        "commands"      // core predefined command set
    #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
    #define INLINE_MODULE            "inline"        // inline module alias

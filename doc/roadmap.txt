@@ -7,6 +7,7 @@ Ultimate goals
 
 Version 2.0.0
 -------------
+- start migration to Linux
 - simple code optimization (pi < 2s)
 - vmt-less action                 
 - start the code documentation
@@ -19,7 +20,6 @@ Version 2.1.0
 -------------
 - gcx, beta version
 - x64 alpha version
-- start migration to Linux
 - x86 native code: optimize with pentium pro commands
 
 Version 2.2.0

@@ -202,7 +202,7 @@ public:
    }
 
    virtual _Module* resolveModule(const wchar16_t* referenceName, ref_t& reference, bool silentMode = false);
-   virtual _Module* resolvePredefined(ref_t reference, bool silentMode = false);
+   virtual _Module* resolvePredefined(const wchar16_t* package, ref_t reference, bool silentMode = false);
 
    bool HasWarnings() const { return _hasWarning; }
 

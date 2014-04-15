@@ -363,16 +363,14 @@ _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& referen
 
 }
 
-_Module* Project :: resolvePredefined(ref_t reference, bool silentMode)
+_Module* Project :: resolvePredefined(const wchar16_t* package, ref_t reference, bool silentMode)
 {
-   ConstantIdentifier packageName(COMMANDSET_MODULE);
-
    LoadResult result = lrNotFound;
-   _Module* module = _loader.resolvePredefined(packageName, reference, result);
+   _Module* module = _loader.resolvePredefined(package, reference, result);
 
    if (result != lrSuccessful) {
       if (!silentMode)
-         raiseError(getLoadError(result), packageName);
+         raiseError(getLoadError(result), package);
 
       return NULL;
    }

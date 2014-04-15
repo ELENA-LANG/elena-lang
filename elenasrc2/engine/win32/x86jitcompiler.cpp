@@ -1614,7 +1614,7 @@ void x86JITCompiler :: writePreloadedReference(x86JITScope& scope, ref_t referen
       _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
 
       // due to optimization section must be ROModule::ROSection instance
-      SectionInfo info = scope.helper->getPredefinedCommand(reference & ~mskAnyRef);
+      SectionInfo info = scope.helper->getPredefinedSection(ConstantIdentifier(CORE_MODULE), reference & ~mskAnyRef);
       // separate scoep should be used to prevent overlapping
       x86JITScope newScope(NULL, &writer, scope.helper, this, _embeddedSymbolMode);
       newScope.module = info.module;
@@ -1626,6 +1626,8 @@ void x86JITCompiler :: writePreloadedReference(x86JITScope& scope, ref_t referen
 
 void x86JITCompiler :: prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata)
 {
+   ConstantIdentifier corePackage(CORE_MODULE);
+
    MemoryWriter writer(data);
    MemoryWriter rdataWriter(rdata);
    MemoryWriter sdataWriter(sdata);
@@ -1636,7 +1638,7 @@ void x86JITCompiler :: prepareCoreData(_ReferenceHelper& helper, _Memory* data, 
          _preloaded.add(coreVariables[i], helper.getVAddress(writer, mskDataRef));
 
          // due to optimization section must be ROModule::ROSection instance
-         SectionInfo info = helper.getPredefinedCommand(coreVariables[i]);
+         SectionInfo info = helper.getPredefinedSection(corePackage, coreVariables[i]);
          loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
       }
    }
@@ -1670,6 +1672,9 @@ void x86JITCompiler :: prepareVMData(_ReferenceHelper& helper, _Memory* data)
 
 void x86JITCompiler :: prepareCommandSet(_ReferenceHelper& helper, _Memory* code)
 {
+   ConstantIdentifier corePackage(CORE_MODULE);
+   ConstantIdentifier commandPackage(COMMANDSET_MODULE);
+
    MemoryWriter writer(code);
    x86JITScope scope(NULL, &writer, &helper, this, _embeddedSymbolMode);
 
@@ -1678,7 +1683,7 @@ void x86JITCompiler :: prepareCommandSet(_ReferenceHelper& helper, _Memory* code
          _preloaded.add(coreFunctions[i], helper.getVAddress(writer, mskCodeRef));
 
          // due to optimization section must be ROModule::ROSection instance
-         SectionInfo info = helper.getPredefinedCommand(coreFunctions[i]);
+         SectionInfo info = helper.getPredefinedSection(corePackage, coreFunctions[i]);
          scope.module = info.module;
 
          loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
@@ -1688,7 +1693,7 @@ void x86JITCompiler :: prepareCommandSet(_ReferenceHelper& helper, _Memory* code
    // preload vm commands
    scope.helper = &helper;
    for (int i = 0 ; i < gcCommandNumber ; i++) {
-      SectionInfo info = helper.getPredefinedCommand(gcCommands[i]);
+      SectionInfo info = helper.getPredefinedSection(commandPackage, gcCommands[i]);
 
       // due to optimization section must be ROModule::ROSection instance
       _inlines[gcCommands[i]] = (char*)info.section->get(0);
@@ -1696,7 +1701,7 @@ void x86JITCompiler :: prepareCommandSet(_ReferenceHelper& helper, _Memory* code
 
    // preload vm extension commands
    for (int i = 1 ; i < gcExtensionNumber ; i++) {
-      SectionInfo info =  helper.getPredefinedCommand(0x100 + i);
+      SectionInfo info =  helper.getPredefinedSection(commandPackage, 0x100 + i);
       if (info.section) {
          // due to optimization section must be ROModule::ROSection instance
          _extensions[i] = (char*)info.section->get(0);

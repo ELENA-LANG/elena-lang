@@ -19,15 +19,9 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              xdev - linux
-                       * template platform : win32_console stand-alone, win32_console vm client, win32_console multi-threading stand-alone
-                                                linux32 console stand-alone
-                                          
-                           xxxdcbaa  - aa : win32 / linux32 ; b - stand-alone / vm client ; c - console / windows ; d - single thread / multy thread
+              xdev - multithreading       
+                       * migrate primitive code : move all platform related code to commands
 
-                           system/platform, apptype - no longer supported
-
-                       * general architecture review
 <=================> 
 
 1.9.15 [26.4]
@@ -49,8 +43,6 @@ week1:
                        * port elt to linux
 
               xdev - multithreading       
-                       * migrate primitive code : move all platform related code to commands
-
                        * thread test : start new thread
                        * static object should be thread safe
                        * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
@@ -138,7 +130,12 @@ week1:
                        * think over reflection implementtion for static linked executable
 
                        * optimize output code: system'true
+
+                       * should commands be multy-thread independent, e.g. all related code be located in core?
                        
+              xdev - message ids
+                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux?
+
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it?

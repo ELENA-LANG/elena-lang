@@ -360,14 +360,12 @@ SectionInfo Instance :: getSectionInfo(const wchar16_t* reference, size_t mask)
    return sectionInfo;
 }
 
-SectionInfo Instance :: getPredefinedSectionInfo(ref_t reference, size_t mask)
+SectionInfo Instance :: getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask)
 {
    SectionInfo sectionInfo;
 
-   ConstantIdentifier packageName(COMMANDSET_MODULE);
-
    LoadResult result = lrNotFound;
-   sectionInfo.module = _loader.resolvePredefined(packageName, reference, result);
+   sectionInfo.module = _loader.resolvePredefined(package, reference, result);
    sectionInfo.section = sectionInfo.module ? sectionInfo.module->mapSection(reference | mask, true) : NULL;
 
    if (sectionInfo.section == NULL) {
