@@ -224,8 +224,7 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
    loadBoolOption(config, opEmbeddedSymbolMode);
 
    // load compiler settings
-//   loadOption(config, opJITType);
-//   loadIntOption(config, opThreadMax, 0, 60);
+   loadIntOption(config, opThreadMax, 0, 60);
 
    // load linker settings
    loadHexOption(config, opGCMGSize);

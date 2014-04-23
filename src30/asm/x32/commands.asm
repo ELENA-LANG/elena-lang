@@ -184,7 +184,7 @@ inline % 15h
   
 end
 
-// get
+// ; get
 
 inline % 18h
    mov  ebx, esi
@@ -193,7 +193,7 @@ inline % 18h
 
 end
 
-// set
+// ; set
 
 inline % 19h
                                 
@@ -211,7 +211,7 @@ lEnd:
 
 end
 
-// mquit
+// ; mquit
 inline % 1Bh
 
   mov  ecx, edx
@@ -224,7 +224,7 @@ inline % 1Bh
  
 end
 
-// unhook
+// ; unhook
 inline % 1Dh
 
   mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
@@ -267,7 +267,7 @@ inline % 24h
 
 end
 
-// msaveparams
+// ; msaveparams
 inline %29h
 
   mov  ecx, edx
@@ -314,7 +314,7 @@ inline % 33h
 
 end
 
-// popai
+// ; popai
 inline % 035h
   // ; calculate write-barrier address
   mov  esi, eax
@@ -503,9 +503,6 @@ end
 
 inline % 6Eh
 
-   // ; mov  ebx, esi
-   // ; shl  ebx, 2
-   // ; mov  [eax+ebx], __arg1
    mov  [eax+esi*4], __arg1
 
 end

@@ -68,6 +68,15 @@ void ECodesAssembler :: compileRCommand(ByteCode code, TokenInfo& token, MemoryW
 
       writeCommand(ByteCommand(code, reference), writer);
    }
+   else if (ConstantIdentifier::compare(word, "api")) {
+      token.read(_T(":"), _T("Invalid operand"));
+      token.read();
+
+      ReferenceNs functionName(PACKAGE_MODULE, token.value);
+      size_t reference = binary->mapReference(functionName) | mskNativeCodeRef;
+
+      writeCommand(ByteCommand(code, reference), writer);
+   }
    else throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
 }
 

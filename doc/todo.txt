@@ -19,46 +19,21 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              xdev - multithreading       
-                       * migrate primitive code : move all platform related code to commands
+              xdev - byte code optimization                       
+                       * remove unused labels, if the label was never used by any jump or so, mark it as none
 
+                       * fix the latest optimization rule, currently it is not used because of idle label
+           
+                       * excluding stack should be done with a single command, native code implementation contains duplicate code
+                         (especially for mt)
+
+                       * optimize output code: system'true
 <=================> 
 
-1.9.15 [26.4]
+1.9.15 [2.5]
 --------
 week1:
-              xdev - linux
-                       * linux linker
-                       * linux console operations
-                       * linux file operations
-                       * linux date / time operations
-                       * port elc to linux
-                       * port asm2binx to linux
-                       * port elenavm to linux
-                       * port elide to linux
-                       * port sg to linux
-                       * port ecv to linux
-                       * port og to linux
-                       * port elenasm to linux
-                       * port elt to linux
-
-              xdev - multithreading       
-                       * thread test : start new thread
-                       * static object should be thread safe
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-                       * compile pi with mt
-                       * compile anagram with mt
-
-              xdev - GC
-                       * heap mg size should reserved but not committed and can grow
-                       * out of memory exception should be correctly raised
-                       * destructors
-                       
               xdev - generic development                            
-                       * new ecode - openthread
-
                        * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
                          $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
 
@@ -87,8 +62,6 @@ week1:
                        * role class should not be its own class class (like it is now), super class should be used
                        
                        * Object implementation : instead of notequal - implement equal and invert the result ??
-
-                       * "||" operator - to raised if the object does not support the message (see convertor.toLiteral(1))
 
                        * why is not possible: "abc"@4 | onOutOfRangeError: ...
                        * using operators with an extension (e.g. anObject~EReflector @ anIndex)
@@ -129,18 +102,18 @@ week1:
 
                        * think over reflection implementtion for static linked executable
 
-                       * optimize output code: system'true
-
                        * should commands be multy-thread independent, e.g. all related code be located in core?
                        
               xdev - message ids
-                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux?
+                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
 
               xdev - open arg                                      
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it?
                          
               xdev - byte code optimization                       
+                       * optimize output code: system'true
+
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
 
                        * any other operation should result in boxing
@@ -340,8 +313,11 @@ week2:
                        * should clone be part of object protocol?                                                  
                        * mathOp.mod - should be applied only for the integer numbers, may be it should not be part of the role. 
                        * mathOp : is it possible to make it more generic, so it could work with integer number as well
+                       * system'io'Handle maybe should be moved to system namespace
                                                 
               adev - lib30 optimization
+                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
+
                        * start to use stack allocated variables to optimize the code : console operation, ...
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
                        * system'io'MemoryStream - do not create a new integer after each operation
@@ -452,6 +428,7 @@ week2:
                        * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
                        * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
                          and could be invoked by eval
+                       * implement analog of linq
 
               sdev - api doc
                        * create API : system(exceptions.l)
@@ -558,6 +535,36 @@ week4:
 1.9.16
 --------
 week1:
+              xdev - linux
+                       * linux linker
+                       * linux console operations
+                       * linux file operations
+                       * linux date / time operations
+                       * port elc to linux
+                       * port asm2binx to linux
+                       * port elenavm to linux
+                       * port elide to linux
+                       * port sg to linux
+                       * port ecv to linux
+                       * port og to linux
+                       * port elenasm to linux
+                       * port elt to linux
+
+              xdev - multithreading       
+                       * threadhandle - provide safe region like it was in 1.7
+                       * threadhandle - remove the object from the reference table on closing
+                       * reference table should be created on the program start for multy thread version
+                       * implement lock / unlock
+                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
+                         storage ; maybe better to store there data duplication? 
+                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+                       * compile pi with mt
+                       * compile anagram with mt
+
               xdev - elenasm
                        * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
                        * inline script improve error handling
@@ -575,14 +582,20 @@ week2:
 
 1.9.17
 --------
-
 week1:
+
 1.9.18
 --------
 week1:
               xdev - generic development              
                        * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?
                        * review opcode matrix, think over extension simplification
+
+              xdev - GC
+                       * heap mg size should reserved but not committed and can grow
+                       * out of memory exception should be correctly raised
+                       * destructors
+                       
 
 2.0.0
 -----

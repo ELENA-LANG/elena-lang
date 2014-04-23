@@ -1340,3 +1340,31 @@ procedure inline'vmscript_eval
   quitn 2
     
 end
+
+procedure inline'api_alloc_index
+
+  aloadsi 2  
+  callr api : coreapi'alloc_index
+  aloadsi 3
+  dsaveai 0
+  quitn 3
+
+end
+
+procedure inline'api_free_index
+                      
+  aloadsi 2           
+  dloadai 0
+  callr api : coreapi'free_index
+  quitn 2
+  
+end
+
+procedure inline'thread_start
+
+  aloadsi 1
+  callr api : coreapi'resolve_index
+  callr api : coreapi'start_thread
+  quitn 1
+  
+end

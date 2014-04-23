@@ -38,7 +38,7 @@ enum ProjectSetting
    opVMPath                = 0x000B,
    opTemplate              = 0x000C,
    opEmbeddedSymbolMode    = 0x000D,
-//   opThreadMax             = 0x0013,
+   opThreadMax             = 0x0013,
 
    // linker options
    opImageBase             = 0x0020,

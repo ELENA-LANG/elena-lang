@@ -44,4 +44,5 @@ dynamic\script.l
 winforms\win32_handles.l
 winforms\win32_factories.l
 winforms\win32_app.l
-
+threading\win32_handlers.l
+threading\thread.l

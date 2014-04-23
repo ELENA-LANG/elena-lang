@@ -217,10 +217,8 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_ENTRY);
    case _ELENA_::opVMPath:
       return config.getSetting(PROJECT_CATEGORY, ELC_VM_PATH);
-////   case _ELENA_::opJITType:
-////      return config.getSetting(COMPILER_CATEGORY, ELC_JIT);
-//   case _ELENA_::opThreadMax:
-//      return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
+   case _ELENA_::opThreadMax:
+      return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
       return config.getSetting(COMPILER_CATEGORY, ELC_L0);
 //   case _ELENA_::opL1:
@@ -470,13 +468,19 @@ int main()
 
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
          _ELENA_::Linker linker;
-//         // check if we need to create TLS table
-//         if (image.getTLSSection()->Length() > 0) {
-//            void* directory = image.resolveReference(_ELENA_::ConstantIdentifier(TLS_KEY), _ELENA_::mskNativeRDataRef);
-//
-//            linker.run(image, (ref_t)directory & ~_ELENA_::mskAnyRef);
-//         }
-         /*else */linker.run(project, image, -1);
+         linker.run(project, image, -1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleMT) {
+         print(ELC_LINKING);
+
+         _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
+         _ELENA_::Linker linker;
+
+         void* directory = image.resolveReference(_ELENA_::ConstantIdentifier(TLS_KEY), _ELENA_::mskNativeRDataRef);
+
+         linker.run(project, image, (ref_t)directory & ~_ELENA_::mskAnyRef);
 
          print(ELC_SUCCESSFUL_LINKING);
       }

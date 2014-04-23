@@ -66,7 +66,7 @@ public:
       if (!duplicateAllowed)
          _binaryAliases.erase(alias);
 
-      _binaryAliases.add(alias, StringHelper::clone(path));
+      _binaryAliases.addToTop(alias, StringHelper::clone(path));
    }
 
    bool loadPrimitive(const wchar16_t* package, LoadResult& result);

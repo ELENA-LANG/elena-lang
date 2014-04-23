@@ -1,3 +1,13 @@
+// --- referenceTableControl ---
+
+#symbol referenceTableControl =
+{
+    allocate &object:anObject &out'int:anIndex
+        <api_alloc_index>.
+
+    free &int:anIndex
+        <api_free_index>.
+}.
 
 // --- primitive ---
 

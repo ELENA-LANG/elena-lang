@@ -164,11 +164,21 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
          }
 
       }
+		else if (token.check(_T("stat"))) {
+         token.read(_T(":"), err);
+         token.read();
+         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
+
+         operand.type = x86Helper::otDD;
+         operand.reference = info.binary->mapReference(structRef) | mskStatSymbolRef;
+      }
 		else if (token.check(_T("const"))) {
          token.read(_T(":"), err);
          token.read();
          operand.type = x86Helper::otDD;
-         operand.reference = info.binary->mapReference(token.value) | mskConstantRef;
+
+         IdentifierString constRef(token.terminal.line + 1, token.terminal.length-2);
+         operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
          operand.offset = 0;
       }
       else if (token.check(_T("code"))) {

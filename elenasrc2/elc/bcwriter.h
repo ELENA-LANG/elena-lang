@@ -314,6 +314,7 @@ public:
 
    void saveStr(CommandTape& tape, bool onlyAllocate);
 //   void saveDump(CommandTape& tape, bool onlyAllocate);
+   void saveActionPtr(CommandTape& tape);
    void setStrLength(CommandTape& tape, ObjectInfo target);
    void setDumpLength(CommandTape& tape, ObjectInfo target);
    void loadStr(CommandTape& tape);

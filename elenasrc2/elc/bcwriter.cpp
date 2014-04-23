@@ -1778,6 +1778,21 @@ void ByteCodeWriter :: saveStr(CommandTape& tape, bool onlyAllocate)
 //{
 //   tape.write(bcFunc, onlyAllocate ? fnBSReserve : fnBSSave);
 //}
+   
+void ByteCodeWriter :: saveActionPtr(CommandTape& tape)
+{
+   // pushb
+   // bcopya
+   // loadclass
+   // popb
+   // pushai 1
+
+   tape.write(bcPushB);
+   tape.write(bcBCopyA);
+   tape.write(bcFunc, fnLoadClass);
+   tape.write(bcPopB);
+   tape.write(bcPushAI, 1);
+}
 
 void ByteCodeWriter :: setStrLength(CommandTape& tape, ObjectInfo target)
 {

@@ -85,14 +85,16 @@ bool LibraryManager :: loadPrimitive(const wchar16_t* package, LoadResult& resul
    result = lrNotFound;
 
    AliasMap::Iterator it = _binaryAliases.getIt(package);
-   while (!it.Eof() && StringHelper::compare(it.key(), package)) {
-      FileReader reader(*it, feRaw, false);
+   while (!it.Eof()) {
+      if (StringHelper::compare(it.key(), package)) {
+         FileReader reader(*it, feRaw, false);
 
-      _Module* binary = new ROModule(reader, result);
-      _binaries.add(package, binary);
+         _Module* binary = new ROModule(reader, result);
+         _binaries.add(package, binary);
 
-      if(result!=lrSuccessful) {
-         return false;
+         if(result!=lrSuccessful) {
+            return false;
+         }
       }
 
       it++;
@@ -103,6 +105,8 @@ bool LibraryManager :: loadPrimitive(const wchar16_t* package, LoadResult& resul
 
 _Module* LibraryManager :: resolvePrimitive(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
 {
+   result = lrNotFound;
+
    NamespaceName package(referenceName + PMODULE_LEN + 1);
    
    ModuleMap::Iterator it = _binaries.getIt(package);
@@ -116,25 +120,28 @@ _Module* LibraryManager :: resolvePrimitive(const wchar16_t* referenceName, Load
 
       it = _binaries.getIt(package);
    }
-   else result = lrSuccessful;
 
-   _Module* binary = NULL;
-   while (!it.Eof() && StringHelper::compare(it.key(), package)) {
-      ref_t currentRef = (*it)->mapReference(referenceName, true);
-      if (currentRef) {
-         binary = *it;
-         reference = currentRef;
+   while (!it.Eof()) {
+      if (StringHelper::compare(it.key(), package)) {
+         ref_t currentRef = (*it)->mapReference(referenceName, true);
+         if (currentRef) {
+            reference = currentRef;
+            result = lrSuccessful;
+
+            return *it;
+         }
       }
-      else result = lrNotFound;
 
       it++;
    }
 
-   return binary;
+   return NULL;
 }
 
 _Module* LibraryManager :: resolvePredefined(const wchar16_t* package, ref_t reference, LoadResult& result)
 {
+   result = lrNotFound;
+
    ModuleMap::Iterator it = _binaries.getIt(package);
    // load modules if it is first time usage
    if (it.Eof()) {
@@ -143,18 +150,19 @@ _Module* LibraryManager :: resolvePredefined(const wchar16_t* package, ref_t ref
 
       it = _binaries.getIt(package);
    }
-   else result = lrSuccessful;
 
-   _Module* last = NULL;
-   while (!it.Eof() && StringHelper::compare(it.key(), package)) {
-      _Memory* current = (*it)->mapSection(reference, true);
-      if (current)
-         last = *it;
-
+   while (!it.Eof()) {
+      if (StringHelper::compare(it.key(), package)) {
+         _Memory* current = (*it)->mapSection(reference, true);
+         if (current) {
+            result = lrSuccessful;
+            return *it;
+         }
+      }
       it++;
    }
 
-   return last;
+   return NULL;
 }
 
 _Module* LibraryManager :: resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)

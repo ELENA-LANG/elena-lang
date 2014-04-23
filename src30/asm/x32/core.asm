@@ -57,7 +57,6 @@ define GC_HEAP_ATTRIBUTE 00Dh
 
 // --- System Core Preloaded Routines --
 
-
 structure % CORE_EXCEPTION_TABLE
 
   dd 0 // ; core_catch_addr       : +x00   - exception point of return
@@ -949,7 +948,7 @@ procedure % INIT_RND
   pop  eax
   pop  edx
   ret
-
+  
 end
 
 // --- System Core Functions --
@@ -1063,6 +1062,7 @@ procedure core'init_ex_tbl
   mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
   mov  ebx, code : "$package'core'default_handler"
   mov  [data : %CORE_EXCEPTION_TABLE], ebx
+  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
 
   ret
 
@@ -1122,6 +1122,82 @@ procedure core'closeframe
   
   // ; restore return pointer
   push ecx   
+  ret
+
+end
+
+// ; ebx - size, eax - allocated object, ecx - presaved
+procedure core'allocate
+
+  call code : %GC_ALLOC
+  mov  [eax + elCountOffset], 0
+  ret
+
+end
+
+// ; new ebx - size, 
+procedure core'reallocate
+
+  push edi
+  mov  ecx, [edi - elCountOffset]
+  
+  call code : %GC_ALLOC
+  mov  [eax - elCountOffset], ecx
+
+  mov  edi, eax
+  pop  esi
+
+labNext:
+  mov  edx, [edi]
+  mov  [esi], edx
+  add  edi, 4
+  add  esi, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+  mov  edi, eax
+
+  ret
+
+end
+
+// ; append eax to edi
+procedure core'append
+
+  mov  ebx, [edi - elCountOffset]
+  shr  ebx, 2
+  mov  ecx, [edi - elSizeOffset]
+  cmp  ebx, ecx
+  jz   short labEnd
+  mov  [edi + ebx], eax
+  add  [edi - elCountOffset], 4
+
+  ret
+
+labEnd:
+  xor  eax, eax
+  ret
+
+end
+
+// ; for single thread application - is idle
+procedure core'lock
+
+  ret
+
+end
+
+// ; for single thread application - is idle
+procedure core'unlock
+
+  ret
+
+end
+
+procedure core'getcount
+
+  mov  ecx, [edi - elCountOffset]
+  shr  ecx, 2
   ret
 
 end

@@ -177,8 +177,8 @@ enum ByteCode
    bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
    //blHint           = 0x204,  // meta command, compiler hint
 
-   bcMatch          = 0xFFFE,  // used in optimization engine
-   bcNone           = 0xFFFF,  // used in optimization engine
+   bcMatch          = 0x8FFE,  // used in optimization engine
+   bcNone           = 0x8FFF,  // used in optimization engine
 
    blDeclare        = 0x8120,  // meta command, closing the structure
    blStatement      = 0x8121,  // meta command, declaring statement

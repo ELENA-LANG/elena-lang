@@ -1,10 +1,6 @@
-//#define std'dictionary'*.
-//#define std'basic'*.
-//#define std'patterns'*.
-////#define std'routines'*.
-////#define ext'patterns'*.
-//#define sys'threading'*.
-//
+#define system.
+#define system'threading.
+
 ////#class LockTest
 ////{
 ////    #method(sync) eval : aLine
@@ -110,8 +106,12 @@
 
 #symbol NewThreadTest =
 [
-////    #var aThread1 := ThreadControl run: => (aTest eval:"Thread 1%n").
-////    aThread1 wait &stopped.
+    #var aThread := threadControl start: 
+        [ 
+            console writeLine:"New thread started" 
+        ].
+    
+    aThread join.
 ].
 
 #symbol program =

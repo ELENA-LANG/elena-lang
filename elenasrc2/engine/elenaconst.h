@@ -230,7 +230,7 @@ namespace _ELENA_
       ptWin32Console     = 0x00001,
       ptVMWin32GUI       = 0x01001,
       ptVMWin32Console   = 0x00101,
-      ptVMWin32ConsoleMT = 0x10101,
+      ptWin32ConsoleMT   = 0x10001,
    };
 
   // --- ELENA Debug Mode ---
@@ -279,7 +279,7 @@ namespace _ELENA_
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
    const int lnGCYGSize            = 0x00000002;
-//   const int lnThreadCount         = 0x00000003;
+   const int lnThreadCount         = 0x00000003;
    const int lnObjectSize          = 0x00000004;
    // used only for VM
    const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
@@ -427,8 +427,8 @@ namespace _ELENA_
    #define TAPE_SYMBOL              "$tape"
 
 //  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
-//   #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
-//   #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
+   #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
+   #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
 
    // predefined classes
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor
@@ -471,6 +471,7 @@ namespace _ELENA_
    #define INDEX_SUBJECT            "index"
 //   #define BYTE_SUBJECT             "byte"
    #define PARAMS_SUBJECT           "params"
+   #define ACTION_SUBJECT           "action"
 
    #define STARTUP_CLASS            "'program"
 

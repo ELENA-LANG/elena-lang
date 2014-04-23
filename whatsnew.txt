@@ -9,6 +9,9 @@
 
 ELC:
 [!] project configuration modified to support multiply platforms
+                                                  
+[LIB]
+[+] system'threading: Thread, threadControl
 
 ******************************************************************************
                     What's New in 1.9.14 (pre release)

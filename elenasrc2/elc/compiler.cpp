@@ -313,6 +313,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
 //   lengthOutSubject = mapSubject(OUT_LENGTH_SUBJECT);
    indexSubject = mapSubject(INDEX_SUBJECT);
    arraySubject = mapSubject(ARRAY_SUBJECT);
+   actionSubject = mapSubject(ACTION_SUBJECT);
 //   byteSubject = mapSubject(BYTE_SUBJECT);
 
    whileSignRef = mapSubject(WHILE_SIGNATURE);
@@ -1142,11 +1143,11 @@ bool Compiler :: applyRules(CommandTape& tape)
 
 void Compiler :: optimizeTape(CommandTape& tape)
 {
-   // optimize the code 
-   while (applyRules(tape));
-
    // optimize unsued and idle jumps
    while (optimizeJumps(tape));
+
+   // optimize the code 
+   while (applyRules(tape));
 }
 
 ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)
@@ -3222,6 +3223,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          }
          else if (param.subject == moduleScope->wideStrSubject) {
          }
+         else if (param.subject == moduleScope->actionSubject) {
+         }
          else scope.raiseError(errInvalidOperation, terminal);
 
          arg = arg.nextNode();
@@ -3310,6 +3313,10 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
       }
       else if ((*out_it).subject == moduleScope->dumpSubject) {
          _writer.pushObject(*scope.tape, (*out_it).info);
+      }
+      else if ((*out_it).subject == moduleScope->actionSubject) {
+         _writer.loadObject(*scope.tape, (*out_it).info);
+         _writer.saveActionPtr(*scope.tape);
       }
 
       out_it++;
