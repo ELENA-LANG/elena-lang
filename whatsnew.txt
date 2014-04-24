@@ -9,6 +9,8 @@
 
 ELC:
 [!] project configuration modified to support multiply platforms
+[+] new platform: console_mt (early alpha)
+[-] private message implementation fixed
                                                   
 [LIB]
 [+] system'threading: Thread, threadControl

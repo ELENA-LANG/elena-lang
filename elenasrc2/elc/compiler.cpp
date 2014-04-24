@@ -1943,6 +1943,11 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
    }
 
    if (verb_id == 0) {
+      // provide namespace for the private message
+      if (verb == tsPrivate) {
+         signature.append(scope.moduleScope->project->StrSetting(opNamespace));
+      }
+
       signature.append(verb);
 
       // if followed by argument list - it is EVAL verb
@@ -3646,6 +3651,11 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
    int paramCount = 0;
 
    if (verb_id == 0) {
+      // add a namespace for the private message
+      if (verb == tsPrivate) {
+         signature.append(scope.moduleScope->project->StrSetting(opNamespace));
+      }
+
       scope.withCustomVerb = true;
 
       signature.append(verb);
