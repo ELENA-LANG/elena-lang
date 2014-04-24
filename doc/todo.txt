@@ -19,25 +19,6 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
-              xdev - generic development                            
-                       * role class should not be its own class class (like it is now), super class should be used
-
-                       * operator implementation : overview
-                       
-                       * using operators with an extension (e.g. anObject~EReflector @ anIndex)
-
-                       * why is not possible: "abc"@4 | onOutOfRangeError: ...
-
-                       * @ operator should support primitive implementation if loperand is array, bytearray and roperand is int
-
-                       * raise an exception if more than 14 arguments in the method / message                                        
-
-                       * it should be possible to override operator implementation with extension methods
-                       
-                       * array item set operator a@b := c ???
-
-                       * write, append, ... operation should be allowed only with $self or out parameter
-
 <=================> 
 
 1.9.15 [2.5]
@@ -253,6 +234,9 @@ week2:
               arev - lib30 review
                        * review api30 : intNumber
                        * review rosetta samples
+                       * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
+                         is not safe , if for some reason the compiler optimization is turned off (replacing operation with the direct action) the code
+                         will raise out of stack error
                        * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
                        * better to use console, no need for consoleEx
                        * system'primitive should be private symbol?
@@ -532,6 +516,8 @@ week1:
 
                        * should be possible to declare sealed classes
 
+                       * should it be possible to override operator implementation with extension methods?
+                       
                        * get rid of predefined subjects - they all should be declared in the source code, no compiler dependency
 
                        * widechar constant : special symbol or we could use literal constant with length=1
@@ -569,6 +555,9 @@ week1:
                        * think over reflection implementtion for static linked executable
 
                        * should commands be multy-thread independent, e.g. all related code be located in core?
+
+                       * write, append, ... operation direct implementation should be allowed only with $self or out parameter
+
                        
               xdev - elenasm
                        * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used

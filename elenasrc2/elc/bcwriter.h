@@ -322,9 +322,11 @@ public:
    void loadLiteralLength(CommandTape& tape, ObjectInfo target);
    void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
    void loadParamsLength(CommandTape& tape, ObjectInfo target);
+   void loadArrayLength(CommandTape& tape, ObjectInfo target);
    void getArrayItem(CommandTape& tape);
-//   void getLiteralItem(CommandTape& tape, ObjectInfo target);
-
+   void getObjectItem(CommandTape& tape, ObjectInfo target);
+   void setObjectItem(CommandTape& tape, ObjectInfo target);
+   
    void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
 

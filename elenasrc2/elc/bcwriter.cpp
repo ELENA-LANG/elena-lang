@@ -1851,6 +1851,17 @@ void ByteCodeWriter :: loadByteArrayLength(CommandTape& tape, ObjectInfo target)
    tape.write(bcDSaveAI);
 }
 
+void ByteCodeWriter :: loadArrayLength(CommandTape& tape, ObjectInfo target)
+{
+   // getlen
+   // <load>
+   // dxsaveai 0
+
+   tape.write(bcGetLen);
+   loadObject(tape, target);
+   tape.write(bcDSaveAI);
+}
+
 void ByteCodeWriter :: loadParamsLength(CommandTape& tape, ObjectInfo target)
 {
    // rfgetlenz
@@ -1876,17 +1887,50 @@ void ByteCodeWriter :: getArrayItem(CommandTape& tape)
    tape.write(bcALoadD);
 }
 
-//void ByteCodeWriter :: getLiteralItem(CommandTape& tape, ObjectInfo target)
-//{
-//   // aswapsi 0
-//   // dloadai
-//   // popa
-//   // push <object>
-//   // wsgetat
-//
-//   tape.write(bcASwapSI);
-//   tape.write(bcDLoadAI);
-//   tape.write(bcPopA);
-//   pushObject(tape, target);
-//   tape.write(bcFunc, fnWSGetAt);
-//}
+void ByteCodeWriter :: getObjectItem(CommandTape& tape, ObjectInfo target)
+{
+   if (target.type == otLiteral) {
+      // pusha
+      // aloadsi 2
+      // dloadai 0
+      // aloadsi 1
+      // wsgetat
+      // popa
+      tape.write(bcPushA);
+      tape.write(bcALoadSI, 2);
+      tape.write(bcDLoadAI);
+      tape.write(bcALoadSI, 1);
+      tape.write(bcFunc, fnWSGetAt);
+      tape.write(bcPopA);
+   }
+   else {
+      // aloadsi 1
+      // dloadai 0
+      // aloadsi 0
+      // aloadd
+      tape.write(bcALoadSI, 1);
+      tape.write(bcDLoadAI);
+      tape.write(bcALoadSI);
+      tape.write(bcALoadD);
+   }
+}
+
+void ByteCodeWriter :: setObjectItem(CommandTape& tape, ObjectInfo target)
+{
+   // aloadsi 1
+   // pushb
+   // dloadai 0
+   // aloadsi 1
+   // bcopya
+   // aloadsi 3
+   // set
+   // popb
+   tape.write(bcALoadSI, 1);
+   tape.write(bcPushB);
+   tape.write(bcDLoadAI);
+   tape.write(bcALoadSI, 1);
+   tape.write(bcBCopyA);
+   tape.write(bcALoadSI, 3);
+   tape.write(bcSet);
+   tape.write(bcPopB);
+}

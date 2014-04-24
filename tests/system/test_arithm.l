@@ -465,10 +465,10 @@
     
     a4~indexable sort: (:aFormer:aNext)[ aFormer < aNext ].
     
-    a4 @ (-1) |
+    a4 getAt:(-1) |
         onOutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
 
-    a4 @ 3 |
+    a4 getAt:3 |
         onOutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 

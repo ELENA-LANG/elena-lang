@@ -6,6 +6,8 @@
 ******************************************************************************
                     What's New in 1.9.15 (pre release)
 ******************************************************************************
+ELENA:
+[+] new operator setAt (e.g. a@2 := b <=> a setAt:2:b)
 
 ELC:
 [!] project configuration modified to support multiply platforms

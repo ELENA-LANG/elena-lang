@@ -13,14 +13,16 @@ Version 2.0.0
 - start the code documentation
 - start developing GUI support, declarative gui description
 - migrate existing GUI samples to lib30
-- gcx alpha (test with small heap size)
+- gcx, beta version
 - migrate upndown to lib30
+- start work on eldoc
 
 Version 2.1.0
 -------------
-- gcx, beta version
 - x64 alpha version
 - x86 native code: optimize with pentium pro commands
+- basic linux version (only console)
+- gcx: thread pools
 
 Version 2.2.0
 -------------
@@ -30,11 +32,7 @@ Version 2.2.0
 
 Version 2.3.0
 -------------
-- start work on eldoc
-
-Version 2.4.0
--------------
-- basic linux version (only console)
+- linux version (console & windowsx)
 
 Version 2.x.x
 -------------
@@ -46,7 +44,6 @@ Version 2.x.x
 - ide: make possible to copy content of output
 = dynamic programming: beta
 - maintenance: review known bugs
-- gcx: thread pools
 - elenavm script: make possible to dynamically declare static variable
 - discontinue api2html
 - samples: multi-threading

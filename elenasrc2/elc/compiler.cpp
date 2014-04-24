@@ -150,6 +150,19 @@ inline bool IsPrimitiveArray(ObjectType type)
       case otLiteral:
       case otByteArray:
       case otParams:
+      case otArray:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool IsPrimitiveIndex(ObjectType type)
+{
+   switch(type) {
+      case otIndex:
+      case otInt:
+      case otIntVar:
          return true;
       default:
          return false;
@@ -1839,6 +1852,16 @@ ObjectInfo Compiler :: compilePrimitiveLength(CodeScope& scope, ObjectInfo objec
 
       return ObjectInfo(okLocalAddress, target.type, target.reference);
    }
+   // if array object is passed as a length argument
+   else if (objectInfo.type == otArray) {
+      ObjectInfo target(okLocal, otInt);
+      allocatePrimitiveObject(scope, 0, target);
+
+      _writer.loadObject(*scope.tape, objectInfo);
+      _writer.loadArrayLength(*scope.tape, target);
+
+      return ObjectInfo(okLocalAddress, target.type, target.reference);
+   }
    // if open arg is passed as a length argument
    else if (objectInfo.type == otParams) {
       ObjectInfo target(okLocal, otInt);
@@ -2028,6 +2051,10 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
          }
       }
       paramCount = count;
+
+      if (paramCount >= OPEN_ARG_COUNT)
+         scope.raiseError(errTooManyParameters, verb);
+
    }
 
    // if signature is presented
@@ -2287,6 +2314,142 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       }
       else return compileBranchingOperator(node, scope, object, mode, operator_id);
    }
+//         // if it is an operation with nil
+//         if ((object.kind == okConstant || object.kind == okSymbol) && object.reference == scope.moduleScope->nilReference && object.type == otNone) {
+//            if (operator_id == EQUAL_MESSAGE_ID) {
+//               _writer.compare(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
+//
+//               return ObjectInfo(okRegister, 0);
+//            }
+//            else if (operator_id == NOTEQUAL_MESSAGE_ID) {
+//               _writer.compare(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
+//
+//               return ObjectInfo(okRegister, 0);
+//            }
+   // if it is getAt / setAt operator
+   if (operator_id == REFER_MESSAGE_ID) {
+      bool setOperator = node.nextNode() == nsAssigning;
+      if (setOperator) {
+         operator_id = SET_REFER_MESSAGE_ID;
+      }
+
+      ObjectInfo operand2;
+      // if the left operand is a result of operation / symbol, use the normal routine
+      if (object.kind == okRegister || object.kind == okSymbol) {
+         _writer.declareArgumentList(*scope.tape, setOperator ? 3 : 2);
+         _writer.loadObject(*scope.tape, object);
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         if(setOperator) {
+            operand2 = compileExpression(node.nextNode().firstChild(), scope, 0);
+            _writer.loadObject(*scope.tape, operand2);
+            if (checkIfBoxingRequired(operand2)) {
+               operand2 = boxObject(scope, operand2, mode);
+            }
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
+         }
+      }
+      else if(setOperator) {
+         operand2 = compileExpression(node.nextNode().firstChild(), scope, 0);
+
+         if (checkIfBoxingRequired(operand2)) {
+            _writer.loadObject(*scope.tape, operand2);
+            operand2 = boxObject(scope, operand2, mode);
+            _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+         }
+         else _writer.pushObject(*scope.tape, operand2);
+      }
+
+      ObjectInfo operand = compileExpression(node, scope, 0);
+
+      recordStep(scope, node.Terminal(), dsProcedureStep);
+
+      bool optimized = IsPrimitiveArray(object.type) && IsPrimitiveIndex(operand.type);
+
+      // HOTFIX: literal value is immunable
+      if (setOperator && optimized && object.type == otLiteral)
+         optimized = false;
+
+      if (optimized) {
+         // if the left operand is a result of operation / symbol, use the normal routine
+         if (object.kind == okRegister || object.kind == okSymbol) {
+            _writer.loadObject(*scope.tape, operand);
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
+         }
+         // otherwise use simplified algorithm
+         else {
+            _writer.pushObject(*scope.tape, operand);
+            _writer.pushObject(*scope.tape, object);
+         }
+
+         if (setOperator) {
+            _writer.setObjectItem(*scope.tape, object);
+
+            // NOTE: operator code should clear stack after itself
+            scope.tape->write(ByteCommand(bcFreeStack, 3));
+         }
+         else {
+            if (object.type == otLiteral) {
+               retVal.type = otShortVar;
+
+               if (allocatePrimitiveObject(scope, 0, retVal)) {
+                  _writer.loadObject(*scope.tape, retVal);
+               }
+            }
+
+            _writer.getObjectItem(*scope.tape, object);
+
+            // NOTE: operator code should clear stack after itself
+            scope.tape->write(ByteCommand(bcFreeStack, 2));
+         }
+      }
+      else {
+         // if the left operand is a result of operation / symbol, use the normal routine
+         if (object.kind == okRegister || object.kind == okSymbol) {
+            _writer.loadObject(*scope.tape, operand);
+
+            if (checkIfBoxingRequired(operand))
+               operand = boxObject(scope, operand, mode);
+
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
+
+            // if we are unlucky load and check if the operator target should be boxed
+            if (checkIfBoxingRequired(object)) {
+               _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+               object = boxObject(scope, ObjectInfo(okRegister, object), mode);
+               _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
+            }
+         }
+         // otherwise use simplified algorithm
+         else {
+            if (checkIfBoxingRequired(operand)) {
+               _writer.loadObject(*scope.tape, operand);
+
+               operand = boxObject(scope, operand, mode);
+
+               _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+            }
+            else _writer.pushObject(*scope.tape, operand);
+
+            if (checkIfBoxingRequired(object)) {
+               _writer.loadObject(*scope.tape, object);
+               object = boxObject(scope, object, mode);
+               _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+            }
+            else _writer.pushObject(*scope.tape, object);
+         }   
+
+         int message_id = encodeMessage(0, operator_id, setOperator ? 2 : 1);
+
+         _writer.setMessage(*scope.tape, message_id);
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         _writer.callMethod(*scope.tape, 0, setOperator ? 2 : 1);
+      }
+
+      if (setOperator)
+         node = node.nextNode();
+   }
    // others
    else {
       // if the left operand is a result of operation / symbol, use the normal routine
@@ -2324,6 +2487,11 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
                _writer.loadObject(*scope.tape, retVal);
             }
          }
+
+         importCode(node, *scope.moduleScope, scope.tape, operation);
+
+         // NOTE: operator code should clear stack after itself
+         scope.tape->write(ByteCommand(bcFreeStack, 2));
       }
       else {
          // if the left operand is a result of operation / symbol, use the normal routine
@@ -2360,28 +2528,6 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
             }
             else _writer.pushObject(*scope.tape, object);
          }      
-      }
-
-//         // if it is an operation with nil
-//         if ((object.kind == okConstant || object.kind == okSymbol) && object.reference == scope.moduleScope->nilReference && object.type == otNone) {
-//            if (operator_id == EQUAL_MESSAGE_ID) {
-//               _writer.compare(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
-//
-//               return ObjectInfo(okRegister, 0);
-//            }
-//            else if (operator_id == NOTEQUAL_MESSAGE_ID) {
-//               _writer.compare(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
-//
-//               return ObjectInfo(okRegister, 0);
-//            }
-
-      if (predefined) {
-         importCode(node, *scope.moduleScope, scope.tape, operation);
-
-         // NOTE: operator code should clear stack after itself
-         scope.tape->write(ByteCommand(bcFreeStack, 2));
-      }
-      else {
          int message_id = encodeMessage(0, operator_id, 1);
 
          _writer.setMessage(*scope.tape, message_id);
@@ -3730,6 +3876,9 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
             arg = arg.nextNode();
          }
       }
+
+      if (paramCount >= OPEN_ARG_COUNT)
+         scope.raiseError(errTooManyParameters, verb);
    }
 
    // if signature is presented
