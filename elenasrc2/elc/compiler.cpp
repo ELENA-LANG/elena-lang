@@ -1160,7 +1160,14 @@ void Compiler :: optimizeTape(CommandTape& tape)
    while (optimizeJumps(tape));
 
    // optimize the code 
-   while (applyRules(tape));
+   bool modified = false;
+   while (applyRules(tape)) { 
+      modified = true; 
+   }
+
+   if (modified) {
+      optimizeTape(tape);
+   }
 }
 
 ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)

@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef listsH
@@ -1700,6 +1700,44 @@ public:
       return _defaultItem;
    }
 
+   T exclude(Key key)
+   {
+      size_t beginning = (size_t)_buffer.get(0);
+      size_t previous = -1;
+
+      if (_buffer.Length() > 0) {
+         // get top item position
+         size_t position = _buffer[0];
+         Item* current = NULL;
+         while (position != 0) {
+            current = (Item*)(beginning + position);
+
+            if (*current == key) {
+               // if it is top item
+               if (previous == -1) {
+                  _buffer[0] = current->next;
+               }
+               else {
+                  Item* prevItem = (Item*)(beginning + previous);
+                  prevItem->next = current->next;
+
+                  if (_tale == position)
+                     _tale = previous;
+               }
+
+               _count--;
+
+               return current->item;
+            }               
+
+            // offset is used instead of pointer due to possible buffer relocation
+            previous = position;
+            position = current->next;
+         }
+      }
+      return _defaultItem;
+   }
+
    bool exist(Key key) const
    {
       return !getIt(key).Eof();
@@ -2037,6 +2075,27 @@ public:
          return true;
       }
       else return false;
+   }
+
+   T exclude(Key key)
+   {
+      if (_cached) {
+         for (int i = 0 ; i < _count ; i++) {
+            if (_cache[i].key == key) {
+               T item = _cache[i].item;
+
+               for (int j = i + 1 ; j < _count ; j++) {
+                  _cache[i] = _cache[j];
+               }
+
+               _count--;
+
+               return item;
+            }
+         }
+         return _map.DefaultValue();
+      }
+      else return _map.exclude(key);
    }
 
    void write(StreamWriter* writer)

@@ -425,6 +425,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
    CachedMemoryMap<int, int, 20> labels(-1);
    CachedMemoryMap<int, int, 40> jumps;
    CachedMemoryMap<int, int, 40> fixes;
+   CachedMemoryMap<int, ByteCodeIterator, 20> idleLabels; // used to remove unused labels
 
    blocks.add(0, -1);
 
@@ -436,6 +437,11 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 
       if (code == blLabel) {
          labels.add((*it).argument, index);
+
+         // add to idleLabels only if there are no forward jumps to it
+         if (!fixes.exist((*it).argument)) {
+            idleLabels.add((*it).argument, it);
+         }
 
          // create partial block if it was not created
          if (!blocks.exist(index))
@@ -485,6 +491,9 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcElseFlag:
             case bcTestFlag:
             case bcHook:
+               // remove the label from idle list
+               idleLabels.exclude((*it).argument);
+
                addJump((*it).argument, index, labels, jumps, fixes);
                break;
          }
@@ -543,6 +552,14 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
          index++;
 
       it++;
+   }
+
+   // remove idle labels
+   CachedMemoryMap<int, ByteCodeIterator, 20>::Iterator i_it = idleLabels.start();
+   while (!i_it.Eof()) {
+      *(*i_it) = bcNop;
+
+      i_it++;
    }
 
    return modified;

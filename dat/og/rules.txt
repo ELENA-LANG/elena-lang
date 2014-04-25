@@ -10,5 +10,8 @@ pushbi  popa   => aloadbi nop;
 pushn asavesi :=0 => pusha nop;
 pusha mcopy breakpoint aloadsi :=0 => pusha mcopy breakpoint nop;
 asavesi := 0 mcopy breakpoint aloadsi :=0 => asavesi mcopy breakpoint nop;
-// pushb bcopya open breakpoint aloadfi pusha mcopy breakpoint acallvi breakpoint close popb quitn =>
-// nop nop nop breakpoint aloadsi pusha mcopy breakpoint acallvi breakpoint nop nop quitn;
+
+// m : x = x m2
+pushb bcopya open breakpoint aloadfi := -2 pusha mcopy breakpoint acallvi breakpoint close popb quitn =>
+             nop nop nop breakpoint aloadsi = 2 pusha mcopy breakpoint acallvi breakpoint nop nop quitn;
+             

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -15,6 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
+#define BUILD_VERSION 3
 
 typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
 typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;
@@ -215,7 +216,7 @@ void generateSuffixLinks(MemoryByteTrie& trie)
 
 int main(int argc, char* argv[])
 {
-   printLine(_T("ELENA command line optimization table generator %d.%d.2 (C)2012 by Alexei Rakov\n"), ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+   printLine(_T("ELENA command line optimization table generator %d.%d.%d (C)2012-14 by Alexei Rakov\n"), ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
    if (argc != 2) {
       printLine(_T("og <optimization_file>"));
       return 0;

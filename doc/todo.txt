@@ -19,6 +19,13 @@ v  - vm script
 ------                                                                                                                  
 Currently:
 ------
+              xdev - byte code optimization                       
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
+
+                       * excluding stack should be done with a single command, native code implementation contains duplicate code
+                         (especially for mt)
+
+                       * optimize output code: system'true
 <=================> 
 
 1.9.15 [2.5]
@@ -32,16 +39,7 @@ week1:
                          raise an error ; do we need it?
                          
               xdev - byte code optimization                       
-                       * remove unused labels, if the label was never used by any jump or so, mark it as none
-
-                       * fix the latest optimization rule, currently it is not used because of idle label
-           
-                       * excluding stack should be done with a single command, native code implementation contains duplicate code
-                         (especially for mt)
-
                        * optimize output code: system'true
-
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
 
                        * any other operation should result in boxing
                        * simplify primitive byte array allocating (store the size directly during space allocating)
