@@ -11,6 +11,8 @@
 
 #symbol XTest =
 [
+//    #var s := "abc".
+//    #var l := s length.
 ].
 
 // --- OpenArgTest ---

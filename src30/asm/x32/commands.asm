@@ -26,7 +26,7 @@ define gc_mg_start           001Ch
 define gc_mg_current         0020h
 define gc_end                0024h
 define gc_promotion          0028h
-define gc_stack_frame        002Ch
+define gc_ext_stack_frame    002Ch
 define gc_mg_wbar            0030h
 define gc_stack_bottom       0034h
 
@@ -228,35 +228,34 @@ end
 inline % 1Dh
 
   mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
-  mov  edx, [data : %CORE_EXCEPTION_TABLE + 8]
+  mov  ebp, [data : %CORE_EXCEPTION_TABLE + 8]
   pop  ebx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
   mov [data : %CORE_EXCEPTION_TABLE + 8], ebx
   pop  ebx
   mov  [data : %CORE_EXCEPTION_TABLE + 4], ebx
   pop  edx
   mov  [data : %CORE_EXCEPTION_TABLE], edx
-  pop  ebp
 
 end
 
 // ; exclude
 inline % 1Eh
 
-  mov  ebx, [data : %CORE_GC_TABLE + gc_stack_frame]
-  // ; lock managed stack frame          
-  mov  [ebx], esp     
+  // ; store previous value
+  push [data : %CORE_GC_TABLE + gc_ext_stack_frame]
+  push ebp
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
 
 end
 
 // ; include
 inline % 1Fh
 
-  // ; save previous pointer 
-  push [data : %CORE_GC_TABLE + gc_stack_frame]                  
-  // ; size field
-  push 0                                
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+  // ; restore previous value
+  mov  esp, [data : %CORE_GC_TABLE + gc_ext_stack_frame]
+  pop  ebp
+  pop  ecx
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ecx
 
 end
 
@@ -343,6 +342,16 @@ inline % 42h
 
 end
 
+// ; reserve
+inline % 44h
+
+  sub  esp, __arg1
+  push ebp
+  push 0
+  mov  ebp, esp
+
+end
+
 // ; mloadai (__arg1 - index)
 inline % 47h
 
@@ -426,6 +435,14 @@ end
 inline % 55h
 
   mov  eax, [esp+__arg1]
+
+end
+
+// ; bloadfi
+
+inline % 58h
+
+  mov  edi, [ebp + __arg1]
 
 end
 
@@ -519,11 +536,8 @@ end
 
 inline % 82h
 
-  lea  esp, [esp+4]
-  pop  ebx
-  lea  esp, [esp + __arg1]
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], ebx
-
+  add  ebp, __arg1
+  
 end
 
 // ; open
@@ -552,14 +566,12 @@ end
 inline % 0A6h
 
   call code : %HOOK
-  push ebp
   push [data : %CORE_EXCEPTION_TABLE]
-  mov  ebx, [data : %CORE_GC_TABLE + gc_stack_frame]
   push [data : %CORE_EXCEPTION_TABLE + 4]
   push [data : %CORE_EXCEPTION_TABLE + 8]
   mov  [data : %CORE_EXCEPTION_TABLE], ecx
   mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebx
+  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
   
 end
 

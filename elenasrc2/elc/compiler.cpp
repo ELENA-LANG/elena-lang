@@ -3501,8 +3501,10 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
 
    compileExternalArguments(node.firstChild(), scope, externalScope);
 
-   // close the managed stack
-   _writer.exclude(*scope.tape);
+   // !! temproally commented : should be used if the method is marked as thread safe
+   //// close the managed stack
+   //// note that it consumes stack
+   //_writer.exclude(*scope.tape, externalScope.frameSize);
 
    // prepare output parameters / widestr references
    reserveExternalOutputParameters(scope, externalScope);
@@ -3578,8 +3580,8 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
       }
    }
 
-   // close the managed stack
-   _writer.endExternalBlock(*scope.tape);
+  // !! temproally always false : should be true if the method is marked as thread safe
+  _writer.endExternalBlock(*scope.tape, false);
 
    return retVal;
 }
@@ -3975,7 +3977,10 @@ void Compiler :: compileAction(DNode node, MethodScope& scope, ref_t actionMessa
 
    CodeScope codeScope(&scope);
 
+   // new stack frame
+   // stack already contains previous $self value
    _writer.declareGenericAction(*codeScope.tape, scope.message, actionMessage);
+   codeScope.level++;
 
 //   declareParameterDebugInfo(scope, codeScope.tape, false);
 
@@ -3995,9 +4000,13 @@ void Compiler :: compileInlineAction(DNode node, MethodScope& scope, ref_t actio
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
 
+   // stack already contains previous $self value
    CodeScope codeScope(&scope);
 
+   // new stack frame
+   // stack already contains previous $self value
    _writer.declareGenericAction(*codeScope.tape, scope.message, actionMessage);
+   codeScope.level++;
 
    declareParameterDebugInfo(scope, codeScope.tape, false);
 
@@ -4017,7 +4026,10 @@ void Compiler :: compileResend(DNode node, CodeScope& scope)
 
    // if it is resend to itself
    if (node == nsMessageOperation) {
+      // new stack frame
+      // stack already contains previous $self value
       _writer.declareMethod(*scope.tape, methodScope->message, true);
+      scope.level++;
 
       compileMessage(node, scope, ObjectInfo(okSelf), 0);
       scope.freeSpace();
@@ -4044,7 +4056,10 @@ void Compiler :: compileResend(DNode node, CodeScope& scope)
          return;
       }
 
+      // new stack frame
+      // stack already contains previous $self value
       _writer.declareMethod(*scope.tape, methodScope->message, true);
+      scope.level++;
 
       _writer.pushObject(*scope.tape, ObjectInfo(okVSelf));
       _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
@@ -4148,7 +4163,10 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, DNode hints)
 //         //compileMessageDispatch(dispatchBody.firstChild(), codeScope);
 //      }
       else {
+         // new stack frame
+         // stack already contains previous $self value
          _writer.declareMethod(*codeScope.tape, scope.message);
+         codeScope.level++;
 
          declareParameterDebugInfo(scope, codeScope.tape, true);
 
@@ -4269,7 +4287,10 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
             _writer.endIdleMethod(*codeScope.tape);
          }
          else {
+            // new stack frame
+            // stack already contains previous $self value
             _writer.newFrame(*codeScope.tape);
+            codeScope.level++;
 
             declareParameterDebugInfo(scope, codeScope.tape, true);
 

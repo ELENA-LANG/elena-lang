@@ -76,14 +76,14 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
 void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withNewFrame)
 {
    // method-begin:
+   //   open
    //   pushb
    //   bcopya
-   //   open
    tape.write(blBegin, bsMethod, message);
    if (withNewFrame) {
+      tape.write(bcOpen, 1);
       tape.write(bcPushB);
       tape.write(bcBCopyA);
-      tape.write(bcOpen, 2);
    }
    tape.newLabel();     // declare exit point
 }
@@ -95,15 +95,15 @@ void ByteCodeWriter :: declareGenericAction(CommandTape& tape, ref_t genericMess
 
    // method-begin:
    //   melse labEnd message
+   //   open
    //   pushb
    //   bcopya
-   //   open
 
    tape.write(blBegin, bsMethod, genericMessage);
    tape.write(bcMElse, baFirstLabel, message);
+   tape.write(bcOpen, 1);
    tape.write(bcPushB);
    tape.write(bcBCopyA);
-   tape.write(bcOpen, 2);
 }
 
 void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
@@ -112,9 +112,10 @@ void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
    tape.write(blDeclare, bsBranch);
 }
 
-void ByteCodeWriter :: exclude(CommandTape& tape)
+void ByteCodeWriter :: exclude(CommandTape& tape, int& level)
 {
    tape.write(bcExclude);
+   level += 2;
 }
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, const wchar_t* localName, int level)
@@ -173,8 +174,6 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
    // { pushn 0 } n
    for(int i = 0 ; i < count ; i++)
       tape.write(bcPushN, 0);
-
-   //tape.write(bcReserve, count);
 }
 
 void ByteCodeWriter :: declareVariable(CommandTape& tape, ref_t nilReference)
@@ -305,12 +304,12 @@ void ByteCodeWriter :: newSelf(CommandTape& tape)
 
 void ByteCodeWriter :: newFrame(CommandTape& tape)
 {
+   //   open 1
    //   pushb
    //   bcopya
-   //   open 2
+   tape.write(bcOpen, 1);
    tape.write(bcPushB);
    tape.write(bcBCopyA);
-   tape.write(bcOpen, 2);
 }
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
@@ -908,7 +907,7 @@ void ByteCodeWriter :: callBack(CommandTape& tape, int sign_id)
 
 void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
 {
-   // callextr ref, n
+   // callextr ref
    tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
 }
 
@@ -1021,22 +1020,18 @@ void ByteCodeWriter :: releaseSelf(CommandTape& tape)
 
 void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
 {
-   // exclude
+   // exclude code should follow open command
+   it++;
+
    // reserve
-   // include
 
-   it--;
-   it--;
-
-   tape.insert(it, ByteCommand(bcExclude));
    tape.insert(it, ByteCommand(bcReserve, size));
-   tape.insert(it, ByteCommand(bcInclude));
 }
 
 void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
 {
    while (*it != bcReserve)  {
-      it--;
+      it++;
    }
 
    (*it).argument += size;
@@ -1087,26 +1082,28 @@ bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
 
 void ByteCodeWriter :: commentFrame(ByteCodeIterator it)
 {
-   // make sure the frame is not used in the code
-   if (checkIfFrameUsed(it))
-      return;
+   // !! temporally commented
 
-   while (*it != blBegin || ((*it).argument != bsMethod))  {
-      // comment operations with stack
-      switch(*it) {
-         case bcOpen:
-         case bcClose:
-         case bdSelf:
-         case bdLocal:
-         case bdIntLocal:
-         case bdLongLocal:
-         case bdRealLocal:
-         case bdParamsLocal:
-            (*it).code = bcNop;
-      }
+   //// make sure the frame is not used in the code
+   //if (checkIfFrameUsed(it))
+   //   return;
 
-      it--;
-   }
+   //while (*it != blBegin || ((*it).argument != bsMethod))  {
+   //   // comment operations with stack
+   //   switch(*it) {
+   //      case bcOpen:
+   //      case bcClose:
+   //      case bdSelf:
+   //      case bdLocal:
+   //      case bdIntLocal:
+   //      case bdLongLocal:
+   //      case bdRealLocal:
+   //      case bdParamsLocal:
+   //         (*it).code = bcNop;
+   //   }
+
+   //   it--;
+   //}
 }
 
 //void ByteCodeWriter :: commentBase(ByteCodeIterator it)
@@ -1177,8 +1174,11 @@ void ByteCodeWriter :: endLoop(CommandTape& tape)
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
+void ByteCodeWriter :: endExternalBlock(CommandTape& tape, bool safeMode)
 {
+   if (safeMode)
+      tape.write(bcInclude);
+
    tape.write(bcSCopyF, bsBranch);
    tape.write(bcPopB);
 }
@@ -1186,21 +1186,20 @@ void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
 void ByteCodeWriter :: exitGenericAction(CommandTape& tape, int count, int reserved)
 {
    // labEnd:
-   //   close
-   //   popb
+   //   bloadfi 1
    //   restore reserved
+   //   close
    //   quitn n
    // labErr:
    //   throw
    // end
 
    tape.setLabel();
-   tape.write(bcClose);
-   tape.write(bcPopB);
-
+   tape.write(bcBLoadFI, 1);
    if (reserved > 0) {
-      tape.write(bcRestore, reserved);
+      tape.write(bcRestore, reserved + 2);
    }
+   tape.write(bcClose);
 
    if (count > 0) {
       tape.write(bcQuitN, count);
@@ -1221,20 +1220,19 @@ void ByteCodeWriter :: endGenericAction(CommandTape& tape, int count, int reserv
 void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bool withFrame)
 {
    // labExit:
-   //   close
-   //   popb
+   //   bloadfi 1
    //   restore reserved / nop
+   //   close
    //   quitn n / quit
    // end
 
    tape.setLabel();
    if (withFrame) {
+      tape.write(bcBLoadFI, 1);
+      if (reserved > 0) {
+         tape.write(bcRestore, 2 + reserved);
+      }
       tape.write(bcClose);
-      tape.write(bcPopB);
-   }
-
-   if (reserved > 0) {
-      tape.write(bcRestore, reserved);
    }
 
    if (count > 0) {
@@ -1564,7 +1562,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          int hibyte = *it & 0xFFFFFFF0;
          if (hibyte == 0) {
             if (*it == bcPushA || *it == bcPushB || *it == bcPushM)
-               hibyte = bcReserve;
+               hibyte = bcPushN;
             else if (*it == bcPop || *it == bcPopA || *it == bcPopM)
                hibyte = bcPopI;
          }
@@ -1574,8 +1572,8 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          if(*it == bcAllocStack) {
             stackLevel += (*it).argument;
          }
-         else if (hibyte == bcReserve) {
-            stackLevel += (*it == bcReserve) ? (*it).argument : 1;
+         else if (hibyte == bcPushN) {
+            stackLevel += /*(*it == bcPushN) ? (*it).argument : */1;
          }
          // if it is a pop command
          else if (hibyte == bcPopI || *it == bcFreeStack || *it == bcPopB) {

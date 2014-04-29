@@ -20,17 +20,17 @@ const char* _fnOpcodes[256] =
    "bsgredirect", "getlen", "bcopya", "ddec", "popb", "close", "unknown", "quit",
    "get", "set", "dinc", "mquit", "aloadd", "unhook", "exclude", "include",
 
-   "reserve", "pushn", "pushr", "pushbi", "pushai", "unknown", "pushfi", "unknown",
+   "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "unknown",
    "unknown", "msaveparams", "pushsi", "unknown", "unknown", "pushf", "unknown", "unknown",
 
    "popi", "popbi", "popfi", "xpopai", "popsi", "popai", "unknown", "unknown",
    "unknown", "quitn", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
-   "callextr", "evalr", "acallvi", "callr", "unknown", "unknown", "unknown", "mloadai",
+   "callextr", "evalr", "acallvi", "callr", "reserve", "unknown", "unknown", "mloadai",
    "mloadsi", "mloadfi", "msaveai", "msetverb", "mreset", "maddai", "mcopy", "madd",
 
    "dloadsi", "dsavesi", "dloadfi", "aloadr", "aloadfi", "aloadsi", "dcopy", "dloadai",
-   "unknown", "daddai", "dsubai", "daddsi", "dsubsi", "dsavefi", "unknown", "unknown",
+   "bloadfi", "daddai", "dsubai", "daddsi", "dsubsi", "dsavefi", "unknown", "unknown",
 
    "unknown", "asavebi", "unknown", "asavesi", "asavefi", "asaver", "unknown", "dsaveai",
    "unknown", "unknown", "unknown", "unknown", "swapsi", "aswapsi", "axcopyr", "iaxloadb",
@@ -38,7 +38,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "scopyf", "unknown", "unknown", "acopys", "unknown", "unknown",
    "acopyr", "unknown", "aloadai", "unknown", "acopyf", "unknown", "unknown", "unknown",
 
-   "unknown", "unknown", "reserved", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "unknown", "unknown", "restore", "unknown", "unknown", "unknown", "unknown", "unknown",
    "open", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",

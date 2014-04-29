@@ -50,8 +50,7 @@ enum ByteCode
    bcInclude        = 0x1F,
 
    // all 2x command are push ones
-   bcReserve        = 0x20,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
-   bcPushN          = 0x21,
+   bcPushN          = 0x20,
    bcPushR          = 0x22,
    bcPushBI         = 0x23,
    bcPushAI         = 0x24,
@@ -73,6 +72,7 @@ enum ByteCode
    bcEvalR          = 0x41,
    bcACallVI        = 0x42,
    bcCallR          = 0x43,
+   bcReserve        = 0x44,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
    bcMLoadAI        = 0x47,
    bcMLoadSI        = 0x48,
    bcMLoadFI        = 0x49,
@@ -91,6 +91,7 @@ enum ByteCode
    bcALoadSI        = 0x55,
    bcDCopy          = 0x56,
    bcDLoadAI        = 0x57,
+   bcBLoadFI        = 0x58,
    bcDAddAI         = 0x59,
    bcDSubAI         = 0x5A,
    bcDAddSI         = 0x5B,

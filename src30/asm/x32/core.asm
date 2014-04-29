@@ -36,7 +36,7 @@ define gc_mg_start           001Ch
 define gc_mg_current         0020h
 define gc_end                0024h
 define gc_promotion          0028h
-define gc_stack_frame        002Ch
+define gc_ext_stack_frame    002Ch
 define gc_mg_wbar            0030h
 define gc_stack_bottom       0034h
 
@@ -78,7 +78,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_mg_current         : +20h
   dd 0 // ; gc_end                : +24h
   dd 0 // ; gc_promotion          : +28h
-  dd 0 // ; gc_stack_frame        : +2Ch 
+  dd 0 // ; gc_ext_stack_frame    : +2Ch 
   dd 0 // ; gc_mg_wbar            : +30h
   dd 0 // ; gc_stack_bottom       : +34h
 
@@ -103,14 +103,13 @@ labYGCollect:
 
   // ; save registers
   push edi                             
+  push ebp
 
   // ; lock frame
-  mov  edx, [data : %CORE_GC_TABLE + gc_stack_frame]
-  mov  [edx], esp
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
 
   push ecx
   push ebx                        
-  push ebp
   
   // ; create set of roots
   mov  ebp, esp
@@ -125,16 +124,23 @@ labYGCollect:
   push ecx
 
   // ; collect frames
-  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
-  
+  mov  eax, [data : %CORE_GC_TABLE + gc_ext_stack_frame]  
+  mov  ecx, eax
+
 labYGNextFrame:
-  mov  eax, [esi+4]
-  mov  ecx, [esi]
-  sub  esi, ecx
-  push ecx
-  push esi
   mov  esi, eax
-  test esi, esi
+  mov  eax, [esi]
+  test eax, eax
+  jnz  short labYGNextFrame
+  
+  push ecx
+  sub  ecx, esi
+  neg  ecx
+  push ecx  
+  
+  mov  eax, [esi + 4]
+  test eax, eax
+  mov  ecx, eax
   jnz  short labYGNextFrame
 
   // ; check if major collection should be performed
@@ -203,9 +209,10 @@ labWBMark4:
   mov  ecx, [eax-elCountOffset]
   push ecx
   jmp  short labWBNext
-
+  
 labWBEnd:
-  push ebp                      // save the stack restore-point
+  // ; save the stack restore-point
+  push ebp
 
   // ; init registers
   mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
@@ -242,22 +249,23 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx+4]                           // ; restore object size  
+  mov  ebx, [ebx]                           // ; restore object size     // !! changed
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
 
   // ; check if it is enough place
   cmp  ebx, edx
+  pop  ebp                   // !! changed
   jae  short labFullCollect
 
   // ; free root set
-  mov  esp, [esp]
+  mov  esp, ebp              // !! changed
 
   // ; restore registers
-  pop  ebp
   pop  ebx
   pop  ecx
+  pop  ebp
   pop  edi
 
   // ; try to allocate once again
@@ -269,8 +277,9 @@ labCollectFrame:
   ret
 
 labFullCollect:
-  // ====== Major Collection ====
-  push ebp                      // ; save the stack restore-point
+  // ; ====== Major Collection ====
+  // ; save the stack restore-point
+  push ebp                                     
 
   // ; mark both yg and mg objects
   mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
@@ -431,9 +440,9 @@ labClearWBar:
 	
   // ; free root set
   mov  esp, [esp]
-  pop  ebp
   pop  ebx
   pop  ecx
+  pop  ebp
   pop  edi 
 
   // ; allocate
@@ -450,9 +459,9 @@ labClearWBar:
 labError:
   // ; restore stack
   mov  esp, [esp]
-  pop  ebp
   pop  ebx
   pop  ecx
+  pop  ebp
   pop  edi 
 
 labError2:
@@ -855,8 +864,8 @@ labFixResume:
 
 end
 
-// --- HOOK ---
-// in: ecx - catch offset
+// ; --- HOOK ---
+// ; in: ecx - catch offset
 procedure %HOOK
                           
   add  ecx, [esp]
@@ -1043,14 +1052,17 @@ procedure core'newframe
   pop  edx           
 
   xor  ebx, ebx
+
+  push ebp
   push ebx                      
   push ebx
 
   // ; set stack frame pointer / bottom stack pointer
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp 
+  mov  ebp, esp 
   mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp
   
   push edx
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ebx
 
   ret
 
@@ -1071,9 +1083,11 @@ end
 procedure core'default_handler
                                                        
   mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
-  mov  eax, 1                         // exit error code
+  // ; exit error code
+  mov  eax, 1                           
   push eax
-  call extern 'dlls'KERNEL32.ExitProcess     // exit  
+  // ; exit  
+  call extern 'dlls'KERNEL32.ExitProcess     
 
 end
 
@@ -1084,7 +1098,7 @@ procedure core'endframe
   
   xor  edx, edx
   lea  esp, [esp+8]
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
+  pop  ebp
 
   // ; restore return pointer
   push ecx   
@@ -1099,11 +1113,12 @@ procedure core'openframe
 
   xor  edi, edi
 
-  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
+  mov  esi, [data : %CORE_GC_TABLE + gc_ext_stack_frame]
   // ; save previous pointer / size field
-  push esi                              
+  push ebp
+  push esi                                
   push edi                              
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+  mov  ebp, esp
   
   // ; restore return pointer
   push ecx   
@@ -1115,10 +1130,9 @@ procedure core'closeframe
 
   // ; save return pointer
   pop  ecx  
-
+  
   lea  esp, [esp+4]
-  pop  edx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
+  pop  ebp
   
   // ; restore return pointer
   push ecx   

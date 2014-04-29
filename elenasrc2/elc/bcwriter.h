@@ -195,7 +195,7 @@ public:
    void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
    void declareGenericAction(CommandTape& tape, ref_t genericMessage, ref_t message);
-   void exclude(CommandTape& tape);
+   void exclude(CommandTape& tape, int& level);
    void declareExternalBlock(CommandTape& tape);
    void declareVariable(CommandTape& tape, ref_t nilReference);
 //   void declareVariable(CommandTape& tape);
@@ -297,7 +297,7 @@ public:
    void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
    void endLoop(CommandTape& tape);
-   void endExternalBlock(CommandTape& tape);
+   void endExternalBlock(CommandTape& tape, bool safeMode);
    void exitGenericAction(CommandTape& tape, int count, int reserved);
    void endGenericAction(CommandTape& tape, int count, int reserved);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);

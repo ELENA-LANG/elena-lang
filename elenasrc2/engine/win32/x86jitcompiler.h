@@ -145,7 +145,6 @@ protected:
    friend void compileAElseR(int opcode, x86JITScope& scope);
    friend void compileNext(int opcode, x86JITScope& scope);
    friend void compileAThenR(int opcode, x86JITScope& scope);
-   friend void compileReserve(int opcode, x86JITScope& scope);
    friend void compileElseN(int opcode, x86JITScope& scope);
    friend void compileThenN(int opcode, x86JITScope& scope);
    friend void compileElseSI(int opcode, x86JITScope& scope);
@@ -295,7 +294,6 @@ void compileNext(int opcode, x86JITScope& scope);
 void compileAThenR(int opcode, x86JITScope& scope);
 void compileElseN(int opcode, x86JITScope& scope);
 void compileThenN(int opcode, x86JITScope& scope);
-void compileReserve(int opcode, x86JITScope& scope);
 ////void compileMElseSubj(int opcode, x86JITScope& scope);
 ////void compileMThenSubj(int opcode, x86JITScope& scope);
 ////void compileAccInc(int opcode, x86JITScope& scope);

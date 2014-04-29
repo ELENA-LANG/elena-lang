@@ -48,7 +48,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 56;
+const int gcCommandNumber = 58;
 const int gcCommands[gcCommandNumber] =
 {   
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
@@ -63,7 +63,8 @@ const int gcCommands[gcCommandNumber] =
 /*   bcRCallN, */bcGet, bcSet, bcASwapSI, bcMSaveAI,
    bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcNBox,
    /*   bcMccReverse,*/ bcAXCopyR, bcWSTest, bcTest, bcBSTest,
-   bcBox, bcUnbox, bcBSGRedirect, bcIAXLoadB, bsMSetVerb
+   bcBox, bcUnbox, bcBSGRedirect, bcIAXLoadB, bsMSetVerb,
+   bcBLoadFI, bcReserve
 };
 
 // command table
@@ -75,17 +76,17 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileNop, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoadD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileReserve, &compilePush, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &compileNop,
+   &compilePush, &compileNop, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &compileNop,
    &compileNop, &loadFPOp, &compilePushS, &compileNop, &compileNop, &compilePushF, &compileNop, &compileNop,
 
    &compilePopN, &loadIndexOp, &compilePopFI, &loadIndexOp, &compilePopSI, &loadIndexOp, &compileNop, &compileNop,
    &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &compileNop, &compileNop, &compileNop, &loadIndexOp,
+   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &loadIndexOp, &compileNop, &compileNop, &loadIndexOp,
    &loadIndexOp, &loadFPOp, &loadIndexOp, &compileMOp, &compileMReset, &loadIndexOp, &compileMCopy, &compileMAdd,
 
    &loadIndexOp, &loadIndexOp, &loadFPOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileDCopy, &compileDLoadAI,
-   &compileNop, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
+   &loadFPOp, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
 
    &compileNop, &loadIndexOp, &compileNop, &loadIndexOp, &loadFPOp, &compileASaveR, &compileNop, &compileDSaveAI,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp, &loadROp, &loadIndexOp,
@@ -1458,18 +1459,6 @@ void _ELENA_::compileThenFlag(int opcode, x86JITScope& scope)
    scope.code->writeDWord(flag);
 
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-}
-
-void _ELENA_::compileReserve(int opcode, x86JITScope& scope)
-{
-   // sub esp, count
-   scope.code->writeWord(0xEC81);
-   scope.code->writeDWord(scope.argument << 2);
-
-   //for(int i = 0 ; i < scope.argument ; i++) {
-   //   // push 0
-   //   scope.code->writeWord(0x006A);
-   //}
 }
 
 ////void _ELENA_::compileAccInc(int opcode, x86JITScope& scope)

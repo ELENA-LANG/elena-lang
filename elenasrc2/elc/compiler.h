@@ -418,7 +418,7 @@ protected:
          reserved += size;
 
          // the offset should include frame header offset
-         return -4 - retVal;
+         return -2 - retVal;
       }
 
       void freeSpace()

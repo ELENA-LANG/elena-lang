@@ -77,8 +77,8 @@ ELENA byte codes (or ecodes)
  
  pushsi i                   - [sp+i] => [sp+1] ; sp++
 
- reserve i                  - sp += n; stack is reserved ; 
-                              NOTE: it is not cleared with zeros, could lead to bugs with GC
+ reserve i                  - exclude part of the stack from managed stack frame ;
+                              should follow "open" byte code
  
  swapsi   i                 - [sp+i] <=> [sp]
  
@@ -122,6 +122,8 @@ ELENA byte codes (or ecodes)
  aswapsi i                  - [sp+i] <=> acc
  
  bcopya                     - acc => self
+          
+ bloadfi i                  - [fp+i] => self
  
  daddai i                   - index += [acc:i]
  
@@ -396,7 +398,7 @@ ELENA byte codes (or ecodes)
 
  lload                       - long:[sp] >> long:acc
 
- loadclass                   - self.VMT >> acc
+ loadclass                   - self:VMT >> acc
 
  lsave                       - long:[sp] << long:acc
 

@@ -8,8 +8,11 @@
 ******************************************************************************
 ELENA:
 [+] new operator setAt (e.g. a@2 := b <=> a setAt:2:b)
+[+] new ecodes: bloadfi
 
 ELC:
+[*] output code : some refactoring, binary incompatible due to changes in method
+    calling code
 [!] project configuration modified to support multiply platforms
 [+] new platform: console_mt (early alpha)
 [-] private message implementation fixed

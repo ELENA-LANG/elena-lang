@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   2
+#define BUILD_VERSION   1
 
 using namespace _ELENA_;
 
@@ -563,13 +563,13 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       ////   command.append(_T("], "));
       ////   command.appendHex(argument2);
       ////   break;
-      //case bcIAccCopyR:
-      //   command.append(opcode);
-      //   command.append(_T(" acc["));
-      //   command.appendInt(argument);
-      //   command.append(_T("], "));
-      //   printReference(command, module, argument2);
-      //   break;
+      case bcIAXCopyR:
+         command.append(opcode);
+         command.append(_T(" acc["));
+         command.appendInt(argument);
+         command.append(_T("], "));
+         printReference(command, module, argument2);
+         break;
       //case bcIAccFillR:
       //   command.append(opcode);
       //   command.append(_T(' '));

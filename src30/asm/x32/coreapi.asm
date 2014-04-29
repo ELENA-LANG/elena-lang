@@ -17,9 +17,11 @@ procedure coreapi'console_entry
   mov  esi, [eax - 4]
   call [esi + 4]
 
-  mov  eax, 0                         // exit code
+  // ; exit code
+  mov  eax, 0                         
   push eax
-  call extern 'dlls'KERNEL32.ExitProcess     // exit
+  // ; exit
+  call extern 'dlls'KERNEL32.ExitProcess     
 
   ret
 
