@@ -19,25 +19,23 @@ v  - vm script
 ------                                 
 Currently:
 ------
+              arev - lib30 review
+
+                       * modify resend handlers                       
+
+                       * review all code base
+                       * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg )
+
               xdev - byte code optimization                                     
-                       * test pi
-                       * test ackerman
-                       * test anagram	
-                       * arithmeval
-                       * bullscows
-                       * calendar
-
                        * test tape sample
-
-                       * no need to save previous external reference, it should be done on frame openning
 
                        * modify GCX
 
                        * test mt sample
                        * test interpreter
+                       * test calendar
 
-                       * modify resend handlers                       
-
+                       
                        * recompile og
 
                        * idle jumps are not removed (see 2 add:3)
@@ -51,10 +49,6 @@ Currently:
 1.9.15 [2.5]
 --------
 week2:
-              arev - lib30 review
-                       * review all code base
-                       * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg )
-
               adev - lib30                                        
                        * DownCounter - should goes till 0 or 1 ? (if till 0, then modify once again brackets sample)
 
@@ -342,6 +336,11 @@ week1:
                        * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
                          $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
 
+                       * no need to save previous external reference, it should be done on frame openning
+
+                       * nested action / function should be reimplemented, Action / Function class should contain the reference to the 
+                         code ; what about non constant ones ?
+
                        * constant array
 
                        * make possible to send exception futher with ifFailed handler
@@ -397,8 +396,11 @@ week1:
                        * think over reflection implementtion for static linked executable
 
                        * should commands be multy-thread independent, e.g. all related code be located in core?
-
+                       
                        * write, append, ... operation direct implementation should be allowed only with $self or out parameter
+
+                       * it is better to implement != operator as primitive one (in operators module), so no need to predefine NOT subject,
+                         asm2binx should support subjects in that case
 
               xdev - message ids
                        * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?

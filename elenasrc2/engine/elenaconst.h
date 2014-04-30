@@ -456,6 +456,9 @@ namespace _ELENA_
    #define WHILE_SIGNATURE          "while&do"
    #define UNTIL_SIGNATURE          "until"
 
+   // predefined subjects
+   #define NOT_SUBJECT              "not"
+
    // primitive types
    #define REF_SUBJECT              "ref"
    #define INT_SUBJECT              "int"

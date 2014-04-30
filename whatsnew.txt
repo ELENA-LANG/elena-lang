@@ -12,7 +12,7 @@ ELENA:
 
 ELC:
 [*] output code : some refactoring, binary incompatible due to changes in method
-    calling code
+    calling code / stack frame structure
 [!] project configuration modified to support multiply platforms
 [+] new platform: console_mt (early alpha)
 [-] private message implementation fixed

@@ -328,6 +328,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
    arraySubject = mapSubject(ARRAY_SUBJECT);
    actionSubject = mapSubject(ACTION_SUBJECT);
 //   byteSubject = mapSubject(BYTE_SUBJECT);
+   notSubject = mapSubject(NOT_SUBJECT);
 
    whileSignRef = mapSubject(WHILE_SIGNATURE);
    untilSignRef = mapSubject(UNTIL_SIGNATURE);
@@ -2501,6 +2502,13 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          scope.tape->write(ByteCommand(bcFreeStack, 2));
       }
       else {
+         bool inverted = false;
+         // != operator is implemented through equal message
+         if (operator_id == NOTEQUAL_MESSAGE_ID) {
+            operator_id = EQUAL_MESSAGE_ID;
+            inverted = true;
+         }
+
          // if the left operand is a result of operation / symbol, use the normal routine
          if (object.kind == okRegister || object.kind == okSymbol) {
             _writer.loadObject(*scope.tape, operand);
@@ -2540,6 +2548,12 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          _writer.setMessage(*scope.tape, message_id);
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
          _writer.callMethod(*scope.tape, 0, 1);
+
+         if (inverted) {
+            _writer.setMessage(*scope.tape, encodeMessage(scope.moduleScope->notSubject, GET_MESSAGE_ID, 0));
+            _writer.pushObject(*scope.tape, ObjectInfo(okRegister));
+            _writer.callMethod(*scope.tape, 0, 0);
+         }
       }
    }
 

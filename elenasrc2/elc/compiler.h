@@ -119,6 +119,7 @@ protected:
       ref_t arraySubject;
 //      ref_t byteSubject;
       ref_t actionSubject;
+      ref_t notSubject;
 
       ref_t whileSignRef;
       ref_t untilSignRef;

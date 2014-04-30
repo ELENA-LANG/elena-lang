@@ -8,9 +8,6 @@
     #method equal : anObject
         <object_equal>.
 
-    #method notequal : anObject
-        = $self equal:anObject not.
-                        
     #method equal &object:anObject
         <object_equal>.
 
