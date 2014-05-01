@@ -20,6 +20,9 @@ v  - vm script
 Currently:
 ------
               arev - lib30 review
+                       * review: system'IntNumber
+
+                       * use control.runRange&int&int&int
 
                        * modify resend handlers                       
 
@@ -37,8 +40,6 @@ Currently:
 
                        
                        * recompile og
-
-                       * idle jumps are not removed (see 2 add:3)
 
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
 
@@ -333,6 +334,8 @@ week1:
                        * compile anagram with mt
 
               xdev - generic development                            
+                       * should int and index be synonym, no need to support both of them?
+
                        * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
                          $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
 
@@ -363,7 +366,7 @@ week1:
 
                        * widechar constant : special symbol or we could use literal constant with length=1
                        
-                       * Object implementation : instead of notequal - implement equal and invert the result ??
+                       * Object implementation : instead of notequal / notgreater / greater - implement equal, less, notless and invert the result?
                              
                        * group object implementation (group, union, cast)
                        
@@ -415,6 +418,9 @@ week1:
                        * we do not need to store the previous gc_ext_stack_frame, it should be done in open / close frame routine
 
               xdev - byte code optimization                               
+                       * optimize output code: system'true - nested classes should be sealed, so an operation to itself (or resend) should be
+                         resolved in compile-time
+
                        * optimize output code: system'object
                        
                        * redesign frame optimization: do we really need it, or better to use optimization rules

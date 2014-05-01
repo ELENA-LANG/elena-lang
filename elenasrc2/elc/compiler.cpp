@@ -3323,6 +3323,7 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
             break;
          case nsRetStatement:
          {
+            needVirtualEnd = false;
             compileRetExpression(statement.firstChild(), scope, 0);
             scope.freeSpace();
 

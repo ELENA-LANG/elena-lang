@@ -361,7 +361,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    {
       case bcPushF:
       case bcSCopyF:
-      //case bcAccCopyFPI:
+      case bcACopyF:
          command.append(opcode);
          command.append(_T(" fp:"));
          command.appendHex(argument);
@@ -513,6 +513,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.appendInt(argument);
       //   command.append(_T("]]"));
       //   break;
+      case bcBLoadFI:
       case bcPushFI:
       case bcALoadFI:
       //case bcPopFI:

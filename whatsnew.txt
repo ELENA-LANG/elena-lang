@@ -19,6 +19,7 @@ ELC:
 [*] ecode optimization: idle labels are removed
                                                   
 [LIB]
+[*] some code refactoring
 [+] system'threading: Thread, threadControl
 
 ******************************************************************************

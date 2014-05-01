@@ -6,7 +6,7 @@
     #method => <redirect>.
     
     #method equal : anObject
-        <object_equal>.
+        => &equal &object:anObject.
 
     #method equal &object:anObject
         <object_equal>.

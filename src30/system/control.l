@@ -18,9 +18,6 @@
 
     and &action:aBoolExpr = aBoolExpr eval bool.
 
-    and &int:anInt 
-        = 0 != anInt.
-                
     xor &bool:aBool = aBool ? [ false ] ! [ true ].
     
     xor &action:aBoolExpr = aBoolExpr eval ? [ false ] ! [ true ].
@@ -35,8 +32,6 @@
     not = false.
 
     literal = "true".
-    
-    int = -1.
 
     bool = $self.
 
@@ -64,9 +59,6 @@
     or &bool:aBool = aBool.
 
     or &action:aBool = aBool eval bool.
-        
-    or &int:anInt 
-        = 0 != anInt.
                 
     xor &bool:aBool = aBool ? [ true ] ! [ false ].
     
@@ -82,8 +74,6 @@
     not = true.
 
     literal = "false".
-
-    int = 0.
 
     bool = $self.
 
@@ -126,7 +116,7 @@
 
 #class(role) functionOp
 {    
-    #method run &for:anEnumerator
+    #method run &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -136,11 +126,12 @@
         ^ nil.        
     ]
     
-    #method run &for:anEnumerator &where:aConditionFunction
+    #method run &enumerator:anEnumerator &where:aConditionFunction
     [
+        #var anItem.
         #loop (anEnumerator next) ?
         [
-            #var anItem := anEnumerator get.
+            anItem := anEnumerator get.
             
             aConditionFunction eval:anItem
                 ? [ self eval:anItem. ].
@@ -149,61 +140,43 @@
         ^ nil.        
     ]
     
-    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
+    #method retrieve &enumerator:anEnumerator
     [
-        anIterator << aStart.
-        
-        #loop (anIterator <= anEndValue) ?
+        #var anItem.
+        #loop (anEnumerator next) ?
         [
-            self eval:anIterator.
+            anItem := anEnumerator get.
             
-            anIterator += aStep.
-        ].
+            self eval:anItem ?
+                [ #break anItem. ].
+        ].        
         
         ^ nil.        
     ]
-    
-    #method run &for:anIterator &from:aStart &till:anEndValue &by:aStep
+                                        
+    #method run &range &int:aStart &int:n &int:dx
     [
-        anIterator << aStart.
+        #var(type:int)i := aStart.
         
-        #loop (anIterator < anEndValue) ?
+        #loop(i <= n) ?
         [
-            self eval:anIterator.
+            self eval &int:i.
             
-            anIterator += aStep.
+            i := i + dx.
         ].
-        
-        ^ nil.        
-    ]
-    
-    #method reverse &for:anIterator &from:aStart &to:anEndValue &by:aStep
+    ]          
+                    
+    #method rewind &range &int:aStart &int:n &int:dx
     [
-        anIterator << anEndValue.
+        #var(type:int)i := aStart.
         
-        #loop (anIterator >= aStart) ?
+        #loop(i >= n) ?
         [
-            self eval:anIterator.
+            self eval &int:i.
             
-            anIterator -= aStep.
+            i := i - dx.
         ].
-        
-        ^ nil.
-    ]    
-    
-    #method reverse &for:anIterator &from:aStart &till:anEndValue &by:aStep
-    [
-        anIterator << anEndValue.
-        
-        #loop (anIterator > aStart) ?
-        [
-            anIterator -= aStep.
-            
-            self eval:anIterator.
-        ].
-        
-        ^ nil.
-    ]    
+    ]          
 }
 
 // --- control ---
@@ -222,31 +195,18 @@
         = anAction~actionOp run &if:anExpr | stop.
 
     foreach:anEnumerable &do:aFunction
-        = aFunction~functionOp run &for:(anEnumerable enumerator) | stop.
+        = aFunction~functionOp run &enumerator::anEnumerable | stop.
 
     foreach:anEnumerable &until:aFunction
-    [
-        #var anEnumerator := anEnumerable enumerator.
-        
-        ^ control while:[anEnumerator next] &do:
-            [
-                aFunction eval:(anEnumerator get) ?
-                    [ #break anEnumerator get. ].
-            ].
-    ]
+        = aFunction~functionOp retrieve &enumerator::anEnumerable.
     
-    for:anIterator &from:aStart &to:anEndValue &by:aStep &do:aFunction
-        = aFunction~functionOp run &for:anIterator &from:aStart &to:anEndValue &by:aStep | stop.
-
-    from:aStart &to:anEndValue &do:aFunction
-        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
-            
-    from:aStart &till:anEndValue &do:aFunction
-        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &till:anEndValue &by:1 | stop.
-            
-    for:anIterator &from:aStart &backTo:anEndValue &by:aStep &do:aFunction
-        = aFunction~functionOp reverse &for:anIterator &from:anEndValue &to:aStart &by:aStep | stop.
-            
-    from:aStart &backTo:anEndValue &do:aFunction
-        = aFunction~functionOp reverse &for:(system'Integer new) &from:anEndValue &to:aStart &by:1 | stop.
+    forrange &int:aStart &int:anEnd &do:aFunction
+        = aStart < anEnd
+            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:1 ]
+            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:1 ].
+    
+    forrange &int:aStart &int:anEnd &int:aStep &do:aFunction
+        = aStart < anEnd
+            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:aStep ]
+            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:aStep ].
 }.

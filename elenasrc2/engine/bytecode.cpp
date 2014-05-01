@@ -380,7 +380,7 @@ inline int getBlockEnd(CachedMemoryMap<int, int, 20>::Iterator it, int length)
    else return length;
 }
 
-inline void removeIdleJump(ByteCodeIterator it)
+inline bool removeIdleJump(ByteCodeIterator it)
 {
    while (true) {
       switch((ByteCode)*it) {
@@ -409,10 +409,11 @@ inline void removeIdleJump(ByteCodeIterator it)
          case bcMThenAI:
 //         case bcMccThenAccI:
             *it = bcNop;
-            return;
+            return true;
       }
       it--;
    }
+   return false;
 }
 
 inline bool optimizeProcJumps(ByteCodeIterator& it)
@@ -431,7 +432,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 
    // populate blocks and jump lists
    int index = 0;
-   while (*it != blEnd) {
+   while (*it != blEnd || ((*it).argument != bsMethod && (*it).argument != bsSymbol)) {
       // skip pseudo commands (except labels)
       ByteCode code = *it;
 
@@ -450,7 +451,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
          // fix forward jumps
          // if there is a idle jump it should be removed
          if (fixJumps((*it).argument, index, fixes, jumps)) {
-            removeIdleJump(it);
+            modified |= removeIdleJump(it);
             // mark its block as partial
             *blocks.getIt(index) = 1;
          }
@@ -558,6 +559,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
    CachedMemoryMap<int, ByteCodeIterator, 20>::Iterator i_it = idleLabels.start();
    while (!i_it.Eof()) {
       *(*i_it) = bcNop;
+      modified = true;
 
       i_it++;
    }
@@ -735,7 +737,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, IFFAILED_MESSAGE,   IFFAILED_MESSAGE_ID);
    addVerb(verbs, FIND_MESSAGE,       FIND_MESSAGE_ID);
    addVerb(verbs, SEEK_MESSAGE,       SEEK_MESSAGE_ID);
-   addVerb(verbs, REVERSE_MESSAGE,    REVERSE_MESSAGE_ID);
+   addVerb(verbs, REWIND_MESSAGE,     REWIND_MESSAGE_ID);
    addVerb(verbs, EXCHANGE_MESSAGE,   EXCHANGE_MESSAGE_ID);
    addVerb(verbs, INDEXOF_MESSAGE,    INDEXOF_MESSAGE_ID);
    addVerb(verbs, CLOSE_MESSAGE,      CLOSE_MESSAGE_ID);
@@ -753,6 +755,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, VALIDATE_MESSAGE,   VALIDATE_MESSAGE_ID);
    addVerb(verbs, INC_MESSAGE,        INC_MESSAGE_ID);
    addVerb(verbs, START_MESSAGE,      START_MESSAGE_ID);
+   addVerb(verbs, RETRIEVE_MESSAGE,   RETRIEVE_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

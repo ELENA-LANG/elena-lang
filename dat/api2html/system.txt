@@ -55,7 +55,6 @@ Variant
 #shortdescr=A common ancestor
 #method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.
 #method=equal,&object:object,bool;Returns true if the specified object instances are equal; otherwise, false.
-#method=notequal,object,bool;Returns false if the specified object is equal to the current object; otherwise, true.<br/>By default compares the object references.
 
 [nil]
 #title=Symbol nil
@@ -158,12 +157,10 @@ Variant
 #shortdescr=A control helper symbol
 #method=do,action;Executes the action
 #method=do,action&until:bool_expr;Executes the action until the condition is met
-#method=for,variable&from:value&backTo:value&by:value&do:function;Executes the function for every value in the specified range in the reverse order
-#method=for,variable&from:value&to:value&by:value&do:function;Executes the function for every value in the specified range
 #method=foreach,enumerable&do:function;Executes the function for every member of the enumerable object
 #method=foreach,enumerable&until:bool_function;Executes the function until the condition is true
-#method=from,value&till:value&do:function;Executes the function for every value in the specified range
-#method=from,value&to:value&do:function;Executes the function for every value in the specified range
+#method=forrange,&int:int&int:int&do:function;Executes the function for every value in the specified range
+#method=forrange,&int:int&int:int&&int:int&do:function;Executes the function for every value in the specified range
 #method=while,bool_expr;Checks the condition until it is true
 #method=while,bool_expr&do:action;Executes the action while the condition is true
 

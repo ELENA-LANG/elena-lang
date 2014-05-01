@@ -62,7 +62,7 @@ namespace _ELENA_
    #define FIND_MESSAGE_ID         0x0022
    #define SEEK_MESSAGE_ID         0x0023
    #define STOP_MESSAGE_ID         0x0024
-   #define REVERSE_MESSAGE_ID      0x0025
+   #define REWIND_MESSAGE_ID       0x0025
    #define EXCHANGE_MESSAGE_ID     0x0026
    #define INDEXOF_MESSAGE_ID      0x0027
    #define CLOSE_MESSAGE_ID        0x0028
@@ -81,6 +81,7 @@ namespace _ELENA_
    #define VALIDATE_MESSAGE_ID     0x0035
    #define INC_MESSAGE_ID          0x0036
    #define START_MESSAGE_ID        0x0037
+   #define RETRIEVE_MESSAGE_ID     0x0038
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -337,7 +338,7 @@ namespace _ELENA_
    #define IFFAILED_MESSAGE         "ifFailed"
    #define FIND_MESSAGE             "find"
    #define SEEK_MESSAGE             "seek"
-   #define REVERSE_MESSAGE          "reverse"
+   #define REWIND_MESSAGE           "rewind"
    #define EXCHANGE_MESSAGE         "exchange"
    #define INDEXOF_MESSAGE          "indexOf"
    #define CLOSE_MESSAGE            "close"
@@ -356,6 +357,7 @@ namespace _ELENA_
    #define VALIDATE_MESSAGE         "validate"
    #define INC_MESSAGE              "next"
    #define START_MESSAGE            "start"
+   #define RETRIEVE_MESSAGE         "retrieve"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="
