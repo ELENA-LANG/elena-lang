@@ -334,14 +334,14 @@
         theData << 0.
     ]
     
+    #constructor new : aValue
+        => &new::aValue.
+    
     #constructor new &short:aCode
     [
         theData << aCode.
     ]
 
-    #constructor new : aValue
-        => &new::aValue.
-    
     #constructor new &int:aCode
     [
         theData << aCode.
@@ -398,7 +398,7 @@
 
     #method reset
     [
-        theIndex write &type'int:-1.
+        theIndex write &int:-1.
     ]
 
     #method append &index:anIndex
@@ -653,6 +653,9 @@
         
     #method divideInto &int:anOperand
         => &divideInto &long:(LongNumber new &int:anOperand).
+    
+    #method write &variant:anOperand
+        => &write &long::anOperand.
 }
 
 // --- Real ---
@@ -700,6 +703,9 @@
     [
         theData << anOperand.
     ]
+    
+    #method write &variant:anOperand
+        => &write &real::anOperand.
     
     #method append &real:anOperand
     [
@@ -834,9 +840,6 @@
     #method equal : aValue
         => theValue.
             
-    #method notequal : aValue
-        => theValue.
-            
     #method => theValue.
 }
 
@@ -918,15 +921,15 @@
         
     #method add &array:anArray
     [
-        #var aLength1 := $self length.
-        #var aLength2 := anArray length.
+        #var(type:int)aLength1 := $self length.
+        #var(type:int)aLength2 := anArray length.
         
         #var aRetVal := Array new &length:(aLength1 + aLength2).
         
-        control from:0 &till:aLength1 &do: i
+        control forrange &int:0 &int:aLength1 &do: (&int:i)
             [ aRetVal setAt &index:i &object:(self getAt &index:i). ].
             
-        control from:0 &till:aLength2 &do: j
+        control forrange &int:0 &int:aLength2 &do: (&int:j)
             [ aRetVal setAt &index:(aLength1 + j) &object:(anArray getAt &index:j). ].
             
         ^ aRetVal.
@@ -951,9 +954,9 @@
 
 // --- convertor helpers ---
 
-#symbol intConvertor =
+#class(role) intConvertor
 {
-    convert &literal:aLiteral
+    #method convert &literal:aLiteral
     [
         #var(type:int)aRetVal.
         primitive convert &literal:aLiteral &out'int:aRetVal.
@@ -961,13 +964,13 @@
         ^ IntNumber new &int:aRetVal.
     ]
     
-    convert &int:anInt
+    #method convert &int:anInt
         = anInt.
-}.
+}
 
-#symbol longConvertor =
+#class(role) longConvertor
 {
-    convert &literal:aLiteral
+    #method convert &literal:aLiteral
     [
         #var(type:long)aRetVal.
         primitive convert &literal:aLiteral &out'long:aRetVal.
@@ -975,13 +978,13 @@
         ^ LongNumber new &long:aRetVal.        
     ]
     
-    convert &long:aLong
+    #method convert &long:aLong
         = aLong.
-}.
+}
 
-#symbol realConvertor =
+#class(role) realConvertor
 {
-    convert &literal:aLiteral
+    #method convert &literal:aLiteral
     [
         #var(type:real)aRetVal.
         primitive convert &literal:aLiteral &out'real:aRetVal.
@@ -989,36 +992,39 @@
         ^ RealNumber new &real:aRetVal.
     ]
     
-    convert &real:aReal
+    #method convert &real:aReal
         = aReal.
         
-    convert &int:anInt
+    #method convert &int:anInt
         = RealNumber new &int:anInt.
         
-    convert &long:aLong
+    #method convert &long:aLong
         = RealNumber new &long:aLong.
-}.
+}
 
-#symbol literalConvertor =
+#class(role) literalConvertor
 {
-    convert &int:aNumber
+    #method convert &int:aNumber
         = aNumber literal.
         
-    convert &int:aNumber &base:aRadix
+    #method convert &int:aNumber &base:aRadix
         = primitive toLiteral &int:aNumber &index::aRadix.
         
-    convert &long:aNumber
+    #method convert &long:aNumber &base:aRadix
+        = primitive toLiteral &long:aNumber &index::aRadix.
+        
+    #method convert &long:aNumber
         = aNumber literal.
         
-    convert &real:aNumber
+    #method convert &real:aNumber
         = aNumber literal.
         
-    convert &object:anObject
+    #method convert &object:anObject
         = anObject literal.
         
-    convert &literal:aLiteral
+    #method convert &literal:aLiteral
         = aLiteral.
-}.
+}
 
 // --- Variant ---
 
@@ -1031,6 +1037,8 @@
     #method real = realConvertor convert &literal:theValue.
     
     #method literal = theValue.
+    
+    #method <= &variant:$self.
 }
 
 // === Basic Factory symbols ==

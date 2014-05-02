@@ -2,12 +2,12 @@
 
 // === extensions ===
 
-// --- misc ---
-
-#class(role)misc
-{
-    #method back : anObject = anObject.
-}
+//// --- misc ---
+//
+//#class(role)misc
+//{
+//    #method back : anObject = anObject.
+//}
 
 // --- indexable ---
 
@@ -24,9 +24,9 @@
     
     #method exchange:anIndex1:anIndex2
     [
-        #var aTemp := self getAt &index::anIndex1.
+        #var aTemp := self @ anIndex1.
         
-        self setAt:anIndex1:(self getAt &index::anIndex2).
+        self setAt:anIndex1:(self @ anIndex2).
         self setAt:anIndex2:aTemp.
     ]
 
@@ -68,18 +68,7 @@
 #class(role)literalOp
 {
     #method indexOf &literal:aLiteral
-    [
-        #var(type:int)aRetVal := self indexOf &index:0 &literal:aLiteral.
-        
-        ^ IntNumber new &int:aRetVal.
-    ]
-    
-    #method indexOf &index:anIndex &char:aChar
-    [
-        #var(type:int)aRetVal := self indexOf &index:anIndex &literal::aChar.
-        
-        ^ IntNumber new &int:aRetVal.
-     ]
+        = self indexOf &index:0 &literal:aLiteral.
 
     #method Substring &index:anIndex
     [
@@ -235,7 +224,7 @@
     
     #method array
     [
-        #var aListIndexer := EnumerableIndexer new &enumerable:self.
+        #var aListIndexer := EnumerationIterator new &enumerable:self.
         
         ^ Array new &length::self ~indexable set &each:anIndex[ aListIndexer set &index:anIndex get ].
     ]
@@ -275,8 +264,8 @@
         
     sort : aList &with:aCondition
     [
-        #var aCurrent := EnumerableIndexer new &enumerable:aList.
-        #var aNext := EnumerableIndexer new &enumerable:aList.
+        #var aCurrent := EnumerationIterator new &enumerable:aList.
+        #var aNext := EnumerationIterator new &enumerable:aList.
 
         control while:[ aCurrent next ] &do:
         [
@@ -367,10 +356,6 @@
         
     contain : aSubS &in:anS
         = -1 != anS indexOf &index:0 &literal::aSubS.
-        
-    sort : aList
-    [
-    ]
 }.
 
 // === patterns ===
@@ -422,7 +407,7 @@
     
     #method for : aCounter
     [
-        $self~functionOp reverse &for:(Integer new) &from:1 &till:aCounter &by:1.
+        $self~functionOp rewind &range &int:aCounter &int:1 &int:1.
     ]
 }
 

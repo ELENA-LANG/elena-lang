@@ -198,7 +198,7 @@
         = aFunction~functionOp run &enumerator::anEnumerable | stop.
 
     foreach:anEnumerable &until:aFunction
-        = aFunction~functionOp retrieve &enumerator::anEnumerable.
+        = aFunction~functionOp retrieve &enumerator::anEnumerable | stop.
     
     forrange &int:aStart &int:anEnd &do:aFunction
         = aStart < anEnd

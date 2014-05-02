@@ -1,16 +1,10 @@
 #define system.
 #define system'routines.
 #define system'text.
-#define system'dynamic.
 
 // --- literalConvertorEx ---
 
-#static literalConvertorEx
-    = GroupExtension(extensions'literalConvertorExtension, literalConvertor).
-
-// --- literalConvertorExtension ---
-
-#class(role)literalConvertorExtension
+#class(role)literalConvertorEx : literalConvertor
 {
 //    #method convert &type'real:aReal &type'length:aLength
 //    [
@@ -55,12 +49,12 @@
 
 // --- convertControl ---
 
-#symbol radixDispatcher = 
+#symbol baseDispatcher = 
 {
-    eval &int:anInteger
+    int : n
         = %(int&base).
         
-    eval &type'long:aLong
+    long : aLong
         = %(long&base).
 }.
 
@@ -76,31 +70,11 @@
         = realConvertor convert::anObject.
                 
     toLiteral:anObject
-        = anObject literal | ifFailed:[ literalConvertorEx convert::anObject ].
-//        = anObject literal || ~misc back:(literalConvertorEx convert::anObject).
-        
-    toLiteral : anObject &base:anOrder
-        = literalConvertor~(radixDispatcher eval::anObject) convert:anObject:(anOrder int).
+        = literalConvertorEx convert::anObject.
 
-//    toLiteral:anObject &length:aLength &decimals:aDecimalLength
-//        = literalConvertor convert &type'real::anObject &type'length::aLength &type'length::aDecimalLength.
+    toLiteral : anObject &base:anOrder
+        = literalConvertorEx~(baseDispatcher eval::anObject) convert:anObject:anOrder.
 
     save : anObject &to:aTarget
-        = aTarget write:(anObject~(DispatchSubject new::aTarget) get).
-
-    saveVariant : anObject &to:aTarget
-        => &save:(Variant new:anObject) &to:aTarget.
+        = aTarget write:(Variant new:anObject).
 }.
-
-
-// --- value helpers ---
-
-#symbol realValue = (:x)
-[
-    realConvertor convert::x
-].
-
-#symbol intValue = (:x)
-[
-    intConvertor convert::x
-].

@@ -19,18 +19,15 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              arev - lib30 review
-                       * review: system'IntNumber
+              xdev - byte code optimization
+                       
+                       * test binary sample
+                       * test samples
 
-                       * use control.runRange&int&int&int
-
-                       * modify resend handlers                       
-
-                       * review all code base
-                       * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg )
-
-              xdev - byte code optimization                                     
+                       * test rosetta samples
                        * test tape sample
+
+                       * refactore consoleEx , should be left for compatibility
 
                        * modify GCX
 
@@ -47,7 +44,7 @@ Currently:
                        
 <=================> 
 
-1.9.15 [2.5]
+1.9.15 [9.5]
 --------
 week2:
               adev - lib30                                        
@@ -73,8 +70,20 @@ week2:
                          cases
 
               arev - lib30 review
-                       * review api30 : intNumber
+                       * review: system'routines'indexable
+                       * review samples
                        * review rosetta samples
+
+                       * maybe system'primitive should be splitted into several ones - e.g. intPrimitive, ...? so no need to mathPrimitive,
+                         should be included into realPrimitive
+
+                       * int and index subjects should be synonym ?? (side effect if int could be used instead of index for the operation with literals
+                         for example)
+                       * CharValue: short and char in some form are interdependant, maybe should be synonym as well?
+
+                       * mathOp : it is an extension, should be possible to wotk with int, long and real
+                       * intOp : it is an extension, should be possible to wotk with int and long
+
                        * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
                          is not safe , if for some reason the compiler optimization is turned off (replacing operation with the direct action) the code
                          will raise out of stack error
@@ -83,13 +92,21 @@ week2:
                        * system'primitive should be private symbol?
                        * it should be possible to use convertor for other types as well
                        * should clone be part of object protocol?                                                  
-                       * mathOp.mod - should be applied only for the integer numbers, may be it should not be part of the role. 
-                       * mathOp : is it possible to make it more generic, so it could work with integer number as well
                        * system'io'Handle maybe should be moved to system namespace
+                       * system'LiteralValue : probably getAt&index&out'short and indexOf&index&literal&out'int should be implemented
+                         in literalPrimitive like other operations?
+                       * system'Array : probably getAt&index&out'short  should be implemented
+                         in arrayPrimitive like other operations?
+                       * Real should support operation with long numbers
+                       * system'ByteArray : should support indexOf operation without out parameter, should the ones with out parameters
+                         be implemented in byteArrayPrimitive ?
+                       * use clone methods for basic objects
+                       * system'routines'indexable.deepClone - should use clone method for every array item
                                                 
               adev - lib30 optimization
+                       * review system'Object 
                        * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
-
+                       
                        * start to use stack allocated variables to optimize the code : console operation, ...
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
                        * system'io'MemoryStream - do not create a new integer after each operation
@@ -98,6 +115,9 @@ week2:
                        * TextBuffer : redesign delete operation, it should not create new literal classes
                        * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
                          modify the code, from reading bool values from stack to constant array
+                       * system'LiteralIterator - operation available and next should not creates a new object , try
+                         to use stack allocated object for the length operations
+                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes
 
               srev - console samples
                        * simplify goods (Record.get&Literal implementation)
@@ -334,6 +354,10 @@ week1:
                        * compile anagram with mt
 
               xdev - generic development                            
+                       * support #define(extension:inputOp)consoleEx=system'console. or #use ...
+
+                       * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg ) ??
+
                        * should int and index be synonym, no need to support both of them?
 
                        * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with

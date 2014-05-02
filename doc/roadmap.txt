@@ -34,6 +34,10 @@ Version 2.3.0
 -------------
 - linux version (console & windowsx)
 
+Version 2.3.0
+-------------
+- lib30 review -> lib31
+
 Version 2.x.x
 -------------
 - custom verb dispatching (through implicit adapter)??

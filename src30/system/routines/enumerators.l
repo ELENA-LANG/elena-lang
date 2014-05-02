@@ -1,8 +1,8 @@
 #define system.
 
-// --- EnumerableIndexer ---
+// --- EnumerationIterator ---
 
-#class EnumerableIndexer
+#class EnumerationIterator
 {
     #field theList.
     #field theEnumerator.
@@ -16,7 +16,9 @@
         theIndex:= Integer new &int:-1.
     ]
 
-    #method goTo &index:anIndex
+    #method index = theIndex number.
+    
+    #method set &index:anIndex
     [
         theIndex > anIndex ?
         [
@@ -31,13 +33,6 @@
             
             theIndex += 1.
         ].        
-    ]
-
-    #method index = theIndex number.
-    
-    #method set &index:anIndex
-    [
-        self goTo &index:anIndex.        
     ]
             
     #method get
@@ -57,33 +52,33 @@
         ^ theEnumerator next.
     ]
 }
-
-// --- TopEnumerator ---
-
-#class TopEnumerator
-{
-    #field theEnumerator.
-    #field theCounter.
-    #field theMaxValue.
-    
-    #constructor new : anEnumerable &max:aMaxValue
-    [
-        theEnumerator := anEnumerable enumerator.
-        theCounter := Integer new:aMaxValue.
-        theMaxValue := aMaxValue.
-    ]
-    
-    #method reset
-    [
-        $super reset.
-        
-        theCounter << theMaxValue.
-    ]
-    
-    #method next
-        = (theCounter > 0)
-            ? [ theCounter -= 1. ^ theEnumerator next. ]
-            ! [ false ].
-    
-    #method => theEnumerator.
-}
+//
+//// --- TopEnumerator ---
+//
+//#class TopEnumerator
+//{
+//    #field theEnumerator.
+//    #field theCounter.
+//    #field theMaxValue.
+//    
+//    #constructor new : anEnumerable &max:aMaxValue
+//    [
+//        theEnumerator := anEnumerable enumerator.
+//        theCounter := Integer new:aMaxValue.
+//        theMaxValue := aMaxValue.
+//    ]
+//    
+//    #method reset
+//    [
+//        $super reset.
+//        
+//        theCounter << theMaxValue.
+//    ]
+//    
+//    #method next
+//        = (theCounter > 0)
+//            ? [ theCounter -= 1. ^ theEnumerator next. ]
+//            ! [ false ].
+//    
+//    #method => theEnumerator.
+//}
