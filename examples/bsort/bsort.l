@@ -14,13 +14,13 @@
 
 #symbol sorting =
 {
-    sort:anArray &from:aStart &to:anEnd
+    sortRange:anArray &int:aStart &int:anEnd
     [
-        #var aCurrent := aStart.
+        #var(type:int) aCurrent := aStart.
         control while:[aCurrent * 2 < anEnd] &do:
         [
-            #var aMaxChild := nil.
-            #var aChild := (aCurrent * 2) + 1.
+            #var(type:int) aMaxChild.
+            #var(type:int) aChild := (aCurrent * 2) + 1.
 
             (aChild == anEnd)or:[(anArray@aChild) > (anArray@(aChild + 1))]
                 ? [ aMaxChild := aChild. ]  
@@ -28,7 +28,7 @@
 
             (anArray@aCurrent) < (anArray@aMaxChild)
                 ? [
-                    anArray~indexable exchange:aCurrent:aMaxChild.
+                    anArray~indexable exchange &int:aCurrent &int:aMaxChild.
 
                     aCurrent := aMaxChild.
                 ]
@@ -38,18 +38,18 @@
 
     sort : anArray
     [
-        #var aLastIndex := anArray length - 1.
+        #var(type:int) aLastIndex := anArray length - 1.
         
-        control from:(anArray length / 2) &backTo:0 &do: anIndex
+        control forrange &int:(anArray length / 2) &int:0 &do: (&int:anIndex)
         [
-            sorting sort:anArray &from:anIndex &to:aLastIndex
+            sorting sortRange:anArray &int:anIndex &int:aLastIndex
         ].
         
-        control from:aLastIndex &backTo:0 &do: anIndex
+        control forrange &int:aLastIndex &int:0 &do: (&int:anIndex)
         [
-            anArray~indexable exchange:anIndex:0.
+            anArray~indexable exchange &int:anIndex &int:0.
 
-            sorting sort:anArray &from:0 &to:(anIndex - 1).
+            sorting sortRange:anArray &int:0 &int:(anIndex - 1).
         ].
     ]
 }.

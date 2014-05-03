@@ -21,13 +21,11 @@ Currently:
 ------
               xdev - byte code optimization
                        
-                       * test binary sample
+                       * test bsort
                        * test samples
 
                        * test rosetta samples
                        * test tape sample
-
-                       * refactore consoleEx , should be left for compatibility
 
                        * modify GCX
 
@@ -39,9 +37,8 @@ Currently:
                        * recompile og
 
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
+                       * bsort: sorting sortRange:anArray &int:0 &int:(anIndex - 1)  - anIndex - 1 expression should be inline.
 
-                       * optimize output code: system'true
-                       
 <=================> 
 
 1.9.15 [9.5]
@@ -104,7 +101,7 @@ week2:
                        * system'routines'indexable.deepClone - should use clone method for every array item
                                                 
               adev - lib30 optimization
-                       * review system'Object 
+                       * optimize output code: system'Object 
                        * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
                        
                        * start to use stack allocated variables to optimize the code : console operation, ...

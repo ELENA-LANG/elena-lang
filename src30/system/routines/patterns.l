@@ -29,6 +29,14 @@
         self setAt:anIndex1:(self @ anIndex2).
         self setAt:anIndex2:aTemp.
     ]
+    
+    #method exchange &int:anIndex1 &int:anIndex2
+    [
+        #var aTemp := self @ anIndex1.
+        
+        self setAt &index:anIndex1 &object:(self @ anIndex2).
+        self setAt &index:anIndex2 &object:aTemp.
+    ]
 
     #method Subarray &index:anIndex &length:aLength
         = Array new &length:aLength ~indexable set &each: i [ self@(anIndex + i) ].

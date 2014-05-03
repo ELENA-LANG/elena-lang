@@ -3776,11 +3776,9 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
       }
       else first = false;
 
-      ObjectType type = otNone;
-      if (subject.symbol == tsReference) {
-         bool output = false;
-         type = scope.moduleScope->mapSubjectType(subject, output);
-      }
+      bool output = false;
+      ObjectType type = scope.moduleScope->mapSubjectType(subject, output);
+      
       signature.append(subject);
 
       // declare method parameter

@@ -7,10 +7,6 @@
 
 #class/*(role)*/XTester
 {
-    #field(type:int)theData.
-    
-    #method add &int:anOperand
-        = IntNumber new &int:(theData + anOperand).
 }
 
 #symbol XTest =
