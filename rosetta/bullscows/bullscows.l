@@ -31,7 +31,7 @@
         (aGuess length != 4)
             ? [ aBulls << -1. ]
             ! [
-                control from:0 &to:3 &do: i
+                control forrange &int:0 &int:3 &do: (&int:i)
                 [
                     #var ch := aGuess@i.
                     #var aNumber := convertor toInt:(ch literal).

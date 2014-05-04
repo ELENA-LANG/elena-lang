@@ -52,33 +52,33 @@
         ^ theEnumerator next.
     ]
 }
-//
-//// --- TopEnumerator ---
-//
-//#class TopEnumerator
-//{
-//    #field theEnumerator.
-//    #field theCounter.
-//    #field theMaxValue.
-//    
-//    #constructor new : anEnumerable &max:aMaxValue
-//    [
-//        theEnumerator := anEnumerable enumerator.
-//        theCounter := Integer new:aMaxValue.
-//        theMaxValue := aMaxValue.
-//    ]
-//    
-//    #method reset
-//    [
-//        $super reset.
-//        
-//        theCounter << theMaxValue.
-//    ]
-//    
-//    #method next
-//        = (theCounter > 0)
-//            ? [ theCounter -= 1. ^ theEnumerator next. ]
-//            ! [ false ].
-//    
-//    #method => theEnumerator.
-//}
+
+// --- TopEnumerator ---
+
+#class TopEnumerator
+{
+    #field theEnumerator.
+    #field theCounter.
+    #field theMaxValue.
+    
+    #constructor new : anEnumerable &max:aMaxValue
+    [
+        theEnumerator := anEnumerable enumerator.
+        theCounter := Integer new:aMaxValue.
+        theMaxValue := aMaxValue.
+    ]
+    
+    #method reset
+    [
+        $super reset.
+        
+        theCounter << theMaxValue.
+    ]
+    
+    #method next
+        = (theCounter > 0)
+            ? [ theCounter -= 1. ^ theEnumerator next. ]
+            ! [ false ].
+    
+    #method => theEnumerator.
+}

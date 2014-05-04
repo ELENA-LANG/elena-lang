@@ -20,24 +20,15 @@ v  - vm script
 Currently:
 ------
               xdev - byte code optimization
-                       
-                       * test bsort
-                       * test samples
-
-                       * test rosetta samples
                        * test tape sample
 
                        * modify GCX
-
                        * test mt sample
-                       * test interpreter
-                       * test calendar
 
-                       
+                       * test interpreter with grammar rules
+
                        * recompile og
-
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
-                       * bsort: sorting sortRange:anArray &int:0 &int:(anIndex - 1)  - anIndex - 1 expression should be inline.
+                       
 
 <=================> 
 
@@ -45,8 +36,6 @@ Currently:
 --------
 week2:
               adev - lib30                                        
-                       * DownCounter - should goes till 0 or 1 ? (if till 0, then modify once again brackets sample)
-
                        * classOp : test if object is class or subclass of
 
                        * test if object is nil
@@ -77,8 +66,7 @@ week2:
                        * int and index subjects should be synonym ?? (side effect if int could be used instead of index for the operation with literals
                          for example)
                        * CharValue: short and char in some form are interdependant, maybe should be synonym as well?
-
-                       * mathOp : it is an extension, should be possible to wotk with int, long and real
+                       
                        * intOp : it is an extension, should be possible to wotk with int and long
 
                        * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
@@ -101,6 +89,7 @@ week2:
                        * system'routines'indexable.deepClone - should use clone method for every array item
                                                 
               adev - lib30 optimization
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
                        * optimize output code: system'Object 
                        * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
                        

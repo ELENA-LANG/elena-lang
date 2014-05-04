@@ -4,6 +4,6 @@
 [
     #var anArray := (1, 2, 3).
 
-    control from:0 &till:(anArray length) &do: i
+    control forrange &int:0 &int:(anArray length - 1) &do: (&int:i)
         [ console write:"a[" write:i write:"]=" writeLine:(anArray@i) ].
 ].

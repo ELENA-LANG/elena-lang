@@ -8,12 +8,12 @@
     #var aLength := aLiteral length.
     #var aShuffled := literalControl toArray:aLiteral.
 
-    control from:0 &till:aLength &do: i
+    control forrange &int:0 &int:(aLength-1) &do: (&int:i)
     [
         #var aChar := aLiteral@i.
         (aChar == (aShuffled@i)) ?
         [
-            control from:0 &till:aLength &do: j
+            control forrange &int:0 &int:(aLength-1) &do: (&int:j)
             [
                 #var anAltChar := aShuffled@j.
                 (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
@@ -35,7 +35,7 @@
 [
     #var aScore := Integer new.
     
-    control from:0 &till:(anOriginal length) &do: i
+    control forrange &int:0 &int:(anOriginal length - 1) &do: (&int:i)
         [ (anOriginal @ i) == (aShuffled @ i) ? [ aScore += 1. ]. ].
     
     ^ aScore number.

@@ -1,6 +1,6 @@
 #define system.
-//#define system'routines.
-////#define system'text.
+#define system'routines.
+//#define system'text.
 
 // === roles ===
 
@@ -166,42 +166,42 @@
         ^ anObject.
     ]
         
-//    #method readLine : anObject1 : anObject2
-//    [
-//        #var aLine := self readLine.
-//        
-//        #var aParams := aLine ~literalOp split &char:(CharValue new &int:32).
-//        
-//        convertor save:(Variant new:(aParams@0)) &to:anObject1.
-//        convertor save:(Variant new:(aParams@1)) &to:anObject2.
-//    ]
-//        
-//    #method readLine : anObject1 : anObject2 : anObject3
-//    [ 
-//        #var aBuffer := String new.
-//        
-//        self readLine:aBuffer.
-//        
-//        #var aParams := aBuffer ~literalOp split &char:(CharValue new &int:32).
-//        
-//        convertor save:(Variant new:(aParams@0)) &to:anObject1.
-//        convertor save:(Variant new:(aParams@1)) &to:anObject2.
-//        convertor save:(Variant new:(aParams@2)) &to:anObject3.
-//    ]
-//        
-//    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
-//    [
-//        #var aBuffer := String new.
-//        
-//        self readLine:aBuffer.
-//        
-//        #var aParams := aBuffer ~literalOp split &char:(CharValue new &int:32).
-//        
-//        convertor save:(Variant new:(aParams@0)) &to:anObject1.
-//        convertor save:(Variant new:(aParams@1)) &to:anObject2.
-//        convertor save:(Variant new:(aParams@2)) &to:anObject3.
-//        convertor save:(Variant new:(aParams@3)) &to:anObject4.
-//    ]
+    #method readLine : anObject1 : anObject2
+    [
+        #var aLine := self readLine.
+        
+        #var aParams := aLine ~literalOp split &char:(CharValue new &int:32).
+        
+        convertor save:(aParams@0) &to:anObject1.
+        convertor save:(aParams@1) &to:anObject2.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3
+    [ 
+        #var aBuffer := String new.
+        
+        self readLine:aBuffer.
+        
+        #var aParams := aBuffer ~literalOp split &char:(CharValue new &int:32).
+        
+        convertor save:(aParams@0) &to:anObject1.
+        convertor save:(aParams@1) &to:anObject2.
+        convertor save:(aParams@2) &to:anObject3.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
+    [
+        #var aBuffer := String new.
+        
+        self readLine:aBuffer.
+        
+        #var aParams := aBuffer ~literalOp split &char:(CharValue new &int:32).
+        
+        convertor save:(aParams@0) &to:anObject1.
+        convertor save:(aParams@1) &to:anObject2.
+        convertor save:(aParams@2) &to:anObject3.
+        convertor save:(aParams@3) &to:anObject4.
+    ]
 }
 
 // === helper symbols ==
@@ -211,6 +211,6 @@
 #static consoleEx
     = ArrayExtension(RoleArray(inputOp, outputOp), console).
 
-//// --- printingLn ---
-//
-//#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+// --- printingLn ---
+
+#symbol printingLn = aLine [ 'program'output writeLine:aLine ].

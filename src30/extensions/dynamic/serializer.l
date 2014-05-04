@@ -17,7 +17,7 @@
         [       
             aResult << "{".
 
-            control from:0 &till:aCounter &do: i
+            control forrange &int:0 &int:(aCounter-1) &do: (&int:i)
             [
                 (0 == i) 
                     ? [ aResult << "," ].

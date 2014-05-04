@@ -4,7 +4,7 @@
 
 #symbol Program =
 [
-    console writeLine:"Привет Мир!!".
+    console writeLine:"Hello World - Привет Мир!!".
 
     // wait for any key
     console readChar.   

@@ -18,7 +18,7 @@
 #symbol program =
 [
     #var aNumbers := numbers:N.    
-    controlEx for:(Combinator new:(arrayControl new &length:M &each: i [ aNumbers ])) &do: aRow
+    control for:(Combinator new:(arrayControl new &length:M &each: i [ aNumbers ])) &do: aRow
     [
         consoleEx writeLine:aRow.
     ].

@@ -213,7 +213,7 @@
     [
         #var anEnumerator := self enumerator.
         
-        control from:0 &to:anIndex &do: n[ anEnumerator next ].
+        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
         
         ^ anEnumerator get.
     ]
@@ -222,7 +222,7 @@
     [
         #var anEnumerator := self enumerator.
         
-        control from:0 &to:anIndex &do: n[ anEnumerator next ].
+        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
         
         anEnumerator set:aValue.
     ]
@@ -409,6 +409,11 @@
     ]
     
     #method eval : aCounter
+    [
+        theFunction eval:aCounter.
+    ]
+    
+    #method eval &int:aCounter
     [
         theFunction eval:aCounter.
     ]

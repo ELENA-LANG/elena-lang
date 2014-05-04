@@ -12,7 +12,7 @@
 #class(role) EReader
 {
     #method(extension) loadNumber : aStream
-        =  convertor saveVariant:(aStream readLine) &to:self
+        =  convertor save:(aStream readLine) &to:self
             | onFormatError: e
                 [
                     console writeLine:(e Message) readChar.

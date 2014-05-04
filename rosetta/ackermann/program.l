@@ -24,9 +24,9 @@
 
 #symbol program =
 [
-    control from:0 &to:3 &do: i
+    control forrange &int:0 &int:3 &do: (&int:i)
     [
-        control from:0 &to:5 &do: j
+        control forrange &int:0 &int:5 &do: (&int:j)
         [
             console << "A(" << i << "," << j << ")=" << (ackermann:i:j).
             

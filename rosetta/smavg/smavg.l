@@ -40,15 +40,15 @@
     #var SMA3 := sma:3.
     #var SMA5 := sma:5.
 
-    control from:1 &to:5 &do: i
+    control forrange &int:1 &int:5 &do: (&int:i)
     [
-        consoleEx writeLine:"sma3 + " :i :" = ": (SMA3 + i number).
-        consoleEx writeLine:"sma5 + " :i :" = ": (SMA5 + i number).
+        consoleEx writeLine:"sma3 + " :i :" = ": (SMA3 + i).
+        consoleEx writeLine:"sma5 + " :i :" = ": (SMA5 + i).
     ].
 
-    control from:5 &backTo:1 &do: i
+    control forrange &int:5 &int:1 &do: (&int:i)
     [
-        consoleEx writeLine:"sma3 + " :i :" = ": (SMA3 + i number).
-        consoleEx writeLine:"sma5 + " :i :" = ": (SMA5 + i number).
+        consoleEx writeLine:"sma3 + " :i :" = ": (SMA3 + i).
+        consoleEx writeLine:"sma5 + " :i :" = ": (SMA5 + i).
     ].
 ].

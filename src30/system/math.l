@@ -5,7 +5,7 @@
     #method Exp
     [
         #var(type:real)aRetVal.
-        mathPrimitive Exp &real::self &out'real:aRetVal.
+        mathPrimitive Exp &real:(realConvertor convert::self) &out'real:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -13,7 +13,7 @@
     #method Ln
     [
         #var(type:real)aRetVal.
-        mathPrimitive Ln &real::self &out'real:aRetVal.
+        mathPrimitive Ln &real:(realConvertor convert::self) &out'real:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -21,7 +21,7 @@
     #method Rounded
     [
         #var(type:real)aRetVal.
-        mathPrimitive Round &real::self &out'real:aRetVal.
+        mathPrimitive Round &real:(realConvertor convert::self) &out'real:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -29,7 +29,7 @@
     #method Int
     [
         #var(type:real)aRetVal.
-        mathPrimitive Truncate &real::self &out'real:aRetVal.
+        mathPrimitive Truncate &real:(realConvertor convert::self) &out'real:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -37,18 +37,28 @@
     #method Frac
     [
         #var(type:real)aRetVal.
-        mathPrimitive Truncate &real::self &out'real:aRetVal.
+        mathPrimitive Truncate &real:(realConvertor convert::self) &out'real:aRetVal.
         
         ^ RealNumber new &real:(self real - aRetVal).
     ]
     
-    #method Abs
-    [
-        #var(type:real)aRetVal.
-        mathPrimitive Abs &real::self &out'real:aRetVal.
+    #method Abs =
+    { 
+        real : n 
+        [
+            #var(type:real)aRetVal.
+            mathPrimitive Abs &real:n &out'real:aRetVal.
+            
+            ^ RealNumber new &real:aRetVal.
+        ]
         
-        ^ RealNumber new &real:aRetVal.
-    ]
+        int : n
+            = n < 0 ? [ -1 * n ] ! [ n ].
+        
+        long : n
+            = n < 0l ? [ -1l * n ] ! [ n ].
+    } 
+    eval::self.
 
     #method mod : anOperand
         = self - (self / anOperand * anOperand).

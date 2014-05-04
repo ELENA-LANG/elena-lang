@@ -938,7 +938,7 @@ void Win32AppDebugController :: onVMBreakpoint()
       char signature[0x10];
       _debugger.Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE) + 1);
       if (strcmp(signature, ELENACLIENT_SIGNITURE) == 0) {
-         _vmHook = _debugger.Context()->readDWord(0x400000 + rdata + strlen(ELENACLIENT_SIGNITURE));
+         _vmHook = _debugger.Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE),4));
 
          // enable debug mode
          _debugger.Context()->writeDWord(_vmHook, -1);

@@ -59,7 +59,7 @@
 
 #symbol InterpreterTest =
 [
-//    console readChar.
+    //console readChar.
     
     #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
 

@@ -1131,7 +1131,7 @@ procedure core'closeframe
   // ; save return pointer
   pop  ecx  
   
-  lea  esp, [esp+4]
+  lea  esp, [esp+8]
   pop  ebp
   
   // ; restore return pointer

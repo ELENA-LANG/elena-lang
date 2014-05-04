@@ -9,12 +9,16 @@
 // --- RandomBrackets ---
 
 #symbol randomBrackets = (:aLength)
-[
-    #var aBrackets := arrayControl new &length:aLength &each: i[ CharValue new:91 ] + arrayControl new &length:aLength &each: i[ CharValue new:93 ].
+[   
+    ^ (0 == aLength)
+        ? [ emptyLiteralValue ]
+        ! [
+            #var aBrackets := arrayControl new &length:aLength &each: i[ CharValue new:91 ] + arrayControl new &length:aLength &each: i[ CharValue new:93 ].
     
-    randomControl randomize:(aLength * 2) &array:aBrackets.
+            randomControl randomize:(aLength * 2) &array:aBrackets.
     
-    ^ Summing new:(String new) foreach:aBrackets literal.
+            ^ Summing new:(String new) foreach:aBrackets literal.        
+        ].
 ].
 
 #symbol isBalanced = (:aLiteral)
@@ -30,7 +34,7 @@
 
 #symbol program =                                             
 [
-    control from:0 &till:10 &do: aLength
+    control forrange &int:0 &int:9 &do: (&int:aLength)
     [
         #var anStr := randomBrackets:aLength.
         #var balanced := isBalanced:anStr.

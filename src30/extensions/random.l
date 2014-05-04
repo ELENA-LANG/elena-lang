@@ -32,7 +32,7 @@
 {
     #method eval : aValue
     [
-        #var i := aValue.
+        #var i := aValue - 1.
         #var j := randomGenerator:aValue.
         
         arrayControl exchange:i &with:j &in:self.

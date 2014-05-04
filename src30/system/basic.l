@@ -926,10 +926,10 @@
         
         #var aRetVal := Array new &length:(aLength1 + aLength2).
         
-        control forrange &int:0 &int:aLength1 &do: (&int:i)
+        control forrange &int:0 &int:(aLength1-1) &do: (&int:i)
             [ aRetVal setAt &index:i &object:(self getAt &index:i). ].
             
-        control forrange &int:0 &int:aLength2 &do: (&int:j)
+        control forrange &int:0 &int:(aLength2-1) &do: (&int:j)
             [ aRetVal setAt &index:(aLength1 + j) &object:(anArray getAt &index:j). ].
             
         ^ aRetVal.

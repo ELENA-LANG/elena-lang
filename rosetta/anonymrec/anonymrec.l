@@ -12,7 +12,7 @@
 
 #symbol program =
 [
-    control from:-1 &to:10 &do: i
+    control forrange &int:-1 &int:10 &do: (&int:i)
     [
         console << "fib(" << i << ")=".
         

@@ -37,7 +37,7 @@
 #symbol textFileControl =
 {
     forEachLine:aPath &do:anAction
-        = anAction~functionOp run &for:(TextFileEnumerator new &path:aPath).
+        = anAction~functionOp run &enumerator:(TextFileEnumerator new &path:aPath).
 }.
 
 // --- enumControl ---
@@ -45,5 +45,5 @@
 #symbol enumControl =
 {
     forEachWord:aText &do:anAction
-        = anAction~functionOp run &for:(WordEnumerator new:(aText literal)).
+        = anAction~functionOp run &enumerator:(WordEnumerator new:(aText literal)).
 }.

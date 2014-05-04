@@ -9,7 +9,7 @@
 [
     #var aResult := Real new::1.
 
-    control from:1 &to:y &do: n [ aResult *= x ] .
+    control forrange &int:1 &int:y &do: (&int:n) [ aResult *= x ] .
 
     ^ aResult.    
 ].
@@ -22,7 +22,7 @@
 
     #var pi := Real new::0.
 
-    control from:0 &to:MAX &do: i
+    control forrange &int:0 &int:MAX &do: (&int:i)
     [
         pi += (Power eval:(-1):i / ((2*i)+1)*4).
     ].

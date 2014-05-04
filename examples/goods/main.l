@@ -52,7 +52,7 @@
             ! [
                 theBM find &literal:";".
                 
-                convertor saveVariant:(theBM Marked) &to:aVariable.
+                convertor save:(theBM Marked) &to:aVariable.
                 
                 theBM mark.
                 

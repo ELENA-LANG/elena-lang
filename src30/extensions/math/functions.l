@@ -1,22 +1,22 @@
-//#define system.
+#define system.
 //#define extensions.
-//
-//// --- Functions ---
-//
-//#symbol exp = (:x)
-//    [ (realValue:x)~mathOp Exp ].
-//
-//#symbol ln = (:x)
-//    [ (realValue:x)~mathOp Ln ].
-//    
-//#symbol power = (:x:y)
-//    [ exp:((ln:(realValue:x)) * y) ].
-//
-//#symbol round = (:x)
-//    [ (realValue:x)~mathOp Rounded ].
-//    
-//#symbol abs = (:x)
-//  [ (realValue:x)~mathOp Abs ].
-//
-//#symbol modulus = (:x:y)
-//    [ x - (x / y * y) ].
+
+// --- Functions ---
+
+#symbol exp = (:x)
+    [ x~mathOp Exp ].
+
+#symbol ln = (:x)
+    [ x~mathOp Ln ].
+    
+#symbol power = (:x:y)
+    [ exp:((ln:x) * y) ].
+
+#symbol round = (:x)
+    [ x~mathOp Rounded ].
+    
+#symbol abs = (:x)
+  [ x~mathOp Abs ].
+
+#symbol modulus = (:x:y)
+    [ x - (x / y * y) ].

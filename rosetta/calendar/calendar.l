@@ -111,7 +111,7 @@
             
             anOutput writeLine.
             
-            controlEx for:(ParallelEnumerator new:aRow) &do: aLine
+            control for:(ParallelEnumerator new:aRow) &do: aLine
             [
                 control foreach:aLine &do: aPrinter
                 [

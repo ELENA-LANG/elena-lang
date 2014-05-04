@@ -164,6 +164,8 @@
             
             i := i + dx.
         ].
+        
+        ^ nil.        
     ]          
                     
     #method rewind &range &int:aStart &int:n &int:dx
@@ -176,7 +178,23 @@
             
             i := i - dx.
         ].
+        
+        ^ nil.        
     ]          
+    
+    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
+    [
+        anIterator << aStart.
+        
+        #loop (anIterator <= anEndValue) ?
+        [
+            self eval:anIterator.
+            
+            anIterator += aStep.
+        ].
+        
+        ^ nil.        
+    ]    
 }
 
 // --- control ---
@@ -197,16 +215,22 @@
     foreach:anEnumerable &do:aFunction
         = aFunction~functionOp run &enumerator::anEnumerable | stop.
 
+    for:anEnumerator &do:aFunction
+        = aFunction~functionOp run &enumerator:anEnumerator | stop.
+
     foreach:anEnumerable &until:aFunction
         = aFunction~functionOp retrieve &enumerator::anEnumerable | stop.
     
     forrange &int:aStart &int:anEnd &do:aFunction
         = aStart < anEnd
-            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:1 ]
-            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:1 ].
+            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:1 | stop ]
+            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:1 | stop ].
     
     forrange &int:aStart &int:anEnd &int:aStep &do:aFunction
         = aStart < anEnd
-            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:aStep ]
-            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:aStep ].
+            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:aStep | stop ]
+            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:aStep | stop ].
+
+    from:aStart &to:anEndValue &do:aFunction
+        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
 }.
