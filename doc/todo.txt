@@ -20,9 +20,6 @@ v  - vm script
 Currently:
 ------
               xdev - byte code optimization
-                       * test tape sample
-
-                       * modify GCX
                        * test mt sample
 
                        * test interpreter with grammar rules
@@ -131,8 +128,6 @@ week2:
                        * write formatted string (with parameters)
                        
               adev - lib30                                                                  
-                       * convertor.saveVariant&to reimplement to support any possible "type" conversions
-
                        * extension : support several roles
                        * Struct : check if the income message is "get"
                        * win32 file i/o operations should raise an exception with an error code

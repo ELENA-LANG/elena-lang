@@ -148,7 +148,7 @@ procedure coreapi'start_thread
 
   call code : "$package'core'init_ex_tbl"
 
-  mov  eax, [esp+8]
+  mov  eax, [esp+0Ch]
 
   push  eax
   mov   edx, EXEC_MESSAGE_ID

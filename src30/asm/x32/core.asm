@@ -249,19 +249,19 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx]                           // ; restore object size     // !! changed
+  mov  ebx, [ebx]                           // ; restore object size
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
 
   // ; check if it is enough place
   cmp  ebx, edx
-  pop  ebp                   // !! changed
+  pop  ebp                   
   jae  short labFullCollect
 
   // ; free root set
-  mov  esp, ebp              // !! changed
-
+  mov  esp, ebp             
+  
   // ; restore registers
   pop  ebx
   pop  ecx
@@ -1131,7 +1131,9 @@ procedure core'closeframe
   // ; save return pointer
   pop  ecx  
   
-  lea  esp, [esp+8]
+  lea  esp, [esp+4]
+  pop  esi
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esi
   pop  ebp
   
   // ; restore return pointer

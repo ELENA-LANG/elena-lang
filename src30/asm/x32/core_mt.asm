@@ -130,17 +130,15 @@ labYGCollect:
   // ; GCXT: save registers
   push edi
   mov  eax, [edx+eax*4]
+  push ebp
 
   // ; GCXT: lock frame
   // ; get current thread event
   mov  esi, [eax + tls_sync_event]         
-  // ; get current frame
-  mov  edx, [eax + tls_stack_frame]
-  mov  [edx], esp
+  mov  [eax + tls_stack_frame], esp
 
   push ecx
   push ebx
-  push ebp
 
   // ; === GCXT: safe point ===
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
@@ -246,22 +244,30 @@ labSkipWait:
 labYGNextThread:  
   sub  ebx, 1
   mov  eax, data : %THREAD_TABLE
-  mov  [esp], ecx                  // !! do we need this?
+  
   // ; get tls entry address
   mov  esi, [eax+ebx*4]            
   // ; get the top frame pointer
-  mov  esi, [esi + tls_stack_frame]                  
-  
+  mov  eax, [esi + tls_stack_frame]
+  mov  ecx, eax
+
 labYGNextFrame:
-  mov  eax, [esi+4]
-  mov  ecx, [esi]
-  sub  esi, ecx
-  push ecx
-  push esi
   mov  esi, eax
-  test esi, esi
+  mov  eax, [esi]
+  test eax, eax
   jnz  short labYGNextFrame
   
+  push ecx
+  sub  ecx, esi
+  neg  ecx
+  push ecx  
+  
+  mov  eax, [esi + 4]
+  test eax, eax
+  mov  ecx, eax
+  jnz  short labYGNextFrame
+  nop
+  nop
   test ebx, ebx
   jnz  short labYGNextThread
   // ; == GCXT: end ==
@@ -371,20 +377,20 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx+4]                           // ; restore object size  
+  mov  ebx, [ebx]                           // ; restore object size  
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
 
   // ; check if it is enough place
   cmp  ebx, edx
+  pop  ebp
   jae  short labFullCollect
 
   // ; free root set
-  mov  esp, [esp]
+  mov  esp, ebp
 
   // ; restore registers
-  pop  ebp
   pop  ebx
 
   // ; try to allocate once again
@@ -405,6 +411,7 @@ labCollectFrame:
 
   mov  eax, edi
   pop  ecx
+  pop  ebp
   pop  edi  
 
   ret
@@ -602,9 +609,9 @@ labClearWBar:
 labError:
   // ; restore stack
   mov  esp, [esp]
-  pop  ebp
   pop  ebx
   pop  ecx
+  pop  ebp
   pop  edi 
 
 labError2:
@@ -1134,27 +1141,29 @@ procedure core'newframe
   // ; put frame end and move procedure returning address
   pop  edx           
 
-  // ; GCXT
+  // ; GCXT                                                               
   // ; get thread table entry from tls
   mov  ecx, [data : %CORE_TLS_INDEX]
   mov  esi, fs:[2Ch]
   mov  esi, [esi+ecx*4]
 
   xor  ebx, ebx
-  push ebx                      
+  push ebp
+  push ebx
   push ebx
 
   // ; GCXT
   // ; set stack frame pointer / bottom stack pointer
-  mov  [esi + tls_stack_frame], esp 
+  mov  ebp, esp 
   mov  [esi + tls_stack_bottom], esp
+  push edx
+  mov  [esi + tls_stack_frame], ebx
   
   // ; GCXT
   // ; set thread table length
   mov  ebx, 1
   mov  [data : %CORE_GC_TABLE + tt_ptr], ebx   
   
-  push edx
 
   ret
 
@@ -1194,19 +1203,12 @@ end
 
 procedure core'endframe
 
-  // ; GCXT: get thread table entry from tls
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  esi, fs:[2Ch]
-  mov  esi, [esi+ebx*4]
-
   // ; save return pointer
   pop  ecx  
   
   xor  edx, edx
   lea  esp, [esp+8]
-
-  // ; GCXT
-  mov  [esi + tls_stack_frame], edx
+  pop  ebp
 
   // ; restore return pointer
   push ecx   
@@ -1227,9 +1229,11 @@ procedure core'openframe
 
   // ; GCXT: get thread table entry from tls
   // ; save previous pointer / size field
-  push [esi + tls_stack_frame]
-  push edi                             
-  mov  [esi + tls_stack_frame], esp
+  mov  esi, [esi + tls_stack_frame]
+  push ebp
+  push esi                                
+  push edi                              
+  mov  ebp, esp
   
   // ; restore return pointer
   push ecx   
@@ -1250,8 +1254,9 @@ procedure core'closeframe
 
   // ; GCXT
   lea  esp, [esp+4]
-  pop  edx
-  mov  [esi + tls_stack_frame], edx
+  pop  esi
+  mov  [esi + tls_stack_frame], esi
+  pop  ebp
   
   // ; restore return pointer
   push ecx   
@@ -1321,11 +1326,13 @@ labSkipSave:
   pop  edx                             // ; put frame end and move procedure returning address
 
   xor  ebx, ebx
+  push ebp
   push ebx                      
   push ebx
 
   // ; set stack frame pointer  
-  mov  [esi + tls_stack_frame], esp 
+  mov  ebp, esp 
+  mov  [esi + tls_stack_frame], ebx
   mov  [esi + tls_stack_bottom], esp
 
   // ; restore return pointer

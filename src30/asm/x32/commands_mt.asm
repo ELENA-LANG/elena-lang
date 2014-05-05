@@ -67,15 +67,13 @@ inline % 1Dh
   mov  ebx, [ecx+ebx*4]
 
   mov  esp, [ebx + tls_catch_level]  
-  mov  edx, [ebx + tls_catch_frame]
+  mov  ebp, [ebx + tls_catch_frame]
   pop  ecx
-  mov  [ebx + tls_stack_frame], edx
   mov  [ebx + tls_catch_frame], ecx
   pop  ecx
   mov  [ebx + tls_catch_level], ecx
   pop  ecx
   mov  [ebx + tls_catch_addr], ecx
-  pop  ebp
 
 end
 
@@ -87,8 +85,9 @@ inline % 1Eh
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
   // ; lock managed stack frame
-  mov  ecx, [ebx + tls_stack_frame]
-  mov  [ecx], esp
+  push  [ebx + tls_stack_frame]
+  push ebp
+  mov  [ebx + tls_stack_frame], esp
 
 end
 
@@ -100,10 +99,11 @@ inline % 1Fh
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
   // ; save previous pointer 
-  push [ebx + tls_stack_frame]
+  mov  esp, [ebx + tls_stack_frame]
+  pop  ebp
+  pop  ecx
   // ; size field
-  push 0                                
-  mov  [ebx + tls_stack_frame], esp
+  mov  [ebx + tls_stack_frame], ecx
 
 end                                                                            
 
@@ -149,22 +149,6 @@ inline %61h
 
 end
 
-// ; restore
-
-inline % 82h
-
-  lea  esp, [esp+4]
-  pop  edx
-
-  // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
-  lea  esp, [esp + __arg1]
-  mov  [ebx + tls_stack_frame], edx
-
-end
-
 // ; hook label (ecx - offset)
 
 inline % 0A6h
@@ -177,12 +161,11 @@ inline % 0A6h
   call code : %HOOK
   push ebp
   push [ebx + tls_catch_addr]
-  mov  edx, [ebx + tls_catch_frame]
   push [ebx + tls_catch_frame]
   push [ebx + tls_catch_level]  
   mov  [ebx + tls_catch_addr], ecx
   mov  [ebx + tls_catch_level], esp
-  mov  [ebx + tls_catch_frame], edx
+  mov  [ebx + tls_catch_frame], ebp
 
 end
 
