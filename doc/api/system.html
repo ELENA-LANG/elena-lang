@@ -395,15 +395,6 @@ less : <A HREF="protocol.html#value">value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-notequal : <A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#bool">bool</A>
-</TD>
-<TD><CODE>Compares the values</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
 notgreater : <A HREF="protocol.html#value">value</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
@@ -566,15 +557,6 @@ multiplyBy : <A HREF="protocol.html#value">value</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Executes logical AND operation</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-notequal : <A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#bool">bool</A>
-</TD>
-<TD><CODE>Compares the value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -913,7 +895,7 @@ notless &int:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-notless &widechar:<A HREF="protocol.html#value">value</A>
+notless &char:<A HREF="protocol.html#char">char</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Compares the value with value</CODE>
@@ -1014,6 +996,15 @@ do  : <A HREF="protocol.html#action">action</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+for  : <A HREF="protocol.html#enumerator">enumerator</A>
+&do:<A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the function for every step of the enumerator</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 foreach  : <A HREF="protocol.html#enumerable">enumerable</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
@@ -1045,6 +1036,16 @@ forrange &int:<A HREF="protocol.html#int">int</A>
 forrange &int:<A HREF="protocol.html#int">int</A>
 &int:<A HREF="protocol.html#int">int</A>
 &int:<A HREF="protocol.html#int">int</A>
+&do:<A HREF="protocol.html#function">function</A>
+</TD>
+<TD><CODE>Executes the function for every value in the specified range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+from  : <A HREF="protocol.html#value">value</A>
+&to:<A HREF="protocol.html#value">value</A>
 &do:<A HREF="protocol.html#function">function</A>
 </TD>
 <TD><CODE>Executes the function for every value in the specified range</CODE>
@@ -1311,14 +1312,6 @@ equal &bool:<A HREF="protocol.html#bool">bool</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-int = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns numeric value.</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
 literal = <A HREF="protocol.html#literal">literal</A>
 </TD>
 <TD><CODE>Returns literal representation.</CODE>
@@ -1357,15 +1350,6 @@ or &bool:<A HREF="protocol.html#bool">bool</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Executes logical OR operation with a boolean value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-or &int:<A HREF="protocol.html#int">int</A>
- = <A HREF="protocol.html#bool">bool</A>
-</TD>
-<TD><CODE>Executes logical OR operation with a numeric value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -1494,31 +1478,27 @@ A function role
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-reverse &for:<A HREF="protocol.html#variable">variable</A>
-&from:<A HREF="protocol.html#value">value</A>
-&till:<A HREF="protocol.html#value">value</A>
-&by:<A HREF="protocol.html#value">value</A>
+retrieve &enumerator:<A HREF="protocol.html#enumerator">enumerator</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
+<TD><CODE>Executes the function for every value in the specified range until the function returns true</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-reverse &for:<A HREF="protocol.html#variable">variable</A>
-&from:<A HREF="protocol.html#value">value</A>
-&to:<A HREF="protocol.html#value">value</A>
-&by:<A HREF="protocol.html#value">value</A>
+rewind &range&int:<A HREF="protocol.html#int">int</A>
+&int:<A HREF="protocol.html#int">int</A>
+&int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
+<TD><CODE>Executes the function for every value in the specified integer range (starting value, ending value, -step)</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-run &for:<A HREF="protocol.html#enumerator">enumerator</A>
+run &enumerator:<A HREF="protocol.html#enumerator">enumerator</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
 <TD><CODE>Executes the function for every enumeration item</CODE>
@@ -1527,7 +1507,7 @@ run &for:<A HREF="protocol.html#enumerator">enumerator</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-run &for:<A HREF="protocol.html#enumerator">enumerator</A>
+run &enumerator:<A HREF="protocol.html#enumerator">enumerator</A>
 &where:<A HREF="protocol.html#bool_function">bool_function</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
@@ -1539,35 +1519,22 @@ run &for:<A HREF="protocol.html#enumerator">enumerator</A>
 <CODE>&nbsp;
 run &for:<A HREF="protocol.html#variable">variable</A>
 &from:<A HREF="protocol.html#value">value</A>
-&backTo:<A HREF="protocol.html#value">value</A>
-&by:<A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#object">object</A>
-</TD>
-<TD><CODE>Executes the function for every value in the specified range in the reverse order</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-run &for:<A HREF="protocol.html#variable">variable</A>
-&from:<A HREF="protocol.html#value">value</A>
-&till:<A HREF="protocol.html#value">value</A>
-&by:<A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#object">object</A>
-</TD>
-<TD><CODE>Executes the function for every value in the specified range</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-run &for:<A HREF="protocol.html#variable">variable</A>
-&from:<A HREF="protocol.html#value">value</A>
 &to:<A HREF="protocol.html#value">value</A>
 &by:<A HREF="protocol.html#value">value</A>
  = <A HREF="protocol.html#object">object</A>
 </TD>
-<TD><CODE>Executes the function for every value in the specified range</CODE>
+<TD><CODE>Executes the function for every value in the specified generic range</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+run &range&int:<A HREF="protocol.html#int">int</A>
+&int:<A HREF="protocol.html#int">int</A>
+&int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Executes the function for every value in the specified range (starting value, ending value, step)</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2236,6 +2203,16 @@ convert &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+convert &long:<A HREF="protocol.html#long">long</A>
+&base:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Converts the parameter to the literal value with the provided radix</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 convert &object:<A HREF="protocol.html#object">object</A>
  = <A HREF="protocol.html#literal">literal</A>
 </TD>
@@ -2249,61 +2226,6 @@ convert &real:<A HREF="protocol.html#real">real</A>
  = <A HREF="protocol.html#literal">literal</A>
 </TD>
 <TD><CODE>Converts the parameter to the literal value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert &int:<A HREF="protocol.html#int">int</A>
- = <A HREF="protocol.html#literal">literal</A>
-</TD>
-<TD><CODE>Converts the integer value to the literal value</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert &int:<A HREF="protocol.html#int">int</A>
-&base:<A HREF="protocol.html#int">int</A>
- = <A HREF="protocol.html#literal">literal</A>
-</TD>
-<TD><CODE>Converts the integer value to the literal value with the specified base</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert &literal:<A HREF="protocol.html#literal">literal</A>
- = <A HREF="protocol.html#real">real</A>
-</TD>
-<TD><CODE>Converts the literal value to the real number</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert &literal:<A HREF="protocol.html#literal">literal</A>
- = <A HREF="protocol.html#literal">literal</A>
-</TD>
-<TD><CODE>Returns the parameter</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert &long:<A HREF="protocol.html#long">long</A>
- = <A HREF="protocol.html#literal">literal</A>
-</TD>
-<TD><CODE>Converts the integer value to the literal one</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert &real:<A HREF="protocol.html#real">real</A>
- = <A HREF="protocol.html#literal">literal</A>
-</TD>
-<TD><CODE>Converts the real value to the literal one</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2848,6 +2770,14 @@ write &int:<A HREF="protocol.html#int">int</A>
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
 write &long:<A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Copies the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &variant:<A HREF="protocol.html#variant">variant</A>
 </TD>
 <TD><CODE>Copies the integer value</CODE>
 </TD>
@@ -3551,6 +3481,14 @@ write &int:<A HREF="protocol.html#int">int</A>
 <TD><CODE>Copies the integer value</CODE>
 </TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write &variant:<A HREF="protocol.html#variant">variant</A>
+</TD>
+<TD><CODE>Copies the real number value</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="realConvertor">
 <HR>
@@ -3725,7 +3663,25 @@ divide &real:<A HREF="protocol.html#real">real</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+equal &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 equal &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Compares the integer value</CODE>
@@ -4037,14 +3993,6 @@ equal &bool:<A HREF="protocol.html#bool">bool</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Determines whether the specified object is equal to the current object boolean value.</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-int = <A HREF="protocol.html#int">int</A>
-</TD>
-<TD><CODE>Returns numeric value.</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">

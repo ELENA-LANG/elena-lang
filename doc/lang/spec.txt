@@ -60,3 +60,71 @@ message name is eval&foreach&do(2).
 The generic message can have several parameters as well:
 
     consoleEx writeLine:”a+b=”: (a + b).
+
+
+Classes, Roles and Symbols
+
+ELENA is an object-oriented language, so to create a program we have to declare new classes.
+
+A class encapsulates data (fields) with code (methods) to access it. In most cases it is not possible
+to get a direct access to the class content (it makes sense for dynamic languages when in the most cases
+code is generic and can be applied for different "types"). Usually the fields refer to another classes and so on
+until we reach "primitive" ones which content are considered as raw data (e.g. numeric or literal values).
+
+To work with the class we have to create its instance with the help of the special methods - constructors. A constructor
+is used mostly to initialize the class fields. There are special type of classes which do not have fields and constructors
+and can be used directly (roles).
+
+Classes form the inheritance tree. There is the common super class - system'Object.
+ELENA does not support multiple inheritance, though it is possible to inherit the code using redirect handler 
+(so called "horizontal inheritance"). When the parent is not provided the class inherits directly system'Object 
+(the super class).
+
+#class BaseClass
+{
+  #field theField1.
+  #field theField2.
+  
+  #method field1 = theField1.
+
+  #method field2 = theField.
+
+}
+
+#class DerivedClass : BaseClass
+{
+  #constructor new &field1:aField2 &field2:aField2
+  [  
+     theField1 := aField1.
+     theField2 := aField2.
+  ]
+
+  #method add &field1:aField2 &field2:aField2
+     = MyClass new &Field1:(theField1 + aField1) &Field2:(theField2 + aField2).
+}
+
+To create a class instance we have to send a message (usually new) to its symbol (a class symbol is declared 
+implicitly for every class and can be used as a normal one)
+
+#var anObject := DerivedClass new &field1:1 &field2:1. // DerivedClass is a symbol
+
+Roles cannot have constructors and their symbols can be used directly
+
+#class(role)ClassHelper
+{
+   #method sumOf:anObject1:anObject2
+      = anObject1 add &field1::anObject2 &field2::anObject1.
+}
+
+...
+
+#var aSum := ClassHelper sumOf:anObject1:anObject2.
+
+In general the symbol is a named expression and can be used to declare initialized objects, constants, reusable expressions
+and so on.
+
+#symbol ZeroClass = DerivedClass new &field:0 &field:0.
+
+A static symbol is the class instance which state is preserved. There could be only one instance of static symbol.
+
+#static SingletonClass = DerivedClass new &field:0 &field:0.

@@ -150,17 +150,19 @@ Variant
 #method=less,&char:value,bool;Compares the value with value
 #method=literal,,literal;Returns the literal value
 #method=notless,&int:int,bool;Compares the value with numeric value
-#method=notless,&widechar:value,bool;Compares the value with value
+#method=notless,&char:char,bool;Compares the value with value
 
 [control]
 #title=Symbol control
 #shortdescr=A control helper symbol
 #method=do,action;Executes the action
 #method=do,action&until:bool_expr;Executes the action until the condition is met
+#method=for,enumerator&do:function;Executes the function for every step of the enumerator
 #method=foreach,enumerable&do:function;Executes the function for every member of the enumerable object
 #method=foreach,enumerable&until:bool_function;Executes the function until the condition is true
 #method=forrange,&int:int&int:int&do:function;Executes the function for every value in the specified range
 #method=forrange,&int:int&int:int&&int:int&do:function;Executes the function for every value in the specified range
+#method=from,value&to:value&do:function;Executes the function for every value in the specified range
 #method=while,bool_expr;Checks the condition until it is true
 #method=while,bool_expr&do:action;Executes the action while the condition is true
 
@@ -185,7 +187,6 @@ Variant
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
 #method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current boolean expression.
 #method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
-#method=int,,int;Returns numeric value.
 #method=literal,,literal;Returns literal representation.
 #method=not,,bool;Always returns false.
 #method=or,object,bool;Executes logical OR operation<br/>Always return true
@@ -206,13 +207,11 @@ Variant
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
 #method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current boolean expression.
 #method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
-#method=int,,int;Returns numeric value.
 #method=literal,,literal;Returns literal representation.
 #method=not,,bool;Always returns true.
 #method=or,object,bool;Executes logical OR operation
 #method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
 #method=or,&bool:bool,bool;Executes logical OR operation with a boolean value
-#method=or,&int:int,bool;Executes logical OR operation with a numeric value
 #method=then,action;Always returns nil.
 #method=then,action&else:action;Executes else-action;
 #method=xor,object,bool;Executes logical XOR operation
@@ -375,7 +374,9 @@ Variant
 #method=add,&real:real,real;Returns the sum of numbers
 #method=divide,&int:int,real;Returns the result of the division
 #method=divide,&real:real,real;Returns the result of division
+#method=equal,&int:int,bool;Compares the integer value
 #method=equal,&real:real,bool;Compares the integer value
+#method=less,&int:int,bool;Compares the integer value
 #method=less,&real:real,bool;Compares the integer value
 #method=literal,,literal;Returns the literal presentation
 #method=notless,&real:real,bool;Compares the integer value
@@ -393,7 +394,6 @@ Variant
 #method=equal,value,bool;Compares the values
 #method=greater,value,bool;Compares the values
 #method=less,value,bool;Compares the values
-#method=notequal,value,bool;Compares the values
 #method=notgreater,value,bool;Compares the values
 #method=notless,value,bool;Compares the values
 
@@ -464,6 +464,7 @@ Variant
 #method=convert,&int:int&base:int,literal;Converts the parameter to the literal value with the provided radix
 #method=convert,&literal:literal,literal;Returns the parameter
 #method=convert,&long:long,literal;Converts the parameter to the literal value
+#method=convert,&long:long&base:int,literal;Converts the parameter to the literal value with the provided radix
 #method=convert,&object:object,literal;Converts the parameter to the literal value
 #method=convert,&real:real,literal;Converts the parameter to the literal value
 
@@ -493,6 +494,7 @@ Variant
 #method=write,numeric_value;Copies the numeric value
 #method=write,&real:real;Copies the real number value
 #method=write,&int:int;Copies the integer value
+#method=write,&variant:variant;Copies the real number value
 
 [Long]
 #title=Class Long
@@ -520,6 +522,7 @@ Variant
 #method=write,numeric_value;Copies the integer value
 #method=write,&int:int;Copies the integer value
 #method=write,&long:long;Copies the integer value
+#method=write,&variant:variant;Copies the integer value
 
 [Boolean]
 #title=Class Boolean
@@ -532,7 +535,6 @@ Variant
 #method=equal,value,bool;Compares the value
 #method=invert,,;Inverts the boolean value
 #method=multiplyBy,value,bool;Executes logical AND operation
-#method=notequal,value,bool;Compares the value
 #method=value,,bool;Returns the boolean value
 #method=write,value,;Writes the value
 
@@ -562,13 +564,12 @@ Variant
 #shortdescr=A function role
 #parent=system.html#Object:system'Object
 #protocol=function
-#method=reverse,&for:variable&from:value&till:value&by:value,object;Executes the function for every value in the specified range in the reverse order
-#method=reverse,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified range in the reverse order
-#method=run,&for:enumerator,object;Executes the function for every enumeration item
-#method=run,&for:enumerator&where:bool_function,object;Executes the function for every enumeration item when the condition is true
-#method=run,&for:variable&from:value&backTo:value&by:value,object;Executes the function for every value in the specified range in the reverse order
-#method=run,&for:variable&from:value&till:value&by:value,object;Executes the function for every value in the specified range
-#method=run,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified range
+#method=retrieve,&enumerator:enumerator,object;Executes the function for every value in the specified range until the function returns true
+#method=rewind,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified integer range (starting value, ending value, -step)
+#method=run,&enumerator:enumerator,object;Executes the function for every enumeration item
+#method=run,&enumerator:enumerator&where:bool_function,object;Executes the function for every enumeration item when the condition is true
+#method=run,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified generic range
+#method=run,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting value, ending value, step)
 
 [ArrayIterator]
 #title=Class ArrayIterator
@@ -604,16 +605,6 @@ Variant
 #method=length,,int;Returns the array length
 #method=setAt,int,object;Sets the specified array member
 #method=setAt,&index:int,object;Sets the specified array member
-
-[literalConvertor]
-#title=Symbol literalConvertor
-#shortdescr=A literal convertor
-#method=convert,&int:int,literal;Converts the integer value to the literal value
-#method=convert,&int:int&base:int,literal;Converts the integer value to the literal value with the specified base
-#method=convert,&literal:literal,real;Converts the literal value to the real number
-#method=convert,&literal:literal,literal;Returns the parameter
-#method=convert,&long:long,literal;Converts the integer value to the literal one
-#method=convert,&real:real,literal;Converts the real value to the literal one
 
 [mathOp]
 #title=Class mathOp

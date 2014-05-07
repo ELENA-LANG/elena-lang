@@ -19,14 +19,9 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - byte code optimization
-                       * test mt sample
-
-                       * test interpreter with grammar rules
-
-                       * recompile og
+              sdev - api doc
+                       * refresh API : system(system'mathOp)
                        
-
 <=================> 
 
 1.9.15 [9.5]
@@ -36,12 +31,6 @@ week2:
                        * classOp : test if object is class or subclass of
 
                        * test if object is nil
-                       * test if number is zero
-                       * test if number is positive
-                       * test if number is greater than zero
-                       * test if number is negative
-                       * test if number is even
-                       * test if number is odd
                        * test if literal constant
                        * test if object is integer
                        * test if object is float
@@ -51,6 +40,8 @@ week2:
                        
                        * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
                          cases
+
+                       * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
 
               arev - lib30 review
                        * review: system'routines'indexable
@@ -203,17 +194,15 @@ week2:
                          and could be invoked by eval
                        * implement analog of linq
 
-              sdev - api doc
-                       * create API : system(exceptions.l)
-                       * it should be listed extensions per supported protocol
-                       * create API doc
-                       * change api faq
-                       * copy protocols to doc\protocols
-                       * support dispatch method
-                       * support redirect method
-
 week3:
+              sdev - elenasm
+                       * review
+
               sdev - prime project
+                       * vm console
+                       * interpreter
+                       * calculator
+                       
                        * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
                          for all neighbours)
                          
@@ -611,6 +600,15 @@ week2:
                          dynamically for external operation
                        * support GUI mode
                        * support GUI application
+
+              sdev - api doc
+                       * create API : system(exceptions.l)
+                       * it should be listed extensions per supported protocol
+                       * create API doc
+                       * change api faq
+                       * copy protocols to doc\protocols
+                       * support dispatch method
+                       * support redirect method
 
 1.9.17
 --------

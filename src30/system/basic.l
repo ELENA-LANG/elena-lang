@@ -294,6 +294,12 @@
     #method notless &real:anOperand
         = theData >= anOperand.
 
+    #method equal &int:anOperand
+        = $self equal &real:(RealNumber new &int:anOperand).
+
+    #method less &int:anOperand
+        = $self less &real:(RealNumber new &int:anOperand).
+
     #method add &real:anOperand
         = RealNumber new &real:(theData + anOperand).
 

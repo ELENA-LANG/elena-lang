@@ -21,6 +21,7 @@ ELC:
 [LIB]
 [*] some code refactoring
 [+] system'threading: Thread, threadControl
+[*] new functionality: system'intOp, system'mathOp
 
 ******************************************************************************
                     What's New in 1.9.14 (pre release)

@@ -60,14 +60,32 @@
     } 
     eval::self.
 
-    #method mod : anOperand
-        = self - (self / anOperand * anOperand).
+    #method isZero
+        = self == 0.
+        
+    #method isPositive
+        = self > 0.
+        
+    #method isNegative
+        = self < 0.
+        
+    #method isNonnegative
+        = self <= 0.
 }
 
 // --- intOp ---
 
 #class(role) intOp
 {
+    #method mod : anOperand
+        = self - (self / anOperand * anOperand).
+                
+    #method isOdd
+        = self~intOp mod:2 != 0.
+        
+    #method isEven
+        = self~intOp mod:2 == 0.
+        
     #method HiWord
     [
         #var(type:int)aWord. 
