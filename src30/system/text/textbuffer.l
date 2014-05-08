@@ -83,7 +83,7 @@
                 
                 theBuffer bytearray read &index:(anIndex * 2) &length:(aLength * 2) &bytearray:aLiteral.
                 
-                primitive refresh &literal:aLiteral.
+                literalPrimitiveOp refresh &literal:aLiteral.
                 
                 ^ aLiteral.        
             ].

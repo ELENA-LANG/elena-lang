@@ -39,5 +39,7 @@
 
 #symbol nil =
 {
+    clone = $self.
+    
     <= &nil:$self.
 }.

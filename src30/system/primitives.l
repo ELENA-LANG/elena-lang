@@ -9,25 +9,31 @@
         <api_free_index>.
 }.
 
-// --- primitive ---
+// --- primitive data helpers ---
 
-#symbol primitive =
+#symbol intPrimitiveOp =
 {
     shift &int:aValue &int:aShift &out'int:aRetVal
         <int_shift>.
         
+    invert &int:aValue &out'int:aRetVal
+        <int_not>.
+}.
+
+#symbol longPrimitiveOp =
+{
     shift &long:aValue &int:aShift &out'long:aRetVal
         <long_shift>.
         
-    invert &int:aValue &out'int:aRetVal
-        <int_not>.
-        
     invert &long:aValue &out'long:aRetVal
         <long_not>.
+}.
 
+#symbol literalPrimitiveOp =
+{
     toLiteral &int:aValue
         <ws_copyint>.
-         
+        
     toLiteral &int:aValue &index:aRadix
         <ws_copyint_radix>.
         
@@ -36,7 +42,7 @@
 
     toLiteral &long:aValue &index:aRadix
         <ws_copylong_radix>.
-                
+        
     toLiteral &bytearray:aValue &length:aLength
         <ws_copybuf>.
         
@@ -48,9 +54,6 @@
         
     concat &literal:s1 &literal:s2
         <ws_concat>.
-
-    readLength &array:anObject &out'int:aRetVal
-        <array_getlen>.
         
     convert &literal:aValue &out'int:aRetVal
         <n_copystr>.
@@ -72,7 +75,16 @@
         
     refresh &literal:anS
         <ws_refresh>.
-        
+}.
+
+#symbol primitiveOp =
+{
+    readLength &array:anObject &out'int:aRetVal
+        <array_getlen>.
+}.
+
+#symbol byteArrayPrimitiveOp =
+{
     write &bytearray:anArray &index:anIndex &short:aWord
         <bs_writeword>.
         

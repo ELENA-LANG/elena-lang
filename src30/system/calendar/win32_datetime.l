@@ -15,19 +15,19 @@
     
     #constructor new &short:aYear &short:aMonth &short:aDay &short:anHour &short:aMinute &short:aSecond &short:aMillisecond
     [
-        primitive write &bytearray:theData &index:0 &short:aYear.
-        primitive write &bytearray:theData &index:2 &short:aMonth.
-        primitive write &bytearray:theData &index:6 &short:aDay.
-        primitive write &bytearray:theData &index:8 &short:anHour.
-        primitive write &bytearray:theData &index:10 &short:aMinute.
-        primitive write &bytearray:theData &index:12 &short:aSecond.
-        primitive write &bytearray:theData &index:14 &short:aMillisecond.
+        byteArrayPrimitiveOp write &bytearray:theData &index:0 &short:aYear.
+        byteArrayPrimitiveOp write &bytearray:theData &index:2 &short:aMonth.
+        byteArrayPrimitiveOp write &bytearray:theData &index:6 &short:aDay.
+        byteArrayPrimitiveOp write &bytearray:theData &index:8 &short:anHour.
+        byteArrayPrimitiveOp write &bytearray:theData &index:10 &short:aMinute.
+        byteArrayPrimitiveOp write &bytearray:theData &index:12 &short:aSecond.
+        byteArrayPrimitiveOp write &bytearray:theData &index:14 &short:aMillisecond.
     ]
     
     #method read &short &index:anIndex
     [
         #var(type:short)aValue.
-        primitive read &bytearray:theData &index:anIndex &out'short:aValue.
+        byteArrayPrimitiveOp read &bytearray:theData &index:anIndex &out'short:aValue.
         
         ^ IntNumber new &int:aValue.
     ]

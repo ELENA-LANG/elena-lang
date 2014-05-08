@@ -68,7 +68,7 @@
 
     #method deepClone
         = Array new &length::self ~indexable set &each: i
-            [ (self @ i) ~indexable array ].
+            [ (self @ i) clone ].
 }
 
 // --- literalOp ---

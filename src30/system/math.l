@@ -89,7 +89,7 @@
     #method HiWord
     [
         #var(type:int)aWord. 
-        primitive read &bytearray:(self int) &index:2 &out'short:aWord.
+        byteArrayPrimitiveOp read &bytearray:(self int) &index:2 &out'short:aWord.
         
         ^ IntNumber new &int:aWord.
     ]
@@ -97,7 +97,7 @@
     #method LoWord
     [
         #var(type:int)aWord. 
-        primitive read &bytearray:(self int) &index:0 &out'short:aWord.
+        byteArrayPrimitiveOp read &bytearray:(self int) &index:0 &out'short:aWord.
         
         ^ IntNumber new &int:aWord.
     ]
@@ -105,7 +105,7 @@
     #method HiByte
     [
         #var(type:int)aWord. 
-        primitive read &bytearray:(self int) &index:1 &out'short:aWord.
+        byteArrayPrimitiveOp read &bytearray:(self int) &index:1 &out'short:aWord.
         
         ^ IntNumber new &int:(aWord ^& 0FFh).
     ]

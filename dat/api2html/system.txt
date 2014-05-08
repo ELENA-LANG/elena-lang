@@ -23,6 +23,7 @@ Integer
 IntBaseNumber
 intConvertor
 IntNumber
+intOp
 InvalidArgumentException
 literalConvertor
 LiteralIterator
@@ -75,6 +76,7 @@ Variant
 #method=add,object,literal;Concatinates the values
 #method=add,&char:value,literal;Concatinates the values
 #method=add,&literal:literal,literal;Concatinates the values
+#method=clone,,literal;Clones the value
 #method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
 #method=enumerator,,enumerator;Returns the object enumerator
 #method=equal,&char:value,bool;Compares the values
@@ -107,6 +109,7 @@ Variant
 #method=add,&long:long,long;Returns the sum of integers
 #method=add,&real:real,real;Returns the sum
 #method=and,&int:int,int;Returns the result of bitwise AND operation
+#method=clone,,int;Clones the value
 #method=divide,&int:int,int;Returns the result of integer division
 #method=divide,&long:long,long;Returns the result of integer division
 #method=divide,&real:real,real;Returns the result of division
@@ -142,6 +145,7 @@ Variant
 #constructor=new,&int:int,char;Creates the object with specified numeric value
 #constructor=new,&short:short,char;Creates the object with specified numeric value
 #method=char,,value;Returns itself
+#method=clone,,char;Clones the value
 #method=equal,&char:value,bool;Compares the value with value
 #method=equal,&int:int,bool;Compares the value with numeric value
 #method=equal,&literal:literal,bool;Compares the value with value
@@ -276,6 +280,7 @@ Variant
 #method=append,value,;Appends the value
 #method=append,&literal:literal,;Appends the value
 #method=clear,,;Clears the variable value
+#method=clone,,object;Clones the object
 #method=delete,&index:int&length:int,;Deletes a sub string
 #method=insert,&index:int&literal:literal,;Inserts a sub string
 #method=write,value,;Writes the value
@@ -336,6 +341,7 @@ Variant
 #method=add,&long:long,long;Returns the sum of integers
 #method=add,&real:real,real;Returns the sum
 #method=and,&long:long,long;Returns the result of bitwise AND operation
+#method=clone,,long;Clones the value
 #method=divide,&int:int,long;Returns the result of integer division
 #method=divide,&long:long,long;Returns the result of integer division
 #method=divide,&real:real,real;Returns the result of division
@@ -372,6 +378,7 @@ Variant
 #constructor=new,&real:real,real;Creates the object with specified value
 #method=add,&int:int,real;Returns the sum of numbers
 #method=add,&real:real,real;Returns the sum of numbers
+#method=clone,,real;Clones the value
 #method=divide,&int:int,real;Returns the result of the division
 #method=divide,&real:real,real;Returns the result of division
 #method=equal,&int:int,bool;Compares the integer value
@@ -532,6 +539,7 @@ Variant
 #protocol=variable
 #constructor=new,value,variable;Creates a boolean variable with specified value
 #method=append,value,bool;Executes logical OR operation
+#method=clone,,object;Clones the object
 #method=equal,value,bool;Compares the value
 #method=invert,,;Inverts the boolean value
 #method=multiplyBy,value,bool;Executes logical AND operation
@@ -599,6 +607,7 @@ Variant
 #method=add,array,array;Concatinates the arrays
 #method=add,&array:array,array;Concatinates the arrays
 #method=array,,array;Returns itself
+#method=clone,,array;Clones the array
 #method=enumerator,,enumerator;Returns the array enumerator
 #method=getAt,int,object;Returns the specified array member
 #method=getAt,&index:int,object;Returns the specified array member
@@ -608,15 +617,30 @@ Variant
 
 [mathOp]
 #title=Class mathOp
-#shortdescr=A Real number mathematical operation extension
+#shortdescr=A mathematical operation extension
 #parent=system.html#Object:system'Object
-#method=Abs,,real;Returns the absolute value of the object
-#method=Exp,,real;Returns the exponent of the object
-#method=Frac,,real;Returns the fractional part
+#method=Abs,,real;Returns the absolute value of the number
+#method=Exp,,real;Returns the exponent of the number
+#method=Frac,,real;Returns the fractional part of the number
 #method=Int,,real;Returns the integer part
-#method=Ln,,real;Returns the natural logarithm of the object
-#method=mod,real,real;Returns the remained of the division
-#method=Rounded,,real;Rounds the object
+#method=isNegative,,bool;Determines if the numer is negative
+#method=isNonnegative,,bool;Determines if the numer is greater or equal to zero
+#method=isPositive,,bool;Determines if the numer is positive
+#method=isZero,,bool;Determines if the number is zero
+#method=Ln,,real;Returns the natural logarithm of the number
+#method=Rounded,,real;Rounds the number to the closest integer value
+
+[intOp]
+#title=Class intOp
+#shortdescr=An integer number extension
+#parent=system.html#Object:system'Object
+#method=HiByte,,int;Returns the high byte
+#method=HiWord,,int;Returns the high word
+#method=isEven,,bool;Determines if the integer number is even
+#method=isOdd,,bool;Determines if the integer number is odd
+#method=LoByte,,int;Returns the low byte
+#method=LoWord,,int;Returns the low word
+#method=mod,value,value;Returns the remained of the division
 
 [ByteArray]
 #title=Class ByteArray
@@ -626,8 +650,9 @@ Variant
 #constructor=new,&length:int,bytearray;Creates the byte array with the specified length
 #method=bytearray,,bytearray;Returns itself
 #method=indexOf,&index:int&length:int&byte:byte&out'int:int;Returns the index of the first occurence of the specified byte starting from the index.<br/>If the substring is not found. returns -1
-#method=indexOf,&index:int&length:int&ahort:short&out'int:int;Returns the index of the first occurence of the specified word starting from the index.<br/>If the substring is not found. returns -1
+#method=indexOf,&index:int&length:int&short:short&out'int:int;Returns the index of the first occurence of the specified word starting from the index.<br/>If the substring is not found. returns -1
 #method=length,,int;Returns the byte array length
 #method=read,&index:int&length:int&bytearray:bytearray;Copies a sub array to the provided one at the specified position
 #method=write,&index:int&length:int&bytearray:bytearray;Copies the byte array at the specified position
 #method=write,&index:int&literal:literal;Copies the literal value at the specified position
+

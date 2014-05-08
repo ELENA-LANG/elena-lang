@@ -131,22 +131,24 @@
     #method shift : anOrder
     [
         #var(type:int)retVal.
-        primitive shift &int:$self &int::anOrder &out'int:retVal.
+        intPrimitiveOp shift &int:$self &int::anOrder &out'int:retVal.
         
         ^ IntNumber new &int:retVal.
     ]
 
-    #method literal = primitive toLiteral &int:$self.
+    #method literal = literalPrimitiveOp toLiteral &int:$self.
 
     #method negative = 0 - $self.
 
     #method not
     [
         #var(type:int)retVal.
-        primitive invert &int:$self &out'int:retVal.
+        intPrimitiveOp invert &int:$self &out'int:retVal.
         
         ^ IntNumber new &int:retVal.
     ]
+
+    #method clone = IntNumber new &int:$self.
 
     #method <= &int:$self.
 }
@@ -237,22 +239,24 @@
     #method shift : anOrder
     [
         #var(type:long)aRetVal.
-        primitive shift &long:$self &int::anOrder &out'long:aRetVal.
+        longPrimitiveOp shift &long:$self &int::anOrder &out'long:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
     ]
 
-    #method literal = primitive toLiteral &long:$self.
+    #method literal = literalPrimitiveOp toLiteral &long:$self.
 
     #method negative = 0l - $self.
 
     #method not
     [
         #var(type:long)retVal.
-        primitive invert &long:$self &out'long:retVal.
+        longPrimitiveOp invert &long:$self &out'long:retVal.
         
         ^ LongNumber new &type'long:retVal.
     ]
+
+    #method clone = LongNumber new &long:$self.
             
     #method <= &long:$self.
 }
@@ -324,7 +328,9 @@
     #method divide &int:anOperand
         = $self divide &real:(RealNumber new &int:anOperand).
 
-    #method literal = primitive toLiteral &real:$self.
+    #method literal = literalPrimitiveOp toLiteral &real:$self.
+
+    #method clone = RealNumber new &real:$self.
     
     #method <= &real:$self.
 }
@@ -379,6 +385,8 @@
     #method int = IntNumber new &int:theData.
 
     #method literal = system'LiteralValue new &length:1 &char:$self.
+    
+    #method clone = CharValue new &short:$self.
 
     #method <= &char:$self.
 }
@@ -472,10 +480,10 @@
         = $self add::aLiteral.
 
     #method add &literal : aLiteral
-        = primitive concat &literal:$self &literal:aLiteral.
+        = literalPrimitiveOp concat &literal:$self &literal:aLiteral.
 
     #method add &char : aChar
-        = primitive concat &literal:$self &literal::aChar.
+        = literalPrimitiveOp concat &literal:$self &literal::aChar.
 
     #method getAt : aParam
     [
@@ -503,13 +511,13 @@
         => &indexOf &index:anIndex &literal::aChar.
     
     #method insert &index:anIndex &literal:aLiteral
-        = primitive insert &literal:$self &index:anIndex &literal:aLiteral.
+        = literalPrimitiveOp insert &literal:$self &index:anIndex &literal:aLiteral.
 
     #method delete &index:anIndex &length:aLength
-        = primitive delete &literal:$self &index:anIndex &length:aLength.
+        = literalPrimitiveOp delete &literal:$self &index:anIndex &length:aLength.
 
     #method Substring &index:anIndex &length:aLength
-        = primitive Substring &literal:$self &index:anIndex &length:aLength.
+        = literalPrimitiveOp Substring &literal:$self &index:anIndex &length:aLength.
 
     #method length
     [
@@ -519,6 +527,8 @@
     ]
 
     #method enumerator = LiteralIterator new &literal:$self.
+    
+    #method clone = LiteralValue new &literal:$self.
 
     #method <= &literal:$self.
 }
@@ -585,6 +595,8 @@
     [
         theData /= anOperand.
     ]
+    
+    #method clone = Integer new &int:$self.
 }
 
 // --- Long ---
@@ -662,6 +674,8 @@
     
     #method write &variant:anOperand
         => &write &long::anOperand.
+    
+    #method clone = Long new &long:$self.
 }
 
 // --- Real ---
@@ -752,6 +766,8 @@
     [
         theData /= anOperand.
     ]
+    
+    #method clone = Real new &real:$self.
 }
 
 // --- String ---
@@ -804,6 +820,8 @@
     [
         theValue := emptyLiteralValue.
     ]
+    
+    #method clone = String new:theValue.
             
     #method <= &literal:theValue.
     
@@ -845,6 +863,8 @@
 
     #method equal : aValue
         => theValue.
+            
+    #method clone = Boolean new:($self value).            
             
     #method => theValue.
 }
@@ -946,12 +966,24 @@
     #method length 
     [
         #var(type:int)aLen.
-        primitive readLength &array:$self &out'int:aLen.
+        primitiveOp readLength &array:$self &out'int:aLen.
         
         ^ aLen.
     ]
 
     #method enumerator = ArrayIterator new &array:$self.
+
+    #method clone 
+    [
+        #var(type:int)aLength := $self length.
+        
+        #var aRetVal := Array new &length:aLength.
+        
+        control forrange &int:0 &int:(aLength-1) &do: (&int:i)
+            [ aRetVal setAt &index:i &object:(self getAt &index:i). ].        
+            
+        ^ aRetVal.
+    ]
 
     #method <= &array:$self.
 }
@@ -965,7 +997,7 @@
     #method convert &literal:aLiteral
     [
         #var(type:int)aRetVal.
-        primitive convert &literal:aLiteral &out'int:aRetVal.
+        literalPrimitiveOp convert &literal:aLiteral &out'int:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -979,7 +1011,7 @@
     #method convert &literal:aLiteral
     [
         #var(type:long)aRetVal.
-        primitive convert &literal:aLiteral &out'long:aRetVal.
+        literalPrimitiveOp convert &literal:aLiteral &out'long:aRetVal.
         
         ^ LongNumber new &long:aRetVal.        
     ]
@@ -993,7 +1025,7 @@
     #method convert &literal:aLiteral
     [
         #var(type:real)aRetVal.
-        primitive convert &literal:aLiteral &out'real:aRetVal.
+        literalPrimitiveOp convert &literal:aLiteral &out'real:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -1014,10 +1046,10 @@
         = aNumber literal.
         
     #method convert &int:aNumber &base:aRadix
-        = primitive toLiteral &int:aNumber &index::aRadix.
+        = literalPrimitiveOp toLiteral &int:aNumber &index::aRadix.
         
     #method convert &long:aNumber &base:aRadix
-        = primitive toLiteral &long:aNumber &index::aRadix.
+        = literalPrimitiveOp toLiteral &long:aNumber &index::aRadix.
         
     #method convert &long:aNumber
         = aNumber literal.

@@ -75,10 +75,10 @@
                 &int           : 1
                 &out'int       : aNumberRead.
         ]
-        &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
-                    and:(primitive equal &bytearray:aDump &index:4 &int:1)].
+        &until:[(byteArrayPrimitiveOp equal &bytearray:aDump &index:0 &short:1)
+                    and:(byteArrayPrimitiveOp equal &bytearray:aDump &index:4 &int:1)].
 
-        primitive read &bytearray:aDump &index:14 &out'short:aChar.
+        byteArrayPrimitiveOp read &bytearray:aDump &index:14 &out'short:aChar.
     ]
 
 //    #method read &int

@@ -15,7 +15,7 @@
         
         self read &bytearray:aLiteral &length:(aLength * 2).
         
-        primitive refresh &literal:aLiteral.
+        literalPrimitiveOp refresh &literal:aLiteral.
         
         ^ aLiteral.
     ]

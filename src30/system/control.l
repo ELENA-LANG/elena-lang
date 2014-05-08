@@ -35,6 +35,8 @@
 
     bool = $self.
 
+    clone = $self.
+
     <= &bool:$self.
 }.
 
@@ -76,6 +78,8 @@
     literal = "false".
 
     bool = $self.
+
+    clone = $self.
 
     <= &bool:$self.    
 }.
