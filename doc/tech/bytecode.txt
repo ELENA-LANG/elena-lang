@@ -178,6 +178,8 @@ ELENA byte codes (or ecodes)
  
  mreset m                   - m + mcc.param_count => mcc
 
+ mresetsubj m               - m + mcc.param_count + mcc.subj => mcc
+
  scopyf i                   - sp <= fp + i
  
  

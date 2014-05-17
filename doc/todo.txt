@@ -19,133 +19,36 @@ v  - vm script
 ------                                 
 Currently:
 ------
+              sdev - blog post : ELENA 2.0 : method body
+                       * statements
+                       * single statement 
+                       * returning statement
+                       * variable statement
+
+              sdev - elenasm
+                       * engine (or vm terminal) can work in direct or parsed mode, if parsed mode is turned on, the incoming code is parsed
+                         based on specified rules, this mode can be switched off
+                         
+                       * while
+                       * support cf grammar
+                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
+
 <=================> 
 
-1.9.15 [9.5]
+1.9.15 [23.5]
 --------
-week2:
-              adev - lib30 optimization
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
-                       * optimize output code: system'Object 
-                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
-                       
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
-                       * TextBuffer : redesign delete operation, it should not create new literal classes
-                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                         modify the code, from reading bool values from stack to constant array
-                       * system'LiteralIterator - operation available and next should not creates a new object , try
-                         to use stack allocated object for the length operations
-                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
-
-              srev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-                       * vmconsole
-
-              adev - dynamic programming
-                       * deserialize object
-                       
-               adev - LiteralValue / String / TextBuffer
-                       * support appendLine?? (e.g. maybe in extension)
-
-            smaint - testing
-                       * modify system test, it should raise an exception if any of the tests fails
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
-               adev - console operations:  
-                       * read / write operation: complex types
-                       * write formatted numbers
-                       * write formatted string (with parameters)
-                       
-              adev - lib30                                                                  
-                       * extension : support several roles
-                       * Struct : check if the income message is "get"
-                       * win32 file i/o operations should raise an exception with an error code
-                       * implement: square function
-                       * implement: square root
-                       * implement: sine
-                       * implement: cosine
-                       * implement: tangent
-                       * implement: arcsine
-                       * implement: arccosine
-                       * implement: arctangent
-                       * implement: reciprocal
-                       * implement: power function with integer
-                       * implement: exponential
-                       * implement: absolute value
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: truncate
-                       * implement: round up
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: natural logarithm
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: convert degrees to radians
-                       * implement: convert radians to degrees
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
-                       * implement: pi
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
-                       * support: primitive operation int + long, long + int
-                       
-                       * convertor toArray , which converts list to elist wrap or returns itself
-                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-
-                       * bytearray : get / set - outofrange exception
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range (insert, delete, ...)
-                       * should control foreach&until be implemented in EFunction?
-                       * implement: extensions'math'power - support integer values as well                       
-                       * combinators should work both with list and array
-                       * system'$consolehandler: if the returning handler is -1
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: custom presenter / formatter / custom formatter
-                       * it should be possible to compare integer and value - the result is false
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * date - return utc time
-                       * implement analog of String.Format
-                       * calender: custom formatting
-                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
-                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
-                         and could be invoked by eval
-                       * implement analog of linq
-                       * classOp : test if object is subclass of ??
-                       
 week3:
               sdev - elenasm
-                       * review
+                       * support several grammar rules
+                       * methods - variables
+                       * methods - roles
+                       * if
+                       * if in the method
+                       * while in the method
+                       * method - clear stack after the last operation?
+                       * extends the object with dynamic code
+                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
+                       * inject vm console into IDE
 
               sdev - prime project
                        * vm console
@@ -183,6 +86,11 @@ week3:
 
               sdev - calculator
                        * review
+
+              sdev - elenasm
+                       * refactor & optimize the engine code
+                       * should the parameters be saved in the correct order, so no need in reverse command?
+                       * should the object and role be saved in the correct order, so no need in reverse command?
 
               sdev - default script
                        * how could it be used?
@@ -563,6 +471,8 @@ week2:
                        * support redirect method
 
               adev - lib30                                        
+                       * scriptControl.load&literal - raise an error if the result is broken
+
                        * test if object is nil                       
                        * test if object is literal constant
                        * test if object is integer
@@ -599,7 +509,128 @@ week2:
                        * system'ByteArray : should support indexOf operation without out parameter, should the ones with out parameters
                          be implemented in byteArrayPrimitive ?
                        * should clone be implemented in system'Object and be overridden only when it is required?                                                
+                       * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
 
+
+              adev - lib30 optimization
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
+                       * optimize output code: system'Object 
+                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
+                       
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
+                       * TextBuffer : redesign delete operation, it should not create new literal classes
+                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                         modify the code, from reading bool values from stack to constant array
+                       * system'LiteralIterator - operation available and next should not creates a new object , try
+                         to use stack allocated object for the length operations
+                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
+
+              srev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * vmconsole
+
+              adev - dynamic programming
+                       * deserialize object
+                       
+               adev - LiteralValue / String / TextBuffer
+                       * support appendLine?? (e.g. maybe in extension)
+
+            smaint - testing
+                       * modify system test, it should raise an exception if any of the tests fails
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
+
+               adev - console operations:  
+                       * read / write operation: complex types
+                       * write formatted numbers
+                       * write formatted string (with parameters)
+                       
+              adev - lib30                                                                  
+                       * extension : support several roles
+                       * Struct : check if the income message is "get"
+                       * win32 file i/o operations should raise an exception with an error code
+                       * implement: square function
+                       * implement: square root
+                       * implement: sine
+                       * implement: cosine
+                       * implement: tangent
+                       * implement: arcsine
+                       * implement: arccosine
+                       * implement: arctangent
+                       * implement: reciprocal
+                       * implement: power function with integer
+                       * implement: exponential
+                       * implement: absolute value
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: truncate
+                       * implement: round up
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: natural logarithm
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: convert degrees to radians
+                       * implement: convert radians to degrees
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * implement: pi
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
+                       * support: primitive operation int + long, long + int
+                       
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+
+                       * bytearray : get / set - outofrange exception
+                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
+                         out of range (insert, delete, ...)
+                       * should control foreach&until be implemented in EFunction?
+                       * implement: extensions'math'power - support integer values as well                       
+                       * combinators should work both with list and array
+                       * system'$consolehandler: if the returning handler is -1
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: custom presenter / formatter / custom formatter
+                       * it should be possible to compare integer and value - the result is false
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * date - return utc time
+                       * implement analog of String.Format
+                       * calender: custom formatting
+                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
+                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
+                         and could be invoked by eval
+                       * implement analog of linq
+                       * classOp : test if object is subclass of ??
+                       
 
 1.9.17
 --------

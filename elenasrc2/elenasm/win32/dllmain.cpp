@@ -20,28 +20,18 @@ void freeSession(int processId)
 
 // === dll entries ===
 
-EXTERN_DLL_EXPORT void* TranslateLVMTape(const wchar16_t* name, const wchar16_t* script, int mode)
+EXTERN_DLL_EXPORT int TranslateLVMTape(const wchar16_t* script)
 {
    _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
    
-   return session->translate(name, script, mode);
+   return session->translate(script);
 }
 
-EXTERN_DLL_EXPORT void* TranslateLVMFile(const wchar16_t* name,   const wchar16_t* path, int encoding, bool autoDetect, int mode)
+EXTERN_DLL_EXPORT int TranslateLVMFile(const wchar16_t* path, int encoding, bool autoDetect)
 {
    _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
    
-   return session->translate(name, path, encoding, autoDetect, mode);
-}
-
-EXTERN_DLL_EXPORT void FreeLVMTape(void* tape)
-{
-   if (tape == NULL)
-      return;
-
-   _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
-
-   return session->free(tape);
+   return session->translate(path, encoding, autoDetect);
 }
 
 EXTERN_DLL_EXPORT const wchar16_t* GetLSMStatus()

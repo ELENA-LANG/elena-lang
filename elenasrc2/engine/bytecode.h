@@ -73,6 +73,7 @@ enum ByteCode
    bcACallVI        = 0x42,
    bcCallR          = 0x43,
    bcReserve        = 0x44,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
+   bcMResetSubj     = 0x46,
    bcMLoadAI        = 0x47,
    bcMLoadSI        = 0x48,
    bcMLoadFI        = 0x49,

@@ -570,3 +570,12 @@
 [
     GetPropertyAgent eval:%property[2].
 ].
+
+#symbol StructTest =
+[
+    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( "Struct method works", system'console, %writeLine(1) )).
+    
+    #var x := a x.
+    
+    a eval&print.
+].

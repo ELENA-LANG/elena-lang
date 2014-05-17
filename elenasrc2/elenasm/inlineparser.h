@@ -1,25 +1,49 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2013, by Alexei Rakov
+//                                             (C)2011-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef inlineparserH
 #define inlineparserH 1
 
 #include "elena.h"
-//#include "textsource.h"
-#include "session.h"
 #include "textsource.h"
 
 namespace _ELENA_
 {
 
+typedef String<wchar16_t, 0x100> TempString;
+
+// --- EParseError ---
+
+struct EParseError
+{
+   int column, row;
+
+   EParseError(int column, int row)
+   {
+      this->column = column;
+      this->row = row;
+   }
+};
+
+// --- ScriptReader ---
+
+class _ScriptReader
+{
+public:
+   LineInfo  info;
+   wchar16_t token[LINE_LEN];
+
+   virtual const wchar16_t* read() = 0;
+};
+
 // --- TapeWriter ---
 
 class TapeWriter
 {
-   MemoryDump _tape;
+   MemoryDump* _tape;
 
 public:
    void writeCallCommand(const wchar16_t* reference);
@@ -30,61 +54,67 @@ public:
       writeCommand(command, (size_t)0);
    }
    void writeEndCommand();
-
-//      void copyTape(_Memory* subTape, size_t ptr);
 //
-//      void parseVMCommand(TokenInfo& token, ScriptReader& reader);
-//      void parseCommand(TokenInfo& token, ScriptReader& reader);
-//      void parse(ScriptReader& reader);
+////      void copyTape(_Memory* subTape, size_t ptr);
+////
+////      void parseVMCommand(TokenInfo& token, ScriptReader& reader);
+////      void parseCommand(TokenInfo& token, ScriptReader& reader);
+////      void parse(ScriptReader& reader);
+//
+//   size_t Position() { return _tape.Length(); }
+//
+//   void trim(size_t position)
+//   {
+//      _tape.trim(position);
+//   }
+//
+//   void* extract()
+//   {
+//      return _tape.extract();
+//   }
 
-   size_t Position() { return _tape.Length(); }
-
-   void trim(size_t position)
+   TapeWriter(MemoryDump* tape)
    {
-      _tape.trim(position);
+      _tape = tape;
    }
-
-   void* extract()
-   {
-      return _tape.extract();
-   }
-
-   TapeWriter();
    virtual ~TapeWriter() {}
 };
 
-// --- ScriptCompiler ---
+// --- InlineScriptParser ---
 
-class ScriptVMCompiler : public _ScriptCompiler
+class InlineScriptParser
 {
-   TapeWriter _writer;
+   MessageMap _verbs;
 
-   void parseVMCommand(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
-   ////void parseAction(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token/*, Terminal* terminal*/);
-   void parseMessage(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token, int command);
-   void parseNewObject(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
-   //void parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
+   enum Mode
+   {
+      mdRoot   = 0,
+      mdRootOp = 1,
+      mdTape   = 2
+   };
 
-   void parseTerminal(const wchar16_t* token, char state, int row, int column);
+//   void parseVMCommand(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
+//   void parseNewObject(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
+//   //void parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
+
+   int mapVerb(const wchar16_t* literal);
+
+   //void writeTerminal(TapeWriter& writer, const wchar16_t* token, char state, int col, int row);
+
+   int writeVariable(TapeWriter& writer, int index, int level, Mode mode);
+
+   int parseOperations(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+   int parseExpression(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+   int parseStatement(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+   int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
+   void parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals);
+   void parseAction(TapeWriter& writer, _ScriptReader& reader);
 
 public:
-   virtual void compile(TextReader* script);
+   void parseDirectives(MemoryDump& tape, _ScriptReader& reader);
+   void parseScript(MemoryDump& tape, _ScriptReader& reader);
 
-   virtual void* generate();
-
-   virtual size_t Position()
-   {
-      return _writer.Position();
-   }
-
-   virtual void trim(size_t position)
-   {
-      _writer.trim(position);
-   }
-
-   ScriptVMCompiler()
-   {
-   }
+   InlineScriptParser();
 };
 
 } // _ELENA_

@@ -1,38 +1,101 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                               (C)2011-2013 by Alexei Rakov
+//                                               (C)2011-2014 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "session.h"
-#include "cfparser.h"
-#include "inlineparser.h"
+//#include "cfparser.h"
+//#include "inlineparser.h"
+#include "elenavm.h"
 
 using namespace _ELENA_;
+using namespace _ELENA_TOOL_;
 
-// --- ScriptLog ---
+//// --- ScriptLog ---
+//
+//void ScriptLog :: write(wchar16_t ch)
+//{
+//   MemoryWriter writer(&_log);
+//
+//   writer.writeWideChar(ch);
+//}
+//
+//void ScriptLog :: write(const wchar16_t* token)
+//{
+//   MemoryWriter writer(&_log);
+//
+//   writer.writeWideLiteral(token, getlength(token));
+//   writer.writeWideChar(' ');
+//}
 
-void ScriptLog :: write(wchar16_t ch)
+// --- ScriptReader ---
+
+const wchar16_t* Session::ScriptReader :: read()
 {
-   MemoryWriter writer(&_log);
+   info = reader.read(token, LINE_LEN);
 
-   writer.writeWideChar(ch);
+//   if (_reader.read()) {
+//      token.column = _reader.token.column;
+//      token.row = _reader.token.row;
+//      token.state = _reader.token.state;
+   if (info.state == dfaQuote) {
+      QuoteTemplate<TempString> quote(info.line);
+
+         //!!HOTFIX: what if the literal will be longer than 0x100?
+         size_t length = getlength(quote);
+         StringHelper::copy(token, quote, length);
+         token[length] = 0;
+   }  
+
+   return token;
 }
 
-void ScriptLog :: write(const wchar16_t* token)
-{
-   MemoryWriter writer(&_log);
+// --- CachedScriptReader ---
 
-   writer.writeWideLiteral(token, getlength(token));
-   writer.writeWideChar(' ');
+void Session::CachedScriptReader :: cache()
+{
+   ScriptReader::read();
+
+   MemoryWriter writer(&_buffer);
+
+   writer.writeDWord(info.column);
+   writer.writeDWord(info.row);
+   writer.writeChar(info.state);
+   writer.writeWideLiteral(token, getlength(token) + 1);
+}
+
+const wchar16_t* Session::CachedScriptReader :: read()
+{
+   // read from the outer reader if the cache is empty
+   if (_cacheMode && _position >= _buffer.Length()) {
+      cache();
+   }
+
+   // read from the cache
+   if (_position < _buffer.Length()) {
+      MemoryReader reader(&_buffer, _position);
+
+      reader.readDWord(info.column);
+      reader.readDWord(info.row);
+      reader.readChar(info.state);
+
+      const wchar16_t* s = reader.getWideLiteral();
+      StringHelper::copy(token, s, getlength(s));
+
+      _position = reader.Position();
+
+      return token;
+   }
+   else ScriptReader::read();
 }
 
 // --- Session ---
 
 Session :: Session()
-   : _parsers(NULL, freeobj)
+//   : _parsers(NULL, freeobj)
 {
 }
 
@@ -40,75 +103,90 @@ Session :: ~Session()
 {
 }
 
-void* Session :: translateScript(const wchar16_t* name, TextReader* source)
+//void* Session :: translateScript(const wchar16_t* name, TextReader* source)
+//{
+//   ScriptVMCompiler compiler;
+//
+//   _Parser* parser = _parsers.get(name);
+//   if (parser == NULL) {
+//      parser = new CFParser();
+//
+//      _parsers.add(name, parser, true);
+//   }
+//
+//   parser->parse(source, &compiler);
+//
+//   // the tape should be explicitly releases with FreeLVMTape function
+//   return compiler.generate();
+//}
+
+void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
 {
-   ScriptVMCompiler compiler;
+   int saved = reader.Position();
 
-   _Parser* parser = _parsers.get(name);
-   if (parser == NULL) {
-      parser = new CFParser();
+   const wchar16_t* token = reader.read();
+   if (ConstantIdentifier::compare(token, "[[")) {
+      saved = reader.Position();
+      token = reader.read();
+      while (!ConstantIdentifier::compare(token, "]]")) {
+         reader.seek(saved);
+         _scriptParser.parseDirectives(tape, reader);
 
-      _parsers.add(name, parser, true);
+         saved = reader.Position();
+         token = reader.read();
+      }
    }
+   else reader.seek(saved);
 
-   parser->parse(source, &compiler);
-
-   // the tape should be explicitly releases with FreeLVMTape function
-   return compiler.generate();
+   reader.clearCache();
 }
 
-void* Session :: traceScript(const wchar16_t* name, TextReader* source)
+void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
 {
-   //ScriptLog log;
-
-   //// if it is a inline parsing mode
-   //if (ConstantIdentifier::compare(name, "inline")) {
-   //   log.compile(source, NULL);
-   //}
-   //else {
-   //   _Parser* parser = _parsers.get(name);
-
-   //   parser->parse(source, &log);
-   //}
-
-   //// the tape should be explicitly releases with FreeLVMTape function
-   //return log.generate();
-
-   return NULL; // !! temporal
+   _scriptParser.parseScript(tape, reader);
 }
 
-void* Session :: translate(const wchar16_t* name, TextReader* source, int mode)
+int Session :: translate(TextReader* source)
 {
    _lastError.clear();
 
-   //if (test(mode, TRACE_MODE)) {
-   //   return traceScript(name, source);
-   //}
-   return translateScript(name, source);
+   CachedScriptReader scriptReader(source);
+   MemoryDump         tape;
+
+   parseMetaScript(tape, scriptReader);
+   parseScript(tape, scriptReader);
+
+   int retVal = InterpretLVM(tape.get(0));
+
+   // copy vm error if retVal is zero
+   if (!retVal)
+      _lastError.copy(GetLVMStatus());
+
+   return retVal;
 }
 
-void* Session :: translate(const wchar16_t* name, const wchar16_t* script, int mode)
+int Session :: translate(const wchar16_t* script)
 {
    try {
       WideLiteralTextReader reader(script);
 
-      return translate(name, &reader, mode);
+      return translate(&reader);
    }
-   catch(EUnrecognizedException) {
-      _lastError.copy("Unrecognized expression");
-
-      return NULL;
-   }
-   catch(EInvalidExpression e) {
-      _lastError.copy("Rule ");
-      _lastError.append(e.nonterminal);
-      _lastError.append(": invalid expression at ");
-      _lastError.appendInt(e.row);
-      _lastError.append(':');
-      _lastError.appendInt(e.column);
-
-      return NULL;
-   }
+//   catch(EUnrecognizedException) {
+//      _lastError.copy("Unrecognized expression");
+//
+//      return NULL;
+//   }
+//   catch(EInvalidExpression e) {
+//      _lastError.copy("Rule ");
+//      _lastError.append(e.nonterminal);
+//      _lastError.append(": invalid expression at ");
+//      _lastError.appendInt(e.row);
+//      _lastError.append(':');
+//      _lastError.appendInt(e.column);
+//
+//      return NULL;
+//   }
    catch(EParseError e) {
       _lastError.copy("Invalid syntax at ");
       _lastError.appendInt(e.row);
@@ -119,7 +197,7 @@ void* Session :: translate(const wchar16_t* name, const wchar16_t* script, int m
    }
 }
 
-void* Session :: translate(const wchar16_t* name, const wchar16_t* path, int encoding, bool autoDetect, int mode)
+int Session :: translate(const wchar16_t* path, int encoding, bool autoDetect)
 {
    try {
       TextFileReader reader(path, encoding, autoDetect);
@@ -131,23 +209,23 @@ void* Session :: translate(const wchar16_t* name, const wchar16_t* path, int enc
          return NULL;
       }
 
-      return translate(name, &reader, mode);
+      return translate(&reader);
    }
-   catch(EUnrecognizedException) {
-      _lastError.copy("Unrecognized expression");
-
-      return NULL;
-   }
-   catch(EInvalidExpression e) {
-      _lastError.copy("Rule ");
-      _lastError.append(e.nonterminal);
-      _lastError.append(": invalid expression at ");
-      _lastError.appendInt(e.row);
-      _lastError.append(':');
-      _lastError.appendInt(e.column);
-
-      return NULL;
-   }
+//   catch(EUnrecognizedException) {
+//      _lastError.copy("Unrecognized expression");
+//
+//      return NULL;
+//   }
+//   catch(EInvalidExpression e) {
+//      _lastError.copy("Rule ");
+//      _lastError.append(e.nonterminal);
+//      _lastError.append(": invalid expression at ");
+//      _lastError.appendInt(e.row);
+//      _lastError.append(':');
+//      _lastError.appendInt(e.column);
+//
+//      return NULL;
+//   }
    catch(EParseError e) {
       _lastError.copy("Invalid syntax at ");
       _lastError.appendInt(e.row);
@@ -158,7 +236,7 @@ void* Session :: translate(const wchar16_t* name, const wchar16_t* path, int enc
    }
 }
 
-void Session :: free(void* tape)
-{
-   freestr((char*)tape);
-}
+//void Session :: free(void* tape)
+//{
+//   freestr((char*)tape);
+//}

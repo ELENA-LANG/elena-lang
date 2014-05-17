@@ -128,3 +128,6 @@ and so on.
 A static symbol is the class instance which state is preserved. There could be only one instance of static symbol.
 
 #static SingletonClass = DerivedClass new &field:0 &field:0.
+
+
+Syntax: 

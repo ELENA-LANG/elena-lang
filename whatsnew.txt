@@ -8,7 +8,7 @@
 ******************************************************************************
 ELENA:
 [+] new operator setAt (e.g. a@2 := b <=> a setAt:2:b)
-[+] new ecodes: bloadfi
+[+] new ecodes: bloadfi, mresetsubj
 
 ELC:
 [*] output code : some refactoring, binary incompatible due to changes in method
@@ -22,6 +22,10 @@ ELC:
 [*] some code refactoring
 [+] system'threading: Thread, threadControl
 [*] new functionality: system'intOp, system'mathOp
+[*] new functionality: system'dynamic'Tape (supports methods)
+
+ElenaScript:
+[*] engine: syntax simplified, implementation refactored (alpha)
 
 ******************************************************************************
                     What's New in 1.9.14 (pre release)

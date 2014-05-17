@@ -36,4 +36,5 @@
     OuterFieldTest eval.
     LocalTest eval.
     OpenArgTest eval.
+    StructTest eval.
 ].

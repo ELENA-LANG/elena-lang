@@ -82,7 +82,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &loadIndexOp, &compilePopFI, &loadIndexOp, &compilePopSI, &loadIndexOp, &compileNop, &compileNop,
    &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &loadIndexOp, &compileNop, &compileNop, &loadIndexOp,
+   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &loadIndexOp, &compileNop, &compileMResetSubj, &loadIndexOp,
    &loadIndexOp, &loadFPOp, &loadIndexOp, &compileMOp, &compileMReset, &loadIndexOp, &compileMCopy, &compileMAdd,
 
    &loadIndexOp, &loadIndexOp, &loadFPOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileDCopy, &compileDLoadAI,
@@ -1128,6 +1128,18 @@ void _ELENA_::compileMReset(int opcode, x86JITScope& scope)
    scope.code->writeDWord(PARAM_MASK);
    scope.code->writeWord(0xCA81);
    scope.code->writeDWord(scope.resolveMessage(scope.argument));
+}
+
+void _ELENA_::compileMResetSubj(int opcode, x86JITScope& scope)
+{
+   // and edx, PARAM_MASK | VERB_MASK | MESSAGE_MASK
+   // or edx, message
+   scope.code->writeWord(0xE281);
+   scope.code->writeDWord(PARAM_MASK | VERB_MASK | MESSAGE_MASK);
+   if (scope.argument) {
+      scope.code->writeWord(0xCA81);
+      scope.code->writeDWord(scope.resolveMessage(scope.argument));
+   }
 }
 
 //void _ELENA_::compileAAdd(int opcode, x86JITScope& scope)

@@ -1214,7 +1214,7 @@ end
 
 procedure inline'handle_selector
 
-  melseverb labEnd GET_MESSAGE_ID
+  pushm
   pushb
   mcopysubj
   bcopya
@@ -1231,8 +1231,14 @@ labNext:
   acopyb
   aloadd
   popb
-  quitn 1
+  popm
+  mthenverb labQuit GET_MESSAGE_ID
+  mresetsubj 0
+  ajumpvi 0
 
+labQuit:
+  quitn 1
+  
 labEnd:
   throw
 

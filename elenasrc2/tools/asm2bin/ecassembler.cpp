@@ -227,6 +227,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMCopy:
       case bsMSetVerb:
       case bcMReset:
+      case bcMResetSubj:
       case bcQuitN:
       case bcPushN:
       case bcPopI:

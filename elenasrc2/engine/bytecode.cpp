@@ -26,7 +26,7 @@ const char* _fnOpcodes[256] =
    "popi", "popbi", "popfi", "xpopai", "popsi", "popai", "unknown", "unknown",
    "unknown", "quitn", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
-   "callextr", "evalr", "acallvi", "callr", "reserve", "unknown", "unknown", "mloadai",
+   "callextr", "evalr", "acallvi", "callr", "reserve", "unknown", "mresetsubj", "mloadai",
    "mloadsi", "mloadfi", "msaveai", "msetverb", "mreset", "maddai", "mcopy", "madd",
 
    "dloadsi", "dsavesi", "dloadfi", "aloadr", "aloadfi", "aloadsi", "dcopy", "dloadai",
