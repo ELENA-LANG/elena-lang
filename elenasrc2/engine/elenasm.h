@@ -8,9 +8,17 @@
 #ifndef elenasmH
 #define elenasmH 1
 
-extern "C" __declspec(dllimport) int TranslateLVMTape(const wchar_t* script);
+// should be used from stand-alone application
+extern "C" __declspec(dllimport) int InterpretScript(const wchar_t* script);
 
-extern "C" __declspec(dllimport) int TranslateLVMFile(const wchar_t* path, int encoding, bool autoDetect);
+// should be used from stand-alone application
+extern "C" __declspec(dllimport) int InterpretFile(const wchar_t* path, int encoding, bool autoDetect);
+
+// should be used from ELENA program
+extern "C" __declspec(dllimport) int EvaluateScript(const wchar_t* script);
+
+// should be used from ELENA program
+extern "C" __declspec(dllimport) int EvaluateFile(const wchar_t* path, int encoding, bool autoDetect);
 
 extern "C" __declspec(dllimport) const wchar_t* GetLSMStatus();
 

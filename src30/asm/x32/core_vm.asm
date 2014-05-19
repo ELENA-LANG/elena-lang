@@ -57,7 +57,7 @@ labHookEnd:
   mov  ebx, data:"'vm_tape"
   push ebx
 
-  call [eax]               // call InterpretLVM
+  call [eax]               // call Interpret
   lea   esp, [esp + 8]
 
   test  eax, eax

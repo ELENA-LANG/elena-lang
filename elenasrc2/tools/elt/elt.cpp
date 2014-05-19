@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   5
+#define ELT_BUILD_NUMBER   6
  
 // global variables
 int   _encoding = feAnsi;
@@ -81,7 +81,7 @@ void printHelp()
 
 void executeScript(const wchar16_t* script)
 {
-   int retVal = TranslateLVMTape(script);
+   int retVal = InterpretScript(script);
    if (retVal == 0) {
       const wchar16_t* error = GetLSMStatus();
       if (!emptystr(error)) {
@@ -93,7 +93,7 @@ void executeScript(const wchar16_t* script)
 
 void loadScript(const wchar16_t* path)
 {
-   int retVal = TranslateLVMFile(path, _encoding, false);
+   int retVal = InterpretFile(path, _encoding, false);
    if (retVal == 0) {
       const wchar16_t* error = GetLSMStatus();
       if (!emptystr(error)) {

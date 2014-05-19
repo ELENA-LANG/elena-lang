@@ -76,16 +76,18 @@ namespace _ELENA_
 //      _log.trim(0);
 //   }
 //};
-//
-//// --- Parser ---
-//
-//class _Parser
-//{
-//public:
+
+// --- Parser ---
+
+class _Parser
+{
+public:
+   virtual void defineGrammarRule(_ScriptReader& reader) = 0;  
+
 //   virtual void parse(TextReader* script, _ScriptCompiler* compiler) = 0;
-//};
-//
-//typedef Map<const wchar16_t*, _Parser*, true> ParserMap;
+};
+
+typedef Map<const wchar16_t*, _Parser*, true> ParserMap;
 
 typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
 
@@ -150,16 +152,17 @@ class Session
       }
    };
 
-   InlineScriptParser _scriptParser;
+   ParserMap          _parsers;
+   _Parser*           _currentParser;  
 
-//   ParserMap              _parsers;  
+   InlineScriptParser _scriptParser;
 
    String<wchar16_t, 512> _lastError;
 
    void parseMetaScript(MemoryDump& tape, CachedScriptReader& reader);
    void parseScript(MemoryDump& tape, _ScriptReader& reader);
 
-   int translate(TextReader* source);
+   int translate(TextReader* source, bool standalone);
 
 public:
    const wchar16_t* getLastError()
@@ -169,9 +172,8 @@ public:
       return !emptystr(error) ? error : NULL;
    }
 
-   int translate(const wchar16_t* script);
-   int translate(const wchar16_t* path, int encoding, bool autoDetect);
-//   void free(void* tape);
+   int translate(const wchar16_t* script, bool standalone);
+   int translate(const wchar16_t* path, int encoding, bool autoDetect, bool standalone);
 
    Session();
    virtual ~Session();

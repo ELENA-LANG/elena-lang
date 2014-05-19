@@ -6,7 +6,7 @@
 {
     load &literal:aScript
     [
-        #var aRetVal := system'external'elenasm TranslateLVMTape &literal:aScript.
+        #var aRetVal := system'external'elenasm EvaluateScript &literal:aScript.
         
         ^ aRetVal.
     ]

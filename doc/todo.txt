@@ -19,17 +19,12 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              sdev - blog post : ELENA 2.0 : method body
-                       * statements
-                       * single statement 
-                       * returning statement
-                       * variable statement
-
               sdev - elenasm
                        * engine (or vm terminal) can work in direct or parsed mode, if parsed mode is turned on, the incoming code is parsed
                          based on specified rules, this mode can be switched off
                          
-                       * while
+                       * using script engine from ELENA program
+
                        * support cf grammar
                        * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
 
@@ -44,6 +39,7 @@ week3:
                        * methods - roles
                        * if
                        * if in the method
+                       * while
                        * while in the method
                        * method - clear stack after the last operation?
                        * extends the object with dynamic code

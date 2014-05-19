@@ -1,23 +1,23 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA VM Script Engine
-////
-////                                             (C)2011-2013, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//#ifndef cfparserH
-//#define cfparserH 1
-//
+//                                             (C)2011-2014, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef cfparserH
+#define cfparserH 1
+
 //////#include "elena.h"
-//#include "session.h"
-//
-//namespace _ELENA_
-//{
-//
-//// --- CFPrarser ---
-//
-//class CFParser : public _Parser
-//{
-//public:
+#include "session.h"
+
+namespace _ELENA_
+{
+
+// --- CFPrarser ---
+
+class CFParser : public _Parser
+{
+public:
 //   // --- TokenInfo ---
 //
 //   struct TokenInfo
@@ -170,20 +170,20 @@
 //
 //      ScriptReader(TextReader* script);
 //   };
-//
-//   enum RuleType
-//   {
-//      rtNormal,
-//      rtChomski,
-//      rtLiteral,
-//      rtNumeric,
-////      rtReference,
-////      rtIdentifier,
-//      rtAny,
-//      rtEps,
-//      rtEof
-//   };
-//
+
+   enum RuleType
+   {
+      rtNormal,
+      rtChomski,
+      rtLiteral,
+      rtNumeric,
+//      rtReference,
+//      rtIdentifier,
+      rtAny,
+      rtEps,
+      rtEof
+   };
+
 //   // --- Rule ---
 //   struct Rule
 //   {
@@ -236,28 +236,29 @@
 //   const wchar16_t* getBodyText(size_t ptr);
 //
 //   size_t defineGrammarRule(TokenInfo& token, ScriptReader& reader);
-//   void defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule& rule);
 //   size_t defineDSARule(TokenInfo& token, ScriptReader& reader);
 //
 //   void writeDSARule(TokenInfo& token, size_t ptr);
 //
 //   void compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler);
-//
-//public:
+
+public:
 //   bool applyRule(Rule& rule, TokenInfo& token, CachedScriptReader& reader);
 //   bool applyRule(size_t ruleId, TokenInfo& token, CachedScriptReader& reader);
 //
 //   virtual void parse(TextReader* script, _ScriptCompiler* compiler);
-//
-//   CFParser()
+
+   virtual void defineGrammarRule(_ScriptReader& reader);
+
+   CFParser()
 //      : _rules(Rule())
-//   {
+   {
 //      // all body pointers should be greater than zero
 //      _symbolMode = false;
 //      _body.writeDWord(0, 0);
-//   }
-//};
-//
-//} // _ELENA_
-//
-//#endif // cfparserH
+   }
+};
+
+} // _ELENA_
+
+#endif // cfparserH

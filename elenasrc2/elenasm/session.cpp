@@ -7,7 +7,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "session.h"
-//#include "cfparser.h"
+#include "cfparser.h"
 //#include "inlineparser.h"
 #include "elenavm.h"
 
@@ -95,8 +95,9 @@ const wchar16_t* Session::CachedScriptReader :: read()
 // --- Session ---
 
 Session :: Session()
-//   : _parsers(NULL, freeobj)
+   : _parsers(NULL, freeobj)
 {
+   _currentParser = NULL;
 }
 
 Session :: ~Session()
@@ -132,6 +133,16 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
          reader.seek(saved);
          _scriptParser.parseDirectives(tape, reader);
 
+         if(ConstantIdentifier::compare(token, "#define")) {
+            if (!_currentParser) {
+               _currentParser = new CFParser();
+
+               _parsers.add(ConstantIdentifier("default"), _currentParser);
+            }
+
+            _currentParser->defineGrammarRule(reader);
+         }
+
          saved = reader.Position();
          token = reader.read();
       }
@@ -146,7 +157,7 @@ void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
    _scriptParser.parseScript(tape, reader);
 }
 
-int Session :: translate(TextReader* source)
+int Session :: translate(TextReader* source, bool standalone)
 {
    _lastError.clear();
 
@@ -156,7 +167,7 @@ int Session :: translate(TextReader* source)
    parseMetaScript(tape, scriptReader);
    parseScript(tape, scriptReader);
 
-   int retVal = InterpretLVM(tape.get(0));
+   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
 
    // copy vm error if retVal is zero
    if (!retVal)
@@ -165,12 +176,12 @@ int Session :: translate(TextReader* source)
    return retVal;
 }
 
-int Session :: translate(const wchar16_t* script)
+int Session :: translate(const wchar16_t* script, bool standalone)
 {
    try {
       WideLiteralTextReader reader(script);
 
-      return translate(&reader);
+      return translate(&reader, standalone);
    }
 //   catch(EUnrecognizedException) {
 //      _lastError.copy("Unrecognized expression");
@@ -197,7 +208,7 @@ int Session :: translate(const wchar16_t* script)
    }
 }
 
-int Session :: translate(const wchar16_t* path, int encoding, bool autoDetect)
+int Session :: translate(const wchar16_t* path, int encoding, bool autoDetect, bool standalone)
 {
    try {
       TextFileReader reader(path, encoding, autoDetect);
@@ -209,7 +220,7 @@ int Session :: translate(const wchar16_t* path, int encoding, bool autoDetect)
          return NULL;
       }
 
-      return translate(&reader);
+      return translate(&reader, standalone);
    }
 //   catch(EUnrecognizedException) {
 //      _lastError.copy("Unrecognized expression");
@@ -235,8 +246,3 @@ int Session :: translate(const wchar16_t* path, int encoding, bool autoDetect)
       return NULL;
    }
 }
-
-//void Session :: free(void* tape)
-//{
-//   freestr((char*)tape);
-//}

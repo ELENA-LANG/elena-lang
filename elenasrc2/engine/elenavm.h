@@ -8,7 +8,11 @@
 #ifndef elenavmH
 #define elenavmH 1
 
-extern "C" __declspec(dllimport) int InterpretLVM(void* tape);
+// Should be used from stand-alone application
+extern "C" __declspec(dllimport) int Interpret(void* tape);
+
+// Should be used from ELENA program
+extern "C" __declspec(dllimport) int Evaluate(void* tape);
 
 extern "C" __declspec(dllimport) wchar_t* GetLVMStatus();
 

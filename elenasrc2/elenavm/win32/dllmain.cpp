@@ -33,7 +33,7 @@ Instance* getCurrentInstance()
 
 // ==== DLL entries ====
 
-EXTERN_DLL_EXPORT int InterpretLVM(void* tape)
+EXTERN_DLL_EXPORT int Interpret(void* tape)
 {
    //getchar();
 
@@ -43,6 +43,35 @@ EXTERN_DLL_EXPORT int InterpretLVM(void* tape)
 
    try {
       return instance->interprete(tape, VM_INTERPRET_EXT);
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus(_T("Cannot load "), e.reference);
+
+      return 0;
+   }
+   catch(InternalError& e)
+   {
+      instance->setStatus(ConstantIdentifier(e.message));
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int Evaluate(void* tape)
+{
+   //getchar();
+
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return instance->interprete(tape, VM_INTERPRET);
    }
    catch (JITUnresolvedException& e)
    {

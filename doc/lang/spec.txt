@@ -130,4 +130,51 @@ A static symbol is the class instance which state is preserved. There could be o
 #static SingletonClass = DerivedClass new &field:0 &field:0.
 
 
-Syntax: 
+Code blocks
+
+ELENA code block consists of a sequence of statements. The block is enclosed in square brackets and may contain nested sub code blocks 
+(which in fact are inline action classes). The statement terminator is a dot.
+
+#method printAckermann &n:n &m:m
+[
+    control forrange &int:0 &int:n &do: (&int:i)
+    [
+        control forrange &int:0 &int:m &do: (&int:j)
+        [
+            ...
+            
+            console writeLine.
+        ].
+    ].
+]
+
+When a method should return a result (other than self) return statement is used. It should be the
+last statement in the block.
+
+[
+    ...
+
+    ^ aRetVal / anArray length.
+]
+
+...
+
+If the code block contains only return statement the simplified syntax can be used:
+
+...
+#method Number = convertor toReal:theValue.    
+...
+
+or there is an alternative block expression
+
+[ convertor toReal:theValue ]
+
+Note: it should not end with the terminator symbol
+
+It is possible to declare the block variable and assigns the value to it. The variable name must be 
+unique within the code block scope.
+
+...
+#var aRetVal := Integer new:0.
+...
+

@@ -334,7 +334,7 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
 
    consts.add(ConstantIdentifier(VM_TAPE), createTape(data, project));
    consts.add(ConstantIdentifier(VM_PATH), writeLiteral(data, _rootPath));
-   consts.add(ConstantIdentifier(VM_PROCEDURE), writeAnsiLiteral(data, "InterpretLVM"));
+   consts.add(ConstantIdentifier(VM_PROCEDURE), writeAnsiLiteral(data, "Interpret"));
    consts.add(ConstantIdentifier(VM_DEBUGPROCEDURE), writeAnsiLiteral(data, "SetDebugMode"));
    consts.add(ConstantIdentifier(VM_HOOK), vmHook);
    consts.add(ConstantIdentifier(VM_ERR_ERRPROC), writeAnsiLiteral(data, "GetLVMStatus"));

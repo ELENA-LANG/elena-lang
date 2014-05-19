@@ -119,11 +119,7 @@
 
 #symbol Program =
 [ 
-    #var a := Struct(%print, Tape(0,system'dynamic'tapeControl,%read(1,),system'console,%write(1))).
-   
-    a print:2.
-
-//    #var aTape := scriptControl load &literal:"{ print &x [ system'console.write(x) ] }".
+    #var aTape := scriptControl load &literal:"system'console.write(123)".
 
     InterpreterTest eval.
 

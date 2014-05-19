@@ -1,16 +1,16 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA VM Script Engine
-////
-////                                              (C)2011-2014, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		e l e n a   p r o j e c t:  elena vm script engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "cfparser.h"
-//
-//using namespace _ELENA_;
-//using namespace _ELENA_TOOL_;
-//
+//                                              (c)2011-2014, by alexei rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "cfparser.h"
+
+using namespace _ELENA_;
+using namespace _ELENA_TOOL_;
+
 ////#define REFERENCE_KEYWORD     "$reference"
 ////#define IDENTIFIER_KEYWORD    "$identifier"
 //#define LITERAL_KEYWORD       "$literal"
@@ -464,76 +464,6 @@
 //
 //void CFParser :: defineGrammarRule(TokenInfo& token, ScriptReader& reader, Rule& rule)
 //{
-//   // read: terminal [nonterminal] ;
-//   // read: nonterminal [nonterminal2] ;
-//
-//   RuleType type = rtNormal;
-//
-//   while (token.value[0] != ';') {
-//      if (token.state == dfaQuote) {
-//         if (rule.terminal) {
-//            rule.nonterminal = defineGrammarRule(token, reader);
-//            break;
-//         }
-//         else rule.terminal = writeBodyText(token.value);
-//      }
-//      else if (token.state == dfaPrivate) {
-//         if (rule.terminal) {
-//            rule.nonterminal = defineGrammarRule(token, reader);
-//            break;
-//         }
-//         else {
-//            rule.prefixPtr = defineDSARule(token, reader);
-//
-//            if (ConstantIdentifier::compare(token.value, LITERAL_KEYWORD)) {
-//               type = rtLiteral;
-//            }
-//            else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
-//               type = rtNumeric;
-//            }
-//            else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
-//               type = rtEps;
-//            }
-//            else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
-//               type = rtEof;
-//            }
-//      //      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
-//      //         type = rtReference;
-//      //      }
-//            else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
-//               type = rtAny;
-//            }
-//      //      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
-//      //         type = rtIdentifier;
-//      //      }
-//         }
-//      }
-//      else if (token.state == dfaIdentifier) {
-//         if (rule.nonterminal == 0) {
-//            rule.prefixPtr = defineDSARule(token, reader);
-//
-//            rule.nonterminal = mapRuleId(token.value);
-//         }
-//         else if (token.state == dfaIdentifier && rule.terminal == 0) {
-//            type = rtChomski;
-//
-//            rule.terminal = mapRuleId(token.value);
-//         }
-//      }
-//      else if (token.value[0] == '%' || token.value[0] == '.' || token.value[0] == '&') {
-//         // save the next token directly to output
-//         token.writeLog();         
-//         reader.read(token);
-//         token.writeLog();
-//      }
-//      else token.writeLog();
-//
-//      reader.read(token);      
-//   }
-//
-//   rule.postfixPtr = defineDSARule(token, reader);
-//
-//   defineApplyRule(rule, type);
 //}
 //
 //void CFParser :: writeDSARule(TokenInfo& token, size_t ptr)
@@ -662,3 +592,95 @@
 //      token.clearLog();
 //   }
 //}
+
+void CFParser :: defineGrammarRule(_ScriptReader& reader)
+{
+   // read: terminal [nonterminal] ;
+   // read: nonterminal [nonterminal2] ;
+
+   RuleType type = rtNormal;
+
+//         reader.read(token);
+//
+//         if (token.state != dfaIdentifier)
+//            throw EParseError(token.column, token.row);
+//
+//         size_t ruleId = mapRuleId(token.value);
+//
+//         reader.read(token);
+//         if (ConstantIdentifier::compare(token.value, "::=")) {
+//            Rule rule;
+//
+//            reader.read(token);
+//            defineGrammarRule(token, reader, rule);
+//
+//            _rules.add(ruleId, rule);
+//         }
+//         else throw EParseError(token.column, token.row);
+
+//   while (token.value[0] != ';') {
+//      if (token.state == dfaQuote) {
+//         if (rule.terminal) {
+//            rule.nonterminal = defineGrammarRule(token, reader);
+//            break;
+//         }
+//         else rule.terminal = writeBodyText(token.value);
+//      }
+//      else if (token.state == dfaPrivate) {
+//         if (rule.terminal) {
+//            rule.nonterminal = defineGrammarRule(token, reader);
+//            break;
+//         }
+//         else {
+//            rule.prefixPtr = defineDSARule(token, reader);
+//
+//            if (ConstantIdentifier::compare(token.value, LITERAL_KEYWORD)) {
+//               type = rtLiteral;
+//            }
+//            else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
+//               type = rtNumeric;
+//            }
+//            else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
+//               type = rtEps;
+//            }
+//            else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
+//               type = rtEof;
+//            }
+//      //      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
+//      //         type = rtReference;
+//      //      }
+//            else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
+//               type = rtAny;
+//            }
+//      //      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
+//      //         type = rtIdentifier;
+//      //      }
+//         }
+//      }
+//      else if (token.state == dfaIdentifier) {
+//         if (rule.nonterminal == 0) {
+//            rule.prefixPtr = defineDSARule(token, reader);
+//
+//            rule.nonterminal = mapRuleId(token.value);
+//         }
+//         else if (token.state == dfaIdentifier && rule.terminal == 0) {
+//            type = rtChomski;
+//
+//            rule.terminal = mapRuleId(token.value);
+//         }
+//      }
+//      else if (token.value[0] == '%' || token.value[0] == '.' || token.value[0] == '&') {
+//         // save the next token directly to output
+//         token.writeLog();         
+//         reader.read(token);
+//         token.writeLog();
+//      }
+//      else token.writeLog();
+//
+//      reader.read(token);      
+//   }
+//
+//   rule.postfixPtr = defineDSARule(token, reader);
+//
+//   defineApplyRule(rule, type);
+}
