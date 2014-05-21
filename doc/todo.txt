@@ -19,113 +19,21 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              sdev - elenasm
-                       * engine (or vm terminal) can work in direct or parsed mode, if parsed mode is turned on, the incoming code is parsed
-                         based on specified rules, this mode can be switched off
-                         
-                       * using script engine from ELENA program
+              sdev - prime project
+                       * simple calculator
+                       * stand alone interpreter                       
+                       * interpreter
 
-                       * support cf grammar
+              sdev - elenasm
                        * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
+                       * using script engine from ELENA program - return the result
+                       * using script engine from ELENA program - error handling
+
 
 <=================> 
 
 1.9.15 [23.5]
 --------
-week3:
-              sdev - elenasm
-                       * support several grammar rules
-                       * methods - variables
-                       * methods - roles
-                       * if
-                       * if in the method
-                       * while
-                       * while in the method
-                       * method - clear stack after the last operation?
-                       * extends the object with dynamic code
-                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
-                       * inject vm console into IDE
-
-              sdev - prime project
-                       * vm console
-                       * interpreter
-                       * calculator
-                       
-                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
-                         for all neighbours)
-                         
-              sdev - rosetta samples              
-                       * Call a function
-                       * Call an object method
-                       * Canny edge detector
-                       * Carmichael 3 strong pseudoprimes
-                       * Casting out nines
-                       * modify amb operator using open argument list 
-                       * arraymode: support collection of different types
-                       * update amb sample on rosetta code site
-                       * C samples
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              sdev - calculator
-                       * review
-
-              sdev - elenasm
-                       * refactor & optimize the engine code
-                       * should the parameters be saved in the correct order, so no need in reverse command?
-                       * should the object and role be saved in the correct order, so no need in reverse command?
-
-              sdev - default script
-                       * how could it be used?
-                       * support code execution
-                       * suppoer method call
-                       * support variables
-
-              sdev - interpreter
-                       * fix interpreter.bat (should start vm somehow)                       
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                       * trace could print the result directly to console?? (so it will simplify script debugging)
-                       * elenascript should be default one in elt
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-                                                         
-              sdev - prime project
-                       * eldoc: dynamic parser
-                       * upndown
-                       * script program - calculator
-                                              
 week4:
             xmaint - utf-8
                        * all project files should be converted to UTF8
@@ -627,7 +535,92 @@ week2:
                        * implement analog of linq
                        * classOp : test if object is subclass of ??
                        
+week3:
+              sdev - elenasm
+                       * support several grammar rules
+                       * methods - variables
+                       * methods - roles
+                       * if
+                       * if in the method
+                       * while
+                       * while in the method
+                       * method - clear stack after the last operation?
+                       * extends the object with dynamic code
+                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
+                       * inject vm console into IDE
 
+              sdev - prime project
+                       * vm console
+                       * calculator
+                       
+                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
+                         for all neighbours)
+                         
+              sdev - rosetta samples              
+                       * Call a function
+                       * Call an object method
+                       * Canny edge detector
+                       * Carmichael 3 strong pseudoprimes
+                       * Casting out nines
+                       * modify amb operator using open argument list 
+                       * arraymode: support collection of different types
+                       * update amb sample on rosetta code site
+                       * C samples
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
+
+              sdev - calculator
+                       * review
+
+              sdev - elenasm
+                       * refactor & optimize the engine code
+                       * should the parameters be saved in the correct order, so no need in reverse command?
+                       * should the object and role be saved in the correct order, so no need in reverse command?
+
+              sdev - interpreter
+                       * fix interpreter.bat (should start vm somehow)                       
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                       * trace could print the result directly to console?? (so it will simplify script debugging)
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
+                                                         
+              sdev - prime project
+                       * eldoc: dynamic parser
+                       * upndown
+                       * script program - calculator
+                                              
 1.9.17
 --------
 week1:

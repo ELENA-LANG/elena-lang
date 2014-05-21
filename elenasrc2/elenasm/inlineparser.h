@@ -37,6 +37,10 @@ public:
    wchar16_t token[LINE_LEN];
 
    virtual const wchar16_t* read() = 0;
+
+   virtual size_t Position() = 0;
+
+   virtual void seek(size_t position) = 0;
 };
 
 // --- TapeWriter ---

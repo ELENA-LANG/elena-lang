@@ -37,54 +37,50 @@ namespace _ELENA_
 //      this->row = row;
 //   }
 //};
-//
-//// --- Terminal ---
-//
-//struct Terminal
-//{
-//   int       col, row;
-//   char      state;
-//   wchar16_t value[0x100];
-//};
-//
-//// --- ScriptLog ---
-//
-//class ScriptLog
-//{
-//   MemoryDump _log;
-//
-//public:
-//   void write(wchar16_t ch);
-//   void write(const wchar16_t* token);
-//
-//   size_t Position()
-//   {
-//      return _log.Length();
-//   }
-//
-//   void trim(size_t position)
-//   {
-//      _log.trim(position);
-//   }
-//
-//   void* getBody() { return _log.get(0); } 
-//
-//   size_t Length() const { return _log.Length(); }
-//
-//   void clear()
-//   {
-//      _log.trim(0);
-//   }
-//};
+
+// --- ScriptLog ---
+
+class ScriptLog
+{
+   MemoryDump _log;
+
+public:
+   void write(wchar16_t ch);
+   void write(const wchar16_t* token);
+
+   size_t Position()
+   {
+      return _log.Length();
+   }
+
+   void trim(size_t position)
+   {
+      _log.trim(position);
+   }
+
+   void* getBody() 
+   { 
+      write((wchar16_t)0);
+
+      return _log.get(0); 
+   } 
+
+   size_t Length() const { return _log.Length(); }
+
+   void clear()
+   {
+      _log.trim(0);
+   }
+};
 
 // --- Parser ---
 
 class _Parser
 {
 public:
-   virtual void defineGrammarRule(_ScriptReader& reader) = 0;  
+   virtual void parseGrammarRule(_ScriptReader& reader) = 0;  
 
-//   virtual void parse(TextReader* script, _ScriptCompiler* compiler) = 0;
+   virtual void parse(_ScriptReader& reader, ScriptLog& log) = 0;
 };
 
 typedef Map<const wchar16_t*, _Parser*, true> ParserMap;
@@ -119,14 +115,14 @@ class Session
       void cache();
 
    public:
-      size_t Position() 
+      virtual size_t Position() 
       { 
          _cacheMode = true;
 
          return _position; 
       }
 
-      void seek(size_t position)
+      virtual void seek(size_t position)
       {
          _position = position;
       }
@@ -160,7 +156,8 @@ class Session
    String<wchar16_t, 512> _lastError;
 
    void parseMetaScript(MemoryDump& tape, CachedScriptReader& reader);
-   void parseScript(MemoryDump& tape, _ScriptReader& reader);
+   void parseScript(_Parser* parser, MemoryDump& tape, _ScriptReader& reader);
+   void parseScript(MemoryDump& tape, const wchar16_t* script);
 
    int translate(TextReader* source, bool standalone);
 

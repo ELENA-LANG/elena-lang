@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   6
+#define ELT_BUILD_NUMBER   8
  
 // global variables
 int   _encoding = feAnsi;
@@ -58,21 +58,21 @@ int   _encoding = feAnsi;
 ////   while (p2[0]==' ')
 ////      p2++;
 ////}
-//
-//const wchar16_t* trim(const wchar16_t* s)
-//{
-//   while(s[0]==0x20)s++;
-//
-//   return s;
-//}
+
+const wchar16_t* trim(const wchar16_t* s)
+{
+   while(s[0]==0x20)s++;
+
+   return s;
+}
 
 void printHelp()
 {
    printf("-q                   - quit\n");
-//   printf("-h                   - help\n");
+   printf("-h                   - help\n");
 ////   printf("-ton                 - trace mode is on\n");
 ////   printf("-toff                - trace mode is off\n");
-//   printf("-l [name=]<path>     - execute a script from file\n");
+   printf("-l <path>            - execute a script from file\n");
 ////   printf("-lt [name=]<path>      - disassemble a script from file\n");
 ////   printf("-lc [name=]<path>      - generate CF parser from file\n");
 ////   printf("-li <path>             - load an inline script from file\n");
@@ -93,6 +93,8 @@ void executeScript(const wchar16_t* script)
 
 void loadScript(const wchar16_t* path)
 {
+   path = trim(path);
+
    int retVal = InterpretFile(path, _encoding, false);
    if (retVal == 0) {
       const wchar16_t* error = GetLSMStatus();
@@ -113,12 +115,12 @@ bool executeCommand(const wchar16_t* line, bool& running)
    if(line[0] == 'q') {
       running = false;
    }
-//   else if(line[0] == 'h') {
-//      printHelp();
-//   }
-//   else if(line[0] == 'l') {
-//      loadScript(line + 1);
-//   }
+   else if(line[0] == 'h') {
+      printHelp();
+   }
+   else if(line[0] == 'l') {
+      loadScript(line + 1);
+   }
 ////   else if(ConstantIdentifier::compare(line, "ton")) {
 ////      _tracing = true;
 ////   }
@@ -155,12 +157,11 @@ void runSession()
 
          if (line[0]=='-') {
             if(!executeCommand(line + 1, running))
-               printHelp();
+               printf("Invalid command, use -h to get the list of the commands\n");
          }
          else if (!emptystr(line) && line[getlength(line) - 1]!=','){
             executeScript(line);
          }
-//         else printHelp();
       }
       catch(...) {
          printf("Invalid operation");

@@ -141,6 +141,9 @@ int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& rea
       if (reader.token[0]=='{') {
          parseStruct(writer, reader, locals);
       }
+      else if (ConstantIdentifier::compare(reader.token, "[") || ConstantIdentifier::compare(reader.token, "&")) {
+         parseAction(writer, reader);
+      }
       else {
          switch (reader.info.state) {
             case dfaInteger:
@@ -361,12 +364,7 @@ void InlineScriptParser :: parseStruct(TapeWriter& writer, _ScriptReader& reader
             throw EParseError(reader.info.column, reader.info.row);
 
          token = reader.read();
-         if (ConstantIdentifier::compare(token, "[") || ConstantIdentifier::compare(token, "&")) {
-            parseAction(writer, reader);
-            
-            reader.read();
-         }
-         else parseExpression(writer, reader, locals, 0, mdRoot);
+         parseExpression(writer, reader, locals, 0, mdRoot);
       }
       else throw EParseError(reader.info.column, reader.info.row);
    }
@@ -459,6 +457,7 @@ void InlineScriptParser :: parseDirectives(MemoryDump& tape, _ScriptReader& read
          }
          else throw EParseError(reader.info.column, reader.info.row);
       }
+      else return;
    }
    while(true);
 }

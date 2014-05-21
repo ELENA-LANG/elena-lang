@@ -14,33 +14,28 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-//// --- ScriptLog ---
-//
-//void ScriptLog :: write(wchar16_t ch)
-//{
-//   MemoryWriter writer(&_log);
-//
-//   writer.writeWideChar(ch);
-//}
-//
-//void ScriptLog :: write(const wchar16_t* token)
-//{
-//   MemoryWriter writer(&_log);
-//
-//   writer.writeWideLiteral(token, getlength(token));
-//   writer.writeWideChar(' ');
-//}
+// --- ScriptLog ---
+
+void ScriptLog :: write(wchar16_t ch)
+{
+   MemoryWriter writer(&_log);
+
+   writer.writeWideChar(ch);
+}
+
+void ScriptLog :: write(const wchar16_t* token)
+{
+   MemoryWriter writer(&_log);
+
+   writer.writeWideLiteral(token, getlength(token));
+   writer.writeWideChar(' ');
+}
 
 // --- ScriptReader ---
 
 const wchar16_t* Session::ScriptReader :: read()
 {
    info = reader.read(token, LINE_LEN);
-
-//   if (_reader.read()) {
-//      token.column = _reader.token.column;
-//      token.row = _reader.token.row;
-//      token.state = _reader.token.state;
    if (info.state == dfaQuote) {
       QuoteTemplate<TempString> quote(info.line);
 
@@ -140,7 +135,7 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
                _parsers.add(ConstantIdentifier("default"), _currentParser);
             }
 
-            _currentParser->defineGrammarRule(reader);
+            _currentParser->parseGrammarRule(reader);
          }
 
          saved = reader.Position();
@@ -152,9 +147,24 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
    reader.clearCache();
 }
 
-void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
+void Session :: parseScript(_Parser* parser, MemoryDump& tape, _ScriptReader& reader)
 {
-   _scriptParser.parseScript(tape, reader);
+   if (parser) {
+      ScriptLog log;
+
+      _currentParser->parse(reader, log);
+
+      parseScript(tape, (const wchar16_t*)log.getBody());
+   }
+   else _scriptParser.parseScript(tape, reader);
+}
+
+void Session :: parseScript(MemoryDump& tape, const wchar16_t* script)
+{
+   WideLiteralTextReader reader(script);
+   CachedScriptReader scriptReader(&reader);
+
+   parseScript(NULL, tape, scriptReader);
 }
 
 int Session :: translate(TextReader* source, bool standalone)
@@ -165,7 +175,7 @@ int Session :: translate(TextReader* source, bool standalone)
    MemoryDump         tape;
 
    parseMetaScript(tape, scriptReader);
-   parseScript(tape, scriptReader);
+   parseScript(_currentParser, tape, scriptReader);
 
    int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
 
