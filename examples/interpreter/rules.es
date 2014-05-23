@@ -10,5 +10,5 @@
    #define command ::= < ]) > "]" command;
    #define command ::= $any command;
    #define command ::= $eof; 
+   #mode symbolic;
 ]]                                
-@@

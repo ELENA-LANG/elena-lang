@@ -95,6 +95,29 @@ void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, Memory
    writeCommand(ByteCommand(code, n1, n2), writer);
 }
 
+void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   const wchar16_t* word = token.read();
+   if (ConstantIdentifier::compare(word, "extern")) {
+      token.read(_T(":"), _T("Invalid operand"));
+      token.read();
+      if (StringHelper::compare(token.value, _T("'dlls'"), 6)) {
+         ReferenceNs function(DLL_NAMESPACE, token.value + 6);
+
+	      token.read(_T("."), _T("dot expected (%d)\n"));
+	      function.append(_T("."));
+	      function.append(token.read());
+
+         size_t reference = binary->mapReference(function) | mskImportRef;
+
+         writeCommand(ByteCommand(code, reference), writer);
+
+         return;
+      }
+   }
+   throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
+}
+
 void ECodesAssembler :: compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info)
 {
    writer.writeByte(code);
@@ -186,6 +209,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcDDec:
       case bcGetLen:
       case bcDInc:
+      case bcExclude:
          writeCommand(ByteCommand(opcode), writer);
          break;
       case bcCallR:
@@ -262,6 +286,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          break;
       case bcSCallVI:
          compileNNCommand(opcode, token, writer);
+         break;
+      case bcCallExtR:
+         compileExtCommand(opcode, token, writer, binary);
          break;
    default:
       recognized = false;

@@ -131,6 +131,7 @@ bool IsRCode(ByteCode code)
       case bcNBox:
       case bcBox:
       case bcXCallRM:
+      case bcCallExtR:
          return true;
       default:
          return false;

@@ -6,6 +6,7 @@ define elRole               000004000h
 define elSubject            000002000h
 
 define NEW_MESSAGE_ID       084000000h
+define NEW_MESSAGE_ID_1     084000001h
 define IFFAILED_MESSAGE_ID  0A1000001h
 define EVAL_MESSAGE_ID      085000000h
 define RAISE_MESSAGE_ID     0A0000001h
@@ -1338,12 +1339,46 @@ end
 procedure inline'vmscript_eval
 
   aloadsi 2
-  aloadai 0
-  pushb
-  bcopya 
-  bseval
-  popb
+  exclude
+  pusha
+  callextr extern : 'dlls'elenasm.EvaluateScript
+  aelse labErr
+  popi 2
   quitn 2
+
+labErr:
+  callr system'dynamic'scriptLastError
+  pusha  
+  callr system'dynamic'ScriptException
+  pusha
+  mcopy NEW_MESSAGE_ID_1
+  acallvi 0
+  throw
+    
+end
+
+procedure inline'vmscript_load
+
+  exclude
+  aloadsi 5
+  pushai 0
+  aloadsi 5
+  pushai 0
+  aloadsi 5
+  pusha
+  callextr extern : 'dlls'elenasm.EvaluateFile
+  aelse labErr
+  popi 4
+  quitn 4
+
+labErr:
+  callr system'dynamic'scriptLastError
+  pusha  
+  callr system'dynamic'ScriptException
+  pusha
+  mcopy NEW_MESSAGE_ID_1
+  acallvi 0
+  throw
     
 end
 

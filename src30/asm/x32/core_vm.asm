@@ -178,15 +178,6 @@ procedure core_vm'eval
   
   call code : "$package'core'openframe"
 
-  // set default exception handler
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  mov  ebx, code : "$package'core_vm'default_handler"
-  mov  [data : %CORE_EXCEPTION_TABLE], ebx
-/*  
-  mov edx, [ebp+20h]
-
-  mov esi, [edx]
-*/  
   // invoke symbol
   call eax
 

@@ -19,35 +19,13 @@ using namespace _ELENA_TOOL_;
 #define EOF_KEYWORD           "$eof"
 #define ANY_KEYWORD           "$any"
 
-//const char* dfaSymbolic[4] =
-//{
-//        ".????????dd??d??????????????????bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-//        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-//        "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
-//        "*********dd**d******************************************************************************************************************"
-//};
-//
-//// --- ScriptReader :: Reader ---
-//
-//CFParser::ScriptReader::Reader :: Reader(TextReader* script)
-//   : parser(4, script)
-//{
-//}
-//
-//bool CFParser::ScriptReader::Reader :: read()
-//{
-//   try {
-//      token = parser.read(buffer, LINE_LEN);
-//
-//      return (token.state == dfaEOF) ? false : true;
-//   }
-//   catch(InvalidChar) {
-//      throw EParseError(token.column, token.row);
-//   }
-//   catch(LineTooLong) {
-//      throw EParseError(token.column, token.row);
-//   }
-//}
+const char* dfaSymbolic[4] =
+{
+        ".????????dd??d??????????????????bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
+        "*********dd**d******************************************************************************************************************"
+};
 
 // --- CFParser ---
 
@@ -426,43 +404,6 @@ bool CFParser :: applyRule(Rule& rule, TokenInfo& token, _ScriptReader& reader)
    else return false;
 }
 
-//void CFParser :: compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler)
-//{
-//   while(reader.read(token)) {
-//      if (token.compare("]]")) {
-//         return;
-//      }
-//      else if (token.compare("#define")) {
-//         reader.read(token);
-//
-//         if (token.state != dfaIdentifier)
-//            throw EParseError(token.column, token.row);
-//
-//         size_t ruleId = mapRuleId(token.value);
-//
-//         reader.read(token);
-//         if (ConstantIdentifier::compare(token.value, "::=")) {
-//            Rule rule;
-//
-//            reader.read(token);
-//            defineGrammarRule(token, reader, rule);
-//
-//            _rules.add(ruleId, rule);
-//         }
-//         else throw EParseError(token.column, token.row);
-//      }
-//      // compile the line
-//      else if (token.compare(";")) {
-//         WideLiteralTextReader script(token.getLog());
-//
-//         compiler->compile(&script);
-//
-//         token.clearLog();
-//      }
-//      else token.writeLog();
-//   }
-//}
-
 size_t CFParser :: defineDSARule(TokenInfo& token, _ScriptReader& reader)
 {
    const wchar16_t* s = token.getLog();
@@ -609,26 +550,27 @@ void CFParser :: parseGrammarRule(_ScriptReader& reader)
    _rules.add(ruleId, rule);
 }
 
+void CFParser :: parseDirective(_ScriptReader& reader)
+{
+   const wchar16_t* token = reader.read();
+   while (token[0] != ';') {
+      if (ConstantIdentifier::compare(token, "symbolic")) {
+         _symbolMode = true;
+      }
+      else throw EParseError(reader.info.column, reader.info.row);
+
+      token = reader.read();
+   }
+}
+
 void CFParser :: parse(_ScriptReader& reader, ScriptLog& log)
 {
-   //if (_symbolMode)
-   //   reader.switchDFA(dfaSymbolic);
+   if (_symbolMode)
+      reader.switchDFA(dfaSymbolic);
 
    TokenInfo token(this, &log);
 
    token.read(reader);
-
-   //// if it is switch derective
-   //if (token.compare("@")) {
-   //   reader.read(token);
-   //   if (token.compare("@")) {
-   //      reader.switchDFA(dfaSymbolic);
-   //      _symbolMode = true;
-
-   //      reader.read(token);
-   //   }
-   //   else throw EParseError(token.column, token.row);
-   //}
 
    size_t readerRollback = reader.Position();
    //size_t outputRollback = compiler->Position();

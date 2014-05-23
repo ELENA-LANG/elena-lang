@@ -119,8 +119,6 @@
 
 #symbol Program =
 [ 
-    #var aTape := scriptControl load &literal:"system'console.write(123)".
-
     InterpreterTest eval.
 
     ClassTest eval.

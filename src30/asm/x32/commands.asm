@@ -242,7 +242,6 @@ end
 inline % 1Eh
 
   // ; store previous value
-  push [data : %CORE_GC_TABLE + gc_ext_stack_frame]
   push ebp
   mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
 

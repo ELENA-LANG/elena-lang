@@ -48,7 +48,7 @@ EXTERN_DLL_EXPORT int EvaluateFile(const wchar16_t* path, int encoding, bool aut
    return session->translate(path, encoding, autoDetect, false);
 }
 
-EXTERN_DLL_EXPORT const wchar16_t* GetLSMStatus()
+EXTERN_DLL_EXPORT const wchar16_t* GetStatus()
 {
    _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
 

@@ -156,14 +156,18 @@
 
 #symbol program2 =
 [
+    console readChar.
+    
     ('program'arguments length == 1)?
         [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
 
     system'dynamic'scriptControl load &path:"rules.es"
-        | ifFailed: [ console writeLine:(system'dynamic'scriptControl LastScriptError). #throw BreakException new. ].
+        | onScriptError : ex [ console writeLine:(ex Message). #break nil. ].
 
     #var aBFTape := BFTape new &length:1024.
-    #var aSourceTape := system'dynamic'scriptControl load &path:('program'arguments@1).
+    
+    #var aSourceTape := system'dynamic'scriptControl load &path:('program'arguments@1)
+        | onScriptError : ex [ console writeLine:(ex Message). #break nil. ].
     
     aSourceTape eval:aBFTape.
 ].

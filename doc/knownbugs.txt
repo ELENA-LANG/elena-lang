@@ -6,6 +6,7 @@ ELC:
 
 Samples:
 --------
+#00068: interpreter (script mode) crashes with long file (e.g. sample2.txt)
 
 LIB:
 ----
@@ -18,4 +19,4 @@ Tools:
 -----
 #00017: ASM2BINX: warn on unresolved labels
 
-(next=#00068)
+(next=#00069)

@@ -19,39 +19,10 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              sdev - prime project
-                       * simple calculator
-                       * stand alone interpreter                       
-                       * interpreter
-
-              sdev - elenasm
-                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
-                       * using script engine from ELENA program - return the result
-                       * using script engine from ELENA program - error handling
-
 
 <=================> 
 
-1.9.15 [23.5]
---------
-week4:
-            xmaint - utf-8
-                       * all project files should be converted to UTF8
-                       * test saving to utf-8
-                       * test saving to utf-16
-                       * test saving to oem
-                       
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-                                             
-              xdev - test
-                       * test #var(type:long)a := 2.
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
-                       * boxing: message target / operand, operator target / operand                       
-                       * try to automize build process  
-
-1.9.16
+1.9.16 [9.6]
 --------
 week1:
               xdev - linux
@@ -85,6 +56,11 @@ week1:
                        * compile anagram with mt
 
               xdev - generic development                            
+                       * #var(type:long)a := 2 - does not work                       
+
+                       * do we need bseval? direct operation with dll is better
+                       * do we need include?
+
                        * can we have a special handler which has else part (something like => operator) e.g. it returns true if the operand
                          is integer, otherwise false
 
@@ -536,7 +512,16 @@ week2:
                        * classOp : test if object is subclass of ??
                        
 week3:
+              sdev - prime project
+                       * interpreter : execute simple sample3.txt
+                       * interpreter : execute sample1.txt
+                       * interpreter : execute sample2.txt
+                       * interpreter : find out why the debugger does not work after script engine call
+
               sdev - elenasm
+                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
+                       * using script engine from ELENA program - return the result
+                       * using script engine from ELENA program - error handling
                        * support several grammar rules
                        * methods - variables
                        * methods - roles
@@ -550,6 +535,7 @@ week3:
                        * inject vm console into IDE
 
               sdev - prime project
+                       * simple calculator
                        * vm console
                        * calculator
                        
@@ -620,7 +606,19 @@ week3:
                        * eldoc: dynamic parser
                        * upndown
                        * script program - calculator
-                                              
+
+week4:
+              xdoc - blog
+                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
+                         variable, visualize it content, execute it)
+                                             
+              xdev - test
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                       * boxing: message target / operand, operator target / operand
+                       * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
+                         script, so we could check if the caller stack is included correctly)
+                       * try to automize build process  
+
 1.9.17
 --------
 week1:

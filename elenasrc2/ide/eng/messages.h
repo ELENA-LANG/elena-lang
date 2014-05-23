@@ -86,7 +86,7 @@
 
 // --- Debugger exception texts ---
 
-#define UNKNOWN_EXCEPTION_TEXT                  _T("Unknown exceptoin at address ")
+#define UNKNOWN_EXCEPTION_TEXT                  _T("Unknown exception at address ")
 #define ACCESS_VIOLATION_EXCEPTION_TEXT         _T("Access violation at address ")
 #define ARRAY_BOUNDS_EXCEEDED_EXCEPTION_TEXT    _T("Array bounds exceeded at address ")
 #define DATATYPE_MISALIGNMENT_EXCEPTION_TEXT    _T("Datatype misalignment at address ")

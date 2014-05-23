@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   8
+#define ELT_BUILD_NUMBER   9
  
 // global variables
 int   _encoding = feAnsi;
@@ -83,7 +83,7 @@ void executeScript(const wchar16_t* script)
 {
    int retVal = InterpretScript(script);
    if (retVal == 0) {
-      const wchar16_t* error = GetLSMStatus();
+      const wchar16_t* error = GetStatus();
       if (!emptystr(error)) {
          wprintf(_T("\nFailed:%s"), error);
       }
@@ -97,7 +97,7 @@ void loadScript(const wchar16_t* path)
 
    int retVal = InterpretFile(path, _encoding, false);
    if (retVal == 0) {
-      const wchar16_t* error = GetLSMStatus();
+      const wchar16_t* error = GetStatus();
       if (!emptystr(error)) {
          wprintf(_T("\nFailed:%s"), error);
       }

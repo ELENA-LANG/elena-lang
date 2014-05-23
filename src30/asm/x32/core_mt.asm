@@ -1253,9 +1253,7 @@ procedure core'closeframe
   pop  ecx  
 
   // ; GCXT
-  lea  esp, [esp+4]
-  pop  esi
-  mov  [esi + tls_stack_frame], esi
+  lea  esp, [esp+8]
   pop  ebp
   
   // ; restore return pointer

@@ -133,15 +133,15 @@ public:
          value = NULL;
          state = 0;
       }
-//      TokenInfo(TokenInfo& token)
-//      {
-//         parser = token.parser;
-//         this->buffer = token.buffer;
-//         row = token.row;
-//         column = token.column;
-//         value = token.value;
-//         state = token.state;
-//      }
+      TokenInfo(TokenInfo& token)
+      {
+         parser = token.parser;
+         this->buffer = token.buffer;
+         row = token.row;
+         column = token.column;
+         value = token.value;
+         state = token.state;
+      }
    };
    
    enum RuleType
@@ -225,6 +225,7 @@ public:
 
    virtual void parse(_ScriptReader& reader, ScriptLog& log);
    virtual void parseGrammarRule(_ScriptReader& reader);
+   virtual void parseDirective(_ScriptReader& reader);
 
    CFParser()
       : _rules(Rule())

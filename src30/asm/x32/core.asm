@@ -1131,9 +1131,7 @@ procedure core'closeframe
   // ; save return pointer
   pop  ecx  
   
-  lea  esp, [esp+4]
-  pop  esi
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esi
+  lea  esp, [esp+8]
   pop  ebp
   
   // ; restore return pointer

@@ -79,6 +79,7 @@ class _Parser
 {
 public:
    virtual void parseGrammarRule(_ScriptReader& reader) = 0;  
+   virtual void parseDirective(_ScriptReader& reader) = 0;  
 
    virtual void parse(_ScriptReader& reader, ScriptLog& log) = 0;
 };
@@ -98,6 +99,11 @@ class Session
 
    public:
       virtual const wchar16_t* read();
+
+      virtual void switchDFA(const char** dfa)
+      {
+         reader.switchDFA(dfa);
+      }
 
       ScriptReader(TextReader* script)
          : reader(4, script)

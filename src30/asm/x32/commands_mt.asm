@@ -85,7 +85,6 @@ inline % 1Eh
   mov  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
   // ; lock managed stack frame
-  push  [ebx + tls_stack_frame]
   push ebp
   mov  [ebx + tls_stack_frame], esp
 

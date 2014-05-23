@@ -125,9 +125,6 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
       saved = reader.Position();
       token = reader.read();
       while (!ConstantIdentifier::compare(token, "]]")) {
-         reader.seek(saved);
-         _scriptParser.parseDirectives(tape, reader);
-
          if(ConstantIdentifier::compare(token, "#define")) {
             if (!_currentParser) {
                _currentParser = new CFParser();
@@ -137,7 +134,14 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
 
             _currentParser->parseGrammarRule(reader);
          }
+         else if(ConstantIdentifier::compare(token, "#mode")) {
+            _currentParser->parseDirective(reader);
+         }
+         else {
+            reader.seek(saved);
 
+            _scriptParser.parseDirectives(tape, reader);
+         }
          saved = reader.Position();
          token = reader.read();
       }
