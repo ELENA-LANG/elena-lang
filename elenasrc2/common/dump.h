@@ -134,7 +134,6 @@ public:
    virtual bool read(wchar16_t* s, size_t length)
    {
       const wchar16_t* start = s;
-      bool read = false;
       while (length > 0) {
          if(!_reader->read(s, 1))
             break;

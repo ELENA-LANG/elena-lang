@@ -54,6 +54,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-static-libgcc -static-libstdc++" />
+			<Add library="..\..\..\bin\libelenavm.a" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />
