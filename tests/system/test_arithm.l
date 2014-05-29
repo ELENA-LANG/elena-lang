@@ -11,6 +11,8 @@
 
 #symbol XTest =
 [
+    #var(type:int)a := 2.
+                                              
 //    #var s := "abc".
 //    #var l := s length.
 ].

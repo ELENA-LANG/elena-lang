@@ -19,13 +19,60 @@ v  - vm script
 ------                                 
 Currently:
 ------
+              xdev - generic development                            
+                       * #var(type:long)a := 2 - does not work                       
+
+                       * can we have a special handler which has else part (something like => operator) e.g. it returns true if the operand
+                         is integer, otherwise false
+
+                       * should int and index be synonym, no need to support both of them?
+
+                       * no need to save previous external reference, it should be done on frame openning
+                       
+                       * make possible to send exception futher with ifFailed handler
+
+                       * multiple parameter dispatching
+                             save&to => save&int&to | save&long&to ; 
+                             can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
+                             
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+
+                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
+                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
+                       
+                       * Object implementation : instead of notequal / notgreater / greater - implement equal, less, notless and invert the result?
+                       
+                       * write, append, ... operation direct implementation should be allowed only with $self or out parameter
+                                                     
+                       * it is better to implement != operator as primitive one (in operators module), so no need to predefine NOT subject,
+                         asm2binx should support subjects in that case
+
+                       * do we need bseval? direct operation with dll is better
+                       * do we need include?
+                       
+                       * widechar constant : special symbol or we could use literal constant with length=1
+
+                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
 
 <=================> 
 
 1.9.16 [9.6]
 --------
 week1:
+              xdev - hotfix : unicode
+                       * u_helloworld does not show russian text correctly in just installed IDE
+                       * problem with compiling the text with national letters
+
               xdev - linux
+                       * paths: lib    - \usr\share\elena\lib30
+                                         \usr\share\elena\src30
+                                config - \etc\elena
+                                data   - \usr\share\elena - data
+
                        * linux linker
                        * linux console operations
                        * linux file operations
@@ -54,90 +101,6 @@ week1:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        * compile anagram with mt
-
-              xdev - generic development                            
-                       * #var(type:long)a := 2 - does not work                       
-
-                       * do we need bseval? direct operation with dll is better
-                       * do we need include?
-
-                       * can we have a special handler which has else part (something like => operator) e.g. it returns true if the operand
-                         is integer, otherwise false
-
-                       * support #define(extension:inputOp)consoleEx=system'console. or #use ...
-
-                       * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg ) ??
-
-                       * should int and index be synonym, no need to support both of them?
-
-                       * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
-                         $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
-
-                       * no need to save previous external reference, it should be done on frame openning
-
-                       * nested action / function should be reimplemented, Action / Function class should contain the reference to the 
-                         code ; what about non constant ones ?
-
-                       * constant array
-
-                       * make possible to send exception futher with ifFailed handler
-
-                       * multiple parameter dispatching
-                             save&to => save&int&to | save&long&to ; 
-                             can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
-                             
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-
-                       * custom verb dispatching (see for example stringControl split&by[2])
-                           : intNumber.shift ; stringControl
-
-                       * should be possible to declare sealed classes
-
-                       * should it be possible to override operator implementation with extension methods?
-                       
-                       * get rid of predefined subjects - they all should be declared in the source code, no compiler dependency
-
-                       * widechar constant : special symbol or we could use literal constant with length=1
-                       
-                       * Object implementation : instead of notequal / notgreater / greater - implement equal, less, notless and invert the result?
-                             
-                       * group object implementation (group, union, cast)
-                       
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-                       * loop should contain snop
-                       * warn if number of subjects / verbs are overflown
-                       * readonly fields like in C# (some optimization gains?)
-                       * warn if system'Object does not contain send method
-                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
-                       * lcopystr : index should contain radix
-                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
-                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
-                       * ws_indexof: check operations check if index, index + length is not beyond string
-                       * new ecode: released - do we need it, or loop would be enough?
-                       * type enforcing : compiler should generate a warning if out'xx is not local variable 
-                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
-                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
-                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
-                         (either typed variable or typed expression)
-                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
-                       * virtual optimization: it is presumed that result of comparision operator is true or false, but it still possible
-                         that it will return Boolean varible for example, we need somehow garantee that it is the case for the boolean function 
-                       * review opcode matrix, think over extension simplification
-                       * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
-                       * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
-                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
-                       * refactore Compiler::definePrimitiveOperationCode
-                       * out'literal - literal is a constant , so maybe better to use out'bytearray?
-
-                       * think over reflection implementtion for static linked executable
-
-                       * should commands be multy-thread independent, e.g. all related code be located in core?
-                       
-                       * write, append, ... operation direct implementation should be allowed only with $self or out parameter
-
-                       * it is better to implement != operator as primitive one (in operators module), so no need to predefine NOT subject,
-                         asm2binx should support subjects in that case
 
               xdev - message ids
                        * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
@@ -309,8 +272,11 @@ week1:
                        
               xdev - script support
                        * should be possible to debug vm scripts
-
+                       
               idev - generic development
+                       * some phantom ending in the file open with utf8 mode
+                       * utf8 by default
+                       * refresh / reload documents after changing encoding ??
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
                          utf-16 for windows?
                        * store current encoding for every file
@@ -349,8 +315,10 @@ week2:
                        * copy protocols to doc\protocols
                        * support dispatch method
                        * support redirect method
-
+                       
               adev - lib30                                        
+                       * String : padLeft, padRight, trimAll, trimEnd, trimStart
+
                        * scriptControl.load&literal - raise an error if the result is broken
 
                        * test if object is nil                       
@@ -623,6 +591,56 @@ week4:
 --------
 week1:
 
+              xdev - generic development                            
+
+                       * support #define(extension:inputOp)consoleEx=system'console. or #use ...
+
+                       * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg ) ??
+
+                       * sealed methods which could be used only inside the current object ; will use direct call and be accessible only with
+                         $self : (#method(sealed)do []) - if it is private than it is accessible only in the current package
+
+                       * nested action / function should be reimplemented, Action / Function class should contain the reference to the 
+                         code ; what about non constant ones ?
+
+                       * constant array
+                       * should be possible to declare sealed classes
+
+                       * should it be possible to override operator implementation with extension methods?
+                       
+                       * get rid of predefined subjects - they all should be declared in the source code, no compiler dependency
+                             
+                       * group object implementation (group, union, cast)
+                       
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+                       * loop should contain snop
+                       * warn if number of subjects / verbs are overflown
+                       * readonly fields like in C# (some optimization gains?)
+                       * warn if system'Object does not contain send method
+                       * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
+                       * lcopystr : index should contain radix
+                       * wsindexof... should be similare to bsindexof, search in edi for eax, [esp] times, starting from esi
+                       * bs_findshort, bs_findbyte - check if index + length is not beyond string
+                       * ws_indexof: check operations check if index, index + length is not beyond string
+                       * new ecode: released - do we need it, or loop would be enough?
+                       * type enforcing : compiler should generate a warning if out'xx is not local variable 
+                       * type enforcing : if type enforcing is turned on  - msg &int::n should be compiled directly without need to send int message,
+                         otherwise (type enforcing is turned off or type is unknown) - replace with n ~type int 
+                       * type enforcing : if this option is turned on - it should be possible to type - subject with the correct value
+                         (either typed variable or typed expression)
+                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
+                       * review opcode matrix, think over extension simplification
+                       * new opcodes : bsgetbyte, bssetbyte , (uncomment primitive.read&bytearray&index:anIndex&out'byte, reimplement intOp)
+                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
+                       * refactore Compiler::definePrimitiveOperationCode
+                       * out'literal - literal is a constant , so maybe better to use out'bytearray?
+
+                       * think over reflection implementtion for static linked executable
+
+                       * should commands be multy-thread independent, e.g. all related code be located in core?
+                       * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
+                         so the actualy read size should be reduced to match the valid group
+
 1.9.18
 --------
 week1:
@@ -635,6 +653,9 @@ week1:
                        * out of memory exception should be correctly raised
                        * destructors
                        
+
+1.9.19
+--------
 
 2.0.0
 -----

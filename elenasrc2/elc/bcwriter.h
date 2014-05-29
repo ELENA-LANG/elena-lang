@@ -14,7 +14,7 @@
 namespace _ELENA_
 {
 
-enum ObjectKind 
+enum ObjectKind
 {
    okUnknown = 0,
 
@@ -41,7 +41,7 @@ enum ObjectKind
    okIdle
 };
 
-enum ObjectType 
+enum ObjectType
 {
    otNone,
    otControl,
@@ -68,7 +68,7 @@ enum ObjectType
    otParams
 };
 
-struct ObjectInfo 
+struct ObjectInfo
 {
    ObjectKind kind;
    ObjectType type;
@@ -141,7 +141,7 @@ class ByteCodeWriter
       ref_t         sourceRef;
       MemoryWriter* vmt;
       MemoryWriter* code;
-      MemoryWriter* debug; 
+      MemoryWriter* debug;
       MemoryWriter* debugStrings;
 
       Scope()
@@ -158,7 +158,7 @@ class ByteCodeWriter
 
       return (*it).code;
    }
-	
+
    ByteCode peekPrevious(ByteCodeIterator it)
    {
       it--;
@@ -187,7 +187,7 @@ class ByteCodeWriter
    void compileClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 
 public:
-   ref_t writeSourcePath(_Module* debugModule, const wchar16_t* path);
+   ref_t writeSourcePath(_Module* debugModule, const tchar_t* path);
 
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
@@ -326,7 +326,7 @@ public:
    void getArrayItem(CommandTape& tape);
    void getObjectItem(CommandTape& tape, ObjectInfo target);
    void setObjectItem(CommandTape& tape, ObjectInfo target);
-   
+
    void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
 

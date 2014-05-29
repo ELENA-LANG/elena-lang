@@ -14,7 +14,6 @@
 #include "jitcompiler.h"
 
 // --- ELC default file names ---
-#define DEFAULT_CONFIG              "elc.cfg"
 #define SYNTAX_FILE                 "syntax.dat"
 #define RULES_FILE                  "rules.dat"
 
@@ -117,16 +116,15 @@ public:
 
    _ELENA_::_JITCompiler* createJITCompiler();
 
-//   virtual void printInfo(const char* msg);
+   virtual void printInfo(const char* msg, const char* value);
    virtual void printInfo(const char* msg, const wchar16_t* param);
-//   virtual void printInfo(const wchar16_t* msg); // !! temporal
 
    virtual void raiseError(const char* msg);
    virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
-//   virtual void raiseError(const char* msg, const char* value);   // !! temporal??
+   virtual void raiseError(const char* msg, const char* value);
    virtual void raiseError(const char* msg, const wchar16_t* value);
 
-   void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path);
+   virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path);
 
    virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
    virtual void raiseWarning(const char* msg, const tchar_t* path);

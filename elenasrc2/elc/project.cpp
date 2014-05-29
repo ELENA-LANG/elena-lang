@@ -38,6 +38,7 @@ inline const char* getLoadError(LoadResult result)
 // --- Project ---
 
 Project :: Project()
+   : _sources(NULL, freestr)
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
@@ -113,6 +114,41 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, cons
    else return false;
 }
 
+void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* path)
+{
+   ProjectParam param;
+   ProjectParam key;
+
+   ConfigCategoryIterator it = getCategory(config, setting);
+   while (!it.Eof()) {
+      // copy line key
+      key.copy(it.key());
+      key.lower();
+
+      // copy value or key if the value is absent
+      const char* value = *it;
+      if (emptystr(value))
+         value = it.key();
+
+      // add path if provided
+      if (!emptystr(path)) {
+         Path filePath(path);
+         filePath.combine(value);
+         filePath.lower();
+
+         _settings.add(setting, key, filePath.clone());
+      }
+      else {
+         param.copy(value);
+         param.lower();
+
+         _settings.add(setting, key, param.clone());
+      }
+
+      it++;
+   }
+}
+
 void Project :: loadForwardCategory(_ConfigFile& config)
 {
    ProjectParam key, value;
@@ -165,36 +201,20 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, const tchar_t* path)
    }
 }
 
-void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* path)
+void Project :: loadSourceCategory(_ConfigFile& config, const tchar_t* path)
 {
-   ProjectParam param;
    ProjectParam key;
 
-   ConfigCategoryIterator it = getCategory(config, setting);
+   ConfigCategoryIterator it = getCategory(config, opSources);
    while (!it.Eof()) {
-      // copy line key
-      key.copy(it.key());
-      key.lower();
-
-      // copy value or key if the value is absent
-      const char* value = *it;
-      if (emptystr(value))
-         value = it.key();
+      Path name(it.key());
 
       // add path if provided
-      if (!emptystr(path)) {
-         Path filePath(path);
-         filePath.combine(value);
-         filePath.lower();
+      Path filePath(path);
+      filePath.combine(it.key());
+      filePath.lower();
 
-         _settings.add(setting, key, filePath.clone());
-      }
-      else {
-         param.copy(value);
-         param.lower();
-
-         _settings.add(setting, key, param.clone());
-      }
+      _sources.add(name, filePath.clone());
 
       it++;
    }
@@ -243,13 +263,13 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
 //   loadIntOption(config, opL1);
 //   loadIntOption(config, opL2);
    loadIntOption(config, opL3);
-   
+
    // load primitive aliases
    // duplicates should be allowed to implement routine overriding
    loadPrimitiveCategory(config, configPath);
 
    // load sources
-   loadCategory(config, opSources, configPath);
+   loadSourceCategory(config, configPath);
 
    // load forwards
    loadForwardCategory(config);
@@ -296,7 +316,7 @@ _Module* Project :: createModule(const tchar_t* sourcePath)
    else return module;
 }
 
-_Module* Project :: createDebugModule(const wchar_t* name)
+_Module* Project :: createDebugModule(const wchar16_t* name)
 {
    return new Module(name);
 }

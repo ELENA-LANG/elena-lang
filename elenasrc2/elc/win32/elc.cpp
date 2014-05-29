@@ -11,6 +11,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elc.h"
+#include "constants.h"
 #include "errors.h"
 #include "compiler.h"
 #include "linker.h"
@@ -90,15 +91,12 @@ void _ELC_::Project :: raiseError(const char* msg)
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project :: raiseError(const char* msg, const char* value)
-//{
-//   PrintableValue wMsg(msg);
-//   PrintableValue wValue(value);
-//
-//   print(wMsg, (const wchar_t*)wValue);
-//
-//   throw _ELENA_::_Exception();
-//}
+void _ELC_::Project :: raiseError(const char* msg, const char* value)
+{
+   print(msg, value);
+
+   throw _ELENA_::_Exception();
+}
 
 void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
 {
@@ -109,10 +107,10 @@ void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project :: printInfo(const char* msg)
-//{
-//   print(msg);
-//}
+void _ELC_::Project :: printInfo(const char* msg, const char* value)
+{
+   print(msg);
+}
 
 void _ELC_::Project :: printInfo(const char* msg, const wchar16_t* wValue)
 {

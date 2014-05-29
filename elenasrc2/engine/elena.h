@@ -425,7 +425,7 @@ struct ClassInfo
 
    ClassHeader header;
    size_t      size;           // Object size
-   ref_t       classClassRef;  // reference to class class VMT 
+   ref_t       classClassRef;  // reference to class class VMT
    MethodMap   methods;
    MethodMap   extensions;
    FieldMap    fields;

@@ -139,9 +139,30 @@ public:
       return writeWideLiteral(s, getlength(s) + 1);
    }
 
+   bool writeWideLiteral(const char* s)
+   {
+      return writeWideLiteral(s, getlength(s) + 1);
+   }
+
    bool writeWideLiteral(const wchar16_t* s, size_t length)
    {
       return write((void*)s, length << 1);
+   }
+
+   bool writeWideLiteral(const char* s, size_t length)
+   {
+      while (length > 0) {
+         wchar16_t tmp[128];
+         size_t    subLength = length < 127 ? length : 127;
+         size_t    tmpLength = subLength;
+
+         StringHelper::copy(tmp, s, tmpLength);
+
+         writeWideLiteral(tmp, tmpLength);
+
+         length -= subLength;
+         s += subLength;
+      }
    }
 
    bool writeLiteral(const char* s)

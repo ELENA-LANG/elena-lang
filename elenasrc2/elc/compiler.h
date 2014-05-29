@@ -98,7 +98,7 @@ protected:
 
       // symbol hints
       Map<ref_t, ObjectKind>  symbolHints;
-      SubjectMap              extensions; 
+      SubjectMap              extensions;
 
       // cached values
       ref_t nilReference;
@@ -500,7 +500,7 @@ protected:
          }
       };
 
-      Map<const wchar_t*, Outer> outers;
+      Map<const wchar16_t*, Outer> outers;
 
       Outer mapSelf();
 
@@ -552,7 +552,7 @@ protected:
          }
       };
 
-      int               frameSize;   
+      int               frameSize;
       Stack<ParamInfo>  operands;
       Stack<OutputInfo> output;
 
@@ -653,7 +653,7 @@ protected:
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileSignatureReference(DNode objectNode, CodeScope& scope, int mode);
-   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);   
+   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);

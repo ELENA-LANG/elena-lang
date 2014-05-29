@@ -13,8 +13,6 @@
 
 using namespace _ELENA_;
 
-//#include <ctype.h>
-
 // --- Unicode coversion routines ---
 
 #define UNI_MAX_BMP           (unsigned int)0x0000FFFF
@@ -509,12 +507,12 @@ bool StringHelper :: copy(unsigned short* dest, const char* sour, size_t& length
    bool result = true;
 
    unsigned short* start = dest;
-   const unsigned char* s = sour;
+   const unsigned char* s = (const unsigned char*)sour;
    const unsigned char* end = s + length;
    while (end > s) {
       unsigned int ch = 0;
       unsigned short extraBytesToRead = trailingBytesForUTF8[*s];
-      if (extraBytesToRead >= count) {
+      if (extraBytesToRead >= length) {
          result = false;
          break;
       }
@@ -579,6 +577,7 @@ void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, size
 bool StringHelper :: copy(char* dest, const unsigned short* sour, size_t& length)
 {
    bool result = true;
+   char* s = dest;
    const unsigned short* end = sour + length;
    while (sour < end) {
       unsigned short bytesToWrite = 0;
@@ -662,7 +661,7 @@ bool StringHelper :: append(unsigned short* dest, const char* sour, size_t lengt
    else return false;
 }
 
-bool StringHelper :: append(char* dest, const unsigned short* sour, int length)
+bool StringHelper :: append(char* dest, const unsigned short* sour, size_t length)
 {
    size_t current_length = getlength(dest);
    if (copy(dest + current_length, sour, length)) {
@@ -744,15 +743,15 @@ unsigned short* StringHelper :: lower(unsigned short* s)
    return s;
 }
 
-   while(p > s) {
-      if (*p == c)
-         return p - s;
-
-      p--;
-   }
-
-   return defValue;
-}
+//   while(p > s) {
+//      if (*p == c)
+//         return p - s;
+//
+//      p--;
+//   }
+//
+//   return defValue;
+//}
 
 unsigned short* StringHelper :: upper(unsigned short* s)
 {
@@ -779,6 +778,40 @@ int StringHelper :: strToInt(const unsigned short* s)
       unsigned short c = *s;
       if(c >= '0' && c <= '9') {
          n += (c - '0');
+      }
+      else return 0;
+   }
+   if (neg)
+      n *= -1;
+
+   return n;
+}
+
+
+long StringHelper :: strToLong(const unsigned short* s, int radix)
+{
+   int n = 0;
+   bool neg = false;
+
+   //!! temporal
+   if (*s == '-') {
+      s++;
+      neg = true;
+   }
+   while (*s) {
+      n *= 10;
+
+      unsigned short c = *s;
+      if(c >= '0' && c <= '9') {
+         n += (c - '0');
+      }
+      else if(c >= 'A' && c <= 'F') {
+         n += (c - 'A');
+         n += 0x0A;
+      }
+      else if(c >= 'a' && c <= 'f') {
+         n += (c - 'a');
+         n += 0x0A;
       }
       else return 0;
    }
@@ -833,15 +866,15 @@ void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t l
    memmove(s1, s2, length << 1);
 }
 
-//unsigned short* StringHelper :: w_clone(const unsigned short* s)
-//{
-//   size_t length = getlength(s) + 1;
-//   unsigned short* dup = allocate((unsigned short*)NULL, length);
-//   copy(dup, s, length);
-//
-//   return dup;
-//}
-//
+unsigned short* StringHelper :: clone(const unsigned short* s)
+{
+   size_t length = getlength(s) + 1;
+   unsigned short* dup = w_allocate(length);
+   copy(dup, s, length);
+
+   return dup;
+}
+
 //unsigned short* StringHelper :: w_clone(const char* s)
 //{
 //   size_t length = strlen(s) + 1;

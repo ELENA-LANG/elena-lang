@@ -369,7 +369,7 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
    writeTapeRecord(tapeRef, data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
 
    // { MAP_VM_MESSAGE_ID fwrd, ref }*
-   SourceIterator it = project->getForwardIt();
+   ForwardIterator it = project->getForwardIt();
    while (!it.Eof()) {
       writeTapeRecord(tapeRef, data, MAP_VM_MESSAGE_ID, it.key(), *it);
 

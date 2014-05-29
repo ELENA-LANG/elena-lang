@@ -32,6 +32,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-march=pentium2" />
+			<Add option="-Wno-conversion-null" />
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
@@ -44,6 +45,8 @@
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />
 		<Unit filename="../../common/common.h" />
+		<Unit filename="../../common/config.cpp" />
+		<Unit filename="../../common/config.h" />
 		<Unit filename="../../common/dump.cpp" />
 		<Unit filename="../../common/dump.h" />
 		<Unit filename="../../common/files.cpp" />
@@ -51,18 +54,8 @@
 		<Unit filename="../../common/lists.h" />
 		<Unit filename="../../common/streams.h" />
 		<Unit filename="../../common/tools.h" />
-		<Unit filename="../bcwriter.h" />
-		<Unit filename="../compiler.h" />
-		<Unit filename="../derivation.h" />
-		<Unit filename="../elc.h" />
-		<Unit filename="../errors.h" />
-		<Unit filename="../linux32/elc.cpp" />
-		<Unit filename="../parser.h" />
-		<Unit filename="../parsertable.h" />
-		<Unit filename="../project.cpp" />
-		<Unit filename="../project.h" />
-		<Unit filename="../source.h" />
-		<Unit filename="../syntax.h" />
+		<Unit filename="../../engine/bytecode.cpp" />
+		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/elena.h" />
 		<Unit filename="../../engine/elenaconst.h" />
 		<Unit filename="../../engine/libman.cpp" />
@@ -71,6 +64,22 @@
 		<Unit filename="../../engine/module.h" />
 		<Unit filename="../../engine/section.cpp" />
 		<Unit filename="../../engine/section.h" />
+		<Unit filename="../bcwriter.cpp" />
+		<Unit filename="../bcwriter.h" />
+		<Unit filename="../compiler.cpp" />
+		<Unit filename="../compiler.h" />
+		<Unit filename="../derivation.h" />
+		<Unit filename="../elc.h" />
+		<Unit filename="../errors.h" />
+		<Unit filename="../linux32/constants.h" />
+		<Unit filename="../linux32/elc.cpp" />
+		<Unit filename="../parser.cpp" />
+		<Unit filename="../parser.h" />
+		<Unit filename="../parsertable.h" />
+		<Unit filename="../project.cpp" />
+		<Unit filename="../project.h" />
+		<Unit filename="../source.h" />
+		<Unit filename="../syntax.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

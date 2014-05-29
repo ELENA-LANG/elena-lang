@@ -20,24 +20,35 @@ namespace _ELENA_
 #define min(a, b)       ((a) < (b) ? (a) : (b))
 #endif
 
-//#ifdef _LINUX32
-//
-//inline wchar_t* wcslwr(wchar_t* str)
-//{
-//   wchar_t* it = str;
-//   while (*it != 0) { *it = towlower(*it); ++it; }
-//
-//   return str;
-//}
-//
-//inline wchar_t* wcsupr(wchar_t* str)
-//{
-//   wchar_t* it = str;
-//   while (*it != 0) { *it = towupper(*it); ++it; }
-//
-//   return str;
-//}
-//
+#ifdef _LINUX32
+
+#include <ctype.h>
+
+inline static size_t wcslen(const unsigned short* s)
+{
+   const unsigned short* p = s;
+
+   while (*p++);
+
+   return (size_t)(p - s) >> 1;
+}
+
+inline char* strlwr(char* str)
+{
+   char* it = str;
+   while (*it != 0) { *it = tolower(*it); ++it; }
+
+   return str;
+}
+
+inline char* strupr(char* str)
+{
+   char* it = str;
+   while (*it != 0) { *it = toupper(*it); ++it; }
+
+   return str;
+}
+
 //int _itow(int val, wchar_t* s, int radix)
 //{
 //    int len = 0;
@@ -77,7 +88,7 @@ namespace _ELENA_
 //    return len;
 //}
 //
-//#endif
+#endif
 
 // --- miscellaneous string routines ---
 

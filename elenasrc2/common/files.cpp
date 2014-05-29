@@ -18,8 +18,8 @@
 
 #else
 
-//#include <unistd.h>
-//#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #endif
 
@@ -414,7 +414,7 @@ bool File :: writeLiteral(const unsigned short* s, size_t length)
    }
    else {
       char temp[TEMP_SIZE];
-      int count;
+      size_t count;
       while (length > 0) {
          count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
 

@@ -15,9 +15,12 @@ namespace _ELENA_
 {
 
 // --- Project list types ---
-typedef String<wchar16_t, IDENTIFIER_LEN>   ProjectParam;
-typedef Dictionary2D<int, const wchar16_t*> ProjectSettings;
-typedef _Iterator<ProjectSettings::VItem, _MapItem<const wchar16_t*, ProjectSettings::VItem>, const wchar16_t*> SourceIterator;
+typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
+typedef Dictionary2D<int, const wchar16_t*>    ProjectSettings;
+typedef Map<const tchar_t*, tchar_t*>          Sources;
+
+typedef Map<const tchar_t*, tchar_t*> :: Iterator                                                               SourceIterator;
+typedef _Iterator<ProjectSettings::VItem, _MapItem<const wchar16_t*, ProjectSettings::VItem>, const wchar16_t*> ForwardIterator;
 
 // --- ELENA Project options ---
 enum ProjectSetting
@@ -84,7 +87,7 @@ struct ModuleInfo
 
    ModuleInfo(_Module* codeModule, _Module* debugModule)
    {
-      this->codeModule = 
+      this->codeModule =
       this->debugModule = NULL;
    }
 };
@@ -99,6 +102,7 @@ protected:
 
    LibraryManager  _loader;
    ProjectSettings _settings;
+   Sources         _sources;
 
    virtual ConfigCategoryIterator getCategory(_ConfigFile& config, ProjectSetting setting) = 0;
    virtual const char* getOption(_ConfigFile& config, ProjectSetting setting) = 0;
@@ -110,8 +114,9 @@ protected:
    void loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment);
    void loadBoolOption(_ConfigFile& config, ProjectSetting setting);
    bool loadPathOption(_ConfigFile& config, ProjectSetting setting, const tchar_t* path);
-   void loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* configPath);
 
+   void loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* configPath);
+   void loadSourceCategory(_ConfigFile& config, const tchar_t* configPath);
    void loadPrimitiveCategory(_ConfigFile& config, const tchar_t* configPath);
    void loadForwardCategory(_ConfigFile& config);
 
@@ -141,10 +146,10 @@ public:
 
    SourceIterator getSourceIt()
    {
-      return _settings.getIt(opSources);
+      return _sources.start();
    }
 
-   SourceIterator getForwardIt()
+   ForwardIterator getForwardIt()
    {
       return _settings.getIt(opForwards);
    }
@@ -159,13 +164,14 @@ public:
 //      return _settings.getIt(opPrimitives);
 //   }
 
-//   virtual void printInfo(const char* msg) = 0;
+   virtual void printInfo(const char* msg, const char* value) = 0;
    virtual void printInfo(const char* msg, const wchar16_t* value) = 0;
 
 //   virtual void raiseError(const char* msg) = 0;
    virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
-//   virtual void raiseError(const char* msg, const char* value) = 0;  // !! temporal??
+   virtual void raiseError(const char* msg, const char* value) = 0;
    virtual void raiseError(const char* msg, const wchar16_t* value) = 0;
+   virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path) = 0;
 
    virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
    virtual void raiseWarning(const char* msg, const tchar_t* path) = 0;
@@ -220,7 +226,7 @@ public:
    }
 
    virtual _Module* createModule(const tchar_t* sourcePath);
-   virtual _Module* createDebugModule(const wchar_t* name);
+   virtual _Module* createDebugModule(const wchar16_t* name);
 
    virtual void saveModule(_Module* module, const tchar_t* extension);
 

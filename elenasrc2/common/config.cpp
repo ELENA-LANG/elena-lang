@@ -10,9 +10,6 @@
 
 using namespace _ELENA_;
 
-// --- Param string template ---
-typedef String<char, 255> UTF8String;
-
 // --- IniConfigFile ---
 
 IniConfigFile :: IniConfigFile()

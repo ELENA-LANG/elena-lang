@@ -44,7 +44,6 @@ typedef char           tchar_t;
 //
 //#else
 //
-//#include <wctype.h>
 //
 //#endif // WIN32
 
@@ -76,6 +75,9 @@ enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 =
 enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
 
 #endif
+
+// --- Param string template ---
+typedef String<char, 255> UTF8String;
 
 // --- Common mapping type definitions ---
 typedef Dictionary2D<const char*, const char*> ConfigSettings;
