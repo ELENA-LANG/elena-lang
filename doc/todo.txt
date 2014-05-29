@@ -20,8 +20,6 @@ v  - vm script
 Currently:
 ------
               xdev - generic development                            
-                       * #var(type:long)a := 2 - does not work                       
-
                        * can we have a special handler which has else part (something like => operator) e.g. it returns true if the operand
                          is integer, otherwise false
 
@@ -640,6 +638,7 @@ week1:
                        * should commands be multy-thread independent, e.g. all related code be located in core?
                        * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group
+                       * Compiler::compileStackAssignment - simplify / refactor the code
 
 1.9.18
 --------

@@ -308,9 +308,10 @@ enum FunctionCode
    fnIndexOfMsg     = 0x006A,
    fnWSEval         = 0x006B,
    fnNCall          = 0x006C,
+   fnLSaveInt       = 0x006D
 };
 
-#define EXTENSION_COUNT 0x6D
+#define EXTENSION_COUNT 0x6E
 
 enum PseudoArg
 {

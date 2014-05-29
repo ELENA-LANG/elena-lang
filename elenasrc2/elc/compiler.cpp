@@ -1464,11 +1464,18 @@ void Compiler :: compileStackAssignment(DNode node, CodeScope& scope, ObjectInfo
       _writer.releaseObject(*scope.tape);
    }
    else if (variableInfo.type == otLong) { 
-      compileTypecast(scope, object, scope.moduleScope->longSubject);
+      if (object.type == otInt) {
+         _writer.pushObject(*scope.tape, variableInfo);
+         _writer.copyIntToLong(*scope.tape, variableInfo);
+         _writer.releaseObject(*scope.tape);
+      }
+      else {
+         compileTypecast(scope, object, scope.moduleScope->longSubject);
 
-      _writer.pushObject(*scope.tape, variableInfo);
-      _writer.copyLong(*scope.tape, variableInfo);
-      _writer.releaseObject(*scope.tape);
+         _writer.pushObject(*scope.tape, variableInfo);
+         _writer.copyLong(*scope.tape, variableInfo);
+         _writer.releaseObject(*scope.tape);
+      }
    }
    else if (variableInfo.type == otReal) {
       compileTypecast(scope, object, scope.moduleScope->realSubject);
@@ -1517,9 +1524,9 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             case otShort:
                _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), level);
                break;
-//            case otLong:
-//               _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
-//               break;
+            case otLong:
+               _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
+               break;
 //            case otReal:
 //               _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
 //               break;

@@ -3414,3 +3414,14 @@ inline % 16Ch
   call [eax]
 
 end
+
+// ; lsaveint
+inline % 16Dh
+
+  mov  ebx, [esp]
+  mov  ecx, [eax]
+  xor  edx, edx
+  mov  [ebx], ecx
+  mov  [ebx+4], edx
+
+end

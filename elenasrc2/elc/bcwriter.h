@@ -311,6 +311,7 @@ public:
 
    void copyInt(CommandTape& tape);
    void copyLong(CommandTape& tape, ObjectInfo target);
+   void copyIntToLong(CommandTape& tape, ObjectInfo target);
 
    void saveStr(CommandTape& tape, bool onlyAllocate);
 //   void saveDump(CommandTape& tape, bool onlyAllocate);

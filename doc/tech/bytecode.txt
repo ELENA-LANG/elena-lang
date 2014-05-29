@@ -404,6 +404,8 @@ ELENA byte codes (or ecodes)
 
  lsave                       - long:[sp] << long:acc
 
+ lsaveint                    - long:[sp] << int:acc
+
  lequal                      - long(acc) == long([sp]) ? index=1 : index=0
  
  lless                       - long(acc) < long([sp]) ? index=1 : index=0

@@ -1767,6 +1767,12 @@ void ByteCodeWriter :: copyLong(CommandTape& tape, ObjectInfo target)
    tape.write(bcFunc, fnLSave);
 }
 
+void ByteCodeWriter :: copyIntToLong(CommandTape& tape, ObjectInfo target)
+{
+   //  lsaveint
+   tape.write(bcFunc, fnLSaveInt);
+}
+
 void ByteCodeWriter :: saveStr(CommandTape& tape, bool onlyAllocate)
 {
    tape.write(bcFunc, onlyAllocate ? fnWSReserve : fnWSSave);
