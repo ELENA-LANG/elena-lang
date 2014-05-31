@@ -194,6 +194,7 @@ public:
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
    void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
+   void declareGenericMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
    void declareGenericAction(CommandTape& tape, ref_t genericMessage, ref_t message);
    void exclude(CommandTape& tape, int& level);
    void declareExternalBlock(CommandTape& tape);

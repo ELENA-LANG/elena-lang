@@ -210,6 +210,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcGetLen:
       case bcDInc:
       case bcExclude:
+      case bcPushSubj:
          writeCommand(ByteCommand(opcode), writer);
          break;
       case bcCallR:
@@ -227,7 +228,6 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMLoadSI:
       case bcMLoadFI:
       case bcMSaveAI:
-      case bcMAddAI:
       case bcPushAI:
       case bcMSaveParams:
       case bcPushSI:
@@ -251,7 +251,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcMCopy:
       case bsMSetVerb:
       case bcMReset:
-      case bcMResetSubj:
+      case bcMSetSubj:
       case bcQuitN:
       case bcPushN:
       case bcPopI:

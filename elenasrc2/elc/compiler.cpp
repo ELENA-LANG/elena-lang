@@ -25,8 +25,9 @@ using namespace _ELENA_;
 #define HINT_SUBBRANCH        0x02000000     // used for if-else statement to indicate that the exit label is not the last one
 #define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define HINT_GETPROP          0x00800000     // used in GET PROPERTY expression
-#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_EXTENSION_METH   0x00400000     // extension 
+#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
+#define HINT_GENERIC_METH     0x00100000     // generic method
 
 // --- Method optimization masks ---
 #define MTH_FRAME_USED        0x00000001
@@ -4131,13 +4132,10 @@ void Compiler :: compileBreakHandler(CodeScope& scope, int mode)
    _writer.throwCurrent(*scope.tape);
 }
 
-void Compiler :: compileMethod(DNode node, MethodScope& scope, DNode hints)
+void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 {
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
-
-   // compile constructor hints
-   int mode = scope.compileHints(hints);
 
    if (test(mode, HINT_EXTENSION_METH)) {
       scope.includeExtension();
@@ -4185,7 +4183,10 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, DNode hints)
       else {
          // new stack frame
          // stack already contains previous $self value
-         _writer.declareMethod(*codeScope.tape, scope.message);
+         if (test(mode, HINT_GENERIC_METH)) {
+            _writer.declareGenericMethod(*codeScope.tape, scope.message);
+         }
+         else _writer.declareMethod(*codeScope.tape, scope.message);
          codeScope.level++;
 
          declareParameterDebugInfo(scope, codeScope.tape, true);
@@ -4378,6 +4379,8 @@ void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, Class
 
 void Compiler :: compileVMT(DNode member, ClassScope& scope)
 {
+   int inheritedFlags = scope.info.header.flags;
+
    while (member != nsNone) {
       DNode hints = skipHints(member);
 
@@ -4403,11 +4406,29 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             if (scope.info.methods.exist(methodScope.message, true))
                scope.raiseError(errDuplicatedMethod, member.Terminal());
 
-            compileMethod(member, methodScope, hints);
+            compileMethod(member, methodScope, methodScope.compileHints(hints));
+            break;
+         }
+         case nsGeneric:
+         {
+            MethodScope methodScope(&scope);
+            declareArgumentList(member, methodScope);
+
+            // override subject with generic postfix
+            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_POSTFIX));
+
+            // mark as having generic methods
+            scope.info.header.flags |= elWithGenerics;
+
+            compileMethod(member, methodScope, HINT_GENERIC_METH);
             break;
          }
       }
       member = member.nextNode();
+   }
+
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (test(scope.info.header.flags, elWithGenerics) && !test(inheritedFlags, elWithGenerics)) {
    }
 }
 

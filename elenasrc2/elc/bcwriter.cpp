@@ -88,6 +88,24 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool with
    tape.newLabel();     // declare exit point
 }
 
+void ByteCodeWriter :: declareGenericMethod(CommandTape& tape, ref_t message, bool withNewFrame)
+{
+   // method-begin:
+   //   popm            ; the current subject is saved in the stack
+   //   open
+   //   pushb
+   //   bcopya
+   tape.write(blBegin, bsMethod, message);
+   tape.write(bcPopM);
+
+   if (withNewFrame) {
+      tape.write(bcOpen, 1);
+      tape.write(bcPushB);
+      tape.write(bcBCopyA);
+   }
+   tape.newLabel();     // declare exit point
+}
+
 void ByteCodeWriter :: declareGenericAction(CommandTape& tape, ref_t genericMessage, ref_t message)
 {
    tape.newLabel();     // declare error
@@ -898,10 +916,10 @@ void ByteCodeWriter :: resend(CommandTape& tape)
 
 void ByteCodeWriter :: callBack(CommandTape& tape, int sign_id)
 {
-   // madd subject_id
+   // msetsubj subject_id
    // ajumpvi 0
 
-   tape.write(bcMAdd, sign_id);
+   tape.write(bcMSetSubj, sign_id);
    tape.write(bcAJumpVI);
 }
 

@@ -698,7 +698,7 @@ protected:
 
    void compileDispatcher(DNode node, CodeScope& scope);
    void compileTransmitor(DNode node, CodeScope& scope);
-   void compileMethod(DNode node, MethodScope& scope, DNode hints);
+   void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
 

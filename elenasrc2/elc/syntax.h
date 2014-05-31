@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser Symbol constants
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxH
@@ -88,6 +88,7 @@ enum Symbol
    nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
    nsUsage                      = 0x01044,
+   nsGeneric                    = 0x01045,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

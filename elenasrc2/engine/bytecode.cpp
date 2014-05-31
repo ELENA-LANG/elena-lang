@@ -15,7 +15,7 @@
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", "pushb", "pop", "unknown", "pushm", "mcopyverb", "throw",
-   "unknown", "mcopysubj", "pusha", "popa", "acopyb", "popm", "bsredirect", "unbox",
+   "pushsubj", "mcopysubj", "pusha", "popa", "acopyb", "popm", "bsredirect", "unbox",
 
    "bsgredirect", "getlen", "bcopya", "ddec", "popb", "close", "unknown", "quit",
    "get", "set", "dinc", "mquit", "aloadd", "unhook", "exclude", "include",
@@ -27,7 +27,7 @@ const char* _fnOpcodes[256] =
    "unknown", "quitn", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "callextr", "evalr", "acallvi", "callr", "reserve", "unknown", "mresetsubj", "mloadai",
-   "mloadsi", "mloadfi", "msaveai", "msetverb", "mreset", "maddai", "mcopy", "madd",
+   "mloadsi", "mloadfi", "msaveai", "msetverb", "mreset", "maddai", "mcopy", "msetsubj",
 
    "dloadsi", "dsavesi", "dloadfi", "aloadr", "aloadfi", "aloadsi", "dcopy", "dloadai",
    "bloadfi", "daddai", "dsubai", "daddsi", "dsubsi", "dsavefi", "unknown", "unknown",

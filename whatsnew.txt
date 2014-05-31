@@ -7,8 +7,16 @@
                     What's New in 1.9.16 (pre release)
 ******************************************************************************
 
+ELENA:
+[+] generic methods
+[+] new ecodes: msetsubj, pushsubj
+[+] obsolete ecodes: madd, maddai, mresetsubj
+
 ELC:
 [-] fixed: #var(type:long)n := 2
+
+ELENA:
+[+] new ecodes: lsaveint
 
 ******************************************************************************
                     What's New in 1.9.16 (pre release)

@@ -54,14 +54,14 @@ const int gcCommands[gcCommandNumber] =
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
    bcSwapSI, bcALoadFI, bcASaveSI, bcASaveFI, bcClose,
 /*   bcIAccFillR, */bcCreateN, bcPopBI, bcCreate,
-   bcALoadBI, bcPushAI, bcCallExtR, bcPushF, /*bcPushSPI, */
+   bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcPushSubj,
    bcHook, bcPopAI, bcXPopAI, bcInclude, bcExclude, 
    bcThrow, bcUnhook, /*bcRethrow, bcAccCreate, */bcMLoadSI,
    bcMLoadFI, bcMSaveParams, bcDLoadSI, bcDSaveSI, 
    bcDAddSI, bcDSubSI, bcDLoadFI, bcDSaveFI, //bcJumpAcc, bcAccFillR,
    bcMLoadAI, bcMQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
 /*   bcRCallN, */bcGet, bcSet, bcASwapSI, bcMSaveAI,
-   bcSCallVI, bcMAddAI, bcRestore, bcGetLen, bcNBox,
+   bcSCallVI, bcRestore, bcGetLen, bcNBox,
    /*   bcMccReverse,*/ bcAXCopyR, bcWSTest, bcTest, bcBSTest,
    bcBox, bcUnbox, bcBSGRedirect, bcIAXLoadB, bsMSetVerb,
    bcBLoadFI, bcReserve
@@ -71,7 +71,7 @@ const int gcCommands[gcCommandNumber] =
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
    &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &compileNop, &compileMPush, &compileMCopyVerb, &loadOneByteOp,
-   &compileNop, &compileMCopySubj, &compilePushA, &compilePopA, &compileACopyB, &compileMPop, &loadOneByteOp, &loadNOp,
+   &loadOneByteOp, &compileMCopySubj, &compilePushA, &compilePopA, &compileACopyB, &compileMPop, &loadOneByteOp, &loadNOp,
 
    &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileNop, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoadD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
@@ -82,8 +82,8 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &loadIndexOp, &compilePopFI, &loadIndexOp, &compilePopSI, &loadIndexOp, &compileNop, &compileNop,
    &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &loadIndexOp, &compileNop, &compileMResetSubj, &loadIndexOp,
-   &loadIndexOp, &loadFPOp, &loadIndexOp, &compileMOp, &compileMReset, &loadIndexOp, &compileMCopy, &compileMAdd,
+   &loadFunction, &loadCode, &loadVMTIndexOp, &compileCallR, &loadIndexOp, &compileNop, &compileNop, &loadIndexOp,
+   &loadIndexOp, &loadFPOp, &loadIndexOp, &compileMOp, &compileMReset, &loadIndexOp, &compileMCopy, &compileMSetSubj,
 
    &loadIndexOp, &loadIndexOp, &loadFPOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileDCopy, &compileDLoadAI,
    &loadFPOp, &compileDAddAI, &compileDSubAI, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop,
@@ -1113,9 +1113,12 @@ void _ELENA_::compileMOp(int opcode, x86JITScope& scope)
    loadNOp(opcode, scope);
 }
 
-void _ELENA_::compileMAdd(int opcode, x86JITScope& scope)
+void _ELENA_::compileMSetSubj(int opcode, x86JITScope& scope)
 {
+   // and edx, SIGN_MASK
    // or edx, message
+   scope.code->writeWord(0xE281);
+   scope.code->writeDWord(~SIGN_MASK);
    scope.code->writeWord(0xCA81);
    scope.code->writeDWord(scope.resolveMessage(scope.argument));
 }
@@ -1128,18 +1131,6 @@ void _ELENA_::compileMReset(int opcode, x86JITScope& scope)
    scope.code->writeDWord(PARAM_MASK);
    scope.code->writeWord(0xCA81);
    scope.code->writeDWord(scope.resolveMessage(scope.argument));
-}
-
-void _ELENA_::compileMResetSubj(int opcode, x86JITScope& scope)
-{
-   // and edx, PARAM_MASK | VERB_MASK | MESSAGE_MASK
-   // or edx, message
-   scope.code->writeWord(0xE281);
-   scope.code->writeDWord(PARAM_MASK | VERB_MASK | MESSAGE_MASK);
-   if (scope.argument) {
-      scope.code->writeWord(0xCA81);
-      scope.code->writeDWord(scope.resolveMessage(scope.argument));
-   }
 }
 
 //void _ELENA_::compileAAdd(int opcode, x86JITScope& scope)
@@ -1493,13 +1484,6 @@ void _ELENA_::compileIndexDec(int opcode, x86JITScope& scope)
    scope.code->writeWord(0xEE83);
    scope.code->writeByte(1);
 }
-
-////void _ELENA_::compileAccCopyM(int opcode, x86JITScope& scope)
-////{
-////   //// mov eax, m
-////   //scope.code->writeByte(0xB8);
-////   //scope.code->writeDWord(scope.resolveMessage(scope.argument));
-//}
 
 void _ELENA_::compileMCopyVerb(int opcode, x86JITScope& scope)
 {

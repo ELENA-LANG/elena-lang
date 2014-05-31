@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0001
+   #define ENGINE_MINOR_VERSION     0x0002
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -252,22 +252,22 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-//   const int elClassClass          = 0x00000010;
-//  // const int elVMTWithRoles        = 0x00000020;
-//  // const int elVMTAnyHandler       = 0x00000040;
+// const int elClassClass          = 0x00000010;
+   const int elVMTCustomSHandler   = 0x00000040;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000100;
    const int elGroup               = 0x00000200;
-//  // const int elCastGroup           = 0x00000600;
-//  // const int elUnion               = 0x00000A00;
-//   const int elMethodHandler       = 0x00001000; 
+   const int elWithGenerics        = 0x00000440;
+// const int elCastGroup           = 0x00000600;
+// const int elUnion               = 0x00000A00;
+// const int elMethodHandler       = 0x00001000; 
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004000;
    const int elMessage             = 0x00008000;
   // const int elDynamicSubjectRole  = 0x0000B080;
    const int elConstantSymbol      = 0x00000082;
    const int elOperation           = 0x00204000;
-   //const int elWithLocker          = 0x00100000;
+// const int elWithLocker          = 0x00100000;
 
    const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
@@ -293,9 +293,9 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.01"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.01"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!8.01"         // the language version
+   #define ELENA_SIGNITURE          "ELENA.8.02"       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.02"    // the ELENAVM client
+   #define MODULE_SIGNATURE         "EN!8.02"         // the language version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---
@@ -387,13 +387,14 @@ namespace _ELENA_
    #define SELF_VAR                "self"             // the current object group
    #define THIS_VAR                "$self"            // the current class instance
    #define SUPER_VAR               "$super"           // the predecessor class
-//  // #define NEXT_VAR                "$next"            // the next group member
+  // #define NEXT_VAR                "$next"            // the next group member
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
    #define EXTENSION_POSTFIX        "#extensions"
    #define OPERATION_POSTFIX        "#operations"
+   #define GENERIC_POSTFIX          "#generic"
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
@@ -428,7 +429,7 @@ namespace _ELENA_
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
 
-//  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
+  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
 

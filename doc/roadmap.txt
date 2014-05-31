@@ -188,7 +188,6 @@ Version 2.x.x
 - full x64 support (both code generation + compiler and gui)
 - f:simple basic interpreter
 - is there any way to reduce the number of vmts, dynamic ones
-- lang: generic methods (e.g generic write, generic read - *'read, *'write ...)?
 - Linux full support (elc + elide + elenavm / gui + console)
 - ELENA library: state of art standard libraries, database support
 - state of art IDE

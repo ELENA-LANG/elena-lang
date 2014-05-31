@@ -5,7 +5,7 @@ i  - ide
 a  - api
 
 l  - language                                                                                   
-s  - samples
+s  - samples  ]
 f  - flagship project (up to 2)                                                                                                   
 t  - tools
 v  - vm script                                                                                            
@@ -19,9 +19,26 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - generic development                            
-                       * can we have a special handler which has else part (something like => operator) e.g. it returns true if the operand
-                         is integer, otherwise false
+              xdev - generic development                                                                                                           
+                       * generic handler : 
+                           - declaration 
+                                   #generic add : aParam []                                                      
+
+                           - implementation
+
+                                   as normal method, except the subject variable in the stack
+
+                                   [params][ret][subject][frame]
+
+                           
+                           - special resend handler - tries to send the message, if no match, save the subject, change it with special one
+                             and sends once again if not - fails
+
+                       * make binary incompatible
+
+                       * generic handle - use it for implementing default handler
+                                        { x = 2. y = 3. ! nil. }
+                                        { int : n = n. long : l = l. ! : o = o numeric. }
 
                        * should int and index be synonym, no need to support both of them?
 
@@ -590,8 +607,11 @@ week4:
 week1:
 
               xdev - generic development                            
+                       * generic handlers : make possible to use passed subject
+                       * generic handlers : resend handler
+                       * resend handler - send handler should be automatically declared in super class (system'Object)
 
-                       * support #define(extension:inputOp)consoleEx=system'console. or #use ...
+                       * support #define(extension:inputOp)consoleEx=system'console. or #use or get rid of it
 
                        * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg ) ??
 

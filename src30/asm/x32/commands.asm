@@ -55,7 +55,16 @@ inline % 7
 
 end
 
-// bsredirect
+// ; pushsubj
+inline % 8
+
+  mov  ebx, edx
+  add  ebx, subj_mask
+  push ebx
+
+end
+
+// ; bsredirect
 
 inline % 0Eh // (eax - object, edx - message)
 
@@ -387,15 +396,6 @@ inline % 4Bh
 
   and edx, subj_mask
   or  edx, __arg1
-
-end
-
-
-// ; maddai
-
-inline % 4Dh
-
-  or  edx, [eax + __arg1]
 
 end
 

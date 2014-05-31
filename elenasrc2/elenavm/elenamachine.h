@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x0007             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0001             // ELENAVM build version
 
 namespace _ELENA_
 {
