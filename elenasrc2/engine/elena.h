@@ -584,7 +584,7 @@ inline ref_t encodeVerb(int verbId)
 inline ref_t overwriteSubject(ref_t message, ref_t subject)
 {
    message &= ~SIGN_MASK;
-   message |= (subject >> 4);
+   message |= (subject << 4);
 
    return message;
 }

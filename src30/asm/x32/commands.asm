@@ -59,7 +59,7 @@ end
 inline % 8
 
   mov  ebx, edx
-  add  ebx, subj_mask
+  and  ebx, subj_mask
   push ebx
 
 end

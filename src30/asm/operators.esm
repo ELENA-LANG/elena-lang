@@ -1,15 +1,4 @@
 
-procedure operators'redirectgeneric
-
-  bsredirect
-  pushsubj
-  msetsubj xxx
-  bsredirect
-  throw
-
-end
-
-
 procedure operators'equalint_int
 
   popa

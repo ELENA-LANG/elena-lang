@@ -70,6 +70,8 @@ ELENA byte codes (or ecodes)
  pushfi i                   - [fp+i] => [sp+1] ; sp++
 
  pushm                      - mcc => [sp+1] ; sp++;
+
+ pushsubj                   - mcc:subject => [sp+1] ; sp++; 
  
  pushn n                    - n  => [sp+1] ; sp++
  
@@ -152,10 +154,6 @@ ELENA byte codes (or ecodes)
  
  dsubsi n                   - d << d - [sp:i]
 
- madd m                     - m + mcc => mcc
- 
- maddai i                   - mcc + acc:i => mcc
-
  mcopy                      - m => mcc
  
  mcopysubj                  - mcc:subj => mcc
@@ -172,13 +170,12 @@ ELENA byte codes (or ecodes)
  
  msaveparams i              - copy the message parameters;
                               [fp+i]::mcc.param => [sp+1] ; sp++;
-
-
+                              
  msetverb m                 - m.verb + mcc.subj + m.param_count => mcc
  
+ msetsubj m                 - m.subj + mcc.verb + mcc.param_count => mcc
+ 
  mreset m                   - m + mcc.param_count => mcc
-
- mresetsubj m               - m + mcc.param_count + mcc.subj => mcc
 
  scopyf i                   - sp <= fp + i
  

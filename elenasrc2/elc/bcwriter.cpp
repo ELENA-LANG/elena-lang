@@ -906,6 +906,20 @@ void ByteCodeWriter :: extendObject(CommandTape& tape, ObjectInfo info)
    tape.write(bcAJumpVI);
 }
 
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape, ref_t generic_sign_id)
+{
+  //bsredirect
+  //pushsubj
+  //msetsubj subj : #generic
+  //bsredirect
+  //throw
+   tape.write(bcBSRedirect);
+   tape.write(bcPushSubj);
+   tape.write(bcMSetSubj, generic_sign_id);
+   tape.write(bcBSRedirect);
+   tape.write(bcThrow);
+}
+
 void ByteCodeWriter :: resend(CommandTape& tape)
 {
    // ajumpvi 0

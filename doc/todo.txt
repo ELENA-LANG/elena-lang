@@ -20,26 +20,6 @@ v  - vm script
 Currently:
 ------
               xdev - generic development                                                                                                           
-                       * generic handler : 
-                           - declaration 
-                                   #generic add : aParam []                                                      
-
-                           - implementation
-
-                                   as normal method, except the subject variable in the stack
-
-                                   [params][ret][subject][frame]
-
-                           
-                           - special resend handler - tries to send the message, if no match, save the subject, change it with special one
-                             and sends once again if not - fails
-
-                       * make binary incompatible
-
-                       * generic handle - use it for implementing default handler
-                                        { x = 2. y = 3. ! nil. }
-                                        { int : n = n. long : l = l. ! : o = o numeric. }
-
                        * should int and index be synonym, no need to support both of them?
 
                        * no need to save previous external reference, it should be done on frame openning
@@ -493,6 +473,7 @@ week2:
                          and could be invoked by eval
                        * implement analog of linq
                        * classOp : test if object is subclass of ??
+                       * implement multi-select method (control or value?)
                        
 week3:
               sdev - prime project
@@ -609,6 +590,7 @@ week1:
               xdev - generic development                            
                        * generic handlers : make possible to use passed subject
                        * generic handlers : resend handler
+                       * generic handlers : should not be allowed for roles ??
                        * resend handler - send handler should be automatically declared in super class (system'Object)
 
                        * support #define(extension:inputOp)consoleEx=system'console. or #use or get rid of it

@@ -8,6 +8,7 @@
 ******************************************************************************
 
 ELENA:
+[!] binary incompatible due to changes in ecodes
 [+] generic methods
 [+] new ecodes: msetsubj, pushsubj
 [+] obsolete ecodes: madd, maddai, mresetsubj

@@ -696,6 +696,8 @@ protected:
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 
+   void compileSpecialMethod(MethodScope& scope);
+
    void compileDispatcher(DNode node, CodeScope& scope);
    void compileTransmitor(DNode node, CodeScope& scope);
    void compileMethod(DNode node, MethodScope& scope, int mode);

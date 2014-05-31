@@ -55,6 +55,7 @@ __define SIZE_VALUE             4162
 __define L0_OPERATION           4163
 __define USE                    4164
 __define GENERIC                4165
+__define DEFAULT                4166
 
 __define eof            	12291
 __define literal		12292
@@ -128,6 +129,7 @@ METHODS ->
 
 NESTED_METHODS ->
 	METHOD NESTED_METHODS
+	| ! DEFAULT NESTED_METHODS
 	| CLOSING_CURLY_BRACKET	
 	| NESTED_MEMBER_EXPECTED
 		
@@ -311,6 +313,10 @@ METHOD ->
 
 GENERIC ->
 	identifier GENERIC_METHOD_ARGUMENTS METHOD_BODY
+
+DEFAULT ->
+	: PARAMETER GENERIC_METHOD_ARGUMENTS METHOD_BODY
+	| METHOD_BODY
 
 CONSTRUCTOR ->
 	identifier METHOD_ARGUMENTS METHOD_BODY

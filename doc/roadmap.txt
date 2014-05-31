@@ -113,7 +113,6 @@ Version 2.x.x
 - ide: implement "find declaration" function
 - usability: warn if vm client is debugged not under vm debug mode
   IDE should reload all debug info in that case
-- ByteCodeWriter::writeRoleTable should be moved to JITCompiler32
 - optimization: nested in the nested inline class: the current implementation
   will be optimized only for the first nested class, the second
   one still hold the object rather then link to the field owner
@@ -165,7 +164,6 @@ Version 2.x.x
   (compiler compiler mode)
 - ide2: win32 plug-ins
 - full linux support (x64 + x32, console, gui)
-- drop support for #loop
 - advanced native code optimization
 - object should be able to have several data fields (currently only one is supported)
 
@@ -173,16 +171,13 @@ Version 2.x.x
   expression
 - there should be two build mode - release / debug
 - start to use pentium commands
-- error handling
 - start to use GetDateFormatExW (windows server 2003 will not be supported)
 - robust api library
-- major language review
 - ide2: linux plug-in
 - Second public release
 - localization to russian / any other languages
 - IDE features supporting "Active code" concept
 - x64 platform support
-- make possible to external link obj files (c++ compiler)
 - CPU oriented optmization (at least for pentium 4)
 - ide2: attach to another process
 - full x64 support (both code generation + compiler and gui)

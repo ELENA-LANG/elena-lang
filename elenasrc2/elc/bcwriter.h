@@ -261,6 +261,7 @@ public:
    void extendObject(CommandTape& tape, ObjectInfo info);
 
 //   void redirectVerb(CommandTape& tape, ref_t message);
+   void doGenericHandler(CommandTape& tape, ref_t generic_sign_id);
    void resend(CommandTape& tape);
    void callBack(CommandTape& tape, int subject_id);
 ////   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);

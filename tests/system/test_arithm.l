@@ -5,7 +5,7 @@
 #define extensions.
 #define extensions'math.
 
-#class/*(role)*/XTester
+#class(role)XTester
 {
 }
 

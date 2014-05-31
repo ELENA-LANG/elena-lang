@@ -4132,6 +4132,24 @@ void Compiler :: compileBreakHandler(CodeScope& scope, int mode)
    _writer.throwCurrent(*scope.tape);
 }
 
+void Compiler :: compileSpecialMethod(MethodScope& scope)
+{
+   CodeScope codeScope(&scope);
+
+   scope.include();
+   _writer.declareIdleMethod(*codeScope.tape, scope.message);
+
+   if (scope.message == encodeVerb(SEND_MESSAGE_ID)) {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+      if (test(classScope->info.header.flags, elWithGenerics)) {
+         _writer.doGenericHandler(*codeScope.tape, encodeMessage(scope.moduleScope->mapSubject(GENERIC_POSTFIX), 0, 0));
+      }
+   }
+
+   _writer.endIdleMethod(*codeScope.tape);
+}
+
 void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 {
    // check if the method is inhreited and update vmt size accordingly
@@ -4410,6 +4428,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             break;
          }
          case nsGeneric:
+         case nsDefaultGeneric:
          {
             MethodScope methodScope(&scope);
             declareArgumentList(member, methodScope);
@@ -4429,6 +4448,10 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
 
    // if the VMT conatains newly defined generic handlers, overrides default one
    if (test(scope.info.header.flags, elWithGenerics) && !test(inheritedFlags, elWithGenerics)) {
+      MethodScope methodScope(&scope);
+      methodScope.message = encodeVerb(SEND_MESSAGE_ID);
+
+      compileSpecialMethod(methodScope);
    }
 }
 

@@ -178,3 +178,80 @@ unique within the code block scope.
 #var aRetVal := Integer new:0.
 ...
 
+
+Conditional branching
+
+ELENA like Smalltalk does not support any special language constructs to implement the conditional branching. Instead special Boolean symbols 
+(system’true and system’false) are used. All conditional operations should return these symbols as a result.
+
+There are three branching methods : then[1] , then&else[2], else[1]
+
+(m == 0) then:
+[
+   n + 1
+]
+&else: [
+   m + n
+].
+
+Note that code in square brackets are in fact nested action classes ( an action class is a class supporting evaluate message). 
+So this code is can be written in this form:
+
+(m == 0) then: 
+{
+   eval
+   [
+      ^ n + 1.
+   ]
+}
+&else: 
+{
+   eval
+   [
+      ^ m + n.
+   ]
+}.
+
+This expression can be written using special operators
+
+(m == 0) 
+  ? [ n + 1 ]
+  ! [ m + n ].
+
+Note: the main difference between using explicit messages and conditional operators is that the compiler may optimize the resulting code in the later case.
+
+We could omit true or else part
+
+(m == 0) 
+  ! [ m / n ].
+
+Boolean symbols supports basic logical operations (AND, OR, XOR and NOT), so several conditions can be checked
+
+        (aChar >= 48) and:(aChar < 58)
+        ? [
+            theToken += aChar.
+        ]
+        ! [
+            #throw Exception new:"Invalid expression".
+        ]
+
+Note that in this case both condition will be evaluated even if the first one is true. If we want to use short-circuit evaluation
+expression brackets should be used
+
+                (x >= 0)and:[ array@x != 0] ?
+                    [
+                       ...
+                    ]
+
+A switch statement can be implemented using => operator
+
+        ^ aBulls =>
+            -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
+             4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
+             ! [
+                 theAttempt += 1.
+                 
+                 consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
+                 
+                 ^ true.
+             ].
