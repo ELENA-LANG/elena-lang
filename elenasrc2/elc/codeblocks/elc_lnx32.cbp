@@ -62,12 +62,15 @@
 		<Unit filename="../../engine/libman.h" />
 		<Unit filename="../../engine/module.cpp" />
 		<Unit filename="../../engine/module.h" />
+		<Unit filename="../../engine/parsertable.cpp" />
+		<Unit filename="../../engine/parsertable.h" />
 		<Unit filename="../../engine/section.cpp" />
 		<Unit filename="../../engine/section.h" />
 		<Unit filename="../bcwriter.cpp" />
 		<Unit filename="../bcwriter.h" />
 		<Unit filename="../compiler.cpp" />
 		<Unit filename="../compiler.h" />
+		<Unit filename="../derivation.cpp" />
 		<Unit filename="../derivation.h" />
 		<Unit filename="../elc.h" />
 		<Unit filename="../errors.h" />
@@ -75,9 +78,9 @@
 		<Unit filename="../linux32/elc.cpp" />
 		<Unit filename="../parser.cpp" />
 		<Unit filename="../parser.h" />
-		<Unit filename="../parsertable.h" />
 		<Unit filename="../project.cpp" />
 		<Unit filename="../project.h" />
+		<Unit filename="../source.cpp" />
 		<Unit filename="../source.h" />
 		<Unit filename="../syntax.h" />
 		<Extensions>

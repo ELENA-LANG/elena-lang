@@ -821,7 +821,35 @@ long StringHelper :: strToLong(const unsigned short* s, int radix)
    return n;
 }
 
-unsigned short* intToStr(int n, unsigned short* s, int radix)
+
+long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
+{
+   long long number = 0;
+
+   unsigned short dump[10];
+   int length = getlength(s);
+   while (length > 9) {
+      copy(dump, (unsigned short*)s, 9);
+      dump[9] = 0;
+
+      long long temp = strToLong(dump, radix);
+      for (int i = 0 ; i < (length - 9) ; i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 9;
+      s += 9;
+   }
+   copy(dump, s, length);
+   dump[length] = 0;
+   long long temp = strToLong(dump, radix);
+   number += temp;
+
+   return number;
+}
+
+unsigned short* StringHelper :: intToStr(int n, unsigned short* s, int radix)
 {
    int  rem = 0;
    int  pos = 0;
@@ -959,6 +987,16 @@ unsigned short* StringHelper :: longlongToStr(long long n, unsigned short* s, in
    s[pos] = 0;
 
    return s;
+}
+
+double StringHelper :: strToDouble(const unsigned short* s)
+{
+   // !! temporal solution
+   char tmp[15];
+   size_t len = getlength(s);
+   copy(tmp, s, len);
+
+   return atof(tmp);
 }
 
 #endif
@@ -1101,6 +1139,7 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
 
    return s;
 }
+
 
 //void StringHelper :: move(char* s1, const char* s2, size_t length)
 //{
