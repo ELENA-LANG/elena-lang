@@ -7,12 +7,18 @@ define elSubject            000002000h
 
 define NEW_MESSAGE_ID       084000000h
 define NEW_MESSAGE_ID_1     084000001h
-define IFFAILED_MESSAGE_ID  0A1000001h
 define EVAL_MESSAGE_ID      085000000h
-define RAISE_MESSAGE_ID     0A0000001h
 define GET_MESSAGE_ID       086000000h
 
 procedure inline'redirect
+
+  bsredirect
+  acopyr const : system'MethodNotFoundException
+  throw
+
+end
+
+procedure inline'exception_redirect
 
   bsredirect
   throw
@@ -671,7 +677,7 @@ end
 procedure inline'qualify_message
 
   msetsubj 0
-  mloadai  0
+  maddai   0
   aloadsi  1
   ajumpvi  0
 
@@ -983,26 +989,6 @@ procedure inline'ws_indexof
   dsaveai 0                 // ; save index
   pop
   quitn 3
-
-end
-
-procedure inline'handle_exception
-
-  aloadsi 2
-  melse labRaise IFFAILED_MESSAGE_ID
-  mcopy EVAL_MESSAGE_ID
-  ajumpvi 0
-
-labRaise:
-  melse labCall RAISE_MESSAGE_ID
-  throw
-labCall:
-  aloadsi 1
-  bsredirect
-labErr:
-  pushn 0  
-  popa
-  mquit
 
 end
 

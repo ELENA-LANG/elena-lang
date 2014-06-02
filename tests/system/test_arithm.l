@@ -228,17 +228,19 @@
 #class MyException : Exception
 {
     #method onError : aHandler
-    [
-        aHandler eval:$self.
-    ]
+        = aHandler eval:$self.
+        
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onError:$self.
 }
 
 #class MyException2 : Exception
 {
     #method onError2 : aHandler
-    [
-        aHandler eval:$self.
-    ]
+        = aHandler eval:$self.
+        
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onError2:$self.
 }
 
 #class(role) ExecTester
@@ -476,14 +478,13 @@
         onOutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
-// --- AltTest ---
+// --- MethodNotFoundTest ---
 
-#symbol AltTest =
+#symbol MethodNotFoundTest =
 [
-    #var n := 3.
+    #var n := 2.
     
-    #var r :=  n length | literal.
-    #var r2 :=   n literal | length.
+    n test | ifFailed &function: e [ console writeLine:(e Message). ]
 ].
 
 // --- LoopTest ---
@@ -525,7 +526,13 @@
     
     ExecTester break | onError: e [ console writeLine:(e Message). ].
     
-    ExecTester break2 | onError: e [ console writeLine:(e Message). ] | onError2: e [ console writeLine:(e Message). ].
+    ExecTester break2 
+    | ifFailed &on:
+    {
+        onError : e [ console writeLine:"!!Wrong handler". ]
+        
+        onError2: e [ console writeLine:(e Message). ]
+    }.
 ].
 
 // --- TextBufferTest ---

@@ -48,12 +48,12 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 58;
+const int gcCommandNumber = 59;
 const int gcCommands[gcCommandNumber] =
 {   
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
    bcSwapSI, bcALoadFI, bcASaveSI, bcASaveFI, bcClose,
-/*   bcIAccFillR, */bcCreateN, bcPopBI, bcCreate,
+   /*   bcIAccFillR, */bcCreateN, bcPopBI, bcCreate, bcMAddAI,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcPushSubj,
    bcHook, bcPopAI, bcXPopAI, bcInclude, bcExclude, 
    bcThrow, bcUnhook, /*bcRethrow, bcAccCreate, */bcMLoadSI,

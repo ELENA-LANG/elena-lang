@@ -17,6 +17,15 @@
 
 #class IOException : Exception
 {
+    #method onIOOperation : aHandler
+    [
+        aHandler eval:$self.
+    ]
+        
+    #method ifFailed &on:aCatchBlock
+    [
+        aCatchBlock onIOOperation:$self.
+    ]
 }
 
 // --- FileStream ---

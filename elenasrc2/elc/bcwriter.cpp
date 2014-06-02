@@ -295,13 +295,11 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    //   jump labEnd
    // labErr:
    //   unhook
-   //   pusha
 
    tape.write(bcUnhook);
    tape.write(bcJump, baPreviousLabel);
    tape.setLabel();
    tape.write(bcUnhook);
-   tape.write(bcPushA);
 }
 
 void ByteCodeWriter :: declarePrimitiveCatch(CommandTape& tape)
@@ -1157,15 +1155,6 @@ void ByteCodeWriter :: commentFrame(ByteCodeIterator it)
 //   }
 //}
 
-void ByteCodeWriter :: nextCatch(CommandTape& tape)
-{
-   //   athen labEnd
-   //   aloadsi 0
-
-   tape.write(bcAThen, baCurrentLabel);
-   tape.write(bcALoadSI);
-}
-
 void ByteCodeWriter :: setLabel(CommandTape& tape)
 {
    tape.setLabel();
@@ -1173,12 +1162,8 @@ void ByteCodeWriter :: setLabel(CommandTape& tape)
 
 void ByteCodeWriter :: endCatch(CommandTape& tape)
 {
-   //    popa
-   //    throw
    // labEnd
 
-   tape.write(bcPopA);
-   tape.write(bcThrow);
    tape.setLabel();
 }
 

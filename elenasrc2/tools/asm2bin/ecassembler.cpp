@@ -225,6 +225,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       case bcPushFI:
       case bcALoadAI:
       case bcMLoadAI:
+      case bcMAddAI:
       case bcMLoadSI:
       case bcMLoadFI:
       case bcMSaveAI:

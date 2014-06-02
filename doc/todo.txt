@@ -20,12 +20,6 @@ v  - vm script
 Currently:
 ------
               xdev - generic development                                                                                                           
-                       * should int and index be synonym, no need to support both of them?
-
-                       * no need to save previous external reference, it should be done on frame openning
-                       
-                       * make possible to send exception futher with ifFailed handler
-
                        * multiple parameter dispatching
                              save&to => save&int&to | save&long&to ; 
                              can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
@@ -53,6 +47,8 @@ Currently:
 
                        * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
 
+                       * should int and index be synonym, no need to support both of them?
+                       
 <=================> 
 
 1.9.16 [9.6]
@@ -68,17 +64,19 @@ week1:
                                 config - \etc\elena
                                 data   - \usr\share\elena - data
 
+                       * linux - build system libraris
                        * linux linker
                        * linux console operations
                        * linux file operations
                        * linux date / time operations
                        * port elc to linux
                        * port asm2binx to linux
-                       * port elenavm to linux
-                       * port elide to linux
                        * port sg to linux
                        * port ecv to linux
                        * port og to linux
+                       * review deployment mechanism
+                       * port elenavm to linux
+                       * port elide to linux
                        * port elenasm to linux
                        * port elt to linux
 
@@ -235,7 +233,8 @@ week1:
                        * if only method parameter is used, no need to use frame / self commands
                        * replace enumeration / iteration loops with a virtual expressions
                        * ByteCodeWriter::checkIfBaseUsed: extension commands should be checked as well 
-
+                       * x : p = p eval. and x : p = p eval:$self. should be optimized
+                       
               xdev - native code optimization
                        * should ret be followed with several nops?
 
@@ -303,6 +302,7 @@ week2:
                        * support GUI application
 
               sdev - api doc
+                       * modify to reflect exception support changes
                        * create API : system(groups.l)
                        * it should be listed extensions per supported protocol
                        * create API doc
@@ -589,10 +589,12 @@ week1:
 
               xdev - generic development                            
                        * generic handlers : make possible to use passed subject
-                       * generic handlers : resend handler
+                       * generic handlers : resend handler - if no match found call the super handler
                        * generic handlers : should not be allowed for roles ??
-                       * resend handler - send handler should be automatically declared in super class (system'Object)
+                       * extender : if no match found call the super handler
 
+                       * exceptions : provide call stack info
+                       
                        * support #define(extension:inputOp)consoleEx=system'console. or #use or get rid of it
 
                        * operation with typed operation should be implemented as an extension (e.g  #var(:y)x. x msg <=> x~y msg ) ??
@@ -641,6 +643,8 @@ week1:
                        * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group
                        * Compiler::compileStackAssignment - simplify / refactor the code
+
+                       * no need to save previous external reference, it should be done on frame openning
 
 1.9.18
 --------

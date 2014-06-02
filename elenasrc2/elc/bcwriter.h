@@ -222,8 +222,6 @@ public:
    void declareStatement(CommandTape& tape);
    void declareBlock(CommandTape& tape);
 
-   void nextCatch(CommandTape& tape);
-
    void newSelf(CommandTape& tape);
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);

@@ -153,13 +153,15 @@ ELENA byte codes (or ecodes)
  dsubai i                   - index -= [acc:i]
  
  dsubsi n                   - d << d - [sp:i]
+ 
+ maddai i                   - mcc + acc:i => mcc
 
  mcopy                      - m => mcc
  
  mcopysubj                  - mcc:subj => mcc
  
  mcopyverb                  - mcc:verb => mcc
-
+ 
  mloadai i                  - acc:i => mcc
 
  mloadfi i                  - [fp+i] => mcc

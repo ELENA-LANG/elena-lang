@@ -235,7 +235,7 @@ Boolean symbols supports basic logical operations (AND, OR, XOR and NOT), so sev
             #throw Exception new:"Invalid expression".
         ]
 
-Note that in this case both condition will be evaluated even if the first one is true. If we want to use short-circuit evaluation
+Note that in this case both condition will be evaluated even if the first one is false. If we want to use short-circuit evaluation
 expression brackets should be used
 
                 (x >= 0)and:[ array@x != 0] ?

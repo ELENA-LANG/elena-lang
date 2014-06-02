@@ -1,6 +1,24 @@
+// --- BaseException ---
+
+#class BaseException
+{
+    #method raise : anError
+    [
+        #throw anError.
+    ]
+    
+    #method ifFailed : aHandler
+        = aHandler eval.
+    
+    #method ifFailed &function:aHandler
+        = aHandler eval:$self.
+    
+    #method => <exception_redirect>.
+}
+
 // --- Exception ---
 
-#class Exception
+#class Exception : BaseException
 {
     #field theMessage.
     
@@ -24,9 +42,10 @@
     ]    
     
     #method onFormatError : aHandler    
-    [
-        aHandler eval:$self.
-    ]
+        = aHandler eval:$self.
+    
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onFormatError:$self.
 }
 
 // --- OutOfRangeException ---
@@ -39,9 +58,10 @@
     ]    
     
     #method onOutOfRangeError : aHandler    
-    [
-        aHandler eval:$self.
-    ]
+        = aHandler eval:$self.
+    
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onOutOfRangeError:$self.
 }
 
 // --- InvalidArgumentException ---
@@ -54,7 +74,23 @@
     ]    
     
     #method onInvalidArgumentError : aHandler    
+        = aHandler eval:$self.
+    
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onInvalidArgumentError:$self.
+}
+
+// --- MethodNotFound ---
+
+#class(role) MethodNotFoundException : BaseException
+{
+    #method onMethodNotFound : aHandler    
     [
         aHandler eval:$self.
     ]
+    
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onMethodNotFound:$self.
+        
+    #method Message = "Method not found".
 }

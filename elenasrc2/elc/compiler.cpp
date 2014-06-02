@@ -2660,9 +2660,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          _writer.callRoleMessage(*scope.tape, paramCount);
       }
       else if (catchMode) {
-         _writer.loadObject(*scope.tape, ObjectInfo(okConstant, scope.moduleScope->mapConstantReference(EXCEPTION_ROLE)));
-         _writer.callRoleMessage(*scope.tape, paramCount);
-         _writer.nextCatch(*scope.tape);
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         _writer.callMethod(*scope.tape, 0, paramCount);
       }
       else { 
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));

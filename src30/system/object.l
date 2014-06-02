@@ -14,13 +14,6 @@
     #method <= &object:$self.
 }
 
-// --- EException ---
-
-#class EException
-{
-    #method => <handle_exception>.
-}
-
 // --- Action wrapper ---
 
 #class Action

@@ -79,6 +79,7 @@ enum ByteCode
    bcMSaveAI        = 0x4A, 
    bsMSetVerb       = 0x4B,
    bcMReset         = 0x4C,
+   bcMAddAI         = 0x4D,
    bcMCopy          = 0x4E,
    bcMSetSubj       = 0x4F,
 

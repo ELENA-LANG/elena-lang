@@ -26,7 +26,7 @@
     RoleTest eval.
     ConvertorTest eval.
     ArrayTest eval.     
-    AltTest eval.
+    MethodNotFoundTest eval.
     ExceptionTest eval.
     DateTest eval.
     ListTest eval.    

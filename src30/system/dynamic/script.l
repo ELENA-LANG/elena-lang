@@ -8,6 +8,11 @@
     [
         aHandler eval:$self.
     ]
+        
+    #method ifFailed &on:aCatchBlock
+    [
+        aCatchBlock onScriptError:$self.
+    ]
 }
 
 // --- scriptControl --

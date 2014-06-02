@@ -437,7 +437,6 @@ namespace _ELENA_
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor
    #define ACTION_CLASS             "system'Action"                  // the base action class
    #define NIL_CLASS                "system'nil"                     // the nil reference
-   #define EXCEPTION_ROLE           "system'EException"              // generic exception handler
    #define BREAK_EXCEPTION_CLASS    "system'BreakException"          // break class
    #define CONTROL_CLASS            "system'control"
    #define TRUE_CLASS               "system'true"

@@ -1,4 +1,3 @@
-
 __define START          	1
 __define eps            	2
 
@@ -272,7 +271,7 @@ L7_OPERATIONS ->
 	| eps	
 
 ALT_OPERATIONS ->
-        || ALT_MESSAGE ALT_OPERATIONS
+        || ALT_MESSAGE
 	| eps
 	
 HINT -> identifier HINT_BODY

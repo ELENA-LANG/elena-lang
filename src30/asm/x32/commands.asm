@@ -399,6 +399,14 @@ inline % 4Bh
 
 end
 
+// ; maddai
+
+inline % 4Dh
+
+  or  edx, [eax + __arg1]
+
+end
+
 // ; dloadsi
 
 inline % 50h
