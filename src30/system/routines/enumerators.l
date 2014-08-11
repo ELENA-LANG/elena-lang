@@ -16,23 +16,28 @@
         theIndex:= Integer new &int:-1.
     ]
 
-    #method index = theIndex number.
+    #method index = theIndex index.
     
     #method set &index:anIndex
     [
-        theIndex > anIndex ?
+        #var(type:int)aCurrent.
+        theIndex read &out'int:aCurrent.
+        
+        anIndex less &int:aCurrent ?
         [
-            theIndex << -1.
+            aCurrent := -1.
             theEnumerator := theList enumerator.
         ].
         
-        control while:[ theIndex < anIndex ] &do:
+        #loop (aCurrent less &int:anIndex)?
         [
             theEnumerator next
                 ! [ #throw OutOfRangeException new:"Index out of the range". ].
             
-            theIndex += 1.
-        ].        
+            aCurrent := aCurrent + 1.
+        ].
+        
+        theIndex write &int:aCurrent.
     ]
             
     #method get
@@ -53,32 +58,32 @@
     ]
 }
 
-// --- TopEnumerator ---
-
-#class TopEnumerator
-{
-    #field theEnumerator.
-    #field theCounter.
-    #field theMaxValue.
-    
-    #constructor new : anEnumerable &max:aMaxValue
-    [
-        theEnumerator := anEnumerable enumerator.
-        theCounter := Integer new:aMaxValue.
-        theMaxValue := aMaxValue.
-    ]
-    
-    #method reset
-    [
-        $super reset.
-        
-        theCounter << theMaxValue.
-    ]
-    
-    #method next
-        = (theCounter > 0)
-            ? [ theCounter -= 1. ^ theEnumerator next. ]
-            ! [ false ].
-    
-    #method => theEnumerator.
-}
+//// --- TopEnumerator ---
+//
+//#class TopEnumerator
+//{
+//    #field theEnumerator.
+//    #field theCounter.
+//    #field theMaxValue.
+//    
+//    #constructor new : anEnumerable &max:aMaxValue
+//    [
+//        theEnumerator := anEnumerable enumerator.
+//        theCounter := Integer new:aMaxValue.
+//        theMaxValue := aMaxValue.
+//    ]
+//    
+//    #method reset
+//    [
+//        $super reset.
+//        
+//        theCounter << theMaxValue.
+//    ]
+//    
+//    #method next
+//        = (theCounter > 0)
+//            ? [ theCounter -= 1. ^ theEnumerator next. ]
+//            ! [ false ].
+//    
+//    #method => theEnumerator.
+//}

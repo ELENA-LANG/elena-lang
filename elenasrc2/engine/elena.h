@@ -391,6 +391,7 @@ struct VMTEntry
 
 struct ClassHeader
 {
+   size_t typeRef;
    size_t count;
    size_t flags;
    ref_t  parentRef;
@@ -507,11 +508,11 @@ struct InternalError : _Exception
    }
 };
 
-// --- EAbortException ---
-
-class EAbortException : _Exception
-{
-};
+//// --- EAbortException ---
+//
+//class EAbortException : _Exception
+//{
+//};
 
 // --- key mapping routines ---
 
@@ -567,9 +568,6 @@ inline bool isWeakReference(const wchar16_t* referenceName)
 {
    return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
 }
-
-#define VA_ALIGNMENT       0x08
-#define VA_ALIGNMENT_POWER 0x03
 
 inline ref_t encodeMessage(ref_t signatureRef, int verbId, int paramCount)
 {

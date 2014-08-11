@@ -13,7 +13,7 @@ procedure coreapi'console_entry
   xor  edi, edi
   call code : "'program"
   push eax
-  mov  edx, EXEC_MESSAGE_ID
+  mov  ecx, EXEC_MESSAGE_ID
   mov  esi, [eax - 4]
   call [esi + 4]
 
@@ -151,7 +151,7 @@ procedure coreapi'start_thread
   mov  eax, [esp+0Ch]
 
   push  eax
-  mov   edx, EXEC_MESSAGE_ID
+  mov   ecx, EXEC_MESSAGE_ID
   mov   esi, [eax - 4]
   call [esi + 4]
 

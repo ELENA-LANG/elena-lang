@@ -11,23 +11,17 @@
 {
     #constructor new &attributes:anAttributes
     [
-        theData << system'external'KERNEL32 GetStdHandle 
+        theData := system'external'KERNEL32 GetStdHandle 
                       &int::anAttributes.
     ]
 }
 
 // --- ConsoleWriter ---
 
-#symbol consoleHelper =
-{
-    _trimLine &literal:anOutput
-        <_console_trimline>.
-}.
-
 #class $ConsoleWriter
 {
     #field theHandle.
-    
+
     #constructor new &handle:aHandle
     [
         theHandle := aHandle.
@@ -35,20 +29,23 @@
 
     #method write &literal : aLiteral
     [
+        #var(type:int)aLength.
+        aLiteral read &out'length:aLength.
+        
         system'external'KERNEL32 WriteConsoleW
-            &handle  :  theHandle
+            &handle  ::  theHandle
             &literal :  aLiteral
-            &length  :: aLiteral
-            &int     :: 0                       // !! temporally we do not use it
-            &int     :: 0.             
+            &int     :  aLength
+            &int     :  0                       // !! temporally we do not use it
+            &int     :  0.             
 
         // !!check the result of the operation
     ]
     
-    #method close
-    [
-        theHandle close.
-    ]
+//    #method close
+//    [
+//        theHandle close.
+//    ]
 }
 
 // --- ConsoleReader ---
@@ -67,18 +64,18 @@
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
 
-        control do:
+        #loop
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &handle        : theHandle
+                &handle        :: theHandle
                 &out'bytearray : aDump
                 &int           : 1
                 &out'int       : aNumberRead.
-        ]
-        &until:[(byteArrayPrimitiveOp equal &bytearray:aDump &index:0 &short:1)
-                    and:(byteArrayPrimitiveOp equal &bytearray:aDump &index:4 &int:1)].
+                
+            false equal &bool::(aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
+        ].
 
-        byteArrayPrimitiveOp read &bytearray:aDump &index:14 &out'short:aChar.
+        aDump read &index:14 &out'short:aChar.
     ]
 
 //    #method read &int
@@ -101,49 +98,53 @@
 //        ^ IntNumber new &int:aValue.
 //    ]
 
-    // !! HOTFIX: additional method to pass the literal type
-    #method $read &out'literal:aLiteral &length:aLength
+    #method read &shortarray:aBuffer &out'length:aLength
     [
         system'external'KERNEL32 ReadConsoleW
-            &handle       : theHandle
-            &out'literal  : aLiteral
-            &int          : aLength
-            &out'length   : aLiteral
-            &int          : 0.
-    ]
-
-    #method read &literal &length:aLength
-    [
-        #var aLiteral := LiteralValue new &length:aLength.
-
-        $self $read &out'literal:aLiteral &length:aLength.
-        
-        ^ aLiteral.
+            &handle    :: theHandle
+            &shortarray : aBuffer
+            &int        : aLength
+            &out'length : aLength
+            &int        : 0.
     ]
     
     #method read &Line
     [
+        #var(type:shortarray,size:127)aBuffer.
+        #var(type:int)aLength.
         #var anOutput := emptyLiteralValue.
+        #var continue := true.
 
-        control do:
+        #loop
         [
-            #var aTemp := $self read &literal &length:64.
+            aLength := 128.
+            $self read &shortarray:aBuffer &out'length:aLength.
+            
+            aBuffer equal &index:(aLength - 1) &short:0Ah
+                ? [
+                    aLength := aLength - 2.
+                    
+                    continue := false.
+                ].
+            
+            #var aTemp := LiteralValue new &length:aLength &shortarray:aBuffer.
             
             anOutput := anOutput + aTemp.
-        ] 
-        &until:[ consoleHelper _trimLine &literal:anOutput ].
+            
+            continue
+        ].
 
         ^ anOutput.
     ]
     
-    #method close
-    [
-        theHandle close.
-    ]
+//    #method close
+//    [
+//        theHandle close.
+//    ]
 }
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandle new &attributes:0FFFFFFF5h).
+#symbol stdConsoleWriter = $ConsoleWriter new &handle::($ConsoleHandle new &attributes:0FFFFFFF5h).
 
-#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandle new &attributes:0FFFFFFF6h).
+#symbol stdConsoleReader = $ConsoleReader new &handle::($ConsoleHandle new &attributes:0FFFFFFF6h).

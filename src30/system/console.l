@@ -5,7 +5,7 @@
     #field theReader.
     #field theNewLineConstant.
 
-    #constructor new &input:aReader &output:aWriter
+    #constructor new &reader:aReader &writer:aWriter
     [
         theWriter := aWriter.
         theReader := aReader.
@@ -14,7 +14,7 @@
 
     #method writeLine : anObject
     [
-        theWriter write &literal::anObject write &literal:theNewLineConstant.
+        theWriter write &literal::anObject write &literal::theNewLineConstant.
     ]
 
     #method write : anObject
@@ -29,7 +29,7 @@
             
     #method writeLine
     [
-        theWriter write &literal:theNewLineConstant.
+        theWriter write &literal::theNewLineConstant.
     ]
         
     #method readLine
@@ -39,12 +39,12 @@
     [
         #var(type:short)aRetVal.        
         theReader read &out'short:aRetVal.
-        
+  
         ^ CharValue new &short:aRetVal.
     ]
 
-//    #method readKey
-//        = theReader read &int.
+////    #method readKey
+////        = theReader read &int.
 }
 
-#static console = $Console new &input:system'io'stdConsoleReader &output:system'io'stdConsoleWriter.
+#static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.

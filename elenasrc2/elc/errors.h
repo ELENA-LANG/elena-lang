@@ -46,7 +46,7 @@ namespace _ELENA_
 //   #define errInvalidRedirectMessage "%s(%d:%d): error 127: It is not possible to use redirect message in this case\n"
    #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
    #define errUnknownMessage        "%s(%d:%d): error 131: Unknown message %s\n"
-//   #define errUnknownSubject        "%s(%d:%d): error 132: Unknown subject %s\n"
+   #define errUnknownSubject        "%s(%d:%d): error 132: Unknown subject %s\n"
 //   #define errDuplicatedArgument    "%s(%d:%d): error 133: Argument '%s' already exists\n"
 //   #define errDuplicatedSubject     "%s(%d:%d): error 134: Subject '%s' already exists\n"
 //   #define errUnmappedArgument      "%s(%d:%d): error 135: Argument '%s' is not mapped\n"
@@ -58,6 +58,9 @@ namespace _ELENA_
    #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
    #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
    #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
+   #define errNotDefaultConstructor "%s(%d:%d): error 143: Default constructor is not defined\n"
+   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
+   #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
 //   #define errInternalError         "internal error 599"
@@ -90,7 +93,9 @@ namespace _ELENA_
 //   #define wrnUnknownSignature      "%s(%d:%d): warning 411: Unknown signature '%s'"
 //   #define wrnObsolete              "%s(%d:%d): warning 412: Obsolete language construction near '%s'"
    #define wrnUnknownModule         "%s(%d:%d): warning 413: Unknown module '%s'\n"
-//   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
+   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
+   #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked for '%s'\n"
+   #define wrnUnknownMessage        "%s(%d:%d): warning 416: method '%s' is not supported by the object\n"
 
 } // _ELENA_
 

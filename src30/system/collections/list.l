@@ -101,7 +101,7 @@
 
 // --- List ---
 
-#class List
+#class(type:list) List
 {
     #field theTop.
     #field theLast.
@@ -116,9 +116,9 @@
 
     #method TopItem = theTop.
 
-    #method First = theTop get.
+//    #method First = theTop get.
 
-    #method length = theCount number.
+    #method length = theCount int.
 
     #method enumerator = ListEnumerator new &list:$self.
 
@@ -136,30 +136,30 @@
         theLast := theLast set &Next:(ListItem new:anObject).
     ]
 
-    #method getItem &index:anIndex
-    [
-        #var(type:int)aCurrentIndex := anIndex.
-        #var anItem := theTop.
-        
-        control while:[aCurrentIndex > 0] &do:
-        [
-            anItem := anItem Next.
-            anItem == nil
-                ? [ #throw OutOfRangeException new. ].
-            
-            aCurrentIndex := aCurrentIndex - 1.
-        ].
-        
-        ^ anItem.
-    ]
-
-    #method getAt : anIndex
-        = $self getItem &index::anIndex get.
-
-    #method getAt : anIndex : anObject
-    [
-        $self getItem &index::anIndex set:anObject.
-    ]
+//    #method getItem &index:anIndex
+//    [
+//        #var(type:int)aCurrentIndex := anIndex.
+//        #var anItem := theTop.
+//        
+//        control while:[aCurrentIndex > 0] &do:
+//        [
+//            anItem := anItem Next.
+//            anItem == nil
+//                ? [ #throw OutOfRangeException new. ].
+//            
+//            aCurrentIndex := aCurrentIndex - 1.
+//        ].
+//        
+//        ^ anItem.
+//    ]
+//
+//    #method getAt : anIndex
+//        = $self getItem &index::anIndex get.
+//
+//    #method getAt : anIndex : anObject
+//    [
+//        $self getItem &index::anIndex set:anObject.
+//    ]
 
     #method clear
     [
@@ -169,31 +169,29 @@
         theCount << 0.        
     ]
 
-    #method remove &index:anIndex
-    [
-        (theTop == nil)
-            ? [ #throw OutOfRangeException new. ].
-        
-        (0 == anIndex)
-            ? [
-                theTop := theTop Next.
-                theTop == nil
-                    ? [ theLast := nil. theState := %empty. ].
-            ]
-            ! [
-                #var aPrevious := $self getItem &index:(anIndex - 1).
-                #var anItem := aPrevious Next.
-                
-                aPrevious set &Next:(anItem Next).
-                
-                anItem equal &object:theLast
-                    ? [ theLast := aPrevious ].
-            ].
-            
-        theCount -= 1.
-    ]
-
-    #method <= &enumerable:$self.
+//    #method remove &index:anIndex
+//    [
+//        (theTop == nil)
+//            ? [ #throw OutOfRangeException new. ].
+//        
+//        (0 == anIndex)
+//            ? [
+//                theTop := theTop Next.
+//                theTop == nil
+//                    ? [ theLast := nil. theState := %empty. ].
+//            ]
+//            ! [
+//                #var aPrevious := $self getItem &index:(anIndex - 1).
+//                #var anItem := aPrevious Next.
+//                
+//                aPrevious set &Next:(anItem Next).
+//                
+//                anItem equal &object:theLast
+//                    ? [ theLast := aPrevious ].
+//            ].
+//            
+//        theCount -= 1.
+//    ]
     
     #method append : anObject => theState.
 }

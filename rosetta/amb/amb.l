@@ -79,7 +79,7 @@
         control while:[ theCombinator next ] &do:
         [
             aCondition~theRole eval:(theCombinator get) ?
-                [ #break nil. ].
+                [ #break. ].
         ].
     ]
     

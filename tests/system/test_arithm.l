@@ -3,18 +3,18 @@
 #define system'collections.
 #define system'calendar.
 #define extensions.
-#define extensions'math.
+//#define extensions'math.
 
 #class(role)XTester
 {
+    #method test :: aParams
+    [
+        $self testUnbox &:aParams.
+    ]
 }
 
 #symbol XTest =
 [
-    #var(type:int)a := 2.
-                                              
-//    #var s := "abc".
-//    #var l := s length.
 ].
 
 // --- OpenArgTest ---
@@ -29,7 +29,7 @@
     #method test : anIndex :: aParams
         = aParams @ (anIndex int).
 
-    #method testUnbox :: aParams
+    #method testParamsCopy :: aParams
     [
         #var n := aParams @ 0.
         
@@ -38,7 +38,7 @@
             
     #method test :: aParams
     [
-        #var n := $self testUnbox &:aParams.
+        #var n := $self testParamsCopy &:aParams.
         
         #var aLength := aParams length.
         
@@ -140,10 +140,10 @@
     
     BoxingTester add:n.
     BoxingTester add:2.
-    BoxingTester add &int:(n + 3 * 4).
+    BoxingTester add &int::(n + 3 * 4).
     BoxingTester add &int:(2 + 3).
     BoxingTester add :(2 + 3).
-    BoxingTester add &int:(2 + n).
+    BoxingTester add &int::(2 + n).
     BoxingTester add :(2 + n).
     
     #var n3 := BoxingTester add &int:(2 + 3 * 4).
@@ -194,13 +194,6 @@
        (a == 2) ? [ #break "b". ].
 
        ^ nil.
-    ].    
-    
-    control while:[true] &do:
-    [
-        true ? [
-            #break nil.
-        ].
     ].
 ].
 
@@ -265,6 +258,11 @@
     [
         #throw MyException2 new:"OnError2 handler works".
     ]
+    
+    #method break3
+    [
+        #throw MyException2 new:"Nested OnError2 handler works".
+    ]
 }
 
 #symbol ObjectTest =
@@ -318,6 +316,7 @@
     console write:"(2 > 3) is " writeLine:(2 > 3).
     console write:"(2 <= 3) is " writeLine:(2 <= 3).
     console write:"(2 >= 2) is " writeLine:(2 >= 2).
+    console write:"(2 >= 3) is " writeLine:(2 >= 3).
     
     #var n := Integer new write::1.
     n += 2.
@@ -358,7 +357,7 @@
 
 #symbol RealTest =
 [
-    console write:"(2 + 3 * 4) is " writeLine:(2.0r + 3.0r * 4.0r).
+    console write:"(2 + 3 * 4) is " writeLine:(2.0r +  3.0r * 4.0r).
     console write:"(10/3) is " writeLine:(10.0r / 3.0r).
     
     #var n := Real new write::1.0r.
@@ -399,10 +398,14 @@
 #symbol ConvertorTest =
 [
     #var n := convertor toInt:"23".
+    #var sn := n literal.
+    sn == "23"
+        ! [ console writeLine:"Int conversion does not work" ].
+    
     #var l := convertor toLong:"1234567890123456".
     #var nn := convertor toInt:"-123".
     #var ll := convertor toLong:"-1234567890123456".
-    
+
     #var r := convertor toReal:"23".
     #var r2 := convertor toReal:"123.456789".
     #var r3 := convertor toReal:"-123.456789".
@@ -440,7 +443,7 @@
     #var s3 := "abcd" Substring &index:1 &length:2.
     #var ls3 := s3 length.
    
-    "abc"getAt:2.
+    "abc" getAt:2.
     
     "abc" getAt:(-1) |
         onOutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
@@ -467,8 +470,7 @@
     #var n3 := a2 @ 1.
     
     a2 setAt:0:2.
-    
-    
+        
     a4~indexable sort: (:aFormer:aNext)[ aFormer < aNext ].
     
     a4 getAt:(-1) |
@@ -533,6 +535,13 @@
         
         onError2: e [ console writeLine:(e Message). ]
     }.
+    
+    control do:
+    [
+        ExecTester break3 | onError: e [ console writeLine:"!!Wrong handler". ].
+    ]
+    | onError2: e [ console writeLine:(e Message). ].
+    
 ].
 
 // --- TextBufferTest ---
@@ -583,8 +592,8 @@
 #symbol StructTest =
 [
     #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( "Struct method works", system'console, %writeLine(1) )).
-    
+
     #var x := a x.
-    
+
     a eval&print.
 ].

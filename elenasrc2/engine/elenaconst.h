@@ -25,8 +25,8 @@ namespace _ELENA_
    #define MESSAGE_MASK            0x80000000
    #define OPEN_ARG_COUNT          0x0F
 
-   #define SEND_MESSAGE_ID         0x0001
-   #define DISPATCH_MESSAGE_ID     0x0002
+   #define DISPATCH_MESSAGE_ID     0x0001
+   #define TYPECAST_MESSAGE_ID     0x0002
    #define NEWOBJECT_MESSAGE_ID    0x0003
 
    #define NEW_MESSAGE_ID          0x0004
@@ -82,10 +82,11 @@ namespace _ELENA_
    #define INC_MESSAGE_ID          0x0036
    #define START_MESSAGE_ID        0x0037
    #define RETRIEVE_MESSAGE_ID     0x0038
+   #define CAST_MESSAGE_ID         0x0039
 
-   // ---- ELENAVM command masks ---
-   #define VM_MASK                 0x0200             // vm command mask
-   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
+//   // ---- ELENAVM command masks ---
+//   #define VM_MASK                 0x0200             // vm command mask
+//   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
 
    // ---- ELENAVM commands ---
    #define START_VM_MESSAGE_ID     0x02F1             // restart VM
@@ -113,6 +114,9 @@ namespace _ELENA_
    #define REVERSE_TAPE_MESSAGE_ID 0x01EF             // reverse the stack parameters 
    #define NEWS_TAPE_MESSAGE_ID    0x01F0             // create a dynamic structure
    #define NEWA_TAPE_MESSAGE_ID    0x01F1             // create a dynamic action
+
+   #define VA_ALIGNMENT       0x08
+   #define VA_ALIGNMENT_POWER 0x03
 
   // --- ELENA Reference masks ---
    enum ReferenceType
@@ -252,22 +256,22 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-// const int elClassClass          = 0x00000010;
-   const int elVMTCustomSHandler   = 0x00000040;
+//// const int elClassClass          = 0x00000010;
+   const int elVMTCustomDispatcher = 0x00000040;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000100;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
-// const int elCastGroup           = 0x00000600;
-// const int elUnion               = 0x00000A00;
-// const int elMethodHandler       = 0x00001000; 
+//// const int elCastGroup           = 0x00000600;
+//// const int elUnion               = 0x00000A00;
+//// const int elMethodHandler       = 0x00001000; 
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004000;
    const int elMessage             = 0x00008000;
-  // const int elDynamicSubjectRole  = 0x0000B080;
+//  // const int elDynamicSubjectRole  = 0x0000B080;
    const int elConstantSymbol      = 0x00000082;
-   const int elOperation           = 0x00204000;
-// const int elWithLocker          = 0x00100000;
+//   const int elOperation           = 0x00204000;
+//// const int elWithLocker          = 0x00100000;
 
    const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
@@ -275,7 +279,7 @@ namespace _ELENA_
    const int elDebugLiteral        = 0x00030000;
    const int elDebugArray          = 0x00050000;
    const int elDebugQWORD          = 0x00060000;
-   const int elDebugBytes          = 0x00070000;
+//   const int elDebugBytes          = 0x00070000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -303,7 +307,6 @@ namespace _ELENA_
    #define COMMANDSET_MODULE        "commands"      // core predefined command set
    #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
    #define INLINE_MODULE            "inline"        // inline module alias
-   #define OPERATION_MODULE         "operators"     // operator module alias
 
   // --- ELENA verb messages ---
    #define NEW_MESSAGE              "new"
@@ -317,9 +320,6 @@ namespace _ELENA_
    #define XOR_MESSAGE              "xor"
    #define DO_MESSAGE               "do"
    #define STOP_MESSAGE             "stop"
-   #define NOTEQUAL_MESSAGE         "notequal"
-   #define NOTLESS_MESSAGE          "notless"
-   #define NOTGREATER_MESSAGE       "notgreater"
    #define GREATER_MESSAGE          "greater"
    #define ADD_MESSAGE              "add"
    #define SUB_MESSAGE              "subtract"
@@ -358,6 +358,7 @@ namespace _ELENA_
    #define INC_MESSAGE              "next"
    #define START_MESSAGE            "start"
    #define RETRIEVE_MESSAGE         "retrieve"
+   #define CAST_MESSAGE             "cast"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="
@@ -368,8 +369,8 @@ namespace _ELENA_
    #define LESS_OPERATOR            "<"
    #define IF_OPERATOR			      "?"
    #define IFNOT_OPERATOR		      "!"
-   #define AND_OPERATOR             "^&"
-   #define OR_OPERATOR              "^|"
+   #define AND_OPERATOR             "&&"
+   #define OR_OPERATOR              "||"
    #define XOR_OPERATOR             "^^"
    #define ADD_OPERATOR             "+"
    #define SUB_OPERATOR             "-"
@@ -389,35 +390,41 @@ namespace _ELENA_
    #define SUPER_VAR               "$super"           // the predecessor class
   // #define NEXT_VAR                "$next"            // the next group member
 
+  // --- ELENA special sections ---
+   #define TYPE_SECTION             "#types"
+
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
-   #define EXTENSION_POSTFIX        "#extensions"
-   #define OPERATION_POSTFIX        "#operations"
    #define GENERIC_POSTFIX          "#generic"
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
-   #define HINT_TYPE               "type"              // type / debugger watch hint
+   #define HINT_ROLE               "role"
+   #define HINT_TYPE               "type"              // type hint
    #define HINT_SIZE               "size"
-  // #define HINT_SAFEPOINT          "safepoint"
-  // #define HINT_LOCK               "sync"
+   #define HINT_ITEMSIZE           "itemsize"
+   #define HINT_ITEM               "item"
+//  // #define HINT_SAFEPOINT          "safepoint"
+//  // #define HINT_LOCK               "sync"
    #define HINT_EXTENSION          "extension"
+   #define HINT_SEALED             "sealed"
 
-   #define HINT_INT                "int"              // debugger watch hint values / field size aliases
-   #define HINT_LITERAL            "literal"
-   #define HINT_ARRAY              "array"
-   #define HINT_REAL               "real"
-   #define HINT_LONG               "long"
-   #define HINT_SHORT              "short"
-//   #define HINT_MEM                "mem"
-   #define HINT_BYTEARRAY          "bytearray"
+   #define HINT_DBG                "dbg"               // debugger watch hint values
+   #define HINT_DBG_INT            "int"              
+   #define HINT_DBG_LONG           "long"              
+   #define HINT_DBG_LITERAL        "literal"
+   #define HINT_DBG_REAL           "real"              
+   #define HINT_DBG_ARRAY          "array"              
+
+//   #define HINT_ARRAY              "array"
+//   #define HINT_REAL               "real"
+//   #define HINT_SHORT              "short"
+////   #define HINT_MEM                "mem"
    #define HINT_MESSAGE            "message"
    #define HINT_SIGNATURE          "signature"
-   #define HINT_ROLE               "role"
-   #define HINT_OPERATION          "operation"
+//   #define HINT_OPERATION          "operation"
    #define HINT_GROUP              "group"
-   #define HINT_SEALED             "sealed"
    
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
@@ -426,8 +433,8 @@ namespace _ELENA_
    #define PACKAGE_MODULE           "$package"
    #define EXTERNAL_MODULE          "system'external"
 
-  // VM temporal code
-   #define TAPE_SYMBOL              "$tape"
+//  // VM temporal code
+//   #define TAPE_SYMBOL              "$tape"
 
   // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
@@ -438,47 +445,27 @@ namespace _ELENA_
    #define ACTION_CLASS             "system'Action"                  // the base action class
    #define NIL_CLASS                "system'nil"                     // the nil reference
    #define BREAK_EXCEPTION_CLASS    "system'BreakException"          // break class
-   #define CONTROL_CLASS            "system'control"
+   #define NOMETHOD_EXCEPTION_CLASS "system'MethodNotFoundException"          
    #define TRUE_CLASS               "system'true"
    #define FALSE_CLASS              "system'false"
    #define INT_CLASS                "system'IntNumber" 
    #define LONG_CLASS               "system'LongNumber" 
    #define REAL_CLASS               "system'RealNumber" 
    #define WSTR_CLASS               "system'LiteralValue" 
-   #define WCHR_CLASS               "system'CharValue" 
+//   #define WCHR_CLASS               "system'CharValue" 
    #define ARRAY_CLASS              "system'Array" 
-//   #define ROLES_CLASS              "system'dynamic'RoleList"        // the role list handler
-   #define TAPE_CLASS               "system'dynamic'Tape"            // the role list handler
-   #define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the role list handler
+////   #define ROLES_CLASS              "system'dynamic'RoleList"        // the role list handler
+//   #define TAPE_CLASS               "system'dynamic'Tape"            // the role list handler
+//   #define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the role list handler
    #define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
    #define MESSAGE_CLASS            "system'dynamic'Message"         // the special role class
    #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
    #define GETPROPERTY_CLASS        "system'dynamic'GetProperty"     
-   #define STRUCT_CLASS             "system'dynamic'Struct"     
+//   #define STRUCT_CLASS             "system'dynamic'Struct"     
 
-   // predefined signatures
-   #define WHILE_SIGNATURE          "while&do"
-   #define UNTIL_SIGNATURE          "until"
-
-   // predefined subjects
-   #define NOT_SUBJECT              "not"
-
-   // primitive types
-   #define REF_SUBJECT              "ref"
-   #define INT_SUBJECT              "int"
-   #define LONG_SUBJECT             "long"
-   #define HANDLE_SUBJECT           "handle"
-   #define WSTR_SUBJECT             "literal"
-   #define LENGTH_SUBJECT           "length"
-   #define REAL_SUBJECT             "real"
-   #define SHORT_SUBJECT            "short"
-   #define ARRAY_SUBJECT            "array"
-   #define DUMP_SUBJECT             "bytearray"
-//   #define OUT_LENGTH_SUBJECT       "length&out'int"
-   #define INDEX_SUBJECT            "index"
-//   #define BYTE_SUBJECT             "byte"
+   // predefined types
    #define PARAMS_SUBJECT           "params"
-   #define ACTION_SUBJECT           "action"
+//   #define ACTION_SUBJECT           "action"
 
    #define STARTUP_CLASS            "'program"
 

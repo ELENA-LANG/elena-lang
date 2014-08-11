@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -13,7 +13,8 @@
 using namespace _ELENA_;
 
 // --- ELENA Class constants ---
-const int elVMTOffset32           = 0x000C;           // a VMT header size
+const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
+const int elVMTOffset32           = 0x0010;           // a VMT header size
 
 inline void insertVMTEntry(VMTEntry* entries, int count, int index)
 {
@@ -82,6 +83,21 @@ void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wchar16_t* 
    writer->align(4, 0);
 }
 
+void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(-length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
+}
+
 size_t JITCompiler32 :: findFlags(void* refVMT)
 {
    return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
@@ -89,7 +105,7 @@ size_t JITCompiler32 :: findFlags(void* refVMT)
 
 size_t JITCompiler32 :: findLength(void* refVMT)
 {
-   int count = *(int*)((int)refVMT - elVMTOffset32);
+   int count = *(int*)((int)refVMT - elVMTCountOffset32);
    return count;
 }
 
@@ -149,7 +165,7 @@ int JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
 {
    if (parentVMT != NULL) {
       // get the parent vmt size
-      int count = *(int*)((int)parentVMT - elVMTOffset32);
+      int count = *(int*)((int)parentVMT - elVMTCountOffset32);
 
       // get the parent entry array
       VMTEntry* parentEntries = (VMTEntry*)parentVMT;
@@ -189,7 +205,7 @@ void JITCompiler32 :: addVMTEntry(_ReferenceHelper& helper, ref_t message, size_
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: compileVMT(void* vaddress, MemoryWriter& vmtWriter, ClassHeader& header, int count, void* classClassVAddress, bool virtualMode)
+void JITCompiler32 :: compileVMT(void* vaddress, MemoryWriter& vmtWriter, ref_t typeRef, int count, int flags, void* classClassVAddress, bool virtualMode)
 {
    ref_t position = vmtWriter.Position();
 
@@ -199,10 +215,14 @@ void JITCompiler32 :: compileVMT(void* vaddress, MemoryWriter& vmtWriter, ClassH
    _Memory* image = vmtWriter.Memory();   
 
    // create VMT header:
+   //   type
+   vmtWriter.writeDWord(typeRef);
+
+   //   vmt length
    vmtWriter.writeDWord(count);
 
    //   vmt flags
-   vmtWriter.writeDWord(header.flags);
+   vmtWriter.writeDWord(flags);
 
    // class vmt reference
    if (classClassVAddress != NULL) {

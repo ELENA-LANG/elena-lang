@@ -14,3 +14,6 @@ main.l
 'program=system_test'program
 'test=system_test'test
 
+[primitives]
+inline=..\..\lib30\inline\core_routines.bin
+

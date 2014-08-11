@@ -1,14 +1,14 @@
-// --- Symbol ---
-
-#class Symbol
-{
-    #field(type:int)theReference.
-    
-    #constructor new &literal:aName
-        <symbol_new>.
-        
-    #method => <symbol_redirect>.
-}
+//// --- Symbol ---
+//
+//#class Symbol
+//{
+//    #field(type:int)theReference.
+//    
+//    #constructor new &literal:aName
+//        <symbol_new>.
+//        
+//    #method => <symbol_redirect>.
+//}
 
 // --- Message ---
 
@@ -28,12 +28,12 @@
     #method => <qualify_message>.
 }
 
-// --- DispatchSubject ---
-
-#class DispatchSubject : Signature
-{
-    #constructor => <new_signature>.
-}
+//// --- DynamicSignature ---
+//
+//#class DynamicSignature : Signature
+//{
+//    #constructor => <new_signature>.
+//}
 
 // --- GetProperty ---
 
@@ -44,3 +44,11 @@
     
     #method => <get_property>.
 }
+
+//// --- EDispatchTable ---
+//
+//// Extends pairs of subject, signature
+//#symbol EDispatchTable =
+//{
+//    => <map_subject>.
+//}.

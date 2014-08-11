@@ -1,3 +1,12 @@
+// --- BreakException ---
+
+#class BreakException
+{
+    #field theResult.
+    
+    #method stop = theResult.
+}
+
 // --- BaseException ---
 
 #class BaseException
@@ -93,4 +102,19 @@
         = aCatchBlock onMethodNotFound:$self.
         
     #method Message = "Method not found".
+}
+
+// --- MethodNotSupported ---
+
+#class(role) NotSupportedException : BaseException
+{
+    #method onNotSupported : aHandler    
+    [
+        aHandler eval:$self.
+    ]
+    
+    #method ifFailed &on:aCatchBlock
+        = aCatchBlock onNotSupported:$self.
+        
+    #method Message = "Operation is not supported".
 }

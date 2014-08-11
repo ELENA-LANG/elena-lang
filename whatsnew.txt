@@ -8,9 +8,10 @@
 ******************************************************************************
 
 ELENA:
-[!] binary incompatible due to changes in ecodes
+[!] compiler code overhaul (vm command set, typecasting, method code)
+[!] binary incompatible due to changes in the compiler
 [+] generic methods
-[+] new ecodes: msetsubj, pushsubj
+[+] new ecodes: msetsubj, pushsubj, nexti, bloadsi, testtype, acopybi
 [+] obsolete ecodes: madd, maddai, mresetsubj
 [*] changes in exception handling routines
 
@@ -19,6 +20,9 @@ ELC:
 
 ELENA:
 [+] new ecodes: lsaveint
+
+[LIB]
+[*] some code refactoring due to dispatching / primitive routines changes
 
 ******************************************************************************
                     What's New in 1.9.16 (pre release)

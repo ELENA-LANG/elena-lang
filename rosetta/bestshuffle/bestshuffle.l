@@ -20,7 +20,7 @@
                     [
                         arrayControl exchange:i &with:j &in:aShuffled.
                         
-                        #break nil.
+                        #break.
                     ].
             ].
         ].

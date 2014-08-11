@@ -1,20 +1,31 @@
 //        ELENA Language 2.0
 //      inline system library
 
+define NEW_MESSAGE_ID       084000000h
+define EVAL_MESSAGE_ID      085000000h
+define GET_MESSAGE_ID       086000000h
+
 define elMessage            000008000h
 define elRole               000004000h
 define elSubject            000002000h
 
-define NEW_MESSAGE_ID       084000000h
-define NEW_MESSAGE_ID_1     084000001h
-define EVAL_MESSAGE_ID      085000000h
-define GET_MESSAGE_ID       086000000h
-
-procedure inline'redirect
+procedure inline'dispatch
 
   bsredirect
   acopyr const : system'MethodNotFoundException
   throw
+
+end
+
+procedure inline'typecast
+
+  type
+  if       labExit
+  setverb  GET_MESSAGE_ID
+  pusha
+  acallvi  0
+labExit:
+  quit
 
 end
 
@@ -25,39 +36,125 @@ procedure inline'exception_redirect
 
 end
 
+procedure inline'ws_create
+
+  aloadsi 3
+  nload
+  inc
+  acopyr class : system'LiteralValue
+  wcreate
+  quit
+
+end
+
+procedure inline'sa_create
+
+  aloadsi 3
+  nload
+  acopyr class : system'ShortArray
+  wcreate
+  quit
+
+end
+
+procedure inline'bs_create
+
+  aloadsi 3
+  nload
+  acopyr class : system'ByteArray
+  bcreate
+  quit
+
+end
+
+procedure inline'ws_copy
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'ws_copyarr
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  wsave
+  quitn 2
+
+end
+
+procedure inline'ws_copyint
+
+  dcopy 10
+  acopyr class : system'LiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+  ntow
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'ws_copylong
+
+  dcopy 64
+  acopyr class : system'LiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+  ltow
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'ws_getlen
+
+  wlen
+  dec
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
 procedure inline'bs_equalword
 
-  pushb
-  aloadsi 3
   bcopya
-
-  aloadsi 4
-  dloadai 0
-  acopyb
-  bstest labErr
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
  
-  pushn 0
-  acopys 0
-  bsgetword
-  pusha
-  aloadsi 7
-  nequal
-  popi 2
-  delse labFalse
+  loadw
+  aloadsi 3
+  nload  
+  else    labFalse
 
   acopyr  const : system'true
-  popb
-  quitn 4
+  quitn 3
 
 labFalse:  
   acopyr  const : system'false
-  popb
-  quitn 4
+  quitn 3
   
 labErr:
   callr system'InvalidArgumentException
   pusha
-  mcopy NEW_MESSAGE_ID
+  copym NEW_MESSAGE_ID
   acallvi 0
   throw
 
@@ -65,544 +162,57 @@ end
 
 procedure inline'bs_equalint
 
-  pushb
-  aloadsi 3
   bcopya
-
-  aloadsi 4
-  dloadai 0
-  acopyb
-  bstest labErr
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
  
-  pushn 0
-  acopys 0
-  bsgetint
-  pusha
-  aloadsi 7
-  nequal
-  popi 2
-  delse labFalse
+  load
+  aloadsi 3
+  nload  
+  else    labFalse
 
   acopyr  const : system'true
-  popb
-  quitn 4
+  quitn 3
 
 labFalse:  
   acopyr  const : system'false
-  popb
-  quitn 4
+  quitn 3
   
 labErr:
   callr system'InvalidArgumentException
   pusha
-  mcopy NEW_MESSAGE_ID
+  copym NEW_MESSAGE_ID
   acallvi 0
   throw
 
 end
 
-procedure inline'_console_trimline
+procedure inline'bs_readword
 
-  pushb
-  aloadsi 3
   bcopya
-
-  wsgetlen
-  ddec
-
-  pushn 0Ah
-  pushn 0Dh
-  pushn 0
-  acopys 0
-  pusha
-  acopyb
-  wsgetat
-  acopys 3
-  nequal
-  delse labFalse
-  
-  acopyb
-  wsgetlen
-  ddec
-  ddec  
-  wsgetat
-  acopys 2
-  nequal
-  delse labFalse
-  popi 3
-  
-  // ; trim LRLN           
-  acopyb
-  wsgetlen
-  ddec
-  ddec
-  wssetlen
-  
-  pushn 0
-  acopys 0
-  wssetat
-  popi 2
-
-  acopyr  const : system'true
-  popb
-  quitn 2
-
-labFalse:  
-  popi 4
-  acopyr  const : system'false
-  popb
-  quitn 2
-
-end
-
-procedure inline'ws_concat
-
-  pushn 0
-  aloadsi 3  // ; s1
-  wsgetlen
-  dsavesi 0
-  aloadsi 4  // ; s2
-  wsgetlen
-  daddsi 0
-  pop
-  acopyr class : system'LiteralValue
-  wscreate
-  pushb
-  bcopya
-  aloadsi 3
-  wscopy
-  aloadsi 4
-  wsadd  
-  acopyb
-  popb
-  quitn 3
-
-end                                                
-
-procedure inline'n_copystr
-
-  aloadsi 3
-  pushb
-  bcopya
-  dcopy 10
-  aloadsi 3
-  ncopystr
-  delse labErr
-  popb
-  quitn 2
-
-labErr:
-  callr system'FormatException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'l_copystr
-
-  aloadsi 3
-  pushb
-  bcopya
-  dcopy 10
-  aloadsi 3
-  lcopystr
-  delse labErr
-  popb
-  quitn 2
-
-labErr:
-  callr system'FormatException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'r_copystr
-
-  aloadsi 3
-  pushb
-  bcopya
-  dcopy 10
-  aloadsi 3
-  rcopystr
-  delse labErr
-  popb
-  quitn 2
-
-labErr:
-  callr system'FormatException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-
-procedure inline'ws_copyint
-
-  pushb
-  dcopy 10
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-  aloadsi 3
-  dcopy 10
-  wscopyint
-  acopyb
-  popb
-  quitn 2
-
-end
-
-procedure inline'ws_copyint_radix
-
-  pushb
-  dcopy 32
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-  aloadsi 4
-  dloadai 0
-  aloadsi 3
-  wscopyint
-  acopyb
-  popb
-  quitn 2
-
-end
-
-procedure inline'ws_copylong
-
-  pushb
-  dcopy 64
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-  aloadsi 4
-  dloadai 0
-  aloadsi 3
-  dcopy 10
-  wscopylong
-  acopyb
-  popb
-  quitn 2
-
-end
-
-procedure inline'ws_copylong_radix
-
-  pushb
-  dcopy 20
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-  aloadsi 4
-  dloadai 0
-  aloadsi 3
-  wscopylong
-  acopyb
-  popb
-  quitn 2
-
-end
-
-procedure inline'ws_copyreal
-
-  pushb
-  dcopy 30
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-  aloadsi 3
-  dcopy 24
-  wscopyreal
-  acopyb
-  popb
-  quitn 2
-end
-
-procedure inline'ws_copyreal_len
-
-  pushb
-  dcopy 30
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-  aloadsi 4
-  dloadai 0
-  aloadsi 3
-  wscopyreal
-  acopyb
-  popb
-  quitn 2
-end
-
-procedure inline'ws_copybuf
-
-  pushb
-
-  aloadsi 4
-  dloadai 0
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-
-  pushn 0
-  acopys 0
-  pusha
-
-  aloadsi 6
-  dloadai 0
-  aloadsi 5
-  wscopybuf
-  popi 2
-  acopyb
-  popb
-  quitn 3
-
-end
-
-procedure inline'handle_extension
-
-  pushai  1
-  aloadai 0
-  popsi   2
-  bsredirect
-  aloadsi 1
-  ajumpvi 0
-
-end
-
-procedure inline'handle_arraygroupextension
-
-  aloadai 0
-  bsgredirect
-  aloadsi 1
-  aloadai 1
-  ajumpvi 0
-
-end
-
-procedure inline'handle_roles
-
-  bsgredirect
-  throw
-
-end
-
-procedure inline'bs_write
-
-  pushb
-  bcopya
-
-  aloadsi 3
-  dloadai 0
-  acopyb
-  bstest labErr
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
  
-  aloadsi 4
-  daddai 0
-  acopyb
-  bstest labErr
-  
-  aloadsi 4
-  dloadai 0
-  pushsi 3
-  aloadsi 6
-  bssetbuf
-  pop
+  loadw
+  dcopye
+  bloadsi 3
+  nsave
 
   acopyb
-  popb
-  quitn 4
-  
-labErr:
-  callr system'InvalidArgumentException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-
-procedure inline'bs_writestr
-
-  pushb
-  bcopya
-
-  aloadsi 3
-  dloadai 0
-  acopyb
-  bstest labErr
- 
-  aloadsi 4
-  wsgetlen
-  pushn 0
-  dsavesi 0
-  daddsi 0
-  acopyb
-  bstest labErr
-  
-  dloadsi 0
-  pop
-  pushsi 3
-  aloadsi 5
-  bscopystr
-  pop
-
-  acopyb
-  popb
-  quitn 3
-  
-labErr:
-  callr system'InvalidArgumentException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'bs_read
-
-  pushb
-  bcopya
-
-  aloadsi 3
-  dloadai 0
-  acopyb
-  bstest labErr
- 
-  aloadsi 4
-  daddai 0
-  acopyb
-  bstest labErr
-  
-  aloadsi 4
-  dloadai 0
-  pushsi 3
-  aloadsi 6
-  bsgetbuf
-  pop
-
-  acopyb
-  popb
-  quitn 4
-  
-labErr:
-  callr system'InvalidArgumentException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'bs_findbyte
-
-  pushb
-  bcopya
-
-  aloadsi 3
-  dloadai 0
-  acopyb
-  bstest labErr
- 
-  pushsi 4
-  aloadsi 6
-  bsindexof
-  pop
-
-  aloadsi 6
-  dsaveai 0  
-  acopyb
-  popb
-  quitn 3
-  
-labErr:
-  callr system'InvalidArgumentException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'bs_findshort
-
-  pushb
-  bcopya
-
-  aloadsi 3
-  dloadai 0
-  acopyb
-  bstest labErr
- 
-  pushsi 4
-  aloadsi 6
-  bsindexofword
-  pop
-
-  aloadsi 6
-  dsaveai 0  
-  acopyb
-  popb
-  quitn 3
-  
-labErr:
-  callr system'InvalidArgumentException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'array_getat
-
-  pusha
-  aloadsi 3
-  dloadai 0
-  popa
-  test labErr
-  aloadd
   quitn 2
   
 labErr:
-  callr system'OutOfRangeException
+  callr system'InvalidArgumentException
   pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-                                 
-procedure inline'array_setat
-
-  pushb
-  bcopya
-  aloadsi 3
-  dloadai 0
-  acopyb
-  test labErr
-
-  aloadsi 4
-  set
-
-  acopyb
-  popb
-  quitn 3
-  
-labErr:
-  callr system'OutOfRangeException
-  pusha
-  mcopy NEW_MESSAGE_ID
+  copym NEW_MESSAGE_ID
   acallvi 0
   throw
 
@@ -611,473 +221,807 @@ end
 procedure inline'object_equal
 
   aloadsi 1
-  athensi labTrue 2
-  acopyr const : system'false
-  quitn 2
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
   
 labTrue:
   acopyr const : system'true
   quitn 2
+  
+end
+
+procedure inline'int_equal
+
+  bloadsi 2
+  nequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'ws_equal
+
+  bloadsi 2
+  wequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'int_less
+
+  bloadsi 2
+  nless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'ws_less
+
+  bloadsi 2
+  wless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'int_add
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nadd
+  acopyb
+  quitn 2
 
 end
 
-procedure inline'bs_readword
+procedure inline'int_sub
 
-  pushb
-  aloadsi 3
-  bcopya
-
-  aloadsi 4
-  dloadai 0
-  acopyb
-  bstest labErr
- 
-  aloadsi 5
-  bsgetword
-
-  acopyb
-  popb
-  quitn 3
-  
-labErr:
-  callr system'InvalidArgumentException
   pusha
-  mcopy NEW_MESSAGE_ID
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nsub
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_mul
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nmul
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_div
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  ndiv
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_and
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nand
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_or
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nor
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_xor
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nxor
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_copystr
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  wton
+  ifn      labErr 0
+  quitn    2
+
+labErr:
+  callr system'FormatException
+  pusha
+  copym NEW_MESSAGE_ID
   acallvi 0
   throw
 
 end
 
-procedure inline'ws_fill
-  
-  pushb
+procedure inline'int_saveshort
+
+  pusha
   bcopya
-  wsgetlen
+  acopyr  const : system'shortMaximalValue
+  nless
+  ifn     labEnd 0
 
-  // ; set zero at the end
-  pushn 0
-  acopys 0
-  wssetat
-  pop
+  callr   system'OutOfRangeException
+  pusha
+  copym   NEW_MESSAGE_ID
+  acallvi 0
+  throw  
 
-  // ; fill the literal 
-  aloadsi 4
+labEnd:
+  popa
+  bloadsi 2
+  ncopy
+  quitn 2
 
-labNext:
-  ddec
-  wssetat
-  dthen labNext
+end
 
-  acopyb
-  popb
+procedure inline'ws_equalword
+
+  bcopya
+  wlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  wload
+  aloadsi 3
+  nload  
+  else    labFalse
+
+  acopyr  const : system'true
   quitn 3
 
+labFalse:  
+  acopyr  const : system'false
+  quitn 3
+  
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
 end
 
-procedure inline'qualify_message
+procedure inline'ws_add
 
-  msetsubj 0
-  maddai   0
-  aloadsi  1
-  ajumpvi  0
+  wlen
+  dec
+  ecopyd
+  bcopya
+  aloadsi 2
+  wlen
+  add
+  acopyr class : system'LiteralValue
+  wcreate
+  bswap
+  wlen
+  dec
+  ecopyd
+  dcopy 0
+  winsert
+  ecopyd
+  aloadsi 2
+  wlen
+  eswap
+  winsert
+  acopyb
+
+  quitn 2
+
+end                                                
+
+procedure inline'long_equal
+
+  bloadsi 2
+  lequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'long_less
+
+  bloadsi 2
+  lless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'long_add
+
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  ladd
+  acopyb
+  quitn 2
 
 end
 
-procedure inline'new_signature
+procedure inline'long_sub
 
-  pushm
-  dcopy 4
-  acopyr class : system'dynamic'DispatchSubject
-  bscreate
-  popm
-  mcopysubj
-  msaveai 0
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  lsub
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'long_mul
+
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  lmul
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'long_div
+
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  ldiv
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'long_and
+
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  land
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'long_or
+
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  lor
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'long_xor
+
+  pusha
+  newn   class : system'LongNumber 8
+  bcopya
+  popa
+  lcopy
+  aloadsi 2
+  lxor
+  acopyb
   quitn 2
 
 end
                  
 procedure inline'int_shift
 
-  aloadsi 3    // ; load index
-  dloadai 0
-  pushsi 2     // ; push value
-  aloadsi 5    // ; load target
-  nload        // ; copy content
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 2    // ; load index
+  nload
   nshift
-  pop
-  quitn 3
-  
-end
-
-procedure inline'long_shift
-
-  aloadsi 3    // ; load index
-  dloadai 0
-  pushsi 2     // ; push value
-  aloadsi 5    // ; load target
-  lload        // ; copy content
-  lshift
-  pop
-  quitn 3
+  acopyb
+  quitn 2
   
 end
 
 procedure inline'int_not
 
-  pushsi 2     // ; push value
-  aloadsi 4    // ; load target
-  nload        // ; load content
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
   nnot         // ; invert
-  pop
+  acopyb
+  quitn 1
+  
+end
+                 
+procedure inline'long_shift
+
+  newn   class : system'LongNumber 8
+  bcopya
+  aloadsi 2    // ; load index
+  nload
+  lshift
+  acopyb
   quitn 2
   
 end
 
 procedure inline'long_not
 
-  pushsi 2     // ; push value
-  aloadsi 4    // ; load target
-  lload        // ; copy content
+  newn   class : system'LongNumber 8
+  bcopya
+  aloadsi 1    // ; load source
   lnot         // ; invert
-  pop
+  acopyb
+  quitn 1
+  
+end
+
+procedure inline'real_equal
+
+  bloadsi 2
+  requal
+  selectr const : system'false const : system'true
   quitn 2
   
 end
 
-procedure inline'array_getlen
+procedure inline'real_less
 
+  bloadsi 2
+  rless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'real_add
+
+  pusha
+  newn   class : system'RealNumber 8
+  bcopya
+  popa
+  rcopy
   aloadsi 2
-  getlen
-  aloadsi 3
-  dsaveai 0
+  radd
+  acopyb
   quitn 2
 
 end
 
-procedure inline'ws_insert
+procedure inline'real_sub
 
-  pushb
-
-  // ; calculate length
-  pushn 0
-  aloadsi 4
-  wsgetlen
-  acopys 0
-  dsaveai 0
-  aloadsi 6
-  wsgetlen
-  acopys 0
-  daddai 0
-
-  // ; create a new string  
-  acopyr class : system'LiteralValue
-  wscreate
+  pusha
+  newn   class : system'RealNumber 8
   bcopya
-
-  // ; copy left side               
-  aloadsi 5
-  dloadai 0
-  acopys 0
-  dsaveai 0                        
-  pusha
-  pushn 0
-  acopys 0
-  pusha
-  aloadsi 7
-  wscopystr
-  popi 2
-
-  // ; copy substring                             
-  aloadsi 7
-  wsadd
-
-  // ; copy the rest
-  aloadsi 5
-  wsgetlen
-  acopys 1
-  dsubai 0
-  aloadsi 5
-  wsaddstr
-  popi 2
+  popa
+  rcopy
+  aloadsi 2
+  rsub
   acopyb
-  popb
-  quitn 4
-  
-end
-
-procedure inline'ws_delete
-
-  pushb
-  
-  // ; calculate length
-  pushn 0
-  aloadsi 4
-  wsgetlen
-  aloadsi 6
-  dsubai 0
-  acopys 0
-  dsaveai 0
-
-  // ; create a new string  
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-
-  // ; copy left side               
-  aloadsi 5             
-  dloadai 0
-  acopys 0
-  dsaveai 0             // ; var = index
-  pusha
-  pushn 0
-  acopys 0
-  pusha
-  aloadsi 7
-  wscopystr
-  popi 2
-
-  // ; copy the rest
-  acopys 1
-  dloadai 0  
-  aloadsi 7            // ; length
-  daddai 0
-  acopys 1
-  dsaveai 0
-  aloadsi 5
-  wsgetlen
-  pusha
-  acopys 2
-  dsubai 0
-  popa 
-  wsaddstr                                      
-  popi 2
-  acopyb
-  popb                                                    
-  quitn 4
-
-end
-
-procedure inline'ws_subs
-
-  pushb
-  
-  // ; calculate length
-  aloadsi 5
-  dloadai 0
-
-  // ; create a new string  
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-
-  // ; copy left side               
-  aloadsi 5
-  dloadai 0
-  aloadsi 3
-  pushsi 4
-  wscopystr
-  pop
-  acopyb
-  popb
-  quitn 4
-
-end
-
-procedure inline'ws_refresh
-
-  pushb
-  aloadsi 3
-  bcopya
-
-  wsgetlen
-  pushn 0
-  acopys 0
-  wssetat
-  pop
-
-  popb
   quitn 2
 
 end
 
-procedure inline'bs_writeword
+procedure inline'real_mul
 
-  pushb
-  aloadsi 3
-  bcopya
-
-  aloadsi 4
-  dloadai 0
-  acopyb
-  bstest labErr
- 
-  aloadsi 5
-  bssetword
-
-  acopyb
-  popb
-  quitn 4
-  
-labErr:
-  callr system'InvalidArgumentException
   pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
+  newn   class : system'RealNumber 8
+  bcopya
+  popa
+  rcopy
+  aloadsi 2
+  rmul
+  acopyb
+  quitn 2
 
 end
 
-procedure inline'ws_equalchar
+procedure inline'real_div
 
-   pushb
-   bcopya
-   wsgetlen
-   delsen labFalse 1
-   pushn 0
-   acopys 0
-   pusha
-   dcopy 0
-   acopyb
-   wsgetat
-   aloadsi 5
-   nequal
+  pusha
+  newn   class : system'RealNumber 8
+  bcopya
+  popa
+  rcopy
+  aloadsi 2
+  rdiv
+  acopyb
+  quitn 2
 
-   popi 2
-   delsen labFalse 1
-   acopyr const : system'true
-   popb
-   quitn 2   
-   
-labFalse:
-   acopyr const : system'false
-   popb
-   quitn 2
+end
+
+procedure inline'ws_copyreal
+
+  dcopy 30
+  acopyr class : system'LiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 24
+  rtow
+  acopyb
+  quitn 2
 
 end
 
 procedure inline'ws_getat
 
-  pushsi 3  // target
-  
-  pusha
-  aloadsi 4
-  dloadai 0
-  popa
-  wstest labErr
-  wsgetat
-  pop
-  quitn 2
-  
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  wload
+  acopyb
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
 labErr:
   callr system'OutOfRangeException
   pusha
-  mcopy NEW_MESSAGE_ID
+  copym NEW_MESSAGE_ID
   acallvi 0
   throw
 
 end
 
-procedure inline'ws_indexof
+procedure inline'arr_create
 
+  aloadsi 3
+  nload
+  acopyr class : system'Array
+  create
+
+  bcopya
+  aloadsi 3
+  nload
+  
+  acopyr const : system'nil
+labNext:
+  dec
+  xset
+  elsen labNext 0
+
+  acopyb
+  quit
+
+end
+
+procedure inline'arr_getat
+
+  count
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  get
+  quitn 2
+
+labErr:
+  callr system'OutOfRangeException
   pusha
-  aloadsi 3                 // ; load index
-  dloadai 0                      
-  popa
-  pushsi 3                  // ; load searching str
-  wsindexofstr
-  aloadsi 5                 // ; load target
-  dsaveai 0                 // ; save index
-  pop
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'arr_setat
+
+  count
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  set
+  quitn 3
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'arr_getlen
+
+  count
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure inline'args_create
+
+  callr system'NotSupportedException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'args_getlen
+
+  bcopya
+  dcopy 0
+  ecopyd
+  xseek
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure inline'ws_fill
+  
+  bcopya
+  wlen
+  dec
+  
+  // ; set zero at the end
+  ecopy 0 
+  wsave
+  ecopyd
+
+  aloadsi 3
+  nload
+  eswap
+
+labNext:
+  dec
+  wsave
+  elsen labNext 0 
+
+  acopyb
   quitn 3
 
 end
 
-procedure inline'r_exp
+procedure inline'ws_indexof
 
-  pushb
-  aloadsi 4
   bcopya
+  aloadsi 2                 // ; load index
+  nload
+  aloadsi 3                 // ; load searching str
+  wseek
+  acopyb
+  bloadsi 4                 // ; load target
+  nsave                    // ; save index
+  quitn 4
+
+end
+
+procedure inline'ws_insert
+
+  // ; calculate length
+  wlen
+  dec
+  ecopyd
   
   aloadsi 3
-  rexp
+  wlen
+  add
 
-  popb
-  quitn 2
+  acopyr class : system'LiteralValue
+  wcreate
 
-end
-
-procedure inline'r_ln
-
-  pushb
-  aloadsi 4
+  // ; copy left side               
   bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  winsert
 
+  // ; insert
   aloadsi 3
-  rln
-
-  popb
-  quitn 2
-
-end
-
-procedure inline'r_abs
-
-  pushb
-  aloadsi 4
-  bcopya
-
-  aloadsi 3
-  rabs
-
-  popb
-  quitn 2
-
-end
-
-procedure inline'r_round
-
-  pushb
-  aloadsi 4
-  bcopya
-
-  aloadsi 3
-  rround
+  ecopyd
+  wlen
+  dec
+  eswap
+  winsert
   
-  popb
-  quitn 2
+  // ; copy right side 
+  ecopyd
+  aloadsi 2
+  nload  
+  eswap
+  aloadsi 1
+  wadd
 
+  acopyb
+  quitn 3
+  
 end
 
-procedure inline'r_truncate
+procedure inline'ws_delete
 
-  pushb
-  aloadsi 4
+  bcopya
+
+  // ; calculate length
+  aloadsi 2
+  nload
+  ecopyd
+
+  acopyb
+  wlen
+  sub
+
+  acopyr class : system'LiteralValue
+  wcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  winsert                  
+
+  // ; copy right side 
+  ecopyd          
+  aloadsi 3
+  nload
+  add
+  eswap
+  aloadsi 1
+  wadd
+
+  acopyb
+  quitn 3
+  
+end
+
+procedure inline'ws_subs
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  inc
+
+  // ; create a new string  
+  acopyr class : system'LiteralValue
+  wcreate
   bcopya
 
   aloadsi 3
-  rint
+  nload
+  ecopyd
   
-  popb
-  quitn 2
+  aloadsi 2
+  nload
 
+  aloadsi 1
+  wsubcopy
+
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  wsave
+
+  quitn 3
+
+end
+
+procedure inline'qualify_message
+
+  setsubj 0
+  nload
+  or
+  aloadsi 1
+  ecopyd
+  ajumpvi 0
+  
 end
 
 procedure inline'handle_message
 
-  melseai labEnd 0
-  msetverb EVAL_MESSAGE_ID
+  nload
+  else labEnd
+  setverb EVAL_MESSAGE_ID
   aloadsi 1
   bsredirect
 labEnd:
   throw
-
+  
 end
 
 procedure inline'get_property
 
   pushai 1
   aloadai 0
-  melseai labEnd 0
+  nload
+  else labEnd
   popa
   quitn 1
 
@@ -1086,64 +1030,195 @@ labEnd:
 
 end
 
-procedure inline'class_getLen
+procedure inline'bs_getlen
 
-  aloadsi 2
-  getlen
-  aloadsi 3
-  dsaveai 0
+  len
+  bloadsi 2
+  nsave
   quitn 2
-  
+
 end
 
-procedure inline'class_get                                        
+procedure inline'sa_write
 
-  pushb
-
-  aloadsi 4
   bcopya
+  wlen
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
 
   aloadsi 3
-  dloadai 0
+  pushe
+  ecopyd
+  nload
+  add
+  pope
+  notless labErr
+  lessn   labErr 0
 
-  get
-  popb
-  quitn 3
-  
-end
-
-procedure inline'class_getClass
-
-  pushb
-  bcopya
-  loadclass
-  popb
-  quitn 1
-
-end
-                    
-procedure inline'class_getName
-
-  pushb
-
-  dcopy 255
-  acopyr class : system'LiteralValue
-  wscreate
-  bcopya
-
-  dcopy 255
+  aloadsi 3
+  nload
+  ecopyd
   aloadsi 2
-  wsloadname
-  delse labErr
-  wssetlen
-
-  popb
-  quitn 1
+  nload
+  aloadsi 4
+  winsert
   
-labErr:  
+  acopyb
+  quitn 4
+  
+labErr:
   callr system'InvalidArgumentException
   pusha
-  mcopy NEW_MESSAGE_ID
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'sa_read
+
+  bcopya
+  wlen
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  pushe
+  ecopyd
+  nload
+  add
+  pope
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  acopyb
+  bloadsi 4
+  wsubcopy
+  
+  quitn 4
+  
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'sa_getlen
+
+  wlen
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure inline'long_copyint
+  
+  bloadsi 3
+  aloadsi 2
+  lcopyn
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'real_copyint
+  
+  bloadsi 3
+  aloadsi 2
+  rcopyn
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_copy
+
+  bcopya
+  aloadsi 2
+  ncopy
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_copyshort
+
+  bcopya
+  aloadsi 2
+  nload
+  andn 0FFFFh
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_init
+
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 1
+
+end
+
+procedure inline'long_copy
+
+  bcopya
+  aloadsi 2
+  lcopy
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'long_copystr
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  wtol
+  ifn      labErr 0
+  quitn    2
+
+labErr:
+  callr system'FormatException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'real_copystr
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  wtor
+  ifn      labErr 0
+  quitn    2
+
+labErr:
+  callr system'FormatException
+  pusha
+  copym NEW_MESSAGE_ID
   acallvi 0
   throw
 
@@ -1151,49 +1226,75 @@ end
 
 procedure inline'handle_tape
 
-  pushm
-  mcopyverb
-
-  melse labErr EVAL_MESSAGE_ID
-  mloadsi 0
-  pushb
-  bcopya
-  open 2
-  pushn 0
-  pushn 0
+  dcopyverb
+  eswap
   
-  msaveparams -4
-  pushfi -4
+  elsem labErr EVAL_MESSAGE_ID
+
+  dcopycount
+  inc
+  ecopyd
+
+  open 5
+  reserve 2
+  pusha
+  
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+  
+  bcopya
+  pushn 0
+
+  dcopy 0  
+  acopys 8
+labNextParam:
+  aload
+  pusha
+  add
+  else labNextParam
 
 labNext:
   acopyb
-  dloadfi 1
-  test labEnd
-  aloadd
-  dinc
-  dsavefi 1
-  testflag labMessage elMessage
+  count
+  ecopyd
+  dloadfi -2
+  if labEnd
+  aload
+  inc
+  dsavefi -2
+
+  flag
+  andn elMessage
+  elsen labMessage 0
   pusha
   jump labNext
 
 labMessage:
-  mloadai 0
-  aloadsi 0
+  nload
+  ecopyd
+  aloadsi 0  
 
-  elseflag labSkip elRole
+  flag
+  andn elRole
+  ifn labSkip 0
   popa
 labSkip:
 
   acallvi 0
   pusha
+  bloadfi 1
   jump labNext
 
 labEnd:
   popa
+
+  dloadfi -3
+  ecopyd
+  restore 4
   close
-  popb
-  popm
-  mquit
+
+  equit
 
 labErr:
   throw
@@ -1202,26 +1303,40 @@ end
 
 procedure inline'handle_selector
 
-  pushm
-  pushb
-  mcopysubj
+  pushe
+  dcopysubj
+  pushd
   bcopya
-  dcopy 0
+  pushn 0
 
 labNext:
   acopyb
-  test labEnd
-  aloadd
-  dinc
-  elseflag labNext elSubject
-  melseai labNext 0
-  
+  count
+  ecopyd
+  dloadsi 0
+  if labEnd
+  aload
+  inc
+  dsavesi 0
+
+  flag
+  andn elSubject
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
   acopyb
-  aloadd
-  popb
-  popm
-  mthenverb labQuit GET_MESSAGE_ID
-  msetsubj 0
+  aload
+  popi 2
+  pope
+  setsubj 0
+  dcopye
+  ifn labQuit GET_MESSAGE_ID
   ajumpvi 0
 
 labQuit:
@@ -1230,169 +1345,4 @@ labQuit:
 labEnd:
   throw
 
-end
-
-procedure inline'handle_class       
-
-  pushb
-  bcopya
-  dcopy 0
-
-labNext:
-  acopyb
-  test labEnd
-  aloadd
-  dinc
-  elseflag labNext elMessage
-  melseai labNext 0
-  
-  acopyb
-  aloadd
-  mreset EVAL_MESSAGE_ID
-  popb
-  ajumpvi 0
-
-labEnd:
-  throw
-
-end
-
-procedure inline'handle_wrap
-
-  pushai 0
-  aloadai 1
-  asavesi 2
-  popa
-  ajumpvi 0
-
-end
-
-procedure inline'class_indexOfMsg
-
-  pushb
-  bcopya
-  aloadsi 3   // ; get message
-  mloadai 0   // ; load message id
-  acopyb
-  indexofmsg
-  dthenn labFalse 0FFFFFFFFh
-  acopyr  const : system'true
-  popb
-  quitn 2
-
-labFalse:
-  acopyr  const : system'false
-  popb
-  quitn 2
-
-end
-
-procedure inline'symbol_new
-
-  pushb
-  pusha
-  aloadsi 4   // ; read aName parameter
-  bcopya
-  wseval
-  aelse labError
-
-  popb
-  pusha  
-  acopys 0
-  ncopy
-  pop  
-  acopyb
-  popb
-  quitn 2
-
-labError:
-  callr system'InvalidArgumentException
-  pusha
-  mcopy NEW_MESSAGE_ID
-  acallvi 0
-  throw
-
-end
-
-procedure inline'symbol_redirect
-
-  pushm
-  ncall
-  popm
-  ajumpvi 0
-
-end
-
-procedure inline'vmscript_eval
-
-  aloadsi 2
-  exclude
-  pusha
-  callextr extern : 'dlls'elenasm.EvaluateScript
-  aelse labErr
-  popi 2
-  quitn 2
-
-labErr:
-  callr system'dynamic'scriptLastError
-  pusha  
-  callr system'dynamic'ScriptException
-  pusha
-  mcopy NEW_MESSAGE_ID_1
-  acallvi 0
-  throw
-    
-end
-
-procedure inline'vmscript_load
-
-  exclude
-  aloadsi 5
-  pushai 0
-  aloadsi 5
-  pushai 0
-  aloadsi 5
-  pusha
-  callextr extern : 'dlls'elenasm.EvaluateFile
-  aelse labErr
-  popi 4
-  quitn 4
-
-labErr:
-  callr system'dynamic'scriptLastError
-  pusha  
-  callr system'dynamic'ScriptException
-  pusha
-  mcopy NEW_MESSAGE_ID_1
-  acallvi 0
-  throw
-    
-end
-
-procedure inline'api_alloc_index
-
-  aloadsi 2  
-  callr api : coreapi'alloc_index
-  aloadsi 3
-  dsaveai 0
-  quitn 3
-
-end
-
-procedure inline'api_free_index
-                      
-  aloadsi 2           
-  dloadai 0
-  callr api : coreapi'free_index
-  quitn 2
-  
-end
-
-procedure inline'thread_start
-
-  aloadsi 1
-  callr api : coreapi'resolve_index
-  callr api : coreapi'start_thread
-  quitn 1
-  
 end

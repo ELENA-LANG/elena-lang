@@ -31,21 +31,25 @@ class ECodesAssembler : public Assembler
 
    void fixJump(const wchar16_t* label, MemoryWriter& writer, LabelInfo& info);
 
+   ref_t compileRArg(TokenInfo& token, _Module* binary);
+
    void writeCommand(ByteCommand command, MemoryWriter& writer);
 
-   virtual void compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
-   virtual void compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
-   virtual void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
-   virtual void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
-   virtual void compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
+   void compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
+   void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
+   void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileCreateCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
 
-   virtual void compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
-   virtual void compileMccJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
-   virtual void compileJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
+   void compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
+   void compileMccJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
+   void compileJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
 
-   virtual void compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary);
+   void compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary);
 
-   virtual void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
+   void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
 
 public:
 	virtual void compile(TextReader* reader, const tchar_t* outputPath);

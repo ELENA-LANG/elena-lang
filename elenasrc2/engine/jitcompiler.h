@@ -62,6 +62,7 @@ public:
    virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
    virtual void compileReal64(MemoryWriter* writer, double number) = 0;
    virtual void compileWideLiteral(MemoryWriter* writer, const wchar_t* value) = 0;
+   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
 
    virtual void compileTLS(_JITLoader* loader) = 0;
    virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber) = 0;
@@ -84,7 +85,7 @@ public:
 
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
 
-   virtual void compileVMT(void* vaddress, MemoryWriter& vmtWriter, ClassHeader& header, int count, void* vaddressClass, bool virtualMode) = 0;
+   virtual void compileVMT(void* vaddress, MemoryWriter& vmtWriter, ref_t typeRef, int count, int flags, void* classClassVAddress, bool virtualMode) = 0;
 //   virtual void compilePseudoVMT(MemoryWriter& vmtWriter, void* address, int flags, bool virtualMode) = 0;
 ////   virtual void compileActionVMT(MemoryWriter& vmtWriter, void* address, int dispatchRef, int flags, bool virtualMode);
 
@@ -103,6 +104,7 @@ public:
    virtual void compileInt64(MemoryWriter* writer, long long integer);
    virtual void compileReal64(MemoryWriter* writer, double number);
    virtual void compileWideLiteral(MemoryWriter* writer, const wchar16_t* value);
+   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
 
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
@@ -117,7 +119,7 @@ public:
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void compileVMT(void* vaddress, MemoryWriter& vmtWriter, ClassHeader& header, int count, void* vaddressClass, bool virtualMode);
+   virtual void compileVMT(void* vaddress, MemoryWriter& vmtWriter, ref_t typeRef, int count, int flags, void* classClassVAddress, bool virtualMode);
 //   virtual void compilePseudoVMT(MemoryWriter& vmtWriter, void* address, int flags, bool virtualMode);
 };
 

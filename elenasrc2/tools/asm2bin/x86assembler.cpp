@@ -2382,6 +2382,10 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JLE);
       return true;
 	}
+	else if (token.check(_T("cmovnz"))) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JNZ);
+      return true;
+	}
 	else if (token.check(_T("cmovl"))) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JL);
       return true;
@@ -2634,7 +2638,7 @@ bool x86Assembler :: compileCommandJ(TokenInfo& token, ProcedureInfo& info, Memo
       compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JNZ, helper);
       return true;
 	}
-	else if (token.check(_T("jbe"))) {
+	else if (token.check(_T("jbe")) || token.check(_T("jna"))) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JBE, helper);
       return true;
 	}

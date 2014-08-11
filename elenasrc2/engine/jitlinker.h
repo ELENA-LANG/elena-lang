@@ -82,7 +82,7 @@ class JITLinker
          return _owner->calculateVAddress(&writer, mask);
       }
 
-      virtual ref_t resolveMessage(ref_t reference, _Module* module);
+      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
 
       virtual void addBreakpoint(size_t position);
 

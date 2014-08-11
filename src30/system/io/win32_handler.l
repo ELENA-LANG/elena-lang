@@ -1,14 +1,12 @@
 // --- Handler ---
 
-#class Handle
+#class(type:handle) Handle
 {
     #field(type:int)theData.
 
-    #method close
-    [
-        system'external'KERNEL32 CloseHandle
-            &handle:$self.
-    ]
-
-    #method <= &handle:$self.
+//    #method close
+//    [
+//        system'external'KERNEL32 CloseHandle
+//            &handle:$self.
+//    ]
 }

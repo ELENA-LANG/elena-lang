@@ -115,7 +115,7 @@ SectionInfo ExecutableImage :: getPredefinedSectionInfo(const wchar16_t* package
 {
    SectionInfo sectionInfo;
 
-   sectionInfo.module = _project->resolvePredefined(package, reference);
+   sectionInfo.module = _project->resolvePredefined(package, reference, true);
    if (sectionInfo.module == NULL) {
       throw InternalError(errCommandSetAbsent);
    }

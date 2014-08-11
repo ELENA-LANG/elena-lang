@@ -1,4 +1,5 @@
 // --- System Core API  --
+
 define GC_ALLOC	         10001h
 define HOOK              10010h
 define GETCLASSNAME      10011h
@@ -44,7 +45,9 @@ define elObjectOffset    000Ch
 define elSizeOffset      000Ch
 define elCountOffset     0008h
 define elVMTOffset       0004h 
+define elVMTFlagOffset   0008h
 define elVMTSizeOffset   000Ch
+define elVMTTypeOffset   0010h
 
 // ; ==== Command Set ==
 
@@ -55,37 +58,28 @@ inline % 7
 
 end
 
-// ; pushsubj
-inline % 8
-
-  mov  ebx, edx
-  and  ebx, subj_mask
-  push ebx
-
-end
-
 // ; bsredirect
 
-inline % 0Eh // (eax - object, edx - message)
+inline % 0Eh // (eax - object, ecx - message)
 
   mov  esi, [eax-4]
   xor  ebx, ebx
-  mov  ecx, [esi - elVMTSizeOffset]
+  mov  edx, [esi - elVMTSizeOffset]
 
 labSplit:
-  test ecx, ecx
+  test edx, edx
   jz   short labEnd
 
 labStart:
-  shr  ecx, 1
+  shr  edx, 1
   setnc bl
-  cmp  edx, [esi+ecx*8]
+  cmp  ecx, [esi+edx*8]
   jb   short labSplit
   nop
   nop
   jz   short labFound
-  lea  esi, [esi+ecx*8+8]
-  sub  ecx, ebx
+  lea  esi, [esi+edx*8+8]
+  sub  edx, ebx
   jnz  short labStart
   nop
   nop
@@ -93,7 +87,7 @@ labStart:
   nop
   nop
 labFound:
-  jmp  [esi+ecx*8+4]
+  jmp  [esi+edx*8+4]
   nop
   nop
 
@@ -101,76 +95,11 @@ labEnd:
                                                                 
 end
 
-// ; unbox (esi - size)
-
-inline % 0Fh
-
-   mov  ecx, esi
-labNext:
-   sub  ecx, 1
-   lea  ebx, [eax+ecx*4]
-   push [ebx]
-   jnz  short labNext
-
-end
-
-// bsgredirect
-
-inline % 10h // (eax - object, edx - message)
-
-  push 0
-  mov  ecx, [eax-8]
-  push 0
-
-labScanStart:
-  mov  [esp+4], eax
-  mov  eax, [eax]
-  mov  [esp], ecx
-
-  mov  esi, [eax-4]
-  xor  ebx, ebx
-  mov  ecx, [esi - elVMTSizeOffset]
-
-labSplit:
-  test ecx, ecx
-  jz   short labNext
-
-labStart:
-  shr  ecx, 1
-  setnc bl
-  cmp  edx, [esi+ecx*8]
-  jb   short labSplit
-  nop
-  nop
-  jz   short labFound
-  lea  esi, [esi+ecx*8+8]
-  sub  ecx, ebx
-  jnz  short labStart
-  nop
-  nop
-  jmp  labNext
-labFound:
-  lea  esp, [esp+8]
-  jmp  [esi+ecx*8+4]
-  nop
-
-labNext:
-  mov  eax, [esp+4]
-  mov  ecx, [esp]
-  lea  eax, [eax+4]
-  sub  ecx, 4
-  jnz  labScanStart
-  lea  esp, [esp+8]
-                                                                
-end
-
-// getlen
+// ; getlen
 
 inline % 11h
 
   mov  esi, [eax-8]
-  cmp  esi, 0
-  jl   short labEnd
   shr  esi, 2
 
 labEnd:
@@ -196,9 +125,8 @@ end
 // ; get
 
 inline % 18h
-   mov  ebx, esi
-   shl  ebx, 2
-   mov  eax, [edi + ebx]
+
+   mov  eax, [edi + esi * 4]
 
 end
 
@@ -220,14 +148,12 @@ lEnd:
 
 end
 
-// ; mquit
+// ; equit
 inline % 1Bh
 
-  mov  ecx, edx
-  and  ecx, 0Fh
-  pop  esi
+  pop  ebx
   lea  esp, [esp + ecx * 4 + 4]
-  jmp  esi
+  jmp  ebx
   nop
   nop
  
@@ -244,497 +170,212 @@ inline % 1Dh
   mov  [data : %CORE_EXCEPTION_TABLE + 4], ebx
   pop  edx
   mov  [data : %CORE_EXCEPTION_TABLE], edx
-
+  
 end
 
-// ; exclude
-inline % 1Eh
-
-  // ; store previous value
-  push ebp
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
-
-end
-
-// ; include
+// ; create
 inline % 1Fh
 
-  // ; restore previous value
-  mov  esp, [data : %CORE_GC_TABLE + gc_ext_stack_frame]
-  pop  ebp
-  pop  ecx
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ecx
-
-end
-
-// ; pushai
-inline % 24h
-
-  push [eax+__arg1]
-
-end
-
-// ; msaveparams
-inline %29h
-
-  mov  ecx, edx
-  and  ecx, 0Fh
-  lea  esi, [ebp + __arg1]
-  jz   short labEnd
-  lea  esi, [esi + ecx * 4]
-labNext:
-  push [esi]
-  sub  ecx, 1
-  lea  esi, [esi+4]
-  jnz  short labNext
-labEnd:
-
-end
-
-// ; pushf
-inline % 2Dh
-
-  lea  ebx, [ebp + __arg1]
-  push ebx
-
-end
-
-// ; popbi
-inline % 31h
-  pop  eax
-
-  // ; calculate write-barrier address
-  mov  esi, edi
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-  mov  [edi + __arg1], eax
-
-end
-
-// ; xpopai
-inline % 33h
-
-  pop  ebx
-  mov  [eax+__arg1], ebx
-
-end
-
-// ; popai
-inline % 035h
-  // ; calculate write-barrier address
-  mov  esi, eax
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-
-  pop  edx
-  mov [eax + __arg1], edx
-
-end
-
-// ; callextr
-inline % 040h
-
-  call extern __arg1
-
-end
-
-// ; acallvi (ecx - offset to VMT entry)
-inline % 42h
-
-  mov  esi, [eax - 4]
-  call [esi + __arg1]
-
-end
-
-// ; reserve
-inline % 44h
-
-  sub  esp, __arg1
-  push ebp
-  push 0
-  mov  ebp, esp
-
-end
-
-// ; mloadai (__arg1 - index)
-inline % 47h
-
-  mov  edx, [eax + __arg1]
-
-end
-
-// ; mloadsi
-
-inline % 048h
-
-  mov  edx, [esp + __arg1]
-
-end
-
-// ; mloadfi
-
-inline % 049h
-
-  mov edx, [ebp + __arg1]
-  
-end
-
-// ; msaveai (__arg1 - index)
-inline % 4Ah
-
-  mov  [eax + __arg1], edx
-
-end
-
-// ; msetverb
-
-inline % 4Bh
-
-  and edx, subj_mask
-  or  edx, __arg1
-
-end
-
-// ; maddai
-
-inline % 4Dh
-
-  or  edx, [eax + __arg1]
-
-end
-
-// ; dloadsi
-
-inline % 50h
-
-  mov  esi, [esp + __arg1]
-
-end
-
-// ; dsavesi
-
-inline % 51h
-
-  mov  [esp + __arg1], esi
-
-end
-
-// ; aloadfi
-inline % 54h
-
-  mov  eax, [ebp+__arg1]
-
-end
-
-// ; dloadfi
-
-inline % 52h
-
-  mov  esi, [ebp + __arg1]
-
-end
-
-// ; aloadsi
-inline % 55h
-
-  mov  eax, [esp+__arg1]
-
-end
-
-// ; bloadfi
-
-inline % 58h
-
-  mov  edi, [ebp + __arg1]
-
-end
-
-// daddsi
-inline % 5Bh
-
-  add esi, [esp+__arg1]
-
-end
-
-// dsubsi
-inline % 5Ch
-
-  sub esi, [esp+__arg1]
-
-end
-
-// ; dsavefi
-
-inline % 5Dh
-
-  mov  [ebp + __arg1], esi
-
-end
-
-// ; asavebi
-inline %61h
-
-  mov  esi, edi                     
-  // calculate write-barrier address
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-
-  mov [edi + __arg1], eax
-
-end
-
-// ; asavesi
-inline % 63h
-
-  mov  [esp+__arg1], eax
-
-end
-
-// ; asavefi
-inline % 64h
-
-  mov  [ebp+__arg1], eax
-
-end
-
-// ; swapsi
-inline % 6Ch
-
-  mov ebx, [esp]
-  mov ecx, [esp+__arg1]
-  mov [esp], ecx
-  mov [esp+__arg1], ebx
-  
-end
-
-// ; aswapsi
-inline % 6Dh
-
-  mov ebx, eax
-  mov ecx, [esp+__arg1]
-  mov [esp+__arg1], ebx
-  mov eax, ecx
-  
-end
-
-// ; axcopyr
-
-inline % 6Eh
-
-   mov  [eax+esi*4], __arg1
-
-end
-
-// iaxloadb
-
-inline % 6Fh
-
-   mov  [eax+__arg1], edi
-
-end
-                                 
-// ; restore
-
-inline % 82h
-
-  add  ebp, __arg1
-  
-end
-
-// ; open
-inline % 88h
-
-  push ebp
-  mov  ebp, esp
-
-end
-
-// ; ajumpvi
-
-inline % 0A1h
-
-  mov  esi, [eax - 4]
-  jmp  [esi + __arg1]
-  nop
-  nop
-  nop
-  nop
-
-end
-
-// ; hook label (ecx - offset)
-
-inline % 0A6h
-
-  call code : %HOOK
-  push [data : %CORE_EXCEPTION_TABLE]
-  push [data : %CORE_EXCEPTION_TABLE + 4]
-  push [data : %CORE_EXCEPTION_TABLE + 8]
-  mov  [data : %CORE_EXCEPTION_TABLE], ecx
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
-  
-end
-
-// ; nbox (esi - size, __arg1 - vmt)
-
-inline % 0B0h
-
   mov  ebx, esi
-  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]
-  ja   short labSkip                      
-  cmp  eax, esp
-  jb   short labSkip
-
-  push eax
-  mov  ecx, esi
+  shl  ebx, 2  
+  push eax  
+  mov  ecx, ebx
   add  ebx, page_ceil
-  neg  ecx
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  mov  [eax-4], __arg1
-  pop  esi
-  mov  ebx, eax
+  pop  ebx
+  mov  [eax-4], ebx
+
+end
+
+// ; dswape
+inline % 2Ch
+
+  mov  ebx, ecx
+  mov  ecx, esi
+  mov  esi, ebx
+
+end
+
+// ; bswapa
+inline % 2Dh
+
+  mov  ebx, edi
+  mov  edi, eax
+  mov  eax, ebx
+
+end
+
+// ; copy
+
+inline % 2Eh
+
+  mov  ecx, [edi-8]
+  mov  esi, eax
+  mov  ebx, edi
 labCopy:
   mov  edx, [esi]
   mov  [ebx], edx
   lea  esi, [esi+4]
   lea  ebx, [ebx+4]
   add  ecx, 4
-  jnz  short labCopy
-
-labSkip:
+  js   short labCopy
 
 end
 
-// ; box (esi - size, __arg1 - vmt)
+// ; xset
 
-inline % 0B1h
+inline % 2Fh
+                                
+   mov  [edi + esi * 4], eax
 
-  mov  ebx, esi
-  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]  
-  ja   short labSkip                      
-  shl  ebx, 2
-  cmp  eax, esp
-  jb   short labSkip
+lEnd:
 
-  mov  ecx, ebx
-  push eax
-  add  ebx, page_ceil
-  and  ebx, page_mask  
-  call code : %GC_ALLOC
-  mov  [eax-8], ecx
-  mov  [eax-4], __arg1
-  pop  esi
-  mov  ebx, eax
+end
+
+// ; gettype
+
+inline % 30h
+
+  mov  ebx, [eax - 4]
+  mov  esi, [ebx - elVMTTypeOffset]
+  
+end
+
+// ; getblen
+inline % 31h
+
+  mov  esi, [eax-8]
+  neg  esi
+
+end
+
+// ; getwlen
+// ;in : eax - object, esi - size
+inline % 32h
+
+  mov  esi, [eax-8]
+  neg  esi
+  shr  esi, 1
+  
+end
+
+// ; flag
+
+inline % 33h
+
+  mov  ebx, [eax - 4]
+  mov  esi, [ebx - elVMTFlagOffset]
+  
+end
+
+// ; clone
+
+inline % 3Eh
+
+  mov  ecx, [edi-8]
+  mov  esi, eax
+  mov  ebx, edi
 labCopy:
   mov  edx, [esi]
   mov  [ebx], edx
   lea  esi, [esi+4]
   lea  ebx, [ebx+4]
-  sub  ecx, 4
+  sub  ecx, 1
   jnz  short labCopy
 
-labSkip:
+end
+
+// ; nequal
+
+inline % 40h
+
+  mov  ebx, [eax]
+  cmp  ebx, [edi]
+  mov  esi, 1
+  jz   short labEnd
+  mov  esi, 0  
+labEnd:
 
 end
 
-// ; aloadbi (__arg1 : index)
+// ; nless
+inline % 41h
 
-inline % 0CEh
-
-  mov  eax, [edi + __arg1]
-
-end
-
-// ; test
-inline % 0DEh
-
-  mov  ebx, esi
-  mov  ecx, [eax-8]
-  shl  ebx, 2
-  cmp  ecx, ebx
+  mov  ebx, [eax]
+  cmp  ebx, [edi]
+  mov  esi, 1
+  jl   short labEnd
+  mov  esi, 0  
+labEnd:
 
 end
 
-// ; wstest
-inline % 0DFh
-
-  mov  ecx, [eax-8]
-  mov  ebx, esi
-  neg  ecx
-  shl  ebx, 1
-  cmp  ecx, ebx
-
-end
-                                 
-// ; bstest
-inline % 0DDh
-
-  mov  ecx, [eax-8]
-  mov  ebx, esi
-  neg  ecx
-  cmp  ecx, ebx
-
-end
-
-// ; create (ebx - size, __arg1 - length)
-
-inline % 0F0h
-	
-  mov  ecx, __arg1
-  call code : %GC_ALLOC
-
-  mov  [eax-8], ecx
-
-end
-
-// ; createn (ebx - size, __arg1 - length)
-
-inline % 0F1h
-
-  mov  ecx, __arg1
-  call code : %GC_ALLOC
-
-  mov  [eax-8], ecx
-
-end
-
-// scallvi (__arg1 : vmt index , ebx - the target)
-
-inline % 0FCh
-
-  mov  esi, [ebx - 4]
-  call [esi + __arg1]
-  
-end
-
-// xcallrm (edx contains message, __arg1 contains vmtentry)
-inline % 0FEh
-
-   call code : __arg1
-
-end
-
-// ; === extensions ===
-
-// ncopy (src, tgt)
-inline % 101h
+// ; ncopy (src, tgt)
+inline % 42h
 
   mov  ebx, [eax]
   mov  [edi], ebx
     
 end
 
-// ; ncopystr
-inline % 102h
+// ; nadd
+inline % 43h
+
+  mov  ecx, [eax]
+  add  [edi], ecx
+
+end
+
+// ; nsub
+inline % 44h
+
+  mov  ecx, [eax]
+  sub  [edi], ecx
+
+end
+
+// ; nmul
+inline % 45h
+
+  mov  esi, eax
+  mov  eax, [edi]
+  imul [esi]
+  mov  [edi], eax
+  mov  eax, esi
+
+end
+
+// ; ndiv
+inline % 46h
+                                                   
+  mov  esi, eax
+  mov  ebx, [esp]
+  mov  eax, [edi]
+  cdq
+  idiv [esi]
+  mov  [edi], eax
+  mov  eax, esi
+
+end
+
+// ; nwrite
+inline % 47h
+
+  mov [edi], esi
+
+end
+
+// ; nread
+inline % 48h
+
+  mov esi, [eax]
+
+end
+
+// ; ncopyws
+inline % 49h
   mov  ebx, esi                     // ; radix
   mov  esi, eax                     // ; get str
   mov  ecx, [esi-8]
@@ -781,129 +422,35 @@ Lab3:
 
 end
 
-// ; nload
-inline % 103h
+// ; nand
+inline % 4Ah
 
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  mov  [eax], ecx
-
-end
-
-// nequal
-
-inline % 104h
-
-  mov  ecx, [esp]
-  mov  ebx, [eax]
-  cmp  ebx, [ecx]
-  mov  esi, 1
-  jz   short labEnd
-  mov  esi, 0  
-labEnd:
-
-end
-
-// nless
-inline % 105h
-
-  mov  ecx, [esp]
-  mov  ebx, [eax]
-  cmp  ebx, [ecx]
-  mov  esi, 1
-  jl   short labEnd
-  mov  esi, 0  
-labEnd:
-
-end
-
-// nnotgreate
-inline % 106h
-
-  mov  ecx, [esp]
-  mov  ebx, [eax]
-  cmp  ebx, [ecx]
-  mov  esi, 1
-  jle   short labEnd
-  mov  esi, 0  
-labEnd:
-
-end
-
-// ; nadd
-inline % 107h
-
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  add  [eax], ecx
-
-end
-
-// ; nsub
-inline % 108h
-
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  sub  [eax], ecx
-
-end
-
-// ; nmul
-inline % 0109h
-
-  mov  esi, eax
-  mov  ebx, [esp]
-  mov  eax, [eax]
-  imul [ebx]
-  mov  [esi], eax
-  mov  eax, esi
-
-end
-
-// ; ndiv
-inline % 10Ah
-                                                   
-  mov  esi, eax
-  mov  ebx, [esp]
-  mov  eax, [eax]
-  cdq
-  idiv [ebx]
-  mov  [esi], eax
-  mov  eax, esi
-
-end
-
-// ; nand                                          
-inline % 10Bh
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  and  [eax], ecx
+  mov  ecx, [eax]
+  and  [edi], ecx
 
 end
 
 // ; nor
-inline % 10Ch
+inline % 4Bh
 
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  or   [eax], ecx
+  mov  ecx, [eax]
+  or   [edi], ecx
 
 end
 
 // ; nxor
-inline % 10Dh
+inline % 4Ch
 
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  xor  [eax], ecx
+  mov  ecx, [eax]
+  xor  [edi], ecx
 
 end
 
 // ; nshift
-inline % 10Eh
+inline % 4Dh
 
   mov ecx, esi
-  mov ebx, [eax]
+  mov ebx, [edi]
   and ecx, ecx
   jns short lab1
   neg ecx
@@ -912,1044 +459,105 @@ inline % 10Eh
 lab1:
   shr ebx, cl
 lab2:
-  mov [eax], ebx
+  mov [edi], ebx
 
 end
 
 // ; nnot
-inline % 10Fh
+inline % 4Eh
 
   mov  ebx, [eax]  
   not  ebx
-  mov  [eax], ebx
-
-end
-
-// ; ninc
-inline % 110h
-
-  add  [eax], 1
-
-end
-
-// ; lcopy
-inline % 111h
-
-  mov  ecx, [eax]
-  mov  ebx, [eax+4]
-  mov  [edi], ecx
-  mov  [edi+4], ebx
-    
-end
-
-// ; lcopyint
-inline % 112h
-
-  mov  ebx, [eax]
-  xor  edx, edx
   mov  [edi], ebx
-  mov  [edi+4], edx
-    
-end
-
-// ; lcopystr
-inline % 113h
-
-  push edi
-  push esi
-  mov  esi, eax
-  mov  ecx, [esi-8]
-  xor  edx, edx
-  neg  ecx
-
-  cmp  byte ptr [esi], 2Dh
-  lea  ecx, [ecx-2]
-  jnz  short labStart
-
-  lea  esi, [esi+2]
-  lea  ecx, [ecx-2]
-  mov  edx, 1        // set flag in ebx
-
-labStart:
-  push edx           // save sign flag
-  xor  edi, edi      // edi   - DHI
-  xor  ebx, ebx      // ebx   - DLO
-
-labConvert:
-  mov  edx, [esp+4]
-  mov  eax, edi
-  mul  edx           // DHI * 10
-  mov  edi, eax
-
-  mov  eax, ebx
-  mov  edx, [esp+4]
-  mul  edx           // DLO * 10
-  add  edi, edx
-  mov  ebx, eax
-
-  xor  eax, eax
-  lodsw
-  sub  al, 30h
-  jb   short labErr
-  cmp  al, 9
-  ja   short labErr
-
-  add ebx, eax       // DLO + EAX
-  adc edi, 0         // DHI + CF
-
-  sub  ecx, 2
-  jnz  short labConvert
-
-  pop  eax           // restore flag
-  test eax, eax
-  jz   short labSave
-
-  not  edi           // invert number
-  neg  ebx
-
-labSave:
-
-  mov  edx, edi
-  pop  esi
-  pop  edi
-
-  mov  [edi], ebx
-  mov  [edi+4], edx
-  mov  esi, 1
-  jmp  short labEnd
-
-labErr:
-  xor  esi, esi
-  pop  edi
-
-labEnd:
-  mov  eax, edi
 
 end
 
-// ; lload
-inline % 114h
-
-  mov  ebx, [esp]
-  mov  ecx, [ebx]
-  mov  [eax], ecx
-  mov  edx, [ebx+4]
-  mov  [eax+4], edx
-
-end
-
-// ; lequal
-
-inline % 115h
-
-  mov  ecx, [esp]
-  mov  ebx, [eax]
-  mov  edx, [eax+4]  
-  cmp  ebx, [ecx]
-  mov  esi, 0
-  jnz  short labEnd
-  cmp  edx, [ecx+4]
-  jnz  short labEnd
-  mov  esi, 1
-
-labEnd:
-
-end
-
-// ; lless(lo, ro, tr, fr)
-inline % 116h
-
-  mov  ecx, [esp]
-  mov  ebx, [eax]
-  mov  edx, [eax+4]  
-  cmp  edx, [ecx+4]
-  mov  esi, 1
-  jl   short Lab1
-  nop
-  jnz  short Lab2
-  cmp  ebx, [ecx]
-  jl   short Lab1
-Lab2:
-  mov  esi, 0
-Lab1:
-
-end
-
-// ; lnotgreate(lo, ro, tr, fr)
-inline % 117h
-
-  mov  ecx, [esp]
-  mov  ebx, [eax]                                                        
-  mov  edx, [eax+4]  
-  cmp  edx, [ecx+4]
-  mov  esi, 1
-  jl   short Lab1
-  nop
-  jnz  short Lab2
-  cmp  ebx, [ecx]
-  jle  short Lab1
-Lab2:
-  mov  esi, 0
-Lab1:
-
-end
-
-// ; ladd
-inline % 118h
-
-  mov  ebx, [esp]
-  mov  edx, [ebx+4]
-  mov  ecx, [ebx]
-  add [eax], ecx
-  adc [eax+4], edx
-
-end
-
-// ; lsub
-inline % 119h
-
-  mov  ebx, [esp]
-  mov  edx, [eax+4]
-  mov  ecx, [eax]
-  sub  ecx, [ebx]
-  sbb  edx, [ebx+4]
-  mov  [eax], ecx
-  mov  [eax+4], edx
-
-end
-
-// ; lmul
-inline % 11Ah                       
-  mov  esi, [esp]        // sour
-  mov  edx, eax          // dest
-
-  push eax
-
-  mov  ecx, [edx+4]   // DHI
-  mov  eax, [esi+4]   // SHI
-  or   eax, ecx
-  mov  ecx, [edx]     // DLO
-  jnz  short lLong
-  mov  eax, [esi]
-  mul  ecx
-  jmp  short lEnd
-
-lLong:
-  mov  eax, [esi+4]
-  push edi
-  mov  edi, edx
-  mul  ecx               // SHI * DLO
-  mov  ebx, eax
-  mov  eax, dword ptr [esi]
-  mul  dword ptr [edi+4]  // SLO * DHI
-  add  ebx, eax     
-  mov  eax, dword ptr [esi] // SLO * DLO
-  mul  ecx
-  add  edx, ebx 
-  pop  edi
-
-lEnd:
-  pop  ebx
-  mov  [ebx], eax
-  mov  [ebx+4], edx
-  mov  eax, ebx 
-
-end
-
-// ; ldiv
-inline % 11Bh
-               
-  mov  ebx, [esp]    // ; DVSR
-  mov  esi, eax      // ; DVND
-
-  push eax
-  push edi
-
-  push [esi+4]    // ; DVND hi dword
-  push [esi]      // ; DVND lo dword
-  push [ebx+4]    // ; DVSR hi dword
-  push [ebx]      // ; DVSR lo dword
-
-  xor  edi, edi
-
-  mov  eax, [esp+0Ch]    // hi DVND
-  or   eax, eax
-  jge  short L1
-  add  edi, 1
-  mov  edx, [esp+8]      // lo DVND
-  neg  eax
-  neg  edx
-  sbb  eax, 0
-  mov  [esp+0Ch], eax    // hi DVND
-  mov  [esp+8], edx      // lo DVND
-
-L1:                                                               
-  mov  eax, [esp+4]      // hi DVSR
-  or   eax, eax
-  jge  short L2
-  add  edi, 1
-  mov  edx, [esp]        // lo DVSR
-  neg  eax
-  neg  edx
-  sbb  eax, 0
-  mov  [esp+4], eax      // hi DVSR
-  mov  [esp], edx        // lo DVSR
-
-L2:
-  or   eax, eax
-  jnz  short L3
-  mov  ecx, [esp]        // lo DVSR
-  mov  eax, [esp+0Ch]    // hi DVND
-  xor  edx, edx
-  div  ecx
-  mov  ebx, eax 
-  mov  eax, [esp+8]      // lo DVND
-  div  ecx
-
-  mov  esi, eax          // result
-  jmp  short L4
-
-L3:
-  mov  ebx, eax 
-  mov  ecx, [esp]        // lo DVSR
-  mov  edx, [esp+0Ch]    // hi DVND
-  mov  eax, [esp+8]      // lo DVDN
-L5:
-  shr  ebx, 1 
-  rcr  ecx, 1
-  shr  edx, 1 
-  rcr  eax, 1
-  or   ebx, ebx 
-  jnz  short L5
-  div  ecx
-  mov  esi, eax          // result
-
-  // check the result with the original
-  mul  [esp+4]           // hi DVSR
-  mov  ecx, eax 
-  mov  eax, [esp]        // lo DVSR
-  mul  esi
-  add  edx, ecx
-
-  // carry means Quotient is off by 1
-  jb   short L6
-
-  cmp  edx, [esp+0Ch]    // hi DVND
-  ja   short L6
-  jb   short L7
-  cmp  eax, [esp+8]      // lo DVND
-  jbe  short L7
-
-L6:
-  sub  esi, 1
-
-L7:
-  xor  ebx, ebx
-
-L4:
-  mov  edx, ebx
-  mov  eax, esi
-
-  sub  edi, 1
-  jnz  short L8
-  neg  edx
-  neg  eax
-  sbb  edx, 0
-
-L8:
-  lea  esp, [esp+10h]
-  pop  edi
-  pop  ebx
-
-  mov  [ebx], eax
-  mov  [ebx+4], edx
-  mov  eax, ebx
-                                    
-end
-
-// ; land                                          
-inline % 11Ch
-  mov esi, [esp]
-  
-  mov ebx, [eax]
-  mov edx, [esi]
-
-  mov ecx, [eax+4]
-  mov esi, [esi+4]
-
-  and ebx, edx
-  and ecx, esi
-
-  mov [eax], ebx
-  mov [eax+4], ecx
-end
-
-// ; lor
-inline % 11Dh
-  mov esi, [esp]
-  
-  mov ebx, [eax]
-  mov edx, [esi]
-
-  mov ecx, [eax+4]
-  mov esi, [esi+4]
-
-  or  ebx, edx
-  or  ecx, esi
-
-  mov [eax], ebx
-  mov [eax+4], ecx
-end
-
-// ; lxor
-inline % 11Eh
-
-  mov esi, [esp]
-  
-  mov ebx, [eax]
-  mov edx, [esi]
-
-  mov ecx, [eax+4]
-  mov esi, [esi+4]
-
-  xor ebx, edx
-  xor ecx, esi
-
-  mov [eax], ebx
-  mov [eax+4], ecx
-
-end
-
-// ; lnot
-inline % 11Fh
-
-  mov ebx, [eax]
-  mov ecx, [eax+4]
-                                                                        
-  not ebx
-  not ecx
-
-  mov [eax], ebx
-  mov [eax+4], ecx
-
-end
-
-// ; lshift
-inline % 120h
-
-  mov  edx, [eax]
-  mov  ecx, esi
-  mov  ebx, [eax+4]
-
-  and  ecx, ecx
-  jns  short LR
-  neg  ecx
-
-  cmp  cl, 40h 
-  jae  short lErr
-  cmp  cl, 20h
-  jae  short LL32
-  shld edx, ebx, cl
-  shl  ebx, cl
-  jmp  short lEnd
-
-LL32:
-  mov  edx, ebx
-  xor  ebx, ebx
-  and  cl, 1Fh
-  shl  edx, cl 
-  jmp  short lEnd
-
-LR:
-
-  cmp  cl, 64
-  jae  short lErr
-
-  cmp  cl, 32
-  jae  short LR32
-  shrd ebx, edx, cl
-  sar  edx, cl
-  jmp  short lEnd
-
-LR32:
-  mov  ebx, edx
-  sar  edx, 31
-  and  cl, 31
-  sar  ebx, cl
-  jmp  short lEnd
-  
-lErr:
-  xor  eax, eax
-  jmp  short lEnd2
-
-lEnd:
-  mov  [eax], edx
-  mov  [eax+4], ebx
-
-lEnd2:
-
-end
-
-// ; rcopy (src, tgt)
-inline % 121h
-
-  mov  ecx, [eax]
-  mov  ebx, [eax+4]
-  mov  [edi], ecx
-  mov  [edi+4], ebx
-
-end
-
-// ; rcopyint (src, tgt)
-inline % 122h
-
-  fild dword ptr [eax]
-  fstp qword ptr [edi]
-
-end
-
-// ; rcopylong (src, tgt)
-inline % 123h
-
-  fild qword ptr [eax]
-  fstp qword ptr [edi]
-
-end
-
-
-// ; rcopystr
-inline % 124h
-
-  mov   esi, eax
-  push  edi
-  sub   esp, 12
-  xor   edx, edx
-  xor   eax, eax
-  xor   ebx, ebx
-  mov   edi, esp
-  stosd
-  stosd
-  mov   word ptr [edi], ax
-  mov   ecx, 19
-
-atof1:
-  lodsw
-  cmp   eax, 32                  // " "
-  jz    short atof1
-  or    eax, eax
-  jnz   short atof2
-
-atoflerr:
-  add   esp, 12
-  pop   edi
-  xor   esi, esi
-  jmp   atoflend
-
-  //----------------------
-  // check for leading sign
-  //----------------------
-
-atof2:
-
-  cmp   eax, 43                  // +
-  jz    short atof3
-  cmp   eax,45                   // -
-  jnz   short integer
-  mov   dh,80h
-atof3:
-  mov   byte ptr [edi+1], dh    // put sign byte in bcd string
-  xor   edx,edx
-  lodsw
-
-  //------------------------------------
-  // convert the digits to packed decimal
-  //------------------------------------
-integer:
-
-  cmp   eax, 46                  // .
-  jnz   short atof4
-  test  bh, 1
-  jnz   short atoflerr           // only one decimal point allowed
-  or    bh, 1
-  lodsw
-atof4:
-  cmp   eax, 101                 // "e"
-  jnz   short atof5 
-  cmp   cl, 19
-  jnz   short atof41
-  test  bh, 4
-  jz    short atoflerr
-atof41:  
-  jmp   scient
-atof5:
-  cmp   eax,69                  // "E" 
-  jnz   short atof6
-  cmp   cl, 19
-  jnz   short atof51
-  test  bh, 4
-  jz    short atoflerr
-atof51:  
-  jmp   scient
-atof6:
-  or    eax,eax
-  jnz   short atof7
-  cmp   cl, 19
-  jnz   atof61
-  test  bh, 4
-  jz    short atoflerr
-atof61:
-  jmp   laststep1
-atof7:
-  sub   eax,48                 // "0"
-  jc    short atoflerr          // unacceptable character
-  cmp   eax,9
-  ja    short atoflerr          // unacceptable character
-  or    bh,4                   // at least 1 numerical character
-  test  bh,1
-  jz    short atof8
-  add   bl,1                   // bl holds number of decimal digits
-  jc    atoflerr               // more than 255 decimal digits
-atof8:
-  test  eax, eax
-  jnz   short atof9
-  test  bh,2
-  jnz   short atof9
-  lodsw
-  jmp   short integer
-atof9:
-  or    bh,2                   // at least 1 non-zero numerical character
-  sub   ecx, 1
-  jnz   short atof10
-  test  bh,1                   // check if decimal point
-  jz    atoflerr               // error if more than 18 integer digits in number
-  test  eax, eax
-  jnz   short atof91            // if trailing decimal 0
-  add   ecx, 1
-  sub   bl, 1
-  lodsw
-  jmp   integer
-atof91:
-  jmp   atoflerr
-atof10:
-  mov   dh,al
-  
-integer1:
-  lodsw
-  cmp   eax, 46                 // "."
-  jnz   short atof20
-  test  bh,1
-  jnz   atoflerr               // only one decimal point allowed
-  or    bh, 1                  // use bh bit0 as the decimal point flag
-  lodsw
-atof20:
-  cmp   eax, 101                // "e"
-  jnz   short atof30
-  mov   ah, dh
-  mov   al,0
-  rol   al,4
-  ror   ax,4
-  mov   byte ptr [edi],al
-  mov   dh, ah
-  jmp   scient
-atof30:
-  cmp   eax, 69                 // "E"
-  jnz   short atof40
-  mov   ah, dh
-  mov   al,0
-  rol   al,4
-  ror   ax,4
-  mov   byte ptr [edi],al
-  mov   dh, ah
-  jmp   scient
-atof40:  
-  or    eax,eax
-  jnz   short atof50
-  mov   ah, dh
-  rol   al,4
-  ror   ax,4
-  mov   byte ptr [edi],al
-  mov   dh, ah
-  jmp   short laststep1
-atof50:
-  sub   eax, 48               // "0"
-  jc    atoflerr             // unacceptable character
-  cmp   eax,9
-  ja    atoflerr             // unacceptable character
-  test  bh,1            
-  jz    short atof60
-  add   bl, 1                // processing decimal digits
-atof60:
-  sub   ecx, 1
-  jnz   short atof70
-  test  bh,1                // check if decimal point
-  jz    atoflerr            // error if more than 18 integer digits in number
-  test  eax, eax
-  jnz   short atof602
-  add   ecx, 1
-  sub   bl, 1
-  jmp   integer1
-atof602:
-  jmp   atoflerr
-atof70:
-  mov   ah, dh
-  rol   al,4
-  ror   ax,4
-  mov   byte ptr [edi],al
-  mov   dh, ah
-  sub   edi, 1
-  lodsw
-  jmp   integer
-
-laststep1:
-  cmp   cl,19
-  jnz   short laststep
-  fldz
-  jmp   short laststep2
-
-laststep:
-  mov   ah, dh
-  xor   edx, edx
-  fbld  [esp]
-  sub   cl, 1
-  add   bl,cl
-  movzx eax,bl
-  sub   edx,eax
-
-  push  edx
-  fild  dword ptr [esp]     // load the exponent
-  fldl2t                    // load log2(10)
-  fmulp                     // ->log2(10)*exponent
-  pop   edx
-
-  // at this point, only the log base 2 of the 10^exponent is on the FPU
-  // the FPU can compute the antilog only with the mantissa
-  // the characteristic of the logarithm must thus be removed
-     
-  fld   st(0)             // copy the logarithm
-  frndint                 // keep only the characteristic
-  fsub  st(1),st(0)       // keeps only the mantissa
-  fxch st(1)              // get the mantissa on top
-
-  f2xm1                   // ->2^(mantissa)-1
-  fld1
-  faddp                   // add 1 back
-
-  // the number must now be readjusted for the characteristic of the logarithm
-
-  fscale                  // scale it with the characteristic
-      
-  // the characteristic is still on the FPU and must be removed
-
-  fstp  st(1)             // clean-up the register
-
-  fmulp
-  fstsw ax                // retrieve exception flags from FPU
-  shr   al,1              // test for invalid operation
-  jc    atoflerr          // clean-up and return error
-
-laststep2:
-
-  add   esp, 12
-  pop   edi
-  fstp  qword ptr[edi]    // store result at specified address
-  jmp   short atoflend
-
-scient:
-  cmp   cl,19
-  jnz   short atof80
-  fldz
-  jmp   short laststep2
-  xor   edx, edx
-
-atof80:
-  xor   eax,eax
-  lodsw
-  cmp   ax, 43            // "+"
-  jz    atof90
-  cmp   ax, 45            // "-"
-  jnz   short scient1
-  stc
-  rcr   eax,1             // keep sign of exponent in most significant bit of EAX
-     
-atof90:
-
-  lodsw                   // get next digit after sign
-
-scient1:
-  push  eax
-  and   eax,0ffh
-  jnz   short atof100      // continue if 1st byte of exponent is not terminating 0
-
-scienterr:
-  pop   edi
-  xor   esi, esi
-  jmp   atoflerr         // no exponent
-
-atof100:
-  sub   eax,30h
-  jc    short scienterr    // unacceptable character
-  cmp   eax,9
-  ja    short scienterr    // unacceptable character
-  imul  edx,10
-  add   edx,eax
-  cmp   edx,4931h
-  ja    short scienterr    // exponent too large
-  lodsw
-  or    eax,eax
-  jnz   short atof100
-  pop   eax               // retrieve exponent sign flag
-  rcl   eax,1             // is most significant bit set?
-  jnc   short atof200
-  neg   edx
-
-atof200:
-  jmp   laststep  
-
-atoflend:
-   mov  eax, esi
-
-end
-
-// ; requal
-
-inline % 125h
-
-  mov    ebx, [esp]
-  fld    qword ptr [ebx]
-  fld    qword ptr [eax]
-  fcomip st, st(1)
-  mov    esi, 1
-  je     short lab1
-  mov    esi, 0
-lab1:
-  fstp  st(0)
-
-end
-
-// ; rless(lo, ro, tr, fr)
-inline % 126h
-
-  mov    ebx, [esp]
-  fld    qword ptr [ebx]
-  fld    qword ptr [eax]
-  fcomip st, st(1)
-  mov    esi, 1
-  jb     short lab1
-  mov    esi, 0
-lab1:
-  fstp  st(0)
-
-end
-
-// ; nnotgreate(lo, ro, tr, fr)
-inline % 127h
-
-  mov    ebx, [esp]
-  fld    qword ptr [ebx]
-  fld    qword ptr [eax]
-  fcomip st, st(1)
-  mov    esi, 1
-  jbe    short lab1
-  mov    esi, 0
-lab1:
-  fstp  st(0)
-
-end
-
-// ; radd
-inline % 128h
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fadd qword ptr [ebx] 
-  fstp qword ptr [eax]
-
-end
-
-// ; rsub
-inline % 129h
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fsub qword ptr [ebx] 
-  fstp qword ptr [eax]
-
-end
-
-// ; rmul
-inline % 12Ah
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fmul qword ptr [ebx] 
-  fstp qword ptr [eax]
-
-end
-
-// ; rdiv
-inline % 12Bh
-                                                   
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fdiv qword ptr [ebx] 
-  fstp qword ptr [eax]
-
-end
-
-
-// ; raddint
-inline % 12Ch
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild dword ptr [ebx]
-  faddp
-  fstp qword ptr [eax]
-
-end
-
-// ; rsubint
-inline % 12Dh
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild dword ptr [ebx]
-  fsubp
-  fstp qword ptr [eax]
-
-end
-
-// ; rmulint
-inline % 12Eh
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild dword ptr [ebx]
-  fmulp
-  fstp qword ptr [eax]
-
-end
-
-// ; rdivint
-inline % 12Fh
-                                                   
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild dword ptr [ebx]
-  fdivp
-  fstp qword ptr [eax]
-
-end
-
-// ; raddlong
-inline % 130h
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild qword ptr [ebx]
-  faddp
-  fstp qword ptr [eax]
-
-end
-
-// ; rsublong
-inline % 131h
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild qword ptr [ebx]
-  fsubp
-  fstp qword ptr [eax]
-
-end
-
-// ; rmullong
-inline % 132h
-
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild qword ptr [ebx]
-  fmulp
-  fstp qword ptr [eax]
-
-end
-
-// ; rdivlong
-inline % 133h
-                                                   
-  mov  ebx, [esp]
-  fld  qword ptr [eax]
-  fild qword ptr [ebx]
-  fdivp
-  fstp qword ptr [eax]
-
-end
-
-// ; wsgetlength
-// ;in : eax - object, esi - size
-inline % 134h
-
-  mov  ecx, [eax-8]
-  neg  ecx
-  shr  ecx, 1
-  sub  ecx, 1
-  mov  esi, ecx
-
-end
-
-// ;wssetlength
-// ;in : eax - object, esi - size
-inline % 135h
-
-  // ; lea  ecx, [esi * 2 + 2]                                             
-  mov  ecx, esi
-  shl  ecx, 1
+// ; wsequal
+inline % 50h
+
+  mov  esi, edi              // s2
+  mov  edx, eax              // s1
+  mov  ecx, [edx-8]          // s1.length
+  mov  eax, 0
+  cmp  ecx, [esi-8]          // compare with s2.length
+  jnz  short Lab1
   add  ecx, 2
-  neg  ecx
-  mov  [eax-8], ecx
+Lab2:
+  mov  ebx, [esi]
+  cmp  ebx,  [edx]
+  jnz  short Lab1
+  lea  esi, [esi+4]
+  lea  edx, [edx+4]
+  add  ecx, 4
+  js   short Lab2
+  mov  eax, 1
+Lab1:
+  mov  esi, eax
+  mov  eax, edi
 
 end
 
-// ; wscreate
-inline % 136h
+// ; wsless
+inline % 51h
 
-  //lea  ebx, [esi * 2 + 2]
-  mov  ebx, esi
-  shl  ebx, 1
-  push eax  
-  add  ebx, 2
-  mov  ecx, ebx
-  add  ebx, page_ceil
+  mov  esi, edi              // s2
+  mov  edx, eax              // s1
+  mov  ecx, [edx-8]          // s1 length
+
+  cmp  ecx, [esi-8]
+  mov  eax, 0
+  jbe  short Lab3
+  mov  ecx, [esi-8]
+Lab3:
   neg  ecx
-  and  ebx, page_mask  
-  call code : %GC_ALLOC
-  mov  [eax-8], ecx
-  pop  ebx
-  mov  [eax-4], ebx
+Lab2:
+  mov  ebx, [edx]              // s1[i] 
+  cmp  bx, word ptr [esi]      // compare s2[i] with 
+  jb   short Lab1
+  ja   short LabEnd
+  lea  esi, [esi+2]
+  lea  edx, [edx+2]
+  sub  ecx, 2
+  jnz  short Lab2
+
+Lab1:
+  mov  eax, 1
+
+LabEnd:
+  mov  esi, eax
+  mov  eax, edi
+  
+end
+
+// ; wsreadw
+inline % 52h
+
+  mov ecx, [edi + esi * 2]
+  and ecx, 0FFFFh
+
+end
+
+// ; winsert
+inline % 53h
+
+  mov  edx, eax
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  ebx, [edx]
+  mov  word ptr [edi + esi*2], bx
+  add  esi, 1
+  lea  edx, [edx + 2]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
 
 end
 
 // ; wscopy
-inline % 137h
-
-  mov  edx, edi
-  mov  esi, eax
-
-  mov  ecx, [esi-8]
-  mov  [edi-8], ecx
-  
-labNext1:
-  mov  ebx, [esi]
-  mov  [edx], ebx
-  lea  esi, [esi+4]
-  lea  edx, [edx+4]
-  add  ecx, 4
-  ja   short labNext1
-
-end
-
-// ; wscopyint
-inline % 138h
+inline % 54h
 
    mov  ebx, esi   
    push ebp
@@ -2003,9 +611,8 @@ Lab8:
 
 end
 
-
 // ; wscopylong
-inline % 139h
+inline % 55h
 
    mov  ecx, esi
    push edi
@@ -2085,9 +692,8 @@ Lab8:
    pop  edi
 end
 
-
 // ; wscopyreal
-inline % 13Ah
+inline % 56h
 
    mov   ebx, esi                                 
    mov   ecx, eax
@@ -2440,179 +1046,14 @@ unpacked:- (52)  // -32
 
 end
 
-// ; wscopybuf
-inline % 13Bh
-
-  mov  ecx, esi            // ; length
-  mov  edx, [esp]          // ; index
-  mov  edx, [edx]
-  mov  ebx, ecx
-  shl  ebx, 1
-  neg  ebx
-  add  edx, eax            // ; src + index
-  sub  ebx, 2
-  mov  esi, edi            // ; dst  
-  mov  [edi-8], ebx        // ; set length
-  
-labNext1:
-  mov  ebx, [edx]
-  and  ebx, 0FFh
-  mov  word ptr [esi], bx
-  lea  edx, [edx+1]
-  lea  esi, [esi+2]
-  sub  ecx, 1
-  ja   short labNext1
-  xor  ebx, ebx
-  mov  eax, edi
-  mov  word ptr [esi], bx
-  
-end
-
-// ; wsequal
-inline % 13Ch
-
-  mov  esi, [esp]            // s2
-  mov  edx, eax              // s1
-  mov  ecx, [edx-8]          // s1.length
-  mov  eax, 0
-  cmp  ecx, [esi-8]          // compare with s2.length
-  jnz  short Lab1
-  add  ecx, 2
-Lab2:
-  mov  ebx, [esi]
-  cmp  ebx,  [edx]
-  jnz  short Lab1
-  lea  esi, [esi+4]
-  lea  edx, [edx+4]
-  add  ecx, 4
-  js   short Lab2
-  mov  eax, 1
-Lab1:
-  mov  esi, eax
-  mov  eax, edi
-
-end
-
-// ; wsless
-inline % 13Dh
-
-  mov  esi, [esp]            // s2
-  mov  edx, eax              // s1
-  mov  ecx, [edx-8]          // s1 length
-
-  cmp  ecx, [esi-8]
-  mov  eax, 0
-  jbe  short Lab3
-  mov  ecx, [esi-8]
-Lab3:
-  neg  ecx
-Lab2:
-  mov  ebx, [edx]              // s1[i] 
-  cmp  bx, word ptr [esi]      // compare s2[i] with 
-  jb   short Lab1
-  ja   short LabEnd
-  lea  esi, [esi+2]
-  lea  edx, [edx+2]
-  sub  ecx, 2
-  jnz  short Lab2
-
-Lab1:
-  mov  eax, 1
-
-LabEnd:
-  mov  esi, eax
-  mov  eax, edi
-  
-end
-
-// ; wsnotgreater
-inline % 13Eh
-
-  mov  esi, [esp]            // s2
-  mov  edx, eax              // s1
-  mov  ecx, [edx-8]          // s1 length
-
-  cmp  ecx, [esi-8]
-  mov  eax, [esp]
-  ja   short Lab3
-  mov  eax, 0
-Lab3:
-  neg  ecx
-Lab2:
-  mov  ebx, [edx]              // s1[i] 
-  cmp  bx, word ptr [esi]      // compare s2[i] with 
-  jb   short Lab1
-  ja   short LabEnd
-  lea  esi, [esi+2]
-  lea  edx, [edx+2]
-  sub  ecx, 2
-  jnz  short Lab2
-
-Lab1:
-  mov  eax, 1
-
-LabEnd:
-  mov  esi, eax
-  mov  eax, edi
-
-end
-                                                                                      
-// ; wsadd
-inline % 13Fh
-
-  mov  ecx, 2
-  mov  esi, eax
-  mov  edx, 2
-  
-  add  ecx, [esi-8]     // ; src
-  add  edx, [edi-8]     // ; dst
-  neg  edx
-  add  [edi-8], ecx
-  add  edx, edi
-  sub  ecx, 2
-  
-labNext2:
-  mov  ebx, [esi]
-  mov  word ptr [edx], ebx
-  lea  esi, [esi+2]
-  lea  edx, [edx+2]
-  add  ecx, 2
-  jnz  short labNext2
-  
-end
-
-// ; wsgetat
-inline % 140h
-
-  //mov  ebx, [eax + esi*2]
-  mov  ebx, esi  
-  mov  edx, [esp]
-  mov  ebx, [eax + ebx*2]
-  and  ebx, 0FFFFh
-  mov  [edx], ebx
-
-end
-
-// ; wssetat
-inline % 141h
-
-  //mov  ebx, [eax + esi*2]
-  mov  ebx, esi  
-  lea  ebx, [edi + ebx*2]
-  mov  edx, [eax]
-  mov  word ptr [ebx], dx
-
-end
-
-// ; wsindexofstr
-inline % 142h
+// ; wsseek
+inline % 57h
 
   push eax
   mov  edx, esi     // index
-  mov  esi, [esp+4] // subs
+  mov  esi, eax     // subs
 
   push edi
-  mov  edi, eax     // s
   
   mov  ebx, [edi-8]   // get total length  
 
@@ -2626,7 +1067,7 @@ inline % 142h
 
 labNext:
   add  edx, 2
-  mov  esi, [esp+8]
+  mov  esi, [esp+4]
   mov  ecx, [esi-8]
   sub  ebx, 2
   lea  ecx, [ecx+2]
@@ -2634,7 +1075,7 @@ labNext:
   neg  ecx
   cmp  ebx, ecx
   jb   short labEnd
-  mov  edi, [esp+4]
+  mov  edi, [esp]
   add  edi, edx
 
 labCheck:
@@ -2659,777 +1100,1268 @@ labEnd2:
 
 end
 
-// ; wscopystr
-inline % 143h
+// ; wsave
+inline % 58h
 
-  mov  ecx, esi            // ; length
-  mov  edx, [esp]          // ; index
-  mov  edx, [edx]
-  mov  ebx, ecx
-  shl  edx, 1
-  shl  ebx, 1
-  neg  ebx
-  add  edx, eax            // ; src + index
-  sub  ebx, 2
-  mov  esi, edi            // ; dst  
-  mov  [edi-8], ebx        // ; set length
-  
-labNext1:
-  mov  ebx, [edx]
-  mov  word ptr [esi], bx
-  lea  edx, [edx+2]
-  lea  esi, [esi+2]
-  sub  ecx, 1
-  ja   short labNext1
-  xor  ebx, ebx
-  mov  eax, edi
-  mov  word ptr [esi], bx
-  
+  mov  word ptr [edi + esi*2], cx
+
 end
 
-// ; wsaddstr
-inline % 144h
-                                                               
-  mov  ecx, esi          // ; length
-  mov  edx, [edi-8]
-  mov  esi, [esp]        // ; index
-  neg  edx
-  mov  esi, [esi]
-  sub  edx, 2  
-  shl  ecx, 1
+// ; wadd
+inline % 59h
+
+  mov  edx, esi         // ; dst index
+  mov  esi, ecx         // ; src index
+  shl  edx, 1
+  
+  add  ecx, esi
   shl  esi, 1
-  sub  [edi-8], ecx
-  add  esi, eax
+  add  ecx, [eax-8]  
+
   add  edx, edi
+  add  esi, eax
   
 labNext2:
   mov  ebx, [esi]
   mov  word ptr [edx], ebx
   lea  esi, [esi+2]
   lea  edx, [edx+2]
-  sub  ecx, 2
-  ja   short labNext2
-  xor  ebx, ebx
-  mov  word ptr [edx], bx
-
+  add  ecx, 2
+  jnz  short labNext2
+  
 end
 
-// ; wsloadname
-inline % 145h
+// ; wsubcopy
+inline % 5Ah
 
-  push esi
-  
-  mov  edx, [eax-elVMTOffset]
-  call code : % GETCLASSNAME  
-
-  pop  ecx
-  xor  esi, esi
-
-  test eax, eax
+  mov  edx, edi
+  test ecx, ecx
   jz   short labEnd
 
-  mov  esi, eax
-  mov  edx, edi
-
-labCopy:
-  mov  ebx, [esi]                                                                                           
+labNext:
+  mov  ebx, [eax + esi*2]
   mov  word ptr [edx], bx
-  test ebx, 0FFFFh
-  jz   short labFixLen
-  lea  esi, [esi+2]
+  add  esi, 1
+  lea  edx, [edx + 2]
   sub  ecx, 1
-  lea  edx, [edx+2]
-  jnz  short labCopy
-
-labFixLen:
-  mov  esi, edx
-  sub  esi, edi
-  mov  eax, edi
-  
-labEnd:
-
-end
-
-// ; bssetbuf
-inline % 146h
-
-  mov  ecx, esi            // ; length
-  mov  esi, [esp]          // ; index
-  mov  edx, [esi]
-  mov  ebx, edx
-  add  edx, edi            // ; dest + index
-
-  mov  esi, eax            // ; src
-  and  ebx, 3h
-
-  jz   short labNext
-  sub  ecx, ebx
-  push eax
-labNext1:
-  mov  eax, [esi]
-  mov  byte ptr [edx], al
-  lea  esi, [esi+1]
-  sub  ebx, 1
-  lea  edx, [edx+1]
-  ja   short labNext1
-  pop  eax
-
-labNext:
-  test ecx, ecx
-  jz   short labSkip
-
-labNext2:
-  mov  ebx, [esi]
-  mov  [edx], ebx
-  lea  esi, [esi+4]
-  lea  edx, [edx+4]
-  sub  ecx, 4
-  ja   short labNext2
-
-labSkip:
-  
-end
-
-// ; bsgetbuf
-inline % 147h
-
-  mov  ecx, esi            // ; length
-  mov  edx, [esp]          // ; index
-  mov  esi, [edx]
-  add  esi, edi            // ; src + index
-
-  mov  edx, eax            // ; dst  
-
-  test ecx, ecx
-  jz   short labSkip
-
-labNext2:
-  mov  ebx, [esi]
-  mov  [edx], ebx
-  lea  edx, [edx+4]
-  lea  esi, [esi+4]
-  sub  ecx, 4
-  ja   short labNext2
-
-labSkip:
-  
-end
-
-// ; bscopystr
-inline % 148h
-
-  mov  ecx, esi            // ; length
-  mov  edx, [esp]          // ; index
-  mov  ebx, ecx
-  mov  edx, [edx]
-  add  edx, eax            // ; src + index
-  neg  ebx
-  mov  esi, edi            // ; dst  
-  mov  [edi-8], ebx        // ; set length
-  
-labNext1:
-  mov  ebx, [edx]
-  mov  word ptr [esi], bx
-  lea  edx, [edx+2]
-  lea  esi, [esi+2]
-  sub  ecx, 2
-  ja   short labNext1
-  
-end
-
-// ; bssetword
-inline % 149h 
-
-  mov  edx, esi            // ; index
-  mov  ebx, [eax]
-  add  edx, edi            // ; dst + index
-  
-  mov  word ptr [edx], bx
-  
-end
-
-// ; bsgetword
-inline % 14Ah
-
-  mov  edx, esi            // ; index
-  add  edx, edi            // ; dst + index
-  
-  mov  ebx, [edx]
-  and  ebx, 0FFFFh
-  mov  [eax], ebx
-  
-end
-
-// ; bsindexof
-inline % 14Bh
-
-  mov  ecx, [esp]
-  mov  ecx, [ecx]
-  add  esi, edi
-  mov  ebx, [eax]
-labNext:
-  mov  edx, [esi]
-  cmp  dl, bl
-  jz   short labFound
-  lea  esi, [esi+1]
-  sub  ecx, 1
-  ja   short labNext
-  lea  esi, [edi-1]
-labFound:                         
-  sub  esi, edi
-
-end
-         
-// ; bsindexofword
-inline % 14Ch
-
-  mov  ecx, [esp]
-  mov  ecx, [ecx]
-  add  esi, edi
-  mov  ebx, [eax]
-labNext:
-  mov  edx, [esi]
-  cmp  dx, bx
-  jz   short labFound
-  lea  esi, [esi+1]
-  sub  ecx, 1
-  ja   short labNext
-  lea  esi, [edi-1]
-labFound:                         
-  sub  esi, edi
-
-end
-
-// ; bseval
-inline % 14Dh
-
-  call code : % EVALSCRIPT
-
-end
-
-// ; lrndnew
-inline % 14Eh
-
-  call code : % INIT_RND
-  mov  [edi], eax
-  
-end
-
-// ; lrndnext
-inline % 14Fh
-
-   xor  edx, edx
-   mov  ecx, esi
-   cmp  ecx, edx
-   jz   short labEnd
-
-   push eax
-   push esi
-
-   mov  ebx, [edi+4] // NUM.RE
-   mov  esi, [edi]   // NUM.FR             
-   mov  eax, ebx
-   mov  ecx, 15Ah
-   mov  ebx, 4E35h                              
-   test eax, eax
-   jz   short Lab1
-   mul  ebx
-Lab1: 
-   xchg eax, ecx
-   mul  esi
-   add  eax, ecx
-   xchg eax, esi
-   mul  ebx
-   add  edx, esi
-   add  eax, 1
-   adc  edx, 0
-   mov  ebx, eax
-   mov  esi, edx
-   mov  ecx, edi
-   mov  [ecx+4], ebx
-   mov  eax, esi
-   and  eax, 7FFFFFFFh
-   mov  [ecx] , esi
-   cdq
-   pop  ecx
-   idiv ecx
-   pop  eax
-labEnd:
-   mov  [eax], edx
-
-end
-
-// ; rabs
-inline %150h
-
-  fld   qword ptr [eax]  
-  fabs
-  fstp  qword ptr [edi]    // ; store result 
-  
-end
-
-// ; rround
-inline %151h
-
-  mov   esi, 0
-  fld   qword ptr [eax]  
-
-  push  eax               // ; reserve space on CPU stack
-
-  fstcw word ptr [esp]    // ;get current control word
-  mov   ax,[esp]
-  and   ax,0F3FFh         // ; code it for rounding 
-  push  eax
-  fldcw word ptr [esp]    // ; change rounding code of FPU to round
-
-  frndint                 // ; round the number
-  pop   eax               // ; get rid of last push
-  fldcw word ptr [esp]    // ; load back the former control word
-
-  fstsw ax                // ; retrieve exception flags from FPU
-  shr   al,1              // ; test for invalid operation
-  pop   ebx               // ; clean CPU stack
-  jc    short lErr        // ; clean-up and return error
-  
-  fstp  qword ptr [edi]   // ; store result 
-  mov   esi, 1
-  jmp   short labEnd
-  
-lErr:
-  ffree st(0)
-
-labEnd:
-  
-end
-
-// ; rexp
-inline % 152h
-
-  mov   esi, 0
-  fld   qword ptr [eax]   // ; Src
-
-  fldl2e                  // ; ->log2(e)
-  fmulp                   // ; ->log2(e)*Src
-                                                              
-  // ; the FPU can compute the antilog only with the mantissa
-  // ; the characteristic of the logarithm must thus be removed
-      
-  fld   st(0)             // ; copy the logarithm
-  frndint                 // ; keep only the characteristic
-  fsub  st(1),st(0)       // ; keeps only the mantissa
-  fxch                    // ; get the mantissa on top
-
-  f2xm1                   // ; ->2^(mantissa)-1
-  fld1
-  faddp                   // ; add 1 back
-
-  //; the number must now be readjusted for the characteristic of the logarithm
-
-  fscale                  // ;, scale it with the characteristic
-      
-  fstsw ax                // ; retrieve exception flags from FPU
-  shr   al,1              // ; test for invalid operation
-  jc    short lErr        // ; clean-up and return if error
-      
-  // ; the characteristic is still on the FPU and must be removed
-  
-  fstp  st(1)             // ; get rid of the characteristic
-
-  fstp  qword ptr [edi]    // ; store result 
-  mov   esi, 1
-  jmp   short labEnd
-  
-lErr:
-  ffree st(1)
-  
-labEnd:
-
-end
-
-// ; rln
-inline % 153h
-
-  mov   esi, 0
-  fld   qword ptr [eax]  
-  
-  fldln2
-  fxch
-  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
-
-  fstsw ax                // retrieve exception flags from FPU
-  shr   al,1              // test for invalid operation
-  jc    short lErr        // clean-up and return error
-
-  fstp  qword ptr [edi]    // store result 
-  mov   esi, 1
-  jmp   short labEnd
-
-lErr:
-  ffree st(0)
-
-labEnd:
-
-end
-
-// ; rint
-
-inline % 154h
-
-  mov   esi, 0
-  fld   qword ptr [eax]
-
-  push  ebx                // reserve space on stack
-  fstcw word ptr [esp]     // get current control word
-  mov   bx, [esp]
-  or    bx,0c00h           // code it for truncating
-  push  ebx
-  fldcw word ptr [esp]    // change rounding code of FPU to truncate
-
-  frndint                  // truncate the number
-  pop   ebx                // remove modified CW from CPU stack
-  fldcw word ptr [esp]     // load back the former control word
-  pop   ebx                // clean CPU stack
-      
-  fstsw ax                 // retrieve exception flags from FPU
-  shr   al,1               // test for invalid operation
-  jc    short labErr       // clean-up and return error
-
-labSave:
-  fstp  qword ptr [edi]    // store result
-  mov   esi, 1
-  jmp   short labEnd
-  
-lErr:
-  ffree st(1)
-  
-labEnd:
-
-end
-
-// ; rcose
-
-inline % 155h
-
-  fld   qword ptr [eax]  
-  fcos
-  fstp  qword ptr [edi]    // store result 
-
-end
-
-// ; rsin
-
-inline % 156h
-
-  fld   qword ptr [eax]  
-  fsin
-  fstp  qword ptr [edi]    // store result 
-
-end
-
-// ; rarctan
-
-inline % 157h
-
-  fld   qword ptr [eax]  
-  fld1
-  fpatan                  // i.e. arctan(Src/1)
-  fstp  qword ptr [edi]    // store result 
-
-end
-
-// ; rsqrt
-
-inline % 158h
-
-  fld   qword ptr [eax]  
-  fsqrt
-  fstp  qword ptr [edi]    // store result 
-
-end
-
-// ; rpi
-
-inline % 159h
-
-  fldpi
-  fstp  qword ptr [edi]    // store result 
-
-end
-
-// ; rfgetlenz
-inline % 15Ah
-
-  mov  esi, eax
-  lea  esi, [esi-4]
-labNext:
-  lea  esi, [esi+4]
-  cmp  [esi], 0
   jnz  short labNext
 
-  sub  esi, eax
-  shr  esi, 2
-  
+labEnd:
+
 end
 
-// ; refcreate
+// ; createw
+inline % 5Fh
 
-inline % 15Bh
-
-  push eax
-// ; lea  ebx, [esi*4]
+  //lea  ebx, [esi * 2 + 2]
   mov  ebx, esi
-  shl  ebx, 2  
+  shl  ebx, 1
+  push eax  
   mov  ecx, ebx
   add  ebx, page_ceil
+  neg  ecx
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
   pop  ebx
-  mov  esi, ecx
   mov  [eax-4], ebx
-  shr  esi, 2
 
 end
 
-// ; bscreate
-inline % 15Ch
+// ; bsreadw
+inline % 60h
+
+  mov ecx, [edi + esi]
+  and ecx, 0FFFFh
+
+end
+
+// ; load
+inline % 61h
+
+  mov ecx, [edi + esi]
+
+end
+
+// ; insert
+inline % 62h
+
+  mov  edx, eax
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  ebx, [edx]
+  mov  byte ptr [edi + esi], bl
+  add  esi, 1
+  lea  edx, [edx + 1]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+
+end
+
+// ; ninsert
+inline % 63h
+
+  mov  edx, eax
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  ebx, [edx]
+  mov  [edi + esi*4], ebx
+  add  esi, 1
+  lea  edx, [edx + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+
+end
+
+// ; xseek
+inline % 64h
+
+labNext:
+  cmp  [edi + esi * 4], ecx
+  lea  esi, [esi + 1]
+  jnz  short labNext
+
+  lea  esi, [esi - 1]
+  
+end
+
+// ; save
+inline % 69h
+
+  mov [edi + esi], ecx
+  
+end
+
+// ; subcopy
+inline % 6Ah
+
+  mov  edx, edi
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  ebx, [eax + esi]
+  mov  byte ptr [edx], bl
+  add  esi, 1
+  add  edx, 1
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+
+end
+
+// ; nsubcopy
+
+inline % 6Bh
+
+  mov  edx, edi
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  ebx, [eax + esi * 4]
+  mov  [edx], ebx
+  add  esi, 1
+  lea  edx, [edx + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+
+end
+
+// ; createb
+inline % 6Fh
+
+  mov  ebx, esi
+  push eax  
+  mov  ecx, ebx
+  add  ebx, page_ceil
+  neg  ecx
+  and  ebx, page_mask  
+  call code : %GC_ALLOC
+  mov  [eax-8], ecx
+  pop  ebx
+  mov  [eax-4], ebx
+
+end
+
+// ; lcopy
+inline % 70h
+
+  mov  ecx, [eax]
+  mov  ebx, [eax+4]
+  mov  [edi], ecx
+  mov  [edi+4], ebx
+    
+end
+
+// ; lcopyint
+inline % 71h
+
+  mov  ebx, [eax]
+  xor  edx, edx
+  mov  [edi], ebx
+  mov  [edi+4], edx
+    
+end
+
+// ; lequal
+
+inline % 72h
+
+  mov  ebx, [eax]
+  mov  edx, [eax+4]  
+  cmp  ebx, [edi]
+  mov  esi, 0
+  jnz  short labEnd
+  cmp  edx, [edi+4]
+  jnz  short labEnd
+  mov  esi, 1
+
+labEnd:
+
+end
+
+// ; lless(lo, ro, tr, fr)
+inline % 73h
+
+  mov  ebx, [eax]
+  mov  edx, [eax+4]  
+  cmp  edx, [edi+4]
+  mov  esi, 1
+  jl   short Lab1
+  nop
+  jnz  short Lab2
+  cmp  ebx, [edi]
+  jl   short Lab1
+Lab2:
+  mov  esi, 0
+Lab1:
+
+end
+
+// ; ladd
+inline % 74h
+
+  mov  edx, [eax+4]
+  mov  ecx, [eax]
+  add [edi], ecx
+  adc [edi+4], edx
+
+end
+
+// ; lsub
+inline % 75h
+
+  mov  edx, [edi+4]
+  mov  ecx, [edi]
+  sub  ecx, [eax]
+  sbb  edx, [eax+4]
+  mov  [edi], ecx
+  mov  [edi+4], edx
+
+end
+
+// ; lmul
+inline % 76h
+  mov  esi, eax        // sour
+  mov  edx, edi        // dest
 
   push eax
+  
+  mov  ecx, [edx+4]   // DHI
+  mov  eax, [esi+4]   // SHI
+  or   eax, ecx
+  mov  ecx, [edx]     // DLO
+  jnz  short lLong
+  mov  eax, [esi]
+  mul  ecx
+  jmp  short lEnd
+
+lLong:
+  mov  eax, [esi+4]
+  push edi
+  mov  edi, edx
+  mul  ecx               // SHI * DLO
+  mov  ebx, eax
+  mov  eax, dword ptr [esi]
+  mul  dword ptr [edi+4]  // SLO * DHI
+  add  ebx, eax     
+  mov  eax, dword ptr [esi] // SLO * DLO
+  mul  ecx
+  add  edx, ebx 
+  pop  edi
+
+lEnd:
+  mov  [edi], eax
+  mov  [edi+4], edx
+  pop  eax
+
+end
+
+// ; ldiv
+inline % 77h
+               
+  mov  ebx, eax   // ; DVSR
+  mov  esi, edi   // ; DVND
+
+  push eax
+  push edi
+
+  push [esi+4]    // ; DVND hi dword
+  push [esi]      // ; DVND lo dword
+  push [ebx+4]    // ; DVSR hi dword
+  push [ebx]      // ; DVSR lo dword
+
+  xor  edi, edi
+
+  mov  eax, [esp+0Ch]    // hi DVND
+  or   eax, eax
+  jge  short L1
+  add  edi, 1
+  mov  edx, [esp+8]      // lo DVND
+  neg  eax
+  neg  edx
+  sbb  eax, 0
+  mov  [esp+0Ch], eax    // hi DVND
+  mov  [esp+8], edx      // lo DVND
+
+L1:                                                               
+  mov  eax, [esp+4]      // hi DVSR
+  or   eax, eax
+  jge  short L2
+  add  edi, 1
+  mov  edx, [esp]        // lo DVSR
+  neg  eax
+  neg  edx
+  sbb  eax, 0
+  mov  [esp+4], eax      // hi DVSR
+  mov  [esp], edx        // lo DVSR
+
+L2:
+  or   eax, eax
+  jnz  short L3
+  mov  ecx, [esp]        // lo DVSR
+  mov  eax, [esp+0Ch]    // hi DVND
+  xor  edx, edx
+  div  ecx
+  mov  ebx, eax 
+  mov  eax, [esp+8]      // lo DVND
+  div  ecx
+
+  mov  esi, eax          // result
+  jmp  short L4
+
+L3:
+  mov  ebx, eax 
+  mov  ecx, [esp]        // lo DVSR
+  mov  edx, [esp+0Ch]    // hi DVND
+  mov  eax, [esp+8]      // lo DVDN
+L5:
+  shr  ebx, 1 
+  rcr  ecx, 1
+  shr  edx, 1 
+  rcr  eax, 1
+  or   ebx, ebx 
+  jnz  short L5
+  div  ecx
+  mov  esi, eax          // result
+
+  // check the result with the original
+  mul  [esp+4]           // hi DVSR
+  mov  ecx, eax 
+  mov  eax, [esp]        // lo DVSR
+  mul  esi
+  add  edx, ecx
+
+  // carry means Quotient is off by 1
+  jb   short L6
+
+  cmp  edx, [esp+0Ch]    // hi DVND
+  ja   short L6
+  jb   short L7
+  cmp  eax, [esp+8]      // lo DVND
+  jbe  short L7
+
+L6:
+  sub  esi, 1
+
+L7:
+  xor  ebx, ebx
+
+L4:
+  mov  edx, ebx
+  mov  eax, esi
+
+  sub  edi, 1
+  jnz  short L8
+  neg  edx
+  neg  eax
+  sbb  edx, 0
+
+L8:
+  lea  esp, [esp+10h]
+  pop  edi
+
+  mov  [edi], eax
+  mov  [edi+4], edx
+  mov  eax, ebx
+  pop  eax
+                                    
+end
+
+// ; land
+inline % 78h
+  mov ebx, [edi]
+  mov edx, [eax]
+
+  mov ecx, [edi+4]
+  mov esi, [eax+4]
+
+  and ebx, edx
+  and ecx, esi
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+end
+
+// ; lor
+inline % 79h
+  mov ebx, [edi]
+  mov edx, [eax]
+
+  mov ecx, [edi+4]
+  mov esi, [eax+4]
+
+  or  ebx, edx
+  or  ecx, esi
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+end
+
+// ; lxor
+inline % 7Ah
+  mov ebx, [edi]
+  mov edx, [eax]
+
+  mov ecx, [edi+4]
+  mov esi, [eax+4]
+
+  xor ebx, edx
+  xor ecx, esi
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+end
+
+// ; lshift
+inline % 7Bh
+
+  mov  edx, [edi]
+  mov  ecx, esi
+  mov  ebx, [edi+4]
+
+  and  ecx, ecx
+  jns  short LR
+  neg  ecx
+
+  cmp  cl, 40h 
+  jae  short lErr
+  cmp  cl, 20h
+  jae  short LL32
+  shld edx, ebx, cl
+  shl  ebx, cl
+  jmp  short lEnd
+
+LL32:
+  mov  edx, ebx
+  xor  ebx, ebx
+  and  cl, 1Fh
+  shl  edx, cl 
+  jmp  short lEnd
+
+LR:
+
+  cmp  cl, 64
+  jae  short lErr
+
+  cmp  cl, 32
+  jae  short LR32
+  shrd ebx, edx, cl
+  sar  edx, cl
+  jmp  short lEnd
+
+LR32:
+  mov  ebx, edx
+  sar  edx, 31
+  and  cl, 31
+  sar  ebx, cl
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], edx
+  mov  [edi+4], ebx
+
+lEnd2:
+
+end
+
+// ; lnot
+inline % 7Ch
+
+  mov ebx, [eax]
+  mov ecx, [eax+4]
+                                                                        
+  not ebx
+  not ecx
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+
+end
+
+// ; wtol
+inline % 7Dh
+
+  push edi
+  push esi
+  mov  esi, eax
+  mov  ecx, [esi-8]
+  xor  edx, edx
+  neg  ecx
+
+  cmp  byte ptr [esi], 2Dh
+  lea  ecx, [ecx-2]
+  jnz  short labStart
+
+  lea  esi, [esi+2]
+  lea  ecx, [ecx-2]
+  mov  edx, 1        // set flag in ebx
+
+labStart:
+  push edx           // save sign flag
+  xor  edi, edi      // edi   - DHI
+  xor  ebx, ebx      // ebx   - DLO
+
+labConvert:
+  mov  edx, [esp+4]
+  mov  eax, edi
+  mul  edx           // DHI * 10
+  mov  edi, eax
+
+  mov  eax, ebx
+  mov  edx, [esp+4]
+  mul  edx           // DLO * 10
+  add  edi, edx
+  mov  ebx, eax
+
+  xor  eax, eax
+  lodsw
+  sub  al, 30h
+  jb   short labErr
+  cmp  al, 9
+  ja   short labErr
+
+  add ebx, eax       // DLO + EAX
+  adc edi, 0         // DHI + CF
+
+  sub  ecx, 2
+  jnz  short labConvert
+
+  pop  eax           // restore flag
+  test eax, eax
+  jz   short labSave
+
+  not  edi           // invert number
+  neg  ebx
+
+labSave:
+
+  mov  edx, edi
+  pop  esi
+  pop  edi
+
+  mov  [edi], ebx
+  mov  [edi+4], edx
+  mov  esi, 1
+  jmp  short labEnd
+
+labErr:
+  xor  esi, esi
+  pop  edi
+
+labEnd:
+  mov  eax, edi
+
+end
+
+// ; rcopy (src, tgt)
+inline % 80h
+
+  mov  ecx, [eax]
+  mov  ebx, [eax+4]
+  mov  [edi], ecx
+  mov  [edi+4], ebx
+
+end
+
+// ; rcopyint (src, tgt)
+inline % 81h
+
+  fild dword ptr [eax]
+  fstp qword ptr [edi]
+
+end
+
+// ; rcopylong (src, tgt)
+inline % 82h
+
+  fild qword ptr [eax]
+  fstp qword ptr [edi]
+
+end
+
+// ; requal
+
+inline % 83h
+
+  mov    ebx, [esp]
+  fld    qword ptr [ebx]
+  fld    qword ptr [eax]
+  fcomip st, st(1)
+  mov    esi, 1
+  je     short lab1
+  mov    esi, 0
+lab1:
+  fstp  st(0)
+
+end
+
+// ; rless(lo, ro, tr, fr)
+inline % 84h
+
+  mov    ebx, [esp]
+  fld    qword ptr [ebx]
+  fld    qword ptr [eax]
+  fcomip st, st(1)
+  mov    esi, 1
+  jb     short lab1
+  mov    esi, 0
+lab1:
+  fstp  st(0)
+
+end
+
+// ; radd
+inline % 85h
+
+  fld  qword ptr [eax]
+  fadd qword ptr [edi] 
+  fstp qword ptr [edi]
+
+end
+
+// ; rsub
+inline % 86h
+
+  fld  qword ptr [edi]
+  fsub qword ptr [eax] 
+  fstp qword ptr [edi]
+
+end
+
+// ; rmul
+inline % 87h
+
+  fld  qword ptr [edi]
+  fmul qword ptr [eax] 
+  fstp qword ptr [edi]
+
+end
+
+// ; rdiv
+inline % 88h
+                                                   
+  fld  qword ptr [edi]
+  fdiv qword ptr [eax] 
+  fstp qword ptr [edi]
+
+end
+
+// ; wtor
+inline % 89h
+
+  mov   esi, eax
+  push  edi
+  sub   esp, 12
+  xor   edx, edx
+  xor   eax, eax
+  xor   ebx, ebx
+  mov   edi, esp
+  stosd
+  stosd
+  mov   word ptr [edi], ax
+  mov   ecx, 19
+
+atof1:
+  lodsw
+  cmp   eax, 32                  // " "
+  jz    short atof1
+  or    eax, eax
+  jnz   short atof2
+
+atoflerr:
+  add   esp, 12
+  pop   edi
+  xor   esi, esi
+  jmp   atoflend
+
+  //----------------------
+  // check for leading sign
+  //----------------------
+
+atof2:
+
+  cmp   eax, 43                  // +
+  jz    short atof3
+  cmp   eax,45                   // -
+  jnz   short integer
+  mov   dh,80h
+atof3:
+  mov   byte ptr [edi+1], dh    // put sign byte in bcd string
+  xor   edx,edx
+  lodsw
+
+  //------------------------------------
+  // convert the digits to packed decimal
+  //------------------------------------
+integer:
+
+  cmp   eax, 46                  // .
+  jnz   short atof4
+  test  bh, 1
+  jnz   short atoflerr           // only one decimal point allowed
+  or    bh, 1
+  lodsw
+atof4:
+  cmp   eax, 101                 // "e"
+  jnz   short atof5 
+  cmp   cl, 19
+  jnz   short atof41
+  test  bh, 4
+  jz    short atoflerr
+atof41:  
+  jmp   scient
+atof5:
+  cmp   eax,69                  // "E" 
+  jnz   short atof6
+  cmp   cl, 19
+  jnz   short atof51
+  test  bh, 4
+  jz    short atoflerr
+atof51:  
+  jmp   scient
+atof6:
+  or    eax,eax
+  jnz   short atof7
+  cmp   cl, 19
+  jnz   atof61
+  test  bh, 4
+  jz    short atoflerr
+atof61:
+  jmp   laststep1
+atof7:
+  sub   eax,48                 // "0"
+  jc    short atoflerr          // unacceptable character
+  cmp   eax,9
+  ja    short atoflerr          // unacceptable character
+  or    bh,4                   // at least 1 numerical character
+  test  bh,1
+  jz    short atof8
+  add   bl,1                   // bl holds number of decimal digits
+  jc    atoflerr               // more than 255 decimal digits
+atof8:
+  test  eax, eax
+  jnz   short atof9
+  test  bh,2
+  jnz   short atof9
+  lodsw
+  jmp   short integer
+atof9:
+  or    bh,2                   // at least 1 non-zero numerical character
+  sub   ecx, 1
+  jnz   short atof10
+  test  bh,1                   // check if decimal point
+  jz    atoflerr               // error if more than 18 integer digits in number
+  test  eax, eax
+  jnz   short atof91            // if trailing decimal 0
+  add   ecx, 1
+  sub   bl, 1
+  lodsw
+  jmp   integer
+atof91:
+  jmp   atoflerr
+atof10:
+  mov   dh,al
+  
+integer1:
+  lodsw
+  cmp   eax, 46                 // "."
+  jnz   short atof20
+  test  bh,1
+  jnz   atoflerr               // only one decimal point allowed
+  or    bh, 1                  // use bh bit0 as the decimal point flag
+  lodsw
+atof20:
+  cmp   eax, 101                // "e"
+  jnz   short atof30
+  mov   ah, dh
+  mov   al,0
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   scient
+atof30:
+  cmp   eax, 69                 // "E"
+  jnz   short atof40
+  mov   ah, dh
+  mov   al,0
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   scient
+atof40:  
+  or    eax,eax
+  jnz   short atof50
+  mov   ah, dh
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   short laststep1
+atof50:
+  sub   eax, 48               // "0"
+  jc    atoflerr             // unacceptable character
+  cmp   eax,9
+  ja    atoflerr             // unacceptable character
+  test  bh,1            
+  jz    short atof60
+  add   bl, 1                // processing decimal digits
+atof60:
+  sub   ecx, 1
+  jnz   short atof70
+  test  bh,1                // check if decimal point
+  jz    atoflerr            // error if more than 18 integer digits in number
+  test  eax, eax
+  jnz   short atof602
+  add   ecx, 1
+  sub   bl, 1
+  jmp   integer1
+atof602:
+  jmp   atoflerr
+atof70:
+  mov   ah, dh
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  sub   edi, 1
+  lodsw
+  jmp   integer
+
+laststep1:
+  cmp   cl,19
+  jnz   short laststep
+  fldz
+  jmp   short laststep2
+
+laststep:
+  mov   ah, dh
+  xor   edx, edx
+  fbld  [esp]
+  sub   cl, 1
+  add   bl,cl
+  movzx eax,bl
+  sub   edx,eax
+
+  push  edx
+  fild  dword ptr [esp]     // load the exponent
+  fldl2t                    // load log2(10)
+  fmulp                     // ->log2(10)*exponent
+  pop   edx
+
+  // at this point, only the log base 2 of the 10^exponent is on the FPU
+  // the FPU can compute the antilog only with the mantissa
+  // the characteristic of the logarithm must thus be removed
+     
+  fld   st(0)             // copy the logarithm
+  frndint                 // keep only the characteristic
+  fsub  st(1),st(0)       // keeps only the mantissa
+  fxch st(1)              // get the mantissa on top
+
+  f2xm1                   // ->2^(mantissa)-1
+  fld1
+  faddp                   // add 1 back
+
+  // the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // scale it with the characteristic
+      
+  // the characteristic is still on the FPU and must be removed
+
+  fstp  st(1)             // clean-up the register
+
+  fmulp
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    atoflerr          // clean-up and return error
+
+laststep2:
+
+  add   esp, 12
+  pop   edi
+  fstp  qword ptr[edi]    // store result at specified address
+  jmp   short atoflend
+
+scient:
+  cmp   cl,19
+  jnz   short atof80
+  fldz
+  jmp   short laststep2
+  xor   edx, edx
+
+atof80:
+  xor   eax,eax
+  lodsw
+  cmp   ax, 43            // "+"
+  jz    atof90
+  cmp   ax, 45            // "-"
+  jnz   short scient1
+  stc
+  rcr   eax,1             // keep sign of exponent in most significant bit of EAX
+     
+atof90:
+
+  lodsw                   // get next digit after sign
+
+scient1:
+  push  eax
+  and   eax,0ffh
+  jnz   short atof100      // continue if 1st byte of exponent is not terminating 0
+
+scienterr:
+  pop   edi
+  xor   esi, esi
+  jmp   atoflerr         // no exponent
+
+atof100:
+  sub   eax,30h
+  jc    short scienterr    // unacceptable character
+  cmp   eax,9
+  ja    short scienterr    // unacceptable character
+  imul  edx,10
+  add   edx,eax
+  cmp   edx,4931h
+  ja    short scienterr    // exponent too large
+  lodsw
+  or    eax,eax
+  jnz   short atof100
+  pop   eax               // retrieve exponent sign flag
+  rcl   eax,1             // is most significant bit set?
+  jnc   short atof200
+  neg   edx
+
+atof200:
+  jmp   laststep  
+
+atoflend:
+   mov  eax, esi
+
+end
+
+// ; restore
+
+inline % 92h
+
+  add  ebp, __arg1
+  
+end
+
+// ; aloadfi
+inline % 94h
+
+  mov  eax, [ebp+__arg1]
+
+end
+
+// ; aloadsi
+inline % 95h
+
+  mov  eax, [esp+__arg1]
+
+end
+
+// ; bbox (esi - size, __arg1 - vmt)
+
+inline % 96h
+
   mov  ebx, esi
+  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]
+  ja   short labSkip                      
+  cmp  eax, esp
+  jb   short labSkip
+
+  push eax
   mov  ecx, esi
   add  ebx, page_ceil
   neg  ecx
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  ebx
-  mov  [eax-4], ebx
-
-end
-
-// ; nsave
-inline % 15Dh
-
-  mov  ebx, [esp]
-  mov  ecx, [eax]
-  mov  [ebx], ecx
-
-end
-
-// ; lsave
-inline % 15Eh
-
-  mov  ebx, [esp]
-  mov  ecx, [eax]
-  mov  [ebx], ecx
-  mov  edx, [eax+4]
-  mov  [ebx+4], edx
-
-end
-
-// ; wssave
-// ; in : eax - literal
-// ; out: eax - stack address
-inline % 15Fh
-
-  mov  ecx, [eax-8] 
-  sub  ecx, 3
-  and  ecx, 0FFFFFFF4h
-
-  add  esp, ecx
-  mov  esi, esp
-
-labCopyIn:
-  mov  ebx, [eax]
-  mov  [esi], ebx
-  lea  eax, [eax+4]
+  mov  [eax-4], __arg1
+  pop  esi
+  mov  ebx, eax
+labCopy:
+  mov  edx, [esi]
+  mov  [ebx], edx
   lea  esi, [esi+4]
+  lea  ebx, [ebx+4]
   add  ecx, 4
-  js   short labCopyIn       
+  jnz  short labCopy
 
-  mov  eax, esp
+labSkip:
+
+end
+
+// ; open
+inline % 98h
+
+  push ebp
+  mov  ebp, esp
+
+end
+
+// ; ajumpvi
+
+inline % 0A1h
+
+  mov  esi, [eax - 4]
+  jmp  [esi + __arg1]
+  nop
+  nop
+  nop
+  nop
+
+end
+
+// ; acallvi (ecx - offset to VMT entry)
+inline % 0A2h
+
+  mov  esi, [eax - 4]
+  call [esi + __arg1]
+
+end
+
+// ; callextr
+inline % 0A5h
+
+  call extern __arg1
+  mov  esi, eax
+
+end
+
+// ; hook label (ecx - offset)
+
+inline % 0A6h
+
+  call code : %HOOK
+  push [data : %CORE_EXCEPTION_TABLE]
+  push [data : %CORE_EXCEPTION_TABLE + 4]
+  push [data : %CORE_EXCEPTION_TABLE + 8]
+  mov  [data : %CORE_EXCEPTION_TABLE], ecx
+  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
+  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
   
 end
+                                 
+// ; next
+inline % 0AFh
 
-// ; wsreserve
-// ; in : eax - literal
-// ; out: eax - stack address
-inline % 160h
-
-  mov  ecx, [eax-8] 
-  sub  ecx, 3
-  and  ecx, 0FFFFFFF4h
-
-  add  esp, ecx
-  mov  eax, esp
+  add  esi, 1
+  cmp  esi, ecx
 
 end
 
-// ; bssave
-// ; in : eax - byte array
-// ; out: eax - stack address
-inline % 161h
+// ; pushai
+inline % 0B4h
 
-  mov  ecx, [eax-8] 
-  sub  ecx, 3
-  and  ecx, 0FFFFFFF4h
-  
-  add  esp, ecx
-  mov  esi, esp
-
-labCopyIn:
-  mov  ebx, [eax]
-  mov  [esi], ebx
-  lea  eax, [eax+4]
-  lea  esi, [esi+4]
-  add  ecx, 4
-  js   short labCopyIn       
-
-  mov  eax, esp
-  
-end
-
-// ; bsreserve
-// ; in : eax - byte array
-// ; out: eax - stack address
-inline % 162h
-
-  mov  ecx, [eax-8] 
-  sub  ecx, 3
-  and  ecx, 0FFFFFFF4h
-  
-  add  esp, ecx
-  mov  eax, esp
+  push [eax+__arg1]
 
 end
 
-// ; bsgetlen
-inline % 163h
+// ; dloadfi
 
-  mov  ecx, [eax-8]
-  neg  ecx
-  mov  esi, ecx
+inline % 0B7h
 
-end
-
-// ; bssetlen
-// ; in : eax - object, esi - size
-inline % 164h
-
-  mov ecx, esi
-  neg ecx
-  mov [eax-8], ecx
-  
-end
-
-// ; wsload
-inline % 165h
-
-  pop esi
-  mov ecx, [esi-8] 
-  mov edx, esi
-
-labCopyIn:
-  mov  ebx, [eax]
-  mov  [esi], ebx
-  lea  eax, [eax+4]
-  lea  esi, [esi+4]
-  add  ecx, 4
-  js   short labCopyIn
-
-  mov  eax, edx  
+  mov  esi, [ebp + __arg1]
 
 end
 
-// ; bsload
-// in : eax - stack, [esp] - target
-inline % 166h
+// ; dloadsi
 
-  pop esi
-  mov ecx, [esi-8] 
-  mov edx, esi
+inline % 0B8h
 
-labCopyIn:
-  mov  ebx, [eax]
-  mov  [esi], ebx
-  lea  eax, [eax+4]
-  lea  esi, [esi+4]
-  add  ecx, 4
-  js   short labCopyIn
+  mov  esi, [esp + __arg1]
 
-  mov  eax, edx  
+end
+
+// ; dsavefi
+
+inline % 0B9h
+
+  mov  [ebp + __arg1], esi
+
+end
+
+// ; dsavesi
+
+inline % 0BBh
+
+  mov  [esp + __arg1], esi
 
 end
 
 
-// ; bsgetint
-inline % 167h
+// ; pushf
+inline % 0BDh
 
-  mov  edx, esi            // ; index
-  add  edx, edi            // ; dst + index
-  
-  mov  ebx, [edx]
-  mov  [eax], ebx
-  
-end
-
-// ; ncopyword (src, tgt)
-inline % 168h
-
-  mov  ebx, [eax]
-  and  ebx, 0FFFFh
-  mov  [edi], ebx
-    
-end
-
-// ; loadclass
-inline % 169h
-
-  mov  eax, [edi - elVMTOffset]
+  lea  ebx, [ebp + __arg1]
+  push ebx
 
 end
 
-// ; indexofmsg
-inline % 16Ah
+// ; reserve
+inline % 0BFh
 
-  mov  esi, [eax - elVMTOffset]
-  xor  ebx, ebx
-  mov  ecx, [esi - elVMTSizeOffset]
-labNext:
-  cmp  edx, [esi+ebx*8]
-  jz   short labFound
-  add  ebx, 1
-  sub  ecx, 1
-  jnz  short labNext
-  mov  ebx, -1
-
-labFound:
-  mov   esi, ebx
+  sub  esp, __arg1
+  push ebp
+  push 0
+  mov  ebp, esp
 
 end
 
-// ; wseval
-inline % 16Bh
+// ; asavebi
+inline %0C0h
 
-  mov  edx, edi
-  call code : % LOADSYMBOL
+  mov  esi, edi                     
+  // calculate write-barrier address
+  sub  esi, [data : %CORE_GC_TABLE + gc_start]
+  mov  edx, [data : %CORE_GC_TABLE + gc_header]
+  shr  esi, page_size_order
+  mov  byte ptr [esi + edx], 1  
+
+  mov [edi + __arg1], eax
 
 end
 
-// ; ncall
-inline % 16Ch
+// ; asavesi
+inline % 0C3h
 
-  call [eax]
+  mov  [esp+__arg1], eax
 
 end
 
-// ; lsaveint
-inline % 16Dh
+// ; asavefi
+inline % 0C4h
 
-  mov  ebx, [esp]
-  mov  ecx, [eax]
-  xor  edx, edx
-  mov  [ebx], ecx
-  mov  [ebx+4], edx
+  mov  [ebp+__arg1], eax
+
+end
+
+// ; bloadfi
+
+inline % 0C8h
+
+  mov  edi, [ebp + __arg1]
+
+end
+
+// ; bloadsi
+
+inline % 0C9h
+
+  mov  edi, [esp + __arg1]
+
+end
+
+// ; aloadbi (__arg1 : index)
+
+inline % 0CEh
+
+  mov  eax, [edi + __arg1]
+
+end
+
+// ; axsavebi
+inline %0CFh
+
+  mov [edi + __arg1], eax
+
+end
+
+// ; new (ebx - size, __arg1 - length)
+
+inline % 0F0h
+	
+  mov  ecx, __arg1
+  call code : %GC_ALLOC
+
+  mov  [eax-8], ecx
+
+end
+
+// ; newn (ebx - size, __arg1 - length)
+
+inline % 0F1h
+
+  mov  ecx, __arg1
+  call code : %GC_ALLOC
+
+  mov  [eax-8], ecx
+
+end
+
+// ; selectr (ebx - r1, __arg1 - r2)
+
+inline % 0F6h
+
+  mov    ecx, __arg1
+  test   esi, esi
+  mov    eax, ebx
+  cmovnz eax, ecx
+
+end
+
+// xcallrm (edx contains message, __arg1 contains vmtentry)
+inline % 0FEh
+
+   call code : __arg1
 
 end

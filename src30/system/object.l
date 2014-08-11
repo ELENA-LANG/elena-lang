@@ -1,38 +1,33 @@
-
 // --- super object ---
 
-#class Object
+#class(type:object) Object
 {
-    #method => <redirect>.
-    
+    #method => <dispatch>.
+
+    #method <= <typecast>.
+
     #method equal : anObject
         => &equal &object:anObject.
 
     #method equal &object:anObject
         <object_equal>.
-
-    #method <= &object:$self.
 }
 
 // --- Action wrapper ---
 
-#class Action
+#class(type:action) Action
 {
-    #method <= &action:$self.
 }
 
 // --- Function wrapper ---
 
-#class Function
+#class(type:function) Function
 {
-    #method <= &function:$self.
 }
 
 // --- nil constant ---
 
-#symbol nil =
+#symbol(type:nil) nil =
 {
     clone = $self.
-    
-    <= &nil:$self.
 }.

@@ -3,7 +3,7 @@
 //               
 //		This file contains ELENA Engine Derivation Tree classes
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef derivationH
@@ -80,6 +80,16 @@ public:
       bool operator != (const Node& node) const
       {
          return (this->position != node.position);
+      }
+
+      TerminalInfo FirstTerminal()
+      {
+         TerminalInfo terminal = Terminal();
+         if (terminal == nsNone) {
+            terminal = reader ? firstChild().FirstTerminal() : TerminalInfo();
+         }
+
+         return terminal;
       }
 
       TerminalInfo Terminal()

@@ -19,116 +19,78 @@ enum ObjectKind
    okUnknown = 0,
 
    okExternal,
-   okConstant,
-   okSymbol,
-   okVSelf,
-   okSelf,
+
+   okConstant,                     // param - reference, extraparam - type reference
+   okLiteralConstant,              // param - reference 
+   okIntConstant,                  // param - reference 
+   okLongConstant,                 // param - reference 
+   okRealConstant,                 // param - reference 
+   okConstantSymbol,               // param - reference 
+   okConstantClass,                // param - reference, extraparam - class_reference
+
+   okMessageConstant,
+   okSignatureConstant,
+
+   okSymbol,                       // param - reference
+   okRole,
+   okConstantRole,                 // param - role reference
+   okField,                         // param - field offset
+   okFieldAddress,                  // param - field offset, extraparam - type reference
+   okOuter,                         // param - field offset 
+   okOuterField,                    // param - field offset, extraparam - outer field offset
+   okLocal,                         // param - local / out parameter offset, extraparam - type reference
+   okParam,                         // param - parameter offset, extraparam - type reference
+   okThisParam,                     // param - parameter offset, extraparam - type reference
    okSuper,
-   okField,
-   okOuter,
-   okOuterField,
-   okLocal,
-   okBlockLocal,
-   okCurrent,
-   okRegister,
-   okRegisterField,
-   okCurrentMessage,
-   okLocalAddress,
+   okLocalAddress,                  // param - local offset, extraparam - type reference  
+   okParams,                        // param - local offset
+   okBlockLocal,                    // param - local offset, extraparam - type reference    
+   okCurrent,                       // param - stack offset
+   okAccumulator,                   // extraparam - type reference
+   okAccField,                      // param - field offset
    okBlockLocalAddress,
-   okBlockOuterField,
-   okIndex,
+//   okBlockOuterField,   
+   okIndexAccumulator,
+   okExtraRegister,
+   okBase,
 
    okIdle
-};
-
-enum ObjectType
-{
-   otNone,
-   otControl,
-   otClass,
-   otMessage,
-   otSignature,
-   otRole,
-
-//   otByte,
-   otInt,
-   otIntVar,
-   otLong,
-   otLongVar,
-   otReal,
-   otRealVar,
-   otLiteral,
-   otShort,
-   otShortVar,
-   otByteArray,
-   otArray,
-   otLength,
-   otIndex,
-//   otRef,
-   otParams
 };
 
 struct ObjectInfo
 {
    ObjectKind kind;
-   ObjectType type;
-   ref_t      reference;
+   ref_t      param;
    ref_t      extraparam;
 
    ObjectInfo()
    {
       this->kind = okUnknown;
-      this->type = otNone;
-      this->reference = 0;
+      this->param = 0;
       this->extraparam = 0;
    }
    ObjectInfo(ObjectKind kind)
    {
       this->kind = kind;
-      this->type = otNone;
-      this->reference = 0;
+      this->param = 0;
       this->extraparam = 0;
    }
    ObjectInfo(ObjectKind kind, ObjectInfo copy)
    {
       this->kind = kind;
-      this->type = copy.type;
-      this->reference = copy.reference;
+      this->param = copy.param;
       this->extraparam = copy.extraparam;
    }
-   ObjectInfo(ObjectKind kind, ref_t reference)
+   ObjectInfo(ObjectKind kind, ref_t param)
    {
       this->kind = kind;
-      this->type = otNone;
-      this->reference = reference;
+      this->param = param;
       this->extraparam = 0;
    }
-   ObjectInfo(ObjectKind kind, ObjectType type)
+   ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
    {
       this->kind = kind;
-      this->type = type;
-      this->reference = 0;
-      this->extraparam = 0;
-   }
-   ObjectInfo(ObjectKind kind, ObjectType type, ref_t reference)
-   {
-      this->kind = kind;
-      this->type = type;
-      this->reference = reference;
-      this->extraparam = 0;
-   }
-   ObjectInfo(ObjectKind kind, ObjectType type, ref_t reference, ref_t extraparam)
-   {
-      this->kind = kind;
-      this->type = type;
-      this->reference = reference;
-      this->extraparam = extraparam;
-   }
-   ObjectInfo(ObjectKind kind, ref_t reference, ref_t extraparam)
-   {
-      this->kind = kind;
-      this->type = otNone;
-      this->reference = reference;
+      this->param = param;
       this->extraparam = extraparam;
    }
 };
@@ -181,9 +143,9 @@ class ByteCodeWriter
 
    void compileProcedure(ByteCodeIterator& it, Scope& scope);
    void compileVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-////   void writeAction(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
+//   void writeAction(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
    void compileSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
-////   void writeClassHandler(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
+//   void writeClassHandler(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
    void compileClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 
 public:
@@ -196,10 +158,10 @@ public:
    void declareMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
    void declareGenericMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
    void declareGenericAction(CommandTape& tape, ref_t genericMessage, ref_t message);
-   void exclude(CommandTape& tape, int& level);
+//   void exclude(CommandTape& tape, int& level);
    void declareExternalBlock(CommandTape& tape);
    void declareVariable(CommandTape& tape, ref_t nilReference);
-//   void declareVariable(CommandTape& tape);
+////   void declareVariable(CommandTape& tape);
    void declarePrimitiveVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
@@ -215,34 +177,33 @@ public:
    void declareLocalInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalIntInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalLongInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level);
+//   void declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareStatement(CommandTape& tape);
    void declareBlock(CommandTape& tape);
 
-   void newSelf(CommandTape& tape);
+//   void newSelf(CommandTape& tape);
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
-   void newObject(CommandTape& tape, int fieldCount, ref_t reference, ref_t nilReference);
-   void newDynamicObject(CommandTape& tape, ref_t reference, int sizeOffset, ref_t nilReference);
-   void newByteArray(CommandTape& tape, ref_t reference, int sizeOffset);
-   void newWideLiteral(CommandTape& tape, ref_t reference, int sizeOffset);
 
-//   void pushObject(ByteCodeIterator bookmark, CommandTape& tape, ObjectInfo object);
-   void pushObject(CommandTape& tape, ObjectInfo object);
-   void swapObject(CommandTape& tape, ObjectKind type, int offset);
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
    void loadObject(CommandTape& tape, ObjectInfo object);
-   void selectObject(CommandTape& tape, ObjectInfo object);
-////   void copyPrimitiveValue(CommandTape& type, int value);
+   void pushObject(CommandTape& tape, ObjectInfo object);
    void saveObject(CommandTape& tape, ObjectInfo object);
-   void saveRegister(CommandTape& tape, ObjectInfo object, int fieldOffset);
-   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool registerMode);
+   void popObject(CommandTape& tape, ObjectInfo object);
+
+   void loadBase(CommandTape& tape, ObjectInfo object);
+   void initBase(CommandTape& tape, int fieldCount);
+   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
+
+//   void swapObject(CommandTape& tape, ObjectKind type, int offset);
+//////   void copyPrimitiveValue(CommandTape& type, int value);
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape);
 
-   void popObject(CommandTape& tape, ObjectInfo object);
    void releaseObject(CommandTape& tape, int count = 1);
    void releaseArgList(CommandTape& tape);
 
@@ -252,52 +213,55 @@ public:
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callRoleMessage(CommandTape& tape, int paramCount);
-//   void callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount);
+////   void callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-//   void callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef);
-   void dispatchVerb(CommandTape& tape, int verb, int dispatcherOffset);
-   void extendObject(CommandTape& tape, ObjectInfo info);
+////   void callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef);
+   void typecastVerb(CommandTape& tape, int verb);
+//   void extendObject(CommandTape& tape, ObjectInfo info);
 
-//   void redirectVerb(CommandTape& tape, ref_t message);
+////   void redirectVerb(CommandTape& tape, ref_t message);
    void doGenericHandler(CommandTape& tape, ref_t generic_sign_id);
    void resend(CommandTape& tape);
-   void callBack(CommandTape& tape, int subject_id);
-////   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);
-   void executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code);
-//   void executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code);
+//   void callBack(CommandTape& tape, int subject_id);
+//////   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);
+//   void executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code);
+////   void executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
    int declareLabel(CommandTape& tape);
-//   void compare(CommandTape& tape, ref_t trueRetVal, ref_t falseRetVal);
-//   void jumpIfEqual(CommandTape& tape, ObjectInfo object);
+////   void compare(CommandTape& tape, ref_t trueRetVal, ref_t falseRetVal);
+////   void jumpIfEqual(CommandTape& tape, ObjectInfo object);
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqualN(CommandTape& tape, int value);
-////   void jumpIfNotEqual(CommandTape& tape, ObjectInfo object);
+//////   void jumpIfNotEqual(CommandTape& tape, ObjectInfo object);
    void jump(CommandTape& tape, bool previousLabel = false);
 
-////   void setArrayItem(CommandTape& tape);
+//////   void setArrayItem(CommandTape& tape);
 
    void throwCurrent(CommandTape& tape);
    void breakLoop(CommandTape& tape, int label);
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-   void releaseSelf(CommandTape& tape);
+   void selectConstant(CommandTape& tape, ref_t r1, ref_t r2);
+
+//   void releaseSelf(CommandTape& tape);
 
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
-   bool checkIfFrameUsed(ByteCodeIterator it);
-//   bool checkIfBaseUsed(ByteCodeIterator it);
+//   bool checkIfFrameUsed(ByteCodeIterator it);
+////   bool checkIfBaseUsed(ByteCodeIterator it);
    void commentFrame(ByteCodeIterator it);
-//   void commentBase(ByteCodeIterator it);
+////   void commentBase(ByteCodeIterator it);
 
    void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
    void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
    void endLoop(CommandTape& tape);
-   void endExternalBlock(CommandTape& tape, bool safeMode);
+   void endLoop(CommandTape& tape, ref_t comparingRef);
+   void endExternalBlock(CommandTape& tape);
    void exitGenericAction(CommandTape& tape, int count, int reserved);
    void endGenericAction(CommandTape& tape, int count, int reserved);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
@@ -309,24 +273,30 @@ public:
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
 
-   void copyInt(CommandTape& tape);
-   void copyLong(CommandTape& tape, ObjectInfo target);
-   void copyIntToLong(CommandTape& tape, ObjectInfo target);
-
-   void saveStr(CommandTape& tape, bool onlyAllocate);
-//   void saveDump(CommandTape& tape, bool onlyAllocate);
-   void saveActionPtr(CommandTape& tape);
-   void setStrLength(CommandTape& tape, ObjectInfo target);
-   void setDumpLength(CommandTape& tape, ObjectInfo target);
-   void loadStr(CommandTape& tape);
-//   void loadDump(CommandTape& tape, ObjectInfo source);
-   void loadLiteralLength(CommandTape& tape, ObjectInfo target);
-   void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
-   void loadParamsLength(CommandTape& tape, ObjectInfo target);
-   void loadArrayLength(CommandTape& tape, ObjectInfo target);
-   void getArrayItem(CommandTape& tape);
-   void getObjectItem(CommandTape& tape, ObjectInfo target);
-   void setObjectItem(CommandTape& tape, ObjectInfo target);
+   void assignInt(CommandTape& tape, ObjectInfo target);
+   void assignLong(CommandTape& tape, ObjectInfo target);
+   void assignShort(CommandTape& tape, ObjectInfo target);
+   void saveInt(CommandTape& tape, ObjectInfo target);
+   void copyInt(CommandTape& tape, int offset);
+   void copyShort(CommandTape& tape, int offset);
+   void copyStructure(CommandTape& tape, int offset, int size);
+//   void copyIntToLong(CommandTape& tape, ObjectInfo target);
+////   void saveDump(CommandTape& tape, bool onlyAllocate);
+//   void saveActionPtr(CommandTape& tape);
+//   void setDumpLength(CommandTape& tape, ObjectInfo target);
+//   void loadStr(CommandTape& tape);
+////   void loadDump(CommandTape& tape, ObjectInfo source);
+//   void loadLiteralLength(CommandTape& tape, ObjectInfo target);
+//   void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
+//   void loadParamsLength(CommandTape& tape, ObjectInfo target);
+//   void loadArrayLength(CommandTape& tape, ObjectInfo target);
+   void saveIntConstant(CommandTape& tape, int value);
+   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doLongOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id);
+   void doLiteralOperation(CommandTape& tape, int operator_id);
+   void doArrayOperation(CommandTape& tape, int operator_id);
 
    void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };

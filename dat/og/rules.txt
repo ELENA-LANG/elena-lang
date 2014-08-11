@@ -1,16 +1,20 @@
-pushr   pop    => nop nop;
-pushsi  pop    => nop nop;
-pushfi  pop    => nop nop;
-pop     pop    => nop popi =2;
-popi    pop    => popi +1 nop;
-pop     popi   => nop popi +1;
-pusha   popa   => nop nop;
-pushr   popa   => acopyr nop;
-pushbi  popa   => aloadbi nop;
-pushn asavesi :=0 => pusha nop;
-pusha mcopy breakpoint aloadsi :=0 => pusha mcopy breakpoint nop;
-asavesi := 0 mcopy breakpoint aloadsi :=0 => asavesi mcopy breakpoint nop;
+pusha copym aloadsi :=0 => pusha copym nop;
+pushn asavesi := 0 => pusha nop;
+pushn aloadfi asavesi := 0 => nop aloadfi pusha;
+pushn acopyr asavesi := 0 => nop acopyr pusha;
+asavesi := 0 copym aloadsi :=0 => asavesi copym nop;
+acopyb acopyf => nop acopyf;
+acopyb aloadfi => nop aloadfi;
+acopyr aloadfi => nop aloadfi;
+acopyb bcopya => acopyb nop;
+pushr popb => bcopyr nop;
+pushr popa => acopyr nop;
+pushfi popb => bloadfi nop;
+pushfi popa => aloadfi nop;
+pushsi popb => bloadsi nop;
+pushsi popa => aloadsi nop;
+asavesi := 1 aloadsi := 1 => asavesi nop;
+pushfi pop => nop nop;
 
-// m : x = x m2
-pushb bcopya open breakpoint aloadfi := -2 pusha mcopy breakpoint acallvi breakpoint close popb quitn =>
-             nop nop nop breakpoint aloadsi = 2 pusha mcopy breakpoint acallvi breakpoint nop nop quitn;
+// m = $self
+open pusha aloadfi := 1 close quitn => nop nop nop nop quitn;

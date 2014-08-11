@@ -440,7 +440,9 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
       void* classClassVAddress = getVMTAddress(sectionInfo.module, classClassRef, references);
 
       // arrange VMT
-      _compiler->compileVMT(vaddress, vmtWriter, header, count, classClassVAddress, _virtualMode);
+      _compiler->compileVMT(vaddress, vmtWriter, 
+         refHelper.resolveMessage(encodeMessage(header.typeRef, 0, 0)),
+         count, header.flags, classClassVAddress, _virtualMode);
    }
 
    return vaddress;
@@ -483,7 +485,7 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
    else constantValue = false;
 
    // get constant VMT reference
-   void* vmtVAddress = resolve(vmtReference, mskVMTRef, /*true*/false);
+   void* vmtVAddress = resolve(vmtReference, mskVMTRef, true);
 
    // HOTFIX: if the constant is referred by iself it could be already resolved
    void* vaddress = _loader->resolveReference(reference, mask);
@@ -515,6 +517,35 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
    else if (mask == mskRealRef) {
       _compiler->compileReal64(&writer, StringHelper::strToDouble(value));
    }
+   else if (vmtVAddress == LOADER_NOTLOADED) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef);
+      _compiler->compileBinary(&writer, sectionInfo.section);
+
+      // resolve section references
+      _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+      ref_t currentMask = 0;
+      ref_t currentRef = 0;
+      while (!it.Eof()) {
+         currentMask = it.key() & mskAnyRef;
+         currentRef = it.key() & ~mskAnyRef;
+
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+         if (*it == -4) {
+            // resolve the constant vmt reference
+            vmtVAddress = refVAddress;
+         }
+         else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+
+         it++;
+      }
+
+      constantValue = true;
+   }
+
+   if (vmtVAddress == LOADER_NOTLOADED)
+      throw JITUnresolvedException(reference);
 
    // check if the class could be constant one
    if (!constantValue) {

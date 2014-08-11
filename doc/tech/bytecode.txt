@@ -1,78 +1,65 @@
-
 ELENA byte codes (or ecodes)
 ============================
 
  ELENA virtual machine registers:
 
-   f(p)   - frame pointer  (positive values - pointing to the current frame, 
-                            negative - to the previous frame)
-   s(p)   - stack pointer  (only positive)
+   f(p)   - frame pointer     (positive values - pointing to the current frame, 
+                               negative - to the previous frame)
+   s(p)   - stack pointer     (only positive)
 
-   a(cc)  - accumulator
+   a(cc)  - accumulator       (object register) 
 
-   m(cc)  - message accumulator
+   b(ase) - base              (object register) 
 
-   b(ase) -  self
+   d(ex)  - index             (data register) 
+   
+   e(xt)  - length / message  (data register) 
 
-   d(ex)  - index
-
+   
  Legend:
    a   - accumulator
    b   - self
    d   - index
+   l   - length
    r   - reference
    i   - index  
-   m   - message 
+   m   - message
    n   - int
-   l   - long
-   rl  - real
-   ws  - wideliteral
+   q   - long
+   f   - real
+   w   - short
 
  
  stack commands:
  ---------------
  pop                        - sp--; 
-                              should not affect the command result;
-                              should not affect the message prefix;
-                              x86: should not change EAX
  
  popa                       - acc <= [sp] ; sp--
- 
- popai i                    - [acc::i] <= [sp] ; sp--;
-                              use GC reference bit masks
 
- popb                       - restore the last self variable;
+ popb                       - base <= [sp] ; sp--
  
- popbi i                    - [self::i] <= [sp] ; sp-- ;
-                               use GC reference bit masks
- 
- popfi i                    - [fp+i] <= [sp] ; sp--
-
  popi n                     - sp-=i; 
-                              should not affect the command result;
-                              should not affect the message prefix;
-                              x86: should not change EAX
  
- popm                       - mcc <= [sp] ; sp--
+ pope                       - ext <= [sp] ; sp--
  
- popsi i                    - [sp+i] <= [sp] ; sp--
-
+ popd                       - index <= [sp] ; sp--
+ 
  pusha                      - acc => [sp+1] ; sp++                  
     
  pushai i                   - [acc::i] => [sp+1] ; sp++
  
- pushb                      - self => [sp+1] ; sp++
+ pushb                      - base => [sp+1] ; sp++
  
- pushbi i                   - [self::i] => [sp+1] ; sp++ ;
+ pushbi i                   - [base::i] => [sp+1] ; sp++ ;
  
  pushf i                    - fp+i => [sp+1] ; sp++
  
  pushfi i                   - [fp+i] => [sp+1] ; sp++
 
- pushm                      - mcc => [sp+1] ; sp++;
+ pushe                      - ext => [sp+1] ; sp++;
 
- pushsubj                   - mcc:subject => [sp+1] ; sp++; 
- 
+ pushd                      - index => [sp+1] ; sp++;
+
  pushn n                    - n  => [sp+1] ; sp++
  
  pushr r                    - r  => [sp+1] ; sp++
@@ -83,27 +70,26 @@ ELENA byte codes (or ecodes)
                               should follow "open" byte code
  
  swapsi   i                 - [sp+i] <=> [sp]
- 
- xpopai                     - [acc:i] <= [sp] ; sp-- ;
-                              direct operation       
 
  register commands:
  ------------------            
- acopyb                     - self => acc
+ acopyb                     - base => acc
  
  acopyf i                   - fp+i => acc
-                              does not affect m register (EDX)           
+                              does not affect ext register (ECX)           
  
  acopyr r                   - r => acc
 
+ bcopyr r                   - r => base
+
  acopys i                   - sp+i => acc
-                              does not affect m register (EDX)           
+                              does not affect ext register (ECX)
  
  aloadai i                  - [acc::i] => acc
  
- aloadbi i                  - [self::i] => acc
-
- aloadd                     - [acc::index] => acc
+ aloadbi i                  - [base::i] => acc
+ 
+ aload                      - [acc::index] => acc
           
  aloadfi i                  - [fp+i] => acc
 
@@ -111,9 +97,6 @@ ELENA byte codes (or ecodes)
 
  aloadsi i                  - [sp+i] => acc;
                                does not affect m register (EDX)
- 
- asavebi i                  - [self::i] <= acc;
-                               use GC reference bit masks
  
  asavefi i                  - [fp+i] <= acc 
  
@@ -123,65 +106,71 @@ ELENA byte codes (or ecodes)
 
  aswapsi i                  - [sp+i] <=> acc
  
- bcopya                     - acc => self
+ bswap                      - a <=> b
+
+ eswap                      - index <=> ext
+
+ axsavebi i                 - [base::i] <= acc;
+                               direct
+ 
+ bcopya                     - acc => base
           
- bloadfi i                  - [fp+i] => self
+ bcopyf i                   - fp+i => base
+                              does not affect ext register (ECX)           
  
- daddai i                   - index += [acc:i]
- 
- daddsi n                   - d << d + [sp:i]
+ bloadfi i                  - [fp+i] => base
 
+ bloadsi i                  - [sp+i] => base
+
+ add                        - index += ext
+
+ addn n                     - index += n
+
+ or                         - index |= ext
+  
+ andn n                     - index && n => index
+ 
  dcopy i                    - i => index
- 
- ddec                       - index--
 
- dinc                       - index++
+ dcopye                     - index << ext
  
- dloadai i                  - [acc:i] => index
+ dec                        - index--
+
+ inc                        - index++
  
  dloadfi i                  - [fp:i] => index
 
  dloadsi i                  - [sp:i] => index
  
- dsaveai i                  - [acc:i] <= index ;
-                              direct operation      
- 
  dsavefi i                  - [fp:i] <= index
 
  dsavesi i                  - [sp:i] <= index
-
- dsubai i                   - index -= [acc:i]
+ 
+ sub                        - index -= ext
  
  dsubsi n                   - d << d - [sp:i]
- 
- maddai i                   - mcc + acc:i => mcc
 
- mcopy                      - m => mcc
- 
- mcopysubj                  - mcc:subj => mcc
- 
- mcopyverb                  - mcc:verb => mcc
- 
- mloadai i                  - acc:i => mcc
+ ecopy i                    - i => ext
 
- mloadfi i                  - [fp+i] => mcc
+ ecopyd                     - ext << index
+ 
+ dcopym m                   - index << message
 
- mloadsi i                  - [sp+i] => mcc
+ dcopyverb                  - index << ext.verb
+ 
+ dcopysubj                  - index << ext.verb
+ 
+ dcopycount                  - index << ext.paramcount
+ 
+ ecopym m                   - ext << message
+ 
+ setverb m                  - ext.verb << m
 
- msaveai                    - mcc => [acc:i]
- 
- msaveparams i              - copy the message parameters;
-                              [fp+i]::mcc.param => [sp+1] ; sp++;
-                              
- msetverb m                 - m.verb + mcc.subj + m.param_count => mcc
- 
- msetsubj m                 - m.subj + mcc.verb + mcc.param_count => mcc
- 
- mreset m                   - m + mcc.param_count => mcc
+ setsubj m                  - ext.subject << m
 
  scopyf i                   - sp <= fp + i
- 
- 
+
+
  control commands:
  -----------------                     
  breakpoint                 - used for debugging
@@ -200,20 +189,23 @@ ELENA byte codes (or ecodes)
                               it should be only one command per procedure ; 
 
  restore n                  - remove the excluded stack
+ 
+ saveparams i               - copy the message parameters;
+                              [fp+i]::ext.param => [sp+1] ; sp++;
 
  
  calling commands:
  -----------------  
  acallvi i                  - call acc::VMT[i] method
 
- bsredirect                 - search acc::VMT for the message in m;
+ bsredirect                 - search acc::VMT for the message in ext;
                               if found jumps to it; binary search is used
                               
- bsgredirect                - foreach o in acc -> search o::VMT for the message in m;
+ bsgredirect                - foreach o in acc -> search o::VMT for the message in ext;
                               if found jumps to it; if not - goes to the next member
                               binary search is used
   
- callextr r                 - calls the external procedure
+ callextr r                 - calls the external procedure ; index contains the result
               
  callr r                    - calls the procedure;
                               acc contains the result
@@ -221,10 +213,8 @@ ELENA byte codes (or ecodes)
  evalr r                    - evaluate a reference ; if r is a symbol reference
                               symbol code is executed ; acc contains the result
  
- mquit                      - terminates the procedure ; clear the stack parameters, based
-                              on mcc value
-
- scallvi i, n               - redirect to [sp+i]::VMT[n] method
+ equit                      - terminates the procedure ; clear the stack parameters, based
+                              on ext
  
  quit                       - terminates the procedure;
                               
@@ -237,57 +227,41 @@ ELENA byte codes (or ecodes)
 
  branching commands:
  ------------------- 
- aelse label                - jumps to the label if acc == 0
-
- aelser r, label            - jumps to the label if acc != r
-
- aelsesi i, label           - jumps to the label if acc != [sp+i]
-
  ajumpvi i                  - redirect to acc::VMT[i] method
 
- athen label                - jumps to the label if acc != 0
- 
- athenr r, label            - jumps to the label if acc == r
- 
- athensi i, label           - jumps to the label if acc == [sp+i]
-
- bstest labErr               - 0 < index < buf:acc.Length
- 
- delse label                - jumps to the label if index == 0
- 
- delsen n, label            - jumps to the label if index != n
- 
- dthen label                - jumps to the label if index != 0
- 
- dthenn n, label            - jumps to the label if index == n
-  
- elseflag f, label           - jumps to the label if acc.vmt.flag & f != f
- 
  jumpr address              - jumps to the address
 
  jump label                 - jumps to the label
 
- melse m, label             - jumps to the label if mcc != m
+ ifr r, label               - jumps to the label if acc == r
+ 
+ elser r, label             - jumps to the label if acc != r
+ 
+ ifb label                  - jump to the label if acc == base
+ 
+ elseb label                - jump to the label if acc != base
+ 
+ if label                   - jump to the label if index == ext                                                   
 
- melseai i, label           - jumps to the label if mcc != acc[i]
+ else label                 - jump to the label if index != ext
  
- melseverb m, label         - jumps to the label if mcc.verb != m
+ less label                 - jump to the label if index < ext
  
- mthen m, label             - jumps to the label if mcc == m
+ notless label              - jump to the label if index >= ext
  
- mthenai i, label           - jumps to the label if mcc == acc[i]
+ ifn n, label               - jump to the label if index == n
+ 
+ elsen n, label             - jump to the label if index != n
+ 
+ lessn n, label             - jump to the label if index < n
+ 
+ ifm n, label               - jump to the label if ext == m
+ 
+ elsem n, label             - jump to the label if ext != m
+ 
+ next label                 - index++; if index < ext, jump to the label
 
- mthenverb m, label         - jumps to the label if mcc.verb == m
- 
- next  i, label             - index++; jumps to the label if index < i
- 
- test labErr                 - if not 0 < index < acc.Length, jump to the label
- 
- testflag f, label           - jumps to the label if acc.vmt.flag & f == f
- 
- wstest labErr               - 0 < index < str:acc.Length
- 
-
+                                                                      
  exception handling:
  --------------- 
  hook label                 - assign a new exception handler
@@ -296,272 +270,190 @@ ELENA byte codes (or ecodes)
 
  unhook                     - remove the current exception handler
 
+                                                                      
+ class handling:
+ --------------- 
+ type                        - acc::VMT::type >> index
+
+ flag                        - acc::VMT::flag >> index 
+
  
  memory managing commands:
  -------------------------
- box vmt                     - if acc is local box its content into the object with vmt and size index
-
- bscreate                    - create the byte array with size=index and vmt=acc, out : acc  
-
- create i, vmt               - create the object with the specified
+ new vmt, i                  - create the object with the specified
                                number of fields;
                                out: acc contains the class instance
+                               
+ newn vmt, n                 - create the binary object with the specified size ;
+                               out: acc contains the class instance
 
- createn n, vmt              - create the binary object with the 
-                               specified size ; acc contains the class instance
-
- nbox vmt                    - if acc is local box its content into the object with vmt and size index
+ bcreate                     - create the object with size=index and vmt=acc, out : acc  
  
- refcreate                   - create the object with size=index and vmt=acc, out : acc  
-
- unbox                       - copy acc content into the stack where index=size
-
- wscreate                    - create the object with size=index and vmt=acc, out : acc  
+ ncreate                     - create the object with size=index*4 and vmt=acc, out : acc  
+ 
+ wcreate                     - create the object with size=index*2 and vmt=acc, out : acc  
+ 
+ create                      - create the object with length=index and vmt=acc, out : acc  
+ 
+ count                       - [acc].Count >> index ;
  
 
  data manipulating commands:
  -----------------  
- axcopyr r                   - r => [acc::index]                              
-                               ; direct
- 
- get                         - acc <= self[index] ;
+ get                         - acc <= base[index] ;
 
- iaxcopyr i, r               - r => [acc::i]               
-                               ; direct
+ set                         - acc => base[index] ;
 
- iaxloadb i                  - self => [acc::i]
-                               ; direct
-                                
- iaxloadbi i1, i2            - [self::i1] => [acc::i2]
-                               ; direct
+ asavebi i                  - [base::i] <= acc;
+                               use GC reference bit masks
+ 
+ xset                       - acc => base[index] ;
+                              ; direct
+ 
+ nsave                      - int[base] << index
+ 
+ wsave                      - literal[base][index] << short(ext)
+ 
+ nload                      - int[acc] >> index
 
- iaxloadfi i1, i2            - [fp+i1] => [acc::i2]
-                               ; direct
-                               
- iaxloadsi i1, i2            - [sp+i1] => [acc::i2]
-                               ; direct
+ copy                       - base << acc, base.Length
 
- set                         - acc => self[index] ;
+ clone                      - base[i] << acc[i], base.Length
 
- memory managing commands:
- -------------------------
+ ncopy                      - int[base] << int[acc]
 
+ save                       - bytearray[base][index] << ext
 
- data manipulating commands:
- -----------------
-          
- extension commands:
- -----------------
- indexofmsg                  - search for mcc in acc:VMT; out: index or -1
+ load                       - bytearray[base][index] >> ext
+ 
+ loadw                      - [short]bytearray[base][index] >> [short]ext
+ 
+ wload                      - [short]shortarray[base][index] >> [short]ext
 
- ncopy                       - int:self << int:acc
+ selectr r1, r2             - acc = (index = 0 ? r1 : r2)
+ 
+ 
+ int commands:
+ -------------
+ nequal                     - int[acc] == int[base] ; if true - index = 1, if false - index = 0
 
- ncopyword                   - int:self << word:acc
+ nless                      - int[acc] < int[base] ; if true - index = 1, if false - index = 0
+ 
+ nadd                       - int[base] += int[acc]
+ 
+ nsub                       - int[base] -= int[acc]
+ 
+ nmul                       - int[base] *= int[acc]
+ 
+ ndiv                       - int[base] /= int[acc]
+ 
+ nand                       - int[base] && int[acc]
+ 
+ nor                        - int[base] || int[acc]
+ 
+ nxor                       - int[base] ~~ int[acc]
 
- ncopystr                    - int:self << str:acc, index = radix, convert to int; out: acc=self, index = 0 if failed
+ wton                       - converts literal[acc] into int with base=index and copies to int[base] ; out index = 0 if error 
  
- nload                       - int:[sp] >> int:acc
-
- nsave                       - int:[sp] << int:acc
-
- nequal                      - int(acc) == int([sp]) ? index=1 : index=0
-                                                                                         
- nless                       - int(acc) < int([sp]) ? index=1 : index=0
-
- nnotgreater                 - int(acc) <= int([sp]) ? index=1 : index=0
+ nshift                     - int[base] <<= index
  
- nadd                        - int(acc) += int([sp])                  
+ nnot                       - int[base] << not int[acc]
 
  
- nsub                        - int(acc) -= int([sp])
- 
- nmul                        - int(acc) *= int([sp])
- 
- ndiv                        - int(acc) /= int([sp])
-                                
- nand                        - int(acc) && int([sp]) => [acc]
- 
- nor                         - int(acc) || int([sp]) => [acc]
- 
- nxor                        - int(acc) ^^ int([sp]) => [acc] 
+ long commands:
+ -------------
+ lcopy                      - long[base] << long[acc]
 
- nshift                      - acc <<= index
+ lcopyn                     - long[base] << int[acc]
 
- nnot                        - ~int(acc) >> acc
- 
- ninc                        - int(acc)++
+ lequal                     - long[acc] == long[base] ; if true - index = 1, if false - index = 0
 
- lcopy                       - long:self << long:acc
+ lless                      - long[acc] < [base] ; if true - index = 1, if false - index = 0
+ 
+ lshift                     - long[base] <<= index
+ 
+ lnot                       - long[base] << not long[acc]
+ 
+ ladd                       - long[base] += long[acc]
+ 
+ lsub                       - long[base] -= long[acc]
+ 
+ lmul                       - long[base] *= long[acc]
+ 
+ ldiv                       - long[base] /= long[acc]
+ 
+ land                       - long[base] && long[acc]
+ 
+ lor                        - long[base] || long[acc]
+ 
+ lxor                       - long[base] ~~ long[acc]
+ 
+ wtol                       - converts literal[acc] into long with base=index and copies to int[base] ; out index = 0 if error
 
- lcopyint                    - long:self << int:acc
  
- lcopystr                    - long:self << str:acc, index = radix, convert to long; out: acc=self, index = 0 if failed
+ float commands:
+ -----------------  
+ rcopy                      - real[base] << real[acc]
 
- lload                       - long:[sp] >> long:acc
+ rcopyn                     - real[base] << int[acc]
 
- loadclass                   - self:VMT >> acc
+ rcopyl                     - real[base] << long[acc] 
 
- lsave                       - long:[sp] << long:acc
+ requal                     - real[acc] == real[base] ; if true - index = 1, if false - index = 0
 
- lsaveint                    - long:[sp] << int:acc
+ rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
+ 
+ radd                       - real[base] += real[acc]
+ 
+ rsub                       - real[base] -= real[acc]
+ 
+ rmul                       - real[base] *= real[acc]
+ 
+ rdiv                       - real[base] /= real[acc]
+ 
+ wtor                       - converts literal[acc] into real with base=index and copies to int[base] ; out index = 0 if error
+ 
 
- lequal                      - long(acc) == long([sp]) ? index=1 : index=0
+ literal commands:
+ -----------------  
+ wequal                     - literal[acc] == literal[base] ; if true - index = 1, if false - index = 0
  
- lless                       - long(acc) < long([sp]) ? index=1 : index=0
-                                                                                                                                                     
- lnotgreater                 - long(acc) <= long([sp]) ? index=1 : index=0
+ wless                      - literal[acc] < literal[base] ; if true - index = 1, if false - index = 0
  
- ladd                        - long(acc) += long([sp])
- 
- lsub                        - long(acc) -= long([sp])
- 
- lmul                        - long(acc) *= long([sp])
- 
- ldiv                        - long(acc) /= long([sp])
+ wlen                       - [acc].Length / 2 >> index
+                                                   
+ winsert                    - short[acc+i] >> short[base+index+i] ; i++ ; i < ext
 
- land                        - long(acc) && long([sp]) => [acc]
- 
- lor                         - long(acc) || long([sp]) => [acc]
- 
- lxor                        - long(acc) ^^ long([sp]) => [acc]
+ wsubcopy                   - short[acc+index+i] >> short[base+i] ; i++ ; i < ext
 
- lnot                       - ~long:acc >> acc
+ wadd                       - short[base+index] << short[acc+ext] ; index++, ext++ ; ext < literal[acc].length
+   
+ ntow                       - converts int[acc] into literal with base=index and copies to literal[base] 
  
- lshift                      - acc <<= index
+ ltow                       - converts long[acc] into literal with base=index and copies to literal[base]
  
- rcopy                       - real:self << real:acc
+ rtow                       - converts real[acc] into literal with base=index and copies to literal[base]
  
- rcopyint                    - real:self << int:acc
- 
- rcopylong                   - real:self << long:acc
- 
- rcopystr                    - real:self << str:acc, convert to real; out: acc=self, index = 0 if failed
- 
- requal                      - long(acc) == long([sp]) ? index=1 : index=0
- 
- rless                       - long(acc) < long([sp]) ? index=1 : index=0
+ wseek                      - search for string[acc] in string[base] starting from index ; out - index first occ, or -1
 
- rnotgreater                 - long(acc) <= long([sp]) ? index=1 : index=0
  
- radd                        - real(acc) += real([sp])
+ byte array commands:
+ -----------------    
+ bbox vmt                   - if acc is local box its content into the object with vmt and size index
  
- rsub                        - real(acc) -= real([sp])
- 
- rmul                        - real(acc) *= real([sp])
- 
- rdiv                        - real(acc) /= real([sp])
- 
- raddint                     - real(acc) += int([sp])
- 
- rsubint                      real(acc) -= int([sp])
- 
- rmulint                     - real(acc) *= int([sp])
- 
- rdivint                     - real(acc) /= int([sp])
- 
- raddlong                    - real(acc) += long([sp])
- 
- rsublong                    - real(acc) -= long([sp])
- 
- rmullong                    - real(acc) *= long([sp])
- 
- rdivlong                    - real(acc) /= long([sp])
- 
- wsgetlen                    - str(acc).Length >> index
- 
- wssetlen                    - str(acc).Length << index
+ len                        - [acc].Length >> index ; where acc is a object
 
- wscopy                      - self << str:acc
+ insert                     - copy acc content to base, at index, ext times, at the end - index += ext
  
- wscopyint                   - convert int(acc) with base=index into ws(self)
+ ninsert                    - copy acc content to base, at index*4, ext*4 times, at the end - index += ext, aligned by 4
+ 
+ insertn n1,n2              - copy acc content to base, at n1, n2 times
+  
+ ninsertn n1,n2             - copy acc content to base, at n1*4, n2*4 times
 
- wscopylong                  - convert long(acc) with base=index into ws(self)
- 
- wscopyreal                  - convert real(acc) with len=index into ws(self)
- 
- wscopybuf                   - self << buf(acc:[sp], index) convert utf8 to utf16
+ subcopy                    - byte[acc+index+i] >> byte[base+i] ; i++ ; i < ext
 
- wssave                      - save str(acc) in the stack; out : acc - reference to saved
+ nsubcopy                   - int[acc+index+i] >> int[base+i] ; i++ ; i < ext
 
- wsreserve                   - allocate the space for acc=widestr
-
- wsequal                     - str(acc) == str([sp]) ? index=1 : index=0
- 
- wsless                      - str(acc) < str([sp]) ? index=1 : index=0
- 
- wsnotgreater                - str(acc) <= str([sp]) ? index=1 : index=0
- 
- wsadd                       - self += ws(acc)
- 
- wsgetat                     - str:acc[index] >> short:[sp]
- 
- wssetat                     - str:self[index] << acc
-
- wsindexofstr                - search for str=[sp] in acc starting with index, out: index or -1
-
- wscopystr                   - self << str(acc:[sp], index)
- 
- wsaddstr                    - self += str(acc:[sp], index)
- 
- wsloadname                  - str(self) << acc.VMT.ClassName (only for VM client), max length = index ; out : eax, index - the actual size
-
- wseval                      - load symbol by name into acc ; str(self) => acc
- 
- wsload                      - load acc content into [sp]
- 
- bsload                      - load acc content into [sp]
-
- bssave                      - save acc=bytes in the stack, out : acc - reference to saved
-
- bsreserve                   - allocate the space for acc=bytearray 
-
- bssetbuf                    - (self:[sp], index) << acc
- 
- bsgetbuf                    - (self:[sp], index) >> acc
- 
- bscopystr                   - self << str(acc:[sp], index)
- 
- bssetword                   - self:index << word(acc)
- 
- bsgetword                   - self:index >> word(acc)
- 
- bsindexof                   - search for byte=acc in (self:index, [sp]), out: index or -1
-
- bsindexofword               - search for byte=acc in (self:index, [sp]), out: index or -1
-
- bseval                      - executes VM Script tape in self, acc contains the result
- 
- bssetlen                    - bytes(acc).Length << index
-
- bsgetlen                    - bytes(acc).Length >> index
-
- getlen                      - acc.Length >> index
- 
- lrndnew                     - random number init >> long(self)
- 
- lrndnext                    - long(self) : index >> acc
- 
- rabs                        - self << abs(real:acc)
-
- rround                      - self << round(real:acc)
-
- rexp                        - self << exp(real:acc)
-                                                                                                     
- rln                         - self << ln(real:acc)
- 
- rint                        - self << int(real:acc)
- 
- rcos                        - self << cos(real:acc)
- 
- rsin                        - self << sin(real:acc)
- 
- rarctan                     - self << argtan(real:acc)
- 
- rsqrt                       - self << sqrt(real:acc)
- 
- rpi                         - self << pi
-                                                                                                      
- refgetlenz                  - params(acc).length >> index
-
- ncall                       - call symbol:acc
- 
+ xseek                      - search for ext in base, starting from index ; out - index first occ ; unsafe command - length is not checked
+                                                                                                                           

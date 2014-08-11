@@ -14,129 +14,56 @@
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", "pushb", "pop", "unknown", "pushm", "mcopyverb", "throw",
-   "pushsubj", "mcopysubj", "pusha", "popa", "acopyb", "popm", "bsredirect", "unbox",
+   "nop", "breakpoint", "pushb", "pop", "unknown", "pushe", "dcopyverb", "throw",
+   "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
-   "bsgredirect", "getlen", "bcopya", "ddec", "popb", "close", "unknown", "quit",
-   "get", "set", "dinc", "mquit", "aloadd", "unhook", "exclude", "include",
+   "unknown", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
+   "get", "set", "inc", "equit", "aload", "unhook", "add", "create",
 
-   "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "unknown",
-   "unknown", "msaveparams", "pushsi", "unknown", "unknown", "pushf", "unknown", "unknown",
+   "ecopyd", "dcopye", "pushd", "popd", "unknown", "unknown", "unknown", "unknown",
+   "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "popi", "popbi", "popfi", "xpopai", "popsi", "popai", "unknown", "unknown",
-   "unknown", "quitn", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "type", "len", "wlen", "flag", "unknown", "unknown", "unknown", "unknown",
+   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "clone", "unknown",
 
-   "callextr", "evalr", "acallvi", "callr", "reserve", "unknown", "mresetsubj", "mloadai",
-   "mloadsi", "mloadfi", "msaveai", "msetverb", "mreset", "maddai", "mcopy", "msetsubj",
+   "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
+   "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "unknown",
 
-   "dloadsi", "dsavesi", "dloadfi", "aloadr", "aloadfi", "aloadsi", "dcopy", "dloadai",
-   "bloadfi", "daddai", "dsubai", "daddsi", "dsubsi", "dsavefi", "unknown", "unknown",
+   "wequal", "wless", "wload", "winsert", "ntow", "ltow", "rtow", "wseek",
+   "wsave", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",
 
-   "unknown", "asavebi", "unknown", "asavesi", "asavefi", "asaver", "unknown", "dsaveai",
-   "unknown", "unknown", "unknown", "unknown", "swapsi", "aswapsi", "axcopyr", "iaxloadb",
+   "loadw", "load", "insert", "ninsert", "xseek", "unknown", "unknown", "unknown",
+   "unknown", "save", "subcopy", "nsubcopy", "unknown", "unknown", "unknown", "bcreate",
 
-   "unknown", "unknown", "scopyf", "unknown", "unknown", "acopys", "unknown", "unknown",
-   "acopyr", "unknown", "aloadai", "unknown", "acopyf", "unknown", "unknown", "unknown",
+   "lcopy", "lcopyn", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
+   "land", "lor", "lxor", "lshift", "lnot", "wtol", "unknown", "unknown",
 
-   "unknown", "unknown", "restore", "unknown", "unknown", "unknown", "unknown", "unknown",
-   "open", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "rcopy", "rcopyl", "rcopyn", "requal", "rless", "radd", "rsub", "rmul",
+   "rdiv", "wtor", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+
+   "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "bbox", "unknown",
+   "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
+
+   "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "unknown",
+   "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
+
+   "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",
+   "dloadsi", "dsavefi", "pushsi", "dsavesi", "unknown", "pushf", "unknown", "reserve",
+
+   "asavebi", "unknown", "unknown", "asavesi", "asavefi", "unknown", "unknown", "unknown",
+   "bloadfi", "bloadsi", "unknown", "unknown", "asaver", "aloadai", "aloadbi", "axsavebi",
+
+   "popi", "unknown", "scopyf", "setverb", "setsubj", "andn", "addn", "unknown",
+   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
-   "jump", "ajumpvi", "unknown", "unknown", "unknown", "unknown", "hook", "delse",
-   "dthen", "aelse", "athen", "unknown", "unknown", "unknown", "unknown", "unknown",
-
-   "nbox", "box", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
-
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "aloadbi", "unknown",
-
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
-   "unknown", "unknown", "unknown", "unknown", "unknown", "bstest", "test", "wstest",
-
-   "aelser", "athenr", "melse", "mthen", "delsen", "dthenn", "aelsesi", "athensi",
-   "melseverb", "mthenverb", "melseai", "mthenai", "elseflag", "testflag", "unknown", "next",
-
-   "create", "createn", "iaxcopyr", "iaxloadfi", "iaxloadsi", "iaxloadbi", "unknown", "unknown",
-   "unknown", "unknown", "unknown", "unknown", "scallvi", "unknown", "xcallrm", "unknown",
-};
-
-const char* _fnExtensions[EXTENSION_COUNT] =
-{
-   "unknown", "ncopy", "ncopystr", "nload", "nequal", "nless", "nnotgreater", "nadd", "nsub", "nmul",
-   "ndiv", "nand", "nor", "nxor", "nshift", "nnot", "ninc", 
-   "lcopy", "lcopyint", "lcopystr", "lload", "lequal", "lless", "lnotgreater", "ladd", "lsub", "lmul",
-   "ldiv", "land", "lor", "lxor", "lnot", "lshift", 
-   "rcopy", "rcopyint", "rcopylong", "rcopystr", "requal", "rless", "rnotgreater", "radd", "rsub", "rmul",
-   "rdiv", "raddint", "rsubint", "rmulint", "rdivint", "raddlong", "rsublong", "rmullong", "rdivlong",
-   "wsgetlen", "wssetlen", "wscreate", "wscopy", "wscopyint", "wscopylong", "wscopyreal", "wscopybuf",
-   "wsequal", "wsless", "wsnotgreater", "wsadd", "wsgetat", "wssetat", "wsindexofstr", "wscopystr", 
-   "wsaddstr", "wsloadname", "bssetbuf", "bsgetbuf", "bscopystr", "bssetword", "bsgetword", "bsindexof",
-   "bsindexofword", "bseval", "lrndnew", "lrndnext", "rabs", "rround", "rexp", "rln", "rint", "rcos",
-   "rsin", "rarctan", "rsqrt", "rpi", "refgetlenz", "refcreate", "bscreate", "nsave", "lsave", "wssave",
-   "wsreserve", "bssave", "bsreserve", "bsgetlen", "bssetlen", "wsload", "bsload", "bsgetint", "ncopyword",
-   "loadclass", "indexofmsg", "wseval", "ncall", "lsaveint"
+   "new", "newn", "unknown", "unknown", "unknown", "unknown", "selectr", "lessn",
+   "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
 };
 
 using namespace _ELENA_;
-
-// --- help functions ---
-inline bool IsJump(ByteCode code)
-{
-   switch(code) {
-      case bcJump:
-      case bcNext:
-      case bcAElse:
-      case bcAThen:
-      case bcWSTest:
-      case bcBSTest:
-      case bcTest:
-      case bcDElse:
-      case bcDThen:
-      case bcDElseN:
-      case bcDThenN:
-      case bcAElseR:
-      case bcAThenR:
-      case bcMElse:
-      case bcMThen:
-      case bcMElseVerb:
-      case bcMThenVerb:
-      case bcAElseSI:
-      case bcAThenSI:
-      case bcMElseAI:
-      case bcMThenAI:
-      case bcElseFlag:
-      case bcTestFlag:
-         return true;
-      default:
-         return false;
-      }
-}
-
-bool IsRCode(ByteCode code)
-{
-   switch(code) {
-      case bcPushR:
-      case bcEvalR:
-      case bcCallR:
-      case bcALoadR:
-      case bcASaveR:
-      case bcAXCopyR:
-      case bcACopyR:
-      case bcCreate:
-      case bcCreateN:
-      case bcIAXCopyR:
-      case bcNBox:
-      case bcBox:
-      case bcXCallRM:
-      case bcCallExtR:
-         return true;
-      default:
-         return false;
-   }
-}
 
 inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
 {
@@ -151,8 +78,11 @@ inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
 
 bool CommandTape :: import(ByteCommand& command, _Module* sour, _Module* dest)
 {
-   if (IsRCode(command.code)) {
+   if (ByteCodeCompiler::IsRCode(command.code)) {
       command.argument = importRef(sour, (ref_t)command.argument, dest);
+      if (command.code == bcSelectR) {
+         command.additional = importRef(sour, (ref_t)command.additional, dest);
+      }
 
       return true;
    }
@@ -280,13 +210,13 @@ void CommandTape :: import(_Memory* section, bool withHeader)
       additional = 0;
 
       code = (ByteCode)reader.getByte();
-      if (code >= 0x20) {
+      if (code > MAX_SINGLE_ECODE) {
          argument = reader.getDWord();
       }
-      if (code >= 0xE0) {  
+      if (code > MAX_DOUBLE_ECODE) {  
          additional = reader.getDWord();
       }
-      if (IsJump(code)) {
+      if (ByteCodeCompiler::IsJump(code)) {
          int offset = 0;
          int label = 0;
          if (code >= 0xE0) {
@@ -386,29 +316,20 @@ inline bool removeIdleJump(ByteCodeIterator it)
    while (true) {
       switch((ByteCode)*it) {
          case bcJump:
-         case bcAElse:
-         case bcAThen:
-         case bcWSTest:
-         case bcBSTest:
-         case bcTest:
-         case bcDElse:
-         case bcDThen:
-         case bcDElseN:
-         case bcDThenN:
-         case bcAElseR:
-         case bcAThenR:
+         case bcIfR:
+         case bcElseR:
+         case bcIfB:
+         case bcElseB:
+         case bcIf:
+         case bcElse:
+         case bcLess:
+         case bcNotLess:
+         case bcIfN:
+         case bcElseN:
+         case bcLessN:
+         case bcIfM:
+         case bcElseM:
          case bcNext:
-         case bcMElse:
-         case bcMThen:
-         case bcMElseVerb:
-         case bcMThenVerb:
-         case bcAElseSI:
-         case bcAThenSI:
-         case bcElseFlag:
-         case bcTestFlag:
-         case bcMElseAI:
-         case bcMThenAI:
-//         case bcMccThenAccI:
             *it = bcNop;
             return true;
       }
@@ -469,29 +390,20 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
                break;
             case bcJump:
                blocks.add(index + 1, 0);
-            case bcAElse:
-            case bcAThen:              
-            case bcWSTest:
-            case bcBSTest:
-            case bcTest:
-            case bcDElse:
-            case bcDThen:              
-            case bcDElseN:
-            case bcDThenN:              
-            case bcAElseR:
-            case bcAThenR:     
+            case bcIfR:
+            case bcElseR:              
+            case bcIfB:
+            case bcElseB:              
+            case bcIf:
+            case bcElse:              
+            case bcLess:
+            case bcNotLess:
+            case bcIfN:
+            case bcElseN:              
+            case bcLessN:
+            case bcIfM:
+            case bcElseM:              
             case bcNext:
-            case bcMElse:
-            case bcMThen:
-            case bcMElseVerb:
-            case bcMThenVerb:
-            case bcAElseSI:
-            case bcAThenSI:
-            case bcMElseAI:
-            case bcMThenAI:
-            //case bcMccThenAccI:
-            case bcElseFlag:
-            case bcTestFlag:
             case bcHook:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);
@@ -585,6 +497,11 @@ bool CommandTape :: optimizeJumps(CommandTape& tape)
 
 // --- TransformTape ---
 
+inline bool matchable(ByteCodeIterator& it)
+{
+   return test(*it, blLabelMask) || (*it < bcReserved && *it > bcBreakpoint);
+}
+
 void TransformTape :: transform(ByteCodeIterator& trans_it, Node replacement)
 {
    ByteCodeIterator target_it = trans_it;
@@ -592,7 +509,7 @@ void TransformTape :: transform(ByteCodeIterator& trans_it, Node replacement)
    ByteCodePattern pattern = replacement.Value();
    while (pattern.code != bcNone) {
       // skip meta commands (except label)
-      while (!test(*trans_it, blLabelMask) && ((*trans_it).code > bcReserved || (*trans_it).code == bcNop))
+      while (!matchable(trans_it))
          trans_it--;
 
       (*trans_it).code = pattern.code;
@@ -650,11 +567,6 @@ bool TransformTape :: makeStep(Node& step, ByteCommand& command)
    return false;
 }
 
-inline bool matchable(ByteCodeIterator& it)
-{
-   return test(*it, blLabelMask) || (*it < bcReserved && *it > bcNop);
-}
-
 bool TransformTape :: apply(CommandTape& commandTape)
 {
    ByteCodeIterator it = commandTape.start();
@@ -706,7 +618,7 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
 void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
 {
    // load verbs
-   addVerb(verbs, NEW_MESSAGE, NEW_MESSAGE_ID);
+   addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
    addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
    addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
    addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
@@ -717,9 +629,6 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
    addVerb(verbs, DO_MESSAGE,         DO_MESSAGE_ID);
    addVerb(verbs, STOP_MESSAGE,       STOP_MESSAGE_ID);
-   addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
-   addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
-   addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
    addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
    addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
    addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
@@ -757,6 +666,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, INC_MESSAGE,        INC_MESSAGE_ID);
    addVerb(verbs, START_MESSAGE,      START_MESSAGE_ID);
    addVerb(verbs, RETRIEVE_MESSAGE,   RETRIEVE_MESSAGE_ID);
+   addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)
@@ -803,25 +713,25 @@ const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
    return s;
 }
 
-FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
-{
-   for(int i = 1 ; i < EXTENSION_COUNT ; i++) {
-      if (ConstantIdentifier::compare(s, _fnExtensions[i])) {
-         return (FunctionCode)i;
-      }
-   }
+//FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
+//{
+//   for(int i = 1 ; i < EXTENSION_COUNT ; i++) {
+//      if (ConstantIdentifier::compare(s, _fnExtensions[i])) {
+//         return (FunctionCode)i;
+//      }
+//   }
+//
+//   return fnUnknown;
+//}
 
-   return fnUnknown;
-}
-
-const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t* s)
-{
-   size_t key = (size_t)code;
-
-   if (key < EXTENSION_COUNT) {
-      copystr(s, _fnExtensions[(int)code]);
-   }
-   else copystr(s, _fnExtensions[0]);
-
-   return s;
-}
+//const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t* s)
+//{
+//   size_t key = (size_t)code;
+//
+//   if (key < EXTENSION_COUNT) {
+//      copystr(s, _fnExtensions[(int)code]);
+//   }
+//   else copystr(s, _fnExtensions[0]);
+//
+//   return s;
+//}

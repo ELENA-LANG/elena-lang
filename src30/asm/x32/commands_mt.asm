@@ -34,8 +34,8 @@ inline % 7
 
   // ; GCXT: get current thread frame
   mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
+  mov  edx, fs:[2Ch]
+  mov  ebx, [edx+ebx*4]
   jmp  [ebx + tls_catch_addr]
 
 end
@@ -63,114 +63,23 @@ inline % 1Dh
 
   // ; GCXT: get current thread frame
   mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
-
-  mov  esp, [ebx + tls_catch_level]  
-  mov  ebp, [ebx + tls_catch_frame]
-  pop  ecx
-  mov  [ebx + tls_catch_frame], ecx
-  pop  ecx
-  mov  [ebx + tls_catch_level], ecx
-  pop  ecx
-  mov  [ebx + tls_catch_addr], ecx
-
-end
-
-// ; exclude
-inline % 1Eh
-
-  // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
-  // ; lock managed stack frame
-  push ebp
-  mov  [ebx + tls_stack_frame], esp
-
-end
-
-// ; include
-inline % 1Fh
-
-  // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
-  // ; save previous pointer 
-  mov  esp, [ebx + tls_stack_frame]
-  pop  ebp
-  pop  ecx
-  // ; size field
-  mov  [ebx + tls_stack_frame], ecx
-
-end                                                                            
-
-// ; popbi
-inline % 31h
-  pop  eax
-
-  // ; calculate write-barrier address
-  mov  esi, edi
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-  mov  [edi + __arg1], eax
-
-end
-
-// ; popai
-inline % 035h
-  // ; calculate write-barrier address
-  mov  esi, eax
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-
-  pop  edx
-  mov [eax + __arg1], edx
-
-end
-
-// ; asavebi
-inline %61h
-
-  mov  esi, edi                     
-  // calculate write-barrier address
-  sub  esi, [data : %CORE_GC_TABLE + gc_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_header]
-  shr  esi, page_size_order
-  mov  byte ptr [esi + edx], 1  
-
-  mov [edi + __arg1], eax
-
-end
-
-// ; hook label (ecx - offset)
-
-inline % 0A6h
-
-  // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
   mov  edx, fs:[2Ch]
   mov  ebx, [edx+ebx*4]
 
-  call code : %HOOK
-  push ebp
-  push [ebx + tls_catch_addr]
-  push [ebx + tls_catch_frame]
-  push [ebx + tls_catch_level]  
-  mov  [ebx + tls_catch_addr], ecx
-  mov  [ebx + tls_catch_level], esp
-  mov  [ebx + tls_catch_frame], ebp
+  mov  esp, [ebx + tls_catch_level]  
+  mov  ebp, [ebx + tls_catch_frame]
+  pop  edx
+  mov  [ebx + tls_catch_frame], edx
+  pop  edx
+  mov  [ebx + tls_catch_level], edx
+  pop  edx
+  mov  [ebx + tls_catch_addr], edx
 
 end
 
 // ; nbox (esi - size, __arg1 - vmt)
 
-inline % 0B0h
+inline % 096h
 
   // ; GCXT: get current thread frame
   mov  ebx, [data : %CORE_TLS_INDEX]
@@ -205,39 +114,36 @@ labSkip:
 
 end
 
-// ; box (esi - size, __arg1 - vmt)
+// ; hook label (ecx - offset)
 
-inline % 0B1h
+inline % 0A6h
 
   // ; GCXT: get current thread frame
   mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
+  mov  edx, fs:[2Ch]
+  mov  ebx, [edx+ebx*4]
 
-  cmp  eax, [ebx + tls_stack_bottom]
-  ja   short labSkip                      
-  mov  ebx, esi
-  shl  ebx, 2
-  cmp  eax, esp
-  jb   short labSkip
+  call code : %HOOK
+  push ebp
+  push [ebx + tls_catch_addr]
+  push [ebx + tls_catch_frame]
+  push [ebx + tls_catch_level]  
+  mov  [ebx + tls_catch_addr], ecx
+  mov  [ebx + tls_catch_level], esp
+  mov  [ebx + tls_catch_frame], ebp
 
-  mov  ecx, ebx
-  push eax
-  add  ebx, page_ceil
-  and  ebx, page_mask  
-  call code : %GC_ALLOC
-  mov  [eax-8], ecx
-  mov  [eax-4], __arg1
-  pop  esi
-  mov  ebx, eax
-labCopy:
-  mov  edx, [esi]
-  mov  [ebx], edx
-  lea  esi, [esi+4]
-  lea  ebx, [ebx+4]
-  sub  ecx, 4
-  jnz  short labCopy
+end
 
-labSkip:
+// ; asavebi
+inline %0C0h
+
+  mov  esi, edi                     
+  // calculate write-barrier address
+  sub  esi, [data : %CORE_GC_TABLE + gc_start]
+  mov  edx, [data : %CORE_GC_TABLE + gc_header]
+  shr  esi, page_size_order
+  mov  byte ptr [esi + edx], 1  
+
+  mov [edi + __arg1], eax
 
 end

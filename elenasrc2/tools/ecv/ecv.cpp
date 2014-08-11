@@ -20,16 +20,16 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   1
+#define BUILD_VERSION   3
 
 using namespace _ELENA_;
 
 // === Variables ===
 MessageMap         _verbs;
 ConstantIdentifier _integer(INT_CLASS);
-//ConstantIdentifier _long(LONG_FORWARD);
-//ConstantIdentifier _real(REAL_FORWARD);
-//ConstantIdentifier _literal(LITERAL_FORWARD);
+ConstantIdentifier _long(LONG_CLASS);
+ConstantIdentifier _real(REAL_CLASS);
+ConstantIdentifier _literal(WSTR_CLASS);
 
 TextFileWriter* _writer;
 
@@ -177,11 +177,11 @@ ref_t resolveMessage(_Module* module, const wchar16_t* method)
 
    ref_t verb = _verbs.get(verbName);
    if (verb == 0) {
-      if (StringHelper::compare(verbName, _T("resend"))) {
-         verb = SEND_MESSAGE_ID;
-      }
-      else if (StringHelper::compare(verbName, _T("dispatch"))) {
+      if (StringHelper::compare(verbName, _T("dispatch"))) {
          verb = DISPATCH_MESSAGE_ID;
+      }
+      else if (StringHelper::compare(verbName, _T("typecast"))) {
+         verb = TYPECAST_MESSAGE_ID;
       }
       else {
          wprintf(_T("Unknown verb %s\n"), (const wchar16_t*)verbName);
@@ -202,10 +202,17 @@ ref_t resolveMessage(_Module* module, const wchar16_t* method)
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
 {
-   unsigned int len = hex / 0x10 + 1;
-   while (len < 8) {
+   unsigned int n = hex / 0x10;
+   int len = 7;
+   while (n > 0) {
+      n = n / 0x10;
+
+      len--;
+   }
+
+   while (len > 0) {
       command.append(_T('0'));
-      len++;
+      len--;
    }
 
    command.appendHex(hex);
@@ -251,18 +258,18 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _integer;
       literalConstant = true;
    }
-   //else if (mask == mskInt64Ref) {
-   //   referenceName = _long;
-   //   literalConstant = true;
-   //}
-   //else if (mask == mskLiteralRef) {
-   //   referenceName = _literal;
-   //   literalConstant = true;
-   //}
-   //else if (mask == mskRealRef) {
-   //   referenceName = _real;
-   //   literalConstant = true;
-   //}
+   else if (mask == mskInt64Ref) {
+      referenceName = _long;
+      literalConstant = true;
+   }
+   else if (mask == mskLiteralRef) {
+      referenceName = _literal;
+      literalConstant = true;
+   }
+   else if (mask == mskRealRef) {
+      referenceName = _real;
+      literalConstant = true;
+   }
    else referenceName = module->resolveReference(reference & ~mskAnyRef);
 
    if (emptystr(referenceName)) {
@@ -285,11 +292,11 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    int paramCount = 0;
    decodeMessage(reference, signRef, verb, paramCount);
 
-   if (verb == SEND_MESSAGE_ID) {
-      command.append(_T("resend"));
-   }
-   else if (verb == DISPATCH_MESSAGE_ID) {
+   if (verb == DISPATCH_MESSAGE_ID) {
       command.append(_T("dispatch"));
+   }
+   else if (verb == TYPECAST_MESSAGE_ID) {
+      command.append(_T("typecast"));
    }
    else if (verb == NEWOBJECT_MESSAGE_ID) {
       command.append(_T("new[0]"));
@@ -335,7 +342,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 
    int argument = 0;
    int argument2 = 0;
-   if (code >= 0xE0) {
+   if (code > MAX_DOUBLE_ECODE) {
       argument = codeReader.getDWord();
       argument2 = codeReader.getDWord();
 
@@ -345,7 +352,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       appendHex32(command, argument2);
       command.append(_T(' '));
    }
-   else if (code >= 0x20) {
+   else if (code > MAX_SINGLE_ECODE) {
       argument = codeReader.getDWord();
 
       appendHex32(command, argument);
@@ -362,45 +369,45 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPushF:
       case bcSCopyF:
       case bcACopyF:
+      case bcBCopyF:
          command.append(opcode);
          command.append(_T(" fp:"));
-         command.appendHex(argument);
+         command.appendInt(argument);
          break;
       case bcACopyS:
          command.append(opcode);
          command.append(_T(" sp:"));
-         command.appendHex(argument);
+         command.appendInt(argument);
          break;
-      case bcAElse:
-      case bcAThen:
+      //case bcAElse:
+      //case bcAThen:
       //case bcMccElseAcc:
       //case bcMccThenAcc:
       case bcJump:
       //case bcElseLocal:
+      case bcHook:
          command.append(opcode);
          command.append(_T(' '));
          printLabel(command, position + argument + 5, labels);
          break;
-      case bcMElse:
-      case bcMThen:
+      case bcElseM:
+      case bcIfM:
          command.append(opcode);
          command.append(_T(' '));
          printMessage(command, module, argument);
          command.append(_T(' '));
          printLabel(command, position + argument2 + 9, labels);
          break;
-      //case bcElseR:
-      //case bcThenR:
-      //   command.append(opcode);
-      //   command.append(_T(' '));
-      //   printReference(command, module, argument);
-      //   command.append(_T(' '));
-      //   printLabel(command, position + argument2 + 9, labels);
-      //   break;
-      //case bcTestFlag:
-      //case bcElseFlag:
-      ////case bcElseN:
-      ////case bcThenN:
+      case bcElseR:
+      case bcIfR:
+         command.append(opcode);
+         command.append(_T(' '));
+         printReference(command, module, argument);
+         command.append(_T(' '));
+         printLabel(command, position + argument2 + 9, labels);
+         break;
+      case bcIfN:
+      case bcElseN:
          command.append(opcode);
          command.append(_T(' '));
          command.appendHex(argument);
@@ -415,27 +422,26 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.append(_T('] '));
       //   printLabel(command, position + argument2 + 9, labels);
       //   break;
-      case bcAElseR:
-      case bcAThenR:
-         command.append(opcode);
-         command.append(_T(' '));
-         printReference(command, module, argument);
-         command.append(_T(' '));
-         printLabel(command, position + argument2 + 9, labels);
-         break;
-         break;
-      case bcAElseSI:
-      case bcAThenSI:
-      //case bcMccElseSI:
-      //case bcMccThenSI:
-      //case bcMccVerbElseSI:
-      //case bcMccVerbThenSI:
-         command.append(opcode);
-         command.append(_T(" sp["));
-         command.appendInt(argument);
-         command.append(_T("] "));
-         printLabel(command, position + argument2 + 9, labels);
-         break;
+      //case bcAElseR:
+      //case bcAThenR:
+      //   command.append(opcode);
+      //   command.append(_T(' '));
+      //   printReference(command, module, argument);
+      //   command.append(_T(' '));
+      //   printLabel(command, position + argument2 + 9, labels);
+      //   break;
+      //case bcAElseSI:
+      //case bcAThenSI:
+      ////case bcMccElseSI:
+      ////case bcMccThenSI:
+      ////case bcMccVerbElseSI:
+      ////case bcMccVerbThenSI:
+      //   command.append(opcode);
+      //   command.append(_T(" sp["));
+      //   command.appendInt(argument);
+      //   command.append(_T("] "));
+      //   printLabel(command, position + argument2 + 9, labels);
+      //   break;
       case bcNop:
          printLabel(command, position + argument, labels);
          command.append(_T(':'));
@@ -450,8 +456,9 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       ////case bcSendVMTR:
       case bcASaveR:
       case bcACopyR:
-      case bcNBox:
-      case bcBox:
+      case bcBCopyR:
+      //case bcNBox:
+      //case bcBox:
       ////case bcAccTryR:
       ////case bcAccMergeR:
       ////case bcJumpR:
@@ -466,19 +473,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcOpen:
       case bcQuitN:
       case bcDCopy:
-      //case bcAccCreate:
-      ////case bcAccTestFlagN:
-      ////case bcAccCopyN:
-      //case bcAccAddN:
-      //case bcGetLen:
-      ////case bcAccTryN:
-      ////case bcSelfShiftI:
-      ////case bcAccShiftI:
-      ////case bcTryLock:
-      ////case bcFreeLock:
-      ////case bcSPTryLock:
-      ////case bcAccFreeLock:
-      //case bcJumpAccN:
+      case bcECopy:
          command.append(opcode);
          command.append(_T(' '));
          command.appendHex(argument);
@@ -529,6 +524,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument);
          command.append(_T(']'));
          break;
+      case bcAJumpVI:
       case bcACallVI:
          command.append(opcode);
          command.append(_T(" acc::vmt["));
@@ -537,12 +533,10 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcPushAI:
       ////case bcPopAccI:
-      case bcXPopAI:
       ////case bcPop2AccI:
       //case bcAccLoadAccI:
-      //case bcMLoadAI:
+      case bcALoadAI:
       //case bcMccAddAccI:
-      case bcDSaveAI:
          command.append(opcode);
          command.append(_T(" acc["));
          command.appendInt(argument);
@@ -551,9 +545,10 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //case bcPushSelfI:
       //case bcPopSelfI:
       case bcASaveBI:
-      ////case bcAccLoadSelfI:
+      case bcAXSaveBI:
+      case bcALoadBI:
          command.append(opcode);
-         command.append(_T(" self["));
+         command.append(_T(" base["));
          command.appendInt(argument);
          command.append(_T(']'));
          break;
@@ -564,13 +559,13 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       ////   command.append(_T("], "));
       ////   command.appendHex(argument2);
       ////   break;
-      case bcIAXCopyR:
-         command.append(opcode);
-         command.append(_T(" acc["));
-         command.appendInt(argument);
-         command.append(_T("], "));
-         printReference(command, module, argument2);
-         break;
+      //case bcIAXCopyR:
+      //   command.append(opcode);
+      //   command.append(_T(" acc["));
+      //   command.appendInt(argument);
+      //   command.append(_T("], "));
+      //   printReference(command, module, argument2);
+      //   break;
       //case bcIAccFillR:
       //   command.append(opcode);
       //   command.append(_T(' '));
@@ -578,16 +573,16 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.append(_T(", "));
       //   printReference(command, module, argument2);
       //   break;
-      //case bcCreate:
+      case bcNew:
       //case bcCreateN:
       //case bcAccCreateN:
       //case bcAccBoxN:
-      //   command.append(opcode);
-      //   command.append(_T(' '));
-      //   command.appendInt(argument);
-      //   command.append(_T(", "));
-      //   printReference(command, module, argument2);
-      //   break;
+         command.append(opcode);
+         command.append(_T(' '));
+         printReference(command, module, argument);
+         command.append(_T(", "));
+         command.appendInt(argument2);
+         break;
       case bcXCallRM:
          command.append(opcode);
          command.append(_T(' '));
@@ -603,25 +598,27 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       //   command.appendInt(argument2);
       //   break;
       ////case bcAccCopyM:
-      case bcMCopy:
-      //case bcXMccCopyM:
-      //case bcMccAddM:
+      case bcCopyM:
+      case bcSetVerb:
          command.append(opcode);
          command.append(_T(' '));
          printMessage(command, module, argument);
          break;
-      case bcSCallVI:
+      case bcSelectR:
          command.append(opcode);
-         command.append(_T(" sp["));
-         command.appendInt(argument);
-         command.append(_T("]::vmt["));
-         command.appendInt(argument2);
-         command.append(_T("]"));
+         command.append(_T(' '));
+         printReference(command, module, argument);
+         command.append(_T(", "));
+         printReference(command, module, argument2);
          break;
-      case bcFunc:
-         ByteCodeCompiler::decodeFunction((FunctionCode)argument, opcode);
-         command.append(opcode);
-         break;
+      //case bcSCallVI:
+      //   command.append(opcode);
+      //   command.append(_T(" sp["));
+      //   command.appendInt(argument);
+      //   command.append(_T("]::vmt["));
+      //   command.appendInt(argument2);
+      //   command.append(_T("]"));
+      //   break;
       default:
          command.append(opcode);
          break;

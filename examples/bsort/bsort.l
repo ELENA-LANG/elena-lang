@@ -32,7 +32,7 @@
 
                     aCurrent := aMaxChild.
                 ]
-                ! [ #break nil. ].
+                ! [ #break. ].
         ].
      ]
 
