@@ -48,17 +48,17 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 107;
+const int gcCommandNumber = 109;
 const int gcCommands[gcCommandNumber] =
 {   
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
    bcALoadFI, bcASaveSI, bcASaveFI, bcClose,
-   bcNewN, bcNew,
+   bcNewN, bcNew, bcWEval,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF,
    bcHook, bcThrow, bcUnhook, 
    bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, 
    bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
-   bcGet, bcSet, bcXSet,
+   bcGet, bcSet, bcXSet, bcECall,
    bcRestore, bcCount, bcBBox, bcFlag,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI,
    bcType, bcNEqual, bcNLess, bcNCopy, bcNAdd,
@@ -89,7 +89,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
@@ -107,7 +107,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileDCopy, &compileECopy, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &loadROp, &compileNop,
+   &compileDCopy, &compileECopy, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &loadROp, &loadROp,
    &compileOpen, &compileQuitN, &compileBCopyR, &compileBCopyF, &compileACopyF, &compileACopyS, &compileACopyR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &loadCode, &loadFunction, &compileHook, &compileNop,

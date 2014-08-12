@@ -465,7 +465,7 @@ namespace _ELENA_
 
    // predefined types
    #define PARAMS_SUBJECT           "params"
-//   #define ACTION_SUBJECT           "action"
+   #define ACTION_SUBJECT           "action"
 
    #define STARTUP_CLASS            "'program"
 

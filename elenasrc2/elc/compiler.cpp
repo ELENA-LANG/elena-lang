@@ -370,8 +370,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
    falseReference = mapConstantReference(FALSE_CLASS);
 
    paramsType = mapSubject(PARAMS_SUBJECT);
-
-//   actionSubject = mapSubject(ACTION_SUBJECT);
+   actionType = mapSubject(ACTION_SUBJECT);
 
    defaultNs.add(module->Name());
 
@@ -792,6 +791,11 @@ ref_t Compiler::ModuleScope :: getLiteralType()
 ref_t Compiler::ModuleScope :: getParamsType()
 {
    return paramsType;
+}
+
+ref_t Compiler::ModuleScope :: getActionType()
+{
+   return actionType;
 }
 
 // --- Compiler::SourceScope ---
@@ -1896,6 +1900,9 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          // otherwise it is a singature
          else result = compileSignatureReference(member, scope, mode);
          break;
+      case nsSymbolReference:
+         result = compileReference(member, scope, mode);
+         break;
       default:
          result = compileTerminal(objectNode, scope, mode);
    }
@@ -2001,6 +2008,18 @@ ObjectInfo Compiler :: compileMessageReference(DNode objectNode, CodeScope& scop
    message[0] = message[0] + count;
 
    return ObjectInfo(okMessageConstant, scope.moduleScope->module->mapReference(message));
+}
+
+ObjectInfo Compiler :: compileReference(DNode objectNode, CodeScope& scope, int mode)
+{
+   ObjectInfo symbol = scope.mapObject(objectNode.Terminal());
+   
+   if (symbol.kind == okSymbol || symbol.kind == okConstantSymbol) {
+      return ObjectInfo(okSymbolReference, symbol.param);
+   }
+   else scope.raiseError(errInvalidOperation, objectNode.Terminal());
+
+   return ObjectInfo(okUnknown);
 }
 
 ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
@@ -3550,6 +3569,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
+   ref_t actionType = moduleScope->getActionType();
+
    while (arg == nsSubjectArg) {
       TerminalInfo terminal = arg.Terminal();
 
@@ -3578,11 +3599,11 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
          }
-         else if (param.info.kind == okIntConstant && size == 4) {
+         else if (param.info.kind == okIntConstant && size == 4 || param.subject == actionType && param.info.kind == okSymbolReference) {
             // if direct pass is possible
             // do nothing at this stage
          }
-         else if(param.subject == param.info.extraparam || size == -1) {
+         else if(param.subject == param.info.extraparam || size == -1 || param.subject == actionType) {
             saveObject(scope, param.info, 0);
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
@@ -3605,9 +3626,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
       else scope.raiseError(errInvalidOperation, terminal);
 
       // raise an error if the subject type is not supported
-      if (param.output && size != 0) {
-      }
-      else if (size == 4 || size < 0) {
+      if ((param.output && size != 0) || size == 4 || size < 0 || param.subject == actionType) {
       }
       else scope.raiseError(errInvalidOperation, terminal);
 
@@ -3619,6 +3638,8 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
+   ref_t actionType = moduleScope->getActionType();
+
    // save function parameters
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
    while (!out_it.Eof()) {
@@ -3626,10 +3647,10 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
       if ((*out_it).output) {
          _writer.pushObject(*scope.tape, (*out_it).info);
       }
-      //else if ((*out_it).subject == moduleScope->actionSubject) {
-      //   _writer.loadObject(*scope.tape, (*out_it).info);
-      //   _writer.saveActionPtr(*scope.tape);
-      //}
+      else if ((*out_it).subject == actionType) {
+         _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
+         _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+      }
       else {
          int size = moduleScope->sizeHints.get((*out_it).subject);
          if (size == 4) {
@@ -4709,9 +4730,44 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
    CodeScope codeScope(&scope);
 
-   // compile symbol body
-   ObjectInfo retVal = compileExpression(expression, codeScope, HINT_ROOT);
-   _writer.loadObject(*codeScope.tape, retVal);
+   DNode importBody = node.select(nsImport);
+   // check if it is external code
+   if (importBody == nsImport) {
+      ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
+      reference.combine(importBody.Terminal());
+
+      importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
+   }
+   else {
+      // compile symbol body
+      ObjectInfo retVal = compileExpression(expression, codeScope, HINT_ROOT);
+      _writer.loadObject(*codeScope.tape, retVal);
+
+      // create constant if required
+      if (constant && (retVal.kind == okIntConstant || retVal.kind == okLiteralConstant)) {
+         _Module* module = scope.moduleScope->module;
+
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         if (retVal.kind == okIntConstant) {
+            int value = StringHelper::strToInt(module->resolveConstant(retVal.param));
+
+            dataWriter.writeDWord(value);
+
+            dataWriter.Memory()->addReference(scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, -4);
+
+            scope.moduleScope->defineIntConstant(scope.reference);
+         }
+         else if (retVal.kind == okLiteralConstant) {
+            const wchar16_t* value = module->resolveConstant(retVal.param);
+
+            dataWriter.writeWideLiteral(value, getlength(value) + 1);
+
+            dataWriter.Memory()->addReference(scope.moduleScope->mapConstantReference(WSTR_CLASS) | mskVMTRef, -4);
+
+             scope.moduleScope->defineLiteralConstant(scope.reference);
+         }
+      }
+   }
 
    _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
 
@@ -4725,31 +4781,6 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
    // create byte code sections
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-
-   // create constant if required
-   if (constant && (retVal.kind == okIntConstant || retVal.kind == okLiteralConstant)) {
-      _Module* module = scope.moduleScope->module;
-
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-      if (retVal.kind == okIntConstant) {
-         int value = StringHelper::strToInt(module->resolveConstant(retVal.param));
-
-         dataWriter.writeDWord(value);
-
-         dataWriter.Memory()->addReference(scope.moduleScope->mapConstantReference(INT_CLASS) | mskVMTRef, -4);
-
-         scope.moduleScope->defineIntConstant(scope.reference);
-      }
-      else if (retVal.kind == okLiteralConstant) {
-         const wchar16_t* value = module->resolveConstant(retVal.param);
-
-         dataWriter.writeWideLiteral(value, getlength(value) + 1);
-
-         dataWriter.Memory()->addReference(scope.moduleScope->mapConstantReference(WSTR_CLASS) | mskVMTRef, -4);
-
-          scope.moduleScope->defineLiteralConstant(scope.reference);
-      }
-   }
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hints)

@@ -1,14 +1,14 @@
-//// --- Symbol ---
-//
-//#class Symbol
-//{
-//    #field(type:int)theReference.
-//    
-//    #constructor new &literal:aName
-//        <symbol_new>.
-//        
-//    #method => <symbol_redirect>.
-//}
+// --- Symbol ---
+
+#class Symbol
+{
+    #field(type:int)theReference.
+    
+    #constructor new &literal:aName
+        <symbol_new>.
+        
+    #method => <symbol_redirect>.
+}
 
 // --- Message ---
 

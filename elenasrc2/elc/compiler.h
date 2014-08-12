@@ -128,9 +128,7 @@ protected:
       // should not be referred directly ;
       // appropriate get function should be used instead
       ref_t intType, longType, realType, literalType;
-      ref_t boolType;
-//      ref_t actionSubject;
-      ref_t paramsType;
+      ref_t boolType, actionType, paramsType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -227,6 +225,7 @@ protected:
       ref_t getRealType();
       ref_t getLiteralType();
       ref_t getParamsType();
+      ref_t getActionType();
 
       void init(_Module* module, _Module* debugModule);
 
@@ -666,6 +665,7 @@ protected:
 
    ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int& mode, size_t& spaceToRelease);
 
+   ObjectInfo compileReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileSignatureReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);

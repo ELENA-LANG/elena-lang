@@ -91,6 +91,7 @@ enum Symbol
    nsGeneric                    = 0x01045,
    nsDefaultGeneric             = 0x01046,
    nsType                       = 0x01047,
+   nsSymbolReference            = 0x01048,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

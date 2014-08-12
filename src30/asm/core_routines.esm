@@ -1346,3 +1346,64 @@ labEnd:
   throw
 
 end
+
+procedure inline'thread_start
+
+  aloadsi 1
+  callr api : coreapi'resolve_index
+  callr api : coreapi'start_thread
+  quitn 1
+  
+end
+
+procedure inline'api_alloc_index
+
+  aloadsi 2  
+  callr api : coreapi'alloc_index
+  aloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure inline'api_free_index
+                      
+  aloadsi 2           
+  nload
+  callr api : coreapi'free_index
+  quitn 2
+  
+end
+
+procedure inline'symbol_redirect
+
+  pushe
+  nload
+  ecopyd
+  ecall
+  pope
+  ajumpvi 0
+
+end
+
+procedure inline'symbol_new
+
+  pusha
+  aloadsi 3   // ; read aName parameter
+  bcopya
+  weval
+  dcopye
+  ifn labError 0
+  popb
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end

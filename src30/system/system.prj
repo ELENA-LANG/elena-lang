@@ -11,6 +11,7 @@ inline=..\..\lib30\inline\core_routines.bin
 [files]
 object.l
 control.l
+primitives.l
 exceptions.l
 basic.l
 memory.l
@@ -25,3 +26,5 @@ io\win32_console.l
 text\textbuffer.l
 dynamic\loaders.l
 dynamic\interpreters.l
+threading\win32_handlers.l
+threading\thread.l

@@ -1,11 +1,11 @@
 #define system.
 #define system'io.
 
-#symbol INFINITE = 0FFFFFFFFh.
+#symbol(const)INFINITE = 0FFFFFFFFh.
 
 // --- ThreadStarter ---
 
-#symbol $threadStarter = { => <thread_start>. }.
+#symbol $threadStarter = <thread_start>.
 
 // --- ThreadHandle ---
 
@@ -15,12 +15,12 @@
     [
         #var(type:int)param.
 
-        referenceTableControl allocate &object:anAction &out'int:param.
+        referenceTableControl allocate:anAction &out'int:param.
                         
-        theData << system'external'KERNEL32 CreateThread
+        theData := system'external'KERNEL32 CreateThread
                         &int:0
                         &int:0
-                        &action:$threadStarter
+                        &action: #symbol $threadStarter
                         &int:param
                         &int:4
                         &int:0.

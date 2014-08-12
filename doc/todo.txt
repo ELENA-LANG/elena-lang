@@ -20,22 +20,15 @@ v  - vm script
 Currently:
 ------
               xdev - generic development
+                       * external call action parameter - only symbol reference can be used, the symbol loader should not be directly created,
+                         rather than only symbol address be used
+
                        * can we use ^ operator to returns from any part of the code to the end
 
                        * allow to declare variable / field type for dynamic types as well
 
-                       * review test code, optimize performance - ConvertorTest
-       
-                       * review : operation between index and int ; compiler use method call instead of inline implementation
 
-                       * it should be possible to implement something like this
-
-                         (a==2) if True:{ eval [ #break nil ] } | raise:(BreakException new:xxx)
-
-                       * optimize comparision operation with nil (see ListEnumerator)
-
-                       * extend realtest with comparision operation test
-
+                       
                        * fix debugger to correctly show $self
                        * fix debugger to correctly show stack allocated objects
                        * fix debugger to correctly show arrays
@@ -46,13 +39,8 @@ Currently:
                        
                        * test if console.readChar return correct code
                                                                                                 
-                       * uncomment bcwriter::copyint, saveIntConstant
-                       * uncomment bcwriter::saveRegister
                        * uncomment bcwriter::saveObject - okLocalAddress
-                       * uncomment / remove : bcwriter::popObject
                        * uncomment : bcwriter::doGenericHandler / declareGenericMethod / dispatchVerb / jumpIfNotEqualN
-
-                       * test : argithmetic operations, int => short
 
                        * boxing the result of external call
 
@@ -61,10 +49,6 @@ Currently:
                        * do we actually need system'Action - dispatch ref can be defined directly in compileNestedExpression
 
 
-                       * optimized assigning the external call result
-                       
-                       * test boxing                       
-                       
                        * module system should be inclduded automatically ??
                        
                        * warn if system'Object does not contain send method
@@ -102,11 +86,7 @@ Currently:
                        * uncomment commentFrame
                        * remove all commented code
 
-                       * implement structure support
-
                        * optimize control.forrange implementation
-
-                       * do we need scallvi ??
 
                        * generic handlers : make possible to use passed subject
                        * generic handlers : resend handler - if no match found call the super handler
@@ -341,6 +321,7 @@ week1:
                        * true.and[1] - can resend with dispatch be optimized?
                        * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
                        * can we implement #break statement which will not create a breakexception for every call?
+                       * optimize comparision operation with nil (see ListEnumerator)
 
               xdev - native code optimization
                        * optimize hook / unhook commands
@@ -511,6 +492,7 @@ week2:
                        * support appendLine?? (e.g. maybe in extension)
 
             smaint - testing
+                       * extend realtest with comparision operation test
                        * modify system test, it should raise an exception if any of the tests fails
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object

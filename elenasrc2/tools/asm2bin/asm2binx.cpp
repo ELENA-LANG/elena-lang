@@ -17,7 +17,7 @@
 
 #include <windows.h>
 
-#define BUILD_NUMBER 8
+#define BUILD_NUMBER 9
 
 int main(int argc, char* argv[])
 {

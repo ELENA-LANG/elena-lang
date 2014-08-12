@@ -32,6 +32,7 @@ enum ObjectKind
    okSignatureConstant,
 
    okSymbol,                       // param - reference
+   okSymbolReference,              // param - reference
    okRole,
    okConstantRole,                 // param - role reference
    okField,                         // param - field offset
@@ -280,9 +281,9 @@ public:
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
+   void loadSymbolReference(CommandTape& tape, ref_t reference);
 //   void copyIntToLong(CommandTape& tape, ObjectInfo target);
 ////   void saveDump(CommandTape& tape, bool onlyAllocate);
-//   void saveActionPtr(CommandTape& tape);
 //   void setDumpLength(CommandTape& tape, ObjectInfo target);
 //   void loadStr(CommandTape& tape);
 ////   void loadDump(CommandTape& tape, ObjectInfo source);

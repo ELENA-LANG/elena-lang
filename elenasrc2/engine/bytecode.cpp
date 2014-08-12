@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "ecopyd", "dcopye", "pushd", "popd", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "type", "len", "wlen", "flag", "unknown", "unknown", "unknown", "unknown",
+   "type", "len", "wlen", "flag", "weval", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "clone", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "bbox", "unknown",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
-   "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "unknown",
+   "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "ecall",
    "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
    "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",

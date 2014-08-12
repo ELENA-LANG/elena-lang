@@ -64,6 +64,7 @@ enum ByteCode
    bcLen            = 0x31, 
    bcWLen           = 0x32,
    bcFlag           = 0x33, 
+   bcWEval          = 0x34,
    bcClone          = 0x3E,
 
    bcNEqual         = 0x40,
@@ -154,6 +155,7 @@ enum ByteCode
    bcEvalR          = 0xA4,
    bcCallExtR       = 0xA5,
    bcHook           = 0xA6,
+   bcECall          = 0xA7,
    bcLess           = 0xA9,
    bcNotLess        = 0xAA,
    bcIfB            = 0xAB,
@@ -162,7 +164,6 @@ enum ByteCode
    bcElse           = 0xAE,
    bcNext           = 0xAF,
 
-//   bcBox            = 0xB1,
    bcPushN          = 0xB0,
    bcPushR          = 0xB2,
    bcPushBI         = 0xB3,

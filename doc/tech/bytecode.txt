@@ -196,6 +196,8 @@ ELENA byte codes (or ecodes)
  
  calling commands:
  -----------------  
+ ecall                      - call ext procedure
+
  acallvi i                  - call acc::VMT[i] method
 
  bsredirect                 - search acc::VMT for the message in ext;
@@ -457,3 +459,7 @@ ELENA byte codes (or ecodes)
 
  xseek                      - search for ext in base, starting from index ; out - index first occ ; unsafe command - length is not checked
                                                                                                                            
+
+ dynamic / reflection commands
+ ----------------
+ weval                     - load symbol by name into ext ; str(base) => ext

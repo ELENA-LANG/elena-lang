@@ -270,6 +270,15 @@ inline % 33h
   
 end
 
+// ; weval
+inline % 34h
+
+  mov  edx, edi
+  call code : % LOADSYMBOL
+  mov  ecx, eax
+
+end
+
 // ; clone
 
 inline % 3Eh
@@ -2199,6 +2208,12 @@ inline % 0A6h
   mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
   mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
   
+end
+
+inline % 0A7h
+
+  call ecx
+
 end
                                  
 // ; next

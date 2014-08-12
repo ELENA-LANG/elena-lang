@@ -408,6 +408,8 @@ inline ref_t defineConstantMask(ObjectKind type)
          return mskMessage;
       case okSignatureConstant:
          return mskSignature;
+      case okSymbolReference:
+         return mskSymbolLoaderRef;
       default:
          return mskConstantRef;
    }
@@ -439,6 +441,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
+      case okSymbolReference:
          // pushr reference
          tape.write(bcPushR, object.param | defineConstantMask(object.kind));
          break;
@@ -558,6 +561,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
+      case okSymbolReference:
          // acccopyr r
          tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
          break;
@@ -2103,6 +2107,12 @@ void ByteCodeWriter :: selectConstant(CommandTape& tape, ref_t r1, ref_t r2)
    tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 }
 
+void ByteCodeWriter :: loadSymbolReference(CommandTape& tape, ref_t reference)
+{
+   // acopyr reference
+   tape.write(bcACopyR, reference | mskSymbolRef);
+}
+
 //void ByteCodeWriter :: copyIntToLong(CommandTape& tape, ObjectInfo target)
 //{
 //   //  lsaveint
@@ -2113,21 +2123,6 @@ void ByteCodeWriter :: selectConstant(CommandTape& tape, ref_t r1, ref_t r2)
 ////{
 ////   tape.write(bcFunc, onlyAllocate ? fnBSReserve : fnBSSave);
 ////}
-//
-//void ByteCodeWriter :: saveActionPtr(CommandTape& tape)
-//{
-//   // pushb
-//   // bcopya
-//   // loadclass
-//   // popb
-//   // pushai 1
-//
-//   tape.write(bcPushB);
-//   tape.write(bcBCopyA);
-//   tape.write(bcFunc, fnLoadClass);
-//   tape.write(bcPopB);
-//   tape.write(bcPushAI, 1);
-//}
 
 //void ByteCodeWriter :: setDumpLength(CommandTape& tape, ObjectInfo target)
 //{

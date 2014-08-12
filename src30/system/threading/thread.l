@@ -31,7 +31,7 @@
 {
     start : anAction
     [
-        #var aThread := Thread new &action:anAction.
+        #var aThread := Thread new &action::anAction.
         
         aThread start.
         

@@ -57,6 +57,7 @@ __define USE                    4164
 __define GENERIC                4165
 __define DEFAULT                4166
 __define TYPE                   4167
+__define SYMBOL_REFERENCE	4168
 
 __define eof            	12291
 __define literal		12292
@@ -352,7 +353,11 @@ CLASS_BODY ->
 	| { FIELDS METHODS CLOSING_CURLY_BRACKET
 	
 SYMBOL_BODY ->
-	= EXPRESSION DECLARATION_END
+	= SYMBOL_EXPRESSION DECLARATION_END
+
+SYMBOL_EXPRESSION ->
+	EXPRESSION
+	| < IMPORT >
 
 INCLUDE_BODY ->
 	= FORWARD
@@ -511,11 +516,17 @@ OBJECT ->
 	| NESTED_EXPRESSION
 	| CODE_BLOCK
 	| % MESSAGE_REFERENCE
+	| #symbol SYMBOL_REFERENCE
 	
 MESSAGE ->
 	identifier MESSAGE_BODY
 	| reference MESSAGE_BODY
 	| private MESSAGE_BODY
+
+SYMBOL_REFERENCE ->
+	identifier
+	| reference
+	| private
 
 ALT_MESSAGE ->
 	identifier MESSAGE_BODY
@@ -612,8 +623,7 @@ OBJECT_EXPECTED ->
 	. ERROR
 
 DECLARATION_END_EXPECTED ->
-	#symbol ERROR
-	| #static ERROR
+	#static ERROR
 	| #define ERROR
 	| #class ERROR
 	| #method ERROR
@@ -621,8 +631,7 @@ DECLARATION_END_EXPECTED ->
 	| eof ERROR
 	       
 BLOCK_CLOSING_EXPECTED ->
-	#symbol ERROR
-	| #static ERROR
+	#static ERROR
 	| #define ERROR
 	| #class ERROR
 	| eof ERROR
@@ -643,3 +652,4 @@ MESSAGE_EXPECTED ->
 	| long ERROR
 	| real ERROR
 	| ( ERROR
+	

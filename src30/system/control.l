@@ -2,6 +2,7 @@
 #define(const)false = system'false.
 
 #type bool.
+#type action.
 
 // --- true ---
 

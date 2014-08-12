@@ -4,13 +4,9 @@
 #define system'calendar.
 #define extensions.
 //#define extensions'math.
-
+    
 #class(role)XTester
 {
-    #method test :: aParams
-    [
-        $self testUnbox &:aParams.
-    ]
 }
 
 #symbol XTest =
