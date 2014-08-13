@@ -31,15 +31,16 @@
 
 #symbol scriptLastError = control do:
 [
-    #var anErrorPtr := IntNumber new &int:(system'external'elenasm GetStatus).
+    #var(type:int)anErrorPtr := system'external'elenasm GetStatus.
     ^ (anErrorPtr != 0) ?
     [
-        #var anErrorLen := IntNumber new &int:(system'external'KERNEL32 lstrlenW &int:anErrorPtr).
-        #var anError := LiteralValue new &length:anErrorLen.
+        #var(type:shortarray,size:255)aBuffer.
+        #var(type:int)anErrorLen := system'external'KERNEL32 lstrlenW &int:anErrorPtr.
+        
         system'external'kernel32 lstrcpyW 
-            &out'literal:anError &int:anErrorPtr.
+            &out'shortarray:aBuffer &int:anErrorPtr.
     
-        ^ anError.
+        ^ LiteralValue new &length:anErrorLen &shortarray:aBuffer.
     ]
     ! [ emptyLiteralValue ].
 ].

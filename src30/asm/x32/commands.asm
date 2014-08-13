@@ -279,6 +279,68 @@ inline % 34h
 
 end
 
+// ; wname
+inline % 35h
+
+  push esi
+  
+  mov  edx, [eax-elVMTOffset]
+  call code : % GETCLASSNAME  
+
+  pop  ecx
+  xor  esi, esi
+
+  test eax, eax
+  jz   short labEnd
+
+  mov  esi, eax
+  mov  edx, edi
+
+labCopy:
+  mov  ebx, [esi]                                                                                           
+  mov  word ptr [edx], bx
+  test ebx, 0FFFFh
+  jz   short labFixLen
+  lea  esi, [esi+2]
+  sub  ecx, 1
+  lea  edx, [edx+2]
+  jnz  short labCopy
+
+labFixLen:
+  mov  esi, edx
+  sub  esi, edi
+  mov  eax, edi
+  
+labEnd:
+
+end
+
+// ; class
+inline % 36h
+
+  mov  eax, [edi - elVMTOffset]
+
+end
+
+// ; mindex
+inline % 37h
+
+  mov  esi, [eax - elVMTOffset]
+  xor  ebx, ebx
+  mov  ecx, [esi - elVMTSizeOffset]
+labNext:
+  cmp  edx, [esi+ebx*8]
+  jz   short labFound
+  add  ebx, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  ebx, -1
+
+labFound:
+  mov   esi, ebx
+
+end
+
 // ; clone
 
 inline % 3Eh
@@ -2294,6 +2356,26 @@ inline %0C0h
 
   mov [edi + __arg1], eax
 
+end
+
+// ; swapsi
+inline % 0C1h
+
+  mov ebx, [esp]
+  mov ecx, [esp+__arg1]
+  mov [esp], ecx
+  mov [esp+__arg1], ebx
+  
+end
+
+// ; aswapsi
+inline % 0C2h
+
+  mov ebx, eax
+  mov ecx, [esp+__arg1]
+  mov [esp+__arg1], ebx
+  mov eax, ecx
+  
 end
 
 // ; asavesi

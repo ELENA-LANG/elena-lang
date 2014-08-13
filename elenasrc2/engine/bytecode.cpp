@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "ecopyd", "dcopye", "pushd", "popd", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "type", "len", "wlen", "flag", "weval", "unknown", "unknown", "unknown",
+   "type", "len", "wlen", "flag", "weval", "wname", "class", "mindex",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "clone", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
@@ -50,7 +50,7 @@ const char* _fnOpcodes[256] =
    "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",
    "dloadsi", "dsavefi", "pushsi", "dsavesi", "unknown", "pushf", "unknown", "reserve",
 
-   "asavebi", "unknown", "unknown", "asavesi", "asavefi", "unknown", "unknown", "unknown",
+   "asavebi", "swapsi", "aswapsi", "asavesi", "asavefi", "unknown", "unknown", "unknown",
    "bloadfi", "bloadsi", "unknown", "unknown", "asaver", "aloadai", "aloadbi", "axsavebi",
 
    "popi", "unknown", "scopyf", "setverb", "setsubj", "andn", "addn", "unknown",

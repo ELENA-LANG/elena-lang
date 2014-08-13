@@ -513,9 +513,9 @@ inline void reverseArgOrder(MemoryWriter& ecodes, int count/*, bool useRole = fa
             ecodes.writeDWord(j);
          }
          else {
-            // accloadsi j
-            // accswapssi i
-            // accsavesi j
+            // aloadsi j
+            // aswapsi i
+            // asavesi j
             ecodes.writeByte(bcALoadSI);
             ecodes.writeDWord(j);
             ecodes.writeByte(bcASwapSI);
@@ -678,12 +678,12 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
          case SEND_TAPE_MESSAGE_ID:
             message = _linker->parseMessage((wchar16_t*)(base + param));
 
-            //mcopy message
+            //copym message
             //aloadsi 0
             //acallvi 0
             //pusha
 
-            ecodes.writeByte(bcMCopy);
+            ecodes.writeByte(bcCopyM);
             ecodes.writeDWord(message);
 
             if (command != SENDR_TAPE_MESSAGE_ID) {
@@ -704,22 +704,31 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
          {
             int level = param;
 
-            // create n, vmt
-            ecodes.writeByte(bcCreate);
-            ecodes.writeDWord(param);
+            // new n, vmt
+            ecodes.writeByte(bcNew);
             if (command == NEWA_TAPE_MESSAGE_ID) {
                helper.writeTape(ecodes, loadSymbol(ConstantIdentifier(TAPE_CLASS), mskVMTRef), mskVMTRef);
             }
             else helper.writeTape(ecodes, loadSymbol(ConstantIdentifier(STRUCT_CLASS), mskVMTRef), mskVMTRef);
+            ecodes.writeDWord(param);
 
-            // assign content
+            // ; assign content
+            // bcopya
+
+            // ; repeat param-time
+            // popa
+            // axsavebi i
+
+            // pushb
+            ecodes.writeByte(bcBCopyA);
             while (level > 0) {
-               ecodes.writeByte(bcXPopAI);
+               ecodes.writeByte(bcPopA);
+               ecodes.writeByte(bcAXSaveBI);
                level--;
                ecodes.writeDWord(level);
             }
 
-            ecodes.writeByte(bcPushA);
+            ecodes.writeByte(bcPushB);
          //   level++;
             break;
          }

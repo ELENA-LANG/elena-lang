@@ -65,6 +65,9 @@ enum ByteCode
    bcWLen           = 0x32,
    bcFlag           = 0x33, 
    bcWEval          = 0x34,
+   bcWName          = 0x35,
+   bcClass          = 0x36,
+   bcMIndex         = 0x37,
    bcClone          = 0x3E,
 
    bcNEqual         = 0x40,
@@ -178,6 +181,8 @@ enum ByteCode
    bcReserve        = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
    bcASaveBI        = 0xC0,
+   bcSwapSI         = 0xC1,
+   bcASwapSI        = 0xC2,
    bcASaveSI        = 0xC3,
    bcASaveFI        = 0xC4,
    bcBLoadFI        = 0xC8,

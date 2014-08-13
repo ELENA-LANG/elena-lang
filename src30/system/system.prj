@@ -25,6 +25,8 @@ collections\list.l
 io\win32_console.l
 text\textbuffer.l
 dynamic\loaders.l
+dynamic\reflection.l
 dynamic\interpreters.l
+dynamic\script.l
 threading\win32_handlers.l
 threading\thread.l

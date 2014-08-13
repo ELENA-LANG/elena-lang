@@ -508,11 +508,11 @@ struct InternalError : _Exception
    }
 };
 
-//// --- EAbortException ---
-//
-//class EAbortException : _Exception
-//{
-//};
+// --- EAbortException ---
+
+class EAbortException : _Exception
+{
+};
 
 // --- key mapping routines ---
 

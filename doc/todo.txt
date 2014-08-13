@@ -20,8 +20,10 @@ v  - vm script
 Currently:
 ------
               xdev - generic development
-                       * external call action parameter - only symbol reference can be used, the symbol loader should not be directly created,
-                         rather than only symbol address be used
+                       * role should automatically extends appropriate types, if no type provided - generic ones,
+                         so type role is no longer class, some code should be modifie, boxing should be done differently
+
+                       * review all roles, to make sure no side effects will be, especially generic ones (look at classOp.getAt[1])
 
                        * can we use ^ operator to returns from any part of the code to the end
 

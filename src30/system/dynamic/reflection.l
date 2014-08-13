@@ -22,14 +22,14 @@
     #method respondsTo &message:aMessage
         <class_indexOfMsg>.
 
-    #method length
-    [
-        #var(type:int)aCount.
-        classControl readLength &object:self &out'int:aCount.
-        
-        ^ IntNumber new &int:aCount.
-    ]
-
-    #method getAt : anIndex
-        = classControl read &index::anIndex &object:self.
+//    #method length
+//    [
+//        #var(type:int)aCount.
+//        classControl readLength &object:self &out'int:aCount.
+//        
+//        ^ IntNumber new &int:aCount.
+//    ]
+//
+//    #method getAt : anIndex
+//        = classControl read &index::anIndex &object:self.
 }

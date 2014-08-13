@@ -279,6 +279,10 @@ ELENA byte codes (or ecodes)
 
  flag                        - acc::VMT::flag >> index 
 
+ class                       - base::VMT >> acc
+
+ mindex                      - search for ext in acc:VMT; out: index or -1
+
  
  memory managing commands:
  -------------------------
@@ -463,3 +467,5 @@ ELENA byte codes (or ecodes)
  dynamic / reflection commands
  ----------------
  weval                     - load symbol by name into ext ; str(base) => ext
+
+ wname                     - acc.VMT.Name >> str(base), index maximal value

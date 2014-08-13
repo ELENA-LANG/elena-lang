@@ -433,8 +433,8 @@ namespace _ELENA_
    #define PACKAGE_MODULE           "$package"
    #define EXTERNAL_MODULE          "system'external"
 
-//  // VM temporal code
-//   #define TAPE_SYMBOL              "$tape"
+  // VM temporal code
+   #define TAPE_SYMBOL              "$tape"
 
   // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
@@ -455,13 +455,13 @@ namespace _ELENA_
 //   #define WCHR_CLASS               "system'CharValue" 
    #define ARRAY_CLASS              "system'Array" 
 ////   #define ROLES_CLASS              "system'dynamic'RoleList"        // the role list handler
-//   #define TAPE_CLASS               "system'dynamic'Tape"            // the role list handler
+   #define TAPE_CLASS               "system'dynamic'Tape"            // the role list handler
 //   #define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the role list handler
    #define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
    #define MESSAGE_CLASS            "system'dynamic'Message"         // the special role class
    #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
    #define GETPROPERTY_CLASS        "system'dynamic'GetProperty"     
-//   #define STRUCT_CLASS             "system'dynamic'Struct"     
+   #define STRUCT_CLASS             "system'dynamic'Struct"     
 
    // predefined types
    #define PARAMS_SUBJECT           "params"

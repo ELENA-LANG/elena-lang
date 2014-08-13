@@ -12,7 +12,7 @@
         #var anObject := self.
 
         aResult << anObject~classOp Name.
-        #var aCounter := anObject~classOp length.
+        #var(type:int) aCounter := anObject~classOp length.
         (0 < aCounter) ?
         [       
             aResult << "{".

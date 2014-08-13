@@ -18,16 +18,18 @@ namespace _ELENA_
 {
 
 // --- ECodesAssembler ---
-
 class ECodesAssembler : public Assembler
 {
 	Map<const wchar16_t*, size_t> constants;
+   MessageMap                    verbs;
 
    struct LabelInfo
    {
       Map<const wchar16_t*, int> labels;
       Map<const wchar16_t*, int> fwdJumps;
    };
+
+   int mapVerb(const wchar16_t* literal);
 
    void fixJump(const wchar16_t* label, MemoryWriter& writer, LabelInfo& info);
 
@@ -36,6 +38,7 @@ class ECodesAssembler : public Assembler
    void writeCommand(ByteCommand command, MemoryWriter& writer);
 
    void compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
+   void compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);

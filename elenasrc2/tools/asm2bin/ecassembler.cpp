@@ -15,6 +15,15 @@ using namespace _ELENA_;
 
 // --- ECodesAssembler ---
 
+int ECodesAssembler :: mapVerb(const wchar16_t* literal)
+{
+   if (verbs.Count() == 0) {
+      ByteCodeCompiler::loadVerbs(verbs);
+   }
+
+   return verbs.get(literal);
+}
+
 void ECodesAssembler :: fixJump(const wchar16_t* label, MemoryWriter& writer, LabelInfo& info)
 {
    _Memory* code = writer.Memory();
@@ -93,6 +102,54 @@ void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryW
 	int n = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, n), writer);
+}
+
+void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{   
+	const wchar16_t* word = token.read();
+   if (token.terminal.state == dfaInteger || constants.exist(word)) {
+      int m = 0;
+      if(token.getInteger(m, constants)) {
+         writeCommand(ByteCommand(code, m), writer);
+      }
+      else token.raiseErr(_T("Invalid number (%d)\n"));
+   }
+   else if (ConstantIdentifier::compare(word, "subject")) {
+      token.read(_T(":"), _T("Invalid operand"));
+      token.read();
+
+      int paramCount = 0; // NOTE: paramCount might be not equal to stackCount (the actual stack size) in the case if variables are used for virtual methods
+      int stackCount = 0;
+      int verbId = mapVerb(token.value);
+      if (verbId == 0) {
+         verbId = EVAL_MESSAGE_ID;
+      }
+
+      IdentifierString subject; 
+      token.read();
+      bool first = true;
+      while(token.value[0] == '&') {
+         if (first) {
+            first = false;
+         }
+         else subject.append(token.value);
+
+         token.read();
+         subject.append(token.value);
+         token.read();
+      }
+      if (token.value[0] == '[') {
+         paramCount = token.readInteger(constants);
+      }
+      else token.raiseErr(_T("Invalid operand"));
+
+      token.read(_T("]"), _T("Invalid operand"));
+
+      ref_t subj = binary->mapSubject(subject, false);
+
+      writeCommand(ByteCommand(code, encodeMessage(subj, verbId, paramCount)), writer);
+   }
+   else throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
 }
 
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
@@ -206,6 +263,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);
             break;
+         case bcCallExtR:
+            compileExtCommand(opcode, token, writer, binary);
+            break;
          case bcACallVI:
          case bcAJumpVI:
          case bcALoadSI:
@@ -224,7 +284,6 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcReserve:
             compileICommand(opcode, token, writer);
             break;
-         case bcCopyM:
          case bcQuitN:
          case bcPopI:
          case bcDCopy:
@@ -234,6 +293,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcAndN:
          case bcPushN:
             compileNCommand(opcode, token, writer);
+            break;
+         case bcCopyM:
+            compileMCommand(opcode, token, writer, binary);
             break;
          case bcIfB:
          case bcElseB:

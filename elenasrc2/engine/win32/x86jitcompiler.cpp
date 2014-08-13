@@ -48,14 +48,14 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 109;
+const int gcCommandNumber = 114;
 const int gcCommands[gcCommandNumber] =
 {   
    bcBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
-   bcALoadFI, bcASaveSI, bcASaveFI, bcClose,
-   bcNewN, bcNew, bcWEval,
+   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
+   bcNewN, bcNew, bcWEval, bcSwapSI, bcASwapSI,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF,
-   bcHook, bcThrow, bcUnhook, 
+   bcHook, bcThrow, bcUnhook, bcWName, bcClass,
    bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, 
    bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
    bcGet, bcSet, bcXSet, bcECall,
@@ -89,7 +89,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
@@ -116,7 +116,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePush, &compileNop, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &compileNop, &compilePushF, &compileNop, &loadIndexOp,
 
-   &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
+   &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &loadFPOp, &loadIndexOp, &compileNop, &compileNop, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &compileNop, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileNop,
