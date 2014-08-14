@@ -53,7 +53,6 @@ __define VARSIZE_VALUE          4160
 __define L6_OPERATION           4161
 __define SIZE_VALUE             4162
 __define L0_OPERATION           4163
-__define USE                    4164
 __define GENERIC                4165
 __define DEFAULT                4166
 __define TYPE                   4167
@@ -82,7 +81,6 @@ START ->
 	| CLASS_DECLARATION DECLARATIONS eof
 	| SYMBOL_DECLARATION DECLARATIONS eof
 	| STATIC_DECLARATION DECLARATIONS eof
-	| USE_DECLARATION DECLARATIONS eof
 	| TYPE_DECLARATION DECLARATIONS eof
 	| eof
 
@@ -98,9 +96,6 @@ SYMBOL_DECLARATION ->
 STATIC_DECLARATION ->
 	#static STATIC
 
-USE_DECLARATION ->
-	#use USE
-
 TYPE_DECLARATION ->
 	#type HINTS TYPE
 	
@@ -108,7 +103,6 @@ DECLARATIONS ->
 	SYMBOL_DECLARATION DECLARATIONS
 	| STATIC_DECLARATION DECLARATIONS
 	| CLASS_DECLARATION DECLARATIONS
-	| USE_DECLARATION DECLARATIONS
 	| TYPE_DECLARATION DECLARATIONS
 	| eps
 	
@@ -303,10 +297,6 @@ SYMBOL ->
 STATIC ->
 	identifier SYMBOL_BODY
 	| private SYMBOL_BODY
-
-USE ->
-	identifier TERMINATOR
-	| reference TERMINATOR
 
 TYPE ->
 	identifier TERMINATOR
@@ -575,6 +565,7 @@ HINT_VALUE ->
 	| hex
 	| identifier
 	| literal
+	| reference
 	
 BASE_CLASS ->
 	identifier

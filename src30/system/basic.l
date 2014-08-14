@@ -8,19 +8,6 @@
 #define(const)realConvertor = system'realConvertor.
 #define(const)literalConvertor = system'literalConvertor.
 
-// === basic types ===
-
-#type(size:2,role:ShortNumber)      short.
-#type(size:4,role:IntNumber)        int.
-#type(role:LiteralValue)            literal.
-#type(size:8,role:LongNumber)       long.
-#type(size:8,role:RealNumber)       real.
-
-#type(size:4,role:IntNumber)        length.
-#type(size:4,role:IntNumber)        index.
-
-#type(role:ArgArray)                params.
-
 // --- BaseValue ---
 
 #class BaseValue
@@ -176,10 +163,10 @@
 
     #method shift &index:anOrder
         <int_shift>.
-
+        
     #method read &out'short:aLength
         <int_saveshort>.
-        
+
     #method literal = literalConvertor convert &int:$self literal.
 
     #method negative = 0 - $self.
@@ -191,7 +178,6 @@
 
     #method clone = IntNumber new &int:$self.
 }
-
 
 // --- longnumber ---
 
@@ -1104,14 +1090,10 @@
 //    ]
 }
 
-// --- ArgArray ---
+// --- paramsOp ---
 
-#class(sealed,type:params) ArgArray
+#class(extension:params)$paramsOp
 {
-    #field(item)theItem.
-    
-    #constructor => <args_create>.
-    
     #method length
     [
         #var(type:int)aLength.
@@ -1122,7 +1104,7 @@
 
     #method read &out'length:aLength
         <args_getlen>.
-}    
+}
 
 // === Basic Convertors ===
 

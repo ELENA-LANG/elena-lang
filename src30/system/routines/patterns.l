@@ -1,6 +1,6 @@
 #define system.
 
-//// === extensions ===
+// === extensions ===
 //
 ////// --- misc ---
 ////
@@ -11,7 +11,7 @@
 
 // --- indexable ---
 
-#class(role) indexable
+#class(extension:indexable) indexable
 {
     #method set &each:aFunction
     [
@@ -201,7 +201,7 @@
 
 // --- enumerable ---
 
-#class(role)enumerable
+#class(extension:enumerable)enumerable
 {
     #method run : aFunction
         = control foreach:self &do:aFunction.

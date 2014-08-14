@@ -1,8 +1,5 @@
 // === basic memory classes ===
 
-#type(itemsize:1,role:ByteArray)bytearray.
-#type(itemsize:2,role:ShortArray)shortarray.
-
 // --- ByteArray ---
 
 #class(sealed,type:bytearray) ByteArray

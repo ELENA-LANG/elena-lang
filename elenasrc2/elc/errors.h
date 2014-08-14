@@ -61,6 +61,7 @@ namespace _ELENA_
    #define errNotDefaultConstructor "%s(%d:%d): error 143: Default constructor is not defined\n"
    #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
    #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
+   #define errNotSupprotedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n" 
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
 //   #define errInternalError         "internal error 599"
@@ -96,6 +97,7 @@ namespace _ELENA_
    #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
    #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked for '%s'\n"
    #define wrnUnknownMessage        "%s(%d:%d): warning 416: method '%s' is not supported by the object\n"
+   #define wrnDuplicateExtension    "%s(%d:%d): warning 417: '%s': duplicate extension\n" 
 
 } // _ELENA_
 

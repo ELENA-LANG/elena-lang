@@ -423,13 +423,14 @@ struct ClassInfo
 
    typedef MemoryMap<ref_t, bool, false>          MethodMap;
    typedef MemoryMap<const wchar16_t*, int, true> FieldMap;
+   typedef MemoryMap<int, ref_t>                  FieldTypeMap;
 
-   ClassHeader header;
-   size_t      size;           // Object size
-   ref_t       classClassRef;  // reference to class class VMT
-   MethodMap   methods;
-   MethodMap   extensions;
-   FieldMap    fields;
+   ClassHeader  header;
+   size_t       size;           // Object size
+   ref_t        classClassRef;  // reference to class class VMT
+   MethodMap    methods;
+   FieldMap     fields;
+   FieldTypeMap fieldTypes;
 
    void save(StreamWriter* writer)
    {
@@ -438,7 +439,7 @@ struct ClassInfo
       writer->writeDWord(classClassRef);
       methods.write(writer);
       fields.write(writer);
-      extensions.write(writer);
+      fieldTypes.write(writer);
    }
 
    void load(StreamReader* reader)
@@ -448,11 +449,11 @@ struct ClassInfo
       classClassRef = reader->getDWord();
       methods.read(reader);
       fields.read(reader);
-      extensions.read(reader);
+      fieldTypes.read(reader);
    }
 
    ClassInfo()
-      : fields(-1), methods(false), extensions(false)
+      : fields(-1), methods(false)
    {
       header.flags = 0;
    }

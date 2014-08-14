@@ -5,7 +5,7 @@
 
 // --- SystemTime ---
 
-#type(size:16,role:Win32SystemTime)__win_systemtime.
+#type(size:16,wrapper:Win32SystemTime)__win_systemtime.
 
 #class(type:__win_systemtime) Win32SystemTime
 {

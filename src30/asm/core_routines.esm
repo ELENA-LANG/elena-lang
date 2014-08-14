@@ -19,6 +19,20 @@ procedure inline'dispatch
 
 end
 
+procedure inline'object_equal
+
+  aloadsi 1
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
+  
+labTrue:
+  acopyr const : system'true
+  quitn 2
+  
+end
+
 procedure inline'typecast
 
   type
@@ -35,6 +49,202 @@ procedure inline'exception_redirect
 
   bsredirect
   throw
+
+end
+
+procedure inline'int_copy
+
+  bcopya
+  aloadsi 2
+  ncopy
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_copyshort
+
+  bcopya
+  aloadsi 2
+  nload
+  andn 0FFFFh
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_equal
+
+  bloadsi 2
+  nequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'int_less
+
+  bloadsi 2
+  nless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure inline'int_add
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nadd
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_sub
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nsub
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_mul
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nmul
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_div
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  ndiv
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_and
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nand
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_or
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nor
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'int_xor
+
+  pusha
+  newn   class : system'IntNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nxor
+  acopyb
+  quitn 2
+
+end
+                 
+procedure inline'int_shift
+
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 2    // ; load index
+  nload
+  nshift
+  acopyb
+  quitn 2
+  
+end
+
+procedure inline'int_not
+
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure inline'int_saveshort
+
+  pusha
+  bcopya
+  acopyr  const : system'shortMaximalValue
+  nless
+  ifn     labEnd 0
+
+  callr   system'OutOfRangeException
+  pusha
+  copym   NEW_MESSAGE_ID
+  acallvi 0
+  throw  
+
+labEnd:
+  popa
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure inline'args_getlen
+
+  aloadsi 1
+  bcopya
+  dcopy 0
+  ecopyd
+  xseek
+  bloadsi 2
+  nsave
+  quitn 2
 
 end
 
@@ -220,42 +430,10 @@ labErr:
 
 end
 
-procedure inline'object_equal
-
-  aloadsi 1
-  bloadsi 2
-  ifb     labTrue
-  acopyr  const : system'false
-  quitn   2
-  
-labTrue:
-  acopyr const : system'true
-  quitn 2
-  
-end
-
-procedure inline'int_equal
-
-  bloadsi 2
-  nequal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
 procedure inline'ws_equal
 
   bloadsi 2
   wequal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure inline'int_less
-
-  bloadsi 2
-  nless
   selectr const : system'false const : system'true
   quitn 2
   
@@ -268,104 +446,6 @@ procedure inline'ws_less
   selectr const : system'false const : system'true
   quitn 2
   
-end
-
-procedure inline'int_add
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nadd
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_sub
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nsub
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_mul
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nmul
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_div
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  ndiv
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_and
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nand
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_or
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nor
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_xor
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nxor
-  acopyb
-  quitn 2
-
 end
 
 procedure inline'int_copystr
@@ -383,28 +463,6 @@ labErr:
   copym NEW_MESSAGE_ID
   acallvi 0
   throw
-
-end
-
-procedure inline'int_saveshort
-
-  pusha
-  bcopya
-  acopyr  const : system'shortMaximalValue
-  nless
-  ifn     labEnd 0
-
-  callr   system'OutOfRangeException
-  pusha
-  copym   NEW_MESSAGE_ID
-  acallvi 0
-  throw  
-
-labEnd:
-  popa
-  bloadsi 2
-  ncopy
-  quitn 2
 
 end
 
@@ -581,29 +639,6 @@ procedure inline'long_xor
   acopyb
   quitn 2
 
-end
-                 
-procedure inline'int_shift
-
-  newn   class : system'IntNumber 4
-  bcopya
-  aloadsi 2    // ; load index
-  nload
-  nshift
-  acopyb
-  quitn 2
-  
-end
-
-procedure inline'int_not
-
-  newn   class : system'IntNumber 4
-  bcopya
-  aloadsi 1    // ; load source
-  nnot         // ; invert
-  acopyb
-  quitn 1
-  
 end
                  
 procedure inline'long_shift
@@ -826,18 +861,6 @@ procedure inline'args_create
   copym NEW_MESSAGE_ID
   acallvi 0
   throw
-
-end
-
-procedure inline'args_getlen
-
-  bcopya
-  dcopy 0
-  ecopyd
-  xseek
-  bloadsi 2
-  nsave
-  quitn 2
 
 end
 
@@ -1143,28 +1166,6 @@ procedure inline'real_copyint
   bloadsi 3
   aloadsi 2
   rcopyn
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_copy
-
-  bcopya
-  aloadsi 2
-  ncopy
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'int_copyshort
-
-  bcopya
-  aloadsi 2
-  nload
-  andn 0FFFFh
-  nsave
   acopyb
   quitn 2
 

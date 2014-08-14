@@ -11,7 +11,7 @@
 
 // --- classOp ---
 
-#class(role) classOp
+#class(extension) classOp
 {
     #method Name
         <class_getName>.

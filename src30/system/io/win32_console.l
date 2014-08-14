@@ -33,7 +33,7 @@
         aLiteral read &out'length:aLength.
         
         system'external'KERNEL32 WriteConsoleW
-            &handle  ::  theHandle
+            &handle  :: theHandle
             &literal :  aLiteral
             &int     :  aLength
             &int     :  0                       // !! temporally we do not use it

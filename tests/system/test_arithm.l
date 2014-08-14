@@ -7,10 +7,15 @@
     
 #class(role)XTester
 {
+    #method test :: aParams
+    [
+        #var aLength := aParams length.
+    ]
 }
 
 #symbol XTest =
 [
+    #var n := Integer new:1.
 ].
 
 // --- OpenArgTest ---

@@ -25,7 +25,6 @@ using namespace _ELENA_;
 #define HINT_SUBBRANCH        0x02000000     // used for if-else statement to indicate that the exit label is not the last one
 #define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define HINT_TYPEENFORCING    0x00800000     
-#define HINT_EXTENSION_METH   0x00400000     // extension 
 #define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
@@ -57,7 +56,7 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
    if (signRef != 0) {
       const wchar16_t* subject = exporter->resolveSubject(signRef);
 
-      signRef = importer->mapSubject(subject, true);
+      signRef = importer->mapSubject(subject, false);
    }
    return encodeMessage(signRef, verbId, paramCount);
 }
@@ -174,30 +173,16 @@ inline bool isAssignOperation(DNode target, DNode operation)
    return false;
 }
 
-//inline bool IsPrimitiveArray(ObjectType type)
-//{
-//   switch(type) {
-//      case otLiteral:
-//      case otByteArray:
-//      case otParams:
-//      case otArray:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//inline bool IsPrimitiveIndex(ObjectType type)
-//{
-//   switch(type) {
-//      case otIndex:
-//      case otInt:
-//      case otIntVar:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+inline ref_t getType(ObjectInfo object)
+{
+   switch(object.kind) {
+      case okConstantClass:
+      case okOuterField:
+         return 0;
+      default:
+         return object.extraparam;
+   }
+}
 
 inline bool IsExprOperator(int operator_id)
 {
@@ -260,93 +245,10 @@ inline bool IsInvertedOperator(int& operator_id)
    else return false;
 }
 
-//inline int defineSubjectHint(ObjectType type)
-//{
-//   switch(type) {
-//      case otInt:
-//      case otIntVar:
-//      case otIndex:
-//      case otLong:
-//      case otLongVar:
-//      case otReal:
-//      case otRealVar:
-//      case otLength:
-//      case otShort:
-//      case otShortVar:
-//      case otLiteral:
-//      case otByteArray:
-//      case otParams:
-//         return HINT_STACKREF_ALLOWED;
-//      default:
-//         return 0;
-//   }
-//}
-//
-////inline ObjectType ModeToType(int mode)
-////{
-////   int type = mode & ~HINT_MASK;
-////   switch(type) {
-////      case tcInt:
-////         return otInt;
-////      case tcLong:
-////         return otLong;
-////      case tcReal:
-////         return otReal;
-////      case tcShort:
-////         return otShort;
-////      case tcLen:
-////         return otLength;
-////      case tcStr:
-////         return otLiteral;
-////      default:
-////         if (mode >= tcBytes) {
-////            return otByteArray;
-////         }
-////         else return otNone;
-////   }
-////}
-//
-//inline int defineExpressionType(ObjectType loperand, ObjectType roperand)
-//{
-//   if (loperand == otInt || loperand == otLength || loperand == otIndex) {
-//      switch (roperand) {
-//         case otInt:
-//         case otLength:
-//         case otIndex:
-//            return otInt;
-//         default:
-//            return roperand;
-//      }
-//   }
-//   else if (loperand == otLong) {
-//      switch (roperand) {
-//         case otInt:
-//         case otLength:
-//         case otIndex:
-//         case otLong:
-//            return otLong;
-//         case otReal:
-//            return otReal;
-//      }
-//   }
-//   else if (loperand == otReal) {
-//      switch (roperand) {
-//         case otInt:
-//         case otIndex:
-//         case otLength:
-//         case otLong:
-//         case otReal:
-//            return otReal;
-//      }
-//   }
-//
-//   return 0;
-//}
-
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope :: ModuleScope(Project* project, const tchar_t* sourcePath, Unresolveds* forwardsUnresolved)
-   : symbolHints(okUnknown)
+   : symbolHints(okUnknown), extensions(NULL, freeobj)
 {
    this->project = project;
    this->sourcePath = sourcePath;
@@ -385,27 +287,6 @@ ref_t Compiler::ModuleScope :: mapSubject(const wchar16_t* name)
    return sign_ref;
 }
 
-//ObjectInfo Compiler::ModuleScope :: mapSubjectInfo(ObjectKind kind, ref_t subjRef)
-//{
-   //bool out = false;
-   //ref_t subjRef = mapSubject(identifier, out);
-//   ObjectType type = mapSubjectType(subjRef);
-//
-//   if (out) {
-//      switch(type) {
-//         case otInt:
-//            return otIntVar;
-//         case otLong:
-//            return otLongVar;
-//         case otReal:
-//            return otRealVar;
-//         case otShort:
-//            return otShortVar;
-//      }
-//   }
-//   return type;
-//}
-
 ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
 {
    if (identifier==tsReference) {
@@ -437,10 +318,14 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(const wchar16_t* identifier)
 ref_t Compiler::ModuleScope :: mapType(const wchar16_t* terminal)
 {
    ref_t subj_ref = module->mapSubject(terminal, true);
-   if (subj_ref != 0 && typeHints.exist(subj_ref)) {
-      return subj_ref;
+   if (subj_ref != 0) {
+      if (typeHints.exist(subj_ref)) {
+         return subj_ref;
+      }
+      else return synonymHints.get(subj_ref);
    }
-   else return 0;
+
+   return 0;
 }
 
 ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal, bool& out)
@@ -695,13 +580,54 @@ void Compiler::ModuleScope :: loadTypes(_Module* extModule)
          MemoryReader metaReader(section);
          while (!metaReader.Eof()) {
             ref_t subj_ref = importSubject(extModule, metaReader.getDWord(), module);
-            ref_t wrapper_ref = importReference(extModule, metaReader.getDWord(), module);
-            int size = metaReader.getDWord();
 
-            typeHints.add(subj_ref, wrapper_ref, true);
+            if (subj_ref) {
+               ref_t wrapper_ref = importReference(extModule, metaReader.getDWord(), module);
+               int size = metaReader.getDWord();
 
-            if (size != 0)
-               sizeHints.add(subj_ref, size, true);
+               typeHints.add(subj_ref, wrapper_ref, true);
+
+               if (size != 0)
+                  sizeHints.add(subj_ref, size, true);
+            }
+            // if it is a synonym
+            else {
+               ref_t typeRef = importSubject(extModule, metaReader.getDWord(), module);
+               ref_t synonymRef = importSubject(extModule, metaReader.getDWord(), module);
+
+               synonymHints.add(synonymRef, typeRef, true);
+            }
+         }
+      }
+   }
+}
+
+void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* extModule)
+{
+   if (extModule) {
+      ReferenceNs sectionName(extModule->Name(), EXTENSION_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t type_ref = importSubject(extModule, metaReader.getDWord(), module);
+            ref_t message = importMessage(extModule, metaReader.getDWord(), module);
+            ref_t role_ref = importReference(extModule, metaReader.getDWord(), module);
+
+            if(!extensionHints.exist(message, type_ref)) {
+               extensionHints.add(message, type_ref);
+
+               SubjectMap* typeExtensions = extensions.get(type_ref);
+               if (!typeExtensions) {
+                  typeExtensions = new SubjectMap();
+
+                  extensions.add(type_ref, typeExtensions);
+               }
+
+               typeExtensions->add(message, role_ref);
+            }
+            else raiseWarning(wrnDuplicateExtension, terminal);
          }
       }
    }
@@ -721,6 +647,56 @@ bool Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t wrapper_ref, int si
       sizeHints.add(type_ref, size);
 
    return typeHints.add(type_ref, wrapper_ref, true);
+}
+
+bool Compiler::ModuleScope :: saveSynonym(ref_t type_ref, ref_t synonym_ref)
+{
+   ReferenceNs sectionName(module->Name(), TYPE_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(0);
+   metaWriter.writeDWord(type_ref);
+   metaWriter.writeDWord(synonym_ref);
+
+   return synonymHints.add(synonym_ref, type_ref, true);
+}
+
+bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
+{
+   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(type);
+   metaWriter.writeDWord(message);
+   metaWriter.writeDWord(role);
+
+   if (!extensionHints.exist(message, type)) {
+      extensionHints.add(message, type);
+
+      SubjectMap* typeExtensions = extensions.get(type);
+      if (!typeExtensions) {
+         typeExtensions = new SubjectMap();
+
+         extensions.add(type, typeExtensions);
+      }
+
+      typeExtensions->add(message, role);
+
+      return true;
+   }
+   else return false;
+}
+
+ref_t Compiler::ModuleScope :: getClassType(ref_t reference)
+{
+   ClassInfo info;
+
+   if(loadClassInfo(info, module->resolveReference(reference))) {
+      return info.header.typeRef;
+   }
+   else return 0;
 }
 
 ref_t Compiler::ModuleScope :: getBoolType()
@@ -861,6 +837,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.flags = elStandartVMT;
    info.size = 0;
    info.classClassRef = 0;
+   extensionTypeRef = 0;
 }
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
@@ -875,21 +852,13 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
       int reference = info.fields.get(identifier);
       if (reference != -1) {
          if (test(info.header.flags, elStructureRole)) {
-            // if it is a structure - a field reference is a field type
-            ClassInfo::FieldMap::Iterator it = info.fields.start();
-            int offset = 0;
-            // we have to calculate the field offset
-            while (!StringHelper::compare(it.key(), identifier)) {
-               offset += moduleScope->sizeHints.get(*it);
-
-               it++;
-            }
+            int offset = reference;
 
             // HOTFIX : if it is a first data field, $self can be used instead
             if (offset == 0) {
-               return ObjectInfo(okLocal, 1, reference);
+               return ObjectInfo(okLocal, 1, info.fieldTypes.get(offset));
             }
-            else return ObjectInfo(okFieldAddress, offset, reference);
+            else return ObjectInfo(okFieldAddress, offset, info.fieldTypes.get(offset));
          }
 //         else if (test(info.header.flags, elDynamicRole)) {
 //            int type = getClassType();
@@ -899,7 +868,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 //            else return ObjectInfo(okUnknown);
 //         }
          // otherwise it is a normal field
-         else return ObjectInfo(okField, reference);
+         else return ObjectInfo(okField, reference, info.fieldTypes.get(reference));
       }
       else return Scope::mapObject(identifier);
    }
@@ -931,9 +900,13 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       else if (ConstantIdentifier::compare(terminal, HINT_ROLE)) {
          info.header.flags |= elRole;
       }
-//      else if (ConstantIdentifier::compare(terminal, HINT_OPERATION)) {
-//         info.header.flags |= elOperation;
-//      }      
+      else if (ConstantIdentifier::compare(terminal, HINT_EXTENSION)) {
+         info.header.flags |= elExtension;
+         DNode value = hints.select(nsHintValue);
+         if (value != nsNone) {
+            extensionTypeRef = moduleScope->mapSubject(value.Terminal());
+         }
+      }      
       else if (ConstantIdentifier::compare(terminal, HINT_SEALED)) {
          info.header.flags |= elSealed;
       }
@@ -1037,9 +1010,6 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
 
             type = moduleScope->mapSubject(typeTerminal);
             size = moduleScope->sizeHints.get(type);
-
-            if (size == 0)
-               raiseError(errInvalidHintValue, typeTerminal);
          }
          else raiseWarning(wrnInvalidHint, terminal);
       }
@@ -1071,13 +1041,6 @@ void Compiler::MethodScope :: include()
       classScope->info.methods.add(message, true);
    }
    else (*it) = true;
-}
-
-void Compiler::MethodScope :: includeExtension()
-{
-   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-
-   classScope->info.extensions.add(message, true,true );
 }
 
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
@@ -1121,10 +1084,7 @@ int Compiler::MethodScope :: compileHints(DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (ConstantIdentifier::compare(terminal, HINT_EXTENSION)) {
-         mode |= HINT_EXTENSION_METH;
-      }
-      else raiseWarning(wrnUnknownHint, terminal);
+      raiseWarning(wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1198,12 +1158,8 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
       if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
          TerminalInfo typeValue = hints.firstChild().Terminal();
 
-         bool isStructure;
-         type = moduleScope->mapType(typeValue, isStructure);
+         type = moduleScope->mapType(typeValue);
          if (!type)
-            raiseError(errUnknownSubject, typeValue);
-
-         if (!isStructure)
             raiseError(errUnknownSubject, typeValue);
 
          size = moduleScope->sizeHints.get(type);
@@ -1478,25 +1434,14 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
             it++;
          }
 
-         // import extension references
-         it = copy.extensions.start();
-         while (!it.Eof()) {
-            scope.info.extensions.add(importMessage(module, it.key(), moduleScope->module), true);
+         scope.info.fields.add(copy.fields);
 
-            it++;
+         ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+         while (!type_it.Eof()) {
+            scope.info.fieldTypes.add(type_it.key(), importSubject(module, *type_it, moduleScope->module));
+
+            type_it++;
          }
-
-         // if it is a data structure import type subjects
-         if (test(copy.header.flags, elStructureRole)) {
-            ClassInfo::FieldMap::Iterator it = copy.fields.start();
-            while (!it.Eof()) {
-               scope.info.fields.add(it.key(), importSubject(module, *it, moduleScope->module));
-
-               it++;
-            }
-         }
-         // otherwise copy fields
-         else scope.info.fields.add(copy.fields);
       }
       else {
          scope.info.load(&reader);
@@ -1689,23 +1634,12 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       int size = 0;
       scope.compileLocalHints(hints, type, size);
 
+      bool stackAllocated = (type != 0 && scope.moduleScope->typeHints.get(type) != 0);
+
       int level = scope.newLocal();
 
-      if (type != 0) {
+      if (stackAllocated) {
          ObjectInfo primitive(okLocal, 0, type);
-
-         //// Note: size modificator is used only for bytearray
-         ////       in all other cases it should be zero
-         //if (type == scope.moduleScope->dumpSubject && size > 0) {
-         //   ObjectInfo headerInfo(okLocal, 0, scope.moduleScope->longSubject);
-
-         //   // byte array should start with negative size field & idle vmt
-         //   allocateStructure(scope, 0, headerInfo);
-
-         //   _writer.declarePrimitiveVariable(*scope.tape, -size);
-         //   _writer.loadObject(*scope.tape, ObjectInfo(okLocalAddress, headerInfo.param));
-         //   _writer.popObject(*scope.tape, ObjectInfo(okRegisterField));
-         //}
 
          if(!allocateStructure(scope, size, primitive))
             scope.raiseError(errInvalidOperation, node.Terminal());
@@ -1719,14 +1653,11 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          }
          //else if (type == scope.moduleScope->longSubject) {
          //   _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
+//               _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
          //}
          else {
             _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
          }
-////            case otReal:
-////               _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
-////               break;
-//         }
       }
       else {
          _writer.declareVariable(*scope.tape, scope.moduleScope->nilReference);
@@ -1735,7 +1666,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 
       DNode assigning = node.firstChild();
       if (assigning != nsNone) {
-         if (type != 0) {
+         if (stackAllocated) {
             scope.mapLocal(node.Terminal(), level, type);
 
             ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
@@ -2311,14 +2242,14 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
       }
 
       bool out = false;
-      ref_t type_ref = scope.moduleScope->mapType(subject, out);
-      // if it is get-property call and type is not known
-      // implicit message call
+      ref_t type_ref = 0;
       int paramMode = HINT_DIRECT_ORDER;
-      if (arg == nsTypedMessageParameter && type_ref == 0) {
+      if (arg == nsTypedMessageParameter) {
          type_ref = scope.moduleScope->mapSubject(subject);
       }
-      else {
+      else type_ref = scope.moduleScope->mapType(subject, out);
+
+      if (type_ref != 0) {
          paramMode |= HINT_TYPEENFORCING;
 
          if (out)
@@ -2391,14 +2322,17 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
                arg = arg.nextNode();
             }
 
-            int paramMode = 0;
             bool out = false;
-            ref_t type_ref = scope.moduleScope->mapType(subject, out);
-            if (arg == nsTypedMessageParameter && type_ref == 0) {
+            ref_t type_ref = 0;
+            int paramMode = 0;
+            if (arg == nsTypedMessageParameter) {
                type_ref = scope.moduleScope->mapSubject(subject);
             }
-            else {
+            else type_ref = scope.moduleScope->mapType(subject, out);
+
+            if (type_ref != 0) {
                paramMode |= HINT_TYPEENFORCING;
+
                if (out)
                   paramMode |= HINT_OUTEXPR;
             }
@@ -2798,7 +2732,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          _writer.callResolvedMethod(*scope.tape, object.extraparam, messageRef);
 
          // try to define the type if any
-         retVal.extraparam = retrieveKey(scope.moduleScope->typeHints.start(), object.param, 0);
+         retVal.extraparam = scope.moduleScope->getClassType(object.param);
       }
       // if static message is sent to a integer constant class
       else if (object.kind == okIntConstant) {
@@ -2858,18 +2792,20 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
             }
             else {
                scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
-
                _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->mapConstantReference(NOMETHOD_EXCEPTION_CLASS)));
                _writer.throwCurrent(*scope.tape);
-            }            
+            }
          }
          else _writer.callMethod(*scope.tape, 0, paramCount);
       }
    }
 
    // the result of get&type message should be typed
-   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->typeHints.exist(signRef)) {
-      return ObjectInfo(okAccumulator, 0, signRef);
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+      if (scope.moduleScope->typeHints.exist(signRef)) {
+         return ObjectInfo(okAccumulator, 0, signRef);
+      }
+      else return ObjectInfo(okAccumulator, 0, scope.moduleScope->synonymHints.get(signRef));
    }
    else return retVal;
 }
@@ -2879,9 +2815,13 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    size_t spaceToRelease = 0;
    ref_t messageRef = compileMessageParameters(node, scope, object, mode, spaceToRelease);
 
-   // map dynamic extension
-   if (scope.moduleScope->extensions.exist(messageRef)) {
-      object = ObjectInfo(okConstantRole, scope.moduleScope->extensions.get(messageRef));
+   // use dynamic extension if exists
+   if (scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(getType(object));
+
+      ref_t roleRef = typeExtensions->get(messageRef);
+      if (roleRef != 0)
+         object = ObjectInfo(okConstantRole, roleRef);
    }
 
    if (spaceToRelease > 0) {
@@ -3350,19 +3290,16 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, ref_
          }
          if (target.extraparam != type_ref) {
             // if type mismatch
-            ref_t wrapper_ref = moduleScope->typeHints.get(type_ref);
-            if (wrapper_ref == 0 || wrapper_ref != moduleScope->typeHints.get(target.extraparam)) {
-               mismatch = true;
+            mismatch = true;
 
-               // if they are not synonym
-               // call typecast method
-               boxObject(scope, target, 0);
+            // if they are not synonym
+            // call typecast method
+            boxObject(scope, target, 0);
 
-               _writer.setMessage(*scope.tape, encodeMessage(type_ref, 0, 0));
-               _writer.callMethod(*scope.tape, 1, -1);   // HOTFIX: typecast call does not release the stack
+            _writer.setMessage(*scope.tape, encodeMessage(type_ref, 0, 0));
+            _writer.callMethod(*scope.tape, 1, -1);   // HOTFIX: typecast call does not release the stack
 
-               return ObjectInfo(okAccumulator, 0, type_ref);
-            }
+            return ObjectInfo(okAccumulator, 0, type_ref);
          }
       }
       else {
@@ -3389,11 +3326,16 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    int verb, paramCount;
    ref_t subj;
    decodeMessage(scope.getMessageID(), subj, verb, paramCount);
-   if (verb == GET_MESSAGE_ID && paramCount == 0 && scope.moduleScope->typeHints.exist(subj)) {
-      bool mismatch = false;
-      compileTypecast(scope, info, subj, mismatch, HINT_TYPEENFORCING);
-      if (mismatch)
-         scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
+   if (verb == GET_MESSAGE_ID && paramCount == 0) {
+      if (scope.moduleScope->synonymHints.exist(subj)) {
+         subj = scope.moduleScope->synonymHints.get(subj);
+      }
+      if (scope.moduleScope->typeHints.exist(subj)) {
+         bool mismatch = false;
+         compileTypecast(scope, info, subj, mismatch, HINT_TYPEENFORCING);
+         if (mismatch)
+            scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
+      }
    }
 
    scope.freeSpace();
@@ -3739,6 +3681,7 @@ void Compiler :: reserveSpace(CodeScope& scope, int size)
 bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand)
 {
    bool bytearray = false;
+   // !! temporal
    int size = scope.moduleScope->sizeHints.get(exprOperand.extraparam);
    if (size < 0) {
       bytearray = true;
@@ -4216,14 +4159,14 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
 
-   if (test(mode, HINT_EXTENSION_METH)) {
-      scope.includeExtension();
-   }
-
    int paramCount = getParamCount(scope.message);
 
    CodeScope codeScope(&scope);
-   ByteCodeIterator bm = codeScope.tape->start();
+
+   // save extensions if any
+   if (test(codeScope.getClassFlags(false), elExtension)) {
+      codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
+   }
 
    if (scope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
       _writer.declareMethod(*codeScope.tape, scope.message, false);
@@ -4514,6 +4457,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
          scope.compileFieldHints(hints, sizeValue, typeRef);
 
          // if it is a data field
+         int offset = scope.info.size;
          if (sizeValue != 0) {
             // if it is a dynamic array
             if (sizeValue == (size_t)-4 && typeRef == (size_t)-1) {
@@ -4540,13 +4484,19 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
             }
 
             // do not add primitive fields
-            if (typeRef != 0)
-               scope.info.fields.add(member.Terminal(), typeRef);
+            if (typeRef != 0) {
+               scope.info.fields.add(member.Terminal(), offset);
+
+               scope.info.fieldTypes.add(offset, typeRef);
+            }
          }
          // if it is a normal field
          else {
             int offset = scope.info.fields.Count();
             scope.info.fields.add(member.Terminal(), offset);
+
+            if (typeRef != 0)
+               scope.info.fieldTypes.add(offset, typeRef);
          }
       }
       else {
@@ -4688,6 +4638,18 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    }
    else scope.info.header.flags &= ~elStateless;
 
+   // if type size is provided make sure the class is compatible
+   if (scope.info.header.typeRef && scope.moduleScope->sizeHints.exist(scope.info.header.typeRef)) {
+      if (scope.info.size < scope.moduleScope->sizeHints.get(scope.info.header.typeRef))
+         scope.raiseError(errNotSupprotedType, node.Terminal());
+   }
+
+   // if type wrapper is proveded make sure the current code is the wrapper
+   if (scope.info.header.typeRef && scope.moduleScope->typeHints.get(scope.info.header.typeRef) != 0) {
+      if (scope.reference != scope.moduleScope->typeHints.get(scope.info.header.typeRef))
+         scope.raiseError(errNotSupprotedType, node.Terminal());
+   }
+
    // if it is super class or a role
    if (scope.info.header.parentRef == 0 || test(scope.info.header.flags, elRole)) {
       // super class is class class
@@ -4788,16 +4750,19 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hint
    if (hints != nsNone)
       scope.raiseWarning(wrnUnknownHint, hints.Terminal());
 
-   const wchar16_t* ns = node.Terminal();
+   TerminalInfo ns = node.Terminal();
 
    // check if the module exists
    _Module* module = scope.project->loadModule(ns, true);
    if (!module)
-      scope.raiseWarning(wrnUnknownModule, node.Terminal());
+      scope.raiseWarning(wrnUnknownModule, ns);
 
    const wchar16_t* value = retrieve(scope.defaultNs.start(), ns, NULL);
    if (value == NULL) {
-      scope.defaultNs.add(ns);
+      scope.defaultNs.add(ns.value);
+
+      // load extensions
+      scope.loadExtensions(ns, module);
    }
 }
 
@@ -4821,6 +4786,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
 
    int size = 0;
    ref_t wrapper = 0;
+   ref_t synonymRef = 0;
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
@@ -4838,41 +4804,40 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
          }
          else scope.raiseWarning(wrnUnknownHint, terminal);         
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_ROLE)) {
+      else if (ConstantIdentifier::compare(terminal, HINT_WRAPPER)) {
          TerminalInfo roleValue = hints.select(nsHintValue).Terminal();
          wrapper = scope.mapTerminal(roleValue);
 
          scope.validateReference(roleValue, wrapper);
+      }
+      else if (ConstantIdentifier::compare(terminal, HINT_SYNONYM)) {
+         TerminalInfo typeValue = hints.select(nsHintValue).Terminal();
+
+         synonymRef = typeRef;
+         typeRef = scope.mapType(typeValue);
+         if (typeRef == 0)
+            scope.raiseError(errUnknownSubject, typeValue);
       }
       else scope.raiseWarning(wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
 
-   bool valid = scope.saveType(typeRef, wrapper, size);
+   if (synonymRef != 0) {
+      if (size != 0 || wrapper != 0)
+         scope.raiseWarning(wrnInvalidHint, hints.Terminal());
 
-   if (!valid)
-      scope.raiseError(errDuplicatedDefinition, member.Terminal());
-}
+      bool valid = scope.saveSynonym(typeRef, synonymRef);
 
-void Compiler :: compileUsage(DNode& member, ModuleScope& scope)
-{
-   ref_t reference = scope.mapTerminal(member.Terminal(), true);
-   ClassInfo info;
-   ref_t r = scope.loadClassInfo(info, scope.module->resolveReference(reference));
-   if (r) {
-      // if it is a role class or stateless symbol
-      if (test(info.header.flags, elRole)) {
-         ClassInfo::MethodMap::Iterator it = info.extensions.start();
-         while (!it.Eof()) {
-            scope.extensions.add(it.key(), reference);
-
-            it++;
-         }
-      }
-      else scope.raiseError(errInvalidOperation, member.Terminal());
+      if (!valid)
+         scope.raiseError(errDuplicatedDefinition, member.Terminal());
    }
-   else scope.raiseError(errUnknownObject, member.Terminal());
+   else {
+      bool valid = scope.saveType(typeRef, wrapper, size);
+
+      if (!valid)
+         scope.raiseError(errDuplicatedDefinition, member.Terminal());
+   }
 }
 
 void Compiler :: compileDeclarations(DNode& member, ModuleScope& scope)
@@ -4883,9 +4848,6 @@ void Compiler :: compileDeclarations(DNode& member, ModuleScope& scope)
       TerminalInfo name = member.Terminal();
 
       switch (member) {
-         case nsUsage:
-            compileUsage(member, scope);
-            break;
          case nsType:
             compileType(member, scope, hints);
             break;

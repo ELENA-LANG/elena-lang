@@ -13,18 +13,6 @@
         <object_equal>.
 }
 
-// --- Action wrapper ---
-
-#class(type:action) Action
-{
-}
-
-// --- Function wrapper ---
-
-#class(type:function) Function
-{
-}
-
 // --- nil constant ---
 
 #symbol(type:nil) nil =

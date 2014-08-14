@@ -100,7 +100,7 @@
 
 // --- action role class ---
 
-#class(role) actionOp
+#class(role,extension:action) actionOp
 {
     #method run &if:aBool
     [
@@ -123,7 +123,7 @@
 
 // --- function role class ---
 
-#class(role) functionOp
+#class(role,extension:function) functionOp
 {    
     #method run &enumerator:anEnumerator
     [
@@ -206,6 +206,18 @@
 //    ]    
 }
 
+// --- Action wrapper ---
+
+#class(type:action) Action
+{
+}
+
+// --- Function wrapper ---
+
+#class(type:function) Function
+{
+}
+
 // --- control ---
 
 #symbol control =
@@ -224,11 +236,11 @@
     foreach:anEnumerable &do:aFunction
         = aFunction~functionOp run &enumerator::anEnumerable | stop.
 
-//    for:anEnumerator &do:aFunction
-//        = aFunction~functionOp run &enumerator:anEnumerator | stop.
-
     foreach:anEnumerable &until:aFunction
         = aFunction~functionOp retrieve &enumerator::anEnumerable | stop.
+
+//    for:anEnumerator &do:aFunction
+//        = aFunction~functionOp run &enumerator:anEnumerator | stop.
     
 //    forrange &int:aStart &int:anEnd &do:aFunction
 //        = aStart < anEnd

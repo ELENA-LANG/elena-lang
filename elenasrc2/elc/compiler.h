@@ -57,11 +57,6 @@ protected:
       }
    };
 
-//   typedef Map<const wchar16_t*, const wchar16_t*, false> NamespaceMaskMap;
-   typedef Map<const wchar16_t*, ref_t, false>      ForwardMap;
-   typedef Map<const wchar16_t*, Parameter, false>  LocalMap;
-   typedef Map<ref_t, ref_t>                        SubjectMap;
-
    // InheritResult
    enum InheritResult
    {
@@ -95,7 +90,12 @@ protected:
       }
    };
 
-   typedef List<Unresolved> Unresolveds;
+   typedef Map<const wchar16_t*, ref_t, false>     ForwardMap;
+   typedef Map<const wchar16_t*, Parameter, false> LocalMap;
+   typedef Map<ref_t, ref_t>                       SubjectMap;
+   typedef List<Unresolved>                        Unresolveds;
+   typedef Map<ref_t, SubjectMap*>                 ExtensionMap;
+   typedef Map<ref_t, int>                         SizeMap;
 
    // - ModuleScope -
    struct ModuleScope
@@ -113,11 +113,15 @@ protected:
 
       // symbol hints
       Map<ref_t, ObjectKind> symbolHints;
-      SubjectMap             extensions; 
 
-      // type / size hints
+      // extensions
+      SubjectMap             extensionHints; 
+      ExtensionMap           extensions;
+
+      // type hints
       SubjectMap             typeHints;
-      Map<ref_t, int>        sizeHints;
+      SubjectMap             synonymHints;
+      SizeMap                sizeHints;
 
       // cached references
       ref_t nilReference;
@@ -214,7 +218,11 @@ protected:
       bool checkTypeMethod(ref_t type_ref, ref_t message);
 
       void loadTypes(_Module* module);
+      void loadExtensions(TerminalInfo terminal, _Module* module);
+
       bool saveType(ref_t type_ref, ref_t wrapper_ref = 0, int size = 0);
+      bool saveSynonym(ref_t type_ref, ref_t synonym_ref);
+      bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 //      void validateForwards();
@@ -226,6 +234,8 @@ protected:
       ref_t getLiteralType();
       ref_t getParamsType();
       ref_t getActionType();
+
+      ref_t getClassType(ref_t reference);
 
       void init(_Module* module, _Module* debugModule);
 
@@ -299,21 +309,12 @@ protected:
    struct ClassScope : public SourceScope
    {
       ClassInfo info;
+      ref_t     extensionTypeRef;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       void compileClassHints(DNode hints);
       void compileFieldHints(DNode hints, int& size, ref_t& type);
-
-//      int getFieldSizeHint();
-      //int getFieldSizeHint(TerminalInfo value);
-
-//      void setTypeHints(DNode hintValue);
-//
-//      int getClassType()
-//      {
-//         return info.header.flags & elDebugMask;
-//      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -340,8 +341,6 @@ protected:
    struct SymbolScope : public SourceScope
    {
       ref_t typeRef;
-
-//      const wchar16_t* param;
 
       void compileHints(DNode hints, bool& constant);
 
@@ -385,7 +384,6 @@ protected:
       }
 
       void include();
-      void includeExtension();
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -483,6 +481,13 @@ protected:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope ? scope->info.header.flags : 0;
+      }
+
+      ref_t getExtensionType()
+      {
+         ClassScope* scope = (ClassScope*)getScope(slClass);
+
+         return scope ? scope->extensionTypeRef : 0;
       }
 
       void compileLocalHints(DNode hints, ref_t& type, int& size);
@@ -734,7 +739,6 @@ protected:
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
    void compileForward(DNode node, ModuleScope& scope, DNode hints);
-   void compileUsage(DNode& member, ModuleScope& scope);
    void compileType(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(DNode& member, ModuleScope& scope);

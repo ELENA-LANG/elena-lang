@@ -256,22 +256,17 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-//// const int elClassClass          = 0x00000010;
    const int elVMTCustomDispatcher = 0x00000040;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000100;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
-//// const int elCastGroup           = 0x00000600;
-//// const int elUnion               = 0x00000A00;
-//// const int elMethodHandler       = 0x00001000; 
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004000;
+   const int elExtension           = 0x00004900;
    const int elMessage             = 0x00008000;
-//  // const int elDynamicSubjectRole  = 0x0000B080;
    const int elConstantSymbol      = 0x00000082;
-//   const int elOperation           = 0x00204000;
-//// const int elWithLocker          = 0x00100000;
+// const int elWithLocker          = 0x00100000;
 
    const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
@@ -392,6 +387,7 @@ namespace _ELENA_
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
+   #define EXTENSION_SECTION        "#extensions"
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
@@ -407,8 +403,13 @@ namespace _ELENA_
    #define HINT_ITEM               "item"
 //  // #define HINT_SAFEPOINT          "safepoint"
 //  // #define HINT_LOCK               "sync"
-   #define HINT_EXTENSION          "extension"
    #define HINT_SEALED             "sealed"
+   #define HINT_MESSAGE            "message"
+   #define HINT_SIGNATURE          "signature"
+   #define HINT_EXTENSION          "extension"
+   #define HINT_GROUP              "group"
+   #define HINT_WRAPPER            "wrapper"
+   #define HINT_SYNONYM            "synonym"
 
    #define HINT_DBG                "dbg"               // debugger watch hint values
    #define HINT_DBG_INT            "int"              
@@ -416,15 +417,6 @@ namespace _ELENA_
    #define HINT_DBG_LITERAL        "literal"
    #define HINT_DBG_REAL           "real"              
    #define HINT_DBG_ARRAY          "array"              
-
-//   #define HINT_ARRAY              "array"
-//   #define HINT_REAL               "real"
-//   #define HINT_SHORT              "short"
-////   #define HINT_MEM                "mem"
-   #define HINT_MESSAGE            "message"
-   #define HINT_SIGNATURE          "signature"
-//   #define HINT_OPERATION          "operation"
-   #define HINT_GROUP              "group"
    
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

@@ -19,17 +19,11 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - generic development
-                       * role should automatically extends appropriate types, if no type provided - generic ones,
-                         so type role is no longer class, some code should be modifie, boxing should be done differently
+              xdev - generic development       
+                       * classOp, indexable, enumarable should be declared as extensions
 
-                       * review all roles, to make sure no side effects will be, especially generic ones (look at classOp.getAt[1])
 
                        * can we use ^ operator to returns from any part of the code to the end
-
-                       * allow to declare variable / field type for dynamic types as well
-
-
                        
                        * fix debugger to correctly show $self
                        * fix debugger to correctly show stack allocated objects
@@ -87,8 +81,6 @@ Currently:
 
                        * uncomment commentFrame
                        * remove all commented code
-
-                       * optimize control.forrange implementation
 
                        * generic handlers : make possible to use passed subject
                        * generic handlers : resend handler - if no match found call the super handler
@@ -459,7 +451,7 @@ week2:
                        * should clone be implemented in system'Object and be overridden only when it is required?                                                
                        * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
                        * TextBuffer : review the code, try to optimize / limit the number of newly created objects
-
+                       * optimize control.forrange implementation
 
               adev - lib30 optimization
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
@@ -581,6 +573,8 @@ week2:
                        * implement analog of linq
                        * classOp : test if object is subclass of ??
                        * implement multi-select method (control or value?)
+
+                       * make sure stack allocated objects are correctly boxed for the custom int roles
                        
 week3:
               sdev - prime project

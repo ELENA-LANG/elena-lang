@@ -87,7 +87,6 @@ enum Symbol
    nsL6Operation                = 0x01041,
    nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
-   nsUsage                      = 0x01044,
    nsGeneric                    = 0x01045,
    nsDefaultGeneric             = 0x01046,
    nsType                       = 0x01047,
