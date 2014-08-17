@@ -3398,7 +3398,13 @@ void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
 
 void Compiler :: compileBreak(DNode node, CodeScope& scope, int mode)
 {
-   ObjectInfo retVal = compileExpression(node.firstChild(), scope, mode);
+   ObjectInfo retVal(okConstantSymbol, scope.moduleScope->nilReference);
+   DNode breakExpr = node.firstChild();
+   // if break expression is provided
+   if (breakExpr != nsNone) {
+      retVal = compileExpression(breakExpr, scope, mode);
+   }
+   // otherwise use nil
    _writer.loadObject(*scope.tape, retVal);
 
    _writer.breakLoop(*scope.tape, -1);

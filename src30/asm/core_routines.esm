@@ -13,7 +13,7 @@ define elStructure          000000008h
 
 procedure inline'dispatch
 
-  bsredirect
+  xbsredirect
   acopyr const : system'MethodNotFoundException
   throw
 
@@ -47,7 +47,7 @@ end
 
 procedure inline'exception_redirect
 
-  bsredirect
+  xbsredirect
   throw
 
 end
@@ -802,9 +802,8 @@ end
 
 procedure inline'arr_getat
 
-  count
   bcopya
-  ecopyd
+  count
   aloadsi 2
   nload  
   notless labErr
@@ -824,9 +823,8 @@ end
 
 procedure inline'arr_setat
 
-  count
   bcopya
-  ecopyd
+  count
   aloadsi 2
   nload  
   notless labErr
@@ -847,7 +845,9 @@ end
 
 procedure inline'arr_getlen
 
+  bcopya
   count
+  dcopye
   bloadsi 2
   nsave
   quitn 2
@@ -1035,7 +1035,7 @@ procedure inline'handle_message
   else labEnd
   setverb EVAL_MESSAGE_ID
   aloadsi 1
-  bsredirect
+  xbsredirect
 labEnd:
   throw
   
@@ -1258,9 +1258,7 @@ labNextParam:
   else labNextParam
 
 labNext:
-  acopyb
   count
-  ecopyd
   dloadfi -2
   if labEnd
   aload
@@ -1313,9 +1311,7 @@ procedure inline'handle_selector
   pushn 0
 
 labNext:
-  acopyb
   count
-  ecopyd
   dloadsi 0
   if labEnd
   aload
@@ -1468,8 +1464,8 @@ procedure inline'class_getLen
   flag
   andn elStructure
   elsen labSkip 0
+  bcopya
   count
-  ecopyd
 labSkip:
   dcopye
   bloadsi 3
@@ -1557,5 +1553,26 @@ procedure inline'class_indexOfMsg
 labFalse:
   acopyr  const : system'false
   quitn 2
+
+end
+
+procedure inline'handle_wrap
+
+  pushe
+  bcopya
+  dcopy 1
+
+labNext:
+  pope
+  get
+  bsredirect
+  pushe
+  inc
+  count
+  less labNext
+  
+  pope
+  aloadbi 0
+  ajumpvi 0
 
 end

@@ -201,12 +201,11 @@ ELENA byte codes (or ecodes)
  acallvi i                  - call acc::VMT[i] method
 
  bsredirect                 - search acc::VMT for the message in ext;
+                              if found jumps to it; binary search is used ; index presaved
+                              
+ xbsredirect                 - search acc::VMT for the message in ext;
                               if found jumps to it; binary search is used
                               
- bsgredirect                - foreach o in acc -> search o::VMT for the message in ext;
-                              if found jumps to it; if not - goes to the next member
-                              binary search is used
-  
  callextr r                 - calls the external procedure ; index contains the result
               
  callr r                    - calls the procedure;
@@ -301,7 +300,7 @@ ELENA byte codes (or ecodes)
  
  create                      - create the object with length=index and vmt=acc, out : acc  
  
- count                       - [acc].Count >> index ;
+ count                       - [base].Count >> ext ;
  
 
  data manipulating commands:

@@ -2,25 +2,25 @@
 //#define system'routines.
 //#define system'text.
 
-//// --- literalConvertorEx ---
-//
-//#class(role)literalConvertorEx : literalConvertor
-//{
-////    #method convert &type'real:aReal &type'length:aLength
-////    [
-////        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
-////        
-////        ^ anOutput.
-////    ]
-////    
-////    #method convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
-////    [
-////        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
-////        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.
-////        
-////        ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
-////    ]
-//
+// --- literalConvertorEx ---
+
+#class(role)literalConvertorEx : literalConvertor
+{
+//    #method convert &type'real:aReal &type'length:aLength
+//    [
+//        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
+//        
+//        ^ anOutput.
+//    ]
+//    
+//    #method convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
+//    [
+//        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
+//        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.
+//        
+//        ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
+//    ]
+
 //    #method convert &enumerable:aList &char:aSeparator
 //    [
 //        #var theOutput := TextBuffer new.
@@ -42,10 +42,7 @@
 //
 //    #method convert &array:anArray &char:aSeparator
 //        = $self convert &enumerable:anArray &char:aSeparator.
-//
-//    #method convert &object : anObject
-//        = anObject literal.
-//}
+}
 
 // --- convertControl ---
 
@@ -69,9 +66,9 @@
     toReal : anObject
         = realConvertor convert::anObject.
                 
-//    toLiteral:anObject
-//        = literalConvertorEx convert::anObject.
-//
+    toLiteral:anObject
+        = literalConvertorEx convert::anObject.
+
 //    toLiteral : anObject &base:anOrder
 //        = literalConvertorEx~(baseDispatcher eval::anObject) convert:anObject:anOrder.
 

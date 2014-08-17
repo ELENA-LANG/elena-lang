@@ -9,30 +9,29 @@
 
 // --- EReader ---
 
-#class(role) EReader
+#class(extension) EReader
 {
-    #method(extension) loadNumber : aStream
+    #method loadFrom : aStream
         =  convertor save:(aStream readLine) &to:self
             | onFormatError: e
                 [
                     console writeLine:(e Message) readChar.
                     
-                    #throw BreakException new.
+                    #break.
                 ].
 }
 
-#use EReader.
+#symbol enteredNumber = 'number new loadFrom:console.
 
 // --- Program ---
 
 #symbol Program =
 [
-    console writeLine:'prompt.
-
-    #var a := 'number new loadNumber:console.
-    #var b := 'number new loadNumber:console.
-
-    console write:"The sum is " writeLine:(a + b).
-            
-    console readChar. // wait for any key
+    consoleEx 
+        writeLine:'prompt
+        writeLine:"The sum is ":(enteredNumber + enteredNumber)
+        readChar.
 ].
+
+
+

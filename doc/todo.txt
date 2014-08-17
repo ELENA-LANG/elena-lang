@@ -20,6 +20,14 @@ v  - vm script
 Currently:
 ------
               xdev - generic development       
+                       * migrate all samples
+                       * migrate rosetta samples
+                       * check system test
+                       * redesign script support
+                       * migrate tape sample
+                         
+
+                         
                        * classOp, indexable, enumarable should be declared as extensions
 
 
@@ -122,7 +130,13 @@ Currently:
 
                        * review super ecode: bbox, ...
 
-                       * count ecode : better use base?
+                       * review loop code (see system'io'$ConsoleReader) :
+                             #loop
+                             [
+                                 ...        
+                                 continue   // -- should be correctly loaded into accumulator
+                             ].
+
                        
 <=================> 
 
@@ -690,9 +704,6 @@ week4:
 --------
 week1:
               xdev - generic development                        
-                       * allow to declare field type for dynamic types as well
-
-
                        * exceptions : provide call stack info
 
                        * nested action / function should be reimplemented, Action / Function class should contain the reference to the 
@@ -727,6 +738,9 @@ week1:
 
                        * exception handling, if the handler does not react on the current exception for ifFailed&on call - different error is thrown
                          (NotFound) and the original exception is lost
+
+                       * if more than 15 parameters passed - use open argument list
+
                        
 1.9.18
 --------

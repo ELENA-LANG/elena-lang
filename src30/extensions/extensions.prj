@@ -10,4 +10,5 @@ inline=..\..\lib30\inline\ext_routines.bin
 
 [files]
 convertors.l
+console.l
 dynamic\serializer.l

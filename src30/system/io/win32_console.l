@@ -71,8 +71,8 @@
                 &out'bytearray : aDump
                 &int           : 1
                 &out'int       : aNumberRead.
-                
-            false equal &bool::(aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
+
+            false equal &bool::((aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1)).
         ].
 
         aDump read &index:14 &out'short:aChar.
@@ -131,7 +131,7 @@
             
             anOutput := anOutput + aTemp.
             
-            continue
+            continue bool
         ].
 
         ^ anOutput.

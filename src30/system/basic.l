@@ -1190,11 +1190,11 @@
     #method convert &real:aNumber
         <ws_copyreal>.
         
-//    #method convert &object:anObject
-//        = anObject literal.
-//        
-//    #method convert &literal:aLiteral
-//        = aLiteral.
+    #method convert &object:anObject
+        = anObject literal.
+        
+    #method convert &literal:aLiteral
+        = aLiteral.
 }
 
 // --- Variant ---

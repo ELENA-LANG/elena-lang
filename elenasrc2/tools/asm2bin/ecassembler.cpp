@@ -282,6 +282,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcDSaveSI:
          case bcRestore:
          case bcReserve:
+         case bcALoadBI:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

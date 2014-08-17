@@ -24,6 +24,7 @@ calendar\dates.l
 collections\list.l
 io\win32_console.l
 text\textbuffer.l
+dynamic\groups.l
 dynamic\loaders.l
 dynamic\reflection.l
 dynamic\interpreters.l

@@ -41,7 +41,7 @@
     
     #method input
     [
-        (theArray@thePointer) write &int:(console readChar).
+        (theArray@thePointer) write &int::(console readChar).
     ]
     
     #method output
@@ -108,20 +108,20 @@
     aTape eval.
 ].
 
-#symbol ClassTest =
-[
-    #var n := Integer new.
-
-    #var g := system'dynamic'Class(%next(0), system'dynamic'Tape(1, 1, system'dynamic'tapeControl, %read(1,), %index(0), %append(1)), %index(0), [ n ]).
-
-    g next.
-].
+//#symbol ClassTest =
+//[
+//    #var n := Integer new.
+//
+//    #var g := system'dynamic'Class(%next(0), system'dynamic'Tape(1, 1, system'dynamic'tapeControl, %read(1,), %index(0), %append(1)), %index(0), [ n ]).
+//
+//    g next.
+//].
 
 #symbol Program =
 [ 
-    InterpreterTest eval.
+//    InterpreterTest eval.
 
-    ClassTest eval.
+//    ClassTest eval.
     GetPropertyTester eval.
     ReflectionTester eval.
     TapeTest eval.

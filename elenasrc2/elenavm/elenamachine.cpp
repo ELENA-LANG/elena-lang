@@ -382,15 +382,13 @@ ClassSectionInfo Instance :: getClassSectionInfo(const wchar16_t* reference, siz
    LoadResult result;
    ref_t      referenceID = 0;
    sectionInfo.module = resolveModule(reference, result, referenceID);
-   if (sectionInfo.module != NULL && referenceID != 0) {
+
+   if (sectionInfo.module == NULL || referenceID == 0)
+      throw JITUnresolvedException(reference);
+   else {
       sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
       sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
    }
-
-   if (sectionInfo.codeSection == NULL) {
-      throw JITUnresolvedException(reference);
-   }
-
    return sectionInfo;
 }
 

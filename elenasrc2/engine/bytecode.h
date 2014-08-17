@@ -30,10 +30,10 @@ enum ByteCode
    bcPopA           = 0x0B,
    bcACopyB         = 0x0C,
    bcPopE           = 0x0D,
-   bcBSRedirect     = 0x0E,
+   bcXBSRedirect    = 0x0E,
    bcDCopySubj      = 0x0F,
 
-//   bcBSGRedirect    = 0x10
+   bcBSRedirect     = 0x10,
    bcCount          = 0x11,
    bcBCopyA         = 0x12,
    bcDec            = 0x13,

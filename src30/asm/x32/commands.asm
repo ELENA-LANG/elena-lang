@@ -58,7 +58,7 @@ inline % 7
 
 end
 
-// ; bsredirect
+// ; xbsredirect
 
 inline % 0Eh // (eax - object, ecx - message)
 
@@ -95,12 +95,52 @@ labEnd:
                                                                 
 end
 
-// ; getlen
+// ; bsredirect
+
+inline % 10h // (eax - object, ecx - message)
+
+  push esi
+  xor  ebx, ebx
+  mov  esi, [eax-4]
+  mov  edx, [esi - elVMTSizeOffset]
+
+labSplit:
+  test edx, edx
+  jz   short labEnd
+
+labStart:
+  shr  edx, 1
+  setnc bl
+  cmp  ecx, [esi+edx*8]
+  jb   short labSplit
+  nop
+  nop
+  jz   short labFound
+  lea  esi, [esi+edx*8+8]
+  sub  edx, ebx
+  jnz  short labStart
+  nop
+  nop
+  jmp  labEnd
+  nop
+  nop
+labFound:
+  pop  ebx
+  jmp  [esi+edx*8+4]
+  nop
+  nop
+
+labEnd:
+  pop  esi
+                                                                
+end
+
+// ; count
 
 inline % 11h
 
-  mov  esi, [eax-8]
-  shr  esi, 2
+  mov  ecx, [edi-8]
+  shr  ecx, 2
 
 labEnd:
 
