@@ -1,17 +1,17 @@
 #define system.
-#define system'routines.
+//#define system'routines.
 
 // --- Bookmark ---
 
 #class Bookmark
 {
-    #field theLiteral.
-    #field theIndex.
-    #field theStart.
+    #field(type:literal) theLiteral.
+    #field(type:int)     theIndex.
+    #field(type:int)     theStart.
     
     #constructor new
     [
-        theLiteral := emptyLiteralValue.
+        theLiteral := emptyLiteralValue literal.
         theIndex := 0.
         theStart := 0.
     ]
@@ -37,7 +37,7 @@
             
     #method find &literal:aValue
     [
-        theIndex := theLiteral indexOf &index:theIndex &literal:aValue.
+        theIndex := theLiteral indexOf &index:theIndex &literal:aValue int.
         
         ^ (-1 != theIndex).
     ]
@@ -60,32 +60,32 @@
     
     #method append &literal:aValue
     [
-        theLiteral := theLiteral + aValue.
+        theLiteral := (theLiteral + aValue) literal.
     ]
     
     #method insert &literal:aValue
     [
-        theLiteral := theLiteral insert &index:theIndex &literal:aValue.
+        theLiteral := theLiteral insert &index:theIndex &literal:aValue literal.
         
         theIndex := theIndex + aValue length.
     ]
     
     #method delete &length:aLength
     [
-        theLiteral := theLiteral delete &index:theIndex &length:aLength.
+        theLiteral := theLiteral delete &index:theIndex &length:aLength literal.
     ]
 
     #method clear
     [
-        theLiteral := emptyLiteralValue.
+        theLiteral := emptyLiteralValue literal.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #method Marked
-        = (-1 == theIndex)
-            ? [ theLiteral~literalOp Substring &index:theStart ]
-            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
+//    #method Marked
+//        = (-1 == theIndex)
+//            ? [ theLiteral~literalOp Substring &index:theStart ]
+//            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
     
     #method literal = theLiteral.
     

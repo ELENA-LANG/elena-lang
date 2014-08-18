@@ -1,6 +1,6 @@
 #define system.
-#define system'text.
 #define extensions.
+#define extensions'text.
 
 // --- Program ---
 
@@ -17,7 +17,7 @@
         aBM delete &length::aSearchText insert::aReplaceText.
     ].
 
-    console write:"The resulting text:" writeLine:(aBM literal).
+    consoleEx writeLine:"The resulting text:":aBM.
 
     console readChar. // wait for any key
 ].

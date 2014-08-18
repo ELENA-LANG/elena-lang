@@ -387,7 +387,7 @@
 
 // --- emptyliteralvalue ---
 
-#symbol emptyLiteralValue = "".
+#symbol(const) emptyLiteralValue = "".
 
 // --- literalvalue ---
 
@@ -862,7 +862,7 @@
 
 #class String : BaseValue
 {
-    #field theValue.
+    #field(type:literal)theValue.
 
     #constructor new
     [
@@ -874,16 +874,16 @@
         theValue := aValue literal.
     ]
     
-//    #method write : anOperand
-//    [
-//        theValue := anOperand literal.
-//    ]
-//    
-//    #method write &literal:aLiteral
-//    [
-//        theValue := aLiteral.
-//    ]
-//    
+    #method write : anOperand
+    [
+        theValue := anOperand literal.
+    ]
+    
+    #method write &literal:aLiteral
+    [
+        theValue := aLiteral.
+    ]
+    
 //    #method append : anOperand
 //    [
 //        theValue := theValue + anOperand.
@@ -909,7 +909,7 @@
         theValue := emptyLiteralValue.
     ]
     
-    #method clone = String new:theValue.
+    #method clone = String new &literal:theValue.
                 
     #method cast : anObject = anObject literal.
 }
@@ -1209,12 +1209,24 @@
         ^ IntNumber new &int:retVal.
     ]
 
-//    #method long = longConvertor convert &literal:theValue.
-//    
-//    #method real = realConvertor convert &literal:theValue.
-//    
-//    #method literal = theValue.
-//    
+    #method long
+    [
+        #var(type:long)retVal.
+        longConvertor convert &literal::theValue &out'long:retVal.
+        
+        ^ LongNumber new &long:retVal.
+    ]
+
+    #method real
+    [
+        #var(type:real)retVal.
+        realConvertor convert &literal::theValue &out'real:retVal.
+        
+        ^ RealNumber new &real:retVal.
+    ]
+
+    #method literal = theValue.
+    
 //    #method <= &variant:$self.
 }
 

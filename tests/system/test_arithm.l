@@ -4,7 +4,7 @@
 #define system'calendar.
 #define extensions.
 //#define extensions'math.
-    
+
 #class(role)XTester
 {
 }

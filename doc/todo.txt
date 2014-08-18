@@ -19,17 +19,31 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - generic development       
+              srev - migration
                        * migrate all samples
                        * migrate rosetta samples
                        * check system test
-                       * redesign script support
                        * migrate tape sample
-                         
 
+              xdev - generic development       
+                       * generic dispatch handler / dispatch handler
+
+
+                       * get rid of object type, so type casting with the object without the type will call the generic method ; so what about
+                         (a < 2)and:[arr@a == 2] 
+
+
+                       * for defined types get'type operation should be replaced with typecasting ?? (e.g. try to read the result type before invoking
+                         message call)
+
+                       * for some operation can we somehow to define the output result : e.g. insert&index&literal or toLiteral, so no need to
+                         type cast every time the method is called??
+
+                       * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
+
+                       * redesign script support
                          
                        * classOp, indexable, enumarable should be declared as extensions
-
 
                        * can we use ^ operator to returns from any part of the code to the end
                        

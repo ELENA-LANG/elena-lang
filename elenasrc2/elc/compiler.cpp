@@ -494,9 +494,20 @@ bool Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, ref_t message)
       loadClassInfo(extModule, info, module->resolveReference(reference));
 
       if (extModule) {
-         ref_t msg = module != extModule ? importMessage(module, message, extModule) : message;
-
-         return info.methods.exist(msg);
+         if (module != extModule) {
+            int   verb, paramCount;
+            ref_t subj;
+            decodeMessage(message, subj, verb, paramCount);
+            if (subj != 0) {
+               ref_t extSubj = extModule->mapSubject(module->resolveSubject(subj), true);
+               if (extSubj != 0) {
+                  return info.methods.exist(encodeMessage(extSubj, verb, paramCount));
+               }
+               else return false;
+            }
+            else return info.methods.exist(message);
+         }
+         else return info.methods.exist(message);
       }
    }
 
@@ -1601,7 +1612,7 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
    else scope.raiseError(errInvalidOperation, node.Terminal());
 }
 
-void Compiler :: compileStackAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
+void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
 {
    if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress) {
       if (object.kind == okIndexAccumulator) {
@@ -1672,7 +1683,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
             if (info.kind == okIndexAccumulator) {
                // if it is a primitive operation
-               compileStackAssignment(node, scope, scope.mapObject(node.Terminal()), info);
+               compileContentAssignment(node, scope, scope.mapObject(node.Terminal()), info);
             }
             else {
                _writer.loadObject(*scope.tape, info);
@@ -1682,7 +1693,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
                if (mismatch)
                   scope.raiseWarning(wrnTypeMismatch, node.Terminal());
 
-               compileStackAssignment(node, scope, scope.mapObject(node.Terminal()), info);
+               compileContentAssignment(node, scope, scope.mapObject(node.Terminal()), info);
             }
          }
          else {
@@ -2901,6 +2912,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          currentObject = ObjectInfo(okAccumulator);
       }
       else if (member == nsAssigning) {
+         // if primitive data operation can be used
          if (object.extraparam != 0 && scope.moduleScope->sizeHints.exist(object.extraparam)) {
             int assignMode = 0;
             if (object.kind == okLocal || object.kind == okFieldAddress) {
@@ -2913,7 +2925,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             ObjectInfo info = compileExpression(member.firstChild(), scope, assignMode);
             if (info.kind == okIndexAccumulator) {
                // if it is a primitive operation
-               compileStackAssignment(member, scope, currentObject, info);
+               compileContentAssignment(member, scope, currentObject, info);
             }
             else if (info.kind == okIdle) {
                // if assigning was already done - do nothing
@@ -2926,7 +2938,12 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
                if (mismatch)
                   scope.raiseWarning(wrnTypeMismatch, node.Terminal());
 
-               compileStackAssignment(member, scope, currentObject, info);
+               // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
+               if (currentObject.kind == okField) {
+                  compileAssignment(member, scope, currentObject);
+               }
+               // otherwise assign data content
+               else compileContentAssignment(member, scope, currentObject, info);
             }
          }
          else {
@@ -2936,6 +2953,11 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
             if (checkIfBoxingRequired(scope, info))
                info = boxObject(scope, info, mode);
+
+            bool mismatch = false;
+            compileTypecast(scope, info, object.extraparam, mismatch, HINT_TYPEENFORCING);
+            if (mismatch)
+               scope.raiseWarning(wrnTypeMismatch, node.Terminal());
 
             compileAssignment(member, scope, currentObject);
          }
@@ -4462,9 +4484,9 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
          ref_t typeRef = 0;
          scope.compileFieldHints(hints, sizeValue, typeRef);
 
-         // if it is a data field
          int offset = scope.info.size;
-         if (sizeValue != 0) {
+         // if it is a data type and structural field is possible
+         if (sizeValue != 0 && (test(scope.info.header.flags, elStructureRole) || scope.info.fields.Count() == 0)) {
             // if it is a dynamic array
             if (sizeValue == (size_t)-4 && typeRef == (size_t)-1) {
                scope.info.header.flags |= elDynamicRole;
@@ -4498,6 +4520,9 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
          }
          // if it is a normal field
          else {
+            if (test(scope.info.header.flags, elStructureRole))
+               scope.raiseError(errIllegalField, member.Terminal());
+
             int offset = scope.info.fields.Count();
             scope.info.fields.add(member.Terminal(), offset);
 

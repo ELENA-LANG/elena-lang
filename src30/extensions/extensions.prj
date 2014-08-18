@@ -12,3 +12,4 @@ inline=..\..\lib30\inline\ext_routines.bin
 convertors.l
 console.l
 dynamic\serializer.l
+text\strings.l

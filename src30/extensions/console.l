@@ -160,13 +160,13 @@
 
 #class(role)inputOp
 {
-//    #method readLine : anObject
-//    [
-//        convertor save:(self readLine) &to:anObject.
-//        
-//        ^ anObject.
-//    ]
-//        
+    #method readLine : anObject
+    [
+        convertor save:(self readLine) &to:anObject.
+        
+        ^ anObject.
+    ]
+
 //    #method readLine : anObject1 : anObject2
 //    [
 //        #var aLine := self readLine.

@@ -652,7 +652,7 @@ protected:
 
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
-   void compileStackAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
+   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
