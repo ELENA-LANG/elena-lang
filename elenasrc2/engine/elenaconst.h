@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0002
+   #define ENGINE_MINOR_VERSION     0x0003
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -26,39 +26,43 @@ namespace _ELENA_
    #define OPEN_ARG_COUNT          0x0F
 
    #define DISPATCH_MESSAGE_ID     0x0001
-   #define TYPECAST_MESSAGE_ID     0x0002
+   #define GENERIC_MESSAGE_ID      0x0002
    #define NEWOBJECT_MESSAGE_ID    0x0003
 
    #define NEW_MESSAGE_ID          0x0004
    #define EVAL_MESSAGE_ID         0x0005
    #define GET_MESSAGE_ID          0x0006
-   #define EQUAL_MESSAGE_ID        0x0007
-   #define LESS_MESSAGE_ID         0x0008
-   #define IF_MESSAGE_ID           0x0009
-   #define AND_MESSAGE_ID          0x000A
-   #define OR_MESSAGE_ID           0x000B
-   #define XOR_MESSAGE_ID          0x000C
-   #define IFNOT_MESSAGE_ID        0x000D
-   #define RUN_MESSAGE_ID          0x000E
-   #define NOTEQUAL_MESSAGE_ID     0x000F
-   #define NOTLESS_MESSAGE_ID      0x0010
-   #define NOTGREATER_MESSAGE_ID   0x0011
-   #define GREATER_MESSAGE_ID      0x0012
+   #define SET_MESSAGE_ID          0x001D
+
    #define ADD_MESSAGE_ID          0x0013
    #define SUB_MESSAGE_ID          0x0014
    #define MUL_MESSAGE_ID          0x0015
    #define DIV_MESSAGE_ID          0x0016
+   #define AND_MESSAGE_ID          0x000A
+   #define OR_MESSAGE_ID           0x000B
+   #define XOR_MESSAGE_ID          0x000C
+
+   #define EQUAL_MESSAGE_ID        0x0007
+   #define LESS_MESSAGE_ID         0x0008
+   #define NOTEQUAL_MESSAGE_ID     0x000F
+   #define NOTLESS_MESSAGE_ID      0x0010
+   #define NOTGREATER_MESSAGE_ID   0x0011
+   #define GREATER_MESSAGE_ID      0x0012
+
+   #define READ_MESSAGE_ID         0x001E
+   #define WRITE_MESSAGE_ID        0x001F
+
+   #define IF_MESSAGE_ID           0x0009
+   #define IFNOT_MESSAGE_ID        0x000D
+   #define RUN_MESSAGE_ID          0x000E
    #define REFER_MESSAGE_ID        0x0017
    #define APPEND_MESSAGE_ID       0x0018
    #define REDUCE_MESSAGE_ID       0x0019
    #define INCREASE_MESSAGE_ID     0x001A
    #define SEPARATE_MESSAGE_ID     0x001B
    #define SET_REFER_MESSAGE_ID    0x001C
-   #define SET_MESSAGE_ID          0x001D
-   #define READ_MESSAGE_ID         0x001E
-   #define WRITE_MESSAGE_ID        0x001F
    #define RAISE_MESSAGE_ID        0x0020
-   #define IFFAILED_MESSAGE_ID     0x0021
+   #define SELECT_MESSAGE_ID       0x0021
    #define FIND_MESSAGE_ID         0x0022
    #define SEEK_MESSAGE_ID         0x0023
    #define STOP_MESSAGE_ID         0x0024
@@ -83,6 +87,15 @@ namespace _ELENA_
    #define START_MESSAGE_ID        0x0037
    #define RETRIEVE_MESSAGE_ID     0x0038
    #define CAST_MESSAGE_ID         0x0039
+   #define RESUME_MESSAGE_ID       0x003A
+   #define OPEN_MESSAGE_ID         0x003B
+   #define EXIT_MESSAGE_ID         0x003C
+   #define SHOW_MESSAGE_ID         0x003D
+   #define HIDE_MESSAGE_ID         0x003E
+   #define CREATE_MESSAGE_ID       0x003F
+   #define IS_MESSAGE_ID           0x0040
+   #define ROLLBACK_MESSAGE_ID     0x0041
+   #define REPLACE_MESSAGE_ID      0x0043
 
 //   // ---- ELENAVM command masks ---
 //   #define VM_MASK                 0x0200             // vm command mask
@@ -292,9 +305,9 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.02"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.02"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!8.02"         // the language version
+   #define ELENA_SIGNITURE          "ELENA.8.03"       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.03"    // the ELENAVM client
+   #define MODULE_SIGNATURE         "EN!8.03"         // the language version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---
@@ -330,7 +343,7 @@ namespace _ELENA_
    #define READ_MESSAGE             "read"
    #define WRITE_MESSAGE            "write"
    #define RAISE_MESSAGE            "raise"
-   #define IFFAILED_MESSAGE         "ifFailed"
+   #define IF_MESSAGE               "if"
    #define FIND_MESSAGE             "find"
    #define SEEK_MESSAGE             "seek"
    #define REWIND_MESSAGE           "rewind"
@@ -354,6 +367,16 @@ namespace _ELENA_
    #define START_MESSAGE            "start"
    #define RETRIEVE_MESSAGE         "retrieve"
    #define CAST_MESSAGE             "cast"
+   #define RESUME_MESSAGE           "resume"
+   #define OPEN_MESSAGE             "open"
+   #define EXIT_MESSAGE             "exit"
+   #define SHOW_MESSAGE             "show"
+   #define HIDE_MESSAGE             "hide"
+   #define CREATE_MESSAGE           "create"
+   #define IS_MESSAGE               "is"
+   #define ROLLBACK_MESSAGE         "rollback"
+   #define SELECT_MESSAGE           "select"
+   #define REPLACE_MESSAGE          "replace"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="
@@ -428,6 +451,10 @@ namespace _ELENA_
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
 
+  // Predefined routines
+   #define DISPATCH_ROUTINE         "dispatch"
+   #define TRY_DISPATCH_ROUTINE     "generic_dispatch"
+
   // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
@@ -435,6 +462,7 @@ namespace _ELENA_
    // predefined classes
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor
    #define ACTION_CLASS             "system'Action"                  // the base action class
+   #define EXPRESSION_CLASS         "system'Expression"              // the base expression class
    #define NIL_CLASS                "system'nil"                     // the nil reference
    #define BREAK_EXCEPTION_CLASS    "system'BreakException"          // break class
    #define NOMETHOD_EXCEPTION_CLASS "system'MethodNotFoundException"          

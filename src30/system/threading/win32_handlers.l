@@ -33,7 +33,7 @@
     ]
 
     #method join
-        => &join &int:INFINITE.
+        <= %join &int:INFINITE.
                                                                    
     #method join &int:aTimeOut
     [

@@ -51,7 +51,7 @@ const int coreFunctions[coreFunctionNumber] =
 const int gcCommandNumber = 115;
 const int gcCommands[gcCommandNumber] =
 {   
-   bcXBSRedirect, bcALoadSI, bcACallVI, bcOpen, bcBCopyA,
+   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
    bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
    bcNewN, bcNew, bcWEval, bcSwapSI, bcASwapSI,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
@@ -83,7 +83,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &compileNop, &compilePushE, &compileDCopyVerb, &loadOneByteOp,
    &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDCopySubj,
 
-   &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
+   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoad, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -111,7 +111,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileOpen, &compileQuitN, &compileBCopyR, &compileBCopyF, &compileACopyF, &compileACopyS, &compileACopyR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &loadCode, &loadFunction, &compileHook, &compileNop,
-   &compileNop, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
+   &loadVMTMIndexOp, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
 
    &compilePush, &compileNop, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &compileNop, &compilePushF, &compileNop, &loadIndexOp,
@@ -445,6 +445,33 @@ void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
 
       if (relocation[0]==-1) {
          scope.code->writeDWord((scope.argument << 3) + 4);
+      }
+      else writePreloadedReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadVMTMIndexOp(int opcode, x86JITScope& scope)
+{
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0]==-1) {
+         scope.code->writeDWord(scope.argument << 3);
       }
       else writePreloadedReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1042,7 +1069,10 @@ void _ELENA_::compileACopyR(int opcode, x86JITScope& scope)
 {
    // mov eax, r
    scope.code->writeByte(0xB8);
-   scope.writeReference(*scope.code, scope.argument, 0);
+   if (scope.argument != 0) {
+      scope.writeReference(*scope.code, scope.argument, 0);
+   }
+   else scope.code->writeDWord(0);
 }
 
 void _ELENA_::compileBCopyR(int opcode, x86JITScope& scope)

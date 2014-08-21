@@ -160,7 +160,7 @@ ELENA byte codes (or ecodes)
  
  dcopysubj                  - index << ext.verb
  
- dcopycount                  - index << ext.paramcount
+ dcopycount                 - index << ext.paramcount
  
  ecopym m                   - ext << message
  
@@ -199,12 +199,9 @@ ELENA byte codes (or ecodes)
  ecall                      - call ext procedure
 
  acallvi i                  - call acc::VMT[i] method
-
+ 
  bsredirect                 - search acc::VMT for the message in ext;
-                              if found jumps to it; binary search is used ; index presaved
-                              
- xbsredirect                 - search acc::VMT for the message in ext;
-                              if found jumps to it; binary search is used
+                              if found jumps to it; binary search is used ; index, ext, acc presaved
                               
  callextr r                 - calls the external procedure ; index contains the result
               
@@ -274,13 +271,15 @@ ELENA byte codes (or ecodes)
                                                                       
  class handling:
  --------------- 
- type                        - acc::VMT::type >> index
+ type                        - base::VMT::type >> index
 
  flag                        - acc::VMT::flag >> index 
 
  class                       - base::VMT >> acc
 
  mindex                      - search for ext in acc:VMT; out: index or -1
+
+ message i                   - acc::VMT[i].message >> index
 
  
  memory managing commands:

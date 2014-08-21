@@ -709,7 +709,7 @@ protected:
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);
 
    void compileResendExpression(DNode node, CodeScope& scope);
-////   void compileMessageDispatch(DNode node, CodeScope& scope);
+   void compileDispatchExpression(DNode node, CodeScope& scope);
 
    void compileCode(DNode node, CodeScope& scope, int mode = 0);
 
@@ -718,8 +718,10 @@ protected:
 
    void compileSpecialMethod(MethodScope& scope);
 
-   void compileTypecastHandler(DNode node, CodeScope& scope);
-   void compileDispatcher(DNode node, CodeScope& scope);
+   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function);
+   void compileImportMethod(DNode node, CodeScope& scope, ref_t message, const wchar16_t* function, int mode);
+
+   void compileDispatcher(DNode node, MethodScope& scope);
    void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
@@ -729,8 +731,8 @@ protected:
    void compileActionVMT(DNode node, InlineClassScope& scope, DNode argNode);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
-   void compileAction(DNode member, MethodScope& scope, ref_t actionMessage);
-   void compileInlineAction(DNode member, MethodScope& scope, ref_t actionMessage);
+   void compileAction(DNode member, MethodScope& scope);
+   void compileExpressionAction(DNode member, MethodScope& scope);
    void compileVMT(DNode member, ClassScope& scope);
 
    void compileFieldDeclarations(DNode& member, ClassScope& scope);

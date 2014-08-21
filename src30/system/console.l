@@ -3,18 +3,18 @@
 {
     #field theWriter.
     #field theReader.
-    #field theNewLineConstant.
+    #field(type:literal)theNewLineConstant.
 
     #constructor new &reader:aReader &writer:aWriter
     [
         theWriter := aWriter.
         theReader := aReader.
-        theNewLineConstant := system'io'newLine.
+        theNewLineConstant := system'io'newLine literal.
     ]
 
     #method writeLine : anObject
     [
-        theWriter write &literal::anObject write &literal::theNewLineConstant.
+        theWriter write &literal::anObject write &literal:theNewLineConstant.
     ]
 
     #method write : anObject
@@ -29,7 +29,7 @@
             
     #method writeLine
     [
-        theWriter write &literal::theNewLineConstant.
+        theWriter write &literal:theNewLineConstant.
     ]
         
     #method readLine

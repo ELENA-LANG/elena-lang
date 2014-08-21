@@ -22,17 +22,10 @@ Currently:
               srev - migration
                        * migrate all samples
                        * migrate rosetta samples
-                       * check system test
                        * migrate tape sample
+                       * migrate mt test
 
               xdev - generic development       
-                       * generic dispatch handler / dispatch handler
-
-
-                       * get rid of object type, so type casting with the object without the type will call the generic method ; so what about
-                         (a < 2)and:[arr@a == 2] 
-
-
                        * for defined types get'type operation should be replaced with typecasting ?? (e.g. try to read the result type before invoking
                          message call)
 
@@ -50,8 +43,10 @@ Currently:
                        * fix debugger to correctly show $self
                        * fix debugger to correctly show stack allocated objects
                        * fix debugger to correctly show arrays
-
+                       
                        * simplify primitive loop implementing
+
+                       * review verb list, probably it should be reduced
 
                        * optimize ByteCodeWriter::newObject - implement axsetr r ???
                        
@@ -61,16 +56,11 @@ Currently:
                        * uncomment : bcwriter::doGenericHandler / declareGenericMethod / dispatchVerb / jumpIfNotEqualN
 
                        * boxing the result of external call
-
+                       
                        * any type casting get method call should be implemented as typecast - see system'literalConvertor convert &int:$self literal
                        
-                       * do we actually need system'Action - dispatch ref can be defined directly in compileNestedExpression
-
-
                        * module system should be inclduded automatically ??
                        
-                       * warn if system'Object does not contain send method
-
                        * test all samples
 
                        * multiple parameter dispatching
@@ -140,7 +130,7 @@ Currently:
                        * probably we have to caching type wrapper, so no need to load every time
 
                        * review problematic implementation: constructor (for example Tape and Struct both have to define default constructor),  
-                         exception handling, loop breaking, return operator
+                         loop breaking, return operator, exception handling, loop implementation (especially until loop)
 
                        * review super ecode: bbox, ...
 
@@ -150,6 +140,17 @@ Currently:
                                  ...        
                                  continue   // -- should be correctly loaded into accumulator
                              ].
+                                                                                                                             
+                       * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
+                         the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
+                         if not - goes to the alternative branch (what about dynamic objects in that case)
+
+                       * rename / refactor weval - misleading name
+
+                       * inline'handle_tape: - test the message with argument list
+
+                       * test mttest (find out why debugger cannot debug it correctly)
+                         
 
                        
 <=================> 

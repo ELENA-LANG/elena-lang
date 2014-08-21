@@ -1,4 +1,5 @@
 pusha copym aloadsi :=0 => pusha copym nop;
+pusha aloadsi := 0 => pusha nop;
 pushn asavesi := 0 => pusha nop;
 pushn aloadfi asavesi := 0 => nop aloadfi pusha;
 pushn acopyr asavesi := 0 => nop acopyr pusha;

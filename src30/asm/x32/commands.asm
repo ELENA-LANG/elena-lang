@@ -58,13 +58,13 @@ inline % 7
 
 end
 
-// ; xbsredirect
+// ; bsredirect
 
 inline % 0Eh // (eax - object, ecx - message)
 
-  mov  esi, [eax-4]
+  mov  edi, [eax-4]
   xor  ebx, ebx
-  mov  edx, [esi - elVMTSizeOffset]
+  mov  edx, [edi - elVMTSizeOffset]
 
 labSplit:
   test edx, edx
@@ -73,12 +73,12 @@ labSplit:
 labStart:
   shr  edx, 1
   setnc bl
-  cmp  ecx, [esi+edx*8]
+  cmp  ecx, [edi+edx*8]
   jb   short labSplit
   nop
   nop
   jz   short labFound
-  lea  esi, [esi+edx*8+8]
+  lea  edi, [edi+edx*8+8]
   sub  edx, ebx
   jnz  short labStart
   nop
@@ -87,51 +87,11 @@ labStart:
   nop
   nop
 labFound:
-  jmp  [esi+edx*8+4]
+  jmp  [edi+edx*8+4]
   nop
   nop
 
 labEnd:
-                                                                
-end
-
-// ; bsredirect
-
-inline % 10h // (eax - object, ecx - message)
-
-  push esi
-  xor  ebx, ebx
-  mov  esi, [eax-4]
-  mov  edx, [esi - elVMTSizeOffset]
-
-labSplit:
-  test edx, edx
-  jz   short labEnd
-
-labStart:
-  shr  edx, 1
-  setnc bl
-  cmp  ecx, [esi+edx*8]
-  jb   short labSplit
-  nop
-  nop
-  jz   short labFound
-  lea  esi, [esi+edx*8+8]
-  sub  edx, ebx
-  jnz  short labStart
-  nop
-  nop
-  jmp  labEnd
-  nop
-  nop
-labFound:
-  pop  ebx
-  jmp  [esi+edx*8+4]
-  nop
-  nop
-
-labEnd:
-  pop  esi
                                                                 
 end
 
@@ -274,11 +234,11 @@ lEnd:
 
 end
 
-// ; gettype
+// ; type
 
 inline % 30h
 
-  mov  ebx, [eax - 4]
+  mov  ebx, [edi - 4]
   mov  esi, [ebx - elVMTTypeOffset]
   
 end
@@ -2273,8 +2233,8 @@ end
 
 inline % 0A1h
 
-  mov  esi, [eax - 4]
-  jmp  [esi + __arg1]
+  mov  edx, [eax - 4]
+  jmp  [edx + __arg1]
   nop
   nop
   nop
@@ -2285,8 +2245,8 @@ end
 // ; acallvi (ecx - offset to VMT entry)
 inline % 0A2h
 
-  mov  esi, [eax - 4]
-  call [esi + __arg1]
+  mov  edx, [eax - 4]
+  call [edx + __arg1]
 
 end
 
@@ -2312,12 +2272,22 @@ inline % 0A6h
   
 end
 
+// ; ecall
+
 inline % 0A7h
 
   call ecx
 
 end
-                                 
+
+// ; message
+inline % 0A8h
+
+  mov  edx, [eax - 4]
+  mov  esi, [edx + __arg1]
+
+end
+
 // ; next
 inline % 0AFh
 

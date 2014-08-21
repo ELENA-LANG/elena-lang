@@ -42,10 +42,10 @@
         // !!check the result of the operation
     ]
     
-//    #method close
-//    [
-//        theHandle close.
-//    ]
+    #method close
+    [
+        theHandle close.
+    ]
 }
 
 // --- ConsoleReader ---
@@ -72,7 +72,7 @@
                 &int           : 1
                 &out'int       : aNumberRead.
 
-            false equal &bool::((aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1)).
+            false equal:((aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1)).
         ].
 
         aDump read &index:14 &out'short:aChar.
@@ -137,10 +137,10 @@
         ^ anOutput.
     ]
     
-//    #method close
-//    [
-//        theHandle close.
-//    ]
+    #method close
+    [
+        theHandle close.
+    ]
 }
 
 // --- Console Standard Symbols

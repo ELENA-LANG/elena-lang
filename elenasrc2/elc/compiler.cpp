@@ -39,6 +39,11 @@ inline bool isCollection(DNode node)
    return (node == nsExpression && node.nextNode()==nsExpression);
 }
 
+inline bool isExpressionAction(DNode expr)
+{
+   return (expr == nsExpression && expr.nextNode() == nsNone);
+}
+
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    int verbId = 0;
@@ -2723,11 +2728,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
    // if it is generic dispatch (NOTE: param count is set to zero as the marker)
    if (paramCount == 0 && node.firstChild() == nsTypedMessageParameter) {
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
-      // HOTFIX : include the parameter
-      _writer.typecastVerb(*scope.tape, messageRef + 1);
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callMethod(*scope.tape, 0, 1);
+      // HOTFIX : include the parameter
+      _writer.setMessage(*scope.tape, messageRef + 1);
+      _writer.callMethod(*scope.tape, 1, 1);
    }
    // otherwise compile message call
    else {
@@ -3030,9 +3034,8 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    if (node.firstChild() == nsTypedMessageParameter && getParamCount(messageRef) == 0) {
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
       // HOTFIX : include the parameter
-      _writer.typecastVerb(*scope.tape, messageRef + 1);
-      _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
-      _writer.callMethod(*scope.tape, 0, 1);
+      _writer.setMessage(*scope.tape, messageRef + 1);
+      _writer.callMethod(*scope.tape, 1, 1);
    }
    else {
       // if it is a not a constant, compile a role
@@ -3054,25 +3057,21 @@ void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, DNode arg
    _writer.declareClass(scope.tape, scope.reference);
 
    ActionScope methodScope(&scope);
-   methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
+   methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
-   ref_t actionMessage = encodeVerb(EVAL_MESSAGE_ID);
    if (argNode != nsNone) {
       // define message parameter
-      actionMessage = declareInlineArgumentList(argNode, methodScope);
+      methodScope.message = declareInlineArgumentList(argNode, methodScope);
 
       node = node.select(nsSubCode);
    }
 
    // if it is single expression
    DNode expr = node.firstChild();
-   if (expr == nsExpression && expr.nextNode() == nsNone) {
-      if (argNode == nsNone)
-         actionMessage = encodeVerb(EVAL_MESSAGE_ID);
-
-      compileInlineAction(expr, methodScope, actionMessage);
+   if (isExpressionAction(expr)) {
+      compileExpressionAction(expr, methodScope);
    }
-   else compileAction(node, methodScope, actionMessage);
+   else compileAction(node, methodScope);
 
    _writer.endClass(scope.tape);
 
@@ -3189,7 +3188,10 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
    // if it is an action code block
    if (node == nsSubCode) {
-      compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
+      if (isExpressionAction(node.firstChild())) {
+         compileParentDeclaration(scope.moduleScope->mapConstantReference(EXPRESSION_CLASS), scope);
+      }
+      else compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
 
       compileActionVMT(node, scope, DNode());
    }
@@ -3319,7 +3321,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, ref_
             boxObject(scope, target, 0);
 
             _writer.setMessage(*scope.tape, encodeMessage(type_ref, 0, 0));
-            _writer.callMethod(*scope.tape, 1, -1);   // HOTFIX: typecast call does not release the stack
+            _writer.typecast(*scope.tape);
 
             return ObjectInfo(okAccumulator, 0, type_ref);
          }
@@ -3839,7 +3841,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
    ref_t sign_id = 0;
 
    // if it is a generic verb, make sure no parameters are provided
-   if ((verb_id == DISPATCH_MESSAGE_ID || verb_id == TYPECAST_MESSAGE_ID)/* && node.firstChild() == nsSubjectArg*/) {
+   if (verb_id == DISPATCH_MESSAGE_ID) {
       scope.raiseError(errInvalidOperation, verb);
    }
 
@@ -3943,13 +3945,25 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
    scope.message = encodeMessage(sign_id, verb_id, paramCount);
 }
 
-void Compiler :: compileDispatcher(DNode node, CodeScope& scope)
+void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
 {
-   if (node == nsImport) {
-      ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-      reference.combine(node.Terminal());
+   // check if the method is inhreited and update vmt size accordingly
+   scope.include();
 
-      importCode(node, *scope.moduleScope, scope.tape, reference);
+   CodeScope codeScope(&scope);
+
+   _writer.declareIdleMethod(*codeScope.tape, scope.message);
+
+   if (node == nsImport) {
+      ReferenceNs routine(PACKAGE_MODULE, INLINE_MODULE);
+
+      if (getVerb(scope.message) == GENERIC_MESSAGE_ID) {
+         routine.combine("generic_");
+         routine.append(node.Terminal());
+      }
+      else routine.combine(node.Terminal());
+
+      importCode(node, *scope.moduleScope, codeScope.tape, routine);
    }
 //   else {
 //      DNode nextNode = node.nextNode();
@@ -3964,62 +3978,11 @@ void Compiler :: compileDispatcher(DNode node, CodeScope& scope)
    // else scope.raiseError(errInvalidOperation, node.Terminal());
    //}
    else scope.raiseError(errInvalidOperation, node.Terminal());
+
+   _writer.endIdleMethod(*codeScope.tape);
 }
 
-void Compiler :: compileTypecastHandler(DNode node, CodeScope& scope)
-{
-   if (node == nsImport) {
-      ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-      reference.combine(node.Terminal());
-
-      importCode(node, *scope.moduleScope, scope.tape, reference);
-   }
-//   DNode sign = node.firstChild();
-//
-//   int parameters = countSymbol(sign, nsMessageParameter);
-//
-//   // if direct dispatching is possible
-//   if (parameters == 1) {
-//      ref_t sign_id = encodeMessage(scope.moduleScope->module->mapSubject(node.Terminal(), false), 0, 1);
-//
-//      DNode paramNode = sign.firstChild();
-//      // if direct callback is possible
-//      if (paramNode.nextNode() == nsNone && paramNode.firstChild() == nsNone) {
-//         ObjectInfo param = compileTerminal(paramNode, scope, 0);
-//
-//         if (param.kind == okSelf) {
-//         }
-//         else if (param.kind == okField) {
-//            _writer.swapObject(*scope.tape, okRegister, 2);
-//            _writer.loadObject(*scope.tape, ObjectInfo(okRegisterField, param.reference));
-//            _writer.swapObject(*scope.tape, okRegister, 2);
-//         }
-//         else scope.raiseError(errUnknownObject, sign.nextNode().firstChild().Terminal());
-//      }
-//      // otherwise self and message should be stored
-//      else {
-//         DNode paramNode = sign.nextNode().firstChild();
-//
-//         _writer.swapObject(*scope.tape, okRegister, 2);
-//         _writer.newSelf(*scope.tape);
-//         _writer.pushObject(*scope.tape, ObjectInfo(okCurrentMessage));
-//
-//         ObjectInfo param = compileObject(paramNode, scope, 0);
-//         if (param.kind != okRegister)
-//            _writer.popObject(*scope.tape, ObjectInfo(okRegister));
-//
-//         _writer.popObject(*scope.tape, ObjectInfo(okCurrentMessage));
-//
-//         _writer.releaseSelf(*scope.tape);
-//         _writer.swapObject(*scope.tape, okRegister, 2);
-//      }
-//      _writer.callBack(*scope.tape, sign_id);
-//   }
-//   // !! temporally raise an error
-//   else scope.raiseError(errUnknownObject, sign.nextNode().firstChild().Terminal());
-}
-
-void Compiler :: compileAction(DNode node, MethodScope& scope, ref_t actionMessage)
+void Compiler :: compileAction(DNode node, MethodScope& scope)
 {
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
@@ -4028,7 +3991,7 @@ void Compiler :: compileAction(DNode node, MethodScope& scope, ref_t actionMessa
 
    // new stack frame
    // stack already contains previous $self value
-   _writer.declareGenericAction(*codeScope.tape, scope.message, actionMessage);
+   _writer.declareMethod(*codeScope.tape, scope.message);
    codeScope.level++;
 
 //   declareParameterDebugInfo(scope, codeScope.tape, false);
@@ -4036,15 +3999,15 @@ void Compiler :: compileAction(DNode node, MethodScope& scope, ref_t actionMessa
    compileCode(node, codeScope);
 
    if (scope.withBreakHandler) {
-      _writer.exitGenericAction(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+      _writer.exitMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
 
       compileBreakHandler(codeScope, 0);
       _writer.endIdleMethod(*codeScope.tape);
    }
-   else _writer.endGenericAction(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+   else _writer.endMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
 }
 
-void Compiler :: compileInlineAction(DNode node, MethodScope& scope, ref_t actionMessage)
+void Compiler :: compileExpressionAction(DNode node, MethodScope& scope)
 {
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
@@ -4054,7 +4017,7 @@ void Compiler :: compileInlineAction(DNode node, MethodScope& scope, ref_t actio
 
    // new stack frame
    // stack already contains previous $self value
-   _writer.declareGenericAction(*codeScope.tape, scope.message, actionMessage);
+   _writer.declareMethod(*codeScope.tape, scope.message);
    codeScope.level++;
 
    declareParameterDebugInfo(scope, codeScope.tape, false);
@@ -4062,69 +4025,70 @@ void Compiler :: compileInlineAction(DNode node, MethodScope& scope, ref_t actio
    compileRetExpression(node, codeScope, 0);
 
    if (scope.withBreakHandler) {
-      _writer.exitGenericAction(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+      _writer.exitMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
       compileBreakHandler(codeScope, 0);
       _writer.endIdleMethod(*codeScope.tape);
    }
-   else _writer.endGenericAction(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+   else _writer.endMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
+}
+
+void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // try to implement light-weight resend operation
+   if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
+      ObjectInfo target = compileTerminal(node, scope, 0);
+      if (target.kind == okConstant || target.kind == okField) {
+         _writer.declareMethod(*scope.tape, methodScope->message, false);
+
+         if (target.kind == okField) {
+            _writer.loadObject(*scope.tape, ObjectInfo(okAccField, target.param));
+         }
+         else _writer.loadObject(*scope.tape, target);
+
+         _writer.resend(*scope.tape);
+
+         _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
+
+         return;
+      }
+   }
+
+   // new stack frame
+   // stack already contains previous $self value
+   _writer.declareMethod(*scope.tape, methodScope->message, true);
+   scope.level++;
+
+   _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
+   _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
+
+   ObjectInfo target = compileObject(node, scope, 0);
+   if (checkIfBoxingRequired(scope, target))
+      boxObject(scope, target, 0);
+
+   _writer.loadObject(*scope.tape, target);
+
+   _writer.popObject(*scope.tape, ObjectInfo(okExtraRegister));
+
+   _writer.callRoleMessage(*scope.tape, getParamCount(methodScope->message));
+
+   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
 void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-   // if it is resend to itself
-   if (node == nsMessageOperation) {
-      // new stack frame
-      // stack already contains current $self reference
-      _writer.declareMethod(*scope.tape, methodScope->message, true);
-      scope.level++;
+   // new stack frame
+   // stack already contains current $self reference
+   _writer.declareMethod(*scope.tape, methodScope->message, true);
+   scope.level++;
 
-      compileMessage(node, scope, ObjectInfo(okThisParam, 1, methodScope->getClassType()), 0);
-      scope.freeSpace();
+   compileMessage(node, scope, ObjectInfo(okThisParam, 1, methodScope->getClassType()), 0);
+   scope.freeSpace();
 
-      _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-   }
-   else {
-      // try to implement light-weight resend operation
-      if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
-         ObjectInfo target = compileTerminal(node, scope, 0);
-         if (target.kind == okConstant || target.kind == okField) {
-            _writer.declareMethod(*scope.tape, methodScope->message, false);
-
-            if (target.kind == okField) {
-               _writer.loadObject(*scope.tape, ObjectInfo(okAccField, target.param));
-            }
-            else _writer.loadObject(*scope.tape, target);
-
-            _writer.resend(*scope.tape);
-
-            _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
-
-            return;
-         }
-      }
-
-      // new stack frame
-      // stack already contains previous $self value
-      _writer.declareMethod(*scope.tape, methodScope->message, true);
-      scope.level++;
-
-      _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
-      _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
-
-      ObjectInfo target = compileObject(node, scope, 0);
-      if (checkIfBoxingRequired(scope, target))
-         boxObject(scope, target, 0);
-
-      _writer.loadObject(*scope.tape, target);
-
-      _writer.popObject(*scope.tape, ObjectInfo(okExtraRegister));
-
-      _writer.callRoleMessage(*scope.tape, getParamCount(methodScope->message));
-
-      _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-   }
+   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
 ////void Compiler :: compileMessageDispatch(DNode node, CodeScope& scope)
@@ -4182,6 +4146,28 @@ void Compiler :: compileSpecialMethod(MethodScope& scope)
    _writer.endIdleMethod(*codeScope.tape);
 }
 
+void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function)
+{
+   MethodScope methodScope(&scope);
+   methodScope.message = message;
+
+   methodScope.include();
+
+   CodeScope codeScope(&methodScope);
+
+   compileImportMethod(node, codeScope, message, ConstantIdentifier(function), 0);
+}
+
+void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t message, const wchar16_t* function, int mode)
+{
+   ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
+   reference.combine(function);
+
+   _writer.declareIdleMethod(*codeScope.tape, message);
+   importCode(node, *codeScope.moduleScope, codeScope.tape, reference);
+   _writer.endIdleMethod(*codeScope.tape);
+}
+
 void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 {
    // check if the method is inhreited and update vmt size accordingly
@@ -4196,73 +4182,58 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
    }
 
-   if (scope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-      _writer.declareMethod(*codeScope.tape, scope.message, false);
-      compileDispatcher(node.select(nsDispatchHandler).firstChild(), codeScope);
-      _writer.endMethod(*codeScope.tape, 2, scope.reserved, false);
+   DNode resendBody = node.select(nsResendExpression);
+   DNode dispatchBody = node.select(nsDispatchExpression);
+   DNode importBody = node.select(nsImport);
+
+   // check if it is resend
+   if (importBody == nsImport) {
+      compileImportMethod(importBody, codeScope, scope.message, importBody.Terminal(), mode);
    }
-   else if (getVerb(scope.message) == TYPECAST_MESSAGE_ID) {
-      _writer.declareMethod(*codeScope.tape, scope.message, false);
-      compileTypecastHandler(node.select(nsTypecastHandler).firstChild(), codeScope);
-      _writer.endMethod(*codeScope.tape, 2, scope.reserved, false);
+   // check if it is a dispatch
+   else if (resendBody != nsNone) {         
+      compileResendExpression(resendBody.firstChild(), codeScope);
+   }
+   // check if it is a resend
+   else if (dispatchBody != nsNone) {
+      compileDispatchExpression(dispatchBody.firstChild(), codeScope);
    }
    else {
-      DNode resendBody = node.select(nsResendExpression);
-//      DNode dispatchBody = node.select(nsDispatchExpression);
-      DNode importBody = node.select(nsImport);
+      // new stack frame
+      // stack already contains current $self reference
+      if (test(mode, HINT_GENERIC_METH)) {
+         _writer.declareGenericMethod(*codeScope.tape, scope.message);
+      }
+      else _writer.declareMethod(*codeScope.tape, scope.message);
+      codeScope.level++;
 
-      // check if it is resend
-      if (importBody == nsImport) {
-         ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-         reference.combine(importBody.Terminal());
+      declareParameterDebugInfo(scope, codeScope.tape, true);
 
-         _writer.declareIdleMethod(*codeScope.tape, scope.message);
-         importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
+      DNode body = node.select(nsSubCode);
+      // if method body is a return expression
+      if (body==nsNone) {
+         compileCode(node, codeScope);
+      }
+      // if method body is a set of statements
+      else {
+         compileCode(body, codeScope);
+
+         _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
+      }
+
+      int stackToFree = paramCount + scope.rootToFree;
+
+   //   if (scope.testMode(MethodScope::modLock)) {
+   //      _writer.endSyncMethod(*codeScope.tape, -1);
+   //   }
+      if (scope.withBreakHandler) {
+         _writer.exitMethod(*codeScope.tape, stackToFree, scope.reserved);
+         compileBreakHandler(codeScope, 0);
          _writer.endIdleMethod(*codeScope.tape);
       }
-      else if (resendBody != nsNone) {         
-         compileResendExpression(resendBody.firstChild(), codeScope);
-      }
-//      // check if it is dispatch
-//      else if (dispatchBody != nsNone) {
-//         //compileMessageDispatch(dispatchBody.firstChild(), codeScope);
-//      }
-      else {
-         // new stack frame
-         // stack already contains current $self reference
-         if (test(mode, HINT_GENERIC_METH)) {
-            _writer.declareGenericMethod(*codeScope.tape, scope.message);
-         }
-         else _writer.declareMethod(*codeScope.tape, scope.message);
-         codeScope.level++;
-
-         declareParameterDebugInfo(scope, codeScope.tape, true);
-
-         DNode body = node.select(nsSubCode);
-         // if method body is a return expression
-         if (body==nsNone) {
-            compileCode(node, codeScope);
-         }
-         // if method body is a set of statements
-         else {
-            compileCode(body, codeScope);
-
-            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
-         }
-
-         int stackToFree = paramCount + scope.rootToFree;
-
-      //   if (scope.testMode(MethodScope::modLock)) {
-      //      _writer.endSyncMethod(*codeScope.tape, -1);
-      //   }
-         if (scope.withBreakHandler) {
-            _writer.exitMethod(*codeScope.tape, stackToFree, scope.reserved);
-            compileBreakHandler(codeScope, 0);
-            _writer.endIdleMethod(*codeScope.tape);
-         }
-         else _writer.endMethod(*codeScope.tape, stackToFree, scope.reserved);
-      }
+      else _writer.endMethod(*codeScope.tape, stackToFree, scope.reserved);
    }
+
 //   // critical section entry if sync hint declared
 //   if (scope.testMode(MethodScope::modLock)) {
 //      ownerScope->info.header.flags |= elWithLocker;
@@ -4421,18 +4392,27 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
                   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-            }
-            // if it is a type qualifier
-            else if (member.firstChild() == nsTypecastHandler) {
-               methodScope.message = encodeVerb(TYPECAST_MESSAGE_ID);
-            }
-            else declareArgumentList(member, methodScope);
 
-            // check if there is no duplicate method
-            if (scope.info.methods.exist(methodScope.message, true))
-               scope.raiseError(errDuplicatedMethod, member.Terminal());
+               // check if there is no duplicate method
+               if (scope.info.methods.exist(methodScope.message, true))
+                  scope.raiseError(errDuplicatedMethod, member.Terminal());
 
-            compileMethod(member, methodScope, methodScope.compileHints(hints));
+               compileDispatcher(member.firstChild().firstChild(), methodScope);
+
+               // NOTE: due to the current implementation - there are two dispatch handler (second one - typed dispatch)
+               methodScope.message = encodeVerb(GENERIC_MESSAGE_ID);
+               compileDispatcher(member.firstChild().firstChild(), methodScope);
+            }
+            // if it is a normal method
+            else {
+               declareArgumentList(member, methodScope);
+
+               // check if there is no duplicate method
+               if (scope.info.methods.exist(methodScope.message, true))
+                  scope.raiseError(errDuplicatedMethod, member.Terminal());
+
+               compileMethod(member, methodScope, methodScope.compileHints(hints));
+            }
             break;
          }
          case nsGeneric:
@@ -4696,6 +4676,14 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    compileVMT(member, scope);
 
+   // add default handlers for base class
+   if (scope.info.header.parentRef == 0) {
+      compileImportMethod(node, scope, encodeVerb(DISPATCH_MESSAGE_ID), DISPATCH_ROUTINE);
+
+      // NOTE: due to the current implementation - there are two dispatch handler (second one - generic type dispatch)
+      compileImportMethod(node, scope, encodeVerb(GENERIC_MESSAGE_ID), TRY_DISPATCH_ROUTINE);
+   }
+
    _writer.endClass(scope.tape);
 
    // compile explicit symbol
@@ -4785,7 +4773,7 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hint
 
    // check if the module exists
    _Module* module = scope.project->loadModule(ns, true);
-   if (!module)
+   if (!module)   
       scope.raiseWarning(wrnUnknownModule, ns);
 
    const wchar16_t* value = retrieve(scope.defaultNs.start(), ns, NULL);

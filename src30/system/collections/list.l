@@ -211,7 +211,7 @@
         = $self~enumerable seek: x [ x key == aKey ].
         
     #method append &key:aKey &value:aValue
-        => &append:(KeyValue new &key:aKey &value:aValue).
+        <= %append:(KeyValue new &key:aKey &value:aValue).
 
     #method getAt &key:aKey
     [

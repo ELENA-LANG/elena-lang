@@ -52,7 +52,7 @@ enum Symbol
    nsCodeEnd                    = 0x0101D,
    nsVariable                   = 0x0101E,
    nsL4Operation                = 0x0101F,
-   nsTypecastHandler            = 0x01020,
+   nsDispatchExpression         = 0x01020,
    nsAssigning                  = 0x01021,
    nsStatic                     = 0x01022,
    nsBaseClass                  = 0x01023,

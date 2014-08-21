@@ -1,10 +1,10 @@
 ﻿
                                 ELENA Language 
 
-                                Version 1.9.16
+                                Version 1.9.17
  
 ******************************************************************************
-                    What's New in 1.9.16 (pre release)
+                    What's New in 1.9.17 (pre release)
 ******************************************************************************
 
 ELENA:
@@ -23,6 +23,9 @@ ELENA:
 
 [LIB]
 [*] some code refactoring due to dispatching / primitive routines changes
+
+Tools:
+[*] asm2binx: fixed ecode compiler
 
 ******************************************************************************
                     What's New in 1.9.16 (pre release)

@@ -15,14 +15,18 @@
     [
         #throw anError.
     ]
+
+    #method if : aHandler
+    [
+        aHandler eval:$self.
+    ]
     
-    #method ifFailed : aHandler
-        = aHandler eval.
-    
-    #method ifFailed &function:aHandler
-        = aHandler eval:$self.
-    
-    #method => <exception_redirect>.
+    #method on : aCatchBlock
+    [
+        aCatchBlock if::$self | if &MethodNotFoundError: e [ #throw $self. ].
+    ]
+
+    #method => <exception_dispatch>.
 }
 
 // --- Exception ---
@@ -36,85 +40,51 @@
         theMessage := aMessage.
     ]    
     
-    #method literal => theMessage.
+//    #method literal => theMessage.
     
     #method Message = theMessage.
 }
 
 // --- FormatException ---
 
-#class FormatException : Exception
+#class(type:FormatError) FormatException : Exception
 {
     #constructor new
     [
         theMessage := "A number is not in the correct format".
     ]    
-    
-    #method onFormatError : aHandler    
-        = aHandler eval:$self.
-    
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onFormatError:$self.
 }
 
 // --- OutOfRangeException ---
 
-#class OutOfRangeException : Exception
+#class(type:OutOfRangeError) OutOfRangeException : Exception
 {
     #constructor new
     [
         theMessage := "An index is out of range".
     ]    
-    
-    #method onOutOfRangeError : aHandler    
-        = aHandler eval:$self.
-    
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onOutOfRangeError:$self.
 }
 
 // --- InvalidArgumentException ---
 
-#class InvalidArgumentException : Exception
+#class(type:InvalidArgumentError) InvalidArgumentException : Exception
 {
     #constructor new
     [
         theMessage := "Invalid argument".
     ]    
-    
-    #method onInvalidArgumentError : aHandler    
-        = aHandler eval:$self.
-    
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onInvalidArgumentError:$self.
 }
 
 // --- MethodNotFound ---
 
-#class(role) MethodNotFoundException : BaseException
+#class(role,type:MethodNotFoundError) MethodNotFoundException : BaseException
 {
-    #method onMethodNotFound : aHandler    
-    [
-        aHandler eval:$self.
-    ]
-    
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onMethodNotFound:$self.
-        
     #method Message = "Method not found".
 }
 
 // --- MethodNotSupported ---
 
-#class(role) NotSupportedException : BaseException
+#class(role,type:NotSupportedError) NotSupportedException : BaseException
 {
-    #method onNotSupported : aHandler    
-    [
-        aHandler eval:$self.
-    ]
-    
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onNotSupported:$self.
-        
     #method Message = "Operation is not supported".
 }

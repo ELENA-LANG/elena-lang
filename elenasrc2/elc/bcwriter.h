@@ -158,11 +158,8 @@ public:
    void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
    void declareGenericMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
-   void declareGenericAction(CommandTape& tape, ref_t genericMessage, ref_t message);
-//   void exclude(CommandTape& tape, int& level);
    void declareExternalBlock(CommandTape& tape);
    void declareVariable(CommandTape& tape, ref_t nilReference);
-////   void declareVariable(CommandTape& tape);
    void declarePrimitiveVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
@@ -185,7 +182,6 @@ public:
    void declareStatement(CommandTape& tape);
    void declareBlock(CommandTape& tape);
 
-//   void newSelf(CommandTape& tape);
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
 
@@ -199,8 +195,6 @@ public:
    void initBase(CommandTape& tape, int fieldCount);
    void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
 
-//   void swapObject(CommandTape& tape, ObjectKind type, int offset);
-//////   void copyPrimitiveValue(CommandTape& type, int value);
    void boxObject(CommandTape& tape, int size, ref_t vmtReference);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape);
@@ -208,37 +202,22 @@ public:
    void releaseObject(CommandTape& tape, int count = 1);
    void releaseArgList(CommandTape& tape);
 
-////   void moveLocalObject(CommandTape& tape, int index);
-
    void setMessage(CommandTape& tape, ref_t message);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callRoleMessage(CommandTape& tape, int paramCount);
-////   void callRoleMessage(CommandTape& tape, ref_t classRef, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-////   void callResolvedMethod(CommandTape& tape, ref_t classRef, ref_t messageRef);
-   void typecastVerb(CommandTape& tape, int verb);
-//   void extendObject(CommandTape& tape, ObjectInfo info);
+   void typecast(CommandTape& tape);
 
-////   void redirectVerb(CommandTape& tape, ref_t message);
    void doGenericHandler(CommandTape& tape, ref_t generic_sign_id);
    void resend(CommandTape& tape);
-//   void callBack(CommandTape& tape, int subject_id);
-//////   void callAPI(CommandTape& tape, ref_t reference, bool embedded, int count);
-//   void executeFunction(CommandTape& tape, ObjectInfo target, FunctionCode code);
-////   void executeFunction(CommandTape& tape, ObjectInfo target, ObjectInfo lparam, FunctionCode code);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
    int declareLabel(CommandTape& tape);
-////   void compare(CommandTape& tape, ref_t trueRetVal, ref_t falseRetVal);
-////   void jumpIfEqual(CommandTape& tape, ObjectInfo object);
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqualN(CommandTape& tape, int value);
-//////   void jumpIfNotEqual(CommandTape& tape, ObjectInfo object);
    void jump(CommandTape& tape, bool previousLabel = false);
-
-//////   void setArrayItem(CommandTape& tape);
 
    void throwCurrent(CommandTape& tape);
    void breakLoop(CommandTape& tape, int label);
@@ -247,14 +226,9 @@ public:
 
    void selectConstant(CommandTape& tape, ref_t r1, ref_t r2);
 
-//   void releaseSelf(CommandTape& tape);
-
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
-//   bool checkIfFrameUsed(ByteCodeIterator it);
-////   bool checkIfBaseUsed(ByteCodeIterator it);
    void commentFrame(ByteCodeIterator it);
-////   void commentBase(ByteCodeIterator it);
 
    void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
@@ -263,8 +237,6 @@ public:
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
    void endExternalBlock(CommandTape& tape);
-   void exitGenericAction(CommandTape& tape, int count, int reserved);
-   void endGenericAction(CommandTape& tape, int count, int reserved);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
@@ -282,15 +254,6 @@ public:
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
    void loadSymbolReference(CommandTape& tape, ref_t reference);
-//   void copyIntToLong(CommandTape& tape, ObjectInfo target);
-////   void saveDump(CommandTape& tape, bool onlyAllocate);
-//   void setDumpLength(CommandTape& tape, ObjectInfo target);
-//   void loadStr(CommandTape& tape);
-////   void loadDump(CommandTape& tape, ObjectInfo source);
-//   void loadLiteralLength(CommandTape& tape, ObjectInfo target);
-//   void loadByteArrayLength(CommandTape& tape, ObjectInfo target);
-//   void loadParamsLength(CommandTape& tape, ObjectInfo target);
-//   void loadArrayLength(CommandTape& tape, ObjectInfo target);
    void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);

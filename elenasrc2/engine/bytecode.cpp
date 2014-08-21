@@ -15,9 +15,9 @@
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", "pushb", "pop", "unknown", "pushe", "dcopyverb", "throw",
-   "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "xbsredirect", "dcopysubj",
+   "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
-   "bsredirect", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
+   "unknown", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "aload", "unhook", "add", "create",
 
    "ecopyd", "dcopye", "pushd", "popd", "unknown", "unknown", "unknown", "unknown",
@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
    "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "ecall",
-   "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
+   "message", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
    "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",
    "dloadsi", "dsavefi", "pushsi", "dsavesi", "unknown", "pushf", "unknown", "reserve",
@@ -67,11 +67,14 @@ using namespace _ELENA_;
 
 inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
 {
-   int mask = ref & mskAnyRef;
+   if (ref != 0) {
+      int mask = ref & mskAnyRef;
 
-   const wchar16_t* referenceName = sour->resolveReference(ref & ~mskAnyRef);
+      const wchar16_t* referenceName = sour->resolveReference(ref & ~mskAnyRef);
 
-   return dest->mapReference(referenceName) | mask;
+      return dest->mapReference(referenceName) | mask;
+   }
+   else return 0;
 }
 
 // --- CommandTape ---
@@ -198,7 +201,7 @@ void CommandTape :: import(_Memory* section, bool withHeader)
    int      argument = 0;
    int      additional = 0;
 
-   Map<int, int> labels;
+   Map<int, int> extLabels;
 
    MemoryReader reader(section);
 
@@ -224,24 +227,24 @@ void CommandTape :: import(_Memory* section, bool withHeader)
          }
          else offset = argument;
 
-         if (!labels.exist(offset)) {
-            label = labels.Count() + 0x1000;
-            labels.add(offset, label);
+         if (!extLabels.exist(offset)) {
+            label = ++labelSeed;
+            extLabels.add(offset, label);
          }
-         else label = labels.get(offset);
+         else label = extLabels.get(offset);
 
-         if (code >= 0xE0) {
+         if (code >= MAX_DOUBLE_ECODE) {
             write(code, label, argument);
          }
          else write(code, label);
       }
       else if (code == bcNop) {
          int label;
-         if (!labels.exist(reader.Position() - 1)) {
-            label = labels.Count() + 0x1000;
-            labels.add(reader.Position() - 1, label);
+         if (!extLabels.exist(reader.Position() - 1)) {
+            label = ++labelSeed;
+            extLabels.add(reader.Position() - 1, label);
          }
-         else label = labels.get(reader.Position() - 1);
+         else label = extLabels.get(reader.Position() - 1);
 
          write(blLabel, label);
       }
@@ -644,7 +647,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
    addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
    addVerb(verbs, RAISE_MESSAGE,      RAISE_MESSAGE_ID);
-   addVerb(verbs, IFFAILED_MESSAGE,   IFFAILED_MESSAGE_ID);
+   addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
    addVerb(verbs, FIND_MESSAGE,       FIND_MESSAGE_ID);
    addVerb(verbs, SEEK_MESSAGE,       SEEK_MESSAGE_ID);
    addVerb(verbs, REWIND_MESSAGE,     REWIND_MESSAGE_ID);
@@ -667,6 +670,17 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, START_MESSAGE,      START_MESSAGE_ID);
    addVerb(verbs, RETRIEVE_MESSAGE,   RETRIEVE_MESSAGE_ID);
    addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
+   addVerb(verbs, RESUME_MESSAGE,     RESUME_MESSAGE_ID);
+   addVerb(verbs, OPEN_MESSAGE,       OPEN_MESSAGE_ID);
+   addVerb(verbs, EXIT_MESSAGE,       EXIT_MESSAGE_ID);
+   addVerb(verbs, SHOW_MESSAGE,       SHOW_MESSAGE_ID);
+   addVerb(verbs, HIDE_MESSAGE,       HIDE_MESSAGE_ID);
+   addVerb(verbs, CREATE_MESSAGE,     CREATE_MESSAGE_ID);
+   addVerb(verbs, IS_MESSAGE,         IS_MESSAGE_ID);
+   addVerb(verbs, ROLLBACK_MESSAGE,   ROLLBACK_MESSAGE_ID);
+   addVerb(verbs, SELECT_MESSAGE,     SELECT_MESSAGE_ID);
+   addVerb(verbs, REPLACE_MESSAGE,    REPLACE_MESSAGE_ID);
+
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

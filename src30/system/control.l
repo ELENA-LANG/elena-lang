@@ -16,31 +16,12 @@
 
     or : anExpr = $self.
 
-    and : anExpr => &and::anExpr.
+    and : anExpr = anExpr bool.
 
-    xor : anExpr => &xor::anExpr.
+    xor : aBool = aBool ? [ false ] ! [ true ].
 
-    and &bool:aBool = aBool.
+    equal : anExpr = anExpr bool.
 
-    and &action:aBoolExpr = aBoolExpr eval bool.
-
-    and &object:aBool = aBool bool.
-
-    xor &bool:aBool = aBool ? [ false ] ! [ true ].
-    
-    xor &action:aBoolExpr = aBoolExpr eval ? [ false ] ! [ true ].
-            
-    xor &object:anObject => &xor &bool::anObject.
-            
-    equal : aBool => &equal::aBool.
-    
-    equal &bool:aBool = aBool ? [ true ] ! [ false ].
-            
-    equal &action:aBoolExpr 
-        = $self equal &bool::(aBoolExpr eval).
-            
-    equal &object:anObject => &equal &bool::anObject.
-            
     not = false.
 
     literal = "true".
@@ -60,35 +41,14 @@
 
     else : aFalseAction = aFalseAction eval.
 
-    or : anExpr => &or::anExpr.
-            
+    or : anExpr = anExpr bool.
+
     and : anExpr = $self.
 
-    and &action:aBoolExpr = $self.
-    
-    xor : anExpr => &xor::anExpr.
+    xor : anExpr = anExpr ? [ true ] ! [ false ].
 
-    or &bool:aBool = aBool.
+    equal : anExpr = anExpr ? [ false ] ! [ true ].
 
-    or &object:anObject = anObject bool.
-
-    or &action:aBool = aBool eval bool.
-                
-    xor &bool:aBool = aBool ? [ true ] ! [ false ].
-    
-    xor &action:anExpr = anExpr eval ? [ true ] ! [ false ].
-
-    xor &object:anObject => &xor &bool::anObject.
-    
-    equal : aBool => &equal::aBool.
-    
-    equal &bool:aBool = aBool ? [ false ] ! [ true ].
-            
-    equal &action:aBoolExpr 
-        = $self equal &bool::(aBoolExpr eval).
-            
-    equal &object:anObject => &equal &bool::anObject.
-            
     not = true.
 
     literal = "false".
@@ -100,11 +60,11 @@
 
 // --- action role class ---
 
-#class(role,extension:action) actionOp
+#class(role) actionOp
 {
     #method run &if:aBool
     [
-        #loop (true equal::aBool) ?
+        #loop aBool ?
         [
             self eval.
         ].
@@ -116,14 +76,14 @@
         [
             self eval.
             
-            false equal::aBool
+            false equal:aBool
         ].
-    ]    
+    ]
 }
 
 // --- function role class ---
 
-#class(role,extension:function) functionOp
+#class(role) functionOp
 {    
     #method run &enumerator:anEnumerator
     [
@@ -210,12 +170,14 @@
 
 #class(type:action) Action
 {
+    #method => <action_dispatch>.
 }
 
-// --- Function wrapper ---
+// --- Expression ---
 
-#class(type:function) Function
+#class Expression
 {
+    #method => <expression_dispatch>.
 }
 
 // --- control ---

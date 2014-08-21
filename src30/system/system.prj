@@ -12,9 +12,9 @@ inline=..\..\lib30\inline\core_routines.bin
 object.l
 control.l
 primitives.l
-exceptions.l
 basic.l
 memory.l
+exceptions.l
 console.l
 win32_handler.l
 routines\enumerators.l
@@ -26,8 +26,6 @@ io\win32_console.l
 text\textbuffer.l
 dynamic\groups.l
 dynamic\loaders.l
-dynamic\reflection.l
 dynamic\interpreters.l
-dynamic\script.l
 threading\win32_handlers.l
 threading\thread.l

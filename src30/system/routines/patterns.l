@@ -1,13 +1,13 @@
 #define system.
 
 // === extensions ===
+
+//// --- misc ---
 //
-////// --- misc ---
-////
-////#class(role)misc
-////{
-////    #method back : anObject = anObject.
-////}
+//#class(role)misc
+//{
+//    #method back : anObject = anObject.
+//}
 
 // --- indexable ---
 

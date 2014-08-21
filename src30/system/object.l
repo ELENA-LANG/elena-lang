@@ -1,15 +1,11 @@
 // --- super object ---
 
-#class(type:object) Object
+#class Object
 {
-    #method => <dispatch>.
-
-    #method <= <typecast>.
-
     #method equal : anObject
-        => &equal &object:anObject.
+        <= %equal &reference:anObject.
 
-    #method equal &object:anObject
+    #method equal &reference:anObject
         <object_equal>.
 }
 

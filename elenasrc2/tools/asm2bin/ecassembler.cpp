@@ -40,10 +40,10 @@ void ECodesAssembler :: fixJump(const wchar16_t* label, MemoryWriter& writer, La
 void ECodesAssembler :: writeCommand(ByteCommand command, MemoryWriter& writer)
 {
    writer.writeByte(command.code);
-   if (command.code >= 0x20) {
+   if (command.code >= MAX_SINGLE_ECODE) {
       writer.writeDWord(command.argument);
    }
-   if (command.code >= 0xE0) {
+   if (command.code >= MAX_DOUBLE_ECODE) {
       writer.writeDWord(command.additional);
    }
 }
@@ -61,6 +61,9 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 
    if (token.terminal.state == dfaFullIdentifier) {
       return binary->mapReference(token.value) | mskSymbolRelRef;
+   }
+   else if (ConstantIdentifier::compare(word, "0")) {
+      return 0;
    }
    else if (ConstantIdentifier::compare(word, "const")) {
       token.read(_T(":"), _T("Invalid operand"));
@@ -283,6 +286,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcRestore:
          case bcReserve:
          case bcALoadBI:
+         case bcASaveSI:
+         case bcMessage:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

@@ -269,6 +269,19 @@ public:
       }
       else copy(properName);
    }
+   ReferenceNs(const char* rootName, const char* moduleName, const char* properName)
+   {
+      copy(rootName);
+      if (!emptystr(_string)) {
+         combine(moduleName);
+      }
+      else copy(moduleName);
+
+      if (!emptystr(_string)) {
+         combine(properName);
+      }
+      else copy(properName);
+   }
    ReferenceNs(const char* moduleName)
    {
       copy(moduleName);

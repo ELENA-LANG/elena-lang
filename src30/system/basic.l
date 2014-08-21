@@ -12,61 +12,101 @@
 
 #class BaseValue
 {
-    #method equal : anObject = $self equal::anObject.
+    #method equal : anObject = $self equal::($self cast:anObject).
+    
+    #method less : anObject = $self less::($self cast:anObject).
     
     #method greater : anObject = anObject less:$self.
-    
-    #method less : anObject = $self less::anObject.
-    
-    #method equal &object:anObject = $self equal::($self cast:anObject).
-    
-    #method less &object:anObject = $self less::($self cast:anObject).
-    
-    #method greater &object:anObject = $self greater::($self cast:anObject).
 }
 
 // --- BaseNumber ---
 
 #class BaseNumber : BaseValue
 {
-    #method add : anOperand = $self add::anOperand.
+    #method add : anObject = $self add::($self cast:anObject).
     
-    #method subtract : anOperand = $self subtract::anOperand.
+    #method subtract : anObject = $self subtract::($self cast:anObject).
     
-    #method multiply : anOperand = $self multiply::anOperand.
+    #method multiply : anObject = $self multiply::($self cast:anObject).
     
-    #method divide : anOperand = $self divide::anOperand.
-    
-    #method add &object : anObject = $self add::($self cast:anObject).
-    
-    #method subtract &object : anObject = $self subtract::($self cast:anObject).
-    
-    #method multiply &object : anObject = $self multiply::($self cast:anObject).
-    
-    #method divide &object : anObject = $self divide::($self cast:anObject).
+    #method divide : anObject = $self divide::($self cast:anObject).
 }
 
 // --- IntBaseNumber ---
 
 #class IntBaseNumber : BaseNumber
 {
-    #method and : anOperand = $self and::anOperand.
+    #method and : anOperand = $self and::($self cast:anOperand).
     
-    #method or : anOperand = $self or::anOperand.
+    #method or : anOperand = $self or::($self cast:anOperand).
     
-    #method xor : anOperand = $self xor::anOperand.
-    
-    #method and &object:anOperand = $self and::($self cast:anOperand).
-    
-    #method or &object:anOperand = $self or::($self cast:anOperand).
-    
-    #method xor &object:anOperand = $self xor::($self cast:anOperand).
+    #method xor : anOperand = $self xor::($self cast:anOperand).
     
     #method allMask : anOperand
         = $self and:anOperand == anOperand.
         
     #method anyMask : anOperand
         = 0 != $self and:anOperand.
+}
+
+// --- IntBaseVariable ---
+
+#class IntBaseVariable : IntBaseNumber
+{
+    #method write : anOperand
+    [
+        $self write::($self cast:anOperand).
+    ]
+    
+    #method append : anOperand
+    [
+        $self append::($self cast:anOperand).
+    ]
+    
+    #method reduce : anOperand
+    [
+        $self reduce::($self cast:anOperand).
+    ]
+    
+    #method multiplyBy : anOperand
+    [
+        $self multiplyBy::($self cast:anOperand).
+    ]
+    
+    #method divideInto : anOperand
+    [
+        $self divideInto::($self cast:anOperand).
+    ]
+}
+
+// --- BaseNumber ---
+
+#class BaseVariable : BaseNumber
+{
+    #method write : anOperand
+    [
+        $self write::($self cast:anOperand).
+    ]
+    
+    #method append : anOperand
+    [
+        $self append::($self cast:anOperand).
+    ]
+    
+    #method reduce : anOperand
+    [
+        $self reduce::($self cast:anOperand).
+    ]
+    
+    #method multiplyBy : anOperand
+    [
+        $self multiplyBy::($self cast:anOperand).
+    ]
+    
+    #method divideInto : anOperand
+    [
+        $self divideInto::($self cast:anOperand).
+    ]
 }
 
 // --- ByteNumber ---
@@ -189,7 +229,7 @@
         <long_copy>.
 
     #constructor new
-        => &new &long:0l.
+        <= %new &long:0l.
 
     #constructor new &int:anOperand 
     [
@@ -277,7 +317,7 @@
     #field(size:8)theData.
 
     #constructor new
-        => &new &real:0.0r.
+        <= %new &real:0.0r.
 
     #constructor new &real:anOperand 
         <long_copy>.
@@ -357,7 +397,7 @@
     ]
 
     #constructor new &char:aCode
-        => &new &short::aCode.
+        <= %new &short::aCode.
 
 //    #method equal &int:anOperand 
 //        = theData == anOperand.
@@ -460,7 +500,7 @@
         <ws_fill>.
 
     #constructor new &literal:aLiteral
-        => &new &length::aLiteral &literal:aLiteral.
+        <= %new &length::aLiteral &literal:aLiteral.
 
     #method literal = $self.
 
@@ -538,7 +578,7 @@
 
 // --- Integer ---
 
-#class(dbg:int,sealed) Integer : IntBaseNumber
+#class(dbg:int,sealed) Integer : IntBaseVariable
 {
     #field(type:int)theValue.
     
@@ -562,31 +602,6 @@
     #method read &out'int:aRetVal
     [
         aRetVal := theValue.
-    ]
-    
-    #method write : anOperand
-    [
-        $self write &int::anOperand.
-    ]
-    
-    #method append : anOperand
-    [
-        $self append &int::anOperand.
-    ]
-    
-    #method reduce : anOperand
-    [
-        $self reduce &int::anOperand.
-    ]
-    
-    #method multiplyBy : anOperand
-    [
-        $self multiplyBy &int::anOperand.
-    ]
-    
-    #method divideInto : anOperand
-    [
-        $self divideInto &int::anOperand.
     ]
     
     #method write &int:anOperand
@@ -650,7 +665,7 @@
 
 // --- Long ---
 
-#class(dbg:long,sealed) Long : IntBaseNumber
+#class(dbg:long,sealed) Long : IntBaseVariable
 {
     #field(type:long)theValue.
     
@@ -670,31 +685,6 @@
     ]
     
     #method long = LongNumber new &long:theValue.
-    
-    #method write : anOperand
-    [
-        $self write &long::anOperand.
-    ]
-    
-    #method append : anOperand
-    [
-        $self append &long::anOperand.
-    ]
-    
-    #method reduce : anOperand
-    [
-        $self reduce &long::anOperand.
-    ]
-    
-    #method multiplyBy : anOperand
-    [
-        $self multiplyBy &long::anOperand.
-    ]
-    
-    #method divideInto : anOperand
-    [
-        $self divideInto &long::anOperand.
-    ]
     
     #method write &long:anOperand
     [
@@ -757,7 +747,7 @@
 
 // --- Real ---
 
-#class(dbg:real,sealed) Real : BaseNumber
+#class(dbg:real,sealed) Real : BaseVariable
 {
     #field(type:real)theValue.
     
@@ -782,31 +772,6 @@
     ]
     
     #method real = RealNumber new &real:theValue.
-    
-    #method write : anOperand
-    [
-        $self write &real::anOperand.
-    ]
-    
-    #method append : anOperand
-    [
-        $self append &real::anOperand.
-    ]
-    
-    #method reduce : anOperand
-    [
-        $self reduce &real::anOperand.
-    ]
-    
-    #method multiplyBy : anOperand
-    [
-        $self multiplyBy &real::anOperand.
-    ]
-    
-    #method divideInto : anOperand
-    [
-        $self divideInto &real::anOperand.
-    ]
     
     #method write &real:anOperand
     [
@@ -953,10 +918,10 @@
         => theValue.
             
     #method clone = Boolean new:($self value).
-            
-//    #method => theValue.
 
     #method cast : anObject = anObject bool.
+            
+//    #method => theValue.
 }
 
 // --- ArrayIterator ---
@@ -1226,8 +1191,6 @@
     ]
 
     #method literal = theValue.
-    
-//    #method <= &variant:$self.
 }
 
 // === Basic Factory symbols ==

@@ -3,8 +3,8 @@
 #define system'collections.
 #define system'calendar.
 #define extensions.
-//#define extensions'math.
-
+////#define extensions'math.
+    
 #class(role)XTester
 {
 }
@@ -214,22 +214,12 @@
     ]
 }.
 
-#class MyException : Exception
+#class(type:Error) MyException : Exception
 {
-    #method onError : aHandler
-        = aHandler eval:$self.
-        
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onError:$self.
 }
 
-#class MyException2 : Exception
+#class(type:Error2) MyException2 : Exception
 {
-    #method onError2 : aHandler
-        = aHandler eval:$self.
-        
-    #method ifFailed &on:aCatchBlock
-        = aCatchBlock onError2:$self.
 }
 
 #class(role) ExecTester
@@ -442,10 +432,10 @@
     "abc" getAt:2.
     
     "abc" getAt:(-1) |
-        onOutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
+        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
 
     "abc" getAt:4 |
-        onOutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
+        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 // --- ArrayTest ---
@@ -470,10 +460,10 @@
     a4~indexable sort: (:aFormer:aNext)[ aFormer < aNext ].
     
     a4 getAt:(-1) |
-        onOutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
+        if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
 
     a4 getAt:3 |
-        onOutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
+        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 // --- MethodNotFoundTest ---
@@ -482,7 +472,7 @@
 [
     #var n := 2.
     
-    n test | ifFailed &function: e [ console writeLine:(e Message). ]
+    n test | if &MethodNotFoundError: e [ console writeLine:(e Message). ]
 ].
 
 // --- LoopTest ---
@@ -520,23 +510,23 @@
 
 #symbol ExceptionTest =
 [
-    ExecTester break | ifFailed: [ console writeLine:"Throw works!". ].
+    ExecTester break | if: e [ console writeLine:"Throw works!". ].
     
-    ExecTester break | onError: e [ console writeLine:(e Message). ].
+    ExecTester break | if &Error: e [ console writeLine:(e Message). ].
     
     ExecTester break2 
-    | ifFailed &on:
+    | on:
     {
-        onError : e [ console writeLine:"!!Wrong handler". ]
+        if &Error : e [ console writeLine:"!!Wrong handler". ]
         
-        onError2: e [ console writeLine:(e Message). ]
+        if &Error2: e [ console writeLine:(e Message). ]
     }.
     
     control do:
     [
-        ExecTester break3 | onError: e [ console writeLine:"!!Wrong handler". ].
+        ExecTester break3 | if &Error: e [ console writeLine:"!!Wrong handler". ].
     ]
-    | onError2: e [ console writeLine:(e Message). ].
+    | if &Error2: e [ console writeLine:(e Message). ].
     
 ].
 
