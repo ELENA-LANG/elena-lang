@@ -26,6 +26,8 @@ Currently:
                        * migrate mt test
 
               xdev - generic development       
+                       * review super ecode: bbox, ...
+
                        * for defined types get'type operation should be replaced with typecasting ?? (e.g. try to read the result type before invoking
                          message call)
 
@@ -132,8 +134,6 @@ Currently:
                        * review problematic implementation: constructor (for example Tape and Struct both have to define default constructor),  
                          loop breaking, return operator, exception handling, loop implementation (especially until loop)
 
-                       * review super ecode: bbox, ...
-
                        * review loop code (see system'io'$ConsoleReader) :
                              #loop
                              [
@@ -150,6 +150,8 @@ Currently:
                        * inline'handle_tape: - test the message with argument list
 
                        * test mttest (find out why debugger cannot debug it correctly)
+
+                       * boxing : for okLocalAddress no need to check if it is local - box directly
                          
 
                        

@@ -877,6 +877,8 @@
     #method clone = String new &literal:theValue.
                 
     #method cast : anObject = anObject literal.
+    
+    #method literal = theValue.    
 }
 
 // --- Boolean ---

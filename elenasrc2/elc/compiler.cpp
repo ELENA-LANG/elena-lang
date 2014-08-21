@@ -2937,13 +2937,16 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             else {
                _writer.loadObject(*scope.tape, info);
 
-               bool mismatch = false;
-               compileTypecast(scope, info, object.extraparam, mismatch, HINT_TYPEENFORCING);
-               if (mismatch)
-                  scope.raiseWarning(wrnTypeMismatch, node.Terminal());
-
                // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
                if (currentObject.kind == okField) {
+                  if (checkIfBoxingRequired(scope, info))
+                     info = boxObject(scope, info, mode);
+
+                  bool mismatch = false;
+                  compileTypecast(scope, info, object.extraparam, mismatch, HINT_TYPEENFORCING);
+                  if (mismatch)
+                     scope.raiseWarning(wrnTypeMismatch, node.Terminal());
+
                   compileAssignment(member, scope, currentObject);
                }
                // otherwise assign data content

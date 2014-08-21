@@ -755,7 +755,7 @@ procedure inline'ws_delete
   bcopya
 
   // ; calculate length
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
 

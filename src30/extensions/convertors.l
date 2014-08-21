@@ -42,6 +42,9 @@
 //
 //    #method convert &array:anArray &char:aSeparator
 //        = $self convert &enumerable:anArray &char:aSeparator.
+
+    #method convert : anObject
+        = anObject literal.
 }
 
 // --- convertControl ---
