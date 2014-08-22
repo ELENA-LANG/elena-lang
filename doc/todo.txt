@@ -25,22 +25,15 @@ Currently:
                        * migrate rosetta samples
                        * migrate tape sample
                        * migrate mt test
-
+                       
               xdev - generic development       
-                       * review super ecode: bbox, ...
-                            dcopy n
-                            bbox vmt
-                            
-                            ifheap labSkip
-                            bcopya                            
-                            newn vmt n
-                            aswapb
-                            copy         | nload nsave
-                            acopyb
-                         labSkip:
-                            
+                       * fix debugger to correctly show $self
+                       * fix debugger to correctly show stack allocated objects
+                       * fix debugger to correctly show arrays
+                       * fix debugger stepping operation
+                       
 
-
+	
                        * for defined types get'type operation should be replaced with typecasting ?? (e.g. try to read the result type before invoking
                          message call)
 
@@ -52,12 +45,8 @@ Currently:
                        * redesign script support
                          
                        * classOp, indexable, enumarable should be declared as extensions
-
-                       * can we use ^ operator to returns from any part of the code to the end
                        
-                       * fix debugger to correctly show $self
-                       * fix debugger to correctly show stack allocated objects
-                       * fix debugger to correctly show arrays
+                       * can we use ^ operator to returns from any part of the code to the end
                        
                        * simplify primitive loop implementing
 
@@ -68,15 +57,13 @@ Currently:
                        * test if console.readChar return correct code
                                                                                                 
                        * uncomment bcwriter::saveObject - okLocalAddress
-                       * uncomment : bcwriter::doGenericHandler / declareGenericMethod / dispatchVerb / jumpIfNotEqualN
+                       * uncomment : declareGenericMethod / jumpIfNotEqualN
 
                        * boxing the result of external call
                        
                        * any type casting get method call should be implemented as typecast - see system'literalConvertor convert &int:$self literal
                        
                        * module system should be inclduded automatically ??
-                       
-                       * test all samples
 
                        * multiple parameter dispatching
                              save&to => save&int&to | save&long&to ; 
@@ -90,10 +77,6 @@ Currently:
 
                        * add multiply dispatch test
 
-                       * optimize output code: system'true - nested classes should be sealed, so an operation to itself (or resend) should be
-                         resolved in compile-time
-
-                             
                        * implement dispatching with several parameters
                          (see Compiler::compileDispatcher)              
 
@@ -107,7 +90,6 @@ Currently:
                        * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
 
                        * uncomment commentFrame
-                       * remove all commented code
 
                        * generic handlers : make possible to use passed subject
                        * generic handlers : resend handler - if no match found call the super handler

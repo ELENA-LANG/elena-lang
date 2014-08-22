@@ -261,9 +261,9 @@
     find:aValue &in:aList
         = aList~enumerable find:aValue.
 
-//    seek:aList &until:anAction
-//        = aList~enumerable seek:anAction.
-//
+    seek:aList &until:anAction
+        = aList~enumerable seek:anAction.
+
 //    ifExist:aValue &in:aList
 //        = nil != aList~enumerable seek: x [ aValue equal:x ].
 //        

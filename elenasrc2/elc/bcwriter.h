@@ -210,7 +210,9 @@ public:
    void typecast(CommandTape& tape);
 
    void doGenericHandler(CommandTape& tape, ref_t generic_sign_id);
+   void doGenericHandler(CommandTape& tape, bool genericDispatch);
    void resend(CommandTape& tape);
+   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
    int declareLabel(CommandTape& tape);

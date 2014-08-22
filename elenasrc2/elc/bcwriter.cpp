@@ -828,6 +828,32 @@ void ByteCodeWriter :: typecast(CommandTape& tape)
    tape.setLabel();
 }
 
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape, bool genericDispatch)
+{
+   if (genericDispatch) {
+      // bloadsi 2
+      // type
+      // or
+      // ecopyd
+      // bsredirect
+      // setsubj 0
+      // bsredirect
+
+      tape.write(bcBLoadSI, 2);
+      tape.write(bcType);
+      tape.write(bcOr);
+      tape.write(bcECopyD);
+      tape.write(bcBSRedirect);
+      tape.write(bcSetSubj, 0);
+      tape.write(bcBSRedirect);
+   }
+   else {
+      // bsredirect
+
+      tape.write(bcBSRedirect);
+   }
+}
+
 void ByteCodeWriter :: doGenericHandler(CommandTape& tape, ref_t generic_sign_id)
 {
   ////bsredirect
@@ -846,6 +872,39 @@ void ByteCodeWriter :: resend(CommandTape& tape)
 {
    // ajumpvi 0
    tape.write(bcAJumpVI);
+}
+
+void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatchIndex)
+{
+   switch (object.kind) {
+      case okSymbol:
+         tape.write(bcPushE);
+         tape.write(bcEvalR, object.param | mskSymbolRef);
+         tape.write(bcPopE);
+         break;
+      case okConstantSymbol:
+      case okConstantClass:
+      case okConstant:
+      case okLiteralConstant:
+      case okIntConstant:
+      case okLongConstant:
+      case okRealConstant:
+      case okMessageConstant:
+      case okSignatureConstant:
+      case okSymbolReference:
+         // acccopyr r
+         tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
+         break;
+      case okField:
+         // bcopya
+         // aloadbi
+         tape.write(bcBCopyA);
+         tape.write(bcALoadBI, object.param);
+         break;
+   }
+
+   // ajumpvi 0
+   tape.write(bcAJumpVI, dispatchIndex);
 }
 
 void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)

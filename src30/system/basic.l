@@ -878,7 +878,9 @@
                 
     #method cast : anObject = anObject literal.
     
-    #method literal = theValue.    
+    #method literal = theValue.
+    
+    #method => theValue.
 }
 
 // --- Boolean ---

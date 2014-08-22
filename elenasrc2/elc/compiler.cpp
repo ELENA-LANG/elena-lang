@@ -3332,7 +3332,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, ref_
       else {
          _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
          _writer.setMessage(*scope.tape, encodeMessage(type_ref, GET_MESSAGE_ID, 0));
-         _writer.callMethod(*scope.tape, 1, 0);
+         _writer.callMethod(*scope.tape, 0, 0);
 
          return ObjectInfo(okAccumulator);
       }
@@ -3950,6 +3950,8 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
 void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
 {
+   bool genericDispatch = getVerb(scope.message) == GENERIC_MESSAGE_ID;
+
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
 
@@ -3960,7 +3962,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
    if (node == nsImport) {
       ReferenceNs routine(PACKAGE_MODULE, INLINE_MODULE);
 
-      if (getVerb(scope.message) == GENERIC_MESSAGE_ID) {
+      if (genericDispatch) {
          routine.combine("generic_");
          routine.append(node.Terminal());
       }
@@ -3968,19 +3970,20 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
 
       importCode(node, *scope.moduleScope, codeScope.tape, routine);
    }
-//   else {
-//      DNode nextNode = node.nextNode();
-//
-//      // !! currently only simple construction is supported
-//      if (node == nsObject && node.firstChild() == nsNone && nextNode == nsNone) {
-//         ObjectInfo extension = compileTerminal(node, scope, 0);
-//         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//         _writer.extendObject(*scope.tape, extension);
-//      }
-   // else scope.raiseError(errInvalidOperation, node.Terminal());
-   //}
-   else scope.raiseError(errInvalidOperation, node.Terminal());
+   else {
+      _writer.doGenericHandler(*codeScope.tape, genericDispatch);
+
+      DNode nextNode = node.nextNode();
+
+      // !! currently only simple construction is supported
+      if (node == nsObject && node.firstChild() == nsNone && nextNode == nsNone) {
+         ObjectInfo extension = compileTerminal(node, codeScope, 0);
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+         _writer.resend(*codeScope.tape, extension, genericDispatch ? 1 : 0);
+      }
+      else scope.raiseError(errInvalidOperation, node.Terminal());
+   }
 
    _writer.endIdleMethod(*codeScope.tape);
 }

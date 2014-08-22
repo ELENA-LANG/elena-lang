@@ -32,7 +32,7 @@
                                     
     #method write : aLine
     [
-        $self write::aLine.
+        $self write &literal::aLine.
     ]
                                     
 //    #method write &char:aChar
