@@ -20,6 +20,7 @@ v  - vm script
 Currently:
 ------
               srev - migration
+                       * migrate translit
                        * migrate all samples
                        * migrate rosetta samples
                        * migrate tape sample
@@ -27,6 +28,18 @@ Currently:
 
               xdev - generic development       
                        * review super ecode: bbox, ...
+                            dcopy n
+                            bbox vmt
+                            
+                            ifheap labSkip
+                            bcopya                            
+                            newn vmt n
+                            aswapb
+                            copy         | nload nsave
+                            acopyb
+                         labSkip:
+                            
+
 
                        * for defined types get'type operation should be replaced with typecasting ?? (e.g. try to read the result type before invoking
                          message call)

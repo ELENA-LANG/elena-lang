@@ -2189,35 +2189,11 @@ inline % 95h
 
 end
 
-// ; bbox (esi - size, __arg1 - vmt)
+// ; ifheap - part of the command
 
 inline % 96h
 
-  mov  ebx, esi
-  cmp  eax, [data : %CORE_GC_TABLE + gc_stack_bottom]
-  ja   short labSkip                      
-  cmp  eax, esp
-  jb   short labSkip
-
-  push eax
-  mov  ecx, esi
-  add  ebx, page_ceil
-  neg  ecx
-  and  ebx, page_mask  
-  call code : %GC_ALLOC
-  mov  [eax-8], ecx
-  mov  [eax-4], __arg1
-  pop  esi
-  mov  ebx, eax
-labCopy:
-  mov  edx, [esi]
-  mov  [ebx], edx
-  lea  esi, [esi+4]
-  lea  ebx, [ebx+4]
-  add  ecx, 4
-  jnz  short labCopy
-
-labSkip:
+  lea  ebx,[data : %CORE_GC_TABLE + gc_stack_bottom]
 
 end
 

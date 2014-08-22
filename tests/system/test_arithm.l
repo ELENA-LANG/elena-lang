@@ -11,6 +11,7 @@
 
 #symbol XTest =
 [
+    #var n := 2 + 3.
 ].
 
 // --- OpenArgTest ---

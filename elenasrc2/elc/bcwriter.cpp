@@ -627,11 +627,28 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
 
 void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference)
 {
-   // dcopy n
-   // bbox
+   // ifheap labSkip
+   // bcopya
+   // newn vmt, size
+   // bswap
+   // copy
+   // acopyb
+   // labSkip:
 
-   tape.write(bcDCopy, size);
-   tape.write(bcBBox, vmtReference);
+   tape.newLabel();
+   tape.write(bcIfHeap, baCurrentLabel);
+   tape.write(bcBCopyA);
+   tape.write(bcNewN, vmtReference | mskVMTRef, size);
+   tape.write(bcBSwap);
+
+   if (size <= 4) {
+      tape.write(bcNLoad);
+      tape.write(bcNSave);
+   }
+   else tape.write(bcCopy);
+
+   tape.write(bcACopyB);
+   tape.setLabel();
 }
 
 void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
@@ -1487,7 +1504,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          case bcNext:
          case bcJump:
          case bcHook:
-         //case bcNextI:
+         case bcIfHeap:
             (*it).save(scope.code, true);
 
             if ((*it).code > MAX_DOUBLE_ECODE)

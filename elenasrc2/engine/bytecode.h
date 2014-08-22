@@ -139,7 +139,7 @@ enum ByteCode
    bcALoadR         = 0x93,
    bcALoadFI        = 0x94,
    bcALoadSI        = 0x95,
-   bcBBox           = 0x96,
+   bcIfHeap         = 0x96,
    bcOpen           = 0x98,
    bcQuitN          = 0x99,
    bcBCopyR         = 0x9A,
@@ -360,6 +360,7 @@ public:
          case bcIfM:
          case bcElseM:
          case bcNext:
+         case bcIfHeap:
             return true;
          default:
             return false;
@@ -380,8 +381,6 @@ public:
          case bcNewN:
          case bcBCopyR:
    //      case bcIAXCopyR:
-         case bcBBox:
-   //      case bcBox:
          case bcXCallRM:
          case bcCallExtR:
          case bcSelectR:

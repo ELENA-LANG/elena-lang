@@ -41,7 +41,7 @@ const char* _fnOpcodes[256] =
    "rcopy", "rcopyl", "rcopyn", "requal", "rless", "radd", "rsub", "rmul",
    "rdiv", "wtor", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
-   "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "bbox", "unknown",
+   "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "unknown",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
    "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "ecall",
@@ -333,6 +333,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case bcIfM:
          case bcElseM:
          case bcNext:
+         case bcIfHeap:
             *it = bcNop;
             return true;
       }
@@ -408,6 +409,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcElseM:              
             case bcNext:
             case bcHook:
+            case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);
 

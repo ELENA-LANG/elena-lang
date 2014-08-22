@@ -77,40 +77,15 @@ inline % 1Dh
 
 end
 
-// ; nbox (esi - size, __arg1 - vmt)
+// ; ifheap - part of the command
 
 inline % 096h
 
   // ; GCXT: get current thread frame
+  mov  ecx, tls_stack_bottom
   mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
+  add  ecx, fs:[2Ch]
   mov  ebx, [ecx+ebx*4]
-
-  cmp  eax, [ebx + tls_stack_bottom]
-  ja   short labSkip                      
-  mov  ebx, esi         
-  cmp  eax, esp
-  jb   short labSkip
-
-  push eax
-  mov  ecx, esi
-  add  ebx, page_ceil
-  neg  ecx
-  and  ebx, page_mask  
-  call code : %GC_ALLOC
-  mov  [eax-8], ecx
-  mov  [eax-4], __arg1
-  pop  esi
-  mov  ebx, eax
-labCopy:
-  mov  edx, [esi]
-  mov  [ebx], edx
-  lea  esi, [esi+4]
-  lea  ebx, [ebx+4]
-  add  ecx, 4
-  jnz  short labCopy
-
-labSkip:
 
 end
 

@@ -259,6 +259,8 @@ ELENA byte codes (or ecodes)
  
  next label                 - index++; if index < ext, jump to the label
 
+ ifheap label               - jump to the label if acc is allocated in heap (more precisely not in the stack)
+
                                                                       
  exception handling:
  --------------- 
@@ -443,8 +445,6 @@ ELENA byte codes (or ecodes)
  
  byte array commands:
  -----------------    
- bbox vmt                   - if acc is local box its content into the object with vmt and size index
- 
  len                        - [acc].Length >> index ; where acc is a object
 
  insert                     - copy acc content to base, at index, ext times, at the end - index += ext

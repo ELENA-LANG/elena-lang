@@ -383,6 +383,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcHook:
       case bcIf:
       case bcElse:
+      case bcIfHeap:
          command.append(opcode);
          command.append(_T(' '));
          printLabel(command, position + argument + 5, labels);
@@ -506,6 +507,13 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printReference(command, module, argument);
          command.append(_T(", "));
          printReference(command, module, argument2);
+         break;
+      case bcNewN:
+         command.append(opcode);
+         command.append(_T(' '));
+         printReference(command, module, argument);
+         command.append(_T(", "));
+         command.appendInt(argument2);
          break;
       default:
          command.append(opcode);
