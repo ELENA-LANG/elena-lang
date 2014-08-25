@@ -204,8 +204,11 @@ namespace _ELENA_
       dsLongLocal               = 0x0205,
       dsRealLocal               = 0x0305,
       dsParamsLocal             = 0x0405,
+      dsByteArrayLocal          = 0x0505,
+      dsShortArrayLocal         = 0x0605,
 
       dsDebugMask               = 0x00F0,
+      dsTypeMask                = 0x0F00,
       dsDebugTypeMask           = 0x0FFF,
    };
 
@@ -286,7 +289,8 @@ namespace _ELENA_
    const int elDebugLiteral        = 0x00030000;
    const int elDebugArray          = 0x00050000;
    const int elDebugQWORD          = 0x00060000;
-//   const int elDebugBytes          = 0x00070000;
+   const int elDebugBytes          = 0x00070000;
+   const int elDebugChars          = 0x00080000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;

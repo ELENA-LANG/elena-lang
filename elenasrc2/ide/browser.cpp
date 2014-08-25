@@ -88,6 +88,30 @@ void DebuggerWatch :: writeSubWatch(DebugController* controller, TreeViewItem no
    else refreshNode(node);
 }
 
+void DebuggerWatch :: writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address, char* byteArray, int length)
+{
+   if (_deepLevel < 3 || _browser->isExpanded(node)) {
+      DebuggerWatch watch(_browser, node, address, _deepLevel + 1);
+
+      for(int i = 0 ; i < length ; i++) {
+         watch.write(controller, i, byteArray[i]);
+      }
+   }
+   else refreshNode(node);
+}
+
+void DebuggerWatch :: writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address, short* shortArray, int length)
+{
+   if (_deepLevel < 3 || _browser->isExpanded(node)) {
+      DebuggerWatch watch(_browser, node, address, _deepLevel + 1);
+
+      for(int i = 0 ; i < length ; i++) {
+         watch.write(controller, i, shortArray[i]);
+      }
+   }
+   else refreshNode(node);
+}
+
 void DebuggerWatch :: write(DebugController* controller, size_t address, const wchar16_t* variableName, const wchar16_t* className)
 {
    wchar_t itemName[CAPTION_LEN + 1];
@@ -112,6 +136,58 @@ void DebuggerWatch :: write(DebugController* controller, size_t address, const w
    item = addNode(variableName, className, address);
 
    writeSubWatch(controller, item, address);
+}
+
+void DebuggerWatch :: write(DebugController* controller, size_t address, const wchar16_t* variableName, char* bytearray, int length)
+{
+   wchar_t itemName[CAPTION_LEN + 1];
+   size_t nameLen = getlength(variableName);
+
+   TreeViewItem item = _browser->getChild(_root);
+   while (item != NULL) {
+      size_t itemAddress = _browser->getParam(item);
+      _browser->getCaption(item, itemName, CAPTION_LEN);
+
+      if ((getlength(itemName) > nameLen + 1) &&  StringHelper::compare(itemName, variableName, nameLen)
+         && itemName[nameLen] == ' ')
+      {
+         editNode(item, variableName, _T("<array>"), address);
+   
+         writeSubWatch(controller, item, address, bytearray, length);
+
+         return;
+      }
+      item = _browser->getNext(item);
+   }
+   item = addNode(variableName, _T("<bytearray>"), address);
+
+   writeSubWatch(controller, item, address, bytearray, length);
+}
+
+void DebuggerWatch :: write(DebugController* controller, size_t address, const wchar16_t* variableName, short* shortarray, int length)
+{
+   wchar_t itemName[CAPTION_LEN + 1];
+   size_t nameLen = getlength(variableName);
+
+   TreeViewItem item = _browser->getChild(_root);
+   while (item != NULL) {
+      size_t itemAddress = _browser->getParam(item);
+      _browser->getCaption(item, itemName, CAPTION_LEN);
+
+      if ((getlength(itemName) > nameLen + 1) &&  StringHelper::compare(itemName, variableName, nameLen)
+         && itemName[nameLen] == ' ')
+      {
+         editNode(item, variableName, _T("<shortarray>"), address);
+   
+         writeSubWatch(controller, item, address, shortarray, length);
+
+         return;
+      }
+      item = _browser->getNext(item);
+   }
+   item = addNode(variableName, _T("<array>"), address);
+
+   writeSubWatch(controller, item, address, shortarray, length);
 }
 
 #ifdef _UNICODE
@@ -153,6 +229,18 @@ void DebuggerWatch :: write(DebugController* controller, const wchar16_t* value)
       StringHelper::insert(caption, StringHelper::find(caption, '{'), value);
       _browser->setCaption(_root, caption);
    }
+}
+
+void DebuggerWatch :: write(DebugController* controller, int index, int value)
+{
+   CaptionString node;
+
+   node.append('[');
+   node.appendInt(index);
+   node.append(_T("] = "));
+   node.appendHex(value);
+
+   _browser->insertTo(_root, node, 0);
 }
 
 #else

@@ -124,10 +124,20 @@ void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, const wchar16_t* 
    tape.write(bdLongLocal, (ref_t)localName, level);
 }
 
-//void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level)
-//{
-//   tape.write(bdRealLocal, (ref_t)localName, level);
-//}
+void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level)
+{
+   tape.write(bdRealLocal, (ref_t)localName, level);
+}
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, const wchar16_t* localName, int level)
+{
+   tape.write(bdByteArrayLocal, (ref_t)localName, level);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, const wchar16_t* localName, int level)
+{
+   tape.write(bdShortArrayLocal, (ref_t)localName, level);
+}
 
 void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level)
 {
@@ -1513,6 +1523,12 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bdRealLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
+            break;
+         case bdByteArrayLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsByteArrayLocal, frameLevel);
+            break;
+         case bdShortArrayLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsShortArrayLocal, frameLevel);
             break;
          case bdParamsLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);

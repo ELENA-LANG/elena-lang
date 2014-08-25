@@ -46,7 +46,7 @@
         ^ IntNumber new &int:aLength.
     ]
 
-    #method read&length &out'length:aLength
+    #method read &out'length:aLength
         <bs_getlen>.
 }
 

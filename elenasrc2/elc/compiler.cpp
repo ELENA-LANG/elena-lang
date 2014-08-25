@@ -1364,25 +1364,21 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
    // declare method parameter debug info
    LocalMap::Iterator it = scope.parameters.start();
    while (!it.Eof()) {
+      int size = moduleScope->sizeHints.get((*it).sign_ref);
+
       if ((*it).sign_ref == moduleScope->getParamsType()) {
          _writer.declareLocalParamsInfo(*tape, it.key(), -1 - (*it).offset);
       }
+      else if ((*it).sign_ref == moduleScope->getIntType() || size == 4 || size == 2) {
+         _writer.declareLocalIntInfo(*tape, it.key(), -1 - (*it).offset);
+      }
+      else if ((*it).sign_ref == moduleScope->getLongType()) {
+         _writer.declareLocalLongInfo(*tape, it.key(), -1 - (*it).offset);
+      }
+      else if ((*it).sign_ref == moduleScope->getRealType()) {
+         _writer.declareLocalRealInfo(*tape, it.key(), -1 - (*it).offset);
+      }
       else _writer.declareLocalInfo(*tape, it.key(), -1 - (*it).offset);
-
-//      switch ((*it).type) {
-//         case otInt:
-//         case otIntVar:
-//            _writer.declareLocalIntInfo(*tape, it.key(), -1 - (*it).reference);
-//            break;
-//         case otLong:
-//         case otLongVar:
-//            _writer.declareLocalLongInfo(*tape, it.key(), -1 - (*it).reference);
-//            break;
-//         case otReal:
-//         case otRealVar:
-//            _writer.declareLocalRealInfo(*tape, it.key(), -1 - (*it).reference);
-//            break;
-//      }
 
       it++;
    }
@@ -1665,16 +1661,22 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          scope.saved = scope.reserved;
 
          _writer.pushObject(*scope.tape, primitive);
-         if (size == 4) {
+         if (size == 4 || size == 2) {
             _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), level);
          }
-         //else if (type == scope.moduleScope->longSubject) {
-         //   _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
-//               _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
-         //}
-         else {
-            _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+         else if (type == scope.moduleScope->getLongType()) {
+            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
          }
+         else if (type == scope.moduleScope->getRealType()) {
+            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (scope.moduleScope->sizeHints.get(type) == -1) {
+            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (scope.moduleScope->sizeHints.get(type) == -2) {
+            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
       }
       else {
          _writer.declareVariable(*scope.tape, scope.moduleScope->nilReference);

@@ -25,6 +25,7 @@ namespace _ELENA_
 
 #define DEBUG_MAX_LIST_LENGTH  100
 #define DEBUG_MAX_STR_LENGTH   260
+#define DEBUG_MAX_ARRAY_LENGTH 100
 
 class DebugController;
 
@@ -33,15 +34,18 @@ class DebugController;
 class _DebuggerWatch
 {
 public:
-   virtual void write(DebugController* controller, size_t address, const wchar16_t* variableName, const wchar16_t* className) = 0;
+   virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, const wchar16_t* className) = 0;
    virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, int value) = 0;
    virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, double value) = 0;
    virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, long long value) = 0;
+   virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, char* bytearray, int length) = 0;
+   virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, short* shortarray, int length) = 0;
    virtual void write(_ELENA_::DebugController* controller, const wchar16_t* value) = 0;
    virtual void write(_ELENA_::DebugController* controller, const char* value) = 0;
    virtual void write(_ELENA_::DebugController* controller, int value) = 0;
    virtual void write(_ELENA_::DebugController* controller, double value) = 0;
    virtual void write(_ELENA_::DebugController* controller, long long value) = 0;
+   virtual void write(_ELENA_::DebugController* controller, int index, int value) = 0;
 
    virtual ~_DebuggerWatch() {}
 };
@@ -178,12 +182,14 @@ protected:
 
    void readFields(_DebuggerWatch* watch, DebugLineInfo* self, size_t address);
    void readList(_DebuggerWatch* watch, int* list, int length);
+   void readByteArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name);
+   void readShortArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name);
    void readObject(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
    void readMessage(_DebuggerWatch* watch, ref_t reference);
    void readPString(size_t address, IdentifierString& string);
-   void readLocalInt(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
-   void readLocalLong(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
-   void readLocalReal(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
+   void readLocalInt(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name);
+   void readLocalLong(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name);
+   void readLocalReal(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name);
    void readParams(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
 
    const char* getValue(size_t address, char* value, size_t length);
