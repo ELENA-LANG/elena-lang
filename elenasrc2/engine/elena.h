@@ -484,8 +484,8 @@ struct DebugLineInfo
       struct Module { int nameRef; int flags; } symbol;
       struct Step   { size_t address;         } step;
       struct Local  { int nameRef; int level; } local;
+      struct Field  { int nameRef; int size;  } field;
    } addresses;
-
 
    DebugLineInfo()
    {

@@ -230,6 +230,7 @@ enum ByteCode
    blBlock          = 0x8122,  // meta command, declaring sub code
 
    // debug info
+   bdDebugInfo      = 0x8400,
    bdBreakpoint     = 0x8401,
    bdBreakcoord     = 0x8402,
    bdLocal          = 0x8403,

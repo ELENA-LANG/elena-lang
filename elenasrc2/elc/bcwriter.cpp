@@ -1156,14 +1156,12 @@ void ByteCodeWriter :: endSymbol(CommandTape& tape)
    tape.write(blEnd, bsSymbol);
 }
 
-void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
+void ByteCodeWriter :: exitStaticSymbol(CommandTape& tape, ref_t staticReference)
 {
    // asaver static
-   // procedure-ending:
 
    tape.write(bcASaveR, staticReference | mskStatSymbolRef);
    tape.setLabel();
-   tape.write(blEnd, bsSymbol);
 }
 
 void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* debug, ref_t sourceNameRef)
@@ -1244,14 +1242,34 @@ void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug
    debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo::FieldMap& fields, MemoryWriter* writer, MemoryWriter* debugStrings)
+inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
 {
-   ClassInfo::FieldMap::Iterator it = fields.start();
+   it++;
+   
+   return it.Eof() ? -1 : *it;
+}
+
+void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
+{
+   bool structure = test(info.header.flags, elStructureRole);
+   int remainingSize = info.size;
+
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
       if (!emptystr(it.key())) {
          DebugLineInfo symbolInfo(dsField, 0, 0, 0);
 
-         symbolInfo.addresses.symbol.nameRef = debugStrings->Position();
+         symbolInfo.addresses.field.nameRef = debugStrings->Position();
+         if (structure) {            
+            int nextOffset = getNextOffset(it);
+            if (nextOffset == -1) {
+               symbolInfo.addresses.field.size = remainingSize;
+            }
+            else symbolInfo.addresses.field.size = nextOffset - *it;
+
+            remainingSize -= symbolInfo.addresses.field.size;
+         }
+
          debugStrings->writeWideLiteral(it.key());
 
          writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
@@ -1400,7 +1418,7 @@ void ByteCodeWriter :: compileClass(ref_t reference, ByteCodeIterator& it, _Modu
 
      // save class debug info
       writeClassDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef), info.header.flags);
-      writeFieldDebugInfo(info.fields, &debugWriter, &debugStringWriter);
+      writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
 
       compileVMT(classPosition, it, scope);
 

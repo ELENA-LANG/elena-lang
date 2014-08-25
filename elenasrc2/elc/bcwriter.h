@@ -136,7 +136,7 @@ class ByteCodeWriter
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
-   void writeFieldDebugInfo(ClassInfo::FieldMap& fields, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
    void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* symbolName);
    void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
@@ -246,7 +246,7 @@ public:
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
 

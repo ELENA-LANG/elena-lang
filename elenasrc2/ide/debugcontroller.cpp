@@ -171,26 +171,28 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
       DebugLineInfo* next = &step[1];
       // go to the end of statement or procedure
       int level = 0;
+      // NOTE : end-statements should be ignored if they are inside virtual blocks
       while (level > 0 || next->symbol != dsStatement) {
          switch (next->symbol) {
             case dsVirtualBlock:
                level++;
                break;
             case dsEOP:
-            case dsVirtualEnd:
             case dsEnd:
-               level--;
-               if (level < 0)
-                  break;
+            case dsVirtualEnd:
+               // NOTE : ends should be ignored if they are inside virtual blocks
+               if (level == 0) {
+                  return (next->symbol == dsEnd) ? NULL : next;
+               }
+               else level--;
+
                break;
          }
+
          next = &next[1];
       }
 
-      if (next->symbol != dsVirtualEnd) {
-         return getNextStep(next);
-      }
-      else return next;
+      return getNextStep(next);
    }
    return NULL;
 }
@@ -671,30 +673,45 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
 {
    int index = 1;
    while (info[index].symbol == dsField) {
-      const wchar16_t* fieldName = (const wchar16_t*)info[index].addresses.symbol.nameRef;
+      const wchar16_t* fieldName = (const wchar16_t*)info[index].addresses.field.nameRef;
+      int size = info[index].addresses.field.size;
+      // if it is a data field
+      if (size != 0) {
+         if (size == 4) {
+            watch->write(this, 0, fieldName, (int)_debugger.Context()->readDWord(address));
+         }
+         else if (size == 2) {
+            watch->write(this, 0, fieldName, (int)_debugger.Context()->readWord(address));
+         }
 
-      size_t fieldPtr = _debugger.Context()->ObjectPtr(address);
-      if (fieldPtr==0) {
-         watch->write(this, fieldPtr, fieldName, _T("<nil>"));
+         address += size;
       }
       else {
-         int flags = 0;
-         const wchar16_t* className = NULL;
-         DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
-         if (field) {
-            watch->write(this, fieldPtr, fieldName, className);
+         size_t fieldPtr = _debugger.Context()->ObjectPtr(address);
+         if (fieldPtr==0) {
+            watch->write(this, fieldPtr, fieldName, _T("<nil>"));
          }
-         //// if unknown check if it is a dynamic subject
-         //else if (test(flags, elDynamicSubjectRole)) {
-         //   watch->write(this, fieldPtr, fieldName, _T("<subject>"));
-         //}
-         //// if unknown check if it is a group object
-         //else if (test(flags, elGroup)) {
-         //   watch->write(this, fieldPtr, fieldName, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
-         //}
-         else watch->write(this, fieldPtr, fieldName, _T("<unknown>"));
+         else {
+            int flags = 0;
+            const wchar16_t* className = NULL;
+            DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
+            if (field) {
+               watch->write(this, fieldPtr, fieldName, className);
+            }
+            //// if unknown check if it is a dynamic subject
+            //else if (test(flags, elDynamicSubjectRole)) {
+            //   watch->write(this, fieldPtr, fieldName, _T("<subject>"));
+            //}
+            //// if unknown check if it is a group object
+            //else if (test(flags, elGroup)) {
+            //   watch->write(this, fieldPtr, fieldName, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
+            //}
+            else watch->write(this, fieldPtr, fieldName, _T("<unknown>"));
+         }
+
+         address += 4;
       }
-      address += 4;
+
       index++;
    }
 }

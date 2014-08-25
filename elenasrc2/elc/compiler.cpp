@@ -4093,6 +4093,8 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
    compileMessage(node, scope, ObjectInfo(okThisParam, 1, methodScope->getClassType()), 0);
    scope.freeSpace();
 
+   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
    _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
@@ -4195,11 +4197,11 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    if (importBody == nsImport) {
       compileImportMethod(importBody, codeScope, scope.message, importBody.Terminal(), mode);
    }
-   // check if it is a dispatch
+   // check if it is a resend
    else if (resendBody != nsNone) {         
       compileResendExpression(resendBody.firstChild(), codeScope);
    }
-   // check if it is a resend
+   // check if it is a dispatch
    else if (dispatchBody != nsNone) {
       compileDispatchExpression(dispatchBody.firstChild(), codeScope);
    }
@@ -4755,12 +4757,14 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
       }
    }
 
+   if (isStatic) {
+      // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
+      _writer.exitStaticSymbol(scope.tape, scope.reference);
+   }
+
    _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
 
-   if (isStatic) {
-      _writer.endStaticSymbol(scope.tape, scope.reference);
-   }
-   else _writer.endSymbol(scope.tape);
+   _writer.endSymbol(scope.tape);
 
    // optimize
    optimizeTape(scope.tape);

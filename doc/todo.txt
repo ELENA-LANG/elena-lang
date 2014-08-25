@@ -20,27 +20,25 @@ v  - vm script
 Currently:
 ------
               srev - migration
-                       * migrate translit
-                       * migrate all samples
+                       * migrate words
+                       * migrate bsort
+                       * migrate date time
+                       * migrate goods
+                       * migrate textview
+                       * migrate textdb
+                       * migrate pi
                        * migrate rosetta samples
                        * migrate tape sample
                        * migrate mt test
+                       * migrate interpreter
                        
               xdev - script engine
+                       * redesign script support
                        * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
                        * use script to build objects
                        * use script to parse
                        * use script generate code
 
-              idev - debugger
-                       * fix debugger to correctly show stack allocated objects, structure classes
-
-                       * should $self be displayed for nested classes / action / expression ...
-                       * show self only for roles
-
-                       * fix debugger to correctly show arrays
-                       * fix debugger stepping operation
-                       
               xdev - generic development       
                        * #var(type:int)n := n int.  // probably we should use optimized version if available (e.g n get&int &out'int:xxx)
 
@@ -53,9 +51,7 @@ Currently:
                        * fix warnings for system'String
 
                        * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
-
-                       * redesign script support
-                         
+                       
                        * classOp, indexable, enumarable should be declared as extensions
                        
                        * can we use ^ operator to returns from any part of the code to the end
@@ -395,8 +391,13 @@ week1:
                        * store current encoding for every file
 
               idev - debugger
+
+              idev - debugger
+                       * f4 - goto closest code (e.g. $ConsoleReader.read&out'short - f4 on the function)
+                       * should $self be displayed for nested classes / action / expression ...
+                       * show self only for roles
+                       * fix debugger to correctly show arrays
                        * tune debugger, make possible to use step over / step into everywhere
-                       * should be possible to display structure content
                        * step over #break / #throw does not work correctly
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
 
@@ -767,6 +768,7 @@ week1:
 
               idev - debugger
                        * implement watch
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
                        
 1.9.18
 --------

@@ -462,7 +462,8 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
       }
 
       // clear unreachable block
-      if (*b_it != -1 && code != bcNone) {
+      // HOTFIX : do not remove ending breakpoint coordinates
+      if (*b_it != -1 && code != bcNone && code != bdBreakcoord && code != bdBreakpoint) {
          (*it).code = bcNone;
          modified = true;
       }
