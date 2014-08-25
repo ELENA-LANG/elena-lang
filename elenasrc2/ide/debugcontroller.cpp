@@ -867,22 +867,8 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
    if (_debugger.isStarted()) {
       DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
       int index = 0;
-      bool selfAvailable = false;
       while (lineInfo[index].symbol != dsProcedure) {
-         // write self
-         if (lineInfo[index].symbol == dsBase) {
-            ref_t selfPtr = 0;
-            if (lineInfo[index].addresses.local.level < 0) {
-               selfPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            }
-            readObject(watch, selfPtr, _T("self"), true);
-            // if self and $self are different (group member / dynamic inheritance / wrap)
-            if (selfPtr != _debugger.Context()->Self()) {
-               readObject(watch, _debugger.Context()->Self(), _T("$self"), false);
-            }
-            selfAvailable = true;
-         }
-         else if (lineInfo[index].symbol == dsLocal) {
+         if (lineInfo[index].symbol == dsLocal) {
             // write local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
             readObject(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef, false);
@@ -919,9 +905,6 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          }
          index--;
       }
-      // in test mode, show $self always
-      if (_testMode && !selfAvailable)
-         readObject(watch, _debugger.Context()->Self(), _T("$self"), false);
    }
 }
 

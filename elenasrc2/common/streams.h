@@ -163,6 +163,8 @@ public:
          length -= subLength;
          s += subLength;
       }
+
+      return true;
    }
 
    bool writeLiteral(const char* s)

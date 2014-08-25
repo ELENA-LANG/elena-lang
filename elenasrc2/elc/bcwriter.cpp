@@ -136,7 +136,7 @@ void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, const wchar16_t
 
 void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
-   tape.write(bdSelf, -2, level);
+   tape.write(bdSelf, 0, level);
 }
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
@@ -1164,19 +1164,6 @@ void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* debug, ref_t source
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSelfLocal(Scope& scope, int level)
-{
-   if (!scope.debug)
-      return;
-
-   DebugLineInfo info;
-
-   info.symbol = dsBase;
-   info.addresses.local.level = level;
-
-   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-}
-
 void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
 {
    DebugLineInfo symbolInfo(dsStatement, 0, 0, 0);
@@ -1194,6 +1181,20 @@ void ByteCodeWriter :: writeNewBlock(MemoryWriter* debug)
 void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel)
 {
    writeLocal(scope, localName, level, dsLocal, frameLevel);
+}
+
+void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
+{
+   if (!scope.debug)
+      return;
+
+   DebugLineInfo info;
+   info.symbol = dsLocal;
+   info.addresses.local.nameRef = scope.debugStrings->Position();
+   info.addresses.local.level = level;
+
+   scope.debugStrings->writeWideLiteral(THIS_VAR);
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
 void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel)
@@ -1498,6 +1499,9 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
                   writeBreakpoint(++it, scope.debug);
             }
             break;
+         case bdSelf:
+            writeSelf(scope, (*it).additional, frameLevel);
+            break;
          case bdLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, frameLevel);
             break;
@@ -1512,9 +1516,6 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bdParamsLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
-            break;
-         case bdSelf:
-            writeSelfLocal(scope, (*it).additional - frameLevel);
             break;
          case bcOpen:
             frameLevel = (*it).argument;

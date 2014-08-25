@@ -214,6 +214,8 @@
     #method not
         <int_not>.
 
+    #method value = $self.
+    
     #method cast : anObject = anObject int.
 
     #method clone = IntNumber new &int:$self.
@@ -307,6 +309,8 @@
 
     #method clone = LongNumber new &long:$self.
     
+    #method value = $self.
+    
     #method cast : anObject = anObject long.
 }
 
@@ -371,7 +375,9 @@
         = $self divide &real::(RealNumber new &int:anOperand).
 
     #method literal = literalConvertor convert &real:$self literal.
-
+    
+    #method value = $self.
+    
     #method cast : anObject = anObject real.
 
     #method clone = RealNumber new &real:$self.
@@ -415,7 +421,7 @@
 //        = aLiteral equal &char:$self.
 
     #method char = $self.
-
+    
     #method short = ShortNumber new &short:theValue.
 
     #method int = IntNumber new &short:theValue.
@@ -423,6 +429,10 @@
     #method literal = system'LiteralValue new &length:1 &short:theValue literal.
     
     #method clone = CharValue new &short:theValue.
+    
+    #method value = $self.
+    
+    #method cast : anObject = anObject char.
 }
 
 // --- emptyliteralvalue ---
@@ -571,6 +581,8 @@
     
     #method clone = LiteralValue new &literal:$self.
     
+    #method value = $self.
+    
     #method cast : anObject = anObject literal.
 }
 
@@ -658,6 +670,8 @@
     
     #method cast : anObject = anObject int.
 
+    #method value <= %int.
+
     #method literal = system'literalConvertor convert &int:theValue literal.
 
     #method clone = Integer new &int:theValue.
@@ -740,6 +754,8 @@
     
     #method cast : anObject = anObject long.
 
+    #method value <= %long.
+
     #method literal = system'literalConvertor convert &long:theValue literal.
 
     #method clone = Long new &long:theValue.
@@ -818,6 +834,8 @@
     
     #method cast : anObject = anObject real.
 
+    #method value <= %real.
+
     #method literal = system'literalConvertor convert &real:theValue literal.
 
     #method clone = Real new &real:theValue.
@@ -858,12 +876,14 @@
 //    [
 //        theValue := theValue add &literal:anOperand.
 //    ]
-//    
-//    #method insert &index:anIndex &literal:aLiteral
-//    [
-//        theValue := theValue insert &index:anIndex &literal:aLiteral.
-//    ]
-//            
+    
+    #method insert &index:anIndex &literal:aLiteral
+    [
+        (anIndex == 0)
+            ? [ theValue := aLiteral + theValue. ]
+            ! [ theValue := theValue insert &index:anIndex &literal:aLiteral. ].
+    ]
+            
 //    #method delete &index:anIndex &length:aLength
 //    [
 //        theValue := theValue delete &index:anIndex &length:aLength.
@@ -879,6 +899,8 @@
     #method cast : anObject = anObject literal.
     
     #method literal = theValue.
+    
+    #method value = theValue.
     
     #method => theValue.
 }
@@ -924,6 +946,8 @@
     #method clone = Boolean new:($self value).
 
     #method cast : anObject = anObject bool.
+            
+    #method value = theValue.
             
 //    #method => theValue.
 }
@@ -1147,9 +1171,9 @@
     #method convert &int:aNumber
         <ws_copyint>.
 
-//    #method convert &int:aNumber &base:aRadix
-//        = literalPrimitiveOp toLiteral &int:aNumber &index::aRadix.
-//        
+    #method convert &int:aNumber &base:aRadix
+        <ws_copyint_radix>.
+
 //    #method convert &long:aNumber &base:aRadix
 //        = literalPrimitiveOp toLiteral &long:aNumber &index::aRadix.
 

@@ -49,14 +49,14 @@
 
 // --- convertControl ---
 
-//#symbol baseDispatcher = 
-//{
-//    int : n
-//        = %(int&base).
-//        
-//    long : aLong
-//        = %(long&base).
-//}.
+#symbol baseDispatcher = 
+{
+    int : n
+        = %(int&base).
+        
+    long : aLong
+        = %(long&base).
+}.
 
 #symbol convertor =
 {
@@ -72,8 +72,12 @@
     toLiteral:anObject
         = literalConvertorEx convert::anObject.
 
-//    toLiteral : anObject &base:anOrder
-//        = literalConvertorEx~(baseDispatcher eval::anObject) convert:anObject:anOrder.
+    toLiteral : anObject &base:aBase
+    [
+        #var aValue := anObject value.
+        
+        ^ literalConvertorEx~(baseDispatcher eval::aValue) convert:aValue:aBase.
+    ]
 
     save : anObject &to:aTarget
         = aTarget write:(Variant new:anObject).

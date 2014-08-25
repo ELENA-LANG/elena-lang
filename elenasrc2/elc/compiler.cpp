@@ -25,6 +25,7 @@ using namespace _ELENA_;
 #define HINT_SUBBRANCH        0x02000000     // used for if-else statement to indicate that the exit label is not the last one
 #define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define HINT_TYPEENFORCING    0x00800000     
+#define HINT_GENERIC_MODE     0x00400000
 #define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
@@ -1386,7 +1387,7 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
       it++;
    }
    if (withSelf)
-      _writer.declareSelfInfo(*tape, -1);
+      _writer.declareSelfInfo(*tape, 1);
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* referenceName)
@@ -2068,7 +2069,6 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, ref_t typ
    }
    else if (arg == nsTypedMessageParameter) {
       // if it is a typed message callback - directly call the message
-
       count++;
 
       ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~(HINT_DIRECT_ORDER | HINT_OUTEXPR));
@@ -2109,10 +2109,12 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, ObjectInfo object, si
    if (arg == nsTypedMessageParameter && verb_id != 0) {
       count = 1;
 
+      mode |= HINT_GENERIC_MODE;
+
       if (arg.firstChild().firstChild() == nsNone)
          mode |= HINT_DIRECT_ORDER;
 
-      return encodeMessage(0, verb_id, 0);
+      return encodeMessage(0, verb_id, count);
    }
 
    if (verb_id == 0) {
@@ -2696,11 +2698,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
 
-      compileMessage(node, scope, object, message_id, 0);
-
-      //_writer.setMessage(*scope.tape, message_id);
-      //_writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      //_writer.callMethod(*scope.tape, 0, dblOperator ? 2 : 1);
+      compileMessage(node, scope, object, message_id, HINT_GENERIC_MODE);
    }
 
    if (notOperator) {
@@ -2727,10 +2725,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    bool catchMode = test(mode, HINT_CATCH);
 
    // if it is generic dispatch (NOTE: param count is set to zero as the marker)
-   if (paramCount == 0 && node.firstChild() == nsTypedMessageParameter) {
+   if (test(mode, HINT_GENERIC_MODE)) {
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      // HOTFIX : include the parameter
-      _writer.setMessage(*scope.tape, messageRef + 1);
+      _writer.setMessage(*scope.tape, messageRef);
       _writer.callMethod(*scope.tape, 1, 1);
    }
    // otherwise compile message call

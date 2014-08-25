@@ -131,9 +131,9 @@ class ByteCodeWriter
 
    void writeNewStatement(MemoryWriter* debug);
    void writeNewBlock(MemoryWriter* debug);
+   void writeSelf(Scope& scope, int level, int frameLevel);
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel);
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel);
-   void writeSelfLocal(Scope& scope, int level);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
    void writeFieldDebugInfo(ClassInfo::FieldMap& fields, MemoryWriter* writer, MemoryWriter* debugStrings);

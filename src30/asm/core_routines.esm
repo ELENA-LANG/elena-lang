@@ -1618,3 +1618,18 @@ labNext:
   ajumpvi 0
 
 end
+
+procedure inline'ws_copyint_radix
+
+  dcopy 10
+  acopyr class : system'LiteralValue
+  wcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+  ntow
+  acopyb
+  quitn 3
+
+end

@@ -26,19 +26,31 @@ Currently:
                        * migrate tape sample
                        * migrate mt test
                        
-              xdev - generic development       
-                       * fix debugger to correctly show $self
-                       * fix debugger to correctly show stack allocated objects
+              xdev - script engine
+                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
+                       * use script to build objects
+                       * use script to parse
+                       * use script generate code
+
+              idev - debugger
+                       * fix debugger to correctly show stack allocated objects, structure classes
+
+                       * should $self be displayed for nested classes / action / expression ...
+                       * show self only for roles
+
                        * fix debugger to correctly show arrays
                        * fix debugger stepping operation
                        
+              xdev - generic development       
+                       * #var(type:int)n := n int.  // probably we should use optimized version if available (e.g n get&int &out'int:xxx)
 
-	
                        * for defined types get'type operation should be replaced with typecasting ?? (e.g. try to read the result type before invoking
                          message call)
 
                        * for some operation can we somehow to define the output result : e.g. insert&index&literal or toLiteral, so no need to
                          type cast every time the method is called??
+
+                       * fix warnings for system'String
 
                        * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
 
@@ -65,7 +77,7 @@ Currently:
                        
                        * module system should be inclduded automatically ??
 
-                       * multiple parameter dispatching
+                       * multiple parameter dispatching (see extensions'convertor)
                              save&to => save&int&to | save&long&to ; 
                              can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
 
@@ -753,6 +765,8 @@ week1:
 
                        * if more than 15 parameters passed - use open argument list
 
+              idev - debugger
+                       * implement watch
                        
 1.9.18
 --------
@@ -762,6 +776,8 @@ week1:
                        * out of memory exception should be correctly raised
                        * destructors
                        
+              idev - script engine
+                       * build-in script into IDE
 
 1.9.19
 --------

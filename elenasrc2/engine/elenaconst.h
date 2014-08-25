@@ -191,7 +191,6 @@ namespace _ELENA_
 
       dsSymbol                  = 0x0001,
       dsClass                   = 0x0002,
-      dsBase                    = 0x0003,
       dsField                   = 0x0004,
       dsLocal                   = 0x0005,
       dsMessage                 = 0x0006,
