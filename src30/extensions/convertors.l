@@ -1,6 +1,6 @@
 #define system.
-//#define system'routines.
-//#define system'text.
+#define system'routines.
+#define system'text.
 
 // --- literalConvertorEx ---
 
@@ -21,22 +21,24 @@
 //        ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
 //    ]
 
-//    #method convert &enumerable:aList &char:aSeparator
-//    [
-//        #var theOutput := TextBuffer new.
-//        
-//        aList~enumerable run: anItem [ theOutput write:(literalConvertorEx convert::anItem) write:aSeparator ].
-//        
-//        #var aLength := theOutput length.
-//        (0 < aLength)
-//            ? [ theOutput set &length:(-1 + aLength). ].
-//        
-//        ^ theOutput literal.
-//    ]
-//
-//    #method convert &enumerable:aList
-//        = $self convert &enumerable:aList &char:",".
-//
+    #method convert &enumerable:aList &char:aSeparator
+    [
+        #var theOutput := TextBuffer new.
+        
+        aList~enumerable run: anItem [ theOutput write:(literalConvertorEx convert::anItem) write:aSeparator ].
+        
+        #var(type:int)aLength.
+        theOutput read &out'length:aLength.
+        
+        (0 < aLength)
+            ? [ theOutput set &length:(-1 + aLength). ].
+        
+        ^ theOutput literal.
+    ]
+
+    #method convert &enumerable:aList
+        = $self convert &enumerable:aList &char:",".
+
 //    #method convert &array : anArray
 //        = $self convert &enumerable:anArray &char:",".
 //

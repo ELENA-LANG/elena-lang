@@ -223,8 +223,6 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
 //   case _ELENA_::opL2:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-   case _ELENA_::opL3:
-      return config.getSetting(COMPILER_CATEGORY, ELC_L3);
    case _ELENA_::opTemplate:
       return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
    default:
@@ -330,7 +328,7 @@ void _ELC_::Project :: setOption(const tchar_t* value)
             _settings.add(_ELENA_::opL0, 0);
 //            _settings.add(_ELENA_::opL1, 0);
 //            _settings.add(_ELENA_::opL2, 0);
-            _settings.add(_ELENA_::opL3, 0);
+//            _settings.add(_ELENA_::opL3, 0);
          }
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_SYMBOLEMBEDOFF)) {
             _settings.add(_ELENA_::opEmbeddedSymbolMode, 0);
@@ -391,15 +389,6 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
          project.raiseWarning(errInvalidFile, rulesPath);
       }
       else compiler.loadRules(&rulesFile);
-   }
-//   if (project.IntSetting(_ELENA_::opL1) != 0) {
-//      compiler.setOptFlag(_ELENA_::optDirectConstant);
-//   }
-//   if (project.IntSetting(_ELENA_::opL2) != 0) {
-//      compiler.setOptFlag(_ELENA_::optJumps);
-//   }
-   if (project.IntSetting(_ELENA_::opL3, -1) != 0) {
-      compiler.setOptFlag(_ELENA_::optIdleFrame);
    }
 }
 

@@ -7,7 +7,7 @@
 
 // --- WordList ---
 
-#class WordList
+#class(type:enumerable) WordList
 {
     #field theTotal.
     #field theList.
@@ -31,8 +31,6 @@
     #method total_words = theTotal.
 
     #method unique_words = theList length.
-    
-    #method <= &enumerable:$self.
 }
 
 // --- Program ---
@@ -45,11 +43,11 @@
     #var aLine := String new.
 
     // read until the empty string is not entered
-    control do:[ aText << consoleEx readLine:aLine << " " ] &until:[ aLine length == 0 ].
+    control do:[ aText << consoleEx readLine:aLine << " ". ] &until:[ aLine length == 0 ].
 
     #var aList := WordList new:(List new).
 
-    enumControl forEachWord:aText &do: anItem [ aList append:anItem ].
+    textControl forEachWord:aText &do: anItem [ aList append:anItem ].
 
     consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)

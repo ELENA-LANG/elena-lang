@@ -23,7 +23,9 @@ calendar\win32_datetime.l
 calendar\dates.l
 collections\list.l
 io\win32_console.l
+io\win32_encoder.l
 text\textbuffer.l
+text\textio.l
 dynamic\groups.l
 dynamic\loaders.l
 dynamic\interpreters.l

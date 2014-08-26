@@ -48,7 +48,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 115;
+const int gcCommandNumber = 116;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
@@ -58,14 +58,14 @@ const int gcCommands[gcCommandNumber] =
    bcHook, bcThrow, bcUnhook, bcWName, bcClass,
    bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, 
    bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
-   bcGet, bcSet, bcXSet, bcECall,
+   bcGet, bcSet, bcXSet, bcECall, bcBReadB,
    bcRestore, bcCount, bcIfHeap, bcFlag,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI,
    bcType, bcNEqual, bcNLess, bcNCopy, bcNAdd,
    bcNSub, bcNMul, bcNDiv, bcWEqual, bcWLess,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
-   bcWSave, bcBCreate, bcSave, bcLen, bcLoadW,
-   bcLoad, bcWLoad, bcWInsert, bcESwap, bcBSwap,
+   bcWWrite, bcBCreate, bcBWrite, bcLen, bcBReadW,
+   bcBRead, bcWRead, bcWInsert, bcESwap, bcBSwap,
    bcWToN, bcNToW, bcNAnd, bcNOr, bcNXor,
    bcLCopy, bcLCopyN, bcLEqual, bcLLess, bcLAdd,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
@@ -98,7 +98,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop,
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,

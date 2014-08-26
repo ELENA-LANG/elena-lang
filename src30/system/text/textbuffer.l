@@ -25,21 +25,26 @@
     #method length
         = theLength int.
 
-//    #method set &length:aLength
-//    [
-//        theBuffer set &length:(2 * aLength).
-//    ]
-                                    
+    #method read &out'length:aLength
+    [
+        theLength read &out'int:aLength.
+    ]
+
+    #method set &length:aLength
+    [
+        theLength write &int:aLength.
+    ]
+
     #method write : aLine
     [
         $self write &literal::aLine.
     ]
                                     
-//    #method write &char:aChar
-//    [
-//        $self write &literal::aChar.
-//    ]
-//    
+    #method write &char:aChar
+    [
+        $self write &literal::aChar.
+    ]
+    
     #method reserve &length:aLength
     [
         #var(type:int)anOldLength.

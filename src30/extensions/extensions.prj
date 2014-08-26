@@ -11,5 +11,7 @@ inline=..\..\lib30\inline\ext_routines.bin
 [files]
 convertors.l
 console.l
-dynamic\serializer.l
 text\strings.l
+text\words.l
+text\enumerating.l
+dynamic\serializer.l

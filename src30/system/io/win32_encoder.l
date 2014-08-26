@@ -4,6 +4,6 @@
 
 #symbol ansiLiteralEncoder =
 {
-    read &bytearray:aByteArray &length:aLength
-        = literalPrimitiveOp toLiteral &bytearray:aByteArray &length:aLength.
+    convert &bytearray:aByteArray &length:aLength
+        <ws_copybuf>.
 }.

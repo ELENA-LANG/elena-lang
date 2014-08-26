@@ -405,20 +405,20 @@
     #constructor new &char:aCode
         <= %new &short::aCode.
 
-//    #method equal &int:anOperand 
-//        = theData == anOperand.
-//
-//    #method less &int:anOperand 
-//        = theData < anOperand.
+    #method equal &int:anOperand 
+        <int_equal>.
 
-//    #method equal &char:anOperand 
-//        = $self equal &int:anOperand .
-//
-//    #method less &char:anOperand 
-//        = $self less &int:anOperand .
-//
-//    #method equal &literal:aLiteral
-//        = aLiteral equal &char:$self.
+    #method less &int:anOperand 
+        <int_less>.
+
+    #method equal &char:anOperand 
+        <int_equal>.
+
+    #method less &char:anOperand 
+        <int_less>.
+
+    #method equal &literal:aLiteral
+        = aLiteral equal::$self.
 
     #method char = $self.
     
@@ -517,8 +517,8 @@
     #method equal &literal : aLiteral
         <ws_equal>.
 
-//    #method equal &char : aChar
-//        <ws_equalchar>.
+    #method equal &char : aChar
+        <ws_equalchar>.
 
     #method less &literal : aLiteral
         <ws_less>.

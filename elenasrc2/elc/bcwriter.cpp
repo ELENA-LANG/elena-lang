@@ -576,6 +576,7 @@ void ByteCodeWriter :: saveBase(CommandTape& tape, ObjectInfo object, int fieldO
    switch (object.kind) {
       case okLocal:
       case okParam:
+      case okThisParam:
          // aloadfi 1
          // axsavebi
          tape.write(bcALoadFI, object.param, bpFrame);
@@ -988,75 +989,6 @@ void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, CommandTape& tape, 
    }
 
    (*it).argument += size;
-}
-
-//bool ByteCodeWriter :: checkIfFrameUsed(ByteCodeIterator it)
-//{
-//   while (*it != blBegin || ((*it).argument != bsMethod))  {
-//      switch(*it) {
-//         case bcPushFI:
-//         case bcMSaveParams:
-//         case bcPushF:
-//         case bcPopFI:
-//         case bcMLoadFI:
-//         case bcDLoadFI:
-//         case bcDSaveFI:
-//         case bcALoadFI:
-//         case bcASaveFI:
-//         case bcSCopyF:
-//         case bcACopyF:
-//         case bcUnhook:
-//         case bcHook:
-//            return true;
-//      }
-//
-//      it--;
-//   }
-//   return false;
-//}
-//
-////bool ByteCodeWriter :: checkIfBaseUsed(ByteCodeIterator it)
-////{
-////   while (*it != blBegin || ((*it).argument != bsMethod))  {
-////      switch(*it) {
-////         case bcGet:
-////         case bcSet:
-////         case bcPushBI:
-////         case bcPopBI:
-////         case bcASaveBI:
-////         case bcIAXLoadB:
-////            return true;
-////      }
-////
-////      it--;
-////   }
-////   return false;
-////}
-
-void ByteCodeWriter :: commentFrame(ByteCodeIterator it)
-{
-   // !! temporally commented
-
-   //// make sure the frame is not used in the code
-   //if (checkIfFrameUsed(it))
-   //   return;
-
-   //while (*it != blBegin || ((*it).argument != bsMethod))  {
-   //   // comment operations with stack
-   //   switch(*it) {
-   //      case bcOpen:
-   //      case bcClose:
-   //      case bdSelf:
-   //      case bdLocal:
-   //      case bdIntLocal:
-   //      case bdLongLocal:
-   //      case bdRealLocal:
-   //      case bdParamsLocal:
-   //         (*it).code = bcNop;
-   //   }
-
-   //   it--;
-   //}
 }
 
 void ByteCodeWriter :: setLabel(CommandTape& tape)
@@ -1651,11 +1583,11 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, ObjectInfo target)
       // ecopyd
       // bloadfi 1
       // dcopy target.param
-      // save
+      // bwrite
       tape.write(bcECopyD);
       tape.write(bcBLoadFI, 1, bpFrame);
       tape.write(bcDCopy, target.param);
-      tape.write(bcSave);
+      tape.write(bcBWrite);
    }   
 }
 
@@ -1687,13 +1619,13 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, ObjectInfo target)
          // ecopyd
          // bloadfi 1
          // dcopy target.param
-         // save
+         // bwrite
 
          tape.write(bcNLoad);
          tape.write(bcECopyD);
          tape.write(bcBLoadFI, 1, bpFrame);
          tape.write(bcDCopy, target.param);
-         tape.write(bcSave);
+         tape.write(bcBWrite);
       }
    }
    else if (target.kind == okLocal) {
@@ -1715,13 +1647,13 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, ObjectInfo target)
       // ecopyd
       // bloadfi 1
       // dcopy target.param / 2
-      // wsave
+      // wwrite
 
       tape.write(bcNLoad);
       tape.write(bcECopyD);
       tape.write(bcBLoadFI, 1, bpFrame);
       tape.write(bcDCopy, target.param >> 1);
-      tape.write(bcWSave);
+      tape.write(bcWWrite);
    }
    else if (target.kind == okLocal) {
       // bloadfi param
@@ -1806,14 +1738,14 @@ void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
 {
    // bswap
    // dcopy index
-   // load
+   // bread
    // dcopye
    // bcopya
    // nsave
 
    tape.write(bcBSwap);
    tape.write(bcDCopy, offset);
-   tape.write(bcLoad);
+   tape.write(bcBRead);
    tape.write(bcDCopyE);
    tape.write(bcBCopyA);
    tape.write(bcNSave);
@@ -1824,14 +1756,14 @@ void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
    if ((offset & 1) == 0) {
       // bswap
       // dcopy index / 2
-      // wload
+      // wread
       // dcopye
       // bcopya
       // nsave
 
       tape.write(bcBSwap);
       tape.write(bcDCopy, offset >> 1);
-      tape.write(bcWLoad);
+      tape.write(bcWRead);
       tape.write(bcDCopyE);
       tape.write(bcBCopyA);
       tape.write(bcNSave);
@@ -1839,14 +1771,14 @@ void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
    else {
       // bswap
       // dcopy index
-      // load
+      // bread
       // dcopye
       // andn 0FFFFh
       // bcopya
       // nsave
       tape.write(bcBSwap);
       tape.write(bcDCopy, offset);
-      tape.write(bcLoad);
+      tape.write(bcBRead);
       tape.write(bcDCopyE);
       tape.write(bcAndN, 0xFFFF);
       tape.write(bcBCopyA);

@@ -4,14 +4,13 @@
 #define system'calendar.
 #define extensions.
 ////#define extensions'math.
-    
+            
 #class(role)XTester
 {
 }
 
 #symbol XTest =
 [
-    #var n := 2 + 3.
 ].
 
 // --- OpenArgTest ---

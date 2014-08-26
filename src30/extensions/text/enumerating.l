@@ -40,9 +40,9 @@
         = anAction~functionOp run &enumerator:(TextFileEnumerator new &path:aPath).
 }.
 
-// --- enumControl ---
+// --- textControl ---
 
-#symbol enumControl =
+#symbol textControl =
 {
     forEachWord:aText &do:anAction
         = anAction~functionOp run &enumerator:(WordEnumerator new:(aText literal)).

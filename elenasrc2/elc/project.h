@@ -63,9 +63,6 @@ enum ProjectSetting
 
    // compiler optimization options
    opL0                    = 0x0050,   // generic
-//   opL1                    = 0x0051,   // direct invoke
-//   opL2                    = 0x0052,   // jumps
-   opL3                    = 0x0053,   // idle frame
 
    opPrimitives            = 0x0060,
    opForwards              = 0x0061,

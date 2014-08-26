@@ -260,9 +260,6 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
 
    // load compiler engine options
    loadIntOption(config, opL0);
-//   loadIntOption(config, opL1);
-//   loadIntOption(config, opL2);
-   loadIntOption(config, opL3);
 
    // load primitive aliases
    // duplicates should be allowed to implement routine overriding

@@ -37,7 +37,7 @@
             ? [
                 theRole := %space.
         
-                control while:[ $self~theRole next ] &do:[].
+                #loop ($self~theRole next) ? [].
             ].
 
         ^ 0 != theWord length.

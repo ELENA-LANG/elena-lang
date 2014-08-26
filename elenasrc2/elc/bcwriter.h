@@ -232,7 +232,6 @@ public:
 
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
-   void commentFrame(ByteCodeIterator it);
 
    void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);

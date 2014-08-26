@@ -1239,7 +1239,7 @@ inline % 5Fh
 
 end
 
-// ; bsreadw
+// ; loadw
 inline % 60h
 
   mov ecx, [edi + esi]
@@ -1247,7 +1247,7 @@ inline % 60h
 
 end
 
-// ; load
+// ; bread
 inline % 61h
 
   mov ecx, [edi + esi]
@@ -1302,6 +1302,14 @@ labNext:
 
   lea  esi, [esi - 1]
   
+end
+
+// ; breadb
+inline % 65h
+
+  mov ecx, [edi + esi]
+  and ecx, 0FFh
+
 end
 
 // ; save

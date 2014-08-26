@@ -101,7 +101,7 @@
 
 // --- List ---
 
-#class(type:list) List
+#class(type:enumerable) List
 {
     #field theTop.
     #field theLast.
@@ -116,9 +116,11 @@
 
     #method TopItem = theTop.
 
-//    #method First = theTop get.
+    #method First = theTop get.
 
     #method length = theCount int.
+
+    #method enumerable = $self.
 
     #method enumerator = ListEnumerator new &list:$self.
 

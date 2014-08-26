@@ -676,7 +676,7 @@ procedure inline'ws_getat
   notless labErr
   lessn   labErr 0
 
-  wload
+  wread
   acopyb
   bloadsi 3
   dcopye
@@ -815,7 +815,7 @@ procedure inline'ws_subs
   wlen
   ecopy 0
   dec
-  wsave
+  wwrite
 
   quitn 3
 
@@ -850,7 +850,7 @@ procedure inline'ws_copyarr
   wlen
   ecopy 0
   dec
-  wsave
+  wwrite
   quitn 2
 
 end
@@ -863,7 +863,7 @@ procedure inline'ws_fill
   
   // ; set zero at the end
   ecopy 0 
-  wsave
+  wwrite
   ecopyd
 
   aloadsi 3
@@ -872,7 +872,7 @@ procedure inline'ws_fill
 
 labNext:
   dec
-  wsave
+  wwrite
   elsen labNext 0 
 
   acopyb
@@ -944,7 +944,7 @@ procedure inline'bs_readword
   notless labErr
   lessn   labErr 0
  
-  loadw
+  breadw
   dcopye
   bloadsi 3
   nsave
@@ -971,7 +971,7 @@ procedure inline'bs_equalword
   notless labErr
   lessn   labErr 0
  
-  loadw
+  breadw
   aloadsi 3
   nload  
   else    labFalse
@@ -1002,7 +1002,7 @@ procedure inline'bs_equalint
   notless labErr
   lessn   labErr 0
  
-  load
+  bread
   aloadsi 3
   nload  
   else    labFalse
@@ -1042,7 +1042,7 @@ procedure inline'ws_equalword
   notless labErr
   lessn   labErr 0
  
-  wload
+  wread
   aloadsi 3
   nload  
   else    labFalse
@@ -1621,7 +1621,7 @@ end
 
 procedure inline'ws_copyint_radix
 
-  dcopy 10
+  dcopy 11
   acopyr class : system'LiteralValue
   wcreate
   bcopya
@@ -1631,5 +1631,54 @@ procedure inline'ws_copyint_radix
   ntow
   acopyb
   quitn 3
+
+end
+
+procedure inline'ws_copybuf
+
+  aloadsi 3
+  nload
+  inc
+  acopyr class : system'LiteralValue
+  wcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  dcopy 0
+
+labNext:
+  breadb
+  wwrite
+  inc
+  next labNext
+
+  ecopy 0
+  wwrite
+  
+  acopyb
+  quitn 3
+
+end
+
+procedure inline'ws_equalchar
+
+   bcopya
+   wlen
+   elsen labFalse 1
+   dcopy 0
+   wread
+   aloadsi 2
+   nload
+   else labFalse
+
+   acopyr const : system'true
+   quitn 2   
+   
+labFalse:
+   acopyr const : system'false
+   quitn 2
 
 end

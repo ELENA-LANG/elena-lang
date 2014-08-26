@@ -1190,6 +1190,11 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
 
             size = StringHelper::strToInt(sizeValue.value) * itemSize;
          }
+         else if (itemSize < 0 && sizeValue.symbol == tsHexInteger) {
+            itemSize = -itemSize;
+
+            size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
+         }
          else raiseWarning(wrnUnknownHint, terminal);
       }
       else raiseWarning(wrnUnknownHint, terminal);
@@ -4098,26 +4103,6 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
    _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
-////void Compiler :: compileMessageDispatch(DNode node, CodeScope& scope)
-////{
-////  // MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-////
-////  //// int parameters = countSymbol(node, nsMessageParameter);
-////
-////  // _writer.declareMethod(*scope.tape, methodScope->message, true);
-////
-////  // compileMessage(node, scope, ObjectInfo(okSelf), 0);
-////
-////  // compileEndStatement(node, scope);
-////
-////  // _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-////
-////  // // method optimization
-////  // // if self / variables are not used try to comment frame openning / closing
-////  // if (!test(methodScope->masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
-////  //    _writer.commentFrame(scope.tape->end());
-////}
-
 void Compiler :: compileBreakHandler(CodeScope& scope, int mode)
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
@@ -4250,16 +4235,6 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 //   // safe point (no need in extra one because lock already has one safe point)
 //   else if (scope.testMode(MethodScope::modSafePoint))
 //      _writer.declareSafePoint(*codeScope.tape);
-
-   // method optimization
-   // if self / variables are not used try to comment frame openning / closing
-   if (test(_optFlag, optIdleFrame)) {
-      if (!test(scope.masks, MTH_FRAME_USED))
-         _writer.commentFrame(codeScope.tape->end());
-
-      //if (!test(scope.masks, MTH_THIS_USED))
-      //   _writer.commentBase(codeScope.tape->end());   
-   }
 }
 
 void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints)
@@ -4322,11 +4297,6 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
             _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved);
          }
-
-         // method optimization
-         // if self / variables are not used try to comment frame openning / closing
-         if (!test(scope.masks, MTH_FRAME_USED) && test(_optFlag, optIdleFrame))
-            _writer.commentFrame(codeScope.tape->end());
       }
    }
 }

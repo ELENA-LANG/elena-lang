@@ -16,7 +16,7 @@
         theIndex:= Integer new &int:-1.
     ]
 
-    #method index = theIndex index.
+    #method index = theIndex int.
     
     #method set &index:anIndex
     [

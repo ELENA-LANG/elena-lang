@@ -19,7 +19,6 @@ namespace _ELENA_
 // Compiler optimization flags
 //const int optDirectConstant = 0x00000001;
 //const int optJumps          = 0x00000002;
-const int optIdleFrame         = 0x00000003;
 
 // --- Compiler class ---
 class Compiler

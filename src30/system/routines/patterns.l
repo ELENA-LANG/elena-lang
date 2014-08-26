@@ -1,5 +1,11 @@
 #define system.
 
+// === actions ===
+
+#symbol ifOrdered
+    = (:aFormer:aLater) [ aFormer < aLater ].
+
+
 // === extensions ===
 
 //// --- misc ---
@@ -264,43 +270,44 @@
     seek:aList &until:anAction
         = aList~enumerable seek:anAction.
 
-//    ifExist:aValue &in:aList
-//        = nil != aList~enumerable seek: x [ aValue equal:x ].
-//        
+    ifExist:aValue &in:aList
+        = nil != aList~enumerable find:aValue.
+        
 ////    getAt:anIndex &in:aList
 ////        = aList~EList getAt:anIndex.
 ////        
 ////    toArray : aList
 ////        = aList~EList Array.
-//        
-//    sort : aList &with:aCondition
-//    [
-//        #var aCurrent := EnumerationIterator new &enumerable:aList.
-//        #var aNext := EnumerationIterator new &enumerable:aList.
-//
-//        control while:[ aCurrent next ] &do:
-//        [
-//            aNext set &index::aCurrent.
-//            control while:[ aNext next ] &do:
-//            [
-//                aCondition eval:(aCurrent get):(aNext get)
-//                    ! [
-//                        #var aTmp := aCurrent get.
-//                        aCurrent set:(aNext get).
-//                        aNext set:aTmp.
-//                    ].
-//            ].
-//        ].
-//        
-//        ^ aList.
-//    ]    
-//
-//    sort : aList
-//    [
-//        listControl sort:aList &with:(:aFormer:aLater) [ aFormer < aLater ].
-//        
-//        ^ aList.
-//    ]
+        
+    sort : aList &with:aCondition
+    [
+        #var aCurrent := EnumerationIterator new &enumerable:aList.
+        #var aNext := EnumerationIterator new &enumerable:aList.
+
+        #loop (aCurrent next)?
+        [
+            aNext set &index::aCurrent.
+            
+            #loop (aNext next)?
+            [
+                aCondition eval:(aCurrent get):(aNext get)
+                    ! [
+                        #var aTmp := aCurrent get.
+                        aCurrent set:(aNext get).
+                        aNext set:aTmp.
+                    ].
+            ].
+        ].
+        
+        ^ aList.
+    ]    
+
+    sort : aList
+    [
+        listControl sort:aList &with:ifOrdered.
+        
+        ^ aList.
+    ]
 
     toArray : anEnumerable
         = anEnumerable ~enumerable array.
@@ -336,7 +343,7 @@
 //        = nil != anArray~enumerable seek: x [ aValue equal:x ].
 //        
 //    sort : anArray
-//        = anArray~indexable sort: (:aFormer:aLater) [ aFormer < aLater ].        
+//        = anArray~indexable sort: (:aFormer:aLater) [ aFormer < aLater ].
 //        
 //    Subarray : anArray &from:anIndex &length:aLength
 //        = anArray~indexable Subarray &index::anIndex &length:aLength.

@@ -29,11 +29,11 @@ const char* _fnOpcodes[256] =
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
    "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "unknown",
 
-   "wequal", "wless", "wload", "winsert", "ntow", "ltow", "rtow", "wseek",
-   "wsave", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",
+   "wequal", "wless", "wread", "winsert", "ntow", "ltow", "rtow", "wseek",
+   "wwrite", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",
 
-   "loadw", "load", "insert", "ninsert", "xseek", "unknown", "unknown", "unknown",
-   "unknown", "save", "subcopy", "nsubcopy", "unknown", "unknown", "unknown", "bcreate",
+   "breadw", "bread", "insert", "ninsert", "xseek", "breadb", "unknown", "unknown",
+   "unknown", "bwrite", "subcopy", "nsubcopy", "unknown", "unknown", "unknown", "bcreate",
 
    "lcopy", "lcopyn", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
    "land", "lor", "lxor", "lshift", "lnot", "wtol", "unknown", "unknown",

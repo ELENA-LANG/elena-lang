@@ -74,9 +74,6 @@
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "ygsize"
 #define ELC_L0                      "l0"                // optimization: byte code optimization
-//#define ELC_L1                      "l1"                // optimization: direct invoke
-//#define ELC_L2                      "l2"                // optimization: jumps
-#define ELC_L3                      "l3"                // optimization: idle frame optimization
 #define ELC_SYMBOLINFO              "symbolembed"
 
 // --- ELC information messages ---
