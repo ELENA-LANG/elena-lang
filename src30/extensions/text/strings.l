@@ -1,5 +1,5 @@
 #define system.
-//#define system'routines.
+#define system'routines.
 
 // --- Bookmark ---
 
@@ -82,10 +82,10 @@
         theStart := 0.
     ]
 
-//    #method Marked
-//        = (-1 == theIndex)
-//            ? [ theLiteral~literalOp Substring &index:theStart ]
-//            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
+    #method Marked
+        = (-1 == theIndex)
+            ? [ theLiteral Substring &index:theStart ]
+            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
     
     #method literal = theLiteral.
     

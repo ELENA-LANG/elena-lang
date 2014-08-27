@@ -527,7 +527,7 @@
         <ws_less>.
 
     #method add : aLiteral
-        = $self add::aLiteral.
+        = $self add &literal::aLiteral.
 
     #method add &literal : aLiteral
         <ws_add>.
@@ -870,15 +870,15 @@
         theValue := aLiteral.
     ]
     
-//    #method append : anOperand
-//    [
-//        theValue := theValue + anOperand.
-//    ]
-//    
-//    #method append &literal:anOperand
-//    [
-//        theValue := theValue add &literal:anOperand.
-//    ]
+    #method append : anOperand
+    [
+        theValue := theValue + anOperand.
+    ]
+    
+    #method append &literal:anOperand
+    [
+        theValue := theValue add &literal:anOperand.
+    ]
     
     #method insert &index:anIndex &literal:aLiteral
     [
@@ -887,11 +887,11 @@
             ! [ theValue := theValue insert &index:anIndex &literal:aLiteral. ].
     ]
             
-//    #method delete &index:anIndex &length:aLength
-//    [
-//        theValue := theValue delete &index:anIndex &length:aLength.
-//    ]
-//                        
+    #method delete &index:anIndex &length:aLength
+    [
+        theValue := theValue delete &index:anIndex &length:aLength.
+    ]
+                        
     #method clear
     [
         theValue := emptyLiteralValue.

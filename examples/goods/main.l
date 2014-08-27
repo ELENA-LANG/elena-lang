@@ -23,7 +23,7 @@
 
     #method literal
     [
-        ^ "Name:" + theName + " Price:" + thePrice literal.
+        ^ ("Name:" + theName + " Price:" + thePrice literal) literal.
     ]
 }
 
@@ -79,11 +79,11 @@
         #var aName := String new.
         #var aPrice := Real new.
                         
-        control while:(anAdapter read:aName) &do:
+        control while:[ anAdapter read:aName ] &do:
         [
             anAdapter read:aPrice.
         
-            aList append:(Record new &Price:(aPrice number) &Name:(aName literal)).
+            aList append:(Record new &Price:(aPrice value) &Name:(aName value)).
         ].
     ].
 

@@ -102,52 +102,50 @@
 //        
 //        ^ self delete &index:0 &length:theIndex.
 //    ]
-//    
-//    #method split &char:aChar
-//    [
-//        #var aList := system'collections'List new.
-//        #var aStart := 0.
-//        #var anIndex := 0.
-//        
-//        control do:
-//        [
-//            anIndex := self indexOf &index:aStart &char:aChar.
-//            (-1 != anIndex) ?
-//            [
-//                aList += self Substring &index:aStart &length:(anIndex - aStart).
-//                aStart := anIndex + 1.
-//            ]
-//            ! [
-//                aList += self Substring &index:aStart &length:(self length - aStart).
-//            ].
-//        ]        
-//        &until:[anIndex == -1].
-//        
-//        ^ aList~indexable array.
-//    ]
-//    
-//    #method split &literal:aValue
-//    [
-//        #var aList := system'collections'List new.
-//        #var aStart := 0.
-//        #var anIndex := 0.
-//        
-//        control do:
-//        [
-//            anIndex := self indexOf &index:aStart &literal:aValue.
-//            (-1 != anIndex) ?
-//            [
-//                aList += self Substring &index:aStart &length:(anIndex - aStart).
-//                aStart := anIndex + aValue length.
-//            ]
-//            ! [
-//                aList += self Substring &index:aStart &length:(self length - aStart).
-//            ].
-//        ]        
-//        &until:[anIndex == -1].
-//        
-//        ^ aList~indexable array.
-//    ]
+    
+    #method split &char:aChar
+    [
+        #var aList := system'collections'List new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        
+        #loop (anIndex >= 0)?        
+        [
+            self indexOf &index:aStart &char:aChar &out'int:anIndex.
+            (-1 != anIndex) ?
+            [
+                aList += self Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + 1.
+            ]
+            ! [
+                aList += self Substring &index:aStart &length:(self length - aStart).
+            ].
+        ].
+        
+        ^ aList~indexable array.
+    ]
+    
+    #method split &literal:aValue
+    [
+        #var aList := system'collections'List new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        
+        #loop (anIndex >= 0)?        
+        [
+            self indexOf &index:aStart &literal:aValue &out'int:anIndex.
+            (-1 != anIndex) ?
+            [
+                aList += self Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + aValue length.
+            ]
+            ! [
+                aList += self Substring &index:aStart &length:(self length - aStart).
+            ].
+        ].
+        
+        ^ aList~indexable array.
+    ]
 }
 
 //#class(role)textOp
@@ -349,17 +347,18 @@
         = anArray~indexable Subarray &index::anIndex &length:aLength.
 }.
 
-//// --- literalControl ---
-//
-//#symbol literalControl =
-//{
-//    split:aLiteral &by:aSplitter
-//        = { 
-//            eval &literal:aSplitter [ ^ aLiteral~literalOp split &literal:aSplitter. ] 
-//            
-//            eval &char:aSplitter [ ^ aLiteral~literalOp split &char:aSplitter. ] 
-//          } eval::aSplitter.
-//    
+// --- literalControl ---
+
+#symbol literalControl =
+{
+    split:aLiteral &by:aSplitter
+        = { 
+            eval &literal:aSplitter [ ^ aLiteral~literalOp split &literal:aSplitter. ] 
+            
+            eval &char:aSplitter [ ^ aLiteral~literalOp split &char:aSplitter. ] 
+          } 
+          eval::aSplitter.
+    
 ////    trimStart:aChar &in:aString
 ////        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
 //
@@ -374,8 +373,8 @@
 //        
 //    contain : aSubS &in:anS
 //        = -1 != anS indexOf &index:0 &literal::aSubS.
-//}.
-//
+}.
+
 //// === patterns ===
 //
 //// --- BasePattern ---

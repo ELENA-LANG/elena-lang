@@ -20,12 +20,10 @@ v  - vm script
 Currently:
 ------
               srev - migration
-                       * migrate goods
-                       * migrate textview
-                       * migrate textdb
+                       * migrate rosetta samples
+
                        * migrate date time
                        * migrate pi
-                       * migrate rosetta samples
                        * migrate tape sample
                        * migrate mt test
                        * migrate interpreter
@@ -36,57 +34,6 @@ Currently:
                        * use script to build objects
                        * use script to parse
                        * use script generate code
-
-              xdev - generic development       
-
-                       * for some operation can we somehow to define the output result : e.g. insert&index&literal or toLiteral, so no need to
-                         type cast every time the method is called??
-
-                       * fix warnings for system'String
-
-                       * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
-                       
-                       * classOp, indexable, enumarable should be declared as extensions
-                       
-                       * can we use ^ operator to returns from any part of the code to the end
-                       
-                       
-                       * any type casting get method call should be implemented as typecast - see system'literalConvertor convert &int:$self literal
-                       
-                       * module system should be inclduded automatically ??
-                       
-                       * do we need bseval? direct operation with dll is better
-
-                       * extender : if no match found call the super handler
-                                                                                                       
-                       
-                       *  in the following code throw is executed twice
-                          #symbol XTest =
-                          [
-                              #var(type:int)n := 2.
-    
-                              n error.
-                          ].
-
-                       * review problematic implementation: constructor (for example Tape and Struct both have to define default constructor),  
-                         loop breaking, return operator, exception handling, loop implementation (especially until loop)
-
-                       * review loop code (see system'io'$ConsoleReader) :
-                             #loop
-                             [
-                                 ...        
-                                 continue   // -- should be correctly loaded into accumulator
-                             ].
-                                                                                                                             
-                       * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
-                         the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
-                         if not - goes to the alternative branch (what about dynamic objects in that case)
-
-                       * rename / refactor weval - misleading name
-
-                       * inline'handle_tape: - test the message with argument list
-
-                       * test mttest (find out why debugger cannot debug it correctly)
 
 
                        
@@ -125,7 +72,19 @@ week2:
                        * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
                          the second method call is excessive
                        * bsort example, sortRange method : variable is used because of loop implementation
-
+                       * goods : Record.get&literal : 
+                                  #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
+                       * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
+                         the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
+                         if not - goes to the alternative branch (what about dynamic objects in that case)
+                       * review loop code (see system'io'$ConsoleReader) :
+                             #loop
+                             [
+                                 ...        
+                                 continue   // -- should be correctly loaded into accumulator
+                             ].
+                       * review literalControl.split&by - could we ismplify / beautify the code
+                                                                                                                             
               arev - lib30 review
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
 
@@ -154,6 +113,8 @@ week2:
                        * should clone be implemented in system'Object and be overridden only when it is required?                                                
                        * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
                        * optimize control.forrange implementation
+
+                       * fix warnings for system'String
 
               adev - lib30 optimization
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
@@ -385,6 +346,16 @@ week4:
                          variable, visualize it content, execute it)
                                              
               xmaint - test
+                       * inline'handle_tape: - test the message with argument list
+
+                       * test mttest (find out why debugger cannot debug it correctly)#
+                       *  in the following code throw is executed twice
+                          #symbol XTest =
+                          [
+                              #var(type:int)n := 2.
+    
+                              n error.
+                          ].
                        * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)
                        
                        * test operation with stack allocated binaray array (write / read / length / getAt)
@@ -392,14 +363,22 @@ week4:
                        * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
                          script, so we could check if the caller stack is included correctly)
                        * try to automize build process  
-
+                       
 1.9.17
 --------
 week1:
               xdev - generic development                        
+                       * review problematic implementation: constructor (for example Tape and Struct both have to define default constructor),  
+                         loop breaking, return operator, exception handling, loop implementation (especially until loop)
+
+                       * can we use ^ operator to returns from any part of the code to the end
+                       
                        * #var(type:int)n := n int.  // probably we should use optimized version if available (e.g n get&int &out'int:xxx)
 
                        * exceptions : provide call stack info
+
+                       * for some operation can we somehow to define the output result : e.g. insert&index&literal or toLiteral, so no need to
+                         type cast every time the method is called??
 
                        * nested action / function should be reimplemented, Action / Function class should contain the reference to the 
                          code ; what about non constant ones ?
@@ -462,8 +441,10 @@ week1:
 
                        * using literal / int / .. constants before they are declared ??
 
+                       * extender : if no match found call the super handler
+
               xdev - general implementation
-                       * msaveparams consumes the stack, the stack change is not correctly calculated 
+                       * rename / refactor weval - misleading name
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * we do not need to store the previous gc_ext_stack_frame, it should be done in open / close frame routine
                        * probably we have to caching type wrapper, so no need to load every time
@@ -486,10 +467,11 @@ week1:
                        * should numeric constant always be compatible with int types (e.g. with handle)??
 
                        * structure field cannot be passed as out parameter
-                       
                        * 0r should be correct real constant
-                       
                        * boxing : for okLocalAddress no need to check if it is local - box directly
+                       * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
+                       * any type casting get method call should be implemented as typecast - see system'literalConvertor convert &int:$self literal
+                       * module system should be inclduded automatically ??
 
               xdev - linux
                        * paths: lib    - \usr\share\elena\lib30
