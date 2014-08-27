@@ -14,13 +14,13 @@
 
 #symbol sorting =
 {
-    sortRange:anArray &int:aStart &int:anEnd
+    sortRange:anArray:aStart:anEnd
     [
-        #var(type:int) aCurrent := aStart.
-        control while:[aCurrent * 2 < anEnd] &do:
+        #var aCurrent := Integer new << aStart.
+        control while:[ aCurrent * 2 < anEnd ] &do:
         [
-            #var(type:int) aMaxChild.
-            #var(type:int) aChild := (aCurrent * 2) + 1.
+            #var aMaxChild.
+            #var aChild := (aCurrent * 2) + 1.
 
             (aChild == anEnd)or:[(anArray@aChild) > (anArray@(aChild + 1))]
                 ? [ aMaxChild := aChild. ]  
@@ -28,9 +28,9 @@
 
             (anArray@aCurrent) < (anArray@aMaxChild)
                 ? [
-                    anArray~indexable exchange &int:aCurrent &int:aMaxChild.
+                    anArray~indexable exchange:aCurrent:aMaxChild.
 
-                    aCurrent := aMaxChild.
+                    aCurrent << aMaxChild.
                 ]
                 ! [ #break. ].
         ].
@@ -38,18 +38,18 @@
 
     sort : anArray
     [
-        #var(type:int) aLastIndex := anArray length - 1.
+        #var aLastIndex := anArray length - 1.
         
         control forrange &int:(anArray length / 2) &int:0 &do: (&int:anIndex)
         [
-            sorting sortRange:anArray &int:anIndex &int:aLastIndex
+            sorting sortRange:anArray:anIndex:aLastIndex
         ].
         
-        control forrange &int:aLastIndex &int:0 &do: (&int:anIndex)
+        control forrange &int::aLastIndex &int:0 &do: (&int:anIndex)
         [
             anArray~indexable exchange &int:anIndex &int:0.
 
-            sorting sortRange:anArray &int:0 &int:(anIndex - 1).
+            sorting sortRange:anArray:0:(anIndex - 1).
         ].
     ]
 }.
@@ -62,7 +62,7 @@
     #var aSize := consoleEx write:"Enter the array size:" readLine:(Integer new).
 
     // 2. Initialize the array
-    #var anArray := arrayControl new &length:aSize &each:prompter.
+    #var anArray := arrayControl new &length:(aSize int) &each:prompter.
 
     // 3. Sort the array
     sorting sort:anArray.

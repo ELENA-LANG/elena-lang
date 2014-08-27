@@ -48,7 +48,7 @@ const char* _fnOpcodes[256] =
    "message", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
    "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",
-   "dloadsi", "dsavefi", "pushsi", "dsavesi", "unknown", "pushf", "unknown", "reserve",
+   "dloadsi", "dsavefi", "pushsi", "dsavesi", "eloadsi", "pushf", "esavesi", "reserve",
 
    "asavebi", "swapsi", "aswapsi", "asavesi", "asavefi", "unknown", "unknown", "unknown",
    "bloadfi", "bloadsi", "unknown", "unknown", "asaver", "aloadai", "aloadbi", "axsavebi",

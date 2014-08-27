@@ -20,11 +20,10 @@ v  - vm script
 Currently:
 ------
               srev - migration
-                       * migrate bsort
-                       * migrate date time
                        * migrate goods
                        * migrate textview
                        * migrate textdb
+                       * migrate date time
                        * migrate pi
                        * migrate rosetta samples
                        * migrate tape sample
@@ -122,6 +121,11 @@ week2:
 
                        * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
                        
+              arev - general review
+                       * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
+                         the second method call is excessive
+                       * bsort example, sortRange method : variable is used because of loop implementation
+
               arev - lib30 review
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
 
@@ -149,10 +153,10 @@ week2:
                          be implemented in byteArrayPrimitive ?
                        * should clone be implemented in system'Object and be overridden only when it is required?                                                
                        * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
-                       * TextBuffer : review the code, try to optimize / limit the number of newly created objects
                        * optimize control.forrange implementation
 
               adev - lib30 optimization
+                       * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
                        * optimize output code: system'Object 
                        * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
@@ -455,6 +459,8 @@ week1:
 
                        * custom verb dispatching (see for example stringControl split&by[2])
                            : intNumber.shift ; stringControl
+
+                       * using literal / int / .. constants before they are declared ??
 
               xdev - general implementation
                        * msaveparams consumes the stack, the stack change is not correctly calculated 

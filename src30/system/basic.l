@@ -506,6 +506,9 @@
     #constructor new &length:aSize &shortarray:anArray
         <ws_copyarr>.
 
+    #constructor new &length:aSize &index:anIndex &shortarray:anArray
+        <ws_copysubarr>.
+
     #constructor new &length:aSize &short:aChar
         <ws_fill>.
 

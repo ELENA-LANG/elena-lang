@@ -138,30 +138,30 @@
         theLast := theLast set &Next:(ListItem new:anObject).
     ]
 
-//    #method getItem &index:anIndex
-//    [
-//        #var(type:int)aCurrentIndex := anIndex.
-//        #var anItem := theTop.
-//        
-//        control while:[aCurrentIndex > 0] &do:
-//        [
-//            anItem := anItem Next.
-//            anItem == nil
-//                ? [ #throw OutOfRangeException new. ].
-//            
-//            aCurrentIndex := aCurrentIndex - 1.
-//        ].
-//        
-//        ^ anItem.
-//    ]
-//
-//    #method getAt : anIndex
-//        = $self getItem &index::anIndex get.
-//
-//    #method getAt : anIndex : anObject
-//    [
-//        $self getItem &index::anIndex set:anObject.
-//    ]
+    #method getItem &index:anIndex
+    [
+        #var(type:int)aCurrentIndex := anIndex.
+        #var anItem := theTop.
+        
+        #loop (aCurrentIndex > 0) ?
+        [
+            anItem := anItem Next.
+            anItem == nil
+                ? [ #throw OutOfRangeException new. ].
+            
+            aCurrentIndex := aCurrentIndex - 1.
+        ].
+        
+        ^ anItem.
+    ]
+
+    #method getAt : anIndex
+        = $self getItem &index:(anIndex int) get.
+
+    #method setAt : anIndex : anObject
+    [
+        $self getItem &index::anIndex set:anObject.
+    ]
 
     #method clear
     [

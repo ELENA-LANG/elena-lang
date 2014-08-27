@@ -146,6 +146,10 @@ ELENA byte codes (or ecodes)
 
  dsavesi i                  - [sp:i] <= index
  
+ eloadsi i                  - [sp:i] => ext
+ 
+ esavesi i                  - [sp:i] <= ext
+ 
  sub                        - index -= ext
  
  dsubsi n                   - d << d - [sp:i]
@@ -328,13 +332,13 @@ ELENA byte codes (or ecodes)
 
  ncopy                      - int[base] << int[acc]
 
- bwrite                     - bytearray[base][index] << ext
+ bwrite                     - base[index] << ext
  
- bread                      - bytearray[base][index] >> ext                               
+ bread                      - acc[index] >> ext                               
  
- breadw                     - [short]bytearray[base][index] >> [short]ext
+ breadw                     - acc[index] >> [short]ext
  
- breadb                     - bytearray[base][index] >> byte[ext]
+ breadb                     - acc[index] >> [byte]ext
  
  wread                      - [base][index*2] >> [short]ext
 

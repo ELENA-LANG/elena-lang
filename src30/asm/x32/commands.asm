@@ -600,10 +600,10 @@ LabEnd:
   
 end
 
-// ; wsreadw
+// ; wread
 inline % 52h
 
-  mov ecx, [edi + esi * 2]
+  mov ecx, [eax + esi * 2]
   and ecx, 0FFFFh
 
 end
@@ -1239,10 +1239,10 @@ inline % 5Fh
 
 end
 
-// ; loadw
+// ; breadw
 inline % 60h
 
-  mov ecx, [edi + esi]
+  mov ecx, [eax + esi]
   and ecx, 0FFFFh
 
 end
@@ -1250,7 +1250,7 @@ end
 // ; bread
 inline % 61h
 
-  mov ecx, [edi + esi]
+  mov ecx, [eax + esi]
 
 end
 
@@ -1307,7 +1307,7 @@ end
 // ; breadb
 inline % 65h
 
-  mov ecx, [edi + esi]
+  mov ecx, [eax + esi]
   and ecx, 0FFh
 
 end
@@ -2319,12 +2319,27 @@ inline % 0BBh
 
 end
 
+// ; eloadsi
+
+inline % 0BCh
+
+  mov  ecx, [esp + __arg1]
+
+end
 
 // ; pushf
 inline % 0BDh
 
   lea  ebx, [ebp + __arg1]
   push ebx
+
+end
+
+// ; esavesi
+
+inline % 0BEh
+
+  mov  [esp + __arg1], ecx
 
 end
 

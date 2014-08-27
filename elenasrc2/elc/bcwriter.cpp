@@ -1743,45 +1743,35 @@ void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
    // bcopya
    // nsave
 
-   tape.write(bcBSwap);
    tape.write(bcDCopy, offset);
    tape.write(bcBRead);
    tape.write(bcDCopyE);
-   tape.write(bcBCopyA);
    tape.write(bcNSave);
 }
 
 void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
 {
    if ((offset & 1) == 0) {
-      // bswap
       // dcopy index / 2
       // wread
       // dcopye
-      // bcopya
       // nsave
 
-      tape.write(bcBSwap);
       tape.write(bcDCopy, offset >> 1);
       tape.write(bcWRead);
       tape.write(bcDCopyE);
-      tape.write(bcBCopyA);
       tape.write(bcNSave);
    }
    else {
-      // bswap
       // dcopy index
       // bread
       // dcopye
       // andn 0FFFFh
-      // bcopya
       // nsave
-      tape.write(bcBSwap);
       tape.write(bcDCopy, offset);
       tape.write(bcBRead);
       tape.write(bcDCopyE);
       tape.write(bcAndN, 0xFFFF);
-      tape.write(bcBCopyA);
       tape.write(bcNSave);
    }
 }

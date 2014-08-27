@@ -676,8 +676,8 @@ procedure inline'ws_getat
   notless labErr
   lessn   labErr 0
 
-  wread
   acopyb
+  wread
   bloadsi 3
   dcopye
   nsave
@@ -855,6 +855,26 @@ procedure inline'ws_copyarr
 
 end
 
+procedure inline'ws_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  pushe
+  aloadsi 4
+  nload
+  aloadsi 5
+  wsubcopy
+  
+  acopyb
+  popd
+  ecopy 0
+  wwrite
+  quitn 2
+
+end
+
 procedure inline'ws_fill
   
   bcopya
@@ -944,12 +964,12 @@ procedure inline'bs_readword
   notless labErr
   lessn   labErr 0
  
+  acopyb
   breadw
   dcopye
   bloadsi 3
   nsave
 
-  acopyb
   quitn 2
   
 labErr:
@@ -971,6 +991,7 @@ procedure inline'bs_equalword
   notless labErr
   lessn   labErr 0
  
+  acopyb
   breadw
   aloadsi 3
   nload  
@@ -1002,6 +1023,7 @@ procedure inline'bs_equalint
   notless labErr
   lessn   labErr 0
  
+  acopyb
   bread
   aloadsi 3
   nload  
@@ -1042,6 +1064,7 @@ procedure inline'ws_equalword
   notless labErr
   lessn   labErr 0
  
+  acopyb
   wread
   aloadsi 3
   nload  
@@ -1648,15 +1671,17 @@ procedure inline'ws_copybuf
   ecopyd
   aloadsi 2
   dcopy 0
+  pushe
 
 labNext:
   breadb
   wwrite
-  inc
+  eloadsi 0
   next labNext
 
   ecopy 0
   wwrite
+  pop
   
   acopyb
   quitn 3
@@ -1665,20 +1690,66 @@ end
 
 procedure inline'ws_equalchar
 
-   bcopya
-   wlen
-   elsen labFalse 1
-   dcopy 0
-   wread
-   aloadsi 2
-   nload
-   else labFalse
+  bcopya
+  wlen
+  elsen labFalse 1
+  dcopy 0
+  wread
+  aloadsi 2
+  nload
+  else labFalse
 
-   acopyr const : system'true
-   quitn 2   
+  acopyr const : system'true
+  quitn 2   
    
 labFalse:
-   acopyr const : system'false
-   quitn 2
+  acopyr const : system'false
+  quitn 2
+
+end
+
+procedure inline'sa_indexof
+
+  bcopya
+  // ; save the searching value
+  aloadsi 4
+  nload
+  pushd
+  
+  // ; save the length
+  aloadsi 4
+  nload
+  pushd
+
+  // ; save the index
+  aloadsi 4
+  nload
+  pushd
+
+  acopyb
+labNext:
+  dsavesi 0
+  wread
+  dloadsi 2
+  if labFound
+
+  eloadsi 1
+  dloadsi 0
+  next labNext
+
+  dcopy 0FFFFFFFFh
+  bloadsi 8
+  nsave
+  acopyb
+  popi 3
+  quitn 4
+
+labFound:
+  dloadsi 0
+  bloadsi 8
+  nsave
+  acopyb
+  popi 3
+  quitn 4
 
 end

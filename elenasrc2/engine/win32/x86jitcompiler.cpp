@@ -48,7 +48,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 116;
+const int gcCommandNumber = 118;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
@@ -56,8 +56,8 @@ const int gcCommands[gcCommandNumber] =
    bcNewN, bcNew, bcWEval, bcSwapSI, bcASwapSI,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
    bcHook, bcThrow, bcUnhook, bcWName, bcClass,
-   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, 
-   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, 
+   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
+   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
    bcGet, bcSet, bcXSet, bcECall, bcBReadB,
    bcRestore, bcCount, bcIfHeap, bcFlag,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI,
@@ -114,7 +114,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadVMTMIndexOp, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
 
    &compilePush, &compileNop, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
-   &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &compileNop, &compilePushF, &compileNop, &loadIndexOp,
+   &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &loadIndexOp, &compilePushF, &loadIndexOp, &loadIndexOp,
 
    &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &loadFPOp, &loadIndexOp, &compileNop, &compileNop, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,

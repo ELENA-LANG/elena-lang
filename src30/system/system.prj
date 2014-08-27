@@ -10,13 +10,14 @@ inline=..\..\lib30\inline\core_routines.bin
 
 [files]
 object.l
-control.l
-primitives.l
+types.l
 basic.l
+control.l
 memory.l
 exceptions.l
 console.l
 win32_handler.l
+win32_app.l
 routines\enumerators.l
 routines\patterns.l
 calendar\win32_datetime.l
@@ -24,6 +25,7 @@ calendar\dates.l
 collections\list.l
 io\win32_console.l
 io\win32_encoder.l
+io\files.l
 text\textbuffer.l
 text\textio.l
 dynamic\groups.l

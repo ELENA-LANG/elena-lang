@@ -39,11 +39,11 @@
     #method convert &enumerable:aList
         = $self convert &enumerable:aList &char:",".
 
-//    #method convert &array : anArray
-//        = $self convert &enumerable:anArray &char:",".
-//
-//    #method convert &array:anArray &char:aSeparator
-//        = $self convert &enumerable:anArray &char:aSeparator.
+    #method convert &array : anArray
+        = $self convert &enumerable:anArray &char:",".
+
+    #method convert &array:anArray &char:aSeparator
+        = $self convert &enumerable:anArray &char:aSeparator.
 
     #method convert : anObject
         = anObject literal.

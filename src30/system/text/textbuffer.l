@@ -1,5 +1,5 @@
 #define system. 
-//#define system'routines. 
+#define system'routines. 
 //#define system'io. 
 
 #symbol(const)$TextPageSize = 128.
@@ -56,7 +56,7 @@
         #var(type:int)aBufferLength.
         theBuffer read &out'length:aBufferLength.
         
-        (aNewLength > aBufferLength) ?
+        (aNewLength >= aBufferLength) ?
         [
             aNewLength := ((aNewLength / $TextPageSize + 1) * $TextPageSize) int.
             
@@ -86,45 +86,47 @@
         ].
     ]
 
-//    #method indexOf &index:aPosition &char:aChar
-//    [
-//        #var(type:int) anIndex.
-//        theBuffer indexOf &index:(2 * aPosition) &short:aChar &out'int:anIndex.
-//        
-//        (-1 == anIndex) 
-//            ! [ anIndex := anIndex / 2. ].
-//            
-//        ^ anIndex.
-//    ]
-//
-//    #method Substring &index:anIndex &length:aLength
-//        = (aLength == 0)
-//            ? [ emptyLiteralValue ]
-//            ! [
-//                #var aLiteral := LiteralValue new &length:aLength.
-//                
-//                theBuffer bytearray read &index:(anIndex * 2) &length:(aLength * 2) &bytearray:aLiteral.
-//                
-//                literalPrimitiveOp refresh &literal:aLiteral.
-//                
-//                ^ aLiteral.        
-//            ].
-//
-//    #method delete &index:anIndex &length:aLength
-//    [
-//        (anIndex == 0)
-//            ? [
-//                #var aRightLiteral := $self~literalOp Substring &index:aLength.
-//                
-//                $self clear write &literal:aRightLiteral.
-//            ]
-//            ! [
-//                #var aLeftLiteral := $self Substring &index:0 &length:anIndex.
-//                #var aRightLiteral := $self~literalOp Substring &index:(anIndex + aLength).
-//                
-//                $self clear write &literal:aLeftLiteral write &literal:aRightLiteral.                
-//            ].
-//    ]
+    #method indexOf &index:aPosition &char:aChar &out'int:aRetVal
+    [
+        #var(type:short)aValue.
+        aChar read &out'short:aValue.
+        
+        $self indexOf &index:aPosition &short:aValue &out'int:aRetVal.
+    ]
+
+    #method indexOf &index:aPosition &short:aValue &out'int:aRetVal
+    [
+        #var(type:int)aLength.
+        theLength read &out'int:aLength.
+        
+        #var(type:int) anIndex.
+        theBuffer indexOf &index:aPosition &length:aLength &short:aValue &out'int:aRetVal.
+    ]
+
+    #method Substring &index:anIndex &length:aLength
+        = (aLength == 0)
+            ? [ emptyLiteralValue ]
+            ! [
+                #var aLiteral := LiteralValue new &length:aLength &index:anIndex &shortarray::theBuffer.
+
+                ^ aLiteral.        
+            ].
+
+    #method delete &index:anIndex &length:aLength
+    [
+        (anIndex == 0)
+            ? [
+                #var aRightLiteral := $self~literalOp Substring &index:aLength.
+                
+                $self clear write &literal::aRightLiteral.
+            ]
+            ! [
+                #var aLeftLiteral := $self Substring &index:0 &length:anIndex.
+                #var aRightLiteral := $self~literalOp Substring &index:(anIndex + aLength).
+                
+                $self clear write &literal::aLeftLiteral write &literal::aRightLiteral.
+            ].
+    ]
 
     #method literal
     [

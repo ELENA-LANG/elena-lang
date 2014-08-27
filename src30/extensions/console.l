@@ -212,6 +212,6 @@
 #static consoleEx
     = Wrap(console, outputOp, inputOp).
 
-//// --- printingLn ---
-//
-//#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+// --- printingLn ---
+
+#symbol printingLn = aLine [ 'program'output writeLine:aLine ].

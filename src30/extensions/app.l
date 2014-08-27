@@ -14,7 +14,7 @@
     [ 
         #var anArg := anEnumerator get.
     
-        aList append:(LiteralValue new &length:(anArg length + 4) &literal:anArg).
+        aList append:(LiteralValue new &length:(anArg length + 4) &literal::anArg).
     ].
 
     ^ arrayControl new &length:(aList length) &each: anIndex [ aList @ anIndex ].

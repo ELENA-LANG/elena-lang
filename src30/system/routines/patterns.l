@@ -31,24 +31,24 @@
         ^ self.
     ]
     
-//    #method exchange:anIndex1:anIndex2
-//    [
-//        #var aTemp := self @ anIndex1.
-//        
-//        self setAt:anIndex1:(self @ anIndex2).
-//        self setAt:anIndex2:aTemp.
-//    ]
-//    
-//    #method exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var aTemp := self @ anIndex1.
-//        
-//        self setAt &index:anIndex1 &object:(self @ anIndex2).
-//        self setAt &index:anIndex2 &object:aTemp.
-//    ]
-//
-//    #method Subarray &index:anIndex &length:aLength
-//        = Array new &length:aLength ~indexable set &each: i [ self@(anIndex + i) ].
+    #method exchange:anIndex1:anIndex2
+    [
+        #var aTemp := self @ anIndex1.
+        
+        self setAt:anIndex1:(self @ anIndex2).
+        self setAt:anIndex2:aTemp.
+    ]
+    
+    #method exchange &int:anIndex1 &int:anIndex2
+    [
+        #var aTemp := self @ anIndex1.
+        
+        self setAt &index:anIndex1 &object:(self @ anIndex2).
+        self setAt &index:anIndex2 &object:aTemp.
+    ]
+
+    #method Subarray &index:anIndex &length:aLength
+        = Array new &length:aLength ~indexable set &each: i [ self@(anIndex + i) ].
 
     #method sort : aCondition
     [
@@ -80,21 +80,21 @@
 //            [ (self @ i) clone ].
 }
 
-//// --- literalOp ---
-//
-//#class(role)literalOp
-//{
+// --- literalOp ---
+
+#class(role,extension:literal)literalOp
+{
 //    #method indexOf &literal:aLiteral
 //        = self indexOf &index:0 &literal:aLiteral.
-//
-//    #method Substring &index:anIndex
-//    [
-//        #var(type:int)aLength := self length.
-//        aLength := aLength - anIndex.
-//        
-//        ^ self Substring &index:anIndex &length:aLength.
-//    ]
-//     
+
+    #method Substring &index:anIndex
+    [
+        #var(type:int)aLength := self length.
+        aLength := aLength - anIndex.
+        
+        ^ self Substring &index:anIndex &length:aLength.
+    ]
+     
 //    #method trimStart &char:aChar
 //    [
 //        #var theIndex := Integer new.
@@ -148,8 +148,8 @@
 //        
 //        ^ aList~indexable array.
 //    ]
-//}
-//
+}
+
 //#class(role)textOp
 //{
 //    #method write : aLiteral &length:aCounter
@@ -218,26 +218,26 @@
     #method find : aValue
         = control foreach:self &until: x [ aValue equal:x ].
         
-//    #method getAt : anIndex
-//    [
-//        #var anEnumerator := self enumerator.
-//        
-//        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
-//        
-//        ^ anEnumerator get.
-//    ]
-//    
-//    #method setAt : anIndex : aValue
-//    [
-//        #var anEnumerator := self enumerator.
-//        
-//        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
-//        
-//        anEnumerator set:aValue.
-//    ]
-//    
-//    #method Last
-//        = self~enumerable getAt:(self length - 1).
+    #method getAt : anIndex
+    [
+        #var anEnumerator := self enumerator.
+        
+        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
+        
+        ^ anEnumerator get.
+    ]
+    
+    #method setAt : anIndex : aValue
+    [
+        #var anEnumerator := self enumerator.
+        
+        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
+        
+        anEnumerator set:aValue.
+    ]
+    
+    #method Last
+        = self~enumerable getAt:(self length - 1).
     
     #method array
     [
@@ -320,33 +320,33 @@
     new &length:aLength &each:aFunction
         = Array new &length:aLength ~indexable set &each:aFunction.
     
-//    toArray : anIndexable
-//        = anIndexable ~indexable array.
-//    
-////    forEach:anArray &do:aFunction
-////    [
-////        anArray~EArray set &function:aFunction.
-////    ]
-//        
-//    exchange:anIndex1 &with:anIndex2 &in:anArray
+    toArray : anIndexable
+        = anIndexable ~indexable array.
+    
+//    forEach:anArray &do:aFunction
 //    [
-//        anArray~indexable exchange:anIndex1:anIndex2.
+//        anArray~EArray set &function:aFunction.
 //    ]
-//    
-//    find:aValue &in:anArray
-//        = anArray~enumerable seek: x [ aValue equal:x ].
-//
-//    seek:anArray &until:aFunction
-//        = anArray~enumerable seek:aFunction.
-//        
-//    ifExist:aValue &in:anArray
-//        = nil != anArray~enumerable seek: x [ aValue equal:x ].
-//        
-//    sort : anArray
-//        = anArray~indexable sort: (:aFormer:aLater) [ aFormer < aLater ].
-//        
-//    Subarray : anArray &from:anIndex &length:aLength
-//        = anArray~indexable Subarray &index::anIndex &length:aLength.
+        
+    exchange:anIndex1 &with:anIndex2 &in:anArray
+    [
+        anArray~indexable exchange:anIndex1:anIndex2.
+    ]
+    
+    find:aValue &in:anArray
+        = anArray~enumerable seek: x [ aValue equal:x ].
+
+    seek:anArray &until:aFunction
+        = anArray~enumerable seek:aFunction.
+        
+    ifExist:aValue &in:anArray
+        = nil != anArray~enumerable seek: x [ aValue equal:x ].
+        
+    sort : anArray
+        = anArray~indexable sort: ifOrdered.
+        
+    Subarray : anArray &from:anIndex &length:aLength
+        = anArray~indexable Subarray &index::anIndex &length:aLength.
 }.
 
 //// --- literalControl ---

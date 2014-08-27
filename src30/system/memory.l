@@ -66,6 +66,9 @@
     #method equal &index:anIndex &short:aValue
         <ws_equalword>.
         
+    #method indexOf &index:anIndex &length:aLength &short:aLiteral &out'int:aRetVal
+        <sa_indexof>.
+        
     #method write &index:anIndex &length:aLength &literal:aLiteral
         <sa_write>.
         

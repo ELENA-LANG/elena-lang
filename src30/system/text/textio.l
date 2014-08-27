@@ -28,10 +28,8 @@
 
     #method $readFile
     [
-        theStream read &bytearray:theBuffer &length:64.
-        
-        #var(type:int)aLength.
-        theBuffer read &out'length:aLength.
+        #var(type:int)aLength := 64.
+        theStream read &bytearray:theBuffer &out'length:aLength.
         
         (0 == aLength)
             ? [ theOpen := false. theStream close. ]
@@ -51,7 +49,7 @@
     ]
             
     #method $readBuffer &out'int:aRetVal
-        = theOutput indexOf &index:0 &char:10 &out'int:aRetVal.
+        = theOutput indexOf &index:0 &short:10 &out'int:aRetVal.
 
     #method available = theOpen.
 

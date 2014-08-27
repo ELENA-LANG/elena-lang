@@ -1,8 +1,6 @@
 #define(const)true = system'true.
 #define(const)false = system'false.
 
-#type bool.
-#type action.
 
 // --- true ---
 
@@ -123,47 +121,47 @@
         ^ nil.        
     ]
 
-//    #method run &range &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop(i <= n) ?
-//        [
-//            self eval &int:i.
-//            
-//            i := i + dx.
-//        ].
-//        
-//        ^ nil.        
-//    ]          
-//                    
-//    #method rewind &range &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop(i >= n) ?
-//        [
-//            self eval &int:i.
-//            
-//            i := i - dx.
-//        ].
-//        
-//        ^ nil.        
-//    ]          
-//    
-//    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
-//    [
-//        anIterator << aStart.
-//        
-//        #loop (anIterator <= anEndValue) ?
-//        [
-//            self eval:anIterator.
-//            
-//            anIterator += aStep.
-//        ].
-//        
-//        ^ nil.        
-//    ]    
+    #method run &range &int:aStart &int:n &int:dx
+    [
+        #var(type:int)i := aStart.
+        
+        #loop(i <= n) ?
+        [
+            self eval &int:i.
+            
+            i := i + dx.
+        ].
+        
+        ^ nil.        
+    ]          
+                    
+    #method rewind &range &int:aStart &int:n &int:dx
+    [
+        #var(type:int)i := aStart.
+        
+        #loop(i >= n) ?
+        [
+            self eval &int:i.
+            
+            i := i - dx.
+        ].
+        
+        ^ nil.        
+    ]          
+    
+    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
+    [
+        anIterator << aStart.
+        
+        #loop (anIterator <= anEndValue) ?
+        [
+            self eval:anIterator.
+            
+            anIterator += aStep.
+        ].
+        
+        ^ nil.        
+    ]
 }
 
 // --- Action wrapper ---
@@ -204,16 +202,16 @@
     for:anEnumerator &do:aFunction
         = aFunction~functionOp run &enumerator:anEnumerator | stop.
     
-//    forrange &int:aStart &int:anEnd &do:aFunction
-//        = aStart < anEnd
-//            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:1 | stop ]
-//            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:1 | stop ].
-//    
-//    forrange &int:aStart &int:anEnd &int:aStep &do:aFunction
-//        = aStart < anEnd
-//            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:aStep | stop ]
-//            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:aStep | stop ].
-//
-//    from:aStart &to:anEndValue &do:aFunction
-//        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
+    forrange &int:aStart &int:anEnd &do:aFunction
+        = aStart < anEnd
+            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:1 | stop ]
+            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:1 | stop ].
+    
+    forrange &int:aStart &int:anEnd &int:aStep &do:aFunction
+        = aStart < anEnd
+            ? [ aFunction~functionOp run &range &int:aStart &int:anEnd &int:aStep | stop ]
+            ! [ aFunction~functionOp rewind &range &int:aStart &int:anEnd &int:aStep | stop ].
+
+    from:aStart &to:anEndValue &do:aFunction
+        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
 }.
