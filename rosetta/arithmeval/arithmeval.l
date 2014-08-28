@@ -29,7 +29,7 @@
         ^ aNode += self.
     ]
 
-    #method Number = convertor toReal:theValue.    
+    #method Number = convertor toReal:(theValue value).
 }
 
 // --- Node ---
@@ -289,13 +289,12 @@
 [
     #var aText := String new.
 
-    control while:(consoleEx readLine:aText length > 0) &do:
+    control while:[ consoleEx readLine:aText length > 0] &do:
     [
         #var aParser := Parser new.
 
         consoleEx writeLine:"=" :(aParser foreach:aText Number)
-            | ifFailed: 
-                [
+            | if:e [
                     consoleEx writeLine:"Invalid Expression".
                 ].
     ].

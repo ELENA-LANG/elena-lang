@@ -1567,7 +1567,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
       _writer.setMessage(*scope.tape, encodeMessage(0, operator_id, 1));
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callMethod(*scope.tape, 0, 1);
+      _writer.callMethod(*scope.tape, 1, 1);
 
       bool mismatch = false;
       compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->getBoolType(), mismatch, HINT_TYPEENFORCING);

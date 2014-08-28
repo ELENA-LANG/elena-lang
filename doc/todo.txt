@@ -19,11 +19,8 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - general implementation
-                       * box operands for extension operation
-
               srev - migration
-                       * migrate rosetta samples
+                       * migrate rosetta samples : bestshaffle
 
                        * test anagram
 
@@ -33,7 +30,7 @@ Currently:
                        * migrate mt test
                        * migrate interpreter
 
-                       * update samples:ackermann, amb, anagram, anonymrec, arithmeticint
+                       * update samples:ackermann, amb, anagram, anonymrec, arithmeticintm arithmeval, arithmmean
                        
               xdev - script engine
                        * redesign script support

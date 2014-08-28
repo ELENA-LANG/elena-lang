@@ -617,6 +617,10 @@
     
     #method int = IntNumber new &int:theValue.
     
+    #method real = RealNumber new &int:theValue.
+    
+    #method long = LongNumber new &int:theValue.
+    
     #method read &out'int:aRetVal
     [
         aRetVal := theValue.
@@ -816,7 +820,7 @@
         = theValue * anOperand.
     
     #method divide &real:anOperand
-        = theValue + anOperand.
+        = theValue / anOperand.
     
     #method append &real:anOperand    
     [
@@ -836,6 +840,26 @@
     #method divideInto &real:anOperand
     [
         theValue := theValue / anOperand.
+    ]
+    
+    #method append &int:anOperand    
+    [
+        theValue := theValue add&int:anOperand.
+    ]
+        
+    #method reduce &int:anOperand
+    [
+        theValue := theValue subtract &int:anOperand.
+    ]
+        
+    #method multiplyBy &int:anOperand
+    [
+        theValue := theValue multiply &int:anOperand.
+    ]        
+        
+    #method divideInto &int:anOperand
+    [
+        theValue := theValue divide &int:anOperand.
     ]
     
     #method cast : anObject = anObject real.
@@ -1044,22 +1068,35 @@
 
 //    #method add : anObject
 //        = $self add::anObject.
-//        
-//    #method add &array:anArray
-//    [
-//        #var(type:int)aLength1 := $self length.
-//        #var(type:int)aLength2 := anArray length.
-//        
-//        #var aRetVal := Array new &length:(aLength1 + aLength2).
-//        
-//        control forrange &int:0 &int:(aLength1-1) &do: (&int:i)
-//            [ aRetVal setAt &index:i &object:(self getAt &index:i). ].
-//            
-//        control forrange &int:0 &int:(aLength2-1) &do: (&int:j)
-//            [ aRetVal setAt &index:(aLength1 + j) &object:(anArray getAt &index:j). ].
-//            
-//        ^ aRetVal.
-//    ]
+        
+    #method add &array:anArray
+    [
+        #var(type:int)aLength1. 
+        $self read &out'length:aLength1.
+        
+        #var(type:int)aLength2.
+        anArray read &out'length:aLength2.
+        
+        #var aRetVal := Array new &length:(aLength1 + aLength2).
+
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength1) ?
+        [
+            aRetVal setAt &index:anIndex &object:(self getAt &index:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+
+        anIndex := 0.
+        #loop (anIndex < aLength2) ?
+        [
+            aRetVal setAt &index:(aLength1 + anIndex) &object:(anArray getAt &index:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+            
+        ^ aRetVal.
+    ]
 
     #method array = $self.
 
