@@ -20,6 +20,7 @@ win32_handler.l
 win32_app.l
 routines\enumerators.l
 routines\patterns.l
+math\math.l
 calendar\win32_datetime.l
 calendar\dates.l
 collections\list.l

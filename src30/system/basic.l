@@ -557,8 +557,11 @@
         ^ IntNumber new &int:aRetVal.
     ]
     
-//    #method indexOf &index:anIndex &char:aChar
-//        => &indexOf &index:anIndex &literal::aChar.
+    #method indexOf &index:anIndex &char:aChar
+        <= %indexOf &index:anIndex &literal::aChar.
+
+    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+        <= %indexOf &index:anIndex &literal::aChar &out'int:aRetVal.
 
     #method insert &index:anIndex &literal:aLiteral
         <ws_insert>.
@@ -1226,41 +1229,41 @@
 
 // === Basic Factory symbols ==
 
-//#class Variable
-//{
-//    #field theValue.
-//    
-//    #constructor new : aValue
-//    [
-//        theValue := aValue.
-//    ]
-//  
-//    #method write : aValue
-//    [
-//        theValue := aValue.
-//    ]
-//        
-//    #method get = theValue.        
-//        
-//    #method append : aValue
-//    [
-//        theValue := theValue + aValue.
-//    ]
-//    
-//    #method reduce : aValue
-//    [
-//        theValue := theValue - aValue.
-//    ]
-//
-//    #method multiplyBy : aValue
-//    [
-//        theValue := theValue * aValue.
-//    ]
-//    
-//    #method divideInto : aValue
-//    [
-//        theValue := theValue / aValue.
-//    ]
-//        
-//    #method => theValue.
-//}
+#class Variable
+{
+    #field theValue.
+    
+    #constructor new : aValue
+    [
+        theValue := aValue.
+    ]
+  
+    #method write : aValue
+    [
+        theValue := aValue.
+    ]
+        
+    #method value = theValue.        
+        
+    #method append : aValue
+    [
+        theValue := theValue + aValue.
+    ]
+    
+    #method reduce : aValue
+    [
+        theValue := theValue - aValue.
+    ]
+
+    #method multiplyBy : aValue
+    [
+        theValue := theValue * aValue.
+    ]
+    
+    #method divideInto : aValue
+    [
+        theValue := theValue / aValue.
+    ]
+        
+    #method => theValue.
+}

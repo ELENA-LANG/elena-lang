@@ -95,13 +95,14 @@
         ^ self Substring &index:anIndex &length:aLength.
     ]
      
-//    #method trimStart &char:aChar
-//    [
-//        #var theIndex := Integer new.
-//        control while:[self getAt &index:theIndex == aChar ] &do:[ theIndex += 1. ].
-//        
-//        ^ self delete &index:0 &length:theIndex.
-//    ]
+    #method trimStart &char:aChar
+    [
+        #var(type:int)anIndex.
+        #loop (self getAt &index:anIndex == aChar) 
+            ? [ anIndex := anIndex + 1. ].
+        
+        ^ self delete &index:0 &length:anIndex.
+    ]
     
     #method split &char:aChar
     [
@@ -359,77 +360,77 @@
           } 
           eval::aSplitter.
     
-////    trimStart:aChar &in:aString
-////        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
-//
-//    toArray : aLiteral
-//        = aLiteral ~indexable array.
-//
-//    starting : anS &with:aSubS
-//        = 0 == anS indexOf &index:0 &literal::aSubS.
-//        
-//    ending : anS &with:aSubS
-//        = (anS length - aSubS length) == anS indexOf &index:0 &literal::aSubS.
-//        
-//    contain : aSubS &in:anS
-//        = -1 != anS indexOf &index:0 &literal::aSubS.
+//    trimStart:aChar &in:aString
+//        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
+
+    toArray : aLiteral
+        = aLiteral ~indexable array.
+
+    starting : anS &with:aSubS
+        = 0 == anS indexOf &index:0 &literal::aSubS.
+        
+    ending : anS &with:aSubS
+        = (anS length - aSubS length) == anS indexOf &index:0 &literal::aSubS.
+        
+    contain : aSubS &in:anS
+        = -1 != anS indexOf &index:0 &literal::aSubS.
 }.
 
-//// === patterns ===
-//
-//// --- BasePattern ---
-//
-//#class BasePattern
-//{
-//    #method foreach : anEnumerable
-//    [
-//        control foreach:anEnumerable &do:self.
-//    ]
-//}
-//
-//// --- Summing ---
-//
-//#class Summing : BasePattern
-//{
-//    #field theVariable.
-//    
-//    #constructor new : aVariable
-//    [
-//        theVariable := aVariable.
-//    ]
-//    
-//    #method eval : anItem
-//    [
-//        theVariable += anItem.
-//    ]
-//    
-//    #method => theVariable.
-//}
-//
-//// --- DownCounter ---
-//
-//#class DownCounter
-//{
-//    #field theFunction.
-//    
-//    #constructor new : aFunction
-//    [
-//        theFunction := aFunction.
-//    ]
-//    
-//    #method eval : aCounter
-//    [
-//        theFunction eval:aCounter.
-//    ]
-//    
-//    #method eval &int:aCounter
-//    [
-//        theFunction eval:aCounter.
-//    ]
-//    
-//    #method for : aCounter
-//    [
-//        $self~functionOp rewind &range &int:aCounter &int:1 &int:1.
-//    ]
-//}
-//
+// === patterns ===
+
+// --- BasePattern ---
+
+#class BasePattern
+{
+    #method foreach : anEnumerable
+    [
+        control foreach:anEnumerable &do:self.
+    ]
+}
+
+// --- Summing ---
+
+#class Summing : BasePattern
+{
+    #field theVariable.
+    
+    #constructor new : aVariable
+    [
+        theVariable := aVariable.
+    ]
+    
+    #method eval : anItem
+    [
+        theVariable += anItem.
+    ]
+    
+    #method => theVariable.
+}
+
+// --- DownCounter ---
+
+#class DownCounter
+{
+    #field theFunction.
+    
+    #constructor new : aFunction
+    [
+        theFunction := aFunction.
+    ]
+    
+    #method eval : aCounter
+    [
+        theFunction eval:aCounter.
+    ]
+    
+    #method eval &int:aCounter
+    [
+        theFunction eval:aCounter.
+    ]
+    
+    #method for : aCounter
+    [
+        $self~functionOp rewind &range &int::aCounter &int:1 &int:1.
+    ]
+}
+

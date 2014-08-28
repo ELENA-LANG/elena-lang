@@ -115,7 +115,7 @@
 [
     ambOperator for:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
         [ consoleEx writeLine: a : " * " : b : " = 8" ]
-        | onInvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
+        | if &InvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
 ].
 
 #symbol program2 =
@@ -124,5 +124,5 @@
         for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
         seek: (:a:b:c:d) [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
         do: (:a:b:c:d) [ consoleEx writeLine:a:" ":b:" ":c:" ":d. ]
-        | onInvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
+        | if &InvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
 ].

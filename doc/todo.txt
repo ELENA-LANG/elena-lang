@@ -19,14 +19,21 @@ v  - vm script
 ------                                 
 Currently:
 ------
+              xdev - general implementation
+                       * box operands for extension operation
+
               srev - migration
                        * migrate rosetta samples
+
+                       * test anagram
 
                        * migrate date time
                        * migrate pi
                        * migrate tape sample
                        * migrate mt test
                        * migrate interpreter
+
+                       * update samples:ackermann, amb, anagram, anonymrec, arithmeticint
                        
               xdev - script engine
                        * redesign script support
@@ -115,6 +122,7 @@ week2:
                        * optimize control.forrange implementation
 
                        * fix warnings for system'String
+                       * pattern : for i,j - forregion &int:0 &int:0 &int:n &int:m
 
               adev - lib30 optimization
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
@@ -472,6 +480,7 @@ week1:
                        * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
                        * any type casting get method call should be implemented as typecast - see system'literalConvertor convert &int:$self literal
                        * module system should be inclduded automatically ??
+                       * boxing : object saving should be done only if the object was boxed
 
               xdev - linux
                        * paths: lib    - \usr\share\elena\lib30

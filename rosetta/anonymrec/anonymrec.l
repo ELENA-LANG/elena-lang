@@ -16,7 +16,7 @@
     [
         console << "fib(" << i << ")=".
         
-        console writeLine:(fibo:i) | onInvalidArgumentError: e
+        console writeLine:(fibo:i) | if &InvalidArgumentError: e
             [
                 console writeLine:"invalid".
             ].

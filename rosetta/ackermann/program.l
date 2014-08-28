@@ -9,6 +9,7 @@
 // A( 3 , 4 ) =  125
 
 #define system.
+#define extensions.
 
 // --- Ackermann function ---
 
@@ -28,9 +29,7 @@
     [
         control forrange &int:0 &int:5 &do: (&int:j)
         [
-            console << "A(" << i << "," << j << ")=" << (ackermann:i:j).
-            
-            console writeLine.
+            consoleEx writeLine:"A(":i:",":j:")=":(ackermann:i:j).
         ].
     ].
 

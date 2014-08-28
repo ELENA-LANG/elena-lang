@@ -229,28 +229,64 @@
 //    ]
 }.
 
-//#symbol timeSpanControl =
-//{
-//    readYears:aValue
-//        = aValue~EWin32FileTime win32'SystemTime read &short &index:0 - 1601.
-//    
-//    readMonths:aValue
-//        = aValue~EWin32FileTime win32'SystemTime read &short &index:2 - 1.
-//    
-//    readDays:aValue
-//        = aValue~EWin32FileTime win32'SystemTime read &short &index:6 - 1.
-//    
-//    readHours:aValue
-//        = aValue~EWin32FileTime win32'SystemTime read &short &index:8.
-//    
-//    readMinutes:aValue
-//        = aValue~EWin32FileTime win32'SystemTime read &short &index:10.
-//    
-//    readSeconds:aValue
-//        = aValue~EWin32FileTime win32'SystemTime read &short &index:12.
-//        
-//    readMilliseconds:aValue = LongNumber new &long:(aValue long / 10000l).
-//        
+#symbol timeSpanControl =
+{
+    readYears &long:aValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
+                                
+        ^ aSystemTime Year - 1601.
+    ]
+
+    readMonths &long:aValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
+                                
+        ^ aSystemTime Month - 1.
+    ]
+
+    readDays &long:aValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
+                                
+        ^ aSystemTime Day - 1.
+    ]
+    
+    readHours &long:aValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
+                                
+        ^ aSystemTime Hour.
+    ]
+
+    readMinutes &long:aValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
+                                
+        ^ aSystemTime Minute.
+    ]
+
+    readSeconds &long:aValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
+                                
+        ^ aSystemTime Second.
+    ]
+
+    readMilliseconds &long:aValue = LongNumber new &long:(aValue / 10000l).
+
 //    new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
 //    [
 //        // HOTFIX: temporally, due to current implementation
@@ -278,4 +314,4 @@
 //
 //        ^ aSystemStruct win32'FileTime.
 //    ]
-//}.
+}.

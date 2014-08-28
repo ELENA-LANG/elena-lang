@@ -1,4 +1,5 @@
 #define system.
+#define extensions.
 
 #class Extender
 {
@@ -29,7 +30,7 @@
 
     anObject set &foo:"bar".
 
-    console << anObject << ".foo=" << anObject foo.
+    consoleEx write:anObject:".foo=":(anObject foo).
 
     console readChar.
 ].

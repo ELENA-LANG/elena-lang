@@ -6,23 +6,28 @@
 
 #class TimeSpan : BaseNumber
 {
-    #field(type:long)theData.
+    #field(type:long)theValue.
+
+    #constructor new &long:aValue
+    [
+        theValue := aValue.
+    ]
+            
+    #method long = theValue.
     
-//    #method long = $self.
-//    
-//    #method Years = timeSpanControl readYears:$self.
-//
-//    #method Months = timeSpanControl readMonths:$self.
-//                        
-//    #method Days = timeSpanControl readDays:$self.
-//                        
-//    #method Hours = timeSpanControl readHours:$self.
-//                        
-//    #method Minutes = timeSpanControl readMinutes:$self.
-//                        
-//    #method Seconds = timeSpanControl readSeconds:$self.
-//
-//    #method Milliseconds = timeSpanControl readMilliseconds:$self.    
+    #method Years = timeSpanControl readYears &long:theValue.
+
+    #method Months = timeSpanControl readMonths &long:theValue.
+                        
+    #method Days = timeSpanControl readDays &long:theValue.
+                        
+    #method Hours = timeSpanControl readHours &long:theValue.
+                        
+    #method Minutes = timeSpanControl readMinutes &long:theValue.
+                        
+    #method Seconds = timeSpanControl readSeconds &long:theValue.
+
+    #method Milliseconds = timeSpanControl readMilliseconds &long:theValue.    
 }
 
 // --- Date ---
@@ -47,14 +52,14 @@
 //    #constructor new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond
 //        => &new &long:(dateTimeControl new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond).
 
-//    #method add &long:aValue
-//        = Date new &long:(theData + aValue).
-//    
-//    #method subtract &long:aValue
-//        = Date new &long:(theData - aValue).
-//  
-//    #method subtract &datetime:aValue
-//        = TimeSpan new &long:(theData - aValue long).
+    #method add &long:aValue
+        = Date new &long:(theValue + aValue).
+    
+    #method subtract &long:aValue
+        = Date new &long:(theValue - aValue).
+  
+    #method subtract &datetime:aValue
+        = TimeSpan new &long:(theValue - aValue long).
 
     #method Year = dateTimeControl readYear &long:theValue.
 
@@ -71,6 +76,8 @@
     #method Second = dateTimeControl readSecond &long:theValue.
                         
     #method Millisecond = dateTimeControl readMillisecond &long:theValue.
+
+    #method long = theValue.
                         
 //    #method add &Years:aYear
 //        = $self add &long:(timeSpanControl new &Years:aYear &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
@@ -92,6 +99,8 @@
 
     #method literal
         = dateTimeControl toShortDateTime &long:theValue literal.
+        
+    #method cast : anObject = anObject long.
 }
 
 // --- now ---

@@ -636,7 +636,7 @@ protected:
 
    ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
 
-   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object);
+   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode = 0);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo object, int mode);
 

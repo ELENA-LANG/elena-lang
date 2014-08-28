@@ -1799,18 +1799,18 @@ inline % 80h
 
 end
 
-// ; rcopyint (src, tgt)
+// ; rcopyl (src, tgt)
 inline % 81h
 
-  fild dword ptr [eax]
+  fild qword ptr [eax]
   fstp qword ptr [edi]
 
 end
 
-// ; rcopylong (src, tgt)
+// ; rcopyn (src, tgt)
 inline % 82h
 
-  fild qword ptr [eax]
+  fild dword ptr [eax]
   fstp qword ptr [edi]
 
 end

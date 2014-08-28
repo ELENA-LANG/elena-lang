@@ -8,7 +8,7 @@
 {
     #field theIndexers.
     #field theCurrent.
-    #field theCount.
+    #field(type:int)theCount.
     
     #constructor new : aCollection
     [
@@ -68,9 +68,9 @@
     [
         #var aPrevious := Integer new:(theIndexers@anIndex index).
         
-        #var retVal := control forrange &int:anIndex &int:(theCount-1) &do: (&int:i)
+        #var retVal := control forrange &int::anIndex &int:(theCount-1) &do: (&int:i)
         [
-            theIndexers@i set &index:(aPrevious += 1) available
+            theIndexers@i set &index::(aPrevious append &int:1 value) available
                 ! [ #break. ].            
         ].
         

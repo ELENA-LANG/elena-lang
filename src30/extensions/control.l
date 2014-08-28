@@ -14,7 +14,7 @@
 
     foreach:anEnumerable &where:aCondition &do:aFunction
         = aFunction~functionOp run &each:(anEnumerable enumerator) &where:aCondition | stop.
-
-    dispatch : anObject1 : anObject2 &table:aTable &to:aTarget
-        = aTarget~(aTable~EDispatchTable eval:anObject) eval:anObject1:anObject2.
+//
+//    dispatch : anObject1 : anObject2 &table:aTable &to:aTarget
+//        = aTarget~(aTable~EDispatchTable eval:anObject) eval:anObject1:anObject2.
 }.

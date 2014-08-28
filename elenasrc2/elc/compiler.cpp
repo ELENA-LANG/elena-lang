@@ -29,6 +29,7 @@ using namespace _ELENA_;
 #define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
+#define HINT_BOXINGENFORCING  0x00040000     // enforce boxing
 
 // --- Method optimization masks ---
 #define MTH_FRAME_USED        0x00000001
@@ -1985,14 +1986,16 @@ ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
    return object;
 }
 
-bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object)
+bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode)
 {
    // NOTE: boxing should be applied only for the typed local parameter
    if (object.kind == okParams) {
       return true;
    }
-   else if (object.kind == okParam || object.kind == okLocal || object.kind == okLocalAddress || object.kind == okFieldAddress) {
-      return scope.moduleScope->sizeHints.exist(object.extraparam);
+   else if (object.kind == okParam || object.kind == okLocal || object.kind == okLocalAddress || object.kind == okFieldAddress
+      || test(mode, HINT_BOXINGENFORCING)) 
+   {
+      return scope.moduleScope->sizeHints.exist(object.extraparam) && scope.moduleScope->typeHints.exist(object.extraparam);
    }
    else return false;
 }
@@ -2003,10 +2006,12 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
    if (object.kind == okParams) {
       _writer.boxArgList(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
    }
-   else if (object.kind == okParam || object.kind == okLocal || object.kind == okLocalAddress || object.kind == okFieldAddress) {
+   else if (object.kind == okParam || object.kind == okLocal || object.kind == okLocalAddress || object.kind == okFieldAddress 
+      || test(mode, HINT_BOXINGENFORCING)) 
+   {
       int sizeHint = scope.moduleScope->sizeHints.get(object.extraparam);
       if (sizeHint != 0) {
-         ref_t wrapperRef = scope.moduleScope->typeHints.get(object.extraparam);         
+         ref_t wrapperRef = scope.moduleScope->typeHints.get(object.extraparam);
          if (wrapperRef != 0)
             _writer.boxObject(*scope.tape, sizeHint, wrapperRef | mskVMTRef);
       }
@@ -2839,8 +2844,18 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(getType(object));
 
       ref_t roleRef = typeExtensions->get(messageRef);
-      if (roleRef != 0)
-         object = ObjectInfo(okConstantRole, roleRef);
+      if (roleRef != 0) {
+         // if the object can be stack allocated - box it
+         if (checkIfBoxingRequired(scope, object, HINT_BOXINGENFORCING)) {
+            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
+
+            boxObject(scope, object, HINT_BOXINGENFORCING);
+
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
+         }         
+
+         object = ObjectInfo(okConstantRole, roleRef, getType(object));
+      }
    }
 
    if (spaceToRelease > 0) {
