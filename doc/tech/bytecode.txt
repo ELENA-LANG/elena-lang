@@ -367,7 +367,7 @@ ELENA byte codes (or ecodes)
 
  wton                       - converts literal[acc] into int with base=index and copies to int[base] ; out index = 0 if error 
  
- nshift                     - int[base] <<= index
+ nshift                     - int[base] << int[acc] <<< index
  
  nnot                       - int[base] << not int[acc]
 
@@ -401,6 +401,10 @@ ELENA byte codes (or ecodes)
  lxor                       - long[base] ~~ long[acc]
  
  wtol                       - converts literal[acc] into long with base=index and copies to int[base] ; out index = 0 if error
+ 
+ lrndnew                    - random number init >> long(self)
+ 
+ lrndnext                   - long(self) : index >> acc
 
  
  float commands:

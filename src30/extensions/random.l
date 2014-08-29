@@ -1,5 +1,6 @@
 #define system.
 #define system'routines.
+#define system'dynamic.
 
 // --- RandomGenerator ---
 
@@ -48,7 +49,7 @@
     
     randomize:aCount &array:anArray
     [
-        DownCounter new:Wrap(ERandomizer, anArray) for:aCount.
+        DownCounter new:Wrap(anArray, ERandomizer) for:aCount.
         
         ^ anArray.
     ]

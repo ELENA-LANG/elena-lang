@@ -25,13 +25,14 @@ Currently:
                        * test anagram
 
                        * migrate date time
+                       * migrate matrix
                        * migrate pi
                        * migrate tape sample
                        * migrate mt test
                        * migrate interpreter
 
                        * update samples:ackermann, amb, anagram, anonymrec, arithmeticintm arithmeval, arithmmean,
-                                        bestshuffle
+                                        bestshuffle, brackets
                        
               xdev - script engine
                        * redesign script support

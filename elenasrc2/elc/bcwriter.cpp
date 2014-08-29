@@ -1131,9 +1131,16 @@ void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
    DebugLineInfo info;
    info.symbol = dsLocal;
    info.addresses.local.nameRef = scope.debugStrings->Position();
+
+   if (level < 0) {
+      scope.debugStrings->writeWideLiteral(SELF_VAR);
+
+      level -= frameLevel;
+   }
+   else scope.debugStrings->writeWideLiteral(THIS_VAR);
+
    info.addresses.local.level = level;
 
-   scope.debugStrings->writeWideLiteral(THIS_VAR);
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 

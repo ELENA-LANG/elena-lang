@@ -29,7 +29,7 @@
     
     #method multiply : anObject = $self multiply::($self cast:anObject).
     
-    #method divide : anObject = $self divide::($self cast:anObject).
+    #method divide : anObject = $self divide::($self cast:anObject).    
 }
 
 // --- IntBaseNumber ---
@@ -47,6 +47,11 @@
         
     #method anyMask : anOperand
         = 0 != $self and:anOperand.
+        
+    #method shift : anOffset
+        = $self shift &index:(anOffset int).
+        
+    #method negative = 0 subtract::$self.
 }
 
 // --- IntBaseVariable ---
@@ -208,8 +213,6 @@
         <int_saveshort>.
 
     #method literal = literalConvertor convert &int:$self literal.
-
-    #method negative = 0 - $self.
 
     #method not
         <int_not>.
@@ -685,6 +688,12 @@
     #method literal = system'literalConvertor convert &int:theValue literal.
 
     #method clone = Integer new &int:theValue.
+    
+    #method not
+        <int_not>.
+        
+    #method shift &index:anOrder
+        <int_shift>.
 }
 
 // --- Long ---
@@ -769,6 +778,12 @@
     #method literal = system'literalConvertor convert &long:theValue literal.
 
     #method clone = Long new &long:theValue.
+    
+    #method not
+        <long_not>.
+        
+    #method shift &index:anOrder
+        <long_shift>.
 }
 
 // --- Real ---

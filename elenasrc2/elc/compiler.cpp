@@ -1363,7 +1363,7 @@ ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode, ref_t& typeRef
    return moduleScope->module->mapReference(name);
 }
 
-void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withSelf)
+void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1390,6 +1390,9 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
    }
    if (withSelf)
       _writer.declareSelfInfo(*tape, 1);
+
+   if (withSelf)
+      _writer.declareSelfInfo(*tape, -1);
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* referenceName)
@@ -4049,7 +4052,7 @@ void Compiler :: compileExpressionAction(DNode node, MethodScope& scope)
    _writer.declareMethod(*codeScope.tape, scope.message);
    codeScope.level++;
 
-   declareParameterDebugInfo(scope, codeScope.tape, false);
+   declareParameterDebugInfo(scope, codeScope.tape, false, false);
 
    compileRetExpression(node, codeScope, 0);
 
@@ -4218,7 +4221,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       else _writer.declareMethod(*codeScope.tape, scope.message);
       codeScope.level++;
 
-      declareParameterDebugInfo(scope, codeScope.tape, true);
+      declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
 
       DNode body = node.select(nsSubCode);
       // if method body is a return expression
@@ -4308,7 +4311,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
             _writer.newFrame(*codeScope.tape);
             codeScope.level++;
 
-            declareParameterDebugInfo(scope, codeScope.tape, true);
+            declareParameterDebugInfo(scope, codeScope.tape, true, false);
 
             compileCode(body, codeScope);
 

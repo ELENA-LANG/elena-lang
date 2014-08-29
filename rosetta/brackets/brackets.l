@@ -13,7 +13,7 @@
     ^ (0 == aLength)
         ? [ emptyLiteralValue ]
         ! [
-            #var aBrackets := arrayControl new &length:aLength &each: i[ CharValue new:91 ] + arrayControl new &length:aLength &each: i[ CharValue new:93 ].
+            #var aBrackets := arrayControl new &length:(aLength int) &each: i[ CharValue new &short:91 ] + arrayControl new &length:(aLength int) &each: i[ CharValue new &short:93 ].
     
             randomControl randomize:(aLength * 2) &array:aBrackets.
     

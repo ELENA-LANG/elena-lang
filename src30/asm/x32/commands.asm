@@ -521,7 +521,7 @@ end
 inline % 4Dh
 
   mov ecx, esi
-  mov ebx, [edi]
+  mov ebx, [eax]
   and ecx, ecx
   jns short lab1
   neg ecx
@@ -1647,9 +1647,9 @@ end
 // ; lshift
 inline % 7Bh
 
-  mov  edx, [edi]
+  mov  edx, [eax]
   mov  ecx, esi
-  mov  ebx, [edi+4]
+  mov  ebx, [eax+4]
 
   and  ecx, ecx
   jns  short LR
@@ -1786,6 +1786,58 @@ labErr:
 
 labEnd:
   mov  eax, edi
+
+end
+
+// ; lrndnew
+inline % 7Eh
+
+  call code : % INIT_RND
+  mov  [edi], eax
+  
+end
+
+// ; lrndnext
+inline % 7Fh
+
+   xor  edx, edx
+   mov  ecx, esi
+   cmp  ecx, edx
+   jz   short labEnd
+
+   push eax
+   push esi
+
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   mul  esi
+   add  eax, ecx
+   xchg eax, esi
+   mul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx] , esi
+   cdq
+   pop  ecx
+   idiv ecx
+   pop  eax
+labEnd:
+   mov  [eax], edx
 
 end
 

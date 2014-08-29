@@ -627,7 +627,7 @@ protected:
 
 ////   void assignBranchExpression(DNode node, TerminalInfo target, CodeScope& scope, ObjectInfo currentInfo, bool& assigned);
 
-   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withSelf);
+   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 
    ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, int mode);
 

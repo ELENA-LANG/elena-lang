@@ -122,6 +122,8 @@ enum ByteCode
    bcLShift         = 0x7B,
    bcLNot           = 0x7C,
    bcWToL           = 0x7D,
+   bcLRndNew        = 0x7E,
+   bcLRndNext       = 0x7F,
 
    bcRCopy          = 0x80,
    bcRCopyL         = 0x81,

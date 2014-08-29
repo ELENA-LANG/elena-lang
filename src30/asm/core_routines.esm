@@ -354,10 +354,12 @@ end
                  
 procedure inline'int_shift
 
+  pusha
   newn   class : system'IntNumber 4
   bcopya
-  aloadsi 2    // ; load index
+  aloadsi 3    // ; load index
   nload
+  popa
   nshift
   acopyb
   quitn 2
@@ -525,10 +527,12 @@ end
                  
 procedure inline'long_shift
 
+  pusha
   newn   class : system'LongNumber 8
   bcopya
-  aloadsi 2    // ; load index
+  aloadsi 3    // ; load index
   nload
+  popa
   lshift
   acopyb
   quitn 2
@@ -1637,6 +1641,7 @@ labNext:
   less labNext
   
   pope
+  setsubj 0
   aloadbi 0
   ajumpvi 0
 
@@ -1692,6 +1697,7 @@ procedure inline'ws_equalchar
 
   bcopya
   wlen
+  dec
   elsen labFalse 1
   dcopy 0
   wread
