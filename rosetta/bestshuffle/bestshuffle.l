@@ -1,5 +1,6 @@
 #define system.
 #define system'routines.
+#define extensions.
 
 // --- shuffle ---
 
@@ -8,12 +9,12 @@
     #var aLength := aLiteral length.
     #var aShuffled := literalControl toArray:aLiteral.
 
-    control forrange &int:0 &int:(aLength-1) &do: (&int:i)
+    control forrange &int:0 &int::(aLength-1) &do: (&int:i)
     [
         #var aChar := aLiteral@i.
         (aChar == (aShuffled@i)) ?
         [
-            control forrange &int:0 &int:(aLength-1) &do: (&int:j)
+            control forrange &int:0 &int::(aLength-1) &do: (&int:j)
             [
                 #var anAltChar := aShuffled@j.
                 (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
@@ -38,7 +39,7 @@
     control forrange &int:0 &int:(anOriginal length - 1) &do: (&int:i)
         [ (anOriginal @ i) == (aShuffled @ i) ? [ aScore += 1. ]. ].
     
-    ^ aScore number.
+    ^ aScore value.
 ].
 
 // --- Program ---
@@ -49,8 +50,7 @@
     [
         #var aShuffled := shuffle:aWord.
 
-        console write:"The best shuffle of " write:aWord write:" is " write:aShuffled write:"(" 
-            write:(scoreShuffle:aWord:aShuffled) writeLine:")".
+        consoleEx writeLine:"The best shuffle of ":aWord:" is ":aShuffled:"(":(scoreShuffle:aWord:aShuffled):")".
     ].
 
     console readChar.

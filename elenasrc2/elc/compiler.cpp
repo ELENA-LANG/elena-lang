@@ -2066,11 +2066,14 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, ref_t typ
 
       _writer.loadObject(*scope.tape, param);
        
-      // if type is mismatch - typecast
-      bool mismatch = false;
-      compileTypecast(scope, param, type_ref, mismatch, HINT_TYPEENFORCING);
-      if (mismatch)
-         scope.raiseWarning(wrnTypeMismatch, arg.FirstTerminal());
+      if (type_ref != 0) {
+         // if type is mismatch - typecast
+         bool mismatch = false;
+         compileTypecast(scope, param, type_ref, mismatch, HINT_TYPEENFORCING);
+         if (mismatch)
+            scope.raiseWarning(wrnTypeMismatch, arg.FirstTerminal());
+      }
+      else boxObject(scope, param, 0);
 
       if (test(mode, HINT_DIRECT_ORDER)) {
          _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
@@ -3336,10 +3339,9 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, ref_
          }
          if (target.extraparam != type_ref) {
             // if type mismatch
+            // call typecast method
             mismatch = true;
 
-            // if they are not synonym
-            // call typecast method
             boxObject(scope, target, 0);
 
             _writer.setMessage(*scope.tape, encodeMessage(type_ref, 0, 0));
@@ -3349,6 +3351,8 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo target, ref_
          }
       }
       else {
+         boxObject(scope, target, 0);
+
          _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
          _writer.setMessage(*scope.tape, encodeMessage(type_ref, GET_MESSAGE_ID, 0));
          _writer.callMethod(*scope.tape, 0, 0);

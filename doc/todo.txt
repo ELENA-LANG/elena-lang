@@ -30,7 +30,8 @@ Currently:
                        * migrate mt test
                        * migrate interpreter
 
-                       * update samples:ackermann, amb, anagram, anonymrec, arithmeticintm arithmeval, arithmmean
+                       * update samples:ackermann, amb, anagram, anonymrec, arithmeticintm arithmeval, arithmmean,
+                                        bestshuffle
                        
               xdev - script engine
                        * redesign script support

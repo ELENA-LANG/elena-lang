@@ -147,6 +147,38 @@
         
         ^ aList~indexable array.
     ]
+
+    #method replace &first_occ &literal:aReplacee &literal:aReplacer
+    [
+        #var(type:int)anIndex. 
+        self indexOf &index:0 &literal:aReplacee &out'int:anIndex.
+        
+        ^ (anIndex != -1)
+            ? [ ^ self delete &index:anIndex &length::aReplacee insert &index:anIndex &literal:aReplacee. ]
+            ! [ self ].
+    ]
+        
+    #method replace &all_occ &literal:aReplacee &literal:aReplacer
+    [
+        #var aTarget := String new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anEnd := 0.
+        self indexOf &index:aStart &literal:aReplacee &out'int:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget 
+                append &literal::(self Substring &index:aStart &length:(anEnd - aStart))
+                append &literal:aReplacer.
+            
+            aStart := anEnd + aReplacee length.
+            self indexOf &index:aStart &literal:aReplacee &out'int:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget append:(self~literalOp Substring &index:aStart) literal ]
+            ! [ self literal ].
+    ]    
 }
 
 //#class(role)textOp
