@@ -12,9 +12,9 @@
 
 #class BaseValue
 {
-    #method equal : anObject = $self equal::($self cast:anObject).
+    #method equal : anObject = $self equal::(anObject value).
     
-    #method less : anObject = $self less::($self cast:anObject).
+    #method less : anObject = $self less::(anObject value).
     
     #method greater : anObject = anObject less:$self.
 }
@@ -23,33 +23,30 @@
 
 #class BaseNumber : BaseValue
 {
-    #method add : anObject = $self add::($self cast:anObject).
+    #method add : anObject = $self add::(anObject value).
     
-    #method subtract : anObject = $self subtract::($self cast:anObject).
+    #method subtract : anObject = $self subtract::(anObject value).
     
-    #method multiply : anObject = $self multiply::($self cast:anObject).
+    #method multiply : anObject = $self multiply::(anObject value).
     
-    #method divide : anObject = $self divide::($self cast:anObject).    
+    #method divide : anObject = $self divide::(anObject value).    
 }
 
 // --- IntBaseNumber ---
 
 #class IntBaseNumber : BaseNumber
 {
-    #method and : anOperand = $self and::($self cast:anOperand).
+    #method and : anOperand = $self and::(anOperand value).
     
-    #method or : anOperand = $self or::($self cast:anOperand).
+    #method or : anOperand = $self or::(anOperand value).
     
-    #method xor : anOperand = $self xor::($self cast:anOperand).
+    #method xor : anOperand = $self xor::(anOperand value).
     
     #method allMask : anOperand
         = $self and:anOperand == anOperand.
         
     #method anyMask : anOperand
         = 0 != $self and:anOperand.
-        
-    #method shift : anOffset
-        = $self shift &index:(anOffset int).
         
     #method negative = 0 subtract::$self.
 }
@@ -128,6 +125,9 @@
 #class(sealed,type:short,dbg:int) ShortNumber : IntBaseNumber
 {
     #field(size:2)theData.
+    
+    #constructor new &int:anOperand
+        <int_copyshort>.
 }
 
 // --- IntNumber ---
@@ -219,8 +219,6 @@
 
     #method value = $self.
     
-    #method cast : anObject = anObject int.
-
     #method clone = IntNumber new &int:$self.
 }
 
@@ -313,8 +311,6 @@
     #method clone = LongNumber new &long:$self.
     
     #method value = $self.
-    
-    #method cast : anObject = anObject long.
 }
 
 // --- realNumber ---
@@ -377,225 +373,24 @@
     #method divide &int:anOperand
         = $self divide &real::(RealNumber new &int:anOperand).
 
+    #method add &long:anOperand
+        = $self add &real::(RealNumber new &long:anOperand).
+
+    #method subtract &long:anOperand
+        = $self subtract &real::(RealNumber new &long:anOperand).
+
+    #method multiply &long:anOperand
+        = $self multiply &real::(RealNumber new &long:anOperand).
+
+    #method divide &long:anOperand
+        = $self divide &real::(RealNumber new &long:anOperand).
+
     #method literal = literalConvertor convert &real:$self literal.
     
     #method value = $self.
-    
-    #method cast : anObject = anObject real.
 
     #method clone = RealNumber new &real:$self.
 }
-
-// --- CharValue ---
-
-#class(type:char,dbg:int) CharValue : BaseValue
-{
-    #field(type:short)theValue.
-    
-    #constructor new
-    [
-        theValue := 0 short.
-    ]
-    
-//    #constructor new : aValue
-//        => &new::aValue.
-    
-    #constructor new &short:aCode
-    [
-        theValue := aCode.
-    ]
-
-    #constructor new &char:aCode
-        <= %new &short::aCode.
-
-    #method equal &int:anOperand 
-        <int_equal>.
-
-    #method less &int:anOperand 
-        <int_less>.
-
-    #method equal &char:anOperand 
-        <int_equal>.
-
-    #method less &char:anOperand 
-        <int_less>.
-
-    #method equal &literal:aLiteral
-        = aLiteral equal::$self.
-
-    #method char = $self.
-    
-    #method short = ShortNumber new &short:theValue.
-
-    #method int = IntNumber new &short:theValue.
-
-    #method literal = system'LiteralValue new &length:1 &short:theValue literal.
-    
-    #method clone = CharValue new &short:theValue.
-    
-    #method value = $self.
-    
-    #method cast : anObject = anObject char.
-}
-
-// --- emptyliteralvalue ---
-
-#symbol(const) emptyLiteralValue = "".
-
-// --- literalvalue ---
-
-#class LiteralIterator
-{
-    #field theLiteral.
-    #field theIndex.
-    
-    #constructor new &literal:aLiteral
-    [
-        theLiteral := aLiteral.
-        theIndex := system'Integer new &int:(-1).
-    ]
-
-    #method index = theIndex int.
-
-    #method reset
-    [
-        theIndex write &int:-1.
-    ]
-
-    #method append &index:anIndex
-    [
-        theIndex append &int:anIndex.
-    ]
-
-    #method set &index:anIndex
-    [
-        theIndex write &int:anIndex.
-    ]
-
-    #method available = theIndex less &int:(theLiteral length).
-    
-    #method next
-    [
-        theIndex append &int:1.
-
-        ^ theIndex less &int:(theLiteral length).
-    ]
-    
-    #method get
-    [
-        #var(type:int)anIndex.
-        theIndex read &out'int:anIndex.
-        
-        #var(type:short)aChar.
-        theLiteral getAt &index:anIndex &out'short:aChar.
-        
-        ^ CharValue new &short:aChar.
-    ]
-}
-
-#class(type:literal,sealed,dbg:literal) LiteralValue : BaseValue
-{
-    #field(itemsize:2)theData.
-
-    #constructor => <ws_create>.
-
-    #constructor new &length:aSize 
-    [
-    ]
-
-    #constructor new &length:aSize &literal:aLiteral
-        <ws_copy>.
-
-    #constructor new &length:aSize &shortarray:anArray
-        <ws_copyarr>.
-
-    #constructor new &length:aSize &index:anIndex &shortarray:anArray
-        <ws_copysubarr>.
-
-    #constructor new &length:aSize &short:aChar
-        <ws_fill>.
-
-    #constructor new &literal:aLiteral
-        <= %new &length::aLiteral &literal:aLiteral.
-
-    #method literal = $self.
-
-    #method equal &literal : aLiteral
-        <ws_equal>.
-
-    #method equal &char : aChar
-        <ws_equalchar>.
-
-    #method less &literal : aLiteral
-        <ws_less>.
-
-    #method add : aLiteral
-        = $self add &literal::aLiteral.
-
-    #method add &literal : aLiteral
-        <ws_add>.
-
-//    #method add &char : aChar
-//        = literalPrimitiveOp concat &literal:$self &literal::aChar.
-
-    #method getAt : aParam
-    [
-        #var(type:short)aChar.
-        $self getAt &index:(aParam int) &out'short:aChar.
-        
-        ^ CharValue new &short:aChar.
-    ]
-
-    #method getAt &index:anIndex &out'short:aChar
-        <ws_getat>.
-
-    #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
-        <ws_indexof>.
-
-    #method indexOf &index:anIndex &literal:aLiteral
-    [
-        #var(type:int)aRetVal.
-        $self indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal.
-        
-        ^ IntNumber new &int:aRetVal.
-    ]
-    
-    #method indexOf &index:anIndex &char:aChar
-        <= %indexOf &index:anIndex &literal::aChar.
-
-    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
-        <= %indexOf &index:anIndex &literal::aChar &out'int:aRetVal.
-
-    #method insert &index:anIndex &literal:aLiteral
-        <ws_insert>.
-
-    #method delete &index:anIndex &length:aLength
-        <ws_delete>.
-
-    #method Substring &index:anIndex &length:aLength
-        <ws_subs>.
-
-    #method length
-    [
-        #var(type:int)aLength.
-        $self read &out'length:aLength.
-        
-        ^ IntNumber new &int:aLength.
-    ]
-
-    #method read &out'length:aLength
-        <ws_getlen>.
-
-    #method enumerator = LiteralIterator new &literal:$self.
-    
-    #method clone = LiteralValue new &literal:$self.
-    
-    #method value = $self.
-    
-    #method cast : anObject = anObject literal.
-}
-
-// === Basic Variable Classes ===
 
 // --- Integer ---
 
@@ -660,8 +455,44 @@
         
     #method xor &int:anOperand
         = theValue ^^ anOperand.
+        
+    #method equal &long:anOperand 
+        = LongNumber new &int:theValue equal &long:anOperand.
+
+    #method less &long:anOperand
+        = LongNumber new &int:theValue less &long:anOperand.
+        
+    #method add &long:anOperand
+        = LongNumber new &int:theValue add &long:anOperand.
     
-    #method append &int:anOperand    
+    #method subtract &long:anOperand
+        = LongNumber new &int:theValue subtract &long:anOperand.
+    
+    #method multiply &long:anOperand
+        = LongNumber new &int:theValue multiply &long:anOperand.
+    
+    #method divide &long:anOperand
+        = LongNumber new &int:theValue divide &long:anOperand.
+                
+    #method equal &real:anOperand 
+        = RealNumber new &int:theValue equal &real:anOperand.
+
+    #method less &real:anOperand
+        = RealNumber new &int:theValue less &real:anOperand.
+        
+    #method add &real:anOperand
+        = RealNumber new &int:theValue add &real:anOperand.
+    
+    #method subtract &real:anOperand
+        = RealNumber new &int:theValue subtract &real:anOperand.
+    
+    #method multiply &real:anOperand
+        = RealNumber new &int:theValue multiply &real:anOperand.
+    
+    #method divide &real:anOperand
+        = RealNumber new &int:theValue divide &real:anOperand.
+
+    #method append &int:anOperand
     [
         theValue := theValue + anOperand.
     ]
@@ -724,6 +555,11 @@
         theValue := anOperand.
     ]
     
+    #method read &out'long:aRetVal
+    [
+        aRetVal := theValue.
+    ]
+    
     #method equal &long:anOperand 
         = theValue == anOperand.
 
@@ -750,7 +586,52 @@
         
     #method xor &long:anOperand
         = theValue ^^ anOperand.
+
+    #method equal &int:anOperand 
+        = $self equal &long:(LongNumber new &int:anOperand).
+
+    #method less &int:anOperand
+        = $self less &long:(LongNumber new &int:anOperand).
+        
+    #method add &int:anOperand
+        = $self add &long:(LongNumber new &int:anOperand).
     
+    #method subtract &int:anOperand
+        = $self subtract &long:(LongNumber new &int:anOperand).
+    
+    #method multiply &int:anOperand
+        = $self multiply &long:(LongNumber new &int:anOperand).
+    
+    #method divide &int:anOperand
+        = $self divide &long:(LongNumber new &int:anOperand).
+        
+    #method and &int:anOperand
+        = $self and &long:(LongNumber new &int:anOperand).
+        
+    #method or &int:anOperand
+        = $self or &long:(LongNumber new &int:anOperand).
+        
+    #method xor &int:anOperand
+        = $self xor &long:(LongNumber new &int:anOperand).
+        
+    #method equal &real:anOperand 
+        = RealNumber new &long:theValue equal &real:anOperand.
+
+    #method less &real:anOperand
+        = RealNumber new &long:theValue less &real:anOperand.
+        
+    #method add &real:anOperand
+        = RealNumber new &long:theValue add &real:anOperand.
+    
+    #method subtract &real:anOperand
+        = RealNumber new &long:theValue subtract &real:anOperand.
+    
+    #method multiply &real:anOperand
+        = RealNumber new &long:theValue multiply &real:anOperand.
+    
+    #method divide &real:anOperand
+        = RealNumber new &long:theValue divide &real:anOperand.
+                        
     #method append &long:anOperand    
     [
         theValue := theValue + anOperand.
@@ -819,6 +700,16 @@
         theValue := anOperand.
     ]
     
+    #method write &int:anOperand
+    [
+        theValue := RealNumber new &int:anOperand.
+    ]
+    
+    #method read &out'real:aRetVal
+    [
+        aRetVal := theValue.
+    ]
+    
     #method equal &real:anOperand 
         = theValue == anOperand.
 
@@ -836,6 +727,42 @@
     
     #method divide &real:anOperand
         = theValue / anOperand.
+    
+    #method equal &int:anOperand 
+        = $self equal &real:(RealNumber new &int:anOperand).
+
+    #method less &int:anOperand
+        = $self less &real:(RealNumber new &int:anOperand).
+        
+    #method add &int:anOperand
+        = $self add &real:(RealNumber new &int:anOperand).
+    
+    #method subtract &int:anOperand
+        = $self subtract &real:(RealNumber new &int:anOperand).
+    
+    #method multiply &int:anOperand
+        = $self multiply &real:(RealNumber new &int:anOperand).
+    
+    #method divide &int:anOperand
+        = $self divide &real:(RealNumber new &int:anOperand).
+    
+    #method equal &long:anOperand 
+        = $self equal &real:(RealNumber new &long:anOperand).
+
+    #method less &long:anOperand
+        = $self less &real:(RealNumber new &long:anOperand).
+        
+    #method add &long:anOperand
+        = $self add &real:(RealNumber new &long:anOperand).
+    
+    #method subtract &long:anOperand
+        = $self subtract &real:(RealNumber new &long:anOperand).
+    
+    #method multiply &long:anOperand
+        = $self multiply &real:(RealNumber new &long:anOperand).
+    
+    #method divide &long:anOperand
+        = $self divide &real:(RealNumber new &long:anOperand).
     
     #method append &real:anOperand    
     [
@@ -859,7 +786,7 @@
     
     #method append &int:anOperand    
     [
-        theValue := theValue add&int:anOperand.
+        theValue := theValue add &int:anOperand.
     ]
         
     #method reduce &int:anOperand
@@ -877,6 +804,26 @@
         theValue := theValue divide &int:anOperand.
     ]
     
+    #method append &long:anOperand    
+    [
+        theValue := theValue add &long:anOperand.
+    ]
+        
+    #method reduce &long:anOperand
+    [
+        theValue := theValue subtract &long:anOperand.
+    ]
+        
+    #method multiplyBy &long:anOperand
+    [
+        theValue := theValue multiply &long:anOperand.
+    ]        
+        
+    #method divideInto &long:anOperand
+    [
+        theValue := theValue divide &long:anOperand.
+    ]
+    
     #method cast : anObject = anObject real.
 
     #method value <= %real.
@@ -884,6 +831,194 @@
     #method literal = system'literalConvertor convert &real:theValue literal.
 
     #method clone = Real new &real:theValue.
+}
+
+// --- CharValue ---
+
+#class(dbg:int) CharValue : BaseValue
+{
+    #field(type:short)theValue.
+    
+    #constructor new
+    [
+        theValue := 0.
+    ]
+    
+    #constructor new &short:aCode
+    [
+        theValue := aCode.
+    ]
+
+    #method equal &int:anOperand 
+        <int_equal>.
+
+    #method less &int:anOperand 
+        <int_less>.
+
+    #method equal &short:anOperand 
+        <int_equal>.
+
+    #method less &short:anOperand 
+        <int_less>.
+
+    #method equal &literal:aLiteral
+        = $self literal equal &literal:aLiteral.
+
+    #method less &literal:aLiteral
+        = $self literal less &literal:aLiteral.
+    
+    #method short = ShortNumber new &short:theValue.
+
+    #method int = IntNumber new &short:theValue.
+
+    #method literal = system'LiteralValue new &length:1 &short:theValue literal.
+    
+    #method clone = CharValue new &short:theValue.
+    
+    #method value = ShortNumber new &short:theValue.
+}
+
+// --- emptyliteralvalue ---
+
+#symbol(const) emptyLiteralValue = "".
+
+// --- literalvalue ---
+
+#class LiteralIterator
+{
+    #field(type:literal) theLiteral.
+    #field theIndex.
+    
+    #constructor new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := system'Integer new &int:(-1).
+    ]
+
+    #method index = theIndex int.
+
+    #method reset
+    [
+        theIndex write &int:-1.
+    ]
+
+    #method append &index:anIndex
+    [
+        theIndex append &int:anIndex.
+    ]
+
+    #method set &index:anIndex
+    [
+        theIndex write &int:anIndex.
+    ]
+
+    #method available = theIndex less &int:(theLiteral length).
+    
+    #method next
+    [
+        theIndex append &int:1.
+
+        ^ theIndex less &int:(theLiteral length).
+    ]
+    
+    #method get
+    [
+        #var(type:int)anIndex.
+        theIndex read &out'int:anIndex.
+        
+        #var(type:short)aChar.
+        theLiteral read &index:anIndex &out'short:aChar.
+        
+        ^ CharValue new &short:aChar.
+    ]
+}
+
+#class(type:literal,sealed,dbg:literal) LiteralValue : BaseValue
+{
+    #field(itemsize:2)theData.
+
+    #constructor => <ws_create>.
+
+    #constructor new &length:aSize 
+    [
+    ]
+
+    #constructor new &length:aSize &literal:aLiteral
+        <ws_copy>.
+
+    #constructor new &length:aSize &shortarray:anArray
+        <ws_copyarr>.
+
+    #constructor new &length:aSize &index:anIndex &shortarray:anArray
+        <ws_copysubarr>.
+
+    #constructor new &length:aSize &short:aChar
+        <ws_fill>.
+
+    #constructor new &literal:aLiteral
+        <= %new &length::aLiteral &literal:aLiteral.
+
+    #method literal = $self.
+
+    #method equal &literal : aLiteral
+        <ws_equal>.
+
+    #method less &literal : aLiteral
+        <ws_less>.
+
+    #method add : aLiteral
+        = $self add &literal::aLiteral.
+
+    #method add &literal : aLiteral
+        <ws_add>.
+
+    #method getAt : aParam
+    [
+        #var(type:short)aChar.
+        $self read &index:(aParam int) &out'short:aChar.
+        
+        ^ CharValue new &short:aChar.
+    ]
+
+    #method read &index:anIndex &out'short:aChar
+        <ws_getat>.
+
+    #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
+        <ws_indexof>.
+
+    #method indexOf &index:anIndex &literal:aLiteral
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method insert &index:anIndex &literal:aLiteral
+        <ws_insert>.
+
+    #method delete &index:anIndex &length:aLength
+        <ws_delete>.
+
+    #method Substring &index:anIndex &length:aLength
+        <ws_subs>.
+
+    #method length
+    [
+        #var(type:int)aLength.
+        $self read &out'length:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
+    #method read &out'length:aLength
+        <ws_getlen>.
+
+    #method enumerator = LiteralIterator new &literal:$self.
+    
+    #method clone = LiteralValue new &literal:$self.
+    
+    #method value = $self.
 }
 
 // --- String ---
@@ -961,7 +1096,7 @@
         theValue := true == aValue.
     ]
 
-//    #method value = theValue.
+    #method value = theValue.
 
     #method write : aValue
     [
@@ -970,20 +1105,20 @@
 
     #method bool = theValue bool.
 
-//    #method append : aValue
-//    [
-//        theValue := theValue or:aValue.
-//    ]
-//            
-//    #method multiplyBy : aValue
-//    [
-//        theValue := theValue and:aValue.
-//    ]
-//            
-//    #method invert
-//    [
-//        theValue := theValue not.
-//    ]            
+    #method append : aValue
+    [
+        theValue := theValue or:aValue.
+    ]
+            
+    #method multiplyBy : aValue
+    [
+        theValue := theValue and:aValue.
+    ]
+            
+    #method invert
+    [
+        theValue := theValue not.
+    ]            
 
     #method equal &bool:aValue
         => theValue.
@@ -992,9 +1127,7 @@
 
     #method cast : anObject = anObject bool.
             
-    #method value = theValue.
-            
-//    #method => theValue.
+    #method => theValue.
 }
 
 // --- ArrayIterator ---
@@ -1003,7 +1136,7 @@
 {
     #field theArray.
     #field theIndex.
-    #field theCount.
+    #field(type:int)theCount.
     
     #constructor new &array:anArray
     [
@@ -1017,6 +1150,7 @@
     #method reset
     [
         theIndex write &int:-1.
+        theCount := theArray length.
     ]
 
     #method set &index:anIndex
@@ -1029,13 +1163,13 @@
         theIndex append &int:anIndex.
     ]
 
-    #method available = theIndex less &int::theCount.
+    #method available = theIndex less &int:theCount.
   
     #method next
     [
         theIndex append &int:1.
 
-        ^ theIndex less &int::theCount.
+        ^ theIndex less &int:theCount.
     ]
 
     #method get
@@ -1080,9 +1214,6 @@
     
     #method setAt &index:anIndex &object:anObject
         <arr_setat>.
-
-//    #method add : anObject
-//        = $self add::anObject.
         
     #method add &array:anArray
     [
@@ -1128,17 +1259,23 @@
 
     #method enumerator = ArrayIterator new &array:$self.
 
-//    #method clone 
-//    [
-//        #var(type:int)aLength := $self length.
-//        
-//        #var aRetVal := Array new &length:aLength.
-//        
-//        control forrange &int:0 &int:(aLength-1) &do: (&int:i)
-//            [ aRetVal setAt &index:i &object:(self getAt &index:i). ].        
-//            
-//        ^ aRetVal.
-//    ]
+    #method clone 
+    [
+        #var(type:int)aLength. 
+        $self read &out'length:aLength.
+        
+        #var aRetVal := Array new &length:aLength.
+        
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            aRetVal setAt &index:anIndex &object:($self getAt &index:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+            
+        ^ aRetVal.
+    ]
 }
 
 // --- paramsOp ---

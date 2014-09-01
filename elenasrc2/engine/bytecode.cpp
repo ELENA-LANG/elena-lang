@@ -32,14 +32,14 @@ const char* _fnOpcodes[256] =
    "wequal", "wless", "wread", "winsert", "ntow", "ltow", "rtow", "wseek",
    "wwrite", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",
 
-   "breadw", "bread", "insert", "ninsert", "xseek", "breadb", "unknown", "unknown",
-   "unknown", "bwrite", "subcopy", "nsubcopy", "unknown", "unknown", "unknown", "bcreate",
+   "breadw", "bread", "insert", "ninsert", "xseek", "breadb", "rsin", "rcos",
+   "rarctab", "bwrite", "subcopy", "nsubcopy", "unknown", "unknown", "unknown", "bcreate",
 
    "lcopy", "lcopyn", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
    "land", "lor", "lxor", "lshift", "lnot", "wtol", "lrndnew", "lrndnext",
 
    "rcopy", "rcopyl", "rcopyn", "requal", "rless", "radd", "rsub", "rmul",
-   "rdiv", "wtor", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "rdiv", "wtor", "rexp", "rln", "rabs", "rround", "rint", "unknown",
 
    "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "unknown",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",

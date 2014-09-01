@@ -486,6 +486,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
 void ByteCodeWriter :: loadBase(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
+      case okCurrent:
+         // bloadsi param
+         tape.write(bcBLoadSI, object.param);
+         break;
       case okLocalAddress:
          // bcopyf n
          tape.write(bcBCopyF, object.param);
@@ -626,13 +630,18 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcBLoadFI, 1, bpFrame);
          tape.write(bcASaveBI, object.param);
          break;
-      //case okLocalAddress:
-      //   // 
-      //   // bcopyf
-      //   // nwrite
-      //   tape.write(bcBCopyF, object.param);
-      //   tape.write(bcNWrite);
-      //   break;
+      case okOuterField:
+         // bcopya
+         // aloadfi 1
+         // aloadai param
+         // bswap
+         // asavebi extra
+         tape.write(bcBCopyA);
+         tape.write(bcALoadFI, 1, bpFrame);
+         tape.write(bcALoadAI, object.param);
+         tape.write(bcBSwap);
+         tape.write(bcASaveBI, object.extraparam);
+         break;
    }
 }
 
@@ -794,6 +803,20 @@ void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)
    tape.write(bcCopyM, message);
 }
 
+void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message, ObjectInfo operand)
+{
+   loadBase(tape, operand);
+
+   // copym message
+   // type
+   // or
+   // ecopyd
+   tape.write(bcCopyM, message);
+   tape.write(bcType);
+   tape.write(bcOr);
+   tape.write(bcECopyD);
+}
+
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
 {
    // acallvi offs
@@ -839,44 +862,11 @@ void ByteCodeWriter :: typecast(CommandTape& tape)
    tape.setLabel();
 }
 
-void ByteCodeWriter :: doGenericHandler(CommandTape& tape, bool genericDispatch)
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
 {
-   if (genericDispatch) {
-      // bloadsi 2
-      // type
-      // or
-      // ecopyd
-      // bsredirect
-      // setsubj 0
-      // bsredirect
+   // bsredirect
 
-      tape.write(bcBLoadSI, 2);
-      tape.write(bcType);
-      tape.write(bcOr);
-      tape.write(bcECopyD);
-      tape.write(bcBSRedirect);
-      tape.write(bcSetSubj, 0);
-      tape.write(bcBSRedirect);
-   }
-   else {
-      // bsredirect
-
-      tape.write(bcBSRedirect);
-   }
-}
-
-void ByteCodeWriter :: doGenericHandler(CommandTape& tape, ref_t generic_sign_id)
-{
-  ////bsredirect
-  ////pushsubj
-  ////msetsubj subj : #generic
-  ////bsredirect
-  ////throw
-  // tape.write(bcBSRedirect);
-  // tape.write(bcPushSubj);
-  // tape.write(bcMSetSubj, generic_sign_id);
-  // tape.write(bcBSRedirect);
-  // tape.write(bcThrow);
+   tape.write(bcBSRedirect);
 }
 
 void ByteCodeWriter :: resend(CommandTape& tape)

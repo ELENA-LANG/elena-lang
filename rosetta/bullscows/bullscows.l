@@ -41,7 +41,7 @@
                         ! [ #throw InvalidArgumentException new. ].
                     
                     // check duplicates
-                    #var duplicate := arrayControl seek:aGuess &until: x [ (x == ch)and:[ x equal &object:ch not ] ].
+                    #var duplicate := arrayControl seek:aGuess &until: x [ (x == ch)and:[ x equal &reference:ch not ] ].
                     nil != duplicate ?
                     [
                         #throw InvalidArgumentException new.
@@ -77,5 +77,5 @@
 [
     #var aGameMaster := GameMaster new.
 
-    control while:[ aGameMaster proceed:(aGameMaster ask). ].
+    control while:[ aGameMaster proceed:(aGameMaster ask) ].
 ].

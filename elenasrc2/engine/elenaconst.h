@@ -26,7 +26,6 @@ namespace _ELENA_
    #define OPEN_ARG_COUNT          0x0F
 
    #define DISPATCH_MESSAGE_ID     0x0001
-   #define GENERIC_MESSAGE_ID      0x0002
    #define NEWOBJECT_MESSAGE_ID    0x0003
 
    #define NEW_MESSAGE_ID          0x0004
@@ -456,7 +455,6 @@ namespace _ELENA_
 
   // Predefined routines
    #define DISPATCH_ROUTINE         "dispatch"
-   #define TRY_DISPATCH_ROUTINE     "generic_dispatch"
 
   // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table

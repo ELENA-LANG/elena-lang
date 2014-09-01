@@ -41,11 +41,11 @@
         
         (theDate Month == theMonth)
             ? [
-                theLine~textOp write:"   " &length:(((theDate DayOfWeek) => 0 ? [ 7 ] ! [ theDate DayOfWeek ]) - 1).
+                theLine~stringOp write:"   " &length:(((theDate DayOfWeek) => 0 ? [ 7 ] ! [ theDate DayOfWeek ]) - 1).
                 
                 control do:
                 [
-                    theLine~textOp write:(theDate Day) &paddingLeft:3 &with:" ".
+                    theLine~stringOp write:(theDate Day) &paddingLeft:3 &with:" ".
                     
                     theDate := theDate add &Days:1.
                 ]         
@@ -54,7 +54,7 @@
         
         #var aLength := theLine length.
         (aLength < 21)
-            ? [ theLine~textOp write:" " &length:(21 - aLength). ].
+            ? [ theLine~stringOp write:" " &length:(21 - aLength). ].
             
         theRow += 1.
         
@@ -72,7 +72,7 @@
     
     #method printTitleTo : anOutput
     [
-        anOutput~textOp write:(MonthNames @(theMonth - 1)) &padding:21 &with:" ".
+        anOutput~stringOp write:(MonthNames @(theMonth - 1)) &padding:21 &with:" ".
     ]
    
     #method printTo : anOutput
@@ -94,8 +94,8 @@
     
     #method printTo:anOutput
     [
-        anOutput~textOp write:"[SNOOPY]" &padding:(theRowLength * 25) &with:" " writeLine.
-        anOutput~textOp write:theYear &padding:(theRowLength * 25) &with:" " writeLine writeLine.
+        anOutput~stringOp write:"[SNOOPY]" &padding:(theRowLength * 25) &with:" " writeLine.
+        anOutput~stringOp write:theYear &padding:(theRowLength * 25) &with:" " writeLine writeLine.
         
         #var aRowCount := 12 / theRowLength.
         #var Months := matrixControl new &m:aRowCount &n:theRowLength &each: (:i:j) [ CalendarMonthPrinter new &Year:theYear &Month:(i * theRowLength + j + 1) ].

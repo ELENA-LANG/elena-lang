@@ -3,8 +3,13 @@
 #class Object
 {
     #method equal : anObject
-        <= %equal &reference:anObject.
+        <object_equal>.
+}
 
+// --- common methods ---
+
+#class(extension)objectOp
+{
     #method equal &reference:anObject
         <object_equal>.
 }

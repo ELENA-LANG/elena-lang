@@ -1312,6 +1312,38 @@ inline % 65h
 
 end
 
+// ; rsin
+
+inline % 66h
+
+  fld   qword ptr [eax]  
+  fsin
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rcose
+
+inline % 67h
+
+  fld   qword ptr [eax]  
+  fcos
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rarctan
+
+inline % 68h
+
+  fld   qword ptr [eax]  
+  fld1
+  fpatan                  // i.e. arctan(Src/1)
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+
 // ; save
 inline % 69h
 
@@ -2224,6 +2256,153 @@ atof200:
 
 atoflend:
    mov  eax, esi
+
+end
+
+// ; rexp
+inline % 8Ah
+
+  mov   esi, 0
+  fld   qword ptr [eax]   // ; Src
+
+  fldl2e                  // ; ->log2(e)
+  fmulp                   // ; ->log2(e)*Src
+                                                              
+  // ; the FPU can compute the antilog only with the mantissa
+  // ; the characteristic of the logarithm must thus be removed
+      
+  fld   st(0)             // ; copy the logarithm
+  frndint                 // ; keep only the characteristic
+  fsub  st(1),st(0)       // ; keeps only the mantissa
+  fxch                    // ; get the mantissa on top
+
+  f2xm1                   // ; ->2^(mantissa)-1
+  fld1
+  faddp                   // ; add 1 back
+
+  //; the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // ;, scale it with the characteristic
+      
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  jc    short lErr        // ; clean-up and return if error
+      
+  // ; the characteristic is still on the FPU and must be removed
+  
+  fstp  st(1)             // ; get rid of the characteristic
+
+  fstp  qword ptr [edi]    // ; store result 
+  mov   esi, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
+labEnd:
+
+end
+
+// ; rln
+inline % 8Bh
+
+  mov   esi, 0
+  fld   qword ptr [eax]  
+  
+  fldln2
+  fxch
+  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return error
+
+  fstp  qword ptr [edi]    // store result 
+  mov   esi, 1
+  jmp   short labEnd
+
+lErr:
+  ffree st(0)
+
+labEnd:
+
+end
+
+// ; rabs
+inline %8Ch
+
+  fld   qword ptr [eax]  
+  fabs
+  fstp  qword ptr [edi]    // ; store result 
+  
+end
+
+// ; rround
+inline %8Dh
+
+  mov   esi, 0
+  fld   qword ptr [eax]  
+
+  push  eax               // ; reserve space on CPU stack
+
+  fstcw word ptr [esp]    // ;get current control word
+  mov   ax,[esp]
+  and   ax,0F3FFh         // ; code it for rounding 
+  push  eax
+  fldcw word ptr [esp]    // ; change rounding code of FPU to round
+
+  frndint                 // ; round the number
+  pop   eax               // ; get rid of last push
+  fldcw word ptr [esp]    // ; load back the former control word
+
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  pop   ebx               // ; clean CPU stack
+  jc    short lErr        // ; clean-up and return error
+  
+  fstp  qword ptr [edi]   // ; store result 
+  mov   esi, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(0)
+
+labEnd:
+  
+end
+
+// ; rint
+
+inline % 8Eh
+
+  mov   esi, 0
+  fld   qword ptr [eax]
+
+  push  ebx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+  mov   bx, [esp]
+  or    bx,0c00h           // code it for truncating
+  push  ebx
+  fldcw word ptr [esp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   ebx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   ebx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  mov   esi, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
+labEnd:
 
 end
 

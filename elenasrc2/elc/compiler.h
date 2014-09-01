@@ -213,8 +213,7 @@ protected:
       ref_t loadClassInfo(_Module* &classModule, ClassInfo& info, const wchar16_t* vmtName);
       ref_t loadClassInfo(ClassInfo& info, const wchar16_t* vmtName);
       
-      bool checkTypeMethod(ref_t type_ref, const wchar16_t* message, int verb, int paramCount);
-      bool checkTypeMethod(ref_t type_ref, ref_t message);
+      bool checkTypeMethod(ref_t type_ref, ref_t message, bool& found);
 
       void loadTypes(_Module* module);
       void loadExtensions(TerminalInfo terminal, _Module* module);

@@ -43,8 +43,13 @@
         ^ CharValue new &short:aRetVal.
     ]
 
-////    #method readKey
-////        = theReader read &int.
+    #method readKey
+    [
+        #var(type:int)aRetVal.        
+        theReader read &out'int:aRetVal.
+  
+        ^ IntNumber new &int:aRetVal.
+    ]
 }
 
 #static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.

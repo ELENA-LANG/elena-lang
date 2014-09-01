@@ -25,7 +25,7 @@ using namespace _ELENA_;
 #define HINT_SUBBRANCH        0x02000000     // used for if-else statement to indicate that the exit label is not the last one
 #define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define HINT_TYPEENFORCING    0x00800000     
-#define HINT_GENERIC_MODE     0x00400000
+#define HINT_DISPATCH_MODE    0x00400000
 #define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
@@ -492,13 +492,15 @@ ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& inf
    return moduleRef;
 }
 
-bool Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, ref_t message)
+bool Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, ref_t message, bool& found)
 {
+   found = false;
+
    ref_t reference = typeHints.get(type_ref);
    if (reference) {
       _Module* extModule;
       ClassInfo info;
-      loadClassInfo(extModule, info, module->resolveReference(reference));
+      found = loadClassInfo(extModule, info, module->resolveReference(reference)) != 0;
 
       if (extModule) {
          if (module != extModule) {
@@ -515,25 +517,6 @@ bool Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, ref_t message)
             else return info.methods.exist(message);
          }
          else return info.methods.exist(message);
-      }
-   }
-
-   return false;
-}
-
-bool Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, const wchar16_t* message, int verb, int paramCount)
-{
-   ref_t reference = typeHints.get(type_ref);
-   if (reference) {
-      _Module* extModule;
-      ClassInfo info;
-      loadClassInfo(extModule, info, module->resolveReference(reference));
-
-      if (extModule) {
-         ref_t msg = extModule->mapSubject(message, true);
-         if (msg) {
-            return info.methods.exist(encodeMessage(msg, verb, paramCount));
-         }
       }
    }
 
@@ -1610,7 +1593,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
 void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo object)
 {
-   if (object.kind == okLocal || object.kind == okField) {
+   if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
       _writer.saveObject(*scope.tape, object);
    }
    else if ((object.kind == okOuter)) {
@@ -2127,7 +2110,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, ObjectInfo object, si
    if (arg == nsTypedMessageParameter && verb_id != 0) {
       count = 1;
 
-      mode |= HINT_GENERIC_MODE;
+      mode |= HINT_DISPATCH_MODE;
 
       if (arg.firstChild().firstChild() == nsNone)
          mode |= HINT_DIRECT_ORDER;
@@ -2429,7 +2412,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
    // if only simple arguments are used we could directly save parameters
    if (test(mode, HINT_DIRECT_ORDER)) {
-      compileDirectMessageParameters(node.firstChild(), scope, mode);
+      compileDirectMessageParameters(node.firstChild(), scope, mode & ~HINT_DISPATCH_MODE);
 
       _writer.loadObject(*scope.tape, object);
       _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
@@ -2444,7 +2427,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
       _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 
-      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~HINT_OARG_UNBOXING, count, spaceToRelease);
+      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~(HINT_OARG_UNBOXING | HINT_DISPATCH_MODE), count, spaceToRelease);
    }
    // otherwise the space should be allocated first,
    // to garantee the correct order of parameter evaluation
@@ -2453,7 +2436,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
       _writer.loadObject(*scope.tape, object);
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
-      compilePresavedMessageParameters(node.firstChild(), scope, mode, spaceToRelease);
+      compilePresavedMessageParameters(node.firstChild(), scope, mode & ~HINT_DISPATCH_MODE, spaceToRelease);
    }
 
    return messageRef;
@@ -2716,7 +2699,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
 
-      compileMessage(node, scope, object, message_id, HINT_GENERIC_MODE);
+      compileMessage(node, scope, object, message_id, 0);
    }
 
    if (notOperator) {
@@ -2743,10 +2726,12 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    bool catchMode = test(mode, HINT_CATCH);
 
    // if it is generic dispatch (NOTE: param count is set to zero as the marker)
-   if (test(mode, HINT_GENERIC_MODE)) {
+   if (test(mode, HINT_DISPATCH_MODE)) {
+      recordStep(scope, node.Terminal(), dsProcedureStep);
+
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.setMessage(*scope.tape, messageRef);
-      _writer.callMethod(*scope.tape, 1, 1);
+      _writer.setMessage(*scope.tape, messageRef, ObjectInfo(okCurrent, 1));
+      _writer.callMethod(*scope.tape, 0, 1);
    }
    // otherwise compile message call
    else {
@@ -2817,13 +2802,15 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          // check if it is a type wrapper
          if (wrapper) {
             // check if the message is supported
-            if (scope.moduleScope->checkTypeMethod(object.extraparam, messageRef)) {
+            bool found = false;
+            if (scope.moduleScope->checkTypeMethod(object.extraparam, messageRef, found)) {
                _writer.callResolvedMethod(*scope.tape, wrapper, messageRef);
             }
             else {
-               scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
-               _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->mapConstantReference(NOMETHOD_EXCEPTION_CLASS)));
-               _writer.throwCurrent(*scope.tape);
+               if (found)
+                  scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
+
+               _writer.callMethod(*scope.tape, 0, paramCount);
             }
          }
          else _writer.callMethod(*scope.tape, 0, paramCount);
@@ -3976,8 +3963,6 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
 void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
 {
-   bool genericDispatch = getVerb(scope.message) == GENERIC_MESSAGE_ID;
-
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
 
@@ -3988,16 +3973,12 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
    if (node == nsImport) {
       ReferenceNs routine(PACKAGE_MODULE, INLINE_MODULE);
 
-      if (genericDispatch) {
-         routine.combine("generic_");
-         routine.append(node.Terminal());
-      }
-      else routine.combine(node.Terminal());
+      routine.combine(node.Terminal());
 
       importCode(node, *scope.moduleScope, codeScope.tape, routine);
    }
    else {
-      _writer.doGenericHandler(*codeScope.tape, genericDispatch);
+      _writer.doGenericHandler(*codeScope.tape);
 
       DNode nextNode = node.nextNode();
 
@@ -4006,7 +3987,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
          ObjectInfo extension = compileTerminal(node, codeScope, 0);
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-         _writer.resend(*codeScope.tape, extension, genericDispatch ? 1 : 0);
+         _writer.resend(*codeScope.tape, extension, 0);
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
    }
@@ -4153,7 +4134,7 @@ void Compiler :: compileSpecialMethod(MethodScope& scope)
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
       if (test(classScope->info.header.flags, elWithGenerics)) {
-         _writer.doGenericHandler(*codeScope.tape, encodeMessage(scope.moduleScope->mapSubject(GENERIC_POSTFIX), 0, 0));
+         //_writer.doGenericHandler(*codeScope.tape, encodeMessage(scope.moduleScope->mapSubject(GENERIC_POSTFIX), 0, 0));
       }
    }
 
@@ -4293,7 +4274,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
          _writer.declareMethod(*codeScope.tape, scope.message, false);
 
          // HOTFIX: -1 indicates the stack is not consumed by the constructor
-         _writer.callMethod(*codeScope.tape, 2, -1);
+         _writer.callMethod(*codeScope.tape, 1, -1);
 
          DNode importBody = node.select(nsImport);
 
@@ -4396,10 +4377,6 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
                if (scope.info.methods.exist(methodScope.message, true))
                   scope.raiseError(errDuplicatedMethod, member.Terminal());
 
-               compileDispatcher(member.firstChild().firstChild(), methodScope);
-
-               // NOTE: due to the current implementation - there are two dispatch handler (second one - typed dispatch)
-               methodScope.message = encodeVerb(GENERIC_MESSAGE_ID);
                compileDispatcher(member.firstChild().firstChild(), methodScope);
             }
             // if it is a normal method
@@ -4678,9 +4655,6 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    // add default handlers for base class
    if (scope.info.header.parentRef == 0) {
       compileImportMethod(node, scope, encodeVerb(DISPATCH_MESSAGE_ID), DISPATCH_ROUTINE);
-
-      // NOTE: due to the current implementation - there are two dispatch handler (second one - generic type dispatch)
-      compileImportMethod(node, scope, encodeVerb(GENERIC_MESSAGE_ID), TRY_DISPATCH_ROUTINE);
    }
 
    _writer.endClass(scope.tape);

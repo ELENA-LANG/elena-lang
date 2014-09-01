@@ -20,65 +20,6 @@ procedure inline'dispatch
 
 end
 
-procedure inline'generic_dispatch
-
-  bloadsi 2
-  type
-  or
-  ecopyd
-  bsredirect
-  setsubj 0
-  bsredirect
-  acopyr const : system'MethodNotFoundException
-  throw
-
-end
-
-procedure inline'exception_dispatch
-
-  ifm labElse IF_MESSAGE_ID_1
-  dcopyverb
-  elsen labElse IF_MESSAGE_ID
-  dcopysubj
-  bcopya
-  ecopyd
-  type
-  inc                         // ; to include a parameter count
-  else labElse
-  ecopy IF_MESSAGE_ID_1
-
-labElse:
-  bsredirect
-  throw
-
-end
-
-procedure inline'generic_exception_dispatch
-
-  bloadsi 2
-  type
-  or
-  ecopyd
-
-  dcopyverb
-  elsen labElse IF_MESSAGE_ID
-  dcopysubj
-  bcopya
-  ecopyd
-  type
-  inc                         // ; to include a parameter count
-  else labElse
-  ecopy IF_MESSAGE_ID_1
-  
-labElse:
-  bsredirect
-  setsubj 0
-  bsredirect
-
-  throw
-
-end
-
 procedure inline'object_equal
 
   aloadsi 1
@@ -91,117 +32,6 @@ labTrue:
   acopyr const : system'true
   quitn 2
   
-end
-
-procedure inline'action_dispatch
-
-  message 2
-  else labErr
-  ajumpvi 2
-
-labErr:
-  bsredirect
-  acopyr const : system'MethodNotFoundException
-  throw
-  
-end
-
-procedure inline'generic_action_dispatch
-
-  bloadsi 2
-  type
-  or
-  ecopyd
-
-  message 2
-  else labErr
-  ajumpvi 2
-
-labErr:
-  bsredirect
-  setsubj 0
-  bsredirect
-
-  acopyr const : system'MethodNotFoundException
-  throw
-
-end
-
-procedure inline'expression_dispatch
-
-  pushe
-  pusha
-  copym EVAL_MESSAGE_ID
-  acallvi 2
-  pope
-  asavesi 1
-  ajumpvi 0
-
-end
-
-procedure inline'generic_expression_dispatch
-
-  pushe
-  pusha
-  copym EVAL_MESSAGE_ID
-  acallvi 2
-  pope
-  asavesi 1
-  ajumpvi 1
-
-end
-
-procedure inline'ws_create
-
-  aloadsi 3
-  nload
-  inc
-  acopyr class : system'LiteralValue
-  wcreate
-  quit
-
-end
-
-procedure inline'arr_create
-
-  aloadsi 3
-  nload
-  acopyr class : system'Array
-  create
-
-  bcopya
-  aloadsi 3
-  nload
-  
-  acopyr const : system'nil
-labNext:
-  dec
-  xset
-  elsen labNext 0
-
-  acopyb
-  quit
-
-end
-
-procedure inline'bs_create
-
-  aloadsi 3
-  nload
-  acopyr class : system'ByteArray
-  bcreate
-  quit
-
-end
-
-procedure inline'sa_create
-
-  aloadsi 3
-  nload
-  acopyr class : system'ShortArray
-  wcreate
-  quit
-
 end
 
 procedure inline'int_copy
@@ -624,6 +454,61 @@ procedure inline'real_div
 
 end
 
+procedure inline'ws_create
+
+  aloadsi 3
+  nload
+  inc
+  acopyr class : system'LiteralValue
+  wcreate
+  quit
+
+end
+
+procedure inline'ws_copy
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 2
+
+end
+
+procedure inline'ws_copyarr
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  wwrite
+  quitn 2
+
+end
+
+procedure inline'ws_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  pushe
+  aloadsi 4
+  nload
+  aloadsi 5
+  wsubcopy
+  
+  acopyb
+  popd
+  ecopy 0
+  wwrite
+  quitn 2
+
+end
+
 procedure inline'ws_equal
 
   bloadsi 2
@@ -835,50 +720,6 @@ procedure inline'ws_getlen
 
 end
 
-procedure inline'ws_copy
-
-  bcopya
-  aloadsi 3
-  copy
-  acopyb
-  quitn 2
-
-end
-
-procedure inline'ws_copyarr
-
-  bcopya
-  aloadsi 3
-  copy
-  acopyb
-  wlen
-  ecopy 0
-  dec
-  wwrite
-  quitn 2
-
-end
-
-procedure inline'ws_copysubarr
-
-  bcopya
-  aloadsi 2
-  nload
-  ecopyd
-  pushe
-  aloadsi 4
-  nload
-  aloadsi 5
-  wsubcopy
-  
-  acopyb
-  popd
-  ecopy 0
-  wwrite
-  quitn 2
-
-end
-
 procedure inline'ws_fill
   
   bcopya
@@ -901,6 +742,92 @@ labNext:
 
   acopyb
   quitn 3
+
+end
+
+procedure inline'exception_dispatch
+
+  ifm labElse IF_MESSAGE_ID_1
+  dcopyverb
+  elsen labElse IF_MESSAGE_ID
+  dcopysubj
+  bcopya
+  ecopyd
+  type
+  inc                         // ; to include a parameter count
+  else labElse
+  ecopy IF_MESSAGE_ID_1
+
+labElse:
+  bsredirect
+  throw
+
+end
+
+procedure inline'action_dispatch
+
+  message 2
+  else labErr
+  ajumpvi 1
+
+labErr:
+  bsredirect
+  acopyr const : system'MethodNotFoundException
+  throw
+  
+end
+
+procedure inline'expression_dispatch
+
+  pushe
+  pusha
+  copym EVAL_MESSAGE_ID
+  acallvi 1
+  pope
+  asavesi 1
+  ajumpvi 0
+
+end
+
+procedure inline'arr_create
+
+  aloadsi 3
+  nload
+  acopyr class : system'Array
+  create
+
+  bcopya
+  aloadsi 3
+  nload
+  
+  acopyr const : system'nil
+labNext:
+  dec
+  xset
+  elsen labNext 0
+
+  acopyb
+  quit
+
+end
+
+procedure inline'bs_create
+
+  aloadsi 3
+  nload
+  acopyr class : system'ByteArray
+  bcreate
+  quit
+
+end
+
+procedure inline'sa_create
+
+  aloadsi 3
+  nload
+  acopyr class : system'ShortArray
+  wcreate
+  quit
 
 end
 
@@ -970,6 +897,33 @@ procedure inline'bs_readword
  
   acopyb
   breadw
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 2
+  
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'bs_readdword
+
+  bcopya
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  bread
   dcopye
   bloadsi 3
   nsave
@@ -1317,17 +1271,6 @@ procedure inline'symbol_redirect
 
 end
 
-procedure inline'generic_symbol_redirect
-
-  pushe
-  nload
-  ecopyd
-  ecall
-  pope
-  ajumpvi 1
-
-end
-
 procedure inline'symbol_new
 
   pusha
@@ -1363,19 +1306,6 @@ labEnd:
   
 end
 
-procedure inline'generic_handle_message
-
-  nload
-  else labEnd
-  setverb EVAL_MESSAGE_ID
-  aloadsi 1
-  ajumpvi 1
-labEnd:
-  acopyr const : system'MethodNotFoundException
-  throw
-  
-end
-
 procedure inline'qualify_message
 
   setsubj 0
@@ -1387,38 +1317,7 @@ procedure inline'qualify_message
   
 end
 
-procedure inline'generic_qualify_message
-
-  setsubj 0
-  nload
-  or
-  aloadsi 1
-  ecopyd
-  ajumpvi 1
-  
-end
-
 procedure inline'get_property
-
-  pushai 1
-  aloadai 0
-  nload
-  else labEnd
-  popa
-  quitn 1
-
-labEnd:
-  acopyr const : system'MethodNotFoundException
-  throw
-
-end
-
-procedure inline'generic_get_property
-
-  bloadsi 2
-  type
-  or
-  ecopyd
 
   pushai 1
   aloadai 0
@@ -1508,12 +1407,6 @@ labErr:
 
 end
 
-procedure inline'generic_handle_tape
-
-  ajumpvi 0
-
-end
-
 procedure inline'handle_selector
 
   pushe
@@ -1556,16 +1449,6 @@ labQuit:
 labEnd:
   acopyr const : system'MethodNotFoundException
   throw
-
-end
-
-procedure inline'generic_handle_selector
-
-  bloadsi 2
-  type
-  or
-  ecopyd
-  ajumpvi 0
 
 end
 
@@ -1614,34 +1497,6 @@ labNext:
   less labNext
   
   pope
-  aloadbi 0
-  ajumpvi 0
-
-end
-
-procedure inline'generic_handle_wrap
-
-  bloadsi 2
-  type
-  or
-  ecopyd
-  pushe
-
-  bcopya
-  dcopy 1
-
-labNext:
-  pope
-  get
-  bsredirect
-  pushe
-  bloadsi 2
-  inc
-  count
-  less labNext
-  
-  pope
-  setsubj 0
   aloadbi 0
   ajumpvi 0
 
@@ -1757,5 +1612,65 @@ labFound:
   acopyb
   popi 3
   quitn 4
+
+end
+
+procedure inline'r_exp
+
+  aloadsi 1
+  bcopya
+  
+  aloadsi 2
+  rexp
+
+  quitn 2
+
+end
+
+procedure inline'r_ln
+
+  aloadsi 1
+  bcopya
+  
+  aloadsi 2
+  rln
+
+  quitn 2
+
+end
+
+procedure inline'r_abs
+
+  aloadsi 1
+  bcopya
+  
+  aloadsi 2
+  rabs
+
+  quitn 2
+
+end
+
+procedure inline'r_round
+
+  aloadsi 1
+  bcopya
+  
+  aloadsi 2
+  rround
+  
+  quitn 2
+
+end
+
+procedure inline'r_truncate
+
+  aloadsi 1
+  bcopya
+  
+  aloadsi 2
+  rint
+  
+  quitn 2
 
 end

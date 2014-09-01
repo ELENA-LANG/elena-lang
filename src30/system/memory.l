@@ -23,6 +23,9 @@
     #method read &index:anIndex &out'short:aChar
         <bs_readword>.
 
+    #method read &index:anIndex &out'int:anInt
+        <bs_readdword>.
+
 //    #method read &index:anIndex &length:aLength &bytearray:aDump
 //        <bs_read>.
 //

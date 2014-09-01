@@ -14,6 +14,8 @@ convertors.l
 console.l
 app.l
 random.l
+math\functions.l
+math\matrix.l
 text\strings.l
 text\words.l
 text\enumerating.l

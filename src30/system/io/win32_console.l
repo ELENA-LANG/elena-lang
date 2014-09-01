@@ -78,25 +78,24 @@
         aDump read &index:14 &out'short:aChar.
     ]
 
-//    #method read &int
-//    [
-//        #var aDump := ByteArray new &length:20.
-//
-//        control do:
-//        [
-//            system'external'KERNEL32 ReadConsoleInputW
-//                &handle        : theHandle
-//                &out'bytearray : aDump
-//                &int           : 1
-//                &int           : 0.
-//        ]
-//        &until:[(primitive equal &bytearray:aDump &index:0 &short:1)
-//                    and:(primitive equal &bytearray:aDump &index:4 &int:1)].
-//                    
-//        #var(type:int)aValue := primitive read &bytearray:aDump &index:8.
-//                    
-//        ^ IntNumber new &int:aValue.
-//    ]
+    #method read &out'int:aKey
+    [
+        #var(type:bytearray,size:20)aDump.
+        #var(type:int)aNumberRead.
+
+        #loop
+        [
+            system'external'KERNEL32 ReadConsoleInputW
+                &handle        :: theHandle
+                &out'bytearray : aDump
+                &int           : 1
+                &out'int       : aNumberRead.
+
+            false equal:((aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1)).
+        ].
+                    
+        aDump read &index:8 &out'int:aKey.
+    ]
 
     #method read &shortarray:aBuffer &out'length:aLength
     [
