@@ -29,7 +29,7 @@
                     aCount := thePeriod.
                 ].
         
-                #var aSum := Summing new:(Real new:0) foreach:theList.
+                #var aSum := Summing new:(Real new &int:0) foreach:theList.
                 
                 ^ aSum / aCount.
             ].

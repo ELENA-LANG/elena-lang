@@ -49,14 +49,28 @@
 
     #method Millisecond = IntNumber new &short:theMillisecond.
 
-//    #method win32'FileTime
-//    [
-//        #var aRetVal := LongNumber new.
-//        
-//        system'external'KERNEL32 SystemTimeToFileTime &bytearray:theData &out'bytearray:aRetVal.
-//        
-//        ^ aRetVal.
-//    ]    
+    #method set &Year:aValue [ theYear := aValue short. ]
+
+    #method set &Month:aValue [ theMonth := aValue short. ]
+
+    #method set &Day:aValue [ theDay := aValue short. ]
+
+    #method set &Hour:aValue [ theHour := aValue short. ]
+
+    #method set &Minute:aValue [ theMinute := aValue short. ]
+
+    #method set &Second:aValue [ theSecond := aValue short. ]
+
+    #method set &Millisecond:aValue [ theMillisecond := aValue short. ]
+
+    #method long
+    [
+        #var(type:long) aRetVal := 0l.
+        
+        system'external'KERNEL32 SystemTimeToFileTime &bytearray:$self &out'long:aRetVal.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]    
     
     #method get &literal &dateFlags:Flags
     [
@@ -188,19 +202,20 @@
         ^ aSystemTime Millisecond.
     ]
         
-//    new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond
-//    [
-//        #var aSystemStruct := Win32SystemTime new 
-//            &short:(aYear int)
-//            &short:(aMonth int)
-//            &short:(aDay int)
-//            &short:(anHour int)
-//            &short:(aMinute int)
-//            &short:(aSecond int)
-//            &short:0.
-//        
-//        ^ aSystemStruct win32'FileTime.
-//    ]
+    new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond
+    [
+        #var(type:__win_systemtime)aSystemTime.
+        
+        aSystemTime set &Year:aYear.
+        aSystemTime set &Month:aMonth.
+        aSystemTime set &Day:aDay.
+        aSystemTime set &Hour:anHour.
+        aSystemTime set &Minute:aMinute.
+        aSystemTime set &Second:aMinute.
+        aSystemTime set &Millisecond:0.
+        
+        ^ aSystemTime long.
+    ]
     
     toShortDateTime &long:aDateValue
     [
@@ -287,31 +302,23 @@
 
     readMilliseconds &long:aValue = LongNumber new &long:(aValue / 10000l).
 
-//    new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
-//    [
-//        // HOTFIX: temporally, due to current implementation
-//        #var(type:int)aYearWord := 1601 + aYear int.
-//        #var(type:int)aMonthWord := 1 + aMonth int.
-//        #var(type:int)aDayWord := 1 + aDay int.
-//
-//        #var aSystemStruct := Win32SystemTime new
-//            &short:aYearWord
-//            &short:aMonthWord
-//            &short:aDayWord
-//            &short:(anHour int)
-//            &short:(aMinute int)
-//            &short:(aSecond int)
-//            &short:0.
-//                                                
-////        #var aSystemStruct := Win32SystemTime new
-////            &type'short:(1601 + aYear type'int)
-////            &type'short:(1 + aMonth type'int)
-////            &type'short:(1 + aDay type'int)
-////            &type'short:(anHour type'int)
-////            &type'short:(aMinute type'int)
-////            &type'short:(aSecond type'int)
-////            &type'short:0.
-//
-//        ^ aSystemStruct win32'FileTime.
-//    ]
+    new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
+    [
+        #var(type:__win_systemtime)aSystemTime.
+        
+        // HOTFIX: temporally, due to current implementation
+        #var(type:int)aYearWord := 1601 + aYear int.
+        #var(type:int)aMonthWord := 1 + aMonth int.
+        #var(type:int)aDayWord := 1 + aDay int.
+        
+        aSystemTime set &Year:aYearWord.
+        aSystemTime set &Month:aMonthWord.
+        aSystemTime set &Day:aDayWord.
+        aSystemTime set &Hour:anHour.
+        aSystemTime set &Minute:aMinute.
+        aSystemTime set &Second:aMinute.
+        aSystemTime set &Millisecond:0.
+
+        ^ aSystemTime long.
+    ]
 }.

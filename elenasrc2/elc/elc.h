@@ -18,7 +18,7 @@
 #define RULES_FILE                  "rules.dat"
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x000F
+#define ELC_BUILD_NUMBER             0x0011
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'

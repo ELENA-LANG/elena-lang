@@ -70,8 +70,8 @@
         
         #var retVal := control forrange &int::anIndex &int:(theCount-1) &do: (&int:i)
         [
-            theIndexers@i set &index::(aPrevious append &int:1 value) available
-                ! [ #break. ].            
+            theIndexers@i set &index:(aPrevious append &int:1 int) available
+                ! [ #break self. ].
         ].
         
         ^ nil == retVal.

@@ -171,29 +171,29 @@
         theCount << 0.        
     ]
 
-//    #method remove &index:anIndex
-//    [
-//        (theTop == nil)
-//            ? [ #throw OutOfRangeException new. ].
-//        
-//        (0 == anIndex)
-//            ? [
-//                theTop := theTop Next.
-//                theTop == nil
-//                    ? [ theLast := nil. theState := %empty. ].
-//            ]
-//            ! [
-//                #var aPrevious := $self getItem &index:(anIndex - 1).
-//                #var anItem := aPrevious Next.
-//                
-//                aPrevious set &Next:(anItem Next).
-//                
-//                anItem equal &object:theLast
-//                    ? [ theLast := aPrevious ].
-//            ].
-//            
-//        theCount -= 1.
-//    ]
+    #method remove &index:anIndex
+    [
+        (theTop == nil)
+            ? [ #throw OutOfRangeException new. ].
+        
+        (0 == anIndex)
+            ? [
+                theTop := theTop Next.
+                theTop == nil
+                    ? [ theLast := nil. theState := %empty. ].
+            ]
+            ! [
+                #var aPrevious := $self getItem &index:(anIndex - 1).
+                #var anItem := aPrevious Next.
+                
+                aPrevious set &Next:(anItem Next).
+                
+                anItem equal &reference:theLast
+                    ? [ theLast := aPrevious ].
+            ].
+            
+        theCount -= 1.
+    ]
     
     #method append : anObject => theState.
 }

@@ -1903,8 +1903,7 @@ end
 
 inline % 83h
 
-  mov    ebx, [esp]
-  fld    qword ptr [ebx]
+  fld    qword ptr [edi]
   fld    qword ptr [eax]
   fcomip st, st(1)
   mov    esi, 1
@@ -1918,8 +1917,7 @@ end
 // ; rless(lo, ro, tr, fr)
 inline % 84h
 
-  mov    ebx, [esp]
-  fld    qword ptr [ebx]
+  fld    qword ptr [edi]
   fld    qword ptr [eax]
   fcomip st, st(1)
   mov    esi, 1

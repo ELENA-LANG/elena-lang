@@ -3,14 +3,14 @@
 #define extensions.
 #define extensions'routines.
 
-#symbol M = 3.
-#symbol N = 5. 
+#symbol(const)M = 3.
+#symbol(const)N = 5. 
 
 // --- Numbers ---
 
 #symbol numbers = (:anN)
 [
-    arrayControl new &length:anN &each: anIndex [ Integer new:(anIndex + 1) ]
+    arrayControl new &length:(anN int) &each: anIndex [ Integer new:(anIndex + 1) ]
 ].
 
 // --- Program ---

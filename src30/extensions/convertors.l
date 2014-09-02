@@ -82,5 +82,5 @@
     ]
 
     save : anObject &to:aTarget
-        = aTarget write:(Variant new:anObject).
+        = aTarget write:(aTarget cast:(Variant new:anObject)).
 }.

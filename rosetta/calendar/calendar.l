@@ -41,7 +41,7 @@
         
         (theDate Month == theMonth)
             ? [
-                theLine~stringOp write:"   " &length:(((theDate DayOfWeek) => 0 ? [ 7 ] ! [ theDate DayOfWeek ]) - 1).
+                theLine~stringOp write:"   " &length:(((theDate DayOfWeek) => 0 ? [ 7 ] ! [ theDate DayOfWeek ]) subtract:1 int).
                 
                 control do:
                 [
@@ -52,7 +52,7 @@
                 &until:[(theDate Month != theMonth)or:[theDate DayOfWeek == 1]].
             ].
         
-        #var aLength := theLine length.
+        #var(type:int) aLength := theLine length.
         (aLength < 21)
             ? [ theLine~stringOp write:" " &length:(21 - aLength). ].
             

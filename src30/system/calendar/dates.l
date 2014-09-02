@@ -46,11 +46,16 @@
         dateTimeControl read &CurrentUTCTime &out'long:theValue.
     ]
   
-//    #constructor new &Year:aYear &Month:aMonth &Day:aDay
-//        => &new &long:(dateTimeControl new &Year:aYear &Month:aMonth &Day:aDay &Hour:0 &Minute:0 &Second:0).
-//  
-//    #constructor new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond
-//        => &new &long:(dateTimeControl new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond).
+    #constructor new &long:aValue
+    [
+        theValue := aValue.
+    ]
+  
+    #constructor new &Year:aYear &Month:aMonth &Day:aDay
+        <= %new &long::(dateTimeControl new &Year:aYear &Month:aMonth &Day:aDay &Hour:0 &Minute:0 &Second:0).
+  
+    #constructor new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond
+        <= %new &long::(dateTimeControl new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond).
 
     #method add &long:aValue
         = Date new &long:(theValue + aValue).
@@ -79,23 +84,23 @@
 
     #method long = theValue.
                         
-//    #method add &Years:aYear
-//        = $self add &long:(timeSpanControl new &Years:aYear &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
-//
-//    #method add &Months:aMonth
-//        = $self add &long:(timeSpanControl new &Years:0 &Months:aMonth &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
-//
-//    #method add &Days:aDay
-//        = $self add &long:(timeSpanControl new &Years:0 &Months:0 &Days:aDay &Hours:0 &Minutes:0 &Seconds:0).
-//
-//    #method add &Hours:anHour
-//        = $self add &long:(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:anHour &Minutes:0 &Seconds:0).
-//
-//    #method add &Minutes:aMinute
-//        = $self add &long:(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:0 &Minutes:aMinute &Seconds:0).
-//
-//    #method add &Seconds:aSecond
-//        = $self add &long:(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:aSecond).
+    #method add &Years:aYear
+        = $self add &long::(timeSpanControl new &Years:aYear &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
+
+    #method add &Months:aMonth
+        = $self add &long::(timeSpanControl new &Years:0 &Months:aMonth &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
+
+    #method add &Days:aDay
+        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:aDay &Hours:0 &Minutes:0 &Seconds:0).
+
+    #method add &Hours:anHour
+        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:anHour &Minutes:0 &Seconds:0).
+
+    #method add &Minutes:aMinute
+        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:0 &Minutes:aMinute &Seconds:0).
+
+    #method add &Seconds:aSecond
+        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:aSecond).
 
     #method literal
         = dateTimeControl toShortDateTime &long:theValue literal.

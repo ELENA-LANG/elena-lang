@@ -57,27 +57,27 @@
 {
     #method write : anOperand
     [
-        $self write::($self cast:anOperand).
+        $self write::(anOperand value).
     ]
     
     #method append : anOperand
     [
-        $self append::($self cast:anOperand).
+        $self append::(anOperand value).
     ]
     
     #method reduce : anOperand
     [
-        $self reduce::($self cast:anOperand).
+        $self reduce::(anOperand value).
     ]
     
     #method multiplyBy : anOperand
     [
-        $self multiplyBy::($self cast:anOperand).
+        $self multiplyBy::(anOperand value).
     ]
     
     #method divideInto : anOperand
     [
-        $self divideInto::($self cast:anOperand).
+        $self divideInto::(anOperand value).
     ]
 }
 
@@ -87,27 +87,27 @@
 {
     #method write : anOperand
     [
-        $self write::($self cast:anOperand).
+        $self write::(anOperand value).
     ]
     
     #method append : anOperand
     [
-        $self append::($self cast:anOperand).
+        $self append::(anOperand value).
     ]
     
     #method reduce : anOperand
     [
-        $self reduce::($self cast:anOperand).
+        $self reduce::(anOperand value).
     ]
     
     #method multiplyBy : anOperand
     [
-        $self multiplyBy::($self cast:anOperand).
+        $self multiplyBy::(anOperand value).
     ]
     
     #method divideInto : anOperand
     [
-        $self divideInto::($self cast:anOperand).
+        $self divideInto::(anOperand value).
     ]
 }
 
@@ -128,6 +128,8 @@
     
     #constructor new &int:anOperand
         <int_copyshort>.
+        
+    #method short = $self.
 }
 
 // --- IntNumber ---
@@ -538,6 +540,11 @@
         theValue := 0l.
     ]
     
+    #constructor new : aValue
+    [
+        theValue := aValue long.
+    ]
+    
     #constructor new &long:aValue
     [
         theValue := aValue.
@@ -553,6 +560,11 @@
     #method write &long:anOperand
     [
         theValue := anOperand.
+    ]
+    
+    #method write &int:anOperand
+    [
+        longConvertor convert &int:anOperand &out'long:theValue.
     ]
     
     #method read &out'long:aRetVal
@@ -651,6 +663,26 @@
     [
         theValue := theValue / anOperand.
     ]
+                        
+    #method append &int:anOperand    
+    [
+        theValue := theValue + LongNumber new &int:anOperand.
+    ]
+        
+    #method reduce &int:anOperand
+    [
+        theValue := theValue - LongNumber new &int:anOperand.
+    ]
+        
+    #method multiplyBy &int:anOperand
+    [
+        theValue := theValue * LongNumber new &int:anOperand.
+    ]        
+        
+    #method divideInto &int:anOperand
+    [
+        theValue := theValue / LongNumber new &int:anOperand.
+    ]
     
     #method cast : anObject = anObject long.
 
@@ -676,6 +708,11 @@
     #constructor new
     [
         theValue := 0.0r.
+    ]
+
+    #constructor new : aValue
+    [
+        theValue := aValue real.
     ]
     
     #constructor new &real:aValue

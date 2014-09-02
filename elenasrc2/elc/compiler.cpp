@@ -1371,7 +1371,7 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
 
       it++;
    }
-   if (withSelf)
+   if (withThis)
       _writer.declareSelfInfo(*tape, 1);
 
    if (withSelf)
@@ -1553,7 +1553,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
       _writer.setMessage(*scope.tape, encodeMessage(0, operator_id, 1));
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callMethod(*scope.tape, 1, 1);
+      _writer.callMethod(*scope.tape, 0, 1);
 
       bool mismatch = false;
       compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->getBoolType(), mismatch, HINT_TYPEENFORCING);
@@ -1783,7 +1783,10 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          break;
       case okFieldAddress:
          // field address cannot be used directly and should be boxed
-         object = boxStructureField(scope, object, mode);
+         // if it is not an assignment target
+         if (node.nextNode() != nsAssigning)
+            object = boxStructureField(scope, object, mode);
+
          break;
    }
 
@@ -3170,7 +3173,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
          //NOTE: info should be either fields or locals
          if (info.kind == okOuterField) {
             _writer.loadObject(*ownerScope.tape, info);
-            _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+            _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
          }
          else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress) {
             if (checkIfBoxingRequired(ownerScope, info)) {

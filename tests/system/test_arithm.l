@@ -3,8 +3,8 @@
 #define system'collections.
 #define system'calendar.
 #define extensions.
-////#define extensions'math.
-                                                        
+#define extensions'math.
+
 #class(role)XTester
 {
 }

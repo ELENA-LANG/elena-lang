@@ -123,6 +123,14 @@ week1:
                        * extender : if no match found call the super handler
 
               xdev - general implementation
+                       * due to typecasting we have to always specify the returning type, it is ok, but it should be possible to turn off the
+                         validation message, in that case the code:                         
+                            #symbol numbers = (:anN)
+                            [
+                               arrayControl new &length:anN &each: anIndex [ Integer new:(anIndex + 1) ]
+                            ].
+                         will fails (becase length will be sent to anN)
+
                        * rename / refactor weval - misleading name
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * we do not need to store the previous gc_ext_stack_frame, it should be done in open / close frame routine
@@ -469,8 +477,11 @@ week2:
                                  continue   // -- should be correctly loaded into accumulator
                              ].
                        * review literalControl.split&by - could we ismplify / beautify the code
+                       * review all samples : simplify / refactore (look if the code can be reused)
                                                                                                                              
               arev - lib30 review
+                       * review extensions'math'EMatrix, simplify / optimize the code
+
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
 
                        * LiteralIndexer implementation : try to optimize to minimize new object creating
@@ -502,7 +513,9 @@ week2:
                        * fix warnings for system'String
                        * pattern : for i,j - forregion &int:0 &int:0 &int:n &int:m
                        * should get&length be moved into generic extension?
-
+                       * review all classes : simplify / refactore (look if the code can be reused)
+                       * review extensions'consoleEx implementation - do we need Wrap?
+                       
               adev - lib30 optimization
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)

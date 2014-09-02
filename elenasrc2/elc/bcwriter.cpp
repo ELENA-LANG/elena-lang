@@ -429,7 +429,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okBlockLocal:
          // pushfi index
          tape.write(bcPushFI, object.param, bpBlock);
-         tape.write(bcAllocStack, 1);
          break;
       case okCurrent:
          // pushsi index
@@ -549,11 +548,11 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          else tape.write(bcALoadBI, object.param);
          break;
       case okOuterField:
-         // bloadfi 1
-         // aloadbi index
-         // aloadai index
-         tape.write(bcBLoadFI, 1, bpFrame);
-         tape.write(bcALoadBI, object.param);
+         // aloadfi 1
+         // aloadai param
+         // aloadai extra
+         tape.write(bcALoadFI, 1, bpFrame);
+         tape.write(bcALoadAI, object.param);
          tape.write(bcALoadAI, object.extraparam);
          break;
       case okLocalAddress:
@@ -859,6 +858,7 @@ void ByteCodeWriter :: typecast(CommandTape& tape)
    tape.write(bcSetVerb, encodeVerb(GET_MESSAGE_ID));
    tape.write(bcPushA);
    tape.write(bcACallVI, 0);
+   tape.write(bcFreeStack, 1);
    tape.setLabel();
 }
 
@@ -1733,17 +1733,17 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
 
 void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
 {
-   // bswap
    // dcopy index
    // bread
    // dcopye
-   // bcopya
    // nsave
+   // acopyb
 
    tape.write(bcDCopy, offset);
    tape.write(bcBRead);
    tape.write(bcDCopyE);
    tape.write(bcNSave);
+   tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
@@ -1771,6 +1771,8 @@ void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
       tape.write(bcAndN, 0xFFFF);
       tape.write(bcNSave);
    }
+   // acopyb
+   tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
