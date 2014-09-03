@@ -37,8 +37,10 @@
     
     #method eval
     [
-        control while:theActive &do:
-          [ 'program'output << (theControl >> 'program'input). ].        
+        control while:[ theActive ] &do:
+        [ 
+            'program'output write:(theControl prompt:'program'output read:'program'input). 
+        ].
     ]
 }
 

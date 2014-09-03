@@ -20,21 +20,9 @@ v  - vm script
 Currently:
 ------
               srev - migration
-                       * migrate rosetta samples : bestshaffle
-
-                       * test anagram
-
-                       * migrate date time
                        * migrate matrix
                        * migrate pi
-                       * migrate tape sample
-                       * migrate mt test
-                       * migrate interpreter
-
-                       * update samples:ackermann, amb, anagram, anonymrec, arithmeticintm arithmeval, arithmmean,
-                                        bestshuffle, brackets, bullscows, caesar
-                       
-
+                       * test anagram
                        
 <=================> 
 
@@ -42,6 +30,9 @@ Currently:
 --------
 week1:
               xdev - generic development                        
+                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
+                         another group object - Group (a, %Even[ even value ]), which will works correctly
+
                        * reimplement generic methods
 
                        * for examples we have to support both get&literal and read&out'literal, the second one to be used with stack allocated
@@ -434,6 +425,10 @@ week2:
                        * support redirect method
                        
               adev - lib30                                        
+                       * migrate tape sample
+                       * migrate mt test
+                       * migrate interpreter
+
                        * test: true and Boolean, intNumber and Integer, ...
                        * test true / false operations with Boolean
 
@@ -515,7 +510,8 @@ week2:
                        * should get&length be moved into generic extension?
                        * review all classes : simplify / refactore (look if the code can be reused)
                        * review extensions'consoleEx implementation - do we need Wrap?
-                       
+                       * comparing literal and char (see for example trans sample)
+                                                      
               adev - lib30 optimization
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)

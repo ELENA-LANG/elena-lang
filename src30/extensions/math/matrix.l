@@ -120,13 +120,13 @@
             ]
         ].
         
-        ^ Wrap(a, %Even[ even value ]).
+        ^ Wrap(%Even[ even value ], a).
     ]
 
     #method Determinant
     [
         #var lum := self~EMatrix Decomposed.
-        #var deter := Real new:1.
+        #var deter := Real new &int:1.
 
         (lum Even)
             ! [ deter *= -1. ].

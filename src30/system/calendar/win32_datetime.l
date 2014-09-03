@@ -229,19 +229,27 @@
         ^ aDate + " " + aTime.
     ]
     
-//    toShortDate:aValue
-//    [
-//        #var aSystemStruct := aValue~EWin32FileTime win32'SystemTime.
-//
-//        ^ aSystemStruct read &date &literal &int:DATE_SHORTDATE.
-//    ]
-//    
-//    toShortTime:aValue
-//    [
-//        #var aSystemStruct := aValue~EWin32FileTime win32'SystemTime.
-//
-//        ^ aSystemStruct read &time &literal &int:0.
-//    ]
+    toShortDate &long:aDateValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
+
+        #var aDate := aSystemTime get &literal &dateFlags:DATE_SHORTDATE.
+
+        ^ aDate.
+    ]
+    
+    toShortTime &long:aDateValue
+    [
+        #var(type:__win_systemtime)aSystemTime.
+
+        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
+
+        #var aTime := aSystemTime get &literal &timeFlags:0.
+
+        ^ aTime.
+    ]
 }.
 
 #symbol timeSpanControl =

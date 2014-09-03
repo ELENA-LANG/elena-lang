@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 executable=matrix.exe
 output=obj
 options=-xembed-
@@ -13,5 +13,6 @@ matrix.l
 [forwards]
 'program=extensions'programLoop
 'program'control=matrix'control
-'program'output=matrix'output
+'program'output=extensions'consoleEx
 'program'input=extensions'consoleEx
+

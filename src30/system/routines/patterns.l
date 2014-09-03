@@ -75,9 +75,9 @@
     #method array
         = Array new &length::self ~indexable set &each: i [ self @ i ].
 
-//    #method deepClone
-//        = Array new &length::self ~indexable set &each: i
-//            [ (self @ i) clone ].
+    #method deepClone
+        = Array new &length::self ~indexable set &each: i
+            [ (self @ i) clone ].
 }
 
 // --- literalOp ---
@@ -181,60 +181,76 @@
     ]    
 }
 
-//#class(role)textOp
-//{
-//    #method write : aLiteral &length:aCounter
-//    [
-//        #var(type:int)aNumber := aCounter.
-//        control while:[aNumber > 0] &do:
-//            [ self write:aLiteral. aNumber := aNumber - 1. ].
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &paddingLeft:aWidth &with:aChar
-//    [
-//        #var aLiteral := aLine literal.
-//        #var aLength := aLiteral length.        
-//        (aLength < aWidth)
-//            ? [ self~textOp write:aChar &length:(aWidth - aLength). ].
-//            
-//        self write::aLiteral.
-//            
-//        ^ self.
-//    ]
-//
-//    #method write : aLine &paddingRight:aWidth &with:aChar
-//    [
-//        #var aLiteral := aLine literal.
-//        
-//        self write::aLiteral.
-//        
-//        #var aLength := aLiteral length.        
-//        (aLength < aWidth)
-//            ? [ self~textOp write:aChar &length:(aWidth - aLength). ].
-//            
-//        ^ self.            
-//    ]
-//
-//    #method write : aLine &padding:aWidth &with:aChar
-//    [
-//        #var aLiteral := aLine literal.
-//        #var aLength := aLiteral length.        
-//        (aLength < aWidth)
-//            ? [
-//                #var aLen := aWidth - aLength.
-//                #var aLeftLen := aLen / 2.
-//                
-//                self~textOp write:aChar &length:aLeftLen.
-//                self write::aLiteral.
-//                self ~textOp write:aChar &length:(aLen - aLeftLen).
-//            ]
-//            ! [ self write::aLiteral. ].
-//            
-//        ^ self.
-//    ]
-//}
+#class(role)stringOp
+{
+    #method write : aLiteral &length:aCounter
+    [
+        #var(type:int)aNumber := aCounter.
+        
+        #loop (aNumber > 0) ?
+        [
+            self write:aLiteral. 
+            
+            aNumber := aNumber - 1.
+        ].
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:int)aWidthInt := aWidth int.
+        #var aLiteral := aLine literal.
+        
+        #var(type:int)aLength.
+        aLiteral read &out'length:aLength.
+        
+        (aLength < aWidthInt)
+            ? [ self~stringOp write:aChar &length:(aWidthInt - aLength). ].
+            
+        self write::aLiteral.
+            
+        ^ self.
+    ]
+
+    #method write : aLine &paddingRight:aWidth &with:aChar
+    [
+        #var aLiteral := aLine literal.
+        #var(type:int)aWidthInt := aWidth int.
+        
+        self write::aLiteral.
+                    
+        #var(type:int)aLength.
+        aLiteral read &out'length:aLength.
+        
+        (aLength < aWidthInt)
+            ? [ self~stringOp write:aChar &length:(aWidthInt - aLength). ].
+            
+        ^ self.
+    ]
+
+    #method write : aLine &padding:aWidth &with:aChar
+    [
+        #var aLiteral := aLine literal.
+        #var(type:int)aWidthInt := aWidth int.
+        
+        #var(type:int)aLength.
+        aLiteral read &out'length:aLength.        
+        
+        (aLength < aWidth)
+            ? [
+                #var(type:int)aLen := aWidthInt - aLength.
+                #var(type:int)aLeftLen := aLen / 2.
+                
+                self~stringOp write:aChar &length:aLeftLen.
+                self write::aLiteral.
+                self ~stringOp write:aChar &length:(aLen - aLeftLen).
+            ]
+            ! [ self write::aLiteral. ].
+            
+        ^ self.
+    ]
+}
 
 // --- enumerable ---
 
@@ -377,7 +393,7 @@
         = anArray~indexable sort: ifOrdered.
         
     Subarray : anArray &from:anIndex &length:aLength
-        = anArray~indexable Subarray &index::anIndex &length:aLength.
+        = anArray~indexable Subarray &index:(anIndex int) &length:aLength.
 }.
 
 // --- literalControl ---

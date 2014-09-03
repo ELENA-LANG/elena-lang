@@ -22,19 +22,21 @@
 
 // ---- Program ---
 
-#symbol output =
-    consoleEx 
-        writeLine:"%nChoose an option"
-        writeLine:"[1] - Sum Matrix"
-        writeLine:"[2] - Subtract Matrix"
-        writeLine:"[3] - Multiply Matrix"
-        writeLine:"[4] - Matrix Determinant"
-        writeLine:"[5] - Identity Matrix"
-        writeLine:"[6] - Exit"
-        write:"Your choice:".
-
 #symbol control =
 {
+    prompt : anOutput
+    [
+        anOutput
+            writeLine:"%nChoose an option"
+            writeLine:"[1] - Sum Matrix"
+            writeLine:"[2] - Subtract Matrix"
+            writeLine:"[3] - Multiply Matrix"
+            writeLine:"[4] - Matrix Determinant"
+            writeLine:"[5] - Identity Matrix"
+            writeLine:"[6] - Exit"
+            write:"Your choice:".
+    ]
+    
     read : anInput
     [
         #var aChoice := anInput readLine:(Integer new).

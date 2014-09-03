@@ -36,14 +36,14 @@
     
     #method set &Name:aName
     [
-        theName << aName.
+        convertor save:aName &to:theName.
     ]
     
     #method Age = theAge Number.
     
     #method set &Age:anAge
     [
-        theAge << anAge.
+        convertor save:anAge &to:theAge.
     ]
     
     #method Phone = thePhone literal.
@@ -88,7 +88,7 @@
                 #var aValue := aKeyValue@1.
 
                 // update field
-                aDB~enumerable Last ~(aName~EField Unserialized) set:(Variant new:aValue).
+                aDB~enumerable Last ~(aName~EField Unserialized) set:aValue.
             ].
     ].
     

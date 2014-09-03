@@ -429,6 +429,21 @@ ELENA byte codes (or ecodes)
  
  wtor                       - converts literal[acc] into real with base=index and copies to int[base] ; out index = 0 if error
  
+ rabs                       - base << abs(real:acc)
+
+ rround                     - base << round(real:acc)
+
+ rexp                       - base << exp(real:acc)
+                                                                                                     
+ rln                        - base << ln(real:acc)
+ 
+ rint                       - base << int(real:acc)
+ 
+ rcos                       - base << cos(real:acc)
+ 
+ rsin                       - base << sin(real:acc)
+ 
+ rarctan                    - base << argtan(real:acc) 
 
  literal commands:
  -----------------  

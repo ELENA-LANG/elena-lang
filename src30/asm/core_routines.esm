@@ -1617,10 +1617,8 @@ end
 
 procedure inline'r_exp
 
-  aloadsi 1
-  bcopya
-  
-  aloadsi 2
+  aloadsi 1  
+  bloadsi 2
   rexp
 
   quitn 2
@@ -1629,10 +1627,8 @@ end
 
 procedure inline'r_ln
 
-  aloadsi 1
-  bcopya
-  
-  aloadsi 2
+  aloadsi 1  
+  bloadsi 2
   rln
 
   quitn 2
@@ -1641,10 +1637,8 @@ end
 
 procedure inline'r_abs
 
-  aloadsi 1
-  bcopya
-  
-  aloadsi 2
+  aloadsi 1  
+  bloadsi 2
   rabs
 
   quitn 2
@@ -1653,10 +1647,8 @@ end
 
 procedure inline'r_round
 
-  aloadsi 1
-  bcopya
-  
-  aloadsi 2
+  aloadsi 1  
+  bloadsi 2
   rround
   
   quitn 2
@@ -1665,10 +1657,8 @@ end
 
 procedure inline'r_truncate
 
-  aloadsi 1
-  bcopya
-  
-  aloadsi 2
+  aloadsi 1  
+  bloadsi 2
   rint
   
   quitn 2

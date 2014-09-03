@@ -129,6 +129,9 @@
     #constructor new &int:anOperand
         <int_copyshort>.
         
+    #constructor new &short:anOperand
+        <int_copy>.
+        
     #method short = $self.
 }
 
@@ -1031,6 +1034,12 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
+    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+        <= %indexOf &index:anIndex &literal::aChar &out'int:aRetVal.
+
+    #method indexOf &index:anIndex &char:aChar
+        <= %indexOf &index:anIndex &literal::aChar.
+
     #method insert &index:anIndex &literal:aLiteral
         <ws_insert>.
 
@@ -1251,6 +1260,9 @@
     
     #method setAt &index:anIndex &object:anObject
         <arr_setat>.
+        
+    #method add : anObject
+        = $self add &array::anObject.
         
     #method add &array:anArray
     [

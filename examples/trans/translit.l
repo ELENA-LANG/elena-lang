@@ -49,7 +49,7 @@
     control foreach:aText &do: aChar
     [
         #var aRule := listControl seek:rusLatRules &until: x 
-                [ x from == aChar ].
+                [ x from == aChar literal ].
         (nil == aRule)
             ? [ anOutput << aChar. ] 
             ! [ anOutput << aRule to. ].

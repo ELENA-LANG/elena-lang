@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 projecttype=1
 package=date
 executable=dtcalculator.exe
@@ -14,5 +14,6 @@ control.l
 [forwards]
 'program=extensions'programLoop
 'program'control=datetime'control
-'program'output=datetime'output
+'program'output=extensions'consoleEx
 'program'input=extensions'consoleEx
+

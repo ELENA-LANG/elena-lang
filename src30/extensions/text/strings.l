@@ -58,6 +58,11 @@
         
     ]
     
+    #method append : anObject
+    [
+        $self append::(anObject value).
+    ]
+    
     #method append &literal:aValue 
     [
         theLiteral := (theLiteral + aValue) literal.

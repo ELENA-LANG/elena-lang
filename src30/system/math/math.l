@@ -129,7 +129,7 @@
         [
             #var(type:real)aRetVal.
             
-            realConvertor convert::self ~realOp Abs &out'real:aRetVal.
+            n~realOp Abs &out'real:aRetVal.
             
             ^ RealNumber new &real:aRetVal.
         ]
@@ -140,7 +140,7 @@
         long : n
             = n < 0l ? [ -1l * n ] ! [ n ].
     } 
-    eval::self.
+    eval::(self value).
 
     #method isZero
         = self == 0.
