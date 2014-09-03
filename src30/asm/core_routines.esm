@@ -800,12 +800,15 @@ procedure inline'arr_create
   aloadsi 3
   nload
   
+  ifn labSkip 0
+
   acopyr const : system'nil
 labNext:
   dec
   xset
   elsen labNext 0
 
+labSkip:
   acopyb
   quit
 

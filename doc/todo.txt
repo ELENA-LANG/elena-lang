@@ -20,7 +20,6 @@ v  - vm script
 Currently:
 ------
               srev - migration
-                       * migrate matrix
                        * migrate pi
                        * test anagram
                        

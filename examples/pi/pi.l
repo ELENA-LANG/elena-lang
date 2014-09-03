@@ -9,12 +9,12 @@
 [
     #var aResult := Real new::1.
 
-    control forrange &int:1 &int:y &do: (&int:n) [ aResult *= x ] .
+    control forrange &int:1 &int:(y int) &do: (&int:n) [ aResult *= x ] .
 
     ^ aResult.    
 ].
 
-#symbol MAX = 10000.
+#symbol(const) MAX = 10000.
 
 #symbol Program =
 [

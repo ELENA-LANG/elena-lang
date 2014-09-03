@@ -27,7 +27,9 @@
                         
     #method Seconds = timeSpanControl readSeconds &long:theValue.
 
-    #method Milliseconds = timeSpanControl readMilliseconds &long:theValue.    
+    #method Milliseconds = timeSpanControl readMilliseconds &long:theValue.
+    
+    #method value = $self long.  
 }
 
 // --- Date ---
@@ -106,6 +108,8 @@
         = dateTimeControl toShortDateTime &long:theValue literal.
         
     #method cast : anObject = anObject long.
+    
+    #method value = $self.
 }
 
 // --- now ---

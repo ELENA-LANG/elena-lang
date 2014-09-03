@@ -8,18 +8,12 @@
 ******************************************************************************
 
 ELENA:
-[!] compiler code overhaul (vm command set, typecasting, method code)
+[!] compiler code overhaul & optimized (vm command set, typecasting, method code), 
 [!] binary incompatible due to changes in the compiler
-[+] generic methods
-[+] new ecodes: msetsubj, pushsubj, nexti, bloadsi, testtype, acopybi
-[+] obsolete ecodes: madd, maddai, mresetsubj
 [*] changes in exception handling routines
 
 ELC:
 [-] fixed: #var(type:long)n := 2
-
-ELENA:
-[+] new ecodes: lsaveint
 
 [LIB]
 [*] some code refactoring due to dispatching / primitive routines changes
