@@ -295,6 +295,24 @@ void ByteCodeWriter :: newFrame(CommandTape& tape)
    tape.write(bcPushA);
 }
 
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape)
+{
+   // bcreate
+   tape.write(bcBCreate);
+}
+
+void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
+{
+   // wcreate
+   tape.write(bcWCreate);
+}
+
+void ByteCodeWriter :: newDynamicNStructure(CommandTape& tape)
+{
+   // ncreate
+   tape.write(bcNCreate);
+}
+
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
 {
    // newn size, vmt
@@ -307,6 +325,12 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
    //   new fieldCount, vmt
 
    tape.write(bcNew, reference | mskVMTRef, fieldCount);
+}
+
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
+{
+   // create
+   tape.write(bcCreate);
 }
 
 void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)

@@ -268,6 +268,7 @@ void compileDAddN(int opcode, x86JITScope& scope);
 void compileDCopyVerb(int opcode, x86JITScope& scope);
 void compileDCopyCount(int opcode, x86JITScope& scope);
 void compileDCopyCount(int opcode, x86JITScope& scope);
+void compileDCopySubj(int opcode, x86JITScope& scope);
 void compileALoad(int opcode, x86JITScope& scope);
 
 } // _ELENA_

@@ -180,9 +180,6 @@ ref_t resolveMessage(_Module* module, const wchar16_t* method)
       if (StringHelper::compare(verbName, _T("dispatch"))) {
          verb = DISPATCH_MESSAGE_ID;
       }
-      else if (StringHelper::compare(verbName, _T("generic_dispatch"))) {
-         verb = GENERIC_MESSAGE_ID;
-      }
       else {
          wprintf(_T("Unknown verb %s\n"), (const wchar16_t*)verbName);
 
@@ -294,9 +291,6 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
 
    if (verb == DISPATCH_MESSAGE_ID) {
       command.append(_T("dispatch"));
-   }
-   else if (verb == GENERIC_MESSAGE_ID) {
-      command.append(_T("generic_dispatch"));
    }
    else if (verb == NEWOBJECT_MESSAGE_ID) {
       command.append(_T("new[0]"));

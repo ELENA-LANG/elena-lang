@@ -118,3 +118,11 @@ NOTE: VM Table is empty for stand-alone application
                                                    
 method should copy 0 to self if it breaks the flow, otherwise the method result should
 be copied there; 
+
+7) Linux paths:
+
+  lib    - /usr/lib/elena/lib30
+  src    - /usr/share/elena/src30
+  config - /etc/elena
+  data   - /usr/share/elena
+  

@@ -977,11 +977,8 @@
 {
     #field(itemsize:2)theData.
 
-    #constructor => <ws_create>.
-
     #constructor new &length:aSize 
-    [
-    ]
+        <ws_create>.
 
     #constructor new &length:aSize &literal:aLiteral
         <ws_copy>.
@@ -1235,18 +1232,18 @@
     ]
 }
 
-// --- Array ---
-
-#class(sealed,type:array,dbg:array) Array
+#class BaseArray
 {
     #field(item)theItem.
 
-    #constructor => <arr_create>.
-    
     #constructor new &length:aLength
-    [
-    ]
+        <arr_create>.
+}
 
+// --- Array ---
+
+#class(sealed,type:array,dbg:array) Array : BaseArray
+{
     #method getAt : anIndex
         = $self getAt &index:(anIndex int).
 

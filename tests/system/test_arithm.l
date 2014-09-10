@@ -11,6 +11,7 @@
 
 #symbol XTest =
 [
+
 ].
 
 // --- OpenArgTest ---

@@ -1,3 +1,5 @@
+#define system.
+
 //// --- ETapeControl --
 //
 //#symbol tapeControl =
@@ -14,12 +16,8 @@
 
 // --- Tape ---
 
-#class(group,dbg:array) Tape
+#class(group,dbg:array) Tape : BaseArray
 {
-    #field(item)theBody.
-    
-    #constructor => <arr_create>.
-
     #method => <handle_tape>.
 }
 
@@ -27,8 +25,6 @@
 
 #class Struct : Tape
 {
-    #constructor => <arr_create>.
-
     #method => <handle_selector>.
 }
 

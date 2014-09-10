@@ -33,7 +33,6 @@ typedef wchar_t  tchar_t;
 #define _T(x)       x
 
 typedef unsigned short wchar16_t;
-//typedef char           _path_t;
 typedef char           tchar_t;
 
 #endif

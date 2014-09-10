@@ -19,33 +19,20 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              srev - migration
-                       * migrate pi
-                       * test anagram
+
+              xdev - linux
+                       * linux - build system libraris
+                       * linux linker
                        
-<=================> 
-
-1.9.17
---------
-week1:
-              xdev - generic development                        
-                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
-                         another group object - Group (a, %Even[ even value ]), which will works correctly
-
+              xdev - general development                                                                                                  
+                       * test creating ShortArray, LiteralArray, Array
+                       
                        * reimplement generic methods
 
-                       * for examples we have to support both get&literal and read&out'literal, the second one to be used with stack allocated
-                         objects, can we simplify / redesign this approach
-
-                       * review problematic implementation: constructor (for example Tape and Struct both have to define default constructor),  
-                         loop breaking, return operator, exception handling, loop implementation (especially until loop)
+                       * review problematic implementation:loop breaking, return operator, loop implementation (especially until loop)
 
                        * can we use ^ operator to returns from any part of the code to the end
                        
-                       * #var(type:int)n := n int.  // probably we should use optimized version if available (e.g n get&int &out'int:xxx)
-
-                       * exceptions : provide call stack info
-
                        * for some operation can we somehow to define the output result : e.g. insert&index&literal or toLiteral, so no need to
                          type cast every time the method is called??
 
@@ -56,62 +43,17 @@ week1:
                                                                                                                   
                        * should it be possible to override operator implementation with extension methods?
                                                     
-                       * group object implementation (group, union, cast)
-                       
                        * hook and unhook consume stack, it should be reflected in bytecodewriter::save
                        * loop should contain snop
                        * warn if number of subjects / verbs are overflown
                        * readonly fields - (initialization happends inside default constructor) - operation with such fields
                          can use direct method call 
                        * warn if subject / verb is unknown (it means we should declare subject, but this function can be turned off)
-                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
+<=================> 
 
-                       * think over reflection implementtion for static linked executable
-
-                       * should commands be multy-thread independent, e.g. all related code be located in core?
-                       * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
-                         so the actualy read size should be reduced to match the valid group
-                       * get rid of predefined constant classes (intnumber, ...)
-                       * make possible to use custom types in compileExternalCall (to pass structures), so we could get rid of built-in subject handle
-
-                       * okFieldAddress : it should be possible to have several primitive fields - the value should be copied to stack allocated
-                         object if offset is not zero
-
-                       * #throw should generate stack call list, #break will raise an exception without it
-
-                       * exception handling, if the handler does not react on the current exception for ifFailed&on call - different error is thrown
-                         (NotFound) and the original exception is lost
-
-                       * if more than 15 parameters passed - use open argument list
-
-                       * generic handlers : make possible to use passed subject
-                       * generic handlers : resend handler - if no match found call the super handler
-                       * generic handlers : should not be allowed for roles ??
-                       * uncomment : declareGenericMethod / jumpIfNotEqualN
-                       
-                       * widechar constant : special symbol or we could use literal constant with length=1
-                       * multiple parameter dispatching (see extensions'convertor)
-                             save&to => save&int&to | save&long&to ; 
-                             can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
-
-
-                             self~({ int : n = %(int&to). long : n = %(long&to). } eval::sour ) eval:sour:dest
-                             
-
-                             controlEx dispatch:x:y &table:(%int,%(int&to),%long,%(long&to))
-
-                       * add multiply dispatch test
-
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-
-                       * custom verb dispatching (see for example stringControl split&by[2])
-                           : intNumber.shift ; stringControl
-
-                       * using literal / int / .. constants before they are declared ??
-
-                       * extender : if no match found call the super handler
-
+1.9.17
+--------
+week1:
               xdev - general implementation
                        * due to typecasting we have to always specify the returning type, it is ok, but it should be possible to turn off the
                          validation message, in that case the code:                         
@@ -150,28 +92,6 @@ week1:
                        * any type casting get method call should be implemented as typecast - see system'literalConvertor convert &int:$self literal
                        * module system should be inclduded automatically ??
                        * boxing : object saving should be done only if the object was boxed
-
-              xdev - linux
-                       * paths: lib    - \usr\share\elena\lib30
-                                         \usr\share\elena\src30
-                                config - \etc\elena
-                                data   - \usr\share\elena - data
-
-                       * linux - build system libraris
-                       * linux linker
-                       * linux console operations
-                       * linux file operations
-                       * linux date / time operations
-                       * port elc to linux
-                       * port asm2binx to linux
-                       * port sg to linux
-                       * port ecv to linux
-                       * port og to linux
-                       * review deployment mechanism
-                       * port elenavm to linux
-                       * port elide to linux
-                       * port elenasm to linux
-                       * port elt to linux
 
               xdev - multithreading       
                        * threadhandle - provide safe region like it was in 1.7
@@ -424,6 +344,24 @@ week2:
                        * support redirect method
                        
               adev - lib30                                        
+                       * throw / dispatch handler : assign ebp to $self                       
+                       * group object : implementation, limitation
+                       * group object implementation (group, union, cast)
+                                              
+                         implement : copy message parameters, set exception hook, and try to call the method for all its members, if
+                         exception raises - make sure the stack level is the same (taking into account ret address) and it is method not found -
+                         goes to the next element otherwise - send the message further (except for the last member - simply call the dispatch method)
+
+                         limitation : copying stack / setting hook overhead                         
+
+                         alternative : special handler, if the method is found remove return point from the stack - jump to the dispach, otherwise
+                         return to the method ; limitation - two handlers
+
+                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
+                         another group object - Group (a, %Even[ even value ]), which will works correctly
+
+                       * move Array.add(1) method to the extension ??
+
                        * migrate tape sample
                        * migrate mt test
                        * migrate interpreter
@@ -461,9 +399,6 @@ week2:
                        * bsort example, sortRange method : variable is used because of loop implementation
                        * goods : Record.get&literal : 
                                   #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
-                       * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
-                         the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
-                         if not - goes to the alternative branch (what about dynamic objects in that case)
                        * review loop code (see system'io'$ConsoleReader) :
                              #loop
                              [
@@ -763,6 +698,83 @@ week4:
 1.9.18
 --------
 week1:
+              xdev - exception handling
+                       * Exception handler overhaul : either callcontext (stack + $self) should be somehow passed to the object where it
+                         is created or in catch handler - forming group with the exception object ; in the first case - how could we
+                         create light weight exception - like - method not found
+
+                       * call stack : using ebp it is possible to reconstruct call stack - how to get the call context - method name + call
+                         coordinate - load dm module - looking throug the code to find out the procedure name
+
+                       * Review exception handling mechanism : how to provide the exception parameters and the exception call stack
+                                              
+                       * exception handling : parse catch statements to recognize the exception handler with out need to create a special
+                         handler, only if the event was not recognized should we implement it
+
+                       * Exception object should generate the exception info on 
+
+                       * exceptions : provide call stack info
+
+                       * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
+                         the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
+                         if not - goes to the alternative branch (what about dynamic objects in that case)
+
+                       * method not found event should provides the way to specify the object where the method was not found
+
+              xdev - generic development                        
+                       * default construtor : there should be way to call it explicitly (especially for dynamic one where we need to provide
+                         the length parameter, sometimes it should be possible to make some operation with it before passing to default one, see
+                         for example LiteralValue - length should be increaded by one)
+                       * constructor : should be possible to call base / another constructor
+
+                       * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
+
+                       * think over reflection implementtion for static linked executable
+
+                       * should commands be multy-thread independent, e.g. all related code be located in core?
+                       * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
+                         so the actualy read size should be reduced to match the valid group
+                       * get rid of predefined constant classes (intnumber, ...)
+                       * make possible to use custom types in compileExternalCall (to pass structures), so we could get rid of built-in subject handle
+
+                       * okFieldAddress : it should be possible to have several primitive fields - the value should be copied to stack allocated
+                         object if offset is not zero
+
+                       * #throw should generate stack call list, #break will raise an exception without it
+
+                       * exception handling, if the handler does not react on the current exception for ifFailed&on call - different error is thrown
+                         (NotFound) and the original exception is lost
+
+                       * if more than 15 parameters passed - use open argument list
+
+                       * generic handlers : make possible to use passed subject
+                       * generic handlers : resend handler - if no match found call the super handler
+                       * generic handlers : should not be allowed for roles ??
+                       * uncomment : declareGenericMethod / jumpIfNotEqualN
+                       
+                       * widechar constant : special symbol or we could use literal constant with length=1
+                       * multiple parameter dispatching (see extensions'convertor)
+                             save&to => save&int&to | save&long&to ; 
+                             can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.
+
+
+                             self~({ int : n = %(int&to). long : n = %(long&to). } eval::sour ) eval:sour:dest
+                             
+
+                             controlEx dispatch:x:y &table:(%int,%(int&to),%long,%(long&to))
+
+                       * add multiply dispatch test
+
+                       * implement dispatching with several parameters
+                         (see Compiler::compileDispatcher)              
+
+                       * custom verb dispatching (see for example stringControl split&by[2])
+                           : intNumber.shift ; stringControl
+
+                       * using literal / int / .. constants before they are declared ??
+
+                       * extender : if no match found call the super handler
+
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
                        * out of memory exception should be correctly raised
@@ -770,6 +782,26 @@ week1:
                        
               idev - script engine
                        * build-in script into IDE
+                       
+              xdev - linux
+                       * paths: lib    - \usr\share\elena\lib30
+                                         \usr\share\elena\src30
+                                config - \etc\elena
+                                data   - \usr\share\elena - data
+
+                       * linux console operations
+                       * linux file operations
+                       * linux date / time operations
+                       * port elc to linux
+                       * port asm2binx to linux
+                       * port sg to linux
+                       * port ecv to linux
+                       * port og to linux
+                       * review deployment mechanism
+                       * port elenavm to linux
+                       * port elide to linux
+                       * port elenasm to linux
+                       * port elt to linux
 
 1.9.19
 --------

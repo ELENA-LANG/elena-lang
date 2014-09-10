@@ -543,6 +543,23 @@ inline % 4Eh
 
 end
 
+// ; ncreate
+inline % 4Fh
+
+  mov  ebx, esi
+  shl  ebx, 2
+  push eax  
+  mov  ecx, ebx
+  add  ebx, page_ceil
+  neg  ecx
+  and  ebx, page_mask  
+  call code : %GC_ALLOC
+  mov  [eax-8], ecx
+  pop  ebx
+  mov  [eax-4], ebx
+
+end
+
 // ; wsequal
 inline % 50h
 
@@ -1221,7 +1238,7 @@ labEnd:
 
 end
 
-// ; createw
+// ; wcreate
 inline % 5Fh
 
   //lea  ebx, [esi * 2 + 2]

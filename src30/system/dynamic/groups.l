@@ -1,11 +1,9 @@
+#define system.
+
 // --- Wrap ---
 
-#class(group,dbg:array) Wrap
+#class(group,dbg:array) Wrap : BaseArray
 {
-    #field(item)theItems.
-    
-    #constructor => <arr_create>.
-    
     #method => <handle_wrap>.
 }
 

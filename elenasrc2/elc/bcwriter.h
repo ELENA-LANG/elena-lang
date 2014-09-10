@@ -186,8 +186,13 @@ public:
 
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
+   void newDynamicStructure(CommandTape& tape);
+   void newDynamicWStructure(CommandTape& tape);
+   void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+   void newDynamicObject(CommandTape& tape);
+
    void loadObject(CommandTape& tape, ObjectInfo object);
    void pushObject(CommandTape& tape, ObjectInfo object);
    void saveObject(CommandTape& tape, ObjectInfo object);

@@ -456,26 +456,41 @@ end
 
 procedure inline'ws_create
 
-  aloadsi 3
+  bcopya
+  aloadsi 2
   nload
   inc
-  acopyr class : system'LiteralValue
-  wcreate
-  quit
+  acopyb
+  acallvi 1
+  quitn 2
 
 end
 
 procedure inline'ws_copy
 
   bcopya
+  aloadsi 2
+  nload
+  inc
+  acopyb
+  acallvi 1
+
+  bcopya
   aloadsi 3
   copy
   acopyb
-  quitn 2
+  quitn 3
 
 end
 
 procedure inline'ws_copyarr
+
+  bcopya
+  aloadsi 2
+  nload
+  inc
+  acopyb
+  acallvi 1
 
   bcopya
   aloadsi 3
@@ -485,11 +500,18 @@ procedure inline'ws_copyarr
   ecopy 0
   dec
   wwrite
-  quitn 2
+  quitn 3
 
 end
 
 procedure inline'ws_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  inc
+  acopyb
+  acallvi 1
 
   bcopya
   aloadsi 2
@@ -505,7 +527,39 @@ procedure inline'ws_copysubarr
   popd
   ecopy 0
   wwrite
-  quitn 2
+  quitn 4
+
+end
+
+procedure inline'ws_fill
+  
+  bcopya
+  aloadsi 2
+  nload
+  inc
+  acopyb
+  acallvi 1
+
+  bcopya
+  wlen
+  dec
+  
+  // ; set zero at the end
+  ecopy 0 
+  wwrite
+  ecopyd
+
+  aloadsi 3
+  nload
+  eswap
+
+labNext:
+  dec
+  wwrite
+  elsen labNext 0 
+
+  acopyb
+  quitn 3
 
 end
 
@@ -720,31 +774,6 @@ procedure inline'ws_getlen
 
 end
 
-procedure inline'ws_fill
-  
-  bcopya
-  wlen
-  dec
-  
-  // ; set zero at the end
-  ecopy 0 
-  wwrite
-  ecopyd
-
-  aloadsi 3
-  nload
-  eswap
-
-labNext:
-  dec
-  wwrite
-  elsen labNext 0 
-
-  acopyb
-  quitn 3
-
-end
-
 procedure inline'exception_dispatch
 
   ifm labElse IF_MESSAGE_ID_1
@@ -791,13 +820,14 @@ end
 
 procedure inline'arr_create
 
-  aloadsi 3
+  bcopya
+  aloadsi 2
   nload
-  acopyr class : system'Array
-  create
+  acopyb
+  acallvi 1
 
   bcopya
-  aloadsi 3
+  aloadsi 2
   nload
   
   ifn labSkip 0
@@ -810,27 +840,29 @@ labNext:
 
 labSkip:
   acopyb
-  quit
+  quitn 2
 
 end
 
 procedure inline'bs_create
 
-  aloadsi 3
+  bcopya
+  aloadsi 2
   nload
-  acopyr class : system'ByteArray
-  bcreate
-  quit
+  acopyb
+  acallvi 1
+  quitn 2
 
 end
 
 procedure inline'sa_create
 
-  aloadsi 3
+  bcopya
+  aloadsi 2
   nload
-  acopyr class : system'ShortArray
-  wcreate
-  quit
+  acopyb
+  acallvi 1
+  quitn 2
 
 end
 

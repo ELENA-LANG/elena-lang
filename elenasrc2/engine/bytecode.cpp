@@ -27,7 +27,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "clone", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
-   "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "unknown",
+   "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
 
    "wequal", "wless", "wread", "winsert", "ntow", "ltow", "rtow", "wseek",
    "wwrite", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",

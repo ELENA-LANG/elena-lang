@@ -58,7 +58,6 @@ namespace _ELENA_
    #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
    #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
    #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
-   #define errNotDefaultConstructor "%s(%d:%d): error 143: Default constructor is not defined\n"
    #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
    #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
    #define errNotSupprotedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n" 

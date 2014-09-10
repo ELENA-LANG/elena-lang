@@ -188,8 +188,8 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
 //   case _ELENA_::opL2:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-   case _ELENA_::opL3:
-      return config.getSetting(COMPILER_CATEGORY, ELC_L3);
+//   case _ELENA_::opL3:
+//      return config.getSetting(COMPILER_CATEGORY, ELC_L3);
    case _ELENA_::opTemplate:
       return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
    default:
@@ -261,7 +261,7 @@ void _ELC_::Project :: loadConfig(const tchar_t* path, bool root, bool requiered
 
 void _ELC_::Project :: setOption(const tchar_t* value)
 {
-//   switch ((char)value[0]) {
+   switch ((char)value[0]) {
 //      case ELC_PRM_LIB_PATH:
 //         _settings.add(_ELENA_::opLibPath, _ELENA_::StringHelper::clone(value + 1));
 //         break;
@@ -328,19 +328,19 @@ void _ELC_::Project :: setOption(const tchar_t* value)
 //      case ELC_PRM_DEBUGINFO:
 //         _settings.add(_ELENA_::opDebugMode, -1);
 //         break;
-//      case ELC_PRM_CONFIG:
-//      {
-//         loadConfig(value + 1);
-//
-//         _ELENA_::Path projectPath;
-//         projectPath.copyPath(value + 1);
-//         _settings.add(_ELENA_::opProjectPath, projectPath.clone());
-//
-//         break;
-//      }
-//      default:
-//         raiseError(ELC_ERR_INVALID_OPTION, value);
-//   }
+      case ELC_PRM_CONFIG:
+      {
+         loadConfig(value + 1);
+
+         _ELENA_::Path projectPath;
+         projectPath.copyPath(value + 1);
+         _settings.add(_ELENA_::opProjectPath, projectPath.clone());
+
+         break;
+      }
+      default:
+         raiseError(ELC_ERR_INVALID_OPTION, value);
+   }
 }
 
 _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
@@ -405,7 +405,7 @@ int main(int argc, char* argv[])
       // Compiling..
       print(ELC_COMPILING);
 
-      _ELENA_::Path syntaxPath(project.StrSetting(_ELENA_::opAppPath), SYNTAX_FILE);
+      _ELENA_::Path syntaxPath(SYNTAX_FILE);
       _ELENA_::FileReader syntaxFile(syntaxPath, _ELENA_::feRaw, false);
       if (!syntaxFile.isOpened())
          project.raiseError(errInvalidFile, (const tchar_t*)syntaxPath);

@@ -722,6 +722,7 @@ protected:
    void compileDispatcher(DNode node, MethodScope& scope);
    void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
+   void compileDynamicDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
 
    void compileSymbolCode(ClassScope& scope);

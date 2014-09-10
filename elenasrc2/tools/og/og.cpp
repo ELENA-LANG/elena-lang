@@ -9,7 +9,6 @@
 #include "textsource.h"
 #include "bytecode.h"
 
-#include <windows.h>
 #include <stdarg.h>
 
 using namespace _ELENA_;
@@ -40,6 +39,7 @@ void printLine(const char* msg, ...)
    fflush(stdout);
 }
 
+#ifdef _WIN32
 void printLine(const wchar_t* msg, ...)
 {
    va_list argptr;
@@ -49,6 +49,7 @@ void printLine(const wchar_t* msg, ...)
    va_end(argptr);
    fflush(stdout);
 }
+#endif
 
 ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineInfo& info)
 {
@@ -140,7 +141,7 @@ size_t addOpcode(MemoryByteTrie& trie, size_t parentPosition, ByteCodePattern pa
 
 size_t readTransform(size_t position, TextSourceReader& source, wchar16_t* token, LineInfo& info, MemoryByteTrie& trie)
 {
-   if (!StringHelper::compare(token, _T(";"))) {
+   if (!ConstantIdentifier::compare(token, ";")) {
       ByteCodePattern pattern = decodeCommand(source, token, info);
 
       // should be saved in reverse order, to simplify transform algorithm
@@ -158,7 +159,7 @@ void appendOpCodeString(TextSourceReader& source, wchar16_t* token, LineInfo& in
 
    size_t position = addOpcode(trie, 0, pattern);
 
-   while (!StringHelper::compare(token, _T("=>"))) {
+   while (!ConstantIdentifier::compare(token, "=>")) {
       position = addOpcode(trie, position, decodeCommand(source, token, info));
    }
 
@@ -224,10 +225,10 @@ int main(int argc, char* argv[])
 
    Path path(argv[1]);
 
-   TextFileReader   sourceFile(path, feAnsi, false);
+   TextFileReader   sourceFile(path, feUTF8, false);
    TextSourceReader source(4, &sourceFile);
    LineInfo         info(0, 0, 0);
-   TCHAR            token[IDENTIFIER_LEN + 1];
+   wchar16_t        token[IDENTIFIER_LEN + 1];
 
    ByteCodePattern defValue;
    MemoryByteTrie  trie(defValue);
@@ -249,7 +250,7 @@ int main(int argc, char* argv[])
       generateSuffixLinks(trie);
 
       // save the result
-      Path outputFile(NULL, path);
+      Path outputFile(path);
       outputFile.changeExtension(_T("dat"));
 
       FileWriter file(outputFile, feRaw, false);

@@ -14,11 +14,20 @@
 #include "jitcompiler.h"
 
 // --- ELC default file names ---
+#ifdef _WIN32
+
 #define SYNTAX_FILE                 "syntax.dat"
 #define RULES_FILE                  "rules.dat"
 
+#else
+
+#define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
+#define RULES_FILE                  "rules.dat"
+
+#endif
+
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0011
+#define ELC_BUILD_NUMBER             0x0012
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'

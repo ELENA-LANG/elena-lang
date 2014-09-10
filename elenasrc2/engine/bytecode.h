@@ -83,6 +83,7 @@ enum ByteCode
    bcNXor           = 0x4C,
    bcNShift         = 0x4D,
    bcNNot           = 0x4E,
+   bcNCreate        = 0x4F,
 
    bcWEqual         = 0x50,
    bcWLess          = 0x51,

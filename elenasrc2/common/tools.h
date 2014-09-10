@@ -28,9 +28,9 @@ inline static size_t wcslen(const unsigned short* s)
 {
    const unsigned short* p = s;
 
-   while (*p++);
+   while (*p) p++;
 
-   return (size_t)(p - s) >> 1;
+   return (size_t)(p - s);
 }
 
 inline char* strlwr(char* str)

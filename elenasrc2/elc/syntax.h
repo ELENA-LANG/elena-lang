@@ -61,7 +61,6 @@ enum Symbol
    nsL7Operation                = 0x01026,
    nsRetStatement               = 0x01027,
    nsL5Operation                = 0x01028,
-   nsConstructorExpression      = 0x01029,
    nsElseOperation              = 0x0102A,
    nsExtension                  = 0x0102B,
    nsTypedMessageParameter      = 0x0102C,

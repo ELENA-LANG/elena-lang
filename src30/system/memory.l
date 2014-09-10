@@ -1,17 +1,19 @@
 // === basic memory classes ===
 
-// --- ByteArray ---
+// --- BaseByteArray ---
 
-#class(sealed,type:bytearray) ByteArray
+#class BaseByteArray
 {
     #field(itemsize:1)theData.
 
-    #constructor => <bs_create>.
-    
     #constructor new &length : aLength
-    [
-    ]
-    
+        <bs_create>.
+}
+
+// --- ByteArray ---
+
+#class(sealed,type:bytearray) ByteArray : BaseByteArray
+{
     #method bytearray = $self.
 
 //    #method write &index:anIndex &length:aLength &bytearray:aDump
@@ -60,11 +62,8 @@
 {
     #field(itemsize:2)theData.
     
-    #constructor => <sa_create>.
-    
     #constructor new &length : aLength
-    [
-    ]
+        <sa_create>.
     
     #method equal &index:anIndex &short:aValue
         <ws_equalword>.

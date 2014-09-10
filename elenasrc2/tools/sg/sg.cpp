@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sg.h"
@@ -51,7 +51,7 @@ int registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line syntax generator %d.%d.0 (C)2005-2013 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+   printf("ELENA command line syntax generator %d.%d.1 (C)2005-2014 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
    if (argc < 2 || argc > 3) {
       printLine("sg <syntax_file> [-cp<codepage>]");
       return 0;
@@ -72,6 +72,10 @@ int main(int argc, char* argv[])
       Path path;
 		path.copy(argv[1], strlen(argv[1]));
       TextFileReader   sourceFile(path, encoding, true);
+      if (!sourceFile.isOpened()) {
+         printLine("file not found %s", path);
+      }
+
       TextSourceReader source(4, &sourceFile);
       ParserTable      table;
       LineInfo         info(0, 0, 0);
@@ -129,7 +133,7 @@ int main(int argc, char* argv[])
 
       printLine("saving...\n");
 
-      path.changeExtension(ConstantIdentifier("dat"));
+      path.changeExtension(_T("dat"));
 
       FileWriter file(path, feRaw, false);
       table.save(&file);

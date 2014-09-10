@@ -994,6 +994,9 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
          TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
          if (sizeValue.symbol == tsInteger) {
             size = -StringHelper::strToInt(sizeValue.value);
+            // !! HOTFIX : allow only 1,2 or 4 as an item size
+            if (size != -1 && size != -2 && size != -4)
+               raiseError(wrnInvalidHint, terminal);
          }
          else raiseWarning(wrnUnknownHint, terminal);
       }
@@ -4263,46 +4266,45 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    // HOTFIX: constructor is declared in class class but should be executed if the class instance
    codeScope.tape = &classClassScope.tape;
 
-   if (getVerb(scope.message) == NEWOBJECT_MESSAGE_ID) {
-      compileDefaultConstructor(node.firstChild().firstChild(), scope, classClassScope, hints);
+   DNode body = node.select(nsSubCode);
+   DNode resendBody = node.select(nsResendExpression);
+
+   if (resendBody != nsNone) {
+      compileResendExpression(resendBody.firstChild(), codeScope);
    }
    else {
-      DNode body = node.select(nsSubCode);
-      DNode resendBody = node.select(nsResendExpression);
+      _writer.declareMethod(*codeScope.tape, scope.message, false);
 
-      if (resendBody != nsNone) {
-         compileResendExpression(resendBody.firstChild(), codeScope);
+      // HOTFIX: -1 indicates the stack is not consumed by the constructor
+      _writer.callMethod(*codeScope.tape, 1, -1);
+
+      DNode importBody = node.select(nsImport);
+
+      // check if it is resend
+      if (importBody == nsImport) {
+         ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
+         reference.combine(importBody.Terminal());
+
+         importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
+         _writer.endIdleMethod(*codeScope.tape);
       }
       else {
-         _writer.declareMethod(*codeScope.tape, scope.message, false);
+         // !!temporal: HOTFIX : do not allow normal constructor for the dynamic object
+         if (test(codeScope.getClassFlags(), elDynamicRole))
+            scope.raiseError(errNotApplicable, node.Terminal());
 
-         // HOTFIX: -1 indicates the stack is not consumed by the constructor
-         _writer.callMethod(*codeScope.tape, 1, -1);
+         // new stack frame
+         // stack already contains $self value
+         _writer.newFrame(*codeScope.tape);
+         codeScope.level++;
 
-         DNode importBody = node.select(nsImport);
+         declareParameterDebugInfo(scope, codeScope.tape, true, false);
 
-         // check if it is resend
-         if (importBody == nsImport) {
-            ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-            reference.combine(importBody.Terminal());
+         compileCode(body, codeScope);
 
-            importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
-            _writer.endIdleMethod(*codeScope.tape);
-         }
-         else {
-            // new stack frame
-            // stack already contains $self value
-            _writer.newFrame(*codeScope.tape);
-            codeScope.level++;
+         _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
 
-            declareParameterDebugInfo(scope, codeScope.tape, true, false);
-
-            compileCode(body, codeScope);
-
-            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
-
-            _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved);
-         }
+         _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved);
       }
    }
 }
@@ -4329,30 +4331,66 @@ void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, Class
 
    _writer.declareIdleMethod(*codeScope.tape, scope.message);
 
-   // if it has custom implementation
-   if (node == nsImport) {
-      ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-      reference.combine(node.Terminal());
-
-      importCode(node, *scope.moduleScope, codeScope.tape, reference);
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      if (!test(classScope->info.header.flags, elDynamicRole)) {
+         _writer.newStructure(*codeScope.tape, classScope->info.size, classScope->reference);
+      }
    }
-   // if it has default implementation
+   else if (!test(classScope->info.header.flags, elDynamicRole)) {
+      _writer.newObject(*codeScope.tape, classScope->info.fields.Count(), classScope->reference);
+      _writer.loadBase(*codeScope.tape, ObjectInfo(okAccumulator));
+      _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->nilReference));
+      _writer.initBase(*codeScope.tape, classScope->info.fields.Count());
+      _writer.loadObject(*codeScope.tape, ObjectInfo(okBase));
+   }
+
+   _writer.exitMethod(*codeScope.tape, 0, 0, false);
+
+   _writer.endIdleMethod(*codeScope.tape);
+}
+
+void Compiler :: compileDynamicDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   // check if the method is inhreited and update vmt size accordingly
+   // NOTE: the method is class class member though it is compiled within class scope
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
+   if (it.Eof()) {
+      classClassScope.info.methods.add(scope.message, true);
+   }
+   else (*it) = true;
+
+   CodeScope codeScope(&scope);
+
+   // compile constructor hints
+   //int mode = scope.compileHints(hints);
+
+   // HOTFIX: constructor is declared in class class but should be executed if the class instance
+   codeScope.tape = &classClassScope.tape;
+
+   _writer.declareIdleMethod(*codeScope.tape, scope.message);
+
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantClass, classScope->reference));
+      switch(classScope->info.size) {
+         case -1:
+            _writer.newDynamicStructure(*codeScope.tape);
+            break;
+         case -2:
+            _writer.newDynamicWStructure(*codeScope.tape);
+            break;
+         case -4:
+            _writer.newDynamicNStructure(*codeScope.tape);
+            break;
+      }
+   }
    else {
-      if (test(classScope->info.header.flags, elStructureRole)) {
-         if (!test(classScope->info.header.flags, elDynamicRole)) {
-            _writer.newStructure(*codeScope.tape, classScope->info.size, classScope->reference);
-         }
-      }
-      else if (!test(classScope->info.header.flags, elDynamicRole)) {
-         _writer.newObject(*codeScope.tape, classScope->info.fields.Count(), classScope->reference);
-         _writer.loadBase(*codeScope.tape, ObjectInfo(okAccumulator));
-         _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->nilReference));
-         _writer.initBase(*codeScope.tape, classScope->info.fields.Count());
-         _writer.loadObject(*codeScope.tape, ObjectInfo(okBase));
-      }
-
-      _writer.exitMethod(*codeScope.tape, 0, 0, false);
+      _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantClass, classScope->reference));
+      _writer.newDynamicObject(*codeScope.tape);
    }
+
+   _writer.exitMethod(*codeScope.tape, 0, 0, false);
 
    _writer.endIdleMethod(*codeScope.tape);
 }
@@ -4556,13 +4594,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
       if (member == nsConstructor) {
          MethodScope methodScope(&classScope);
 
-         if (member.firstChild() == nsConstructorExpression) {
-            if (test(classScope.info.header.flags, elDynamicRole)) {
-               methodScope.message = encodeMessage(0, NEWOBJECT_MESSAGE_ID, 1);
-            }
-            else methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
-         }
-         else declareArgumentList(member, methodScope);
+         declareArgumentList(member, methodScope);
 
          // check if there is no duplicate method
          if (classClassScope.info.methods.exist(methodScope.message, true))
@@ -4577,18 +4609,13 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    }
 
    if (!test(classScope.info.header.flags, elStateless)) {
-      if (test(classScope.info.header.flags, elDynamicRole)) {
-         // if no custom default constructor defined - raise an error
-         if (!classClassScope.info.methods.exist(encodeMessage(0, NEWOBJECT_MESSAGE_ID, 1), true))
-            classClassScope.raiseError(errNotDefaultConstructor, node.FirstTerminal());
-      }
-      // if no custom default constructor defined - autogenerate one
-      else if (!classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID), true)) {
-         MethodScope methodScope(&classScope);
-         methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
+      MethodScope methodScope(&classScope);
+      methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
 
-         compileDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
+      if (test(classScope.info.header.flags, elDynamicRole)) {
+         compileDynamicDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
       }
+      else compileDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
    }
 
    _writer.endClass(classClassScope.tape);

@@ -646,8 +646,10 @@ bool StringHelper :: copy(char* dest, const unsigned short* sour, size_t& length
 void StringHelper :: append(unsigned short* dest, const unsigned short* sour, size_t length)
 {
    unsigned short* p = dest + getlength(dest);
-   for(int i = 0 ; i <= length ; i++)
-      *p++ = *sour++;
+   for(int i = 0 ; i < length ; i++)
+      p[i] = sour[i];
+
+   p[length] = 0;
 }
 
 bool StringHelper :: append(unsigned short* dest, const char* sour, size_t length)
@@ -732,6 +734,15 @@ int StringHelper :: find(const unsigned short* s, unsigned short c, int defValue
 int StringHelper :: findLast(const unsigned short* s, unsigned short c, int defValue)
 {
    const unsigned short* p = s + getlength(s);
+
+   while(p != s) {
+      if (*p == c)
+         return p - s;
+
+      p--;
+   }
+
+   return defValue;
 }
 
 unsigned short* StringHelper :: lower(unsigned short* s)
@@ -778,6 +789,8 @@ int StringHelper :: strToInt(const unsigned short* s)
       unsigned short c = *s;
       if(c >= '0' && c <= '9') {
          n += (c - '0');
+
+         s++;
       }
       else return 0;
    }
