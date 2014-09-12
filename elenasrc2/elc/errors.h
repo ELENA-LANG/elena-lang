@@ -61,6 +61,7 @@ namespace _ELENA_
    #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
    #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
    #define errNotSupprotedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n" 
+   #define errInvalidHint           "%s(%d:%d): error 147: Invalid hint '%s'\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
 //   #define errInternalError         "internal error 599"

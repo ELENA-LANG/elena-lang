@@ -381,6 +381,11 @@ protected:
          return ((ClassScope*)parent)->info.header.typeRef;
       }
 
+      void setClassFlag(int flag)
+      {
+         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
+      }
+
       void include();
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -714,12 +719,10 @@ protected:
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 
-   void compileSpecialMethod(MethodScope& scope);
-
    void compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function);
    void compileImportMethod(DNode node, CodeScope& scope, ref_t message, const wchar16_t* function, int mode);
 
-   void compileDispatcher(DNode node, MethodScope& scope);
+   void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
    void compileDynamicDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);

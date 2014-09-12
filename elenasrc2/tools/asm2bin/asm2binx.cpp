@@ -15,8 +15,6 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#include <windows.h>
-
 #define BUILD_NUMBER 4
 
 int main(int argc, char* argv[])
@@ -42,7 +40,7 @@ int main(int argc, char* argv[])
 	target.changeExtension(_T("bin"));
 
    _ELENA_::Path source(argv[1]);
-	_ELENA_::TextFileReader reader(source, CP_OEMCP, true);
+	_ELENA_::TextFileReader reader(source, _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
       printf("Cannot open the file");
       return -1;

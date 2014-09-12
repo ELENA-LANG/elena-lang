@@ -840,6 +840,12 @@ void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message, ObjectInfo o
    tape.write(bcECopyD);
 }
 
+void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
+{
+   // setsubj subj
+   tape.write(bcSetSubj, subject);
+}
+
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
 {
    // acallvi offs

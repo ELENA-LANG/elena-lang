@@ -52,7 +52,6 @@ __define VARSIZE_VALUE          4160
 __define L6_OPERATION           4161
 __define SIZE_VALUE             4162
 __define L0_OPERATION           4163
-__define GENERIC                4165
 __define DEFAULT                4166
 __define TYPE                   4167
 __define SYMBOL_REFERENCE	4168
@@ -123,7 +122,6 @@ FIELDS ->
 	
 METHODS ->
 	#method HINTS METHOD METHODS
-	| #generic HINTS GENERIC METHODS
 	| #constructor CONSTRUCTOR METHODS
 	| eps
 
@@ -309,9 +307,6 @@ METHOD ->
 	| private METHOD_ARGUMENTS METHOD_BODY
 	| reference METHOD_ARGUMENTS METHOD_BODY
 	| => DISPATCH_HANDLER TERMINATOR
-
-GENERIC ->
-	identifier GENERIC_METHOD_ARGUMENTS METHOD_BODY
 
 DEFAULT ->
 	: PARAMETER GENERIC_METHOD_ARGUMENTS METHOD_BODY

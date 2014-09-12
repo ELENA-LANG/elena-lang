@@ -1087,8 +1087,17 @@ int Compiler::MethodScope :: compileHints(DNode hints)
 
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
+      if (ConstantIdentifier::compare(terminal, HINT_GENERIC)) {
+         if (getSignature(message) != 0)
+            raiseError(errInvalidHint, terminal);
 
-      raiseWarning(wrnUnknownHint, terminal);
+         message = overwriteSubject(message, moduleScope->mapSubject(GENERIC_PREFIX));
+
+         setClassFlag(elWithGenerics);
+
+         mode |= HINT_GENERIC_METH;
+      }
+      else raiseWarning(wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -3967,7 +3976,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
    scope.message = encodeMessage(sign_id, verb_id, paramCount);
 }
 
-void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
+void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods)
 {
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
@@ -3986,17 +3995,25 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope)
    else {
       _writer.doGenericHandler(*codeScope.tape);
 
-      DNode nextNode = node.nextNode();
+      if (node != nsNone) {
+         DNode nextNode = node.nextNode();
 
-      // !! currently only simple construction is supported
-      if (node == nsObject && node.firstChild() == nsNone && nextNode == nsNone) {
-         ObjectInfo extension = compileTerminal(node, codeScope, 0);
-         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+         // !! currently only simple construction is supported
+         if (node == nsObject && node.firstChild() == nsNone && nextNode == nsNone) {
+            ObjectInfo extension = compileTerminal(node, codeScope, 0);
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-         _writer.resend(*codeScope.tape, extension, 0);
+            _writer.resend(*codeScope.tape, extension, 0);
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
       }
-      else scope.raiseError(errInvalidOperation, node.Terminal());
-   }
+      else if (withGenericMethods) {
+         _writer.setSubject(*codeScope.tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
+         _writer.doGenericHandler(*codeScope.tape);
+         _writer.loadObject(*codeScope.tape, ObjectInfo(okConstant, codeScope.moduleScope->mapConstantReference(NOMETHOD_EXCEPTION_CLASS)));
+         _writer.throwCurrent(*codeScope.tape);
+      }
+   } 
 
    _writer.endIdleMethod(*codeScope.tape);
 }
@@ -4129,24 +4146,6 @@ void Compiler :: compileBreakHandler(CodeScope& scope, int mode)
    _writer.throwCurrent(*scope.tape);
 }
 
-void Compiler :: compileSpecialMethod(MethodScope& scope)
-{
-   CodeScope codeScope(&scope);
-
-   scope.include();
-   _writer.declareIdleMethod(*codeScope.tape, scope.message);
-
-   if (scope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-
-      if (test(classScope->info.header.flags, elWithGenerics)) {
-         //_writer.doGenericHandler(*codeScope.tape, encodeMessage(scope.moduleScope->mapSubject(GENERIC_POSTFIX), 0, 0));
-      }
-   }
-
-   _writer.endIdleMethod(*codeScope.tape);
-}
-
 void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function)
 {
    MethodScope methodScope(&scope);
@@ -4202,10 +4201,10 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    else {
       // new stack frame
       // stack already contains current $self reference
-      if (test(mode, HINT_GENERIC_METH)) {
+      /*if (test(mode, HINT_GENERIC_METH)) {
          _writer.declareGenericMethod(*codeScope.tape, scope.message);
       }
-      else _writer.declareMethod(*codeScope.tape, scope.message);
+      else */_writer.declareMethod(*codeScope.tape, scope.message);
       codeScope.level++;
 
       declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
@@ -4275,10 +4274,12 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    else {
       _writer.declareMethod(*codeScope.tape, scope.message, false);
 
-      // HOTFIX: -1 indicates the stack is not consumed by the constructor
-      _writer.callMethod(*codeScope.tape, 1, -1);
-
       DNode importBody = node.select(nsImport);
+
+      // call default constructor automatically for not dynamic objects
+      if (!test(codeScope.getClassFlags(), elDynamicRole))
+         // HOTFIX: -1 indicates the stack is not consumed by the constructor
+         _writer.callMethod(*codeScope.tape, 1, -1);
 
       // check if it is resend
       if (importBody == nsImport) {
@@ -4432,21 +4433,6 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             }
             break;
          }
-         case nsGeneric:
-         case nsDefaultGeneric:
-         {
-            MethodScope methodScope(&scope);
-            declareArgumentList(member, methodScope);
-
-            // override subject with generic postfix
-            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_POSTFIX));
-
-            // mark as having generic methods
-            scope.info.header.flags |= elWithGenerics;
-
-            compileMethod(member, methodScope, HINT_GENERIC_METH);
-            break;
-         }
       }
       member = member.nextNode();
    }
@@ -4456,7 +4442,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
       MethodScope methodScope(&scope);
       methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 
-      compileSpecialMethod(methodScope);
+      compileDispatcher(DNode(), methodScope, true);
    }
 }
 

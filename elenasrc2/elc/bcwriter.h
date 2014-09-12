@@ -211,6 +211,7 @@ public:
 
    void setMessage(CommandTape& tape, ref_t message);
    void setMessage(CommandTape& tape, ref_t message, ObjectInfo operand);
+   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callRoleMessage(CommandTape& tape, int paramCount);

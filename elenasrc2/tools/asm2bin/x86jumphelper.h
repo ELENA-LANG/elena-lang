@@ -9,7 +9,7 @@
 #ifndef x86jumphelperH
 #define x86jumphelperH
 
-#include "win32\x86helper.h"
+#include "x86helper.h"
 
 namespace _ELENA_
 {

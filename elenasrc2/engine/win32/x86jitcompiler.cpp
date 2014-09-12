@@ -1164,7 +1164,7 @@ void _ELENA_::compileSetSubj(int opcode, x86JITScope& scope)
    scope.code->writeWord(0xE181);
    scope.code->writeDWord(~SIGN_MASK);
    scope.code->writeWord(0xC981);
-   scope.code->writeDWord(scope.argument);
+   scope.code->writeDWord(scope.resolveMessage(scope.argument));
 }
 
 void _ELENA_::compileOr(int opcode, x86JITScope& scope)

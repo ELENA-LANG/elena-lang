@@ -12,7 +12,7 @@
 #include "elena.h"
 #include "source.h"
 #include "assembler.h"
-#include "win32\x86helper.h"
+#include "x86helper.h"
 #include "x86jumphelper.h"
 
 namespace _ELENA_
@@ -89,7 +89,7 @@ protected:
    Operand readDispOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
 	Operand readPtrOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
 
-	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);   
+	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
 
 	void compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

@@ -417,7 +417,7 @@ namespace _ELENA_
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
-   #define GENERIC_POSTFIX          "#generic"
+   #define GENERIC_PREFIX           "#generic"
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
@@ -435,6 +435,7 @@ namespace _ELENA_
    #define HINT_GROUP              "group"
    #define HINT_WRAPPER            "wrapper"
    #define HINT_SYNONYM            "synonym"
+   #define HINT_GENERIC            "generic"
 
    #define HINT_DBG                "dbg"               // debugger watch hint values
    #define HINT_DBG_INT            "int"              

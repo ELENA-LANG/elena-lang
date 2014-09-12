@@ -104,7 +104,7 @@
     <ClCompile Include="..\..\engine\loader.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
-    <ClCompile Include="..\..\engine\win32\x86helper.cpp" />
+    <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\win32\x86jitcompiler.cpp" />
     <ClCompile Include="..\image.cpp" />
     <ClCompile Include="..\win32\elc.cpp" />
@@ -135,7 +135,7 @@
     <ClInclude Include="..\..\engine\loader.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
-    <ClInclude Include="..\..\engine\win32\x86helper.h" />
+    <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\..\engine\win32\x86jitcompiler.h" />
     <ClInclude Include="..\compiler.h" />
     <ClInclude Include="..\elc.h" />

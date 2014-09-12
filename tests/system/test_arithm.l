@@ -10,8 +10,7 @@
 }
 
 #symbol XTest =
-[
-
+[    
 ].
 
 // --- OpenArgTest ---
@@ -28,6 +27,7 @@
 
     #method testParamsCopy :: aParams
     [
+        
         #var n := aParams @ 0.
         
         ^ n.

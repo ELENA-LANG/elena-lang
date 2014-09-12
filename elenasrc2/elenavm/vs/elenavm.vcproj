@@ -249,7 +249,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\win32\x86helper.cpp"
+				RelativePath="..\..\engine\x86helper.cpp"
 				>
 			</File>
 			<File
@@ -343,7 +343,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\win32\x86helper.h"
+				RelativePath="..\..\engine\x86helper.h"
 				>
 			</File>
 			<File

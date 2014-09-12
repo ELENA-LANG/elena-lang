@@ -36,9 +36,7 @@
 		<Compiler>
 			<Add option="-march=pentium2" />
 			<Add option="-Wno-conversion-null" />
-			<Add option="-D_UNICODE" />
-			<Add option="-DUNICODE" />
-			<Add option="-D_WIN32" />
+			<Add option="-D_LINUX32" />
 			<Add directory=".." />
 			<Add directory="../../../common" />
 			<Add directory="../../../common/win32" />

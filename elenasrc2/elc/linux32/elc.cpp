@@ -71,7 +71,7 @@ void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
 {
    _ELENA_::UTF8String s(wValue);
 
-   print(msg, s);
+   print(msg, (const char*)s);
 
    throw _ELENA_::_Exception();
 }

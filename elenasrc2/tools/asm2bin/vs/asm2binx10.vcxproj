@@ -100,7 +100,7 @@
     <ClCompile Include="..\..\..\elc\source.cpp" />
     <ClCompile Include="..\ecassembler.cpp" />
     <ClCompile Include="..\x86assembler.cpp" />
-    <ClCompile Include="..\..\..\engine\win32\x86helper.cpp" />
+    <ClCompile Include="..\..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\x86jumphelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -120,7 +120,7 @@
     <ClInclude Include="..\..\..\common\tools.h" />
     <ClInclude Include="..\ecassembler.h" />
     <ClInclude Include="..\x86assembler.h" />
-    <ClInclude Include="..\..\..\engine\win32\x86helper.h" />
+    <ClInclude Include="..\..\..\engine\x86helper.h" />
     <ClInclude Include="..\x86jumphelper.h" />
   </ItemGroup>
   <ItemGroup>
