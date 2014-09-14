@@ -108,10 +108,15 @@
 [
     #var aThread := threadControl start: 
         [ 
-            console writeLine:"New thread started" 
+            console writeLine:"New thread started. Press any key".
+
+            console readChar.
+
+            console writeLine:"New thread ended".
         ].
     
     aThread join.
+    console writeLine:"Main thread ended".
 ].
 
 #symbol program =

@@ -158,7 +158,7 @@ procedure coreapi'start_thread
   // ; close thread
   call code : "$package'core'closethread"
 
-  mov  eax, 0FFFFFFFFh
+  xor  eax, eax
 
 lErr:
   push  eax

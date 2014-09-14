@@ -1500,7 +1500,7 @@ procedure inline'api_alloc_index
 
   aloadsi 2  
   callr api : coreapi'alloc_index
-  aloadsi 3
+  bloadsi 3
   nsave
   quitn 3
 

@@ -668,7 +668,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
    }
 }
 
-void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference)
+void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing)
 {
    // ifheap labSkip
    // bcopya
@@ -678,8 +678,11 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
    // acopyb
    // labSkip:
 
-   tape.newLabel();
-   tape.write(bcIfHeap, baCurrentLabel);
+   if (!alwaysBoxing) {
+      tape.newLabel();
+      tape.write(bcIfHeap, baCurrentLabel);
+   }
+
    tape.write(bcBCopyA);
    tape.write(bcNewN, vmtReference | mskVMTRef, size);
    tape.write(bcBSwap);
@@ -691,7 +694,9 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
    else tape.write(bcCopy);
 
    tape.write(bcACopyB);
-   tape.setLabel();
+
+   if (!alwaysBoxing)
+      tape.setLabel();
 }
 
 void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)

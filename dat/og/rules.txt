@@ -19,3 +19,5 @@ pushfi pop => nop nop;
 
 // m = $self
 open pusha aloadfi := 1 close quitn => nop nop nop nop quitn;
+// m = const
+open pusha acopyr close quitn => nop nop acopyr nop quitn;

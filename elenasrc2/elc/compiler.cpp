@@ -31,9 +31,6 @@ using namespace _ELENA_;
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 #define HINT_BOXINGENFORCING  0x00040000     // enforce boxing
 
-// --- Method optimization masks ---
-#define MTH_FRAME_USED        0x00000001
-
 // --- Auxiliary routines ---
 
 inline bool isCollection(DNode node)
@@ -1054,10 +1051,6 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    }
    else if (ConstantIdentifier::compare(identifier, SELF_VAR)) {
       ObjectInfo retVal = parent->mapObject(identifier);
-      // overriden to set FRAME USED flag
-      if (retVal.kind == okParam) {
-         masks |= MTH_FRAME_USED;
-      }
 
       return retVal;
    }
@@ -1066,8 +1059,6 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
       int local = param.offset;
       if (local >= 0) {
-         masks |= MTH_FRAME_USED;
-
          if (param.sign_ref == moduleScope->getParamsType()) {
             return ObjectInfo(okParams, -1 - local, param.sign_ref);
          }
@@ -1724,11 +1715,6 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       else scope.mapLocal(node.Terminal(), level, type);
    }
    else scope.raiseError(errDuplicatedLocal, node.Terminal());
-
-   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-   // indicate the frame usage
-   // to prevent commenting frame operation out
-   methodScope->masks = MTH_FRAME_USED;
 }
 
 ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
@@ -1993,6 +1979,9 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int 
    if (object.kind == okParams) {
       return true;
    }
+   else if (object.kind == okIndexAccumulator) {
+      return true;
+   }
    else if (object.kind == okParam || object.kind == okLocal || object.kind == okLocalAddress || object.kind == okFieldAddress
       || test(mode, HINT_BOXINGENFORCING)) 
    {
@@ -2006,6 +1995,12 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
    // NOTE: boxing should be applied only for the typed local parameter
    if (object.kind == okParams) {
       _writer.boxArgList(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
+   }
+   else if (object.kind == okIndexAccumulator) {
+      allocateStructure(scope, 0, object);
+      _writer.saveInt(*scope.tape, object);
+      ref_t wrapperRef = scope.moduleScope->typeHints.get(scope.moduleScope->getIntType());
+      _writer.boxObject(*scope.tape, 4, wrapperRef | mskVMTRef, true);
    }
    else if (object.kind == okParam || object.kind == okLocal || object.kind == okLocalAddress || object.kind == okFieldAddress 
       || test(mode, HINT_BOXINGENFORCING)) 
@@ -2817,15 +2812,19 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          // check if it is a type wrapper
          if (wrapper) {
             // check if the message is supported
-            bool found = false;
-            if (scope.moduleScope->checkTypeMethod(object.extraparam, messageRef, found)) {
+            bool classFound = false;
+            if (scope.moduleScope->checkTypeMethod(object.extraparam, messageRef, classFound)) {
                _writer.callResolvedMethod(*scope.tape, wrapper, messageRef);
             }
             else {
-               if (found)
+               // if the class found and the message is not supported - warn the programmer and raise an exception
+               if (classFound) {
                   scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
 
-               _writer.callMethod(*scope.tape, 0, paramCount);
+                  _writer.loadObject(*scope.tape, ObjectInfo(okConstant, scope.moduleScope->mapConstantReference(NOMETHOD_EXCEPTION_CLASS)));
+                  _writer.throwCurrent(*scope.tape);
+               }
+               else _writer.callMethod(*scope.tape, 0, paramCount);
             }
          }
          else _writer.callMethod(*scope.tape, 0, paramCount);
@@ -3750,6 +3749,9 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
       // plus space for size
       size = ((dynamicSize + 3) >> 2) + 2;
    }
+   else if (exprOperand.kind == okIndexAccumulator) {
+      size = 1;
+   }
    else if (size == 0) {
       return false;
    }
@@ -3771,10 +3773,6 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
 
          exprOperand.param -= 2;
       }
-
-      // indicate the frame usage
-      // to prevent commenting frame operation out
-      methodScope->masks = MTH_FRAME_USED;
 
       return true;
    }
@@ -4431,6 +4429,20 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
 
                compileMethod(member, methodScope, methodScope.compileHints(hints));
             }
+            break;
+         }
+         case nsDefaultGeneric:
+         {
+            MethodScope methodScope(&scope);
+            declareArgumentList(member, methodScope);
+
+            // override subject with generic postfix
+            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
+
+            // mark as having generic methods
+            scope.info.header.flags |= elWithGenerics;
+
+            compileMethod(member, methodScope, HINT_GENERIC_METH);
             break;
          }
       }

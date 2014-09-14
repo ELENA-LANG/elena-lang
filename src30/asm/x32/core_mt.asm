@@ -1389,16 +1389,17 @@ labSkipDelete:
   mov  ebx, [edi + tls_sync_event]
   mov  [data : %CORE_GC_TABLE + tt_ptr], ecx
 
+  // ; close handle
+
+  push ebx
+  call extern 'dlls'kernel32.CloseHandle
+
 labNotFound:
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
   mov  edx, -1
   lock xadd [esi], edx
-
-  // ; close handle
-  push ebx
-  call extern 'dlls'kernel32.CloseHandle
 
   pop  edx
   lea  esp, [esp+8]

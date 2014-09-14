@@ -202,7 +202,7 @@ public:
    void initBase(CommandTape& tape, int fieldCount);
    void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
 
-   void boxObject(CommandTape& tape, int size, ref_t vmtReference);
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape);
 
