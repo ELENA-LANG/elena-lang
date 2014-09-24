@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   1
+#define BUILD_VERSION   2
 
 using namespace _ELENA_;
 
@@ -87,12 +87,12 @@ void printHelp()
 {
    wprintf(_T("-q                       - quit\n"));
    wprintf(_T("-h                       - help\n"));
-   wprintf(_T("-m<class>.<method name>  - view method byte codes\n"));
+   wprintf(_T("-?<class>.<method name>  - view method byte codes\n"));
+   wprintf(_T("-?<class>                - list all class methods\n"));
    wprintf(_T("-s<symbol>               - view symbol byte codes\n"));
    wprintf(_T("-o<path>                 - save the output\n"));
    wprintf(_T("-c<path>                 - save the output\n"));
    wprintf(_T("-l                       - list all classes\n"));
-   wprintf(_T("-lm<class>               - list all class methods\n"));
 }
 
 _Memory* findClassMetaData(_Module* module, const wchar16_t* referenceName)
@@ -378,6 +378,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIf:
       case bcElse:
       case bcIfHeap:
+      case bcAddress:
          command.append(opcode);
          command.append(_T(' '));
          printLabel(command, position + argument + 5, labels);
@@ -776,30 +777,27 @@ void runSession(_Module* module)
          line[getlength(line) - 1] = 0;
 
       // execute command
-      if (line[0]=='-') {
+      if (line[0]=='?') {
+         if (StringHelper::find(line + 1, '.') != -1) {
+            printMethod(module, line + 1, pageSize);   
+         }
+         else if (line[1]==0) {
+            listClasses(module, pageSize);
+         }
+         else listClassMethods(module, line + 1, pageSize);
+      }
+      else if (line[0]=='-') {
          switch(line[1]) {
             case 'q':
                return;
             case 'h':
                printHelp();
                break;
-            case 'm':
-               printMethod(module, line + 2, pageSize);
-               break;
             //case 'c':
             //   printConstructor(module, line + 2, pageSize);
             //   break;
             case 's':
                printSymbol(module, line + 2, pageSize);
-               break;
-            case 'l':
-               if (line[2]=='m') {
-                  listClassMethods(module, line + 3, pageSize);
-               }
-               //else if (line[2]=='r') {
-               //   listClassRoles(module, line + 3, pageSize);
-               //}
-               else listClasses(module, pageSize);
                break;
             case 'o':
                setOutputMode(line + 2);

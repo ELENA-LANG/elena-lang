@@ -1,6 +1,7 @@
 #define system.
 #define system'routines.
 #define system'collections.
+#define system'dynamic.
 #define system'calendar.
 #define extensions.
 #define extensions'math.
@@ -10,7 +11,7 @@
 }
 
 #symbol XTest =
-[    
+[
 ].
 
 // --- OpenArgTest ---
@@ -583,4 +584,22 @@
     #var x := a x.
 
     a eval&print.
+].
+
+#class(role) GroupMember1
+{
+    #method m1 : prm = "group 1 " + prm.
+}
+
+#class(role) GroupMember2
+{
+    #method m2 : prm = "group 2 ".
+}
+
+#symbol GroupTest =
+[
+    #var g := Group(GroupMember1, GroupMember2).
+    
+    #var m1 := g m1:"called".
+    #var m2 := g m2:"called".
 ].

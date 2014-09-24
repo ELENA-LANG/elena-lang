@@ -24,7 +24,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
    "type", "len", "wlen", "flag", "weval", "wname", "class", "mindex",
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "clone", "unknown",
+   "ecall", "unknown", "unknown", "unknown", "unknown", "unknown", "clone", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
    "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "unknown",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
-   "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "ecall",
+   "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "address",
    "message", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
    "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",
@@ -81,15 +81,13 @@ inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
 
 bool CommandTape :: import(ByteCommand& command, _Module* sour, _Module* dest)
 {
+   if (ByteCodeCompiler::IsR2Code(command.code)) {
+      command.additional = importRef(sour, (ref_t)command.additional, dest);
+   }
    if (ByteCodeCompiler::IsRCode(command.code)) {
       command.argument = importRef(sour, (ref_t)command.argument, dest);
-      if (command.code == bcSelectR) {
-         command.additional = importRef(sour, (ref_t)command.additional, dest);
-      }
-
-      return true;
    }
-   else return false;
+   return true;
 }
 
 void CommandTape :: write(ByteCode code)
@@ -222,7 +220,7 @@ void CommandTape :: import(_Memory* section, bool withHeader)
       if (ByteCodeCompiler::IsJump(code)) {
          int offset = 0;
          int label = 0;
-         if (code >= 0xE0) {
+         if (code >= MAX_DOUBLE_ECODE) {
             offset = additional;
          }
          else offset = argument;
@@ -409,6 +407,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcElseM:              
             case bcNext:
             case bcHook:
+            case bcAddress:
             case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);

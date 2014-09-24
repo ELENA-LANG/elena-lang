@@ -66,6 +66,7 @@ enum ByteCode
    bcWName          = 0x35,
    bcClass          = 0x36,
    bcMIndex         = 0x37,
+   bcECall          = 0x38,
    bcClone          = 0x3E,
 
    bcNEqual         = 0x40,
@@ -168,7 +169,7 @@ enum ByteCode
    bcEvalR          = 0xA4,
    bcCallExtR       = 0xA5,
    bcHook           = 0xA6,
-   bcECall          = 0xA7,
+   bcAddress        = 0xA7,
    bcMessage        = 0xA8,
    bcLess           = 0xA9,
    bcNotLess        = 0xAA,
@@ -378,6 +379,8 @@ public:
          case bcElseM:
          case bcNext:
          case bcIfHeap:
+         case bcHook:
+         case bcAddress:
             return true;
          default:
             return false;
@@ -392,14 +395,24 @@ public:
          case bcCallR:
          case bcALoadR:
          case bcASaveR:
-   //      case bcAXCopyR:
          case bcACopyR:
          case bcNew:
          case bcNewN:
          case bcBCopyR:
-   //      case bcIAXCopyR:
          case bcXCallRM:
          case bcCallExtR:
+         case bcSelectR:
+            return true;
+         default:
+            return false;
+      }
+   }
+
+   static bool IsR2Code(ByteCode code)
+   {
+      switch(code) {
+         case bcIfR:
+         case bcElseR:
          case bcSelectR:
             return true;
          default:

@@ -63,8 +63,8 @@ protected:
 
 	void checkComma(TokenInfo& token)
 	{
-		if (!token.check(_T(",")))
-			throw AssemblerException(_T("',' exprected(%d)\n"), token.terminal.row);
+		if (!token.check(","))
+			throw AssemblerException("',' exprected(%d)\n", token.terminal.row);
 	}
 
 	void setOffsetSize(Operand& operand)
@@ -83,13 +83,13 @@ protected:
    bool setOffset(Operand& operand, Operand disp);
 
 	Operand defineRegister(TokenInfo& token);
-	Operand defineOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
-   Operand defineDisplacement(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
+	Operand defineOperand(TokenInfo& token, ProcedureInfo& info, const char* err);
+   Operand defineDisplacement(TokenInfo& token, ProcedureInfo& info, const char* err);
 
-   Operand readDispOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
-	Operand readPtrOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix);
+   Operand readDispOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix);
+	Operand readPtrOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix);
 
-	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err);
+	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const char* err);
 
 	void compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

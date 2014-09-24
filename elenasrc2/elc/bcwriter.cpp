@@ -1562,6 +1562,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          case bcNext:
          case bcJump:
          case bcHook:
+         case bcAddress:
          case bcIfHeap:
             (*it).save(scope.code, true);
 

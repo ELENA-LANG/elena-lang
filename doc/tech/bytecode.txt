@@ -174,6 +174,8 @@ ELENA byte codes (or ecodes)
 
  scopyf i                   - sp <= fp + i
 
+ address label              - load label address to ext
+
 
  control commands:
  -----------------                     
@@ -268,7 +270,7 @@ ELENA byte codes (or ecodes)
                                                                       
  exception handling:
  --------------- 
- hook label                 - assign a new exception handler
+ hook label                 - assign a new exception handler ; ext affected
 
  throw                      - raise an exception (acc contains the exception object)
 

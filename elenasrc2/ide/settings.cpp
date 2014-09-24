@@ -145,7 +145,7 @@ bool Settings :: lastPathRemember = true;
 
 bool Settings :: lastProjectRemember = true;
 
-int Settings :: defaultEncoding = 0;
+int Settings :: defaultEncoding = _ELENA_::feUTF8;
 
 bool Settings :: autoDetecting = true;
 

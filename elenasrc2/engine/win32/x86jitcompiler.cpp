@@ -48,7 +48,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 129;
+const int gcCommandNumber = 130;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
@@ -77,6 +77,7 @@ const int gcCommands[gcCommandNumber] =
    bcSubCopy, bcNSubCopy, bcXSeek, bcNext, bcClone,
    bcLRndNew, bcLRndNext, bcRAbs, bcRExp, bcRInt, 
    bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
+   bcAddress,
 };
 
 // command table
@@ -112,7 +113,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDCopy, &compileECopy, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadROp,
    &compileOpen, &compileQuitN, &compileBCopyR, &compileBCopyF, &compileACopyF, &compileACopyS, &compileACopyR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &loadCode, &loadFunction, &compileHook, &compileNop,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &loadCode, &loadFunction, &compileHook, &compileHook,
    &loadVMTMIndexOp, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
 
    &compilePush, &compileNop, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
@@ -624,7 +625,11 @@ void _ELENA_::compileJump(int opcode, x86JITScope& scope)
 
 void _ELENA_::compileHook(int opcode, x86JITScope& scope)
 {
-   scope.lh.writeLoadForward(scope.tape->Position() + scope.argument);
+   if (scope.argument < 0) {
+      scope.lh.writeLoadBack(scope.tape->Position() + scope.argument);
+   }
+   else scope.lh.writeLoadForward(scope.tape->Position() + scope.argument);
+
    loadOneByteOp(opcode, scope);
 }
 
@@ -1397,8 +1402,9 @@ void x86JITCompiler :: compileTLS(_JITLoader* loader)
    loader->mapReference(tlsKey, (void*)(rdataWriter.Position() | mskRDataRef), mskRDataRef);
 
    // create IMAGE_TLS_DIRECTORY
+   int tlsLength = tlsWriter.Position();
    rdataWriter.writeRef(mskTLSRef, 0);          // StartAddressOfRawData
-   rdataWriter.writeRef(mskTLSRef, 12);         // EndAddressOfRawData
+   rdataWriter.writeRef(mskTLSRef, tlsLength);  // EndAddressOfRawData
    rdataWriter.writeRef(mskDataRef, position);  // AddressOfIndex
    rdataWriter.writeDWord(0);                   // AddressOfCallBacks
    rdataWriter.writeDWord(0);                   // SizeOfZeroFill

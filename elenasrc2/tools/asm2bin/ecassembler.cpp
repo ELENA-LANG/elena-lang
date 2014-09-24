@@ -66,23 +66,23 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       return 0;
    }
    else if (ConstantIdentifier::compare(word, "const")) {
-      token.read(_T(":"), _T("Invalid operand"));
+      token.read(":", "Invalid operand");
       token.read();
       return binary->mapReference(token.value) | mskConstantRef;
    }
    else if (ConstantIdentifier::compare(word, "class")) {
-      token.read(_T(":"), _T("Invalid operand"));
+      token.read(":", "Invalid operand");
       token.read();
       return binary->mapReference(token.value) | mskVMTRef;
    }
    else if (ConstantIdentifier::compare(word, "api")) {
-      token.read(_T(":"), _T("Invalid operand"));
+      token.read(":", "Invalid operand");
       token.read();
 
       ReferenceNs functionName(PACKAGE_MODULE, token.value);
       return binary->mapReference(functionName) | mskNativeCodeRef;
    }
-   else throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
+   else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 
 void ECodesAssembler :: compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
@@ -115,10 +115,10 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       if(token.getInteger(m, constants)) {
          writeCommand(ByteCommand(code, m), writer);
       }
-      else token.raiseErr(_T("Invalid number (%d)\n"));
+      else token.raiseErr("Invalid number (%d)\n");
    }
    else if (ConstantIdentifier::compare(word, "subject")) {
-      token.read(_T(":"), _T("Invalid operand"));
+      token.read(":", "Invalid operand");
       token.read();
 
       int paramCount = 0; // NOTE: paramCount might be not equal to stackCount (the actual stack size) in the case if variables are used for virtual methods
@@ -144,15 +144,15 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       if (token.value[0] == '[') {
          paramCount = token.readInteger(constants);
       }
-      else token.raiseErr(_T("Invalid operand"));
+      else token.raiseErr("Invalid operand");
 
-      token.read(_T("]"), _T("Invalid operand"));
+      token.read("]", "Invalid operand");
 
       ref_t subj = binary->mapSubject(subject, false);
 
       writeCommand(ByteCommand(code, encodeMessage(subj, verbId, paramCount)), writer);
    }
-   else throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
+   else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
@@ -175,13 +175,13 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 {
    const wchar16_t* word = token.read();
    if (ConstantIdentifier::compare(word, "extern")) {
-      token.read(_T(":"), _T("Invalid operand"));
+      token.read(":", "Invalid operand");
       token.read();
-      if (StringHelper::compare(token.value, _T("'dlls'"), 6)) {
+      if (ConstantIdentifier::compare(token.value, "'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
-	      token.read(_T("."), _T("dot expected (%d)\n"));
-	      function.append(_T("."));
+	      token.read(".", "dot expected (%d)\n");
+	      function.append(".");
 	      function.append(token.read());
 
          size_t reference = binary->mapReference(function) | mskImportRef;
@@ -191,7 +191,7 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
          return;
       }
    }
-   throw AssemblerException(_T("Invalid operand (%d)\n"), token.terminal.row);
+   throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 
 void ECodesAssembler :: compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info)
@@ -212,6 +212,26 @@ void ECodesAssembler :: compileNJump(ByteCode code, TokenInfo& token, MemoryWrit
    int n = token.readInteger(constants);
 
    writer.writeDWord(n);
+   writer.writeDWord(label);
+}
+
+void ECodesAssembler :: compileRJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary)
+{
+   writer.writeByte(code);
+
+   int label = 0;
+
+   token.read();
+
+   if (info.labels.exist(token.value)) {
+      label = info.labels.get(token.value);
+   }
+   else {
+      info.fwdJumps.add(token.value, 4 + writer.Position());
+   }
+   size_t reference = compileRArg(token, binary);
+
+   writer.writeDWord(reference);
    writer.writeDWord(label);
 }
 
@@ -275,7 +295,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcBLoadSI:
          case bcBLoadFI:
          case bcACopyS:
+         case bcACopyF:
          case bcALoadAI:
+         case bcALoadFI:
          case bcPushAI:
          case bcOpen:
          case bcAddN:
@@ -313,6 +335,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcNotLess:
          case bcNext:
          case bcJump:
+         case bcHook:
+         case bcAddress:
             compileJump(opcode, token, writer, info);
             break;
          case bcIfM:
@@ -323,6 +347,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcElseN:
          case bcLessN:
             compileNJump(opcode, token, writer, info);
+            break;
+         case bcIfR:
+         case bcElseR:
+            compileRJump(opcode, token, writer, info, binary);
             break;
          case bcNewN:
             compileCreateCommand(opcode, token, writer, binary);
@@ -344,7 +372,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 
       writeCommand(ByteCommand(bcNop), writer);
 
-      token.read(_T(":"), _T("':' expected (%d)\n"));
+      token.read(":", "':' expected (%d)\n");
    }
    token.read();
 }
@@ -359,7 +387,7 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
    ref_t reference = binary->mapReference(refName) | mskCodeRef;
 
 	if (binary->mapSection(reference, true)!=NULL) {
-		throw AssemblerException(_T("Procedure already exists (%d)\n"), token.terminal.row);
+		throw AssemblerException("Procedure already exists (%d)\n", token.terminal.row);
 	}
 
    _Memory* code = binary->mapSection(reference, false);
@@ -367,21 +395,21 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 
    token.read();
       
-	while (!token.check(_T("end"))) {
+	while (!token.check("end")) {
       compileCommand(token, writer, info, binary);
 	}
 }
 
 void ECodesAssembler :: compile(TextReader* source, const wchar_t* outputPath)
 {
-   Module       binary(_T("$binary"));
+   Module       binary(ConstantIdentifier("$binary"));
    SourceReader reader(4, source);
 
    TokenInfo    token(&reader);
 
    token.read();
 	do {
-		if (token.check(_T("define"))) {
+		if (token.check("define")) {
          IdentifierString name(token.read());
 			size_t value = token.readInteger(constants);
 
@@ -389,16 +417,16 @@ void ECodesAssembler :: compile(TextReader* source, const wchar_t* outputPath)
             constants.erase(name);
 
 			if (!constants.add(name, value, true))
-				token.raiseErr(_T("Constant already exists (%d)\n"));
+				token.raiseErr("Constant already exists (%d)\n");
 
 			token.read();
 		}
-		else if (token.check(_T("procedure"))) {
+		else if (token.check("procedure")) {
          compileProcedure(token, &binary, true, true);
 
          token.read();
 		}
-		else token.raiseErr(_T("Invalid statement (%d)\n"));
+		else token.raiseErr("Invalid statement (%d)\n");
 
 	} while (!token.Eof());
 

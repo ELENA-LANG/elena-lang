@@ -1699,3 +1699,74 @@ procedure inline'r_truncate
   quitn 2
 
 end
+
+procedure inline'handle_group
+
+  open 5
+  reserve 2
+
+  dcopye
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+
+  pusha
+
+  hook labNotFound
+
+// ; define the message length
+  dloadfi -3
+  ecopyd
+  dcopycount
+  inc
+  
+  bcopya
+
+// ; copy message
+labNextParam:
+  acopyf -5
+  aload
+  pusha
+  dec
+  elsen labNextParam 0
+
+labNext:
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  dloadfi -3
+  ecopyd
+  acallvi 0
+
+labReturn:
+  unhook
+  dloadfi -3
+  ecopyd
+  restore 4
+  close
+
+  equit  
+  
+labNotFound:  
+  elser labContinueError const : system'MethodNotFoundException
+  dloadsi 0
+  address labReturn
+  else labContinueError
+
+  bloadfi 1
+  jump labNext
+
+labContinueError:
+  unhook
+  throw
+                         
+labEnd:
+  unhook
+  acopyr const : system'MethodNotFoundException
+  throw
+        
+end

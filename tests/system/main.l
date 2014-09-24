@@ -37,4 +37,5 @@
     LocalTest eval.
     OpenArgTest eval.
     StructTest eval.
+    GroupTest eval.
 ].

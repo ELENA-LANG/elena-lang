@@ -16,10 +16,10 @@ namespace _ELENA_
 
 struct AssemblerException
 {
-	const wchar_t* message;
-	int            row;
+	const char* message;
+	int         row;
 
-	AssemblerException(const wchar_t* message, int row)
+	AssemblerException(const char* message, int row)
 	{
 		this->message = message;
 		this->row = row;
@@ -31,12 +31,12 @@ struct AssemblerException
 struct TokenInfo
 {
    SourceReader* reader;
-   wchar16_t       value[50];
+   wchar16_t     value[50];
    LineInfo      terminal;
 
    bool Eof() const { return terminal.state == dfaEOF; }
 
-   void raiseErr(const wchar16_t* err)
+   void raiseErr(const char* err)
    {
       if (!emptystr(err))
          throw AssemblerException(err, terminal.row);
@@ -71,7 +71,7 @@ struct TokenInfo
 		return value;
 	}
 
-	const wchar16_t* read(const wchar16_t* word, const wchar16_t* err)
+	const wchar16_t* read(const char* word, const char* err)
 	{
 		read();
 		if (!check(word))
@@ -87,7 +87,7 @@ struct TokenInfo
 		if (getInteger(integer, constants)) {
 			return integer;
 		}
-		else raiseErr(_T("Invalid number (%d)\n"));
+		else raiseErr("Invalid number (%d)\n");
 		return 0;
 	}
 
@@ -96,7 +96,7 @@ struct TokenInfo
       bool negative = false;
 		read();
 
-      if (check(_T("-"))) {
+      if (check("-")) {
          negative = true;
 		   read();
       }
@@ -105,13 +105,18 @@ struct TokenInfo
 		if (getInteger(integer, constants)) {
          return negative ? -integer : integer;
 		}
-		else raiseErr(_T("Invalid number (%d)\n"));
+		else raiseErr("Invalid number (%d)\n");
 		return 0;
 	}
 
    bool check(const wchar16_t* word)
 	{
       return StringHelper::compare(value, word);
+	}
+
+   bool check(const char* word)
+	{
+      return ConstantIdentifier::compare(value, word);
 	}
 
    TokenInfo(SourceReader* reader)

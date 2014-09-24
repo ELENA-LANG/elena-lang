@@ -17,8 +17,8 @@ using namespace _ELENA_;
 
 const int gcPageSize       = 0x0010;      // !! temporal
 
-#define ARGUMENT1           _T("__arg1")
-#define ARGUMENT2           _T("__arg2")
+#define ARGUMENT1           "__arg1"
+#define ARGUMENT2           "__arg2"
 
 void x86Assembler :: loadDefaultConstants()
 {
@@ -36,102 +36,102 @@ void x86Assembler :: readParameterList(TokenInfo& token, ProcedureInfo& info, Re
          info.parameters.add(token.value, info.parameters.Count());
 		   token.read();
 
-		   if (!token.check(_T(":")))
-             token.raiseErr(_T("Semicolumn expected (%d)\n"));
+		   if (!token.check(":"))
+             token.raiseErr("Semicolumn expected (%d)\n");
 
          token.read();
-		   if (token.check(_T("out"))) {
-            refName.append(_T("&out"));
+		   if (token.check("out")) {
+            refName.append("&out");
             token.read();
-		      if (token.check(_T(")")))
+		      if (token.check(")"))
                break;
 		   }
          refName.append('&');
          refName.append(token.value);
 
          token.read();
-		   if (token.check(_T(")"))) {
+		   if (token.check(")")) {
              break;
 		   }
-		   else if (!token.check(_T(",")))
-             token.raiseErr(_T("Comma expected (%d)\n"));
+		   else if (!token.check(","))
+             token.raiseErr("Comma expected (%d)\n");
 	   }
-	   else token.raiseErr(_T("Invalid parameter list syntax (%d)\n"));
+	   else token.raiseErr("Invalid parameter list syntax (%d)\n");
    }
 }
 
 int x86Assembler :: readStReg(TokenInfo& token)
 {
-	token.read(_T("("), _T("'(' expected (%d)\n"));
+	token.read("(", "'(' expected (%d)\n");
 	int index = token.readInteger(constants);
-	token.read(_T(")"), _T("')' expected (%d)\n"));
+	token.read(")", "')' expected (%d)\n");
 
 	return index;
 }
 
 x86Assembler::Operand x86Assembler :: defineRegister(TokenInfo& token)
 {
-	if (token.check(_T("eax"))) {
+	if (token.check("eax")) {
 		return x86Helper::otEAX;
 	}
-	else if (token.check(_T("ecx"))) {
+	else if (token.check("ecx")) {
 		return x86Helper::otECX;
 	}
-	else if (token.check(_T("ebx"))) {
+	else if (token.check("ebx")) {
 		return x86Helper::otEBX;
 	}
-	else if (token.check(_T("esi"))) {
+	else if (token.check("esi")) {
 		return x86Helper::otESI;
 	}
-	else if (token.check(_T("edi"))) {
+	else if (token.check("edi")) {
 		return x86Helper::otEDI;
 	}
-	else if (token.check(_T("ebp"))) {
+	else if (token.check("ebp")) {
 		return Operand(x86Helper::otEBP);
 	}
-	else if (token.check(_T("edx"))) {
+	else if (token.check("edx")) {
 		return Operand(x86Helper::otEDX);
 	}
-	else if (token.check(_T("esp"))) {
+	else if (token.check("esp")) {
 		return Operand(x86Helper::otESP);
 	}
-	else if (token.check(_T("al"))) {
+	else if (token.check("al")) {
 		return Operand(x86Helper::otAL);
 	}
-	else if (token.check(_T("bl"))) {
+	else if (token.check("bl")) {
 		return Operand(x86Helper::otBL);
 	}
-	else if (token.check(_T("cl"))) {
+	else if (token.check("cl")) {
 		return Operand(x86Helper::otCL);
 	}
-	else if (token.check(_T("dl"))) {
+	else if (token.check("dl")) {
 		return Operand(x86Helper::otDL);
 	}
-	else if (token.check(_T("dh"))) {
+	else if (token.check("dh")) {
 		return Operand(x86Helper::otDH);
 	}
-	else if (token.check(_T("ah"))) {
+	else if (token.check("ah")) {
 		return Operand(x86Helper::otAH);
 	}
-	else if (token.check(_T("bh"))) {
+	else if (token.check("bh")) {
 		return Operand(x86Helper::otBH);
 	}
-	else if (token.check(_T("ax"))) {
+	else if (token.check("ax")) {
 		return Operand(x86Helper::otAX);
 	}
-	else if (token.check(_T("bx"))) {
+	else if (token.check("bx")) {
 		return Operand(x86Helper::otBX);
 	}
-	else if (token.check(_T("cx"))) {
+	else if (token.check("cx")) {
 		return Operand(x86Helper::otCX);
 	}
-	else if (token.check(_T("dx"))) {
+	else if (token.check("dx")) {
 		return Operand(x86Helper::otDX);
 	}
    else return Operand(x86Helper::otUnknown);
 }
 
-x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err)
+x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureInfo& info, const char* err)
 {
 	Operand operand = defineRegister(token);
    if (operand.type == x86Helper::otUnknown) {
@@ -148,10 +148,10 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
             operand.type = x86Helper::otDD;
          }
 		}
-		else if (token.check(_T("data"))) {
-         token.read(_T(":"), err);
+		else if (token.check("data")) {
+         token.read(":", err);
          token.read();
-         if (token.check(_T("%"))) {
+         if (token.check("%")) {
             operand.type = x86Helper::otDD;
             operand.reference = token.readInteger(constants) | mskPreloadDataRef;
             operand.offset = 0x0;
@@ -164,16 +164,16 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
          }
 
       }
-		else if (token.check(_T("stat"))) {
-         token.read(_T(":"), err);
+		else if (token.check("stat")) {
+         token.read(":", err);
          token.read();
          IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
 
          operand.type = x86Helper::otDD;
          operand.reference = info.binary->mapReference(structRef) | mskStatSymbolRef;
       }
-		else if (token.check(_T("const"))) {
-         token.read(_T(":"), err);
+		else if (token.check("const")) {
+         token.read(":", err);
          token.read();
          operand.type = x86Helper::otDD;
 
@@ -181,8 +181,8 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
          operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
          operand.offset = 0;
       }
-      else if (token.check(_T("code"))) {
-         token.read(_T(":"), err);
+      else if (token.check("code")) {
+         token.read(":", err);
          token.read();
          IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
 
@@ -243,14 +243,14 @@ bool x86Assembler :: setOffset(Operand& operand, Operand disp)
    return false;
 }
 
-x86Assembler::Operand x86Assembler :: defineDisplacement(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err)
+x86Assembler::Operand x86Assembler :: defineDisplacement(TokenInfo& token, ProcedureInfo& info, const char* err)
 {
-   if (token.check(_T("+"))) {
+   if (token.check("+")) {
       token.read();
 
       return defineOperand(token, info, err);
    }
-   else if (token.check(_T("-"))) {
+   else if (token.check("-")) {
       token.read();
 
       Operand disp = defineOperand(token, info, err);
@@ -268,15 +268,15 @@ x86Assembler::Operand x86Assembler :: defineDisplacement(TokenInfo& token, Proce
       }
       else token.raiseErr(err);
    }
-   else if (token.check(_T("*"))) {
+   else if (token.check("*")) {
       token.read();
-      if(token.check(_T("4"))) {
+      if(token.check("4")) {
          return Operand(x86Helper::otFactor4);
       }
-      else if(token.check(_T("8"))) {
+      else if(token.check("8")) {
          return Operand(x86Helper::otFactor8);
       }
-      else if(token.check(_T("2"))) {         
+      else if(token.check("2")) {         
          return Operand(x86Helper::otFactor2);
       }
       else token.raiseErr(err);
@@ -285,7 +285,7 @@ x86Assembler::Operand x86Assembler :: defineDisplacement(TokenInfo& token, Proce
    return Operand();
 }
 
-x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix)
+x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix)
 {
 	Operand operand = defineOperand(token, info, err);
    if (operand.type != x86Helper::otUnknown) {
@@ -409,17 +409,17 @@ x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, Procedur
 	return operand;
 }
 
-x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, ProcedureInfo& info, const wchar16_t* err, OperandType prefix)
+x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix)
 {
 	token.read();
-   if (token.check(_T("ptr")))
+   if (token.check("ptr"))
       token.read();
 
-	if (token.check(_T("["))) {
+	if (token.check("[")) {
 	   token.read();
-	   Operand operand = readDispOperand(token, info, _T("Invalid expression (%d)"), prefix);
-	   if(!token.check(_T("]"))) {
-          token.raiseErr(_T("']' expected (%d)\n"));
+	   Operand operand = readDispOperand(token, info, "Invalid expression (%d)", prefix);
+	   if(!token.check("]")) {
+          token.raiseErr("']' expected (%d)\n");
 	   }
 	   else token.read();
 
@@ -435,7 +435,7 @@ x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, Procedure
             operand.type = x86Helper::otDB;
          }
       }
-	   else token.raiseErr(_T("'[' expected (%d)\n"));
+	   else token.raiseErr("'[' expected (%d)\n");
 
       token.read();
 
@@ -443,37 +443,37 @@ x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, Procedure
 	}
 }
 
-x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, ProcedureInfo& info/*, _Module* binary*/, const wchar16_t* err)
+x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, ProcedureInfo& info/*, _Module* binary*/, const char* err)
 {
 	Operand	    operand;
 
 	token.read();
-	if (token.check(_T("["))) {
+	if (token.check("[")) {
 		token.read();
-      operand = readDispOperand(token, info, _T("Invalid expression (%d)"), x86Helper::otM32);
+      operand = readDispOperand(token, info, "Invalid expression (%d)", x86Helper::otM32);
 
-	   if(!token.check(_T("]"))) {
-          token.raiseErr(_T("']' expected (%d)\n"));
+	   if(!token.check("]")) {
+          token.raiseErr("']' expected (%d)\n");
 	   }
 	   else token.read();
 	}
-	else if (token.check(_T("dword"))) {
-	   token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
+	else if (token.check("dword")) {
+	   token.read("ptr", "'ptr' expected (%d)\n");
 
 		operand = readPtrOperand(token, info, err, x86Helper::otM32);
 	}
-	else if (token.check(_T("word"))) {
-	   token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
+	else if (token.check("word")) {
+	   token.read("ptr", "'ptr' expected (%d)\n");
 
 		operand = readPtrOperand(token, info, err, x86Helper::otM16);
 	}
-	else if (token.check(_T("byte"))) {
-	   token.read(_T("ptr"), _T("'ptr' expected (%d)\n"));
+	else if (token.check("byte")) {
+	   token.read("ptr", "'ptr' expected (%d)\n");
 
 		operand = readPtrOperand(token, info, err, x86Helper::otM8);
 	}
-   else if (token.check(_T("fs"))) {
-      token.read(_T(":"), _T("Column is expected"));
+   else if (token.check("fs")) {
+      token.read(":", "Column is expected");
       operand = readPtrOperand(token, info, err, x86Helper::otM32);
 
       if (operand.prefix != x86Helper::spNone) {
@@ -487,7 +487,7 @@ x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, Procedure
       if (operand.type != x86Helper::otUnknown) {
          token.read();
 
-         if (token.check(_T("+"))) {
+         if (token.check("+")) {
             operand.offset += token.readInteger(constants);
 
             token.read();
@@ -500,22 +500,22 @@ x86Assembler::Operand x86Assembler :: compileOperand(TokenInfo& token, Procedure
 
 void x86Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
    // write segment prefix
    if (sour.prefix != x86Helper::spNone) {
       if (dest.prefix != x86Helper::spNone)
-         token.raiseErr(_T("Invalid command (%d)"));
+         token.raiseErr("Invalid command (%d)");
 
       code->writeByte(sour.prefix);
    }
    else if (dest.prefix != x86Helper::spNone) {
       if (sour.prefix != x86Helper::spNone)
-         token.raiseErr(_T("Invalid command (%d)"));
+         token.raiseErr("Invalid command (%d)");
 
       code->writeByte(dest.prefix);
    }
@@ -586,16 +586,16 @@ void x86Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0x8A);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otPtr16)) {
       sour.type = x86Helper::overrideOperand16(sour.type);
@@ -643,16 +643,16 @@ void x86Assembler :: compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 7), sour);
 		code->writeByte(dest.offset);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (sour.type==x86Helper::otEAX && dest.type == x86Helper::otDD) {
 		code->writeByte(0x05);
@@ -685,22 +685,22 @@ void x86Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), sour);
       x86Helper::writeImm(code, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileXADD(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
    if (prefix.lockMode) {
       code->writeByte(0xF0);
    }
    else if(prefix.Exists()) {
-      token.raiseErr(_T("Invalid Prefix (%d)"));
+      token.raiseErr("Invalid Prefix (%d)");
    }
 
 	if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otR32)) {
@@ -708,16 +708,16 @@ void x86Assembler :: compileXADD(PrefixInfo& prefix, TokenInfo& token, Procedure
       code->writeByte(0xC1);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (sour.type== x86Helper::otEAX && dest.type == x86Helper::otDD) {
 		code->writeByte(0x15);
@@ -750,18 +750,18 @@ void x86Assembler :: compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 2), sour);
 		code->writeDWord(dest.offset);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	bool overridden = false;
 
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 	if (test(sour.type, x86Helper::otR16) && dest.type==x86Helper::otDD) {
 		sour.type = x86Helper::overrideOperand16(sour.type);
 		code->writeByte(0x66);
@@ -794,16 +794,16 @@ void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 4), sour);
       x86Helper::writeImm(code, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32)) {
 		code->writeByte(0x33);
@@ -828,18 +828,18 @@ void x86Assembler :: compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0x33);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	bool overridden = false;
 
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR16) && dest.type==x86Helper::otDD) {
 		sour.type = x86Helper::overrideOperand16(sour.type);
@@ -886,16 +886,16 @@ void x86Assembler :: compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWrit
 		code->writeByte(0x0B);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (sour.type == x86Helper::otEAX && dest.type == x86Helper::otDD) {
 		code->writeByte(0xA9);
@@ -929,16 +929,16 @@ void x86Assembler :: compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		code->writeByte(0x85);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32)||test(dest.type, x86Helper::otM32))) {
 		code->writeByte(0x2B);
@@ -970,16 +970,16 @@ void x86Assembler :: compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 5), sour);
 		x86Helper::writeImm(code, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if ((test(sour.type, x86Helper::otR32) ||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDB) {
 		code->writeByte(0x83);
@@ -990,31 +990,31 @@ void x86Assembler :: compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0x1B);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otM32)) {
 		code->writeByte(0x8D);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && dest.type==x86Helper::otDB) {
 		code->writeByte(0xC1);
@@ -1034,16 +1034,16 @@ void x86Assembler :: compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 5), sour);
 		code->writeByte(dest.offset);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSAR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && dest.type==x86Helper::otDB) {
 		code->writeByte(0xC1);
@@ -1063,16 +1063,16 @@ void x86Assembler :: compileSAR(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 7), sour);
 		code->writeByte(dest.offset);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && dest.type==x86Helper::otDB) {
 		code->writeByte(0xC1);
@@ -1083,20 +1083,20 @@ void x86Assembler :: compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0xD3);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSHLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	checkComma(token);
 
-	Operand third = compileOperand(token, info, _T("Invalid third operand (%d)\n"));
+	Operand third = compileOperand(token, info, "Invalid third operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32) && third.type==x86Helper::otDB) {
       code->writeByte(0x0F);
@@ -1108,20 +1108,20 @@ void x86Assembler :: compileSHLD(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		code->writeByte(0xA5);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSHRD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	checkComma(token);
 
-	Operand third = compileOperand(token, info, _T("Invalid third operand (%d)\n"));
+	Operand third = compileOperand(token, info, "Invalid third operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32) && third.type==x86Helper::otDB) {
       code->writeByte(0x0F);
@@ -1133,32 +1133,32 @@ void x86Assembler :: compileSHRD(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		code->writeByte(0xAD);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileROL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR8) && dest.type==x86Helper::otDB) {
 		code->writeByte(0xC0);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 0), sour);
 		code->writeByte(dest.offset);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileROR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR16)) {
 		sour.type = (OperandType)x86Helper::overrideOperand16(sour.type);
@@ -1175,31 +1175,31 @@ void x86Assembler :: compileROR(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 1), sour);
 		code->writeByte(dest.offset);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileRCR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && dest.type==x86Helper::otDB && dest.offset==1) {
 		code->writeByte(0xD1);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 3), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (sour.type== x86Helper::otEAX && test(dest.type, x86Helper::otR32)) {
 		code->writeByte(0x90 + (char)dest.type);
@@ -1208,31 +1208,31 @@ void x86Assembler :: compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		code->writeByte(0x87);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileRCL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && dest.type==x86Helper::otDB && dest.offset==1) {
 		code->writeByte(0xD1);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 2), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileMOVZX(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR8)||test(dest.type, x86Helper::otM8))) {
 		code->writeWord(0xB60F);
@@ -1242,12 +1242,12 @@ void x86Assembler :: compileMOVZX(TokenInfo& token, ProcedureInfo& info, MemoryW
 		code->writeWord(0xB70F);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + (char)sour.type), dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compilePUSH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)) {
 		code->writeByte(0x50 + (char)sour.type);
 	}
@@ -1273,64 +1273,64 @@ void x86Assembler :: compilePUSH(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		code->writeByte(0x68);
 		x86Helper::writeImm(code, sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compilePOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)) {
 		code->writeByte(0x58 + (char)sour.type);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) {
 		code->writeByte(0xF7);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
-   if (!token.check(_T(","))) {
+   if (!token.check(",")) {
 	   if (test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) {
 		   code->writeByte(0xF7);
 		   x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 5), sour);
 	   }
-	   else token.raiseErr(_T("Invalid command (%d)"));
+	   else token.raiseErr("Invalid command (%d)");
    }
    else {
-	   Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	   if (test(sour.type, x86Helper::otR32) && dest.type==x86Helper::otDB) {
 		   code->writeByte(0x6B);
 		   x86Helper::writeModRM(code, sour, sour);
 		   code->writeByte(dest.offset);
 	   }
-	   else token.raiseErr(_T("Invalid command (%d)"));
+	   else token.raiseErr("Invalid command (%d)");
    }
 }
 
 void x86Assembler :: compileIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) {
 		code->writeByte(0xF7);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 7), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) {
 		code->writeByte(0xF7);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), sour);
@@ -1339,12 +1339,12 @@ void x86Assembler :: compileDIV(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0xF6);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 6), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileDEC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)) {
 		code->writeByte(0x48 + (char)sour.type);
 	}
@@ -1356,12 +1356,12 @@ void x86Assembler :: compileDEC(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0xFF);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 1), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)) {
 		code->writeByte(0x40 + (char)sour.type);
 	}
@@ -1369,34 +1369,34 @@ void x86Assembler :: compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0xFE);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 0), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)) {
 		code->writeByte(0xF7);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 3), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileNOT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR32)) {
 		code->writeByte(0xF7);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 2), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
    if (token.terminal.state == dfaInteger || token.terminal.state == dfaHexInteger || token.check(ARGUMENT1) || token.check(ARGUMENT2)) {
-      Operand sour = defineOperand(token, info, _T("Invalid operand (%d)\n"));
+      Operand sour = defineOperand(token, info, "Invalid operand (%d)\n");
       if (sour.type == x86Helper::otDD || sour.type == x86Helper::otDB) {
          code->writeByte(0xC2);
          if (sour.type == x86Helper::otDB) 
@@ -1404,7 +1404,7 @@ void x86Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryWri
 
          x86Helper::writeImm(code, sour);
       }
-      else token.raiseErr(_T("Invalid command (%d)"));
+      else token.raiseErr("Invalid command (%d)");
 
       token.read();
    }
@@ -1530,12 +1530,12 @@ void x86Assembler :: compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWri
    token.read();
 
    bool shortJump = false;
-   if (token.check(_T("short"))) {
+   if (token.check("short")) {
       shortJump = true;
       token.read();
    }
-   else if (token.check(_T("short"))) {
-      token.raiseErr(_T("Use short prefix instead"));
+   else if (token.check("short")) {
+      token.raiseErr("Use short prefix instead");
    }
 
    // if jump forward
@@ -1558,12 +1558,12 @@ void x86Assembler :: compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWri
 	}
    else {
 	   bool shortJump = false;
-	   if (token.check(_T("short"))) {
+	   if (token.check("short")) {
 		   shortJump = true;
 		   token.read();
 	   }
-      else if (token.check(_T("near"))) {
-         token.raiseErr(_T("Use short prefix instead"));
+      else if (token.check("near")) {
+         token.raiseErr("Use short prefix instead");
       }
 
       // if jump forward
@@ -1600,7 +1600,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       code->writeByte(0xFF);
       code->writeByte(0xD0 + (char)operand.type);
    }
-   else if (token.check(_T("extern"))) {
+   else if (token.check("extern")) {
       code->writeWord(0x15FF);
       token.read();
       if (token.check(ARGUMENT1)) {
@@ -1609,41 +1609,41 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       else if (token.check(ARGUMENT2)) {
          code->writeRef(-2, 0);
       }
-      else if (StringHelper::compare(token.value, _T("'dlls'"), 6)) {
+      else if (ConstantIdentifier::compare(token.value, "'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
-	      token.read(_T("."), _T("dot expected (%d)\n"));
-	      function.append(_T("."));
+	      token.read(".", "dot expected (%d)\n");
+	      function.append(".");
 	      function.append(token.read());
 
 	      int ref = info.binary->mapReference(function) | mskImportRef;
 
 	      code->writeRef(ref, 0);
       }
-      else token.raiseErr(_T("Invalid call label (%d)\n"));
+      else token.raiseErr("Invalid call label (%d)\n");
    }
-	else if (token.check(_T("["))) {
+	else if (token.check("[")) {
 		token.read();
-		Operand operand = readDispOperand(token, info, _T("Invalid call target (%d)\n"), x86Helper::otM32);
-		if (!token.check(_T("]")))
-			token.raiseErr(_T("']' expected(%d)\n"));
+		Operand operand = readDispOperand(token, info, "Invalid call target (%d)\n", x86Helper::otM32);
+		if (!token.check("]"))
+			token.raiseErr("']' expected(%d)\n");
 
 		if (test(operand.type, x86Helper::otM32)) {
 			code->writeByte(0xFF);
 			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 2), operand);
 			x86Helper::writeImm(code, operand);
 		}
-		else token.raiseErr(_T("Invalid call target (%d)\n"));
+		else token.raiseErr("Invalid call target (%d)\n");
 	}
-	else if (token.check(_T("code"))) {
-      token.read(_T(":"), _T("Column is expected"));
+	else if (token.check("code")) {
+      token.read(":", "Column is expected");
       token.read();
 
       code->writeByte(0xE8);
 
 		int ref = 0;
 
-      if (token.check(_T("%"))) {
+      if (token.check("%")) {
          ref = token.readInteger(constants) | mskPreloadRelCodeRef;
       }
       else if (token.check(ARGUMENT1)) {
@@ -1672,23 +1672,23 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 void x86Assembler :: fixJump(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper)
 {
 	if (helper.checkDeclaredLabel(token.value)) {
-		token.raiseErr(_T("Label with such a name already exists (%d)\n"));
+		token.raiseErr("Label with such a name already exists (%d)\n");
 	}
 
 	if (!helper.addLabel(token.value))
-      token.raiseErr(_T("Invalid near jump to this label (%d)\n"));
+      token.raiseErr("Invalid near jump to this label (%d)\n");
 
-	token.read(_T(":"), _T("Invalid command or label (%d)\n"));
+	token.read(":", "Invalid command or label (%d)\n");
 }
 
 void x86Assembler :: compileFBLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otM32)) {
 		code->writeByte(0xDF);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFCHS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -1702,65 +1702,65 @@ void x86Assembler :: compileFILD(TokenInfo& token, ProcedureInfo& info, MemoryWr
 {
 	token.read();
 
-	if (token.check(_T("dword"))) {
-		Operand sour = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	if (token.check("dword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		if (test(sour.type, x86Helper::otM32)) {
 			code->writeByte(0xDB);
 			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), sour);
 		}
-		else token.raiseErr(_T("Invalid command (%d)"));
+		else token.raiseErr("Invalid command (%d)");
 	}
-   else if (token.check(_T("qword"))) {
-		Operand sour = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+   else if (token.check("qword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		if (test(sour.type, x86Helper::otM32)) {
 			code->writeByte(0xDF);
 			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 5), sour);
 		}
-		else token.raiseErr(_T("Invalid command (%d)"));
+		else token.raiseErr("Invalid command (%d)");
    }
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFIST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otM32)) {
 		code->writeByte(0xDB);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 2), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFISTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
 
-	if (token.check(_T("dword"))) {
-		Operand sour = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	if (token.check("dword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		if (test(sour.type, x86Helper::otM32)) {
 			code->writeByte(0xDB);
 			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 3), sour);
 		}
-		else token.raiseErr(_T("Invalid command (%d)"));
+		else token.raiseErr("Invalid command (%d)");
 	}
-   else if (token.check(_T("qword"))) {
-		Operand sour = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+   else if (token.check("qword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		if (test(sour.type, x86Helper::otM32)) {
 			code->writeByte(0xDF);
 			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 7), sour);
 		}
-		else token.raiseErr(_T("Invalid command (%d)"));
+		else token.raiseErr("Invalid command (%d)");
    }
 }
 
 void x86Assembler :: compileFLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int index = readStReg(token);
 
 		code->writeByte(0xD9);
@@ -1768,19 +1768,19 @@ void x86Assembler :: compileFLD(TokenInfo& token, ProcedureInfo& info, MemoryWri
 
 		token.read();
 	}
-	else if (token.check(_T("qword"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	else if (token.check("qword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDD);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFXCH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int index = readStReg(token);
 
 		token.read();
@@ -1797,15 +1797,15 @@ void x86Assembler :: compileFXCH(TokenInfo& token, ProcedureInfo& info, MemoryWr
 void x86Assembler :: compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int sour = readStReg(token);
 
-		token.read(_T(","),_T("',' comma expected(%d)\n"));
+		token.read(",","',' comma expected(%d)\n");
 
 		if (sour != 0) {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			if (readStReg(token)!=0)
-				token.raiseErr(_T("'0' expected (%d)"));
+				token.raiseErr("'0' expected (%d)");
 
 			token.read();
 
@@ -1813,7 +1813,7 @@ void x86Assembler :: compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xE8 + sour);
 		}
 		else {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			sour = readStReg(token);
 			token.read();
 
@@ -1821,27 +1821,27 @@ void x86Assembler :: compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xE0 + sour);
 		}
 	}
-	else if (token.check(_T("qword"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	else if (token.check("qword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDC);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int sour = readStReg(token);
 
-		token.read(_T(","),_T("',' comma expected(%d)\n"));
+		token.read(",","',' comma expected(%d)\n");
 
 		if (sour != 0) {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			if (readStReg(token)!=0)
-				token.raiseErr(_T("'0' expected (%d)"));
+				token.raiseErr("'0' expected (%d)");
 
 			token.read();
 
@@ -1849,7 +1849,7 @@ void x86Assembler :: compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xC0 + sour);
 		}
 		else {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			sour = readStReg(token);
 			token.read();
 
@@ -1857,27 +1857,27 @@ void x86Assembler :: compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xC0 + sour);
 		}
 	}
-	else if (token.check(_T("qword"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	else if (token.check("qword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDC);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int sour = readStReg(token);
 
-		token.read(_T(","),_T("',' comma expected(%d)\n"));
+		token.read(",", "',' comma expected(%d)\n");
 
 		if (sour != 0) {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			if (readStReg(token)!=0)
-				token.raiseErr(_T("'0' expected (%d)"));
+				token.raiseErr("'0' expected (%d)");
 
 			token.read();
 
@@ -1885,7 +1885,7 @@ void x86Assembler :: compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xC8 + sour);
 		}
 		else {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			sour = readStReg(token);
 			token.read();
 
@@ -1893,27 +1893,27 @@ void x86Assembler :: compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xC8 + sour);
 		}
 	}
-	else if (token.check(_T("qword"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	else if (token.check("qword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDC);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 1), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int sour = readStReg(token);
 
-		token.read(_T(","),_T("',' comma expected(%d)\n"));
+		token.read(",","',' comma expected(%d)\n");
 
 		if (sour != 0) {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			if (readStReg(token)!=0)
-				token.raiseErr(_T("'0' expected (%d)"));
+				token.raiseErr("'0' expected (%d)");
 
 			token.read();
 
@@ -1921,7 +1921,7 @@ void x86Assembler :: compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xF8 + sour);
 		}
 		else {
-			token.read(_T("st"), _T("'st' expected (%d)\n"));
+			token.read("st", "'st' expected (%d)\n");
 			sour = readStReg(token);
 			token.read();
 
@@ -1929,21 +1929,21 @@ void x86Assembler :: compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWr
 			code->writeByte(0xF0 + sour);
 		}
 	}
-	else if (token.check(_T("qword"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	else if (token.check("qword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDC);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFCOMIP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
-		token.read(_T(","), _T("',' expected (%d)\n"));
-		token.read(_T("st"), _T("'st' expected (%d)\n"));
+	if (token.check("st")) {
+		token.read(",", "',' expected (%d)\n");
+		token.read("st", "'st' expected (%d)\n");
 
 		int dest = readStReg(token);
 
@@ -1952,15 +1952,15 @@ void x86Assembler :: compileFCOMIP(TokenInfo& token, ProcedureInfo& info, Memory
 		code->writeByte(0xDF);
 		code->writeByte(0xF0 + dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFCOMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
-		token.read(_T(","), _T("',' expected (%d)\n"));
-		token.read(_T("st"), _T("'st' expected (%d)\n"));
+	if (token.check("st")) {
+		token.read(",", "',' expected (%d)\n");
+		token.read("st", "'st' expected (%d)\n");
 
 		int dest = readStReg(token);
 
@@ -1969,86 +1969,86 @@ void x86Assembler :: compileFCOMP(TokenInfo& token, ProcedureInfo& info, MemoryW
 		code->writeByte(0xD8);
 		code->writeByte(0xD8 + dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int sour = readStReg(token);
 		token.read();
 
 		code->writeByte(0xDD);
 		code->writeByte(0xD8 + sour);
 	}
-	else if (token.check(_T("qword"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	else if (token.check("qword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDD);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 3), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFBSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("tbyte"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	if (token.check("tbyte")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xDF);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("ax"))) {
+	if (token.check("ax")) {
 		token.read();
 
 		code->writeByte(0x9B);
 		code->writeWord(0xE0DF);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFNSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("ax"))) {
+	if (token.check("ax")) {
 		token.read();
 
 		code->writeWord(0xE0DF);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFSTCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("word"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	if (token.check("word")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0x9B);
 		code->writeByte(0xD9);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 7), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFLDCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("word"))) {
-		Operand operand = readPtrOperand(token, info, _T("Invalid operand (%d)\n"), x86Helper::otM32);
+	if (token.check("word")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
 		code->writeByte(0xD9);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 5), operand);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileFLDZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -2215,29 +2215,29 @@ void x86Assembler :: compileFLDLN2(TokenInfo& token, ProcedureInfo& info, Memory
 void x86Assembler :: compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
-	if (token.check(_T("st"))) {
+	if (token.check("st")) {
 		int sour = readStReg(token);
 		token.read();
 
 		code->writeByte(0xDD);
 		code->writeByte(0xC0 + sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileCMPXCHG(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
    if (prefix.lockMode) {
       code->writeByte(0xF0);
    }
    else if(prefix.Exists()) {
-      token.raiseErr(_T("Invalid Prefix (%d)"));
+      token.raiseErr("Invalid Prefix (%d)");
    }
 
 	if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otR32)) {
@@ -2245,34 +2245,34 @@ void x86Assembler :: compileCMPXCHG(PrefixInfo& prefix, TokenInfo& token, Proced
 		code->writeByte(0xB1);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-   else token.raiseErr(_T("Invalid command (%d)"));
+   else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
 	if (test(sour.type, x86Helper::otR8)) {
 		code->writeByte(0x0F);
       code->writeByte(0x90 + postfix);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 0), sour);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix)
 {
-	Operand sour = compileOperand(token, info, _T("Invalid source operand (%d)\n"));
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
 
 	checkComma(token);
 
-	Operand dest = compileOperand(token, info, _T("Invalid destination operand (%d)\n"));
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32) || test(dest.type, x86Helper::otM32) )) {
       code->writeByte(0x0F);
       code->writeByte(0x40 + postfix);
 		x86Helper::writeModRM(code, sour, dest);
 	}
-	else token.raiseErr(_T("Invalid command (%d)"));
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mask)
@@ -2280,7 +2280,7 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
 	token.read();
 
    int ref = 0;
-   if (token.check(_T("%"))) {
+   if (token.check("%")) {
       ref = token.readInteger(constants);
    }
    else {
@@ -2292,16 +2292,16 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
    ProcedureInfo info(binary, false);
 
    if (binary->mapSection(ref, true)!=NULL) {
-      throw AssemblerException(_T("Structure / Procedure already exists (%d)\n"), token.terminal.row);
+      throw AssemblerException("Structure / Procedure already exists (%d)\n", token.terminal.row);
    }
    _Memory* code = binary->mapSection(ref, false);
    MemoryWriter writer(code);
 
    token.read();
-   while (!token.check(_T("end"))) {
-      if (token.check(_T("dd"))) {
+   while (!token.check("end")) {
+      if (token.check("dd")) {
          token.read();
-         Operand operand = defineOperand(token, info, _T("Invalid constant"));
+         Operand operand = defineOperand(token, info, "Invalid constant");
          if (operand.type==x86Helper::otDD) {
             x86Helper::writeImm(&writer, operand);
          }
@@ -2309,27 +2309,27 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
             operand.type = x86Helper::otDD;
             x86Helper::writeImm(&writer, operand);
          }
-         else token.raiseErr(_T("Invalid operand (%d)"));
+         else token.raiseErr("Invalid operand (%d)");
       }
-      else if (token.check(_T("dw"))) {
+      else if (token.check("dw")) {
          token.read();
-         Operand operand = defineOperand(token, info, _T("Invalid constant"));
+         Operand operand = defineOperand(token, info, "Invalid constant");
          if (operand.type==x86Helper::otDB) {
             operand.type = x86Helper::otDW;
             x86Helper::writeImm(&writer, operand);
          }
-         else token.raiseErr(_T("Invalid operand (%d)"));
+         else token.raiseErr("Invalid operand (%d)");
       }
-      else if (token.check(_T("db"))) {
+      else if (token.check("db")) {
          token.read();
-         Operand operand = defineOperand(token, info, _T("Invalid constant"));
+         Operand operand = defineOperand(token, info, "Invalid constant");
          if (operand.type==x86Helper::otDB) {
             x86Helper::writeImm(&writer, operand);
          }
-         else token.raiseErr(_T("Invalid operand (%d)"));
+         else token.raiseErr("Invalid operand (%d)");
       }
       else if (token.Eof()) {
-         token.raiseErr(_T("Invalid end of the file\n"));
+         token.raiseErr("Invalid end of the file\n");
       }
       else token.read();
    }
@@ -2337,15 +2337,15 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
 
 bool x86Assembler :: compileCommandA(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-   if (token.check(_T("add"))) {
+   if (token.check("add")) {
       compileADD(token, info, &writer);
       return true;
    }
-   else if (token.check(_T("and"))) {
+   else if (token.check("and")) {
       compileAND(token, info, &writer);
       return true;
    }
-   else if (token.check(_T("adc"))) {
+   else if (token.check("adc")) {
       compileADC(token, info, &writer);
       return true;
    }
@@ -2357,44 +2357,44 @@ bool x86Assembler :: compileCommandB(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper)
 {
-	if (token.check(_T("cmp"))) {
+	if (token.check("cmp")) {
 		compileCMP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("call"))) {
+	else if (token.check("call")) {
 		compileCALL(token, info, &writer, helper);
       return true;
 	}
-	else if (token.check(_T("cdq"))) {
+	else if (token.check("cdq")) {
 		compileCDQ(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("cmpsb"))) {
+	else if (token.check("cmpsb")) {
 		compileCMPSB(token, info, &writer);
       return true;
 	}
-   else if (token.check(_T("cmpxchg"))) {
+   else if (token.check("cmpxchg")) {
       compileCMPXCHG(prefix, token, info, &writer);
       prefix.clear();
       return true;
    }
-	else if (token.check(_T("cmovle"))) {
+	else if (token.check("cmovle")) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JLE);
       return true;
 	}
-	else if (token.check(_T("cmovnz"))) {
+	else if (token.check("cmovnz")) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JNZ);
       return true;
 	}
-	else if (token.check(_T("cmovl"))) {
+	else if (token.check("cmovl")) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JL);
       return true;
 	}
-	else if (token.check(_T("cmovg"))) {
+	else if (token.check("cmovg")) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JG);
       return true;
 	}
-	else if (token.check(_T("cmovge"))) {
+	else if (token.check("cmovge")) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JGE);
       return true;
 	}
@@ -2402,11 +2402,11 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
 }
 bool x86Assembler :: compileCommandD(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("dec"))) {
+	if (token.check("dec")) {
 		compileDEC(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("div"))) {
+	else if (token.check("div")) {
 		compileDIV(token, info, &writer);
       return true;
 	}
@@ -2418,179 +2418,179 @@ bool x86Assembler :: compileCommandE(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandF(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("fldz"))) {
+	if (token.check("fldz")) {
 		compileFLDZ(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fld1"))) {
+	else if (token.check("fld1")) {
 		compileFLD1(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("f2xm1"))) {
+	else if (token.check("f2xm1")) {
 		compileF2XM1(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fbld"))) {
+	else if (token.check("fbld")) {
 		compileFBLD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fchs"))) {
+	else if (token.check("fchs")) {
 		compileFCHS(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fild"))) {
+	else if (token.check("fild")) {
 		compileFILD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fist"))) {
+	else if (token.check("fist")) {
 		compileFIST(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fistp"))) {
+	else if (token.check("fistp")) {
 		compileFISTP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fld"))) {
+	else if (token.check("fld")) {
 		compileFLD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fadd"))) {
+	else if (token.check("fadd")) {
 		compileFADD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fsub"))) {
+	else if (token.check("fsub")) {
 		compileFSUB(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fcomip"))) {
+	else if (token.check("fcomip")) {
 		compileFCOMIP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fcomp"))) {
+	else if (token.check("fcomp")) {
 		compileFCOMP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fmulp"))) {
+	else if (token.check("fmulp")) {
 		compileFMULP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fmul"))) {
+	else if (token.check("fmul")) {
 		compileFMUL(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fdiv"))) {
+	else if (token.check("fdiv")) {
 		compileFDIV(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("faddp"))) {
+	else if (token.check("faddp")) {
 		compileFADDP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fsubp"))) {
+	else if (token.check("fsubp")) {
 		compileFSUBP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fmulp"))) {
+	else if (token.check("fmulp")) {
 		compileFMULP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fdivp"))) {
+	else if (token.check("fdivp")) {
 		compileFDIVP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fldl2t"))) {
+	else if (token.check("fldl2t")) {
 		compileFLDL2T(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fldlg2"))) {
+	else if (token.check("fldlg2")) {
 		compileFLDLG2(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("frndint"))) {
+	else if (token.check("frndint")) {
 		compileFRNDINT(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fxch"))) {
+	else if (token.check("fxch")) {
 		compileFXCH(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fstp"))) {
+	else if (token.check("fstp")) {
 		compileFSTP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fbstp"))) {
+	else if (token.check("fbstp")) {
 		compileFBSTP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fstsw"))) {
+	else if (token.check("fstsw")) {
 		compileFSTSW(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fnstsw"))) {
+	else if (token.check("fnstsw")) {
 		compileFNSTSW(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fstcw"))) {
+	else if (token.check("fstcw")) {
 		compileFSTCW(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fldcw"))) {
+	else if (token.check("fldcw")) {
 		compileFLDCW(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fscale"))) {
+	else if (token.check("fscale")) {
 		compileFSCALE(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fxam"))) {
+	else if (token.check("fxam")) {
 		compileFXAM(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fabs"))) {
+	else if (token.check("fabs")) {
 		compileFABS(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fsqrt"))) {
+	else if (token.check("fsqrt")) {
 		compileFSQRT(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fcos"))) {
+	else if (token.check("fcos")) {
 		compileFCOS(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fsin"))) {
+	else if (token.check("fsin")) {
 		compileFSIN(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fyl2x"))) {
+	else if (token.check("fyl2x")) {
 		compileFYL2X(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("ftst"))) {
+	else if (token.check("ftst")) {
 		compileFTST(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fldpi"))) {
+	else if (token.check("fldpi")) {
 		compileFLDPI(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fprem"))) {
+	else if (token.check("fprem")) {
 		compileFPREM(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fpatan"))) {
+	else if (token.check("fpatan")) {
 		compileFPATAN(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fldl2e"))) {
+	else if (token.check("fldl2e")) {
 		compileFLDL2E(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("fldln2"))) {
+	else if (token.check("fldln2")) {
 		compileFLDLN2(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("ffree"))) {
+	else if (token.check("ffree")) {
 		compileFFREE(token, info, &writer);
       return true;
 	}
@@ -2606,15 +2606,15 @@ bool x86Assembler :: compileCommandH(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandI(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("inc"))) {
+	if (token.check("inc")) {
 		compileINC(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("imul"))) {
+	else if (token.check("imul")) {
 		compileIMUL(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("idiv"))) {
+	else if (token.check("idiv")) {
 		compileIDIV(token, info, &writer);
       return true;
 	}
@@ -2622,63 +2622,63 @@ bool x86Assembler :: compileCommandI(TokenInfo& token, ProcedureInfo& info, Memo
 }
 bool x86Assembler :: compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper)
 {
-	if (token.check(_T("jb"))||token.check(_T("jc"))) {
+	if (token.check("jb")||token.check("jc")) {
       compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JB, helper);
       return true;
 	}
-	else if (token.check(_T("jnb"))||token.check(_T("jnc"))||token.check(_T("jae"))) {
+	else if (token.check("jnb")||token.check("jnc")||token.check("jae")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JAE, helper);
       return true;
 	}
-	else if (token.check(_T("jz"))||token.check(_T("je"))) {
+	else if (token.check("jz")||token.check("je")) {
       compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JZ, helper);
       return true;
 	}
-	else if (token.check(_T("jnz"))) {
+	else if (token.check("jnz")) {
       compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JNZ, helper);
       return true;
 	}
-	else if (token.check(_T("jbe")) || token.check(_T("jna"))) {
+	else if (token.check("jbe") || token.check("jna")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JBE, helper);
       return true;
 	}
-	else if (token.check(_T("ja"))||token.check(_T("jnbe"))) {
+	else if (token.check("ja")||token.check("jnbe")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JA, helper);
       return true;
 	}
-	else if (token.check(_T("js"))) {
+	else if (token.check("js")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JS, helper);
       return true;
 	}
-	else if (token.check(_T("jns"))) {
+	else if (token.check("jns")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JNS, helper);
       return true;
 	}
-	else if (token.check(_T("jpe")) || token.check(_T("jp"))) {
+	else if (token.check("jpe") || token.check("jp")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JP, helper);
       return true;
 	}
-	else if (token.check(_T("jpo")) || token.check(_T("jnp"))) {
+	else if (token.check("jpo") || token.check("jnp")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JPO, helper);
       return true;
 	}
-	else if (token.check(_T("jl"))) {
+	else if (token.check("jl")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JL, helper);
       return true;
 	}
-	else if (token.check(_T("jge"))) {
+	else if (token.check("jge")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JGE, helper);
       return true;
 	}
-	else if (token.check(_T("jle"))) {
+	else if (token.check("jle")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JLE, helper);
       return true;
 	}
-	else if (token.check(_T("jg"))) {
+	else if (token.check("jg")) {
 		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JG, helper);
       return true;
 	}
-	else if (token.check(_T("jmp"))) {
+	else if (token.check("jmp")) {
 		compileJMP(token, info, &writer, helper);
       return true;
 	}
@@ -2690,27 +2690,27 @@ bool x86Assembler :: compileCommandK(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandL(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper)
 {
-	if (token.check(_T("lea"))) {
+	if (token.check("lea")) {
 		compileLEA(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("loop"))) {
+	else if (token.check("loop")) {
 		compileLOOP(token, info, &writer, helper);
       return true;
 	}
-	else if (token.check(_T("lodsd"))) {
+	else if (token.check("lodsd")) {
 		compileLODSD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("lodsw"))) {
+	else if (token.check("lodsw")) {
 		compileLODSW(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("lodsb"))) {
+	else if (token.check("lodsb")) {
 		compileLODSB(token, info, &writer);
       return true;
 	}
-   else if (token.check(_T("lock"))) {
+   else if (token.check("lock")) {
       prefix.lockMode = true;
 
       token.read();
@@ -2721,19 +2721,19 @@ bool x86Assembler :: compileCommandL(PrefixInfo& prefix, TokenInfo& token, Proce
 }
 bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("mov"))) {
+	if (token.check("mov")) {
 		compileMOV(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("mul"))) {
+	else if (token.check("mul")) {
 		compileMUL(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("movzx"))) {
+	else if (token.check("movzx")) {
 		compileMOVZX(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("movsb"))) {
+	else if (token.check("movsb")) {
 		compileMOVSB(token, info, &writer);
       return true;
 	}
@@ -2741,15 +2741,15 @@ bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Memo
 }
 bool x86Assembler :: compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("neg"))) {
+	if (token.check("neg")) {
 		compileNEG(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("not"))) {
+	else if (token.check("not")) {
 		compileNOT(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("nop"))) {
+	else if (token.check("nop")) {
 		compileNOP(token, info, &writer);
       return true;
 	}
@@ -2757,7 +2757,7 @@ bool x86Assembler :: compileCommandN(TokenInfo& token, ProcedureInfo& info, Memo
 }
 bool x86Assembler :: compileCommandO(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("or"))) {
+	if (token.check("or")) {
 		compileOR(token, info, &writer);
       return true;
 	}
@@ -2765,19 +2765,19 @@ bool x86Assembler :: compileCommandO(TokenInfo& token, ProcedureInfo& info, Memo
 }
 bool x86Assembler :: compileCommandP(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("push"))) {
+	if (token.check("push")) {
 		compilePUSH(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("pop"))) {
+	else if (token.check("pop")) {
 		compilePOP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("pushfd"))) {
+	else if (token.check("pushfd")) {
 		compilePUSHFD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("popfd"))) {
+	else if (token.check("popfd")) {
 		compilePOPFD(token, info, &writer);
       return true;
 	}
@@ -2789,31 +2789,31 @@ bool x86Assembler :: compileCommandQ(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandR(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("ret"))) {
+	if (token.check("ret")) {
 		compileRET(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("rol"))) {
+	else if (token.check("rol")) {
 		compileROL(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("ror"))) {
+	else if (token.check("ror")) {
 		compileROR(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("rcr"))) {
+	else if (token.check("rcr")) {
 		compileRCR(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("rcl"))) {
+	else if (token.check("rcl")) {
 		compileRCL(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("rep"))) {
+	else if (token.check("rep")) {
 		compileREP(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("repz"))) {
+	else if (token.check("repz")) {
 		compileREPZ(token, info, &writer);
       return true;
 	}
@@ -2821,63 +2821,63 @@ bool x86Assembler :: compileCommandR(TokenInfo& token, ProcedureInfo& info, Memo
 }
 bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("sub"))) {
+	if (token.check("sub")) {
 		compileSUB(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("sahf"))) {
+	else if (token.check("sahf")) {
 		compileSAHF(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("sbb"))) {
+	else if (token.check("sbb")) {
 		compileSBB(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("shr"))) {
+	else if (token.check("shr")) {
 		compileSHR(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("sar"))) {
+	else if (token.check("sar")) {
 		compileSAR(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("shl"))) {
+	else if (token.check("shl")) {
 		compileSHL(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("stc"))) {
+	else if (token.check("stc")) {
 		compileSTC(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("stosd"))) {
+	else if (token.check("stosd")) {
 		compileSTOSD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("stosb"))) {
+	else if (token.check("stosb")) {
 		compileSTOSB(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("stosw"))) {
+	else if (token.check("stosw")) {
 		compileSTOSW(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("shld"))) {
+	else if (token.check("shld")) {
 		compileSHLD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("shrd"))) {
+	else if (token.check("shrd")) {
 		compileSHRD(token, info, &writer);
       return true;
 	}
-	else if (token.check(_T("setc"))) {
+	else if (token.check("setc")) {
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JB);
       return true;
 	}
-	else if (token.check(_T("setg"))) {
+	else if (token.check("setg")) {
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JG);
       return true;
 	}
-	else if (token.check(_T("setnc"))) {
+	else if (token.check("setnc")) {
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JAE);
       return true;
 	}
@@ -2885,7 +2885,7 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 }
 bool x86Assembler :: compileCommandT(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("test"))) {
+	if (token.check("test")) {
 		compileTEST(token, info, &writer);
       return true;
 	}
@@ -2905,17 +2905,17 @@ bool x86Assembler :: compileCommandW(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandX(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check(_T("xor"))) {
+	if (token.check("xor")) {
 		compileXOR(token, info, &writer);
       prefix.clear();
       return true;
 	}
-	else if (token.check(_T("xchg"))) {
+	else if (token.check("xchg")) {
 		compileXCHG(token, info, &writer);
       prefix.clear();
       return true;
 	}
-	else if (token.check(_T("xadd"))) {
+	else if (token.check("xadd")) {
 		compileXADD(prefix, token, info, &writer);
       prefix.clear();
       return true;
@@ -3014,7 +3014,7 @@ bool x86Assembler :: compileCommand(PrefixInfo& prefix, TokenInfo& token, Proced
 
    if (!recognized) {
       if (token.Eof()) {
-			token.raiseErr(_T("Invalid end of the file\n"));
+			token.raiseErr("Invalid end of the file\n");
 		}
 		else {
 			fixJump(token, info, &writer, helper);
@@ -3029,7 +3029,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
 	ProcedureInfo info(binary, inlineMode);
 
 	token.read();
-   if (token.check(_T("%"))) {
+   if (token.check("%")) {
       info.reference = token.readInteger(constants);
 
       token.read();
@@ -3038,7 +3038,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
       ReferenceNs refName(PACKAGE_MODULE, token.value);
 
       token.read();
-	   if (token.check(_T("("))) {
+	   if (token.check("(")) {
 	      readParameterList(token, info, refName);
 	      token.read();
 	   }
@@ -3046,7 +3046,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
       info.reference = binary->mapReference(refName) | mskNativeCodeRef;
    }
 	if (binary->mapSection(info.reference, true)!=NULL) {
-		throw AssemblerException(_T("Procedure already exists (%d)\n"), token.terminal.row);
+		throw AssemblerException("Procedure already exists (%d)\n", token.terminal.row);
 	}
 
    _Memory* code = binary->mapSection(info.reference, false);
@@ -3056,7 +3056,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
 
    PrefixInfo prefix;
 
-	while (!token.check(_T("end"))) {
+	while (!token.check("end")) {
       compileCommand(prefix, token, info, writer, helper);
 	}
    if (aligned)
@@ -3065,14 +3065,14 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
 
 void x86Assembler :: compile(TextReader* source, const wchar_t* outputPath)
 {
-   Module       binary(_T("$binary"));
+   Module       binary(ConstantIdentifier("$binary"));
    SourceReader reader(4, source);
 
    TokenInfo    token(&reader);
 
    token.read();
 	do {
-		if (token.check(_T("define"))) {
+		if (token.check("define")) {
          IdentifierString name(token.read());
 			size_t value = token.readInteger(constants);
 
@@ -3080,31 +3080,31 @@ void x86Assembler :: compile(TextReader* source, const wchar_t* outputPath)
             constants.erase(name);
 
 			if (!constants.add(name, value, true))
-				token.raiseErr(_T("Constant already exists (%d)\n"));
+				token.raiseErr("Constant already exists (%d)\n");
 
 			token.read();
 		}
-		else if (token.check(_T("procedure"))) {
+		else if (token.check("procedure")) {
 			compileProcedure(token, &binary, true, true);
 
 			token.read();
 		}
-		else if (token.check(_T("inline"))) {
+		else if (token.check("inline")) {
 			compileProcedure(token, &binary, false, false);
 
 			token.read();
 		}
-      else if (token.check(_T("structure"))) {
+      else if (token.check("structure")) {
 			compileStructure(token, &binary, mskNativeDataRef);
 
 			token.read();
       }
-      else if (token.check(_T("rstructure"))) {
+      else if (token.check("rstructure")) {
          compileStructure(token, &binary, mskNativeRDataRef);
 
 			token.read();
       }
-		else token.raiseErr(_T("Invalid statement (%d)\n"));
+		else token.raiseErr("Invalid statement (%d)\n");
 
 	} while (!token.Eof());
 

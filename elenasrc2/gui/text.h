@@ -131,7 +131,10 @@ private:
       }
       return go(1);
 #else
-      return go(1);
+      if ((*_page).text[_offset] >= 0xD800) {
+         return go(2);
+      }
+      else return go(1);
 #endif
    }
 
@@ -148,7 +151,10 @@ private:
       }
       return go(-1);
 #else
-      return go(-1);
+      if ((*_page).text[_offset] >= 0xDC00) {
+         return go(-2);
+      }
+      else return go(-1);
 #endif
    }
 

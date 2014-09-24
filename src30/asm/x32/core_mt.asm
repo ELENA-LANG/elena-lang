@@ -1169,6 +1169,7 @@ procedure core'newframe
 
 end
 
+// ; presave eax
 procedure core'init_ex_tbl
 
   // ; GCXT: get current thread frame
@@ -1262,7 +1263,10 @@ procedure core'closeframe
   
 end
 
+// ; presave eax
 procedure core'newthread
+
+  push eax
   
   // ; GCXT
   mov  edx, data : %THREAD_TABLE
@@ -1321,6 +1325,7 @@ labSkipSave:
 
   mov  [esi+tls_flags], 0              // ; init thread flags  
 
+  pop  eax
   pop  edx                             // ; put frame end and move procedure returning address
 
   xor  ebx, ebx
@@ -1335,8 +1340,10 @@ labSkipSave:
 
   // ; restore return pointer
   push edx              
+  ret
 
 lErr:
+  add esp, 4 
   ret
 
 end

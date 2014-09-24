@@ -151,8 +151,10 @@ end
 // ; equit
 inline % 1Bh
 
+  mov  edx, ecx
   pop  ebx
-  lea  esp, [esp + ecx * 4 + 4]
+  and  edx, 000000Fh
+  lea  esp, [esp + edx * 4 + 4]
   jmp  ebx
   nop
   nop
@@ -338,6 +340,14 @@ labNext:
 
 labFound:
   mov   esi, ebx
+
+end
+
+// ; ecall
+
+inline % 038h
+
+  call ecx
 
 end
 
@@ -2502,12 +2512,12 @@ inline % 0A6h
   
 end
 
-// ; ecall
+// ; address label (ecx - offset)
 
 inline % 0A7h
 
-  call ecx
-
+  call code : %HOOK
+  
 end
 
 // ; message

@@ -46,6 +46,7 @@ class ECodesAssembler : public Assembler
    void compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileCreateCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
 
+   void compileRJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary);
    void compileNJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
    void compileMccJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);
    void compileJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info);

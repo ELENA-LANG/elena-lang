@@ -15,7 +15,7 @@ v  - vm script
 - rev
 - opt
 - port                                                                                                                    
-
+                                                                               
 ------                                 
 Currently:
 ------
@@ -25,115 +25,19 @@ Currently:
                        * linux - build system libraris
                        * linux linker
                        
-              xdev - multithreading       
-                       * test mttest: it crashes time to time
-                         
-              xdev - open arg                                      
-                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
-                         raise an error ; do we need it?
-                         
-              xdev - native code optimization
-                       * optimize hook / unhook commands
-
-                       * should ret be followed with several nops?
-
-
-<=================> 
-
-1.9.17
---------
-week1:
-              xdev - dynamic programming                                             
-                       * implement trace mode
-                       * it should be possible Tape to debug  (see 1.x implementation)
-                       
-              xdev - elenavm
-                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
-                       * elenavm: use reverse instead of set of swaps
-                       
-              xdev - external routine:
-                       * if bytearray subject is used for literal - use temporal buffer
-                       
-              xdev - script support
-                       * should be possible to debug vm scripts
-
-            xtools - usability
-                       * simplify ecv, use ? both for class and method listing ; think over symbol
-                       
-              xdev - elenasm
-                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-     
-              idev - generic development
-                       * some phantom ending in the file open with utf8 mode
-                       * utf8 by default
-                       * refresh / reload documents after changing encoding ??
-                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
-                         utf-16 for windows?
-                       * store current encoding for every file
-                       
-              idev - debugger
-                       * implement watch
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                       * nested expression should display all its fields as variables
-                       * f4 - goto closest code (e.g. $ConsoleReader.read&out'short - f4 on the function)
-                       * should $self be displayed for nested classes / action / expression ...
-                       * show self only for roles
-                       * fix debugger to correctly show arrays
-                       * tune debugger, make possible to use step over / step into everywhere
-                       * step over #break / #throw does not work correctly
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-
-              idev - usability
-                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
-                       * recognize out of memory exception
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-                       * test compilation with a very long identifier names                       
-
-week2:
-              adev - gui
-                       * general architecture
-                       * class function
-                       * eventhandle group object
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
-                       * support GUI mode
-                       * support GUI application
-
-              sdev - api doc
-                       * modify to reflect exception support changes
-                       * create API : system(groups.l)
-                       * it should be listed extensions per supported protocol
-                       * create API doc
-                       * change api faq
-                       * copy protocols to doc\protocols
-                       * support dispatch method
-                       * support redirect method
-                       
               adev - lib30                                        
-                       * throw / dispatch handler : assign ebp to $self                       
-                       * group object : implementation, limitation
-                       * group object implementation (group, union, cast)
-                                              
-                         implement : copy message parameters, set exception hook, and try to call the method for all its members, if
-                         exception raises - make sure the stack level is the same (taking into account ret address) and it is method not found -
-                         goes to the next element otherwise - send the message further (except for the last member - simply call the dispatch method)
+                       * group object implementation : test
 
-                         limitation : copying stack / setting hook overhead                         
-
-                         alternative : special handler, if the method is found remove return point from the stack - jump to the dispach, otherwise
-                         return to the method ; limitation - two handlers
+                       * test tape with parameters
 
                        * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
                          another group object - Group (a, %Even[ even value ]), which will works correctly
 
-                       * move Array.add(1) method to the extension ??
+                       * special class IndexedPointer - which is used to refer to the object by index
 
-                       * migrate tape sample
-                       * migrate mt test
-                       * migrate interpreter
+                       * nested Action and Frame should implement specific type so extensions can be used
+                       
+                       * move Array.add(1) method to the extension ??
 
                        * test: true and Boolean, intNumber and Integer, ...
                        * test true / false operations with Boolean
@@ -161,6 +65,33 @@ week2:
                        * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
                        
                        * support sin, cos, arctan
+
+                       * migrate tape sample
+                       * migrate interpreter
+
+<=================> 
+
+1.9.17
+--------
+week2:
+              adev - gui
+                       * general architecture
+                       * class function
+                       * eventhandle group object
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * support GUI mode
+                       * support GUI application
+
+              sdev - api doc
+                       * modify to reflect exception support changes
+                       * create API : system(groups.l)
+                       * it should be listed extensions per supported protocol
+                       * create API doc
+                       * change api faq
+                       * copy protocols to doc\protocols
+                       * support dispatch method
+                       * support redirect method                       
 
               arev - general review
                        * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
@@ -347,6 +278,11 @@ week3:
                        * use script to build objects
                        * use script to parse
                        * use script generate code
+                       
+              xdev - elenasm
+                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
 
               sdev - prime project
                        * interpreter : execute simple sample3.txt
@@ -498,6 +434,8 @@ week1:
                        * method not found event should provides the way to specify the object where the method was not found
 
               xdev - generic development                                                      
+                       * calling the parent constructor ??
+
                        * should index allocateing / referring / releasing be done as commands ; review reference table design , could it be done
                          differently ? optimize current implementation
 
@@ -561,6 +499,9 @@ week1:
 
                        * light way to implement return from loop / any part of the procedure
                        * rename / refactor weval - misleading name
+                       * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
+                         raise an error ; do we need it? - better always box into array
+                       * split hook l into two : address l , hook ; or use internal function for exception raising / handling?
 
               xdev - general implementation
                        * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
@@ -684,9 +625,54 @@ week1:
                        * simplify primitive loop implementing
                        * optimize output code: system'object
                        * optimize - operation with nil (==, !=)
+                       * optimize hook / unhook commands
+                       * should ret be followed with several nops?
+
+              idev - generic development                                          
+                       * test utf16 text with Supplementary characters (chinese)
+                       * some phantom ending in the file open with utf8 mode
+                       * refresh / reload documents after changing encoding ??
+                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
+                         utf-16 for windows?
+
+              xdev - dynamic programming                                             
+                       * implement trace mode
+                       * it should be possible Tape to debug  (see 1.x implementation)
+
+              idev - debugger
+                       * f4 - goto closest code (e.g. $ConsoleReader.read&out'short - f4 on the function)
+                       * nested expression should display all its fields as variables
+                       * implement watch
+                       * should $self be displayed for nested classes / action / expression ...
+                       * show self only for roles
+                       * fix debugger to correctly show arrays
+                       * tune debugger, make possible to use step over / step into everywhere
+                       * step over #break / #throw does not work correctly
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       
+            xtools - usability
+                       * print symbol (special keyword to distinguish from class)
+                       
+              xdev - elenavm
+                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
+                       * elenavm: use reverse instead of set of swaps
+
+week2:
+              adev - lib30                                        
+                       * expanding lib30
 
 1.9.19
 --------
+week1:
+              idev - usability
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
+                       * recognize out of memory exception
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
+
+              idev - debugger
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
 
 1.9.20
 --------
@@ -736,6 +722,12 @@ week1:
                        * starts to use Pentium commands: we need to introduce the mode for
                          i686 (cmov is not supported for older CPU, so we have to have two
                          set of commands)
+                       
+              xdev - script support
+                       * should be possible to debug vm scripts
+
+              idev - debugger
+                       * implement watch
                          
 week2:
               adev - lib30

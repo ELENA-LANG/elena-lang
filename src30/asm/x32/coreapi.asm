@@ -138,17 +138,14 @@ end
 
 // ; in : acc - param
 procedure coreapi'start_thread
-
-  push eax
-
+                  
   // ; init thread
   call code : "$package'core'newthread"
+  mov  ecx, 1
   test eax, eax
   jz   short lErr
 
-  call code : "$package'core'init_ex_tbl"
-
-  mov  eax, [esp+0Ch]
+  call code : "$package'core'init_ex_tbl"  
 
   push  eax
   mov   ecx, EXEC_MESSAGE_ID
@@ -158,10 +155,10 @@ procedure coreapi'start_thread
   // ; close thread
   call code : "$package'core'closethread"
 
-  xor  eax, eax
+  xor  ecx, ecx
 
 lErr:
-  push  eax
+  push  ecx
   call  extern 'dlls'kernel32.ExitThread
   lea   esp, [esp+4]
 

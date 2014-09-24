@@ -7,6 +7,13 @@
     #method => <handle_wrap>.
 }
 
+// --- Group ---
+
+#class(group,dbg:array) Group : BaseArray
+{
+    #method => <handle_group>.
+}
+
 //// --- Extension ---
 //
 //#class(group) Extension

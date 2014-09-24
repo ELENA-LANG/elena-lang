@@ -99,6 +99,15 @@ void x86LabelHelper :: writeLoadForward(int label)
    code->writeDWord(0);
 }
 
+void x86LabelHelper :: writeLoadBack(int label)
+{
+   code->writeByte(0xB9);
+
+   int offset = labels.get(label) - code->Position() - 4;
+
+   code->writeDWord(offset);
+}
+
 void x86LabelHelper :: writeShortJmpForward(int label)
 {
    code->writeByte(0xEB);
