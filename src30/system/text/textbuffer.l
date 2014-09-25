@@ -86,6 +86,21 @@
         ].
     ]
 
+    #method write &shortarray:anArray &length:aLength
+    [
+        #var(type:int)anOldLength.
+        theLength read &out'int:anOldLength.
+        
+        (0 == aLength) !
+        [
+            $self reserve &length:aLength.
+            
+            theBuffer write &index:anOldLength &length:aLength &shortarray:anArray.
+            
+            theLength append &int:aLength.
+        ].
+    ]
+
     #method indexOf &index:aPosition &char:aChar &out'int:aRetVal
     [
         #var(type:short)aValue.

@@ -1,5 +1,5 @@
 #define system.
-#define system'text.
+#define system'io.
 
 // --- TextFileEnumerator ---
 
@@ -18,7 +18,7 @@
     [
         (nil == theReader) 
             ? [
-                theReader := TextReader new &path:thePath.
+                theReader := StreamReader new &path:thePath.
                 
                 theLine := theReader readLine.
             ]
@@ -26,7 +26,7 @@
                 theLine := theReader readLine.
             ].
             
-        ^ (nil != theLine).
+        ^ theReader available.
     ]
     
     #method get = theLine.

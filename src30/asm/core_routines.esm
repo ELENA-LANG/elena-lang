@@ -1554,12 +1554,7 @@ end
 
 procedure inline'ws_copybuf
 
-  aloadsi 3
-  nload
-  inc
-  acopyr class : system'LiteralValue
-  wcreate
-  bcopya
+  bloadsi 4
 
   aloadsi 3
   nload
@@ -1574,9 +1569,9 @@ labNext:
   eloadsi 0
   next labNext
 
-  ecopy 0
-  wwrite
-  pop
+  popd
+  bloadsi 5
+  nsave
   
   acopyb
   quitn 3

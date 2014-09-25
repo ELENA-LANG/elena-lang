@@ -89,7 +89,9 @@
 
     #method Substring &index:anIndex
     [
-        #var(type:int)aLength := self length.
+        #var(type:int)aLength.
+        self read &out'length:aLength.
+        
         aLength := aLength - anIndex.
         
         ^ self Substring &index:anIndex &length:aLength.
@@ -178,7 +180,23 @@
         ^ (aStart != 0)
             ? [ aTarget append:(self~literalOp Substring &index:aStart) literal ]
             ! [ self literal ].
-    ]    
+    ]
+    
+    #method isEmpty
+    [
+        #var(type:int)aLength.
+        self read &out'length:aLength.
+        
+        ^ aLength == 0.
+    ]
+    
+    #method isNotEmpty
+    [
+        #var(type:int)aLength.
+        self read &out'length:aLength.
+        
+        ^ aLength != 0.
+    ]
 }
 
 #class(role)stringOp

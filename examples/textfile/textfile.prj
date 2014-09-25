@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 executable=textfile.exe
 arguments=sample.txt
 options=-xembed-
@@ -13,3 +13,4 @@ viewer.l
 [forwards]
 'program=textfile'program
 'program'output=system'console
+

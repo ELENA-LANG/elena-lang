@@ -1,4 +1,5 @@
 #define system.
+#define system'text.
 
 // --- File Access Modes ---
 #symbol(const) $FILE_READ_DATA     = 00000001h.
@@ -56,6 +57,39 @@
             &int         : aLength
             &out'length  : aLength
             &int         : 0.
+    ]
+}
+
+// --- StreamReader ---
+
+#class StreamReader : TextReader
+{
+    #field theStream.
+    #field theEncoder.
+
+    #constructor new &stream:aStream &encoder:anEncoder
+    [
+        theStream := aStream.
+        theEncoder := anEncoder.
+
+        theOutput := TextBuffer new.
+        theOpen := true.
+    ]
+
+    #constructor new &path:aPath
+        <= %new &stream:(system'io'fileControl openForRead &path:aPath) &encoder:system'io'ansiLiteralEncoder.
+
+    #method read &shortarray:anOutput &out'length:aLength
+    [
+        #var(type:bytearray,size:64)aBuffer.
+        theStream read &bytearray:aBuffer &out'length:aLength.
+                
+        theEncoder convert &bytearray:aBuffer &length:aLength &shortarray:anOutput &out'length:aLength.
+    ]
+    
+    #method close
+    [
+        theStream close.
     ]
 }
 

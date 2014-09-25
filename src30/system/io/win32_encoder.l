@@ -4,6 +4,6 @@
 
 #symbol ansiLiteralEncoder =
 {
-    convert &bytearray:aByteArray &length:aLength
+    convert &bytearray:aByteArray &length:aLength &shortarray:anOutput &out'length:anOutputLength
         <ws_copybuf>.
 }.

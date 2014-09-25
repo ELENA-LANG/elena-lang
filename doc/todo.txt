@@ -26,9 +26,10 @@ Currently:
                        * linux linker
                        
               adev - lib30                                        
-                       * group object implementation : test
+                       * TextWriter , BinaryReader / BinaryWriter
 
-                       * test tape with parameters
+                       * make sure the stream is correctly closed after the operations with files
+
 
                        * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
                          another group object - Group (a, %Even[ even value ]), which will works correctly
@@ -39,16 +40,11 @@ Currently:
                        
                        * move Array.add(1) method to the extension ??
 
-                       * test: true and Boolean, intNumber and Integer, ...
-                       * test true / false operations with Boolean
-
 
                        * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
 
-                       * TextReader / TextWriter , BinaryReader / BinaryWriter
-
                        * String : padLeft, padRight, trimAll, trimEnd, trimStart
-
+                                                                                           
                        * scriptControl.load&literal - raise an error if the result is broken
 
                        * test if object is nil                       
@@ -57,8 +53,9 @@ Currently:
                        * test if object is float
                        * test if object is number
                        * test if upper case character
-                       * test if lower case character
-                       
+                       * test if lower case character                       
+                       * test if literal is empty
+
                        * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
                          cases
 
@@ -389,6 +386,9 @@ week4:
                          variable, visualize it content, execute it)
                                              
               xmaint - test
+                       * test: true and Boolean, intNumber and Integer, ...
+                       * test true / false operations with Boolean
+
                        * inline'handle_tape: - test the message with argument list
 
                        *  in the following code throw is executed twice
@@ -434,7 +434,7 @@ week1:
                        * method not found event should provides the way to specify the object where the method was not found
 
               xdev - generic development                                                      
-                       * calling the parent constructor ??
+                       * calling the parent constructor ?? (see system'io'StreamReader (output should be created in the parent class), Exceptions and so on)
 
                        * should index allocateing / referring / releasing be done as commands ; review reference table design , could it be done
                          differently ? optimize current implementation

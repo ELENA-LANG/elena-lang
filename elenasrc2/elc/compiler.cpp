@@ -1642,7 +1642,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       int size = 0;
       scope.compileLocalHints(hints, type, size);
 
-      bool stackAllocated = (type != 0 && scope.moduleScope->typeHints.get(type) != 0);
+      bool stackAllocated = (type != 0 && scope.moduleScope->sizeHints.exist(type));
 
       int level = scope.newLocal();
 

@@ -8,10 +8,15 @@
 ******************************************************************************
 
 ELENA:
+[*] some bug fixes
 [+] generic methods
                                                   
 [LIB]
+[*] some bug fixes
 [+] system'dynamic: Group
+[+] system'io: TextReader, StreamReader, BinaryReader
+[+] extensions'text: StringReader
+[-] system'text: TextReader (refactored to be a base class and moved to system'io, system'io'StreamReader should be used instead)
 
 ******************************************************************************
                     What's New in 1.9.16 (pre release)
