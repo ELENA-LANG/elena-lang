@@ -130,7 +130,7 @@ struct TokenInfo
 class Assembler
 {
 public:
-	virtual void compile(TextReader* reader, const wchar_t* outputPath) = 0;
+	virtual void compile(TextReader* reader, const tchar_t* outputPath) = 0;
 
 	virtual ~Assembler() {}
 };

@@ -717,6 +717,28 @@ bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2)
    return greater(s1, s2, getlength(s1) + 1);
 }
 
+int StringHelper :: find(const unsigned short* s, const unsigned short* subs, int defValue)
+{
+   int l = getlength(s);
+   int ls = getlength(subs);
+
+   for(int i = 0 ; i < l - ls ; i++) {
+      if (s[i]==subs[0]) {
+         bool match = true;
+         for(int j = 1 ; j < ls ; j++) {
+            if (s[i+j] != subs[j]) {
+               match = false;
+               break;
+            }
+         }
+         if (match)
+            return i;
+      }
+   }
+
+   return defValue;
+}
+
 int StringHelper :: find(const unsigned short* s, unsigned short c, int defValue)
 {
    const unsigned short* p = s;

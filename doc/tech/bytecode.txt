@@ -342,6 +342,8 @@ ELENA byte codes (or ecodes)
  
  breadb                     - acc[index] >> [byte]ext
  
+ bwriteb                    - base[index] << [byte]ext
+ 
  wread                      - [base][index*2] >> [short]ext
 
  selectr r1, r2             - acc = (index = 0 ? r1 : r2)

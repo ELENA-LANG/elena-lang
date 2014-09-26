@@ -1578,6 +1578,38 @@ labNext:
 
 end
 
+procedure inline'ws_copy2buf
+
+  bloadsi 4
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  dcopy 0
+  pushe
+
+labNext:
+  wread
+  eswap
+  lessn labSkip 128
+  dcopy 63  
+labSkip:
+  eswap
+  bwriteb
+
+  eloadsi 0
+  next labNext
+
+  popd
+  bloadsi 5
+  nsave
+  
+  acopyb
+  quitn 3
+
+end
+
 procedure inline'ws_equalchar
 
   bcopya

@@ -93,10 +93,72 @@
     ]
 }
 
+// --- StreamWriter ---
+
+#class StreamWriter : TextWriter
+{
+    #field theStream.
+    #field theEncoder.
+
+    #constructor new &stream:aStream &encoder:anEncoder
+    [
+        theStream := aStream.
+        theEncoder := anEncoder.
+
+        theNewLineConstant := system'io'newLine literal.
+    ]
+
+    #constructor new &path:aPath
+        <= %new &stream:(system'io'fileControl openForReWrite &path:aPath) &encoder:system'io'ansiLiteralEncoder.
+        
+    #method write &shortarray:anInput &length:aLength
+    [
+        #var(type:int)aTotal := aLength.
+        #var(type:bytearray,size:64)aBuffer.
+        #var(type:int)aBlockLength.
+        
+        #loop (aTotal > 0) ?
+        [
+            (aTotal < 64)
+                ? [ aBlockLength := aTotal. ]
+                ! [ aBlockLength := 64. ].
+                
+            theEncoder convert &shortarray:anInput &length:aBlockLength &bytearray:aBuffer &out'length:aBlockLength.
+            
+            theStream write &bytearray:aBuffer &length:aBlockLength.
+            
+            aTotal := aTotal - aBlockLength.
+        ].
+    ]
+        
+    #method write &literal:anOutput &length:aLength
+    [
+        #var(type:int)aTotal := aLength.
+        #var(type:bytearray,size:64)aBuffer.
+        #var(type:int)aBlockLength.
+        
+        #loop (aTotal > 0) ?
+        [
+            (aTotal < 64)
+                ? [ aBlockLength := aTotal. ]
+                ! [ aBlockLength := 64. ].
+                
+            theEncoder convert &literal:anOutput &length:aBlockLength &bytearray:aBuffer &out'length:aBlockLength.
+            
+            theStream write &bytearray:aBuffer &length:aBlockLength.
+            
+            aTotal := aTotal - aBlockLength.
+        ].
+    ]
+}
+
 // --- fileControl ---
 
 #symbol fileControl =
 {
     openForRead &path:aPath
         = FileStream new &literal::aPath &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
+        
+    openForReWrite &path:aPath
+        = FileStream new &literal::aPath &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
 }.

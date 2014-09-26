@@ -1370,8 +1370,7 @@ inline % 68h
 
 end
 
-
-// ; save
+// ; bwrite
 inline % 69h
 
   mov [edi + esi], ecx
@@ -1415,6 +1414,13 @@ labNext:
 
 labEnd:
 
+end
+
+// ; bwriteb
+inline % 6Ch
+
+  mov byte ptr [edi + esi], cl
+  
 end
 
 // ; createb

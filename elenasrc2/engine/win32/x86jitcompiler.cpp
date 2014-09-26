@@ -48,7 +48,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 130;
+const int gcCommandNumber = 131;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
@@ -60,7 +60,7 @@ const int gcCommands[gcCommandNumber] =
    bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
    bcGet, bcSet, bcXSet, bcECall, bcBReadB,
    bcRestore, bcCount, bcIfHeap, bcFlag, bcNCreate,
-   bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI,
+   bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
    bcType, bcNEqual, bcNLess, bcNCopy, bcNAdd,
    bcNSub, bcNMul, bcNDiv, bcWEqual, bcWLess,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,

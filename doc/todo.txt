@@ -26,7 +26,7 @@ Currently:
                        * linux linker
                        
               adev - lib30                                        
-                       * TextWriter , BinaryReader / BinaryWriter
+                       * BinaryReader / BinaryWriter
 
                        * make sure the stream is correctly closed after the operations with files
 
@@ -388,6 +388,7 @@ week4:
               xmaint - test
                        * test: true and Boolean, intNumber and Integer, ...
                        * test true / false operations with Boolean
+                       * test system'io'StreamWriter
 
                        * inline'handle_tape: - test the message with argument list
 

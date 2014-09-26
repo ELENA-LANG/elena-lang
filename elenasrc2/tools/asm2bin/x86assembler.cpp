@@ -276,7 +276,7 @@ x86Assembler::Operand x86Assembler :: defineDisplacement(TokenInfo& token, Proce
       else if(token.check("8")) {
          return Operand(x86Helper::otFactor8);
       }
-      else if(token.check("2")) {         
+      else if(token.check("2")) {
          return Operand(x86Helper::otFactor2);
       }
       else token.raiseErr(err);
@@ -302,7 +302,7 @@ x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, Procedur
 		         operand.offset += disp.offset;
 		         operand.reference = disp.reference;
 	         }
-	         else token.raiseErr(err);               
+	         else token.raiseErr(err);
 
             token.read();
          }
@@ -320,7 +320,7 @@ x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, Procedur
          if (disp.type == x86Helper::otDD || disp.type == x86Helper::otDB) {
             // if it is [r + disp]
             if(!setOffset(operand, disp))
-               token.raiseErr(err);               
+               token.raiseErr(err);
 
             token.read();
          }
@@ -359,7 +359,7 @@ x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, Procedur
                int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
 
                if(!setOffset(operand, disp2))
-                  token.raiseErr(err);               
+                  token.raiseErr(err);
 
                operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode);
 
@@ -374,7 +374,7 @@ x86Assembler::Operand x86Assembler :: readDispOperand(TokenInfo& token, Procedur
                   int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
 
                   if(!setOffset(operand, disp3))
-                     token.raiseErr(err);               
+                     token.raiseErr(err);
 
                   operand.type = (OperandType)((operand.type & 0xFFFFFFF8) | x86Helper::otSIB | sibcode | disp2.type);
 
@@ -1399,7 +1399,7 @@ void x86Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryWri
       Operand sour = defineOperand(token, info, "Invalid operand (%d)\n");
       if (sour.type == x86Helper::otDD || sour.type == x86Helper::otDB) {
          code->writeByte(0xC2);
-         if (sour.type == x86Helper::otDB) 
+         if (sour.type == x86Helper::otDB)
             sour.type = x86Helper::otDW;
 
          x86Helper::writeImm(code, sour);
@@ -1656,7 +1656,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
          }
          else ref = info.binary->mapReference(funRef) | mskSymbolRelRef;
       }
-         
+
       code->writeRef(ref, 0);
    }
    // if jump forward
@@ -3042,7 +3042,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
 	      readParameterList(token, info, refName);
 	      token.read();
 	   }
-      
+
       info.reference = binary->mapReference(refName) | mskNativeCodeRef;
    }
 	if (binary->mapSection(info.reference, true)!=NULL) {
@@ -3063,7 +3063,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
 	   writer.align(4, 0x90);
 }
 
-void x86Assembler :: compile(TextReader* source, const wchar_t* outputPath)
+void x86Assembler :: compile(TextReader* source, const tchar_t* outputPath)
 {
    Module       binary(ConstantIdentifier("$binary"));
    SourceReader reader(4, source);

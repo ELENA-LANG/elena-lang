@@ -27,6 +27,7 @@ collections\list.l
 text\textbuffer.l
 text\textio.l
 io\streamreader.l
+io\streamwriter.l
 io\win32_console.l
 io\win32_encoder.l
 io\files.l

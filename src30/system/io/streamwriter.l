@@ -1,23 +1,44 @@
 #define system.
 
-// --- StreamWriter ---
+// --- TextWriter ---
 
-#class StreamWriter
+#class TextWriter
 {
-    #field theStream.
+    #field(type:literal)theNewLineConstant.
     
-    #constructor new : aStream
+    #method writeLine : aLine
     [
-        theStream := aStream.
+        $self write &literal::aLine write &literal:theNewLineConstant.
     ]
-
-    #method write : anObject
+    
+    #method write &literal:aLine
     [
-        $self write::anObject.
+        #var(type:int)aLength.
+        aLine read &out'length:aLength.
+        
+        $self write &literal:aLine &length:aLength.
     ]
-
-    #method write &type'widestr:aLiteral
-    [
-        theStream write &type'bytearray:aLiteral &type'length:(aLiteral type'length * 2).
-    ]    
 }
+
+//
+//// --- StreamWriter ---
+//
+//#class StreamWriter
+//{
+//    #field theStream.
+//    
+//    #constructor new : aStream
+//    [
+//        theStream := aStream.
+//    ]
+//
+//    #method write : anObject
+//    [
+//        $self write::anObject.
+//    ]
+//
+//    #method write &type'widestr:aLiteral
+//    [
+//        theStream write &type'bytearray:aLiteral &type'length:(aLiteral type'length * 2).
+//    ]    
+//}

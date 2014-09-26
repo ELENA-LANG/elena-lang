@@ -142,6 +142,8 @@
                 $self clear write &literal::aLeftLiteral write &literal::aRightLiteral.
             ].
     ]
+    
+    #method shortarray = theBuffer shortarray.
 
     #method literal
     [

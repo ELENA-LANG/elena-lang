@@ -108,7 +108,7 @@ void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryW
 }
 
 void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
-{   
+{
 	const wchar16_t* word = token.read();
    if (token.terminal.state == dfaInteger || constants.exist(word)) {
       int m = 0;
@@ -128,7 +128,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
          verbId = EVAL_MESSAGE_ID;
       }
 
-      IdentifierString subject; 
+      IdentifierString subject;
       token.read();
       bool first = true;
       while(token.value[0] == '&') {
@@ -394,13 +394,13 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 	MemoryWriter writer(code);
 
    token.read();
-      
+
 	while (!token.check("end")) {
       compileCommand(token, writer, info, binary);
 	}
 }
 
-void ECodesAssembler :: compile(TextReader* source, const wchar_t* outputPath)
+void ECodesAssembler :: compile(TextReader* source, const tchar_t* outputPath)
 {
    Module       binary(ConstantIdentifier("$binary"));
    SourceReader reader(4, source);
