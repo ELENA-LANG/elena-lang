@@ -12,7 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters="D:\ALEX\ELENA\src26\asm\x32\commandst.asm" />
+				<Option parameters="/home/alex/elena/src30/asm/core_routines.esm" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

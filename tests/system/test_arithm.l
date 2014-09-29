@@ -12,6 +12,9 @@
 
 #symbol XTest =
 [
+    #var a := [ console write:"action". ].
+    #var f := x [ console write:"function". ].
+    #var f2 := (:x) [ console write:"function". ].
 ].
 
 // --- OpenArgTest ---

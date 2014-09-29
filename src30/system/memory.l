@@ -16,9 +16,18 @@
 {
     #method bytearray = $self.
 
-//    #method write &index:anIndex &length:aLength &bytearray:aDump
-//        <bs_write>.
-//
+    #method write &index:anIndex &short:anInt
+        <bs_writeword>.
+
+    #method write &index:anIndex &int:anInt
+        <bs_writedword>.
+
+    #method write &index:anIndex &long:aLong
+        <bs_writeqword>.
+
+    #method write &index:anIndex &length:aLength &bytearray:aDump
+        <bs_write>.
+
 //    #method write &index:anIndex &literal:aLiteral
 //        <bs_writestr>.
 
@@ -28,9 +37,12 @@
     #method read &index:anIndex &out'int:anInt
         <bs_readdword>.
 
-//    #method read &index:anIndex &length:aLength &bytearray:aDump
-//        <bs_read>.
-//
+    #method read &index:anIndex &out'long:aLong
+        <bs_readqword>.
+
+    #method read &index:anIndex &length:aLength &bytearray:aDump
+        <bs_read>.
+
 //    #method indexOf &index:anIndex &length:aLength &byte:aByte &out'int:aRetVal
 //        <bs_findbyte>.me
 //

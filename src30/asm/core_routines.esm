@@ -974,6 +974,60 @@ labErr:
 
 end
 
+procedure inline'bs_readqword
+
+  bcopya
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  bread
+  dcopye
+  bloadsi 3
+  ecopy 8
+  subcopy
+  quitn 2
+  
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'bs_read
+
+  bcopya
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  aloadsi 3
+  nload
+  acopyb
+
+  bloadsi 4
+  subcopy
+  quitn 2
+  
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
 procedure inline'bs_equalword
 
   bcopya
@@ -1796,4 +1850,107 @@ labEnd:
   acopyr const : system'MethodNotFoundException
   throw
         
+end
+
+procedure inline'bs_writeword
+
+  len
+  bcopya
+  aloadsi 2
+  nload
+  addn 3
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwritew
+  quitn 3
+
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'bs_writedword
+
+  len
+  bcopya
+  aloadsi 2
+  nload
+  addn 5
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwrite
+  quitn 3
+
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'bs_writeqword
+
+  len
+  bcopya
+  aloadsi 2
+  nload
+  addn 9
+  notless labErr
+  nload
+  aloadsi 3
+  ecopy 8
+  insert
+  quitn 3
+
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'bs_write
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  acopyb
+  len
+  eswap
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  insert
+  quitn 4
+
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
 end

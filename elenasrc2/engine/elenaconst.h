@@ -426,8 +426,8 @@ namespace _ELENA_
    #define HINT_SIZE               "size"
    #define HINT_ITEMSIZE           "itemsize"
    #define HINT_ITEM               "item"
-//  // #define HINT_SAFEPOINT          "safepoint"
-//  // #define HINT_LOCK               "sync"
+  // #define HINT_SAFEPOINT          "safepoint"
+  // #define HINT_LOCK               "sync"
    #define HINT_SEALED             "sealed"
    #define HINT_MESSAGE            "message"
    #define HINT_SIGNATURE          "signature"
@@ -464,6 +464,7 @@ namespace _ELENA_
    // predefined classes
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor
    #define ACTION_CLASS             "system'Action"                  // the base action class
+   #define FUNCTION_CLASS           "system'Function"                // the base action class
    #define EXPRESSION_CLASS         "system'Expression"              // the base expression class
    #define NIL_CLASS                "system'nil"                     // the nil reference
    #define BREAK_EXCEPTION_CLASS    "system'BreakException"          // break class
@@ -474,11 +475,8 @@ namespace _ELENA_
    #define LONG_CLASS               "system'LongNumber" 
    #define REAL_CLASS               "system'RealNumber" 
    #define WSTR_CLASS               "system'LiteralValue" 
-//   #define WCHR_CLASS               "system'CharValue" 
    #define ARRAY_CLASS              "system'Array" 
-////   #define ROLES_CLASS              "system'dynamic'RoleList"        // the role list handler
    #define TAPE_CLASS               "system'dynamic'Tape"            // the role list handler
-//   #define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the role list handler
    #define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
    #define MESSAGE_CLASS            "system'dynamic'Message"         // the special role class
    #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
@@ -488,6 +486,11 @@ namespace _ELENA_
    // predefined types
    #define PARAMS_SUBJECT           "params"
    #define ACTION_SUBJECT           "action"
+   #define FUNCTION_SUBJECT         "func"
+   #define FUNCTION2_SUBJECT        "func2"
+   #define FUNCTION3_SUBJECT        "func3"
+   #define FUNCTION4_SUBJECT        "func4"
+   #define FUNCTION5_SUBJECT        "func5"
 
    #define STARTUP_CLASS            "'program"
 

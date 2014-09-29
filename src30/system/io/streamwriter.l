@@ -1,5 +1,45 @@
 #define system.
 
+// --- BinaryWriter ---
+
+#class BinaryWriter
+{
+    #field theStream.
+    
+    #constructor new &stream:aStream
+    [
+        theStream := aStream.
+    ]
+
+    #method write &bytearray:anArray &length:aLength
+    [
+        theStream write &bytearray:anArray &length:aLength.
+    ]
+
+    #method write &int:anInt
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        
+        aBuffer write &index:0 &int:anInt.
+                
+        theStream write &bytearray:aBuffer &length:4.
+    ]
+
+    #method write &long:aLong
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        
+        aBuffer write &index:0 &long:aLong.
+                
+        theStream write &bytearray:aBuffer &length:8.
+    ]
+            
+    #method close
+    [
+        theStream close.
+    ]
+}
+
 // --- TextWriter ---
 
 #class TextWriter

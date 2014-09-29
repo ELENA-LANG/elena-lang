@@ -58,7 +58,7 @@
 
 // --- action role class ---
 
-#class(role) actionOp
+#class(role,extension:action) actionOp
 {
     #method run &if:aBool
     [
@@ -81,7 +81,7 @@
 
 // --- function role class ---
 
-#class(role) functionOp
+#class(role,extension:func) functionOp
 {    
     #method run &enumerator:anEnumerator
     [
@@ -166,7 +166,7 @@
 
 // --- Action wrapper ---
 
-#class(type:action) Action
+#class Action
 {
     #method => <action_dispatch>.
 }

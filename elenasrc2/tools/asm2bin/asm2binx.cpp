@@ -15,7 +15,7 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#define BUILD_NUMBER 8
+#define BUILD_NUMBER 9
 
 int main(int argc, char* argv[])
 {
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 		   assembler.compile(&reader, target);
       }
 
-      printf("Successfully compiled");
+      printf("Successfully compiled\n");
    }
    catch(_ELENA_::InvalidChar& e) {
       printf("(%d): Invalid char %c\n", e.row, e.ch);

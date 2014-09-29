@@ -849,6 +849,8 @@ long StringHelper :: strToLong(const unsigned short* s, int radix)
          n += 0x0A;
       }
       else return 0;
+
+      s++;
    }
    if (neg)
       n *= -1;

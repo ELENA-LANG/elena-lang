@@ -21,32 +21,10 @@ Currently:
 ------
 
               xdev - linux
-                       * linux - recompile asm2binx
                        * linux - build system libraris
                        * linux linker
                        
               adev - lib30                                        
-                       * BinaryReader / BinaryWriter
-
-                       * make sure the stream is correctly closed after the operations with files
-
-
-                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
-                         another group object - Group (a, %Even[ even value ]), which will works correctly
-
-                       * special class IndexedPointer - which is used to refer to the object by index
-
-                       * nested Action and Frame should implement specific type so extensions can be used
-                       
-                       * move Array.add(1) method to the extension ??
-
-
-                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
-
-                       * String : padLeft, padRight, trimAll, trimEnd, trimStart
-                                                                                           
-                       * scriptControl.load&literal - raise an error if the result is broken
-
                        * test if object is nil                       
                        * test if object is literal constant
                        * test if object is integer
@@ -56,8 +34,12 @@ Currently:
                        * test if lower case character                       
                        * test if literal is empty
 
-                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
-                         cases
+                       * make sure the stream is correctly closed after the operations with files
+
+                       * move Array.add(1) method to the extension ??
+
+
+                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
 
                        * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
                        
@@ -389,6 +371,9 @@ week4:
                        * test: true and Boolean, intNumber and Integer, ...
                        * test true / false operations with Boolean
                        * test system'io'StreamWriter
+                       * test system'io'BinarayReader / system'io'BinarayWriter
+                       * test ByteArray operations
+                       * test padLeft, padRight, trimLeft, trimRight, trim
 
                        * inline'handle_tape: - test the message with argument list
 
@@ -660,6 +645,12 @@ week1:
 
 week2:
               adev - lib30                                        
+                       * scriptControl.load&literal - raise an error if the result is broken
+                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
+                         another group object - Group (a, %Even[ even value ]), which will works correctly
+                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
+                         cases
+                       * special class IndexedPointer - which is used to refer to the object by index
                        * expanding lib30
 
 1.9.19

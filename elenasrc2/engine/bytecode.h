@@ -112,6 +112,7 @@ enum ByteCode
    bcSubCopy        = 0x6A,
    bcNSubCopy       = 0x6B,
    bcBWriteB        = 0x6C,
+   bcBWriteW        = 0x6D,
    bcBCreate        = 0x6F,  
 
    bcLCopy          = 0x70,

@@ -3097,10 +3097,29 @@ void Compiler :: compileActionVMT(DNode node, InlineClassScope& scope, DNode arg
 
    // if it is single expression
    DNode expr = node.firstChild();
-   if (isExpressionAction(expr)) {
-      compileExpressionAction(expr, methodScope);
+   if (!isExpressionAction(expr)) {
+      if (getVerb(methodScope.message) == EVAL_MESSAGE_ID && getSignature(methodScope.message) == 0) {
+         switch (getParamCount(methodScope.message)) {
+            case 0:
+               scope.info.header.typeRef = scope.moduleScope->mapSubject(ACTION_SUBJECT);
+            case 1:
+               scope.info.header.typeRef = scope.moduleScope->mapSubject(FUNCTION_SUBJECT);
+            case 2:
+               scope.info.header.typeRef = scope.moduleScope->mapSubject(FUNCTION2_SUBJECT);
+            case 3:
+               scope.info.header.typeRef = scope.moduleScope->mapSubject(FUNCTION3_SUBJECT);
+            case 4:
+               scope.info.header.typeRef = scope.moduleScope->mapSubject(FUNCTION4_SUBJECT);
+            case 5:
+               scope.info.header.typeRef = scope.moduleScope->mapSubject(FUNCTION5_SUBJECT);
+            default:
+               break;
+         }
+      }
+
+      compileAction(node, methodScope);
    }
-   else compileAction(node, methodScope);
+   else compileExpressionAction(expr, methodScope);      
 
    _writer.endClass(scope.tape);
 
@@ -3217,10 +3236,10 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
    // if it is an action code block
    if (node == nsSubCode) {
-      if (isExpressionAction(node.firstChild())) {
-         compileParentDeclaration(scope.moduleScope->mapConstantReference(EXPRESSION_CLASS), scope);
+      if (!isExpressionAction(node.firstChild())) {
+         compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
       }
-      else compileParentDeclaration(scope.moduleScope->mapConstantReference(ACTION_CLASS), scope);
+      else compileParentDeclaration(scope.moduleScope->mapConstantReference(EXPRESSION_CLASS), scope);
 
       compileActionVMT(node, scope, DNode());
    }

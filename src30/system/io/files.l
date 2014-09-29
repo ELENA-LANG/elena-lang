@@ -14,12 +14,6 @@
 #symbol(const) $FILE_SHARE_READ    = 00000001h.
 #symbol(const) $FILE_SHARE_WRITE   = 00000002h.
 
-// --- IOException ---
-
-#class IOException : Exception
-{
-}
-
 // --- FileStream ---
 
 #class FileStream : Handle

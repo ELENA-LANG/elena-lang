@@ -1423,6 +1423,13 @@ inline % 6Ch
   
 end
 
+// ; bwritew
+inline % 6Dh
+
+  mov word ptr [edi + esi], cx
+  
+end
+
 // ; createb
 inline % 6Fh
 

@@ -33,7 +33,7 @@ const char* _fnOpcodes[256] =
    "wwrite", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",
 
    "breadw", "bread", "insert", "ninsert", "xseek", "breadb", "rsin", "rcos",
-   "rarctab", "bwrite", "subcopy", "nsubcopy", "bwriteb", "unknown", "unknown", "bcreate",
+   "rarctab", "bwrite", "subcopy", "nsubcopy", "bwriteb", "bwritew", "unknown", "bcreate",
 
    "lcopy", "lcopyn", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
    "land", "lor", "lxor", "lshift", "lnot", "wtol", "lrndnew", "lrndnext",

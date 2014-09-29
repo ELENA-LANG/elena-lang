@@ -26,6 +26,7 @@ calendar\dates.l
 collections\list.l
 text\textbuffer.l
 text\textio.l
+io\ioexceptions.l
 io\streamreader.l
 io\streamwriter.l
 io\win32_console.l
@@ -36,3 +37,4 @@ dynamic\loaders.l
 dynamic\interpreters.l
 threading\win32_handlers.l
 threading\thread.l
+

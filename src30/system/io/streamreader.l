@@ -1,6 +1,59 @@
 #define system.
 #define system'routines.
 
+// --- BinaryReader ---
+
+#class BinaryReader
+{
+    #field theStream.
+    
+    #constructor new &stream:aStream
+    [
+        theStream := aStream.
+    ]
+
+    #method read &bytearray:anArray &length:aLength
+    [
+        #var(type:int)aRead := aLength.
+        
+        theStream read &bytearray:anArray &out'length:aRead.
+        
+        (aLength > aRead)
+            ? [ #throw IOException new. ]
+    ]
+
+    #method read &out'int:anInt
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        #var(type:int)aRead := 4.
+        
+        theStream read &bytearray:aBuffer &out'length:aRead.
+        
+        (aRead < 4)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &index:0 &out'int:anInt.
+    ]
+
+    #method read &out'long:aLong
+    [
+        #var(type:bytearray,size:8)aBuffer.
+        #var(type:int)aRead := 8.
+        
+        theStream read &bytearray:aBuffer &out'length:aRead.
+        
+        (aRead < 8)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &index:0 &out'long:aLong.
+    ]
+                                    
+    #method close
+    [
+        theStream close.
+    ]
+}
+
 // --- TextReader ---
 
 #class TextReader
@@ -49,8 +102,3 @@
     ]
 }
 
-// --- BinaryReader
-
-#class BinaryReader
-{
-}

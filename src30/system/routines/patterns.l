@@ -97,13 +97,55 @@
         ^ self Substring &index:anIndex &length:aLength.
     ]
      
-    #method trimStart &char:aChar
+    #method trimLeft &char:aChar
     [
-        #var(type:int)anIndex.
+        #var(type:int)anIndex := 0.
         #loop (self getAt &index:anIndex == aChar) 
             ? [ anIndex := anIndex + 1. ].
         
         ^ self delete &index:0 &length:anIndex.
+    ]
+     
+    #method trimRight &char:aChar
+    [
+        #var(type:int)aLength.
+        self read &out'length:aLength.
+        
+        #var(type:int)anIndex := aLength - 1.
+        
+        #loop (self getAt &index:anIndex == aChar) 
+            ? [ anIndex := anIndex - 1. ].
+        
+        ^ self delete &index:anIndex &length:(aLength - anIndex).
+    ]
+    
+    #method trim &char:aChar
+        = (self~literalOp trimLeft &char:aChar)~literalOp trimRight &char:aChar.
+    
+    #method padLeft &char:aChar &length:aLength
+    [
+        #var aLiteral := self literal.
+        
+        #var(type:int)aCurrentLength.
+        aLiteral read &out'length:aCurrentLength.
+
+        #loop (aLength > aCurrentLength)?
+            [ aLiteral := aChar literal + aLiteral. aCurrentLength := aCurrentLength + 1. ].
+            
+        ^ aLiteral.
+    ]
+    
+    #method padRight &char:aChar &length:aLength
+    [
+        #var aLiteral := self literal.
+        
+        #var(type:int)aCurrentLength.
+        aLiteral read &out'length:aCurrentLength.
+
+        #loop (aLength > aCurrentLength)?
+            [ aLiteral := aLiteral + aChar. aCurrentLength := aCurrentLength + 1. ].
+            
+        ^ aLiteral.
     ]
     
     #method split &char:aChar
