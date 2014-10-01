@@ -83,6 +83,9 @@
     #method indexOf &index:anIndex &length:aLength &short:aLiteral &out'int:aRetVal
         <sa_indexof>.
         
+    #method write &index:anIndex &short:aValue
+        <sa_writeword>.
+        
     #method write &index:anIndex &length:aLength &literal:aLiteral
         <sa_write>.
         

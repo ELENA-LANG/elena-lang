@@ -15,6 +15,9 @@
     #method isEven
         = self~intOp mod:2 == 0.
         
+    #method isZero
+        = self equal &int:0.
+        
 //    #method HiWord
 //    [
 //        #var(type:int)aWord. 

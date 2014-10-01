@@ -1954,3 +1954,29 @@ labErr:
   throw
 
 end
+
+procedure inline'sa_writeword
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  wwrite
+  quitn 3
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end

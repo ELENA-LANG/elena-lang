@@ -23,55 +23,19 @@ Currently:
               xdev - linux
                        * linux - build system libraris
                        * linux linker
-                       
-              adev - lib30                                        
-                       * test if object is nil                       
-                       * test if object is literal constant
-                       * test if object is integer
-                       * test if object is float
-                       * test if object is number
-                       * test if upper case character
-                       * test if lower case character                       
-                       * test if literal is empty
 
-                       * make sure the stream is correctly closed after the operations with files
-
-                       * move Array.add(1) method to the extension ??
-
-
-                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
-
-                       * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
-                       
-                       * support sin, cos, arctan
-
+              sdev - samples
                        * migrate tape sample
                        * migrate interpreter
+                       
+              sdev - api doc
+                       * create API : system'IntNumber
 
 <=================> 
 
 1.9.17
 --------
 week2:
-              adev - gui
-                       * general architecture
-                       * class function
-                       * eventhandle group object
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
-                       * support GUI mode
-                       * support GUI application
-
-              sdev - api doc
-                       * modify to reflect exception support changes
-                       * create API : system(groups.l)
-                       * it should be listed extensions per supported protocol
-                       * create API doc
-                       * change api faq
-                       * copy protocols to doc\protocols
-                       * support dispatch method
-                       * support redirect method                       
-
               arev - general review
                        * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
                          the second method call is excessive
@@ -156,9 +120,6 @@ week2:
               adev - dynamic programming
                        * deserialize object
                        
-               adev - LiteralValue / String / TextBuffer
-                       * support appendLine?? (e.g. maybe in extension)
-
             smaint - testing
                        * extend realtest with comparision operation test
                        * modify system test, it should raise an exception if any of the tests fails
@@ -169,86 +130,6 @@ week2:
                        * read / write operation: complex types
                        * write formatted numbers
                        * write formatted string (with parameters)
-                       
-              adev - lib30                                                                  
-                       * extension : support several roles
-                       * Struct : check if the income message is "get"
-                       * win32 file i/o operations should raise an exception with an error code
-                       * implement: square function
-                       * implement: square root
-                       * implement: sine
-                       * implement: cosine
-                       * implement: tangent
-                       * implement: arcsine
-                       * implement: arccosine
-                       * implement: arctangent
-                       * implement: reciprocal
-                       * implement: power function with integer
-                       * implement: exponential
-                       * implement: absolute value
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: truncate
-                       * implement: round up
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: natural logarithm
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: convert degrees to radians
-                       * implement: convert radians to degrees
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
-                       * implement: pi
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
-                       * support: primitive operation int + long, long + int
-                       
-                       * convertor toArray , which converts list to elist wrap or returns itself
-                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-
-                       * bytearray : get / set - outofrange exception
-                       * arrayiterator / array / literalvalue:getat, ... - raise an exception or return nil if the index
-                         out of range (insert, delete, ...)
-                       * should control foreach&until be implemented in EFunction?
-                       * implement: extensions'math'power - support integer values as well                       
-                       * combinators should work both with list and array
-                       * system'$consolehandler: if the returning handler is -1
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: custom presenter / formatter / custom formatter
-                       * it should be possible to compare integer and value - the result is false
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * date - return utc time
-                       * implement analog of String.Format
-                       * calender: custom formatting
-                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
-                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
-                         and could be invoked by eval
-                       * implement analog of linq
-                       * classOp : test if object is subclass of ??
-                       * implement multi-select method (control or value?)
-
-                       * make sure stack allocated objects are correctly boxed for the custom int roles
                        
 week3:
               xdev - script engine
@@ -357,7 +238,7 @@ week3:
                        * eldoc: dynamic parser
                        * upndown
                        * script program - calculator
-
+                       
 week4:
               xmaint - hotfix : unicode
                        * u_helloworld does not show russian text correctly in just installed IDE
@@ -374,6 +255,8 @@ week4:
                        * test system'io'BinarayReader / system'io'BinarayWriter
                        * test ByteArray operations
                        * test padLeft, padRight, trimLeft, trimRight, trim
+                       * test ShortArray operations
+                       * test isuppercase / islowercase / tolowercase / touppercase
 
                        * inline'handle_tape: - test the message with argument list
 
@@ -421,6 +304,8 @@ week1:
 
               xdev - generic development                                                      
                        * calling the parent constructor ?? (see system'io'StreamReader (output should be created in the parent class), Exceptions and so on)
+
+                       * could it be possible for several classes supporting literal type??
 
                        * should index allocateing / referring / releasing be done as commands ; review reference table design , could it be done
                          differently ? optimize current implementation
@@ -490,6 +375,11 @@ week1:
                        * split hook l into two : address l , hook ; or use internal function for exception raising / handling?
 
               xdev - general implementation
+                       * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
+                         call parameter
+
+                       * ShortNumber.get&int - could we simplify the code, currently we have to call int explicitly because IntNumber is not yet defined
+
                        * lambda expression : try to implement as a constant / object (without creating a new class every time)                       
 
                        * if predefined operator implementation is used - no need to typecast the result of branching / looping optimization / inverting
@@ -644,7 +534,22 @@ week1:
                        * elenavm: use reverse instead of set of swaps
 
 week2:
+              adev - gui
+                       * general architecture
+                       * class function
+                       * eventhandle group object
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * support GUI mode
+                       * support GUI application
+
               adev - lib30                                        
+                       * make sure the stream is correctly closed after the operations with files
+                       * move Array.add(1) method to the extension ??
+                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
+                       * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
+                       * support sin, cos, arctan
+                       * ShortNumber, ByteNumber implements basic functionality
                        * scriptControl.load&literal - raise an error if the result is broken
                        * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
                          another group object - Group (a, %Even[ even value ]), which will works correctly
@@ -652,6 +557,92 @@ week2:
                          cases
                        * special class IndexedPointer - which is used to refer to the object by index
                        * expanding lib30
+                       
+              adev - lib30                                                                  
+                       * Struct : check if the income message is "get"
+                       * win32 file i/o operations should raise an exception with an error code
+                       * implement: square function
+                       * implement: square root
+                       * implement: sine
+                       * implement: cosine
+                       * implement: tangent
+                       * implement: arcsine
+                       * implement: arccosine
+                       * implement: arctangent
+                       * implement: reciprocal
+                       * implement: power function with integer
+                       * implement: exponential
+                       * implement: absolute value
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: truncate
+                       * implement: round up
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: natural logarithm
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: convert degrees to radians
+                       * implement: convert radians to degrees
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * implement: pi
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
+                       * support: primitive operation int + long, long + int
+                       
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+
+                       * should control foreach&until be implemented in EFunction?
+                       * implement: extensions'math'power - support integer values as well                       
+                       * combinators should work both with list and array
+                       * system'$consolehandler: if the returning handler is -1
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: custom presenter / formatter / custom formatter
+                       * it should be possible to compare integer and value - the result is false
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * date - return utc time
+                       * implement analog of String.Format
+                       * calender: custom formatting
+                       * true / false action methods - can we used light bool converting routine (e.g, type bool::(anActiion eval))?
+                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
+                         and could be invoked by eval
+                       * implement analog of linq
+                       * classOp : test if object is subclass of ??
+                       * implement multi-select method (control or value?)
+
+                       * make sure stack allocated objects are correctly boxed for the custom int roles
+                       * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
+
+              sdev - api doc
+                       * create API : ...
+                       * it should be listed extensions per supported protocol
+                       * create API doc
+                       * change api faq
+                       * copy protocols to doc\protocols
+                       * support dispatch method
+                       * support redirect method                       
 
 1.9.19
 --------

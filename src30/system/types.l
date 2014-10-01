@@ -19,3 +19,14 @@
 // === other types ===
 #type bool.
 #type action.
+
+// === Typecaster ==
+
+#symbol literalDetector
+    = { isLiteral = true. literal : aLiteral = true. ! : anObject = false. ! = false. }.
+
+#symbol intDetector
+    = { isNumeric = true. int : anInt = true. long : aLong = true. ! : anObject = false. ! = false. }.
+
+#symbol numericDetector
+    = { isNumeric = true. int : anInt = true. long : aLong = true. real : aReal = true. ! : anObject = false. ! = false. }.

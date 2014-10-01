@@ -133,6 +133,8 @@
         <int_copy>.
         
     #method short = $self.
+    
+    #method int = IntNumber new &short:$self int.
 }
 
 // --- IntNumber ---
@@ -225,6 +227,8 @@
     #method value = $self.
     
     #method clone = IntNumber new &int:$self.
+    
+    #method cast : aTypecaster = aTypecaster int:$self.
 }
 
 // --- longnumber ---
@@ -316,6 +320,8 @@
     #method clone = LongNumber new &long:$self.
     
     #method value = $self.
+    
+    #method cast : aTypecaster = aTypecaster long:$self.
 }
 
 // --- realNumber ---
@@ -395,6 +401,8 @@
     #method value = $self.
 
     #method clone = RealNumber new &real:$self.
+    
+    #method cast : aTypecaster = aTypecaster real:$self.
 }
 
 // --- Integer ---
@@ -517,7 +525,7 @@
         theValue := theValue / anOperand.
     ]
     
-    #method cast : anObject = anObject int.
+    #method cast : aTypecaster = aTypecaster int::$self.
 
     #method value <= %int.
 
@@ -687,7 +695,7 @@
         theValue := theValue / LongNumber new &int:anOperand.
     ]
     
-    #method cast : anObject = anObject long.
+    #method cast : aTypecaster = aTypecaster long::$self.
 
     #method value <= %long.
 
@@ -864,7 +872,7 @@
         theValue := theValue divide &long:anOperand.
     ]
     
-    #method cast : anObject = anObject real.
+    #method cast : aTypecaster = aTypecaster long::$self.
 
     #method value <= %real.
 
@@ -916,6 +924,11 @@
     #method clone = CharValue new &short:theValue.
     
     #method value = ShortNumber new &short:theValue.
+    
+    #method cast : aSelector
+        = aSelector isNumeric 
+            ? [ aSelector eval &int::$self. ]
+            ! [aSelector eval &literal::$self. ].
 }
 
 // --- emptyliteralvalue ---
@@ -1059,6 +1072,8 @@
 
     #method enumerator = LiteralIterator new &literal:$self.
     
+    #method cast : aTypecaster = aTypecaster literal:$self.
+    
     #method clone = LiteralValue new &literal:$self.
     
     #method value = $self.
@@ -1119,7 +1134,7 @@
     
     #method clone = String new &literal:theValue.
                 
-    #method cast : anObject = anObject literal.
+    #method cast : aTypecaster = aTypecaster literal:theValue.
     
     #method literal = theValue.
     
@@ -1168,7 +1183,7 @@
             
     #method clone = Boolean new:($self value).
 
-    #method cast : anObject = anObject bool.
+    #method cast : aTypecaster = aTypecaster bool:($self value).
             
     #method => theValue.
 }

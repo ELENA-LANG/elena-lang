@@ -149,6 +149,14 @@ array = <A HREF="protocol.html#array">array</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+clone = <A HREF="protocol.html#array">array</A>
+</TD>
+<TD><CODE>Clones the array</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 enumerator = <A HREF="protocol.html#enumerator">enumerator</A>
 </TD>
 <TD><CODE>Returns the array enumerator</CODE>
@@ -335,6 +343,75 @@ reset</TD>
 </TD>
 </TR>
 </TABLE>
+<A NAME="BaseNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class BaseNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<B>system'BaseNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+</DL>
+<P>
+A base numeric value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Adds the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Divides into the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Multiply by the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract : <A HREF="protocol.html#numeric_value">numeric_value</A>
+ = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Subtracts the value</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="BaseValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -392,39 +469,23 @@ less : <A HREF="protocol.html#value">value</A>
 <TD><CODE>Compares the values</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-notgreater : <A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#bool">bool</A>
-</TD>
-<TD><CODE>Compares the values</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-notless : <A HREF="protocol.html#value">value</A>
- = <A HREF="protocol.html#bool">bool</A>
-</TD>
-<TD><CODE>Compares the values</CODE>
-</TD>
-</TR>
 </TABLE>
-<A NAME="BaseNumber">
+<A NAME="BaseVariable">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
 system</FONT>
 <BR>
-Class BaseNumber</H2>
+Class BaseVariable</H2>
 <PRE>
 <A HREF="system.html#Object">system'Object</A>
  |
  +--<A HREF="system.html#BaseValue">system'BaseValue</A>
    |
-   +--<B>system'BaseNumber</B>
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<B>system'BaseVariable</B>
 </PRE>
 <B>All Implemented Protocols:</B><DL>
 <DT>
@@ -432,7 +493,7 @@ Class BaseNumber</H2>
 </DT>
 </DL>
 <P>
-A base numeric value class
+A base numeric variable class
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
@@ -446,37 +507,41 @@ A base numeric value class
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add : <A HREF="protocol.html#numeric_value">numeric_value</A>
- = <A HREF="protocol.html#numeric_value">numeric_value</A>
+append : <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
-<TD><CODE>Adds the values</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-divide : <A HREF="protocol.html#numeric_value">numeric_value</A>
- = <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Divuides the values</CODE>
+<TD><CODE>Appends the numeric value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-multiply : <A HREF="protocol.html#numeric_value">numeric_value</A>
- = <A HREF="protocol.html#numeric_value">numeric_value</A>
+divideInto : <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
-<TD><CODE>Divides the values</CODE>
+<TD><CODE>Divides into the numeric value and reassigns the value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-subtract : <A HREF="protocol.html#numeric_value">numeric_value</A>
- = <A HREF="protocol.html#numeric_value">numeric_value</A>
+multiplyBy : <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
-<TD><CODE>Subtracts the values</CODE>
+<TD><CODE>Multiplies by the numeric value and reassigns the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reduce : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Subtracts the numeric value and reassigns the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Assigns the numeric value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -532,6 +597,14 @@ append : <A HREF="protocol.html#value">value</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Executes logical OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clone = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Clones the object</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -733,6 +806,41 @@ write &index:<A HREF="protocol.html#int">int</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="ByteNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ByteNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
+       |
+       +--<B>system'ByteNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#byte">byte</A>
+</DT>
+</DL>
+<P>
+A byte numeric value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
 <A NAME="CharValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -820,6 +928,14 @@ new &short:<A HREF="protocol.html#short">short</A>
 char = <A HREF="protocol.html#value">value</A>
 </TD>
 <TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clone = <A HREF="protocol.html#char">char</A>
+</TD>
+<TD><CODE>Clones the value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -1758,10 +1874,95 @@ or : <A HREF="protocol.html#numeric_value">numeric_value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+negative = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Returns the inverted value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 xor : <A HREF="protocol.html#numeric_value">numeric_value</A>
  = <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
 <TD><CODE>Execute bitwise XOR operation</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="IntBaseVariable">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class IntBaseVariable</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
+       |
+       +--<B>system'IntBaseVariable</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_variable">numeric_variable</A>
+</DT>
+</DL>
+<P>
+A base integer variable class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+append : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Appends the numeric value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divideInto : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Divides into the numeric value and reassigns the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiplyBy : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Multiplies by the numeric value and reassigns the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reduce : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Subtracts the numeric value and reassigns the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write : <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Assigns the numeric value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1899,6 +2100,14 @@ and &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#int">int</A>
 </TD>
 <TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clone = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Clones the value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -2543,6 +2752,14 @@ add &literal:<A HREF="protocol.html#literal">literal</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+clone = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Clones the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 delete &index:<A HREF="protocol.html#int">int</A>
 &length:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#literal">literal</A>
@@ -3014,6 +3231,14 @@ and &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+clone = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Clones the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 divide &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#long">long</A>
 </TD>
@@ -3348,10 +3573,31 @@ equal : <A HREF="protocol.html#object">object</A>
 <TD><CODE>Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.</CODE>
 </TD>
 </TR>
+</TABLE>
+<A NAME="objectOp">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Extension objectOp</H2>
+<P>
+A generic extension
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-equal &object:<A HREF="protocol.html#object">object</A>
+equal &reference:<A HREF="protocol.html#object">object</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
 <TD><CODE>Returns true if the specified object instances are equal; otherwise, false.</CODE>
@@ -3751,6 +3997,14 @@ add &real:<A HREF="protocol.html#real">real</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+clone = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Clones the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 divide &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#real">real</A>
 </TD>
@@ -3864,6 +4118,88 @@ real = <A HREF="protocol.html#real">real</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="ShortNumber">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Class ShortNumber</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseValue">system'BaseValue</A>
+   |
+   +--<A HREF="system.html#BaseNumber">system'BaseNumber</A>
+     |
+     +--<A HREF="system.html#IntBaseNumber">system'IntBaseNumber</A>
+       |
+       +--<B>system'ShortNumber</B>
+</PRE>
+<B>All Implemented Protocols:</B><DL>
+<DT>
+<A HREF="protocol.html#numeric_value">numeric_value</A>
+</DT>
+<DT>
+<A HREF="protocol.html#short">short</A>
+</DT>
+<DT>
+<A HREF="protocol.html#int">int</A>
+</DT>
+</DL>
+<P>
+A short integer value class
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+int = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+short = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the short integer value</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="String">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -3960,6 +4296,14 @@ append &literal:<A HREF="protocol.html#literal">literal</A>
 <CODE>&nbsp;
 clear</TD>
 <TD><CODE>Clears the variable value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clone = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Clones the object</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">

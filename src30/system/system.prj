@@ -18,6 +18,7 @@ exceptions.l
 console.l
 win32_handler.l
 win32_app.l
+win32_strings.l
 routines\enumerators.l
 routines\patterns.l
 math\math.l

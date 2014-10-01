@@ -12,9 +12,11 @@
 
 #symbol XTest =
 [
-    #var a := [ console write:"action". ].
-    #var f := x [ console write:"function". ].
-    #var f2 := (:x) [ console write:"function". ].
+    #var b := ByteArray new &length:10.
+    
+    #var(type:short)s.
+    
+    b write &index:6 &short:s.
 ].
 
 // --- OpenArgTest ---
