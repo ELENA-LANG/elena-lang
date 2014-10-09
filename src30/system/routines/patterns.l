@@ -8,12 +8,24 @@
 
 // === extensions ===
 
-//// --- misc ---
-//
-//#class(role)misc
-//{
+// --- objectOp ---
+
+#class(role,extension)objectOp
+{
 //    #method back : anObject = anObject.
-//}
+
+    #method isNil
+        = nil == self.
+        
+    #method isLiteral
+        = self cast:literalDetector.
+        
+    #method isInteger
+        = self cast:intDetector.
+        
+    #method isNumeric
+        = self cast:numericDetector.
+}
 
 // --- indexable ---
 
@@ -223,7 +235,13 @@
             ? [ aTarget append:(self~literalOp Substring &index:aStart) literal ]
             ! [ self literal ].
     ]
-    
+
+    #method UpperCase
+        = characterController toUpperCase &literal::self.
+
+    #method LowerCase
+        = characterController toLowerCase &literal::self.
+
     #method isEmpty
     [
         #var(type:int)aLength.

@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x0002             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0004             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -222,8 +222,8 @@ protected:
 
    virtual bool restart(bool debugMode);
 
-   void translate(size_t base, MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
-   void configurate(size_t base, MemoryReader& reader, int terminator);
+   void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
+   void configurate(MemoryReader& reader, int terminator);
 
    //void* findDebugEntryPoint(ByteArray& tape);
 

@@ -6,11 +6,13 @@
 actionOp
 Array
 ArrayIterator
-BaseValue
 BaseNumber
+BaseValue
+BaseVariable
 Boolean
 BreakException
 ByteArray
+ByteNumber
 CharValue
 console
 control
@@ -21,6 +23,7 @@ FormatException
 functionOp
 Integer
 IntBaseNumber
+IntBaseVariable
 intConvertor
 IntNumber
 intOp
@@ -34,10 +37,12 @@ LongNumber
 mathOp
 nil
 Object
+objectOp
 OutOfRangeException
 Real
 realConvertor
 RealNumber
+ShortNumber
 String
 true
 Variable
@@ -55,7 +60,11 @@ Variant
 #title=Class Object
 #shortdescr=A common ancestor
 #method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.
-#method=equal,&object:object,bool;Returns true if the specified object instances are equal; otherwise, false.
+
+[objectOp]
+#title=Extension objectOp
+#shortdescr=A generic extension
+#method=equal,&reference:object,bool;Returns true if the specified object instances are equal; otherwise, false.
 
 [nil]
 #title=Symbol nil
@@ -105,17 +114,18 @@ Variant
 #parent=system.html#IntBaseNumber:system'IntBaseNumber
 #constructor=new,,int;Creates the object with zero value
 #constructor=new,&int:int,int;Creates the object with specified value
+#constructor=new,&short:int,int;Creates the object with specified value
 #method=add,&int:int,int;Returns the sum of integers
 #method=add,&long:long,long;Returns the sum of integers
-#method=add,&real:real,real;Returns the sum
 #method=and,&int:int,int;Returns the result of bitwise AND operation
+#method=add,&real:real,real;Returns the sum
+#method=cast,typecaster;Casts the value
 #method=clone,,int;Clones the value
 #method=divide,&int:int,int;Returns the result of integer division
 #method=divide,&long:long,long;Returns the result of integer division
 #method=divide,&real:real,real;Returns the result of division
 #method=equal,&int:int,bool;Compares the integer value
 #method=equal,&long:long,bool;Compares the integer value
-#method=index,,int;Returns itself
 #method=int,,int;Returns itself
 #method=less,&int:int,bool;Compares the integer value
 #method=less,&long:long,bool;Compares the integer value
@@ -123,14 +133,15 @@ Variant
 #method=multiply,&int:int,int;Returns the product of integers
 #method=multiply,&long:long,long;Returns the product of integers
 #method=multiply,&real:real,real;Returns the product
-#method=negative,,int;Negates the value
 #method=not,,int;Bitwise inversion
-#method=notless,&int:int,bool;Compares the integer value
 #method=or,&int:int,int;Returns the result of bitwise OR operation
-#method=shift,int,int;Bitwise shift operation
+#method=read,&out'short:short;Copies a short value to the parameter if possible
+#method=shift,int,&index:int;Bitwise shift operation
+#method=short,,int;Returns short value if possible
 #method=subtract,&int:int,int;Returns the difference of integers
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
+#method=value,,int;Returns itself
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 
 [CharValue]
@@ -232,19 +243,47 @@ Variant
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
 #parent=system.html#IntBaseNumber:system'IntBaseNumber
-#parent=system.html#IntNumber:system'IntNumber
+#parent=system.html#IntBaseVariable:system'IntBaseVariable
+#field=theValue;The integer value
+#constructor=new,,numeric_variable;Creates an integer variable
 #constructor=new,int,numeric_variable;Creates an integer variable
-#method=append,numeric_value;Appends the integer value
+#constructor=new,&int:int,numeric_variable;Creates an integer variable
+#method=add,&int:int,int;Returns the sum of integers
+#method=add,&long:long,long;Returns the sum of integers
+#method=add,&real:real,real;Returns the sum
+#method=and,&int:int,int;Returns the result of bitwise AND operation
 #method=append,&int:int;Appends the integer value
-#method=divideInto,numeric_value;Divides into the integer value
+#method=cast,typecaster;Casts the value
+#method=clone,,int;Clones the value
+#method=divide,&int:int,int;Returns the result of integer division
+#method=divide,&long:long,long;Returns the result of integer division
+#method=divide,&real:real,real;Returns the result of division
 #method=divideInto,&int:int;Divides into the integer value
-#method=multiplyBy,numeric_value;Multiplies by the integer value
+#method=equal,&int:int,bool;Compares the integer value
+#method=equal,&long:long,bool;Compares the integer value
+#method=equal,&real:real,bool;Compares the integer value
+#method=int,,int;Returns the integer value
+#method=less,&int:int,bool;Compares the integer value
+#method=less,&long:long,bool;Compares the integer value
+#method=less,&real:real,bool;Compares the integer value
+#method=literal,,literal;Returns the literal presentation
+#method=long,,long;Returns the value
+#method=multiply,&int:int,int;Returns the product of integers
+#method=multiply,&long:long,long;Returns the product of integers
+#method=multiply,&real:real,real;Returns the product
 #method=multiplyBy,&int:int;Multiplies by the integer value
-#method=number,,int;Returns the integer value
-#method=reduce,numeric_value;Reduces the integer value
+#method=not,,int;Bitwise inversion
+#method=or,&int:int,int;Returns the result of bitwise OR operation
+#method=read,&out'int;Copies the integer value to the output parameter
+#method=real,,real;Returns the value
 #method=reduce,&int:int;Reduces the integer value
-#method=write,numeric_value;Copies the integer value
+#method=shift,int,&index:int;Bitwise shift operation
+#method=subtract,&int:int,int;Returns the difference of integers
+#method=subtract,&long:long,long;Returns the difference of integers
+#method=subtract,&real:real,real;Returns the difference
+#method=value,,int;Returns the integer value
 #method=write,&int:int;Copies the integer value
+#method=xor,&int:int,int;Returns the result of bitwise XOR operation
 
 [BreakException]
 #title=Class BreakException
@@ -339,8 +378,9 @@ Variant
 #constructor=new,&long:long,long;Creates the object with specified value
 #method=add,&int:int,long;Returns the sum of integers
 #method=add,&long:long,long;Returns the sum of integers
-#method=add,&real:real,real;Returns the sum
 #method=and,&long:long,long;Returns the result of bitwise AND operation
+#method=add,&real:real,real;Returns the sum
+#method=cast,typecaster,object;Casts long integer value
 #method=clone,,long;Clones the value
 #method=divide,&int:int,long;Returns the result of integer division
 #method=divide,&long:long,long;Returns the result of integer division
@@ -356,12 +396,12 @@ Variant
 #method=multiply,&real:real,real;Returns the product
 #method=negative,,long;Negates the value
 #method=not,,long;Bitwise inversion
-#method=notless,&long:int,bool;Compares the integer value
 #method=or,&long:long,long;Returns the result of bitwise OR operation
-#method=shift,int,long;Bitwise shift operation
+#method=shift,&index:int,long;Bitwise shift operation
 #method=subtract,&int:int,long;Returns the difference of integers
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
+#method=value,,long;Returns itself
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
 
 [RealNumber]
@@ -377,21 +417,26 @@ Variant
 #constructor=new,&long:long,real;Creates the object with specified value
 #constructor=new,&real:real,real;Creates the object with specified value
 #method=add,&int:int,real;Returns the sum of numbers
+#method=add,&long:long,real;Returns the sum of numbers
 #method=add,&real:real,real;Returns the sum of numbers
+#method=cast,typecaster;Casts the value
 #method=clone,,real;Clones the value
 #method=divide,&int:int,real;Returns the result of the division
+#method=divide,&long:long,real;Returns the result of the division
 #method=divide,&real:real,real;Returns the result of division
 #method=equal,&int:int,bool;Compares the integer value
 #method=equal,&real:real,bool;Compares the integer value
 #method=less,&int:int,bool;Compares the integer value
 #method=less,&real:real,bool;Compares the integer value
 #method=literal,,literal;Returns the literal presentation
-#method=notless,&real:real,bool;Compares the integer value
 #method=multiply,&int:int,real;Returns the product of numbers
+#method=multiply,&long:long,real;Returns the product of numbers
 #method=multiply,&real:real,real;Returns the product
-#method=subtract,&int:int,real;Returns the difference of integers
-#method=subtract,&real:real,real;Returns the difference
 #method=real,,real;Returns itself
+#method=subtract,&int:int,real;Returns the difference of numbers
+#method=subtract,&long:long,real;Returns the difference of numbers
+#method=subtract,&real:real,real;Returns the difference
+#method=value,,real;Returns itself
 
 [BaseValue]
 #title=Class BaseValue
@@ -401,8 +446,6 @@ Variant
 #method=equal,value,bool;Compares the values
 #method=greater,value,bool;Compares the values
 #method=less,value,bool;Compares the values
-#method=notgreater,value,bool;Compares the values
-#method=notless,value,bool;Compares the values
 
 [BaseNumber]
 #title=Class BaseNumber
@@ -410,10 +453,10 @@ Variant
 #protocol=numeric_value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
-#method=add,numeric_value,numeric_value;Adds the values
-#method=divide,numeric_value,numeric_value;Divuides the values
-#method=multiply,numeric_value,numeric_value;Divides the values
-#method=subtract,numeric_value,numeric_value;Subtracts the values
+#method=add,numeric_value,numeric_value;Adds the value
+#method=divide,numeric_value,numeric_value;Divides into the value
+#method=multiply,numeric_value,numeric_value;Multiply by the value
+#method=subtract,numeric_value,numeric_value;Subtracts the value
 
 [IntBaseNumber]
 #title=Class IntBaseNumber
@@ -426,6 +469,7 @@ Variant
 #method=and,numeric_value,numeric_value;Execute bitwise AND operation
 #method=anyMask,numeric_value,bool;Returns true if any of the mask bits are set
 #method=or,numeric_value,numeric_value;Execute bitwise OR operation
+#method=negative,,numeric_value;Returns the inverted value
 #method=xor,numeric_value,numeric_value;Execute bitwise XOR operation
 
 [LiteralIterator]
@@ -656,3 +700,54 @@ Variant
 #method=write,&index:int&length:int&bytearray:bytearray;Copies the byte array at the specified position
 #method=write,&index:int&literal:literal;Copies the literal value at the specified position
 
+[IntBaseVariable]
+#title=Class IntBaseVariable
+#shortdescr=A base integer variable class
+#protocol=numeric_variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
+#method=append,numeric_value;Appends the numeric value
+#method=divideInto,numeric_value;Divides into the numeric value and reassigns the value
+#method=multiplyBy,numeric_value;Multiplies by the numeric value and reassigns the value
+#method=reduce,numeric_value;Subtracts the numeric value and reassigns the value
+#method=write,numeric_value;Assigns the numeric value
+
+[BaseVariable]
+#title=Class BaseVariable
+#shortdescr=A base numeric variable class
+#protocol=numeric_value
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#method=append,numeric_value;Appends the numeric value
+#method=divideInto,numeric_value;Divides into the numeric value and reassigns the value
+#method=multiplyBy,numeric_value;Multiplies by the numeric value and reassigns the value
+#method=reduce,numeric_value;Subtracts the numeric value and reassigns the value
+#method=write,numeric_value;Assigns the numeric value
+
+[ByteNumber]
+#title=Class ByteNumber
+#shortdescr=A byte numeric value class
+#protocol=numeric_value
+#protocol=byte
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
+
+[ShortNumber]
+#title=Class ShortNumber
+#shortdescr=A short integer value class
+#protocol=numeric_value
+#protocol=short
+#protocol=int
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#parent=system.html#IntBaseNumber:system'IntBaseNumber
+#constructor=new,&int:int,short;Creates the object with specified value
+#constructor=new,&short:short,short;Creates the object with specified value
+#method=int,,int;Returns the integer value
+#method=short,,short;Returns the short integer value

@@ -20,124 +20,48 @@ v  - vm script
 Currently:
 ------
 
-              xdev - linux
-                       * linux - build system libraris
-                       * linux linker
-
               sdev - samples
                        * migrate tape sample
                        * migrate interpreter
-                       
+
               sdev - api doc
-                       * create API : system'IntNumber
+                       * create API : system'Long
+                       
+              xdev - script engine
+                       * script:
+                           - construct structure : a = { x : 2 , y : 3 } ; system'console.writeLine(a.x.add(a.y))
+
+                           - tape : implement simple method
+
+                           a = { writeLine : &x [ system'console.writeLine(x) ] } ; a.writeLine(2)
+
+                           - construct objects - new method
+
+                           - construct objects - implement expression
+                           - construct objects - implement expression, with variables
+
+                           - branching
+                           - branching in code
+                           - assigning values to dynamic objects
+                           - global variables
+                           - parsing expression
+                           - text generating
+                           - script engine support in ELENA code
+                           - script engine support in ELENA code : object creating
+                           - script engine support in ELENA code : script implementing
+                           - script engine support in ELENA code : text generating                           
+                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
 
 <=================> 
 
 1.9.17
---------
-week2:
-              arev - general review
-                       * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
-                         the second method call is excessive
-                       * bsort example, sortRange method : variable is used because of loop implementation
-                       * goods : Record.get&literal : 
-                                  #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
-                       * review loop code (see system'io'$ConsoleReader) :
-                             #loop
-                             [
-                                 ...        
-                                 continue   // -- should be correctly loaded into accumulator
-                             ].
-                       * review literalControl.split&by - could we ismplify / beautify the code
-                       * review all samples : simplify / refactore (look if the code can be reused)
-                                                                                                                             
-              arev - lib30 review
-                       * review extensions'math'EMatrix, simplify / optimize the code
-
-                       * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
-
-                       * LiteralIndexer implementation : try to optimize to minimize new object creating
-
-                       * system'primitive should be private symbol? (but it should be accessed throughout system packages, e.g. system'io and so on)
-
-                       * review: system'routines'indexable
-                       * review samples
-                       * review rosetta samples
-                       * int and index subjects should be synonym ?? (side effect if int could be used instead of index for the operation with literals
-                         for example)
-                       * CharValue: short and char in some form are interdependant, maybe should be synonym as well?
-                       
-                       * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
-                         is not safe , if for some reason the compiler optimization is turned off (replacing operation with the direct action) the code
-                         will raise out of stack error
-                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
-                       * system'LiteralValue : probably getAt&index&out'short and indexOf&index&literal&out'int should be implemented
-                         in literalPrimitive like other operations?
-                       * system'Array : probably getAt&index&out'short  should be implemented
-                         in arrayPrimitive like other operations?
-                       * Real should support operation with long numbers
-                       * system'ByteArray : should support indexOf operation without out parameter, should the ones with out parameters
-                         be implemented in byteArrayPrimitive ?
-                       * should clone be implemented in system'Object and be overridden only when it is required?                                                
-                       * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
-                       * optimize control.forrange implementation
-
-                       * fix warnings for system'String
-                       * pattern : for i,j - forregion &int:0 &int:0 &int:n &int:m
-                       * should get&length be moved into generic extension?
-                       * review all classes : simplify / refactore (look if the code can be reused)
-                       * review extensions'consoleEx implementation - do we need Wrap?
-                       * comparing literal and char (see for example trans sample)
-                                                      
-              adev - lib30 optimization
-                       * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
-                       * optimize output code: system'Object 
-                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
-                       
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
-                       * TextBuffer : redesign delete operation, it should not create new literal classes
-                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                         modify the code, from reading bool values from stack to constant array
-                       * system'LiteralIterator - operation available and next should not creates a new object , try
-                         to use stack allocated object for the length operations
-                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
-                       * review ws_insert function (in assembler), try to simplify it
-
-              srev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-                       * vmconsole
-
-              adev - dynamic programming
-                       * deserialize object
-                       
-            smaint - testing
-                       * extend realtest with comparision operation test
-                       * modify system test, it should raise an exception if any of the tests fails
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
-               adev - console operations:  
-                       * read / write operation: complex types
-                       * write formatted numbers
-                       * write formatted string (with parameters)
-                       
+--------                                                                          
 week3:
               xdev - script engine
-                       * redesign script support
-                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
                        * use script to build objects
                        * use script to parse
                        * use script generate code
+                       * current implementation is done in two passes, simplify to one
                        
               xdev - elenasm
                        * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
@@ -249,6 +173,8 @@ week4:
                          variable, visualize it content, execute it)
                                              
               xmaint - test
+                       * test all basic samples : files / console / datetime
+                       * test mttest
                        * test: true and Boolean, intNumber and Integer, ...
                        * test true / false operations with Boolean
                        * test system'io'StreamWriter
@@ -375,6 +301,8 @@ week1:
                        * split hook l into two : address l , hook ; or use internal function for exception raising / handling?
 
               xdev - general implementation
+                       * immplement 1e10r real literal
+
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
                          call parameter
 
@@ -426,6 +354,8 @@ week1:
                                 config - \etc\elena
                                 data   - \usr\share\elena - data
 
+                       * linux - build system libraris
+                       * linux linker
                        * linux console operations
                        * linux file operations
                        * linux date / time operations
@@ -481,7 +411,7 @@ week1:
                        * compiler option : switch off jump optimization
                        * compiler option : switch off direct calls
                        * optimize type cast call (dispatch handler should be used) 
-                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
+                        * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
                          byte array used?
                        * simplify external call
                        * could we somehow store tls table address?
@@ -525,6 +455,7 @@ week1:
                        * tune debugger, make possible to use step over / step into everywhere
                        * step over #break / #throw does not work correctly
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * debug script
                        
             xtools - usability
                        * print symbol (special keyword to distinguish from class)
@@ -556,9 +487,8 @@ week2:
                        * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
                          cases
                        * special class IndexedPointer - which is used to refer to the object by index
+                       * operation with upper / lower case implementing
                        * expanding lib30
-                       
-              adev - lib30                                                                  
                        * Struct : check if the income message is "get"
                        * win32 file i/o operations should raise an exception with an error code
                        * implement: square function
@@ -634,6 +564,7 @@ week2:
 
                        * make sure stack allocated objects are correctly boxed for the custom int roles
                        * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
+                       * controlTape should verify the range
 
               sdev - api doc
                        * create API : ...
@@ -643,6 +574,100 @@ week2:
                        * copy protocols to doc\protocols
                        * support dispatch method
                        * support redirect method                       
+
+               adev - console operations:  
+                       * read / write operation: complex types
+                       * write formatted numbers
+                       * write formatted string (with parameters)
+              arev - general review
+                       * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
+                         the second method call is excessive
+                       * bsort example, sortRange method : variable is used because of loop implementation
+                       * goods : Record.get&literal : 
+                                  #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
+                       * review loop code (see system'io'$ConsoleReader) :
+                             #loop
+                             [
+                                 ...        
+                                 continue   // -- should be correctly loaded into accumulator
+                             ].
+                       * review literalControl.split&by - could we ismplify / beautify the code
+                       * review all samples : simplify / refactore (look if the code can be reused)
+                                                                                                                             
+              arev - lib30 review
+                       * review extensions'math'EMatrix, simplify / optimize the code
+
+                       * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
+
+                       * LiteralIndexer implementation : try to optimize to minimize new object creating
+
+                       * system'primitive should be private symbol? (but it should be accessed throughout system packages, e.g. system'io and so on)
+
+                       * review: system'routines'indexable
+                       * review samples
+                       * review rosetta samples
+                       * int and index subjects should be synonym ?? (side effect if int could be used instead of index for the operation with literals
+                         for example)
+                       * CharValue: short and char in some form are interdependant, maybe should be synonym as well?
+                       
+                       * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
+                         is not safe , if for some reason the compiler optimization is turned off (replacing operation with the direct action) the code
+                         will raise out of stack error
+                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
+                       * system'LiteralValue : probably getAt&index&out'short and indexOf&index&literal&out'int should be implemented
+                         in literalPrimitive like other operations?
+                       * system'Array : probably getAt&index&out'short  should be implemented
+                         in arrayPrimitive like other operations?
+                       * Real should support operation with long numbers
+                       * system'ByteArray : should support indexOf operation without out parameter, should the ones with out parameters
+                         be implemented in byteArrayPrimitive ?
+                       * should clone be implemented in system'Object and be overridden only when it is required?                                                
+                       * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
+                       * optimize control.forrange implementation
+
+                       * fix warnings for system'String
+                       * pattern : for i,j - forregion &int:0 &int:0 &int:n &int:m
+                       * should get&length be moved into generic extension?
+                       * review all classes : simplify / refactore (look if the code can be reused)
+                       * review extensions'consoleEx implementation - do we need Wrap?
+                       * comparing literal and char (see for example trans sample)
+                                                      
+              adev - lib30 optimization
+                       * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
+                       * optimize output code: system'Object 
+                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
+                       
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
+                       * TextBuffer : redesign delete operation, it should not create new literal classes
+                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                         modify the code, from reading bool values from stack to constant array
+                       * system'LiteralIterator - operation available and next should not creates a new object , try
+                         to use stack allocated object for the length operations
+                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
+                       * review ws_insert function (in assembler), try to simplify it
+
+              srev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * vmconsole
+
+              adev - dynamic programming
+                       * deserialize object
+                       
+            smaint - testing
+                       * extend realtest with comparision operation test
+                       * modify system test, it should raise an exception if any of the tests fails
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
 
 1.9.19
 --------

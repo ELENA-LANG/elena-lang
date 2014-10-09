@@ -130,7 +130,7 @@ protected:
       // cached subjects
       // should not be referred directly ;
       // appropriate get function should be used instead
-      ref_t intType, longType, realType, literalType;
+      ref_t intType, longType, realType, literalType, intPtrType;
       ref_t boolType, actionType, paramsType;
 
       // warning mapiing
@@ -232,6 +232,7 @@ protected:
       ref_t getLiteralType();
       ref_t getParamsType();
       ref_t getActionType();
+      ref_t getIntPtrType();
 
       ref_t getClassType(ref_t reference);
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2013, by Alexei Rakov
+//                                              (C)2009-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -482,51 +482,7 @@ bool Instance :: restart(bool debugMode)
    return true;
 }
 
-inline void reverseArgOrder(MemoryWriter& ecodes, int count/*, bool useRole = false*/)
-{
-   //if (useRole) {
-   //   ecodes.writeByte(bcPushA);
-
-   //   int j = count;
-   //   for(int i = 1 ; i <= count >> 1 ; i++) {
-   //      // accloadsi j
-   //      // accswapssi i
-   //      // accsavesi j
-   //      ecodes.writeByte(bcALoadSI);
-   //      ecodes.writeDWord(j);
-   //      ecodes.writeByte(bcASwapSI);
-   //      ecodes.writeDWord(i);
-   //      ecodes.writeByte(bcASaveSI);
-   //      ecodes.writeDWord(j);
-   //      j--;
-   //   }
-   //   ecodes.writeByte(bcPopA);
-   //}
-   //else {
-      int j = count - 1;
-      for(int i = 0 ; i < count >> 1 ; i++) {
-         if (i == 0) {
-            // swapsi j
-            ecodes.writeByte(bcSwapSI);
-            ecodes.writeDWord(j);
-         }
-         else {
-            // aloadsi j
-            // aswapsi i
-            // asavesi j
-            ecodes.writeByte(bcALoadSI);
-            ecodes.writeDWord(j);
-            ecodes.writeByte(bcASwapSI);
-            ecodes.writeDWord(i);
-            ecodes.writeByte(bcASaveSI);
-            ecodes.writeDWord(j);
-         }
-         j--;
-      }
-//   }
-}
-
-void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator)
+void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator)
 {
    MemoryWriter ecodes(&dump);
 
@@ -538,176 +494,108 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
    ecodes.writeDWord(0);
 
    // resolve tape
-   //int level = 0;
-   //Stack<int> markers;
-   size_t message = 0;
    size_t command = reader.getDWord();
+   void*  extra_param;
    while (command != terminator) {
+      const wchar16_t* arg = NULL;
       size_t param = reader.getDWord();
+      if (test(command, LITERAL_ARG_MASK)) {
+         arg = (const wchar16_t*)reader.Address();
 
-      reader.seek(reader.getDWord());  // goes to the next record
+         reader.seek(reader.Position() + param);  // goes to the next record
+      }
 
       // in debug mode place a breakpoint excluding prefix command
       if (_debugMode)
          ecodes.writeByte(bcBreakpoint);
 
       switch(command) {
-         //case START_TAPE_MESSAGE_ID:
-         //   markers.push(level);
-         //   break;
+         case ARG_TAPE_MESSAGE_ID:
+            extra_param = loadSymbol(arg, mskVMTRef);
+            break;
          case CALL_TAPE_MESSAGE_ID: 
             //callr
             //pusha
             ecodes.writeByte(bcCallR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskSymbolRef), mskCodeRef);
+            helper.writeTape(ecodes, loadSymbol(arg, mskSymbolRef), mskCodeRef);
             ecodes.writeByte(bcPushA);
-            //level++;
-
             break;
-         //case PUSH_EMPTY_MESSAGE_ID:
-         //   // pushn 0
-         //   ecodes.writeByte(bcPushN);
-         //   ecodes.writeDWord(0);
-         //   level++;
-         //   break;
          case PUSH_VAR_MESSAGE_ID:
             // pushfi param
             ecodes.writeByte(bcPushFI);
             ecodes.writeDWord(param);
-            //level++;
             break;
-         //case POP_VAR_MESSAGE_ID:
-         //   // popfi param
-         //   ecodes.writeByte(bcPopFI);
-         //   ecodes.writeDWord(param);
-         //   level--;
-
-         //   break;
+         case ASSIGN_VAR_MESSAGE_ID:
+            // popa
+            // asavefi param
+            ecodes.writeByte(bcPopA);
+            ecodes.writeByte(bcASaveFI);
+            ecodes.writeDWord(param);
+            break;
          case PUSH_TAPE_MESSAGE_ID:
             //pushr r
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskConstantRef), mskRDataRef);
+            helper.writeTape(ecodes, loadSymbol(arg, mskConstantRef), mskRDataRef);
             //level++;
 
             break;
          case PUSHS_TAPE_MESSAGE_ID:
             //pushr constant
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskLiteralRef), mskRDataRef);
-//            level++;
+            helper.writeTape(ecodes, loadSymbol(arg, mskLiteralRef), mskRDataRef);
             break;
          case PUSHN_TAPE_MESSAGE_ID:
             //pushr r
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskInt32Ref), mskRDataRef);
-            //level++;
-
+            helper.writeTape(ecodes, loadSymbol(arg, mskInt32Ref), mskRDataRef);
             break;
          case PUSHR_TAPE_MESSAGE_ID:
             //pushr r
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskRealRef), mskRDataRef);
-            //level++;
-
+            helper.writeTape(ecodes, loadSymbol(arg, mskRealRef), mskRDataRef);
             break;
          case PUSHL_TAPE_MESSAGE_ID:
             //pushr r
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskInt64Ref), mskRDataRef);
-            //level++;
-
+            helper.writeTape(ecodes, loadSymbol(arg, mskInt64Ref), mskRDataRef);
             break;
          case PUSHM_TAPE_MESSAGE_ID:
             // pushr r
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskMessage), mskRDataRef);
-            //level++;
+            helper.writeTape(ecodes, loadSymbol(arg, mskMessage), mskRDataRef);
             break;
          case PUSHG_TAPE_MESSAGE_ID:
             // pushr r
             ecodes.writeByte(bcPushR);
-            helper.writeTape(ecodes, loadSymbol((wchar16_t*)(base + param), mskSignature), mskRDataRef);
-            //level++;
+            helper.writeTape(ecodes, loadSymbol(arg, mskSignature), mskRDataRef);
             break;
          case POP_TAPE_MESSAGE_ID:
             //popi param
             ecodes.writeByte(bcPopI);
             ecodes.writeDWord(param);
-            //level -= param;
             break;
-         ////case DSEND_TAPE_MESSAGE_ID:
-         ////   message = encodeMessage(0, param, level - markers.);
-
-         ////   // reverse the parameter order
-         ////   if (getParamCount(message) > 0) 
-         ////      reverseArgOrder(ecodes, 1 + getParamCount(message), useRole);
-
-         ////   //mcopy message
-         ////   //aloadsi 0
-         ////   //acallvi 0
-         ////   //pusha
-
-         ////   ecodes.writeByte(bcMCopy);
-         ////   ecodes.writeDWord(MESSAGE_MASK | message);
-
-         ////   if (!useRole) {
-         ////      ecodes.writeByte(bcALoadSI);
-         ////      ecodes.writeDWord(0);
-         ////   }
-         ////   else useRole = false;
-
-         ////   ecodes.writeByte(bcACallVI);
-         ////   ecodes.writeDWord(0);
-         ////   ecodes.writeByte(bcPushA);
-         ////   
-         ////   level -= getParamCount(message);
-
-         ////   break;
-         case REVERSE_TAPE_MESSAGE_ID:
-            // reverse the parameter order
-            if (param > 1) 
-               reverseArgOrder(ecodes, param);
-
-            break;
-         case SENDR_TAPE_MESSAGE_ID:
-            // popa
-            ecodes.writeByte(bcPopA);
-            //   level--;
          case SEND_TAPE_MESSAGE_ID:
-            message = _linker->parseMessage((wchar16_t*)(base + param));
-
             //copym message
             //aloadsi 0
             //acallvi 0
             //pusha
 
             ecodes.writeByte(bcCopyM);
-            ecodes.writeDWord(message);
-
-            if (command != SENDR_TAPE_MESSAGE_ID) {
-               ecodes.writeByte(bcALoadSI);
-               ecodes.writeDWord(0);
-            }
-
+            ecodes.writeDWord(_linker->parseMessage(arg));
+            ecodes.writeByte(bcALoadSI);
+            ecodes.writeDWord(0);
             ecodes.writeByte(bcACallVI);
             ecodes.writeDWord(0);
             ecodes.writeByte(bcPushA);
 
-         //   level -= getParamCount(message);
-
             break;
-         //case NEW_TAPE_MESSAGE_ID:
-         case NEWS_TAPE_MESSAGE_ID:
-         case NEWA_TAPE_MESSAGE_ID:
+         case NEW_TAPE_MESSAGE_ID:
          {
             int level = param;
 
             // new n, vmt
             ecodes.writeByte(bcNew);
-            if (command == NEWA_TAPE_MESSAGE_ID) {
-               helper.writeTape(ecodes, loadSymbol(ConstantIdentifier(TAPE_CLASS), mskVMTRef), mskVMTRef);
-            }
-            else helper.writeTape(ecodes, loadSymbol(ConstantIdentifier(STRUCT_CLASS), mskVMTRef), mskVMTRef);
+            helper.writeTape(ecodes, extra_param, mskVMTRef);
             ecodes.writeDWord(param);
 
             // ; assign content
@@ -727,7 +615,6 @@ void Instance :: translate(size_t base, MemoryReader& reader, ImageReferenceHelp
             }
 
             ecodes.writeByte(bcPushB);
-         //   level++;
             break;
          }
       }
@@ -775,27 +662,29 @@ void Instance :: setPackagePath(const wchar16_t* line)
    else setPackagePath(NULL, line);
 }
 
-void Instance :: configurate(size_t base, MemoryReader& reader, int terminator)
+void Instance :: configurate(MemoryReader& reader, int terminator)
 {
    size_t pos = reader.Position();
 
    size_t command = reader.getDWord();
    while (command != terminator) {
+      const wchar16_t* arg = NULL;
       size_t param = reader.getDWord();
+      if (test(command, LITERAL_ARG_MASK)) {
+         arg = (const wchar16_t*)reader.Address();
 
-      reader.seek(reader.getDWord());  // goes to the next record
+         reader.seek(reader.Position() + param);  // goes to the next record
+      }
+
       switch (command) {
          case USE_VM_MESSAGE_ID:
-            //printInfo(_T("package %s"), (wchar16_t*)(param + base));
-            setPackagePath((wchar16_t*)(param + base));
+            setPackagePath(arg);
             break;
          case MAP_VM_MESSAGE_ID:
-            //printInfo(_T("mapping %s"), (wchar16_t*)(param + base));
-            addForward((wchar16_t*)(param + base));
+            addForward(arg);
             break;
          case LOAD_VM_MESSAGE_ID:
-            //printInfo(_T("load %s"),(wchar16_t*)(param + base));
-            if(!loadTemplate((wchar16_t*)(param + base)))
+            if(!loadTemplate(arg))
                throw EAbortException();
 
             break;
@@ -835,15 +724,13 @@ void Instance :: configurate(size_t base, MemoryReader& reader, int terminator)
 
 int Instance :: interprete(void* tape, const wchar16_t* interpreter)
 {
-   size_t base = (size_t)tape;
-
    ByteArray    tapeArray(tape, -1);
    MemoryReader tapeReader(&tapeArray);
 
    stopVM();
 
    // configurate VM instance
-   configurate(base, tapeReader, 0);
+   configurate(tapeReader, 0);
 
    if (!_initialized)
       throw InternalError("ELENAVM is not initialized");
@@ -863,12 +750,12 @@ int Instance :: interprete(void* tape, const wchar16_t* interpreter)
 
    // create byte code tape
    MemoryDump   ecodes;
-   translate(base, tapeReader, helper, ecodes, 0);
+   translate(tapeReader, helper, ecodes, 0);
 
    // compile byte code
    MemoryReader reader(&ecodes);
 
-   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, ConstantIdentifier(TAPE_SYMBOL), (void*)base);
+   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, ConstantIdentifier(TAPE_SYMBOL), (void*)tape);
 
    // update debug section size if available
    if (_debugMode) {

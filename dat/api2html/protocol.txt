@@ -9,6 +9,7 @@ bool
 bool_action
 bool_expr
 bool_function
+byte
 bytearray
 char
 enumerable
@@ -21,6 +22,7 @@ numeric_value
 numeric_variable
 real
 short
+typecaster
 value
 variable
 variant
@@ -33,6 +35,10 @@ variant
 [int]
 #shortdescr=An int protocol
 #method=int,,int;Returns the integer value
+
+[byte]
+#shortdescr=A byte protocol
+#method=byte,,byte;Returns the byte value
 
 [action]
 #shortdescr=An action protocol
@@ -84,22 +90,16 @@ variant
 #method=equal,value,bool;Compares the values
 #method=greater,value,bool;Compares the values
 #method=less,value,bool;Compares the values
-#method=notequal,value,bool;Compares the values
-#method=notgreater,value,bool;Compares the values
-#method=notless,value,bool;Compares the values
 
 [numeric_value]
 #shortdescr=A numeric value protocol
-#method=add,numeric_value,numeric_value;Adds the values
-#method=divide,numeric_value,numeric_value;Divides the values
+#method=add,numeric_value,numeric_value;Adds the value
+#method=divide,numeric_value,numeric_value;Divides into the value
 #method=equal,value,bool;Compares the values
 #method=greater,value,bool;Compares the values
 #method=less,value,bool;Compares the values
-#method=multiply,numeric_value,numeric_value;Divides the values
-#method=notequal,value,bool;Compares the values
-#method=notgreater,value,bool;Compares the values
-#method=notless,value,bool;Compares the values
-#method=subtract,numeric_value,numeric_value;Subtracts the values
+#method=multiply,numeric_value,numeric_value;Multiply by the value
+#method=subtract,numeric_value,numeric_value;Subtracts the value
 
 [enumerator]
 #shortdescr=An enumerator protocol
@@ -116,6 +116,7 @@ variant
 
 [short]
 #shortdescr=A short integer protocol
+#method=short,,short;Returns the short integer value
 
 [numeric_variable]
 #shortdescr=A numeric variable protocol
@@ -131,3 +132,10 @@ variant
 [bytearray]
 #shortdescr=A bytearray protocol
 #method=bytearray,,bytearray;Returns the byte array
+
+[typecaster]
+#shortdescr=A Typecaster protocol
+#method=int,int,object;Casts an integer value
+#method=literal,literal,object;Casts a literal value
+#method=long,long,object;Casts a long integer value
+#method=real,real,object;Casts a real value

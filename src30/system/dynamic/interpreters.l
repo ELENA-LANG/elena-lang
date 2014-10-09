@@ -1,18 +1,12 @@
 #define system.
 
-//// --- ETapeControl --
-//
-//#symbol tapeControl =
-//{
-//    read :anIndex ::Params
-//    [
-//        #var n := Params@(anIndex int).
-//        
-//        ^ n.
-//    ]
-//    
-//    //    = Params@(anIndex int).
-//}.
+// --- ETapeControl --
+
+#symbol tapeControl =
+{
+    read :anIndex ::Params
+        = Params@(anIndex int).
+}.
 
 // --- Tape ---
 

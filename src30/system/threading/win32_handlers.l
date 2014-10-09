@@ -20,7 +20,7 @@
         theData := system'external'KERNEL32 CreateThread
                         &int:0
                         &int:0
-                        &action: #symbol $threadStarter
+                        &intptr: #symbol $threadStarter
                         &int:param
                         &int:4
                         &int:0.

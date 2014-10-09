@@ -60,15 +60,15 @@ public:
       writeCommand(command, (size_t)0);
    }
    void writeEndCommand();
-//
-////      void copyTape(_Memory* subTape, size_t ptr);
-////
+
+   void insert(size_t position, MemoryDump* subTape);
+
 ////      void parseVMCommand(TokenInfo& token, ScriptReader& reader);
 ////      void parseCommand(TokenInfo& token, ScriptReader& reader);
 ////      void parse(ScriptReader& reader);
-//
-//   size_t Position() { return _tape.Length(); }
-//
+
+   size_t Position() { return _tape->Length(); }
+
 //   void trim(size_t position)
 //   {
 //      _tape.trim(position);
@@ -109,12 +109,16 @@ class InlineScriptParser
 
    int writeVariable(TapeWriter& writer, int index, int level, Mode mode);
 
-   int parseOperations(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+   ////int parseOperations(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+   ////int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
+   ////void parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals);
+   ////void parseAction(TapeWriter& writer, _ScriptReader& reader);
+
+   void readMessage(_ScriptReader& reader, IdentifierString& message);
+
+   int parseObject(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
    int parseExpression(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
    int parseStatement(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
-   int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
-   void parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals);
-   void parseAction(TapeWriter& writer, _ScriptReader& reader);
 
 public:
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);

@@ -922,7 +922,7 @@ void _ELENA_::compileDCopySubj(int opcode, x86JITScope& scope)
    // and esi, VERB_MASK
    scope.code->writeWord(0xF18B);
    scope.code->writeWord(0xE681);
-   scope.code->writeDWord(PARAM_MASK | SIGN_MASK | MESSAGE_MASK);   
+   scope.code->writeDWord(SIGN_MASK | MESSAGE_MASK);   
 }
 
 void _ELENA_::compileALoad(int opcode, x86JITScope& scope)

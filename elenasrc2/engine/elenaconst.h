@@ -96,9 +96,9 @@ namespace _ELENA_
    #define ROLLBACK_MESSAGE_ID     0x0041
    #define REPLACE_MESSAGE_ID      0x0043
 
-//   // ---- ELENAVM command masks ---
-//   #define VM_MASK                 0x0200             // vm command mask
-//   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
+   // ---- ELENAVM command masks ---
+   #define VM_MASK                 0x0200             // vm command mask
+   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
 
    // ---- ELENAVM commands ---
    #define START_VM_MESSAGE_ID     0x02F1             // restart VM
@@ -108,9 +108,9 @@ namespace _ELENA_
 
    // ---- ELENAVM interpreter commands ---
    #define CALL_TAPE_MESSAGE_ID    0x05E0             // call symbol
-  // #define PUSH_EMPTY_MESSAGE_ID   0x01E1
+   #define ARG_TAPE_MESSAGE_ID     0x05E1             // define the second parameter
    #define PUSH_VAR_MESSAGE_ID     0x01E2             // copy the data
-  // #define POP_VAR_MESSAGE_ID      0x01E3             // copy the data
+   #define ASSIGN_VAR_MESSAGE_ID   0x01E3             // assign the data
    #define PUSH_TAPE_MESSAGE_ID    0x05E4             // push constant
    #define PUSHS_TAPE_MESSAGE_ID   0x05E5             // push literal constant
    #define PUSHN_TAPE_MESSAGE_ID   0x05E6             // push integer constant
@@ -120,12 +120,7 @@ namespace _ELENA_
    #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
    #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
    #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
-   #define SENDR_TAPE_MESSAGE_ID   0x05ED             // send the message
-  // #define START_TAPE_MESSAGE_ID   0x01EE             // mark the creating object
-  // #define NEW_TAPE_MESSAGE_ID     0x05EE             // create an object (containing the last n objects)
-   #define REVERSE_TAPE_MESSAGE_ID 0x01EF             // reverse the stack parameters 
-   #define NEWS_TAPE_MESSAGE_ID    0x01F0             // create a dynamic structure
-   #define NEWA_TAPE_MESSAGE_ID    0x01F1             // create a dynamic action
+   #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
 
    #define VA_ALIGNMENT       0x08
    #define VA_ALIGNMENT_POWER 0x03
@@ -476,7 +471,8 @@ namespace _ELENA_
    #define REAL_CLASS               "system'RealNumber" 
    #define WSTR_CLASS               "system'LiteralValue" 
    #define ARRAY_CLASS              "system'Array" 
-   #define TAPE_CLASS               "system'dynamic'Tape"            // the role list handler
+   #define TAPE_CLASS               "system'dynamic'Tape"            // the tape
+   #define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the tape helper
    #define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
    #define MESSAGE_CLASS            "system'dynamic'Message"         // the special role class
    #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
@@ -484,6 +480,7 @@ namespace _ELENA_
    #define STRUCT_CLASS             "system'dynamic'Struct"     
 
    // predefined types
+   #define INTPTR_SUBJECT           "intptr"
    #define PARAMS_SUBJECT           "params"
    #define ACTION_SUBJECT           "action"
    #define FUNCTION_SUBJECT         "func"

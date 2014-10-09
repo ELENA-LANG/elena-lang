@@ -67,7 +67,7 @@
     [
         #var(type:long) aRetVal := 0l.
         
-        system'external'KERNEL32 SystemTimeToFileTime &bytearray:$self &out'long:aRetVal.
+        system'external'KERNEL32 SystemTimeToFileTime &__win_systemtime:$self &out'long:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
     ]    
@@ -79,7 +79,7 @@
         #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
             &int::Flags
-            &bytearray:$self
+            &__win_systemtime:$self
             &int:0
             &shortarray:aBuffer
             &int:255
@@ -96,7 +96,7 @@
         #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
             &int::Flags
-            &bytearray:$self
+            &__win_systemtime:$self
             &int:0
             &shortarray:aBuffer
             &int:255
@@ -127,7 +127,7 @@
 
     readSystemTime &long:aFileTime &out'__win_systemtime:aRetVal
     [
-        system'external'KERNEL32 FileTimeToSystemTime &bytearray:aFileTime &out'__win_systemtime:aRetVal.
+        system'external'KERNEL32 FileTimeToSystemTime &long:aFileTime &out'__win_systemtime:aRetVal.
     ]
 
     readYear &long:aDateValue

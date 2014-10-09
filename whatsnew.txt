@@ -18,6 +18,9 @@ ELENA:
 [+] extensions'text: StringReader
 [-] system'text: TextReader (refactored to be a base class and moved to system'io, system'io'StreamReader should be used instead)
 
+ElenaScript:
+[*] script engine redesigned
+
 ******************************************************************************
                     What's New in 1.9.16 (pre release)
 ******************************************************************************

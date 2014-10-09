@@ -783,7 +783,6 @@ procedure inline'exception_dispatch
   bcopya
   ecopyd
   type
-  inc                         // ; to include a parameter count
   else labElse
   ecopy IF_MESSAGE_ID_1
 
@@ -1428,9 +1427,10 @@ procedure inline'handle_tape
   
   elsem labErr EVAL_MESSAGE_ID
 
+  ecopyd
   dcopycount
   inc
-  ecopyd
+  ecopyd  
 
   open 5
   reserve 2
@@ -1442,13 +1442,15 @@ procedure inline'handle_tape
   
   bcopya
   pushn 0
+  dcopye
 
+// ; copy message
 labNextParam:
-  acopys 8
+  acopyf -5
   aload
   pusha
-  inc
-  else labNextParam
+  dec
+  elsen labNextParam 0
 
 labNext:
   count
@@ -1468,13 +1470,6 @@ labMessage:
   nload
   ecopyd
   aloadsi 0  
-
-  flag
-  andn elRole
-  ifn labSkip 0
-  popa
-labSkip:
-
   acallvi 0
   pusha
   bloadfi 1

@@ -277,6 +277,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
 
    paramsType = mapSubject(PARAMS_SUBJECT);
    actionType = mapSubject(ACTION_SUBJECT);
+   intPtrType = mapSubject(INTPTR_SUBJECT);
 
    defaultNs.add(module->Name());
 
@@ -770,6 +771,11 @@ ref_t Compiler::ModuleScope :: getParamsType()
 ref_t Compiler::ModuleScope :: getActionType()
 {
    return actionType;
+}
+
+ref_t Compiler::ModuleScope :: getIntPtrType()
+{
+   return intPtrType;
 }
 
 // --- Compiler::SourceScope ---
@@ -3590,7 +3596,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
-   ref_t actionType = moduleScope->getActionType();
+   ref_t intPtrType = moduleScope->getIntPtrType();
+   ref_t literalType = moduleScope->getLiteralType();
 
    while (arg == nsSubjectArg) {
       TerminalInfo terminal = arg.Terminal();
@@ -3599,55 +3606,67 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
       param.subject = moduleScope->mapType(terminal, param.output);
 
       int size = moduleScope->sizeHints.get(param.subject);
-      // HOTFIX: allow literal argument to be passed as external call argument
-      if (size == 0 && param.subject == moduleScope->getLiteralType()) {
-         size = -2;
-      }
 
       arg = arg.nextNode();
       if (arg == nsTypedMessageParameter || arg == nsMessageParameter) {
          param.info = compileObject(arg.firstChild(), scope, 0);
 
-         // only local variables can be used as output parameters
-         if (param.output) {
-            if(param.info.kind != okLocal || param.subject != param.info.extraparam)
-               scope.raiseError(errInvalidOperation, terminal);
-         }            
-         else if (arg == nsTypedMessageParameter) {         
+         if (arg == nsTypedMessageParameter) {         
             _writer.loadObject(*scope.tape, param.info);
             bool dummy;
             param.info = saveObject(scope, compileTypecast(scope, param.info, param.subject, dummy, HINT_TYPEENFORCING), 0);
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
          }
-         else if (param.info.kind == okIntConstant && size == 4 || param.subject == actionType && param.info.kind == okSymbolReference) {
+
+         // only local variables can be used as output parameters
+         if (param.output) {
+            if(param.info.kind != okLocal || param.subject != param.info.extraparam || size == 0)
+               scope.raiseError(errInvalidOperation, terminal);
+         }            
+         else if ((size == 4 && param.info.kind == okIntConstant) || (param.subject == intPtrType && param.info.kind == okSymbolReference)) {
             // if direct pass is possible
             // do nothing at this stage
          }
-         else if(param.subject == param.info.extraparam || size == -1 || param.subject == actionType) {
+         else if ((size != 0 || param.subject == literalType) && param.subject == param.info.extraparam) {
             saveObject(scope, param.info, 0);
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
          }
-         else {
-            _writer.loadObject(*scope.tape, param.info);
-            bool mismatch = false;
-            param.info = saveObject(scope, 
-               compileTypecast(scope, ObjectInfo(okAccumulator, 0, param.info.extraparam), param.subject, mismatch, HINT_TYPEENFORCING), 0);
+         // raise an error if the subject type is not supported
+         else scope.raiseError(errInvalidOperation, terminal);
 
-            if (mismatch)
-               scope.raiseWarning(wrnTypeMismatch, terminal);
 
-            param.info.kind = okBlockLocal;
-            param.info.param = ++externalScope.frameSize;
-         }
+         //// only local variables can be used as output parameters
+         //if (param.output) {
+         //   if(param.info.kind != okLocal || param.subject != param.info.extraparam)
+         //      scope.raiseError(errInvalidOperation, terminal);
+         //}            
+         //else if (arg == nsTypedMessageParameter) {         
+         //   _writer.loadObject(*scope.tape, param.info);
+         //   bool dummy;
+         //   param.info = saveObject(scope, compileTypecast(scope, param.info, param.subject, dummy, HINT_TYPEENFORCING), 0);
+         //   param.info.kind = okBlockLocal;
+         //   param.info.param = ++externalScope.frameSize;
+         //}
+
+
+         //else if(param.subject == param.info.extraparam || size == -1) {
+         //}
+         //else {
+         //   _writer.loadObject(*scope.tape, param.info);
+         //   bool mismatch = false;
+         //   param.info = saveObject(scope, 
+         //      compileTypecast(scope, ObjectInfo(okAccumulator, 0, param.info.extraparam), param.subject, mismatch, HINT_TYPEENFORCING), 0);
+
+         //   if (mismatch)
+         //      scope.raiseWarning(wrnTypeMismatch, terminal);
+
+         //   param.info.kind = okBlockLocal;
+         //   param.info.param = ++externalScope.frameSize;
+         //}
 
          arg = arg.nextNode();
-      }
-      else scope.raiseError(errInvalidOperation, terminal);
-
-      // raise an error if the subject type is not supported
-      if ((param.output && size != 0) || size == 4 || size < 0 || param.subject == actionType) {
       }
       else scope.raiseError(errInvalidOperation, terminal);
 
@@ -3668,7 +3687,7 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
       if ((*out_it).output) {
          _writer.pushObject(*scope.tape, (*out_it).info);
       }
-      else if ((*out_it).subject == actionType) {
+      else if ((*out_it).info.kind == okSymbolReference) {
          _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
          _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
       }

@@ -12,11 +12,9 @@
 
 #symbol XTest =
 [
-    #var b := ByteArray new &length:10.
+    #var o := Struct(%writeLine, x [ system'console writeLine:x. ]).
     
-    #var(type:short)s.
-    
-    b write &index:6 &short:s.
+    o writeLine:2.
 ].
 
 // --- OpenArgTest ---
