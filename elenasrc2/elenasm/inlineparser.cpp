@@ -310,6 +310,23 @@ int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& rea
    if (mode == mdRoot)
       mode = mdRootOp;
 
+   if (reader.token[0]=='~') {
+      int roleCounter = 1;
+      while (reader.token[0]=='~') {
+         reader.read();
+
+         parseObject(writer, reader, locals, currentLevel, mode);
+
+         currentLevel++;
+         roleCounter++;
+      }
+
+      writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(WRAP_CLASS));
+      writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter << 1);
+
+      currentLevel = level;
+   }
+
    while (reader.token[0]=='.') {
       IdentifierString message; 
       readMessage(reader, message);
@@ -450,6 +467,10 @@ int InlineScriptParser :: parseStatement(TapeWriter& writer, _ScriptReader& read
 
          // otherwise rollback and continue the normal routine
          reader.seek(bookmark);
+         token = retrieveKey(locals.start(), index, DEFAULT_STR);
+         reader.info.state = dfaIdentifier;
+
+         StringHelper::copy(reader.token, token, getlength(token) + 1);
 
          counter = parseExpression(writer, reader, locals, level, mode);
       }

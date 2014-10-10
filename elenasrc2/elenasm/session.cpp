@@ -84,7 +84,7 @@ const wchar16_t* Session::CachedScriptReader :: read()
 
       return token;
    }
-   else ScriptReader::read();
+   else return ScriptReader::read();
 }
 
 // --- Session ---

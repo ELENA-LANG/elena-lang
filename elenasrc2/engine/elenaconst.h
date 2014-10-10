@@ -478,6 +478,7 @@ namespace _ELENA_
    #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
    #define GETPROPERTY_CLASS        "system'dynamic'GetProperty"     
    #define STRUCT_CLASS             "system'dynamic'Struct"     
+   #define WRAP_CLASS               "system'dynamic'Wrap"
 
    // predefined types
    #define INTPTR_SUBJECT           "intptr"

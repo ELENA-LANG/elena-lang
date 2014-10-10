@@ -20,7 +20,7 @@
             control forrange &int:0 &int:(aCounter-1) &do: (&int:i)
             [
                 (0 == i) 
-                    ? [ aResult << "," ].
+                    ! [ aResult << "," ].
                 
                 #var aMember := anObject getFieldAt &index:i.
 

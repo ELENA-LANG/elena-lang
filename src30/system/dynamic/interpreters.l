@@ -5,7 +5,13 @@
 #symbol tapeControl =
 {
     read :anIndex ::Params
-        = Params@(anIndex int).
+    [
+        #var(type:int)aLength.
+        
+        Params read &out'length:aLength.
+        
+        ^ Params@(aLength - anIndex int).
+    ]
 }.
 
 // --- Tape ---

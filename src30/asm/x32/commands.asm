@@ -311,6 +311,7 @@ labCopy:
 labFixLen:
   mov  esi, edx
   sub  esi, edi
+  shr  esi, 1
   mov  eax, edi
   
 labEnd:

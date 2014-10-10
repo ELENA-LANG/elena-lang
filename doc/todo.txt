@@ -29,24 +29,23 @@ Currently:
                        
               xdev - script engine
                        * script:
-                           - serialize dynamic object
+                           - make possible to construct the object dynamically - e.g. special object which can be extended at run time
 
-                           - tape : implement simple method
+                             extensions'sm'dictionary set &x:2, and the object is extended with new field x 
 
-                           a = { writeLine : &x [ system'console.writeLine(x) ] } ; a.writeLine(2)
 
-                           - construct objects - new method
 
-                           - construct objects - implement expression
-                           - construct objects - implement expression, with variables
+                           - script engine support in ELENA code : execute script
+                           - script engine support in ELENA code : return the script result
                            
+
                            - parsing expression
                            - text generating
                            - script engine support in ELENA code
                            - script engine support in ELENA code : object creating
                            - script engine support in ELENA code : script implementing
 
-
+                           - construct objects - implement expression, with variables
                            - using roles
                            - branching
                            - branching in code

@@ -13,7 +13,7 @@ ELENA:
                                                   
 [LIB]
 [*] some bug fixes
-[+] system'dynamic: Group
+[+] system'dynamic: Group, Extension, classOp
 [+] system'io: TextReader, StreamReader, StreamWriter, BinaryReader, BinaryWriter
 [+] extensions'text: StringReader
 [-] system'text: TextReader (refactored to be a base class and moved to system'io, system'io'StreamReader should be used instead)
