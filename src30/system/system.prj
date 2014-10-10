@@ -36,6 +36,7 @@ io\files.l
 dynamic\groups.l
 dynamic\loaders.l
 dynamic\interpreters.l
+dynamic\reflection.l
 threading\win32_handlers.l
 threading\thread.l
 

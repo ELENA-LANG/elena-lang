@@ -327,19 +327,33 @@ end
 // ; mindex
 inline % 37h
 
-  mov  esi, [eax - elVMTOffset]
+  push edi
+  mov  edi, [eax-4]
   xor  ebx, ebx
-  mov  ecx, [esi - elVMTSizeOffset]
-labNext:
-  cmp  edx, [esi+ebx*8]
+  mov  edx, [edi - elVMTSizeOffset]
+
+labSplit:
+  test edx, edx
+  jz   short labEnd
+
+labStart:
+  shr  edx, 1
+  setnc bl
+  cmp  ecx, [edi+edx*8]
+  jb   short labSplit
+  nop
+  nop
   jz   short labFound
-  add  ebx, 1
-  sub  ecx, 1
-  jnz  short labNext
-  mov  ebx, -1
+  lea  edi, [edi+edx*8+8]
+  sub  edx, ebx
+  jnz  short labStart
+  nop
+  nop
+labEnd:
+  mov  esi, -1  
 
 labFound:
-  mov   esi, ebx
+  pop  edi  
 
 end
 

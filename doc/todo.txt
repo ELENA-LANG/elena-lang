@@ -29,7 +29,7 @@ Currently:
                        
               xdev - script engine
                        * script:
-                           - construct structure : a = { x : 2 , y : 3 } ; system'console.writeLine(a.x.add(a.y))
+                           - serialize dynamic object
 
                            - tape : implement simple method
 
@@ -39,16 +39,19 @@ Currently:
 
                            - construct objects - implement expression
                            - construct objects - implement expression, with variables
-
-                           - branching
-                           - branching in code
-                           - assigning values to dynamic objects
-                           - global variables
+                           
                            - parsing expression
                            - text generating
                            - script engine support in ELENA code
                            - script engine support in ELENA code : object creating
                            - script engine support in ELENA code : script implementing
+
+
+                           - using roles
+                           - branching
+                           - branching in code
+                           - assigning values to dynamic objects
+                           - global variables
                            - script engine support in ELENA code : text generating                           
                        * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
 

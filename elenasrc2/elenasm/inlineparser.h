@@ -111,11 +111,12 @@ class InlineScriptParser
 
    ////int parseOperations(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
    ////int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
-   ////void parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals);
    ////void parseAction(TapeWriter& writer, _ScriptReader& reader);
 
    void readMessage(_ScriptReader& reader, IdentifierString& message);
 
+   int parseAction(TapeWriter& writer, _ScriptReader& reader);
+   int parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals);
    int parseObject(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
    int parseExpression(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
    int parseStatement(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);

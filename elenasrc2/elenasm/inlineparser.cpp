@@ -111,9 +111,9 @@ int InlineScriptParser :: writeVariable(TapeWriter& writer, int index, int level
       param.appendInt(index - level);
 
       // system'dynamic'tapeControl read:index &:...
-      writer.writeCommand(PUSHM_TAPE_MESSAGE_ID,  ConstantIdentifier("?#>&1"));
-      writer.writeCommand(PUSH_TAPE_MESSAGE_ID, ConstantIdentifier(TAPECONTROL_CLASS));
       writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, param);
+      writer.writeCommand(PUSH_TAPE_MESSAGE_ID, ConstantIdentifier(TAPECONTROL_CLASS));
+      writer.writeCommand(PUSHM_TAPE_MESSAGE_ID,  ConstantIdentifier("?#>&1"));
 
       return 3;
    }
@@ -124,38 +124,136 @@ int InlineScriptParser :: writeVariable(TapeWriter& writer, int index, int level
    }
 }
 
+int InlineScriptParser :: parseAction(TapeWriter& writer, _ScriptReader& reader)
+{
+   Map<const wchar16_t*, int> locals;
+
+   int level = 0;
+   int paramCount = 1;    
+   locals.add(ConstantIdentifier("self"), paramCount);   // self variable
+   while (reader.token[0] == '&') {
+      paramCount++;
+      locals.add(reader.read(), paramCount);
+
+      reader.read();
+   }
+
+   if (reader.token[0] != '[')
+      throw EParseError(reader.info.column, reader.info.row);
+
+   reader.read();
+   int counter = 0;
+   do {
+      const wchar16_t* token = reader.token;
+      char state = reader.info.state;
+
+      // if it is a block end
+      if (token[0] == ']') {
+         break;
+      }
+      else if (token[0] == ';') {
+         reader.read();
+      }
+      else counter += parseStatement(writer, reader, locals, level++, mdTape);
+      
+   } while (true);
+
+   writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(TAPE_CLASS));
+   writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter);
+
+   return 1;
+}
+
+int InlineScriptParser :: parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals)
+{
+   int counter = 0;
+
+   reader.read();
+   do {
+      const wchar16_t* token = reader.token;
+      char state = reader.info.state;
+
+      if (token[0] == ',') {
+         reader.read();
+      }
+      else if (token[0] == '}') {
+         break;
+      }
+      else if (state == dfaIdentifier) {
+         counter++;
+
+         IdentifierString subject;
+
+         // reserve place for param counter
+         subject.append('0');
+
+         // place dummy verb
+         subject.append('#');
+         subject.append(0x20);
+
+         subject.append('&');
+         subject.append(token);
+
+         writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, subject);
+
+         token = reader.read();
+         if (token[0] != ':')
+            throw EParseError(reader.info.column, reader.info.row);
+
+         token = reader.read();
+
+         parseExpression(writer, reader, locals, 0, mdRoot);
+      }
+      else throw EParseError(reader.info.column, reader.info.row);
+   }
+   while (true);
+
+   writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(STRUCT_CLASS));
+   writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter << 1);
+
+   return 1;
+}
+
 int InlineScriptParser :: parseObject(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode)
 {
    int counter = 1;
 
-   switch (reader.info.state) {
-      case dfaInteger:
-         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
-         break;
-      case dfaReal:
-         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
-         break;
-      case dfaLong:
-         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
-         break;
-      case dfaQuote:
-         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
-         break;
-      case dfaFullIdentifier:
-         writer.writeCallCommand(reader.token);
-         break;
-      case dfaIdentifier:
-      {
-         int index = locals.get(reader.token);
-         if (index != 0) {
-            counter = writeVariable(writer, index, level, mode);
-         }
-         else throw EParseError(reader.info.column, reader.info.row);
+   if (reader.token[0]=='{') {
+      counter = parseStruct(writer, reader, locals);
+   }
+   else if (ConstantIdentifier::compare(reader.token, "[") || ConstantIdentifier::compare(reader.token, "&")) {
+      parseAction(writer, reader);
+   }
+   else {
+      switch (reader.info.state) {
+         case dfaInteger:
+            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
+            break;
+         case dfaReal:
+            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
+            break;
+         case dfaLong:
+            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
+            break;
+         case dfaQuote:
+            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
+            break;
+         case dfaFullIdentifier:
+            writer.writeCallCommand(reader.token);
+            break;
+         case dfaIdentifier:
+         {
+            int index = locals.get(reader.token);
+            if (index != 0) {
+               counter = writeVariable(writer, index, level, mode);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
 
-         break;
+            break;
+         }
+         default:
+            throw EParseError(reader.info.column, reader.info.row);
       }
-      default:
-         throw EParseError(reader.info.column, reader.info.row);
    }
 
    reader.read();
@@ -216,6 +314,7 @@ int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& rea
       IdentifierString message; 
       readMessage(reader, message);
 
+      // if it is a method
       if (reader.token[0] == '(') {
          MemoryDump paramTape;
          TapeWriter paramWriter(&paramTape);
@@ -237,12 +336,11 @@ int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& rea
          if (reader.token[0] != ')')
             throw EParseError(reader.info.column, reader.info.row);
 
-         writer.writeCommand(mode == mdTape ? PUSHM_TAPE_MESSAGE_ID : SEND_TAPE_MESSAGE_ID, message);
-         counter++;
-         currentLevel = level;
-
          reader.read();
       }
+      writer.writeCommand(mode == mdTape ? PUSHM_TAPE_MESSAGE_ID : SEND_TAPE_MESSAGE_ID, message);
+      counter++;
+      currentLevel = level;
    }
 
    //if (mode != mdRootOp) {
@@ -314,112 +412,6 @@ int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& rea
    //while(true);
 //}
 
-//void InlineScriptParser :: parseAction(TapeWriter& writer, _ScriptReader& reader)
-//{
-   //Map<const wchar16_t*, int> locals;
-
-   //int level = 0;
-   //int paramCount = 1;    // self variable
-   //while (reader.token[0] == '&') {
-   //   paramCount++;
-   //   locals.add(reader.read(), paramCount);
-
-   //   reader.read();
-   //}
-
-   //if (reader.token[0] != '[')
-   //   throw EParseError(reader.info.column, reader.info.row);
-
-   //reader.read();
-   //int counter = 0;
-   //do {
-   //   const wchar16_t* token = reader.token;
-   //   char state = reader.info.state;
-
-   //   // if it is a block end
-   //   if (token[0] == ']') {
-   //      break;
-   //   }
-   //   else if (token[0] == ';') {
-   //      reader.read();
-   //   }
-   //   // if it is a field
-   //   else if (token[0] == '.') {
-   //      writeVariable(writer, 0, level, mdTape);
-   //      counter++;
-
-   //      counter += parseOperations(writer, reader, locals, level + 1, mdTape);
-   //   }
-   //   /*else if (state == dfaIdentifier) {
-   //      int index = locals.get(token);
-   //      if (index == 0) {
-   //         locals.add(token, 1 + locals.Count());
-   //      }
-   //      token = reader.read();
-   //      state = reader.info.state;
-
-   //      if (token[0] == '=' && index == 0) {
-   //         reader.read();
-
-   //         parseExpression(writer, reader, locals);
-   //      }
-   //      else parseExpression(writer, reader, locals);
-   //   }
-   //   else*/ counter += parseStatement(writer, reader, locals, level++, mdTape);
-   //   
-   //} while (true);
-
-   //writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(TAPE_CLASS));
-   //writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter);
-//}
-
-//void InlineScriptParser :: parseStruct(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals)
-//{
-   //int counter = 0;
-
-   //reader.read();
-   //do {
-   //   const wchar16_t* token = reader.token;
-   //   char state = reader.info.state;
-
-   //   if (token[0] == ',') {
-   //      reader.read();
-   //   }
-   //   else if (token[0] == '}') {
-   //      break;
-   //   }
-   //   else if (state == dfaIdentifier) {
-   //      counter++;
-
-   //      IdentifierString subject;
-
-   //      // reserve place for param counter
-   //      subject.append('0');
-
-   //      // place dummy verb
-   //      subject.append('#');
-   //      subject.append(0x20);
-
-   //      subject.append('&');
-   //      subject.append(token);
-
-   //      writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, subject);
-
-   //      token = reader.read();
-   //      if (token[0] != ':')
-   //         throw EParseError(reader.info.column, reader.info.row);
-
-   //      token = reader.read();
-   //      parseExpression(writer, reader, locals, 0, mdRoot);
-   //   }
-   //   else throw EParseError(reader.info.column, reader.info.row);
-   //}
-   //while (true);
-
-   //writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(STRUCT_CLASS));
-   //writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter << 1);
-//}
-
 int InlineScriptParser :: parseStatement(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode)
 {
    bool tapeMode = (mode == mdTape);
@@ -468,9 +460,9 @@ int InlineScriptParser :: parseStatement(TapeWriter& writer, _ScriptReader& read
       if (!tapeMode)
          writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
    }
-   //else if (tapeMode && reader.token[0] == ']') {
-   //   // do nothing
-   //}
+   else if (tapeMode && reader.token[0] == ']') {
+      // do nothing
+   }
    else if (!tapeMode && reader.info.state == dfaEOF) {
       // do nothing
    }

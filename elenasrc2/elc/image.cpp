@@ -206,39 +206,26 @@ const wchar16_t* ExecutableImage :: retrieveReference(_Module* module, ref_t ref
 
 inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command)
 {
-   size_t pos = tape.Position() - base;
-
    tape.writeDWord(command);
    tape.writeDWord(0);
-   tape.writeDWord(pos + 12);
 }
 
 inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, const wchar16_t* value)
 {
-   size_t pos = tape.Position() - base;
-
    tape.writeDWord(command);
-   tape.writeDWord(pos + 12);
-   tape.writeDWord(0);        // next place holder
 
-   tape.writeWideLiteral(value);
-
-   // fix next field
-   size_t nextPos = tape.Position() - base;
-   tape.seek(base + pos + 8);
-   tape.writeDWord(nextPos);
-
-   tape.seek(nextPos + base);
+   if (!emptystr(value)) {
+      tape.writeDWord((getlength(value) + 1) << 1);
+      tape.writeWideLiteral(value, getlength(value) + 1);
+   }
+   else tape.writeDWord(0);
 }
 
 inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, const wchar16_t* value1, const wchar16_t* value2)
 {
-   size_t pos = tape.Position() - base;
-
    tape.writeDWord(command);
-   tape.writeDWord(pos + 12);
-   tape.writeDWord(0);        // next place holder
-
+   // write total length including equal sign
+   tape.writeDWord((getlength(value1) + getlength(value2) + 2) << 1);
    if (!emptystr(value1)) {
       tape.writeWideLiteral(value1, getlength(value1));
       tape.writeWideChar('=');
@@ -247,13 +234,6 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, con
       tape.writeWideLiteral(value2);
    }
    else tape.writeWideChar(0);
-
-   // fix next field
-   size_t nextPos = tape.Position() - base;
-   tape.seek(base + pos + 8);
-   tape.writeDWord(nextPos);
-
-   tape.seek(nextPos + base);
 }
 
 //inline void writeLiteralRef(MemoryWriter& tape, MemoryWriter& data, const wchar16_t* s)

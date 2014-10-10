@@ -85,16 +85,16 @@
 //    #var x := aTape X.
 //    #var y := aTape Y.
 //].  
-//
-//#symbol ReflectionTester =
-//[
-//    #var anObject := String new:"abd".
-//
-//    #var aPresentation := anObject~textserializable literal. 
-//    
-//    #var aClass := Symbol new &literal:"system'Integer".
-//    #var anInstance := aClass new.
-//].
+
+#symbol ReflectionTester =
+[
+    #var anObject := String new:"abd".
+
+    #var aPresentation := anObject~textserializable literal. 
+    
+    #var aClass := Symbol new &literal:"system'Integer".
+    #var anInstance := aClass new.
+].
 
 #symbol TapeTest =
 [
@@ -125,6 +125,6 @@
 
 //    ClassTest eval.
 //    GetPropertyTester eval.
-//    ReflectionTester eval.
+    ReflectionTester eval.
     TapeTest eval.
 ].

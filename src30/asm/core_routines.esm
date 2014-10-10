@@ -1564,7 +1564,7 @@ procedure inline'api_free_index
   
 end
 
-procedure inline'handle_wrap
+procedure inline'handle_extension
 
   pushe
   bcopya
@@ -1582,6 +1582,46 @@ labNext:
   
   pope
   aloadbi 0
+  ajumpvi 0
+
+end
+
+procedure inline'handle_wrap
+
+  bcopya
+
+  aloadbi 0
+  pushe
+  asavesi 2
+
+  count
+  dcopye
+  elsen labGroup 02
+  
+  aloadbi 1
+  pope
+  ajumpvi 0
+
+labGroup:
+  dcopy 1
+
+labNext:
+  pope
+  get
+  pushd
+  mindex
+  elsen labFound 0FFFFFFFFh
+  popd
+  pushe
+  inc
+  count
+  less labNext
+
+  acopyr const : system'MethodNotFoundException
+  throw
+
+labFound:
+  pop
   ajumpvi 0
 
 end
@@ -1973,5 +2013,93 @@ labErr:
   copym NEW_MESSAGE_ID
   acallvi 0
   throw
+
+end
+
+
+procedure inline'class_getLen
+
+  ecopy 0
+  aloadsi 2
+  flag
+  andn elStructure
+  elsen labSkip 0
+  bcopya
+  count
+labSkip:
+  dcopye
+  bloadsi 3
+  nsave
+  aloadsi 1
+  quitn 3
+
+end
+
+procedure inline'class_get
+
+  bloadsi 3
+  flag
+  andn elStructure
+  elsen labErr 0
+  count
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  get
+  quitn 3
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
+end
+
+procedure inline'class_getName
+
+  aloadsi 4
+  nload
+  aloadsi 2
+  bloadsi 3
+  wname
+  ifn labErr 0
+  bloadsi 4
+  nsave
+  quitn 4
+
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'class_getClass
+
+  bcopya
+  class
+  quitn 1
+
+end
+
+procedure inline'class_indexOfMsg
+
+  bcopya
+  aloadsi 3 // ; get message
+  nload // ; load message id
+  acopyb
+  mindex
+  ifn labFalse 0FFFFFFFFh
+  acopyr const : system'true
+  quitn 2
+
+labFalse:
+  acopyr const : system'false
+  quitn 2
 
 end
