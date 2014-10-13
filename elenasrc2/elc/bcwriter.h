@@ -54,6 +54,7 @@ enum ObjectKind
    okIndexAccumulator,
    okExtraRegister,
    okBase,
+   okSubject,
 
    okIdle
 };
@@ -156,8 +157,7 @@ public:
    void declareSymbol(CommandTape& tape, ref_t reference);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
    void declareIdleMethod(CommandTape& tape, ref_t message);
-   void declareMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
-   void declareGenericMethod(CommandTape& tape, ref_t message, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
    void declareVariable(CommandTape& tape, ref_t nilReference);
    void declarePrimitiveVariable(CommandTape& tape, int value);
@@ -262,6 +262,7 @@ public:
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
+   void copySubject(CommandTape& tape);
    void loadSymbolReference(CommandTape& tape, ref_t reference);
    void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);

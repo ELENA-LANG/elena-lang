@@ -278,6 +278,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
    paramsType = mapSubject(PARAMS_SUBJECT);
    actionType = mapSubject(ACTION_SUBJECT);
    intPtrType = mapSubject(INTPTR_SUBJECT);
+   subjType = mapSubject(SUBJ_SUBJECT);
 
    defaultNs.add(module->Name());
 
@@ -778,6 +779,11 @@ ref_t Compiler::ModuleScope :: getIntPtrType()
    return intPtrType;
 }
 
+ref_t Compiler::ModuleScope :: getSubjType()
+{
+   return subjType;
+}
+
 // --- Compiler::SourceScope ---
 
 //Compiler::SourceScope :: SourceScope(Scope* parent)
@@ -1155,7 +1161,10 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      return ObjectInfo(okLocal, local.offset, local.sign_ref);
+      if (local.sign_ref == moduleScope->getSubjType()) {
+         return ObjectInfo(okSubject, local.offset, local.sign_ref);
+      }
+      else return ObjectInfo(okLocal, local.offset, local.sign_ref);
    }
    else return Scope::mapObject(identifier);
 }
@@ -1792,6 +1801,10 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             object = boxStructureField(scope, object, mode);
 
          break;
+      case okSubject:
+         // subject should be boxed into Subject class
+         object = boxObject(scope, object, 0);
+         break;
    }
 
    // skip the first breakpoint if it is not a symbol
@@ -1862,7 +1875,6 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 ObjectInfo Compiler :: compileSignatureReference(DNode objectNode, CodeScope& scope, int mode)
 {
    IdentifierString message;
-   ref_t sign_id = 0;
 
    // reserve place for param counter
    message.append('0');
@@ -2001,6 +2013,12 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, int mode)
    // NOTE: boxing should be applied only for the typed local parameter
    if (object.kind == okParams) {
       _writer.boxArgList(*scope.tape, scope.moduleScope->mapConstantReference(ARRAY_CLASS) | mskVMTRef);
+   }
+   else if (object.kind == okSubject) {
+      _writer.loadObject(*scope.tape, ObjectInfo(okLocalAddress, object.param));
+      _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapConstantReference(SIGNATURE_CLASS) | mskVMTRef);
+
+      return ObjectInfo(okAccumulator);
    }
    else if (object.kind == okIndexAccumulator) {
       allocateStructure(scope, 0, object);
@@ -4031,6 +4049,13 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
    else {
       _writer.doGenericHandler(*codeScope.tape);
 
+      if (withGenericMethods) {
+         _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
+         _writer.setSubject(*codeScope.tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
+         _writer.doGenericHandler(*codeScope.tape);
+         _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
+      }
+
       if (node != nsNone) {
          DNode nextNode = node.nextNode();
 
@@ -4044,8 +4069,6 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }
       else if (withGenericMethods) {
-         _writer.setSubject(*codeScope.tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
-         _writer.doGenericHandler(*codeScope.tape);
          _writer.loadObject(*codeScope.tape, ObjectInfo(okConstant, codeScope.moduleScope->mapConstantReference(NOMETHOD_EXCEPTION_CLASS)));
          _writer.throwCurrent(*codeScope.tape);
       }
@@ -4063,7 +4086,7 @@ void Compiler :: compileAction(DNode node, MethodScope& scope)
 
    // new stack frame
    // stack already contains previous $self value
-   _writer.declareMethod(*codeScope.tape, scope.message);
+   _writer.declareMethod(*codeScope.tape, scope.message, false);
    codeScope.level++;
 
 //   declareParameterDebugInfo(scope, codeScope.tape, false);
@@ -4089,7 +4112,7 @@ void Compiler :: compileExpressionAction(DNode node, MethodScope& scope)
 
    // new stack frame
    // stack already contains previous $self value
-   _writer.declareMethod(*codeScope.tape, scope.message);
+   _writer.declareMethod(*codeScope.tape, scope.message, false);
    codeScope.level++;
 
    declareParameterDebugInfo(scope, codeScope.tape, false, false);
@@ -4112,7 +4135,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
       ObjectInfo target = compileTerminal(node, scope, 0);
       if (target.kind == okConstant || target.kind == okField) {
-         _writer.declareMethod(*scope.tape, methodScope->message, false);
+         _writer.declareMethod(*scope.tape, methodScope->message, false, false);
 
          if (target.kind == okField) {
             _writer.loadObject(*scope.tape, ObjectInfo(okAccField, target.param));
@@ -4129,7 +4152,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
 
    // new stack frame
    // stack already contains previous $self value
-   _writer.declareMethod(*scope.tape, methodScope->message, true);
+   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
    scope.level++;
 
    _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
@@ -4154,7 +4177,7 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
 
    // new stack frame
    // stack already contains current $self reference
-   _writer.declareMethod(*scope.tape, methodScope->message, true);
+   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
    scope.level++;
 
    compileMessage(node, scope, ObjectInfo(okThisParam, 1, methodScope->getClassType()), 0);
@@ -4237,11 +4260,16 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    else {
       // new stack frame
       // stack already contains current $self reference
-      /*if (test(mode, HINT_GENERIC_METH)) {
-         _writer.declareGenericMethod(*codeScope.tape, scope.message);
-      }
-      else */_writer.declareMethod(*codeScope.tape, scope.message);
+      // the original message should be restored if it is a generic method
+      _writer.declareMethod(*codeScope.tape, scope.message, test(mode, HINT_GENERIC_METH));
       codeScope.level++;
+      // declare the current subject for a generic method
+      if (test(mode, HINT_GENERIC_METH)) {
+         _writer.copySubject(*codeScope.tape);
+         _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
+         codeScope.level++;
+         codeScope.mapLocal(ConstantIdentifier(SUBJECT_VAR), codeScope.level, codeScope.moduleScope->getSubjType());
+      }
 
       declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
 
@@ -4308,7 +4336,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       compileResendExpression(resendBody.firstChild(), codeScope);
    }
    else {
-      _writer.declareMethod(*codeScope.tape, scope.message, false);
+      _writer.declareMethod(*codeScope.tape, scope.message, false, false);
 
       DNode importBody = node.select(nsImport);
 
@@ -4455,7 +4483,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
                if (scope.info.methods.exist(methodScope.message, true))
                   scope.raiseError(errDuplicatedMethod, member.Terminal());
 
-               compileDispatcher(member.firstChild().firstChild(), methodScope);
+               compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
             }
             // if it is a normal method
             else {
@@ -4488,7 +4516,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
    }
 
    // if the VMT conatains newly defined generic handlers, overrides default one
-   if (test(scope.info.header.flags, elWithGenerics) && !test(inheritedFlags, elWithGenerics)) {
+   if (test(scope.info.header.flags, elWithGenerics) && scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), false)) {
       MethodScope methodScope(&scope);
       methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 

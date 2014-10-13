@@ -67,7 +67,7 @@ enum ByteCode
    bcClass          = 0x36,
    bcMIndex         = 0x37,
    bcECall          = 0x38,
-   bcClone          = 0x3E,
+   bcXClone         = 0x3E,
 
    bcNEqual         = 0x40,
    bcNLess          = 0x41,

@@ -2,12 +2,6 @@
 
 #symbol classControl =
 {
-    readLength &object:anObject &out'int:aLength
-        <class_getLen>.
-        
-    read &index:anIndex &object:anObject
-        <class_get>.
-        
     readName : anObject &out'shortarray:aBuffer &out'length:aLength
         <class_getName>.
 }.
@@ -31,15 +25,4 @@
 
     #method respondsTo &message:aMessage
         <class_indexOfMsg>.
-
-    #method fieldCount
-    [
-        #var(type:int)aCount.
-        classControl readLength &object:self &out'int:aCount.
-        
-        ^ IntNumber new &int:aCount.
-    ]
-
-    #method getFieldAt &index:anIndex
-        = classControl read &index:anIndex &object:self.
 }

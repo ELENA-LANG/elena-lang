@@ -366,7 +366,7 @@ inline % 038h
 
 end
 
-// ; clone
+// ; xclone
 
 inline % 3Eh
 

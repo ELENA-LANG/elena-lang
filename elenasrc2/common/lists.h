@@ -1755,7 +1755,7 @@ public:
             current = (Item*)(beginning + position);
 
             if (*current == key && current->item == item)
-               return current->item;
+               return true;
 
             // offset is used instead of pointer due to possible buffer relocation
             position = current->next;

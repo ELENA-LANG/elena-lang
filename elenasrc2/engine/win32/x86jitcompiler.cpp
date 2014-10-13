@@ -74,7 +74,7 @@ const int gcCommands[gcCommandNumber] =
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
    bcRToW, bcInsert, bcCreate, bcWSeek, bcWAdd,
    bcWSubCopy, bcNInsert, bcSelectR, bcWToL, bcWToR,
-   bcSubCopy, bcNSubCopy, bcXSeek, bcNext, bcClone,
+   bcSubCopy, bcNSubCopy, bcXSeek, bcNext, bcXClone,
    bcLRndNew, bcLRndNext, bcRAbs, bcRExp, bcRInt, 
    bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
    bcAddress, bcBWriteW,

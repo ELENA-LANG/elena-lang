@@ -2016,11 +2016,10 @@ labErr:
 
 end
 
-
-procedure inline'class_getLen
+procedure inline'arrptr_getLen
 
   ecopy 0
-  aloadsi 2
+  aloadsi 1
   flag
   andn elStructure
   elsen labSkip 0
@@ -2028,26 +2027,51 @@ procedure inline'class_getLen
   count
 labSkip:
   dcopye
-  bloadsi 3
+  bloadsi 2
   nsave
-  aloadsi 1
-  quitn 3
+  quitn 2
 
 end
 
-procedure inline'class_get
+procedure inline'arrptr_set
 
-  bloadsi 3
+  aloadsi 1
   flag
   andn elStructure
   elsen labErr 0
+  bcopya
+  count
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  aloadsi 3
+  set
+  quitn 3
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
+end
+
+procedure inline'arrptr_get
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
   count
   aloadsi 2
   nload
   notless labErr
   lessn labErr 0
   get
-  quitn 3
+  quitn 2
 
 labErr:
   callr system'OutOfRangeException
@@ -2100,6 +2124,88 @@ procedure inline'class_indexOfMsg
 
 labFalse:
   acopyr const : system'false
+  quitn 2
+
+end
+
+procedure inline'arr_indexOf
+
+  bcopya
+  flag
+  andn elStructure
+  elsen labErr 0
+  count
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+
+labNext:
+  bloadsi 1
+  get
+  bloadsi 3
+  ifb labFound
+  inc
+  less labNext
+
+  dcopy 0FFFFFFFFh
+
+labFound:
+  bloadsi 4
+  nsave
+  quitn 4
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure inline'arr_realloc
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
+  class
+  aloadsi 2
+  nload
+  create
+  bloadsi 0
+  count
+  dcopye        // ; index - old length
+  bcopya
+  count         // ; ext - new length
+  less labExpand
+
+  aloadsi 1
+  xclone
+  acopyb
+  quitn 2
+
+labExpand:
+  ecopyd
+  dcopy 0
+  pushb
+labNext:
+  bloadsi 2
+  get
+  bloadsi 0
+  xset
+  inc
+  less labNext
+
+  count
+  acopyr system'nil
+labNext2:
+  xset
+  inc
+  less labNext2
+  popa
   quitn 2
 
 end

@@ -38,4 +38,5 @@
     OpenArgTest eval.
     StructTest eval.
     GroupTest eval.
+    GenericMethodTest eval.
 ].

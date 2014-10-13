@@ -73,35 +73,22 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
    tape.write(blBegin, bsMethod, message);
 }
 
-void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withNewFrame)
+void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
 {
    // method-begin:
+   //   { pope }?
    //   open
    //   pusha
    tape.write(blBegin, bsMethod, message);
+
+   if (withPresavedMessage)
+      tape.write(bcPopE);
+
    if (withNewFrame) {
       tape.write(bcOpen, 1);
       tape.write(bcPushA);
    }
    tape.newLabel();     // declare exit point
-}
-
-void ByteCodeWriter :: declareGenericMethod(CommandTape& tape, ref_t message, bool withNewFrame)
-{
-   //// method-begin:
-   ////   popm            ; the current subject is saved in the stack
-   ////   open
-   ////   pushb
-   ////   bcopya
-   //tape.write(blBegin, bsMethod, message);
-   //tape.write(bcPopM);
-
-   //if (withNewFrame) {
-   //   tape.write(bcOpen, 1);
-   //   tape.write(bcPushB);
-   //   tape.write(bcBCopyA);
-   //}
-   //tape.newLabel();     // declare exit point
 }
 
 void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
@@ -495,6 +482,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          // pushe
          tape.write(bcPushE);
          break;
+      case okIndexAccumulator:
+         // pushd
+         tape.write(bcPushD);
+         break;
       case okLocalAddress:
          // pushf n
          tape.write(bcPushF, object.param);
@@ -708,7 +699,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    // acopyr vmt
    // create
    // bswap
-   // clone
+   // xclone
    // acopyb
 
    tape.write(bcDCopy, 0);
@@ -718,7 +709,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcACopyR, vmtReference);
    tape.write(bcCreate);
    tape.write(bcBSwap);
-   tape.write(bcClone);
+   tape.write(bcXClone);
    tape.write(bcACopyB);
 }
 
@@ -1839,6 +1830,12 @@ void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseR
    tape.write(bcASaveSI);
    tape.setLabel();
    tape.write(bcPopA);
+}
+
+void ByteCodeWriter :: copySubject(CommandTape& tape)
+{
+   // dcopysubj
+   tape.write(bcDCopySubj);
 }
 
 void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)

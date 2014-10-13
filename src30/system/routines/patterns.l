@@ -27,6 +27,34 @@
         = self cast:numericDetector.
 }
 
+// --- arrayOp ---
+
+#class(role,extension:array)arrayOp
+{        
+    #method indexOf &index:anIndex &object:anObject &out'int:aRetVal
+        <arr_indexOf>.
+        
+    #method reallocate &length:aNewLength
+        <arr_realloc>.
+
+    #method getAt &index:anIndex
+        <arrptr_get>.
+
+    #method setAt &index:anIndex &object:anObject
+        <arrptr_set>.
+        
+    #method read &out'length:aLength
+        <arrptr_getLen>.        
+        
+    #method length
+    [
+        #var(type:int)aCount.
+        self~arrayOp read &out'length:aCount.
+        
+        ^ IntNumber new &int:aCount.
+    ]
+}
+
 // --- indexable ---
 
 #class(extension:indexable) indexable

@@ -131,7 +131,7 @@ protected:
       // should not be referred directly ;
       // appropriate get function should be used instead
       ref_t intType, longType, realType, literalType, intPtrType;
-      ref_t boolType, actionType, paramsType;
+      ref_t boolType, actionType, paramsType, subjType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -233,6 +233,7 @@ protected:
       ref_t getParamsType();
       ref_t getActionType();
       ref_t getIntPtrType();
+      ref_t getSubjType();
 
       ref_t getClassType(ref_t reference);
 

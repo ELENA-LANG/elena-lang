@@ -24,7 +24,10 @@
 #class(signature) Signature
 {
     #field(type:int)theSignature.
-    
+
+    #constructor new &int:aSubject
+        <int_copy>.
+            
     #method => <qualify_message>.
 }
 

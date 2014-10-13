@@ -15,7 +15,7 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#define BUILD_NUMBER 9
+#define BUILD_NUMBER 10
 
 int main(int argc, char* argv[])
 {

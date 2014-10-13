@@ -34,7 +34,6 @@ Currently:
                              extensions'sm'dictionary set &x:2, and the object is extended with new field x 
 
 
-
                            - script engine support in ELENA code : execute script
                            - script engine support in ELENA code : return the script result
                            
@@ -246,8 +245,6 @@ week1:
                          for example LiteralValue - length should be increaded by one)
                        * constructor : should be possible to call base / another constructor
 
-                       * generic method - should be possible to refer the original subject??
-
                        * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
 
                        * think over reflection implementtion for static linked executable
@@ -268,7 +265,6 @@ week1:
 
                        * if more than 15 parameters passed - use open argument list
 
-                       * generic handlers : make possible to use passed subject
                        * generic handlers : resend handler - if no match found call the super handler
                        * generic handlers : should not be allowed for roles ??
                        * uncomment : declareGenericMethod / jumpIfNotEqualN
@@ -300,9 +296,13 @@ week1:
                        * rename / refactor weval - misleading name
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it? - better always box into array
-                       * split hook l into two : address l , hook ; or use internal function for exception raising / handling?
-
+                       * get rid of predefined classes, use predefined types to map type with classes ; all predefined types should be
+                         declared in system (types.l) ; what about exceptions, true / false, and so on???
+                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
+                       
               xdev - general implementation
+                       * generic method should be the last in VMT
+
                        * immplement 1e10r real literal
 
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal

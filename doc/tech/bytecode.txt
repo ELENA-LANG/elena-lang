@@ -162,7 +162,7 @@ ELENA byte codes (or ecodes)
 
  dcopyverb                  - index << ext.verb
  
- dcopysubj                  - index << ext.verb
+ dcopysubj                  - index << ext.subj
  
  dcopycount                 - index << ext.paramcount
  
@@ -330,7 +330,8 @@ ELENA byte codes (or ecodes)
 
  copy                       - base << acc, base.Length
 
- clone                      - base[i] << acc[i], base.Length
+ xclone                     - base[i] << acc[i], base.Length ;
+                              does not use write barrier
 
  ncopy                      - int[base] << int[acc]
 

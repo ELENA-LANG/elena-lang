@@ -3,6 +3,7 @@
 #define system'collections.
 #define system'dynamic.
 #define system'calendar.
+#define system'math.
 #define extensions.
 #define extensions'math.
 
@@ -12,9 +13,6 @@
 
 #symbol XTest =
 [
-    #var o := Struct(%writeLine, x [ system'console writeLine:x. ]).
-    
-    o writeLine:2.
 ].
 
 // --- OpenArgTest ---
@@ -605,4 +603,37 @@
     
     #var m1 := g m1:"called".
     #var m2 := g m2:"called".
+].
+
+// --- ClassWithGeneric ---
+
+#class ClassWithGeneric
+{
+    #field theExtension.
+    
+    #constructor new : anExtension
+    [
+        theExtension := anExtension.
+    ]
+    
+    #method x = 2.
+    
+    #method(generic)get
+    [
+        ^ nil.
+    ]
+    
+    #method => theExtension.
+}
+
+// --- GenericMethodTest --
+
+#symbol GenericMethodTest =
+[
+    #var o := ClassWithGeneric new:2.
+    
+    #var x := o x.
+    #var y := o y.
+    
+    #var s := o add:3.
 ].

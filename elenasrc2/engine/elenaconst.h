@@ -403,7 +403,8 @@ namespace _ELENA_
    #define SELF_VAR                "self"             // the current object group
    #define THIS_VAR                "$self"            // the current class instance
    #define SUPER_VAR               "$super"           // the predecessor class
-  // #define NEXT_VAR                "$next"            // the next group member
+   #define SUBJECT_VAR             "$subject"         // the current message
+  // #define NEXT_VAR                "$next"          // the next group member
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
@@ -489,6 +490,7 @@ namespace _ELENA_
    #define FUNCTION3_SUBJECT        "func3"
    #define FUNCTION4_SUBJECT        "func4"
    #define FUNCTION5_SUBJECT        "func5"
+   #define SUBJ_SUBJECT             "subj"
 
    #define STARTUP_CLASS            "'program"
 

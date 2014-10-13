@@ -1,4 +1,5 @@
 #define system.
+#define system'routines.
 #define system'text.
 #define system'dynamic.
 
@@ -12,7 +13,8 @@
         #var anObject := self.
 
         aResult << anObject Name.
-        #var(type:int) aCounter := anObject fieldCount int.
+        #var(type:int) aCounter.
+        anObject~arrayOp read &out'length:aCounter.
         (0 < aCounter) ?
         [       
             aResult << "{".
@@ -22,7 +24,7 @@
                 (0 == i) 
                     ! [ aResult << "," ].
                 
-                #var aMember := anObject getFieldAt &index:i.
+                #var aMember := anObject~arrayOp getAt &index:i.
 
                 aResult << aMember~textserializable literal.
             ].
