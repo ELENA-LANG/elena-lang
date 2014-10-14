@@ -27,16 +27,8 @@ Currently:
               sdev - api doc
                        * create API : system'Long
 
-              adev - conversion
-                       * intConvertor.convert&real
-                       
               xdev - script engine
                        * script:
-                           - make possible to construct the object dynamically - e.g. special object which can be extended at run time
-
-                             extensions'sm'dictionary set &x:2, and the object is extended with new field x 
-
-
                            - script engine support in ELENA code : execute script
                            - script engine support in ELENA code : return the script result
                            
@@ -60,113 +52,6 @@ Currently:
 
 1.9.17
 --------                                                                          
-week3:
-              xdev - script engine
-                       * use script to build objects
-                       * use script to parse
-                       * use script generate code
-                       * current implementation is done in two passes, simplify to one
-                       
-              xdev - elenasm
-                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-
-              sdev - prime project
-                       * interpreter : execute simple sample3.txt
-                       * interpreter : execute sample1.txt
-                       * interpreter : execute sample2.txt
-                       * interpreter : find out why the debugger does not work after script engine call
-
-              sdev - elenasm
-                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
-                       * using script engine from ELENA program - return the result
-                       * using script engine from ELENA program - error handling
-                       * support several grammar rules
-                       * methods - variables
-                       * methods - roles
-                       * if
-                       * if in the method
-                       * while
-                       * while in the method
-                       * method - clear stack after the last operation?
-                       * extends the object with dynamic code
-                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
-                       * inject vm console into IDE
-
-              sdev - prime project
-                       * simple calculator
-                       * vm console
-                       * calculator
-                       
-                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
-                         for all neighbours)
-                         
-              sdev - rosetta samples              
-                       * Call a function
-                       * Call an object method
-                       * Canny edge detector
-                       * Carmichael 3 strong pseudoprimes
-                       * Casting out nines
-                       * modify amb operator using open argument list 
-                       * arraymode: support collection of different types
-                       * update amb sample on rosetta code site
-                       * C samples
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              sdev - calculator
-                       * review
-
-              sdev - elenasm
-                       * refactor & optimize the engine code
-                       * should the parameters be saved in the correct order, so no need in reverse command?
-                       * should the object and role be saved in the correct order, so no need in reverse command?
-
-              sdev - interpreter
-                       * fix interpreter.bat (should start vm somehow)                       
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                       * trace could print the result directly to console?? (so it will simplify script debugging)
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-                                                         
-              sdev - prime project
-                       * eldoc: dynamic parser
-                       * upndown
-                       * script program - calculator
-                       
 week4:
               xmaint - hotfix : unicode
                        * u_helloworld does not show russian text correctly in just installed IDE
@@ -347,6 +232,7 @@ week1:
                          are constants / locals / fields  
                                presenterClassFactory new::anObject new:anObject &radix:aRadix.
                        * it should be possible to turn off control virtualization, direct calls, optimization code, jumps
+                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)
 
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
@@ -678,6 +564,113 @@ week2:
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object
 
+week3:
+              xdev - script engine
+                       * use script to build objects
+                       * use script to parse
+                       * use script generate code
+                       * current implementation is done in two passes, simplify to one
+                       
+              xdev - elenasm
+                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
+
+              sdev - prime project
+                       * interpreter : execute simple sample3.txt
+                       * interpreter : execute sample1.txt
+                       * interpreter : execute sample2.txt
+                       * interpreter : find out why the debugger does not work after script engine call
+
+              sdev - elenasm
+                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
+                       * using script engine from ELENA program - return the result
+                       * using script engine from ELENA program - error handling
+                       * support several grammar rules
+                       * methods - variables
+                       * methods - roles
+                       * if
+                       * if in the method
+                       * while
+                       * while in the method
+                       * method - clear stack after the last operation?
+                       * extends the object with dynamic code
+                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
+                       * inject vm console into IDE
+
+              sdev - prime project
+                       * simple calculator
+                       * vm console
+                       * calculator
+                       
+                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
+                         for all neighbours)
+                         
+              sdev - rosetta samples              
+                       * Call a function
+                       * Call an object method
+                       * Canny edge detector
+                       * Carmichael 3 strong pseudoprimes
+                       * Casting out nines
+                       * modify amb operator using open argument list 
+                       * arraymode: support collection of different types
+                       * update amb sample on rosetta code site
+                       * C samples
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
+
+              sdev - calculator
+                       * review
+
+              sdev - elenasm
+                       * refactor & optimize the engine code
+                       * should the parameters be saved in the correct order, so no need in reverse command?
+                       * should the object and role be saved in the correct order, so no need in reverse command?
+
+              sdev - interpreter
+                       * fix interpreter.bat (should start vm somehow)                       
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                       * trace could print the result directly to console?? (so it will simplify script debugging)
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
+                                                         
+              sdev - prime project
+                       * eldoc: dynamic parser
+                       * upndown
+                       * script program - calculator
+                       
 1.9.19
 --------
 week1:

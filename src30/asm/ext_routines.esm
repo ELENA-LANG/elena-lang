@@ -1,3 +1,5 @@
+define NEW_MESSAGE_ID       084000000h
+
 procedure inline'rnd_init
 
   bcopya
@@ -20,4 +22,22 @@ procedure inline'rnd_next
 
   quitn 3
 
+end
+
+procedure inline'evaluate
+
+  aloadsi 2
+  pusha
+  callextr extern : 'dlls'elenasm.EvaluateScript
+  pop
+  ifn labErr 0
+  quitn 2
+
+labErr:
+  callr extensions'dynamic'ScriptEngineException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
 end

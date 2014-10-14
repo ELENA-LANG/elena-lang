@@ -15,9 +15,10 @@ ELENA:
 [*] some bug fixes
 [+] system'dynamic: Group, Extension, classOp, DynamicStruct
 [+] system'io: TextReader, StreamReader, StreamWriter, BinaryReader, BinaryWriter
-[+] extensions'text: StringReader
 [-] system'text: TextReader (refactored to be a base class and moved to system'io, system'io'StreamReader should be used instead)
 [+] extensions'calendar: dateOp
+[+] extensions'dynamic: scriptEngine
+[+] extensions'text: StringReader
 
 ElenaScript:
 [*] script engine redesigned

@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 output=..\..\lib30
 namespace=extensions
 template=lib
@@ -19,5 +19,7 @@ math\matrix.l
 text\strings.l
 text\words.l
 text\enumerating.l
-dynamic\serializer.l
 routines\combinations.l
+calendar\dates.l
+dynamic\serializer.l
+dynamic\interpreter.l

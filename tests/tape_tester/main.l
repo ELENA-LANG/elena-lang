@@ -56,18 +56,21 @@
 //            
 //    #method get = theArray@thePointer.
 //}
-//
-//#symbol InterpreterTest =
-//[
-//    //console readChar.
+
+#symbol InterpreterTest =
+[
+    #var s := scriptEngine eval &literal:"{ x : 2 , y : 3 , writeLine : &x[ system'console.writeLine(x) ] }".
+    #var x := s x.
+    #var y := s y.
+    s writeLine:"Hello".
 //    
 //    #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
 //
 //    #var aTape := BFTape new &length:100.
 //
 //    l eval:aTape.
-//].
-//
+].
+
 //// === Roles ===
 //
 //#class(role)EGetProp
@@ -89,8 +92,7 @@
 #symbol ReflectionTester =
 [
     #var s := 2~textserializable literal. 
-    
-    
+        
     #var anObject := String new:"abd".
 
     #var aPresentation := anObject~textserializable literal. 
@@ -124,7 +126,7 @@
 
 #symbol Program =
 [ 
-//    InterpreterTest eval.
+    InterpreterTest eval.
 
 //    ClassTest eval.
 //    GetPropertyTester eval.
