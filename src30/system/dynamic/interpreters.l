@@ -1,5 +1,6 @@
 #define system.
 #define system'routines.
+#define system'math.
 
 // --- ETapeControl --
 
@@ -50,24 +51,29 @@
         #var aSubject := $subject.
         
         // looking for the current subject
-        #var(type:int)anIndex.
-        theStruct~arrayOp indexOf &index:0 &object:aSubject &out'index:anIndex.
-
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        #var aNotFound := true.
+        theStruct~arrayOp read &out'length:aLength.
+        #loop ((anIndex < aLength)and:aNotFound) ?
+        [
+            #var aCurrent := theStruct~arrayOp getAt &index:anIndex.
+            
+            (aCurrent~intOp equal &object:aSubject)
+                ? [ aNotFound := false. ]
+                ! [ anIndex := anIndex + 2. ].
+        ].
+                
         // if not found extend the structure
-        (anIndex == -1) ?
+        (anIndex == aLength) ?
         [                                    
-            #var(type:int)aLength.
-            theStruct~arrayOp read &out'length:aLength.
-
             theStruct := theStruct~arrayOp reallocate &length:(aLength + 2).
 
-            anIndex := aLength.
-
-            theStruct~arrayOp set &index:anIndex &object:aSubject.
+            theStruct~arrayOp setAt &index:anIndex &object:aSubject.
         ].
 
         // set the content for the appropriate field
-        theStruct~arrayOp set &index:(anIndex + 1) &object:anObject.
+        theStruct~arrayOp setAt &index:(anIndex + 1) &object:anObject.
     ]
     
     #method => theStruct.

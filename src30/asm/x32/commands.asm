@@ -2459,6 +2459,15 @@ labEnd:
 
 end
 
+// ; ncopyr
+
+inline %8Fh
+
+  fld   qword ptr [eax]
+  fistp dword ptr [edi]
+
+end
+
 // ; restore
 
 inline % 92h

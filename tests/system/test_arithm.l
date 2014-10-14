@@ -13,6 +13,16 @@
 
 #symbol XTest =
 [
+    #var ds := DynamicStruct new.
+    
+    ds set &x:1.
+    #var x := ds x.
+
+    ds set &y:2.
+    #var y := ds y.
+        
+    ds set &x:3.
+    #var x2 := ds x.        
 ].
 
 // --- OpenArgTest ---

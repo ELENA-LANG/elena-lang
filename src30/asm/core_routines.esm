@@ -2047,6 +2047,7 @@ procedure inline'arrptr_set
   lessn labErr 0
   aloadsi 3
   set
+  bcopya
   quitn 3
 
 labErr:
@@ -2130,13 +2131,14 @@ end
 
 procedure inline'arr_indexOf
 
-  bcopya
+  bloadsi 1
   flag
   andn elStructure
   elsen labErr 0
   count
   aloadsi 2
   nload
+  if labNotFound
   notless labErr
   lessn labErr 0
 
@@ -2148,6 +2150,7 @@ labNext:
   inc
   less labNext
 
+labNotFound:
   dcopy 0FFFFFFFFh
 
 labFound:
@@ -2171,11 +2174,11 @@ procedure inline'arr_realloc
   andn elStructure
   elsen labErr 0
   bcopya
-  class
   aloadsi 2
   nload
+  class
   create
-  bloadsi 0
+  bloadsi 1
   count
   dcopye        // ; index - old length
   bcopya
@@ -2200,7 +2203,7 @@ labNext:
   less labNext
 
   count
-  acopyr system'nil
+  acopyr const : system'nil
 labNext2:
   xset
   inc
@@ -2209,3 +2212,33 @@ labNext2:
   quitn 2
 
 end
+
+procedure inline'int_copyreal
+
+  aloadsi 2
+  bloadsi 3
+  ncopyr
+  aloadsi 1
+  quitn 3
+
+end
+
+procedure inline'intptr_equal
+
+  bloadsi 1
+  aloadsi 2
+  len 
+  elsen labErr 4 
+  nequal
+  selectr const : system'false const : system'true
+  quitn 3
+ 
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
+end
+

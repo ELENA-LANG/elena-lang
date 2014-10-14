@@ -422,6 +422,8 @@ ELENA byte codes (or ecodes)
 
  rcopyl                     - real[base] << long[acc] 
 
+ ncopyr                     - int[base] << real[acc]
+
  requal                     - real[acc] == real[base] ; if true - index = 1, if false - index = 0
 
  rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0

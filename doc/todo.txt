@@ -26,6 +26,9 @@ Currently:
 
               sdev - api doc
                        * create API : system'Long
+
+              adev - conversion
+                       * intConvertor.convert&real
                        
               xdev - script engine
                        * script:
@@ -230,6 +233,8 @@ week1:
                        * method not found event should provides the way to specify the object where the method was not found
 
               xdev - generic development                                                      
+                       * break normal / virtual loop
+
                        * calling the parent constructor ?? (see system'io'StreamReader (output should be created in the parent class), Exceptions and so on)
 
                        * could it be possible for several classes supporting literal type??
@@ -304,6 +309,7 @@ week1:
                        * generic method should be the last in VMT
 
                        * immplement 1e10r real literal
+                       * implement long hexadecimal constant
 
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
                          call parameter
@@ -477,6 +483,7 @@ week2:
                        * support GUI application
 
               adev - lib30                                        
+                       * mathOp.mod -- fix implemention for real number
                        * make sure the stream is correctly closed after the operations with files
                        * move Array.add(1) method to the extension ??
                        * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException

@@ -1371,9 +1371,20 @@
         
         ^ IntNumber new &int:aRetVal.
     ]
-    
-//    #method convert &int:anInt
-//        = anInt.
+
+    #method convert &real:aReal &out'int:aRetVal
+        <int_copyreal>.
+
+    #method convert &real:aReal
+    [
+        #var(type:int)aRetVal.
+        $self convert &real:aReal &out'int:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+                                    
+    #method convert &int:anInt
+        = anInt.
 }
 
 #class(role) longConvertor
@@ -1391,9 +1402,9 @@
         
         ^ LongNumber new &long:aRetVal.
     ]
-//    
-//    #method convert &long:aLong
-//        = aLong.
+    
+    #method convert &long:aLong
+        = aLong.
 }
 
 #class(role) realConvertor
@@ -1412,14 +1423,14 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
-//    #method convert &real:aReal
-//        = aReal.
-//        
-//    #method convert &int:anInt
-//        = RealNumber new &int:anInt.
-//        
-//    #method convert &long:aLong
-//        = RealNumber new &long:aLong.
+    #method convert &real:aReal
+        = aReal.
+        
+    #method convert &int:anInt
+        = RealNumber new &int:anInt.
+        
+    #method convert &long:aLong
+        = RealNumber new &long:aLong.
 }
 
 #class(role) literalConvertor

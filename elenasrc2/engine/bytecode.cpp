@@ -39,7 +39,7 @@ const char* _fnOpcodes[256] =
    "land", "lor", "lxor", "lshift", "lnot", "wtol", "lrndnew", "lrndnext",
 
    "rcopy", "rcopyl", "rcopyn", "requal", "rless", "radd", "rsub", "rmul",
-   "rdiv", "wtor", "rexp", "rln", "rabs", "rround", "rint", "unknown",
+   "rdiv", "wtor", "rexp", "rln", "rabs", "rround", "rint", "ncopyr",
 
    "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "unknown",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",

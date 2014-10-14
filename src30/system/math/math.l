@@ -17,7 +17,10 @@
         
     #method isZero
         = self equal &int:0.
-        
+
+    #method equal &object:aValue
+        <intptr_equal>.
+                        
 //    #method HiWord
 //    [
 //        #var(type:int)aWord. 

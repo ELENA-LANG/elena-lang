@@ -147,6 +147,7 @@ enum ByteCode
    bcRAbs           = 0x8C,
    bcRRound         = 0x8D,
    bcRInt           = 0x8E,
+   bcNCopyR         = 0x8F,
 
    bcDCopy          = 0x90,
    bcECopy          = 0x91,
