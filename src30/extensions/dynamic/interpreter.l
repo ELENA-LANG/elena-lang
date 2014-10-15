@@ -1,4 +1,5 @@
 #define system.
+#define system'dynamic.
 
 // --- ScriptEngineException --
 
@@ -23,3 +24,7 @@
     loadScript &literal:aLiteral &int:anEncoding &int:anAutoDetect
         <load>.
 }.
+
+// --- globlas ---
+
+#static globals = DynamicStruct new.

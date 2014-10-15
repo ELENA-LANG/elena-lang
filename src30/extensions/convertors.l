@@ -82,5 +82,6 @@
     ]
 
     save : anObject &to:aTarget
-        = aTarget write:(aTarget cast:(Variant new:anObject)).
+        = aTarget write:(aTarget cast:{ ! : x = Variant new:anObject ~$subject get. }).
 }.
+

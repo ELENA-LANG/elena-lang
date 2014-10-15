@@ -20,52 +20,9 @@ v  - vm script
 Currently:
 ------
 
-              sdev - api doc
-                       * create API : system'Long
 
 <=================> 
 
-1.9.17
---------                                                                          
-week4:
-              xmaint - hotfix : unicode
-                       * u_helloworld does not show russian text correctly in just installed IDE
-                       * problem with compiling the text with national letters
-
-              xdoc - blog
-                       * publish the post about hello world script example (both interactive and tape, store the tape into the global
-                         variable, visualize it content, execute it)
-                                             
-              xmaint - test
-                       * test all basic samples : files / console / datetime
-                       * test mttest
-                       * test: true and Boolean, intNumber and Integer, ...
-                       * test true / false operations with Boolean
-                       * test system'io'StreamWriter
-                       * test system'io'BinarayReader / system'io'BinarayWriter
-                       * test ByteArray operations
-                       * test padLeft, padRight, trimLeft, trimRight, trim
-                       * test ShortArray operations
-                       * test isuppercase / islowercase / tolowercase / touppercase
-
-                       * inline'handle_tape: - test the message with argument list
-
-                       *  in the following code throw is executed twice
-                          #symbol XTest =
-                          [
-                              #var(type:int)n := 2.
-    
-                              n error.
-                          ].
-                       * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)
-                       
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
-                       * boxing: message target / operand, operator target / operand
-                       * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
-                         script, so we could check if the caller stack is included correctly)
-                       * try to automize build process  
-                       
-                       
 1.9.18
 --------
 week1:
@@ -441,8 +398,11 @@ week2:
                        * make sure stack allocated objects are correctly boxed for the custom int roles
                        * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
                        * controlTape should verify the range
+                       * literalOp : uppercase / lowercase
+                       * charOp : isUppercase / isLowercase
 
               sdev - api doc
+                       * create API : system'CharValue
                        * create API : ...
                        * it should be listed extensions per supported protocol
                        * create API doc
@@ -507,6 +467,8 @@ week2:
                        * review all classes : simplify / refactore (look if the code can be reused)
                        * review extensions'consoleEx implementation - do we need Wrap?
                        * comparing literal and char (see for example trans sample)
+                       * optimize extensions'convertor.save&to ; when literal to integer converted, int value is created which has no use,
+                         nested class is dynamic as well
                                                       
               adev - lib30 optimization
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
@@ -664,7 +626,25 @@ week3:
                        * eldoc: dynamic parser
                        * upndown
                        * script program - calculator
+
+week 4:
+              xmaint - hotfix : unicode
+                       * u_helloworld does not show russian text correctly in just installed IDE
+                       * problem with compiling the text with national letters
+
+              xmaint - test
+                       * test system'io'StreamWriter
+                       * test system'io'BinarayReader / system'io'BinarayWriter
+                       * test ByteArray operations
+                       * test ShortArray operations
+
+                       * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)
                        
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                       * boxing: message target / operand, operator target / operand
+                       * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
+                         script, so we could check if the caller stack is included correctly)
+                                              
 1.9.19
 --------
 week1:
@@ -961,7 +941,6 @@ stack:
     - is it possible to automize the process of data transfer over sockets?
     - database application which manage TODOs and KNOWNBUGs, possible to create
       what's new automatically, statistics
-    - optimize insert / delete / copysubs to copy dwords rather then bytes / words
     - automatic code writing / reading from stream
     - optimize implement integer / longinteger modulus implementation in assembelr
     - basic'intnumber / longnumber / real should support method "in" to validate range
@@ -993,8 +972,6 @@ stack:
     - compile module only if it was  changed
        - probably we need to always use long jumps for bytecode jump command, it will
          simplify JIT compiler code
-       - empty methods
-       - methods which returns constant
        - cosntant collections / groups / casts
        - optimize group / annex routine
        - shl / shr commands considered to be not optimal
@@ -1028,13 +1005,10 @@ stack:
        - get rid of wait command for float-base operations?
 
        - try to use pairing instructions
-       - we do not need to check for 'mg -> yg conflict' for newly created
-         objects
        - MMX, SSE, SSE2 commands; could we start to use these commands?
        - PREFETCH command could be useful
        - compiler option which specifies the target CPU
     - relative fixup works incorrectly if the reference has an offset
-    - check if Terminal is nsNone and generates the exception
     - optimize hash table filling for Linker tables
 
     - optimize the code using profiler

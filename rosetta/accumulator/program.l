@@ -17,7 +17,7 @@ ELENA is OO language, so a function is in fact an object
     (:x) [ self append:x ].
 
 #symbol Accumulator = (:anInitialValue)
-    [ Wrap(Function, Variable new:anInitialValue) ].
+    [ Extension(Function, Variable new:anInitialValue) ].
 
 #symbol Program =
 [

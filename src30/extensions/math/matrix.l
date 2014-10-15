@@ -120,7 +120,7 @@
             ]
         ].
         
-        ^ Wrap(%Even[ even value ], a).
+        ^ Extension(%Even[ even value ], a).
     ]
 
     #method Determinant

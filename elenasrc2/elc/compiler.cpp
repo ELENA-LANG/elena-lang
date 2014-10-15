@@ -2141,7 +2141,10 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, ObjectInfo object, si
    DNode            arg = node.firstChild();
 
    // if it is a dispatch operation
-   if (arg == nsTypedMessageParameter && verb_id != 0) {
+   if (arg == nsTypedMessageParameter/* && verb_id != 0*/) {
+      if (verb_id == 0)
+         scope.raiseError(errInvalidOperation, verb);
+
       count = 1;
 
       mode |= HINT_DISPATCH_MODE;

@@ -6,6 +6,7 @@
 #define system'math.
 #define extensions.
 #define extensions'math.
+#define extensions'dynamic.
 
 #class(role)XTester
 {
@@ -13,6 +14,9 @@
 
 #symbol XTest =
 [
+    #var s := "ABS".
+    
+    #var b := characterController toLowerCase &literal::s.
 ].
 
 // --- OpenArgTest ---

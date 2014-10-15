@@ -525,7 +525,7 @@
         theValue := theValue / anOperand.
     ]
     
-    #method cast : aTypecaster = aTypecaster int::$self.
+    #method cast : aTypecaster = aTypecaster eval &int::$self.
 
     #method value <= %int.
 
@@ -695,7 +695,7 @@
         theValue := theValue / LongNumber new &int:anOperand.
     ]
     
-    #method cast : aTypecaster = aTypecaster long::$self.
+    #method cast : aTypecaster = aTypecaster eval &long::$self.
 
     #method value <= %long.
 
@@ -872,7 +872,7 @@
         theValue := theValue divide &long:anOperand.
     ]
     
-    #method cast : aTypecaster = aTypecaster long::$self.
+    #method cast : aTypecaster = aTypecaster eval &real::$self.
 
     #method value <= %real.
 
@@ -1028,9 +1028,12 @@
         <ws_add>.
 
     #method getAt : aParam
+        <= %getAt &index:(aParam int).
+
+    #method getAt &index:anIndex
     [
         #var(type:short)aChar.
-        $self read &index:(aParam int) &out'short:aChar.
+        $self read &index:anIndex &out'short:aChar.
         
         ^ CharValue new &short:aChar.
     ]

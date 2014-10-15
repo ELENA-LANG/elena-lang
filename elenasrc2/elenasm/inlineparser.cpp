@@ -482,6 +482,50 @@ void InlineScriptParser :: parseDirectives(MemoryDump& tape, _ScriptReader& read
          }
          else throw EParseError(reader.info.column, reader.info.row);
       }
+      else if(ConstantIdentifier::compare(token, "#map")) {
+         token = reader.read();
+
+         IdentifierString forward;
+         if (reader.info.state == dfaFullIdentifier) {
+            forward.append(token);
+
+            token = reader.read();
+            if(!ConstantIdentifier::compare(token, "="))
+               throw EParseError(reader.info.column, reader.info.row);
+
+            token = reader.read();
+            if (reader.info.state == dfaFullIdentifier) {
+               forward.append('=');
+               forward.append(token);
+               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
+         else throw EParseError(reader.info.column, reader.info.row);
+      }
+      else if(ConstantIdentifier::compare(token, "#use")) {
+         token = reader.read();
+
+         if (reader.info.state == dfaQuote) {
+            writer.writeCommand(USE_VM_MESSAGE_ID, reader.token);
+         }
+         else {
+            Path package;
+            package.append(token);
+
+            token = reader.read();
+            if(!ConstantIdentifier::compare(token, "="))
+               throw EParseError(reader.info.column, reader.info.row);
+
+            token = reader.read();
+            if (reader.info.state == dfaQuote) {
+               package.append('=');
+               package.append(reader.token);
+               writer.writeCommand(USE_VM_MESSAGE_ID, package);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
+      }
       else return;
    }
    while(true);

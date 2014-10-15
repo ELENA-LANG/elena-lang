@@ -210,7 +210,7 @@
 // --- consoleEx ---
 
 #static consoleEx
-    = Wrap(console, outputOp, inputOp).
+    = Extension(console, outputOp, inputOp).
 
 // --- printingLn ---
 
