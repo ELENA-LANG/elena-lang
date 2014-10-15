@@ -448,7 +448,7 @@ size_t CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader)
 void CFParser :: saveScript(TokenInfo& token, _ScriptReader& reader, Rule& rule)
 {
    token.read(reader);
-   while (!token.compare(">") || token.state == dfaQuote) {
+   while (!token.compare("=>") || token.state == dfaQuote) {
       token.writeLog();
 
       token.read(reader);
@@ -471,7 +471,7 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
          }
          else rule.terminal = writeBodyText(token.value);
       }
-      else if (token.compare("<")) {
+      else if (token.compare("<=")) {
          saveScript(token, reader, rule);
       }
       else if (token.state == dfaPrivate) {

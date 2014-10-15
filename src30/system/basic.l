@@ -896,6 +896,11 @@
     [
         theValue := aCode.
     ]
+    
+    #constructor new &int:aCode
+    [
+        theValue := aCode short.
+    ]
 
     #method equal &int:anOperand 
         <int_equal>.

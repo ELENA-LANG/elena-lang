@@ -31,7 +31,37 @@ procedure inline'evaluate
   callextr extern : 'dlls'elenasm.EvaluateScript
   pop
   ifn labErr 0
+  elsen labSkip 0FFFFFFFFh
+  acopyr const : system'nil
+labSkip:
   quitn 2
+
+labErr:
+  callr extensions'dynamic'ScriptEngineException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
+end
+
+procedure inline'load
+
+  aloadsi 4
+  nload
+  pushd
+  aloadsi 4
+  nload
+  pushd
+  aloadsi 4
+  pusha
+  callextr extern : 'dlls'elenasm.EvaluateFile
+  popi 3
+  ifn labErr 0
+  elsen labSkip 0FFFFFFFFh
+  acopyr const : system'nil
+labSkip:
+  quitn 4
 
 labErr:
   callr extensions'dynamic'ScriptEngineException

@@ -16,4 +16,10 @@
 {
     evaluate &literal:aScript
         <evaluate>.
+        
+    load &path:aPath
+        <= %loadScript &literal::aPath &int:0 &int:-1.
+        
+    loadScript &literal:aLiteral &int:anEncoding &int:anAutoDetect
+        <load>.
 }.

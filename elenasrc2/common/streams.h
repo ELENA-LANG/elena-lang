@@ -450,6 +450,8 @@ public:
       if (length > 0) {
          wcsncpy(s, _text + _offset, length);
          s[length] = 0;
+         length = StringHelper::find(s, '\n', length - 1) + 1;
+         s[length] = 0;
 
          _offset += length;
 

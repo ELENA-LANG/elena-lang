@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   10
+#define ELT_BUILD_NUMBER   11
  
 // global variables
 int   _encoding = feAnsi;
@@ -80,6 +80,12 @@ bool executeCommand(const wchar16_t* line, bool& running)
    return true;
 }
 
+bool executeCommand(const wchar16_t* line)
+{
+   bool dummy;
+   return executeCommand(line, dummy);
+}
+
 void runSession()
 {
    char                        buffer[MAX_LINE];
@@ -120,6 +126,26 @@ int main(int argc, char* argv[])
    printf("ELENA command line VM terminal %d.%d.%d (C)2011-2014 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
    loadScript(ConstantIdentifier("scripts\\elt.es"));
+
+   // load script passed via command line arguments
+   if (argc > 1) {
+      for (int i = 1 ; i < argc ; i++) {
+         if (argv[i][0] == '-') {
+            // check exit command
+            if (argv[i][1] == 'q')
+               return 0;
+
+            String<wchar_t, 260> param;
+            param.copy(argv[i]);
+            // if the parameter is followed by argument
+            if (i + 1 < argc && argv[i+1][0] != '-') {
+               param.append(argv[i + 1]);
+            }
+
+            executeCommand(param + 1);
+         }
+      }
+   }
 
    runSession();
 }

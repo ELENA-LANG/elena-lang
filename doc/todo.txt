@@ -20,33 +20,8 @@ v  - vm script
 Currently:
 ------
 
-              sdev - samples
-                       * migrate tape sample
-                       * migrate interpreter
-
               sdev - api doc
                        * create API : system'Long
-
-              xdev - script engine
-                       * script:
-                           - script engine support in ELENA code : execute script
-                           - script engine support in ELENA code : return the script result
-                           
-
-                           - parsing expression
-                           - text generating
-                           - script engine support in ELENA code
-                           - script engine support in ELENA code : object creating
-                           - script engine support in ELENA code : script implementing
-
-                           - construct objects - implement expression, with variables
-                           - using roles
-                           - branching
-                           - branching in code
-                           - assigning values to dynamic objects
-                           - global variables
-                           - script engine support in ELENA code : text generating                           
-                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
 
 <=================> 
 
@@ -370,6 +345,12 @@ week2:
 
               adev - lib30                                        
                        * mathOp.mod -- fix implemention for real number
+                           #method mod : anOperand
+                           [
+                              #var(type:real) aux.
+                              (self/anOperand)~realOp Round &out'real:aux.
+                              ^(self - (aux*anOperand)).
+                           ]  
                        * make sure the stream is correctly closed after the operations with files
                        * move Array.add(1) method to the extension ??
                        * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
@@ -565,7 +546,20 @@ week2:
                          to any object
 
 week3:
+
               xdev - script engine
+                       * if the script contains only grammar, virtual machine should not be called
+
+                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
+                           - text generating
+                           - construct objects - implement expression, with variables
+                           - using roles
+                           - branching
+                           - branching in code
+                           - assigning values to dynamic objects
+                           - global variables
+                           - script engine support in ELENA code : text generating                           
+
                        * use script to build objects
                        * use script to parse
                        * use script generate code

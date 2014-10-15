@@ -11,7 +11,7 @@
         #var(type:int)aLength.
         
         Params read &out'length:aLength.
-        
+
         ^ Params@(aLength - anIndex int).
     ]
 }.

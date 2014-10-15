@@ -1,6 +1,7 @@
 #define system.
 #define system'routines.
 #define extensions'text.
+#define extensions'dynamic.
 
 // --- Tape ---
 
@@ -40,17 +41,17 @@
     
     #method input
     [
-        (theArray@thePointer) write &int:(console readChar).
+        (theArray@thePointer) write &int::(console readChar).
     ]
     
     #method output
     [
-        console write:(CharValue new:(theArray@thePointer)).
+        console write:(CharValue new &int::(theArray@thePointer)).
     ]
 
     #method run : aLoop
     [
-        control while:[ 0 < (theArray@thePointer) ] &do: [ aLoop eval:self ].
+        control while:[ 0 < (theArray@thePointer) ] &do: [ aLoop eval:self. ].
     ]
             
     #method get = theArray@thePointer.
@@ -103,7 +104,7 @@
     
     #method repeatUntil
     [
-        theTape run: aTape [ interpreter'Interpreter new:aTape eval:theLoopBody ].
+        theTape run: aTape [ interpreter'Interpreter new:aTape eval:theLoopBody. ].
             
         ^ theTape.
     ]
@@ -122,12 +123,12 @@
 
     #method eval : anObject
     [
-        $self eval::anObject.
+        $self eval &literal::anObject.
     ]
         
     #method eval &literal:aLiteral
     [
-        control foreach:aLiteral &do:$self.
+        control foreach:aLiteral &do: ch [ self eval &char:ch. ].
     ]
 
     #method eval &char:aChar
@@ -156,18 +157,18 @@
 
 #symbol program2 =
 [
-    console readChar.
+//    console readChar.
     
     ('program'arguments length == 1)?
         [  console write:"Please provide the path to the file to interpret". #throw BreakException new. ].
 
-    system'dynamic'scriptControl load &path:"rules.es"
-        | onScriptError : ex [ console writeLine:(ex Message). #break nil. ].
+    scriptEngine load &path:"rules.es"
+        | if &ScriptFailed : ex [ console writeLine:(ex Message). #break nil. ].
 
     #var aBFTape := BFTape new &length:1024.
     
-    #var aSourceTape := system'dynamic'scriptControl load &path:('program'arguments@1)
-        | onScriptError : ex [ console writeLine:(ex Message). #break nil. ].
+    #var aSourceTape := scriptEngine load &path:('program'arguments@1)
+        | if &ScriptFailed : ex [ console writeLine:(ex Message). #break nil. ].
     
     aSourceTape eval:aBFTape.
 ].
