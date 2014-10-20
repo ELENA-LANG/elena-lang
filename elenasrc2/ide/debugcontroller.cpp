@@ -235,8 +235,8 @@ size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* pat
 void DebugController :: processStep()
 {
    if (_debugger.isTrapped()) {
-      if (_debugger.isVMBreakpoint()) {
-         onVMBreakpoint();
+      if (_debugger.isInitBreakpoint()) {
+         onInitBreakpoint();
 
          return;
       }
@@ -268,28 +268,6 @@ bool DebugController :: start()
    onStart();
 
    return _debugger.isStarted();
-}
-
-bool  DebugController :: loadDebugData(const tchar_t* path)
-{
-   clearDebugInfo();
-
-   FileReader	file(path, _T("rb+"), feRaw, false);
-
-   if (file.isOpened()) {
-      // load signature
-      char signature[10];
-      file.read(signature, strlen(DEBUG_MODULE_SIGNATURE));
-      if (strncmp(signature, DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE)) != 0)
-         return false;
-
-      // load entry point
-      file.readDWord(_entryPoint);
-
-      // load debug info
-      return loadDebugData(file);
-   }
-   else return false;
 }
 
 bool DebugController :: loadSymbolDebugInfo(const wchar16_t* reference, StreamReader&  addressReader)
@@ -371,7 +349,7 @@ bool DebugController :: loadTapeDebugInfo(StreamReader& reader, size_t size)
    return true;
 }
 
-bool DebugController :: loadDebugData(StreamReader& reader)
+bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress)
 {
    IdentifierString reference;
    while (!reader.Eof()) {
@@ -381,6 +359,14 @@ bool DebugController :: loadDebugData(StreamReader& reader)
       // define the next record position
       int size = reader.getDWord() - 4;
       int nextPosition = reader.Position() + size;
+
+      if (setEntryAddress) {
+         // peek entry point (without changing reader position)
+         _entryPoint = reader.getDWord();
+         reader.seek(reader.Position() - 4);
+
+         setEntryAddress = false;
+      }
 
    //   // if it is a VM temporal symbol and tape debugging as allowed
    //   if (ConstantIdentifier::compare(reference, TAPE_SYMBOL) && _debugTape) {
@@ -395,25 +381,27 @@ bool DebugController :: loadDebugData(StreamReader& reader)
    return true;
 }
 
-void DebugController :: onVMBreakpoint()
+void DebugController :: onInitBreakpoint()
 {
-   DebugReader reader(&_debugger, _vmDebugPtr, _vmDebugSize);
+   bool starting = _debugInfoSize == 0;
+
+   DebugReader reader(&_debugger, _debugInfoPtr, _debugInfoSize);
+      // the debug section starts with size field
+   reader.setSize(reader.getDWord());
 
    // if there are new records in debug section
    if (!reader.Eof()) {
-      // if it is a first time the debug data is loaded
-      if (_vmDebugSize == 0) {
-         // skip idle entry address
-         reader.getDWord();
-      }
+      loadDebugData(reader, starting);
 
-      loadDebugData(reader);
-
-      _vmDebugSize = reader.Position();
+      _debugInfoSize = reader.Position();
 
       // continue debugging
       if (_postponed.stepMode) {
-         _debugger.setStepMode();
+         if (starting) {
+            _debugger.setBreakpoint(_entryPoint, false);
+         }
+         else _debugger.setStepMode();
+
          _events.setEvent(DEBUG_RESUME);
       }
       else if (_postponed.gotoMode) {
@@ -471,22 +459,16 @@ bool DebugController :: start(const tchar_t* programPath, const tchar_t* argumen
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
 
-   if (debugMode == dbmStandalone) {
-      Path debugDataPath(programPath);
-      debugDataPath.changeExtension(_T("dn"));
+   if (debugMode != dbmNone) {
+      _entryPoint = findEntryPoint(programPath);
 
-      if (!loadDebugData(debugDataPath))
-         return false;
-
-      loadBreakpoints(breakpoints);
+      _debugger.setInitHook();
    }
-   else if (debugMode == dbmElenaVM) {
-      _entryPoint = 0x401000; // !! is it possible there could be another entry address?
+   else {
+      _entryPoint = 0;
 
-      _vmHookMode = true;
-      _debugger.setVMHook();
+      clearBreakpoints();
    }
-   else clearBreakpoints();
 
    return start();
 }
@@ -496,7 +478,7 @@ void DebugController :: run()
    if (_running || !_debugger.isStarted())
       return;
 
-   if (_vmHookMode) {
+   if (_debugInfoPtr == 0 && _entryPoint != 0) {
       _debugger.setBreakpoint(_entryPoint, false);
       _postponed.clear();
    }
@@ -512,20 +494,12 @@ void DebugController :: runToCursor(const tchar_t* name, const tchar_t* path, in
    if (_running || !_debugger.isStarted())
       return;
 
-   // if it is VM client the debug info should be loaded at first
-   if (_vmHookMode) {
+   // the debug info should be loaded at first
+   if (_debugInfoPtr == 0 && _entryPoint != 0) {
       _debugger.setBreakpoint(_entryPoint, false);
 
       _postponed.setGotoMode(col, row, name, path);
    }
-   // !! temporal
-   //// if it is a temporal tape
-   //else if (ConstIdentifier::compare(name, TAPE_SYMBOL)) {
-   //   size_t address = findNearestAddress((DebugLineInfo*)_tape.get(4), _tape[0], row, col);
-   //   if (address != 0xFFFFFFFF) {
-   //      _debugger.setBreakpoint(address, false);
-   //   }
-   //}
    else {
       _Module* module = _modules.get(name);
       if (module != NULL) {
@@ -549,7 +523,7 @@ void DebugController :: stepOverLine()
    if (!_started) {
       _started = true;
 
-      if (_vmHookMode)
+      if (_debugInfoPtr == 0 && _entryPoint != 0)
          _postponed.setStepMode();
 
       _debugger.setBreakpoint(_entryPoint, false);
@@ -577,7 +551,7 @@ void DebugController :: stepInto()
    if (!_started) {
       _started = true;
 
-      if (_vmHookMode)
+      if (_debugInfoPtr == 0 && _entryPoint != 0)
          _postponed.setStepMode();
 
       _debugger.setBreakpoint(_entryPoint, false);
@@ -614,8 +588,7 @@ void DebugController :: stepOver()
    if (!_started) {
       _started = true;
 
-      if (_vmHookMode)
-         _postponed.setStepMode();
+      _postponed.setStepMode();
 
       _debugger.setBreakpoint(_entryPoint, false);
    }

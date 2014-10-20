@@ -281,7 +281,9 @@ void BreakpointContext :: setHardwareBreakpoint(size_t address, ThreadContext* c
       context->setTrapFlag();
       context->breakpoint.next = address;
    }
-   else context->setHardwareBreakpoint(address);
+   else {
+      context->setHardwareBreakpoint(address);
+   }
 
    if (withStackControl) {
       context->breakpoint.stackLevel = context->context.Ebp;
@@ -347,7 +349,7 @@ Debugger :: Debugger()
    : threads(NULL, freeobj)
 {
    started = false;
-   vm_breakpoint = 0;
+   init_breakpoint = 0;
    threadId = 0;
    current = NULL;
 
@@ -457,8 +459,8 @@ void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
             break;
 
          // stop if it is VM Hook mode
-         if (vm_breakpoint == -1) {
-            vm_breakpoint = current->context.Eip;
+         if (init_breakpoint == -1) {
+            init_breakpoint = current->context.Eip;
             trapped = true;
          }
          else if (current->context.Eip >= minAddress && current->context.Eip <= maxAddress) {
@@ -475,9 +477,9 @@ void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
             stepMode = false;
             current->setTrapFlag();
          }
-         else if (vm_breakpoint != 0 && vm_breakpoint != 0xFFFFFFFF) {
+         else if (init_breakpoint != 0 && init_breakpoint != 0xFFFFFFFF) {
             trapped = true;
-            vm_breakpoint = current->context.Eip;
+            init_breakpoint = current->context.Eip;
          }
          break;
       default:
@@ -651,7 +653,7 @@ void Debugger :: reset()
    steps.clear();
    breakpoints.clear();
 
-   vm_breakpoint = 0;
+   init_breakpoint = 0;
    stepMode = false;
    needToHandle = false;
    exitCheckPoint = false;

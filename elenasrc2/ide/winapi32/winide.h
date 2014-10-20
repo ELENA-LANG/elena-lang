@@ -175,6 +175,8 @@ class Win32AppDebugController : public AppDebugController
       AppDebugController::clearDebugInfo();
    }
 
+   virtual size_t findEntryPoint(const tchar_t* programPath);
+
 public:
    void assign(Window* receptor)
    {
@@ -216,7 +218,7 @@ public:
       _notify(IDE_DEBUGGER_LOADTEMPMODULE, name, tapePtr);
    }
 
-   virtual void onVMBreakpoint();
+   virtual void onInitBreakpoint();
 
    Win32AppDebugController()
    {

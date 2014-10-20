@@ -338,14 +338,10 @@ void ProjectSettingsDialog :: onCreate()
    //setCheckState(IDC_SETTINGS_DEBUG, );
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Enabled"));
-   addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Enabled for VM Client"));
 
    int mode = Project::getDebugMode();
-   if (mode == -1) {
+   if (mode != 0) {
       setComboBoxIndex(IDC_SETTINGS_DEBUG, 1);
-   }
-   else if (mode == -2) {
-      setComboBoxIndex(IDC_SETTINGS_DEBUG, 2);
    }
    else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
@@ -393,10 +389,7 @@ void ProjectSettingsDialog :: onOK()
 
    int index = getComboBoxIndex(IDC_SETTINGS_DEBUG);
    if (index == 1) {
-      Project::setDebugMode(_ELENA_::dbmStandalone);
-   }
-   else if (index == 2) {
-      Project::setDebugMode(_ELENA_::dbmElenaVM);
+      Project::setDebugMode(_ELENA_::dbmActive);
    }
    else Project::setDebugMode(_ELENA_::dbmNone);
 

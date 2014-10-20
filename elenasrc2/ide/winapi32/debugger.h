@@ -183,7 +183,7 @@ class Debugger
    bool              stepMode;
    bool              needToHandle;
    bool              exitCheckPoint;
-   size_t            vm_breakpoint;
+   size_t            init_breakpoint;
 
    BreakpointContext breakpoints;
 
@@ -209,7 +209,7 @@ class Debugger
 public:
    bool isStarted() const { return started; }
    bool isTrapped() const { return trapped; }
-   bool isVMBreakpoint() const { return vm_breakpoint == current->context.Eip; }
+   bool isInitBreakpoint() const { return init_breakpoint == current->context.Eip; }
    bool checkAutoStep();
 
    ThreadContext* Context() { return current; }
@@ -242,7 +242,7 @@ public:
 
    void activate();
 
-   void setVMHook() { vm_breakpoint = -1; }
+   void setInitHook() { init_breakpoint = -1; }
 
    Debugger();
 };

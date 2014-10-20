@@ -460,10 +460,9 @@ bool Instance :: restart(bool debugMode)
    if (_linker->getDebugMode()) {
       printInfo(_T("Debug mode..."));
 
-      // put size and entry point place holders
+      // put size place holders
       int dummy = 0;
       getTargetDebugSection()->write(0, &dummy, 4);
-      getTargetDebugSection()->write(4, &dummy, 4);
    }
 
    // load predefined code

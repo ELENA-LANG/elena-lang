@@ -126,4 +126,8 @@ Image :: Image(bool standAlone)
    else writer.write(ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE));
 
    writer.align(4, 0);
+
+   // reserve size field for debug section
+   MemoryWriter dbgWriter(&_debug);
+   dbgWriter.writeDWord(0);
 }

@@ -61,6 +61,12 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
 
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
+
+  // fix up debug section if required
+   if (project->BoolSetting(opDebugMode)) {
+      _debug.writeDWord(0, _debug.Length());
+   }
+   else _debug.clear();
 }
 
 ref_t ExecutableImage :: getDebugEntryPoint()
@@ -88,6 +94,8 @@ _Memory* ExecutableImage :: getTargetSection(size_t mask)
          return &_bss;
       case mskTLSRef:
          return &_tls;
+      case mskDebugRef:
+         return &_debug;
       default:
          return NULL;
    }

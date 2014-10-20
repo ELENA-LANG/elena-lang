@@ -102,11 +102,11 @@ protected:
 
    public:
       virtual bool Eof() { return (_position >= _size); }
-      virtual size_t Position() { return _position - 4; }
+      virtual size_t Position() { return _position; }
 
       virtual bool seek(size_t position)
       {
-         _position = position + 4;
+         _position = position;
 
          return true;
       }
@@ -123,15 +123,20 @@ protected:
       virtual const wchar16_t* getWideLiteral() { return NULL; } // !! temporal not supported
       virtual const char* getLiteral() { return NULL; } // !! temporal not supported
 
+      void setSize(size_t size)
+      {
+         _size = size;
+      }
+
       DebugReader(Debugger* debugger, size_t address, size_t position)
       {
          _debugger = debugger;
          _address = address;
          _position = 0;
 
-         _size = getDWord();
+         _size = 0;
 
-         _position = position + 4;
+         _position = position;
       }
    };
 
@@ -145,7 +150,6 @@ protected:
 
    bool              _started;
    bool              _running;
-   bool              _vmHookMode;
    bool              _debugTape;
    bool              _testMode;    // in test mode $self is shown always
    Path              _debuggee;
@@ -153,8 +157,8 @@ protected:
 
    size_t			   _entryPoint;
    PostponedStart    _postponed;
-   size_t            _vmDebugPtr;    // VM debug section address
-   size_t            _vmDebugSize;   // loaded VM debug section size
+   size_t            _debugInfoPtr;  // debug section address
+   size_t            _debugInfoSize; // loaded debug section size
 
    const wchar16_t*  _currentModule;
    const wchar16_t*  _currentSource;
@@ -162,8 +166,7 @@ protected:
    bool loadSymbolDebugInfo(const wchar16_t* reference, StreamReader& addressReader);
    bool loadTapeDebugInfo(StreamReader& reader, size_t size);
 
-   bool loadDebugData(const tchar_t* path);
-   bool loadDebugData(StreamReader& reader);
+   bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
 
    _Module* getDebugModule(size_t address);
 
@@ -201,6 +204,8 @@ protected:
 
    void processStep();
 
+   virtual size_t findEntryPoint(const tchar_t* programPath) = 0;
+
 protected:
    ModuleMap  _modules;
    MemoryDump _tape;
@@ -216,19 +221,17 @@ protected:
    virtual void onStop(bool failed) = 0;
    virtual void onCheckPoint(const wchar16_t* message) = 0;
    virtual void onNotification(const wchar16_t* message, size_t address, int code) = 0;
-   virtual void onVMBreakpoint();
+   virtual void onInitBreakpoint();
 
    virtual void clearDebugInfo()
    {
-      _vmDebugPtr = 0;
-      _vmDebugSize = 0;
-
       _classes.clear();
       _modules.clear();
 
       _tape.clear();
 
-      _vmHookMode = 0;
+      _debugInfoPtr = 0;
+      _debugInfoSize = 0;
    }
 
 public:
@@ -292,9 +295,8 @@ public:
       _currentModule = NULL;
       _currentSource = NULL;
       _running = false;
-      _vmDebugPtr = 0;
-      _vmDebugSize = 0;
-      _vmHookMode = false;
+      _debugInfoPtr = 0;
+      _debugInfoSize = 0;
       _debugTape = false;
       _testMode = false;
    }

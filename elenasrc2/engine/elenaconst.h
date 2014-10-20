@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0003
+   #define ENGINE_MINOR_VERSION     0x0004
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -136,6 +136,7 @@ namespace _ELENA_
       mskCodeRef             = 0x00000000,
       mskRelCodeRef          = 0x20000000,
       mskRDataRef            = 0x40000000,
+      mskDebugRef            = 0x60000000,
       mskStatRef             = 0x80000000,
       mskDataRef             = 0xA0000000,
       mskTLSRef              = 0xC0000000,
@@ -250,8 +251,7 @@ namespace _ELENA_
   // --- ELENA Debug Mode ---
    enum DebugMode {
       dbmNone       =  0,
-      dbmStandalone = -1,
-      dbmElenaVM    = -2
+      dbmActive     = -1
    };
 
    // --- ELENA Parse Table constants ---
@@ -302,9 +302,9 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.03"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.03"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!8.03"         // the language version
+   #define ELENA_SIGNITURE          "ELENA.8.04"       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.04"    // the ELENAVM client
+   #define MODULE_SIGNATURE         "EN!8.04"          // the language version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---

@@ -5,7 +5,7 @@ i  - ide
 a  - api
 
 l  - language                                                                                   
-s  - samples  ]
+s  - samples
 f  - flagship project (up to 2)                                                                                                   
 t  - tools                                                 
 v  - vm script                                                                                            
@@ -14,19 +14,48 @@ v  - vm script
 - maint                                                                                                                                          
 - rev
 - opt
-- port                                                                                                                    
+- port
+- doc
                                                                                
 ------                                 
 Currently:
 ------
 
+              xdev - linux
+                       * linux - build system libraris
 
-<=================> 
 
-1.9.18
---------
-week1:
+              xdev - elenart
+                       * special library to help generate the stack info - contains the list of debug modules, can generate stack information for 
+                         stand-alone application
+                       
               xdev - exception handling
+                       * call stack : how to generate
+                       
+
+
+                       * exception : message, [ the object, the stack ] in #exception structure
+
+                       * call stack should be created in catch statement?? boxing the exception ??? the simplest way in exception handler check
+                         if it is methodnotfound - box the object, all otherss should create stack info in the moment of creating ;
+
+                         better to box stack allocated object - (could be used for break as well)
+
+
+
+                       * alternatively: #throw statement generates the stack info and save it into special variable, 
+                         #break - not - for MethodNotFound it will not be provided any stack info as well ; But it could be possible to replace
+                         it with custom made which will generate the stack info / or use special method handler to generate it 
+
+
+                       
+                       * multi-exception catch block - how to preseave the exception (in normal case methodnotfound will be raised if
+                         no handler where found)
+
+                       * generate call stack
+
+
+
                        * Exception handler overhaul : either callcontext (stack + $self) should be somehow passed to the object where it
                          is created or in catch handler - forming group with the exception object ; in the first case - how could we
                          create light weight exception - like - method not found
@@ -49,6 +78,11 @@ week1:
 
                        * method not found event should provides the way to specify the object where the method was not found
 
+<=================> 
+
+1.9.18
+--------
+week1:
               xdev - generic development                                                      
                        * break normal / virtual loop
 
@@ -180,7 +214,6 @@ week1:
                                 config - \etc\elena
                                 data   - \usr\share\elena - data
 
-                       * linux - build system libraris
                        * linux linker
                        * linux console operations
                        * linux file operations
@@ -301,6 +334,8 @@ week2:
                        * support GUI application
 
               adev - lib30                                        
+                       * int, long, real - implement negative
+
                        * mathOp.mod -- fix implemention for real number
                            #method mod : anOperand
                            [

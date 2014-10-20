@@ -28,7 +28,7 @@
 #define BSS_SECTION        ".bss"
 #define IMPORT_SECTION     ".import"
 #define TLS_SECTION        ".tls"
-//#define DEBUG_SECTION      ".debug"
+#define DEBUG_SECTION      ".debug"
 
 #ifndef IMAGE_SIZEOF_NT_OPTIONAL_HEADER
 #define IMAGE_SIZEOF_NT_OPTIONAL_HEADER 224
@@ -66,6 +66,8 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
 
          return ((ImageBaseMap*)map)->import + address + disp;
       }
+      case mskDebugRef:
+         return ((ImageBaseMap*)map)->debug + base + disp;
       default:
          return disp;
    }
@@ -93,8 +95,9 @@ void Linker :: mapImage(ImageInfo& info)
    info.map.stat = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
    info.map.import = align(info.map.tls + getSize(info.image->getTLSSection()), alignment);
+   info.map.debug = align(info.map.import + getSize(info.image->getImportSection()), alignment);
 
-   info.imageSize = align(info.map.import + getSize(info.image->getImportSection()), alignment);
+   info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
 }
 
 int Linker :: fillImportTable(ImageInfo& info)
@@ -230,6 +233,9 @@ int Linker :: countSections(Image* image)
       count++;
 
    if (getSize(image->getImportSection()))
+      count++;
+
+   if (getSize(image->getDebugSection()))
       count++;
 
    return count;
@@ -390,46 +396,69 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    int alignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
    int sectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
 
+   // text section header
    writeSectionHeader(file, TEXT_SECTION, info.image->getTextSection(), tblOffset, alignment, sectionAlignment,
       info.map.code, IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ);
 
+   // rdata section header
    int rdataSize = getSize(info.image->getRDataSection());
    if (rdataSize > 0) {
       writeSectionHeader(file, RDATA_SECTION, info.image->getRDataSection(), tblOffset, alignment, sectionAlignment,
          info.map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
    }
+
+   // bss section header
    int bssSize = getSize(info.image->getBSSSection());
    if (bssSize > 0) {
       writeBSSSectionHeader(file, BSS_SECTION, bssSize, sectionAlignment,
          info.map.bss, IMAGE_SCN_CNT_UNINITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
    }
 
+   // stat section header
    int statSize = getSize(info.image->getStatSection());
    if (statSize > 0) {
       writeBSSSectionHeader(file, DATA_SECTION, statSize, sectionAlignment,
          info.map.stat, IMAGE_SCN_CNT_UNINITIALIZED_DATA |IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
    }
 
+   // tls section header
    int tlsSize = getSize(info.image->getTLSSection());
    if (tlsSize > 0) {
       writeSectionHeader(file, TLS_SECTION, info.image->getTLSSection(), tblOffset, alignment, sectionAlignment,
          info.map.tls, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
    }
 
+   // import section header
    writeSectionHeader(file, IMPORT_SECTION, info.image->getImportSection(), tblOffset, alignment, sectionAlignment,
       info.map.import, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
 
+   // debug section header 
+   int debugSize = getSize(info.image->getDebugSection());
+   if (debugSize > 0) {
+      writeSectionHeader(file, DEBUG_SECTION, info.image->getDebugSection(), tblOffset, alignment, sectionAlignment,
+         info.map.debug, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
+   }
+
    file->align(alignment);
 
+   // text section
    writeSection(file, info.image->getTextSection(), alignment);
 
+   // rdata section
    if (rdataSize > 0)
       writeSection(file, info.image->getRDataSection(), alignment);
 
+   // tls section
    if (tlsSize > 0)
       writeSection(file, info.image->getTLSSection(), alignment);
 
+   // import section
    writeSection(file, info.image->getImportSection(), alignment);
+
+   // debug section
+   if (debugSize > 0) {
+      writeSection(file, info.image->getDebugSection(), alignment);
+   }
 }
 
 bool Linker :: createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory)
@@ -463,31 +492,6 @@ bool Linker :: createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t t
    return true;
 }
 
-bool Linker :: createDebugFile(ImageInfo& info, const tchar_t* debugFilePath)
-{
-   FileWriter	debugFile(debugFilePath, feRaw, false);
-
-   if (!debugFile.isOpened())
-      return false;
-
-   Section*	debugInfo = info.image->getDebugSection();
-
-   // signature
-   debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
-
-   // save entry point
-   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
-   ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
-
-   debugFile.writeDWord(entryPoint);
-
-   // save DebugInfo
-   MemoryReader reader(debugInfo);
-   debugFile.read(&reader, debugInfo->Length());
-
-   return true;
-}
-
 void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 {
    ImageInfo info(&project, &image);
@@ -505,12 +509,4 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 
    if (!createExecutable(info, path, tls_directory))
       project.raiseError(errCannotCreate, path);
-
-   if (info.withDebugInfo) {
-      Path debugPath(path);
-      debugPath.changeExtension(_T("dn"));
-
-      if (!createDebugFile(info, debugPath))
-         info.project->raiseError(errCannotCreate, (const wchar16_t*)debugPath);
-   }
 }

@@ -33,7 +33,7 @@ x := ("abc", 2, 2.3r).                                        // mixing of types
 #var y := 2.
 #var b := (x == y).                                           // equals
 b := (x != y).                                                // not equals
-b := (x equal &type'object: y).                               // identical
+b := (x equal &reference: y).                                 // identical
 b := (x > y).                                                 // greater than
 b := (x < y).                                                 // less than"
 b := (x >= y).                                                // greater than or equal
@@ -69,7 +69,7 @@ x := 0FFh and: 0Fh.                                         // and bits
 x := 0F0h or: 0Fh.                                          // or bits
 x := 0FFh xor: 0Fh.                                         // xor bits
 x := 0FFh not.                                              // invert bits
-x := 0Fh shift: -4.                                         // left shift
-x := 0F0h shift: 4.                                         // right shift
+x := 0Fh shift &index: -4.                                  // left shift
+x := 0F0h shift &index: 4.                                  // right shift
 b := 0FFh allMask: 0Fh.                                     // test if all bits set in mask set in receiver
 b := 0FFh anyMask: 0Fh.                                     // test if any bits set in mask set in receiver

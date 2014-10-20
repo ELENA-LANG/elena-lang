@@ -122,6 +122,8 @@
 		<Unit filename="../winapi32/winoutput.h" />
 		<Unit filename="../windowlist.cpp" />
 		<Unit filename="../windowlist.h" />
+		<Unit filename="../../engine/win32/pehelper.cpp" />
+		<Unit filename="../../engine/win32/pehelper.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

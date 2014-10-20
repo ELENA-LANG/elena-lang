@@ -1,8 +1,19 @@
 ﻿
                                 ELENA Language 
 
-                                Version 1.9.17
+                                Version 1.9.18
  
+******************************************************************************
+                    What's New in 1.9.18 (pre release)
+******************************************************************************
+
+ELENA:
+[!] binary incompatible due to changes in debugger / exception support
+[-] dn files are no longer produced, debug info is inside an executable
+
+IDE:
+[-] Project - Options - Debug Mode : Enabled for VM Client is no longer supported
+
 ******************************************************************************
                     What's New in 1.9.17 (pre release)
 ******************************************************************************

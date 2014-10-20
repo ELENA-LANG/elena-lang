@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "winide.h"
+#include "win32//pehelper.h"
 
 using namespace _GUI_;
 
@@ -927,35 +928,46 @@ void Win32AppDebugController :: _notify(int code, const wchar_t* ns, const wchar
    ::SendMessage(_receptor->getHandle(), WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void Win32AppDebugController :: onVMBreakpoint()
+size_t Win32AppDebugController :: findEntryPoint(const tchar_t* programPath)
 {
-   if (_vmHook == 0) {
-      // set vm hook in debuggee file
+   return _ELENA_::PEHelper::findEntryPoint(programPath);
+}
+
+void Win32AppDebugController :: onInitBreakpoint()
+{
+   if (_debugInfoPtr == 0) {
+      // define if it is a vm client or stand-alone
+
       // !! hard-coded address; better propely to load part of NT_HEADER to correctly get bss address
       size_t rdata = _debugger.Context()->readDWord(0x4000D0);
 
       // load Executable image
       char signature[0x10];
       _debugger.Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE) + 1);
+
       if (strcmp(signature, ELENACLIENT_SIGNITURE) == 0) {
-         _vmHook = _debugger.Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE),4));
+         if (_vmHook == 0) {
+            _vmHook = _debugger.Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE),4));
 
-         // enable debug mode
-         _debugger.Context()->writeDWord(_vmHook, -1);
+            // enable debug mode
+            _debugger.Context()->writeDWord(_vmHook, -1);
 
-         // continue debugging
-         _events.setEvent(DEBUG_RESUME);
-         return;
+            // continue debugging
+            _events.setEvent(DEBUG_RESUME);
+            return;
+         }
+         // load VM debug section address
+         else _debugInfoPtr = _debugger.Context()->readDWord(_vmHook + 4);
       }
-      // !! notify if the executable is not a valid ELENAVM Client
-   }
-   else if (_vmDebugPtr == 0) {
-      // load VM debug section address
-      _vmDebugPtr = _debugger.Context()->readDWord(_vmHook + 4);
-      _vmHookMode = false;
+      else if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
+         DebugReader reader(&_debugger, 0x400000, 0);
+
+         _ELENA_::PEHelper::seekSection(reader, ".debug", _debugInfoPtr);
+      }
+      // !! notify if the executable is not supported
    }
 
-   AppDebugController::onVMBreakpoint();
+   AppDebugController::onInitBreakpoint();
 
    _notify(IDE_DEBUGGER_HOOK);
 }

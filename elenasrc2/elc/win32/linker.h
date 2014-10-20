@@ -20,14 +20,14 @@ namespace _ELENA_
 struct ImageBaseMap
 {
    int base;
-   int code, rdata, bss, stat, tls, import;
+   int code, rdata, bss, stat, tls, debug, import;
 
    RelocationFixMap importMapping;
 
    ImageBaseMap()
       : importMapping((size_t)-1)
    {
-      base = code = rdata = bss = stat = tls = import = 0;
+      base = code = rdata = bss = stat = tls = import = debug = 0;
    }
 };
 
@@ -84,7 +84,6 @@ class Linker
    void writeSections(ImageInfo& info, FileWriter* file);
 
    bool createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory);
-   bool createDebugFile(ImageInfo& info, const tchar_t* debugFilePath);
 
 public:
    void run(Project& project, Image& image, ref_t tls_directory);

@@ -99,6 +99,7 @@
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
+    <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winlistview.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winmenu.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winsplitter.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
+    <ClInclude Include="..\..\engine\win32\pehelper.h" />
     <ClInclude Include="..\..\gui\gui.h" />
     <ClInclude Include="..\..\gui\guicommon.h" />
     <ClInclude Include="..\..\gui\text.h" />
