@@ -101,15 +101,14 @@ public:
    bool checkFailed;
 
    void* State() const { return state; }
-   size_t EIP() const { return /*context.Eip*/0; } // !! temporal
-   size_t Self() const { return /*context.Edi*/0; } // !! temporal
-   size_t Local(int offset) { return /*context.Ebp - offset * */4; } // !! temporal
-   size_t Current(int offset) { return /*context.Esp + offset * */4; }
+   //size_t EIP() const { return context.Eip; } // !! temporal
+   //size_t Local(int offset) { return /*context.Ebp - offset * */4; } // !! temporal
+   //size_t Current(int offset) { return /*context.Esp + offset * */4; }
    size_t ClassVMT(size_t address);
    size_t VMTFlags(size_t address);
    size_t ObjectPtr(size_t address);
-   size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
-   size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
+   //size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
+   //size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
 
    void readDump(size_t address, char* dump, size_t length);
    void writeDump(size_t address, char* dump, size_t length);

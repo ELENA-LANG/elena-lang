@@ -12,26 +12,6 @@
 namespace _GUI_
 {
 
-// --- MessageBookmark ---
-
-struct MessageBookmark
-{
-   tchar_t* file;
-   size_t   col, row;
-
-   MessageBookmark(const tchar_t* file, const tchar_t* col, const tchar_t* row)
-   {
-      this->file = _ELENA_::StringHelper::clone(file);
-      this->col = _ELENA_::StringHelper::strToInt(col);
-      this->row = _ELENA_::StringHelper::strToInt(row);
-   }
-
-   ~MessageBookmark()
-   {
-      _ELENA_::freestr(file);
-   }
-};
-
 // --- MessageLog ---
 
 class MessageLog : public ListView

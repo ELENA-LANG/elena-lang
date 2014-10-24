@@ -135,6 +135,7 @@ class ByteCodeWriter
    void writeSelf(Scope& scope, int level, int frameLevel);
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel);
    void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
    void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
@@ -152,6 +153,7 @@ class ByteCodeWriter
 
 public:
    ref_t writeSourcePath(_Module* debugModule, const tchar_t* path);
+   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
@@ -180,6 +182,7 @@ public:
    void declareLocalShortArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
+   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareStatement(CommandTape& tape);
    void declareBlock(CommandTape& tape);

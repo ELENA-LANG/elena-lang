@@ -294,6 +294,8 @@ void IDE :: onIDEInit()
    // !! temporal
    else if(_outputBar) _outputBar->show();
 
+   doShowCallStack(Settings::compilerCallStack, true);
+
    _statusBar->setText(0, EDITOR_READY);
 
    _highlightBrackets = Settings::highlightBrackets;
@@ -599,13 +601,6 @@ void IDE :: runToCursor()
 
 void IDE :: refreshDebugStatus()
 {
-#ifdef _WIN32
-   if (Settings::testMode)  {
-      _ELENA_::String<tchar_t, 15> address(_T("@"));
-      address.appendHex(_debugController->getEIP());
-      _statusBar->setText(4, address);
-   }
-#endif
 }
 
 bool IDE :: isOutaged(bool noWarning)
@@ -650,27 +645,37 @@ bool IDE :: isOutaged(bool noWarning)
 #endif
 }
 
-void IDE :: highlightMessage(MessageBookmark* bookmark)
+void IDE :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
 {
    //!!temporal
 #ifdef _WIN32
    if (bookmark) {
-      _ELENA_::Path docPath(Project::getPath());
-      docPath.combine(bookmark->file);
-
       //_ELENA_::ReferenceNs name;
       //Project::retrieveName(bookmark->file, name);
 
+      _ELENA_::Path docPath;
+      if (bookmark->module == NULL || _ELENA_::ConstantIdentifier::compare(bookmark->module, Project::getPackage())) {
+         docPath.copy(Project::getPath());
+         docPath.combine(bookmark->file);
+      }
+      else {
+         docPath.copy((const tchar_t*)Paths::packageRoot);
+         docPath.combine(bookmark->module, _ELENA_::StringHelper::find(bookmark->module, '\'', _ELENA_::getlength(bookmark->module)));
+         docPath.combine(bookmark->file);
+
+         openFile(docPath);
+      }
+
       HighlightInfo hi(bookmark->col - 1, bookmark->row - 1, 0, 0);
 
-      _mainFrame->removeAllDocumentMarker(STYLE_ERROR_LINE);
+      _mainFrame->removeAllDocumentMarker(bandStyle);
 
       int index = _mainFrame->getDocumentIndex(docPath);
       if (index != -1) {
          _mainFrame->setFocus();
          _mainFrame->selectDocument(index);
 
-         _mainFrame->addDocumentMarker(index, hi, STYLE_ERROR_LINE, STYLE_ERROR_LINE);
+         _mainFrame->addDocumentMarker(index, hi, bandStyle, bandStyle);
          _mainFrame->refreshDocument();
 
          _state |= uiHighlight;
@@ -1267,10 +1272,38 @@ void IDE :: doShowDebugWatch(bool visible)
 #endif
 }
 
+void IDE :: doShowCallStack(bool checked, bool forced)
+{
+//!!temporal
+#ifdef _WIN32
+   if (Settings::compilerCallStack != checked || forced) {
+      Settings::compilerCallStack = checked;
+
+      _appMenu->checkItemById(IDM_VIEW_CALLSTACK, Settings::compilerCallStack);
+
+      if (checked) {
+         _outputBar->addTabChild(CALLSTACK_TAB, _callStackList);
+         _callStackList->show();
+
+         if (_debugController->isStarted())
+            _callStackList->refresh(_debugController);
+
+         _outputBar->selectLastTabChild();
+      }
+      else {
+         _outputBar->removeTabChild(_callStackList);
+         _callStackList->hide();
+      }
+
+      _appWindow->refresh();
+   }
+#endif
+}
+
 bool findBracket(Text* text, TextBookmark& bookmark, tchar_t starting, tchar_t ending, bool forward)
 {
    // define the upper / lower border of bracket search
-   int frameY = 0;
+   size_t frameY = 0;
    if (forward)
       frameY = text->getRowCount();
 
@@ -1482,7 +1515,7 @@ void IDE :: onRowChange(Document* doc, int row)
    // shift breakpoints if the row number was changed
    Breakpoints::Iterator it = _breakpoints.start();
    while (!it.Eof()) {
-      if ((*it).row > row && (*it).param == doc) {
+      if ((*it).row > (size_t)row && (*it).param == doc) {
          (*it).row += rowChange;
          changed = true;
 
@@ -1776,6 +1809,7 @@ void IDE :: onDebuggerStop(bool broken)
    _mainFrame->removeAllDocumentMarker(STYLE_TRACE_LINE);
    _mainFrame->setReadOnlyMode(false);
    _contextBrowser->reset();
+   _callStackList->clear();
 
    _debugController->release();
 
@@ -1802,6 +1836,7 @@ void IDE :: onDebuggerStep(const wchar16_t* ns, const tchar_t* source, Highlight
    _mainFrame->refreshDocument();
 
    _contextBrowser->refresh(_debugController);
+   _callStackList->refresh(_debugController);
 
    refreshDebugStatus();
 #endif

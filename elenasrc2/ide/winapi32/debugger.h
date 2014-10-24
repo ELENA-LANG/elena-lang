@@ -104,6 +104,7 @@ public:
 
    void* State() const { return state; }
    size_t EIP() const { return context.Eip; }
+   size_t Frame() const { return context.Ebp; }
    size_t Local(int offset) { return context.Ebp - offset * 4; }
    size_t Current(int offset) { return context.Esp + offset * 4; }
    size_t ClassVMT(size_t address);

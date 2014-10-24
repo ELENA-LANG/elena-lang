@@ -104,6 +104,7 @@
 #define IDM_VIEW                                (IDM + 3000)
    #define  IDM_VIEW_OUTPUT                     (IDM_VIEW + 1)
    #define  IDM_VIEW_WATCH                      (IDM_VIEW + 2)
+   #define  IDM_VIEW_CALLSTACK                  (IDM_VIEW + 3)
 
 #define	IDM_SEARCH                             (IDM + 4000)
    #define  IDM_SEARCH_FIND                     (IDM_SEARCH + 1)

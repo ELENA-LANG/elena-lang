@@ -102,6 +102,18 @@ public:
          return reader ? reader->readFirstChild(position) : Node();
       }
 
+      Node lastNode() const
+      {
+         Node last;
+         Node node = firstChild();
+         while (node != nsNone) {
+            last = node;
+
+            node = node.nextNode();
+         }
+         return last;
+      }
+
       Node nextNode() const
       {
          return reader ? reader->readNextNode(position) : Node();

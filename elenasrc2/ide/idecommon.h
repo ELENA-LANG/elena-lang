@@ -97,6 +97,36 @@ struct SearchOption
    }
 };
 
+// --- MessageBookmark ---
+
+struct MessageBookmark
+{
+   const wchar16_t* module;
+   tchar_t*         file;
+   size_t           col, row;
+
+   MessageBookmark(const tchar_t* file, const tchar_t* col, const tchar_t* row)
+   {
+      this->module = NULL;
+      this->file = _ELENA_::StringHelper::clone(file);
+      this->col = _ELENA_::StringHelper::strToInt(col);
+      this->row = _ELENA_::StringHelper::strToInt(row);
+   }
+
+   MessageBookmark(const wchar16_t* module, const tchar_t* file, size_t col, size_t row)
+   {
+      this->module = module;
+      this->file = _ELENA_::StringHelper::clone(file);
+      this->col = col;
+      this->row = row;
+   }
+
+   ~MessageBookmark()
+   {
+      _ELENA_::freestr(file);
+   }
+};
+
 } // _GUI_
 
 #endif // idecommonH

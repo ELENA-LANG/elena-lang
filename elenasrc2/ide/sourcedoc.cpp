@@ -59,7 +59,7 @@ void SourceDoc :: insertNewLine()
    const tchar_t* line = getCurrentLine(0, length);
    while (length > 0) {
       IndentDirection dir = IsAutoIndent(getCurrentChar());
-      for (int i = 0 ; i < length ; i++) {
+      for (size_t i = 0 ; i < length ; i++) {
          if (line[i] != 0x20 && line[i] != 0x9) {
             disp += i;
 

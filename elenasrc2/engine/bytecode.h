@@ -253,6 +253,7 @@ enum ByteCode
    bdBreakcoord     = 0x8402,
    bdLocal          = 0x8403,
    bdSelf           = 0x8404,
+   bdMessage        = 0x8405,
    bdIntLocal       = 0x8413,
    bdLongLocal      = 0x8423,
    bdRealLocal      = 0x8433,

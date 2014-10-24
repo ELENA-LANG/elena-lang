@@ -11,6 +11,7 @@
 #include "historylist.h"
 #include "windowlist.h"
 #include "messagelog.h"
+#include "callstack.h"
 
 #ifdef _WIN32
 
@@ -166,6 +167,7 @@ protected:
    EditFrame*      _mainFrame;
    TabBar*         _outputBar;
    MessageLog*     _messageList;
+   CallStackLog*   _callStackList;
 #ifdef _WIN32
    ContextBrowser* _contextBrowser;
 #endif
@@ -311,6 +313,12 @@ protected:
       doShowDebugWatch(!_contextBrowser->isVisible());
 #endif
    }
+   void doShowCallStack()
+   {
+#ifdef _WIN32
+      doShowCallStack(!Settings::compilerCallStack);
+#endif
+   }
 
    void doSelectWindow();
    void doSwitchTab(bool forward);
@@ -324,6 +332,7 @@ protected:
 
    void doShowCompilerOutput(bool checked);
    void doShowDebugWatch(bool visible);
+   void doShowCallStack(bool visible, bool forced = false);
 
    bool doCompileProject(int postponedAction);
    void doCompileProject()
@@ -463,7 +472,7 @@ public:
       _recentProjects.save(file, RECENTRPOJECTS_SECTION);
    }
 
-   void highlightMessage(MessageBookmark* bookmark);
+   void highlightMessage(MessageBookmark* bookmark, int bandStyle);
    void toggleBreakpoint();
    void clearBreakpoints();
 

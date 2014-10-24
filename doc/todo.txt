@@ -22,18 +22,23 @@ Currently:
 ------
 
               xdev - linux
-                       * linux - build system libraris
+                       * linux linker
 
-
+              xdev - general development
+                       * call stack : how to generate
+                       
+              idev - debugger - call stack
+                       * if output is off, but callstack is on - show output bar anyway                       
+                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
+                       
               xdev - elenart
+                       * design call stack generation algorithm : standalone, vm client
+                       * review the solution, can the shared solution be used inside IDE, Stand-alone and vm client
+
                        * special library to help generate the stack info - contains the list of debug modules, can generate stack information for 
                          stand-alone application
                        
               xdev - exception handling
-                       * call stack : how to generate
-                       
-
-
                        * exception : message, [ the object, the stack ] in #exception structure
 
                        * call stack should be created in catch statement?? boxing the exception ??? the simplest way in exception handler check
@@ -84,6 +89,8 @@ Currently:
 --------
 week1:
               xdev - generic development                                                      
+                       * think over object serialization, for example - save the object into file and load back
+
                        * break normal / virtual loop
 
                        * calling the parent constructor ?? (see system'io'StreamReader (output should be created in the parent class), Exceptions and so on)
@@ -157,6 +164,8 @@ week1:
                        * split hook into two : address , hook ; or use internal function for exception raising / handling?
                        
               xdev - general implementation
+                       * probably we have to get rid of direct path to elenavm and use shared paths, special batch file to update paths??
+
                        * generic method should be the last in VMT
 
                        * immplement 1e10r real literal
@@ -207,27 +216,6 @@ week1:
                        
               idev - script engine
                        * build-in script into IDE
-                       
-              xdev - linux
-                       * paths: lib    - \usr\share\elena\lib30
-                                         \usr\share\elena\src30
-                                config - \etc\elena
-                                data   - \usr\share\elena - data
-
-                       * linux linker
-                       * linux console operations
-                       * linux file operations
-                       * linux date / time operations
-                       * port elc to linux
-                       * port asm2binx to linux
-                       * port sg to linux
-                       * port ecv to linux
-                       * port og to linux
-                       * review deployment mechanism
-                       * port elenavm to linux
-                       * port elide to linux
-                       * port elenasm to linux
-                       * port elt to linux
 
               xdev - multithreading       
                        * implement lock / unlock
@@ -683,6 +671,23 @@ week 4:
 1.9.19
 --------
 week1:
+              xdev - linux
+                       * paths: lib    - \usr\share\elena\lib30
+                                         \usr\share\elena\src30
+                                config - \etc\elena
+                                data   - \usr\share\elena - data
+
+                       * linux console operations
+                       * linux file operations
+                       * linux date / time operations
+                       * port elc to linux
+                       * port ecv to linux
+                       * review deployment mechanism
+                       * port elenavm to linux
+                       * port elide to linux
+                       * port elenasm to linux
+                       * port elt to linux
+
               idev - usability
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
@@ -905,7 +910,6 @@ stack:
                          two constants yg_size, mg_size), it will simplify core_init
                          function (no need to calcuate and round sizes)
               idev - debugger
-                       * support call list
                        * support thread list
                        * debugger should load appropriate dnl modules for
                          loaded module

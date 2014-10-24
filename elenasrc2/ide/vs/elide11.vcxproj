@@ -98,6 +98,7 @@
     <ClCompile Include="..\..\common\dump.cpp" />
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
+    <ClCompile Include="..\..\engine\rtman.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winlistview.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="..\..\gui\winapi32\wintreeview.cpp" />
     <ClCompile Include="..\appwindow.cpp" />
     <ClCompile Include="..\browser.cpp" />
+    <ClCompile Include="..\callstack.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
     <ClCompile Include="..\historylist.cpp" />
@@ -137,6 +139,7 @@
     <ClInclude Include="..\..\common\dump.h" />
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\engine\module.h" />
+    <ClInclude Include="..\..\engine\rtman.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\win32\pehelper.h" />
     <ClInclude Include="..\..\gui\gui.h" />
@@ -156,6 +159,7 @@
     <ClInclude Include="..\..\gui\winapi32\wintreeview.h" />
     <ClInclude Include="..\appwindow.h" />
     <ClInclude Include="..\browser.h" />
+    <ClInclude Include="..\callstack.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\debugging.h" />
     <ClInclude Include="..\editframe.h" />

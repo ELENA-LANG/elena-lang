@@ -15,6 +15,7 @@
 
 #define OUTPUT_TAB                              _T("Output")
 #define MESSAGES_TAB                            _T("Messages")
+#define CALLSTACK_TAB                           _T("Call stack")
 
 #define EDITOR_MODIFIED                         _T("Modified")
 #define EDITOR_READY                            _T("Ready")

@@ -51,9 +51,6 @@ inline void setOption(const wchar_t* parameter)
          Settings::defaultProject.copy(parameter);
       }
    }
-   else if (_ELENA_::StringHelper::compare(parameter, _T("-test"))) {
-      Settings::testMode = true;
-   }
    else if (_ELENA_::StringHelper::compare(parameter, _T("-sclassic"))) {
       Settings::scheme = 1;
    }
@@ -145,11 +142,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
 
    // init IDE settings
    loadSettings(configPath, ide);
-
-   // set test mode if necessary
-   if (Settings::testMode) {
-      controller.setTestMode(Settings::testMode);
-   }
 
    // start IDE
    ide.start(_GUI_::Settings::appMaximized);

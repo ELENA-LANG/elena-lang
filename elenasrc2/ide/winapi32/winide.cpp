@@ -404,6 +404,9 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_VIEW_WATCH:
          _ide->doShowDebugWatch();
          break;
+      case IDM_VIEW_CALLSTACK:
+         _ide->doShowCallStack();
+         break;
       case IDM_SEARCH_FIND:
          _ide->doFind();
          break;
@@ -546,6 +549,8 @@ TabBar* WIN32IDE :: createOutputBar()
 
    _output = new Output(tabBar, _appWindow);
    _messageList = new MessageLog(tabBar);
+   _callStackList = new CallStackLog(tabBar);
+   _callStackList->hide();
 
    tabBar->addTabChild(OUTPUT_TAB, _output);
    tabBar->addTabChild(MESSAGES_TAB, _messageList);
@@ -561,6 +566,7 @@ TabBar* WIN32IDE :: createOutputBar()
    controls.add(tabBar);
    controls.add(_output);
    controls.add(_messageList);
+   controls.add(_callStackList);
    controls.add(bottomSplitter);
 
    return tabBar;

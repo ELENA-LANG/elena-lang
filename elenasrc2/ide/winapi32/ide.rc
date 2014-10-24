@@ -89,6 +89,7 @@ BEGIN
     BEGIN
         MENUITEM "&Compiler output",                IDM_VIEW_OUTPUT
         MENUITEM "&Debug watch",                    IDM_VIEW_WATCH
+        MENUITEM "Call &stack",                     IDM_VIEW_CALLSTACK
     END
     POPUP "&Search"
     BEGIN

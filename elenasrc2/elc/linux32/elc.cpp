@@ -48,7 +48,7 @@ void _ELC_::Project :: raiseError(const char* msg, const tchar_t* path, int row,
 {
    _ELENA_::UTF8String s(wTerminal);
 
-   print(msg, path, row, column, s);
+   print(msg, path, row, column, (const char*)s);
 
    throw _ELENA_::_Exception();
 }
@@ -85,7 +85,7 @@ void _ELC_::Project :: printInfo(const char* msg, const wchar16_t* wValue)
 {
    _ELENA_::UTF8String s(wValue);
 
-   print(msg, s);
+   print(msg, (const char*)s);
 }
 
 //void _ELC_::Project :: printInfo(const wchar16_t* msg)
@@ -108,7 +108,7 @@ void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path, int ro
 
    _ELENA_::UTF8String s(wTerminal);
 
-   print(msg, path, row, column, s);
+   print(msg, path, row, column, (const char*)s);
 }
 
 void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path)
@@ -396,7 +396,7 @@ int main(int argc, char* argv[])
          }
          else project.addSource(argv[i]);
       }
-//      project.initLoader();
+      project.initLoader();
 
 //      // Cleaning up
 //      print("Cleaning up...");

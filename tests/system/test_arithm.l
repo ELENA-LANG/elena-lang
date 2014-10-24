@@ -14,9 +14,6 @@
 
 #symbol XTest =
 [
-    #var s := "ABS".
-    
-    #var b := characterController toLowerCase &literal::s.
 ].
 
 // --- OpenArgTest ---

@@ -41,6 +41,31 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, const tchar_t* pat
    else return 0;
 }
 
+ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message)
+{
+   if (debugModule != NULL) {
+      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      ref_t sourceRef = debugStringWriter.Position();
+
+      ref_t subjectRef;
+      int verb, paramCount;
+      decodeMessage(message, subjectRef, verb, paramCount);
+
+      IdentifierString name(retrieveKey(verbs.start(), verb, DEFAULT_STR));
+      name.append('&');
+      name.append(module->resolveSubject(subjectRef));
+      name.append('[');
+      name.appendInt(paramCount);
+      name.append(']');
+
+      debugStringWriter.writeWideLiteral(name);
+
+      return sourceRef;
+   }
+   else return 0;
+}
+
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeType scope*/)
 {
    // symbol-begin:
@@ -134,6 +159,11 @@ void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, const wchar16_t
 void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
    tape.write(bdSelf, 0, level);
+}
+
+void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t nameRef)
+{
+   tape.write(bdMessage, 0, nameRef);
 }
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
@@ -1178,6 +1208,18 @@ void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int 
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
+void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef)
+{
+   if (!scope.debug)
+      return;
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.local.nameRef = nameRef;
+
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
 void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug)
 {
    // reading breakpoint coordinate
@@ -1505,6 +1547,9 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bdParamsLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
+            break;
+         case bdMessage:
+            writeMessageInfo(scope, dsMessage, (*it).additional);
             break;
          case bcOpen:
             frameLevel = (*it).argument;

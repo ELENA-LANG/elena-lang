@@ -239,11 +239,29 @@ void TabBar :: addTabChild(const wchar_t* name, Control* child)
    child->_setCoordinate(4, 28);
    child->_setWidth(_width - 14);
    child->_setHeight(_height - 36);
+   child->hide();
 
    _children.add(child);
    _child = child;
 
    addTab(_children.Count(), name, NULL);
+}
+
+void TabBar :: removeTabChild(Control* window)
+{
+   int index = 0;
+   _ELENA_::List<Control*>::Iterator it = _children.start();
+   while (!it.Eof() && ((*it) != window)) {
+      index++;
+      it++;
+   }
+
+   _children.cut(window);
+   deleteTab(index);
+
+   _child->hide();
+   _child = NULL;
+   refresh();
 }
 
 void TabBar :: selectTabChild(int index)
@@ -291,8 +309,11 @@ void TabBar :: refresh()
 {
    Control* current = *_children.get(getCurrentIndex());
    if (_child != current) {
-      _child->hide();
+      if (_child)
+         _child->hide();
+
       current->show();
+      current->setFocus();
 
       _child = current;
    }

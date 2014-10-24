@@ -61,7 +61,7 @@ static const unsigned int offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x0
  * (I.e., one byte sequence, two byte... etc.). Remember that sequencs
  * for *legal* UTF-8 will be 4 or fewer bytes total.
  */
-static const char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
 /*
  * Utility routine to tell whether a sequence of bytes is legal UTF-8.

@@ -9,6 +9,7 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "debugcontroller.h"
+#include "rtman.h"
 //#include "messages.h"
 
 using namespace _ELENA_;
@@ -197,6 +198,51 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
    return NULL;
 }
 
+DebugLineInfo* DebugController :: seekLineInfo(size_t address, const wchar16_t* &moduleName, const wchar16_t* &className, 
+                                               const wchar16_t* &methodName, const wchar16_t* &procPath)
+{
+   ModuleMap::Iterator it = _modules.start();
+   while (!it.Eof()) {
+      moduleName = (*it)->Name();
+
+      _Memory* section = (*it)->mapSection(DEBUG_LINEINFO_ID, true);
+      _Memory* strings = (*it)->mapSection(DEBUG_STRINGS_ID, true);
+      if (section != NULL) {
+         DebugLineInfo* info = (DebugLineInfo*)section->get(4);
+         int count = section->Length() / sizeof(DebugLineInfo);
+         int prev = 0;
+         for (int i = 0 ; i < count ; i++) {
+            if (info[i].symbol == dsClass || info[i].symbol == dsSymbol) {
+               className = (const wchar16_t*)strings->get(info[i].addresses.symbol.nameRef);
+            }
+            else if (info[i].symbol == dsProcedure) {
+               procPath = (const wchar16_t*)strings->get(info[i].addresses.source.nameRef);
+               methodName = NULL;
+               prev = 0;
+            }
+            else if (info[i].symbol == dsMessage) {
+               methodName = (const wchar16_t*)strings->get(info[i].addresses.source.nameRef);
+            }
+            else if ((info[i].symbol & dsDebugMask) == dsStep) {
+               // if it is a exact match
+               if (info[i].addresses.step.address == address) {
+                  if (info[i].row < 0) {
+                     return info + i - 1;
+                  }
+                  else return info + i;
+               }
+               else if (prev != 0 && info[prev].addresses.step.address < address && info[i].addresses.step.address >= address && info[i].row >= 0) {
+                  return info + i;
+               }
+               prev = i;
+            }
+         }
+      }
+      it++;
+   }
+   return NULL;
+}
+
 size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* path, size_t row, size_t col)
 {
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
@@ -209,7 +255,7 @@ size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* pat
    size_t address = (size_t)-1;
    int nearestCol = -1;
    bool skipping = true;
-   for (size_t i = 0 ; i < count ; i++) {
+   for (int i = 0 ; i < count ; i++) {
       if (info[i].symbol == dsProcedure) {
          const wchar16_t* procPath = (const wchar16_t*)strings->get(info[i].addresses.source.nameRef);
          if (StringHelper::compare(procPath, path)) {
@@ -640,6 +686,28 @@ const wchar_t* DebugController :: getValue(size_t address, wchar16_t* value, siz
 int DebugController :: getEIP()
 {
    return _debugger.Context()->EIP();
+}
+
+void DebugController :: readCallStack(_DebuggerCallStack* watch)
+{
+   MemoryDump retPoints;
+   
+   MemoryWriter writer(&retPoints);
+   DebugReader reader(&_debugger);
+
+   RTHelper::readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->EIP(), writer);
+
+   const wchar16_t* path = NULL;
+   const wchar16_t* moduleName = NULL;
+   const wchar16_t* className = NULL;
+   const wchar16_t* methodName = NULL;
+   for(size_t pos = 0 ; pos < retPoints.Length(); pos += 4) {
+      DebugLineInfo* info = seekLineInfo((size_t)retPoints[pos], moduleName, className, methodName, path);
+      if (info != NULL) {
+         watch->write(moduleName, className, methodName, path, info->col + 1, info->row + 1, (size_t)retPoints[pos]);
+      }
+      else watch->write((size_t)retPoints[pos]);
+   }
 }
 
 void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, size_t address)

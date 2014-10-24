@@ -30,6 +30,7 @@
 #define SCHEME_SETTING           "scheme"
 #define TABSCORE_SETTING         "tabscore"
 #define OUTPUT_SETTING           "compileroutput"
+#define CALLSTACK_SETTING        "callstack"
 #define AUTO_RECOMPILE_SETTING   "autocomp"
 #define DEBUG_TAPE_SETTING       "debugtape"
 #define FONTSIZE_SETTING         "font_size"
@@ -76,6 +77,7 @@ struct Settings
    static bool tabCharUsing;
    static bool appMaximized;
    static bool compilerOutput;
+   static bool compilerCallStack;
    static bool lastPathRemember;
    static bool lastProjectRemember;
    static bool autoDetecting;

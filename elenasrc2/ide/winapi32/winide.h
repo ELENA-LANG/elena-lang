@@ -66,7 +66,10 @@ public:
    void onDoubleClick(NMHDR* notification)
    {
       if (_messageList->getHandle()==notification->hwndFrom) {
-         highlightMessage(_messageList->getBookmark(((LPNMITEMACTIVATE)notification)->iItem));
+         highlightMessage(_messageList->getBookmark(((LPNMITEMACTIVATE)notification)->iItem), STYLE_ERROR_LINE);
+      }
+      else if (_callStackList->getHandle()==notification->hwndFrom) {
+         highlightMessage(_callStackList->getBookmark(((LPNMITEMACTIVATE)notification)->iItem), STYLE_TRACE_LINE);
       }
    }
 

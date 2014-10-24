@@ -50,6 +50,18 @@ public:
    virtual ~_DebuggerWatch() {}
 };
 
+// --- _DebuggerWatch ---
+
+class _DebuggerCallStack
+{
+public:
+   virtual void write(const wchar16_t* moduleName, const wchar16_t* className, const wchar16_t* methodName, const wchar16_t* path, 
+                        int col, int row, size_t address) = 0;
+   virtual void write(size_t address) = 0;
+
+   virtual ~_DebuggerCallStack() {}
+};
+
 // --- DebugController ---
 
 class DebugController : _Controller
@@ -128,15 +140,21 @@ protected:
          _size = size;
       }
 
+      DebugReader(Debugger* debugger)
+      {
+         _debugger = debugger;
+         _address = 0;
+         _position = 0;
+
+         _size = 0;
+      }
       DebugReader(Debugger* debugger, size_t address, size_t position)
       {
          _debugger = debugger;
          _address = address;
-         _position = 0;
+         _position = position;
 
          _size = 0;
-
-         _position = position;
       }
    };
 
@@ -151,7 +169,6 @@ protected:
    bool              _started;
    bool              _running;
    bool              _debugTape;
-   bool              _testMode;    // in test mode $self is shown always
    Path              _debuggee;
    Path              _arguments;
 
@@ -177,6 +194,8 @@ protected:
    }
 
    DebugLineInfo* seekClassInfo(size_t address, const wchar16_t* &className, int& flags);
+   DebugLineInfo* seekLineInfo(size_t address, const wchar16_t* &moduleName, const wchar16_t* &className, 
+                               const wchar16_t* &methodName, const wchar16_t* &path);
 
    DebugLineInfo* getNextStep(DebugLineInfo* step);
    DebugLineInfo* getEndStep(DebugLineInfo* step);
@@ -256,6 +275,7 @@ public:
    void readAutoContext(_DebuggerWatch* watch);
    void readContext(_DebuggerWatch* watch, size_t selfPtr);
    //void readRegisters(_DebuggerWatch* watch);
+   void readCallStack(_DebuggerCallStack* watch);
 
    void release()
    {
@@ -283,11 +303,6 @@ public:
 
    void loadBreakpoints(List<Breakpoint>& breakpoints);
 
-   void setTestMode(bool testMode)
-   {
-      _testMode = testMode;
-   }
-
    DebugController()
       : _modules(NULL, freeobj)
    {
@@ -298,7 +313,6 @@ public:
       _debugInfoPtr = 0;
       _debugInfoSize = 0;
       _debugTape = false;
-      _testMode = false;
    }
 
    virtual ~DebugController() {}

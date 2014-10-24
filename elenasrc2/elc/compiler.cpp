@@ -1364,7 +1364,7 @@ ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode, ref_t& typeRef
    return moduleScope->module->mapReference(name);
 }
 
-void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
+void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1394,6 +1394,9 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
 
    if (withSelf)
       _writer.declareSelfInfo(*tape, -1);
+
+   if (withMessage)
+      _writer.declareMessageInfo(*tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* referenceName)
@@ -4825,7 +4828,11 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
       _writer.exitStaticSymbol(scope.tape, scope.reference);
    }
 
-   _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
+   TerminalInfo eop = node.lastNode().Terminal();
+   if (eop != nsNone) {
+      recordStep(codeScope, eop, dsVirtualEnd);
+   }
+   else _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
 
    _writer.endSymbol(scope.tape);
 

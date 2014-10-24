@@ -83,8 +83,13 @@ class TabBar : public CustomTabBar
 
 public:
    void addTabChild(const wchar_t* name, Control* window);
+   void removeTabChild(Control* window);
 
    void selectTabChild(int index);
+   void selectLastTabChild()
+   {
+      selectTabChild(_children.Count() - 1);
+   }
 
    virtual void _setWidth(size_t width);
    virtual void _setHeight(size_t height);

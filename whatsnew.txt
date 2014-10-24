@@ -12,6 +12,7 @@ ELENA:
 [-] dn files are no longer produced, debug info is inside an executable
 
 IDE:
+[+] Project - View - Call stack
 [-] Project - Options - Debug Mode : Enabled for VM Client is no longer supported
 
 ******************************************************************************

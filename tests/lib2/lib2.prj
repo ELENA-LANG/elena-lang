@@ -1,15 +1,15 @@
-[project]
+﻿[project]
 executable=test.exe
 vmpath=..\..\bin
 options=-xembed-
-template=win32_console2
+namespace=test
+template=console
 debuginfo=-1
 warn:unresolved=-1
 
 [files]
-testcase.l
 test.l
 
 [forwards]
-'entry=test'program
+'program=test'Program
 
