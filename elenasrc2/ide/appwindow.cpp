@@ -286,15 +286,10 @@ IDE :: IDE(AppDebugController* debugController)
 void IDE :: onIDEInit()
 {
    #ifdef _WIN32
-   _appMenu->checkItemById(IDM_VIEW_OUTPUT, Settings::compilerOutput);
 
-   if (!Settings::compilerOutput) {
-      _outputBar->hide();
-   }
-   // !! temporal
-   else if(_outputBar) _outputBar->show();
-
-   doShowCallStack(Settings::compilerCallStack, true);
+   doShowCallStack(Settings::callStack, true);
+   doShowMessages(Settings::messages, true);
+   doShowCompilerOutput(Settings::compilerOutput, true);
 
    _statusBar->setText(0, EDITOR_READY);
 
@@ -1234,25 +1229,6 @@ bool IDE :: doCompileProject(int postponedAction)
    return true;
 }
 
-void IDE :: doShowCompilerOutput(bool checked)
-{
-//!!temporal
-#ifdef _WIN32
-   if (Settings::compilerOutput != checked) {
-      Settings::compilerOutput = checked;
-
-      _appMenu->checkItemById(IDM_VIEW_OUTPUT, Settings::compilerOutput);
-
-      if (checked) {
-         _outputBar->show();
-      }
-      else _outputBar->hide();
-
-      _appWindow->refresh();
-   }
-#endif
-}
-
 void IDE :: doShowDebugWatch(bool visible)
 {
 //!!temporal
@@ -1268,7 +1244,66 @@ void IDE :: doShowDebugWatch(bool visible)
    }
    else _contextBrowser->hide();
 
+   _contextBrowser->refresh();
    _appWindow->refresh();
+#endif
+}
+
+void IDE :: doShowCompilerOutput(bool checked, bool forced)
+{
+//!!temporal
+#ifdef _WIN32
+   if (Settings::compilerOutput != checked || forced) {
+      Settings::compilerOutput = checked;
+
+      _appMenu->checkItemById(IDM_VIEW_OUTPUT, Settings::compilerOutput);
+
+      if (checked) {
+         _outputBar->addTabChild(OUTPUT_TAB, _output);
+
+         _outputBar->selectLastTabChild();
+
+         _outputBar->show();
+      }
+      else {
+         _outputBar->removeTabChild(_output);
+         _output->hide();
+
+         if (_outputBar->getTabCount() == 0) {
+            _outputBar->hide();
+         }
+      }
+
+      _appWindow->refresh();
+   }
+#endif
+}
+
+void IDE :: doShowMessages(bool checked, bool forced)
+{
+//!!temporal
+#ifdef _WIN32
+   if (Settings::messages != checked || forced) {
+      Settings::messages = checked;
+
+      _appMenu->checkItemById(IDM_VIEW_MESSAGES, Settings::messages);
+
+      if (checked) {
+         _outputBar->addTabChild(MESSAGES_TAB, _messageList);
+         _outputBar->show();
+         _outputBar->selectLastTabChild();
+      }
+      else {
+         _outputBar->removeTabChild(_messageList);
+         _messageList->hide();
+
+         if (_outputBar->getTabCount() == 0) {
+            _outputBar->hide();
+         }
+      }
+
+      _appWindow->refresh();
+   }
 #endif
 }
 
@@ -1276,14 +1311,15 @@ void IDE :: doShowCallStack(bool checked, bool forced)
 {
 //!!temporal
 #ifdef _WIN32
-   if (Settings::compilerCallStack != checked || forced) {
-      Settings::compilerCallStack = checked;
+   if (Settings::callStack != checked || forced) {
+      Settings::callStack = checked;
 
-      _appMenu->checkItemById(IDM_VIEW_CALLSTACK, Settings::compilerCallStack);
+      _appMenu->checkItemById(IDM_VIEW_CALLSTACK, Settings::callStack);
 
       if (checked) {
          _outputBar->addTabChild(CALLSTACK_TAB, _callStackList);
          _callStackList->show();
+         _outputBar->show();
 
          if (_debugController->isStarted())
             _callStackList->refresh(_debugController);
@@ -1293,6 +1329,10 @@ void IDE :: doShowCallStack(bool checked, bool forced)
       else {
          _outputBar->removeTabChild(_callStackList);
          _callStackList->hide();
+
+         if (_outputBar->getTabCount() == 0) {
+            _outputBar->hide();
+         }
       }
 
       _appWindow->refresh();

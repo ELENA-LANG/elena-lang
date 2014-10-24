@@ -28,7 +28,6 @@ Currently:
                        * call stack : how to generate
                        
               idev - debugger - call stack
-                       * if output is off, but callstack is on - show output bar anyway                       
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
                        
               xdev - elenart

@@ -16,7 +16,7 @@ ListView :: ListView(Control* owner)
    HINSTANCE instance = ((Control*)owner)->_getInstance();
 
    _handle = ::CreateWindowEx(
-      0, WC_LISTVIEW, NULL, WS_VISIBLE | WS_BORDER | WS_CHILD | LVS_REPORT/* | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES*/,
+      0, WC_LISTVIEW, NULL, WS_BORDER | WS_CHILD | LVS_REPORT/* | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES*/,
       _left, _top, _width, _height, owner->getHandle(), NULL, instance, (LPVOID)this);
 
    ListView_SetExtendedListViewStyle(_handle, LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);

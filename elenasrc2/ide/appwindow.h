@@ -168,6 +168,7 @@ protected:
    TabBar*         _outputBar;
    MessageLog*     _messageList;
    CallStackLog*   _callStackList;
+   Control*        _output;
 #ifdef _WIN32
    ContextBrowser* _contextBrowser;
 #endif
@@ -303,20 +304,10 @@ protected:
    {
       _mainFrame->swap();
    }
-   void doShowCompilerOutput()
-   {
-      doShowCompilerOutput(!Settings::compilerOutput);
-   }
    void doShowDebugWatch()
    {
 #ifdef _WIN32
       doShowDebugWatch(!_contextBrowser->isVisible());
-#endif
-   }
-   void doShowCallStack()
-   {
-#ifdef _WIN32
-      doShowCallStack(!Settings::compilerCallStack);
 #endif
    }
 
@@ -330,7 +321,8 @@ protected:
    void doShowAbout();
    void doGoToLine();
 
-   void doShowCompilerOutput(bool checked);
+   void doShowCompilerOutput(bool checked, bool forced = false);
+   void doShowMessages(bool checked, bool forced = false);
    void doShowDebugWatch(bool visible);
    void doShowCallStack(bool visible, bool forced = false);
 

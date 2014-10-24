@@ -105,6 +105,10 @@ class ContextBrowser : public TreeView
    #endif
 
 public:
+   void refresh()
+   {
+      TreeView::refresh();
+   }
    void refresh(_ELENA_::DebugController* controller);
    void browse(_ELENA_::DebugController* controller);
    void browse(_ELENA_::DebugController* controller, TreeViewItem current);

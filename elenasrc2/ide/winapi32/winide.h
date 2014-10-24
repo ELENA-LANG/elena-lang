@@ -33,8 +33,6 @@ class WIN32IDE : public IDE
    HINSTANCE   instance;
    ContextMenu contextMenu;
 
-   Output*     _output;
-
    _ELENA_::List<_BaseControl*> controls;
 
    TabBar* createOutputBar();

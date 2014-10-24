@@ -141,7 +141,9 @@ bool Settings :: appMaximized = true;
 
 bool Settings :: compilerOutput = true;
 
-bool Settings :: compilerCallStack = true;
+bool Settings :: callStack = true;
+
+bool Settings :: messages = true;
 
 bool Settings :: lastPathRemember = true;
 
@@ -191,7 +193,8 @@ void Settings :: load(_ELENA_::IniConfigFile& config)
    loadSetting(config.getSetting(SETTINGS_SECTION, TAB_USING_SETTING), tabCharUsing);
    loadSetting(config.getSetting(SETTINGS_SECTION, MAXIMIZED_SETTING), appMaximized);
    loadSetting(config.getSetting(SETTINGS_SECTION, OUTPUT_SETTING), compilerOutput);
-   loadSetting(config.getSetting(SETTINGS_SECTION, CALLSTACK_SETTING), compilerCallStack);   
+   loadSetting(config.getSetting(SETTINGS_SECTION, CALLSTACK_SETTING), callStack);   
+   loadSetting(config.getSetting(SETTINGS_SECTION, MESSAGES_SETTING), messages);   
    loadSetting(config.getSetting(SETTINGS_SECTION, PATH_REMEMBER_SETTING), lastPathRemember);
    loadSetting(config.getSetting(SETTINGS_SECTION, PROJECT_REMEMBER_SETTING), lastProjectRemember);
    loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_DETECTING_SETTING), autoDetecting);
@@ -220,7 +223,8 @@ void Settings :: save(_ELENA_::IniConfigFile& config)
    saveSetting(config, SETTINGS_SECTION, TAB_USING_SETTING, tabCharUsing, false);
    saveSetting(config, SETTINGS_SECTION, MAXIMIZED_SETTING, appMaximized, true);
    saveSetting(config, SETTINGS_SECTION, OUTPUT_SETTING, compilerOutput, true);
-   saveSetting(config, SETTINGS_SECTION, CALLSTACK_SETTING, compilerCallStack, true);
+   saveSetting(config, SETTINGS_SECTION, CALLSTACK_SETTING, callStack, true);
+   saveSetting(config, SETTINGS_SECTION, MESSAGES_SETTING, messages, true);   
    saveSetting(config, SETTINGS_SECTION, PATH_REMEMBER_SETTING, lastPathRemember, true);
    saveSetting(config, SETTINGS_SECTION, PROJECT_REMEMBER_SETTING, lastProjectRemember, true);
    saveSetting(config, SETTINGS_SECTION, AUTO_DETECTING_SETTING, autoDetecting, true);

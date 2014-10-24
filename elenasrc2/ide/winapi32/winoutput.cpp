@@ -38,7 +38,7 @@ Output :: Output(Control* owner, Control* receptor)
 
    _handle = ::CreateWindowEx(
       0, _T("edit"), _T("output"),
-      WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY,
+      WS_CHILD | WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY,
       _left, _top, _width, _height, owner->getHandle(), NULL, _instance, (LPVOID)this);
 
 }

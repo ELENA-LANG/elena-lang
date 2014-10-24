@@ -399,13 +399,16 @@ void MainWindow :: _onMenuCommand(int optionID)
          _ide->doSwap();
          break;
       case IDM_VIEW_OUTPUT:
-         _ide->doShowCompilerOutput();
+         _ide->doShowCompilerOutput(!Settings::compilerOutput);
+         break;
+      case IDM_VIEW_MESSAGES:
+         _ide->doShowMessages(!Settings::messages);
          break;
       case IDM_VIEW_WATCH:
          _ide->doShowDebugWatch();
          break;
       case IDM_VIEW_CALLSTACK:
-         _ide->doShowCallStack();
+         _ide->doShowCallStack(!Settings::callStack);
          break;
       case IDM_SEARCH_FIND:
          _ide->doFind();
@@ -550,11 +553,7 @@ TabBar* WIN32IDE :: createOutputBar()
    _output = new Output(tabBar, _appWindow);
    _messageList = new MessageLog(tabBar);
    _callStackList = new CallStackLog(tabBar);
-   _callStackList->hide();
-
-   tabBar->addTabChild(OUTPUT_TAB, _output);
-   tabBar->addTabChild(MESSAGES_TAB, _messageList);
-
+   
    tabBar->_setHeight(120);
 
    Splitter* bottomSplitter = new Splitter(_appWindow, tabBar, false, IDM_LAYOUT_CHANGED);
@@ -598,7 +597,7 @@ void WIN32IDE :: start(bool maximized)
 
 void WIN32IDE :: onProjectClose()
 {
-   _output->clear();
+   ((Output*)_output)->clear();
 
    IDE::onProjectClose();
 }
@@ -634,7 +633,7 @@ bool WIN32IDE :: compileProject(int postponedAction)
    cmdLine.append(_T(" -xtab"));
    cmdLine.appendInt(Settings::tabSize);
 
-   return _output->execute(appPath, cmdLine, curDir, postponedAction);
+   return ((Output*)_output)->execute(appPath, cmdLine, curDir, postponedAction);
 }
 
 void WIN32IDE :: onCustomDraw(void* handle, void* item)
@@ -652,7 +651,7 @@ void WIN32IDE :: displayErrors()
    _ELENA_::String<wchar_t, 266> message, file;
    _ELENA_::String<wchar_t, 15> colStr, rowStr;
 
-   wchar_t* buffer = _output->getOutput();
+   wchar_t* buffer = ((Output*)_output)->getOutput();
 
    const wchar_t* s = buffer;
    while (s) {

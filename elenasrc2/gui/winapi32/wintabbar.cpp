@@ -249,6 +249,9 @@ void TabBar :: addTabChild(const wchar_t* name, Control* child)
 
 void TabBar :: removeTabChild(Control* window)
 {
+   if (_children.Count() == 0)
+      return;
+
    int index = 0;
    _ELENA_::List<Control*>::Iterator it = _children.start();
    while (!it.Eof() && ((*it) != window)) {
@@ -256,11 +259,14 @@ void TabBar :: removeTabChild(Control* window)
       it++;
    }
 
+   if (_child) {
+      _child->hide();
+      _child = NULL;
+   }
+
    _children.cut(window);
    deleteTab(index);
 
-   _child->hide();
-   _child = NULL;
    refresh();
 }
 
@@ -273,6 +279,8 @@ void TabBar :: selectTabChild(int index)
       _child->show();
    }
    selectTab(index);
+
+   Control::refresh();
 }
 
 void TabBar :: _setWidth(size_t width)
@@ -307,15 +315,18 @@ void TabBar :: _resize()
 
 void TabBar :: refresh()
 {
-   Control* current = *_children.get(getCurrentIndex());
-   if (_child != current) {
-      if (_child)
-         _child->hide();
+   int index = getCurrentIndex();
+   if (index >= 0) {
+      Control* current = *_children.get(index);
+      if (_child != current) {
+         if (_child)
+            _child->hide();
 
-      current->show();
-      current->setFocus();
+         current->show();
+         current->setFocus();
 
-      _child = current;
+         _child = current;
+      }
    }
 
    Control::refresh();
