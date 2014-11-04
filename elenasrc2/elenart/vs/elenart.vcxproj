@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{895D3762-6397-468A-8984-779C1A9E5C0D}</ProjectGuid>
-    <RootNamespace>elenavm</RootNamespace>
+    <RootNamespace>elenart</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -47,7 +47,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>elenavm</TargetName>
+    <TargetName>elenart</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -64,7 +64,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>..\..\..\bin\elenavm.dll</OutputFile>
+      <OutputFile>..\..\..\bin\elenart.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -92,10 +92,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\altstrings.cpp" />
-    <ClCompile Include="..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\common\config.cpp" />
+    <ClCompile Include="..\..\engine\libman.cpp" />
+    <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\rtman.cpp" />
-    <ClCompile Include="..\..\engine\win32\x86jitcompiler.cpp" />
+    <ClCompile Include="..\..\engine\section.cpp" />
+    <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
+    <ClCompile Include="..\instance.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -105,42 +108,23 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="..\..\common\dump.cpp" />
-    <ClCompile Include="..\elenamachine.cpp" />
     <ClCompile Include="..\..\common\files.cpp" />
-    <ClCompile Include="..\..\engine\jitcompiler.cpp" />
-    <ClCompile Include="..\..\engine\jitlinker.cpp" />
-    <ClCompile Include="..\..\engine\libman.cpp" />
-    <ClCompile Include="..\..\engine\loader.cpp" />
-    <ClCompile Include="..\..\engine\module.cpp" />
-    <ClCompile Include="..\..\engine\section.cpp" />
-    <ClCompile Include="..\win32\x86elenamachine.cpp" />
-    <ClCompile Include="..\..\engine\x86helper.cpp" />
-    <ClCompile Include="..\win32\x86process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\altstrings.h" />
-    <ClInclude Include="..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\common\common.h" />
     <ClInclude Include="..\..\common\config.h" />
     <ClInclude Include="..\..\common\dump.h" />
-    <ClInclude Include="..\..\engine\elena.h" />
-    <ClInclude Include="..\..\engine\elenaconst.h" />
-    <ClInclude Include="..\..\engine\rtman.h" />
-    <ClInclude Include="..\..\engine\win32\x86jitcompiler.h" />
-    <ClInclude Include="..\elenamachine.h" />
     <ClInclude Include="..\..\common\files.h" />
-    <ClInclude Include="..\..\engine\jitcompiler.h" />
-    <ClInclude Include="..\..\engine\jitlinker.h" />
-    <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\common\lists.h" />
-    <ClInclude Include="..\..\engine\loader.h" />
-    <ClInclude Include="..\..\engine\module.h" />
-    <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\tools.h" />
-    <ClInclude Include="..\win32\x86elenamachine.h" />
-    <ClInclude Include="..\..\engine\x86helper.h" />
-    <ClInclude Include="..\win32\x86process.h" />
+    <ClInclude Include="..\..\engine\libman.h" />
+    <ClInclude Include="..\..\engine\module.h" />
+    <ClInclude Include="..\..\engine\rtman.h" />
+    <ClInclude Include="..\..\engine\section.h" />
+    <ClInclude Include="..\..\engine\win32\pehelper.h" />
+    <ClInclude Include="..\instance.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

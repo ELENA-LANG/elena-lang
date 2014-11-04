@@ -56,19 +56,17 @@ ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* mod
 
 void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
 {
-   if (_owner->_withDebugInfo) {
-      if (!_debug)
-         _debug = _owner->_loader->getTargetDebugSection();
+   if (!_debug)
+      _debug = _owner->_loader->getTargetDebugSection();
 
-      MemoryWriter writer(_debug);
+   MemoryWriter writer(_debug);
 
-      if (!_owner->_virtualMode) {
-         ref_t address = (size_t)_owner->_codeBase;
+   if (!_owner->_virtualMode) {
+      ref_t address = (size_t)_owner->_codeBase;
 
-         writer.writeDWord(address + position);
-      }
-      else writer.writeRef((ref_t)_owner->_codeBase, position);
+      writer.writeDWord(address + position);
    }
+   else writer.writeRef((ref_t)_owner->_codeBase, position);
 }
 
 ////void ReferenceLoader::ReferenceHelper :: writeMethodReference(SectionWriter& writer, size_t tapeDisp)
@@ -204,7 +202,7 @@ void* JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& r
 
       if (vaddress==LOADER_NOTLOADED) {
          // create VMT table without resolving references to prevent circular reference
-         vaddress = createBytecodeVMTSection(referenceName, mskVMTRef, _loader->getClassSectionInfo(referenceName, mskClassRef, mskVMTRef), references);
+         vaddress = createBytecodeVMTSection(referenceName, mskVMTRef, _loader->getClassSectionInfo(referenceName, mskClassRef, mskVMTRef, false), references);
 
          if (vaddress == LOADER_NOTLOADED)
             throw JITUnresolvedException(referenceName);
@@ -518,29 +516,36 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
       _compiler->compileReal64(&writer, StringHelper::strToDouble(value));
    }
    else if (vmtVAddress == LOADER_NOTLOADED) {
-      // resolve constant value
-      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef);
-      _compiler->compileBinary(&writer, sectionInfo.section);
+      // check if it built-in constants
+      if (ConstantIdentifier::compare(reference, PACKAGE_KEY)) {
+         _compiler->compileWideLiteral(&writer, _loader->getNamespace());
 
-      // resolve section references
-      _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-      ref_t currentMask = 0;
-      ref_t currentRef = 0;
-      while (!it.Eof()) {
-         currentMask = it.key() & mskAnyRef;
-         currentRef = it.key() & ~mskAnyRef;
-
-         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-
-         if (*it == -4) {
-            // resolve the constant vmt reference
-            vmtVAddress = refVAddress;
-         }
-         else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
-
-         it++;
+         vmtVAddress = resolve(_loader->getLiteralClass(), mskVMTRef, true);
       }
+      else {
+         // resolve constant value
+         SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef);
+         _compiler->compileBinary(&writer, sectionInfo.section);
 
+         // resolve section references
+         _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+         ref_t currentMask = 0;
+         ref_t currentRef = 0;
+         while (!it.Eof()) {
+            currentMask = it.key() & mskAnyRef;
+            currentRef = it.key() & ~mskAnyRef;
+
+            void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+            if (*it == -4) {
+               // resolve the constant vmt reference
+               vmtVAddress = refVAddress;
+            }
+            else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+
+            it++;
+         }
+      }
       constantValue = true;
    }
 
@@ -795,7 +800,7 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
             vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef));
             break;
          case mskVMTRef:
-            vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef));
+            vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef, silentMode));
             break;
          case mskNativeCodeRef:
          case mskNativeDataRef:
@@ -846,8 +851,8 @@ void JITLinker :: prepareCompiler()
    _Memory* sdata = _loader->getTargetSection(mskStatRef);
    _compiler->prepareCoreData(helper, data, rdata, sdata);
 
-   // load VM table
-   _compiler->prepareVMData(helper, data);
+   // load RT table
+   _compiler->prepareRTData(helper, data);
 
    // preload compiler command set
    _Memory* code = _loader->getTargetSection(mskCodeRef);

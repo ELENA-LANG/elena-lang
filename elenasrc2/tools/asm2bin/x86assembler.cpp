@@ -135,13 +135,7 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
 {
 	Operand operand = defineRegister(token);
    if (operand.type == x86Helper::otUnknown) {
-		//if (token.check(_T("("))) {
-		//	token.read();
-		//	operand = defineOperand(token, info/*, binary*/, err);
-		//	readOffset(token, info/*, binary*/, err, operand);
-		//	token.read(_T(")"), err);
-		//}
-		/*else*/ if (token.getInteger(operand.offset, constants)) {
+		if (token.getInteger(operand.offset, constants)) {
 			setOffsetSize(operand);
          // !! HOTFIX: 000000080 constant should be considered as int32 rather then int8
          if (getlength(token.value)==8 && operand.type == x86Helper::otDB) {
@@ -163,6 +157,14 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
             operand.reference = info.binary->mapReference(structRef) | mskNativeDataRef;
          }
 
+      }
+		else if (token.check("rdata")) {
+         token.read(":", err);
+         token.read();
+         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
+
+         operand.type = x86Helper::otDD;
+         operand.reference = info.binary->mapReference(structRef) | mskNativeRDataRef;
       }
 		else if (token.check("stat")) {
          token.read(":", err);

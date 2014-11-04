@@ -494,10 +494,3 @@ ELENA byte codes (or ecodes)
  nsubcopy                   - int[acc+index+i] >> int[base+i] ; i++ ; i < ext
 
  xseek                      - search for ext in base, starting from index ; out - index first occ ; unsafe command - length is not checked
-                                                                                                                           
-
- dynamic / reflection commands
- ----------------
- weval                     - load symbol by name into ext ; str(base) => ext
-
- wname                     - acc.VMT.Name >> str(base), index maximal value

@@ -97,8 +97,6 @@
 
     #var aPresentation := anObject~textserializable literal. 
 //    
-//    #var aClass := Symbol new &literal:"system'Integer".
-//    #var anInstance := aClass new.
 ].
 
 #symbol TapeTest =
@@ -126,7 +124,12 @@
 
 #symbol Program =
 [ 
-    InterpreterTest eval.
+    classControl test.
+
+//    #var aClass := Symbol new &literal:"system'Integer".
+//    #var anInstance := aClass new.
+
+//    InterpreterTest eval.
 
 //    ClassTest eval.
 //    GetPropertyTester eval.

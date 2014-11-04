@@ -127,7 +127,6 @@ Image :: Image(bool standAlone)
 
    writer.align(4, 0);
 
-   // reserve size field for debug section
-   MemoryWriter dbgWriter(&_debug);
-   dbgWriter.writeDWord(0);
+   // write debug length and entry point placeholders
+   _debug.writeBytes(0, 0, 8);
 }

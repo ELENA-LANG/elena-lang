@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x0004             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0007             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -135,6 +135,7 @@ class Instance : public _ImageLoader
 {
 protected:
    typedef void*(*VMAPI)(Instance*, void*);
+   typedef size_t(*VMAPI_NAME)(Instance*, void*,wchar16_t*,size_t);
 
    // --- ImageReferenceHelper ---
    // in most cases the references are already real ones
@@ -194,10 +195,11 @@ protected:
    InstanceConfig  _config;
 
    // vm interface
-   VMAPI _loadClassName;
-   VMAPI _loadSymbolPtr;
-   VMAPI _interprete;
-   VMAPI _getLastError;
+   VMAPI_NAME _loadClassName;
+   VMAPI      _loadSymbolPtr;
+   VMAPI      _interprete;
+   VMAPI      _getLastError;
+   VMAPI_NAME _loadAddrInfo;
 
    // status
    String<wchar16_t, 255> _status;
@@ -210,7 +212,7 @@ protected:
    _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
-   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask);
+   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode);
    virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask);
 
    bool initLoader(InstanceConfig& config);
@@ -248,7 +250,12 @@ public:
 
    virtual void raiseBreakpoint() = 0;
 
-   bool isDebugMode() const { return _linker->getDebugMode(); }
+   void setDebugMode(bool isActive = true)
+   {
+      _debugMode = isActive;
+   }
+
+   bool isDebugMode() const { return _debugMode; }
 //   bool isInitialized() const { return _initialized; }
 
    void addForward(const wchar16_t* forward, const wchar16_t* reference);
@@ -272,6 +279,11 @@ public:
    virtual const wchar16_t* getRealClass()
    {
       return _realClass;
+   }
+
+   virtual const wchar16_t* getNamespace()
+   {
+      return _loader.getPackage();
    }
 
    virtual const wchar16_t* getClassName(void* vmtAddress)
@@ -307,6 +319,8 @@ public:
    void* loadSymbol(const wchar16_t* reference, int mask);
 
    int interprete(void* tape, const wchar16_t* interpreter);
+
+   bool loadAddressInfo(void* address, wchar16_t* buffer, size_t& maxLength);
 
    Instance(ELENAMachine* machine);
    virtual ~Instance();

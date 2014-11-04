@@ -10,6 +10,7 @@
 ELENA:
 [!] binary incompatible due to changes in debugger / exception support
 [-] dn files are no longer produced, debug info is inside an executable
+[+] new shared library : elenart - run-time helper for stand-alone applications
 
 IDE:
 [+] Project - View - Call stack

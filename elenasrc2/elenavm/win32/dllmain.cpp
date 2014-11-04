@@ -97,6 +97,8 @@ EXTERN_DLL_EXPORT size_t SetDebugMode()
    if (instance == NULL)
       return 0;
 
+   instance->setDebugMode();
+
    return (size_t)instance->loadDebugSection();
 }
 

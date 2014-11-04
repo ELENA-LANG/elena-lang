@@ -28,10 +28,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
-#define LOADCLASSNAME        0x10011
 #define INIT_RND             0x10012
-#define EVALSCRIPT           0x10013
-#define LOADSYMBOL           0x10014
 
 // preloaded gc routines
 const int coreVariableNumber = 2;
@@ -41,21 +38,21 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 6;
+const int coreFunctionNumber = 3;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK, LOADCLASSNAME, INIT_RND, EVALSCRIPT, LOADSYMBOL
+   GC_ALLOC, HOOK, INIT_RND
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 133;
+const int gcCommandNumber = 131;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
    bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
-   bcNewN, bcNew, bcWEval, bcSwapSI, bcASwapSI,
+   bcNewN, bcNew, bcSwapSI, bcASwapSI,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
-   bcHook, bcThrow, bcUnhook, bcWName, bcClass,
+   bcHook, bcThrow, bcUnhook, bcClass,
    bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
    bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
    bcGet, bcSet, bcXSet, bcECall, bcBReadB,
@@ -92,8 +89,8 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
+   &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
@@ -569,7 +566,7 @@ void _ELENA_::compileNop(int opcode, x86JITScope& scope)
 
 void _ELENA_::compileBreakpoint(int opcode, x86JITScope& scope)
 {
-   if (scope.debugMode)
+   if (scope.withDebugInfo)
       scope.helper->addBreakpoint(scope.code->Position());
 }
 
@@ -1079,7 +1076,11 @@ void _ELENA_::compileIfR(int opcode, x86JITScope& scope)
    // jz lab
 
    scope.code->writeByte(0x3D);
-   scope.writeReference(*scope.code, scope.argument, 0);
+   // HOTFIX : support zero references
+   if (scope.argument != 0) {
+      scope.writeReference(*scope.code, scope.argument, 0);
+   }
+   else scope.code->writeDWord(0);
    //NOTE: due to compileJumpX implementation - compileJumpIf is called
    compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
@@ -1219,7 +1220,7 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->code = code;
    this->helper = helper;
    this->compiler = compiler;
-   this->debugMode = compiler->isDebugMode();
+   this->withDebugInfo = compiler->isWithDebugInfo();
    this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->embeddedSymbols = embeddedSymbols;
    this->module = NULL;
@@ -1233,6 +1234,13 @@ x86JITCompiler :: x86JITCompiler(bool debugMode, bool embeddedSymbolMode)
 {
    _embeddedSymbolMode = embeddedSymbolMode;
    _debugMode = debugMode;
+}
+
+bool x86JITCompiler :: isWithDebugInfo() const
+{
+   // in the current implementation, debug info (i.e. debug section)
+   // is always generated (to be used by RTManager)
+   return true;
 }
 
 void x86JITCompiler :: alignCode(MemoryWriter* writer, int alignment, bool code)
@@ -1291,7 +1299,7 @@ void x86JITCompiler :: prepareCoreData(_ReferenceHelper& helper, _Memory* data, 
    rdataWriter.writeDWord(0);
 }
 
-void x86JITCompiler :: prepareVMData(_ReferenceHelper& helper, _Memory* data)
+void x86JITCompiler :: prepareRTData(_ReferenceHelper& helper, _Memory* data)
 {
    MemoryWriter writer(data);
 
@@ -1302,7 +1310,8 @@ void x86JITCompiler :: prepareVMData(_ReferenceHelper& helper, _Memory* data)
    writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSymbol));
    writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadName));
    writer.writeDWord(helper.getLinkerConstant(lnVMAPI_Interprete));
-//   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
+   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
+   writer.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadAddrInfo));
 }
 
 void x86JITCompiler :: prepareCommandSet(_ReferenceHelper& helper, _Memory* code)
@@ -1428,7 +1437,7 @@ inline void compileTape(MemoryReader& tapeReader, int endPos, x86JITScope& scope
 void x86JITCompiler :: embedSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter, _Module* module)
 {
    x86JITScope scope(&tapeReader, &codeWriter, &helper, this, _embeddedSymbolMode);
-   scope.debugMode = false;   // embedded symbol does not provide a debug info
+   scope.withDebugInfo = false;   // embedded symbol does not provide a debug info
    scope.module = module;
 
    size_t codeSize = tapeReader.getDWord();

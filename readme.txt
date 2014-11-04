@@ -47,6 +47,9 @@ License V2.0e, for more information read the file LICENSE.TXT.
 
 To install just unzip all the files into a directory you want.
 
+You may need to execute install.bat file to set the compiler path 
+as an administrator and reboot. Note it should be done only once
+
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
 (<app root>\bin\elide.exe) or ELENA Command Line Compiler 
 (<app root>\bin\elc.exe)

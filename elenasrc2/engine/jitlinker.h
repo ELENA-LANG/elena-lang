@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitlinkerH
@@ -152,12 +152,12 @@ public:
 
    ref_t parseMessage(const wchar16_t*  reference);
 
-   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool withDebugInfo)
+   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase)
    {
       _loader = loader;
       _compiler = compiler;
       _virtualMode = virtualMode;
-      _withDebugInfo = withDebugInfo;
+      _withDebugInfo = compiler->isWithDebugInfo();
       _codeBase = codeBase;
 
 //      _uniqueID = 0;

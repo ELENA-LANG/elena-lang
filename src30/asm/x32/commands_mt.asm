@@ -7,9 +7,7 @@ define THREAD_TABLE         08h
 // --- System Core API  --
 define GC_ALLOC	         10001h
 define HOOK              10010h
-define GETCLASSNAME      10011h
 define INIT_RND          10012h
-define EVALSCRIPT        10013h
 
 // GC TABLE
 define gc_header             0000h

@@ -1,10 +1,7 @@
 // --- System Core API  --
 define GC_ALLOC	         10001h
 define HOOK              10010h
-define GETCLASSNAME      10011h
 define INIT_RND          10012h
-define EVALSCRIPT        10013h
-define LOADSYMBOL        10014h
 
 // --- System Core Data  --
 define CORE_EXCEPTION_TABLE 01h
@@ -12,13 +9,15 @@ define CORE_GC_TABLE        02h
 define CORE_GC_SIZE         03h
 define CORE_STAT_COUNT      04h
 define CORE_STATICROOT      05h
-define CORE_VM_TABLE        06h
+define CORE_RT_TABLE        06h
 
-// CORE VM TABLE
-define vm_Instance      0000h
-define vm_loadSymbol    0004h
-define vm_loadName      0008h
-define vm_interprete    000Ch
+// CORE RT TABLE
+define rt_Instance      0000h
+define rt_loadSymbol    0004h
+define rt_loadName      0008h
+define rt_interprete    000Ch
+define rt_lasterr       0010h
+define rt_loadaddrinfo  0014h
 
 // CORE GC SIZE
 define gcs_MGSize	0000h
@@ -874,74 +873,6 @@ procedure %HOOK
 
 end
 
-// ; get class name
-// ; in:  edx - VMT
-// ; out: eax - PWSTR
-procedure % GETCLASSNAME
-
-  mov  esi, data : %CORE_VM_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call LoadClassName (instance, object)
-  push edx
-  push eax
-  mov  edx, [esi + vm_loadName] 
-  call edx
-  lea  esp, [esp+8]  
-
-labEnd:
-  ret
-
-end
-
-// ; load symbol
-// ; in : edx - symbol name
-// ; out : eax - reference
-procedure % LOADSYMBOL
-
-  mov  esi, data : %CORE_VM_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call GetSymbolRef (instance, name)
-  push edx
-  push eax
-  mov  edx, [esi + vm_loadSymbol] 
-  call edx
-  lea  esp, [esp+8]  
-
-labEnd:
-  ret  
-
-end
-
-// in:  edi - script
-// out: eax - result
-procedure % EVALSCRIPT
-
-  mov  esi, data : %CORE_VM_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call interpreter (instance, tape)
-  push edi
-  push eax
-  mov  edx, [esi + vm_interprete] 
-  call edx
-  lea  esp, [esp+8]  
-
-labEnd:
-  ret
-
-end
-
 procedure % INIT_RND
 
   sub  esp, 8h
@@ -1215,3 +1146,105 @@ procedure core'getcount
   ret
 
 end
+
+// ; load symbol
+// ; in : edx - symbol name
+// ; out : eax - reference
+procedure core'loadsymbol
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call GetSymbolRef (instance, name)
+  push edx
+  push eax
+  mov  edx, [esi + rt_loadSymbol] 
+  call edx
+  lea  esp, [esp+8]  
+
+labEnd:
+  ret  
+
+end
+
+// ; get class name
+// ; in:  esi - max length, eax - PWSTR, edi - object
+// ; out: eax - PWSTR, esi - length
+procedure core'loadclassname
+
+  push esi
+  push eax
+  mov  edx, [edi-elVMTOffset]
+  push edx
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadClassName (instance, object,out buffer, maxlength)
+  push eax
+  mov  edx, [esi + rt_loadName] 
+  call edx
+  lea  esp, [esp+4]  
+
+labEnd:
+  lea  esp, [esp+0Ch]  
+  ret
+
+end
+
+// ; load address info
+// ; in:  esi - max length, eax - PWSTR, ecx - address
+// ; out: eax - PWSTR, esi - length
+procedure core'loadaddressinfo
+
+  push esi
+  push eax
+  push ecx
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadAddressInfo (instance, ret point,out buffer, maxlength)
+  push eax
+  mov  edx, [esi + rt_loadaddrinfo] 
+  call edx
+  lea  esp, [esp+4]  
+
+labEnd:
+  lea  esp, [esp+0Ch]  
+  ret
+
+end
+
+/*
+// in:  edi - script
+// out: eax - result
+procedure % EVALSCRIPT
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call interpreter (instance, tape)
+  push edi
+  push eax
+  mov  edx, [esi + rt_interprete] 
+  call edx
+  lea  esp, [esp+8]  
+
+labEnd:
+  ret
+
+end
+*/

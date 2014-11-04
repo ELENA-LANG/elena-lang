@@ -15,21 +15,10 @@ using namespace _ELENA_;
 
 #define PMODULE_LEN getlength(PACKAGE_MODULE)
 
-//inline const TCHAR* getName(const TCHAR* name, const TCHAR* package)
-//{
-//   if (name[0]=='$')
-//      name++;
-//
-//   if (!emptystr(package) && compstr(name, pa/.)) {
-//      name += getlength(package) + 1;
-//   }
-//   return name;
-//}
-
 // --- LibraryManager ---
 
 LibraryManager :: LibraryManager()
-   : _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr)
+   : _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr), _debugModules(NULL, freeobj)
 {
 }
 
@@ -74,6 +63,28 @@ _Module* LibraryManager :: loadModule(const wchar16_t* package, LoadResult& resu
          return NULL;
       }
       else _modules.add(package, module);
+   }
+   else result = lrSuccessful;
+
+   return module;
+}
+
+_Module* LibraryManager :: loadDebugModule(const wchar16_t* package, LoadResult& result)
+{
+   _Module* module = _debugModules.get(package);
+   if (!module) {
+      Path path;
+      nameToPath(package, path, _T("dnl"));
+
+      FileReader  reader(path, feRaw, false);
+      module = new ROModule(reader, result);
+
+      if (result != lrSuccessful) {
+         delete module;
+
+         return NULL;
+      }
+      else _debugModules.add(package, module);
    }
    else result = lrSuccessful;
 
@@ -170,6 +181,17 @@ _Module* LibraryManager :: resolveModule(const wchar16_t* referenceName, LoadRes
    NamespaceName name(referenceName);
 
    _Module* module = loadModule(name, result);
+
+   reference = module ? module->mapReference(referenceName, true) : 0;
+
+   return module;
+}
+
+_Module* LibraryManager :: resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+{
+   NamespaceName name(referenceName);
+
+   _Module* module = loadDebugModule(name, result);
 
    reference = module ? module->mapReference(referenceName, true) : 0;
 

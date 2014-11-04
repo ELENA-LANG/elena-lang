@@ -24,20 +24,12 @@ Currently:
               xdev - linux
                        * linux linker
 
-              xdev - general development
-                       * call stack : how to generate
-                       
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
                        
-              xdev - elenart
-                       * design call stack generation algorithm : standalone, vm client
-                       * review the solution, can the shared solution be used inside IDE, Stand-alone and vm client
-
-                       * special library to help generate the stack info - contains the list of debug modules, can generate stack information for 
-                         stand-alone application
-                       
               xdev - exception handling
+                       * create a call stack
+
                        * exception : message, [ the object, the stack ] in #exception structure
 
                        * call stack should be created in catch statement?? boxing the exception ??? the simplest way in exception handler check
@@ -82,12 +74,18 @@ Currently:
 
                        * method not found event should provides the way to specify the object where the method was not found
 
+              idev - usability
+                       * output window should be selected (if presented) and focus set after successful compile
+                       * message window should be selected (if presented) and focus set after unsuccessful compile
+
 <=================> 
 
 1.9.18
 --------
 week1:
               xdev - generic development                                                      
+                       * elenavm should be loaded using shared paths, rather than with direct call, modify the code, get rid of vm path option
+
                        * think over object serialization, for example - save the object into file and load back
 
                        * break normal / virtual loop
@@ -158,8 +156,6 @@ week1:
                        * rename / refactor weval - misleading name
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it? - better always box into array
-                       * get rid of predefined classes, use predefined types to map type with classes ; all predefined types should be
-                         declared in system (types.l) ; what about exceptions, true / false, and so on???
                        * split hook into two : address , hook ; or use internal function for exception raising / handling?
                        
               xdev - general implementation
@@ -206,8 +202,11 @@ week1:
                          are constants / locals / fields  
                                presenterClassFactory new::anObject new:anObject &radix:aRadix.
                        * it should be possible to turn off control virtualization, direct calls, optimization code, jumps
-                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)
-
+                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
+                       * elenart, should support the similar functionality with elenavm (except script support)
+                       * looks like debug section should be generated every time for runtime / call sack
+                       * review the call stack generation solution, can the shared solution be used inside IDE and Stand-alone / vm client
+ 
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
                        * out of memory exception should be correctly raised
@@ -530,6 +529,9 @@ week2:
                          to any object
 
 week3:
+              sdev - c# samples
+                       * try to implement c# reflection samples
+                       * try to implement c# lamda examples (lists)
 
               xdev - script engine
                        * if the script contains only grammar, virtual machine should not be called
@@ -720,6 +722,10 @@ week1:
                        * could typed subjects be reserved for every module? So they have the
                          same ids in every module? (so we could get rid of long list of cached
                          values)
+                       * to move all the code from core_routines into coreapi, implement coreapi in ecodes, get rid of import statement in the
+                         code
+                       * get rid of predefined classes, use predefined types to map type with classes ; all predefined types should be
+                         declared in system (types.l) ; what about exceptions, true / false, and so on???
 
               xdev - stack allocated variable
                        * long
@@ -1080,7 +1086,6 @@ stack:
     - option to ignore unresolved references warning within the project namespace
     - display current file encoding in the status bar
     - ctrl+F8 go to the next statement
-    - call stack window
     - investigate stepping over / into annex inline symbols (e.g. $createHandle)
     - prevent from slowing down on the program exit (make possible to inidicate
       to the sistem that this step is the last in the program)

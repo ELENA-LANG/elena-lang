@@ -22,12 +22,12 @@
 #else
 
 #define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
-#define RULES_FILE                  "rules.dat"
+#define RULES_FILE                  "/usr/share/elena/rules.dat"
 
 #endif
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0002
+#define ELC_BUILD_NUMBER             0x0006
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'

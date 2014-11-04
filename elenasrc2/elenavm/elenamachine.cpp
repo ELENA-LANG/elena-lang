@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include "bytecode.h"
+#include "rtman.h"
 
 #include <stdarg.h>
 
@@ -42,9 +43,18 @@ void* __getSymbolRef(Instance* instance, void* referenceName)
    return instance->getSymbolRef((const wchar16_t*)referenceName);
 }
 
-static void* __getClassName(Instance* instance, void* vmtAddress)
+static size_t __getClassName(Instance* instance, void* vmtAddress, wchar16_t* buffer, size_t maxLength)
 {
-   return (void*)instance->getClassName(vmtAddress);
+   const wchar16_t* className = instance->getClassName(vmtAddress);
+   size_t length = getlength(className);
+   if (length > 0) {
+      if (maxLength >= length) {
+         StringHelper::copy(buffer, className, length);
+      }
+      else buffer[0] = 0;
+   }
+
+   return length;
 }
 
 static void* __interprete(Instance* instance, void* tape)
@@ -63,6 +73,14 @@ static void* __getLastError(Instance* instance, void* retVal)
       return retVal;
    }
    else return NULL;
+}
+
+static size_t __loadAddressInfo(Instance* instance, void* address, wchar16_t* buffer, size_t maxLength)
+{
+   if (instance->loadAddressInfo(address, buffer, maxLength)) {
+      return maxLength;
+   }
+   else return 0;
 }
 
 // --- InstanceConfig ---
@@ -193,11 +211,9 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, void
 
 void Instance::ImageReferenceHelper :: addBreakpoint(size_t position)
 {
-   if (_instance->_debugMode) {
-      MemoryWriter writer(_instance->getTargetDebugSection());
+   MemoryWriter writer(_instance->getTargetDebugSection());
 
-      writer.writeDWord(_codeBase + position);
-   }
+   writer.writeDWord(_codeBase + position);
 }
 
 // --- Instance ---
@@ -223,11 +239,12 @@ Instance :: Instance(ELENAMachine* machine)
    // init loader based on default machine config
    initLoader(_machine->config);
 
-   // init VM API
+   // init Run-Time API
    _loadClassName = __getClassName;
    _loadSymbolPtr = __getSymbolRef;
    _interprete    = __interprete;
    _getLastError  = __getLastError;
+   _loadAddrInfo  = __loadAddressInfo;
 }
 
 Instance :: ~Instance()
@@ -276,8 +293,10 @@ size_t Instance :: getLinkerConstant(int id)
          return (size_t)_loadClassName;
       case lnVMAPI_Interprete:
          return (size_t)_interprete;
-      //case lnVMAPI_GetLastError:
-      //   return (size_t)_getLastError;
+      case lnVMAPI_GetLastError:
+         return (size_t)_getLastError;
+      case lnVMAPI_LoadAddrInfo:
+         return (size_t)_loadAddrInfo;
       default:
          return 0;
    }
@@ -375,7 +394,7 @@ SectionInfo Instance :: getPredefinedSectionInfo(const wchar16_t* package, ref_t
    return sectionInfo;
 }
 
-ClassSectionInfo Instance :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask)
+ClassSectionInfo Instance :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 
@@ -383,8 +402,10 @@ ClassSectionInfo Instance :: getClassSectionInfo(const wchar16_t* reference, siz
    ref_t      referenceID = 0;
    sectionInfo.module = resolveModule(reference, result, referenceID);
 
-   if (sectionInfo.module == NULL || referenceID == 0)
-      throw JITUnresolvedException(reference);
+   if (sectionInfo.module == NULL || referenceID == 0) {
+      if (!silentMode)
+         throw JITUnresolvedException(reference);
+   }
    else {
       sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
       sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
@@ -459,10 +480,6 @@ bool Instance :: restart(bool debugMode)
    // init debug section
    if (_linker->getDebugMode()) {
       printInfo(_T("Debug mode..."));
-
-      // put size place holders
-      int dummy = 0;
-      getTargetDebugSection()->write(0, &dummy, 4);
    }
 
    // load predefined code
@@ -775,6 +792,14 @@ int Instance :: interprete(void* tape, const wchar16_t* interpreter)
       setStatus(_T("Broken"));
 
    return retVal;
+}
+
+bool Instance :: loadAddressInfo(void* address, wchar16_t* buffer, size_t& maxLength)
+{
+   RTManager manager;
+   MemoryReader reader(getTargetDebugSection(), 4);
+
+   return manager.readAddressInfo(reader, (size_t)address, &_loader, buffer, maxLength);
 }
 
 // --- ELENAMachine::Config ---

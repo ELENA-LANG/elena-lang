@@ -296,7 +296,8 @@ namespace _ELENA_
    const int lnVMAPI_LoadSymbol    = 0x00001002;   // reference to LoadSymbol function;
    const int lnVMAPI_LoadName      = 0x00001003;   // reference to LoadClassName function;
    const int lnVMAPI_Interprete    = 0x00001005;   // reference to Interprete function;
-  // const int lnVMAPI_GetLastError  = 0x00001006;   // reference to GetLastError function;
+   const int lnVMAPI_GetLastError  = 0x00001006;   // reference to GetLastError function;
+   const int lnVMAPI_LoadAddrInfo  = 0x00001007;   // reference to LoadAddressInfo function;
 
   // ELENA run-time exceptions
    #define ELENA_ERR_OUTOF_MEMORY  0x190
@@ -456,6 +457,7 @@ namespace _ELENA_
   // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
+   #define PACKAGE_KEY              "$elena'@package"                // The project namespace
 
    // predefined classes
    #define SUPER_CLASS              "system'Object"                  // the common class predecessor

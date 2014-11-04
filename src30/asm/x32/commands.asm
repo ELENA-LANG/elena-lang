@@ -2,10 +2,7 @@
 
 define GC_ALLOC	         10001h
 define HOOK              10010h
-define GETCLASSNAME      10011h
 define INIT_RND          10012h
-define EVALSCRIPT        10013h
-define LOADSYMBOL        10014h
 
 // --- System Core Data  --
 define CORE_EXCEPTION_TABLE 01h
@@ -13,7 +10,6 @@ define CORE_GC_TABLE        02h
 define CORE_GC_SIZE         03h
 define CORE_STAT_COUNT      04h
 define CORE_STATICROOT      05h
-define CORE_VM_TABLE        06h
 
 // GC TABLE
 define gc_header             0000h
@@ -270,52 +266,6 @@ inline % 33h
   mov  ebx, [eax - 4]
   mov  esi, [ebx - elVMTFlagOffset]
   
-end
-
-// ; weval
-inline % 34h
-
-  mov  edx, edi
-  call code : % LOADSYMBOL
-  mov  ecx, eax
-
-end
-
-// ; wname
-inline % 35h
-
-  push esi
-  
-  mov  edx, [eax-elVMTOffset]
-  call code : % GETCLASSNAME  
-
-  pop  ecx
-  xor  esi, esi
-
-  test eax, eax
-  jz   short labEnd
-
-  mov  esi, eax
-  mov  edx, edi
-
-labCopy:
-  mov  ebx, [esi]                                                                                           
-  mov  word ptr [edx], bx
-  test ebx, 0FFFFh
-  jz   short labFixLen
-  lea  esi, [esi+2]
-  sub  ecx, 1
-  lea  edx, [edx+2]
-  jnz  short labCopy
-
-labFixLen:
-  mov  esi, edx
-  sub  esi, edi
-  shr  esi, 1
-  mov  eax, edi
-  
-labEnd:
-
 end
 
 // ; class

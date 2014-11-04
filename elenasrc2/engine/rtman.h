@@ -12,27 +12,19 @@
 namespace _ELENA_
 {
 
-// --- RTHelper ---
-
-class RTHelper
-{
-public:
-   static void readCallStack(StreamReader& stack, size_t startPosition, size_t currentAddress, StreamWriter& output);
-};
-
 // --- RTManager ---
 
 class RTManager
 {
 public:
-   RTManager()
-   {
-   }
+   static void readCallStack(StreamReader& stack, size_t startPosition, size_t currentAddress, StreamWriter& output);
 
-   virtual ~RTManager()
-   {
-   }
+   bool readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, 
+      const wchar16_t* &symbol, const wchar16_t* &method, const wchar16_t* &path, int& row);
+
+   bool readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t& length);
 };
+
 
 } // _ELENA_
 

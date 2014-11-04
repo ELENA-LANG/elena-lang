@@ -103,13 +103,6 @@ void x86Instance :: raiseBreakpoint()
 
 void* x86Instance :: loadDebugSection()
 {
-   if (!_debugMode) {
-      _debugMode = true;
-
-      // put size field
-      _debugProcess.writeBytes(0, 0, 4);
-   }
-
    return _debugProcess.get(0);
 }
 
@@ -124,13 +117,16 @@ bool x86Instance :: restart(bool debugMode)
    _statProcess.trim(0);
    _debugProcess.trim(0);
 
+   // put debug size and entry point place holders
+   getTargetDebugSection()->writeBytes(0, 0, 8);
+
    // free compiler & linker
    freeobj(_compiler);
    freeobj(_linker);
 
    // create new compiler & linker (in debug mode we do not use embedded symbols)
    _compiler = new _ELENA_::x86JITCompiler(debugMode, !debugMode);
-   _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0), debugMode/*, _config.maxThread*/);
+   _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/);
 
    return Instance::restart(debugMode);
 }

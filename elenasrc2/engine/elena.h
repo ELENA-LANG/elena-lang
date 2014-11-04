@@ -42,6 +42,15 @@ public:
    virtual ~_Module() {}
 };
 
+// --- _LibraryManager ---
+
+class _LibraryManager
+{
+public:
+   virtual _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference) = 0;
+   virtual _Module* resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference) = 0;
+};
+
 // --- SectionInfo ---
 
 struct SectionInfo
@@ -87,7 +96,7 @@ public:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask) = 0;
    virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask) = 0;
-   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask) = 0;
+   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
 
@@ -95,6 +104,7 @@ public:
    virtual const wchar16_t* getIntegerClass() = 0;
    virtual const wchar16_t* getRealClass() = 0;
    virtual const wchar16_t* getLongClass() = 0;
+   virtual const wchar16_t* getNamespace() = 0;
 
    virtual const wchar_t* retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 

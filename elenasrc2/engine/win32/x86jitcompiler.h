@@ -31,7 +31,7 @@ struct x86JITScope
    x86LabelHelper    lh;
 
    bool              embeddedSymbols;
-   bool              debugMode;
+   bool              withDebugInfo;
    int               objectSize;
 
    // byte code command argument
@@ -161,7 +161,7 @@ protected:
    void writePreloadedReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 
 public:
-   bool isDebugMode() const { return _debugMode; }
+   virtual bool isWithDebugInfo() const;
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
 
@@ -169,7 +169,7 @@ public:
 
    virtual void prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata);
    virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code);
-   virtual void prepareVMData(_ReferenceHelper& helper, _Memory* data);
+   virtual void prepareRTData(_ReferenceHelper& helper, _Memory* data);
 
    virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber);
    virtual void compileTLS(_JITLoader* loader);

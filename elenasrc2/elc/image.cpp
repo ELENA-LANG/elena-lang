@@ -38,7 +38,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
    _long.copy(LONG_CLASS);
    _real.copy(REAL_CLASS);
 
-   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef, project->BoolSetting(opDebugMode));
+   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
    // compile TLS section if it is a multi-threading app
    if (_project->IntSetting(opThreadMax) > 1) {
@@ -63,8 +63,9 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 
   // fix up debug section if required
-   if (project->BoolSetting(opDebugMode)) {
+   if (_debug.Length() > 8) {
       _debug.writeDWord(0, _debug.Length());
+      _debug.addReference(getDebugEntryPoint(), 4);
    }
    else _debug.clear();
 }
@@ -136,14 +137,16 @@ SectionInfo ExecutableImage :: getPredefinedSectionInfo(const wchar16_t* package
    return sectionInfo;
 }
 
-ClassSectionInfo ExecutableImage :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask)
+ClassSectionInfo ExecutableImage :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 
    ref_t referenceID = 0;
-   sectionInfo.module = _project->resolveModule(reference, referenceID);
-   if (sectionInfo.module == NULL || referenceID == 0)
-      throw JITUnresolvedException(reference);
+   sectionInfo.module = _project->resolveModule(reference, referenceID, silentMode);
+   if (sectionInfo.module == NULL || referenceID == 0) {
+      if (!silentMode)
+         throw JITUnresolvedException(reference);
+   }
    else {
       sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
       sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
@@ -185,6 +188,11 @@ const wchar16_t* ExecutableImage :: getLongClass()
 const wchar16_t* ExecutableImage :: getRealClass()
 {
    return _real;
+}
+
+const wchar16_t* ExecutableImage :: getNamespace()
+{
+   return _project->StrSetting(opNamespace);
 }
 
 const wchar16_t* ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)

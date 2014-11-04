@@ -397,6 +397,14 @@ bool DebugController :: loadTapeDebugInfo(StreamReader& reader, size_t size)
 
 bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress)
 {
+   if (setEntryAddress) {
+      // read entry point
+      _entryPoint = reader.getDWord();
+
+      if (_entryPoint != 0)
+         setEntryAddress = false;
+   }
+
    IdentifierString reference;
    while (!reader.Eof()) {
       // read reference
@@ -405,12 +413,12 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
       // define the next record position
       int size = reader.getDWord() - 4;
       int nextPosition = reader.Position() + size;
-
+      
       if (setEntryAddress) {
-         // peek entry point (without changing reader position)
+         // if entry address was not defined take the first one
          _entryPoint = reader.getDWord();
-         reader.seek(reader.Position() - 4);
 
+         reader.seek(reader.Position() - 4);
          setEntryAddress = false;
       }
 
@@ -695,7 +703,8 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
    MemoryWriter writer(&retPoints);
    DebugReader reader(&_debugger);
 
-   RTHelper::readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->EIP(), writer);
+   RTManager manager;
+   manager.readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->EIP(), writer);
 
    const wchar16_t* path = NULL;
    const wchar16_t* moduleName = NULL;

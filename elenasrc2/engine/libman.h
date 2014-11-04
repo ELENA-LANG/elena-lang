@@ -14,7 +14,7 @@ namespace _ELENA_
 
 // --- LibraryManager ---
 
-class LibraryManager
+class LibraryManager : public _LibraryManager
 {
    typedef Map<const wchar16_t*, tchar_t*> AliasMap;
 
@@ -23,12 +23,18 @@ class LibraryManager
    Path              _packagePath;
 
    ModuleMap         _modules;
+   ModuleMap         _debugModules;
    ModuleMap         _binaries;
 
    AliasMap          _binaryAliases;
 
 public:
    const tchar_t* getRootPath() const { return _rootPath; }
+
+   const wchar16_t* getPackage() const
+   {
+      return _package;
+   }
 
    void setRootPath(const tchar_t* root)
    {
@@ -46,8 +52,6 @@ public:
 
    void nameToPath(const wchar16_t* moduleName, Path& path, const tchar_t* extension)
    {
-//      bool isStandard = ConstantIdentifier::compare(moduleName, STANDARD_MODULE);
-
       // if the module belongs to the current project package
       if (StringHelper::compare(moduleName, _package))
       {
@@ -74,10 +78,12 @@ public:
    _Module* createModule(const wchar16_t* package, LoadResult& result);
 
    _Module* loadModule(const wchar16_t* package, LoadResult& result, bool readOnly = true);
+   _Module* loadDebugModule(const wchar16_t* package, LoadResult& result);
 
    _Module* resolvePrimitive(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
-   _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
    _Module* resolvePredefined(const wchar16_t* package, ref_t reference, LoadResult& result);
+   virtual _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
+   virtual _Module* resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
 
    LibraryManager();
    LibraryManager(const tchar_t* root, const wchar16_t* package);
