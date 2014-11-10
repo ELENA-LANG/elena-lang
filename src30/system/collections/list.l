@@ -202,10 +202,14 @@
 {
     #field theDefaultValue.
     
-    #constructor new &default:aValue
+    #constructor new
+        <= (%new)
     [
-        theState := %empty.
-        theCount := Integer new.
+    ]
+    
+    #constructor new &default:aValue
+        <= (%new)
+    [
         theDefaultValue := aValue.
     ]
 

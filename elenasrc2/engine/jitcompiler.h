@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class.
 //
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitcompilerH
@@ -11,8 +11,6 @@
 
 namespace _ELENA_
 {
-
-//#define DUPLICATE_ENTRY (size_t)-2
 
 // --- ReferenceHelper ---
 
@@ -29,7 +27,6 @@ public:
 
    virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module = NULL) = 0;
    virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp) = 0;
-//   //virtual void writeMethodReference(SectionWriter& writer, size_t tapeDisp) = 0;
 
    virtual void addBreakpoint(size_t position) = 0;
 };
@@ -53,10 +50,6 @@ public:
 
    virtual void prepareRTData(_ReferenceHelper& helper, _Memory* data) = 0;
 
-//   virtual int writeInteger(MemoryWriter& writer, int value);
-//   virtual int writeString(MemoryWriter& writer, const TCHAR* string);
-//   virtual int writeAnsiString(MemoryWriter& writer, const TCHAR* string);
-
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 
    virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
@@ -76,7 +69,7 @@ public:
    virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;
 
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength) = 0;
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t type) = 0;
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
@@ -86,9 +79,7 @@ public:
 
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
 
-   virtual void compileVMT(void* vaddress, MemoryWriter& vmtWriter, ref_t typeRef, int count, int flags, void* classClassVAddress, bool virtualMode) = 0;
-//   virtual void compilePseudoVMT(MemoryWriter& vmtWriter, void* address, int flags, bool virtualMode) = 0;
-////   virtual void compileActionVMT(MemoryWriter& vmtWriter, void* address, int dispatchRef, int flags, bool virtualMode);
+   virtual void fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode) = 0;
 
    virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
@@ -117,11 +108,10 @@ public:
    virtual size_t findLength(void* refVMT);
    virtual int findMethodAddress(void* refVMT, int messageID, size_t vmtLength);
 
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength);
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t type);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void compileVMT(void* vaddress, MemoryWriter& vmtWriter, ref_t typeRef, int count, int flags, void* classClassVAddress, bool virtualMode);
-//   virtual void compilePseudoVMT(MemoryWriter& vmtWriter, void* address, int flags, bool virtualMode);
+   virtual void fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode);
 };
 
 } // _ELENA_

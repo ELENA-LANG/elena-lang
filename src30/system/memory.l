@@ -6,7 +6,7 @@
 {
     #field(itemsize:1)theData.
 
-    #constructor new &length : aLength
+    #constructor(explicit)new &length : aLength
         <bs_create>.
 }
 
@@ -74,7 +74,7 @@
 {
     #field(itemsize:2)theData.
     
-    #constructor new &length : aLength
+    #constructor(explicit)new &length : aLength
         <sa_create>.
     
     #method equal &index:anIndex &short:aValue

@@ -995,19 +995,19 @@
 {
     #field(itemsize:2)theData.
 
-    #constructor new &length:aSize 
+    #constructor(explicit)new &length:aSize 
         <ws_create>.
 
-    #constructor new &length:aSize &literal:aLiteral
+    #constructor(explicit)new &length:aSize &literal:aLiteral
         <ws_copy>.
 
-    #constructor new &length:aSize &shortarray:anArray
+    #constructor(explicit)new &length:aSize &shortarray:anArray
         <ws_copyarr>.
 
-    #constructor new &length:aSize &index:anIndex &shortarray:anArray
+    #constructor(explicit)new &length:aSize &index:anIndex &shortarray:anArray
         <ws_copysubarr>.
 
-    #constructor new &length:aSize &short:aChar
+    #constructor(explicit)new &length:aSize &short:aChar
         <ws_fill>.
 
     #constructor new &literal:aLiteral
@@ -1259,7 +1259,7 @@
 {
     #field(item)theItem.
 
-    #constructor new &length:aLength
+    #constructor(explicit)new &length:aLength
         <arr_create>.
 }
 

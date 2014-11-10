@@ -656,6 +656,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
       case okLocal:
+      case okThisParam:
          // asavefi index
          tape.write(bcASaveFI, object.param, bpFrame);
          break;

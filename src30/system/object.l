@@ -2,6 +2,8 @@
 
 #class Object
 {
+    #constructor new []
+    
     #method equal : anObject
         <object_equal>.
 }

@@ -8,12 +8,29 @@
 #define extensions'math.
 #define extensions'dynamic.
 
+#class BaseClass
+{
+    #field theField1.
+    
+    #constructor new [ theField1 := 1. ]
+}
+
+#class ChildClass : BaseClass
+{
+    #field theField2.
+    
+    #constructor new <= ( %new ) [ theField2 := 2. ]
+}
+
 #class(role)XTester
 {
 }
 
 #symbol XTest =
 [
+    #var o := ChildClass new.
+    
+    #var n := IntNumber new &int:2.
 ].
 
 // --- OpenArgTest ---
@@ -63,7 +80,7 @@
 
 // --- MultiDispatchTest ---
 
-#class DispatchTester
+#class(role)DispatchTester
 {
     #method eval &x:anX &y:anY
     [

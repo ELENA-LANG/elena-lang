@@ -374,6 +374,8 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
 
+   ReferenceHelper refHelper(this, sectionInfo.module, &references);
+
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
    // read tape record size
@@ -393,7 +395,7 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, refHelper.resolveMessage(encodeMessage(header.typeRef, 0, 0)));
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -416,7 +418,6 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
       MemoryWriter   codeWriter(codeImage);
       MemoryReader   codeReader(sectionInfo.codeSection);
 
-      ReferenceHelper refHelper(this, sectionInfo.module, &references);
       size_t          methodPosition;
       VMTEntry        entry;
 
@@ -437,10 +438,8 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
       // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, classClassRef, references);
 
-      // arrange VMT
-      _compiler->compileVMT(vaddress, vmtWriter, 
-         refHelper.resolveMessage(encodeMessage(header.typeRef, 0, 0)),
-         count, header.flags, classClassVAddress, _virtualMode);
+      // fix VMT
+      _compiler->fixVMT(vaddress, vmtWriter, classClassVAddress, count, _virtualMode);
    }
 
    return vaddress;

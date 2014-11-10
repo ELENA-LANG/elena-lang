@@ -214,6 +214,12 @@ protected:
       ref_t loadClassInfo(ClassInfo& info, const wchar16_t* vmtName);
       
       bool checkTypeMethod(ref_t type_ref, ref_t message, bool& found);
+      bool checkMethod(ref_t reference, ref_t message, bool& found);
+      bool checkMethod(ref_t reference, ref_t message)
+      {
+         bool dummy;
+         return checkMethod(reference, message, dummy);
+      }
 
       void loadTypes(_Module* module);
       void loadExtensions(TerminalInfo terminal, _Module* module);
@@ -603,8 +609,6 @@ protected:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-////   void loadOperators(MessageMap& operators);
-
    void recordStep(CodeScope& scope, TerminalInfo terminal, int stepType)
    {
       if (terminal != nsNone) {
@@ -612,26 +616,11 @@ protected:
       }
    }
 
-////   //ref_t mapQualifiedMessage(TerminalInfo terminal, ModuleScope* scope, int defaultVerb);
-
    ref_t mapNestedExpression(CodeScope& scope, int mode, ref_t& typeRef);
-
-////   void saveInlineField(CommandTape& tape, Map<const wchar16_t*, Compiler::InlineClassScope::Outer>::Iterator& outer_it)
-////   {
-////      ObjectInfo info = (*outer_it).outerObject;
-////
-////      outer_it++;
-////      if (!outer_it.Eof())
-////         saveInlineField(tape, outer_it);
-////
-////      _writer.pushObject(tape, info);
-////   }
 
    void importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* reference);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef);
-
-////   void assignBranchExpression(DNode node, TerminalInfo target, CodeScope& scope, ObjectInfo currentInfo, bool& assigned);
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage = true);
 
@@ -646,11 +635,11 @@ protected:
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo object, int mode);
 
-   ref_t mapMessage(DNode node, CodeScope& scope, ObjectInfo object, size_t& paramCount, int& mode);
-   ref_t mapMessage(DNode node, CodeScope& scope, ObjectInfo object, size_t& paramCount)
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
    {
       int dummy = 0;
-      return mapMessage(node, scope, object, paramCount, dummy);
+      return mapMessage(node, scope, paramCount, dummy);
    }
 
    ref_t mapConstantType(ModuleScope& scope, ObjectKind kind);
@@ -690,6 +679,7 @@ protected:
 
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
+   ObjectInfo compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
    ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
@@ -713,6 +703,7 @@ protected:
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);
 
+   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope);
    void compileResendExpression(DNode node, CodeScope& scope);
    void compileDispatchExpression(DNode node, CodeScope& scope);
 

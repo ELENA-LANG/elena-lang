@@ -271,8 +271,8 @@ namespace _ELENA_
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
    const int elSignature           = 0x00002000;
-   const int elRole                = 0x00004000;
-   const int elExtension           = 0x00004900;
+   const int elRole                = 0x00004080;
+   const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
    const int elConstantSymbol      = 0x00000082;
 // const int elWithLocker          = 0x00100000;
@@ -433,6 +433,7 @@ namespace _ELENA_
    #define HINT_WRAPPER            "wrapper"
    #define HINT_SYNONYM            "synonym"
    #define HINT_GENERIC            "generic"
+   #define HINT_EXPLICIT           "explicit"
 
    #define HINT_DBG                "dbg"               // debugger watch hint values
    #define HINT_DBG_INT            "int"              

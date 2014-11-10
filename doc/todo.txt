@@ -90,8 +90,6 @@ week1:
 
                        * break normal / virtual loop
 
-                       * calling the parent constructor ?? (see system'io'StreamReader (output should be created in the parent class), Exceptions and so on)
-
                        * could it be possible for several classes supporting literal type??
 
                        * should index allocateing / referring / releasing be done as commands ; review reference table design , could it be done
@@ -100,10 +98,6 @@ week1:
                        * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
                          not correctly programmed)
                        * review problematic implementation:loop breaking, loop implementation (especially until loop)
-                       * default construtor : there should be way to call it explicitly (especially for dynamic one where we need to provide
-                         the length parameter, sometimes it should be possible to make some operation with it before passing to default one, see
-                         for example LiteralValue - length should be increaded by one)
-                       * constructor : should be possible to call base / another constructor
 
                        * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
 
@@ -532,6 +526,7 @@ week3:
               sdev - c# samples
                        * try to implement c# reflection samples
                        * try to implement c# lamda examples (lists)
+                       * parse an object to xml and back
 
               xdev - script engine
                        * if the script contains only grammar, virtual machine should not be called

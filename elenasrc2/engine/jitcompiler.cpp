@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 // --- ELENA Class constants ---
 const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
-const int elVMTOffset32           = 0x0010;           // a VMT header size
+const int elVMTOffset32           = 0x0010;           // a VMT header size , NOTE - it should be aligned to VA_ALIGNMENT
 
 inline void insertVMTEntry(VMTEntry* entries, int count, int index)
 {
@@ -143,10 +143,22 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t type)
 {
-   vmtWriter.writeBytes(0, elVMTOffset32);
-   alignCode(&vmtWriter, VA_ALIGNMENT, false);
+   alignCode(&vmtWriter, VA_ALIGNMENT, false);   
+
+   // create VMT header:
+   //   type
+   vmtWriter.writeDWord(type);
+
+   //   vmt length
+   vmtWriter.writeDWord(vmtLength);
+
+   //   vmt flags
+   vmtWriter.writeDWord(flags);
+
+   //   dummy class reference
+   vmtWriter.writeDWord(0);
 
    int position = vmtWriter.Position();
 
@@ -205,33 +217,19 @@ void JITCompiler32 :: addVMTEntry(_ReferenceHelper& helper, ref_t message, size_
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: compileVMT(void* vaddress, MemoryWriter& vmtWriter, ref_t typeRef, int count, int flags, void* classClassVAddress, bool virtualMode)
+void JITCompiler32 :: fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode)
 {
-   ref_t position = vmtWriter.Position();
-
-   // move to the VMT header
-   vmtWriter.seek(position - elVMTOffset32);
-
    _Memory* image = vmtWriter.Memory();   
 
-   // create VMT header:
-   //   type
-   vmtWriter.writeDWord(typeRef);
-
-   //   vmt length
-   vmtWriter.writeDWord(count);
-
-   //   vmt flags
-   vmtWriter.writeDWord(flags);
-
-   // class vmt reference
+   // update class vmt reference if available
    if (classClassVAddress != NULL) {
+      vmtWriter.seek(vmtWriter.Position() - 4);
+
       if (virtualMode) {                                  
          vmtWriter.writeRef((ref_t)classClassVAddress, 0);
       }
       else vmtWriter.writeDWord((int)classClassVAddress);
    }
-   else vmtWriter.writeDWord(0);
 
    // if in virtual mode mark method addresses as reference
    if (virtualMode) {

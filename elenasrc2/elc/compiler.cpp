@@ -30,6 +30,7 @@ using namespace _ELENA_;
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 #define HINT_BOXINGENFORCING  0x00040000     // enforce boxing
+#define HINT_EXPLICIT_METH    0x00020000
 
 // --- Auxiliary routines ---
 
@@ -487,6 +488,9 @@ ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& inf
 
       // import type
       info.header.typeRef = importSubject(argModule, info.header.typeRef, module);
+
+      // import parent reference
+      info.header.parentRef = importReference(argModule, info.header.parentRef, module);
    }
    return moduleRef;
 }
@@ -497,26 +501,33 @@ bool Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, ref_t message, boo
 
    ref_t reference = typeHints.get(type_ref);
    if (reference) {
-      _Module* extModule;
-      ClassInfo info;
-      found = loadClassInfo(extModule, info, module->resolveReference(reference)) != 0;
+      return checkMethod(reference, message, found);
+   }
 
-      if (extModule) {
-         if (module != extModule) {
-            int   verb, paramCount;
-            ref_t subj;
-            decodeMessage(message, subj, verb, paramCount);
-            if (subj != 0) {
-               ref_t extSubj = extModule->mapSubject(module->resolveSubject(subj), true);
-               if (extSubj != 0) {
-                  return info.methods.exist(encodeMessage(extSubj, verb, paramCount));
-               }
-               else return false;
+   return false;
+}
+
+bool Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found)
+{
+   _Module* extModule;
+   ClassInfo info;
+   found = loadClassInfo(extModule, info, module->resolveReference(reference)) != 0;
+
+   if (extModule) {
+      if (module != extModule) {
+         int   verb, paramCount;
+         ref_t subj;
+         decodeMessage(message, subj, verb, paramCount);
+         if (subj != 0) {
+            ref_t extSubj = extModule->mapSubject(module->resolveSubject(subj), true);
+            if (extSubj != 0) {
+               return info.methods.exist(encodeMessage(extSubj, verb, paramCount));
             }
-            else return info.methods.exist(message);
+            else return false;
          }
          else return info.methods.exist(message);
       }
+      else return info.methods.exist(message);
    }
 
    return false;
@@ -845,6 +856,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.typeRef = 0;
    info.header.parentRef = moduleScope->mapConstantReference(SUPER_CLASS);
    info.header.flags = elStandartVMT;
+   info.header.count = 0;
    info.size = 0;
    info.classClassRef = 0;
    extensionTypeRef = 0;
@@ -1099,6 +1111,9 @@ int Compiler::MethodScope :: compileHints(DNode hints)
          setClassFlag(elWithGenerics);
 
          mode |= HINT_GENERIC_METH;
+      }
+      else if (ConstantIdentifier::compare(terminal, HINT_EXPLICIT)) {
+         mode |= HINT_EXPLICIT_METH;
       }
       else raiseWarning(wrnUnknownHint, terminal);
 
@@ -2131,7 +2146,7 @@ void Compiler :: compileMessageParameter(DNode& arg, CodeScope& scope, ref_t typ
    }
 }
 
-ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, ObjectInfo object, size_t& count, int& mode)
+ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& mode)
 {
    bool             simpleParameters = true;
 
@@ -2440,7 +2455,7 @@ void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, i
 ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int& mode, size_t& spaceToRelease)
 {
    size_t count = 0;
-   ref_t messageRef = mapMessage(node, scope, object, count, mode);
+   ref_t messageRef = mapMessage(node, scope, count, mode);
 
    // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
    if (object.kind == okAccumulator) {
@@ -3084,6 +3099,11 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    // override standard message compiling routine
    node = node.nextNode();
 
+   return compileExtensionMessage(node, roleNode, scope, object, role, mode);
+}
+
+ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode)
+{
    size_t spaceToRelease = 0;
    int dummy = 0;
    ref_t messageRef = compileMessageParameters(node, scope, object, dummy, spaceToRelease);
@@ -3865,7 +3885,7 @@ ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
    _writer.declarePrimitiveCatch(*scope.tape);
 
    size_t size = 0;
-   ref_t message = mapMessage(node, scope, ObjectInfo(okIndexAccumulator), size);
+   ref_t message = mapMessage(node, scope, size);
    if (message == encodeMessage(0, RAISE_MESSAGE_ID, 1)) {
       compileThrow(node.firstChild().firstChild(), scope, 0);
    }
@@ -4030,9 +4050,6 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
       sign_id = scope.moduleScope->module->mapSubject(signature, false);
    }
 
-   // declare method parameter debug info
-   //_writer.declareLocalInfo(*codeScope.tape, SELF_VAR, -5);
-
    scope.message = encodeMessage(sign_id, verb_id, paramCount);
 }
 
@@ -4177,6 +4194,47 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
+void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // find where the target constructor is declared in the current class
+   size_t count = 0;
+   ref_t messageRef = mapMessage(node, scope, count);
+   ref_t classRef = classClassScope.reference;
+   bool found = false;
+
+   // find where the target constructor is declared in the current class
+   // but it is not equal to the current method
+   if (methodScope->message != messageRef && classClassScope.info.methods.exist(messageRef)) {
+      found = true;
+   }
+   // otherwise search in the parent class constructors
+   else {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      ref_t parent = classScope->info.header.parentRef;
+      ClassInfo info;
+      while (parent != 0) {
+         moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
+
+         if (moduleScope->checkMethod(info.classClassRef, messageRef)) {
+            classRef = info.classClassRef;
+            found = true;
+
+            break;            
+         }
+         else parent = info.header.parentRef;
+      }
+   }
+   if (found) {
+      compileExtensionMessage(node, DNode(), scope, ObjectInfo(okCurrent, 1), ObjectInfo(okConstantSymbol, classRef), 0);
+
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
+   }
+   else scope.raiseError(errUnknownMessage, node.Terminal());
+} 
+
 void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
@@ -4319,18 +4377,10 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-   // check if the method is inhreited and update vmt size accordingly
-   // NOTE: the method is class class member though it is compiled within class scope
-   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
-   if (it.Eof()) {
-      classClassScope.info.methods.add(scope.message, true);
-   }
-   else (*it) = true;
-
    CodeScope codeScope(&scope);
 
-//   // compile constructor hints
-//   int mode = scope.compileHints(hints);
+   // compile constructor hints
+   int mode = scope.compileHints(hints);
 
    // HOTFIX: constructor is declared in class class but should be executed if the class instance
    codeScope.tape = &classClassScope.tape;
@@ -4338,46 +4388,47 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    DNode body = node.select(nsSubCode);
    DNode resendBody = node.select(nsResendExpression);
 
+   _writer.declareMethod(*codeScope.tape, scope.message, false, false);
+
    if (resendBody != nsNone) {
-      compileResendExpression(resendBody.firstChild(), codeScope);
+      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope);
    }
-   else {
-      _writer.declareMethod(*codeScope.tape, scope.message, false, false);
-
-      DNode importBody = node.select(nsImport);
-
-      // call default constructor automatically for not dynamic objects
-      if (!test(codeScope.getClassFlags(), elDynamicRole))
-         // HOTFIX: -1 indicates the stack is not consumed by the constructor
-         _writer.callMethod(*codeScope.tape, 1, -1);
-
-      // check if it is resend
-      if (importBody == nsImport) {
-         ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-         reference.combine(importBody.Terminal());
-
-         importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
-         _writer.endIdleMethod(*codeScope.tape);
-      }
-      else {
-         // !!temporal: HOTFIX : do not allow normal constructor for the dynamic object
-         if (test(codeScope.getClassFlags(), elDynamicRole))
-            scope.raiseError(errNotApplicable, node.Terminal());
-
-         // new stack frame
-         // stack already contains $self value
-         _writer.newFrame(*codeScope.tape);
-         codeScope.level++;
-
-         declareParameterDebugInfo(scope, codeScope.tape, true, false);
-
-         compileCode(body, codeScope);
-
-         _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
-
-         _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved);
-      }
+   // if no redirect statement - call virtual constructor implicitly
+   else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
+      // HOTFIX: -1 indicates the stack is not consumed by the constructor
+      _writer.callMethod(*codeScope.tape, 1, -1);
    }
+   // if it is a dynamic object imlicit constructor call is not possible
+   else if (!test(mode, HINT_EXPLICIT_METH))
+      scope.raiseError(errNotApplicable, node.Terminal());
+
+   bool withFrame = false;
+   DNode importBody = node.select(nsImport);
+   if (importBody == nsImport) {
+      ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
+      reference.combine(importBody.Terminal());
+
+      importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
+      _writer.endIdleMethod(*codeScope.tape);
+      // NOTE : import code already contains quit command, so do not call "endMethod"
+      return;
+   }
+   else if (node.firstChild() != nsNone) {
+      withFrame = true;
+
+      // new stack frame
+      // stack already contains $self value
+      _writer.newFrame(*codeScope.tape);
+      codeScope.level++;
+
+      declareParameterDebugInfo(scope, codeScope.tape, true, false);
+
+      compileCode(body, codeScope);
+
+      _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
+   }
+
+   _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
 }
 
 void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints)
@@ -4537,7 +4588,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 
       if (member==nsField) {
          // a role cannot have fields
-         if (test(scope.info.header.flags, elRole))
+         if (test(scope.info.header.flags, elStateless))
             scope.raiseError(errIllegalField, member.Terminal());
 
          // a class with a dynamic length structure must have no fields
@@ -4623,22 +4674,15 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   _writer.declareClass(classClassScope.tape, classClassScope.reference);
+   // if no construtors are defined inherits the parent one
+   if (!findSymbol(node.firstChild(), nsConstructor)) {
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
 
-   // inherit class class parent
-   if (classScope.info.header.parentRef != 0) {
-      ref_t superClass = classClassScope.moduleScope->mapConstantReference(SUPER_CLASS);
-      // NOTE: if it is a super class direct child
-      //       super class is used as a base for its class class
-      //       otherwise class class should be inherited
-      if (classScope.info.header.parentRef != superClass) {
-         IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
-         classClassParentName.append(CLASSCLASS_POSTFIX);
-
-         classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-      }
-      else classClassScope.info.header.parentRef = superClass;
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
    }
+
+   _writer.declareClass(classClassScope.tape, classClassScope.reference);
 
    InheritResult res = inheritClass(classClassScope, classClassScope.info.header.parentRef);
    //if (res == irObsolete) {
@@ -4657,7 +4701,8 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    classClassScope.info.header.flags |= elStateless;
 
    DNode member = node.firstChild();
-   // compile constructors
+   // NOTE : due to problems with constructor redirection, a class class should be compiled in two passes;
+   // first pass : declare constructors
    while (member != nsNone) {
       DNode hints = skipHints(member);
 
@@ -4667,26 +4712,37 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
          declareArgumentList(member, methodScope);
 
          // check if there is no duplicate method
-         if (classClassScope.info.methods.exist(methodScope.message, true))
+         if (classClassScope.info.methods.exist(methodScope.message)) {
             classClassScope.raiseError(errDuplicatedMethod, member.Terminal());
+         }
+         else classClassScope.info.methods.add(methodScope.message, true);
+      }
+      member = member.nextNode();
+   }
 
-         if (test(classScope.info.header.flags, elStateless))
-            classClassScope.raiseError(errInvalidOperation, member.Terminal());
+   // second pass : compile constructors
+   member = node.firstChild();
+   while (member != nsNone) {
+      DNode hints = skipHints(member);
+
+      if (member == nsConstructor) {
+         MethodScope methodScope(&classScope);
+
+         declareArgumentList(member, methodScope);
 
          compileConstructor(member, methodScope, classClassScope, hints);
       }
       member = member.nextNode();
    }
 
-   if (!test(classScope.info.header.flags, elStateless)) {
-      MethodScope methodScope(&classScope);
-      methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
+   // create a virtual constructor
+   MethodScope methodScope(&classScope);
+   methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
 
-      if (test(classScope.info.header.flags, elDynamicRole)) {
-         compileDynamicDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
-      }
-      else compileDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
+   if (test(classScope.info.header.flags, elDynamicRole)) {
+      compileDynamicDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
    }
+   else compileDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
 
    _writer.endClass(classClassScope.tape);
 
@@ -4713,18 +4769,6 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    compileFieldDeclarations(member, scope);
 
-   // check if the class is stateless
-   if (scope.info.fields.Count() == 0
-      && !test(scope.info.header.flags, elStructureRole)
-      && !test(scope.info.header.flags, elDynamicRole)
-      /* && !test(scope.info.header.flags, elWithLocker)*/)
-   {
-      scope.info.header.flags |= elStateless;
-
-      scope.moduleScope->defineConstantSymbol(scope.reference);
-   }
-   else scope.info.header.flags &= ~elStateless;
-
    // if type size is provided make sure the class is compatible
    if (scope.info.header.typeRef && scope.moduleScope->sizeHints.exist(scope.info.header.typeRef)) {
       if (scope.info.size < scope.moduleScope->sizeHints.get(scope.info.header.typeRef))
@@ -4737,9 +4781,9 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
          scope.raiseError(errNotSupprotedType, node.Terminal());
    }
 
-   // if it is super class or a role
-   if (scope.info.header.parentRef == 0 || test(scope.info.header.flags, elRole)) {
-      // super class is class class
+   // if it is a role
+   if (test(scope.info.header.flags, elRole)) {
+      // class is its own class class
       scope.info.classClassRef = scope.reference;
    }
    else {
@@ -4961,8 +5005,8 @@ void Compiler :: compileDeclarations(DNode& member, ModuleScope& scope)
             ClassScope classScope(&scope, reference);
             compileClassDeclaration(member, classScope, hints);
 
-            // compile class class if it is not a super class or a role
-            if (classScope.info.classClassRef != classScope.reference && !test(classScope.info.header.flags, elRole)) {
+            // compile class class if it available
+            if (classScope.info.classClassRef != classScope.reference) {
                ClassScope classClassScope(&scope, classScope.info.classClassRef);
                compileClassClassDeclaration(member, classClassScope, classScope);
             }
