@@ -26,30 +26,24 @@
     [
         theWriter write &literal:aLiteral.
     ]
-            
+
     #method writeLine
     [
         theWriter write &literal:theNewLineConstant.
     ]
-        
+
     #method readLine
-        = theReader read &Line.
+        = theReader read &line.
 
     #method readChar
     [
-        #var(type:short)aRetVal.        
-        theReader read &out'short:aRetVal.
-  
+        #var(type:short)aRetVal := theReader short.
+      
         ^ CharValue new &short:aRetVal.
     ]
 
     #method readKey
-    [
-        #var(type:int)aRetVal.        
-        theReader read &out'int:aRetVal.
-  
-        ^ IntNumber new &int:aRetVal.
-    ]
+        = theReader int.
 }
 
-#static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.
+#static(type:textio) console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.

@@ -25,6 +25,8 @@ class ExecutableImage : public Image, public _ImageLoader
    ConstantIdentifier _int;
    ConstantIdentifier _long;
    ConstantIdentifier _real;
+   ConstantIdentifier _message;
+   ConstantIdentifier _signature;
 
 public:
    virtual ref_t getEntryPoint()
@@ -43,7 +45,7 @@ public:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode);
-   virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask);
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
    virtual _Memory* getTargetDebugSection()
    {
@@ -56,6 +58,8 @@ public:
    virtual const wchar16_t* getIntegerClass();
    virtual const wchar16_t* getRealClass();
    virtual const wchar16_t* getLongClass();
+   virtual const wchar16_t* getMessageClass();
+   virtual const wchar16_t* getSignatureClass();
    virtual const wchar16_t* getNamespace();
 
    virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask);
@@ -68,22 +72,24 @@ public:
 class VirtualMachineClientImage : public Image
 {
    ReferenceMap   _exportReferences;
-   Project*       _project;
-
-   Path           _rootPath; 
+//   Project*       _project;
 
    class VMClientHelper : public _BinaryHelper
    {
       VirtualMachineClientImage* _owner;
       ReferenceMap*              _references;
+      MemoryWriter*              _dataWriter;
+      _Module*                   _module;
 
    public:
       virtual void writeReference(MemoryWriter& writer, const wchar16_t* reference, int mask);
 
-      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references)
+      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
       {
          _owner = owner;
          _references = references;
+         _dataWriter = writer;
+         _module = module;
       }
    };
 

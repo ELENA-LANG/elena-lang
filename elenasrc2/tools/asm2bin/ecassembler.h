@@ -34,6 +34,7 @@ class ECodesAssembler : public Assembler
    void fixJump(const wchar16_t* label, MemoryWriter& writer, LabelInfo& info);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);
+   ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
 
    void writeCommand(ByteCommand command, MemoryWriter& writer);
 

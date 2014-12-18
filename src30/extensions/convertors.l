@@ -2,65 +2,26 @@
 #define system'routines.
 #define system'text.
 
-// --- literalConvertorEx ---
+#define(const)convertor = extensions'convertor.
 
-#class(role)literalConvertorEx : literalConvertor
+#class(extension:enumerable) enumerableEx
 {
-//    #method convert &type'real:aReal &type'length:aLength
-//    [
-//        #var anOutput := strOp convert &type'real:aReal &type'long:aLength.
-//        
-//        ^ anOutput.
-//    ]
-//    
-//    #method convert &type'real:aReal &type'length:aLength &type'length:aDecimalLength
-//    [
-//        #var aPrecision := extensions'math'power:10.0r:aDecimalLength.
-//        #var aRounded := (extensions'math'round:(aReal * aPrecision)) / aPrecision.
-//        
-//        ^ literalConvertor convert &type'real:aRounded &type'length:aLength.
-//    ]
-
-    #method convert &enumerable:aList &char:aSeparator
+    #method literal
     [
-        #var theOutput := TextBuffer new.
+        #var(type:textbuffer) theOutput := TextBuffer new.
         
-        aList~enumerable run: anItem [ theOutput write:(literalConvertorEx convert::anItem) write:aSeparator ].
+        control run:self &forEach: anItem [ theOutput write:(convertor toLiteral:anItem) write:"," ].
         
-        #var(type:int)aLength.
-        theOutput read &out'length:aLength.
-        
+        #var(type:int)aLength := theOutput length.
+
         (0 < aLength)
             ? [ theOutput set &length:(-1 + aLength). ].
         
         ^ theOutput literal.
     ]
-
-    #method convert &enumerable:aList
-        = $self convert &enumerable:aList &char:",".
-
-    #method convert &array : anArray
-        = $self convert &enumerable:anArray &char:",".
-
-    #method convert &array:anArray &char:aSeparator
-        = $self convert &enumerable:anArray &char:aSeparator.
-
-    #method convert : anObject
-        = anObject literal.
 }
 
-// --- convertControl ---
-
-#symbol baseDispatcher = 
-{
-    int : n
-        = %(int&base).
-        
-    long : aLong
-        = %(long&base).
-}.
-
-#symbol convertor =
+#symbol/*(type:convertor)*/ convertor =
 {
     toInt : anObject
         = intConvertor convert::anObject.
@@ -70,18 +31,28 @@
     
     toReal : anObject
         = realConvertor convert::anObject.
-                
+
     toLiteral:anObject
-        = literalConvertorEx convert::anObject.
+        = anObject cast:
+                   { 
+                      is &numeric = false.
+                   
+                      eval &enumerable : aList = aList~enumerableEx literal. 
+                      
+                      eval &array : anArray = anArray~enumerableEx literal.
+                      
+                      ! : anObject = anObject literal.
+                   }.
 
     toLiteral : anObject &base:aBase
-    [
-        #var aValue := anObject value.
-        
-        ^ literalConvertorEx~(baseDispatcher eval::aValue) convert:aValue:aBase.
-    ]
+        = anObject cast:
+                   { 
+                      eval &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
+                   }.
+                   
+    toArray : anEnumerable
+        = anEnumerable ~enumerable array.
 
     save : anObject &to:aTarget
         = aTarget write:(aTarget cast:{ ! : x = Variant new:anObject ~$subject get. }).
 }.
-

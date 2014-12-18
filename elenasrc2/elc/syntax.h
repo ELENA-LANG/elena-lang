@@ -74,7 +74,6 @@ enum Symbol
    nsThrow                      = 0x01034,
    nsImport                     = 0x01035,
    nsDispatchHandler            = 0x01036,
-   nsBreak                      = 0x01038,
    nsMethodOpenParameter        = 0x01039,
    nsMessageOpenParameter       = 0x0103A,
    nsSwitching                  = 0x0103B,
@@ -88,7 +87,7 @@ enum Symbol
    nsL0Operation                = 0x01043,
    nsDefaultGeneric             = 0x01046,
    nsType                       = 0x01047,
-   nsSymbolReference            = 0x01048,
+   //nsSymbolReference            = 0x01048,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

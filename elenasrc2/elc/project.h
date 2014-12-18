@@ -32,13 +32,10 @@ enum ProjectSetting
    opProjectPath           = 0x0002,
    opLibPath               = 0x0003,
    opNamespace             = 0x0004,
-//   opStandart              = 0x0005,
    opTarget                = 0x0006,
-//   opStarter               = 0x0007,
    opOutputPath            = 0x0008,
    opEntry                 = 0x0009,
    opDebugMode             = 0x000A,
-   opVMPath                = 0x000B,
    opTemplate              = 0x000C,
    opEmbeddedSymbolMode    = 0x000D,
    opThreadMax             = 0x0013,
@@ -136,10 +133,10 @@ public:
       return (_settings.get(key, 0) != 0);
    }
 
-//   virtual bool testSetting(ProjectSetting key)
-//   {
-//      return _settings.exist(key);
-//   }
+////   virtual bool testSetting(ProjectSetting key)
+////   {
+////      return _settings.exist(key);
+////   }
 
    SourceIterator getSourceIt()
    {
@@ -150,16 +147,6 @@ public:
    {
       return _settings.getIt(opForwards);
    }
-
-//   int getForwardCount()
-//   {
-//      return _settings.getCount(opForwards);
-//   }
-//
-//   SourceIterator getPrimitiveIt()
-//   {
-//      return _settings.getIt(opPrimitives);
-//   }
 
    virtual void printInfo(const char* msg, const char* value) = 0;
    virtual void printInfo(const char* msg, const wchar16_t* value) = 0;
@@ -173,7 +160,7 @@ public:
    virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
    virtual void raiseWarning(const char* msg, const tchar_t* path) = 0;
 
-//   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
+////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, const tchar_t* configPath);
 
    virtual void initLoader()
@@ -205,7 +192,7 @@ public:
    }
 
    virtual _Module* resolveModule(const wchar16_t* referenceName, ref_t& reference, bool silentMode = false);
-   virtual _Module* resolvePredefined(const wchar16_t* package, ref_t reference, bool silentMode = false);
+   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    bool HasWarnings() const { return _hasWarning; }
 

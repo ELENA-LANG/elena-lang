@@ -2,7 +2,7 @@
 
 // --- AnsiEncoder ---
 
-#symbol ansiLiteralEncoder =
+#symbol(type:encoder) ansiLiteralEncoder = system'io'Encoder
 {
     convert &bytearray:aByteArray &length:aLength &shortarray:anOutput &out'length:anOutputLength
         <ws_copybuf>.

@@ -22,6 +22,11 @@
 #define MAX_LINE        256
 #define BUILD_VERSION   3
 
+#define INT_CLASS                "system'IntNumber" 
+#define LONG_CLASS               "system'LongNumber" 
+#define REAL_CLASS               "system'RealNumber" 
+#define WSTR_CLASS               "system'LiteralValue" 
+
 using namespace _ELENA_;
 
 // === Variables ===
@@ -484,6 +489,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument2);
          break;
       case bcXCallRM:
+      case bcXJumpRM:
+      case bcXIndexRM:
          command.append(opcode);
          command.append(_T(' '));
          printReference(command, module, argument);

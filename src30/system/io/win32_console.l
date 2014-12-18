@@ -2,25 +2,26 @@
 
 // --- LRLN ---
 
-#symbol newLine
+#symbol(const) newLine
     = "%r%n".
 
-// --- $ConsoleHandle --
+// --- $ConsoleHandleFactory --
 
-#class $ConsoleHandle : Handle
+#symbol $ConsoleHandleFactory =
 {
-    #constructor new &attributes:anAttributes
-    [
-        theData := system'external'KERNEL32 GetStdHandle 
-                      &int::anAttributes.
+    new &int_attributes:anAttributes
+    [ 
+        #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:anAttributes.
+        
+        ^ Handle new &handle:aHandle.
     ]
-}
+}.
 
 // --- ConsoleWriter ---
 
 #class $ConsoleWriter
 {
-    #field theHandle.
+    #field(type:handle) theHandle.
 
     #constructor new &handle:aHandle
     [
@@ -29,11 +30,10 @@
 
     #method write &literal : aLiteral
     [
-        #var(type:int)aLength.
-        aLiteral read &out'length:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         system'external'KERNEL32 WriteConsoleW
-            &handle  :: theHandle
+            &handle  :  theHandle
             &literal :  aLiteral
             &int     :  aLength
             &int     :  0                       // !! temporally we do not use it
@@ -50,9 +50,9 @@
 
 // --- ConsoleReader ---
 
-#class $ConsoleReader
+#class(sealed) $ConsoleReader
 {
-    #field theHandle.
+    #field(type:handle) theHandle.
     
     #constructor new &handle:aHandle
     [
@@ -63,16 +63,17 @@
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
-
-        #loop
+        
+        #var found := false.
+        #loop found !
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &handle        :: theHandle
+                &handle        : theHandle
                 &out'bytearray : aDump
                 &int           : 1
                 &out'int       : aNumberRead.
 
-            false equal:((aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1)).
+            found := (aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
         ].
 
         aDump read &index:14 &out'short:aChar.
@@ -82,42 +83,43 @@
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
-
-        #loop
+        
+        #var found := false.
+        #loop found !
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &handle        :: theHandle
+                &handle        : theHandle
                 &out'bytearray : aDump
                 &int           : 1
                 &out'int       : aNumberRead.
 
-            false equal:((aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1)).
+            found := (aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
         ].
                     
         aDump read &index:8 &out'int:aKey.
     ]
 
-    #method read &shortarray:aBuffer &out'length:aLength
+    #method read &shortarray:aBuffer &length:aLength &out'length:aRetVal
     [
         system'external'KERNEL32 ReadConsoleW
-            &handle    :: theHandle
+            &handle     : theHandle
             &shortarray : aBuffer
             &int        : aLength
-            &out'length : aLength
+            &out'length : aRetVal
             &int        : 0.
     ]
     
-    #method read &Line
+    #method read &line
     [
         #var(type:shortarray,size:127)aBuffer.
         #var(type:int)aLength.
         #var anOutput := emptyLiteralValue.
-        #var continue := true.
-
-        #loop
+        
+        #var(type:bool) continue := true.
+        #loop continue ?
         [
-            aLength := 128.
-            $self read &shortarray:aBuffer &out'length:aLength.
+            aLength := 127.
+            $self read &shortarray:aBuffer &length:aLength &out'length:aLength.
             
             aBuffer equal &index:(aLength - 1) &short:0Ah
                 ? [
@@ -129,13 +131,27 @@
             #var aTemp := LiteralValue new &length:aLength &shortarray:aBuffer.
             
             anOutput := anOutput + aTemp.
-            
-            continue bool
         ].
 
         ^ anOutput.
     ]
-    
+
+    #method int
+    [
+        #var(type:int)aRetVal.
+        $self read &out'int:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+            
+    #method short
+    [
+        #var(type:short)aRetVal.
+        $self read &out'short:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+            
     #method close
     [
         theHandle close.
@@ -144,6 +160,6 @@
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new &handle::($ConsoleHandle new &attributes:0FFFFFFF5h).
+#symbol stdConsoleWriter = $ConsoleWriter new &handle::($ConsoleHandleFactory new &int_attributes:0FFFFFFF5h).
 
-#symbol stdConsoleReader = $ConsoleReader new &handle::($ConsoleHandle new &attributes:0FFFFFFF6h).
+#symbol stdConsoleReader = $ConsoleReader new &handle::($ConsoleHandleFactory new &int_attributes:0FFFFFFF6h).

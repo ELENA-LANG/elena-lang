@@ -13,11 +13,11 @@
 {
     #method loadFrom : aStream
         =  convertor save:(aStream readLine) &to:self
-            | onFormatError: e
+            | if &FormatError: e
                 [
-                    console writeLine:(e Message) readChar.
+                    console writeLine:(e message) readChar.
                     
-                    #break.
+                    #throw e.
                 ].
 }
 
@@ -27,7 +27,7 @@
 
 #symbol Program =
 [
-    consoleEx 
+    consoleEx
         writeLine:'prompt
         writeLine:"The sum is ":(enteredNumber + enteredNumber)
         readChar.

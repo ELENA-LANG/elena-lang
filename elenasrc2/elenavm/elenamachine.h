@@ -11,15 +11,15 @@
 #include "config.h"
 #include "libman.h"
 
-#define VM_INIT           _T("$package'coreapi'vm_console_entry")
+#define VM_INIT           _T("$native'coreapi'vm_console_entry")
 
-#define VM_INTERPRET      _T("$package'core_vm'eval")
-#define VM_INTERPRET_EXT  _T("$package'core_vm'start_n_eval")
+#define VM_INTERPRET      _T("$native'core_vm'eval")
+#define VM_INTERPRET_EXT  _T("$native'core_vm'start_n_eval")
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x0007             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0008             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -151,7 +151,7 @@ protected:
          return _instance->getLinkerConstant(constant);
       }
 
-      virtual SectionInfo getPredefinedSection(const wchar16_t* pacjage, ref_t reference) { return SectionInfo(); }
+      virtual SectionInfo getCoreSection(ref_t reference) { return SectionInfo(); }
       virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
 
       virtual void* getVAddress(MemoryWriter& writer, int mask) { return NULL; }
@@ -159,7 +159,6 @@ protected:
       virtual ref_t resolveMessage(ref_t reference, _Module* module) { return reference; }
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
-
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
 
       virtual void addBreakpoint(size_t position);
@@ -189,6 +188,8 @@ protected:
    ConstantIdentifier _intClass;
    ConstantIdentifier _longClass;
    ConstantIdentifier _realClass;
+   ConstantIdentifier _msgClass;
+   ConstantIdentifier _signClass;
 
    LibraryManager  _loader;
    ELENAMachine*   _machine;
@@ -213,7 +214,7 @@ protected:
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode);
-   virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask);
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
    bool initLoader(InstanceConfig& config);
 
@@ -281,6 +282,16 @@ public:
       return _realClass;
    }
 
+   virtual const wchar16_t* getSignatureClass()
+   {
+      return _signClass;
+   }
+
+   virtual const wchar16_t* getMessageClass()
+   {
+      return _msgClass;
+   }
+
    virtual const wchar16_t* getNamespace()
    {
       return _loader.getPackage();
@@ -306,6 +317,8 @@ public:
       void* symbolAddress = loadSymbol(referenceName, mskSymbolRef);
       if (symbolAddress != LOADER_NOTLOADED) {
          *(int*)object = (int)symbolAddress;
+
+         return true;
       }
       else return false;
    }

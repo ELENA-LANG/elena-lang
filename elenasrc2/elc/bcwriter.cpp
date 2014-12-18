@@ -206,10 +206,10 @@ void ByteCodeWriter :: declarePrimitiveVariable(CommandTape& tape, int value)
    tape.write(bcPushN, value);
 }
 
-int ByteCodeWriter :: declareLabel(CommandTape& tape)
-{
-   return tape.newLabel();
-}
+//int ByteCodeWriter :: declareLabel(CommandTape& tape)
+//{
+//   return tape.newLabel();
+//}
 
 int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
 {
@@ -288,11 +288,34 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    //   unhook
    //   jump labEnd
    // labErr:
+   //   popa
+   //   flag
+   //   andn elMessage
+   //   ifn labSkip
+   //   nload
+   //   ecopyd
+   //   aloadsi 0
+   //   acallvi 0
+   // labSkip:
    //   unhook
 
    tape.write(bcUnhook);
    tape.write(bcJump, baPreviousLabel);
    tape.setLabel();
+
+   tape.newLabel();
+
+   tape.write(bcPopA);
+   tape.write(bcFlag);
+   tape.write(bcAndN, elMessage);
+   tape.write(bcIfN, baCurrentLabel, 0);
+   tape.write(bcNLoad);
+   tape.write(bcECopyD);
+   tape.write(bcALoadSI, 0);
+   tape.write(bcACallVI, 0);
+
+   tape.setLabel();
+
    tape.write(bcUnhook);
 }
 
@@ -423,8 +446,8 @@ inline ref_t defineConstantMask(ObjectKind type)
          return mskMessage;
       case okSignatureConstant:
          return mskSignature;
-      case okSymbolReference:
-         return mskSymbolLoaderRef;
+//      case okSymbolReference:
+//         return mskSymbolLoaderRef;
       default:
          return mskConstantRef;
    }
@@ -449,7 +472,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
-      case okSymbolReference:
+//      case okSymbolReference:
          // pushr reference
          tape.write(bcPushR, object.param | defineConstantMask(object.kind));
          break;
@@ -460,6 +483,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
       case okParam:
       case okThisParam:
+      case okOutputParam:
          // pushfi index
          tape.write(bcPushFI, object.param, bpFrame);
          break;
@@ -520,10 +544,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          // pushf n
          tape.write(bcPushF, object.param);
          break;
-      case okBlockLocalAddress:
-         // pushblockpi n
-         tape.write(bcPushF, object.param, bpBlock);
-         break;
+//      case okBlockLocalAddress:
+//         // pushblockpi n
+//         tape.write(bcPushF, object.param, bpBlock);
+//         break;
    }
 }
 
@@ -560,7 +584,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
-      case okSymbolReference:
+//      case okSymbolReference:
          // acccopyr r
          tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
          break;
@@ -575,6 +599,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
       case okParam:
       case okThisParam:
+      case okOutputParam:
          // aloadfi index
          tape.write(bcALoadFI, object.param, bpFrame);
          break;
@@ -608,10 +633,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          // aloadfi n
          tape.write(bcALoadFI, object.param, bpBlock);
          break;
-      case okBlockLocalAddress:
-         // acopyf n
-         tape.write(bcACopyF, object.param, bpBlock);
-         break;
+//      case okBlockLocalAddress:
+//         // acopyf n
+//         tape.write(bcACopyF, object.param, bpBlock);
+//         break;
       case okBase:
          // acopyb
          tape.write(bcACopyB);
@@ -668,6 +693,12 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
          // asavesi index
          tape.write(bcASaveSI, object.param);
          break;
+      case okOutputParam:
+         // bloadfi index
+         // axsavebi 0
+         tape.write(bcBLoadFI, object.param, bpFrame);
+         tape.write(bcAXSaveBI);
+         break;
       case okField:
       case okOuter:
          // bloadfi 1
@@ -709,7 +740,7 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
    tape.write(bcNewN, vmtReference | mskVMTRef, size);
    tape.write(bcBSwap);
 
-   if (size <= 4) {
+   if (size >0 && size <= 4) {
       tape.write(bcNLoad);
       tape.write(bcNSave);
    }
@@ -888,11 +919,29 @@ void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
+void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xjumprm r, m
+
+   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
+}
+
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
 {
    // xcallrm r, m
 
-   tape.write(bcXCallRM, reference | mskVMTEntryOffset, message);
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xindexrm r, m
+   // acallvd
+
+   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
+   tape.write(bcACallVD);
 
    tape.write(bcFreeStack, 1 + getParamCount(message));
 }
@@ -949,7 +998,7 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatch
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
-      case okSymbolReference:
+//      case okSymbolReference:
          // acccopyr r
          tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
          break;
@@ -983,11 +1032,11 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef)
    tape.write(bcElseR, baCurrentLabel, comparingRef | mskConstantRef);
 }
 
-void ByteCodeWriter :: jumpIfNotEqualN(CommandTape& tape, int value)
-{
-   //// dthenn then-end, value
-   //tape.write(bcDElseN, baCurrentLabel, value);
-}
+//void ByteCodeWriter :: jumpIfNotEqualN(CommandTape& tape, int value)
+//{
+//   //// dthenn then-end, value
+//   //tape.write(bcDElseN, baCurrentLabel, value);
+//}
 
 void ByteCodeWriter :: jump(CommandTape& tape, bool previousLabel)
 {
@@ -1001,23 +1050,11 @@ void ByteCodeWriter :: throwCurrent(CommandTape& tape)
    tape.write(bcThrow);
 }
 
-void ByteCodeWriter :: breakLoop(CommandTape& tape, int label)
-{
-   // jump break_handler
-   tape.write(bcJump, label);
-}
-
 void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
 {
    // jump labEnd
    tape.write(bcJump, label);
 }
-
-//void ByteCodeWriter :: releaseSelf(CommandTape& tape)
-//{
-//   // popb
-//   tape.write(bcPopB);
-//}
 
 void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
 {
@@ -1038,10 +1075,10 @@ void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, CommandTape& tape, 
    (*it).argument += size;
 }
 
-void ByteCodeWriter :: setLabel(CommandTape& tape)
-{
-   tape.setLabel();
-}
+//void ByteCodeWriter :: setLabel(CommandTape& tape)
+//{
+//   tape.setLabel();
+//}
 
 void ByteCodeWriter :: endCatch(CommandTape& tape)
 {
@@ -1643,7 +1680,7 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, ObjectInfo target)
       tape.write(bcBCopyF, target.param);
       tape.write(bcNSave);
    }
-   else if (target.kind == okLocal) {
+   else if (target.kind == okLocal || target.kind == okOutputParam) {
       // bloadfi param
       // nsave
       tape.write(bcBLoadFI, target.param, bpFrame);
@@ -1698,7 +1735,7 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, ObjectInfo target)
          tape.write(bcBWrite);
       }
    }
-   else if (target.kind == okLocal) {
+   else if (target.kind == okLocal || target.kind == okOutputParam) {
       // bloadfi param
       // ncopy
       tape.write(bcBLoadFI, target.param, bpFrame);
@@ -1725,7 +1762,7 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, ObjectInfo target)
       tape.write(bcDCopy, target.param >> 1);
       tape.write(bcWWrite);
    }
-   else if (target.kind == okLocal) {
+   else if (target.kind == okLocal || target.kind == okOutputParam) {
       // bloadfi param
       // ncopy
       tape.write(bcBLoadFI, target.param, bpFrame);
@@ -1768,7 +1805,7 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, ObjectInfo target)
          tape.write(bcInsert);
       }
    }
-   else if (target.kind == okLocal) {
+   else if (target.kind == okLocal || target.kind == okOutputParam) {
       // bloadfi param
       // lcopy
 
@@ -2013,8 +2050,8 @@ void ByteCodeWriter :: selectConstant(CommandTape& tape, ref_t r1, ref_t r2)
    tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 }
 
-void ByteCodeWriter :: loadSymbolReference(CommandTape& tape, ref_t reference)
-{
-   // acopyr reference
-   tape.write(bcACopyR, reference | mskSymbolRef);
-}
+//void ByteCodeWriter :: loadSymbolReference(CommandTape& tape, ref_t reference)
+//{
+//   // acopyr reference
+//   tape.write(bcACopyR, reference | mskSymbolRef);
+//}

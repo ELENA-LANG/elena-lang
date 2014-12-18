@@ -14,7 +14,7 @@
 
 using namespace _ELENA_;
 
-#define PMODULE_LEN getlength(PACKAGE_MODULE)
+#define NMODULE_LEN getlength(NATIVE_MODULE)
 
 inline const char* getLoadError(LoadResult result)
 {
@@ -194,8 +194,10 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, const tchar_t* path)
       filePath.combine(value);
       filePath.lower();
 
-      // duplicates should be allowed to implement routine overriding
-      _loader.addPrimitiveAlias(key, filePath, true);
+      if (ConstantIdentifier::compare(key, CORE_ALIAS)) {
+         _loader.addCoreAlias(filePath);
+      }
+      else _loader.addPrimitiveAlias(key, filePath);
 
       it++;
    }
@@ -222,14 +224,6 @@ void Project :: loadSourceCategory(_ConfigFile& config, const tchar_t* path)
 
 void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
 {
-//   // load entry symbol
-//   const _text_t* entry = getOption(config, opStarter);
-//   if (entry) {
-//      ProjectParam entryRef(entry);
-//
-//      loadForward(ConstantIdentifier(STARTUP_CLASS), entryRef);
-//   }
-
    // load project settings (if setting is absent previous value is used)
    loadOption(config, opNamespace);
    loadOption(config, opEntry);
@@ -239,7 +233,6 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
    loadBoolOption(config, opWarnOnUnresolved);
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
-   loadOption(config, opVMPath);       // path to virtual machine should be saved as it is, because it is relative to the executable path rather then a config one
    loadOption(config, opTemplate);
    loadBoolOption(config, opEmbeddedSymbolMode);
 
@@ -262,7 +255,6 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
    loadIntOption(config, opL0);
 
    // load primitive aliases
-   // duplicates should be allowed to implement routine overriding
    loadPrimitiveCategory(config, configPath);
 
    // load sources
@@ -364,8 +356,8 @@ _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& referen
 
    LoadResult result = lrNotFound;
    _Module* module = NULL;
-   if (ConstantIdentifier::compare(referenceName, PACKAGE_MODULE, PMODULE_LEN) && referenceName[PMODULE_LEN]=='\'') {
-      module = _loader.resolvePrimitive(referenceName, result, reference);
+   if (ConstantIdentifier::compare(referenceName, NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+      module = _loader.resolveNative(referenceName, result, reference);
    }
    else module = _loader.resolveModule(referenceName, result, reference);
 
@@ -379,14 +371,14 @@ _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& referen
 
 }
 
-_Module* Project :: resolvePredefined(const wchar16_t* package, ref_t reference, bool silentMode)
+_Module* Project :: resolveCore(ref_t reference, bool silentMode)
 {
    LoadResult result = lrNotFound;
-   _Module* module = _loader.resolvePredefined(package, reference, result);
+   _Module* module = _loader.resolveCore(reference, result);
 
    if (result != lrSuccessful) {
       if (!silentMode)
-         raiseError(getLoadError(result), package);
+         raiseError(getLoadError(result), CORE_ALIAS);
 
       return NULL;
    }

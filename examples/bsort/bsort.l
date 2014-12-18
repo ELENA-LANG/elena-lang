@@ -5,22 +5,23 @@
 
 // --- Prompter ---
 
-#symbol prompter = (:anIndex)
+#symbol prompter = (&index:anIndex)
 [
-     consoleEx write:"Enter array[":anIndex:"]:" readLine:(Integer new)
+     consoleEx write:"Enter array[":anIndex:"]:" readLine:(Integer new) int
 ].
 
 // --- sorting ---
 
 #symbol sorting =
 {
-    sortRange:anArray:aStart:anEnd
+    sortRange &array:anArray &int:aStart &int:anEnd
     [
-        #var aCurrent := Integer new << aStart.
-        control while:[ aCurrent * 2 < anEnd ] &do:
+        #var(type:int)aCurrent := aStart.
+        
+        #loop (aCurrent * 2 < anEnd) ?
         [
-            #var aMaxChild.
-            #var aChild := (aCurrent * 2) + 1.
+            #var(type:int)aMaxChild.
+            #var(type:int)aChild := (aCurrent * 2) + 1.
 
             (aChild == anEnd)or:[(anArray@aChild) > (anArray@(aChild + 1))]
                 ? [ aMaxChild := aChild. ]  
@@ -30,26 +31,26 @@
                 ? [
                     anArray~indexable exchange:aCurrent:aMaxChild.
 
-                    aCurrent << aMaxChild.
+                    aCurrent := aMaxChild.
                 ]
-                ! [ #break. ].
+                ! [ ^ self. ].
         ].
      ]
 
     sort : anArray
     [
-        #var aLastIndex := anArray length - 1.
+        #var(type:int) aLastIndex := anArray length - 1.
         
-        control forrange &int:(anArray length / 2) &int:0 &do: (&int:anIndex)
+        control runRange &int:(anArray length / 2) &int:0 &forEvery: (&index:anIndex)
         [
-            sorting sortRange:anArray:anIndex:aLastIndex
+            sorting sortRange &array::anArray &int:anIndex &int:aLastIndex
         ].
         
-        control forrange &int::aLastIndex &int:0 &do: (&int:anIndex)
+        control runRange &int:aLastIndex &int:0 &forEvery: (&index:anIndex)
         [
-            anArray~indexable exchange &int:anIndex &int:0.
+            anArray~indexable exchange &index:anIndex &index:0.
 
-            sorting sortRange:anArray:0:(anIndex - 1).
+            sorting sortRange &array::anArray &int:0 &int:(anIndex - 1).
         ].
     ]
 }.
@@ -62,7 +63,7 @@
     #var aSize := consoleEx write:"Enter the array size:" readLine:(Integer new).
 
     // 2. Initialize the array
-    #var anArray := arrayControl new &length:(aSize int) &each:prompter.
+    #var anArray := arrayControl new &length:(aSize int) &every:prompter.
 
     // 3. Sort the array
     sorting sort:anArray.

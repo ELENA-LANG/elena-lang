@@ -24,7 +24,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
    "type", "len", "wlen", "flag", "unknown", "unknown", "class", "mindex",
-   "ecall", "unknown", "unknown", "unknown", "unknown", "unknown", "xclone", "unknown",
+   "ecall", "acallvd", "unknown", "unknown", "unknown", "unknown", "xclone", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
    "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
@@ -59,7 +59,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
-   "new", "newn", "unknown", "unknown", "unknown", "unknown", "selectr", "lessn",
+   "new", "newn", "unknown", "unknown", "xindexrm", "xjumprm", "selectr", "lessn",
    "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
 };
 
@@ -332,6 +332,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case bcElseM:
          case bcNext:
          case bcIfHeap:
+         case bcXJumpRM:
             *it = bcNop;
             return true;
       }
@@ -388,6 +389,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcMQuit:
             case bcQuitN:
             case bcAJumpVI:
+            case bcXJumpRM:
                blocks.add(index + 1, 0);
                break;
             case bcJump:
@@ -682,7 +684,6 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, ROLLBACK_MESSAGE,   ROLLBACK_MESSAGE_ID);
    addVerb(verbs, SELECT_MESSAGE,     SELECT_MESSAGE_ID);
    addVerb(verbs, REPLACE_MESSAGE,    REPLACE_MESSAGE_ID);
-
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

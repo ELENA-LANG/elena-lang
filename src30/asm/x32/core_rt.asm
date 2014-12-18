@@ -1,5 +1,5 @@
 // --- System Core Data  --
-define CORE_RT_TABLE        06h
+define CORE_RT_TABLE   20006h
 
 // CORE RT TABLE
 define rt_Instance      0000h
@@ -134,7 +134,7 @@ end
 procedure core_rt'init_rt_info
 
   // load dll  
-  mov  eax, rdata : "$package'core_rt'dll_name"
+  mov  eax, rdata : "$native'core_rt'dll_name"
   push eax
   call extern 'dlls'KERNEL32.LoadLibraryA
 
@@ -145,7 +145,7 @@ procedure core_rt'init_rt_info
 
   // ; init rt_table
   
-  mov  esi, rdata:"$package'core_rt'LoadAddressInfoFunc" 
+  mov  esi, rdata:"$native'core_rt'LoadAddressInfoFunc" 
   push esi
   push eax
   call extern 'dlls'KERNEL32.GetProcAddress
@@ -157,7 +157,7 @@ procedure core_rt'init_rt_info
   mov  [esi + rt_loadaddrinfo], eax
 
   mov  eax, [esp]
-  mov  esi, rdata:"$package'core_rt'LoadClassNameFunc" 
+  mov  esi, rdata:"$native'core_rt'LoadClassNameFunc" 
   push esi
   push eax
   call extern 'dlls'KERNEL32.GetProcAddress
@@ -169,7 +169,7 @@ procedure core_rt'init_rt_info
   mov  [esi + rt_loadName], eax
 
   mov  eax, [esp]
-  mov  esi, rdata:"$package'core_rt'GetSymbolRefFunc" 
+  mov  esi, rdata:"$native'core_rt'GetSymbolRefFunc" 
   push esi
   push eax
   call extern 'dlls'KERNEL32.GetProcAddress
@@ -181,7 +181,7 @@ procedure core_rt'init_rt_info
   mov  [esi + rt_loadSymbol], eax
 
   mov  eax, [esp]
-  mov  esi, rdata:"$package'core_rt'InterpreterFunc" 
+  mov  esi, rdata:"$native'core_rt'InterpreterFunc" 
   push esi
   push eax
   call extern 'dlls'KERNEL32.GetProcAddress
@@ -193,7 +193,7 @@ procedure core_rt'init_rt_info
   mov  [esi + rt_interprete], eax
 
   mov  eax, [esp]
-  mov  esi, rdata:"$package'core_rt'LastErrFunc" 
+  mov  esi, rdata:"$native'core_rt'LastErrFunc" 
   push esi
   push eax
   call extern 'dlls'KERNEL32.GetProcAddress
@@ -205,7 +205,7 @@ procedure core_rt'init_rt_info
   mov  [esi + rt_lasterr], eax
 
   mov  eax, [esp]
-  mov  esi, rdata:"$package'core_rt'InitFunc" 
+  mov  esi, rdata:"$native'core_rt'InitFunc" 
   push esi
   push eax
   call extern 'dlls'KERNEL32.GetProcAddress

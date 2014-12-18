@@ -10,7 +10,7 @@
 {
     #field theName.
     #field thePrice.
-
+    
     #constructor new &Price:aPrice &Name:aName
     [
         theName := aName.
@@ -35,7 +35,7 @@
     
     #constructor new
     [
-        theBM := Bookmark new.
+        theBM := StringBookmark new.
     ]
 
     #method write : aLiteral
@@ -65,14 +65,14 @@
 #symbol Program = 
 [
     ('program'arguments length == 1)?
-        [  console << "Please provide the path to the file to view". #throw BreakException new. ].
+        [  console << "Please provide the path to the file to view". #throw AbortException new. ].
 
     #var aFileName := 'program'arguments@1.
 
     #var aList := List new.
     #var anAdapter := Adapter new.
 
-    textFileControl forEachLine:aFileName &do: aLine
+    control run &path:(aFileName literal) &forEachLine: aLine
     [
         anAdapter write:aLine.
 
@@ -87,7 +87,7 @@
         ].
     ].
 
-    aList~enumerable run:printingLn.
+    control run:aList &forEach:printingLn.
 
     console readChar.
 ].

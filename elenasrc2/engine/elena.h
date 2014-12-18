@@ -95,7 +95,7 @@ public:
    virtual _Memory* getTargetDebugSection() = 0;
 
    virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask) = 0;
-   virtual SectionInfo getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask) = 0;
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask) = 0;
    virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
@@ -104,6 +104,8 @@ public:
    virtual const wchar16_t* getIntegerClass() = 0;
    virtual const wchar16_t* getRealClass() = 0;
    virtual const wchar16_t* getLongClass() = 0;
+   virtual const wchar16_t* getMessageClass() = 0;
+   virtual const wchar16_t* getSignatureClass() = 0;
    virtual const wchar16_t* getNamespace() = 0;
 
    virtual const wchar_t* retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
@@ -455,30 +457,56 @@ struct ClassInfo
    FieldMap     fields;
    FieldTypeMap fieldTypes;
 
-   void save(StreamWriter* writer)
+   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
-      writer->writeDWord(classClassRef);
-      methods.write(writer);
-      fields.write(writer);
-      fieldTypes.write(writer);
+      if (!headerAndSizeOnly) {
+         writer->writeDWord(classClassRef);
+         methods.write(writer);
+         fields.write(writer);
+         fieldTypes.write(writer);
+      }
    }
 
-   void load(StreamReader* reader)
+   void load(StreamReader* reader, bool headerOnly = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       classClassRef = reader->getDWord();
-      methods.read(reader);
-      fields.read(reader);
-      fieldTypes.read(reader);
+      if (!headerOnly) {
+         methods.read(reader);
+         fields.read(reader);
+         fieldTypes.read(reader);
+      }
    }
 
    ClassInfo()
-      : fields(-1), methods(false)
+      : fields(-1), methods(0)
    {
       header.flags = 0;
+   }
+};
+
+// --- SymbolExpressionInfo ---
+
+struct SymbolExpressionInfo
+{
+   size_t expressionTypeRef;
+
+   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+   {
+      writer->writeDWord(expressionTypeRef);
+   }
+
+   void load(StreamReader* reader, bool headerOnly = false)
+   {
+      expressionTypeRef = reader->getDWord();
+   }
+
+   SymbolExpressionInfo()
+   {
+      expressionTypeRef = 0;
    }
 };
 

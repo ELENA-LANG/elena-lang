@@ -63,7 +63,7 @@ protected:
    bool _debugMode;
    bool _embeddedSymbolMode;
 
-   friend void writePreloadedReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+   friend void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
    friend void loadCoreOp(x86JITScope& scope, char* code);
 
    friend void loadFunction(int opcode, x86JITScope& scope);
@@ -114,6 +114,7 @@ protected:
    friend void compilePushA(int opcode, x86JITScope& scope);
    friend void compileACopyB(int opcode, x86JITScope& scope);
    friend void compileInvokeVMT(int opcode, x86JITScope& scope);
+   friend void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
    friend void compileALoadAI(int opcode, x86JITScope& scope);
    friend void compileACopyS(int opcode, x86JITScope& scope);
    friend void compileNext(int opcode, x86JITScope& scope);
@@ -158,7 +159,7 @@ protected:
    // preloaded references
    IntFixedMap<void*> _preloaded;
 
-   void writePreloadedReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+   void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 
 public:
    virtual bool isWithDebugInfo() const;
@@ -167,9 +168,7 @@ public:
 
    virtual void* getPreloadedReference(ref_t reference);
 
-   virtual void prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata);
-   virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code);
-   virtual void prepareRTData(_ReferenceHelper& helper, _Memory* data);
+   virtual void prepareCore(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata, _Memory* code);
 
    virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber);
    virtual void compileTLS(_JITLoader* loader);
@@ -186,7 +185,7 @@ public:
 };
 
 // --- compiler friend functions---
-inline void writePreloadedReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 void loadCoreOp(x86JITScope& scope, char* code);
 void loadFunction(int opcode, x86JITScope& scope);
 void loadExtensions(int opcode, x86JITScope& scope);
@@ -228,6 +227,7 @@ void compileALoadR(int opcode, x86JITScope& scope);
 void compilePushA(int opcode, x86JITScope& scope);
 void compileACopyB(int opcode, x86JITScope& scope);
 void compileInvokeVMT(int opcode, x86JITScope& scope);
+void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
 void compileIfM(int opcode, x86JITScope& scope);
 void compileElseM(int opcode, x86JITScope& scope);
 void compileALoadAI(int opcode, x86JITScope& scope);

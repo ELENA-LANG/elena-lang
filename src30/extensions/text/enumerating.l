@@ -1,49 +1,63 @@
 #define system.
+#define system'routines.
 #define system'io.
 
-// --- TextFileEnumerator ---
+#type(type:func1)forEachWord.
+#type(type:func1)forEachLine.
 
-#class TextFileEnumerator
+// --- ReaderEnumerator ---
+
+#class ReaderEnumerator : Enumerator
 {
-    #field thePath.
-    #field theReader.
+    #field(type:textreader) theReader.
     #field theLine.
-        
-    #constructor new &path:aPath
+
+    #constructor new
     [
-        thePath := aPath literal.        
+    ]
+
+    #constructor new &stream:aStream
+        <= (%new)
+    [
+        theReader := StreamReader new &stream:aStream.
+    ]        
+                        
+    #constructor new &path:aPath
+        <= (%new)
+    [
+        theReader := StreamReader new &path:aPath.
+    ]
+    
+    #method reset 
+    [
+        theReader := StreamReader new &stream::(theReader source clone).
     ]
     
     #method next
     [
-        (nil == theReader) 
-            ? [
-                theReader := StreamReader new &path:thePath.
-                
-                theLine := theReader readLine.
-            ]
-            ! [
-                theLine := theReader readLine.
-            ].
-            
-        ^ theReader available.
+        theLine := theReader readLine.
+        
+        ^ nil != theLine.
     ]
     
     #method get = theLine.
 }
 
-// --- textFileControl ---
+//// --- textFileControl ---
+//
+//#symbol textFileControl =
+//{
+//    forEachLine:aPath &do:anAction
+//        = anAction~functionOp run &enumerator:(TextFileEnumerator new &path:aPath).
+//}.
 
-#symbol textFileControl =
+// --- textControlEx ---
+
+#class(extension:control) textControlEx 
 {
-    forEachLine:aPath &do:anAction
-        = anAction~functionOp run &enumerator:(TextFileEnumerator new &path:aPath).
-}.
-
-// --- textControl ---
-
-#symbol textControl =
-{
-    forEachWord:aText &do:anAction
-        = anAction~functionOp run &enumerator:(WordEnumerator new:(aText literal)).
-}.
+    #method run:aText &forEachWord:anAction
+        = anAction run &enumerator:(WordEnumerator new &literal::aText).
+        
+    #method run &path:aPath &forEachLine:anAction
+        = anAction run &enumerator:(ReaderEnumerator new &path:aPath).
+}

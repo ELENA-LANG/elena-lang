@@ -1,19 +1,23 @@
-#class(role)Tester
-{
-    #method step
-    [
-        #var n := 2.
-        
-        ^ n.
-    ]
-}
+#define system'dynamic.
 
-#symbol Symbol
-   = Tester step.
+//#class(role)Tester
+//{
+//    #method step
+//    [
+//        #var n := 2.
+//        
+//        ^ n.
+//    ]
+//}
+//
+//#symbol Symbol
+//   = Tester step.
 
 // --- Program ---
 
 #symbol Program =
 [
-    Symbol eval.
+    classControl test.
+    
+//    Symbol eval.
 ].

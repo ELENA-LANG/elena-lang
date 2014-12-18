@@ -65,23 +65,28 @@ public:
       }
    }
 
-   void addPrimitiveAlias(const wchar16_t* alias, const tchar_t* path, bool duplicateAllowed = false)
+   void addPrimitiveAlias(const wchar16_t* alias, const tchar_t* path)
    {
-      if (!duplicateAllowed)
-         _binaryAliases.erase(alias);
+      _binaryAliases.erase(alias);
 
-      _binaryAliases.addToTop(alias, StringHelper::clone(path));
+      _binaryAliases.add(alias, StringHelper::clone(path));
    }
 
-   bool loadPrimitive(const wchar16_t* package, LoadResult& result);
+   void addCoreAlias(const tchar_t* path)
+   {
+      _binaryAliases.addToTop(NULL, StringHelper::clone(path));
+   }
 
    _Module* createModule(const wchar16_t* package, LoadResult& result);
 
+   _Module* loadNative(const wchar16_t* package, LoadResult& result);
    _Module* loadModule(const wchar16_t* package, LoadResult& result, bool readOnly = true);
    _Module* loadDebugModule(const wchar16_t* package, LoadResult& result);
 
-   _Module* resolvePrimitive(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
-   _Module* resolvePredefined(const wchar16_t* package, ref_t reference, LoadResult& result);
+   bool loadCore(LoadResult& result);
+
+   _Module* resolveNative(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
+   _Module* resolveCore(ref_t reference, LoadResult& result);
    virtual _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
 

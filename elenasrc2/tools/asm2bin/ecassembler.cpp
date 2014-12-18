@@ -55,6 +55,51 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
+ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+{
+   int paramCount = 0; // NOTE: paramCount might be not equal to stackCount (the actual stack size) in the case if variables are used for virtual methods
+   int stackCount = 0;
+   int verbId = mapVerb(token.value);
+   if (verbId == 0) {
+      verbId = EVAL_MESSAGE_ID;
+   }
+
+   IdentifierString message;
+   // reserve place for param counter
+   message.append('0');
+
+   // if it is not a verb - by default it is EVAL message
+   if (verbId == 0) {
+      message.append('#');
+      message.append(EVAL_MESSAGE_ID + 0x20);
+      message.append('&');
+      message.append(verbId);
+   }
+   else {
+      message.append('#');
+      message.append(verbId + 0x20);
+   }
+
+   token.read();
+   while(token.value[0] == '&') {
+      message.append(token.value);
+
+      token.read();
+      message.append(token.value);
+      token.read();
+   }
+   if (token.value[0] == '[') {
+      paramCount = token.readInteger(constants);
+   }
+   else token.raiseErr("Invalid operand");
+
+   token.read("]", "Invalid operand");
+
+   message[0] = message[0] + paramCount;
+
+   return binary->mapReference(message) | mskMessage;
+}
+
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 {
    const wchar16_t* word = token.read();
@@ -68,7 +113,13 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    else if (ConstantIdentifier::compare(word, "const")) {
       token.read(":", "Invalid operand");
       token.read();
-      return binary->mapReference(token.value) | mskConstantRef;
+
+      if (ConstantIdentifier::compare(word, "%")) {
+         token.read();
+
+         return compileRMessageArg(token, binary);
+      }
+      else return binary->mapReference(token.value) | mskConstantRef;
    }
    else if (ConstantIdentifier::compare(word, "class")) {
       token.read(":", "Invalid operand");
@@ -79,7 +130,7 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       token.read(":", "Invalid operand");
       token.read();
 
-      ReferenceNs functionName(PACKAGE_MODULE, token.value);
+      ReferenceNs functionName(NATIVE_MODULE, token.value);
       return binary->mapReference(functionName) | mskNativeCodeRef;
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
@@ -382,7 +433,7 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
    LabelInfo info;
 
    token.read();
-   ReferenceNs refName(PACKAGE_MODULE, token.value);
+   ReferenceNs refName(binary->Name(), token.value);
 
    ref_t reference = binary->mapReference(refName) | mskCodeRef;
 
@@ -402,7 +453,11 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 
 void ECodesAssembler :: compile(TextReader* source, const tchar_t* outputPath)
 {
-   Module       binary(ConstantIdentifier("$binary"));
+   FileName moduleName(outputPath);
+
+   ReferenceNs name(ConstantIdentifier("system"), moduleName);
+
+   Module       binary(name);
    SourceReader reader(4, source);
 
    TokenInfo    token(&reader);

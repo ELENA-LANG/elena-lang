@@ -7,7 +7,7 @@
 
 // --- WordList ---
 
-#class(type:enumerable) WordList
+#class WordList
 {
     #field theTotal.
     #field theList.
@@ -22,36 +22,36 @@
     [
         theTotal += 1.
 
-        listControl ifExist:aWord &in:theList
+        control ifExist:aWord &in:theList
             ! [ theList append:aWord. ].
     ]
-
-    #method enumerator => theList.
 
     #method total_words = theTotal.
 
     #method unique_words = theList length.
+    
+    #method => theList.
 }
 
 // --- Program ---
 
 #symbol Program =
 [
-    consoleEx writeLine:"Enter the text(to stop press enter two times):".
+    console writeLine:"Enter the text(to stop press enter two times):".
 
     #var aText := TextBuffer new.
     #var aLine := String new.
 
     // read until the empty string is not entered
-    control do:[ aText << consoleEx readLine:aLine << " ". ] &until:[ aLine length == 0 ].
+    control do:[ aText << console readLine:aLine << " ". ] &until:[ aLine length == 0 ].
 
     #var aList := WordList new:(List new).
 
-    textControl forEachWord:aText &do: anItem [ aList append:anItem ].
+    control run:aText &forEachWord: anItem [ aList append:anItem ].
 
-    consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
+    console writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)
-        ? [ consoleEx writeLine:"the list of unique words:":(listControl sort:aList). ].
+        ? [ console writeLine:"the list of unique words:":(aList~indexable sort:ifOrdered). ].
 
-    consoleEx readChar. // wait for any key
+    console readChar. // wait for any key
 ].

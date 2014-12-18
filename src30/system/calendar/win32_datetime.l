@@ -5,9 +5,11 @@
 
 // --- SystemTime ---
 
-#type(size:16,wrapper:Win32SystemTime)__win_systemtime.
+#type(class:system'calendar'Win32SystemTime)systemtime.
+#type(type:int) int_time_attributes.
+#type(type:int) int_date_attributes.
 
-#class(type:__win_systemtime) Win32SystemTime
+#class(type:systemtime,struct:embeddable,sealed) Win32SystemTime
 {
     #field(type:short)theYear.
     #field(type:short)theMonth.
@@ -22,86 +24,132 @@
     [
     ]
     
-//    #constructor new &short:aYear &short:aMonth &short:aDay &short:anHour &short:aMinute &short:aSecond &short:aMillisecond
-//    [
-//        byteArrayPrimitiveOp write &bytearray:theData &index:0 &short:aYear.
-//        byteArrayPrimitiveOp write &bytearray:theData &index:2 &short:aMonth.
-//        byteArrayPrimitiveOp write &bytearray:theData &index:6 &short:aDay.
-//        byteArrayPrimitiveOp write &bytearray:theData &index:8 &short:anHour.
-//        byteArrayPrimitiveOp write &bytearray:theData &index:10 &short:aMinute.
-//        byteArrayPrimitiveOp write &bytearray:theData &index:12 &short:aSecond.
-//        byteArrayPrimitiveOp write &bytearray:theData &index:14 &short:aMillisecond.
-//    ]
+    #method year = IntNumber new &short:theYear.
 
-    #method Year = IntNumber new &short:theYear.
+    #method month = IntNumber new &short:theMonth.
 
-    #method Month = IntNumber new &short:theMonth.
+    #method dayOfWeek = IntNumber new &short:theDayOfWeek.
 
-    #method DayOfWeek = IntNumber new &short:theDayOfWeek.
+    #method day = IntNumber new &short:theDay.
 
-    #method Day = IntNumber new &short:theDay.
+    #method hour = IntNumber new &short:theHour.
 
-    #method Hour = IntNumber new &short:theHour.
+    #method minute = IntNumber new &short:theMinute.
 
-    #method Minute = IntNumber new &short:theMinute.
+    #method second = IntNumber new &short:theSecond.
 
-    #method Second = IntNumber new &short:theSecond.
+    #method millisecond = IntNumber new &short:theMillisecond.
 
-    #method Millisecond = IntNumber new &short:theMillisecond.
-
-    #method set &Year:aValue [ theYear := aValue short. ]
-
-    #method set &Month:aValue [ theMonth := aValue short. ]
-
-    #method set &Day:aValue [ theDay := aValue short. ]
-
-    #method set &Hour:aValue [ theHour := aValue short. ]
-
-    #method set &Minute:aValue [ theMinute := aValue short. ]
-
-    #method set &Second:aValue [ theSecond := aValue short. ]
-
-    #method set &Millisecond:aValue [ theMillisecond := aValue short. ]
-
-    #method long
+    #method years
     [
-        #var(type:long) aRetVal := 0l.
+        #var(type:short)aValue := theYear - 1601.
         
-        system'external'KERNEL32 SystemTimeToFileTime &__win_systemtime:$self &out'long:aRetVal.
+        ^ IntNumber new &short:aValue.
+    ]
+
+    #method months
+    [
+        #var(type:short)aValue := theMonth - 1.
         
-        ^ LongNumber new &long:aRetVal.
+        ^ IntNumber new &short:aValue.
+    ]
+
+    #method days
+    [
+        #var(type:short)aValue := theDay - 1.
+        
+        ^ IntNumber new &short:aValue.
+    ]
+
+    #method hours = IntNumber new &short:theHour.
+
+    #method minutes = IntNumber new &short:theMinute.
+
+    #method seconds = IntNumber new &short:theSecond.
+
+    #method milliseconds
+    [
+        #var(type:long)aValue.
+        system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &out'long:aValue.
+        
+        ^ LongNumber new &long:(aValue / 10000l).
+    ]
+
+    #method set &year:aValue 
+    [ 
+        theYear := aValue int short.
+    ]
+
+    #method set &month:aValue 
+    [ 
+        theMonth := aValue int short.
+    ]
+
+    #method set &day:aValue 
+    [ 
+        theDay := aValue int short.
+    ]
+
+    #method set &hour:aValue 
+    [ 
+        theHour := aValue int short.
+    ]
+
+    #method set &minute:aValue 
+    [ 
+        theMinute := aValue int short.
+    ]
+
+    #method set &second:aValue 
+    [ 
+        theSecond := aValue int short.
+    ]
+
+    #method set &millisecond:aValue 
+    [ 
+        theMillisecond := aValue int short.
+    ]
+
+    #method read &out'long:aRetVal
+    [
+        system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &out'long:aRetVal.
     ]    
     
-    #method get &literal &dateFlags:Flags
+    #method write &long:aFileTime
+    [
+        system'external'KERNEL32 FileTimeToSystemTime &long:aFileTime &systemtime:$self.
+    ]
+   
+    #method get &literal &int_date_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
-            &int::Flags
-            &__win_systemtime:$self
+            &int:Flags
+            &systemtime:$self
             &int:0
             &shortarray:aBuffer
             &int:255
             &int:0
-            | raise:(system'FormatException new:"Invalid date").
+            | raise:(FormatException new:"Invalid date").
 
         ^ LiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
     ]
     
-    #method get &literal &timeFlags:Flags
+    #method get &literal &int_time_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
-            &int::Flags
-            &__win_systemtime:$self
+            &int:Flags
+            &systemtime:$self
             &int:0
             &shortarray:aBuffer
             &int:255
             &int:0
-            | raise:(system'FormatException new:"Invalid time").
+            | raise:(FormatException new:"Invalid time").
 
         ^ LiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
     ]
@@ -111,222 +159,72 @@
 
 #symbol dateTimeControl =
 {
-    read &CurrentUTCTime &out'long:aRetVal
+    readCurrentUTCTime &out'long:aRetVal
     [
         system'external'KERNEL32 GetSystemTimeAsFileTime &out'long:aRetVal.
     ]
 
-    read &CurrentLocalTime &out'long:aRetVal
+    convertUTC2Local &long:aSrcVal &out'long:aRetVal
     [
-        #var(type:long)aSrcVal.
-        
-        $self read &CurrentUTCTime &out'long:aSrcVal.
-
-        system'external'KERNEL32 FileTimeToLocalFileTime &out'long:aSrcVal &out'long:aRetVal.
-    ]
-
-    readSystemTime &long:aFileTime &out'__win_systemtime:aRetVal
-    [
-        system'external'KERNEL32 FileTimeToSystemTime &long:aFileTime &out'__win_systemtime:aRetVal.
-    ]
-
-    readYear &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Year.
-    ]
-
-    readMonth &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Month.
-    ]
-    
-    readDayOfWeek &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime DayOfWeek.
-    ]
-    
-    readDay &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Day.
-    ]
-    
-    readHour &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Hour.
-    ]
-    
-    readMinute &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Minute.
-    ]
-    
-    readSecond &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Second.
-    ]
-    
-    readMillisecond &long:aDateValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Millisecond.
-    ]
-        
-    new &Year:aYear &Month:aMonth &Day:aDay &Hour:anHour &Minute:aMinute &Second:aSecond
-    [
-        #var(type:__win_systemtime)aSystemTime.
-        
-        aSystemTime set &Year:aYear.
-        aSystemTime set &Month:aMonth.
-        aSystemTime set &Day:aDay.
-        aSystemTime set &Hour:anHour.
-        aSystemTime set &Minute:aMinute.
-        aSystemTime set &Second:aMinute.
-        aSystemTime set &Millisecond:0.
-        
-        ^ aSystemTime long.
+        system'external'KERNEL32 FileTimeToLocalFileTime &long:aSrcVal &out'long:aRetVal.
     ]
     
     toShortDateTime &long:aDateValue
     [
-        #var(type:__win_systemtime)aSystemTime.
+        #var(type:systemtime)aSystemTime.
 
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
+        aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &dateFlags:DATE_SHORTDATE.
-        #var aTime := aSystemTime get &literal &timeFlags:0.
+        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
+        #var aTime := aSystemTime get &literal &int_time_attributes:0.
 
         ^ aDate + " " + aTime.
     ]
     
     toShortDate &long:aDateValue
     [
-        #var(type:__win_systemtime)aSystemTime.
+        #var(type:systemtime)aSystemTime.
 
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
+        aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &dateFlags:DATE_SHORTDATE.
+        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
 
         ^ aDate.
     ]
     
     toShortTime &long:aDateValue
     [
-        #var(type:__win_systemtime)aSystemTime.
+        #var(type:systemtime)aSystemTime.
 
-        $self readSystemTime &long:aDateValue &out'__win_systemtime:aSystemTime.
+        aSystemTime write &long:aDateValue.
 
-        #var aTime := aSystemTime get &literal &timeFlags:0.
+        #var aTime := aSystemTime get &literal &int_time_attributes:0.
 
         ^ aTime.
     ]
 }.
 
-#symbol timeSpanControl =
-{
-    readYears &long:aValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
+// --- dateTimeConvertor ---
 
-        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Year - 1601.
-    ]
-
-    readMonths &long:aValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Month - 1.
-    ]
-
-    readDays &long:aValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Day - 1.
-    ]
-    
-    readHours &long:aValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Hour.
-    ]
-
-    readMinutes &long:aValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Minute.
-    ]
-
-    readSeconds &long:aValue
-    [
-        #var(type:__win_systemtime)aSystemTime.
-
-        $self readSystemTime &long:aValue &out'__win_systemtime:aSystemTime.
-                                
-        ^ aSystemTime Second.
-    ]
-
-    readMilliseconds &long:aValue = LongNumber new &long:(aValue / 10000l).
-
-    new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
-    [
-        #var(type:__win_systemtime)aSystemTime.
-        
-        // HOTFIX: temporally, due to current implementation
-        #var(type:int)aYearWord := 1601 + aYear int.
-        #var(type:int)aMonthWord := 1 + aMonth int.
-        #var(type:int)aDayWord := 1 + aDay int.
-        
-        aSystemTime set &Year:aYearWord.
-        aSystemTime set &Month:aMonthWord.
-        aSystemTime set &Day:aDayWord.
-        aSystemTime set &Hour:anHour.
-        aSystemTime set &Minute:aMinute.
-        aSystemTime set &Second:aMinute.
-        aSystemTime set &Millisecond:0.
-
-        ^ aSystemTime long.
-    ]
-}.
+//#symbol timeSpanControl =
+//{
+//    new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
+//    [
+//        #var(type:__win_systemtime)aSystemTime.
+//        
+//        // HOTFIX: temporally, due to current implementation
+//        #var(type:int)aYearWord := 1601 + aYear int.
+//        #var(type:int)aMonthWord := 1 + aMonth int.
+//        #var(type:int)aDayWord := 1 + aDay int.
+//        
+//        aSystemTime set &Year:aYearWord.
+//        aSystemTime set &Month:aMonthWord.
+//        aSystemTime set &Day:aDayWord.
+//        aSystemTime set &Hour:anHour.
+//        aSystemTime set &Minute:aMinute.
+//        aSystemTime set &Second:aMinute.
+//        aSystemTime set &Millisecond:0.
+//
+//        ^ aSystemTime long.
+//    ]
+//}.

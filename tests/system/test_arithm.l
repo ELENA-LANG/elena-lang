@@ -1,51 +1,38 @@
 #define system.
 #define system'routines.
 #define system'collections.
-#define system'dynamic.
+//#define system'dynamic.
 #define system'calendar.
-#define system'math.
+////#define system'math.
 #define extensions.
-#define extensions'math.
-#define extensions'dynamic.
+////#define extensions'math.
+////#define extensions'dynamic.
 
-#class BaseClass
+#symbol XTester =
 {
-    #field theField1.
-    
-    #constructor new [ theField1 := 1. ]
-}
-
-#class ChildClass : BaseClass
-{
-    #field theField2.
-    
-    #constructor new <= ( %new ) [ theField2 := 2. ]
-}
-
-#class(role)XTester
-{
-}
+    test
+    [
+    ]    
+}.
 
 #symbol XTest =
 [
-    #var o := ChildClass new.
-    
-    #var n := IntNumber new &int:2.
+    XTester test.
 ].
 
 // --- OpenArgTest ---
 
-#class(role) OpenArgTester
+#symbol OpenArgTester =
 {
 //    #method testUnboxing : anArg1 : anArg2 : anArg3
 //    [
 //        #var b := anArg1.
 //    ]
 
-    #method test : anIndex :: aParams
+    test : anIndex :: aParams
         = aParams @ (anIndex int).
 
-    #method testParamsCopy :: aParams
+    testParamsCopy :: aParams
     [
         
         #var n := aParams @ 0.
@@ -53,7 +40,7 @@
         ^ n.
     ]
             
-    #method test :: aParams
+    test :: aParams
     [
         #var n := $self testParamsCopy &:aParams.
         
@@ -65,11 +52,11 @@
 //        $self testUnboxing::aParams.
     ]
     
-    #method testBoxing : anArray
+    testBoxing : anArray
     [
         #var b := anArray.
     ]    
-}
+}.
 
 #symbol OpenArgTest =
 [
@@ -80,12 +67,12 @@
 
 // --- MultiDispatchTest ---
 
-#class(role)DispatchTester
+#symbol DispatchTester =
 {
-    #method eval &x:anX &y:anY
+    eval &x:anX &y:anY
     [
     ]
-}
+}.
 
 #symbol MultiDispatchTest =
 [
@@ -108,13 +95,13 @@
 
 // --- LocalTest ---
 
-#class(role) LocalTester
+#symbol LocalTester =
 {
-    #method do &int:n
+    do &int:n
     [
         #var o := n.
     ]
-}
+}.
 
 #symbol LocalTest =
 [
@@ -138,17 +125,17 @@
     { eval : n [ i << n. ] } eval:3.
 ].
 
-#class(role) BoxingTester
+#symbol BoxingTester =
 {
-    #method add : aValue
+    add : aValue
     [
     ]
     
-    #method add &int:aValue
+    add &int:aValue
     [
         ^ aValue.
     ]
-}
+}.
 
 #symbol BoxingTest =
 [
@@ -185,15 +172,15 @@
 [
     #var aList := List new append:1 append:2 append:4.
 
-    #var anArray := listControl toArray:aList.
+    #var anArray := convertor toArray:aList.
 
-    #var n1 := listControl find:2 &in:aList.
-    #var n2 := listControl find:-1 &in:aList.
+    #var n1 := control find:2 &in:aList.
+    #var n2 := control find:-1 &in:aList.
 ].
 
 #symbol EnumTest =
 [
-    control foreach:"abc" &do: (:x)
+    control run:"abc" &forEach: (:x)
     [
         console write:x.
     ].
@@ -201,26 +188,18 @@
     console writeLine:".".
 ].
 
-#symbol BreakTest =
-[
-    #var a := 2.
-    #var n := control do:
-    [
-       (a == 1) ? [ #break "a". ].
-
-       (a == 2) ? [ #break "b". ].
-
-       ^ nil.
-    ].
-].
-
-#class A
-{
-}
-
-#class B
-{
-}
+//#symbol BreakTest =
+//[
+//    #var a := 2.
+//    #var n := control do:
+//    [
+//       (a == 1) ? [ #break "a". ].
+//
+//       (a == 2) ? [ #break "b". ].
+//
+//       ^ nil.
+//    ].
+//].
 
 #symbol actionTester =
 {
@@ -235,46 +214,53 @@
     ]
 }.
 
-#class(type:Error) MyException : Exception
+#class MyException : Exception
 {
+    #constructor new : aMessage
+        <= %new &message:aMessage &error_type:%MyError.
 }
 
-#class(type:Error2) MyException2 : Exception
+#class MyException2 : Exception
 {
+    #constructor new : aMessage
+        <= %new &message:aMessage &error_type:%MyError2.
 }
 
-#class(role) ExecTester
+#symbol ExecTester =
 {
-    #method do : anAction [ anAction eval. ]
+    do : anAction [ anAction eval. ]
 
-    #method do:x &with:y
+    do:x &with:y
     [
     ]
             
-    #method run : anAction
+    run : anAction
     [
         anAction eval &x:"Eval Works!!".
     ]
     
-    #method break
+    break
     [
         #throw MyException new:"OnError handler works".
     ]
     
-    #method break2
+    break2
     [
         #throw MyException2 new:"OnError2 handler works".
     ]
     
-    #method break3
+    break3
     [
         #throw MyException2 new:"Nested OnError2 handler works".
     ]
-}
+}.
 
 #symbol ObjectTest =
 [
-    (A == A)and:[A != B]
+    #var a := 1.
+    #var b := "abc".
+    
+    (a equal &reference:a)and:[ a equal &reference:b not ]
         ? [ console writeLine:"Reference comparison works" ]
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
@@ -324,7 +310,7 @@
     console write:"(2 <= 3) is " writeLine:(2 <= 3).
     console write:"(2 >= 2) is " writeLine:(2 >= 2).
     console write:"(2 >= 3) is " writeLine:(2 >= 3).
-    
+
     #var n := Integer new write::1.
     n += 2.
     n -= 2.
@@ -432,15 +418,15 @@
     #var c := l@2.
 
     #var a := l~enumerable array.
-    #var a2 := l~indexable array.
+//    #var a2 := l~indexable arreay.
 
-    control foreach:"abc" &do: (:ch) [ console write:ch ].
+    control run:"abc" &forEach: (:ch)[ console write:ch ].
 
     console writeLine.
-    
+
     #var n := "abcd" indexOf &index:0 &literal:"bc".
     #var n2 := "abcd" indexOf &index:0 &literal:"bac".
-    
+
     #var s := "acd" insert &index:1 &literal:"b".
     #var ls := s length.
 
@@ -466,20 +452,20 @@
     #var a1 := Array(1,2,3).
     #var n := a1 @ 1.
 
-    #var a4 := Array new &length:3.
+    #var(type:array) a4 := Array new &length:3.
     a4 setAt:0:2.
     a4 setAt:1:1.
     a4 setAt:2:3.
     
-    #var a2 := arrayControl new &length:5 &each: x [ Integer new:x ].
+    #var a2 := Array new &length:5 set &every: (&index:x) [ Integer new &int:x ].    
     #var n2 := a2 @ 1.
     a2 setAt:1:-1.
     #var n3 := a2 @ 1.
     
     a2 setAt:0:2.
         
-    a4~indexable sort: (:aFormer:aNext)[ aFormer < aNext ].
-    
+    a4 sort: (:aFormer:aNext)[ aFormer < aNext ].
+
     a4 getAt:(-1) |
         if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
 
@@ -493,7 +479,7 @@
 [
     #var n := 2.
     
-    n test | if &MethodNotFoundError: e [ console writeLine:(e Message). ]
+    n test | if &MethodNotFoundError: e [ console writeLine:(e message). ]
 ].
 
 // --- LoopTest ---
@@ -531,23 +517,23 @@
 
 #symbol ExceptionTest =
 [
-    ExecTester break | if: e [ console writeLine:"Throw works!". ].
+    ExecTester break | if &Error: e [ console writeLine:"Throw works!". ].
     
-    ExecTester break | if &Error: e [ console writeLine:(e Message). ].
+    ExecTester break | if &Error: e [ console writeLine:(e message). ].
     
     ExecTester break2 
     | on:
     {
-        if &Error : e [ console writeLine:"!!Wrong handler". ]
+        MyError = e [ console writeLine:"!!Wrong handler". ].
         
-        if &Error2: e [ console writeLine:(e Message). ]
+        MyError2 = e [ console writeLine:(e message). ].
     }.
     
     control do:
     [
-        ExecTester break3 | if &Error: e [ console writeLine:"!!Wrong handler". ].
+        ExecTester break3 | if &MyError: e [ console writeLine:"!!Wrong handler". ].
     ]
-    | if &Error2: e [ console writeLine:(e Message). ].
+    | if &MyError2: e [ console writeLine:(e message). ].
     
 ].
 
@@ -567,21 +553,21 @@
 [
     #var aDate := now.
     
-    #var aYear := aDate Year.
-    #var aMonth := aDate Month.
-    #var aDay := aDate Day.
-    #var anHour := aDate Hour.
-    #var aMinute := aDate Minute.
-    #var aSecond := aDate Second.
+    #var aYear := aDate year.
+    #var aMonth := aDate month.
+    #var aDay := aDate day.
+    #var anHour := aDate hour.
+    #var aMinute := aDate minute.
+    #var aSecond := aDate second.
     
     #var aRetVal := aDate literal.
 ].
 
 // --- GetPropertyTest ---
 
-#class(role) GetPropertyAgent
+#symbol GetPropertyAgent =
 {
-    #method eval : aGetProperty
+    eval : aGetProperty
     [
         #var n := aGetProperty property.
         
@@ -589,7 +575,7 @@
             ? [ console writeLine:"GetProperty works!". ]
             ! [ console writeLine:"!! GetProperty does not work !!". ]
     ]
-}
+}.
 
 #symbol GetPropertyTest =
 [
@@ -605,23 +591,23 @@
     a eval&print:"Struct method works".
 ].
 
-#class(role) GroupMember1
-{
-    #method m1 : prm = "group 1 " + prm.
-}
-
-#class(role) GroupMember2
-{
-    #method m2 : prm = "group 2 ".
-}
-
-#symbol GroupTest =
-[
-    #var g := Group(GroupMember1, GroupMember2).
-    
-    #var m1 := g m1:"called".
-    #var m2 := g m2:"called".
-].
+//#symbol GroupMember1 =
+//{
+//    m1 : prm = "group 1 " + prm.
+//}.
+//
+//#symbol GroupMember2 =
+//{
+//    m2 : prm = "group 2 " + prm.
+//}.
+//
+//#symbol GroupTest =
+//[
+//    #var g := Group(GroupMember1, GroupMember2).
+//    
+//    #var m1 := g m1:"called".
+//    #var m2 := g m2:"called".
+//].
 
 // --- ClassWithGeneric ---
 
@@ -654,4 +640,23 @@
     #var y := o y.
     
     #var s := o add:3.
+].
+
+#class BaseClass
+{
+    #field theField1.
+                   
+    #constructor new [ theField1 := 1. ]
+}
+
+#class ChildClass : BaseClass
+{
+    #field theField2.
+    
+    #constructor new <= ( %new ) [ theField2 := 2. ]
+}
+
+#symbol ConstructorTest =
+[
+    #var o := ChildClass new.
 ].

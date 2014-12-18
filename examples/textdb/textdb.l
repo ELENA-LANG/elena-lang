@@ -77,7 +77,7 @@
     #var aFileName := 'program'arguments@1.
 
     #var aDB := List new += Record new.
-    textFileControl forEachLine:aFileName &do: aLine
+    control run &path:(aFileName literal) &forEachLine: aLine
     [
         (aLine length == 0)
             ? [ aDB += Record new. ]
@@ -88,12 +88,12 @@
                 #var aValue := aKeyValue@1.
 
                 // update field
-                aDB~enumerable Last ~(aName~EField Unserialized) set:aValue.
+                aDB~enumerable last ~(aName~EField Unserialized) set:aValue.
             ].
     ].
     
     // print the list
-    aDB~enumerable run:printingLn.
+    control run:aDB &forEach:printingLn.
 
     console readChar.
 ].

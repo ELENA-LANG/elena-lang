@@ -158,8 +158,9 @@ namespace _ELENA_
 //      mskClassRelRef         = 0x31000000,   // class relative code
       mskStatSymbolRef       = 0x82000000,   // reference to static symbol
 
-      mskVMTEntryOffset      = 0x43000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
+      mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000,   // meta data
+      mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
 
       mskConstantRef         = 0x01000000,   // reference to constant
       mskLiteralRef          = 0x02000000,   // reference to constant literal
@@ -248,11 +249,11 @@ namespace _ELENA_
       ptWin32ConsoleMT   = 0x10001,
    };
 
-  // --- ELENA Debug Mode ---
-   enum DebugMode {
-      dbmNone       =  0,
-      dbmActive     = -1
-   };
+//  // --- ELENA Debug Mode ---
+//   enum DebugMode {
+//      dbmNone       =  0,
+//      dbmActive     = -1
+//   };
 
    // --- ELENA Parse Table constants ---
    const int cnHashSize            = 0x0100;              // the parse table hash size
@@ -265,22 +266,25 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-   const int elVMTCustomDispatcher = 0x00000040;
+   const int elEmbeddable          = 0x00000010;
+   const int elClosed              = 0x00000020;
+//   const int elVMTCustomDispatcher = 0x00000040;
    const int elStateless           = 0x00000080;
-   const int elSealed              = 0x00000100;
+   const int elSealed              = 0x00000120;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
-   const int elConstantSymbol      = 0x00000082;
-// const int elWithLocker          = 0x00100000;
-
+//   const int elConstantSymbol      = 0x00000082;
+//   const int elWithLocker          = 0x00100000;
    const int elDebugMask           = 0x000F0000;
+
    const int elDebugDWORD          = 0x00010000;
    const int elDebugReal64         = 0x00020000;
    const int elDebugLiteral        = 0x00030000;
+   const int elDebugIntegers       = 0x00040000;
    const int elDebugArray          = 0x00050000;
    const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
@@ -309,10 +313,9 @@ namespace _ELENA_
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---
-   #define CORE_MODULE              "core"          // core GC functionality
-   #define COMMANDSET_MODULE        "commands"      // core predefined command set
-   #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
-   #define INLINE_MODULE            "inline"        // inline module alias
+  #define CORE_ALIAS                "core"          // Core functionality
+  // #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
+  #define IMPORT_FORWARD            "'$import" 
 
   // --- ELENA verb messages ---
    #define NEW_MESSAGE              "new"
@@ -405,7 +408,6 @@ namespace _ELENA_
    #define THIS_VAR                "$self"            // the current class instance
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
-  // #define NEXT_VAR                "$next"          // the next group member
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
@@ -418,82 +420,66 @@ namespace _ELENA_
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
-   #define HINT_ROLE               "role"
+//  // #define HINT_ROLE               "role"
    #define HINT_TYPE               "type"              // type hint
    #define HINT_SIZE               "size"
-   #define HINT_ITEMSIZE           "itemsize"
-   #define HINT_ITEM               "item"
-  // #define HINT_SAFEPOINT          "safepoint"
-  // #define HINT_LOCK               "sync"
+   #define HINT_STRUCT             "struct"
+   #define HINT_INTEGER_NUMBER     "integer"
+   #define HINT_FLOAT_NUMBER       "floating"
+   #define HINT_BINARY             "stringof"
+   #define HINT_DYNAMIC            "dynamic"
+//  //// #define HINT_SAFEPOINT          "safepoint"
+//  //// #define HINT_LOCK               "sync"
    #define HINT_SEALED             "sealed"
+   #define HINT_LIMITED            "limited"
    #define HINT_MESSAGE            "message"
    #define HINT_SIGNATURE          "signature"
    #define HINT_EXTENSION          "extension"
    #define HINT_GROUP              "group"
-   #define HINT_WRAPPER            "wrapper"
-   #define HINT_SYNONYM            "synonym"
+   #define HINT_WRAPPER            "class"
    #define HINT_GENERIC            "generic"
-   #define HINT_EXPLICIT           "explicit"
+   #define HINT_UNFORCED           "unforced"
+   #define HINT_EMBEDDABLE         "embeddable"
 
-   #define HINT_DBG                "dbg"               // debugger watch hint values
-   #define HINT_DBG_INT            "int"              
-   #define HINT_DBG_LONG           "long"              
-   #define HINT_DBG_LITERAL        "literal"
-   #define HINT_DBG_REAL           "real"              
-   #define HINT_DBG_ARRAY          "array"              
-   
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
 
+   #define STANDARD_MODULE_LEN      6
    #define STANDARD_MODULE          "system"        // the standard module name
-   #define PACKAGE_MODULE           "$package"
    #define EXTERNAL_MODULE          "system'external"
+   #define NATIVE_MODULE            "$native"
 
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"
 
-  // Predefined routines
-   #define DISPATCH_ROUTINE         "dispatch"
-
-  // #define GC_ROOT                  "$elena'@gcroot"               // static roots
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
    #define PACKAGE_KEY              "$elena'@package"                // The project namespace
 
-   // predefined classes
-   #define SUPER_CLASS              "system'Object"                  // the common class predecessor
-   #define ACTION_CLASS             "system'Action"                  // the base action class
-   #define FUNCTION_CLASS           "system'Function"                // the base action class
-   #define EXPRESSION_CLASS         "system'Expression"              // the base expression class
-   #define NIL_CLASS                "system'nil"                     // the nil reference
-   #define BREAK_EXCEPTION_CLASS    "system'BreakException"          // break class
-   #define NOMETHOD_EXCEPTION_CLASS "system'MethodNotFoundException"          
-   #define TRUE_CLASS               "system'true"
-   #define FALSE_CLASS              "system'false"
-   #define INT_CLASS                "system'IntNumber" 
-   #define LONG_CLASS               "system'LongNumber" 
-   #define REAL_CLASS               "system'RealNumber" 
-   #define WSTR_CLASS               "system'LiteralValue" 
-   #define ARRAY_CLASS              "system'Array" 
-   #define TAPE_CLASS               "system'dynamic'Tape"            // the tape
-   #define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the tape helper
-   #define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
-   #define MESSAGE_CLASS            "system'dynamic'Message"         // the special role class
-   #define SIGNATURE_CLASS          "system'dynamic'Signature"       // the special role class
-   #define GETPROPERTY_CLASS        "system'dynamic'GetProperty"     
-   #define STRUCT_CLASS             "system'dynamic'Struct"     
-   #define WRAP_CLASS               "system'dynamic'Wrap"
+   // predefined system forwards
+   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
+   #define NIL_FORWARD              "'$nil"                          // the nil reference
+   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
+   #define FUNCX_FORWARD            "'$function"                     // the base action / function class
+   #define NFUNCX_FORWARD           "'$nfunction"                    // the base action / function class
+   #define INT_FORWARD              "'$int" 
+   #define LONG_FORWARD             "'$long" 
+   #define REAL_FORWARD             "'$real" 
+   #define WSTR_FORWARD             "'$literal" 
+   #define TRUE_FORWARD             "'$true"
+   #define FALSE_FORWARD            "'$false"
+   #define MESSAGE_FORWARD          "'$message"
+   #define SIGNATURE_FORWARD        "'$signature"       
+   #define GETPROPERTY_FORWARD      "'$getProperty"     
+   #define ARRAY_FORWARD            "'$array" 
+   #define PARAMS_FORWARD           "'$params" 
 
-   // predefined types
-   #define INTPTR_SUBJECT           "intptr"
-   #define PARAMS_SUBJECT           "params"
-   #define ACTION_SUBJECT           "action"
-   #define FUNCTION_SUBJECT         "func"
-   #define FUNCTION2_SUBJECT        "func2"
-   #define FUNCTION3_SUBJECT        "func3"
-   #define FUNCTION4_SUBJECT        "func4"
-   #define FUNCTION5_SUBJECT        "func5"
-   #define SUBJ_SUBJECT             "subj"
+//   //#define NOMETHOD_EXCEPTION_CLASS "system'MethodNotFoundException"          
+//   //#define TAPE_CLASS               "system'dynamic'Tape"            // the tape
+//   //#define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the tape helper
+//   //#define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
+//   //#define STRUCT_CLASS             "system'dynamic'Struct"     
+//   //#define WRAP_CLASS               "system'dynamic'Wrap"
 
    #define STARTUP_CLASS            "'program"
 

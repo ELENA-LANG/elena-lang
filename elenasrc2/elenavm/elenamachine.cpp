@@ -14,7 +14,7 @@
 
 using namespace _ELENA_;
 
-#define PMODULE_LEN getlength(PACKAGE_MODULE)
+#define NMODULE_LEN getlength(NATIVE_MODULE)
 
 #define PROJECT_CATEGORY            "project"
 #define SYSTEM_CATEGORY             "system"
@@ -30,6 +30,8 @@ using namespace _ELENA_;
 #define LINKER_OBJSIZE              "objsize"
 #define LINKER_YGSIZE               "ygsize"
 #define LIBRARY_PATH                "path"
+
+typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
 
 // --- Wrapper Functions ---
 //
@@ -87,15 +89,15 @@ static size_t __loadAddressInfo(Instance* instance, void* address, wchar16_t* bu
 
 void InstanceConfig :: loadForwardList(IniConfigFile& config)
 {
-   String<wchar16_t, 100> key;
+   ProjectParam key, value;
 
    ConfigCategoryIterator it = config.getCategoryIt(FORWARD_CATEGORY);
    while (!it.Eof()) {
       // copy line key
       key.copy(it.key());
+      value.copy((const char*)*it);
 
       // if it is a wildcard
-      String<wchar16_t, 100> value((tchar_t*)*it);
       if (key[getlength(key) - 1] == '*') {
          NamespaceName alias(key);
          NamespaceName module(value);
@@ -113,15 +115,14 @@ void InstanceConfig :: loadForwardList(IniConfigFile& config)
 
 void InstanceConfig :: loadList(IniConfigFile& config, const char* category, const wchar_t* path, Map<const wchar_t*, wchar_t*>* list)
 {
-   String<wchar16_t, 100> key;
+   ProjectParam key, value;
 
    ConfigCategoryIterator it = config.getCategoryIt(category);
    while (!it.Eof()) {
       // copy line key
       key.copy(it.key());
+      value.copy((char*)*it);
 
-      // copy value or key if the value is absent
-      String<char, 100> value((char*)*it);
       if(value.isEmpty())
          value.copy(key);
 
@@ -229,15 +230,17 @@ Instance :: Instance(ELENAMachine* machine)
 
 //   _traceMode = traceMode;
 
-   _literalClass.copy(WSTR_CLASS);
-   _intClass.copy(INT_CLASS);
-   _realClass.copy(REAL_CLASS);
-   _longClass.copy(LONG_CLASS);
-
    _machine = machine;
 
    // init loader based on default machine config
    initLoader(_machine->config);
+
+   _literalClass.copy(_config.forwards.get(ConstantIdentifier(WSTR_FORWARD)));
+   _intClass.copy(_config.forwards.get(ConstantIdentifier(INT_FORWARD)));
+   _realClass.copy(_config.forwards.get(ConstantIdentifier(REAL_FORWARD)));
+   _longClass.copy(_config.forwards.get(ConstantIdentifier(LONG_FORWARD)));
+   _msgClass.copy(_config.forwards.get(ConstantIdentifier(MESSAGE_FORWARD)));
+   _signClass.copy(_config.forwards.get(ConstantIdentifier(SIGNATURE_FORWARD)));
 
    // init Run-Time API
    _loadClassName = __getClassName;
@@ -366,10 +369,11 @@ SectionInfo Instance :: getSectionInfo(const wchar16_t* reference, size_t mask)
 
    LoadResult result;
    ref_t      referenceID = 0;
-   if (ConstantIdentifier::compare(reference, PACKAGE_MODULE, PMODULE_LEN)) {
-      sectionInfo.module = _loader.resolvePrimitive(reference, result, referenceID);
+   if (ConstantIdentifier::compare(reference, NATIVE_MODULE, NMODULE_LEN) && reference[NMODULE_LEN]=='\'') {
+      sectionInfo.module = _loader.resolveNative(reference, result, referenceID);
    }
    else sectionInfo.module = resolveModule(reference, result, referenceID);
+
    sectionInfo.section = sectionInfo.module ? sectionInfo.module->mapSection(referenceID | mask, true) : NULL;
 
    if (sectionInfo.section == NULL) {
@@ -379,12 +383,12 @@ SectionInfo Instance :: getSectionInfo(const wchar16_t* reference, size_t mask)
    return sectionInfo;
 }
 
-SectionInfo Instance :: getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask)
+SectionInfo Instance :: getCoreSectionInfo(ref_t reference, size_t mask)
 {
    SectionInfo sectionInfo;
 
    LoadResult result = lrNotFound;
-   sectionInfo.module = _loader.resolvePredefined(package, reference, result);
+   sectionInfo.module = _loader.resolveCore(reference, result);
    sectionInfo.section = sectionInfo.module ? sectionInfo.module->mapSection(reference | mask, true) : NULL;
 
    if (sectionInfo.section == NULL) {
@@ -462,7 +466,11 @@ bool Instance :: initLoader(InstanceConfig& config)
    // load primitives
    Primitives::Iterator it = config.primitives.start();
    while (!it.Eof()) {
-      _loader.addPrimitiveAlias(it.key(), *it);
+
+      if (ConstantIdentifier::compare(it.key(), CORE_ALIAS)) {
+         _loader.addCoreAlias(*it);
+      }
+      else _loader.addPrimitiveAlias(it.key(), *it);
 
       it++;
    }

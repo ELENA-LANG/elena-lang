@@ -1,3 +1,4 @@
+#define system.
 
 // --- Main ---
 
@@ -5,7 +6,7 @@
 [   
     XTest eval.
 
-    system'console writeLine:"Starting...".
+    console writeLine:"Starting...".
 
     ControlTest eval.
     ObjectTest eval.
@@ -15,7 +16,7 @@
     RealTest eval.
     LiteralTest eval.
 
-    BreakTest eval.
+//    BreakTest eval.
     MultiDispatchTest eval.
 
     MultySelectTest eval.
@@ -29,7 +30,7 @@
     MethodNotFoundTest eval.
     ExceptionTest eval.
     DateTest eval.
-    ListTest eval.    
+    ListTest eval.
     DictionaryTest eval.
     GetPropertyTest eval.
     BoxingTest eval.
@@ -37,6 +38,7 @@
     LocalTest eval.
     OpenArgTest eval.
     StructTest eval.
-    GroupTest eval.
+//    GroupTest eval.
     GenericMethodTest eval.
+    ConstructorTest eval.
 ].

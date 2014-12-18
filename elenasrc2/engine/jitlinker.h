@@ -75,7 +75,7 @@ class JITLinker
       }
 
       virtual SectionInfo getSection(ref_t reference, _Module* module);
-      virtual SectionInfo getPredefinedSection(const wchar16_t* package, ref_t reference);
+      virtual SectionInfo getCoreSection(ref_t reference);
 
       virtual void* getVAddress(MemoryWriter& writer, int mask)
       {
@@ -114,6 +114,7 @@ class JITLinker
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
    int getVMTMethodAddress(void* vaddress, int messageID);
+   int getVMTMethodIndex(void* vaddress, int messageID);
    size_t getVMTFlags(void* vaddress);
 
    void fixReferences(References& relocations, _Memory* image);
@@ -129,10 +130,10 @@ class JITLinker
    void* resolveBytecodeVMTSection(const wchar16_t*  reference, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(const wchar16_t*  reference, int mask);
    void* resolveStaticVariable(const wchar16_t* reference, int mask);
-//   void* resolveDump(const wchar16_t*  reference, int size, int mask);
+////   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(const wchar16_t*  reference, const wchar16_t* vmt);
-   void* resolveLoader(const wchar16_t*  reference);
-////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
+//   //void* resolveLoader(const wchar16_t*  reference);
+//////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
    void prepareCompiler();

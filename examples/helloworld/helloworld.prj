@@ -1,6 +1,5 @@
 [project]
 executable=helloworld.exe
-vmpath=..\..\bin
 template=vm_console
 debuginfo=-2
 warn:unresolved=0

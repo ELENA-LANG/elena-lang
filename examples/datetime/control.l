@@ -25,7 +25,7 @@
         ^ aChoice =>
             1 ? [ now literal ]
             2 ? [ utcNow literal ]
-            3 ? [ now Year literal ]
+            3 ? [ now year literal ]
             4 ? [ dateTimeControl toShortTime &long::now ]
             7 ? [ 'program stop. ^ emptyLiteralValue. ]
             ! [ "Invalid choice" ].

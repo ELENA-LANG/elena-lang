@@ -27,18 +27,15 @@
 #endif
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0007
+#define ELC_BUILD_NUMBER             0x001F
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
 #define ELC_PRM_DEBUGINFO           'd'
-//#define ELC_PRM_ENTRY               'e'
-//#define ELC_PRM_PACKAGE             'g'
-//#define ELC_PRM_LIBRARY             'l'
-//#define ELC_PRM_MAP                 'm'
+////#define ELC_PRM_LIBRARY             'l'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
-//#define ELC_PRM_START               's'
+#define ELC_PRM_START               's'
 #define ELC_PRM_TARGET              't'
 #define ELC_PRM_WARNING             'w'
 #define ELC_W_UNRESOLVED            "wun"
@@ -78,7 +75,6 @@
 ////#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
 #define ELC_PLATFORMTYPE            "platform"
-#define ELC_VM_PATH                 "vmpath"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "ygsize"
@@ -129,6 +125,7 @@ public:
    virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
    virtual void raiseError(const char* msg, const char* value);
    virtual void raiseError(const char* msg, const wchar16_t* value);
+   virtual void raiseError(const char* msg, const wchar16_t value);
 
    virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path);
 

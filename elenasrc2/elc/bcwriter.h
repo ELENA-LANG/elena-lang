@@ -32,16 +32,17 @@ enum ObjectKind
    okSignatureConstant,
 
    okSymbol,                       // param - reference
-   okSymbolReference,              // param - reference
+//   okSymbolReference,              // param - reference
    okRole,
    okConstantRole,                 // param - role reference
    okField,                         // param - field offset
    okFieldAddress,                  // param - field offset, extraparam - type reference
-   okOuter,                         // param - field offset 
+   okOuter,                         // param - field offset, extraparam - type reference
    okOuterField,                    // param - field offset, extraparam - outer field offset
    okLocal,                         // param - local / out parameter offset, extraparam - type reference
    okParam,                         // param - parameter offset, extraparam - type reference
    okThisParam,                     // param - parameter offset, extraparam - type reference
+   okOutputParam,                   // param - target address, extraparam - type reference 
    okSuper,
    okLocalAddress,                  // param - local offset, extraparam - type reference  
    okParams,                        // param - local offset
@@ -49,8 +50,8 @@ enum ObjectKind
    okCurrent,                       // param - stack offset
    okAccumulator,                   // extraparam - type reference
    okAccField,                      // param - field offset
-   okBlockLocalAddress,
-//   okBlockOuterField,   
+//   okBlockLocalAddress,
+////   okBlockOuterField,   
    okIndexAccumulator,
    okExtraRegister,
    okBase,
@@ -219,21 +220,22 @@ public:
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callRoleMessage(CommandTape& tape, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void typecast(CommandTape& tape);
 
    void doGenericHandler(CommandTape& tape);
    void resend(CommandTape& tape);
    void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
+   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
-   int declareLabel(CommandTape& tape);
+//   int declareLabel(CommandTape& tape);
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t ref);
-   void jumpIfNotEqualN(CommandTape& tape, int value);
+//   void jumpIfNotEqualN(CommandTape& tape, int value);
    void jump(CommandTape& tape, bool previousLabel = false);
 
    void throwCurrent(CommandTape& tape);
-   void breakLoop(CommandTape& tape, int label);
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
@@ -242,7 +244,7 @@ public:
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
 
-   void setLabel(CommandTape& tape);
+//   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
    void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
@@ -266,7 +268,7 @@ public:
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
    void copySubject(CommandTape& tape);
-   void loadSymbolReference(CommandTape& tape, ref_t reference);
+//   void loadSymbolReference(CommandTape& tape, ref_t reference);
    void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);

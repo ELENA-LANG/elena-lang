@@ -26,44 +26,69 @@ Currently:
 
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
+
+              idev - debugger - watch
+                       * show shortarray and bytearray
+                       * show real variable
+                       * show output argument
+
+              xdev - redesign
+                       * elenavm should be loaded using shared paths, rather than with direct call, modify the code, get rid of vm path option
+
+                       * migrate elenavm
+
+                       * it should be possible to provide the type for symbol / symbol constants
+
+                       * use directly constants declared in another modules
+
+                       * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
+
+                       * open argument syntax : review , simplify, make it more intuitive
+
+                       * dot syntax: 
+
+                         dot can be ommited if the nested expression contains only one expression ; in that case it will be compiled as lazy
+                         expression if it is function (eval[0]), or as return expression if it is part of ?-! operator / nested function;
+
+                         the problem is that if user write control do :[ console writeLine:"" ] - will raise an error
+
+
+                       * warn if ^ operator is used inside nested action - that it is not allowed / will only exit the current nested code??
+
+                       * do ^ operation should be allowed in nested action?
+                       * probably only one nested expression can be allowed without dot
+
+                       * do we need elRole flag?
+
+                       * simplify primitive loop implementing
                        
+                       * message/subject should be constant which is boxed when it is required ??
+
+                       * $self call for limited class should be optimized as well
+
+                       * fix GroupTest
+
+                       * fix bug : #loop aFormer available ? is not correctly compiled
+
+                       * create installation package
+              
               xdev - exception handling
                        * create a call stack
 
                        * exception : message, [ the object, the stack ] in #exception structure
 
-                       * call stack should be created in catch statement?? boxing the exception ??? the simplest way in exception handler check
-                         if it is methodnotfound - box the object, all otherss should create stack info in the moment of creating ;
-
-                         better to box stack allocated object - (could be used for break as well)
-
-
-
-                       * alternatively: #throw statement generates the stack info and save it into special variable, 
-                         #break - not - for MethodNotFound it will not be provided any stack info as well ; But it could be possible to replace
-                         it with custom made which will generate the stack info / or use special method handler to generate it 
-
-
+                       * call stack should be created in catch statement
                        
                        * multi-exception catch block - how to preseave the exception (in normal case methodnotfound will be raised if
                          no handler where found)
 
                        * generate call stack
 
-
-
-                       * Exception handler overhaul : either callcontext (stack + $self) should be somehow passed to the object where it
-                         is created or in catch handler - forming group with the exception object ; in the first case - how could we
-                         create light weight exception - like - method not found
-
                        * call stack : using ebp it is possible to reconstruct call stack - how to get the call context - method name + call
                          coordinate - load dm module - looking throug the code to find out the procedure name
 
                        * Review exception handling mechanism : how to provide the exception parameters and the exception call stack
                                               
-                       * exception handling : parse catch statements to recognize the exception handler with out need to create a special
-                         handler, only if the event was not recognized should we implement it
-
                        * Exception object should generate the exception info on 
 
                        * exceptions : provide call stack info
@@ -84,35 +109,23 @@ Currently:
 --------
 week1:
               xdev - generic development                                                      
-                       * elenavm should be loaded using shared paths, rather than with direct call, modify the code, get rid of vm path option
-
                        * think over object serialization, for example - save the object into file and load back
-
-                       * break normal / virtual loop
-
-                       * could it be possible for several classes supporting literal type??
 
                        * should index allocateing / referring / releasing be done as commands ; review reference table design , could it be done
                          differently ? optimize current implementation
 
                        * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
                          not correctly programmed)
-                       * review problematic implementation:loop breaking, loop implementation (especially until loop)
 
                        * see gameoflife : implement template support : all append&xxx looks a like, can we generalize them?                                                    
 
                        * think over reflection implementtion for static linked executable
 
-                       * should commands be multy-thread independent, e.g. all related code be located in core?
                        * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group
-                       * get rid of predefined constant classes (intnumber, ...)
-                       * make possible to use custom types in compileExternalCall (to pass structures), so we could get rid of built-in subject handle
 
                        * okFieldAddress : it should be possible to have several primitive fields - the value should be copied to stack allocated
                          object if offset is not zero
-
-                       * #throw should generate stack call list, #break will raise an exception without it
 
                        * exception handling, if the handler does not react on the current exception for ifFailed&on call - different error is thrown
                          (NotFound) and the original exception is lost
@@ -146,13 +159,23 @@ week1:
 
                        * extender : if no match found call the super handler
 
-                       * light way to implement return from loop / any part of the procedure
                        * rename / refactor weval - misleading name
                        * a msg::Args -> converting open arg list into normal one, when direct message parameter saving is not possible
                          raise an error ; do we need it? - better always box into array
                        * split hook into two : address , hook ; or use internal function for exception raising / handling?
-                       
+                       * enumerations
+                       * ambiguity : [ console writeLine:"abc" ] - will be compiled as lazy expression, when the programmer may expect
+                         the nested action 
+                       * no need to check if the object is stack allocated - box it directly, so we could get rid of extra command ifheap
+                                              
               xdev - general implementation
+                       * could we simplify typecasting messaging - e.g. - a literal -, if it is a predefined type - first try to chevk the object
+                         type and only if it is unsuccessful - call the full search
+
+                       * do we need opEmbeddedSymbolMode?
+                       * do we need opModuleForwards?
+                       * do we need opTemplate?
+
                        * probably we have to get rid of direct path to elenavm and use shared paths, special batch file to update paths??
 
                        * generic method should be the last in VMT
@@ -200,7 +223,18 @@ week1:
                        * elenart, should support the similar functionality with elenavm (except script support)
                        * looks like debug section should be generated every time for runtime / call sack
                        * review the call stack generation solution, can the shared solution be used inside IDE and Stand-alone / vm client
- 
+                       * class wrapper : validate if the class wrapper is of this type, should be done later, otherwise generate error
+                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
+                        recognition), instead of symbol reference?
+                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
+                       * stack allocated objects : no need to save the reference to it asa a normal reference, use okLocalAddress for such case,
+                         so boxing mechanism can be simplified
+                       * try to avoid duplciate checks (for example check for methods / types)
+                       * check if the method is stack safe only if the argument contains boxable objects
+                       * cache check operation results
+                       * see FileStream.close -> the operation with theHandle leads to boxing the object - could we optimize?
+                       * fix the error for DateTime.subtract&datetime
+                       
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
                        * out of memory exception should be correctly raised
@@ -225,6 +259,8 @@ week1:
                        * compile anagram with mt
 
               xdev - byte code optimization                               
+                       * review system test for possible byte code optimization
+
                        * should for "expr ? !" on both branches the value is checked (used for the case when the returning value is not bool 
                          - e.g. nil or any other object)
                        * unused code for EException handler after bsredirect (?? should exception be thrown after it)
@@ -232,8 +268,8 @@ week1:
 
                        * simplify ansi constants / wideliteral interaction
                        
-                       * pi (3106)
-
+                       * pi (3506) => ~2000
+ 
                        * maybe replace { push 0 }n-times, with lea esp, [esp+n], xor ebx, ebx @loop: mov [esi], ebx, sub ecx, 1, jnz @loop
                          (for long list > 6??)
                        * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
@@ -256,7 +292,6 @@ week1:
                        * could we somehow store tls table address?
                        * if no calls / GC operation do not use stack frame excluding
                        * if only method parameter is used, no need to use frame / self commands
-                       * replace enumeration / iteration loops with a virtual expressions
                        * ByteCodeWriter::checkIfBaseUsed: extension commands should be checked as well 
                        * x : p = p eval. and x : p = p eval:$self. should be optimized
                        * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
@@ -267,7 +302,6 @@ week1:
                        * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
                        * can we implement #break statement which will not create a breakexception for every call?
                        * optimize comparision operation with nil (see ListEnumerator)
-                       * simplify primitive loop implementing
                        * optimize output code: system'object
                        * optimize - operation with nil (==, !=)
                        * optimize hook / unhook commands
@@ -312,8 +346,19 @@ week2:
                          dynamically for external operation
                        * support GUI mode
                        * support GUI application
-
+                       
               adev - lib30                                        
+                       * test dynamic_test
+                       * test dynamic samples
+
+                       * uncomment Real#class.new&int[1] and Real#class.new&long[1]
+
+                       * uncomment all code
+
+                       * FileStream - implements clone
+
+                       * literalConvertor.convert&long&base - reimplement
+
                        * int, long, real - implement negative
 
                        * mathOp.mod -- fix implemention for real number
@@ -486,6 +531,7 @@ week2:
                          nested class is dynamic as well
                                                       
               adev - lib30 optimization
+                       * review $ConsoleWriter.write&literal[1]
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
                        * optimize output code: system'Object 
@@ -503,6 +549,7 @@ week2:
                          to use stack allocated object for the length operations
                        * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
                        * review ws_insert function (in assembler), try to simplify it
+                       * Real#class.new&int[1] - optimize
 
               srev - console samples
                        * simplify goods (Record.get&Literal implementation)
@@ -523,12 +570,9 @@ week2:
                          to any object
 
 week3:
-              sdev - c# samples
-                       * try to implement c# reflection samples
-                       * try to implement c# lamda examples (lists)
-                       * parse an object to xml and back
-
               xdev - script engine
+                       * migrate
+
                        * if the script contains only grammar, virtual machine should not be called
 
                        * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
@@ -546,6 +590,11 @@ week3:
                        * use script generate code
                        * current implementation is done in two passes, simplify to one
                        
+              sdev - c# samples
+                       * try to implement c# reflection samples
+                       * try to implement c# lamda examples (lists)
+                       * parse an object to xml and back
+
               xdev - elenasm
                        * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
                        * inline script improve error handling
@@ -694,6 +743,32 @@ week1:
               idev - debugger
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
 
+              xdev - generic development                                                      
+                       * make possible to create private type
+
+                       * IntNumber.add&long$ is not stack safe : the possible solution - does not allow any operation with the strong type until the wrapping
+                         class is declared, the object can only be passed to another object - in normal case boxing operation should be called - if the size
+                         is not declared raise the error                         
+                         
+                       * forward class declaration with a type (should be later verified)
+
+                       * When boxed operation with embedable structure is executed -> the object change will be lost -> warn then the object
+                         was boxed                         
+
+                       * variable should always have assign expression??
+
+                       * warn if stack allocated object is boxed
+
+                       * constant symbols should be sealed / closed ?
+
+                       * passing out'int for stack unsafe operation should be allowed, but in this case the content should be copied
+                         after the operation (current the error is raised)
+
+                       * in the following code:
+                         int : anIndex = self find &index:anIndex. - anIndex does not have a type
+                       
+
+
 1.9.20
 --------
 
@@ -719,8 +794,6 @@ week1:
                          values)
                        * to move all the code from core_routines into coreapi, implement coreapi in ecodes, get rid of import statement in the
                          code
-                       * get rid of predefined classes, use predefined types to map type with classes ; all predefined types should be
-                         declared in system (types.l) ; what about exceptions, true / false, and so on???
 
               xdev - stack allocated variable
                        * long

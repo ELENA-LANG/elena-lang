@@ -12,6 +12,11 @@ ELENA:
 [-] dn files are no longer produced, debug info is inside an executable
 [+] new shared library : elenart - run-time helper for stand-alone applications
 [+] constructor may have redirecting and initializing parts
+[+] vmpath is no longer used, shared path used instead (for both elenavm and elenart)
+
+ELC:
+[*] codebase refactored
+[*] output code optimized
 
 IDE:
 [+] Project - View - Call stack
@@ -19,6 +24,9 @@ IDE:
 
 [LIB]
 [*] system : Object#class.new
+
+Misc:
+[+] installation package is introduced
 
 ******************************************************************************
                     What's New in 1.9.17 (pre release)

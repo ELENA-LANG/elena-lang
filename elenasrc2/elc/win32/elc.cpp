@@ -107,6 +107,15 @@ void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
    throw _ELENA_::_Exception();
 }
 
+void _ELC_::Project :: raiseError(const char* msg, const wchar16_t wValue)
+{
+   MsgString wMsg(msg);
+
+   print(wMsg, wValue);
+
+   throw _ELENA_::_Exception();
+}
+
 void _ELC_::Project :: printInfo(const char* msg, const char* value)
 {
    print(msg);
@@ -211,10 +220,6 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
       return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
    case _ELENA_::opEmbeddedSymbolMode:
       return config.getSetting(PROJECT_CATEGORY, ELC_SYMBOLINFO);
-//   case _ELENA_::opStarter:
-//      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_ENTRY);
-   case _ELENA_::opVMPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_VM_PATH);
    case _ELENA_::opThreadMax:
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
@@ -299,18 +304,6 @@ void _ELC_::Project :: setOption(const tchar_t* value)
       case ELC_PRM_OUTPUT_PATH:
          _settings.add(_ELENA_::opOutputPath, _ELENA_::StringHelper::clone(value + 1));
          break;
-//      case ELC_PRM_PACKAGE:
-//         _settings.add(_ELENA_::opPackage, _ELENA_::StringHelper::clone(value + 1));
-//         break;
-//      case ELC_PRM_LIBRARY:
-//         if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_STANDART_LIBRARY)) {
-//            _settings.add(_ELENA_::opStandart, -1);
-//         }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_STANDART_LIBRARY_DBG)) {
-//            _settings.add(_ELENA_::opStandart, -2);
-//         }
-//         else raiseError(ELC_ERR_INVALID_OPTION, value);
-//         break;
       case ELC_PRM_EXTRA:
          if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_TABSIZE, 4)) {
             _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
@@ -318,9 +311,6 @@ void _ELC_::Project :: setOption(const tchar_t* value)
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_CODEPAGE, 3)) {
             _encoding = _ELENA_::StringHelper::strToInt(value + 3);
          }
-////         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_UNICODE)) {
-////            _settings.add(_ELENA_::opOutputPath, _ELENA_::StringHelper::clone(value + 1));
-////         }
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
             _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH)));
          }
@@ -333,7 +323,7 @@ void _ELC_::Project :: setOption(const tchar_t* value)
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_SYMBOLEMBEDOFF)) {
             _settings.add(_ELENA_::opEmbeddedSymbolMode, 0);
          }
-//         else raiseError(ELC_ERR_INVALID_OPTION, value);
+         else raiseError(ELC_ERR_INVALID_OPTION, value);
          break;
       case ELC_PRM_WARNING:
          if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_UNRESOLVED)) {
@@ -347,15 +337,12 @@ void _ELC_::Project :: setOption(const tchar_t* value)
       case ELC_PRM_TARGET:
          _settings.add(_ELENA_::opTarget, _ELENA_::StringHelper::clone(value + 1));
          break;
-////      //case ELC_PRM_MAP:
-////      //   _settings.add(_ELENA_::opMapFile, value + 1);
-////      //   break;
 ////      case ELC_PRM_ENTRY:
 ////         loadForward(_ELENA_::ConstantIdentifier(STARTUP_CLASS), _ELENA_::StringHelper::clone(value + 1));
 ////         break;
-//      case ELC_PRM_START:
-//         _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(value + 1));
-//         break;
+      case ELC_PRM_START:
+         _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(value + 1));
+         break;
       case ELC_PRM_DEBUGINFO:
          _settings.add(_ELENA_::opDebugMode, -1);
          break;
@@ -370,7 +357,7 @@ void _ELC_::Project :: setOption(const tchar_t* value)
          break;
       }
       default:
-         raiseError(ELC_ERR_INVALID_OPTION, value);
+         raiseError(ELC_ERR_INVALID_OPTION, value[0]);
    }
 }
 
@@ -473,9 +460,6 @@ int main()
       }
       else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMWin32Console) {
          print(ELC_LINKING);
-
-         if (_ELENA_::emptystr(project.StrSetting(_ELENA_::opVMPath)))
-            project.raiseError(ELC_WRN_MISSING_VMPATH);
 
          _ELENA_::VirtualMachineClientImage image(
             &project, project.createJITCompiler(), project.StrSetting(_ELENA_::opAppPath));

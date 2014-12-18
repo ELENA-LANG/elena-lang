@@ -4,27 +4,13 @@
 
 // --- Arguments ---
 
-#static arguments = control do:
-[
-    #var aList := List new.
-    
-    #var anEnumerator := extensions'text'WordEnumerator new:CommandLine.
-    // !! temporal : extra space are reserved
-    control while:[ anEnumerator next ] &do: 
-    [ 
-        #var anArg := anEnumerator get.
-    
-        aList append:(LiteralValue new &length:(anArg length + 4) &literal::anArg).
-    ].
-
-    ^ arrayControl new &length:(aList length) &each: anIndex [ aList @ anIndex ].
-].
+#static arguments = extensions'text'WordEnumerator new &literal::CommandLine ~ enumerable array.
 
 // --- ProgramLoop ---
 
 #class $ProgramLoop
 {
-    #field theActive.
+    #field(type:bool) theActive.
     #field theControl.
     
     #constructor new : aControl

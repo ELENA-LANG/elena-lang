@@ -8,7 +8,7 @@
         #var aSource := consoleEx writeLine:"Enter the cyrillic text for transliteration or prese enter to exit:" readLine:(String new).
 
         (0 == aSource length)
-            ? [ #break. ].
+            ? [ #throw AbortException new. ].
 
         consoleEx writeLine:(Transliteration:aSource).
     ].

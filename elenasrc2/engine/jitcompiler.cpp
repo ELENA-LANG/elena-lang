@@ -124,6 +124,21 @@ int JITCompiler32 :: findMethodAddress(void* refVMT, int message, size_t count)
    return (i < count) ? entries[i].address : entries[0].address;
 }
 
+int JITCompiler32 :: findMethodIndex(void* refVMT, int message, size_t count)
+{
+   VMTEntry* entries = (VMTEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != message) {
+      i++;
+   }
+
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
+   return (i < count) ? i : 0;
+}
+
 int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
 {
    writer.writeBytes(0, objectOffset);

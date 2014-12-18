@@ -6,9 +6,9 @@
 #define extensions'math.
 
 // --- factory ---
-#symbol newMatrix = (&m:anM &n:anN &name:aName)
+#symbol newMatrix = (&n:anN &m:anM &name:aName)
     [ 
-        matrixControl new &m:anM &n:anN &each: (:i:j)
+        matrixControl new &n:anN &m:anM &matrixItem: (&index:i &index:j)
         [  
             consoleEx write:"Enter " write:aName write:"[" write:i write:"," write:j write:"]=" readLine:(Real new)
         ]
@@ -16,7 +16,7 @@
 
 #symbol IdentityMatrix = (:aCount)
 [ 
-    matrixControl new &m:aCount &n:aCount &each: (:i:j)
+    matrixControl new &n:aCount &m:aCount &matrixItem: (&index:i &index:j)
         [ (i == j) ? [ 1 ] ! [ 0 ] ]
 ].
 
@@ -47,55 +47,55 @@
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &m:N &n:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
                 
                 consoleEx writeLine.
                 
-                #var aMatrixB := newMatrix eval &m:N &n:N &name:"B".
+                #var aMatrixB := newMatrix eval &n:N &m:N &name:"B".
                 
                 consoleEx writeLine writeLine:"Output:".
 
                 #var aSum := matrixControl sumOf:aMatrixA:aMatrixB.
 
-                ^ matrixControl toLiteral:aSum.
+                ^ aSum~matrixOp literal.
             ]
             2 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &m:N &n:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
                 
                 consoleEx writeLine.
                 
-                #var aMatrixB := newMatrix eval &m:N &n:N &name:"B".
+                #var aMatrixB := newMatrix eval &n:N &m:N &name:"B".
                 
                 consoleEx writeLine writeLine:"Output:".
 
                 #var aDiff := matrixControl differenceOf:aMatrixA:aMatrixB.
 
-                ^ matrixControl toLiteral:aDiff.
+                ^ aDiff~matrixOp literal.
             ]
             3 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &m:N &n:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
                 
                 consoleEx writeLine.
                 
-                #var aMatrixB := newMatrix eval &m:N &n:N &name:"B".
+                #var aMatrixB := newMatrix eval &n:N &m:N &name:"B".
                 
                 consoleEx writeLine writeLine:"Output:".
 
                 #var aProduct := matrixControl productOf:aMatrixA:aMatrixB.
 
-                ^ matrixControl toLiteral:aProduct.
+                ^ aProduct~matrixOp literal.
             ]
             4 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
 
-                #var aMatrixA := newMatrix eval &m:N &n:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
                                 
                 consoleEx writeLine writeLine:"Output:".
 
@@ -107,7 +107,7 @@
 
                 #var identity := IdentityMatrix:N.
 
-                ^ matrixControl toLiteral:identity.
+                ^ identity~matrixOp literal.
             ]
             6 ? [
                 'program stop.

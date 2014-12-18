@@ -1,13 +1,13 @@
 #define system.
-#define system'dynamic.
 #define system'routines.
+#define system'dynamic.
 //#define system'text.
 
 // === roles ===
 
 // --- outputOp ---
 
-#class(extension:textwriter)outputOp
+#class(extension:textio)outputOp
 {
     #method write:anObject
     [
@@ -154,11 +154,101 @@
             
        ^ self.
     ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    [ 
+        self
+            write &literal::(convertor toLiteral:anObject1)
+            write &literal::(convertor toLiteral:anObject2)
+            write &literal::(convertor toLiteral:anObject3)
+            write &literal::(convertor toLiteral:anObject4)
+            write &literal::(convertor toLiteral:anObject5)
+            write &literal::(convertor toLiteral:anObject6)
+            write &literal::(convertor toLiteral:anObject7)
+            write &literal::(convertor toLiteral:anObject8)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    [ 
+        self
+            write &literal::(convertor toLiteral:anObject1)
+            write &literal::(convertor toLiteral:anObject2)
+            write &literal::(convertor toLiteral:anObject3)
+            write &literal::(convertor toLiteral:anObject4)
+            write &literal::(convertor toLiteral:anObject5)
+            write &literal::(convertor toLiteral:anObject6)
+            write &literal::(convertor toLiteral:anObject7)
+            write &literal::(convertor toLiteral:anObject8)
+            write &literal::(convertor toLiteral:anObject9)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    [ 
+        self
+            write &literal::(convertor toLiteral:anObject1)
+            write &literal::(convertor toLiteral:anObject2)
+            write &literal::(convertor toLiteral:anObject3)
+            write &literal::(convertor toLiteral:anObject4)
+            write &literal::(convertor toLiteral:anObject5)
+            write &literal::(convertor toLiteral:anObject6)
+            write &literal::(convertor toLiteral:anObject7)
+            write &literal::(convertor toLiteral:anObject8)
+            write &literal::(convertor toLiteral:anObject9)
+            write &literal::(convertor toLiteral:anObject10)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    [ 
+        self
+            write &literal::(convertor toLiteral:anObject1)
+            write &literal::(convertor toLiteral:anObject2)
+            write &literal::(convertor toLiteral:anObject3)
+            write &literal::(convertor toLiteral:anObject4)
+            write &literal::(convertor toLiteral:anObject5)
+            write &literal::(convertor toLiteral:anObject6)
+            write &literal::(convertor toLiteral:anObject7)
+            write &literal::(convertor toLiteral:anObject8)
+            write &literal::(convertor toLiteral:anObject9)
+            write &literal::(convertor toLiteral:anObject10)
+            write &literal::(convertor toLiteral:anObject11)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11:anObject12
+    [ 
+        self
+            write &literal::(convertor toLiteral:anObject1)
+            write &literal::(convertor toLiteral:anObject2)
+            write &literal::(convertor toLiteral:anObject3)
+            write &literal::(convertor toLiteral:anObject4)
+            write &literal::(convertor toLiteral:anObject5)
+            write &literal::(convertor toLiteral:anObject6)
+            write &literal::(convertor toLiteral:anObject7)
+            write &literal::(convertor toLiteral:anObject8)
+            write &literal::(convertor toLiteral:anObject9)
+            write &literal::(convertor toLiteral:anObject10)
+            write &literal::(convertor toLiteral:anObject11)
+            write &literal::(convertor toLiteral:anObject12)
+            writeLine.
+            
+       ^ self.
+    ]
 }
 
 // --- inputOp ---
 
-#class(role)inputOp
+#class(extension:textio)inputOp
 {
     #method readLine : anObject
     [

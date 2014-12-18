@@ -501,8 +501,17 @@ Punctuators are for grouping and separating.
 	<operator-or-punctuator> : one of
 		'(', ')', '[', ']', '<', '>', '{', '}', '.', ',', '|', ':', '::', '=', '=>', 
 		 '+', '-', '*', '/', '+=', '-=', '*=', '/=', '||', '&&', '^^', '<<', '>>', ':='
-		
-3. Syntax
+
+3. Basic Things.
+
+3.1. Operation with objects
+
+Objects interacts with each other by sending messages  
+
+a message:b <=>  a.dispatch(b,message)
+
+
+4. Syntax
 
 ELENA lexical tokens are considered as terminal symbols. Any other are non-terminal symbols. The parsing operation starts with <start> non-terminal.
 

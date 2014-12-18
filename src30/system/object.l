@@ -3,9 +3,10 @@
 #class Object
 {
     #constructor new []
-    
-    #method equal : anObject
-        <object_equal>.
+
+    #method equal : anObject <object_equal>.
+        
+    #method => <dispatch>.
 }
 
 // --- common methods ---
@@ -18,7 +19,7 @@
 
 // --- nil constant ---
 
-#symbol(type:nil) nil =
+#symbol nil =
 {
     clone = $self.
 }.

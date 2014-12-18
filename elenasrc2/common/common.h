@@ -37,18 +37,7 @@ typedef char           tchar_t;
 
 #endif
 
-//#ifdef _WIN32
-//
-//#include <io.h>
-//
-//#else
-//
-//
-//#endif // WIN32
-
 #define ref_t       size_t
-
-//#endif
 
 // --- Common headers ---
 #include "tools.h"

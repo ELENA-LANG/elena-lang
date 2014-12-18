@@ -1,11 +1,11 @@
 #define system.
 
+#type(type:func1) IOError.
+
 // --- IOException ---
 
-#class(type:IOError) IOException : Exception
+#class IOException : Exception
 {
     #constructor new
-    [
-        theMessage := "I/O error".
-    ]    
+        <= %new &message:"The process terminated" &error_type: %IOError.
 }

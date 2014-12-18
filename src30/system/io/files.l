@@ -1,5 +1,5 @@
 #define system.
-#define system'text.
+//#define system'text.
 
 // --- File Access Modes ---
 #symbol(const) $FILE_READ_DATA     = 00000001h.
@@ -16,11 +16,13 @@
 
 // --- FileStream ---
 
-#class FileStream : Handle
+#class(struct) FileStream : Stream
 {
-    #constructor new &literal:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
+    #field(type:handle) theHandle.
+    
+    #constructor new &path:aPath &int_attributes:dwDesiredAccess &int_attributes:dwShareMode &int_attributes:dwCreationDisposition &int_attributes:dwFlagsAndAttributes
     [
-        theData := system'external'KERNEL32 CreateFileW
+        theHandle := system'external'KERNEL32 CreateFileW
                       &literal:aPath
                       &int:dwDesiredAccess
                       &int:dwShareMode
@@ -29,56 +31,129 @@
                       &int:dwFlagsAndAttributes
                       &int:0.
                       
-        (-1 == theData)
+        (-1 == theHandle)
             ? [ #throw IOException new:"Cannot open the file". ].
     ]
     
-    #method write &bytearray:aDump &length:aLength
-    [
-        system'external'KERNEL32 WriteFile
-            &handle    : $self
-            &bytearray : aDump
-            &int       : aLength
-            &int       : 0
-            &int       : 0.
-    ]
+//    #method write &bytearray:aDump &length:aLength
+//    [
+//        system'external'KERNEL32 WriteFile
+//            &handle    : theHandle
+//            &bytearray : aDump
+//            &int       : aLength
+//            &int       : 0
+//            &int       : 0.
+//    ]
 
-    #method read &bytearray:aDump &out'length:aLength
+    #method read &bytearray:aDump &length:aLength &out'length:aRead
     [
         system'external'KERNEL32 ReadFile
-            &handle      : $self
+            &handle      : theHandle
             &bytearray   : aDump
             &int         : aLength
-            &out'length  : aLength
+            &out'length  : aRead
             &int         : 0.
     ]
+
+//    #method read &bytearray:aDump &length:aLength
+//    [
+//        #var(type:int)aRead.
+//        $self read &bytearray:aDump &length:aLength &out'length:aRead.
+//        
+//        ^ IntNumber new &int:aRead.
+//    ]
+
+    #method close
+    [
+        theHandle close.
+    ]
 }
+
+////// --- StreamWriter ---
+////
+////#class StreamWriter : TextWriter
+////{
+////    #field theStream.
+////    #field theEncoder.
+////
+////    #constructor new &stream:aStream &encoder:anEncoder
+////    [
+////        theStream := aStream.
+////        theEncoder := anEncoder.
+////
+////        theNewLineConstant := system'io'newLine literal.
+////    ]
+////
+////    #constructor new &path:aPath
+////        <= %new &stream:(system'io'fileControl openForReWrite &path:aPath) &encoder:system'io'ansiLiteralEncoder.
+////        
+////    #method write &shortarray:anInput &length:aLength
+////    [
+////        #var(type:int)aTotal := aLength.
+////        #var(type:bytearray,size:64)aBuffer.
+////        #var(type:int)aBlockLength.
+////        
+////        #loop (aTotal > 0) ?
+////        [
+////            (aTotal < 64)
+////                ? [ aBlockLength := aTotal. ]
+////                ! [ aBlockLength := 64. ].
+////                
+////            theEncoder convert &shortarray:anInput &length:aBlockLength &bytearray:aBuffer &out'length:aBlockLength.
+////            
+////            theStream write &bytearray:aBuffer &length:aBlockLength.
+////            
+////            aTotal := aTotal - aBlockLength.
+////        ].
+////    ]
+////        
+////    #method write &literal:anOutput &length:aLength
+////    [
+////        #var(type:int)aTotal := aLength.
+////        #var(type:bytearray,size:64)aBuffer.
+////        #var(type:int)aBlockLength.
+////        
+////        #loop (aTotal > 0) ?
+////        [
+////            (aTotal < 64)
+////                ? [ aBlockLength := aTotal. ]
+////                ! [ aBlockLength := 64. ].
+////                
+////            theEncoder convert &literal:anOutput &length:aBlockLength &bytearray:aBuffer &out'length:aBlockLength.
+////            
+////            theStream write &bytearray:aBuffer &length:aBlockLength.
+////            
+////            aTotal := aTotal - aBlockLength.
+////        ].
+////    ]
+////}
 
 // --- StreamReader ---
 
 #class StreamReader : TextReader
 {
-    #field theStream.
-    #field theEncoder.
+    #field(type:stream) theStream.
+    #field(type:encoder) theEncoder.
 
     #constructor new &stream:aStream &encoder:anEncoder
+        <= ( %new )
     [
         theStream := aStream.
         theEncoder := anEncoder.
-
-        theOutput := TextBuffer new.
-        theOpen := true.
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(system'io'fileControl openForRead &path:aPath) &encoder:system'io'ansiLiteralEncoder.
+        <= %new &stream::(system'io'fileControl openForRead &path:aPath) &encoder:ansiLiteralEncoder.
 
-    #method read &shortarray:anOutput &out'length:aLength
+    #method source = theStream.
+
+    #method read &shortarray:anOutput &length:aMaxLength &out'length:anActualLength
     [
+        #var(type:int)aLength.
         #var(type:bytearray,size:64)aBuffer.
-        theStream read &bytearray:aBuffer &out'length:aLength.
+        theStream read &bytearray:aBuffer &length:aMaxLength &out'length:aLength.
                 
-        theEncoder convert &bytearray:aBuffer &length:aLength &shortarray:anOutput &out'length:aLength.
+        theEncoder convert &bytearray:aBuffer &length:aLength &shortarray:anOutput &out'length:anActualLength.
     ]
     
     #method close
@@ -87,72 +162,13 @@
     ]
 }
 
-// --- StreamWriter ---
-
-#class StreamWriter : TextWriter
-{
-    #field theStream.
-    #field theEncoder.
-
-    #constructor new &stream:aStream &encoder:anEncoder
-    [
-        theStream := aStream.
-        theEncoder := anEncoder.
-
-        theNewLineConstant := system'io'newLine literal.
-    ]
-
-    #constructor new &path:aPath
-        <= %new &stream:(system'io'fileControl openForReWrite &path:aPath) &encoder:system'io'ansiLiteralEncoder.
-        
-    #method write &shortarray:anInput &length:aLength
-    [
-        #var(type:int)aTotal := aLength.
-        #var(type:bytearray,size:64)aBuffer.
-        #var(type:int)aBlockLength.
-        
-        #loop (aTotal > 0) ?
-        [
-            (aTotal < 64)
-                ? [ aBlockLength := aTotal. ]
-                ! [ aBlockLength := 64. ].
-                
-            theEncoder convert &shortarray:anInput &length:aBlockLength &bytearray:aBuffer &out'length:aBlockLength.
-            
-            theStream write &bytearray:aBuffer &length:aBlockLength.
-            
-            aTotal := aTotal - aBlockLength.
-        ].
-    ]
-        
-    #method write &literal:anOutput &length:aLength
-    [
-        #var(type:int)aTotal := aLength.
-        #var(type:bytearray,size:64)aBuffer.
-        #var(type:int)aBlockLength.
-        
-        #loop (aTotal > 0) ?
-        [
-            (aTotal < 64)
-                ? [ aBlockLength := aTotal. ]
-                ! [ aBlockLength := 64. ].
-                
-            theEncoder convert &literal:anOutput &length:aBlockLength &bytearray:aBuffer &out'length:aBlockLength.
-            
-            theStream write &bytearray:aBuffer &length:aBlockLength.
-            
-            aTotal := aTotal - aBlockLength.
-        ].
-    ]
-}
-
 // --- fileControl ---
 
 #symbol fileControl =
 {
     openForRead &path:aPath
-        = FileStream new &literal::aPath &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
+        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
         
     openForReWrite &path:aPath
-        = FileStream new &literal::aPath &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
+        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
 }.

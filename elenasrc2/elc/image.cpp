@@ -13,17 +13,11 @@
 using namespace _ELENA_;
 
 // Virtual machine client built-in references
-#define VM_LOADER          "$package'core_vm'console_vm_start"
-#define VM_GUI_LOADER      "$package'core_vm'gui_vm_start"
+#define VM_LOADER          "$native'core_vm'console_vm_start"
+//#define VM_GUI_LOADER      "$package'core_vm'gui_vm_start"
 
 #define VM_TAPE            "'vm_tape"
-#define VM_PATH            "'vm_path"
-#define VM_PROCEDURE       "'vm_procedure"
-#define VM_DEBUGPROCEDURE  "'vm_debugprocedure"
 #define VM_HOOK            "'vm_hook"
-#define VM_ERR_DLLLOAD     "'vm_dllnotfound"
-#define VM_ERR_DLLINVALID  "'vm_dllinvalid"
-#define VM_ERR_ERRPROC     "'vm_errproc"
 
 // --- ExecutableImage ---
 
@@ -33,10 +27,12 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
    _project = project;
 
    // load default forwards
-   _literal.copy(WSTR_CLASS);
-   _int.copy(INT_CLASS);
-   _long.copy(LONG_CLASS);
-   _real.copy(REAL_CLASS);
+   _literal.copy(project->resolveForward(WSTR_FORWARD));
+   _int.copy(project->resolveForward(INT_FORWARD));
+   _long.copy(project->resolveForward(LONG_FORWARD));
+   _real.copy(project->resolveForward(REAL_FORWARD));
+   _message.copy(project->resolveForward(MESSAGE_FORWARD));
+   _signature.copy(project->resolveForward(SIGNATURE_FORWARD));
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
@@ -120,11 +116,11 @@ SectionInfo ExecutableImage :: getSectionInfo(const wchar16_t* reference, size_t
    return sectionInfo;
 }
 
-SectionInfo ExecutableImage :: getPredefinedSectionInfo(const wchar16_t* package, ref_t reference, size_t mask)
+SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
 {
    SectionInfo sectionInfo;
 
-   sectionInfo.module = _project->resolvePredefined(package, reference, true);
+   sectionInfo.module = _project->resolveCore(reference, true);
    if (sectionInfo.module == NULL) {
       throw InternalError(errCommandSetAbsent);
    }
@@ -190,6 +186,16 @@ const wchar16_t* ExecutableImage :: getRealClass()
    return _real;
 }
 
+const wchar16_t* ExecutableImage :: getMessageClass()
+{
+   return _message;
+}
+
+const wchar16_t* ExecutableImage :: getSignatureClass()
+{
+   return _signature;
+}
+
 const wchar16_t* ExecutableImage :: getNamespace()
 {
    return _project->StrSetting(opNamespace);
@@ -252,67 +258,10 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, con
    else tape.writeWideChar(0);
 }
 
-//inline void writeLiteralRef(MemoryWriter& tape, MemoryWriter& data, const wchar16_t* s)
-//{
-//   if (!emptystr(s)) {
-//      tape.writeRef(mskRDataRef, data.Position());
-//
-//      data.writeWideLiteral(s);
-//   }
-//   else tape.writeDWord(0);
-//}
-
-inline ref_t writeLiteral(MemoryWriter& data, const wchar16_t* s)
-{
-   ref_t position = data.Position();
-   data.writeWideLiteral(s);
-
-   return position;
-}
-
-inline ref_t writeAnsiLiteral(MemoryWriter& data, const char* s)
-{
-   ref_t position = data.Position();
-   data.writeLiteral(s);
-
-   return position;
-}
-
-inline ref_t writeErrorMessage(MemoryWriter& data, const wchar16_t* s)
-{
-   ref_t position = data.Position();
-   data.writeDWord(getlength(s));
-   data.writeWideLiteral(s);
-
-   return position;
-}
-
-inline ref_t writeErrorMessage(MemoryWriter& data, const char* s)
-{
-   String<wchar16_t, 255> message;
-   message.copy(s);
-
-   return writeErrorMessage(data, message);
-}
-
-inline ref_t writeErrorMessage(MemoryWriter& data, const char* s1, const wchar16_t* s2, const char* s3)
-{
-   String<wchar16_t, 255> message;
-   message.copy(s1);
-   message.append(s2);
-   message.append(s3);
-
-   return writeErrorMessage(data, message);
-}
-
 VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const tchar_t* appPath)
    : Image(false), _exportReferences((size_t)-1)
 {
-   _project = project;
-
-   // setup virtual machine path
-   _rootPath.copy(project->StrSetting(opVMPath));
-   _rootPath.combine("elenavm.dll");
+//   _project = project;
 
    MemoryWriter   data(&_data);
    MemoryWriter   code(&_text);
@@ -324,23 +273,10 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    size_t vmHook = data.Position();
    data.writeRef(mskNativeDataRef, 0); // hook address
 
-   // setup startup VM script
-   ReferenceMap consts((size_t)-1);
-   VMClientHelper helper(this, &consts);
-
-   consts.add(ConstantIdentifier(VM_TAPE), createTape(data, project));
-   consts.add(ConstantIdentifier(VM_PATH), writeLiteral(data, _rootPath));
-   consts.add(ConstantIdentifier(VM_PROCEDURE), writeAnsiLiteral(data, "Interpret"));
-   consts.add(ConstantIdentifier(VM_DEBUGPROCEDURE), writeAnsiLiteral(data, "SetDebugMode"));
-   consts.add(ConstantIdentifier(VM_HOOK), vmHook);
-   consts.add(ConstantIdentifier(VM_ERR_ERRPROC), writeAnsiLiteral(data, "GetLVMStatus"));
-   consts.add(ConstantIdentifier(VM_ERR_DLLLOAD), writeErrorMessage(data, "Cannot load ", _rootPath, "\n"));
-   consts.add(ConstantIdentifier(VM_ERR_DLLINVALID), writeErrorMessage(data, "Incorrect elenavm.dll\n"));
-
-   int type = project->IntSetting(opPlatform, ptWin32Console);
+//   int type = project->IntSetting(opPlatform, ptWin32Console);
 
    ref_t reference = 0;
-   _Module* module = project->resolveModule(ReferenceNs(test(type, mtUIMask, mtGUI) ? VM_GUI_LOADER : VM_LOADER), reference, true);
+   _Module* module = project->resolveModule(ReferenceNs(/*test(type, mtUIMask, mtGUI) ? VM_GUI_LOADER : */VM_LOADER), reference, true);
    _Memory* section = NULL;
 
    if (module != NULL) {      
@@ -348,6 +284,13 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    }
    if (section == NULL)
       throw InternalError("Cannnot load vm client loader");
+
+   // setup startup VM script
+   ReferenceMap consts((size_t)-1);
+   VMClientHelper helper(this, &consts, &data, module);
+
+   consts.add(ConstantIdentifier(VM_TAPE), createTape(data, project));
+   consts.add(ConstantIdentifier(VM_HOOK), vmHook);
 
    compiler->loadNativeCode(helper, code, module, section);
 }
@@ -396,9 +339,18 @@ void VirtualMachineClientImage::VMClientHelper :: writeReference(MemoryWriter& w
       writer.writeRef(_owner->resolveExternal(reference), 0);
    }
    else {
-      int offset = _references->get(reference);
+      size_t offset = _references->get(reference);
 
-      if (offset != -1)
-         writer.writeRef(mskRDataRef, offset);
+      if ((int)offset == -1) {
+         offset = _dataWriter->Position();
+
+         _Memory* constant = _module->mapSection(_module->mapReference(reference, true) | mask, true);
+         if (constant != NULL) {
+            _dataWriter->write((char*)constant->get(0), constant->Length());
+         }
+         else throw InternalError("Cannnot load vm client loader");
+      }
+
+      writer.writeRef(mskRDataRef, offset);
    }
 }

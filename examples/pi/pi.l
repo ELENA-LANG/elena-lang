@@ -5,13 +5,13 @@
 
 // x ^ y
 
-#symbol Power = (:x:y)
+#symbol Power = (&int:x &int:y)
 [
-    #var aResult := Real new::1.
+    #var aResult := Real new &int:1.
 
-    control forrange &int:1 &int:(y int) &do: (&int:n) [ aResult *= x ] .
+    control runRange &int:1 &int:y &forEvery: (&index:n) [ aResult *= x ] .
 
-    ^ aResult.    
+    ^ aResult.
 ].
 
 #symbol(const) MAX = 10000.
@@ -20,19 +20,19 @@
 [
     #var aStart := now.
 
-    #var pi := Real new::0.
-
-    control forrange &int:0 &int:MAX &do: (&int:i)
+    #var pi := Real new.
+    
+    control runRange &int:0 &int:MAX &forEvery: (&index:i)
     [
-        pi += (Power eval:(-1):i / ((2*i)+1)*4).
+        pi += (Power eval &int:(-1) &int:i / ((2*i)+1)*4).
     ].
     
     #var anEnd := now.
-        
+
     console writeLine:pi.
-        
+
     #var aDiff := anEnd - aStart.
-    console write:"Time elapsed in msec:" writeLine:(aDiff Milliseconds).
+    console write:"Time elapsed in msec:" writeLine:(aDiff milliseconds).
 
     console readChar.
 ].

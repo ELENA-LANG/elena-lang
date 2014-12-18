@@ -16,9 +16,9 @@
 namespace _ELENA_
 {
 
-// Compiler optimization flags
-//const int optDirectConstant = 0x00000001;
-//const int optJumps          = 0x00000002;
+//// Compiler optimization flags
+////const int optDirectConstant = 0x00000001;
+////const int optJumps          = 0x00000002;
 
 // --- Compiler class ---
 class Compiler
@@ -28,31 +28,31 @@ protected:
    {
       int        offset;
       ref_t      sign_ref;
-      bool       out; 
+      bool       output;
 
       Parameter()
       {
          offset = -1;
          sign_ref = 0;
-         out = false;
+         output = false;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->sign_ref = 0;
-         this->out = false;
+         this->output = false;
       }
       Parameter(int offset, ref_t sign_ref)
       {
          this->offset = offset;
          this->sign_ref = sign_ref;
-         this->out = false;
+         this->output = false;
       }
-      Parameter(int offset, ref_t sign_ref, bool out)
+      Parameter(int offset, ref_t sign_ref, bool output)
       {
          this->offset = offset;
          this->sign_ref = sign_ref;
-         this->out = out;
+         this->output = output;
       }
    };
 
@@ -65,6 +65,14 @@ protected:
       irSealed,
       irInvalid,
       irObsolete
+   };
+
+   enum MethodType
+   {
+      tpUnknown = 0,
+      tpSealed  = 1,
+      tpClosed  = 2,
+      tpNormal  = 3
    };
 
    struct Unresolved
@@ -94,7 +102,6 @@ protected:
    typedef Map<ref_t, ref_t>                       SubjectMap;
    typedef List<Unresolved>                        Unresolveds;
    typedef Map<ref_t, SubjectMap*>                 ExtensionMap;
-   typedef Map<ref_t, int>                         SizeMap;
 
    // - ModuleScope -
    struct ModuleScope
@@ -118,20 +125,23 @@ protected:
       ExtensionMap           extensions;
 
       // type hints
+      ForwardMap             typeForwards;
       SubjectMap             typeHints;
       SubjectMap             synonymHints;
-      SizeMap                sizeHints;
 
       // cached references
+      ref_t superReference;
       ref_t nilReference;
+      ref_t intReference;
+      ref_t longReference;
+      ref_t realReference;
+      ref_t literalReference;
       ref_t trueReference;
       ref_t falseReference;
+      ref_t paramsReference;
 
-      // cached subjects
-      // should not be referred directly ;
-      // appropriate get function should be used instead
-      ref_t intType, longType, realType, literalType, intPtrType;
-      ref_t boolType, actionType, paramsType, subjType;
+      ref_t paramsType;
+      ref_t signType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -147,21 +157,12 @@ protected:
 
       ObjectInfo mapReferenceInfo(const wchar16_t* reference, bool existing = false);
 
-      ref_t mapConstantReference(const char* name)
-      {
-         ConstantIdentifier wsName(name);
-
-         return module->mapReference(wsName);
-      }
-
-      ref_t mapSubject(const wchar16_t* name);
-
-      ref_t mapSubject(const char* name)
-      {
-         IdentifierString wsName(name);
-
-         return mapSubject(wsName);
-      }
+//      ref_t mapConstantReference(const char* name)
+//      {
+//         ConstantIdentifier wsName(name);
+//
+//         return module->mapReference(wsName);
+//      }
 
       bool defineForward(const wchar16_t* forward, const wchar16_t* referenceName, bool constant)
       {
@@ -203,19 +204,49 @@ protected:
 
       ref_t resolveIdentifier(const wchar16_t* name);
 
-      ref_t mapType(const wchar16_t* terminal);
-      ref_t mapType(TerminalInfo terminal, bool& out);
+      ref_t mapNewType(const wchar16_t* terminal);
+
+      ref_t mapSubject(const char* name)
+      {
+         IdentifierString wsName(name);
+
+         return module->mapSubject(wsName, false);
+      }
+
+      ref_t mapType(TerminalInfo terminal, bool ignoreSynonym, bool& out);
+      ref_t mapType(TerminalInfo terminal, bool ignoreSynonym);
+
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool& out);
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
+      {
+         bool dummy;
+         return mapSubject(terminal, output, dummy);
+      }
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-      ref_t loadClassInfo(_Module* &classModule, ClassInfo& info, const wchar16_t* vmtName);
-      ref_t loadClassInfo(ClassInfo& info, const wchar16_t* vmtName);
-      
-      bool checkTypeMethod(ref_t type_ref, ref_t message, bool& found);
-      bool checkMethod(ref_t reference, ref_t message, bool& found);
-      bool checkMethod(ref_t reference, ref_t message)
+      ref_t loadClassInfo(_Module* &classModule, ClassInfo& info, const wchar16_t* vmtName, bool headerOnly = false);
+      ref_t loadClassInfo(ClassInfo& info, const wchar16_t* vmtName, bool headerOnly = false);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, const wchar16_t* symbol);
+
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref);
+      int defineTypeSize(ref_t type_ref)
+      {
+         ref_t dummy1;
+
+         return defineTypeSize(type_ref, dummy1);
+      }
+
+      MethodType checkTypeMethod(ref_t type_ref, ref_t message, bool& found);
+      MethodType checkTypeMethod(ref_t type_ref, ref_t message)
+      {
+         bool dummy;
+         return checkTypeMethod(type_ref, message, dummy);
+      }
+      MethodType checkMethod(ref_t reference, ref_t message, bool& found);
+      MethodType checkMethod(ref_t reference, ref_t message)
       {
          bool dummy;
          return checkMethod(reference, message, dummy);
@@ -224,24 +255,19 @@ protected:
       void loadTypes(_Module* module);
       void loadExtensions(TerminalInfo terminal, _Module* module);
 
-      bool saveType(ref_t type_ref, ref_t wrapper_ref = 0, int size = 0);
+      bool saveType(ref_t type_ref, ref_t classReference);
       bool saveSynonym(ref_t type_ref, ref_t synonym_ref);
       bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 //      void validateForwards();
 
-      ref_t getBoolType();
-      ref_t getIntType();
-      ref_t getLongType();
-      ref_t getRealType();
-      ref_t getLiteralType();
-      ref_t getParamsType();
-      ref_t getActionType();
-      ref_t getIntPtrType();
-      ref_t getSubjType();
+      ref_t getBaseFunctionClass(int paramCount);
+      ref_t getBaseIndexFunctionClass(int paramCount);
+      ref_t getBaseLazyExpressionClass();
 
       ref_t getClassType(ref_t reference);
+      int getClassFlags(ref_t reference);
 
       void init(_Module* module, _Module* debugModule);
 
@@ -316,6 +342,7 @@ protected:
    {
       ClassInfo info;
       ref_t     extensionTypeRef;
+      bool      checkType;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -330,10 +357,17 @@ protected:
          else return Scope::getScope(level);
       }
 
+      void saveHeader()
+      {
+         // save class meta data
+         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+         info.save(&metaWriter, true);
+      }
+
       void save(ByteCodeWriter& writer)
       {
          // save class meta data
-         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false));
+         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
          info.save(&metaWriter);
 
          // create byte code sections
@@ -368,9 +402,8 @@ protected:
    {
       ref_t     message;
       LocalMap  parameters;
-      bool      withBreakHandler;
-//      bool      withCustomVerb;
-      int       masks;              // used for ecode optimization
+////      bool      withCustomVerb;
+      //int       mode;               // used for optimization
       int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 
@@ -394,7 +427,12 @@ protected:
          ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
       }
 
-      void include();
+      int getClassFlag()
+      {
+         return ((ClassScope*)parent)->info.header.flags;
+      }
+
+      bool include();
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -459,19 +497,19 @@ protected:
          else return parent->getScope(level);
       }
 
-      ref_t getClassType()
-      {
-         MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
-
-         return methodScope->getClassType();
-      }
-
-//      //bool testMode(MethodScope::Mode mode)
-//      //{
-//      //   MethodScope* scope = (MethodScope*)getScope(slMethod);
+//      ref_t getClassType()
+//      {
+//         MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
 //
-//      //   return scope ? scope->testMode(mode) : false;
-//      //}
+//         return methodScope->getClassType();
+//      }
+//
+////      //bool testMode(MethodScope::Mode mode)
+////      //{
+////      //   MethodScope* scope = (MethodScope*)getScope(slMethod);
+////
+////      //   return scope ? scope->testMode(mode) : false;
+////      //}
 
       int getMessageID()
       {
@@ -501,7 +539,7 @@ protected:
          return scope ? scope->extensionTypeRef : 0;
       }
 
-      void compileLocalHints(DNode hints, ref_t& type, int& size);
+      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
@@ -548,7 +586,7 @@ protected:
 //         info.fields.add(name, offset);
 //         outers.add(name, Outer(offset, object));
 //      }
-//
+
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       InlineClassScope(CodeScope* owner, ref_t reference);
@@ -561,11 +599,13 @@ protected:
          ref_t      subject;
          ObjectInfo info;
          bool       output;
+         int        size;
 
          ParamInfo()
          {
             subject = 0;
             output = false;
+            size = 0;
          }
       };
 
@@ -598,8 +638,8 @@ protected:
    MessageMap     _operators;                        // list of operators
 //   MessageMap       _obsolete;                       // list of obsolete messages
 
-   // optimization flags
-   int _optFlag;
+//   // optimization flags
+//   int _optFlag;
 
    // optimization rules
    TransformTape _rules;
@@ -620,20 +660,24 @@ protected:
 
    void importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* reference);
 
-   InheritResult inheritClass(ClassScope& scope, ref_t parentRef);
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage = true);
 
    ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, int mode);
 
    void compileParentDeclaration(DNode node, ClassScope& scope);
-   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope);
+   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 
    ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
 
-   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode = 0);
-   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo object, int mode);
+   void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
+
+   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object);
+   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo object);
+
+   bool overridePrimitiveAssigning(CodeScope& scope, ref_t targetType, ref_t objectType, ref_t& message);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
@@ -656,15 +700,16 @@ protected:
    ObjectInfo compileGetProperty(DNode member, CodeScope& scope, int mode, ref_t vmtReference);
    ObjectInfo compileGetProperty(DNode member, CodeScope& scope, int mode);
 
-   void compileMessageParameter(DNode& arg, CodeScope& scope, ref_t type_ref, int mode, size_t& count);
+   void compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count);
 
    void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
    void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
    void compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree);
 
-   ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int& mode, size_t& spaceToRelease);
+   ObjectInfo compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t message, int paramCount, int& mode, size_t& spaceToRelease);
+   ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease);
 
-   ObjectInfo compileReference(DNode objectNode, CodeScope& scope, int mode);
+////   ObjectInfo compileReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileSignatureReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
@@ -686,13 +731,12 @@ protected:
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target);
 
    ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
 
    void compileLoop(DNode node, CodeScope& scope, int mode);
    void compileThrow(DNode node, CodeScope& scope, int mode);
-   void compileBreak(DNode node, CodeScope& scope, int mode);
-   void compileBreakHandler(CodeScope& scope, int mode);
 
    void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
    void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
@@ -711,23 +755,25 @@ protected:
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
+   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol);
 
    void compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function);
    void compileImportMethod(DNode node, CodeScope& scope, ref_t message, const wchar16_t* function, int mode);
 
+   void compileActionMethod(DNode member, MethodScope& scope, int mode);
+   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
    void compileDynamicDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
-   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
+   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, int mode);
 
    void compileSymbolCode(ClassScope& scope);
 
-   void compileActionVMT(DNode node, InlineClassScope& scope, DNode argNode);
+   void compileAction(DNode node, InlineClassScope& scope, DNode argNode);
+//   void compileLazyExpression(DNode node, InlineClassScope& scope);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
-   void compileAction(DNode member, MethodScope& scope);
-   void compileExpressionAction(DNode member, MethodScope& scope);
    void compileVMT(DNode member, ClassScope& scope);
 
    void compileFieldDeclarations(DNode& member, ClassScope& scope);
@@ -751,10 +797,10 @@ protected:
    void createModuleInfo(ModuleScope& scope, const tchar_t* path, bool withDebugInfo, Map<const wchar16_t*, ModuleInfo>& modules);
 
 public:
-   void setOptFlag(int flag)
-   {
-      _optFlag |= flag;
-   }
+//   void setOptFlag(int flag)
+//   {
+//      _optFlag |= flag;
+//   }
 
    void loadRules(StreamReader* optimization);
 

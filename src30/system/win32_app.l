@@ -1,15 +1,15 @@
 #define system.
 
-// --- referenceTableControl ---
-
-#symbol referenceTableControl =
-{
-    allocate : anObject &out'int:anIndex
-        <api_alloc_index>.
-
-    free &int:anIndex
-        <api_free_index>.
-}.
+//// --- referenceTableControl ---
+//
+//#symbol referenceTableControl =
+//{
+//    allocate : anObject &out'int:anIndex
+//        <api_alloc_index>.
+//
+//    free &int:anIndex
+//        <api_free_index>.
+//}.
 
 // --- CommandLine ---
 

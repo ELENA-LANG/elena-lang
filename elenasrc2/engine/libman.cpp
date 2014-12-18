@@ -13,7 +13,7 @@
 
 using namespace _ELENA_;
 
-#define PMODULE_LEN getlength(PACKAGE_MODULE)
+#define NMODULE_LEN getlength(NATIVE_MODULE)
 
 // --- LibraryManager ---
 
@@ -91,89 +91,90 @@ _Module* LibraryManager :: loadDebugModule(const wchar16_t* package, LoadResult&
    return module;
 }
 
-bool LibraryManager :: loadPrimitive(const wchar16_t* package, LoadResult& result)
+_Module* LibraryManager :: loadNative(const wchar16_t* package, LoadResult& result)
 {
-   result = lrNotFound;
+   _Module* binary = _binaries.get(package);
+   if (!binary) {
+      const tchar_t* path = _binaryAliases.get(package);
+      if (emptystr(path)) {
+         result = lrNotFound;
 
-   AliasMap::Iterator it = _binaryAliases.getIt(package);
+         return NULL;
+      }
+
+      FileReader reader(path, feRaw, false);
+
+      binary = new ROModule(reader, result);
+      if (result != lrSuccessful) {
+         delete binary;
+
+         return NULL;
+      }
+      else _binaries.add(package, binary);
+   }
+   else result = lrSuccessful;
+
+   return binary;
+}
+
+bool LibraryManager :: loadCore(LoadResult& result)
+{
+   AliasMap::Iterator it = _binaryAliases.start();
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), package)) {
+      if (emptystr(it.key())) {
          FileReader reader(*it, feRaw, false);
 
          _Module* binary = new ROModule(reader, result);
-         _binaries.add(package, binary);
+         if(result != lrSuccessful) {
+            delete binary;
 
-         if(result!=lrSuccessful) {
             return false;
+            
          }
-      }
+         else _binaries.addToTop(NULL, binary);
 
-      it++;
+         it++;
+      }
+      else break;      
    }
-               
-   return result == lrSuccessful;
+   return true;
 }
 
-_Module* LibraryManager :: resolvePrimitive(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+_Module* LibraryManager :: resolveCore(ref_t reference, LoadResult& result)
 {
    result = lrNotFound;
 
-   NamespaceName package(referenceName + PMODULE_LEN + 1);
-   
-   ModuleMap::Iterator it = _binaries.getIt(package);
    // load modules if it is first time usage
-   if (it.Eof()) {
-      if(!loadPrimitive(package, result)) {
-         reference = 0;
-
+   if (!_binaries.exist(NULL)) {
+      if (!loadCore(result))
          return NULL;
-      }
-
-      it = _binaries.getIt(package);
    }
 
+   ModuleMap::Iterator it = _binaries.start();
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), package)) {
-         ref_t currentRef = (*it)->mapReference(referenceName, true);
-         if (currentRef) {
-            reference = currentRef;
-            result = lrSuccessful;
-
-            return *it;
-         }
-      }
-
-      it++;
-   }
-
-   return NULL;
-}
-
-_Module* LibraryManager :: resolvePredefined(const wchar16_t* package, ref_t reference, LoadResult& result)
-{
-   result = lrNotFound;
-
-   ModuleMap::Iterator it = _binaries.getIt(package);
-   // load modules if it is first time usage
-   if (it.Eof()) {
-      if(!loadPrimitive(package, result))
-         return NULL;
-
-      it = _binaries.getIt(package);
-   }
-
-   while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), package)) {
+      if (emptystr(it.key())) {
          _Memory* current = (*it)->mapSection(reference, true);
          if (current) {
             result = lrSuccessful;
             return *it;
          }
+         else it++;
       }
-      it++;
+      else break;
    }
 
    return NULL;
+}
+
+_Module* LibraryManager :: resolveNative(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+{
+   NamespaceName native(referenceName + NMODULE_LEN + 1);
+
+   _Module* module = loadNative(native, result);
+
+   reference = module ? module->mapReference(referenceName, true) : 0;
+
+   return module;
 }
 
 _Module* LibraryManager :: resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)

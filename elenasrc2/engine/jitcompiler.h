@@ -18,7 +18,7 @@ class _ReferenceHelper
 {
 public:
    virtual ref_t getLinkerConstant(ref_t constant) = 0;
-   virtual SectionInfo getPredefinedSection(const wchar16_t* package, ref_t reference) = 0;
+   virtual SectionInfo getCoreSection(ref_t reference) = 0;
    virtual SectionInfo getSection(ref_t reference, _Module* module = NULL) = 0;
 
    virtual void* getVAddress(MemoryWriter& writer, int mask) = 0;
@@ -45,10 +45,7 @@ class _JITCompiler
 public:
    virtual bool isWithDebugInfo() const = 0;
 
-   virtual void prepareCoreData(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata) = 0;
-   virtual void prepareCommandSet(_ReferenceHelper& helper, _Memory* code) = 0;
-
-   virtual void prepareRTData(_ReferenceHelper& helper, _Memory* data) = 0;
+   virtual void prepareCore(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata, _Memory* code) = 0;
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 
@@ -74,6 +71,7 @@ public:
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
    virtual int findMethodAddress(void* refVMT, int messageID, size_t vmtLength) = 0;
+   virtual int findMethodIndex(void* refVMT, int messageID, size_t vmtLength) = 0;
    virtual size_t findFlags(void* refVMT) = 0;
    virtual size_t findLength(void* refVMT) = 0;
 
@@ -107,6 +105,7 @@ public:
    virtual size_t findFlags(void* refVMT);
    virtual size_t findLength(void* refVMT);
    virtual int findMethodAddress(void* refVMT, int messageID, size_t vmtLength);
+   virtual int findMethodIndex(void* refVMT, int messageID, size_t vmtLength);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t type);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);

@@ -1558,6 +1558,10 @@ void x86Assembler :: compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWri
       code->writeByte(0xFF);
       x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), operand);
 	}
+   else if (operand.type == x86Helper::otDD && operand.reference == -1) {
+      code->writeByte(0xE9);
+      code->writeRef(operand.reference, 0);
+   }
    else {
 	   bool shortJump = false;
 	   if (token.check("short")) {
@@ -1653,7 +1657,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       }
       else if (token.terminal.state==dfaQuote) {
          IdentifierString funRef(token.terminal.line + 1, token.terminal.length-2);
-         if (StringHelper::find(funRef, ConstantIdentifier(PACKAGE_MODULE)) == 0) {
+         if (StringHelper::find(funRef, ConstantIdentifier(NATIVE_MODULE)) == 0) {
             ref = info.binary->mapReference(funRef) | mskNativeRelCodeRef;
          }
          else ref = info.binary->mapReference(funRef) | mskSymbolRelRef;
@@ -2286,7 +2290,7 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
       ref = token.readInteger(constants);
    }
    else {
-      ReferenceNs refName(PACKAGE_MODULE, token.value);
+      ReferenceNs refName(NATIVE_MODULE, token.value);
 
 	   ref = binary->mapReference(refName) | mask;
    }
@@ -3037,7 +3041,7 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
       token.read();
    }
    else {
-      ReferenceNs refName(PACKAGE_MODULE, token.value);
+      ReferenceNs refName(NATIVE_MODULE, token.value);
 
       token.read();
 	   if (token.check("(")) {

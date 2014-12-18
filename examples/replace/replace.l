@@ -10,11 +10,11 @@
     #var aSearchText := consoleEx write:"Enter the phrase to be found:" readLine.  
     #var aReplaceText := consoleEx write:"Enter the phrase to replace with:" readLine.
 
-    #var aBM := Bookmark new::aText.
+    #var aBM := StringBookmark new:aText.
 
-    control while:[ aBM find::aSearchText ] &do:
+    control while:[ aBM find:aSearchText ] &do:
     [
-        aBM delete &length::aSearchText insert::aReplaceText.
+        aBM delete &length::aSearchText insert:aReplaceText.
     ].
 
     consoleEx 

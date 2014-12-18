@@ -1,19 +1,20 @@
 #define system. 
 #define system'routines. 
-//#define system'io. 
 
 #symbol(const)$TextPageSize = 128.
 
+#type(class:system'text'TextBuffer) textbuffer.
+
 // --- TextBuffer ---
 
-#class(sealed) TextBuffer
+#class(sealed,type:textbuffer) TextBuffer
 {
-    #field theBuffer.
-    #field theLength.
+    #field(type:shortarray) theBuffer.
+    #field(type:intvar) theLength.
 
     #constructor new
     [
-        theBuffer := ShortArray new &length:($TextPageSize int).
+        theBuffer := ShortArray new &length:$TextPageSize.
         theLength := Integer new &int:0.
     ]
 
@@ -22,13 +23,13 @@
         theLength write &int:0.
     ]
 
-    #method length
-        = theLength int.
-
     #method read &out'length:aLength
     [
         theLength read &out'int:aLength.
     ]
+
+    #method length
+        = theLength int.
 
     #method set &length:aLength
     [
@@ -40,27 +41,25 @@
         $self write &literal::aLine.
     ]
                                     
-    #method write &char:aChar
-    [
-        $self write &literal::aChar.
-    ]
+//    #method write &char:aChar
+//    [
+//        $self write &literal::aChar.
+//    ]
     
     #method reserve &length:aLength
     [
-        #var(type:int)anOldLength.
-        theLength read &out'int:anOldLength.
-        
+        #var(type:int)anOldLength := theLength int.
         #var(type:int)aNewLength := aLength.
+        
         aNewLength := aNewLength + anOldLength.
         
-        #var(type:int)aBufferLength.
-        theBuffer read &out'length:aBufferLength.
+        #var(type:int)aBufferLength := theBuffer length.
         
         (aNewLength >= aBufferLength) ?
         [
-            aNewLength := ((aNewLength / $TextPageSize + 1) * $TextPageSize) int.
+            aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
             
-            #var aNewBuffer := ShortArray new &length:aNewLength.
+            #var(type:shortarray) aNewBuffer := ShortArray new &length:aNewLength.
             
             aNewBuffer write &index:0 &length:aBufferLength &shortarray::theBuffer.
             
@@ -70,11 +69,8 @@
 
     #method write &literal:aLiteral
     [
-        #var(type:int)anOldLength.
-        theLength read &out'int:anOldLength.
-        
-        #var(type:int)aLength.
-        aLiteral read &out'length:aLength.
+        #var(type:int)anOldLength := theLength int.
+        #var(type:int)aLength := aLiteral length.
         
         (0 == aLength) !
         [
@@ -84,6 +80,17 @@
             
             theLength append &int:aLength.
         ].
+    ]
+
+    #method write &short:aChar
+    [
+        #var(type:int)anOldLength := theLength int.
+        
+        $self reserve &length:1.
+        
+        theBuffer write &index:anOldLength &short:aChar.
+        
+        theLength append &int:1.
     ]
 
     #method write &shortarray:anArray &length:aLength
@@ -101,20 +108,18 @@
         ].
     ]
 
-    #method indexOf &index:aPosition &char:aChar &out'int:aRetVal
-    [
-        #var(type:short)aValue.
-        aChar read &out'short:aValue.
-        
-        $self indexOf &index:aPosition &short:aValue &out'int:aRetVal.
-    ]
+//    #method indexOf &index:aPosition &char:aChar &out'int:aRetVal
+//    [
+//        #var(type:short)aValue.
+//        aChar read &out'short:aValue.
+//        
+//        $self indexOf &index:aPosition &short:aValue &out'int:aRetVal.
+//    ]
 
     #method indexOf &index:aPosition &short:aValue &out'int:aRetVal
     [
-        #var(type:int)aLength.
-        theLength read &out'int:aLength.
+        #var(type:int)aLength := theLength int.
         
-        #var(type:int) anIndex.
         theBuffer indexOf &index:aPosition &length:aLength &short:aValue &out'int:aRetVal.
     ]
 
@@ -122,7 +127,7 @@
         = (aLength == 0)
             ? [ emptyLiteralValue ]
             ! [
-                #var aLiteral := LiteralValue new &length:aLength &index:anIndex &shortarray::theBuffer.
+                #var aLiteral := LiteralValue new &length:aLength &index:anIndex &shortarray:theBuffer.
 
                 ^ aLiteral.        
             ].
@@ -143,13 +148,12 @@
             ].
     ]
     
-    #method shortarray = theBuffer shortarray.
+//    #method shortarray = theBuffer shortarray.
 
     #method literal
     [
-        #var(type:int)aLength.
-        theLength read &out'int:aLength.
+        #var(type:int)aLength := theLength int.
         
-        ^ LiteralValue new &length:aLength &shortarray::theBuffer.
+        ^ LiteralValue new &length:aLength &shortarray:theBuffer.
     ]
 }

@@ -1,90 +1,90 @@
-// --- BreakException ---
+#type(type:subject) error_type.
 
-#class BreakException
+#type(type:func1) Error.
+#type(type:func1) MethodNotFoundError.
+#type(type:func1) FormatError.
+#type(type:func1) OutOfRangeError.
+#type(type:func1) InvalidArgumentError.
+#type(type:func1) NotSupportedError.
+#type(type:func1) Abort.
+
+// --- Exception ---
+
+#class Exception
 {
-    #field theResult.
+    #field theMessage.
+    #field(type:subject) theError.
     
-    #method stop = theResult.
-}
-
-// --- BaseException ---
-
-#class BaseException
-{
-    #method raise : anError
+    #constructor new &message:aMessage &error_type:anError
     [
-        #throw anError.
-    ]
-
-    #method if : aHandler
+        theMessage := aMessage.
+        theError := anError.
+    ]    
+    
+    #method if &Error:aHandler
     [
         aHandler eval:$self.
     ]
     
+    #method(generic) if : aHandler
+    [
+        $subject~subjectOp equal &subject:theError ? [ aHandler eval:$self. ] ! [ #throw $self. ]
+    ]
+    
     #method on : aCatchBlock
     [
-        aCatchBlock if::$self | if &MethodNotFoundError: e [ #throw $self. ].
-    ]
-
-    #method => <exception_dispatch>.
-}
-
-// --- Exception ---
-
-#class Exception : BaseException
-{
-    #field theMessage.
-    
-    #constructor new : aMessage
-    [
-        theMessage := aMessage.
+        aCatchBlock ~ theError get eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
     ]    
     
 //    #method literal => theMessage.
     
-    #method Message = theMessage.
+    #method message = theMessage.
 }
 
 // --- FormatException ---
 
-#class(type:FormatError) FormatException : Exception
+#class FormatException : Exception
 {
     #constructor new
-    [
-        theMessage := "A number is not in the correct format".
-    ]    
+        <= %new &message:"A number is not in the correct format" &error_type: %FormatError.
 }
 
 // --- OutOfRangeException ---
 
-#class(type:OutOfRangeError) OutOfRangeException : Exception
+#class OutOfRangeException : Exception
 {
     #constructor new
-    [
-        theMessage := "An index is out of range".
-    ]    
+        <= %new &message:"An index is out of range" &error_type: %OutOfRangeError.
 }
 
 // --- InvalidArgumentException ---
 
-#class(type:InvalidArgumentError) InvalidArgumentException : Exception
+#class InvalidArgumentException : Exception
 {
     #constructor new
-    [
-        theMessage := "Invalid argument".
-    ]    
+        <= %new &message:"Invalid argument" &error_type: %InvalidArgumentError.
 }
 
 // --- MethodNotFound ---
 
-#class(role,type:MethodNotFoundError) MethodNotFoundException : BaseException
+#class MethodNotFoundException : Exception
 {
-    #method Message = "Method not found".
+    #constructor new
+        <= %new &message:"Method not found" &error_type: %MethodNotFoundError.
 }
 
 // --- MethodNotSupported ---
 
-#class(role,type:NotSupportedError) NotSupportedException : BaseException
+#class NotSupportedException : Exception
 {
-    #method Message = "Operation is not supported".
+    #constructor new
+        <= %new &message:"Operation is not supported" &error_type: %NotSupportedError.
+}
+
+// --- AbortException ---
+
+#class AbortException : Exception
+{
+    #constructor new
+        <= %new &message:"The process terminated" &error_type: %Abort.
 }

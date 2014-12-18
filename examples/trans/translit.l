@@ -46,9 +46,9 @@
 [
     #var anOutput := TextBuffer new.
     
-    control foreach:aText &do: aChar
+    control run:aText &forEach: aChar
     [
-        #var aRule := listControl seek:rusLatRules &until: x 
+        #var aRule := control run:rusLatRules &seeking: x 
                 [ x from == aChar literal ].
         (nil == aRule)
             ? [ anOutput << aChar. ] 

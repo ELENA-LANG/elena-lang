@@ -1,10 +1,21 @@
+#define system.
+
+// === types ===
+#type(class:Handle) handle.
+
+#type(type:int)     int_attributes.
+
 // --- Handler ---
 
-#type(size:4)handle.
-
-#class(type:handle) Handle
+#class(type:handle,sealed,integer:4) Handle
 {
-    #field(type:int)theData.
+    #constructor new &handle:aHandle
+        <int_copy>.
+
+    #method equal &handle:anOperand 
+        <int_equal>.
+
+    #method handle = $self.
 
     #method close
     [

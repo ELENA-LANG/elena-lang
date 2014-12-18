@@ -15,7 +15,7 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#define BUILD_NUMBER 12
+#define BUILD_NUMBER 16
 
 int main(int argc, char* argv[])
 {
@@ -37,7 +37,10 @@ int main(int argc, char* argv[])
    }
    else target.copy(argv[1]);
 
-   target.changeExtension(_T("bin"));
+   if (esmMode) {
+		target.changeExtension(_T("nl"));
+   }
+   else target.changeExtension(_T("bin"));
 
    _ELENA_::Path source(argv[1]);
    _ELENA_::TextFileReader reader(source, _ELENA_::feUTF8, true);

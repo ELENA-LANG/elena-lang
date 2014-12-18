@@ -165,6 +165,8 @@ bool RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Libra
       buffer[copied++] = ')';
 
       length = copied;
+
+      return true;
    }
    else {
       length = 0;

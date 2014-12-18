@@ -1,74 +1,78 @@
 #define system.
 #define system'routines.
+#define system'text.
 
-// --- BinaryReader ---
-
-#class BinaryReader
-{
-    #field theStream.
-    
-    #constructor new &stream:aStream
-    [
-        theStream := aStream.
-    ]
-
-    #method read &bytearray:anArray &length:aLength
-    [
-        #var(type:int)aRead := aLength.
-        
-        theStream read &bytearray:anArray &out'length:aRead.
-        
-        (aLength > aRead)
-            ? [ #throw IOException new. ]
-    ]
-
-    #method read &out'int:anInt
-    [
-        #var(type:bytearray,size:4)aBuffer.
-        #var(type:int)aRead := 4.
-        
-        theStream read &bytearray:aBuffer &out'length:aRead.
-        
-        (aRead < 4)
-            ? [ #throw IOException new. ].
-            
-        aBuffer read &index:0 &out'int:anInt.
-    ]
-
-    #method read &out'long:aLong
-    [
-        #var(type:bytearray,size:8)aBuffer.
-        #var(type:int)aRead := 8.
-        
-        theStream read &bytearray:aBuffer &out'length:aRead.
-        
-        (aRead < 8)
-            ? [ #throw IOException new. ].
-            
-        aBuffer read &index:0 &out'long:aLong.
-    ]
-                                    
-    #method close
-    [
-        theStream close.
-    ]
-}
+//// --- BinaryReader ---
+//
+//#class BinaryReader
+//{
+//    #method read &bytearray:anArray &length:aLength
+//    [
+//        #var(type:int)aRead := aLength.
+//        
+//        theStream read &bytearray:anArray &out'length:aRead.
+//        
+//        (aLength > aRead)
+//            ? [ #throw IOException new. ]
+//    ]
+//
+//    #method read &out'int:anInt
+//    [
+//        #var(type:bytearray,size:4)aBuffer.
+//        #var(type:int)aRead := 4.
+//        
+//        theStream read &bytearray:aBuffer &out'length:aRead.
+//        
+//        (aRead < 4)
+//            ? [ #throw IOException new. ].
+//            
+//        aBuffer read &index:0 &out'int:anInt.
+//    ]
+//
+//    #method read &out'long:aLong
+//    [
+//        #var(type:bytearray,size:8)aBuffer.
+//        #var(type:int)aRead := 8.
+//        
+//        theStream read &bytearray:aBuffer &out'length:aRead.
+//        
+//        (aRead < 8)
+//            ? [ #throw IOException new. ].
+//            
+//        aBuffer read &index:0 &out'long:aLong.
+//    ]
+//                                    
+//    #method close
+//    [
+//        theStream close.
+//    ]
+//}
 
 // --- TextReader ---
 
-#class TextReader
+#class(limited,type:textreader) TextReader
 {
-    #field theOutput.
-    #field theOpen.
+    #field(type:textbuffer) theOutput.
 
-    #method available = theOpen.
+    #constructor new
+    [
+        theOutput := TextBuffer new.
+    ]
 
+    #method read &shortarray:anArray &length:aMaxLength &out'length:anActualLength
+    [
+    ]
+
+    #method source = nil.
+
+    #method close [ ]
+    
     #method readLine
     [
-        #var aLine := emptyLiteralValue.
+        #var(type:literal) aLine := emptyLiteralValue.
         
-        #var(type:int)aLength := 0.
-        #loop
+        #var(type:int)aLength := -1.
+        #loop (aLength == -1) ?
         [
             theOutput indexOf &index:0 &short:10 &out'int:aLength.
             
@@ -77,21 +81,20 @@
                     #var(type:shortarray,size:64)aBuffer.
                     #var(type:int)aBufferLength := 64.
                     
-                    $self read &shortarray:aBuffer &out'length:aBufferLength.
+                    $self read &shortarray:aBuffer &length:aBufferLength &out'length:aBufferLength.
                     (aBufferLength == 0)
-                        ? [ theOpen := false. ]
+                        ? [ aLength := -2. ]  // !! to indicate the eof
                         ! [ theOutput write &shortarray:aBuffer &length:aBufferLength. ].
                 ].
-                
-            theOpen and:(aLength == -1)
         ].
         
-        (aLength == -1)
+        (aLength <= 0) 
             ? [
                 aLine := theOutput literal.                
                 theOutput clear.
                 
-                theOpen := aLine~literalOp isNotEmpty.
+                aLine isEmpty
+                    ? [ ^ nil. ].
             ]
             ! [ 
                 aLine := theOutput Substring &index:0 &length:(aLength - 1).
@@ -101,4 +104,3 @@
         ^ aLine.
     ]
 }
-

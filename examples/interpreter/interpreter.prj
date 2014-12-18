@@ -1,7 +1,7 @@
 ﻿[project]
 debug=interpreter.dm
 executable=interpreter.exe
-arguments=sample3.txt
+arguments=sample1.txt
 vmpath=..\..\bin
 options=-xembed-
 namespace=interpreter
