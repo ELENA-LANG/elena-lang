@@ -25,5 +25,5 @@
         }.
 ].
 
-//#symbol modulus = (:x:y)
-//    [ x - (x / y * y) ].
+#symbol mod = (:x:y)
+    [ x - (x / y * y) ].

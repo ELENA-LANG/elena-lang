@@ -100,6 +100,7 @@ namespace _ELENA_
    #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked for '%s'\n"
 //   #define wrnUnknownMessage        "%s(%d:%d): warning 416: method '%s' is not supported by the object\n"
    #define wrnDuplicateExtension    "%s(%d:%d): warning 417: '%s': duplicate extension\n" 
+   #define wrnBoxingCheck           "%s(%d:%d): warning 417:  the target may be boxed\n" 
 
 } // _ELENA_
 

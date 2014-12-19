@@ -55,6 +55,9 @@
 {
     #constructor new
         <= %new &message:"An index is out of range" &error_type: %OutOfRangeError.
+        
+    #constructor new &message:aMessage
+        <= %new &message:aMessage &error_type: %OutOfRangeError.
 }
 
 // --- InvalidArgumentException ---
@@ -63,6 +66,9 @@
 {
     #constructor new
         <= %new &message:"Invalid argument" &error_type: %InvalidArgumentError.
+        
+    #constructor new &message:aMessage
+        <= %new &message:aMessage &error_type: %InvalidArgumentError.
 }
 
 // --- MethodNotFound ---
@@ -79,6 +85,9 @@
 {
     #constructor new
         <= %new &message:"Operation is not supported" &error_type: %NotSupportedError.
+        
+    #constructor new &message:aMessage
+        <= %new &message:aMessage &error_type: %NotSupportedError.
 }
 
 // --- AbortException ---

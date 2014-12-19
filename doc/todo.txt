@@ -24,6 +24,9 @@ Currently:
               xdev - linux
                        * linux linker
 
+              idev - 
+                       * get rid of vm path option
+
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
 
@@ -32,44 +35,25 @@ Currently:
                        * show real variable
                        * show output argument
 
-              xdev - redesign
-                       * elenavm should be loaded using shared paths, rather than with direct call, modify the code, get rid of vm path option
-
-                       * migrate elenavm
-
-                       * it should be possible to provide the type for symbol / symbol constants
-
-                       * use directly constants declared in another modules
-
-                       * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
-
-                       * open argument syntax : review , simplify, make it more intuitive
-
-                       * dot syntax: 
-
-                         dot can be ommited if the nested expression contains only one expression ; in that case it will be compiled as lazy
-                         expression if it is function (eval[0]), or as return expression if it is part of ?-! operator / nested function;
-
-                         the problem is that if user write control do :[ console writeLine:"" ] - will raise an error
-
-
-                       * warn if ^ operator is used inside nested action - that it is not allowed / will only exit the current nested code??
-
-                       * do ^ operation should be allowed in nested action?
-                       * probably only one nested expression can be allowed without dot
-
-                       * do we need elRole flag?
-
-                       * simplify primitive loop implementing
-                       
-                       * message/subject should be constant which is boxed when it is required ??
-
-                       * $self call for limited class should be optimized as well
-
+              sdev - rosetta
+                       * migrate brackets
+                       * migrate bestshuffle
+                       * migrate bullscows
+                       * migrate associativearrays
+                       * migrate arrays
+                       * migrate arraymode
+                       * migrate arrayconcat
+                       * migrate arithmmean
+                       * migrate smavg
+                       * migrate median
+                       * migrate combinations
+                       * migrate arithmeval
+                       * migrate anagram
+                       * migrate amb
+                       * migrate calendar
                        * fix GroupTest
 
-                       * fix bug : #loop aFormer available ? is not correctly compiled
-
+              xdev - redesign
                        * create installation package
               
               xdev - exception handling
@@ -102,6 +86,9 @@ Currently:
               idev - usability
                        * output window should be selected (if presented) and focus set after successful compile
                        * message window should be selected (if presented) and focus set after unsuccessful compile
+
+              xmaint - structure
+                       * remove unused files (like commands.l, ....)
 
 <=================> 
 
@@ -234,7 +221,11 @@ week1:
                        * cache check operation results
                        * see FileStream.close -> the operation with theHandle leads to boxing the object - could we optimize?
                        * fix the error for DateTime.subtract&datetime
-                       
+                       * simplify primitive loop implementing
+                       * message/subject should be constant which is boxed when it is required ??
+                       * $self call for limited class should be optimized as well
+                       * fix bug : #loop aFormer available ? is not correctly compiled
+                                              
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
                        * out of memory exception should be correctly raised
@@ -257,6 +248,10 @@ week1:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        * compile anagram with mt
+
+              xdev - boxing optimization
+                       * could we simplify stack allocated object check
+                       * review all the code and maximally simplify / reduce boxing operations
 
               xdev - byte code optimization                               
                        * review system test for possible byte code optimization
@@ -767,6 +762,25 @@ week1:
                        * in the following code:
                          int : anIndex = self find &index:anIndex. - anIndex does not have a type
                        
+                       * it should be possible to provide the type for symbol / symbol constants
+
+                       * use directly constants declared in another modules
+
+                       * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
+
+                       * open argument syntax : review , simplify, make it more intuitive
+
+                       * dot syntax: 
+
+                         dot can be ommited if the nested expression contains only one expression ; in that case it will be compiled as lazy
+                         expression if it is function (eval[0]), or as return expression if it is part of ?-! operator / nested function;
+
+                         the problem is that if user write control do :[ console writeLine:"" ] - will raise an error                         
+
+                       * warn if ^ operator is used inside nested action - that it is not allowed / will only exit the current nested code??
+                       
+                       * do ^ operation should be allowed in nested action?
+                       * probably only one nested expression can be allowed without dot
 
 
 1.9.20

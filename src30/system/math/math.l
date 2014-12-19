@@ -13,9 +13,9 @@
         ^ n < 0 ? [ -1 * n ] ! [ n ].
     ]
     
-//    #method mod : anOperand
-//        = self - (self / anOperand * anOperand).
-//                
+    #method mod : anOperand
+        = self - (self / anOperand * anOperand).
+                
 //    #method isOdd
 //        = self~intOp mod:2 != 0.
 //        

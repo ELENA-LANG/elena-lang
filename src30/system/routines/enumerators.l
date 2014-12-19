@@ -189,7 +189,7 @@
             ].
         ].
         
-        ^ aList~literalOp array.
+        ^ aList~enumerable array.
     ]
     
     #method split &literal:aValue
@@ -213,6 +213,25 @@
         ].
         
         ^ aList~enumerable array.
+    ]
+
+    #method startingWith &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)n := aLiteral indexOf &index:0 &literal:s.
+        
+        ^ 0 == n.
+    ]
+
+    #method endingWith &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)l1 := aLiteral length.        
+        #var(type:int)l2 := s length.        
+        
+        #var(type:int)n := aLiteral indexOf &index:(l1 - l2) &literal:s.
+        
+        ^ n != -1.
     ]
 
 ////    #method replace &first_occ &literal:aReplacee &literal:aReplacer
@@ -497,3 +516,266 @@
 ////    
 ////    #method => theEnumerator.
 ////}
+
+// === actions ===
+
+#symbol ifOrdered
+    = (:aFormer:aLater) [ aFormer < aLater ].
+
+//// === extensions ===
+//
+//// --- objectOp ---
+//
+//#class(role,extension)objectOp
+//{
+////    #method back : anObject = anObject.
+//
+//    #method isNil
+//        = nil == self.
+//        
+//    #method isLiteral
+//        = self cast:literalDetector.
+//        
+//    #method isInteger
+//        = self cast:intDetector.
+//        
+//    #method is &numeric
+//        = self cast:numericDetector.
+//}
+
+////#class(role)stringOp
+////{
+////    #method write : aLiteral &length:aCounter
+////    [
+////        #var(type:int)aNumber := aCounter.
+////        
+////        #loop (aNumber > 0) ?
+////        [
+////            self write:aLiteral. 
+////            
+////            aNumber := aNumber - 1.
+////        ].
+////            
+////        ^ self.
+////    ]
+////    
+////    #method write : aLine &paddingLeft:aWidth &with:aChar
+////    [
+////        #var(type:int)aWidthInt := aWidth int.
+////        #var aLiteral := aLine literal.
+////        
+////        #var(type:int)aLength.
+////        aLiteral read &out'length:aLength.
+////        
+////        (aLength < aWidthInt)
+////            ? [ self~stringOp write:aChar &length:(aWidthInt - aLength). ].
+////            
+////        self write::aLiteral.
+////            
+////        ^ self.
+////    ]
+////
+////    #method write : aLine &paddingRight:aWidth &with:aChar
+////    [
+////        #var aLiteral := aLine literal.
+////        #var(type:int)aWidthInt := aWidth int.
+////        
+////        self write::aLiteral.
+////                    
+////        #var(type:int)aLength.
+////        aLiteral read &out'length:aLength.
+////        
+////        (aLength < aWidthInt)
+////            ? [ self~stringOp write:aChar &length:(aWidthInt - aLength). ].
+////            
+////        ^ self.
+////    ]
+////
+////    #method write : aLine &padding:aWidth &with:aChar
+////    [
+////        #var aLiteral := aLine literal.
+////        #var(type:int)aWidthInt := aWidth int.
+////        
+////        #var(type:int)aLength.
+////        aLiteral read &out'length:aLength.        
+////        
+////        (aLength < aWidth)
+////            ? [
+////                #var(type:int)aLen := aWidthInt - aLength.
+////                #var(type:int)aLeftLen := aLen / 2.
+////                
+////                self~stringOp write:aChar &length:aLeftLen.
+////                self write::aLiteral.
+////                self ~stringOp write:aChar &length:(aLen - aLeftLen).
+////            ]
+////            ! [ self write::aLiteral. ].
+////            
+////        ^ self.
+////    ]
+////}
+//
+//// --- enumerable ---
+//
+//#class(extension:enumerable)enumerable
+//{
+////    #method getAt : anIndex
+////    [
+////        #var anEnumerator := self enumerator.
+////        
+////        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
+////        
+////        ^ anEnumerator get.
+////    ]
+////    
+////    #method setAt : anIndex : aValue
+////    [
+////        #var anEnumerator := self enumerator.
+////        
+////        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
+////        
+////        anEnumerator set:aValue.
+////    ]
+////    
+////    #method Last
+////        = self~enumerable getAt:(self length - 1).
+//    
+//    #method array
+//    [
+//        #var aListIndexer := EnumerationIterator new &enumerable:self.
+//        
+//        #var(type:array)anArray := Array new &length::self.
+//
+//        anArray set &each: (&index:anIndex) [ aListIndexer set &index:anIndex get ].
+//        
+//        ^ anArray.
+//    ]
+//}
+//
+////// --- EEnumerator ---
+////
+////#class(role)EEnumerator
+////{
+////    #method run : aFunction
+////        = control while:[ self next ] &do: [ aFunction:self. ].
+////}
+
+// === helpers ===
+
+// --- listControl ---
+
+#class(extension:control) listControl
+{
+////    foreach:aList &do:anAction
+////        = aList~enumerable run:anAction.
+
+    #method find:aValue &in:aList
+        = control run:aList &seeking: x [ aValue equal:x ].
+
+//    seek:aList &until:anAction
+//        = aList~enumerable seek:anAction.
+
+    #method ifExist:aValue &in:aList
+        = nil != (control run:aList &seeking: x [ aValue equal:x ]).
+
+////    getAt:anIndex &in:aList
+////        = aList~EList getAt:anIndex.
+////        
+////    toArray : aList
+////        = aList~EList Array.
+//        
+//    sort : aList &with:aCondition
+//    [
+//        #var aCurrent := EnumerationIterator new &enumerable:aList.
+//        #var aNext := EnumerationIterator new &enumerable:aList.
+//
+//        #loop (aCurrent next)?
+//        [
+//            aNext set &index::aCurrent.
+//            
+//            #loop (aNext next)?
+//            [
+//                aCondition eval:(aCurrent get):(aNext get)
+//                    ! [
+//                        #var aTmp := aCurrent get.
+//                        aCurrent set:(aNext get).
+//                        aNext set:aTmp.
+//                    ].
+//            ].
+//        ].
+//        
+//        ^ aList.
+//    ]    
+//
+//    sort : aList
+//    [
+//        listControl sort:aList &with:ifOrdered.
+//        
+//        ^ aList.
+//    ]
+}
+
+// --- arrayControl ---
+
+#symbol arrayControl =
+{
+    new &length:aLength &every:aFunction
+        = Array new &length:aLength ~arrayOp set &every:aFunction.
+    
+//    toArray : anIndexable
+//        = anIndexable ~indexable array.
+//    
+////    forEach:anArray &do:aFunction
+////    [
+////        anArray~EArray set &function:aFunction.
+////    ]
+//        
+//    exchange:anIndex1 &with:anIndex2 &in:anArray
+//    [
+//        anArray~indexable exchange:anIndex1:anIndex2.
+//    ]
+//    
+//    find:aValue &in:anArray
+//        = anArray~enumerable seek: x [ aValue equal:x ].
+//
+//    seek:anArray &until:aFunction
+//        = anArray~enumerable seek:aFunction.
+//        
+//    ifExist:aValue &in:anArray
+//        = nil != anArray~enumerable seek: x [ aValue equal:x ].
+//        
+//    sort : anArray
+//        = anArray~indexable sort: ifOrdered.
+//        
+//    Subarray : anArray &from:anIndex &length:aLength
+//        = anArray~indexable Subarray &index:(anIndex int) &length:aLength.
+}.
+
+// --- literalControl ---
+
+#symbol literalControl =
+{
+    split:aLiteral &by:aSplitter
+        = aSplitter cast:
+            { 
+                is &numeric = false.
+            
+                eval &literal:aSplitter [ ^ aLiteral~literalOp split &literal:aSplitter. ]
+            
+                eval &char:aSplitter [ ^ aLiteral~literalOp split &char:aSplitter. ] 
+            }.
+
+    starting : anS &with:aSubS
+        = anS ~literalOp startingWith &literal::aSubS.
+        
+    ending : anS &with:aSubS
+        = anS ~literalOp endingWith &literal::aSubS.
+        
+    contain : aSubS &in:anS
+        = -1 != anS literal indexOf &index:0 &literal::aSubS.
+    
+//    trimStart:aChar &in:aString
+//        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
+
+//    toArray : aLiteral
+//        = aLiteral ~indexable array.
+}.

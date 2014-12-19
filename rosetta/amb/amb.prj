@@ -10,5 +10,5 @@ warn:unresolved=0
 amb.l
 
 [forwards]
-'program=amb'program2
+'program=amb'program1
 

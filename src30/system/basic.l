@@ -48,7 +48,7 @@
     #method anyMask : anOperand
         = 0 != $self and:anOperand.
         
-    #method negative = 0 subtract::$self.
+    #method negative = 0 subtract:$self.
 }
 
 // --- IntBaseVariable ---
@@ -1084,47 +1084,47 @@
         = aLiteral.
 }.
 
-//// === Basic Factory symbols ==
-//
-//#class Variable
-//{
-//    #field theValue.
-//    
-//    #constructor new : aValue
-//    [
-//        theValue := aValue.
-//    ]
-//  
-//    #method write : aValue
-//    [
-//        theValue := aValue.
-//    ]
-//        
-//    #method value = theValue.        
-//        
-//    #method append : aValue
-//    [
-//        theValue := theValue + aValue.
-//    ]
-//    
-//    #method reduce : aValue
-//    [
-//        theValue := theValue - aValue.
-//    ]
-//
-//    #method multiplyBy : aValue
-//    [
-//        theValue := theValue * aValue.
-//    ]
-//    
-//    #method divideInto : aValue
-//    [
-//        theValue := theValue / aValue.
-//    ]
-//        
-//    #method => theValue.
-//}
-//
+// === Basic Factory symbols ==
+
+#class Variable
+{
+    #field theValue.
+    
+    #constructor new : aValue
+    [
+        theValue := aValue.
+    ]
+  
+    #method write : aValue
+    [
+        theValue := aValue.
+    ]
+        
+    #method value = theValue.        
+        
+    #method append : aValue
+    [
+        theValue := theValue + aValue.
+    ]
+    
+    #method reduce : aValue
+    [
+        theValue := theValue - aValue.
+    ]
+
+    #method multiplyBy : aValue
+    [
+        theValue := theValue * aValue.
+    ]
+    
+    #method divideInto : aValue
+    [
+        theValue := theValue / aValue.
+    ]
+        
+    #method => theValue.
+}
+
 ////// === Typecaster ==
 ////
 ////#symbol literalDetector

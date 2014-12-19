@@ -25,9 +25,9 @@
 
 #symbol program =
 [
-    control forrange &int:0 &int:3 &do: (&int:i)
+    control runRange &int:0 &int:3 &forEvery: (&index:i)
     [
-        control forrange &int:0 &int:5 &do: (&int:j)
+        control runRange &int:0 &int:5 &forEvery: (&index:j)
         [
             consoleEx writeLine:"A(":i:",":j:")=":(ackermann:i:j).
         ].

@@ -2151,7 +2151,7 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int 
    if (test(mode, HINT_DIRECT_CALL)) {
       return false;
    }
-   else if ((object.kind == okLocal || object.kind == okParam) && object.extraparam != 0) {
+   else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam != 0) {
       return scope.moduleScope->defineTypeSize(object.extraparam) != 0;
    }
    else return object.kind == okParams || object.kind == okIndexAccumulator || object.kind == okLocalAddress || object.kind == okFieldAddress;
@@ -2176,7 +2176,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object)
       _writer.boxObject(*scope.tape, 4, wrapperRef | mskVMTRef, true);
    }
    else if (object.kind == okLocalAddress || object.kind == okFieldAddress || 
-      ((object.kind == okLocal || object.kind == okParam) && object.extraparam != 0)) 
+      ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam != 0)) 
    {
       ref_t classReference = 0;
       int size = scope.moduleScope->defineTypeSize(object.extraparam, classReference);
@@ -2656,6 +2656,8 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
       _writer.loadObject(*scope.tape, object);
 
       if (checkIfBoxingRequired(scope, object, mode)) {
+         //scope.raiseWarning(wrnBoxingCheck, node.Terminal());
+
          // if the object is stack allocated - box it
          boxObject(scope, object);
       }         
@@ -2681,6 +2683,8 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
       _writer.loadObject(*scope.tape, object);
 
       if (checkIfBoxingRequired(scope, object, mode)) {
+         //scope.raiseWarning(wrnBoxingCheck, node.Terminal());
+
          // if the object is stack allocated - box it
          boxObject(scope, object);
       }         
@@ -4510,7 +4514,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
             codeScope.moduleScope->getClassType(scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(SIGNATURE_FORWARD))));
       }
 
-      declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
+      //declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
 
       DNode body = node.select(nsSubCode);
       // if method body is a return expression

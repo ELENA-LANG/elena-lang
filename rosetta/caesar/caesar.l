@@ -12,47 +12,51 @@
 
 // --- Encrypt / Decript ---
 
-#class Encrypting
+#class Encrypting : Enumerator
 {
-    #field theKey.
-    #field theExtendee.
+    #field(type:int) theKey.
+    #field(type:enumerator) theEnumerator.
     
-    #constructor new : aKey &extending:anObject
+    #constructor new &key:aKey &text:aText
     [
-        theKey := aKey.
-        theExtendee := anObject.
+        theKey := aKey int.
+        theEnumerator := aText literal enumerator.
     ]
     
-    #method eval : aChar
+    #method next = theEnumerator next.
+    
+    #method reset [ theEnumerator reset. ]
+    
+    #method get
     [
-        #var anIndex := Letters indexOf &index:0 &char:aChar.
+        #var(type:char) aChar := theEnumerator get char.
+        
+        #var(type:int) anIndex := Letters indexOf &index:0 &char:aChar.
         
         (-1 < anIndex)
             ? [
-                theExtendee eval:(Letters @ ((theKey+anIndex) int mod:26))
+                ^ Letters @ ((theKey+anIndex) int mod:26).
             ]
             ! [
                 anIndex := BigLetters indexOf &index:0 &char:aChar.
                 (-1 < anIndex)
                     ? [
-                        theExtendee eval:(BigLetters @ ((theKey+anIndex) int mod:26))
+                        ^ BigLetters @ ((theKey+anIndex) int mod:26).
                     ]
                     ! [
-                        theExtendee eval:aChar.
+                        ^ aChar.
                     ].
             ].
     ]
-    
-    #method => theExtendee.
 }
 
 // --- Functions ---
 
 #symbol encrypt = (:aText:aKey)
-    [ Encrypting new:aKey &extending:(Summing new:(String new)) foreach:aText literal ].
+    [ Summing new:(String new) run &enumerator:(Encrypting new &key:aKey &text:aText). ].
 
 #symbol decrypt = (:aText:aKey)
-    [ Encrypting new:(26 - aKey) &extending:(Summing new:(String new)) foreach:aText literal ].
+    [ Summing new:(String new) run &enumerator:(Encrypting new &key:(26 - aKey) &text:aText). ].
 
 // --- Program ---
 
