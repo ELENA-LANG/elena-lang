@@ -4,17 +4,9 @@
 {
     #constructor new []
 
-    #method equal : anObject <object_equal>.
+    #method equal : anObject => system'internal'object_equal.
         
-    #method => <dispatch>.
-}
-
-// --- common methods ---
-
-#class(extension)objectOp
-{
-    #method equal &reference:anObject
-        <object_equal>.
+    #method => system'internal'dispatch.
 }
 
 // --- nil constant ---

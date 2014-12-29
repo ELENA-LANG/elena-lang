@@ -27,6 +27,7 @@ class ExecutableImage : public Image, public _ImageLoader
    ConstantIdentifier _real;
    ConstantIdentifier _message;
    ConstantIdentifier _signature;
+   ConstantIdentifier _verb;
 
 public:
    virtual ref_t getEntryPoint()
@@ -60,6 +61,7 @@ public:
    virtual const wchar16_t* getLongClass();
    virtual const wchar16_t* getMessageClass();
    virtual const wchar16_t* getSignatureClass();
+   virtual const wchar16_t* getVerbClass();
    virtual const wchar16_t* getNamespace();
 
    virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask);

@@ -5,7 +5,7 @@
 
 // --- TimeSpan --
 
-#class(sealed,struct:embeddable,type:timespan) TimeSpan : BaseNumber
+#class(sealed,struct:embeddable) TimeSpan :: BaseNumber
 {
     #field(type:long)theValue.
 
@@ -76,26 +76,16 @@
         
         ^ aSystemTime milliseconds.
     ]
-    
-    #method value = $self.
+
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timepspan:$self.
 }
 
 // --- Date ---
 
-#class(sealed,struct:embeddable,type:datetime) Date : BaseNumber
+#class(sealed,struct:embeddable) Date :: BaseNumber
 {
     #field(type:long)theValue.
     
-//    #constructor new &Now
-//    [
-//        dateTimeControl read &CurrentLocalTime &out'long:theValue.
-//    ]
-//    
-//    #constructor new &UTCNow
-//    [
-//        dateTimeControl read &CurrentUTCTime &out'long:theValue.
-//    ]
-  
     #constructor new &long:aValue
     [
         theValue := aValue.
@@ -112,7 +102,7 @@
         aSystemTime set &second:(aSecond int).
         aSystemTime set &millisecond:0.
         
-        aSystemTime read &out'long:theValue.
+        theValue := aSystemTime long.
     ]
     
     #constructor new &year:aYear &month:aMonth &day:aDay
@@ -209,50 +199,118 @@
         ^ aSystemTime millisecond.
     ]
 
-//    #method add &year:aYear
-//        = $self add &long::(timeSpanControl new &Years:aYear &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
-//
-//    #method add &month:aMonth
-//        = $self add &long::(timeSpanControl new &Years:0 &Months:aMonth &Days:0 &Hours:0 &Minutes:0 &Seconds:0).
-//
-//    #method add &day:aDay
-//        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:aDay &Hours:0 &Minutes:0 &Seconds:0).
-//
-//    #method add &hour:anHour
-//        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:anHour &Minutes:0 &Seconds:0).
-//
-//    #method add &minute:aMinute
-//        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:0 &Minutes:aMinute &Seconds:0).
-//
-//    #method add &second:aSecond
-//        = $self add &long::(timeSpanControl new &Years:0 &Months:0 &Days:0 &Hours:0 &Minutes:0 &Seconds:aSecond).
+    #method add &year:aYears
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime set &years:aYears.
+        aSystemTime set &months:0.
+        aSystemTime set &days:0.
+        aSystemTime set &hours:0.
+        aSystemTime set &minutes:0.
+        aSystemTime set &seconds:0.
+        
+        #var(type:long)aValue := aSystemTime long.
+        
+        ^ $self add &long:aValue.
+    ]
+
+    #method add &month:aMonths
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime set &years:0.
+        aSystemTime set &months:aMonths.
+        aSystemTime set &days:0.
+        aSystemTime set &hours:0.
+        aSystemTime set &minutes:0.
+        aSystemTime set &seconds:0.
+        
+        #var(type:long)aValue := aSystemTime long.
+        
+        ^ $self add &long:aValue.
+    ]
+
+    #method add &day:aDays
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime set &years:0.
+        aSystemTime set &months:0.
+        aSystemTime set &days:aDays.
+        aSystemTime set &hours:0.
+        aSystemTime set &minutes:0.
+        aSystemTime set &seconds:0.
+        
+        #var(type:long)aValue := aSystemTime long.
+        
+        ^ $self add &long:aValue.
+    ]
+
+    #method add &hour:anHours
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime set &years:0.
+        aSystemTime set &months:0.
+        aSystemTime set &days:0.
+        aSystemTime set &hours:anHours.
+        aSystemTime set &minutes:0.
+        aSystemTime set &seconds:0.
+        
+        #var(type:long)aValue := aSystemTime long.
+        
+        ^ $self add &long:aValue.
+    ]
+
+    #method add &minute:aMinutes
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime set &years:0.
+        aSystemTime set &months:0.
+        aSystemTime set &days:0.
+        aSystemTime set &hours:0.
+        aSystemTime set &minutes:aMinutes.
+        aSystemTime set &seconds:0.
+        
+        #var(type:long)aValue := aSystemTime long.
+        
+        ^ $self add &long:aValue.
+    ]
+
+    #method add &second:aSeconds
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime set &years:0.
+        aSystemTime set &months:0.
+        aSystemTime set &days:0.
+        aSystemTime set &hours:0.
+        aSystemTime set &minutes:0.
+        aSystemTime set &seconds:aSeconds.
+        
+        #var(type:long)aValue := aSystemTime long.
+        
+        ^ $self add &long:aValue.
+    ]
 
     #method literal
         = dateTimeControl toShortDateTime &long:theValue literal.
         
-//    #method cast : anObject = anObject datetime.
-    
-    #method value = $self.
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
     
     #method datetime = $self.
 }
 
 // --- now ---
 
-#symbol now = control do:
+#symbol now =
 [
-    #var(type:long)aValue.
-    dateTimeControl readCurrentUTCTime &out'long:aValue.
+    #var(type:long)aValue := dateTimeControl read &CurrentUTCTime.
     
-    dateTimeControl convertUTC2Local &long:aValue &out'long:aValue.
+    aValue := dateTimeControl convertUTC2Local &long:aValue.
     
     ^ Date new &long:aValue.
-].
+] eval.
 
-#symbol utcNow = control do:
+#symbol utcNow =
 [
-    #var(type:long)aValue.
-    dateTimeControl readCurrentUTCTime &out'long:aValue.
+    #var(type:long)aValue := dateTimeControl read &CurrentUTCTime.
     
     ^ Date new &long:aValue.
-].
+] eval.

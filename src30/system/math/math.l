@@ -6,7 +6,7 @@
 
 #class(extension:int) intOp
 {
-    #method modulus
+    #method absolute
     [
         #var(type:int)n := self int.
         
@@ -16,156 +16,124 @@
     #method mod : anOperand
         = self - (self / anOperand * anOperand).
                 
-//    #method isOdd
-//        = self~intOp mod:2 != 0.
-//        
-//    #method isEven
-//        = self~intOp mod:2 == 0.
-//        
-//    #method isZero
-//        = self equal &int:0.
-//
-//    #method equal &object:aValue
-//        <intptr_equal>.
-//                        
-////    #method HiWord
-////    [
-////        #var(type:int)aWord. 
-////        byteArrayPrimitiveOp read &bytearray:(self int) &index:2 &out'short:aWord.
-////        
-////        ^ IntNumber new &int:aWord.
-////    ]
-////    
-////    #method LoWord
-////    [
-////        #var(type:int)aWord. 
-////        byteArrayPrimitiveOp read &bytearray:(self int) &index:0 &out'short:aWord.
-////        
-////        ^ IntNumber new &int:aWord.
-////    ]
-////    
-////    #method HiByte
-////    [
-////        #var(type:int)aWord. 
-////        byteArrayPrimitiveOp read &bytearray:(self int) &index:1 &out'short:aWord.
-////        
-////        ^ IntNumber new &int:(aWord ^& 0FFh).
-////    ]
-////        
-////    #method LoByte
-////        = self int and &int:0FFh.
-//
-////    #method power : aPower
-////    [
-////        #var(type:int)aValue := self type'int.
-////        #var(type:int)aRetVal := 1.
-////        #var(type:int)aCounter := aPower type'int.
-////        
-////        control while:[ aCounter > 0 ] &do: [ aRetVal := aRetVal * aValue. aCounter := aCounter - 1. ].
-////        
-////        ^ aRetVal.
-////    ]
+    #method is &odd
+        = self::intOp mod:2 != 0.
+        
+    #method is &even
+        = self::intOp mod:2 == 0.
+        
+    #method is &zero
+        = self equal &int:0.
+
+    #method hiWord
+    [
+        #var(type:int)aWord := self int.
+        aWord := aWord && 0FFFF0000h.
+        aWord := aWord shift &index:16.
+        
+        ^ IntNumber new &int:aWord.
+    ]
+
+    #method loWord
+    [
+        #var(type:int)aWord := self int.
+        aWord := aWord && 0FFFFh.
+        
+        ^ IntNumber new &int:aWord.
+    ]
+    
+    #method hiByte
+    [
+        #var(type:int)aWord := self int.
+        aWord := aWord && 0FF00h.
+        aWord := aWord shift &index:8.
+        
+        ^ IntNumber new &int:aWord.
+    ]
+        
+    #method loByte
+        = self int and &int:0FFh.
 }
 
 // --- realOp ---
-#class(extension:real) realOp
+
+#symbol realOpController =
 {
-//    #method Exp &out'real:aRetVal
-//        <r_exp>.
-//        
-//    #method Ln &out'real:aRetVal
-//        <r_ln>.
+    modulus &real:aReal &out'real:aRetVal
+        => system'internal'r_abs.
         
+    exp &real:aReal &out'real:aRetVal
+        => system'internal'r_exp.
+        
+    ln &real:aReal &out'real:aRetVal
+        => system'internal'r_ln.
+        
+    round &real:aReal &out'real:aRetVal
+        => system'internal'r_round.
+        
+    truncate &real:aReal &out'real:aRetVal
+        => system'internal'r_truncate.
+}.
+
+#class(extension:real) realOp
+{        
     #method modulus
     [
-        #var(type:real)n := self real.
-        
-        #var(type:real)aRetVal.        
-        n modulus &out'real:aRetVal.
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController modulus &real:n.
         
         ^ RealNumber new &real:aRetVal.
     ]        
         
-//    #method Round &out'real:aRetVal
-//        <r_round>.
-//        
-//    #method Truncate &out'real:aRetVal
-//        <r_truncate>.
-}
+    #method exp
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController exp &real:n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+    
+    #method ln
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController ln &real:n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
 
-//// --- mathOp ---
-//
-//#class(role) mathOp
-//{
-//    #method Exp
-//    [
-//        #var(type:real)aRetVal.
-//        
-//        realConvertor convert::self ~realOp Exp &out'real:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//    
-//    #method Ln
-//    [
-//        #var(type:real)aRetVal.
-//        
-//        realConvertor convert::self ~realOp Ln &out'real:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method Rounded
-//    [
-//        #var(type:real)aRetVal.
-//        
-//        realConvertor convert::self ~realOp Round &out'real:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method Int
-//    [
-//        #var(type:real)aRetVal.
-//        
-//        realConvertor convert::self ~realOp Truncate &out'real:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method Frac
-//    [
-//        #var aValue := realConvertor convert::self real.
-//        #var(type:real)aRetVal.
-//        
-//         aValue~realOp Truncate &out'real:aRetVal.
-//        
-//        ^ RealNumber new &real::(aValue subtract &real:aRetVal).
-//    ]
-//    
-//    #method Abs =
-//    { 
-//        real : n 
-//        [
-//        ]
-//        
-//        int : n
-//            = n < 0 ? [ -1 * n ] ! [ n ].
-//        
-//        long : n
-//            = n < 0l ? [ -1l * n ] ! [ n ].
-//    } 
-//    eval::(self value).
-//
-//    #method isZero
-//        = self == 0.
-//        
-//    #method isPositive
-//        = self > 0.
-//        
-//    #method isNegative
-//        = self < 0.
-//        
-//    #method isNonnegative
-//        = self <= 0.
-//}
+    #method rounded
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController round &real:n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method integer
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController truncate &real:n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method frac
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController modulus &real:n.
+        
+        ^ RealNumber new &real:(n subtract &real:aRetVal).
+    ]
+    
+    #method isZero
+        = self == 0.
+        
+    #method isPositive
+        = self > 0.
+        
+    #method isNegative
+        = self < 0.
+        
+    #method isNonnegative
+        = self <= 0.
+}

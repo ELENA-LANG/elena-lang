@@ -319,6 +319,21 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
+
 void ByteCodeWriter :: declarePrimitiveCatch(CommandTape& tape)
 {
    int labEnd = tape.newLabel();
@@ -446,6 +461,8 @@ inline ref_t defineConstantMask(ObjectKind type)
          return mskMessage;
       case okSignatureConstant:
          return mskSignature;
+      case okVerbConstant:
+         return mskVerb;
 //      case okSymbolReference:
 //         return mskSymbolLoaderRef;
       default:
@@ -472,6 +489,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
+      case okVerbConstant:
 //      case okSymbolReference:
          // pushr reference
          tape.write(bcPushR, object.param | defineConstantMask(object.kind));
@@ -584,6 +602,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
+      case okVerbConstant:
 //      case okSymbolReference:
          // acccopyr r
          tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
@@ -884,20 +903,6 @@ void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)
    tape.write(bcCopyM, message);
 }
 
-void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message, ObjectInfo operand)
-{
-   loadBase(tape, operand);
-
-   // copym message
-   // type
-   // or
-   // ecopyd
-   tape.write(bcCopyM, message);
-   tape.write(bcType);
-   tape.write(bcOr);
-   tape.write(bcECopyD);
-}
-
 void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
 {
    // setsubj subj
@@ -948,24 +953,14 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 
 void ByteCodeWriter :: typecast(CommandTape& tape)
 {
-   tape.newLabel();
-
-   //  bcopya
-   //  type
-   //  if       labExit
    //  setverb  GET_MESSAGE_ID
    //  pusha
    //  acallvi  0
-   //labExit:
 
-   tape.write(bcBCopyA);
-   tape.write(bcType);
-   tape.write(bcIf, baCurrentLabel);
    tape.write(bcSetVerb, encodeVerb(GET_MESSAGE_ID));
    tape.write(bcPushA);
    tape.write(bcACallVI, 0);
    tape.write(bcFreeStack, 1);
-   tape.setLabel();
 }
 
 void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
@@ -998,6 +993,7 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatch
       case okRealConstant:
       case okMessageConstant:
       case okSignatureConstant:
+      case okVerbConstant:
 //      case okSymbolReference:
          // acccopyr r
          tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
@@ -1085,6 +1081,15 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    // labEnd
 
    tape.setLabel();
+}
+
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+   // pop
+
+   tape.setLabel();
+   tape.write(bcPop);
 }
 
 void ByteCodeWriter :: endPrimitiveCatch(CommandTape& tape)

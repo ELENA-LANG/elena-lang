@@ -33,6 +33,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
    _real.copy(project->resolveForward(REAL_FORWARD));
    _message.copy(project->resolveForward(MESSAGE_FORWARD));
    _signature.copy(project->resolveForward(SIGNATURE_FORWARD));
+   _verb.copy(project->resolveForward(VERB_FORWARD));
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
@@ -194,6 +195,11 @@ const wchar16_t* ExecutableImage :: getMessageClass()
 const wchar16_t* ExecutableImage :: getSignatureClass()
 {
    return _signature;
+}
+
+const wchar16_t* ExecutableImage :: getVerbClass()
+{
+   return _verb;
 }
 
 const wchar16_t* ExecutableImage :: getNamespace()

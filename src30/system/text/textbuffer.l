@@ -7,14 +7,14 @@
 
 // --- TextBuffer ---
 
-#class(sealed,type:textbuffer) TextBuffer
+#class(sealed) TextBuffer
 {
     #field(type:shortarray) theBuffer.
     #field(type:intvar) theLength.
 
     #constructor new
     [
-        theBuffer := ShortArray new &length:$TextPageSize.
+        theBuffer := ShortArray new &length:($TextPageSize int).
         theLength := Integer new &int:0.
     ]
 
@@ -25,7 +25,7 @@
 
     #method read &out'length:aLength
     [
-        theLength read &out'int:aLength.
+        aLength := theLength int.
     ]
 
     #method length
@@ -38,14 +38,9 @@
 
     #method write : aLine
     [
-        $self write &literal::aLine.
+        $self write &literal:aLine.
     ]
                                     
-//    #method write &char:aChar
-//    [
-//        $self write &literal::aChar.
-//    ]
-    
     #method reserve &length:aLength
     [
         #var(type:int)anOldLength := theLength int.
@@ -61,7 +56,7 @@
             
             #var(type:shortarray) aNewBuffer := ShortArray new &length:aNewLength.
             
-            aNewBuffer write &index:0 &length:aBufferLength &shortarray::theBuffer.
+            aNewBuffer write &index:0 &length:aBufferLength &shortarray:theBuffer.
             
             theBuffer := aNewBuffer.
         ].
@@ -95,8 +90,7 @@
 
     #method write &shortarray:anArray &length:aLength
     [
-        #var(type:int)anOldLength.
-        theLength read &out'int:anOldLength.
+        #var(type:int)anOldLength := theLength int.
         
         (0 == aLength) !
         [
@@ -108,19 +102,11 @@
         ].
     ]
 
-//    #method indexOf &index:aPosition &char:aChar &out'int:aRetVal
-//    [
-//        #var(type:short)aValue.
-//        aChar read &out'short:aValue.
-//        
-//        $self indexOf &index:aPosition &short:aValue &out'int:aRetVal.
-//    ]
-
     #method indexOf &index:aPosition &short:aValue &out'int:aRetVal
     [
         #var(type:int)aLength := theLength int.
         
-        theBuffer indexOf &index:aPosition &length:aLength &short:aValue &out'int:aRetVal.
+        aRetVal := theBuffer indexOf &index:aPosition &length:aLength &short:aValue.
     ]
 
     #method Substring &index:anIndex &length:aLength
@@ -136,19 +122,19 @@
     [
         (anIndex == 0)
             ? [
-                #var aRightLiteral := $self~literalOp Substring &index:aLength.
+                #var aRightLiteral := $self::literalOp Substring &index:aLength.
                 
-                $self clear write &literal::aRightLiteral.
+                $self clear write &literal:aRightLiteral.
             ]
             ! [
                 #var aLeftLiteral := $self Substring &index:0 &length:anIndex.
-                #var aRightLiteral := $self~literalOp Substring &index:(anIndex + aLength).
+                #var aRightLiteral := $self::literalOp Substring &index:(anIndex + aLength).
                 
-                $self clear write &literal::aLeftLiteral write &literal::aRightLiteral.
+                $self clear write &literal:aLeftLiteral write &literal:aRightLiteral.
             ].
     ]
     
-//    #method shortarray = theBuffer shortarray.
+    #method shortarray = theBuffer shortarray.
 
     #method literal
     [

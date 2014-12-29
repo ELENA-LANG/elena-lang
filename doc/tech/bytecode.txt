@@ -281,8 +281,6 @@ ELENA byte codes (or ecodes)
                                                                       
  class handling:
  --------------- 
- type                        - base::VMT::type >> index
-
  flag                        - acc::VMT::flag >> index 
 
  class                       - base::VMT >> acc

@@ -1,20 +1,65 @@
-//#define system.
+#define system.
 //#define system'routines.
 //#define system'dynamic.
-//
-//// --- controlEx ---
-//
-//#symbol controlEx =
-//{
-//    foreach:anEnumerable &top:aMaxValue &do:aFunction
-//        = aFunction~functionOp run &enumerator:(TopEnumerator new:anEnumerable &max:aMaxValue) | stop.
-//
-//    foreach:anEnumerable &top:aMaxValue &where:aCondition &do:aFunction
-//        = aFunction~functionOp run &each:(TopEnumerator new:anEnumerable &max:aMaxValue) &where:aCondition | stop.
-//
-//    foreach:anEnumerable &where:aCondition &do:aFunction
-//        = aFunction~functionOp run &each:(anEnumerable enumerator) &where:aCondition | stop.
-////
-////    dispatch : anObject1 : anObject2 &table:aTable &to:aTarget
-////        = aTarget~(aTable~EDispatchTable eval:anObject) eval:anObject1:anObject2.
-//}.
+
+// --- control ---
+
+#symbol control =
+{
+    try : anAction
+    [
+        anAction eval | if: e [].
+    ]    
+    
+    do:anAction = anAction eval.
+    
+    do:anAction &until:anExpr
+        = anAction run &until:anExpr.
+
+    while:anExpr
+        = $self while:anExpr &do:[].
+
+    while:anExpr &do:anAction
+        = anAction run &if:anExpr.
+
+    run:anEnumerable &forEach:aFunction
+        = aFunction run &enumerator:anEnumerable.
+
+    run:anEnumerable &seeking:aFunction
+        = aFunction retrieve &enumerator:anEnumerable.
+
+    find:aValue &in:aList
+        = control run:aList &seeking: x [ aValue safeEqual:x ].
+
+    ifExist:aValue &in:aList
+        = nil != (control run:aList &seeking: x [ aValue equal:x ]).
+
+    run &int:aStart &int:anEnd &forEvery:aFunction
+        = aStart < anEnd
+            ? [ aFunction run &range &int:aStart &int:anEnd &int:1 ]
+            ! [ aFunction rewind &range &int:aStart &int:anEnd &int:1 ].
+    
+    run &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
+        = aStart < anEnd
+            ? [ aFunction run &range &int:aStart &int:anEnd &int:aStep ]
+            ! [ aFunction rewind &range &int:aStart &int:anEnd &int:aStep ].
+
+    seek &int:aStart &int:anEnd &every:aFunction
+        = aFunction retrieve &range &int:aStart &int:anEnd &int:1.
+
+    seek &int:aStart &int:anEnd &int:aStep &every:aFunction
+        = aFunction retrieve &range &int:aStart &int:anEnd &int:aStep.
+        
+    run:aText &forEachWord:anAction
+        = anAction run &enumerator:(extensions'text'WordEnumerator new &literal:aText).
+        
+    run &path:aPath &forEachLine:anAction
+        = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath).
+
+    getAt :anIndex &args:Params
+    [
+        #var(type:int)aLength := Params length.
+
+        ^ Params@(aLength - anIndex int).
+    ]
+}.

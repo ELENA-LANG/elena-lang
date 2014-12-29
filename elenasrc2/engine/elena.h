@@ -106,6 +106,7 @@ public:
    virtual const wchar16_t* getLongClass() = 0;
    virtual const wchar16_t* getMessageClass() = 0;
    virtual const wchar16_t* getSignatureClass() = 0;
+   virtual const wchar16_t* getVerbClass() = 0;
    virtual const wchar16_t* getNamespace() = 0;
 
    virtual const wchar_t* retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
@@ -416,7 +417,6 @@ struct VMTEntry
 
 struct ClassHeader
 {
-   size_t typeRef;
    size_t count;
    size_t flags;
    ref_t  parentRef;
@@ -652,7 +652,7 @@ inline int getParamCount(ref_t message)
    ref_t signature;
    decodeMessage(message, signature, verb, paramCount);
 
-   if (paramCount == OPEN_ARG_COUNT)
+   if (paramCount >= OPEN_ARG_COUNT)
       return 0;
 
    return paramCount;

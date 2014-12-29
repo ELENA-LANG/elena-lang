@@ -28,8 +28,9 @@ enum ObjectKind
    okConstantSymbol,               // param - reference 
    okConstantClass,                // param - reference, extraparam - class_reference
 
-   okMessageConstant,
+   okVerbConstant,
    okSignatureConstant,
+   okMessageConstant,
 
    okSymbol,                       // param - reference
 //   okSymbolReference,              // param - reference
@@ -44,11 +45,11 @@ enum ObjectKind
    okThisParam,                     // param - parameter offset, extraparam - type reference
    okOutputParam,                   // param - target address, extraparam - type reference 
    okSuper,
-   okLocalAddress,                  // param - local offset, extraparam - type reference  
+   okLocalAddress,                  // param - local offset, extraparam - class reference
    okParams,                        // param - local offset
    okBlockLocal,                    // param - local offset, extraparam - type reference    
    okCurrent,                       // param - stack offset
-   okAccumulator,                   // extraparam - type reference
+   okAccumulator,                   // param - type class reference, extraparam - type reference
    okAccField,                      // param - field offset
 //   okBlockLocalAddress,
 ////   okBlockOuterField,   
@@ -173,6 +174,7 @@ public:
    void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
+   void declareAlt(CommandTape& tape);
    void declarePrimitiveCatch(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, const wchar16_t* localName, int level);
@@ -214,7 +216,6 @@ public:
    void releaseArgList(CommandTape& tape);
 
    void setMessage(CommandTape& tape, ref_t message);
-   void setMessage(CommandTape& tape, ref_t message, ObjectInfo operand);
    void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
@@ -246,6 +247,7 @@ public:
 
 //   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
+   void endAlt(CommandTape& tape);
    void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
    void endLoop(CommandTape& tape);

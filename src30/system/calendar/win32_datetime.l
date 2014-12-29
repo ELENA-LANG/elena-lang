@@ -6,8 +6,9 @@
 // --- SystemTime ---
 
 #type(class:system'calendar'Win32SystemTime)systemtime.
-#type(type:int) int_time_attributes.
-#type(type:int) int_date_attributes.
+
+#type(class:system'IntNumber) int_time_attributes.
+#type(class:system'IntNumber) int_date_attributes.
 
 #class(type:systemtime,struct:embeddable,sealed) Win32SystemTime
 {
@@ -110,6 +111,36 @@
         theMillisecond := aValue int short.
     ]
 
+    #method set &years:aValue
+    [
+        theYear := (aValue int + 1601) short.
+    ]
+
+    #method set &months:aValue
+    [
+        theMonth := (aValue int + 1) short.
+    ]
+
+    #method set &days:aValue
+    [
+        theDay := (aValue int + 1) short.
+    ]
+
+    #method set &hours:aValue 
+    [ 
+        theHour := aValue int short.
+    ]
+
+    #method set &minutes:aValue 
+    [ 
+        theMinute := aValue int short.
+    ]
+
+    #method set &seconds:aValue 
+    [ 
+        theSecond := aValue int short.
+    ]
+
     #method read &out'long:aRetVal
     [
         system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &out'long:aRetVal.
@@ -159,7 +190,7 @@
 
 #symbol dateTimeControl =
 {
-    readCurrentUTCTime &out'long:aRetVal
+    read &CurrentUTCTime &out'long:aRetVal
     [
         system'external'KERNEL32 GetSystemTimeAsFileTime &out'long:aRetVal.
     ]
@@ -175,7 +206,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
+        #var aDate := aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int).
         #var aTime := aSystemTime get &literal &int_time_attributes:0.
 
         ^ aDate + " " + aTime.
@@ -187,7 +218,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
+        #var aDate := aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int).
 
         ^ aDate.
     ]
@@ -203,28 +234,3 @@
         ^ aTime.
     ]
 }.
-
-// --- dateTimeConvertor ---
-
-//#symbol timeSpanControl =
-//{
-//    new &Years:aYear &Months:aMonth &Days:aDay &Hours:anHour &Minutes:aMinute &Seconds:aSecond
-//    [
-//        #var(type:__win_systemtime)aSystemTime.
-//        
-//        // HOTFIX: temporally, due to current implementation
-//        #var(type:int)aYearWord := 1601 + aYear int.
-//        #var(type:int)aMonthWord := 1 + aMonth int.
-//        #var(type:int)aDayWord := 1 + aDay int.
-//        
-//        aSystemTime set &Year:aYearWord.
-//        aSystemTime set &Month:aMonthWord.
-//        aSystemTime set &Day:aDayWord.
-//        aSystemTime set &Hour:anHour.
-//        aSystemTime set &Minute:aMinute.
-//        aSystemTime set &Second:aMinute.
-//        aSystemTime set &Millisecond:0.
-//
-//        ^ aSystemTime long.
-//    ]
-//}.

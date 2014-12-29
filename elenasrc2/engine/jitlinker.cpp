@@ -339,19 +339,19 @@ void* JITLinker :: resolveNativeSection(const wchar16_t*  reference, int mask, S
    return vaddress;
 }
 
-//////void* JITLinker :: resolveNativeVariable(const wchar16_t*  reference)
-//////{
-//////   // get target image & resolve virtual address
-//////   _Memory* image = _loader->getTargetSection(mskDataRef);
-//////   MemoryWriter writer(image);
-//////
-//////   _compiler->allocateVariable(writer);
-//////
-//////   void* vaddress = calculateVAddress(&writer, mskDataRef);
-//////   _loader->mapReference(reference, vaddress, mskDataRef);
-//////
-//////   return vaddress;
-//////}
+//void* JITLinker :: resolveNativeVariable(const wchar16_t*  reference)
+//{
+//   // get target image & resolve virtual address
+//   _Memory* image = _loader->getTargetSection(mskDataRef);
+//   MemoryWriter writer(image);
+//
+//   _compiler->allocateVariable(writer);
+//
+//   void* vaddress = calculateVAddress(&writer, mskDataRef);
+//   _loader->mapReference(reference, vaddress, mskDataRef);
+//
+//   return vaddress;
+//}
 
 void* JITLinker :: resolveBytecodeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo)
 {
@@ -422,7 +422,7 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count, refHelper.resolveMessage(encodeMessage(header.typeRef, 0, 0)));
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -852,12 +852,15 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
          case mskSignature:
             vaddress = resolveMessage(reference, _loader->getSignatureClass());
             break;
+         case mskVerb:
+            vaddress = resolveMessage(reference, _loader->getVerbClass());
+            break;
 //         //case mskSymbolLoaderRef:
 //         //   vaddress = resolveLoader(reference);
 //         //   break;
-////         case mskNativeVariable:
-////            vaddress = resolveNativeVariable(reference);
-////            break;
+//         case mskNativeVariable:
+//            vaddress = resolveNativeVariable(reference);
+//            break;
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)

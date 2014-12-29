@@ -89,7 +89,7 @@ namespace _ELENA_
    #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown hint '%s'\n"
 //   #define wrnUnknownHintValue      "%s(%d:%d): warning 405: Unknown class hint value '%s'\n"
    #define wrnInvalidHint           "%s(%d:%d): warning 406: Hint '%s' cannot be applied here\n"
-   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' doesn not belong to the protocol\n"
+   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' does not belong to the object\n"
 //   #define wrnObsoleteMessage       "%s(%d:%d): warning 408: Message '%s' is obsolete"
 //   #define wrnObsoleteConstruction  "%s(%d:%d): warning 409: Construction near '%s' is obsolete"
 //   #define wrnProhibitedSubjectName "%s(%d:%d): warning 410: Subject name '%s' coincides with a message verb"

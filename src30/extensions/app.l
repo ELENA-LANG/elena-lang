@@ -4,7 +4,7 @@
 
 // --- Arguments ---
 
-#static arguments = extensions'text'WordEnumerator new &literal::CommandLine ~ enumerable array.
+#static arguments = extensions'text'WordEnumerator new &literal:CommandLine :: enumerableOp array.
 
 // --- ProgramLoop ---
 

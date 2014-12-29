@@ -1,7 +1,7 @@
 #define system.
 #define system'text.
 
-#class WordEnumerator : Enumerator
+#class WordEnumerator :: Enumerator
 {
     #field(type:literal)    theLiteral.
     #field(type:intvar)     theIndex.
@@ -50,7 +50,7 @@
         
         #loop (aCurrent < aLength) ?
         [
-            theLiteral read &index:aCurrent &out'short:aChar.
+            aChar := theLiteral read &index:aCurrent.
             (aChar == 32)
                 ? [
                     aSpaceMode ! [ theIndex write &int:aCurrent. ^ true. ].                    

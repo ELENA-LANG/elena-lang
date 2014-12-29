@@ -14,6 +14,6 @@
     aMap set &key:"key4" &value:"foo4".
 
     // Enumerate
-    control foreach:aMap &do: aKeyValue
+    control run:aMap &forEach: aKeyValue
         [ console write:(aKeyValue key) write:" : " writeLine:(aKeyValue value) ].
 ].

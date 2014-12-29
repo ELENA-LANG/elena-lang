@@ -19,7 +19,7 @@
     ]
 
     #constructor new : anObject
-        <= %new &literal::anObject.
+        <= %new &literal:anObject.
 
     #constructor new &literal:aText
         <= ( %new )
@@ -66,18 +66,10 @@
         
     ]
     
-    #method append : anObject
-    [
-        $self append::(anObject value).
-    ]
-    
     #method append &literal:aValue 
     [
         theLiteral := (theLiteral + aValue) literal.
     ]
-    
-    #method insert : anObject
-        <= %insert &literal::anObject.
     
     #method insert &literal:aValue
     [
@@ -98,7 +90,7 @@
         theStart := 0.
     ]
 
-    #method Marked
+    #method marked
         = (-1 == theIndex)
             ? [ theLiteral Substring &index:theStart ]
             ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].

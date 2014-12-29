@@ -23,7 +23,7 @@ namespace _ELENA_
    #define SIGN_MASK               0x00FFFFF0
    #define PARAM_MASK              0x0000000F
    #define MESSAGE_MASK            0x80000000
-   #define OPEN_ARG_COUNT          0x0F
+   #define OPEN_ARG_COUNT          0x0C
 
    #define DISPATCH_MESSAGE_ID     0x0001
    #define NEWOBJECT_MESSAGE_ID    0x0003
@@ -171,6 +171,7 @@ namespace _ELENA_
 //      mskLinkerConstant      = 0x07000000,   // linker constant
       mskSymbolLoaderRef     = 0x08000000,   // reference to symbol loader
       mskSignature           = 0x09000000,   // message signature constant
+      mskVerb                = 0x0A000000,   // message signature constant
       mskPreloaded           = 0x0C000000,   // prelooded mask, should be used in combination with image mask
    };
 
@@ -438,7 +439,6 @@ namespace _ELENA_
    #define HINT_GROUP              "group"
    #define HINT_WRAPPER            "class"
    #define HINT_GENERIC            "generic"
-   #define HINT_UNFORCED           "unforced"
    #define HINT_EMBEDDABLE         "embeddable"
 
   // --- ELENA Standard module references ---
@@ -447,6 +447,7 @@ namespace _ELENA_
    #define STANDARD_MODULE_LEN      6
    #define STANDARD_MODULE          "system"        // the standard module name
    #define EXTERNAL_MODULE          "system'external"
+   #define INTERNAL_MODULE          "system'internal"
    #define NATIVE_MODULE            "$native"
 
   // VM temporal code
@@ -470,9 +471,12 @@ namespace _ELENA_
    #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
    #define SIGNATURE_FORWARD        "'$signature"       
+   #define VERB_FORWARD             "'$verb"       
    #define GETPROPERTY_FORWARD      "'$getProperty"     
    #define ARRAY_FORWARD            "'$array" 
    #define PARAMS_FORWARD           "'$params" 
+   #define BOOL_FORWARD             "'$bool" 
+   #define SUBJ_FORWARD             "'$sign" 
 
 //   //#define NOMETHOD_EXCEPTION_CLASS "system'MethodNotFoundException"          
 //   //#define TAPE_CLASS               "system'dynamic'Tape"            // the tape

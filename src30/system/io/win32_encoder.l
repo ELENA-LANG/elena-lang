@@ -5,11 +5,11 @@
 #symbol(type:encoder) ansiLiteralEncoder = system'io'Encoder
 {
     convert &bytearray:aByteArray &length:aLength &shortarray:anOutput &out'length:anOutputLength
-        <ws_copybuf>.
+        => system'internal'ws_copybuf.
         
     convert  &shortarray:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
-        <ws_copy2buf>.
+        => system'internal'ws_copy2buf.
         
     convert  &literal:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
-        <ws_copy2buf>.
+        => system'internal'ws_copy2buf.
 }.

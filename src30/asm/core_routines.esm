@@ -1495,9 +1495,10 @@ end
 
 procedure handle_message
 
+  setverb 0
   nload
-  else labEnd
-  setverb EVAL_MESSAGE_ID
+  or
+  ecopyd
   aloadsi 1
   ajumpvi 0
 labEnd:
@@ -1745,7 +1746,7 @@ labNotFound:
   address labReturn
   else labContinueError
 
-  popi 2
+  popi 3
   bloadfi 1
   jump labNext
 
@@ -1870,4 +1871,188 @@ procedure r_abs
 
   quitn 2
 
+end
+
+procedure symbol_redirect
+
+  pushe
+  nload
+  ecopyd
+  ecall
+  pope
+  ajumpvi 0
+
+end
+
+procedure symbol_new
+
+  pusha
+  pusha
+  aloadsi 4   // ; read aName parameter
+  pusha
+  callr api : coreapi'load_symbol
+  ifr labError 0
+  popa
+  quitn 2
+
+labError:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure r_exp
+
+  aloadsi 1  
+  bloadsi 2
+  rexp
+
+  quitn 2
+
+end
+
+procedure r_ln
+
+  aloadsi 1  
+  bloadsi 2
+  rln
+
+  quitn 2
+
+end
+
+procedure r_round
+
+  aloadsi 1  
+  bloadsi 2
+  rround
+  
+  quitn 2
+
+end
+
+procedure r_truncate
+
+  aloadsi 1  
+  bloadsi 2
+  rint
+  
+  quitn 2
+
+end
+
+procedure load_classname
+
+  aloadsi 4
+  pusha
+  aloadsi 4
+  pusha
+  aloadsi 4
+  pusha
+  callr api : coreapi'load_classname
+  ifr labErr 0
+  quitn 4
+ 
+labErr:
+  callr system'InvalidArgumentException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+
+end
+
+procedure arrptr_getLen
+
+  ecopy 0
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labSkip 0
+  bcopya
+  count
+labSkip:
+  dcopye
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure arrptr_get
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
+  count
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  get
+  quitn 2
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
+end
+
+procedure class_getClass
+
+  bcopya
+  class
+  quitn 1
+
+end
+
+procedure class_indexOfMsg
+
+  bcopya
+  aloadsi 3 // ; get message
+  nload // ; load message id
+  acopyb
+  mindex
+  ifn labFalse 0FFFFFFFFh
+  acopyr const : system'true
+  quitn 2
+
+labFalse:
+  acopyr const : system'false
+  quitn 2
+
+end
+
+procedure arrptr_set
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
+  count
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  aloadsi 3
+  set
+  bcopya
+  quitn 3
+
+labErr:
+  callr system'OutOfRangeException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
 end

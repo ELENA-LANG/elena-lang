@@ -76,7 +76,7 @@
             found := (aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
         ].
 
-        aDump read &index:14 &out'short:aChar.
+        aChar := aDump read &index:14.
     ]
 
     #method read &out'int:aKey
@@ -96,7 +96,7 @@
             found := (aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
         ].
                     
-        aDump read &index:8 &out'int:aKey.
+        aKey := aDump read &index:8.
     ]
 
     #method read &shortarray:aBuffer &length:aLength &out'length:aRetVal
@@ -119,7 +119,7 @@
         #loop continue ?
         [
             aLength := 127.
-            $self read &shortarray:aBuffer &length:aLength &out'length:aLength.
+            aLength := $self read &shortarray:aBuffer &length:aLength.
             
             aBuffer equal &index:(aLength - 1) &short:0Ah
                 ? [
@@ -138,16 +138,14 @@
 
     #method int
     [
-        #var(type:int)aRetVal.
-        $self read &out'int:aRetVal.
+        #var(type:int)aRetVal := $self int.
         
         ^ IntNumber new &int:aRetVal.
     ]
             
     #method short
     [
-        #var(type:short)aRetVal.
-        $self read &out'short:aRetVal.
+        #var(type:short)aRetVal := $self short.
         
         ^ ShortNumber new &short:aRetVal.
     ]
@@ -160,6 +158,6 @@
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new &handle::($ConsoleHandleFactory new &int_attributes:0FFFFFFF5h).
+#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandleFactory new &int_attributes:0FFFFFFF5h).
 
-#symbol stdConsoleReader = $ConsoleReader new &handle::($ConsoleHandleFactory new &int_attributes:0FFFFFFF6h).
+#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &int_attributes:0FFFFFFF6h).

@@ -41,12 +41,12 @@
     [
         #var(type:int) aLastIndex := anArray length - 1.
         
-        control runRange &int:(anArray length / 2) &int:0 &forEvery: (&index:anIndex)
+        control run &int:(anArray length / 2) &int:0 &forEvery: (&index:anIndex)
         [
             sorting sortRange &array::anArray &int:anIndex &int:aLastIndex
         ].
         
-        control runRange &int:aLastIndex &int:0 &forEvery: (&index:anIndex)
+        control run &int:aLastIndex &int:0 &forEvery: (&index:anIndex)
         [
             anArray~indexable exchange &index:anIndex &index:0.
 

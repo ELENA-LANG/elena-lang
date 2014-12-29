@@ -13,11 +13,14 @@
     ^ (0 == aLength)
         ? [ emptyLiteralValue ]
         ! [
-            #var aBrackets := arrayControl new &length:(aLength int) &each: i[ CharValue new &short:91 ] + arrayControl new &length:(aLength int) &each: i[ CharValue new &short:93 ].
+            #var aBrackets := 
+                arrayControl new &length:(aLength int) &every: (&index:i) [ CharValue new &short:91 ] 
+                + 
+                arrayControl new &length:(aLength int) &every: (&index:i)[ CharValue new &short:93 ].
     
-            randomControl randomize:(aLength * 2) &array:aBrackets.
+            aBrackets~randomOp randomize:(aLength * 2).
     
-            ^ Summing new:(String new) foreach:aBrackets literal.        
+            ^ Summing new:(String new) run &enumerator::aBrackets literal.        
         ].
 ].
 
@@ -25,7 +28,7 @@
 [
     #var aCounter := Integer new:0.
 
-    control foreach:aLiteral &until: aChar [ aCounter append:(aChar => "[" ? [ 1 ] "]" ? [ -1 ]) < 0 ].
+    control run:aLiteral &seeking: aChar [ aCounter append:(aChar => "[" ? [ 1 ] "]" ? [ -1 ]) < 0 ].
 
     ^ (0 == aCounter).
 ].
@@ -34,7 +37,7 @@
 
 #symbol program =                                             
 [
-    control forrange &int:0 &int:9 &do: (&int:aLength)
+    control run &int:0 &int:9 &forEvery: (&index:aLength)
     [
         #var anStr := randomBrackets:aLength.
         #var balanced := isBalanced:anStr.

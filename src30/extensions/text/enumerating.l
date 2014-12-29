@@ -7,7 +7,7 @@
 
 // --- ReaderEnumerator ---
 
-#class ReaderEnumerator : Enumerator
+#class ReaderEnumerator :: Enumerator
 {
     #field(type:textreader) theReader.
     #field theLine.
@@ -30,7 +30,7 @@
     
     #method reset 
     [
-        theReader := StreamReader new &stream::(theReader source clone).
+        theReader := StreamReader new &stream:(theReader source clone).
     ]
     
     #method next
@@ -41,23 +41,4 @@
     ]
     
     #method get = theLine.
-}
-
-//// --- textFileControl ---
-//
-//#symbol textFileControl =
-//{
-//    forEachLine:aPath &do:anAction
-//        = anAction~functionOp run &enumerator:(TextFileEnumerator new &path:aPath).
-//}.
-
-// --- textControlEx ---
-
-#class(extension:control) textControlEx 
-{
-    #method run:aText &forEachWord:anAction
-        = anAction run &enumerator:(WordEnumerator new &literal::aText).
-        
-    #method run &path:aPath &forEachLine:anAction
-        = anAction run &enumerator:(ReaderEnumerator new &path:aPath).
 }

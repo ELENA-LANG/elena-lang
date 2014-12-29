@@ -10,7 +10,7 @@
     #constructor new
     [
         // generate secret number
-        #var aRandomNumbers := randomControl randomize:9 &array:(1,2,3,4,5,6,7,8,9).
+        #var aRandomNumbers := (1,2,3,4,5,6,7,8,9)~randomOp randomize:9.
  
         theNumbers := arrayControl Subarray:aRandomNumbers &from:0 &length:4.
         theAttempt := Integer new:1.
@@ -20,7 +20,7 @@
     [
         #var aRow := consoleEx write:"Your Guess #":theAttempt:" ?" readLine.
         
-        ^ literalControl toArray:aRow.
+        ^ convertor toArray:aRow.
     ]
 
     #method proceed : aGuess
@@ -31,7 +31,7 @@
         (aGuess length != 4)
             ? [ aBulls << -1. ]
             ! [
-                control forrange &int:0 &int:3 &do: (&int:i)
+                control run &int:0 &int:3 &forEvery: (&index:i)
                 [
                     #var ch := aGuess@i.
                     #var aNumber := convertor toInt:(ch literal).

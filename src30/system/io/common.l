@@ -6,21 +6,26 @@
 
 // === i/o interfaces ===
 #type(class:system'io'TextReader)textreader.
+#type(class:system'io'BinaryReader)binaryreader.
+#type(class:system'io'TextWriter)textwriter.
+#type(class:system'io'BinaryWriter)binarywriter.
 
 // --- Stream ---
 
-#class(limited,type:stream)Stream
+#class(limited)Stream
 {
     #method stream = $self.
     
     #method read &bytearray:aDump &length:aLength &out'length:aRead []
+    
+    #method write &bytearray:aDump &length:aLength []
     
     #method close []
 }
 
 // --- Encoder ---
 
-#class(limited,type:encoder)Encoder
+#class(limited)Encoder
 {
     #method encoder = $self.
 

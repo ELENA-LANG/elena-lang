@@ -2,79 +2,66 @@
 //#define system'routines.
 //#define system'math.
 
-// --- ETapeControl --
-
-#symbol tapeControl =
-{
-    read :anIndex ::Params
-    [
-        #var(type:int)aLength.
-        
-        Params read &out'length:aLength.
-
-        ^ Params@(aLength - anIndex int).
-    ]
-}.
-
 // --- Tape ---
 
-#class(group) Tape : BaseArray
+#class(group) Tape :: BaseArray
 {
-    #method => <handle_tape>.
+    #method => system'internal'handle_tape.
 }
 
 // --- Struct ---
 
-#class Struct : Tape
+#class Struct :: Tape
 {
-    #method => <handle_selector>.
+    #method => system'internal'handle_selector.
 }
 
-//// --- DynamicStruct ---
-//
-//#class DynamicStruct
-//{
-//    #field theStruct.
-//    
-//    #constructor new
-//    [
-//        theStruct := Struct new &length:0.
-//    ]
-//    
-//    #constructor new : aStruct
-//    [
-//        theStruct := aStruct.
-//    ]
-//    
-//    #method(generic)set : anObject
-//    [
-//        #var aSubject := $subject.
-//        
-//        // looking for the current subject
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLength.
-//        #var aNotFound := true.
-//        theStruct~arrayOp read &out'length:aLength.
-//        #loop ((anIndex < aLength)and:aNotFound) ?
-//        [
-//            #var aCurrent := theStruct~arrayOp getAt &index:anIndex.
-//            
-//            (aCurrent~intOp equal &object:aSubject)
-//                ? [ aNotFound := false. ]
-//                ! [ anIndex := anIndex + 2. ].
-//        ].
-//                
-//        // if not found extend the structure
-//        (anIndex == aLength) ?
-//        [                                    
-//            theStruct := theStruct~arrayOp reallocate &length:(aLength + 2).
-//
-//            theStruct~arrayOp setAt &index:anIndex &object:aSubject.
-//        ].
-//
-//        // set the content for the appropriate field
-//        theStruct~arrayOp setAt &index:(anIndex + 1) &object:anObject.
-//    ]
-//    
-//    #method => theStruct.
-//}
+// --- DynamicStruct ---
+
+#class DynamicStruct
+{
+    #field theStruct.
+    
+    #constructor new
+    [
+        theStruct := Struct new &length:0.
+    ]
+    
+    #constructor new : aStruct
+    [
+        theStruct := aStruct.
+    ]
+    
+    #method(generic)set : anObject
+    [
+        #var aSubject := $subject.
+        
+        // looking for the current subject
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        #var aNotFound := true.
+        
+        aLength := theStruct::classOp read &object.
+        #loop ((anIndex < aLength)and:aNotFound) ?
+        [
+            #var aCurrent := theStruct::classOp getField &index:anIndex.
+            
+            (aCurrent::subjectOp equal &subject:aSubject)
+                ? [ aNotFound := false. ]
+                ! [ anIndex := anIndex + 2. ].
+        ].
+                
+        // if not found extend the structure
+        (anIndex == aLength) ?
+        [                                    
+            theStruct := theStruct::classOp reallocate &length:(aLength + 2).
+
+            theStruct::classOp setField &index:anIndex &object:aSubject.
+        ].
+
+        // set the content for the appropriate field
+        theStruct::classOp setField &index:(anIndex + 1) &object:anObject.
+    ]
+    
+    #method => theStruct.
+}

@@ -1,6 +1,9 @@
 // --- true ---
 
-#symbol(type:bool) true =
+#define(const)true = system'true.
+#define(const)false = system'false.
+
+#symbol true =
 {
     then : aTrueAction = aTrueAction eval.
 
@@ -27,7 +30,7 @@
 
 // --- false ---
 
-#symbol(type:bool) false =
+#symbol false =
 {
     then : anAction = nil.
     
@@ -54,7 +57,7 @@
 
 // --- base functions ---
 
-#class(limited,type:func)BaseFunction
+#class(limited)BaseFunction
 {
     #method eval []
     
@@ -79,7 +82,7 @@
     ]
 }
 
-#class(limited,type:func1)BaseFunction1
+#class(limited)BaseFunction1
 {
     #method eval : aParam []
     
@@ -106,67 +109,67 @@
     ]
 }
 
-#class(limited,type:func2)BaseFunction2
+#class(limited)BaseFunction2
 {
     #method eval : aParam1 : aParam2 []
 }
 
-#class(limited,type:func3)BaseFunction3
+#class(limited)BaseFunction3
 {
     #method eval : aParam1 : aParam2 : aParam3 []
 }
 
-#class(limited,type:func4)BaseFunction4
+#class(limited)BaseFunction4
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
 }
 
-#class(limited,type:func5)BaseFunction5
+#class(limited)BaseFunction5
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
 }
 
-#class(limited,type:func6)BaseFunction6
+#class(limited)BaseFunction6
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
 }
 
-#class(limited,type:func7)BaseFunction7
+#class(limited)BaseFunction7
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
 }
 
-#class(limited,type:func8)BaseFunction8
+#class(limited)BaseFunction8
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
 }
 
-#class(limited,type:func9)BaseFunction9
+#class(limited)BaseFunction9
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
 }
 
-#class(limited,type:func10)BaseFunction10
+#class(limited)BaseFunction10
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
 }
 
-#class(limited,type:func11)BaseFunction11
+#class(limited)BaseFunction11
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
 }
 
-#class(limited,type:func12)BaseFunction12
+#class(limited)BaseFunction12
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 : aParam12 []
 }
 
-#class(limited,type:func13)BaseFunction13
+#class(limited)BaseFunction13
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 : aParam12 : aParam13 []
 }
 
-#class(limited,type:func14)BaseFunction14
+#class(limited)BaseFunction14
 {
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 : aParam12 : aParam13 : aParam14 []
 }
@@ -177,12 +180,12 @@
 {
     #method eval []
     
-    #method => <expression_dispatch>.
+    #method => system'internal'expression_dispatch.
 }
 
 // --- IndexFunction ---
 
-#class(limited,type:indexfunc)IndexFunction
+#class(limited)IndexFunction1
 {
     #method eval &index:n []
 
@@ -213,13 +216,28 @@
         
         ^ nil.        
     ]
+    
+    #method retrieve &range &int:aStart &int:n &int:dx
+    [
+        #var(type:int)i := aStart.
+        
+        #loop(i <= n) ?
+        [
+            ($self eval &index:i)
+                ? [ ^ IntNumber new &int:i. ].
+            
+            i := i + dx.
+        ].
+        
+        ^ nil.        
+    ]
 }
 
-#class(limited,type:matrixfunc)IndexFunction2
+#class(limited)IndexFunction2
 {
     #method eval &index:i &index:j []
 
-    #method rewind &matrix &int:i &int:j &int:n &int:m &int:dx
+    #method rewind &area &int:i &int:j &int:n &int:m &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -241,7 +259,7 @@
         ^ nil.        
     ]          
     
-    #method run &matrix &int:i &int:j &int:n &int:m &int:dx
+    #method run &area &int:i &int:j &int:n &int:m &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -264,11 +282,11 @@
     ]
 }
 
-#class(limited,type:coordfunc)IndexFunction3
+#class(limited)IndexFunction3
 {
     #method eval &index:i &index:j &index:k []
 
-    #method rewind &coord &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
+    #method rewind &space &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -298,7 +316,7 @@
         ^ nil.        
     ]          
     
-    #method run &coord &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
+    #method run &space &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -331,9 +349,9 @@
 
 // --- Boolean ---
 
-#class Boolean : BaseValue
+#class Boolean :: BaseValue
 {
-    #field theValue.
+    #field(type:bool) theValue.
 
     #constructor new : aValue
     [        
@@ -347,7 +365,7 @@
         theValue := true == aValue.
     ]
 
-    #method bool = theValue bool.
+    #method bool = theValue.
 
     #method append : aValue
     [
@@ -367,108 +385,9 @@
     #method equal &bool:aValue
         => theValue.
             
-    #method clone = Boolean new:($self value).
+    #method clone = Boolean new:theValue.
 
-    #method cast : aTypecaster = aTypecaster bool:($self value).
+    #method cast:aVerb &to:aTareget = aTareget::aVerb bool:theValue.
             
     #method => theValue.
 }
-
-//// --- function role class ---
-//
-//#class(extension:func1) functionOp
-//{    
-////    #method run &enumerator:anEnumerator &where:aConditionFunction
-////    [
-////        #var anItem.
-////        #loop (anEnumerator next) ?
-////        [
-////            anItem := anEnumerator get.
-////            
-////            aConditionFunction eval:anItem
-////                ? [ self eval:anItem. ].
-////        ].        
-////        
-////        ^ nil.        
-////    ]
-//
-//    #method run &range &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop(i <= n) ?
-//        [
-//            self eval:i.
-//            
-//            i := i + dx.
-//        ].
-//        
-//        ^ nil.        
-//    ]          
-//                    
-//    #method rewind &range &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop(i >= n) ?
-//        [
-//            self eval:i.
-//            
-//            i := i - dx.
-//        ].
-//        
-//        ^ nil.        
-//    ]
-//    
-////    #method run &for:anIterator &from:aStart &to:anEndValue &by:aStep
-////    [
-////        anIterator << aStart.
-////        
-////        #loop (anIterator <= anEndValue) ?
-////        [
-////            self eval:anIterator.
-////            
-////            anIterator += aStep.
-////        ].
-////        
-////        ^ nil.        
-////    ]
-//}
-
-// --- control ---
-
-#symbol(type:control) control =
-{
-    do:anAction = anAction eval.
-    
-    do:anAction &until:anExpr
-        = anAction run &until:anExpr.
-
-    while:anExpr
-        = $self while:anExpr &do:[].
-
-    while:anExpr &do:anAction
-        = anAction run &if:anExpr.
-
-    run:anEnumerable &forEach:aFunction
-        = aFunction run &enumerator::anEnumerable.
-
-    run:anEnumerable &seeking:aFunction
-        = aFunction retrieve &enumerator::anEnumerable.
-
-////    for:anEnumerator &do:aFunction
-////        = aFunction~functionOp run &enumerator:anEnumerator | stop.
-
-    runRange &int:aStart &int:anEnd &forEvery:aFunction
-        = aStart < anEnd
-            ? [ aFunction run &range &int:aStart &int:anEnd &int:1 ]
-            ! [ aFunction rewind &range &int:aStart &int:anEnd &int:1 ].
-    
-    runRange &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
-        = aStart < anEnd
-            ? [ aFunction run &range &int:aStart &int:anEnd &int:aStep ]
-            ! [ aFunction rewind &range &int:aStart &int:anEnd &int:aStep ].
-
-////    from:aStart &to:anEndValue &do:aFunction
-////        = aFunction~functionOp run &for:(system'Integer new) &from:aStart &to:anEndValue &by:1 | stop.
-}.

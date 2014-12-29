@@ -1,61 +1,37 @@
-//// --- Symbol ---
-//
-//#class Symbol
-//{
-//    #field(type:int)theReference.
-//    
-//    #constructor new &literal:aName
-//        <symbol_new>.
-//        
-//    #method => <symbol_redirect>.
-//}
+// --- Symbol ---
+
+#class Symbol
+{
+    #field(type:int)theReference.
+    
+    #constructor new &name:aName
+        => system'internal'symbol_new.
+        
+    #method => system'internal'symbol_redirect.
+}
 
 // --- Message ---
 
 #class(message) Message
 {
-    #method => <handle_message>.
+}
+
+// --- Verb ---
+
+#class(sealed,signature) Verb
+{
+    #constructor new &int:aVerb
+        => system'internal'int_copy.
+
+    #method => system'internal'handle_message.
 }
 
 // --- Signature ---
 
-#class(sealed,signature,type:subject) Signature
+#class(sealed,signature) Signature
 {
     #constructor new &int:aSubject
-        <int_copy>.
-            
-    #method => <qualify_message>.
-}
+        => system'internal'int_copy.
 
-//// --- DynamicSignature ---
-//
-//#class DynamicSignature : Signature
-//{
-//    #constructor => <new_signature>.
-//}
-
-// --- GetProperty ---
-
-#class GetProperty
-{
-    #field theSubject.
-    #field theContent.
-    
-    #method => <get_property>.
-}
-
-//// --- EDispatchTable ---
-//
-//// Extends pairs of subject, signature
-//#symbol EDispatchTable =
-//{
-//    => <map_subject>.
-//}.
-
-// --- subjectOp ---
-
-#class(extension:subject)subjectOp
-{
-    #method equal &subject : aSubject
-        <subject_equal>.
+    #method => system'internal'qualify_message.
 }

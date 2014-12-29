@@ -66,7 +66,7 @@ public:
    virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;
 
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t type) = 0;
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength) = 0;
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
@@ -107,7 +107,7 @@ public:
    virtual int findMethodAddress(void* refVMT, int messageID, size_t vmtLength);
    virtual int findMethodIndex(void* refVMT, int messageID, size_t vmtLength);
 
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t type);
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
    virtual void fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode);

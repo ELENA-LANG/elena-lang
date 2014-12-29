@@ -7,27 +7,29 @@
 #symbol shuffle = (:aLiteral)
 [
     #var aLength := aLiteral length.
-    #var aShuffled := literalControl toArray:aLiteral.
+    #var aShuffled := convertor toArray:aLiteral.
 
-    control forrange &int:0 &int::(aLength-1) &do: (&int:i)
+    control seek &int:0 &int::(aLength-1) &every: (&index:i)
     [
         #var aChar := aLiteral@i.
         (aChar == (aShuffled@i)) ?
         [
-            control forrange &int:0 &int::(aLength-1) &do: (&int:j)
+            control run &int:0 &int::(aLength-1) &forEvery: (&index:j)
             [
                 #var anAltChar := aShuffled@j.
                 (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
                     [
-                        arrayControl exchange:i &with:j &in:aShuffled.
+                        aShuffled~indexable exchange:i:j.
                         
-                        #break.
+                        ^ true.
                     ].
             ].
         ].
+        
+        ^ false.
     ].
 
-    ^ Summing new:(String new) foreach:aShuffled literal.
+    ^ Summing new:(String new) run &enumerator::aShuffled literal.
 ].
 
 // --- ShuffleScore ---
@@ -36,7 +38,7 @@
 [
     #var aScore := Integer new.
     
-    control forrange &int:0 &int:(anOriginal length - 1) &do: (&int:i)
+    control run &int:0 &int:(anOriginal length - 1) &forEvery: (&index:i)
         [ (anOriginal @ i) == (aShuffled @ i) ? [ aScore += 1. ]. ].
     
     ^ aScore value.
@@ -46,7 +48,7 @@
 
 #symbol program =
 [
-    control foreach:("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") &do: aWord
+    control run:("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") &forEach: aWord
     [
         #var aShuffled := shuffle:aWord.
 

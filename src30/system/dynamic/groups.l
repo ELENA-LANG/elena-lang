@@ -1,22 +1,22 @@
 #define system.
 
-//// --- Wrap ---
-//
-//#class(group) Wrap : BaseArray
-//{
-//    #method => <handle_wrap>.
-//}
+// --- Wrap ---
+
+#class(group) Wrap :: BaseArray
+{
+    #method => system'internal'handle_wrap.
+}
 
 // --- Extension ---
 
-#class(group) Extension : BaseArray
+#class(group) Extension :: BaseArray
 {
-    #method => <handle_extension>.
+    #method => system'internal'handle_extension.
 }
 
-//// --- Group ---
-//
-//#class(group) Group : BaseArray
-//{
-//    #method => <handle_group>.
-//}
+// --- Group ---
+
+#class(group) Group :: BaseArray
+{
+    #method => system'internal'handle_group.
+}

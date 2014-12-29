@@ -58,7 +58,6 @@ enum ByteCode
    bcCopy           = 0x2E,           
    bcXSet           = 0x2F,
 
-   bcType           = 0x30, 
    bcLen            = 0x31, 
    bcWLen           = 0x32,
    bcFlag           = 0x33, 

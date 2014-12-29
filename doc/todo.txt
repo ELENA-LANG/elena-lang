@@ -34,20 +34,40 @@ Currently:
                        * show shortarray and bytearray
                        * show real variable
                        * show output argument
+                       
+              xdev - redesign
+                       * implement open arg boxing
+                       * implement open arg passing futher
 
+                       * operator or, do we need it (or bitwise operators at all)
+
+                       * enumeration pattern : bool action is sent after each next call, get rid of extra bool check
+
+                       * convertor toLiteral:xx - should not ask for the typecast
+
+                       * BoxingTester add &int:(n + 3 * 4). - get rid of the type mismatch warning
+
+                       * TextBuffer: ShortArray new &length:($TextPageSize int) - constant should be typed, so no need to call int
+                       * dateTimeControl : aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int)  - constant should be typed, so no need to call int
+
+                       * provide message returning type ?? in that case the message should has a namespace
+                      
+                       * #type(type:enumerable)filter ; so anObject~enumerable filter:xxx select:xxx                     
+                       
+                       * redesign ~ operator, it will typecast the object to specified type, if the type is weak nothing will be done,
+                        if it is a strong one - get&<type> message will be sent
+
+                       * uncomment compileMessage,
+                         compileExternalArguments, defineObjectInfo, declareParameterDebugInfo, 
+                         compileInlineReferOperator, ModuleScope :: init
+      
+                       * do we need compileSignatureReference method?
+                        
               sdev - rosetta
-                       * migrate brackets
-                       * migrate bestshuffle
-                       * migrate bullscows
-                       * migrate associativearrays
-                       * migrate arrays
-                       * migrate arraymode
-                       * migrate arrayconcat
-                       * migrate arithmmean
-                       * migrate smavg
-                       * migrate median
-                       * migrate combinations
                        * migrate arithmeval
+
+                       * migrate bullscows
+                       * migrate combinations
                        * migrate anagram
                        * migrate amb
                        * migrate calendar
@@ -153,7 +173,7 @@ week1:
                        * enumerations
                        * ambiguity : [ console writeLine:"abc" ] - will be compiled as lazy expression, when the programmer may expect
                          the nested action 
-                       * no need to check if the object is stack allocated - box it directly, so we could get rid of extra command ifheap
+                       * no need to check if the object is stack allocated - box it directly, so we could get rid of extra command ifheap                       
                                               
               xdev - general implementation
                        * could we simplify typecasting messaging - e.g. - a literal -, if it is a predefined type - first try to chevk the object
@@ -183,7 +203,6 @@ week1:
                        * if typed parameter is used no need to typecast (see true.equal&bool)
                        * should numeric constant always be compatible with int types (e.g. with handle)??
 
-                       * structure field cannot be passed as out parameter
                        * 0r should be correct real constant
                        * boxing : for okLocalAddress no need to check if it is local - box directly
                        * recognize literal / int constant ; e.g. extensions'text'Bookmark#class.new
@@ -225,6 +244,7 @@ week1:
                        * message/subject should be constant which is boxed when it is required ??
                        * $self call for limited class should be optimized as well
                        * fix bug : #loop aFormer available ? is not correctly compiled
+                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
                                               
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
@@ -252,6 +272,9 @@ week1:
               xdev - boxing optimization
                        * could we simplify stack allocated object check
                        * review all the code and maximally simplify / reduce boxing operations
+
+              xdev - general optimization                               
+                       * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
 
               xdev - byte code optimization                               
                        * review system test for possible byte code optimization
@@ -343,8 +366,10 @@ week2:
                        * support GUI application
                        
               adev - lib30                                        
+                       * migrate all the code from old version
                        * test dynamic_test
                        * test dynamic samples
+                       * test literalOp.trim method
 
                        * uncomment Real#class.new&int[1] and Real#class.new&long[1]
 
@@ -455,6 +480,10 @@ week2:
                        * controlTape should verify the range
                        * literalOp : uppercase / lowercase
                        * charOp : isUppercase / isLowercase
+                       * Iterator.get&index - current implementation is looks like a short circite, though due to optimization it is correctly implemented
+                       * look at all wrapper around out parameter, replace the shortcut code with direct use of internal code
+                       * implement LiteralValue.indexOf&index&char:aChar&out'int
+                       * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
 
               sdev - api doc
                        * create API : system'CharValue
@@ -756,9 +785,6 @@ week1:
 
                        * constant symbols should be sealed / closed ?
 
-                       * passing out'int for stack unsafe operation should be allowed, but in this case the content should be copied
-                         after the operation (current the error is raised)
-
                        * in the following code:
                          int : anIndex = self find &index:anIndex. - anIndex does not have a type
                        
@@ -767,8 +793,6 @@ week1:
                        * use directly constants declared in another modules
 
                        * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
-
-                       * open argument syntax : review , simplify, make it more intuitive
 
                        * dot syntax: 
 
@@ -781,6 +805,13 @@ week1:
                        
                        * do ^ operation should be allowed in nested action?
                        * probably only one nested expression can be allowed without dot
+                       * special case to ignore the exception (without creating stack info)
+
+                       * check if the class constructor really exists before direct call
+
+                       * in the following expression - aTarget::aVerb int:self - typecast should be implemented
+
+                       * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
 
 
 1.9.20

@@ -1,8 +1,6 @@
 #define system.
 #define system'collections.
 
-#define(const)enumerable = system'routines'enumerable.
-
 // --- arrayOp ---
 
 #class(extension:array)arrayOp
@@ -76,241 +74,20 @@
         
         ^ self.
     ]
-
-////    #method indexOf &index:anIndex &object:anObject &out'int:aRetVal
-////        <arr_indexOf>.
-////        
-////    #method reallocate &length:aNewLength
-////        <arr_realloc>.
-////
-////    #method getAt &index:anIndex
-////        <arrptr_get>.
-////
-////    #method setAt &index:anIndex &object:anObject
-////        <arrptr_set>.
-////        
-////    #method read &out'length:aLength
-////        <arrptr_getLen>.        
-////        
-////    #method length
-////    [
-////        #var(type:int)aCount.
-////        self~arrayOp read &out'length:aCount.
-////        
-////        ^ IntNumber new &int:aCount.
-////    ]
-}
-
-// --- literalOp ---
-
-#class(extension:literal)literalOp
-{
-//    #method indexOf &literal:aLiteral
-//        = self indexOf &index:0 &literal:aLiteral.
-
-    #method Substring &index:anIndex
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength := aLiteral length.
-        
-        aLength := aLength - anIndex.
-        
-        ^ aLiteral Substring &index:anIndex &length:aLength.
-    ]
-     
-//    #method trimLeft &char:aChar
-//    [
-//        #var(type:int)anIndex := 0.
-//        #loop (self getAt &index:anIndex == aChar) 
-//            ? [ anIndex := anIndex + 1. ].
-//        
-//        ^ self delete &index:0 &length:anIndex.
-//    ]
-//     
-//    #method trimRight &char:aChar
-//    [
-//        #var(type:int)aLength.
-//        self read &out'length:aLength.
-//        
-//        #var(type:int)anIndex := aLength - 1.
-//        
-//        #loop (self getAt &index:anIndex == aChar) 
-//            ? [ anIndex := anIndex - 1. ].
-//        
-//        ^ self delete &index:anIndex &length:(aLength - anIndex).
-//    ]
-//    
-//    #method trim &char:aChar
-//        = (self~literalOp trimLeft &char:aChar)~literalOp trimRight &char:aChar.
-//    
-//    #method padLeft &char:aChar &length:aLength
-//    [
-//        #var aLiteral := self literal.
-//        
-//        #var(type:int)aCurrentLength.
-//        aLiteral read &out'length:aCurrentLength.
-//
-//        #loop (aLength > aCurrentLength)?
-//            [ aLiteral := aChar literal + aLiteral. aCurrentLength := aCurrentLength + 1. ].
-//            
-//        ^ aLiteral.
-//    ]
-//    
-//    #method padRight &char:aChar &length:aLength
-//    [
-//        #var aLiteral := self literal.
-//        
-//        #var(type:int)aCurrentLength.
-//        aLiteral read &out'length:aCurrentLength.
-//
-//        #loop (aLength > aCurrentLength)?
-//            [ aLiteral := aLiteral + aChar. aCurrentLength := aCurrentLength + 1. ].
-//            
-//        ^ aLiteral.
-//    ]
-    
-    #method split &char:aChar
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var aList := system'collections'List new.
-        #var(type:int)aStart := 0.
-        #var(type:int)anIndex := 0.
-        
-        #loop (anIndex >= 0)?        
-        [
-            aLiteral indexOf &index:aStart &char:aChar &out'int:anIndex.
-            (-1 != anIndex) ?
-            [
-                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
-                aStart := anIndex + 1.
-            ]
-            ! [
-                aList += aLiteral Substring &index:aStart &length:(self length - aStart).
-            ].
-        ].
-        
-        ^ aList~enumerable array.
-    ]
-    
-    #method split &literal:aValue
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var aList := system'collections'List new.
-        #var(type:int)aStart := 0.
-        #var(type:int)anIndex := 0.
-        
-        #loop (anIndex >= 0)?        
-        [
-            aLiteral indexOf &index:aStart &literal:aValue &out'int:anIndex.
-            (-1 != anIndex) ?
-            [
-                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
-                aStart := anIndex + aValue length.
-            ]
-            ! [
-                aList += aLiteral Substring &index:aStart &length:(aLiteral length - aStart).
-            ].
-        ].
-        
-        ^ aList~enumerable array.
-    ]
-
-    #method startingWith &literal:s
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var(type:int)n := aLiteral indexOf &index:0 &literal:s.
-        
-        ^ 0 == n.
-    ]
-
-    #method endingWith &literal:s
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var(type:int)l1 := aLiteral length.        
-        #var(type:int)l2 := s length.        
-        
-        #var(type:int)n := aLiteral indexOf &index:(l1 - l2) &literal:s.
-        
-        ^ n != -1.
-    ]
-
-////    #method replace &first_occ &literal:aReplacee &literal:aReplacer
-////    [
-////        #var(type:int)anIndex. 
-////        self indexOf &index:0 &literal:aReplacee &out'int:anIndex.
-////        
-////        ^ (anIndex != -1)
-////            ? [ ^ self delete &index:anIndex &length::aReplacee insert &index:anIndex &literal:aReplacee. ]
-////            ! [ self ].
-////    ]
-////        
-////    #method replace &all_occ &literal:aReplacee &literal:aReplacer
-////    [
-////        #var aTarget := String new.
-////        #var(type:int)aStart := 0.
-////        #var(type:int)anEnd := 0.
-////        self indexOf &index:aStart &literal:aReplacee &out'int:anEnd.
-////        
-////        #loop (anEnd != -1) ?
-////        [
-////            aTarget 
-////                append &literal::(self Substring &index:aStart &length:(anEnd - aStart))
-////                append &literal:aReplacer.
-////            
-////            aStart := anEnd + aReplacee length.
-////            self indexOf &index:aStart &literal:aReplacee &out'int:anEnd.
-////        ].
-////    
-////        ^ (aStart != 0)
-////            ? [ aTarget append:(self~literalOp Substring &index:aStart) literal ]
-////            ! [ self literal ].
-////    ]
-////
-////    #method UpperCase
-////        = characterController toUpperCase &literal::self.
-////
-////    #method LowerCase
-////        = characterController toLowerCase &literal::self.
-
-    #method isEmpty
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength := aLiteral length.
-        
-        ^ aLength == 0.
-    ]
-    
-    #method isNotEmpty
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength := aLiteral length.
-        
-        ^ aLength != 0.
-    ]
-
-//    #method array
-//    [
-//        #var(type:int)aLength := self length.
-//        #var(type:array)anArray := Array new &length:aLength.
-//        
-//        anArray set &each: (&index:i) [ self getAt &index:i ].
-//        
-//        ^ anArray.
-//    ]
 }
 
 // --- Enumerable ---
 
-#class(extension:enumerable) enumerable
+#class(extension:enumerable) enumerableOp
 {
-//    #method run : aFunction
-//        = control foreach:self &do:aFunction.
-        
-//    #method seek : aFunction
-//        = control run:self &seeking:aFunction.
+    #method run &each:aFunction
+      = aFunction run &enumerator:self.
 
-//    #method find : aValue
-//        = control run:self &seeking: x [ aValue equal:x ].
+    #method seek &each:aFunction
+      = aFunction retrieve &enumerator:self.
+
+    #method find : aValue
+        = x [ aValue safeEqual:x ] retrieve &enumerator:self.
 
     #method first
     [
@@ -332,12 +109,19 @@
         ^ aLastItem.
     ]
 
+    #method filter &each:aFilter
+        = system'routines'Filter new &each:aFilter &enumerator:self.
+
+    #method select &each:aSelector
+        = system'routines'Selector new &each:aSelector &enumerator:self.
+
     #method array
     [
         #var(type:list)aList := List new.
-        control run:self &forEach: anItem [ aList append:anItem ].
         
-        #var(type:array) anArray := Array new &length::aList.
+        self::enumerableOp run &each:anItem [ aList append:anItem ].
+        
+        #var(type:array) anArray := Array new &length:aList.
         #var(type:enumerator)anEnumerator := aList enumerator.
         
         anArray set &every: (&index:n) [ anEnumerator next. ^ anEnumerator get. ].
@@ -346,25 +130,279 @@
     ]
 }
 
+// --- literalOp ---
+
+#class(extension:literal)literalOp
+{
+    #method indexOf &literal:aLiteral
+        = self indexOf &index:0 &literal:aLiteral.
+
+    #method Substring &index:anIndex
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aLength := aLiteral length.
+        
+        aLength := aLength - anIndex.
+        
+        ^ aLiteral Substring &index:anIndex &length:aLength.
+    ]
+     
+    #method trimLeft &char:aChar
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)anIndex := 0.
+        #loop (aLiteral getAt &index:anIndex equal &char:aChar) 
+            ? [ anIndex := anIndex + 1. ].
+        
+        ^ aLiteral delete &index:0 &length:anIndex.
+    ]
+     
+    #method trimRight &char:aChar
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aLength := aLiteral length.
+        
+        #var(type:int)anIndex := aLength - 1.
+        
+        #loop (aLiteral getAt &index:anIndex equal &char:aChar) 
+            ? [ anIndex := anIndex - 1. ].
+        
+        ^ aLiteral delete &index:anIndex &length:(aLength - anIndex).
+    ]
+    
+    #method trim &char:aChar
+        = self::literalOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method padLeft &char:aChar &length:aLength
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var padding := aChar literal.
+        
+        #var(type:int)aCurrentLength := aLiteral length.
+
+        #loop (aLength > aCurrentLength)?
+            [ aLiteral := padding + aLiteral. aCurrentLength := aCurrentLength + 1. ].
+            
+        ^ aLiteral.
+    ]
+    
+    #method padRight &char:aChar &length:aLength
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var padding := aChar literal.
+        
+        #var(type:int)aCurrentLength := aLiteral length.
+
+        #loop (aLength > aCurrentLength)?
+            [ aLiteral := aLiteral + padding. aCurrentLength := aCurrentLength + 1. ].
+            
+        ^ aLiteral.
+    ]
+
+    #method startingWith &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)n := aLiteral indexOf &index:0 &literal:s.
+        
+        ^ 0 == n.
+    ]
+
+    #method endingWith &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)l1 := aLiteral length.        
+        #var(type:int)l2 := s length.        
+        
+        #var(type:int)n := aLiteral indexOf &index:(l1 - l2) &literal:s.
+        
+        ^ n != -1.
+    ]
+
+    #method replace &first &literal:aReplacee &literal:aReplacer
+    [
+        #var(type:literal)aLiteral := self literal.
+        
+        #var(type:int)anIndex := aLiteral indexOf &index:0 &literal:aReplacee.
+        
+        ^ (anIndex != -1)
+            ? [ ^ aLiteral delete &index:anIndex &length:aReplacee insert &index:anIndex &literal:aReplacee. ]
+            ! [ self ].
+    ]
+        
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var(type:literal)aLiteral := self literal.
+        
+        #var aTarget := String new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anEnd := aLiteral indexOf &index:aStart &literal:aReplacee.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget 
+                append &literal::(aLiteral Substring &index:aStart &length:(anEnd - aStart))
+                append &literal:aReplacer.
+            
+            aStart := anEnd + aReplacee length.
+            
+            anEnd := aLiteral indexOf &index:aStart &literal:aReplacee.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget append:(aLiteral Substring &index:aStart) literal ]
+            ! [ self literal ].
+    ]
+
+    #method upperCase
+    [
+        #var(type:literal)aLiteral := self literal.
+        
+        #var aRetVal := emptyLiteralValue.        
+        #var(type:int)anIndex := 0.
+        #var(type:shortarray,size:128)aTemp.
+        #var(type:int)aLength := aLiteral length.
+        
+        #loop (aLength > 0)?
+        [
+            (aLength > 127)
+                ? [
+                    aTemp write &index:anIndex &length:127 &literal:aLiteral.
+                
+                    characterController toUpperCase &shortarray:aTemp &length:127.
+                    
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:127 &shortarray:aTemp).                            
+                    anIndex := anIndex + 127.
+                    aLength := aLength - 127.
+                ]
+                ! [
+                    aTemp write &index:anIndex &length:aLength &literal:aLiteral.
+                
+                    characterController toUpperCase &shortarray:aTemp.
+                    
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &shortarray:aTemp).                            
+                    aLength := 0.
+                ].
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    #method lowerCase
+    [
+        #var(type:literal)aLiteral := self literal.
+        
+        #var aRetVal := emptyLiteralValue.        
+        #var(type:int)anIndex := 0.
+        #var(type:shortarray,size:128)aTemp.
+        #var(type:int)aLength := aLiteral length.
+        
+        #loop (aLength > 0)?
+        [
+            (aLength > 127)
+                ? [
+                    aTemp write &index:anIndex &length:127 &literal:aLiteral.
+                
+                    characterController toLowerCase &shortarray:aTemp &length:127.
+                    
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:127 &shortarray:aTemp).                            
+                    anIndex := anIndex + 127.
+                    aLength := aLength - 127.
+                ]
+                ! [
+                    aTemp write &index:anIndex &length:aLength &literal:aLiteral.
+                
+                    characterController toLowerCase &shortarray:aTemp.
+                    
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &shortarray:aTemp).                            
+                    aLength := 0.
+                ].
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    #method isEmpty
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aLength := aLiteral length.
+        
+        ^ aLength == 0.
+    ]
+    
+    #method isNotEmpty
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aLength := aLiteral length.
+        
+        ^ aLength != 0.
+    ]
+
+    #method split &char:aChar
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var aList := List new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        
+        #loop (anIndex >= 0)?        
+        [
+            anIndex := aLiteral indexOf &index:aStart &char:aChar.
+            (-1 != anIndex) ?
+            [
+                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + 1.
+            ]
+            ! [
+                aList += aLiteral Substring &index:aStart &length:(self length - aStart).
+            ].
+        ].
+        
+        ^ aList::enumerableOp array.
+    ]
+    
+    #method split &literal:aValue
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var aList := List new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        
+        #loop (anIndex >= 0)?        
+        [
+            anIndex := aLiteral indexOf &index:aStart &literal:aValue.
+            (-1 != anIndex) ?
+            [
+                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + aValue length.
+            ]
+            ! [
+                aList += aLiteral Substring &index:aStart &length:(aLiteral length - aStart).
+            ].
+        ].
+        
+        ^ aList::enumerableOp array.
+    ]
+}
+
 // --- indexable ---
 
-#class(extension:indexable) indexable
+#class(extension:indexable) indexableOp
 {
-//    #method set &each:anIndexFunc
-//    [
-//        #var anEnumerator := self enumerator.
-//
-//        #loop (anEnumerator next) ?
-//        [
-//            anEnumerator set:(anIndexFunc eval &index::anEnumerator).
-//        ].
-//        
-//        ^ self.
-//    ]
+    #method set &each:anIndexFunc
+    [
+        #var anEnumerator := self enumerator.
+
+        #loop (anEnumerator next) ?
+        [
+            anEnumerator set:(anIndexFunc eval &index:anEnumerator).
+        ].
+        
+        ^ self.
+    ]
     
     #method exchange:anIndex1:anIndex2
     [
-        self~indexable exchange &index:(anIndex1 int) &index:(anIndex2 int).
+        self::indexableOp exchange &index:(anIndex1 int) &index:(anIndex2 int).
     ]
     
     #method exchange &index:anIndex1 &index:anIndex2
@@ -382,8 +420,8 @@
         it set:anObject2.
     ]
 
-//    #method Subarray &index:anIndex &length:aLength
-//        = Array new &length:aLength ~indexable set &each: i [ self@(anIndex + i) ].
+    #method Subarray &index:anIndex &length:aLength
+        = Array new &length:aLength set &every: (&index:i) [ self@(anIndex + i) ].
 
     #method sort : aCondition
     [
@@ -413,369 +451,86 @@
         ^ self.
     ]
 
-//    #method array
-//    [
-//        #var(type:array)anArray := Array new &length::self.
-//        
-//        anArray set &each: (&index:i) [ self getAt &index:i ].
-//        
-//        ^ anArray.
-//    ]
-//
+    #method array
+    [
+        #var(type:array)anArray := Array new &length:self.
+        #var(type:iterator)it := self iterator.
+        
+        anArray set &every: (&index:i) [ it write &index:i get ].
+        
+        ^ anArray.
+    ]
 }
 
-//// --- EnumerationIterator ---
-//
-//#class EnumerationIterator
-//{
-//    #field theList.
-//    #field theEnumerator.
-//    #field(type:intvar) theIndex.
-//
-//    #constructor new &enumerable:aList
-//    [
-//        theList := aList.
-//        theEnumerator := aList enumerator.
-//        
-//        theIndex:= Integer new &int:-1.
-//    ]
-//
-//    #method index = theIndex int.
-//
-//    #method read &out'index : anIndex
-//    [
-//        theIndex read &out'int:anIndex.
-//    ]
-//    
-//    #method set &index:anIndex
-//    [
-//        #var(type:int)aCurrent.
-//        theIndex read &out'int:aCurrent.
-//        
-//        anIndex < aCurrent ?
-//        [
-//            aCurrent := -1.
-//            theEnumerator := theList enumerator.
-//        ].
-//        
-//        #loop (aCurrent < anIndex)?
-//        [
-//            theEnumerator next
-//                ! [ #throw OutOfRangeException new:"Index out of the range". ].
-//            
-//            aCurrent := aCurrent + 1.
-//        ].
-//        
-//        theIndex write &int:aCurrent.
-//    ]
-//            
-//    #method get
-//    [
-//        ^ theEnumerator get.
-//    ]
-//    
-//    #method set : anObject
-//    [
-//        theEnumerator set:anObject        
-//    ]
-//
-//    #method next
-//    [
-//        theIndex append &int:1.
-//        
-//        ^ theEnumerator next.
-//    ]
-//}
-//
-////// --- TopEnumerator ---
-////
-////#class TopEnumerator
-////{
-////    #field theEnumerator.
-////    #field theCounter.
-////    #field theMaxValue.
-////    
-////    #constructor new : anEnumerable &max:aMaxValue
-////    [
-////        theEnumerator := anEnumerable enumerator.
-////        theCounter := Integer new:aMaxValue.
-////        theMaxValue := aMaxValue.
-////    ]
-////    
-////    #method reset
-////    [
-////        $super reset.
-////        
-////        theCounter << theMaxValue.
-////    ]
-////    
-////    #method next
-////        = (theCounter > 0)
-////            ? [ theCounter -= 1. ^ theEnumerator next. ]
-////            ! [ false ].
-////    
-////    #method => theEnumerator.
-////}
+#class(extension:textio)stringOp
+{
+    #method write : aLiteral &length:aCounter
+    [
+        #var(type:int)aNumber := aCounter.
+        
+        #loop (aNumber > 0) ?
+        [
+            self write:aLiteral. 
+            
+            aNumber := aNumber - 1.
+        ].
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:int)aWidthInt := aWidth int.
+        #var(type:literal) aLiteral := aLine literal.
+        
+        #var(type:int)aLength := aLiteral length.
+        
+        (aLength < aWidthInt)
+            ? [ self::stringOp write:aChar &length:(aWidthInt - aLength). ].
+            
+        self write:aLiteral.
+            
+        ^ self.
+    ]
+
+    #method write : aLine &paddingRight:aWidth &with:aChar
+    [
+        #var(type:literal) aLiteral := aLine literal.
+        #var(type:int)aWidthInt := aWidth int.
+        
+        self write:aLiteral.
+                    
+        #var(type:int)aLength := aLiteral length.
+        
+        (aLength < aWidthInt)
+            ? [ self::stringOp write:aChar &length:(aWidthInt - aLength). ].
+            
+        ^ self.
+    ]
+
+    #method write : aLine &padding:aWidth &with:aChar
+    [
+        #var(type:literal) aLiteral := aLine literal.
+        #var(type:int)aWidthInt := aWidth int.
+        
+        #var(type:int)aLength := aLiteral length.        
+        
+        (aLength < aWidth)
+            ? [
+                #var(type:int)aLen := aWidthInt - aLength.
+                #var(type:int)aLeftLen := aLen / 2.
+                
+                self::stringOp write:aChar &length:aLeftLen.
+                self write:aLiteral.
+                self::stringOp write:aChar &length:(aLen - aLeftLen).
+            ]
+            ! [ self write:aLiteral. ].
+            
+        ^ self.
+    ]
+}
 
 // === actions ===
 
 #symbol ifOrdered
     = (:aFormer:aLater) [ aFormer < aLater ].
-
-//// === extensions ===
-//
-//// --- objectOp ---
-//
-//#class(role,extension)objectOp
-//{
-////    #method back : anObject = anObject.
-//
-//    #method isNil
-//        = nil == self.
-//        
-//    #method isLiteral
-//        = self cast:literalDetector.
-//        
-//    #method isInteger
-//        = self cast:intDetector.
-//        
-//    #method is &numeric
-//        = self cast:numericDetector.
-//}
-
-////#class(role)stringOp
-////{
-////    #method write : aLiteral &length:aCounter
-////    [
-////        #var(type:int)aNumber := aCounter.
-////        
-////        #loop (aNumber > 0) ?
-////        [
-////            self write:aLiteral. 
-////            
-////            aNumber := aNumber - 1.
-////        ].
-////            
-////        ^ self.
-////    ]
-////    
-////    #method write : aLine &paddingLeft:aWidth &with:aChar
-////    [
-////        #var(type:int)aWidthInt := aWidth int.
-////        #var aLiteral := aLine literal.
-////        
-////        #var(type:int)aLength.
-////        aLiteral read &out'length:aLength.
-////        
-////        (aLength < aWidthInt)
-////            ? [ self~stringOp write:aChar &length:(aWidthInt - aLength). ].
-////            
-////        self write::aLiteral.
-////            
-////        ^ self.
-////    ]
-////
-////    #method write : aLine &paddingRight:aWidth &with:aChar
-////    [
-////        #var aLiteral := aLine literal.
-////        #var(type:int)aWidthInt := aWidth int.
-////        
-////        self write::aLiteral.
-////                    
-////        #var(type:int)aLength.
-////        aLiteral read &out'length:aLength.
-////        
-////        (aLength < aWidthInt)
-////            ? [ self~stringOp write:aChar &length:(aWidthInt - aLength). ].
-////            
-////        ^ self.
-////    ]
-////
-////    #method write : aLine &padding:aWidth &with:aChar
-////    [
-////        #var aLiteral := aLine literal.
-////        #var(type:int)aWidthInt := aWidth int.
-////        
-////        #var(type:int)aLength.
-////        aLiteral read &out'length:aLength.        
-////        
-////        (aLength < aWidth)
-////            ? [
-////                #var(type:int)aLen := aWidthInt - aLength.
-////                #var(type:int)aLeftLen := aLen / 2.
-////                
-////                self~stringOp write:aChar &length:aLeftLen.
-////                self write::aLiteral.
-////                self ~stringOp write:aChar &length:(aLen - aLeftLen).
-////            ]
-////            ! [ self write::aLiteral. ].
-////            
-////        ^ self.
-////    ]
-////}
-//
-//// --- enumerable ---
-//
-//#class(extension:enumerable)enumerable
-//{
-////    #method getAt : anIndex
-////    [
-////        #var anEnumerator := self enumerator.
-////        
-////        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
-////        
-////        ^ anEnumerator get.
-////    ]
-////    
-////    #method setAt : anIndex : aValue
-////    [
-////        #var anEnumerator := self enumerator.
-////        
-////        control forrange &int:0 &int::anIndex &do: (&int:n)[ anEnumerator next ].
-////        
-////        anEnumerator set:aValue.
-////    ]
-////    
-////    #method Last
-////        = self~enumerable getAt:(self length - 1).
-//    
-//    #method array
-//    [
-//        #var aListIndexer := EnumerationIterator new &enumerable:self.
-//        
-//        #var(type:array)anArray := Array new &length::self.
-//
-//        anArray set &each: (&index:anIndex) [ aListIndexer set &index:anIndex get ].
-//        
-//        ^ anArray.
-//    ]
-//}
-//
-////// --- EEnumerator ---
-////
-////#class(role)EEnumerator
-////{
-////    #method run : aFunction
-////        = control while:[ self next ] &do: [ aFunction:self. ].
-////}
-
-// === helpers ===
-
-// --- listControl ---
-
-#class(extension:control) listControl
-{
-////    foreach:aList &do:anAction
-////        = aList~enumerable run:anAction.
-
-    #method find:aValue &in:aList
-        = control run:aList &seeking: x [ aValue equal:x ].
-
-//    seek:aList &until:anAction
-//        = aList~enumerable seek:anAction.
-
-    #method ifExist:aValue &in:aList
-        = nil != (control run:aList &seeking: x [ aValue equal:x ]).
-
-////    getAt:anIndex &in:aList
-////        = aList~EList getAt:anIndex.
-////        
-////    toArray : aList
-////        = aList~EList Array.
-//        
-//    sort : aList &with:aCondition
-//    [
-//        #var aCurrent := EnumerationIterator new &enumerable:aList.
-//        #var aNext := EnumerationIterator new &enumerable:aList.
-//
-//        #loop (aCurrent next)?
-//        [
-//            aNext set &index::aCurrent.
-//            
-//            #loop (aNext next)?
-//            [
-//                aCondition eval:(aCurrent get):(aNext get)
-//                    ! [
-//                        #var aTmp := aCurrent get.
-//                        aCurrent set:(aNext get).
-//                        aNext set:aTmp.
-//                    ].
-//            ].
-//        ].
-//        
-//        ^ aList.
-//    ]    
-//
-//    sort : aList
-//    [
-//        listControl sort:aList &with:ifOrdered.
-//        
-//        ^ aList.
-//    ]
-}
-
-// --- arrayControl ---
-
-#symbol arrayControl =
-{
-    new &length:aLength &every:aFunction
-        = Array new &length:aLength ~arrayOp set &every:aFunction.
-    
-//    toArray : anIndexable
-//        = anIndexable ~indexable array.
-//    
-////    forEach:anArray &do:aFunction
-////    [
-////        anArray~EArray set &function:aFunction.
-////    ]
-//        
-//    exchange:anIndex1 &with:anIndex2 &in:anArray
-//    [
-//        anArray~indexable exchange:anIndex1:anIndex2.
-//    ]
-//    
-//    find:aValue &in:anArray
-//        = anArray~enumerable seek: x [ aValue equal:x ].
-//
-//    seek:anArray &until:aFunction
-//        = anArray~enumerable seek:aFunction.
-//        
-//    ifExist:aValue &in:anArray
-//        = nil != anArray~enumerable seek: x [ aValue equal:x ].
-//        
-//    sort : anArray
-//        = anArray~indexable sort: ifOrdered.
-//        
-//    Subarray : anArray &from:anIndex &length:aLength
-//        = anArray~indexable Subarray &index:(anIndex int) &length:aLength.
-}.
-
-// --- literalControl ---
-
-#symbol literalControl =
-{
-    split:aLiteral &by:aSplitter
-        = aSplitter cast:
-            { 
-                is &numeric = false.
-            
-                eval &literal:aSplitter [ ^ aLiteral~literalOp split &literal:aSplitter. ]
-            
-                eval &char:aSplitter [ ^ aLiteral~literalOp split &char:aSplitter. ] 
-            }.
-
-    starting : anS &with:aSubS
-        = anS ~literalOp startingWith &literal::aSubS.
-        
-    ending : anS &with:aSubS
-        = anS ~literalOp endingWith &literal::aSubS.
-        
-    contain : aSubS &in:anS
-        = -1 != anS literal indexOf &index:0 &literal::aSubS.
-    
-//    trimStart:aChar &in:aString
-//        = aString << aString Literal ~ELiteralOp trimStart &widechar:aChar.
-
-//    toArray : aLiteral
-//        = aLiteral ~indexable array.
-}.

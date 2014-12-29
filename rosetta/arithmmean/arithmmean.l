@@ -1,5 +1,6 @@
 #define system.
 #define system'routines.
+#define extensions.
 
 // --- Sum ---
 
@@ -19,14 +20,15 @@
         theCount += 1.
         
         theValue += aValue.
+        
+        theResult := theValue / theCount.
     ]
-
-    #method value = theValue / theCount.
 }
 
 // --- Program ---
 
 #symbol program =
 [
-    console writeLine:(MeanAction new foreach:(1, 2, 3, 4, 5, 6, 7, 8) value).
-].
+    #var anArray := (1, 2, 3, 4, 5, 6, 7, 8).
+    console writeLine:"Arithmetic mean of {":anArray:"} is ":(MeanAction new run &enumerator::anArray value).
+]. 

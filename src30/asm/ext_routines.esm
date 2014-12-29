@@ -1,6 +1,6 @@
 define NEW_MESSAGE_ID       084000000h
 
-procedure inline'rnd_init
+procedure rnd_init
 
   bcopya
   lrndnew
@@ -10,7 +10,7 @@ procedure inline'rnd_init
 
 end
 
-procedure inline'rnd_next
+procedure rnd_next
 
   bcopya
 
@@ -24,7 +24,7 @@ procedure inline'rnd_next
 
 end
 
-procedure inline'evaluate
+procedure evaluate
 
   aloadsi 2
   pusha
@@ -45,7 +45,7 @@ labErr:
   
 end
 
-procedure inline'load
+procedure load
 
   aloadsi 4
   nload

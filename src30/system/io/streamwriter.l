@@ -2,18 +2,14 @@
 
 // --- BinaryWriter ---
 
-#class BinaryWriter
+#class(limited) BinaryWriter
 {
-    #field theStream.
-    
-    #constructor new &stream:aStream
-    [
-        theStream := aStream.
-    ]
+    #method source = nil.
 
+    #method close [ ]
+    
     #method write &bytearray:anArray &length:aLength
     [
-        theStream write &bytearray:anArray &length:aLength.
     ]
 
     #method write &int:anInt
@@ -22,7 +18,7 @@
         
         aBuffer write &index:0 &int:anInt.
                 
-        theStream write &bytearray:aBuffer &length:4.
+        $self write &bytearray:aBuffer &length:4.
     ]
 
     #method write &long:aLong
@@ -31,54 +27,38 @@
         
         aBuffer write &index:0 &long:aLong.
                 
-        theStream write &bytearray:aBuffer &length:8.
-    ]
-            
-    #method close
-    [
-        theStream close.
+        $self write &bytearray:aBuffer &length:8.
     ]
 }
 
 // --- TextWriter ---
 
-#class TextWriter
+#class(limited) TextWriter
 {
     #field(type:literal)theNewLineConstant.
     
+    #method source = nil.
+
+    #method close [ ]
+    
+    
+    #method write &shortarray:anArray &length:aLength
+    [
+    ]
+    
+    #method write &literal:anArray &length:aLength
+    [
+    ]
+    
     #method writeLine : aLine
     [
-        $self write &literal::aLine write &literal:theNewLineConstant.
+        $self write &literal:aLine write &literal:theNewLineConstant.
     ]
     
     #method write &literal:aLine
     [
-        #var(type:int)aLength.
-        aLine read &out'length:aLength.
+        #var(type:int)aLength := aLine length.
         
         $self write &literal:aLine &length:aLength.
     ]
 }
-
-//
-//// --- StreamWriter ---
-//
-//#class StreamWriter
-//{
-//    #field theStream.
-//    
-//    #constructor new : aStream
-//    [
-//        theStream := aStream.
-//    ]
-//
-//    #method write : anObject
-//    [
-//        $self write::anObject.
-//    ]
-//
-//    #method write &type'widestr:aLiteral
-//    [
-//        theStream write &type'bytearray:aLiteral &type'length:(aLiteral type'length * 2).
-//    ]    
-//}

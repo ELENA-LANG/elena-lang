@@ -1,19 +1,12 @@
-#define system.
-
-// === types ===
-#type(class:Handle) handle.
-
-#type(type:int)     int_attributes.
-
 // --- Handler ---
 
-#class(type:handle,sealed,integer:4) Handle
+#class(sealed,integer:4) Handle
 {
     #constructor new &handle:aHandle
-        <int_copy>.
+        => system'internal'int_copy.
 
     #method equal &handle:anOperand 
-        <int_equal>.
+        => system'internal'int_equal.
 
     #method handle = $self.
 

@@ -1,46 +1,40 @@
 // === basic data classes ===
 
-//#define LongNumber = system'LongNumber.
-//#define RealNumber = system'RealNumber.
-
-//#define(const)intConvertor  = system'intConvertor.
-//#define(const)longConvertor = system'longConvertor.
-//#define(const)realConvertor = system'realConvertor.
 #define(const)literalConvertor = system'literalConvertor.
 
 // --- BaseValue ---
 
 #class BaseValue
 {
-    #method equal : anObject = $self equal::(anObject value).
-    
-    #method less : anObject = $self less::(anObject value).
-    
-    #method greater : anObject = anObject less:$self.
+    #method equal : anObject = anObject cast:%equal &to:$self.
+
+    #method less : anObject = anObject cast:%less &to:$self.
+
+     #method greater : anObject = anObject less:$self.
 }
 
 // --- BaseNumber ---
 
-#class BaseNumber : BaseValue
+#class BaseNumber :: BaseValue
 {
-    #method add : anObject = $self add::(anObject value).
-    
-    #method subtract : anObject = $self subtract::(anObject value).
-    
-    #method multiply : anObject = $self multiply::(anObject value).
-    
-    #method divide : anObject = $self divide::(anObject value).    
+    #method add : anObject = anObject cast:%add &to:$self.
+
+    #method subtract : anObject = anObject cast:%subtract &to:$self.
+
+    #method multiply : anObject = anObject cast:%multiply &to:$self.
+
+    #method divide : anObject = anObject cast:%divide &to:$self.
 }
 
 // --- IntBaseNumber ---
 
-#class IntBaseNumber : BaseNumber
+#class IntBaseNumber :: BaseNumber
 {
-    #method and : anOperand = $self and::(anOperand value).
+    #method and : anObject = anObject cast:%and &to:$self.
     
-    #method or : anOperand = $self or::(anOperand value).
+    #method or : anObject = anObject cast:%or &to:$self.
     
-    #method xor : anOperand = $self xor::(anOperand value).
+    #method xor : anObject = anObject cast:%xor &to:$self.
     
     #method allMask : anOperand
         = $self and:anOperand == anOperand.
@@ -53,130 +47,133 @@
 
 // --- IntBaseVariable ---
 
-#class IntBaseVariable : IntBaseNumber
+#class IntBaseVariable :: IntBaseNumber
 {
     #method write : anOperand
     [
-        $self write::(anOperand value).
+        anOperand cast:%write &to:$self.
     ]
     
     #method append : anOperand
     [
-        $self append::(anOperand value).
+        anOperand cast:%append &to:$self.
     ]
     
     #method reduce : anOperand
     [
-        $self reduce::(anOperand value).
+        anOperand cast:%reduce &to:$self.
     ]
     
     #method multiplyBy : anOperand
     [
-        $self multiplyBy::(anOperand value).
+        anOperand cast:%multiplyBy &to:$self.
     ]
     
     #method divideInto : anOperand
     [
-        $self divideInto::(anOperand value).
+        anOperand cast:%divideInto &to:$self.
     ]
 }
 
 // --- BaseNumber ---
 
-#class BaseVariable : BaseNumber
+#class BaseVariable :: BaseNumber
 {
     #method write : anOperand
     [
-        $self write::(anOperand value).
+        anOperand cast:%write &to:$self.
     ]
     
     #method append : anOperand
     [
-        $self append::(anOperand value).
+        anOperand cast:%append &to:$self.
     ]
     
     #method reduce : anOperand
     [
-        $self reduce::(anOperand value).
+        anOperand cast:%reduce &to:$self.
     ]
     
     #method multiplyBy : anOperand
     [
-        $self multiplyBy::(anOperand value).
+        anOperand cast:%multiplyBy &to:$self.
     ]
     
     #method divideInto : anOperand
     [
-        $self divideInto::(anOperand value).
+        anOperand cast:%divideInto &to:$self.
     ]
 }
 
 // --- ByteNumber ---
 
-#class(sealed,type:byte,integer:1) ByteNumber : IntBaseNumber
+#class(sealed,integer:1) ByteNumber :: IntBaseNumber
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb byte:$self.
 }
 
 // --- ShortNumber ---
 
 #symbol(const)shortMaximalValue = 65535.
 
-#class(sealed,type:short,integer:2) ShortNumber : IntBaseNumber
+#class(sealed,integer:2) ShortNumber :: IntBaseNumber
 {
     #constructor new &int:anOperand
-        <int_copyshort>.
+        => system'internal'int_copyshort.
         
     #constructor new &short:anOperand
-        <int_copy>.
+        => system'internal'int_copy.
         
     #method short = $self.
     
-    #method int = IntNumber new &short:$self int.
+    #method int = IntNumber new &short:$self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb short:$self.
 }
 
 // --- IntNumber ---
 
-#class(sealed,type:int,integer:4) IntNumber : IntBaseNumber
+#class(sealed,integer:4) IntNumber :: IntBaseNumber
 {
     #constructor new &int:anOperand
-        <int_copy>.
+        => system'internal'int_copy.
 
     #constructor new &short:anOperand
-        <int_copyshort>.
+        => system'internal'int_copyshort.
 
     #constructor new
-        <int_init>.
+        => system'internal'int_init.
 
     #method int = $self.
 
     #method short = ShortNumber new &int:$self.
 
     #method equal &int:anOperand 
-        <int_equal>.
-
+        => system'internal'int_equal.
+        
     #method less &int:anOperand
-        <int_less>.
+        => system'internal'int_less.
 
     #method add &int:anOperand
-        <int_add>.
+        => system'internal'int_add.
 
     #method subtract &int:anOperand
-        <int_sub>.
+        => system'internal'int_sub.
 
     #method multiply &int:anOperand
-        <int_mul>.
+        => system'internal'int_mul.
 
     #method divide &int:anOperand
-        <int_div>.
+        => system'internal'int_div.
 
     #method and &int:anOperand
-        <int_and>.
+        => system'internal'int_and.
 
     #method or &int:anOperand
-        <int_or>.
+        => system'internal'int_or.
 
     #method xor &int:anOperand
-        <int_xor>.
+        => system'internal'int_xor.
 
     #method equal &long:anOperand 
         = LongNumber new &int:$self equal &long:anOperand.
@@ -209,82 +206,80 @@
         = RealNumber new &int:$self divide &real:anOperand.
 
     #method shift &index:anOrder
-        <int_shift>.
+        => system'internal'int_shift.
 
     #method read &out'short:aLength
-        <int_saveshort>.
+        => system'internal'int_saveshort.
 
-    #method literal = literalConvertor convert &int:$self literal.
+    #method literal = literalConvertor convert &int:$self.
 
     #method not
-        <int_not>.
+        => system'internal'int_not.
 
-    #method value = $self.
-    
     #method clone = IntNumber new &int:$self.
     
-    #method cast : aTypecaster = aTypecaster int:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb int:$self.
 }
 
 // --- longnumber ---
 
-#class(sealed,type:long,integer:8) LongNumber : IntBaseNumber
+#class(sealed,integer:8) LongNumber :: IntBaseNumber
 {
     #constructor new &long:anOperand 
-        <long_copy>.
+        => system'internal'long_copy.
 
     #constructor new
         <= %new &long:0l.
 
     #constructor new &int:anOperand 
-        <long_copyint>.
+        => system'internal'long_copyint.
 
     #method long = $self.
 
     #method equal &long:anOperand
-        <long_equal>.
+        => system'internal'long_equal.
 
     #method less &long:anOperand
-        <long_less>.
+        => system'internal'long_less.
 
     #method add &long:anOperand
-        <long_add>.
+        => system'internal'long_add.
 
     #method subtract &long:anOperand
-        <long_sub>.
+        => system'internal'long_sub.
 
     #method multiply &long:anOperand
-        <long_mul>.
+        => system'internal'long_mul.
 
     #method divide &long:anOperand
-        <long_div>.
+        => system'internal'long_div.
 
     #method and &long:anOperand
-        <long_and>.
+        => system'internal'long_and.
 
     #method or &long:anOperand
-        <long_or>.
+        => system'internal'long_or.
 
     #method xor &long:anOperand
-        <long_xor>.
+        => system'internal'long_xor.
 
     #method add &int:anOperand
-        = $self add &long::(LongNumber new &int:anOperand).
+        = $self add &long:(system'LongNumber new &int:anOperand).
 
     #method subtract &int:anOperand
-        = $self subtract &long::(LongNumber new &int:anOperand).
+        = $self subtract &long:(system'LongNumber new &int:anOperand).
 
     #method multiply &int:anOperand
-        = $self multiply &long::(LongNumber new &int:anOperand).
+        = $self multiply &long:(system'LongNumber new &int:anOperand).
 
     #method divide &int:anOperand
-        = $self divide &long::(LongNumber new &int:anOperand).
+        = $self divide &long:(system'LongNumber new &int:anOperand).
 
     #method equal &int:anOperand 
-        = $self equal &long::(LongNumber new &int:anOperand).
+        = $self equal &long:(system'LongNumber new &int:anOperand).
 
     #method less &int:anOperand 
-        = $self less &long::(LongNumber new &int:anOperand).
+        = $self less &long:(system'LongNumber new &int:anOperand).
 
     #method add &real:anOperand
         = RealNumber new &long:$self add &real:anOperand.
@@ -299,34 +294,32 @@
         = RealNumber new &long:$self divide &real:anOperand.
 
     #method shift &index:anOrder
-        <long_shift>.
+        => system'internal'long_shift.
 
-    #method literal = literalConvertor convert &long:$self literal.
+    #method literal = literalConvertor convert &long:$self.
 
     #method negative = 0l - $self.
 
     #method not
-        <long_not>.
+        => system'internal'long_not.
 
     #method clone = LongNumber new &long:$self.
     
-    #method value = $self.
-    
-    #method cast : aTypecaster = aTypecaster long:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb long:$self.
 }
 
 // --- realNumber ---
 
-#class(sealed,type:real,floating:8) RealNumber : BaseNumber
+#class(sealed,floating:8) RealNumber :: BaseNumber
 {
     #constructor new
         <= %new &real:0.0r.
 
     #constructor new &real:anOperand 
-        <long_copy>.
+        => system'internal'long_copy.
   
     #constructor new &int:anOperand 
-        <real_copyint>.
+        => system'internal'real_copyint.
 
 //    #constructor new &long:anOperand 
 //        <real_copylong>.
@@ -334,68 +327,63 @@
     #method real = $self.
 
     #method equal &real:anOperand
-        <real_equal>.
+        => system'internal'real_equal.
 
     #method less &real:anOperand
-        <real_less>.
+        => system'internal'real_less.
 
     #method equal &int:anOperand
-        = $self equal &real::(RealNumber new &int:anOperand).
+        = $self equal &real:(system'RealNumber new &int:anOperand).
 
     #method less &int:anOperand
-        = $self less &real::(RealNumber new &int:anOperand).
+        = $self less &real:(system'RealNumber new &int:anOperand).
 
     #method add &real:anOperand
-        <real_add>.
+        => system'internal'real_add.
 
     #method subtract &real:anOperand
-        <real_sub>.
+        => system'internal'real_sub.
 
     #method multiply &real:anOperand
-        <real_mul>.
+        => system'internal'real_mul.
 
     #method divide &real:anOperand
-        <real_div>.
+        => system'internal'real_div.
 
     #method add &int:anOperand
-        = $self add &real::(RealNumber new &int:anOperand).
+        = $self add &real:(system'RealNumber new &int:anOperand).
 
     #method subtract &int:anOperand
-        = $self subtract &real::(RealNumber new &int:anOperand).
+        = $self subtract &real:(system'RealNumber new &int:anOperand).
 
     #method multiply &int:anOperand
-        = $self multiply &real::(RealNumber new &int:anOperand).
+        = $self multiply &real:(system'RealNumber new &int:anOperand).
 
     #method divide &int:anOperand
-        = $self divide &real::(RealNumber new &int:anOperand).
+        = $self divide &real:(system'RealNumber new &int:anOperand).
 
     #method add &long:anOperand
-        = $self add &real::(RealNumber new &long:anOperand).
+        = $self add &real:(system'RealNumber new &long:anOperand).
 
     #method subtract &long:anOperand
-        = $self subtract &real::(RealNumber new &long:anOperand).
+        = $self subtract &real:(system'RealNumber new &long:anOperand).
 
     #method multiply &long:anOperand
-        = $self multiply &real::(RealNumber new &long:anOperand).
+        = $self multiply &real:(system'RealNumber new &long:anOperand).
 
     #method divide &long:anOperand
-        = $self divide &real::(RealNumber new &long:anOperand).
+        = $self divide &real:(system'RealNumber new &long:anOperand).
 
-    #method modulus &out'real:aRetVal
-        <r_abs>.
-        
-    #method literal = literalConvertor convert &real:$self literal.
+    #method literal = literalConvertor convert &real:$self.
     
-    #method value = $self.
-
     #method clone = RealNumber new &real:$self.
     
-    #method cast : aTypecaster = aTypecaster real:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb real:$self.
 }
 
 // --- Integer ---
 
-#class(sealed,type:intvar) Integer : IntBaseVariable
+#class(sealed) Integer :: IntBaseVariable
 {
     #field(type:int)theValue.
     
@@ -454,7 +442,7 @@
         = theValue && anOperand.
         
     #method or &int:anOperand
-        = theValue || anOperand.
+        => system'internal'int_or.
         
     #method xor &int:anOperand
         = theValue ^^ anOperand.
@@ -515,24 +503,24 @@
         theValue := theValue / anOperand.
     ]
     
-    #method cast : aTypecaster = aTypecaster eval &int::$self.
+    #method cast:aVerb &to:aTarget = aTarget::aVerb int:theValue.
 
     #method value <= %int.
 
-    #method literal = system'literalConvertor convert &int:theValue literal.
+    #method literal = literalConvertor convert &int:theValue.
 
     #method clone = Integer new &int:theValue.
     
     #method not
-        <int_not>.
+        => system'internal'int_not.
         
     #method shift &index:anOrder
-        <int_shift>.
+        => system'internal'int_shift.
 }
 
 // --- Long ---
 
-#class(sealed,type:longvar) Long : IntBaseVariable
+#class(sealed) Long :: IntBaseVariable
 {
     #field(type:long)theValue.
     
@@ -552,7 +540,7 @@
     ]
     
     #constructor new &int:aValue
-        <long_copyint>.
+        => system'internal'long_copyint.
 
     #method longvar = $self.
             
@@ -595,7 +583,7 @@
         = theValue && anOperand.
         
     #method or &long:anOperand
-        = theValue || anOperand.
+        => system'internal'long_or.
         
     #method xor &long:anOperand
         = theValue ^^ anOperand.
@@ -689,20 +677,20 @@
 
     #method value <= %long.
 
-    #method literal = system'literalConvertor convert &long:theValue literal.
+    #method literal = literalConvertor convert &long:theValue.
 
     #method clone = Long new &long:theValue.
     
     #method not
-        <long_not>.
+        => system'internal'long_not.
         
     #method shift &index:anOrder
-        <long_shift>.
+        => system'internal'long_shift.
 }
 
 // --- Real ---
 
-#class(sealed,type:realvar) Real : BaseVariable
+#class(sealed) Real :: BaseVariable
 {
     #field(type:real)theValue.
     
@@ -727,7 +715,7 @@
 //    ]
     
     #constructor new &int:aValue
-        <real_copyint>.
+        => system'internal'real_copyint.
     
     #method realvar = $self.
     
@@ -862,18 +850,18 @@
         theValue := theValue divide &long:anOperand.
     ]
     
-    #method cast : aTypecaster = aTypecaster eval &real::$self.
+    #method cast:aVerb &to:aTarget = aTarget::aVerb real:theValue.
 
     #method value <= %real.
 
-    #method literal = system'literalConvertor convert &real:theValue literal.
+    #method literal = literalConvertor convert &real:theValue.
 
     #method clone = Real new &real:theValue.
 }
 
 // --- CharValue ---
 
-#class(sealed,type:char,struct) CharValue : BaseValue
+#class(sealed,struct) CharValue :: BaseValue
 {
     #field(type:short)theValue.
     
@@ -895,16 +883,16 @@
     #method char = $self.
 
     #method equal &int:anOperand 
-        <int_equal>.
+        => system'internal'int_equal.
 
     #method less &int:anOperand 
-        <int_less>.
+        => system'internal'int_less.
 
-    #method equal &short:anOperand 
-        <int_equal>.
+    #method equal &char:anOperand 
+        => system'internal'int_equal.
 
-    #method less &short:anOperand 
-        <int_less>.
+    #method less &char:anOperand 
+        => system'internal'int_less.
 
     #method equal &literal:aLiteral
         = $self literal equal &literal:aLiteral.
@@ -916,23 +904,18 @@
 
     #method int = IntNumber new &short:theValue.
 
-    #method literal = system'LiteralValue new &length:1 &short:theValue literal.
+    #method literal = system'LiteralValue new &length:1 &short:theValue.
 
     #method clone = CharValue new &short:theValue.
     
-    #method value = ShortNumber new &short:theValue.
-
-    #method cast : aSelector
-        = aSelector is &numeric 
-            ? [ aSelector eval &int::$self. ]
-            ! [ aSelector eval &char:$self. ].
+    #method cast:aVerb &to:aTarget = aTarget::aVerb char:$self.
 }
 
 // === Basic prototypes ===
 
 // --- Enumerator ---
 
-#class(limited,type:enumerator) Enumerator
+#class(limited) Enumerator
 {
     #method enumerator = $self.
     
@@ -945,7 +928,7 @@
 
 // --- Iterator ---
 
-#class(limited,type:iterator) Iterator
+#class(limited) Iterator
 {
     #method available = false.
 
@@ -955,30 +938,27 @@
     
     #method read &out'index:anIndex []
     
-    #method write &index:anIndex []
+    #method index
+    [
+        #var(type:int)anIndex := $self index.
+                        
+        ^ IntNumber new &int:anIndex.
+    ]                
+    
+    #method write &index:anIndex [] 
     
     #method append &index:anOffset
     [
-        #var(type:int)anIndex.
-        $self read &out'index:anIndex.
+        #var(type:int)anIndex := $self index.
         
         $self write &index:(anIndex + anOffset).
     ]
         
     #method reduce &index:anOffset
     [
-        #var(type:int)anIndex.
-        $self read &out'index:anIndex.
+        #var(type:int)anIndex := $self index.
         
         $self write &index:(anIndex - anOffset).
-    ]
-    
-    #method index
-    [
-        #var(type:int)anIndex.
-        $self read &out'index:anIndex.
-        
-        ^ IntNumber new &int:anIndex.
     ]
 }
 
@@ -989,23 +969,21 @@
 #symbol intConvertor =
 {
     convert &literal:aValue &out'int:aRetVal
-        <int_copystr>.    
-    
+        => system'internal'int_copystr.
+
     convert &literal:aLiteral
     [
-        #var(type:int)aRetVal.
-        $self convert &literal:aLiteral &out'int:aRetVal.
+        #var(type:int)aRetVal := $self convert &literal:aLiteral.
         
         ^ IntNumber new &int:aRetVal.
     ]
 
     convert &real:aReal &out'int:aRetVal
-        <int_copyreal>.
+        => system'internal'int_copyreal.
 
     convert &real:aReal
     [
-        #var(type:int)aRetVal.
-        $self convert &real:aReal &out'int:aRetVal.
+        #var(type:int)aRetVal := $self convert &real:aReal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -1020,12 +998,11 @@
         = LongNumber new &int:aValue.
 
     convert &literal:aValue &out'long:aRetVal
-        <long_copystr>.
+        => system'internal'long_copystr.
     
     convert &literal:aLiteral
     [
-        #var(type:long)aRetVal.
-        $self convert &literal:aLiteral &out'long:aRetVal.
+        #var(type:long)aRetVal := $self convert &literal:aLiteral.
         
         ^ LongNumber new &long:aRetVal.
     ]
@@ -1037,15 +1014,14 @@
 #symbol realConvertor =
 {
     convert &int:aValue &out'real:aRetVal
-        <real_saveint>.    
+        => system'internal'real_saveint.
 
     convert &literal:aValue &out'real:aRetVal
-        <real_copystr>.
+        => system'internal'real_copystr.
         
     convert &literal:aLiteral
     [
-        #var(type:real)aRetVal.
-        $self convert &literal:aLiteral &out'real:aRetVal.
+        #var(type:real)aRetVal := $self convert &literal:aLiteral.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -1063,19 +1039,19 @@
 #symbol literalConvertor =
 {
     convert &int:aNumber
-        <ws_copyint>.
+        => system'internal'ws_copyint.
 
     convert &int:aNumber &index:aRadix
-        <ws_copyint_radix>.
+        => system'internal'ws_copyint_radix.
 
 //    #method convert &long:aNumber &base:aRadix
 //        = literalPrimitiveOp toLiteral &long:aNumber &index::aRadix.
 
     convert &long:aNumber
-        <ws_copylong>.
+        => system'internal'ws_copylong.
 
     convert &real:aNumber
-        <ws_copyreal>.
+        => system'internal'ws_copyreal.
         
     convert &object:anObject
         = anObject literal.
@@ -1090,6 +1066,10 @@
 {
     #field theValue.
     
+    #constructor new
+    [
+    ]        
+        
     #constructor new : aValue
     [
         theValue := aValue.
@@ -1104,34 +1084,36 @@
         
     #method append : aValue
     [
-        theValue := theValue + aValue.
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue + aValue. ].
     ]
     
     #method reduce : aValue
     [
-        theValue := theValue - aValue.
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue - aValue. ].
     ]
 
     #method multiplyBy : aValue
     [
-        theValue := theValue * aValue.
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue * aValue. ].
     ]
     
     #method divideInto : aValue
     [
-        theValue := theValue / aValue.
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue / aValue. ].
     ]
         
     #method => theValue.
 }
 
-////// === Typecaster ==
-////
-////#symbol literalDetector
-////    = { isLiteral = true. literal : aLiteral = true. ! : anObject = false. ! = false. }.
-////
-////#symbol intDetector
-////    = { isNumeric = true. int : anInt = true. long : aLong = true. ! : anObject = false. ! = false. }.
-////
-////#symbol numericDetector
-////    = { isNumeric = true. int : anInt = true. long : aLong = true. real : aReal = true. ! : anObject = false. ! = false. }.
+// === Typecaster ==
+
+#symbol typeCaster
+    = { ! : anObject = $subject. }.

@@ -10,7 +10,7 @@
 
 #symbol program =
 [
-    control runRange &int:-1 &int:10 &forEvery: (&index:i)
+    control run &int:-1 &int:10 &forEvery: (&index:i)
     [
         console << "fib(" << i << ")=".
         

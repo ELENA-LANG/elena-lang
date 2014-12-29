@@ -14,12 +14,12 @@
 
     #method writeLine : anObject
     [
-        theWriter write &literal::anObject write &literal:theNewLineConstant.
+        theWriter write &literal:anObject write &literal:theNewLineConstant.
     ]
 
     #method write : anObject
     [
-        theWriter write &literal::anObject.
+        theWriter write &literal:anObject.
     ]
 
     #method write &literal:aLiteral
@@ -46,4 +46,4 @@
         = theReader int.
 }
 
-#static(type:textio) console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.
+#static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.

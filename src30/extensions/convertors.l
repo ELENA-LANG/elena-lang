@@ -21,38 +21,36 @@
     ]
 }
 
-#symbol/*(type:convertor)*/ convertor =
+#symbol convertor =
 {
     toInt : anObject
-        = intConvertor convert::anObject.
+        = anObject cast:%convert &to:intConvertor.
 
     toLong : anObject
-        = longConvertor convert::anObject. 
+        = anObject cast:%convert &to:longConvertor.
     
     toReal : anObject
-        = realConvertor convert::anObject.
+        = anObject cast:%convert &to:realConvertor.
 
     toLiteral:anObject
-        = anObject cast:
+        = anObject cast:%eval &to:
                    { 
-                      is &numeric = false.
-                   
-                      eval &enumerable : aList = aList~enumerableEx literal. 
+                      eval &enumerable : aList = aList::enumerableEx literal. 
                       
-                      eval &array : anArray = anArray~enumerableEx literal.
+                      eval &array : anArray = anArray::enumerableEx literal.
                       
                       ! : anObject = anObject literal.
                    }.
 
     toLiteral : anObject &base:aBase
-        = anObject cast:
+        = anObject cast:%eval &to:
                    { 
                       eval &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
                    }.
                    
     toArray : anEnumerable
-        = anEnumerable ~enumerable array.
+        = anEnumerable::enumerableOp array.
 
     save : anObject &to:aTarget
-        = aTarget write:(aTarget cast:{ ! : x = Variant new:anObject ~$subject get. }).
+        = aTarget write:(aTarget cast:%eval &to:{ ! : x = (Variant new:anObject)::$subject get. }).
 }.

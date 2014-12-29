@@ -14,7 +14,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 3
+#define BUILD_VERSION 4
 
 typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
 typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;

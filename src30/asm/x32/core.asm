@@ -56,7 +56,6 @@ define elCountOffset     0008h
 define elVMTOffset       0004h 
 define elVMTFlagOffset   0008h
 define elVMTSizeOffset   000Ch
-define elVMTTypeOffset   0010h
 
 define GC_HEAP_ATTRIBUTE 00Dh
 
@@ -1229,15 +1228,6 @@ inline % 2Fh
 
 lEnd:
 
-end
-
-// ; type
-
-inline % 30h
-
-  mov  ebx, [edi - 4]
-  mov  esi, [ebx - elVMTTypeOffset]
-  
 end
 
 // ; getblen
