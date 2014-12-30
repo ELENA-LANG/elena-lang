@@ -248,11 +248,12 @@ protected:
          bool dummy;
          return checkTypeMethod(type_ref, message, dummy);
       }
-      MethodType checkMethod(ref_t reference, ref_t message, bool& found);
+      MethodType checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
       MethodType checkMethod(ref_t reference, ref_t message)
       {
          bool dummy;
-         return checkMethod(reference, message, dummy);
+         ref_t dummyRef;
+         return checkMethod(reference, message, dummy, dummyRef);
       }
 
       void loadTypes(_Module* module);
@@ -746,7 +747,7 @@ protected:
    void compileResendExpression(DNode node, CodeScope& scope);
    void compileDispatchExpression(DNode node, CodeScope& scope);
 
-   void compileCode(DNode node, CodeScope& scope, int mode = 0);
+   ObjectInfo compileCode(DNode node, CodeScope& scope, int mode = 0);
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);

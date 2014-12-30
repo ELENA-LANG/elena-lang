@@ -728,10 +728,11 @@ Compiler::MethodType Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, re
 {
    found = false;
 
-   ref_t classReference = typeHints.get(type_ref);
+   ref_t classReference = resolveStrongType(type_ref);
 
    if (classReference != 0) {
-      MethodType type = checkMethod(classReference, message, found);
+      ref_t dummy;
+      MethodType type = checkMethod(classReference, message, found, dummy);
       if (type == tpClosed || type == tpSealed)
          return type;
    }
@@ -739,13 +740,14 @@ Compiler::MethodType Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, re
    return tpUnknown;
 }
 
-Compiler::MethodType Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found)
+Compiler::MethodType Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
 {
-   _Module* extModule;
+   _Module* extModule = NULL;
    ClassInfo info;
    found = loadClassInfo(extModule, info, module->resolveReference(reference)) != 0;
 
-   if (extModule) {
+   if (found) {
+      ref_t extMessage = message;
       bool methodFound = false;
       if (module != extModule) {
          int   verb, paramCount;
@@ -754,12 +756,16 @@ Compiler::MethodType Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t
          if (subj != 0) {
             ref_t extSubj = extModule->mapSubject(module->resolveSubject(subj), true);
             if (extSubj != 0) {
-               methodFound = info.methods.exist(encodeMessage(extSubj, verb, paramCount));
+               extMessage = encodeMessage(extSubj, verb, paramCount);
             }
          }
-         else methodFound = info.methods.exist(message);               
       }
-      else methodFound = info.methods.exist(message);               
+
+      methodFound = info.methods.exist(extMessage);
+      outputType = info.methodTypes.get(extMessage);
+      if (outputType != 0 && module != extModule) {
+         outputType = importSubject(extModule, outputType, module);
+      }
 
       if (methodFound) {
          if (test(info.header.flags, elSealed)) {
@@ -1242,9 +1248,19 @@ int Compiler::MethodScope :: compileHints(DNode hints)
 
          mode |= HINT_GENERIC_METH;
       }
-      //else if (ConstantIdentifier::compare(terminal, HINT_EXPLICIT)) {
-      //   mode |= HINT_EXPLICIT_METH;
-      //}
+      else if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo typeTerminal = value.Terminal();
+
+         ref_t type = moduleScope->mapType(typeTerminal);
+         if (type != 0) {
+            ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+
+            classScope->info.methodTypes.exclude(message);
+            classScope->info.methodTypes.add(message, type);
+         }
+         else raiseError(wrnInvalidHint, terminal);
+      }
       else raiseWarning(wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
@@ -1602,11 +1618,22 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
 
          scope.info.fields.add(copy.fields);
 
+         // import field types
          ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
          while (!type_it.Eof()) {
             scope.info.fieldTypes.add(type_it.key(), importSubject(module, *type_it, moduleScope->module));
 
             type_it++;
+         }
+
+         // import method types
+         ClassInfo::MethodTypeMap::Iterator mtype_it = copy.methodTypes.start();
+         while (!mtype_it.Eof()) {
+            scope.info.methodTypes.add(
+               importMessage(module, mtype_it.key(), moduleScope->module), 
+               importSubject(module, *mtype_it, moduleScope->module));
+
+            mtype_it++;
          }
       }
       else {
@@ -2860,72 +2887,157 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
    recordStep(scope, node.Terminal(), dsProcedureStep);
 
-   // if static message is sent to a class class
-   if (object.kind == okConstantClass) {
-      retVal.param = object.param;
-
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callResolvedMethod(*scope.tape, object.extraparam, messageRef);
-   }
-   // if external role is provided
-   else if (object.kind == okConstantRole) {
-      _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
-   }
-   else if (object.kind == okConstantSymbol) {
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
-   }
-   // if message sent to the class parent
-   else if (object.kind == okSuper) {
-      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-      _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
-   }
-   // if message sent to the $self
-   else if (object.kind == okThisParam && test(scope.getClassFlags(false), elSealed)) {
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callResolvedMethod(*scope.tape, scope.getClassRefId(false), messageRef);
-   }
-   else if (object.kind == okThisParam && test(scope.getClassFlags(false), elClosed)) {
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-      _writer.callVMTResolvedMethod(*scope.tape, scope.getClassRefId(false), messageRef);
-   }
-   // if run-time external role is provided
-   else if (object.kind == okRole) {
-      _writer.callRoleMessage(*scope.tape, paramCount);
-   }
-   else if (catchMode) {
+   if (catchMode) {
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
       _writer.callMethod(*scope.tape, 0, paramCount);
    }
+   else if (object.kind == okRole) {
+      _writer.callRoleMessage(*scope.tape, paramCount);
+   }
    else {
-      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+      ref_t classReference = 0;
+      bool directCall = false;
+      // if static message is sent to a class class
+      if (object.kind == okConstantClass) {
+         retVal.param = object.param;
 
-      ref_t classReference = object.extraparam != 0 ? scope.moduleScope->resolveStrongType(object.extraparam) : 0;
-      // check if it is a strong typed object
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         classReference = object.extraparam;
+         directCall = true;
+      }
+      // if external role is provided
+      else if (object.kind == okConstantRole) {
+         classReference = object.param;
+         directCall = true;
+      }
+      else if (object.kind == okConstantSymbol) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         classReference = object.param;
+         directCall = true;
+      }
+      // if message sent to the class parent
+      else if (object.kind == okSuper) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+
+         classReference = object.param;
+         directCall = true;
+      }
+      // if message sent to the $self
+      else if (object.kind == okThisParam) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         classReference = scope.getClassRefId(false);
+      }
+      else {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         classReference = object.extraparam != 0 ? scope.moduleScope->resolveStrongType(object.extraparam) : 0;
+      }
+      
       if (classReference != 0) {
          // check if the message is supported
          bool classFound = false;
-         MethodType method = scope.moduleScope->checkTypeMethod(object.extraparam, messageRef, classFound);
-         if (method == tpSealed) {
+         MethodType method = tpNormal;
+         if (object.kind == okThisParam) {
+            if (test(scope.getClassFlags(), elClosed)) {
+               ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+               if (classScope->info.methods.exist(messageRef)) {
+                  method = test(classScope->info.header.flags, elSealed) ? tpSealed : tpClosed;
+
+                  retVal.extraparam = classScope->info.methodTypes.get(messageRef);
+               }
+            }
+            classFound = true;
+         }
+         else method = scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.extraparam);
+
+         if ((directCall && method != tpUnknown) || method == tpSealed) {
             _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
          }
          else if (method == tpClosed) {
             _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
          }
          else {
+            retVal.extraparam = 0;
+
             boxObject(scope, object);
 
             // if the class found and the message is not supported - warn the programmer and raise an exception
-            if (classFound) {
+            if (classFound && method == tpUnknown) {
                scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
-
-               _writer.callMethod(*scope.tape, 0, paramCount);
             }
-            else _writer.callMethod(*scope.tape, 0, paramCount);
+            _writer.callMethod(*scope.tape, 0, paramCount);
          }
       }
       else _writer.callMethod(*scope.tape, 0, paramCount);
    }
+
+   //// if static message is sent to a class class
+   //if (object.kind == okConstantClass) {
+   //   retVal.param = object.param;
+
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+   //   _writer.callResolvedMethod(*scope.tape, object.extraparam, messageRef);
+   //}
+   //// if external role is provided
+   //else if (object.kind == okConstantRole) {
+   //   _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
+   //}
+   //else if (object.kind == okConstantSymbol) {
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+   //   _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
+   //}
+   //// if message sent to the class parent
+   //else if (object.kind == okSuper) {
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+   //   _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
+   //}
+   //// if message sent to the $self
+   //else if (object.kind == okThisParam && test(scope.getClassFlags(false), elSealed)) {
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+   //   _writer.callResolvedMethod(*scope.tape, scope.getClassRefId(false), messageRef);
+   //}
+   //else if (object.kind == okThisParam && test(scope.getClassFlags(false), elClosed)) {
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+   //   _writer.callVMTResolvedMethod(*scope.tape, scope.getClassRefId(false), messageRef);
+   //}
+   //// if run-time external role is provided
+   //else if (object.kind == okRole) {
+   //   _writer.callRoleMessage(*scope.tape, paramCount);
+   //}
+   //else if (catchMode) {
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+   //   _writer.callMethod(*scope.tape, 0, paramCount);
+   //}
+   //else {
+   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+   //   ref_t classReference = object.extraparam != 0 ? scope.moduleScope->resolveStrongType(object.extraparam) : 0;
+   //   // check if it is a strong typed object
+   //   if (classReference != 0) {
+   //      // check if the message is supported
+   //      bool classFound = false;
+   //      MethodType method = scope.moduleScope->checkMethod(classReference, messageRef, classFound);
+   //      if (method == tpSealed) {
+   //         _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
+   //      }
+   //      else if (method == tpClosed) {
+   //         _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
+   //      }
+   //      else {
+   //         boxObject(scope, object);
+
+   //         // if the class found and the message is not supported - warn the programmer and raise an exception
+   //         if (classFound) {
+   //            scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
+
+   //            _writer.callMethod(*scope.tape, 0, paramCount);
+   //         }
+   //         else _writer.callMethod(*scope.tape, 0, paramCount);
+   //      }
+   //   }
+   //   else _writer.callMethod(*scope.tape, 0, paramCount);
+   //}
 
    // the result of get&type message should be typed
    if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
@@ -3507,6 +3619,8 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
 
 ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
 {
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
    ObjectInfo info = compileExpression(node, scope, mode);
 
    _writer.loadObject(*scope.tape, info);
@@ -3519,19 +3633,24 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    ref_t subj;
    decodeMessage(scope.getMessageID(), subj, verb, paramCount);
    if (verb == GET_MESSAGE_ID && paramCount == 0) {
-      if (scope.moduleScope->typeHints.get(subj) > 0) {
-         bool mismatch = false;
-         compileTypecast(scope, info, subj, mismatch, 0);
-         if (mismatch)
-            scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
-      }
+   }
+   else if (classScope->info.methodTypes.exist(scope.getMessageID())) {
+      subj = classScope->info.methodTypes.get(scope.getMessageID());
+   }
+   else subj = 0;
+
+   if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
+      bool mismatch = false;
+      compileTypecast(scope, info, subj, mismatch, 0);
+      if (mismatch)
+         scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
    }
 
    scope.freeSpace();
 
    _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
-   return ObjectInfo(okAccumulator);
+   return ObjectInfo(okAccumulator, 0, subj);
 }
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
@@ -3794,8 +3913,10 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
    }
 }
 
-void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
 {
+   ObjectInfo retVal;
+
    bool needVirtualEnd = true;
    DNode statement = node.firstChild();
 
@@ -3821,7 +3942,7 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
          case nsRetStatement:
          {
             needVirtualEnd = false;
-            compileRetExpression(statement.firstChild(), scope, 0);
+            retVal = compileRetExpression(statement.firstChild(), scope, 0);
             scope.freeSpace();
 
             _writer.gotoEnd(*scope.tape, baFirstLabel);
@@ -3842,6 +3963,8 @@ void Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
 
    if (needVirtualEnd)
       _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+   return retVal;
 }
 
 void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalScope& externalScope)
@@ -4488,9 +4611,17 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       }
       // if method body is a set of statements
       else {
-         compileCode(body, codeScope);
+         ObjectInfo retVal = compileCode(body, codeScope);
 
-         _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
+         if(retVal.kind == okUnknown) {
+            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
+
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+            bool mismatch = false;
+            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodTypes.get(scope.message), mismatch, 0);
+            if (mismatch)
+               scope.raiseWarning(wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
+         }
       }
 
       int stackToFree = paramCount + scope.rootToFree;

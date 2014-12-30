@@ -2,8 +2,8 @@
 #define system'routines.
 #define system'io.
 
-#type(type:func1)forEachWord.
-#type(type:func1)forEachLine.
+#type(class:system'BaseFunction1)forEachWord.
+#type(class:system'BaseFunction1)forEachLine.
 
 // --- ReaderEnumerator ---
 

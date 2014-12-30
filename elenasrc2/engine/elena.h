@@ -426,36 +426,18 @@ struct ClassHeader
 
 struct ClassInfo
 {
-   struct MethodInfo
-   {
-      ref_t signatureRef;
-      int   argNumber;
-      ref_t messageId;
-      bool  flag;        // true means overridden / newly implemented; false means inherited
-
-      MethodInfo()
-      {
-         messageId = signatureRef = argNumber = 0;
-      }
-      MethodInfo(ref_t messageId, ref_t signatureRef, int argNumber, bool flag)
-      {
-         this->messageId = messageId;
-         this->signatureRef = signatureRef;
-         this->argNumber = argNumber;
-         this->flag = flag;
-      }
-   };
-
    typedef MemoryMap<ref_t, bool, false>          MethodMap;
    typedef MemoryMap<const wchar16_t*, int, true> FieldMap;
    typedef MemoryMap<int, ref_t>                  FieldTypeMap;
+   typedef MemoryMap<ref_t, ref_t>                MethodTypeMap;
 
-   ClassHeader  header;
-   size_t       size;           // Object size
-   ref_t        classClassRef;  // reference to class class VMT
-   MethodMap    methods;
-   FieldMap     fields;
-   FieldTypeMap fieldTypes;
+   ClassHeader   header;
+   size_t        size;           // Object size
+   ref_t         classClassRef;  // reference to class class VMT
+   MethodMap     methods;
+   FieldMap      fields;
+   FieldTypeMap  fieldTypes;
+   MethodTypeMap methodTypes;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
@@ -466,6 +448,7 @@ struct ClassInfo
          methods.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
+         methodTypes.write(writer);
       }
    }
 
@@ -478,6 +461,7 @@ struct ClassInfo
          methods.read(reader);
          fields.read(reader);
          fieldTypes.read(reader);
+         methodTypes.read(reader);
       }
    }
 

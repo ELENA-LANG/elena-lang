@@ -43,8 +43,6 @@ Currently:
 
                        * enumeration pattern : bool action is sent after each next call, get rid of extra bool check
 
-                       * convertor toLiteral:xx - should not ask for the typecast
-
                        * BoxingTester add &int:(n + 3 * 4). - get rid of the type mismatch warning
 
                        * TextBuffer: ShortArray new &length:($TextPageSize int) - constant should be typed, so no need to call int
@@ -182,8 +180,6 @@ week1:
                        * do we need opEmbeddedSymbolMode?
                        * do we need opModuleForwards?
                        * do we need opTemplate?
-
-                       * probably we have to get rid of direct path to elenavm and use shared paths, special batch file to update paths??
 
                        * generic method should be the last in VMT
 

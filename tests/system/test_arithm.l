@@ -1,12 +1,12 @@
 #define system.
 #define system'routines.
 #define system'collections.
-//#define system'dynamic.
+#define system'dynamic.
 #define system'calendar.
-#define system'math.
+//#define system'math.
 #define extensions.
-#define extensions'math.
-////#define extensions'dynamic.
+//#define extensions'math.
+//////#define extensions'dynamic.
 
 #symbol XTester =
 {
@@ -29,40 +29,41 @@
 //        #var b := anArg1.
 //    ]
 
-    test : anIndex :: aParams
+    test : anIndex &args:aParams
         = aParams @ (anIndex int).
 
-    testParamsCopy :: aParams
-    [
-        
+    testParamsCopy &args: aParams
+    [        
         #var n := aParams @ 0.
         
         ^ n.
     ]
             
-    test :: aParams
-    [
-        #var n := $self testParamsCopy &:aParams.
-        
-        #var aLength := aParams length.
-        
-        #var aSecond := aParams@1.
-        
-        $self testBoxing:aParams.
-//        $self testUnboxing::aParams.
-    ]
-    
-    testBoxing : anArray
-    [
-        #var b := anArray.
-    ]    
+//    test &params : aParams
+//    [
+//        #var n := $self testParamsCopy &:aParams.
+//        
+//        #var aLength := aParams length.
+//        
+//        #var aSecond := aParams@1.
+//        
+//        $self testBoxing:aParams.
+////        $self testUnboxing::aParams.
+//    ]
+//    
+//    testBoxing : anArray
+//    [
+//        #var b := anArray.
+//    ]    
 }.
 
 #symbol OpenArgTest =
 [
-    #var aRetVal := OpenArgTester test:1 &:1:"a":3.
-    
-    OpenArgTester test &:1:"a":3.
+    OpenArgTester testParamsCopy &args:1:"a":3.
+
+    #var aRetVal := OpenArgTester test:1 &args:1:"a":3.
+
+//    OpenArgTester test &args:1:"a":3.
 ].
 
 // --- MultiDispatchTest ---
@@ -78,7 +79,7 @@
 [
     #var msg := %(x&y).
     
-    DispatchTester~msg eval:1:2.
+    DispatchTester::msg eval:1:2.
 ].
 
 // --- MultySelectTest ---
@@ -129,6 +130,7 @@
 {
     add : aValue
     [
+        ^ aValue.
     ]
     
     add &int:aValue
@@ -144,10 +146,8 @@
     
     BoxingTester add:n.
     BoxingTester add:2.
-    BoxingTester add &int::(n + 3 * 4).
-    BoxingTester add &int:(2 + 3).
+    BoxingTester add &int:(n + 3 * 4).
     BoxingTester add :(2 + 3).
-    BoxingTester add &int::(2 + n).
     BoxingTester add :(2 + n).
     
     #var n3 := BoxingTester add &int:(2 + 3 * 4).
@@ -188,18 +188,18 @@
     console writeLine:".".
 ].
 
-//#symbol BreakTest =
-//[
-//    #var a := 2.
-//    #var n := control do:
-//    [
-//       (a == 1) ? [ #break "a". ].
-//
-//       (a == 2) ? [ #break "b". ].
-//
-//       ^ nil.
-//    ].
-//].
+////#symbol BreakTest =
+////[
+////    #var a := 2.
+////    #var n := control do:
+////    [
+////       (a == 1) ? [ #break "a". ].
+////
+////       (a == 2) ? [ #break "b". ].
+////
+////       ^ nil.
+////    ].
+////].
 
 #symbol actionTester =
 {
@@ -214,13 +214,13 @@
     ]
 }.
 
-#class MyException : Exception
+#class MyException :: Exception
 {
     #constructor new : aMessage
         <= %new &message:aMessage &error_type:%MyError.
 }
 
-#class MyException2 : Exception
+#class MyException2 :: Exception
 {
     #constructor new : aMessage
         <= %new &message:aMessage &error_type:%MyError2.
@@ -311,7 +311,7 @@
     console write:"(2 >= 2) is " writeLine:(2 >= 2).
     console write:"(2 >= 3) is " writeLine:(2 >= 3).
 
-    #var n := Integer new write::1.
+    #var n := Integer new write:1.
     n += 2.
     n -= 2.
     n *= 2.
@@ -336,7 +336,7 @@
     console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
     console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
     
-    #var n := Long new write::1l.
+    #var n := Long new write:1l.
     n += 2l.
     n -= 2l.
     n *= 2l.
@@ -353,7 +353,7 @@
     console write:"(2 + 3 * 4) is " writeLine:(2.0r +  3.0r * 4.0r).
     console write:"(10/3) is " writeLine:(10.0r / 3.0r).
     
-    #var n := Real new write::1.0r.
+    #var n := Real new write:1.0r.
     n += 2.0r.
     n -= 2.0r.
     n *= 2.0r.
@@ -383,7 +383,7 @@
 
 #symbol RoleTest =
 [
-    console writeLine:("Role overriding doesn't work!!"~Role literal).
+    console writeLine:("Role overriding doesn't work!!"::Role literal).
 ].
 
 // --- ConvertorTest ---
@@ -479,7 +479,7 @@
 [
     #var n := 2.
     
-    n test | if &MethodNotFoundError: e [ console writeLine:(e message). ]
+    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ]
 ].
 
 // --- LoopTest ---
@@ -563,51 +563,51 @@
     #var aRetVal := aDate literal.
 ].
 
-// --- GetPropertyTest ---
-
-#symbol GetPropertyAgent =
-{
-    eval : aGetProperty
-    [
-        #var n := aGetProperty property.
-        
-        2 == aGetProperty property
-            ? [ console writeLine:"GetProperty works!". ]
-            ! [ console writeLine:"!! GetProperty does not work !!". ]
-    ]
-}.
-
-#symbol GetPropertyTest =
-[
-    GetPropertyAgent eval:%property[2].
-].
+//// --- GetPropertyTest ---
+//
+//#symbol GetPropertyAgent =
+//{
+//    eval : aGetProperty
+//    [
+//        #var n := aGetProperty property.
+//        
+//        2 == aGetProperty property
+//            ? [ console writeLine:"GetProperty works!". ]
+//            ! [ console writeLine:"!! GetProperty does not work !!". ]
+//    ]
+//}.
+//
+//#symbol GetPropertyTest =
+//[
+//    GetPropertyAgent eval:%property[2].
+//].
 
 #symbol StructTest =
 [
-    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 1, system'dynamic'tapeControl, %read(1,), system'console, %writeLine(1) )).    
+    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 1, extensions'control, %(getAt&args)(1), system'console, %(writeLine)(1) )).    
 
     #var x := a x.
 
     a eval&print:"Struct method works".
 ].
 
-//#symbol GroupMember1 =
-//{
-//    m1 : prm = "group 1 " + prm.
-//}.
-//
-//#symbol GroupMember2 =
-//{
-//    m2 : prm = "group 2 " + prm.
-//}.
-//
-//#symbol GroupTest =
-//[
-//    #var g := Group(GroupMember1, GroupMember2).
-//    
-//    #var m1 := g m1:"called".
-//    #var m2 := g m2:"called".
-//].
+#symbol GroupMember1 =
+{
+    m1 : prm = "group 1 " + prm.
+}.
+
+#symbol GroupMember2 =
+{
+    m2 : prm : prm2 = "group 2 " + prm.
+}.
+
+#symbol GroupTest =
+[
+    #var g := Group(GroupMember1, GroupMember2).
+    
+    #var m1 := g m1:"called".
+    #var m2 := g m2:"called":2.
+].
 
 // --- ClassWithGeneric ---
 
@@ -649,7 +649,7 @@
     #constructor new [ theField1 := 1. ]
 }
 
-#class ChildClass : BaseClass
+#class ChildClass :: BaseClass
 {
     #field theField2.
     

@@ -32,13 +32,13 @@
     DateTest eval.
     ListTest eval.
     DictionaryTest eval.
-    GetPropertyTest eval.
+//    GetPropertyTest eval.
     BoxingTest eval.
     OuterFieldTest eval.
     LocalTest eval.
     OpenArgTest eval.
     StructTest eval.
-//    GroupTest eval.
+    GroupTest eval.
     GenericMethodTest eval.
     ConstructorTest eval.
 ].

@@ -23,34 +23,34 @@
 
 #symbol convertor =
 {
-    toInt : anObject
-        = anObject cast:%convert &to:intConvertor.
+    #method(type:int) toInt : anObject
+        = anObject cast:%convert &to:intConvertor int.
 
-    toLong : anObject
-        = anObject cast:%convert &to:longConvertor.
+    #method(type:long) toLong : anObject
+        = anObject cast:%convert &to:longConvertor long.
     
-    toReal : anObject
-        = anObject cast:%convert &to:realConvertor.
+    #method(type:real) toReal : anObject
+        = anObject cast:%convert &to:realConvertor real.
 
-    toLiteral:anObject
+    #method(type:literal) toLiteral:anObject
         = anObject cast:%eval &to:
                    { 
                       eval &enumerable : aList = aList::enumerableEx literal. 
                       
                       eval &array : anArray = anArray::enumerableEx literal.
                       
-                      ! : anObject = anObject literal.
-                   }.
+                      ! : anObject = anObject.
+                   } literal.
 
-    toLiteral : anObject &base:aBase
+     #method(type:literal) toLiteral : anObject &base:aBase
         = anObject cast:%eval &to:
                    { 
                       eval &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
-                   }.
+                   } literal.
                    
-    toArray : anEnumerable
+    #method(type:array) toArray : anEnumerable
         = anEnumerable::enumerableOp array.
 
-    save : anObject &to:aTarget
+    #method save : anObject &to:aTarget
         = aTarget write:(aTarget cast:%eval &to:{ ! : x = (Variant new:anObject)::$subject get. }).
 }.
