@@ -38,7 +38,7 @@
 
     #method write : aLine
     [
-        $self write &literal:aLine.
+        $self write &literal:(aLine literal).
     ]
                                     
     #method reserve &length:aLength
@@ -109,26 +109,25 @@
         aRetVal := theBuffer indexOf &index:aPosition &length:aLength &short:aValue.
     ]
 
-    #method Substring &index:anIndex &length:aLength
-        = (aLength == 0)
-            ? [ emptyLiteralValue ]
-            ! [
-                #var aLiteral := LiteralValue new &length:aLength &index:anIndex &shortarray:theBuffer.
-
-                ^ aLiteral.        
-            ].
+    #method(type:literal) Substring &index:anIndex &length:aLength
+    [
+        (aLength == 0)
+            ? [ ^ emptyLiteralValue. ].
+            
+        ^ LiteralValue new &length:aLength &index:anIndex &shortarray:theBuffer.
+    ]
 
     #method delete &index:anIndex &length:aLength
     [
         (anIndex == 0)
             ? [
-                #var aRightLiteral := $self::literalOp Substring &index:aLength.
+                #var(type:literal) aRightLiteral := $self::literalOp Substring &index:aLength.
                 
                 $self clear write &literal:aRightLiteral.
             ]
             ! [
-                #var aLeftLiteral := $self Substring &index:0 &length:anIndex.
-                #var aRightLiteral := $self::literalOp Substring &index:(anIndex + aLength).
+                #var(type:literal) aLeftLiteral := $self Substring &index:0 &length:anIndex.
+                #var(type:literal) aRightLiteral := $self::literalOp Substring &index:(anIndex + aLength).
                 
                 $self clear write &literal:aLeftLiteral write &literal:aRightLiteral.
             ].

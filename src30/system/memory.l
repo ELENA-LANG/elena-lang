@@ -40,6 +40,20 @@
 
     #method read &out'length:aLength
         => system'internal'bs_getlen.
+
+    #method equal &index:anIndex &int:aValue
+    [
+        #var(type:int)anInt := $self read &index:anIndex.
+        
+        ^ anInt equal &int:aValue.
+    ]
+
+    #method equal &index:anIndex &short:aValue
+    [
+        #var(type:short)anInt := $self read &index:anIndex.
+        
+        ^ anInt equal &short:aValue.
+    ]
         
     #method length
     [
@@ -56,6 +70,9 @@
     #constructor new &length : aLength
         => system'internal'sa_create.
     
+    #method equal &index:anIndex &short:aValue
+        => system'internal'ws_equalword.
+        
     #method indexOf &index:anIndex &length:aLength &short:aLiteral &out'int:aRetVal
         => system'internal'sa_indexof.
         
@@ -74,6 +91,9 @@
     #method read &out'length:aLength
         => system'internal'sa_getlen.
         
+    #method read &index:anIndex &out'short:aValue
+        => system'internal'sa_readword.
+        
     #method length
     [
         #var(type:int)aLength := $self length.
@@ -86,7 +106,7 @@
 
 // --- emptyliteralvalue ---
 
-#symbol(const) emptyLiteralValue = "".
+#symbol(const,type:literal) emptyLiteralValue = "".
 
 // --- LiteralValue ---
 
@@ -110,7 +130,7 @@
         => system'internal'ws_fill.
 
     #constructor new &literal:aLiteral
-        <= %new &length:aLiteral &literal:aLiteral.
+        <= %new &length:(aLiteral length) &literal:aLiteral.
 
     #method literal = $self.
 
@@ -120,11 +140,14 @@
     #method less &literal : aLiteral
         => system'internal'ws_less.
 
-    #method add : aLiteral
-        = $self add &literal:aLiteral.
-
-    #method add &literal : aLiteral
+    #method(type:literal) add &literal : aLiteral
         => system'internal'ws_add.
+
+    #method(type:literal) add &char:aChar
+        = $self add &literal:(aChar literal).
+
+    #method add : anObject
+        = $self add &literal:(anObject literal).
 
     #method getAt : aParam
         <= %getAt &index:(aParam int).
@@ -142,6 +165,13 @@
     #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
         => system'internal'ws_indexof.
 
+    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+    [
+        #var(type:int)anIndex := $self indexOf &index:anIndex &literal:(aChar literal).
+        
+        aRetVal := anIndex.
+    ]
+
     #method indexOf &index:anIndex &literal:aLiteral
     [
         #var(type:int)aRetVal := $self indexOf &index:anIndex &literal:aLiteral.
@@ -153,15 +183,15 @@
 //        <= %indexOf &index:anIndex &literal:aChar &out'int:aRetVal.
 
     #method indexOf &index:anIndex &char:aChar
-        <= %indexOf &index:anIndex &literal:aChar.
+        <= %indexOf &index:anIndex &literal:(aChar literal).
 
-    #method insert &index:anIndex &literal:aLiteral
+    #method(type:literal) insert &index:anIndex &literal:aLiteral
         => system'internal'ws_insert.
 
-    #method delete &index:anIndex &length:aLength
+    #method(type:literal) delete &index:anIndex &length:aLength
         => system'internal'ws_delete.
 
-    #method Substring &index:anIndex &length:aLength
+    #method(type:literal) Substring &index:anIndex &length:aLength
         => system'internal'ws_subs.
 
     #method read &out'length:aLength
@@ -216,7 +246,7 @@
     
     #method append : anOperand
     [
-        theValue := theValue + anOperand.
+        theValue := theValue add &literal:(anOperand literal).
     ]
     
     #method append &literal:anOperand
@@ -227,7 +257,7 @@
     #method insert &index:anIndex &literal:aLiteral
     [
         (anIndex == 0)
-            ? [ theValue := aLiteral + theValue. ]
+            ? [ theValue := aLiteral add &literal:theValue. ]
             ! [ theValue := theValue insert &index:anIndex &literal:aLiteral. ].
     ]
             
@@ -307,7 +337,7 @@
         => system'internal'arr_setat.
 
     #method add : anObject
-        = $self add &array:anObject.
+        = $self add &array:(anObject array).
 
     #method add &array:anArray
     [
@@ -321,7 +351,7 @@
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength1) ?
         [
-            aRetVal setAt &index:anIndex &object:(self getAt &index:anIndex).
+            aRetVal setAt &index:anIndex &object:($self getAt &index:anIndex).
             
             anIndex := anIndex + 1.
         ].

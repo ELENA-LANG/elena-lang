@@ -7,12 +7,12 @@
 #define extensions.
 //#define extensions'math.
 //////#define extensions'dynamic.
-
+                        
 #symbol XTester =
 {
     test
     [
-    ]    
+    ]
 }.
 
 #symbol XTest =
@@ -35,7 +35,11 @@
     testParamsCopy &args: aParams
     [        
         #var n := aParams @ 0.
-        
+
+        $self testBoxing:aParams.
+                        
+        #var n2 := $self test:0 &args:aParams.
+                        
         ^ n.
     ]
             
@@ -50,11 +54,11 @@
 //        $self testBoxing:aParams.
 ////        $self testUnboxing::aParams.
 //    ]
-//    
-//    testBoxing : anArray
-//    [
-//        #var b := anArray.
-//    ]    
+    
+    testBoxing : anArray
+    [
+        #var b := anArray.
+    ]    
 }.
 
 #symbol OpenArgTest =

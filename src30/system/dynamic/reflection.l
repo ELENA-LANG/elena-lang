@@ -4,7 +4,10 @@
 {
     readName : anObject &shortarray:aBuffer &out'length:aLength
         => system'internal'load_classname.
-        
+
+    readLength : anObject &out'length:aLength        
+        => system'internal'arrptr_getLen.        
+                        
 //    test &bytearray:anArray &index:anIndex &out'shortarray:aBuffer &out'length:aLength
 //        <test>.
 //        
@@ -22,21 +25,23 @@
 
 #class(extension) classOp
 {
-    #method read &object &out'length:aLength
-        => system'internal'arrptr_getLen.        
-            
+    #method fieldCount
+    [
+        #var(type:length)aLength := classControl readLength:self.
+    ]     
+                   
     #method setField &index:anIndex &object:anObject
         => system'internal'arrptr_set.
         
     #method getField &index:anIndex
         => system'internal'arrptr_get.
-        
+                                
     #method class
         => system'internal'class_getClass.
 
     #method name
     [
-        #var(type:int)aLength := 255.
+        #var(type:length)aLength := 255.
         #var(type:shortarray,size:256)aBuffer.
         
         aLength := classControl readName:self &shortarray:aBuffer.

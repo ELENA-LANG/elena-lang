@@ -3,56 +3,107 @@
 #define(const)true = system'true.
 #define(const)false = system'false.
 
-#symbol true =
+#class(limited) BaseBoolValue
 {
-    then : aTrueAction = aTrueAction eval.
+    #method then : aTrueAction = nil.
 
-    then : aTrueAction &else:aFalseAction = aTrueAction eval.
+    #method then : aTrueAction &else:aFalseAction = nil.
 
-    else : aTrueAction = nil.
+    #method else : aTrueAction = nil.
 
-    or : anExpr = $self.
+    #method(type:bool) or : anExpr = $self.
 
-    and : anExpr = anExpr bool.
+    #method(type:bool) and : anExpr = $self.
 
-    xor : aBool = aBool ? [ false ] ! [ true ].
+    #method(type:bool) xor : aBool = $self.
 
-    equal : anExpr = anExpr bool.
+    #method equal : anExpr = $self.
 
-    not = false.
+    #method(type:bool) equal &bool:aBool = $self.
 
-    literal = "true".
+    #method(type:bool) not = $self.
 
-    bool = $self.
+    #method literal = "unknown".
 
-    clone = $self.
+    #method bool = $self.
+
+    #method clone = $self.
+}
+
+#symbol true = BaseBoolValue
+{
+    #method then : aTrueAction = aTrueAction eval.
+
+    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
+
+    #method else : aTrueAction = nil.
+
+    #method(type:bool) or : anExpr = $self.
+
+    #method(type:bool) and : anExpr = anExpr bool.
+
+    #method(type:bool) xor : aBool
+    [
+        aBool ? [ ^ false bool. ].
+        
+        ^ $self.
+    ]
+
+    #method equal : anExpr = anExpr bool.
+
+    #method(type:bool) equal &bool:aBool = aBool.
+
+    #method(type:bool) not = false.
+
+    #method literal = "true".
+
+    #method bool = $self.
+
+    #method clone = $self.
 }.
 
 // --- false ---
 
-#symbol false =
+#symbol false = BaseBoolValue
 {
-    then : anAction = nil.
+    #method then : anAction = nil.
     
-    then : aTrueAction &else:aFalseAction = aFalseAction eval.
+    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
 
-    else : aFalseAction = aFalseAction eval.
+    #method else : aFalseAction = aFalseAction eval.
 
-    or : anExpr = anExpr bool.
+    #method(type:bool) or : anExpr = anExpr bool.
 
-    and : anExpr = $self.
+    #method(type:bool) and : anExpr = $self.
 
-    xor : anExpr = anExpr ? [ true ] ! [ false ].
+    #method(type:bool) xor : anExpr 
+    [
+        anExpr ? [ ^ true. ].
+        
+        ^ $self.
+    ]
 
-    equal : anExpr = anExpr ? [ false ] ! [ true ].
+    #method equal : anExpr
+    [
+        anExpr ? [ ^ $self. ].
+        
+        ^ true.
+    ]
 
-    not = true.
+    #method(type:bool) equal &bool:anExpr
+    [
+        anExpr ? [ ^ $self. ].
+        
+        ^ true.
+    ]
 
-    literal = "false".
+    #method not = true.
 
-    bool = $self.
+    #method literal = "false".
 
-    clone = $self.
+    #method bool = $self.
+
+    #method clone = $self.
 }.
 
 // --- base functions ---
@@ -355,31 +406,31 @@
 
     #constructor new : aValue
     [        
-        theValue := true == aValue.
+        theValue := true equal &bool:(aValue bool).
     ]
 
     #method value = theValue.
 
     #method write : aValue
     [
-        theValue := true == aValue.
+        theValue := true equal &bool:(aValue bool).
     ]
 
     #method bool = theValue.
 
     #method append : aValue
     [
-        theValue := theValue or:aValue.
+        theValue := theValue or:aValue bool.
     ]
             
     #method multiplyBy : aValue
     [
-        theValue := theValue and:aValue.
+        theValue := theValue and:aValue bool.
     ]
             
     #method invert
     [
-        theValue := theValue not.
+        theValue := theValue not bool.
     ]            
 
     #method equal &bool:aValue
@@ -390,4 +441,55 @@
     #method cast:aVerb &to:aTareget = aTareget::aVerb bool:theValue.
             
     #method => theValue.
+}
+
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+#class(limited) Enumerator
+{
+    #method enumerator = $self.
+    
+    #method get = nil.
+    
+    #method(type:bool) next = false.
+    
+    #method reset []
+}
+
+// --- Iterator ---
+
+#class(limited) Iterator
+{
+    #method available = false.
+
+    #method get = nil.
+    
+    #method set : anObject []
+    
+    #method read &out'index:anIndex []
+    
+    #method index
+    [
+        #var(type:int)anIndex := $self index.
+                        
+        ^ IntNumber new &int:anIndex.
+    ]                
+    
+    #method write &index:anIndex [] 
+    
+    #method append &index:anOffset
+    [
+        #var(type:int)anIndex := $self index.
+        
+        $self write &index:(anIndex + anOffset).
+    ]
+        
+    #method reduce &index:anOffset
+    [
+        #var(type:int)anIndex := $self index.
+        
+        $self write &index:(anIndex - anOffset).
+    ]
 }

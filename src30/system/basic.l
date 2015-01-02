@@ -1,16 +1,42 @@
 // === basic data classes ===
 
-#define(const)literalConvertor = system'literalConvertor.
+#define(const)false = system'false.
+
+// --- literalConvertor ---
+
+#symbol literalConvertor =
+{
+    #method(type:literal) convert &int:aNumber
+        => system'internal'ws_copyint.
+
+    #method(type:literal) convert &int:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+//    #method convert &long:aNumber &base:aRadix
+//        = literalPrimitiveOp toLiteral &long:aNumber &index::aRadix.
+
+    #method(type:literal) convert &long:aNumber
+        => system'internal'ws_copylong.
+
+    #method(type:literal) convert &real:aNumber
+        => system'internal'ws_copyreal.
+        
+    #method(type:literal) convert &object:anObject
+        = anObject literal.
+        
+    #method(type:literal) convert &literal:aLiteral
+        = aLiteral.
+}.
 
 // --- BaseValue ---
 
 #class BaseValue
 {
-    #method equal : anObject = anObject cast:%equal &to:$self.
+    #method equal : anObject = anObject cast:%equal &to:$self bool.
 
-    #method less : anObject = anObject cast:%less &to:$self.
+    #method(type:bool) less : anObject = anObject cast:%less &to:$self bool.
 
-     #method greater : anObject = anObject less:$self.
+    #method(type:bool) greater : anObject = anObject less:$self bool.
 }
 
 // --- BaseNumber ---
@@ -126,8 +152,20 @@
         
     #method short = $self.
     
-    #method int = IntNumber new &short:$self.
+    #method int = IntNumber new &short:$self int.
     
+    #method equal &int:anOperand 
+        => system'internal'int_equal.
+        
+    #method less &int:anOperand
+        => system'internal'int_less.
+    
+    #method equal &short:anOperand 
+        => system'internal'int_equal.
+        
+    #method less &short:anOperand
+        => system'internal'int_less.
+        
     #method cast : aVerb &to:aTarget = aTarget::aVerb short:$self.
 }
 
@@ -148,31 +186,31 @@
 
     #method short = ShortNumber new &int:$self.
 
-    #method equal &int:anOperand 
+    #method(type:bool) equal &int:anOperand 
         => system'internal'int_equal.
         
-    #method less &int:anOperand
+    #method(type:bool) less &int:anOperand
         => system'internal'int_less.
 
-    #method add &int:anOperand
+    #method(type:int) add &int:anOperand
         => system'internal'int_add.
 
-    #method subtract &int:anOperand
+    #method(type:int) subtract &int:anOperand
         => system'internal'int_sub.
 
-    #method multiply &int:anOperand
+    #method(type:int) multiply &int:anOperand
         => system'internal'int_mul.
 
-    #method divide &int:anOperand
+    #method(type:int) divide &int:anOperand
         => system'internal'int_div.
 
-    #method and &int:anOperand
+    #method(type:int) and &int:anOperand
         => system'internal'int_and.
 
-    #method or &int:anOperand
+    #method(type:int) or &int:anOperand
         => system'internal'int_or.
 
-    #method xor &int:anOperand
+    #method(type:int) xor &int:anOperand
         => system'internal'int_xor.
 
     #method equal &long:anOperand 
@@ -205,7 +243,7 @@
     #method divide &real:anOperand
         = RealNumber new &int:$self divide &real:anOperand.
 
-    #method shift &index:anOrder
+    #method(type:int) shift &index:anOrder
         => system'internal'int_shift.
 
     #method read &out'short:aLength
@@ -213,7 +251,7 @@
 
     #method literal = literalConvertor convert &int:$self.
 
-    #method not
+    #method(type:int) not
         => system'internal'int_not.
 
     #method clone = IntNumber new &int:$self.
@@ -236,31 +274,31 @@
 
     #method long = $self.
 
-    #method equal &long:anOperand
+    #method(type:bool) equal &long:anOperand
         => system'internal'long_equal.
 
-    #method less &long:anOperand
+    #method(type:bool) less &long:anOperand
         => system'internal'long_less.
 
-    #method add &long:anOperand
+    #method(type:long) add &long:anOperand
         => system'internal'long_add.
 
-    #method subtract &long:anOperand
+    #method(type:long) subtract &long:anOperand
         => system'internal'long_sub.
 
-    #method multiply &long:anOperand
+    #method(type:long) multiply &long:anOperand
         => system'internal'long_mul.
 
-    #method divide &long:anOperand
+    #method(type:long) divide &long:anOperand
         => system'internal'long_div.
 
-    #method and &long:anOperand
+    #method(type:long) and &long:anOperand
         => system'internal'long_and.
 
-    #method or &long:anOperand
+    #method(type:long) or &long:anOperand
         => system'internal'long_or.
 
-    #method xor &long:anOperand
+    #method(type:long) xor &long:anOperand
         => system'internal'long_xor.
 
     #method add &int:anOperand
@@ -321,57 +359,57 @@
     #constructor new &int:anOperand 
         => system'internal'real_copyint.
 
-//    #constructor new &long:anOperand 
-//        <real_copylong>.
+    #constructor new &long:anOperand 
+        => system'internal'real_copylong.
         
     #method real = $self.
 
-    #method equal &real:anOperand
+    #method(type:bool) equal &real:anOperand
         => system'internal'real_equal.
 
-    #method less &real:anOperand
+    #method(type:bool) less &real:anOperand
         => system'internal'real_less.
 
-    #method equal &int:anOperand
+    #method(type:bool) equal &int:anOperand
         = $self equal &real:(system'RealNumber new &int:anOperand).
 
-    #method less &int:anOperand
+    #method(type:bool) less &int:anOperand
         = $self less &real:(system'RealNumber new &int:anOperand).
 
-    #method add &real:anOperand
+    #method(type:real) add &real:anOperand
         => system'internal'real_add.
 
-    #method subtract &real:anOperand
+    #method(type:real) subtract &real:anOperand
         => system'internal'real_sub.
 
-    #method multiply &real:anOperand
+    #method(type:real) multiply &real:anOperand
         => system'internal'real_mul.
 
-    #method divide &real:anOperand
+    #method(type:real) divide &real:anOperand
         => system'internal'real_div.
 
-    #method add &int:anOperand
+    #method(type:real) add &int:anOperand
         = $self add &real:(system'RealNumber new &int:anOperand).
 
-    #method subtract &int:anOperand
+    #method(type:real) subtract &int:anOperand
         = $self subtract &real:(system'RealNumber new &int:anOperand).
 
-    #method multiply &int:anOperand
+    #method(type:real) multiply &int:anOperand
         = $self multiply &real:(system'RealNumber new &int:anOperand).
 
-    #method divide &int:anOperand
+    #method(type:real) divide &int:anOperand
         = $self divide &real:(system'RealNumber new &int:anOperand).
 
-    #method add &long:anOperand
+    #method(type:real) add &long:anOperand
         = $self add &real:(system'RealNumber new &long:anOperand).
 
-    #method subtract &long:anOperand
+    #method(type:real) subtract &long:anOperand
         = $self subtract &real:(system'RealNumber new &long:anOperand).
 
-    #method multiply &long:anOperand
+    #method(type:real) multiply &long:anOperand
         = $self multiply &real:(system'RealNumber new &long:anOperand).
 
-    #method divide &long:anOperand
+    #method(type:real) divide &long:anOperand
         = $self divide &real:(system'RealNumber new &long:anOperand).
 
     #method literal = literalConvertor convert &real:$self.
@@ -420,10 +458,10 @@
         theValue := anOperand.
     ]
     
-    #method equal &int:anOperand 
+    #method(type:bool) equal &int:anOperand 
         = theValue == anOperand.
 
-    #method less &int:anOperand
+    #method(type:bool) less &int:anOperand
         = theValue < anOperand.
         
     #method add &int:anOperand
@@ -561,10 +599,10 @@
 //        aRetVal := theValue.
 //    ]
     
-    #method equal &long:anOperand 
+    #method(type:bool) equal &long:anOperand 
         = theValue == anOperand.
 
-    #method less &long:anOperand
+    #method(type:bool) less &long:anOperand
         = theValue < anOperand.
         
     #method add &long:anOperand
@@ -736,10 +774,10 @@
 //        aRetVal := theValue.
 //    ]
     
-    #method equal &real:anOperand 
+    #method(type:bool) equal &real:anOperand 
         = theValue == anOperand.
 
-    #method less &real:anOperand
+    #method(type:bool) less &real:anOperand
         = theValue < anOperand.
         
     #method add &real:anOperand
@@ -904,62 +942,64 @@
 
     #method int = IntNumber new &short:theValue.
 
-    #method literal = system'LiteralValue new &length:1 &short:theValue.
+    #method literal = system'LiteralValue new &length:1 &short:theValue literal.
 
     #method clone = CharValue new &short:theValue.
     
     #method cast:aVerb &to:aTarget = aTarget::aVerb char:$self.
 }
 
-// === Basic prototypes ===
+// === Basic Factory symbols ==
 
-// --- Enumerator ---
-
-#class(limited) Enumerator
+#class Variable
 {
-    #method enumerator = $self.
+    #field theValue.
     
-    #method get = nil.
-    
-    #method next = system'false.
-    
-    #method reset []
-}
-
-// --- Iterator ---
-
-#class(limited) Iterator
-{
-    #method available = false.
-
-    #method get = nil.
-    
-    #method set : anObject []
-    
-    #method read &out'index:anIndex []
-    
-    #method index
+    #constructor new
     [
-        #var(type:int)anIndex := $self index.
-                        
-        ^ IntNumber new &int:anIndex.
-    ]                
-    
-    #method write &index:anIndex [] 
-    
-    #method append &index:anOffset
-    [
-        #var(type:int)anIndex := $self index.
+    ]        
         
-        $self write &index:(anIndex + anOffset).
+    #constructor new : aValue
+    [
+        theValue := aValue.
+    ]
+  
+    #method write : aValue
+    [
+        theValue := aValue.
     ]
         
-    #method reduce &index:anOffset
-    [
-        #var(type:int)anIndex := $self index.
+    #method value = theValue.        
         
-        $self write &index:(anIndex - anOffset).
+    #method append : aValue
+    [
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue + aValue. ].
     ]
+    
+    #method reduce : aValue
+    [
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue - aValue. ].
+    ]
+
+    #method multiplyBy : aValue
+    [
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue * aValue. ].
+    ]
+    
+    #method divideInto : aValue
+    [
+        (nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue / aValue. ].
+    ]
+        
+    #method => theValue.
 }
 
 // === Basic Convertors ===
@@ -1035,83 +1075,6 @@
     convert &long:aLong
         = RealNumber new &long:aLong.
 }.
-
-#symbol literalConvertor =
-{
-    convert &int:aNumber
-        => system'internal'ws_copyint.
-
-    convert &int:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
-
-//    #method convert &long:aNumber &base:aRadix
-//        = literalPrimitiveOp toLiteral &long:aNumber &index::aRadix.
-
-    convert &long:aNumber
-        => system'internal'ws_copylong.
-
-    convert &real:aNumber
-        => system'internal'ws_copyreal.
-        
-    convert &object:anObject
-        = anObject literal.
-        
-    convert &literal:aLiteral
-        = aLiteral.
-}.
-
-// === Basic Factory symbols ==
-
-#class Variable
-{
-    #field theValue.
-    
-    #constructor new
-    [
-    ]        
-        
-    #constructor new : aValue
-    [
-        theValue := aValue.
-    ]
-  
-    #method write : aValue
-    [
-        theValue := aValue.
-    ]
-        
-    #method value = theValue.        
-        
-    #method append : aValue
-    [
-        (nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue + aValue. ].
-    ]
-    
-    #method reduce : aValue
-    [
-        (nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue - aValue. ].
-    ]
-
-    #method multiplyBy : aValue
-    [
-        (nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue * aValue. ].
-    ]
-    
-    #method divideInto : aValue
-    [
-        (nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue / aValue. ].
-    ]
-        
-    #method => theValue.
-}
 
 // === Typecaster ==
 

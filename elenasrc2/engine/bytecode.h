@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2014, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -53,6 +53,8 @@ enum ByteCode
    bcDCopyE         = 0x21,
    bcPushD          = 0x22,
    bcPopD           = 0x23,
+   bcEDec           = 0x24,
+   bcEInc           = 0x25,
    bcESwap          = 0x2C,
    bcBSwap          = 0x2D,
    bcCopy           = 0x2E,           

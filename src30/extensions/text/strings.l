@@ -19,7 +19,7 @@
     ]
 
     #constructor new : anObject
-        <= %new &literal:anObject.
+        <= %new &literal:(anObject literal).
 
     #constructor new &literal:aText
         <= ( %new )

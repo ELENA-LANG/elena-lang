@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -20,13 +20,13 @@ enum ObjectKind
 
    okExternal,
 
-   okConstant,                     // param - reference, extraparam - type reference
+   okConstant,                     // param - reference, extraparam - class reference
    okLiteralConstant,              // param - reference 
    okIntConstant,                  // param - reference 
    okLongConstant,                 // param - reference 
    okRealConstant,                 // param - reference 
    okConstantSymbol,               // param - reference 
-   okConstantClass,                // param - reference, extraparam - class_reference
+   okConstantClass,                // param - reference, extraparam - class reference
 
    okVerbConstant,
    okSignatureConstant,

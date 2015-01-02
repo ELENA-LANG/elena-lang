@@ -16,7 +16,7 @@
 {
     #method stream = $self.
     
-    #method read &bytearray:aDump &length:aLength &out'length:aRead []
+    #method read &bytearray:aDump &length:aLength &out'int:aRead []
     
     #method write &bytearray:aDump &length:aLength []
     

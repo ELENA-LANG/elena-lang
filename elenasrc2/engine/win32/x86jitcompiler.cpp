@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -25,6 +25,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define INIT_ET              0x10015
 #define ENDFRAME             0x10016
 #define RESTORE_ET           0x10017
+#define LOAD_CLASSNAME       0x10018
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
 #define CORE_GC_SIZE         0x20003
@@ -42,10 +43,11 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 8;
+const int coreFunctionNumber = 9;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET
+   GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
+   LOAD_CLASSNAME
 };
 
 // preloaded gc commands
@@ -90,7 +92,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoad, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
-   &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileExtDec, &compileExtInc, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
@@ -1183,6 +1185,20 @@ void _ELENA_::compileIndexDec(int opcode, x86JITScope& scope)
 {
    // sub esi, 1
    scope.code->writeWord(0xEE83);
+   scope.code->writeByte(1);
+}
+
+void _ELENA_::compileExtInc(int opcode, x86JITScope& scope)
+{
+   // add ecx, 1
+   scope.code->writeWord(0xC183);
+   scope.code->writeByte(1);
+}
+
+void _ELENA_::compileExtDec(int opcode, x86JITScope& scope)
+{
+   // sub ecx, 1
+   scope.code->writeWord(0xE983);
    scope.code->writeByte(1);
 }
 

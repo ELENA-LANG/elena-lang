@@ -141,7 +141,6 @@ protected:
       ref_t signatureReference;
 
       ref_t boolType;
-      ref_t signType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -381,7 +380,10 @@ protected:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-      void compileHints(DNode hints, bool& constant);
+      bool  constant;
+      ref_t typeRef;
+
+      void compileHints(DNode hints);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -518,6 +520,13 @@ protected:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope ? scope->reference : 0;
+      }
+
+      ref_t getClassParentRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.parentRef : 0;
       }
 
       ref_t getClassFlags(bool ownerClass = true)
@@ -658,7 +667,7 @@ protected:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage = true);
+   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage = false);
 
    ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, int mode);
 

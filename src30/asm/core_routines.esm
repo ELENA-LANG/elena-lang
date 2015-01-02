@@ -434,6 +434,16 @@ procedure real_copyint
 
 end
 
+procedure real_copylong
+  
+  bcopya
+  aloadsi 2
+  rcopyl
+  acopyb
+  quitn 2
+
+end
+
 procedure real_saveint
   
   bloadsi 3
@@ -908,6 +918,7 @@ procedure ws_equalword
   ecopyd  
   aloadsi 2
   nload
+  edec
   notless labErr
   lessn   labErr 0
  
@@ -2055,4 +2066,75 @@ labErr:
   acallvi 0
   throw
   
+end
+
+procedure sa_readword
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  edec
+  notless labErr
+  lessn   labErr 0
+
+  acopyb
+  wread
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure arr_realloc
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
+  aloadsi 2
+  nload
+  class
+  create
+  bloadsi 1
+  count
+  dcopye        // ; index - old length
+  bcopya
+  count         // ; ext - new length
+  less labExpand
+
+  aloadsi 1
+  xclone
+  acopyb
+  quitn 2
+
+labExpand:
+  ecopyd
+  dcopy 0
+  pushb
+labNext:
+  bloadsi 2
+  get
+  bloadsi 0
+  xset
+  inc
+  less labNext
+
+  count
+  acopyr const : system'nil
+labNext2:
+  xset
+  inc
+  less labNext2
+  popa
+  quitn 2
+
 end

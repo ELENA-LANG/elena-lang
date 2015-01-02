@@ -35,7 +35,7 @@
 #type(class:system'Signature) error_type.
 
 // === logical types ===
-#type(class:system'false,class:system'true) bool.
+#type(class:system'BaseBoolValue) bool.
 
 // === nested functions ===
 
@@ -87,4 +87,3 @@
 
 // === system handles ===
 #type(class:Handle) handle.
-

@@ -1,17 +1,17 @@
 #define system.
 
 // --- File Access Modes ---
-#symbol(const) $FILE_READ_DATA     = 00000001h.
-#symbol(const) $FILE_APPEND_DATA   = 00000004h.
-#symbol(const) $FILE_GENERIC_READ  = 80000000h.
-#symbol(const) $FILE_GENERIC_WRITE = 40000000h.
+#symbol(const,type:int) $FILE_READ_DATA     = 00000001h.
+#symbol(const,type:int) $FILE_APPEND_DATA   = 00000004h.
+#symbol(const,type:int) $FILE_GENERIC_READ  = 80000000h.
+#symbol(const,type:int) $FILE_GENERIC_WRITE = 40000000h.
 
-#symbol(const) $OPEN_EXISTING      = 0003h.
-#symbol(const) $CREATE_ALWAYS      = 0002h.
-#symbol(const) $OPEN_ALWAYS        = 0004h.
+#symbol(const,type:int) $OPEN_EXISTING      = 0003h.
+#symbol(const,type:int) $CREATE_ALWAYS      = 0002h.
+#symbol(const,type:int) $OPEN_ALWAYS        = 0004h.
 
-#symbol(const) $FILE_SHARE_READ    = 00000001h.
-#symbol(const) $FILE_SHARE_WRITE   = 00000002h.
+#symbol(const,type:int) $FILE_SHARE_READ    = 00000001h.
+#symbol(const,type:int) $FILE_SHARE_WRITE   = 00000002h.
 
 // --- FileStream ---
 
@@ -44,13 +44,13 @@
             &int       : 0.
     ]
 
-    #method read &bytearray:aDump &length:aLength &out'length:aRead
+    #method read &bytearray:aDump &length:aLength &out'int:aRead
     [
         system'external'KERNEL32 ReadFile
             &handle      : theHandle
             &bytearray   : aDump
             &int         : aLength
-            &out'length  : aRead
+            &out'int     : aRead
             &int         : 0.
     ]
 
@@ -59,6 +59,17 @@
         theHandle close.
     ]
 }
+
+// --- fileControl ---
+
+#symbol fileControl =
+{
+    #method(type:stream) openForRead &path:aPath
+        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
+        
+    #method(type:stream) openForReWrite &path:aPath
+        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
+}.
 
 // --- StreamWriter ---
 
@@ -76,13 +87,13 @@
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(system'io'fileControl openForReWrite &path:aPath) &encoder:system'io'ansiLiteralEncoder.
+        <= %new &stream:(fileControl openForReWrite &path:aPath) &encoder:ansiLiteralEncoder.
         
     #method write &shortarray:anInput &length:aLength
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
-        #var(type:int)aBlockLength.
+        #var(type:length)aBlockLength.
         
         #loop (aTotal > 0) ?
         [
@@ -102,7 +113,7 @@
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
-        #var(type:int)aBlockLength.
+        #var(type:length)aBlockLength.
         
         #loop (aTotal > 0) ?
         [
@@ -134,9 +145,11 @@
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(system'io'fileControl openForRead &path:aPath) &encoder:ansiLiteralEncoder.
+        <= %new &stream:(fileControl openForRead &path:aPath) &encoder:ansiLiteralEncoder.
 
     #method source = theStream.
+
+    #method encoder = theEncoder.
 
     #method read &shortarray:anOutput &length:aMaxLength &out'length:anActualLength
     [
@@ -152,14 +165,3 @@
         theStream close.
     ]
 }
-
-// --- fileControl ---
-
-#symbol fileControl =
-{
-    openForRead &path:aPath
-        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
-        
-    openForReWrite &path:aPath
-        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
-}.

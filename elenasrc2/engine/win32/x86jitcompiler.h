@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86jitcompilerH
@@ -132,6 +132,8 @@ protected:
    friend void compileIfHeap(int opcode, x86JITScope& scope);
    friend void compileIndexInc(int opcode, x86JITScope& scope);
    friend void compileIndexDec(int opcode, x86JITScope& scope);
+   friend void compileExtInc(int opcode, x86JITScope& scope);
+   friend void compileExtDec(int opcode, x86JITScope& scope);
    friend void compileQuit(int opcode, x86JITScope& scope);
    friend void compileQuitN(int opcode, x86JITScope& scope);
    friend void compileSetVerb(int opcode, x86JITScope& scope);
@@ -247,6 +249,8 @@ void compileLessN(int opcode, x86JITScope& scope);
 void compileIfHeap(int opcode, x86JITScope& scope);
 void compileIndexInc(int opcode, x86JITScope& scope);
 void compileIndexDec(int opcode, x86JITScope& scope);
+void compileExtInc(int opcode, x86JITScope& scope);
+void compileExtDec(int opcode, x86JITScope& scope);
 void compileQuit(int opcode, x86JITScope& scope);
 void compileQuitN(int opcode, x86JITScope& scope);
 void compilePopE(int opcode, x86JITScope& scope);

@@ -1,5 +1,5 @@
 #define system.
-//#define system'routines.
+#define system'routines.
 //#define system'math.
 
 // --- Tape ---
@@ -34,14 +34,14 @@
     
     #method(generic)set : anObject
     [
-        #var aSubject := $subject.
+        #var(type:subject) aSubject := $subject.
         
         // looking for the current subject
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
+        #var(type:length)aLength.
         #var aNotFound := true.
         
-        aLength := theStruct::classOp read &object.
+        aLength := classControl readLength:theStruct.
         #loop ((anIndex < aLength)and:aNotFound) ?
         [
             #var aCurrent := theStruct::classOp getField &index:anIndex.
@@ -54,7 +54,7 @@
         // if not found extend the structure
         (anIndex == aLength) ?
         [                                    
-            theStruct := theStruct::classOp reallocate &length:(aLength + 2).
+            theStruct := theStruct::arrayOp reallocate &length:(aLength + 2).
 
             theStruct::classOp setField &index:anIndex &object:aSubject.
         ].

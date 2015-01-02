@@ -10,7 +10,7 @@
 #type(class:system'IntNumber) int_time_attributes.
 #type(class:system'IntNumber) int_date_attributes.
 
-#class(type:systemtime,struct:embeddable,sealed) Win32SystemTime
+#class(struct:embeddable,sealed) Win32SystemTime
 {
     #field(type:short)theYear.
     #field(type:short)theMonth.

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -28,6 +28,7 @@ using namespace _ELENA_;
 #define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
+#define HINT_SELFEXTENDING    0x00040000
 #define HINT_ACTION           0x00020000
 
 // --- Auxiliary routines ---
@@ -173,6 +174,18 @@ inline DNode goToSymbol(DNode node, Symbol symbol)
       node = node.nextNode();
    }
    return node;
+}
+
+inline DNode goToLastSymbol(DNode node, Symbol symbol)
+{
+   DNode last;
+   while (node != nsNone) {
+      if (node==symbol)
+         last = node;
+
+      node = node.nextNode();
+   }
+   return last;
 }
 
 inline bool IsArgumentList(ObjectInfo object)
@@ -345,7 +358,6 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
    loadTypes(module);
 
    boolType = module->mapSubject(project->resolveForward(BOOL_FORWARD), false);
-   signType = module->mapSubject(project->resolveForward(SUBJ_FORWARD), false);
 }
 
 //ref_t Compiler::ModuleScope :: mapSubject(const wchar16_t* name)
@@ -527,10 +539,10 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
       return ObjectInfo(okConstantSymbol, reference);
    }
    else if (symbolHints.exist(reference, okIntConstant)) {
-      return ObjectInfo(okConstant, reference);
+      return ObjectInfo(okConstant, reference, intReference);
    }
    else if (symbolHints.exist(reference, okLiteralConstant)) {
-      return ObjectInfo(okConstant, reference);
+      return ObjectInfo(okConstant, reference, literalReference);
    }
    else if (checkState) {
       ClassInfo info;
@@ -549,15 +561,15 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
             return ObjectInfo(okConstantClass, reference, info.classClassRef);
          }
       }
-      //else {
-      //   // check if the object is typed expression
-      //   SymbolExpressionInfo symbolInfo;
-      //   // check if the object can be treated like a constant object
-      //   r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
-      //   if (r) {
-      //      return ObjectInfo(okSymbol, reference, symbolInfo.expressionTypeRef);
-      //   }
-      //}
+      else {
+         // check if the object is typed expression
+         SymbolExpressionInfo symbolInfo;
+         // check if the object can be treated like a constant object
+         r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
+         if (r) {
+            return ObjectInfo(okSymbol, reference, symbolInfo.expressionTypeRef);
+         }
+      }
    }
    // otherwise it is a normal one
    return ObjectInfo(okSymbol, reference);
@@ -942,15 +954,25 @@ Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
 Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
+   typeRef = 0;
+   constant = false;
 }
 
-void Compiler::SymbolScope :: compileHints(DNode hints, bool& constant)
+void Compiler::SymbolScope :: compileHints(DNode hints)
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
       if (ConstantIdentifier::compare(terminal, HINT_CONSTANT)) {
          constant = true;
+      }
+      else if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo typeTerminal = value.Terminal();
+
+         typeRef = moduleScope->mapType(typeTerminal);
+         if (typeRef == 0)
+            raiseError(wrnInvalidHint, terminal);
       }
       else raiseWarning(wrnUnknownHint, hints.Terminal());
 
@@ -1322,8 +1344,8 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      if (local.sign_ref != 0 && local.sign_ref == moduleScope->signType) {
-         return ObjectInfo(okSubject, local.offset, local.sign_ref);
+      if (ConstantIdentifier::compare(identifier, SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset);
       }
       else return ObjectInfo(okLocal, local.offset, local.sign_ref);
    }
@@ -2142,7 +2164,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object)
       _writer.loadObject(*scope.tape, ObjectInfo(okLocalAddress, object.param));
       _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(SIGNATURE_FORWARD)) | mskVMTRef);
 
-      return ObjectInfo(okAccumulator);
+      return ObjectInfo(okAccumulator, scope.moduleScope->signatureReference);
    }
    else if (object.kind == okIndexAccumulator) {
       allocateStructure(scope, 0, object);
@@ -2296,7 +2318,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
             // check if argument list should be unboxed
             DNode param = arg.firstChild();
 
-            if (arg.nextNode() == nsNone && param.firstChild() == nsNone && IsArgumentList(scope.mapObject(param.Terminal()))) {
+            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
                mode |= HINT_OARG_UNBOXING;
             }
             else {
@@ -2442,37 +2464,37 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
 
 void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree)
 {
-   //// unbox the argument list
-   //DNode arg = goToSymbol(node, nsMessageOpenParameter).firstChild();
-   //ObjectInfo list = compileObject(arg.firstChild(), scope, mode);
-   //_writer.loadObject(*scope.tape, list);
+   // unbox the argument list
+   DNode args = goToLastSymbol(node, nsMessageParameter);
+   ObjectInfo list = compileObject(args.firstChild(), scope, mode);
+   _writer.loadObject(*scope.tape, list);
 
-   //// unbox the argument list and return the object saved before the list
-   //_writer.unboxArgList(*scope.tape);
+   // unbox the argument list and return the object saved before the list
+   _writer.unboxArgList(*scope.tape);
 
-   //// reserve the place for target and generic message parameters if available and save the target
-   //_writer.declareArgumentList(*scope.tape, count + 1);
-   //_writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
+   // reserve the place for target and generic message parameters if available and save the target
+   _writer.declareArgumentList(*scope.tape, count + 1);
+   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
-   //count = 0;
-   //// if message has generic argument list
-   //arg = node;
-   //while (arg == nsMessageParameter) {
-   //   count++;
+   count = 0;
+   // if message has generic argument list
+   DNode arg = node;
+   while (arg == nsMessageParameter && arg != args) {
+      count++;
 
-   //   ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
-   //   _writer.loadObject(*scope.tape, param);
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+      _writer.loadObject(*scope.tape, param);
 
-   //   // box the object if required
-   //   boxObject(scope, param);
+      // box the object if required
+      boxObject(scope, param);
 
-   //   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
 
-   //   arg = arg.nextNode();
-   //}
+      arg = arg.nextNode();
+   }
 
-   //// indicate that the stack to be freed cannot be defined at compile-time
-   //stackToFree = (size_t)-1;
+   // indicate that the stack to be freed cannot be defined at compile-time
+   stackToFree = (size_t)-1;
 }
 
 ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease)
@@ -2530,7 +2552,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
    if (object.kind == okAccumulator) {
       mode &= ~HINT_DIRECT_ORDER;
    }
-   else if (count == 1) {
+   else if (count == 1 && !test(mode, HINT_OARG_UNBOXING)) {
       mode |= HINT_DIRECT_ORDER;
    }
 
@@ -2897,6 +2919,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    else {
       ref_t classReference = 0;
       bool directCall = false;
+      bool itselfCall = false;
       // if static message is sent to a class class
       if (object.kind == okConstantClass) {
          retVal.param = object.param;
@@ -2909,11 +2932,20 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       else if (object.kind == okConstantRole) {
          classReference = object.param;
          directCall = true;
+
+         if (test(mode, HINT_SELFEXTENDING))
+            itselfCall = true;
       }
       else if (object.kind == okConstantSymbol) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
 
          classReference = object.param;
+         directCall = true;
+      }
+      else if (object.kind == okConstant && object.extraparam != 0) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         classReference = object.extraparam;
          directCall = true;
       }
       // if message sent to the class parent
@@ -2925,8 +2957,13 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       }
       // if message sent to the $self
       else if (object.kind == okThisParam) {
+         itselfCall = true;
+
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
          classReference = scope.getClassRefId(false);
+      }
+      else if (object.kind == okOuterField) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
       }
       else {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
@@ -2938,7 +2975,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          // check if the message is supported
          bool classFound = false;
          MethodType method = tpNormal;
-         if (object.kind == okThisParam) {
+         if (itselfCall) {
             if (test(scope.getClassFlags(), elClosed)) {
                ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
                if (classScope->info.methods.exist(messageRef)) {
@@ -3196,6 +3233,8 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
          // if the symbol is used inside itself
          if (role.param == scope.getClassRefId()) {
             flags = scope.getClassFlags();
+
+            mode |= HINT_SELFEXTENDING;
          }
          // otherwise
          else {
@@ -3255,7 +3294,9 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
 {
    size_t spaceToRelease = 0;
 
-   ref_t messageRef = compileMessageParameters(node, scope, object, mode, spaceToRelease);
+   int paramMode = mode & ~HINT_SELFEXTENDING;
+   ref_t messageRef = compileMessageParameters(node, scope, object, paramMode, spaceToRelease);
+   mode |= paramMode;
 
    ObjectInfo retVal(okAccumulator);
    // if it is a not a constant, compile a role
@@ -3568,14 +3609,24 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                      return object;
                   }
                }
-               else if ((object.kind == okAccumulator || object.kind == okConstantSymbol) && object.param != 0 && object.extraparam == 0) {
-                  if (moduleScope->typeHints.exist(type_ref, object.param)) {
+               else if (object.kind == okConstant && object.extraparam != 0) {
+                  if (moduleScope->typeHints.exist(type_ref, object.extraparam)) {
+                     return object;
+                  }
+               }
+               else if ((object.kind == okThisParam) || ((object.kind == okAccumulator || object.kind == okConstantSymbol) 
+                  && object.param != 0 && object.extraparam == 0)) 
+               {
+                  if (object.kind != okThisParam && moduleScope->typeHints.exist(type_ref, object.param)) {
                      object.extraparam = type_ref;
 
                      return object;
                   }
                   else {
                      ref_t reference = object.param;
+                     if (object.kind == okThisParam)
+                        reference = scope.getClassParentRefId(false);
+
                      ClassInfo info;
                      while (true) {
                         // check if the class is closed than try to check its parent
@@ -3978,18 +4029,33 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
       param.subject = moduleScope->mapType(terminal, param.output);
 
       ref_t classReference = moduleScope->resolveStrongType(param.subject);
-      ClassInfo classInfo;
-      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
-         scope.raiseError(errInvalidOperation, terminal);
+      // HOTFIX: problem with using a strong type inside its wrapper
+      if (scope.getClassRefId() == classReference) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-      if (classInfo.size == 0)
-         scope.raiseError(errInvalidOperation, terminal);
+         if (classScope->info.size == 0)
+            scope.raiseError(errInvalidOperation, terminal);
 
-      // if it is an integer number pass it directly
-      if ((classInfo.header.flags & elDebugMask)==elDebugDWORD) {
-         param.size = 4;
+         // if it is an integer number pass it directly
+         if ((classScope->info.header.flags & elDebugMask)==elDebugDWORD) {
+            param.size = 4;
+         }
+         else param.size = -1;
       }
-      else param.size = -1;
+      else {
+         ClassInfo classInfo;
+         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         if (classInfo.size == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         // if it is an integer number pass it directly
+         if ((classInfo.header.flags & elDebugMask)==elDebugDWORD) {
+            param.size = 4;
+         }
+         else param.size = -1;
+      }
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
@@ -4410,7 +4476,7 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope, int mode)
    _writer.declareMethod(*codeScope.tape, scope.message, false);
    codeScope.level++;
 
-//   declareParameterDebugInfo(scope, codeScope.tape, false);
+   declareParameterDebugInfo(scope, codeScope.tape, false, true);
 
    compileCode(node, codeScope);
 
@@ -4584,7 +4650,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    // check if it is a dispatch
    else if (dispatchBody != nsNone) {
       if (isImportRedirect(dispatchBody.firstChild())) {
-         compileImportMethod(dispatchBody, codeScope, scope.message, dispatchBody.firstChild().Terminal(), mode);
+         compileImportMethod(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal(), mode);
       }
       else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
    }
@@ -4599,10 +4665,12 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
          _writer.copySubject(*codeScope.tape);
          _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
          codeScope.level++;
-         codeScope.mapLocal(ConstantIdentifier(SUBJECT_VAR), codeScope.level, scope.moduleScope->signType);
+         codeScope.mapLocal(ConstantIdentifier(SUBJECT_VAR), codeScope.level, 0);
       }
 
-      //declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
+      declareParameterDebugInfo(scope, codeScope.tape, true, 
+         test(codeScope.getClassFlags(), elRole),
+         test(mode, HINT_GENERIC_METH));
 
       DNode body = node.select(nsSubCode);
       // if method body is a return expression
@@ -5065,9 +5133,9 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
       declareVMT(member, scope, nsMethod);
    }
 
-   // HOTFIX: save class meta data header
-   // to resolve the problem with using the class type inside it
-   scope.saveHeader();
+   //// HOTFIX: save class meta data header
+   //// to resolve the problem with using the class type inside it
+   //scope.saveHeader();
    
    // if it is a role
    if (test(scope.info.header.flags, elRole)) {
@@ -5098,8 +5166,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
 void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
 {
-   bool constant = false;
-   scope.compileHints(hints, constant);
+   scope.compileHints(hints);
 
    DNode expression = node.firstChild();
 
@@ -5125,7 +5192,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
       _writer.loadObject(*codeScope.tape, retVal);
 
       // create constant if required
-      if (constant && (retVal.kind == okIntConstant || retVal.kind == okLiteralConstant)) {
+      if (scope.constant && (retVal.kind == okIntConstant || retVal.kind == okLiteralConstant)) {
          _Module* module = scope.moduleScope->module;
 
          MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
@@ -5148,19 +5215,20 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
             scope.moduleScope->defineLiteralConstant(scope.reference);
          }
       }
-      //else if (retVal.kind == okAccumulator && scope.typeRef != 0) {
-      //   bool mismatch = false;
-      //   compileTypecast(codeScope, retVal, scope.typeRef, mismatch, 0);
-      //   if (mismatch)
-      //      scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
 
-      //   SymbolExpressionInfo info;
-      //   info.expressionTypeRef = scope.typeRef;
+      if (scope.typeRef != 0) {
+         bool mismatch = false;
+         compileTypecast(codeScope, retVal, scope.typeRef, mismatch, 0);
+         if (mismatch)
+            scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
 
-      //   // save class meta data
-      //   MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-      //   info.save(&metaWriter);
-      //}
+         SymbolExpressionInfo info;
+         info.expressionTypeRef = scope.typeRef;
+
+         // save class meta data
+         MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+         info.save(&metaWriter);
+      }
    //}
 
    if (isStatic) {

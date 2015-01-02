@@ -7,6 +7,7 @@ define NEWFRAME             10014h
 define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
+define LOAD_CLASSNAME       10018h
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
@@ -1042,6 +1043,31 @@ procedure % RESTORE_ET
   ret
 
 end 
+
+procedure % LOAD_CLASSNAME
+
+  push esi
+  push eax
+  mov  edx, [edi-elVMTOffset]
+  push edx
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadClassName (instance, object,out buffer, maxlength)
+  push eax
+  mov  edx, [esi + rt_loadName] 
+  call edx
+  lea  esp, [esp+4]  
+
+labEnd:
+  lea  esp, [esp+0Ch]  
+  ret
+
+end
 
 // ; ==== Command Set ==
 

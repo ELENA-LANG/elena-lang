@@ -14,12 +14,12 @@
 
     #method writeLine : anObject
     [
-        theWriter write &literal:anObject write &literal:theNewLineConstant.
+        theWriter write &literal:(anObject literal) write &literal:theNewLineConstant.
     ]
 
     #method write : anObject
     [
-        theWriter write &literal:anObject.
+        theWriter write &literal:(anObject literal).
     ]
 
     #method write &literal:aLiteral

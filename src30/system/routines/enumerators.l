@@ -5,6 +5,9 @@
 
 #class(extension:array)arrayOp
 {
+    #method reallocate &length:aNewLength
+        => system'internal'arr_realloc.
+
     #method deepClone
     [
         #var(type:array)anArray := self array.
@@ -81,13 +84,13 @@
 #class(extension:enumerable) enumerableOp
 {
     #method run &each:aFunction
-      = aFunction run &enumerator:self.
+      = aFunction run &enumerator:(self enumerator).
 
     #method seek &each:aFunction
-      = aFunction retrieve &enumerator:self.
+      = aFunction retrieve &enumerator:(self enumerator).
 
     #method find : aValue
-        = x [ aValue safeEqual:x ] retrieve &enumerator:self.
+        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
     #method first
     [
@@ -110,18 +113,19 @@
     ]
 
     #method filter &each:aFilter
-        = system'routines'Filter new &each:aFilter &enumerator:self.
+        = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).
 
     #method select &each:aSelector
-        = system'routines'Selector new &each:aSelector &enumerator:self.
+        = system'routines'Selector new &each:aSelector &enumerator:(self enumerator).
 
     #method array
     [
         #var(type:list)aList := List new.
+        #var(type:int)aLength := aList length.
         
         self::enumerableOp run &each:anItem [ aList append:anItem ].
         
-        #var(type:array) anArray := Array new &length:aList.
+        #var(type:array) anArray := Array new &length:aLength.
         #var(type:enumerator)anEnumerator := aList enumerator.
         
         anArray set &every: (&index:n) [ anEnumerator next. ^ anEnumerator get. ].
@@ -137,7 +141,7 @@
     #method indexOf &literal:aLiteral
         = self indexOf &index:0 &literal:aLiteral.
 
-    #method Substring &index:anIndex
+    #method(type:literal) Substring &index:anIndex
     [
         #var(type:literal)aLiteral := self literal.        
         #var(type:int)aLength := aLiteral length.
@@ -176,12 +180,12 @@
     #method padLeft &char:aChar &length:aLength
     [
         #var(type:literal)aLiteral := self literal.
-        #var padding := aChar literal.
+        #var(type:literal)padding := aChar literal.
         
         #var(type:int)aCurrentLength := aLiteral length.
 
         #loop (aLength > aCurrentLength)?
-            [ aLiteral := padding + aLiteral. aCurrentLength := aCurrentLength + 1. ].
+            [ aLiteral := padding add &literal:aLiteral. aCurrentLength := aCurrentLength + 1. ].
             
         ^ aLiteral.
     ]
@@ -189,12 +193,11 @@
     #method padRight &char:aChar &length:aLength
     [
         #var(type:literal)aLiteral := self literal.
-        #var padding := aChar literal.
         
         #var(type:int)aCurrentLength := aLiteral length.
 
         #loop (aLength > aCurrentLength)?
-            [ aLiteral := aLiteral + padding. aCurrentLength := aCurrentLength + 1. ].
+            [ aLiteral := aLiteral add &char:aChar. aCurrentLength := aCurrentLength + 1. ].
             
         ^ aLiteral.
     ]
@@ -221,12 +224,13 @@
     #method replace &first &literal:aReplacee &literal:aReplacer
     [
         #var(type:literal)aLiteral := self literal.
+        #var(type:int) aReplaceeLen := aReplacee length.
         
         #var(type:int)anIndex := aLiteral indexOf &index:0 &literal:aReplacee.
         
-        ^ (anIndex != -1)
-            ? [ ^ aLiteral delete &index:anIndex &length:aReplacee insert &index:anIndex &literal:aReplacee. ]
-            ! [ self ].
+        (anIndex != -1)
+            ? [ ^ aLiteral delete &index:anIndex &length:aReplaceeLen insert &index:anIndex &literal:aReplacee. ]
+            ! [ ^ aLiteral. ].
     ]
         
     #method replace &literal:aReplacee &literal:aReplacer
@@ -249,7 +253,7 @@
         ].
     
         ^ (aStart != 0)
-            ? [ aTarget append:(aLiteral Substring &index:aStart) literal ]
+            ? [ aTarget append:(aLiteral::literalOp Substring &index:aStart) literal ]
             ! [ self literal ].
     ]
 
@@ -277,7 +281,7 @@
                 ! [
                     aTemp write &index:anIndex &length:aLength &literal:aLiteral.
                 
-                    characterController toUpperCase &shortarray:aTemp.
+                    characterController toUpperCase &shortarray:aTemp &length:aLength.
                     
                     aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &shortarray:aTemp).                            
                     aLength := 0.
@@ -311,7 +315,7 @@
                 ! [
                     aTemp write &index:anIndex &length:aLength &literal:aLiteral.
                 
-                    characterController toLowerCase &shortarray:aTemp.
+                    characterController toLowerCase &shortarray:aTemp &length:aLength.
                     
                     aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &shortarray:aTemp).                            
                     aLength := 0.
@@ -388,13 +392,15 @@
 
 #class(extension:indexable) indexableOp
 {
-    #method set &each:anIndexFunc
+    #method set &every:anIndexFunc
     [
         #var anEnumerator := self enumerator.
 
         #loop (anEnumerator next) ?
         [
-            anEnumerator set:(anIndexFunc eval &index:anEnumerator).
+            #var(type:int)anIndex := anEnumerator index.
+            
+            anEnumerator set:(anIndexFunc eval &index:anIndex).
         ].
         
         ^ self.
@@ -453,12 +459,13 @@
 
     #method array
     [
-        #var(type:array)anArray := Array new &length:self.
-        #var(type:iterator)it := self iterator.
+        #var(type:array)anArray := self array.
+        #var(type:array)aRetVal := Array new &length:(anArray length).
+        #var(type:iterator)it := anArray iterator.
         
-        anArray set &every: (&index:i) [ it write &index:i get ].
+        aRetVal set &every: (&index:i) [ it write &index:i get ].
         
-        ^ anArray.
+        ^ aRetVal.
     ]
 }
 

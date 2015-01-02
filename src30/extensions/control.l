@@ -23,10 +23,10 @@
         = anAction run &if:anExpr.
 
     run:anEnumerable &forEach:aFunction
-        = aFunction run &enumerator:anEnumerable.
+        = aFunction run &enumerator:(anEnumerable enumerator).
 
     run:anEnumerable &seeking:aFunction
-        = aFunction retrieve &enumerator:anEnumerable.
+        = aFunction retrieve &enumerator:(anEnumerable enumerator).
 
     find:aValue &in:aList
         = control run:aList &seeking: x [ aValue safeEqual:x ].
@@ -51,7 +51,7 @@
         = aFunction retrieve &range &int:aStart &int:anEnd &int:aStep.
         
     run:aText &forEachWord:anAction
-        = anAction run &enumerator:(extensions'text'WordEnumerator new &literal:aText).
+        = anAction run &enumerator:(extensions'text'WordEnumerator new &literal:(aText literal)).
         
     run &path:aPath &forEachLine:anAction
         = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath).

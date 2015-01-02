@@ -36,9 +36,6 @@ Currently:
                        * show output argument
                        
               xdev - redesign
-                       * implement open arg boxing
-                       * implement open arg passing futher
-
                        * operator or, do we need it (or bitwise operators at all)
 
                        * enumeration pattern : bool action is sent after each next call, get rid of extra bool check
@@ -46,30 +43,18 @@ Currently:
                        * BoxingTester add &int:(n + 3 * 4). - get rid of the type mismatch warning
 
                        * TextBuffer: ShortArray new &length:($TextPageSize int) - constant should be typed, so no need to call int
+
                        * dateTimeControl : aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int)  - constant should be typed, so no need to call int
 
-                       * provide message returning type ?? in that case the message should has a namespace
-                      
                        * #type(type:enumerable)filter ; so anObject~enumerable filter:xxx select:xxx                     
-                       
-                       * redesign ~ operator, it will typecast the object to specified type, if the type is weak nothing will be done,
-                        if it is a strong one - get&<type> message will be sent
-
-                       * uncomment compileMessage,
-                         compileExternalArguments, defineObjectInfo, declareParameterDebugInfo, 
-                         compileInlineReferOperator, ModuleScope :: init
       
                        * do we need compileSignatureReference method?
                         
-              sdev - rosetta
-                       * migrate arithmeval
+              sdev - samples
+                       * migrate all samples
 
-                       * migrate bullscows
-                       * migrate combinations
-                       * migrate anagram
-                       * migrate amb
-                       * migrate calendar
-                       * fix GroupTest
+              sdev - rosetta
+                       * migrate all samples
 
               xdev - redesign
                        * create installation package
@@ -94,7 +79,7 @@ Currently:
                        * Exception object should generate the exception info on 
 
                        * exceptions : provide call stack info
-
+                       
                        * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
                          the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
                          if not - goes to the alternative branch (what about dynamic objects in that case)
@@ -241,6 +226,7 @@ week1:
                        * $self call for limited class should be optimized as well
                        * fix bug : #loop aFormer available ? is not correctly compiled
                        * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
+                       * get rid of all warnings in system / extensions
                                               
               xdev - GC
                        * heap mg size should reserved but not committed and can grow
@@ -366,6 +352,8 @@ week2:
                        * test dynamic_test
                        * test dynamic samples
                        * test literalOp.trim method
+
+                       * implement basic operations with short and byte
 
                        * uncomment Real#class.new&int[1] and Real#class.new&long[1]
 

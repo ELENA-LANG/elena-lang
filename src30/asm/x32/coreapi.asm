@@ -5,6 +5,7 @@ define INIT_RND          10012h
 define INIT              10013h
 define NEWFRAME          10014h
 define INIT_ET           10015h
+define LOAD_CLASSNAME       10018h
 
 // verbs
 define EXEC_MESSAGE_ID  085000000h
@@ -66,5 +67,22 @@ procedure coreapi'vm_console_entry
   pop  ebx
                                                            
   ret
+
+end
+
+// ; load_classname(object,out buffer, out length)
+procedure coreapi'load_classname
+
+  mov  eax, [esp + 12]
+  mov  esi, [eax]
+  mov  eax, [esp + 8]
+  mov  edi, [esp + 4]
+  
+  call code : % LOAD_CLASSNAME
+
+  mov  edi, [esp + 12]
+  mov  [edi], eax
+  
+  ret 12
 
 end

@@ -138,6 +138,10 @@ ELENA byte codes (or ecodes)
 
  inc                        - index++
  
+ edec                       - ext--
+
+ einc                       - ext++
+ 
  dloadfi i                  - [fp:i] => index
 
  dloadsi i                  - [sp:i] => index

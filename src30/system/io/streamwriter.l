@@ -52,7 +52,7 @@
     
     #method writeLine : aLine
     [
-        $self write &literal:aLine write &literal:theNewLineConstant.
+        $self write &literal:(aLine literal) write &literal:theNewLineConstant.
     ]
     
     #method write &literal:aLine

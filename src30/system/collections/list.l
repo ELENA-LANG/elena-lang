@@ -80,7 +80,7 @@
             ? [ theCurrent := theList topItem. ]
             ! [ theCurrent := theCurrent nextItem. ].
             
-        ^ nil != theCurrent.
+        ^ nil equal:theCurrent.
     ]
 }
 
@@ -259,7 +259,7 @@
         <= %append:(KeyValue new &key:aKey &value:aValue).
 
     #method findItem &key:aKey
-        = x [ x key safeEqual:aKey ] retrieve &enumerator:$self.
+        = x [ x key safeEqual:aKey ] retrieve &enumerator:($self enumerator).
 
     #method getAt &key:aKey
     [

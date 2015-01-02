@@ -16,10 +16,10 @@
     [
     ]
 
-    #constructor new &stream:aStream
+    #constructor new &stream:aStream &encoder:anEncoder
         <= (%new)
     [
-        theReader := StreamReader new &stream:aStream.
+        theReader := StreamReader new &stream:aStream &encoder:anEncoder.
     ]        
                         
     #constructor new &path:aPath
@@ -30,14 +30,14 @@
     
     #method reset 
     [
-        theReader := StreamReader new &stream:(theReader source clone).
+        theReader := StreamReader new &stream:(theReader source clone) &encoder:(theReader encoder).
     ]
     
     #method next
     [
         theLine := theReader readLine.
         
-        ^ nil != theLine.
+        ^ nil equal:theLine not.
     ]
     
     #method get = theLine.

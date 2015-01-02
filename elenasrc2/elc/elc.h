@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -27,7 +27,7 @@
 #endif
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x002A
+#define ELC_BUILD_NUMBER             0x0030
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'

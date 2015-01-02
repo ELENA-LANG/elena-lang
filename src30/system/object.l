@@ -4,7 +4,7 @@
 {
     #constructor new []
 
-    #method equal : anObject => system'internal'object_equal.
+    #method(type:bool) equal : anObject => system'internal'object_equal.
         
     #method => system'internal'dispatch.
 }

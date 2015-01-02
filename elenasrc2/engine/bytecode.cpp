@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2014, by Alexei Rakov
+//                                                 (C)2009-2015, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -20,7 +20,7 @@ const char* _fnOpcodes[256] =
    "unknown", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "aload", "unhook", "add", "create",
 
-   "ecopyd", "dcopye", "pushd", "popd", "unknown", "unknown", "unknown", "unknown",
+   "ecopyd", "dcopye", "pushd", "popd", "edec", "einc", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
    "unknown", "len", "wlen", "flag", "unknown", "unknown", "class", "mindex",

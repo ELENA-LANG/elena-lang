@@ -9,7 +9,7 @@
 
 #symbol $ConsoleHandleFactory =
 {
-    new &int_attributes:anAttributes
+    #method(type:handle) new &int_attributes:anAttributes
     [ 
         #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:anAttributes.
         
@@ -112,7 +112,7 @@
     #method read &line
     [
         #var(type:shortarray,size:127)aBuffer.
-        #var(type:int)aLength.
+        #var(type:length)aLength.
         #var anOutput := emptyLiteralValue.
         
         #var(type:bool) continue := true.
@@ -121,7 +121,8 @@
             aLength := 127.
             aLength := $self read &shortarray:aBuffer &length:aLength.
             
-            aBuffer equal &index:(aLength - 1) &short:0Ah
+            #var(type:short)aShort := aBuffer read &index:(aLength - 1).
+            aShort equal &int:0Ah
                 ? [
                     aLength := aLength - 2.
                     

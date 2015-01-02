@@ -16,7 +16,7 @@
     
     #method read &bytearray:anArray &length:aLength
     [
-        #var(type:int)aRead := $self read &bytearray:anArray &length:aLength.
+        #var(type:length)aRead := $self read &bytearray:anArray &length:aLength.
          
         (aLength > aRead)
             ? [ #throw IOException new. ]
@@ -25,7 +25,7 @@
     #method read &out'int:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:int)aRead := 4.
+        #var(type:length)aRead := 4.
         
         aRead := $self read &bytearray:aBuffer &length:4.
         
@@ -38,7 +38,7 @@
     #method read &out'long:aLong
     [
         #var(type:bytearray,size:8)aBuffer.
-        #var(type:int)aRead := 8.
+        #var(type:length)aRead := 8.
         
         aRead := $self read &bytearray:aBuffer &length:8.
         
@@ -66,6 +66,8 @@
 
     #method source = nil.
 
+    #method encoder [ #throw NotSupportedException new. ]
+
     #method close [ ]
     
     #method readLine
@@ -80,7 +82,7 @@
             (aLength == -1)
                 ? [
                     #var(type:shortarray,size:64)aBuffer.
-                    #var(type:int)aBufferLength := 64.
+                    #var(type:length)aBufferLength := 64.
                     
                     aBufferLength := $self read &shortarray:aBuffer &length:aBufferLength.
                     (aBufferLength == 0)
