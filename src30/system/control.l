@@ -462,6 +462,8 @@
 
 #class(limited) Iterator
 {
+    #method iterator = $self.
+    
     #method available = false.
 
     #method get = nil.

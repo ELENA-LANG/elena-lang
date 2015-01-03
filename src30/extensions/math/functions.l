@@ -1,29 +1,50 @@
-//#define system.
-//#define system'math.
-//
-//// --- Functions ---
-//
-//#symbol exp = (:x)
-//    [ x::mathOp exp ].
-//
-//#symbol ln = (:x)
-//    [ x::mathOp ln ].
-//    
-//#symbol power = (:x:y)
-//    [ exp: ((ln:x) * y) ].
-//
-//#symbol round = (:x)
-//    [ x~mathOp Rounded ].
-//    
-//#symbol abs = (:x)
-//[
-//    ^ x cast:
-//        {            
-//            eval &int:n = n~intOp modulus.
-//            
-//            eval &real:r = r~realOp modulus.
-//        }.
-//].
-//
-//#symbol mod = (:x:y)
-//    [ x - (x / y * y) ].
+#define system.
+#define system'math.
+
+// --- Functions ---
+
+#symbol mathControl =
+{
+    exp : x
+        = x cast:%eval &to:
+            {
+                eval &int : aValue = RealNumber new &int:aValue exp.
+                
+                eval &real : aValue = aValue exp.
+            }.
+            
+    ln : x
+        = x cast:%eval &to:
+            {
+                eval &int : aValue = RealNumber new &int:aValue ln.
+                
+                eval &real : aValue = aValue ln.
+            }.
+            
+    round : x
+        = x cast:%eval &to:
+            {
+                eval &int : aValue = RealNumber new &int:aValue.
+                
+                eval &real : aValue = aValue rounded.
+            }.
+            
+    abs : x
+        = x cast:%eval &to:
+            {
+                eval &int : aValue = aValue absolute.
+                
+                eval &real : aValue = aValue absolute.
+            }.
+            
+    mod :x :y
+        = x - (x / y * y).
+        
+    power : x : y
+        = x cast:%eval &to:
+            {
+                eval &int : aValue = RealNumber new &int:aValue ln exp * y.
+                
+                eval &real : aValue = aValue ln exp * y.
+            }.
+}.

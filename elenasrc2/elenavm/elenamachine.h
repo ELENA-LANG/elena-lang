@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2014, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x0008             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0009             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -190,6 +190,7 @@ protected:
    ConstantIdentifier _realClass;
    ConstantIdentifier _msgClass;
    ConstantIdentifier _signClass;
+   ConstantIdentifier _verbClass;
 
    LibraryManager  _loader;
    ELENAMachine*   _machine;
@@ -290,6 +291,11 @@ public:
    virtual const wchar16_t* getMessageClass()
    {
       return _msgClass;
+   }
+
+   virtual const wchar16_t* getVerbClass()
+   {
+      return _verbClass;
    }
 
    virtual const wchar16_t* getNamespace()

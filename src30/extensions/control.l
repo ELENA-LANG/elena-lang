@@ -2,6 +2,10 @@
 //#define system'routines.
 //#define system'dynamic.
 
+#type(class:system'BaseFunction1)forEachWord.
+#type(class:system'BaseFunction1)forEachLine.
+#type(class:system'IndexFunction1)forEvery.
+
 // --- control ---
 
 #symbol control =

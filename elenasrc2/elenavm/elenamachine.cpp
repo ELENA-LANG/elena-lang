@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2014, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -241,6 +241,7 @@ Instance :: Instance(ELENAMachine* machine)
    _longClass.copy(_config.forwards.get(ConstantIdentifier(LONG_FORWARD)));
    _msgClass.copy(_config.forwards.get(ConstantIdentifier(MESSAGE_FORWARD)));
    _signClass.copy(_config.forwards.get(ConstantIdentifier(SIGNATURE_FORWARD)));
+   _verbClass.copy(_config.forwards.get(ConstantIdentifier(VERB_FORWARD)));
 
    // init Run-Time API
    _loadClassName = __getClassName;

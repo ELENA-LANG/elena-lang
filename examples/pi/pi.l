@@ -1,5 +1,6 @@
 #define system.
 #define system'calendar.
+#define extensions.
 
 // --- Power ---
 

@@ -80,7 +80,7 @@
             ? [ theCurrent := theList topItem. ]
             ! [ theCurrent := theCurrent nextItem. ].
             
-        ^ nil equal:theCurrent.
+        ^ nil equal:theCurrent not.
     ]
 }
 

@@ -8,6 +8,16 @@
     #method reallocate &length:aNewLength
         => system'internal'arr_realloc.
 
+    #method exchange &index:anIndex1 &index:anIndex2
+    [
+        #var(type:array) anArray := self array.
+
+        #var aTemp := anArray getAt &index:anIndex1.
+        
+        anArray setAt &index:anIndex1 &object:(anArray getAt &index:anIndex2).
+        self setAt &index:anIndex2 &object:aTemp.
+    ]
+
     #method deepClone
     [
         #var(type:array)anArray := self array.
@@ -121,10 +131,10 @@
     #method array
     [
         #var(type:list)aList := List new.
-        #var(type:int)aLength := aList length.
         
         self::enumerableOp run &each:anItem [ aList append:anItem ].
-        
+
+        #var(type:int)aLength := aList length.
         #var(type:array) anArray := Array new &length:aLength.
         #var(type:enumerator)anEnumerator := aList enumerator.
         
@@ -385,6 +395,18 @@
         ].
         
         ^ aList::enumerableOp array.
+    ]
+
+    #method split &by:aChar
+    [
+        #var(type:literal) aLiteral := self literal.
+        
+        ^ aChar cast:%eval &to:
+            {
+                eval &char:aChar = aLiteral::literalOp split &char:aChar.
+                
+                eval &literal:aSplitter = aLiteral::literalOp split &literal:aSplitter.
+            }.
     ]
 }
 

@@ -15,7 +15,7 @@
     #constructor new : aList
     [
         theList := aList.
-        theTotal := Integer new::0.
+        theTotal := Integer new &int:0.
     ]
 
     #method append : aWord
@@ -43,15 +43,15 @@
     #var aLine := String new.
 
     // read until the empty string is not entered
-    control do:[ aText << console readLine:aLine << " ". ] &until:[ aLine length == 0 ].
+    control do:[ aText << consoleEx readLine:aLine << " ". ] &until:[ aLine length == 0 ].
 
     #var aList := WordList new:(List new).
 
     control run:aText &forEachWord: anItem [ aList append:anItem ].
 
-    console writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
+    consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)
-        ? [ console writeLine:"the list of unique words:":(aList~indexable sort:ifOrdered). ].
+        ? [ consoleEx writeLine:"the list of unique words:":(aList~indexable sort:ifOrdered). ].
 
     console readChar. // wait for any key
 ].

@@ -14,7 +14,7 @@
 
     control while:[ aBM find:aSearchText ] &do:
     [
-        aBM delete &length::aSearchText insert:aReplaceText.
+        aBM delete &length:aSearchText insert &literal:aReplaceText.
     ].
 
     consoleEx 

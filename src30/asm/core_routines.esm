@@ -1876,11 +1876,11 @@ end
 
 procedure r_abs
 
-  aloadsi 1  
-  bloadsi 2
+  aloadsi 2
+  bloadsi 3
   rabs
 
-  quitn 2
+  quitn 3
 
 end
 

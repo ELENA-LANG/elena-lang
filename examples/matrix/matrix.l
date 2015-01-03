@@ -8,17 +8,18 @@
 // --- factory ---
 #symbol newMatrix = (&n:anN &m:anM &name:aName)
     [ 
-        matrixControl new &n:anN &m:anM &matrixItem: (&index:i &index:j)
+        matrixControl new &n:anN &m:anM &everyMatrixItem: (&index:i &index:j)
         [  
             consoleEx write:"Enter " write:aName write:"[" write:i write:"," write:j write:"]=" readLine:(Real new)
         ]
     ].
 
-#symbol IdentityMatrix = (:aCount)
-[ 
-    matrixControl new &n:aCount &m:aCount &matrixItem: (&index:i &index:j)
-        [ (i == j) ? [ 1 ] ! [ 0 ] ]
-].
+#symbol IdentityMatrix = 
+{
+    new : aCount
+        = matrixControl new &n:aCount &m:aCount &everyMatrixItem: (&index:i &index:j)
+        [ (i == j) ? [ 1 ] ! [ 0 ] ].
+}.
 
 // ---- Program ---
 
@@ -57,7 +58,7 @@
 
                 #var aSum := matrixControl sumOf:aMatrixA:aMatrixB.
 
-                ^ aSum~matrixOp literal.
+                ^ matrixControl toLiteral:aSum.
             ]
             2 ? [
                 consoleEx write:"Enter the order of matrix: ".
@@ -73,7 +74,7 @@
 
                 #var aDiff := matrixControl differenceOf:aMatrixA:aMatrixB.
 
-                ^ aDiff~matrixOp literal.
+                ^ matrixControl toLiteral:aDiff.
             ]
             3 ? [
                 consoleEx write:"Enter the order of matrix: ".
@@ -89,7 +90,7 @@
 
                 #var aProduct := matrixControl productOf:aMatrixA:aMatrixB.
 
-                ^ aProduct~matrixOp literal.
+                ^ matrixControl toLiteral:aProduct.
             ]
             4 ? [
                 consoleEx write:"Enter the order of matrix: ".
@@ -105,9 +106,9 @@
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
 
-                #var identity := IdentityMatrix:N.
+                #var identity := IdentityMatrix new:N.
 
-                ^ identity~matrixOp literal.
+                ^ matrixControl toLiteral:identity.
             ]
             6 ? [
                 'program stop.

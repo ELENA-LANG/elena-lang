@@ -29,7 +29,7 @@
 
             (anArray@aCurrent) < (anArray@aMaxChild)
                 ? [
-                    anArray~indexable exchange:aCurrent:aMaxChild.
+                    anArray exchange &index:aCurrent &index:aMaxChild.
 
                     aCurrent := aMaxChild.
                 ]
@@ -43,14 +43,14 @@
         
         control run &int:(anArray length / 2) &int:0 &forEvery: (&index:anIndex)
         [
-            sorting sortRange &array::anArray &int:anIndex &int:aLastIndex
+            sorting sortRange &array:anArray &int:anIndex &int:aLastIndex
         ].
         
         control run &int:aLastIndex &int:0 &forEvery: (&index:anIndex)
         [
             anArray~indexable exchange &index:anIndex &index:0.
 
-            sorting sortRange &array::anArray &int:0 &int:(anIndex - 1).
+            sorting sortRange &array:anArray &int:0 &int:(anIndex - 1).
         ].
     ]
 }.
@@ -63,7 +63,7 @@
     #var aSize := consoleEx write:"Enter the array size:" readLine:(Integer new).
 
     // 2. Initialize the array
-    #var anArray := arrayControl new &length:(aSize int) &every:prompter.
+    #var anArray := Array new &length:(aSize int) set &every:prompter.
 
     // 3. Sort the array
     sorting sort:anArray.

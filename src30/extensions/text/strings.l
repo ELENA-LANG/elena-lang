@@ -34,11 +34,19 @@
     ]
  
     #method find : anObject
-        = anObject cast:
+        = anObject cast:%eval &to:
         {
             eval &int : anIndex = self find &index:anIndex.
             
             eval &literal : aLiteral = self find &literal:aLiteral.
+        }.
+
+    #method append : anObject
+        = anObject cast:%eval &to:
+        {
+            eval &int : anIndex = self append &index:anIndex.
+            
+            eval &literal : aLiteral = self append &literal:aLiteral.
         }.
 
     #method find &index:anIndex
@@ -71,6 +79,11 @@
         theLiteral := (theLiteral + aValue) literal.
     ]
     
+    #method append &index:aValue 
+    [
+        theIndex := theIndex + aValue.
+    ]
+    
     #method insert &literal:aValue
     [
         theLiteral := theLiteral insert &index:theIndex &literal:aValue literal.
@@ -101,7 +114,7 @@
     
     #method index = theIndex.
     
-    #method cast : aDispatcher = aDispatcher eval &literal:theLiteral.
+    #method cast : aVerb &to:aDispatcher = aDispatcher::aVerb eval &literal:theLiteral.
 }
 
 //// --- StringReader ---

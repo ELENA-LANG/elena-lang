@@ -24,8 +24,9 @@ Currently:
               xdev - linux
                        * linux linker
 
-              idev - 
+              idev - usability
                        * get rid of vm path option
+                       * warn if the dot is missing #var(type:bool) b := nil equal:theCurrent not ]
 
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
@@ -348,6 +349,8 @@ week2:
                        * support GUI application
                        
               adev - lib30                                        
+                       * find out if the bool is called after each enumeration step - next call
+
                        * migrate all the code from old version
                        * test dynamic_test
                        * test dynamic samples

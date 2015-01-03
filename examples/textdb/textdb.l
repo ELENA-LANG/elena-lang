@@ -83,12 +83,12 @@
             ? [ aDB += Record new. ]
             ! [
                 // split record line                    
-                #var aKeyValue := literalControl split:aLine &by:":".
+                #var aKeyValue := aLine~literal split &by:":".
                 #var aName  := aKeyValue@0.
                 #var aValue := aKeyValue@1.
 
                 // update field
-                aDB~enumerable last ~(aName~EField Unserialized) set:aValue.
+                aDB~enumerable last :: (aName::EField Unserialized) set:aValue.
             ].
     ].
     

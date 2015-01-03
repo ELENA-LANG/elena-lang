@@ -2859,17 +2859,17 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    }
    else {
       // box operands if necessary
-      if (checkIfBoxingRequired(scope, object, mode)) {
+      if (checkIfBoxingRequired(scope, object, 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
          object = boxObject(scope, object);
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
       }
-      if (checkIfBoxingRequired(scope, operand, mode)) {
+      if (checkIfBoxingRequired(scope, operand, 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
          operand = boxObject(scope, operand);
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
       }
-      if (operand2.kind != okUnknown && checkIfBoxingRequired(scope, operand2, mode)) {
+      if (operand2.kind != okUnknown && checkIfBoxingRequired(scope, operand2, 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
          operand2 = boxObject(scope, operand2);
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
@@ -3275,6 +3275,8 @@ ObjectInfo Compiler :: compileTypecastExpression(DNode& node, CodeScope& scope, 
    TerminalInfo typeTerminal = node.firstChild().Terminal();
    ref_t typeRef = scope.moduleScope->mapType(typeTerminal);
 
+   _writer.loadObject(*scope.tape, object);
+
    // override standard message compiling routine
    node = node.nextNode();
 
@@ -3498,7 +3500,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
       compileNestedVMT(node, scope);
    }
-   return compileNestedExpression(node, ownerScope, scope, mode & ~HINT_ROOT);
+   return compileNestedExpression(node, ownerScope, scope, mode & ~(HINT_ROOT | HINT_DIRECT_CALL));
 }
 
 ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)

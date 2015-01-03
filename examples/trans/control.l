@@ -10,6 +10,6 @@
         (0 == aSource length)
             ? [ #throw AbortException new. ].
 
-        consoleEx writeLine:(Transliteration:aSource).
+        consoleEx writeLine:(Transliteration eval:aSource).
     ].
 ].
