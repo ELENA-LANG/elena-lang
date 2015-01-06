@@ -61,8 +61,6 @@
 #type(class:system'BaseFunction14)func14.
 
 #type(class:system'BaseFunction1) each.
-//#type(type:func1)forEach.
-//#type(type:func1)seeking.
 #type(class:system'IndexFunction1)every.
 //#type(type:indexfunc)forEvery.
 

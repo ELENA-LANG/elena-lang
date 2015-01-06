@@ -4,7 +4,7 @@
 
 // --- Sum ---
 
-#class MeanAction : BasePattern
+#class MeanAction :: BasePattern
 {
     #field theValue.
     #field theCount.
@@ -30,5 +30,5 @@
 #symbol program =
 [
     #var anArray := (1, 2, 3, 4, 5, 6, 7, 8).
-    console writeLine:"Arithmetic mean of {":anArray:"} is ":(MeanAction new run &enumerator::anArray value).
+    consoleEx writeLine:"Arithmetic mean of {":anArray:"} is ":(control run:anArray &forEach:(MeanAction new)).
 ]. 

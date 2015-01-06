@@ -258,7 +258,7 @@ protected:
       void loadTypes(_Module* module);
       void loadExtensions(TerminalInfo terminal, _Module* module);
 
-      void saveType(ref_t type_ref, ref_t classReference);
+      void saveType(ref_t type_ref, ref_t classReference, bool internalType);
       bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);

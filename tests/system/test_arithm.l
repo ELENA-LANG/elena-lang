@@ -7,7 +7,7 @@
 #define extensions.
 #define extensions'math.
 //////#define extensions'dynamic.
-                        
+
 #symbol XTester =
 {
     test

@@ -16,6 +16,7 @@ math\matrix.l
 text\words.l
 text\enumerating.l
 text\strings.l
+routines\combinations.l
 
 [forwards]
 '$import=system'ext_routines

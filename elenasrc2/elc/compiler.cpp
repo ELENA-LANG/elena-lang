@@ -414,7 +414,7 @@ ref_t Compiler::ModuleScope :: mapNewType(const wchar16_t* terminal)
 ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal, bool& out)
 {
    const wchar16_t* identifier = NULL;
-   if (terminal.symbol == tsIdentifier) {
+   if (terminal.symbol == tsIdentifier || terminal.symbol == tsPrivate) {
       out = false;
 
       identifier = terminal.value;
@@ -891,14 +891,16 @@ void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* ext
    }
 }
 
-void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference)
+void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference, bool internalType)
 {
-   ReferenceNs sectionName(module->Name(), TYPE_SECTION);
+   if (!internalType) {
+      ReferenceNs sectionName(module->Name(), TYPE_SECTION);
 
-   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
 
-   metaWriter.writeDWord(type_ref);
-   metaWriter.writeDWord(classReference);
+      metaWriter.writeDWord(type_ref);
+      metaWriter.writeDWord(classReference);
+   }
 
    typeHints.add(type_ref, classReference, true);
 }
@@ -2887,6 +2889,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, 0);
 
       _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
+
+      retVal.extraparam = scope.moduleScope->boolType;
    }
 
    return retVal;
@@ -2933,7 +2937,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          classReference = object.param;
          directCall = true;
 
-         if (test(mode, HINT_SELFEXTENDING))
+         if (test(mode, HINT_SELFEXTENDING) || classReference == scope.getClassRefId())
             itselfCall = true;
       }
       else if (object.kind == okConstantSymbol) {
@@ -3191,7 +3195,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             altMode = true;
          }
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
-         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode | HINT_CATCH);
+         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode);
       }
       else if (member == nsCatchMessageOperation) {
          if (!catchMode) {
@@ -3810,7 +3814,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
             size_t paramCount = 0;
             ref_t message = mapMessage(exprNode, scope, paramCount);
 
-            if(overridePrimitiveAssigning(scope, getType(target), info, message)) {
+            if(target.kind != okField && overridePrimitiveAssigning(scope, getType(target), info, message)) {
                overridden = true;
 
                _writer.pushObject(*scope.tape, target);
@@ -5290,6 +5294,8 @@ void Compiler :: compileForward(DNode node, ModuleScope& scope, DNode hints)
 
 void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
 {
+   bool internalType = member.Terminal().symbol == tsPrivate;
+
    // map a full type name
    ref_t typeRef = scope.mapNewType(member.Terminal());
 
@@ -5306,7 +5312,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
 
          scope.validateReference(roleValue, classRef);
 
-         scope.saveType(typeRef, classRef);
+         scope.saveType(typeRef, classRef, internalType);
       }
       else scope.raiseWarning(wrnUnknownHint, hints.Terminal());
 
@@ -5314,7 +5320,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
    }
 
    if (weak)
-      scope.saveType(typeRef, 0);
+      scope.saveType(typeRef, 0, internalType);
 }
 
 void Compiler :: compileDeclarations(DNode& member, ModuleScope& scope)

@@ -14,7 +14,7 @@
 
 #symbol Normalized = (:aLiteral)
 [
-     ^ Summing new:(String new) foreach:(arrayControl sort:(literalControl toArray:aLiteral)) literal.
+     ^ control run:(aLiteral~indexable array sort:ifOrdered) &forEach:(Summing new:(String new)) literal.
 ].
 
 // --- Program ---
@@ -25,7 +25,7 @@
 
     #var aDictionary := Dictionary new.
 
-    textFileControl forEachLine:"unixdict.txt" &do: aWord
+    control run &path:"unixdict.txt" &forEachLine: aWord
     [    
         #var aKey := Normalized:aWord.
         #var anItem := aDictionary getAt &key:aKey.
@@ -38,12 +38,12 @@
         anItem += aWord.
     ].
 
-    listControl sort:aDictionary &with: (:aFormer:aLater) [ aFormer value length > aLater value length ].
+    aDictionary~indexable sort: (:aFormer:aLater) [ aFormer value length > aLater value length ].
 
-    controlEx foreach:aDictionary &top:20 &do: aPair [ consoleEx writeLine:(aPair value) ].
+    control run:(aDictionary~enumerable top:20) &forEach: aPair [ consoleEx writeLine:(aPair value) ].
     
     #var anEnd := now.
    
     #var aDiff := anEnd - aStart.
-    consoleEx writeLine:"Time elapsed in msec:":(aDiff Milliseconds).
+    consoleEx writeLine:"Time elapsed in msec:":(aDiff milliseconds).
 ].

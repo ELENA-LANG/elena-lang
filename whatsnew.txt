@@ -8,11 +8,16 @@
 ******************************************************************************
 
 ELENA:
-[!] binary incompatible due to changes in debugger / exception support
+[!] binary incompatible due to changes in debugger / exception support / typecasting
 [-] dn files are no longer produced, debug info is inside an executable
 [+] new shared library : elenart - run-time helper for stand-alone applications
 [+] constructor may have redirecting and initializing parts
 [+] vmpath is no longer used, shared path used instead (for both elenavm and elenart)
+[*] type routine overhaul
+[*] syntax : extending operator renamed - "::" should be used
+[*] syntax : class syntax changed - "::" should be used to provide the class parent
+[+] new hint : type can be provided for the method result
+[-] direct dispatching no longer supported
 
 ELC:
 [*] codebase refactored

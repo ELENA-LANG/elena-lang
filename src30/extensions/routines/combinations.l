@@ -1,58 +1,94 @@
-//#define system.
-//#define system'routines.
-////#define extensions.
-//
-//// --- CombinatorWithRepetition ---
-//
-//#class CombinatorWithRepetition
-//{
-//    #field theIndexers.
-//    #field theCurrent.
-//    #field(type:int)theCount.
-//    
-//    #constructor new : aCollection
-//    [
-//        theCount := aCollection length.
-//        theIndexers := arrayControl new &length:theCount &each: i [ aCollection getAt:i enumerator ].
-//        theCurrent := nil.
-//    ]
-//    
-//    #method reset
-//    [
-//        control foreach:theIndexers &do: anIndexer [ anIndexer set &index:0. ]. 
-//        theCurrent := nil.
-//    ]
-//    
-//    #method refresh
-//    [
-//        theCurrent := arrayControl new &length:theCount &each: i [ (theIndexers@i) get ].
-//    ]
-//
-//    #method findNext
-//        = nil != control foreach:theIndexers &until: anIndexer 
-//        [
-//            anIndexer next
-//                ? [ true ]
-//                ! [ anIndexer set &index:0. ^ false. ]
-//        ].
-//            
-//    #method next
-//    [
-//        #var aRetVal := (nil == theCurrent)
-//            ? [ $self reset. ^ true. ]
-//            ! [ $self findNext ].
-//            
-//        aRetVal 
-//            ? [ $self refresh. ]
-//            ! [ theCurrent := nil. ].
-//        
-//        ^ aRetVal.
-//    ]
-//    
-//    #method get
-//        = theCurrent.
-//}
-//
+#define system.
+#define system'routines.
+#define extensions.
+
+// --- Combinator ---
+
+#type(class:CombinatorStrategy)$strategy.
+
+#class(limited) CombinatorStrategy
+{
+    #method $strategy = $self.
+    
+    #method getAt &indexers:Indexers &length:aLength = nil.
+    
+    #method(type:bool) eval &indexers:Indexers = false.
+}
+
+#symbol(type:$strategy) combinationStart = CombinatorStrategy
+{
+    eval &indexers:Indexers
+    [
+        control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
+        
+        ^ true.
+    ]
+}.
+
+#symbol(type:$strategy) combinationNext = CombinatorStrategy
+{
+    eval &indexers:Indexers
+        = nil != control run:Indexers &seeking: anIndexer 
+        [
+            anIndexer append &index:1 available
+                ! [ anIndexer write &index:0. ^ false. ].
+                
+            ^ true.
+        ].
+        
+    getAt &indexers:Indexers &length:aLength
+    [
+        ^ Array new &length:aLength set &every: (&index:i) [ Indexers getAt &index:i get ].
+    ]
+}.
+
+#symbol(type:$strategy) combinationEnd = CombinatorStrategy
+{
+    eval &indexers:Indexers = false.
+}.
+
+#class Combinator :: Enumerator
+{
+    #field(type:array) theIndexers.
+    #field(type:int)theLength.
+    
+    #field(type:$strategy) theStrategy.
+
+    #constructor new &args:Arguments
+    [
+        theLength := Arguments length.
+        theIndexers := Array new &length:theLength.
+        
+        #var(type:int)i := 0.
+        #loop (i < theLength) ?
+        [
+            theIndexers setAt &index:i &object:((Arguments @ i) iterator).
+            
+            i := i + 1.
+        ].
+        
+        theStrategy := combinationStart.
+    ]
+    
+    #method reset
+    [
+        theStrategy := combinationStart.
+    ]
+    
+    #method next
+    [
+        #var(type:bool) aRetVal := theStrategy eval &indexers:theIndexers.
+        
+        aRetVal ? [ theStrategy := combinationNext. ]
+                ! [ theStrategy := combinationEnd. ].
+
+        ^ aRetVal.
+    ]
+    
+    #method get
+        = theStrategy getAt &indexers:theIndexers &length:theLength.
+}
+
 //// --- Combinator ---
 //
 //#class Combinator : CombinatorWithRepetition

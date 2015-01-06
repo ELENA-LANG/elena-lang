@@ -135,6 +135,10 @@
 
 #class(limited)BaseFunction1
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func1:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func1:$self.
+    
     #method eval : aParam []
     
     #method run &enumerator:anEnumerator
@@ -162,67 +166,92 @@
 
 #class(limited)BaseFunction2
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func2:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func2:$self.
+    
     #method eval : aParam1 : aParam2 []
 }
 
 #class(limited)BaseFunction3
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func3:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func3:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 []
 }
 
 #class(limited)BaseFunction4
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func4:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func4:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
 }
 
 #class(limited)BaseFunction5
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func5:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func5:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
 }
 
 #class(limited)BaseFunction6
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func6:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func6:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
 }
 
 #class(limited)BaseFunction7
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func7:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func7:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
 }
 
 #class(limited)BaseFunction8
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func8:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func8:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
 }
 
 #class(limited)BaseFunction9
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func9:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func9:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
 }
 
 #class(limited)BaseFunction10
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func10:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func10:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
 }
 
 #class(limited)BaseFunction11
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb func11:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func11:$self.
+    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
-}
-
-#class(limited)BaseFunction12
-{
-    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 : aParam12 []
-}
-
-#class(limited)BaseFunction13
-{
-    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 : aParam12 : aParam13 []
-}
-
-#class(limited)BaseFunction14
-{
-    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 : aParam12 : aParam13 : aParam14 []
 }
 
 // --- base lazy expression ---
@@ -238,6 +267,10 @@
 
 #class(limited)IndexFunction1
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb nfunc:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &nfunc:$self.
+    
     #method eval &index:n []
 
     #method rewind &range &int:aStart &int:n &int:dx
@@ -286,6 +319,10 @@
 
 #class(limited)IndexFunction2
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb nnfunc:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &nnfunc:$self.
+    
     #method eval &index:i &index:j []
 
     #method rewind &area &int:i &int:j &int:n &int:m &int:dx
@@ -335,6 +372,10 @@
 
 #class(limited)IndexFunction3
 {
+    #method cast : aVerb &to:aTarget = aTarget::aVerb n3func:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &n3func:$self.
+    
     #method eval &index:i &index:j &index:k []
 
     #method rewind &space &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
@@ -464,7 +505,7 @@
 {
     #method iterator = $self.
     
-    #method available = false.
+    #method(type:bool) available = false.
 
     #method get = nil.
     

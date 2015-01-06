@@ -5,81 +5,50 @@
 // --- Joinable --
 
 #symbol joinable = (:aFormer:aLater)
-    [ (aFormer @ (aFormer length - 1)) == (aLater @ 0) ].
+    [ (aFormer getAt &index:(aFormer length - 1)) == (aLater getAt &index:0) ].
 
-// --- Activatora ---
-
-#class(role)Activator2
+#symbol dispatcher =
 {
-    #method eval : anArray
+    eval : anArray &func2:aFunction
     [
-        ^ self eval:(anArray@0):(anArray@1).
+        ^ aFunction eval:(anArray@0):(anArray@1).
     ]
-}
 
-#class(role)Activator3
-{
-    #method eval : anArray
+    eval : anArray &func3:aFunction
     [
-        ^ self eval:(anArray@0):(anArray@1):(anArray@2).
+        ^ aFunction eval:(anArray@0):(anArray@1):(anArray@2).
     ]
-}
+    
+    eval : anArray &func4:aFunction
+    [
+        ^ aFunction eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3).
+    ]
+    
+    eval : anArray &func5:aFunction
+    [
+        ^ aFunction eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3):(anArray@4).
+    ]
 
-#class(role)Activator4
-{
-    #method eval : anArray
-    [
-        ^ self eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3).
-    ]
-}
-
-#class(role)Activator5
-{
-    #method eval : anArray
-    [
-        ^ self eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3):(anArray@4).
-    ]
-}
+}.
 
 // --- AmbValueCollection ---
 
 #class AmbValueCollection
 {
     #field theCombinator.
-    #field theRole.
     
-    #constructor new : aSet1 : aSet2
+    #constructor new &args:Arguments
     [
-        theRole := Activator2.
-        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2).
+        theCombinator := Combinator new &args:Arguments.
     ]
-    
-    #constructor new : aSet1 : aSet2 : aSet3
-    [
-        theRole := Activator3.
-        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2,aSet3).
-    ]
-    
-    #constructor new : aSet1 : aSet2 : aSet3 : aSet4
-    [
-        theRole := Activator4.
-        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2,aSet3,aSet4).
-    ]
-    
-    #constructor new : aSet1 : aSet2 : aSet3 : aSet4 : aSet5
-    [
-        theRole := Activator5.
-        theCombinator := CombinatorWithRepetition new:(aSet1,aSet2,aSet3,aSet4,aSet5).
-    ]
-    
+
     #method seek : aCondition
     [
         theCombinator reset.
-        
-        control while:[ theCombinator next ] &do:
+
+        control run:theCombinator &seeking: v
         [
-            aCondition~theRole eval:(theCombinator get) ?
-                [ #break. ].
+            ^ aCondition cast:%eval &with:v &to:dispatcher.
         ].
     ]
     
@@ -87,7 +56,7 @@
     [
         #var aResult := theCombinator get.
         nil != aResult
-            ? [ aFunction~theRole eval:aResult. ]
+            ? [ aFunction cast:%eval &with:aResult &to:dispatcher. ]
             ! [ #throw InvalidArgumentException new. ].
     ]
 }
@@ -96,24 +65,15 @@
 
 #symbol ambOperator =
 {
-    for : aSet1 : aSet2
-        = AmbValueCollection new:aSet1:aSet2.
-    
-    for : aSet1 : aSet2 : aSet3
-        = AmbValueCollection new:aSet1:aSet2:aSet3.
-    
-    for : aSet1 : aSet2 : aSet3 : aSet4
-        = AmbValueCollection new:aSet1:aSet2:aSet3:aSet4.
-    
-    for : aSet1 : aSet2 : aSet3 : aSet4 : aSet5
-        = AmbValueCollection new:aSet1:aSet2:aSet3:aSet4:aSet5.
+    for &args:Arguments
+        = AmbValueCollection new &args:Arguments.
 }.
 
 // --- Program ---
 
 #symbol program1 =
 [
-    ambOperator for:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
+    ambOperator for &args:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
         [ consoleEx writeLine: a : " * " : b : " = 8" ]
         | if &InvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
 ].
@@ -121,7 +81,7 @@
 #symbol program2 =
 [
     ambOperator 
-        for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
+        for &args:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
         seek: (:a:b:c:d) [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
         do: (:a:b:c:d) [ consoleEx writeLine:a:" ":b:" ":c:" ":d. ]
         | if &InvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].

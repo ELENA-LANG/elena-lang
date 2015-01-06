@@ -18,10 +18,13 @@
 
     #var aMax := aCountMap first value.
 
-    ^ convertor toArray:(Summing new:(List new) run 
-        &enumerator::(aCountMap
-            ~enumerable filter &each:kv [ ^ aMax safeEqual:(kv value). ]
-            ~enumerable select &each:kv [ ^ kv key. ])).
+    ^ convertor toArray:(
+        control run:(
+                    aCountMap~enumerable 
+                        filter &each:kv [ aMax safeEqual:(kv value) ] 
+                        select &each:kv [ kv key ]
+                    ) 
+                    &forEach:(Summing new:(List new))).
 ].
 
 #symbol program =

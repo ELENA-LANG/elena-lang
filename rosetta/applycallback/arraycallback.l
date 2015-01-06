@@ -1,4 +1,5 @@
 #define system.
+#define extensions.
 
 #symbol PrintSecondPower =
     (:n) [ console writeLine:(n * n) ].

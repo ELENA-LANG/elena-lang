@@ -37,6 +37,8 @@ Currently:
                        * show output argument
                        
               xdev - redesign
+                       * enumeration : check why bool is called for every next call, though it is declared as bool method
+
                        * operator or, do we need it (or bitwise operators at all)
 
                        * enumeration pattern : bool action is sent after each next call, get rid of extra bool check

@@ -122,6 +122,9 @@
         ^ aLastItem.
     ]
 
+    #method top:aCounter
+        = system'routines'TopFilter new &length:(aCounter int) &enumerator:(self enumerator).
+
     #method filter &each:aFilter
         = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).
 
@@ -481,9 +484,8 @@
 
     #method array
     [
-        #var(type:array)anArray := self array.
-        #var(type:array)aRetVal := Array new &length:(anArray length).
-        #var(type:iterator)it := anArray iterator.
+        #var(type:array)aRetVal := Array new &length:(self length).
+        #var(type:iterator)it := self iterator.
         
         aRetVal set &every: (&index:i) [ it write &index:i get ].
         
