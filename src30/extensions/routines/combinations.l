@@ -2,39 +2,45 @@
 #define system'routines.
 #define extensions.
 
-// --- Combinator ---
+#type(class:BaseStrategy)$strategy.
 
-#type(class:CombinatorStrategy)$strategy.
+// --- Strategy ---
 
-#class(limited) CombinatorStrategy
+#class(limited) BaseStrategy
 {
     #method $strategy = $self.
     
     #method getAt &indexers:Indexers &length:aLength = nil.
     
-    #method(type:bool) eval &indexers:Indexers = false.
+    #method(type:$strategy) eval &indexers:Indexers = $self.
+    
+    #method(type:bool) result = false.
 }
 
-#symbol(type:$strategy) combinationStart = CombinatorStrategy
+// --- Combination strategies ---
+
+#symbol(type:$strategy) combinationEnd = BaseStrategy
 {
-    eval &indexers:Indexers
-    [
-        control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
-        
-        ^ true.
-    ]
+    result = false.
 }.
 
-#symbol(type:$strategy) combinationNext = CombinatorStrategy
+#symbol(type:$strategy) combinationNext = BaseStrategy
 {
+    result = true.
+    
     eval &indexers:Indexers
-        = nil != control run:Indexers &seeking: anIndexer 
-        [
-            anIndexer append &index:1 available
-                ! [ anIndexer write &index:0. ^ false. ].
-                
-            ^ true.
-        ].
+    [
+        (nil equal:(control run:Indexers &seeking: anIndexer 
+                [
+                    anIndexer append &index:1 available
+                        ! [ anIndexer write &index:0. ^ false. ].
+                        
+                    ^ true.
+                ]))
+            ? [ ^ combinationEnd. ].
+            
+        ^ $self.            
+    ]
         
     getAt &indexers:Indexers &length:aLength
     [
@@ -42,12 +48,49 @@
     ]
 }.
 
-#symbol(type:$strategy) combinationEnd = CombinatorStrategy
+#symbol(type:$strategy) combinationStart = BaseStrategy
 {
-    eval &indexers:Indexers = false.
+    eval &indexers:Indexers
+    [
+        control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
+        
+        ^ combinationNext.
+    ]
 }.
 
-#class Combinator :: Enumerator
+// --- Parallel strategies
+
+#symbol(type:$strategy) parallelNext = BaseStrategy
+{
+    result = true.
+    
+    eval &indexers:Indexers
+    [
+        (nil != control run:Indexers &seeking: anIndexer [ anIndexer append &index:1 available not ])
+            ? [ ^ combinationEnd. ].
+            
+        ^ $self.            
+    ]
+        
+    getAt &indexers:Indexers &length:aLength
+    [
+        ^ Array new &length:aLength set &every: (&index:i) [ Indexers getAt &index:i get ].
+    ]
+}.
+
+#symbol(type:$strategy) parallelStart = BaseStrategy
+{
+    eval &indexers:Indexers
+    [
+        control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
+        
+        ^ parallelNext.
+    ]
+}.
+
+// --- BaseRowEnumerator ---
+
+#class BaseRowEnumerator :: Enumerator
 {
     #field(type:array) theIndexers.
     #field(type:int)theLength.
@@ -67,26 +110,54 @@
             i := i + 1.
         ].
         
-        theStrategy := combinationStart.
+        $self reset.
     ]
     
-    #method reset
+    #constructor new : Arguments
     [
-        theStrategy := combinationStart.
+        theLength := Arguments length.
+        theIndexers := Array new &length:theLength.
+        
+        #var(type:int)i := 0.
+        #loop (i < theLength) ?
+        [
+            theIndexers setAt &index:i &object:((Arguments @ i) iterator).
+            
+            i := i + 1.
+        ].
+        
+        $self reset.
     ]
     
     #method next
     [
-        #var(type:bool) aRetVal := theStrategy eval &indexers:theIndexers.
-        
-        aRetVal ? [ theStrategy := combinationNext. ]
-                ! [ theStrategy := combinationEnd. ].
+        theStrategy := theStrategy eval &indexers:theIndexers.
 
-        ^ aRetVal.
+        ^ theStrategy result.
     ]
     
     #method get
         = theStrategy getAt &indexers:theIndexers &length:theLength.
+}
+
+// --- Combinator ---
+
+#class Combinator :: BaseRowEnumerator
+{
+    #method reset
+    [
+        theStrategy := combinationStart.
+    ]
+}
+
+// --- ParallelEnumerator ---
+
+#class ParallelEnumerator :: BaseRowEnumerator
+{
+    #method reset
+    [
+        theStrategy := parallelStart.
+    ]
 }
 
 //// --- Combinator ---
@@ -127,12 +198,4 @@
 //                ^ (0 <= aPrevious).
 //            ].
 //    ]
-//}
-//
-//// --- ParallelEnumeration ---
-//
-//#class ParallelEnumerator : CombinatorWithRepetition
-//{
-//    #method findNext
-//        = nil == control foreach:theIndexers &until: anIndexer [ anIndexer next not ].
 //}

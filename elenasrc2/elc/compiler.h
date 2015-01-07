@@ -678,7 +678,7 @@ protected:
 
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 
-   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode);
+   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo object);
 

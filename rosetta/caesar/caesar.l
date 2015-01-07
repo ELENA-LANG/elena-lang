@@ -12,7 +12,7 @@
 
 // --- Encrypt / Decript ---
 
-#class Encrypting : Enumerator
+#class Encrypting :: Enumerator
 {
     #field(type:int) theKey.
     #field(type:enumerator) theEnumerator.

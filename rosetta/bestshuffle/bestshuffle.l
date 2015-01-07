@@ -9,12 +9,12 @@
     #var aLength := aLiteral length.
     #var aShuffled := convertor toArray:aLiteral.
 
-    control seek &int:0 &int::(aLength-1) &every: (&index:i)
+    control seek &int:0 &int:(aLength-1) &every: (&index:i)
     [
         #var aChar := aLiteral@i.
         (aChar == (aShuffled@i)) ?
         [
-            control run &int:0 &int::(aLength-1) &forEvery: (&index:j)
+            control run &int:0 &int:(aLength-1) &forEvery: (&index:j)
             [
                 #var anAltChar := aShuffled@j.
                 (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
@@ -29,7 +29,7 @@
         ^ false.
     ].
 
-    ^ Summing new:(String new) run &enumerator::aShuffled literal.
+    ^ control run:aShuffled &forEach:(Summing new:(String new)) literal.
 ].
 
 // --- ShuffleScore ---

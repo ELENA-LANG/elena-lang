@@ -24,55 +24,62 @@
         theMonth := aMonth.
         theYear := aYear.
         theLine := TextBuffer new.
-        theRow := Integer new.
+        theRow := Integer new &int:0.
     ]
-    
-    #method firstLine : aDay
+
+    #method writeTitle
     [        
         theRow << 0.
-        theDate := Date new &Year:theYear &Month:theMonth &Day:aDay.
-        control foreach:DayNames &do: aName
+        theDate := Date new &year:theYear &month:theMonth &day:1.
+        control run:DayNames &forEach: aName
             [ theLine write:" " write:aName ].
     ]
     
-    #method nextLine
+    #method writeLine
     [
         theLine clear.
         
-        (theDate Month == theMonth)
+        (theDate month == theMonth)
             ? [
-                theLine~stringOp write:"   " &length:(((theDate DayOfWeek) => 0 ? [ 7 ] ! [ theDate DayOfWeek ]) subtract:1 int).
+                theLine::stringOp write:"   " &length:(((theDate dayOfWeek) => 0 ? [ 7 ] ! [ theDate dayOfWeek ]) subtract:1 int).
                 
                 control do:
                 [
-                    theLine~stringOp write:(theDate Day) &paddingLeft:3 &with:" ".
+                    theLine::stringOp write:(theDate day) &paddingLeft:3 &with:" ".
                     
-                    theDate := theDate add &Days:1.
+                    theDate := theDate add &day:1.
                 ]         
-                &until:[(theDate Month != theMonth)or:[theDate DayOfWeek == 1]].
+                &until:[(theDate month != theMonth)or:[theDate dayOfWeek == 1]].
             ].
         
         #var(type:int) aLength := theLine length.
         (aLength < 21)
-            ? [ theLine~stringOp write:" " &length:(21 - aLength). ].
+            ? [ theLine::stringOp write:" " &length:(21 - aLength). ].
             
-        theRow += 1.
-        
-        ^ theRow < 7.
+        theRow += 1.            
     ]
     
-    #method enumerator =
+    #method iterator = Iterator
     {
-        set &index:anIndex [ self firstLine:(anIndex + 1) ]
-        
-        next [ ^ self nextLine. ]
-        
+        available = theRow < 7.
+
+        read &out'index:anIndex [ anIndex := theRow int. ]
+
+        write &index:anIndex 
+        [
+            (anIndex <= theRow)
+                ? [ self writeTitle. ].
+                
+            #loop (anIndex > theRow) ?
+                [ self writeLine. ].
+        ]
+
         get = self.
     }.
     
     #method printTitleTo : anOutput
     [
-        anOutput~stringOp write:(MonthNames @(theMonth - 1)) &padding:21 &with:" ".
+        anOutput::stringOp write:(MonthNames @(theMonth - 1)) &padding:21 &with:" ".
     ]
    
     #method printTo : anOutput
@@ -83,8 +90,8 @@
 
 #class Calendar
 {
-    #field theYear.
-    #field theRowLength.
+    #field(type:int) theYear.
+    #field(type:int) theRowLength.
     
     #constructor new : aYear
     [
@@ -94,15 +101,18 @@
     
     #method printTo:anOutput
     [
-        anOutput~stringOp write:"[SNOOPY]" &padding:(theRowLength * 25) &with:" " writeLine.
-        anOutput~stringOp write:theYear &padding:(theRowLength * 25) &with:" " writeLine writeLine.
+        anOutput::stringOp write:"[SNOOPY]" &padding:(theRowLength * 25) &with:" ". 
+        anOutput writeLine.        
+        anOutput::stringOp write:theYear &padding:(theRowLength * 25) &with:" ". 
+        anOutput writeLine writeLine.
         
         #var aRowCount := 12 / theRowLength.
-        #var Months := matrixControl new &m:aRowCount &n:theRowLength &each: (:i:j) [ CalendarMonthPrinter new &Year:theYear &Month:(i * theRowLength + j + 1) ].
-        
-        control foreach:Months &do: aRow
+        #var Months := matrixControl new &n:aRowCount &m:theRowLength &everyij: 
+            (&index:i &index:j) [ CalendarMonthPrinter new &Year:theYear &Month:(i * theRowLength + j + 1) ].
+
+        control run:Months &forEach: aRow
         [
-            control foreach:aRow &do: aMonth
+            control run:aRow &forEach: aMonth
             [
                 aMonth printTitleTo:anOutput.
                     
@@ -111,19 +121,18 @@
             
             anOutput writeLine.
             
-            control for:(ParallelEnumerator new:aRow) &do: aLine
+            control run:(ParallelEnumerator new:aRow) &forEach: aLine
             [
-                control foreach:aLine &do: aPrinter
+                control run:aLine &forEach: aPrinter
                 [
                     aPrinter printTo:anOutput.
-                    
+
                     anOutput write:"   ".
                 ].
-                
+
                 anOutput writeLine.
             ].
-        ].
-        
+        ].        
     ]
 }
 

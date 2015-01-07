@@ -29,7 +29,8 @@ IDE:
 
 [LIB]
 [*] system : Object#class.new
-
+[*] system'control => extensions'control
+    
 Misc:
 [+] installation package is introduced
 

@@ -8,7 +8,7 @@
 // --- factory ---
 #symbol newMatrix = (&n:anN &m:anM &name:aName)
     [ 
-        matrixControl new &n:anN &m:anM &everyMatrixItem: (&index:i &index:j)
+        matrixControl new &n:anN &m:anM &everyij: (&index:i &index:j)
         [  
             consoleEx write:"Enter " write:aName write:"[" write:i write:"," write:j write:"]=" readLine:(Real new)
         ]
@@ -17,7 +17,7 @@
 #symbol IdentityMatrix = 
 {
     new : aCount
-        = matrixControl new &n:aCount &m:aCount &everyMatrixItem: (&index:i &index:j)
+        = matrixControl new &n:aCount &m:aCount &everyij: (&index:i &index:j)
         [ (i == j) ? [ 1 ] ! [ 0 ] ].
 }.
 

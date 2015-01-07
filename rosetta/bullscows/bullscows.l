@@ -10,9 +10,9 @@
     #constructor new
     [
         // generate secret number
-        #var aRandomNumbers := (1,2,3,4,5,6,7,8,9)~randomOp randomize:9.
+        #var aRandomNumbers := (1,2,3,4,5,6,7,8,9)::randomOp randomize:9.
  
-        theNumbers := arrayControl Subarray:aRandomNumbers &from:0 &length:4.
+        theNumbers := aRandomNumbers~indexable Subarray &index:0 &length:4.
         theAttempt := Integer new:1.
     ]
 
@@ -41,7 +41,7 @@
                         ! [ #throw InvalidArgumentException new. ].
                     
                     // check duplicates
-                    #var duplicate := arrayControl seek:aGuess &until: x [ (x == ch)and:[ x equal &reference:ch not ] ].
+                    #var duplicate := control run:aGuess &seeking: x [ (x == ch)and:[ x equal &reference:ch not ] ].
                     nil != duplicate ?
                     [
                         #throw InvalidArgumentException new.
@@ -50,11 +50,11 @@
                     (aNumber == (theNumbers@i))
                         ? [ aBulls += 1. ]
                         ! [
-                            arrayControl ifExist:aNumber &in:theNumbers
+                            control ifExist:aNumber &in:theNumbers
                                 ? [ aCows += 1. ].
                         ].
                 ]
-                | ifFailed: 
+                | if &Error: e
                 [
                     aBulls << -1.
                 ].

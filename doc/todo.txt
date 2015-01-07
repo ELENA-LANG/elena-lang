@@ -577,6 +577,7 @@ week2:
                        * deserialize object
                        
             smaint - testing
+                       * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
                        * extend realtest with comparision operation test
                        * modify system test, it should raise an exception if any of the tests fails
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied

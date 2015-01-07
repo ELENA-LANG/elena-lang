@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -305,6 +305,8 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
 
    tape.newLabel();
 
+   // HOT FIX: to compensate the unpaired pop
+   tape.write(bcAllocStack, 1);
    tape.write(bcPopA);
    tape.write(bcFlag);
    tape.write(bcAndN, elMessage);

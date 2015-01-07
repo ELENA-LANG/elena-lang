@@ -14,13 +14,13 @@
         ? [ emptyLiteralValue ]
         ! [
             #var aBrackets := 
-                arrayControl new &length:(aLength int) &every: (&index:i) [ CharValue new &short:91 ] 
+                Array new &length:(aLength int) set &every: (&index:i) [ CharValue new &short:91 ] 
                 + 
-                arrayControl new &length:(aLength int) &every: (&index:i)[ CharValue new &short:93 ].
+                Array new &length:(aLength int) set &every: (&index:i)[ CharValue new &short:93 ].
     
-            aBrackets~randomOp randomize:(aLength * 2).
+            aBrackets::randomOp randomize:(aLength * 2).
     
-            ^ Summing new:(String new) run &enumerator::aBrackets literal.        
+            ^ control run:aBrackets &forEach:(Summing new:(String new)) literal.
         ].
 ].
 

@@ -2145,15 +2145,39 @@ ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
    return object;
 }
 
-bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode)
+bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode)
 {
-   if (test(mode, HINT_DIRECT_CALL)) {
-      return false;
+   //if (test(mode, HINT_DIRECT_CALL) && resolveStrongType(type_ref)) {
+   //   return false;
+   //}
+   if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam != 0) {
+      ref_t wrapper = 0;
+      int size = scope.moduleScope->defineTypeSize(object.extraparam, wrapper);
+      if (size != 0) {
+         // if target is known and supports primitive type, boxing could be skipped
+         if (test(mode, HINT_DIRECT_CALL) && argType != 0 && wrapper == scope.moduleScope->resolveStrongType(argType)) {
+            return false;
+         }
+         else return true;
+      }
+      else return false;
    }
-   else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam != 0) {
-      return scope.moduleScope->defineTypeSize(object.extraparam) != 0;
+   else if (object.kind == okLocalAddress) {
+      if (test(mode, HINT_DIRECT_CALL) && argType != 0 && scope.moduleScope->resolveStrongType(argType) == object.extraparam) {
+         return false;
+      }
+      else return true;
    }
-   else return object.kind == okParams || object.kind == okIndexAccumulator || object.kind == okLocalAddress || object.kind == okFieldAddress;
+   else if (object.kind == okIndexAccumulator || object.kind == okFieldAddress) {
+      return true;
+   }
+   else if (object.kind == okParams) {
+      if (test(mode, HINT_DIRECT_CALL) && argType != 0 && scope.moduleScope->resolveStrongType(argType) == scope.moduleScope->paramsReference) {
+         return false;
+      }
+      else return true;
+   }
+   else return false;
 }
 
 ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object)
@@ -2239,7 +2263,7 @@ void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, Code
 
       _writer.loadObject(*scope.tape, param);
 
-      if (checkIfBoxingRequired(scope, param, mode))
+      if (checkIfBoxingRequired(scope, param, type_ref, mode))
          boxObject(scope, param);
 
       if (type_ref != 0) {
@@ -2373,7 +2397,7 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
       ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
 
       // box the object if required
-      if (checkIfBoxingRequired(scope, param, 0)) {
+      if (checkIfBoxingRequired(scope, param, 0, 0)) {
          _writer.loadObject(*scope.tape, param);
 
          boxObject(scope, param);
@@ -2587,7 +2611,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
 
       _writer.loadObject(*scope.tape, object);
 
-      if (checkIfBoxingRequired(scope, object, mode)) {
+      if (checkIfBoxingRequired(scope, object, getType(object), mode)) {
          //scope.raiseWarning(wrnBoxingCheck, node.Terminal());
 
          // if the object is stack allocated - box it
@@ -2614,7 +2638,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
       _writer.declareArgumentList(*scope.tape, count + 1);
       _writer.loadObject(*scope.tape, object);
 
-      if (checkIfBoxingRequired(scope, object, mode)) {
+      if (checkIfBoxingRequired(scope, object, getType(object), mode)) {
          //scope.raiseWarning(wrnBoxingCheck, node.Terminal());
 
          // if the object is stack allocated - box it
@@ -2861,17 +2885,17 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    }
    else {
       // box operands if necessary
-      if (checkIfBoxingRequired(scope, object, 0)) {
+      if (checkIfBoxingRequired(scope, object, 0, 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
          object = boxObject(scope, object);
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
       }
-      if (checkIfBoxingRequired(scope, operand, 0)) {
+      if (checkIfBoxingRequired(scope, operand, 0, 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
          operand = boxObject(scope, operand);
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
       }
-      if (operand2.kind != okUnknown && checkIfBoxingRequired(scope, operand2, 0)) {
+      if (operand2.kind != okUnknown && checkIfBoxingRequired(scope, operand2, 0, 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
          operand2 = boxObject(scope, operand2);
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
@@ -3422,7 +3446,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
-         if (checkIfBoxingRequired(ownerScope, info, mode)) {
+         if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
             _writer.loadObject(*ownerScope.tape, info);
             boxObject(ownerScope, info);
             _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
@@ -3455,7 +3479,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
             _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
          }
          else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress) {
-            if (checkIfBoxingRequired(ownerScope, info, mode)) {
+            if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
                _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
                toFree++;
             }
@@ -3851,7 +3875,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 
          // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
          if (target.kind == okField) {
-            if (checkIfBoxingRequired(scope, info, assignMode))
+            if (checkIfBoxingRequired(scope, info, 0, assignMode))
                info = boxObject(scope, info);
 
             compileAssignment(node, scope, target);

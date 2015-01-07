@@ -10,6 +10,11 @@
 
 #symbol XTester =
 {
+    test &padding : n
+    [
+        #var o := n.
+    ]
+    
     test
     [
     ]
@@ -17,6 +22,8 @@
 
 #symbol XTest =
 [
+    XTester test &padding:(2+3).
+    
     XTester test.
 ].
 
