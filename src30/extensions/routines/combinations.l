@@ -12,7 +12,7 @@
     
     #method getAt &indexers:Indexers &length:aLength = nil.
     
-    #method(type:$strategy) eval &indexers:Indexers = $self.
+    #method(type:$strategy) eval &indexers:Indexers &length:aLength = $self.
     
     #method(type:bool) result = false.
 }
@@ -24,11 +24,11 @@
     result = false.
 }.
 
-#symbol(type:$strategy) combinationNext = BaseStrategy
+#symbol(type:$strategy) sequentialNext = BaseStrategy
 {
     result = true.
     
-    eval &indexers:Indexers
+    eval &indexers:Indexers &length:aLength
     [
         (nil equal:(control run:Indexers &seeking: anIndexer 
                 [
@@ -48,13 +48,13 @@
     ]
 }.
 
-#symbol(type:$strategy) combinationStart = BaseStrategy
+#symbol(type:$strategy) sequentialStart = BaseStrategy
 {
-    eval &indexers:Indexers
+    eval &indexers:Indexers &length:aLength
     [
         control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
         
-        ^ combinationNext.
+        ^ sequentialNext.
     ]
 }.
 
@@ -64,7 +64,7 @@
 {
     result = true.
     
-    eval &indexers:Indexers
+    eval &indexers:Indexers &length:aLength
     [
         (nil != control run:Indexers &seeking: anIndexer [ anIndexer append &index:1 available not ])
             ? [ ^ combinationEnd. ].
@@ -80,11 +80,61 @@
 
 #symbol(type:$strategy) parallelStart = BaseStrategy
 {
-    eval &indexers:Indexers
+    eval &indexers:Indexers &length:aLength
     [
         control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
         
         ^ parallelNext.
+    ]
+}.
+
+// --- combination strategy ---
+
+#symbol(type:$strategy)  combinationNext = BaseStrategy
+{
+    result = true.
+
+    getAt &indexers:Indexers &length:aLength
+    [
+        ^ Array new &length:aLength set &every: (&index:i) [ Indexers getAt &index:i get ].
+    ]
+        
+    eval &indexers:Indexers &length:aLength
+    [
+        #var(type:array)anArray := Indexers array.
+        #var(type:length)k := anArray length.
+        #var(type:length)i := k - 1.
+        
+        #var aCurrentIndexer := anArray getAt &index:i.
+        
+        (aCurrentIndexer append &index:1 available)
+            ? [ ^ $self. ].
+             
+        #loop ((i > 0) and:[ anArray getAt &index:(i - 1) index + k - i + 1 >= aLength ]) ?
+            [ i := i - 1. ].
+        
+        (i == 0)
+            ? [ ^ combinationEnd. ].
+        
+        anArray getAt &index:(i - 1) append &index:1.
+        
+        control run &int:i &int:(k - 1) 
+            &forEvery: (&index:j) [ anArray getAt &index:j write &index:(anArray getAt &index:(j - 1) index + 1). ].
+            
+        ^ $self.            
+    ]
+}.
+
+#symbol(type:$strategy)  combinationStart = BaseStrategy
+{
+    eval &indexers:Indexers &length:n
+    [
+        #var(type:array)anArray := Indexers array.
+        #var(type:length)aLength := anArray length.
+        
+        control run &int:0 &int:(aLength - 1) &forEvery: (&index:i) [ anArray getAt &index:i write &index:i. ].
+        
+        ^ combinationNext.
     ]
 }.
 
@@ -131,7 +181,7 @@
     
     #method next
     [
-        theStrategy := theStrategy eval &indexers:theIndexers.
+        theStrategy := theStrategy eval &indexers:theIndexers &length:theLength.
 
         ^ theStrategy result.
     ]
@@ -140,13 +190,13 @@
         = theStrategy getAt &indexers:theIndexers &length:theLength.
 }
 
-// --- Combinator ---
+// --- SequentialEnumerator ---
 
-#class Combinator :: BaseRowEnumerator
+#class SequentialEnumerator :: BaseRowEnumerator
 {
     #method reset
     [
-        theStrategy := combinationStart.
+        theStrategy := sequentialStart.
     ]
 }
 
@@ -160,42 +210,27 @@
     ]
 }
 
-//// --- Combinator ---
-//
-//#class Combinator : CombinatorWithRepetition
-//{
-//    #method reset
-//    [
-//        $super reset.
-//        
-//        $self reset:1.
-//    ]
-//
-//    #method reset : anIndex
-//    [
-//        #var aPrevious := Integer new:(theIndexers@anIndex index).
-//        
-//        #var retVal := control forrange &int::anIndex &int:(theCount-1) &do: (&int:i)
-//        [
-//            theIndexers@i set &index:(aPrevious append &int:1 int) available
-//                ! [ #break self. ].
-//        ].
-//        
-//        ^ nil == retVal.
-//    ]
-//    
-//    #method findNext
-//    [
-//        #var aCurrentIndexer := theIndexers @ (theCount - 1).
-//        
-//        ^ aCurrentIndexer next 
-//            ? [ true ]
-//            ! [
-//                #var aPrevious := Integer new:theCount.
-//                
-//                control do:[ aPrevious -= 1. ] &until:[ (aPrevious < 0)or:[ self reset:aPrevious ] ].
-//                
-//                ^ (0 <= aPrevious).
-//            ].
-//    ]
-//}
+// --- Combinator ---
+
+#class Combinator :: BaseRowEnumerator
+{
+    #field(type:int) theTotalLength.
+    
+    #constructor new &k:aSubLength &of:aSet
+        <= (%new : (Array new &length:(aSubLength int) set &every: (&index:n) [ ^ aSet. ]))
+    [
+        theTotalLength := aSet length.
+    ]
+    
+    #method next
+    [
+        theStrategy := theStrategy eval &indexers:theIndexers &length:theTotalLength.
+
+        ^ theStrategy result.
+    ]
+    
+    #method reset
+    [
+        theStrategy := combinationStart.
+    ]
+}

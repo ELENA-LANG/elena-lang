@@ -5,14 +5,14 @@
  
 #symbol median  = (:anArray)
 [
-    #var aSorted := arrayControl sort:(anArray clone).
+    #var aSorted := control sort:(anArray clone).
 
     #var aLen := aSorted length.
     ^ aLen =>
         0 ? [ nil ]
         ! [
             #var aMiddleIndex := aLen / 2.
-            ^ (mod:aLen:2) =>
+            ^ (mathControl mod:aLen:2) =>
                 0 ? [ (aSorted@(aMiddleIndex - 1) + aSorted@aMiddleIndex) / 2 ]                    
                 ! [ aSorted@aMiddleIndex ].
         ].

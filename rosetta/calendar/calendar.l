@@ -140,7 +140,7 @@
 
 #symbol program =
 [
-    #var aCalender := Calendar new:(consoleEx write:"Enter the year:" readLine:(Integer new)).
+    #var aCalender := Calendar new:(consoleEx write:"ENTER THE YEAR:" readLine:(Integer new)).
     
     aCalender printTo:consoleEx.
     

@@ -1,6 +1,5 @@
 #define system.
-//#define system'routines.
-//#define system'dynamic.
+#define system'routines.
 
 #type(class:system'BaseFunction1)forEach.
 #type(class:system'BaseFunction1)forEachWord.
@@ -62,10 +61,45 @@
     run &path:aPath &forEachLine:anAction
         = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath).
 
+    sort : anIndexable
+        = anIndexable~indexable sort:ifOrdered.
+
     getAt :anIndex &args:Params
     [
         #var(type:int)aLength := Params length.
 
         ^ Params@(aLength - anIndex int).
+    ]
+}.
+
+// --- literalControl ---
+
+#symbol literalControl =
+{
+    toArray : aLiteral
+        = aLiteral ~indexable array.
+
+    starting : anS &with:aSubS
+    [
+        #var(type:literal)s := anS literal.
+        #var(type:literal)ss := aSubS literal.
+        
+        ^ 0 == s indexOf &index:0 &literal:ss.
+    ]
+        
+    ending : anS &with:aSubS
+    [
+        #var(type:literal)s := anS literal.
+        #var(type:literal)ss := aSubS literal.
+        
+        ^ (s length - ss length) == s indexOf &index:0 &literal:ss.
+    ]
+                
+    contain : aSubS &in:anS
+    [
+        #var(type:literal)s := anS literal.
+        #var(type:literal)ss := aSubS literal.
+        
+        ^ -1 != s indexOf &index:0 &literal:ss.
     ]
 }.

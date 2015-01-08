@@ -39,7 +39,7 @@
     
     #constructor new &args:Arguments
     [
-        theCombinator := Combinator new &args:Arguments.
+        theCombinator := SequentialEnumerator new &args:Arguments.
     ]
 
     #method seek : aCondition

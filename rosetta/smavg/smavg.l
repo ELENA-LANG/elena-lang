@@ -29,7 +29,7 @@
                     aCount := thePeriod.
                 ].
         
-                #var aSum := Summing new:(Real new &int:0) run &enumerator::theList.
+                #var aSum := Summing new:(Real new &int:0) run &enumerator:theList.
                 
                 ^ aSum / aCount.
             ].
