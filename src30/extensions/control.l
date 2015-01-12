@@ -1,5 +1,6 @@
 #define system.
 #define system'routines.
+#define system'threading.
 
 #type(class:system'BaseFunction1)forEach.
 #type(class:system'BaseFunction1)forEachWord.
@@ -101,5 +102,19 @@
         #var(type:literal)ss := aSubS literal.
         
         ^ -1 != s indexOf &index:0 &literal:ss.
+    ]
+}.
+
+// --- threadControl ---
+
+#symbol threadControl =
+{
+    start &func:anAction
+    [
+        #var aThread := Thread new &func:anAction.
+        
+        aThread start.
+        
+        ^ aThread.
     ]
 }.

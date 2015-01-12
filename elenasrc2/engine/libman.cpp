@@ -132,10 +132,8 @@ bool LibraryManager :: loadCore(LoadResult& result)
             
          }
          else _binaries.addToTop(NULL, binary);
-
-         it++;
       }
-      else break;      
+      it++;
    }
    return true;
 }

@@ -30,6 +30,7 @@ using namespace _ELENA_;
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 #define HINT_SELFEXTENDING    0x00040000
 #define HINT_ACTION           0x00020000
+#define HINT_EXTERNAL_CALL    0x00010000
 
 // --- Auxiliary routines ---
 
@@ -602,6 +603,11 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(const wchar16_t* reference,
    if (ConstantIdentifier::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
       return ObjectInfo(okExternal);
    }
+   else if (ConstantIdentifier::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)]=='\'') {
+      ReferenceNs fullName(project->resolveForward(IMPORT_FORWARD), reference + strlen(INTERNAL_MODULE) + 1);
+
+      return ObjectInfo(okInternal, module->mapReference(fullName));
+   }
    else {
       ref_t referenceID = mapReference(reference, existing);
 
@@ -1135,6 +1141,14 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
+      else if (ConstantIdentifier::compare(terminal, HINT_POINTER)) {
+         if (info.fields.Count() > 0 || test(info.header.flags, elStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 4;
+         info.header.flags |= elDebugPTR;
+         info.header.flags |= (elEmbeddable | elStructureRole);
+      }
       else if (ConstantIdentifier::compare(terminal, HINT_BINARY)) {
          if (info.fields.Count() > 0 || test(info.header.flags, elStructureRole))
             raiseError(wrnInvalidHint, terminal);
@@ -1594,7 +1608,7 @@ void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, c
    if (section == NULL) {
       scope.raiseError(errInvalidLink, node.Terminal());
    }
-   else tape->import(section);
+   else tape->import(section, true);
 
    // goes to the first imported command
    it++;
@@ -1985,6 +1999,10 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          // subject should be boxed into Subject class
          object = boxObject(scope, object);
          break;
+      case okInternal:
+         if (!test(mode, HINT_EXTERNAL_CALL))
+            scope.raiseError(errInvalidOperation, node.Terminal());
+         break;
    }
 
    // skip the first breakpoint if it is not a symbol
@@ -2150,7 +2168,7 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
    //if (test(mode, HINT_DIRECT_CALL) && resolveStrongType(type_ref)) {
    //   return false;
    //}
-   if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam != 0) {
+   if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam || object.kind == okFieldAddress) && object.extraparam != 0) {
       ref_t wrapper = 0;
       int size = scope.moduleScope->defineTypeSize(object.extraparam, wrapper);
       if (size != 0) {
@@ -2594,6 +2612,9 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
    else if (object.kind == okConstantClass) {
       methodInfo = scope.moduleScope->checkMethod(object.extraparam, messageRef);
    }
+   else if (object.kind == okAccumulator && object.param != 0) {
+      methodInfo = scope.moduleScope->checkMethod(object.param, messageRef);
+   }
    else if (object.kind == okThisParam) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
       if (test(classScope->info.header.flags, elClosed) && classScope->info.methods.exist(messageRef)) {
@@ -2976,6 +2997,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          classReference = object.extraparam;
          directCall = true;
       }
+      else if (object.kind == okAccumulator && object.param != 0) {
+         classReference = object.param;
+         directCall = true;
+      }
       // if message sent to the class parent
       else if (object.kind == okSuper) {
          _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
@@ -3036,73 +3061,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       }
       else _writer.callMethod(*scope.tape, 0, paramCount);
    }
-
-   //// if static message is sent to a class class
-   //if (object.kind == okConstantClass) {
-   //   retVal.param = object.param;
-
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-   //   _writer.callResolvedMethod(*scope.tape, object.extraparam, messageRef);
-   //}
-   //// if external role is provided
-   //else if (object.kind == okConstantRole) {
-   //   _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
-   //}
-   //else if (object.kind == okConstantSymbol) {
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-   //   _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
-   //}
-   //// if message sent to the class parent
-   //else if (object.kind == okSuper) {
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-   //   _writer.callResolvedMethod(*scope.tape, object.param, messageRef);
-   //}
-   //// if message sent to the $self
-   //else if (object.kind == okThisParam && test(scope.getClassFlags(false), elSealed)) {
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-   //   _writer.callResolvedMethod(*scope.tape, scope.getClassRefId(false), messageRef);
-   //}
-   //else if (object.kind == okThisParam && test(scope.getClassFlags(false), elClosed)) {
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-   //   _writer.callVMTResolvedMethod(*scope.tape, scope.getClassRefId(false), messageRef);
-   //}
-   //// if run-time external role is provided
-   //else if (object.kind == okRole) {
-   //   _writer.callRoleMessage(*scope.tape, paramCount);
-   //}
-   //else if (catchMode) {
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-   //   _writer.callMethod(*scope.tape, 0, paramCount);
-   //}
-   //else {
-   //   _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-
-   //   ref_t classReference = object.extraparam != 0 ? scope.moduleScope->resolveStrongType(object.extraparam) : 0;
-   //   // check if it is a strong typed object
-   //   if (classReference != 0) {
-   //      // check if the message is supported
-   //      bool classFound = false;
-   //      MethodType method = scope.moduleScope->checkMethod(classReference, messageRef, classFound);
-   //      if (method == tpSealed) {
-   //         _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
-   //      }
-   //      else if (method == tpClosed) {
-   //         _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
-   //      }
-   //      else {
-   //         boxObject(scope, object);
-
-   //         // if the class found and the message is not supported - warn the programmer and raise an exception
-   //         if (classFound) {
-   //            scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
-
-   //            _writer.callMethod(*scope.tape, 0, paramCount);
-   //         }
-   //         else _writer.callMethod(*scope.tape, 0, paramCount);
-   //      }
-   //   }
-   //   else _writer.callMethod(*scope.tape, 0, paramCount);
-   //}
 
    // the result of get&type message should be typed
    if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
@@ -4070,6 +4028,9 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          if ((classScope->info.header.flags & elDebugMask)==elDebugDWORD) {
             param.size = 4;
          }
+         else if ((classScope->info.header.flags & elDebugMask)==elDebugPTR) {
+            param.size = -2;
+         }
          else param.size = -1;
       }
       else {
@@ -4084,12 +4045,15 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          if ((classInfo.header.flags & elDebugMask)==elDebugDWORD) {
             param.size = 4;
          }
+         else if ((classInfo.header.flags & elDebugMask)==elDebugPTR) {
+            param.size = -2;
+         }
          else param.size = -1;
       }
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
-         param.info = compileObject(arg.firstChild(), scope, 0);
+         param.info = compileObject(arg.firstChild(), scope, HINT_EXTERNAL_CALL);
          if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
             param.info.extraparam = param.subject;
          }
@@ -4099,6 +4063,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
             if((param.info.kind != okLocal && param.info.kind != okOutputParam) || param.subject != param.info.extraparam)
                scope.raiseError(errInvalidOperation, terminal);
          }            
+         else if (param.size == -2 && param.info.kind == okInternal) {
+         }
          else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
             // if direct pass is possible
          }
@@ -4131,10 +4097,6 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
       if ((*out_it).output) {
          _writer.pushObject(*scope.tape, (*out_it).info);
       }
-      //else if ((*out_it).info.kind == okSymbolReference) {
-      //   _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
-      //   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-      //}
       else {
          if ((*out_it).size == 4) {
             if ((*out_it).info.kind == okIntConstant) {
@@ -4147,6 +4109,11 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
                _writer.loadObject(*scope.tape, (*out_it).info);
                _writer.pushObject(*scope.tape, ObjectInfo(okAccField, 0));
             }
+         }
+         // if it is an internal reference
+         else if ((*out_it).size == -2) {
+            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
+            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
          }
          else _writer.pushObject(*scope.tape, (*out_it).info);
       }

@@ -1,39 +1,39 @@
 #define system.
-#define system'threading.
+#define extensions.
 
-////#class LockTest
-////{
-////    #method(sync) eval : aLine
-////    [
-////        Loop &&from:0 &to:10000 run: =
-////        [
-////          'program'output << aLine.
-////        ].
-////        
-////        $self fail.
-////    ]
-////}
+//#class LockTest
+//{
+//    #method(sync) eval : aLine
+//    [
+//        Loop &&from:0 &to:10000 run: =
+//        [
+//          'program'output << aLine.
+//        ].
+//        
+//        $self fail.
+//    ]
+//}
+
+//#static Seed = integer::0.
 //
-////#static Seed = integer::0.
-////
-////#class SyncTest
-////{
-////    #method eval : aLine
-////    [
-////          #sync Seed
-////          [
-////              Loop::{ &for:0 &to:10000 } run: =>
-////              [
-////                  'program'output << aLine.
-////              ].
-////
-////          ].
-////                    
-////          $self fail.
-////    ]
-////}
-////
+//#class SyncTest
+//{
+//    #method eval : aLine
+//    [
+//          #sync Seed
+//          [
+//              Loop::{ &for:0 &to:10000 } run: =>
+//              [
+//                  'program'output << aLine.
+//              ].
 //
+//          ].
+//                    
+//          $self fail.
+//    ]
+//}
+//
+
 //#symbol TestCase1 =
 //    [
 //        #var aThread1 := BaseThread
@@ -106,7 +106,7 @@
 
 #symbol NewThreadTest =
 [
-    #var aThread := threadControl start: 
+    #var aThread := threadControl start &func:
         [ 
             console writeLine:"New thread started. Press any key".
 

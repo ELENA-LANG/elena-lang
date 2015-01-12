@@ -2057,8 +2057,8 @@ void ByteCodeWriter :: selectConstant(CommandTape& tape, ref_t r1, ref_t r2)
    tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 }
 
-//void ByteCodeWriter :: loadSymbolReference(CommandTape& tape, ref_t reference)
-//{
-//   // acopyr reference
-//   tape.write(bcACopyR, reference | mskSymbolRef);
-//}
+void ByteCodeWriter :: loadSymbolReference(CommandTape& tape, ref_t reference)
+{
+   // acopyr reference
+   tape.write(bcACopyR, reference | mskInternalRef);
+}

@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -655,6 +655,10 @@ void x86Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWri
 	checkComma(token);
 
 	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+   if (dest.prefix == x86Helper::spFS) {
+      code->writeByte(0x64);
+   }
 
 	if (sour.type==x86Helper::otEAX && dest.type == x86Helper::otDD) {
 		code->writeByte(0x05);

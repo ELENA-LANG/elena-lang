@@ -74,7 +74,7 @@ public:
 
    void addCoreAlias(const tchar_t* path)
    {
-      _binaryAliases.addToTop(NULL, StringHelper::clone(path));
+      _binaryAliases.add(NULL, StringHelper::clone(path));
    }
 
    _Module* createModule(const wchar16_t* package, LoadResult& result);

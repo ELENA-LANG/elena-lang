@@ -35,7 +35,7 @@ Currently:
                        * show shortarray and bytearray
                        * show real variable
                        * show output argument
-                       
+
               xdev - redesign
                        * [ expr ] and (&index:n) = expr  ??
 

@@ -19,6 +19,7 @@ enum ObjectKind
    okUnknown = 0,
 
    okExternal,
+   okInternal,
 
    okConstant,                     // param - reference, extraparam - class reference
    okLiteralConstant,              // param - reference 
@@ -270,7 +271,7 @@ public:
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
    void copySubject(CommandTape& tape);
-//   void loadSymbolReference(CommandTape& tape, ref_t reference);
+   void loadSymbolReference(CommandTape& tape, ref_t reference);
    void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);

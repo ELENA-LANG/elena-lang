@@ -443,12 +443,16 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 
    _Memory* code = binary->mapSection(reference, false);
 	MemoryWriter writer(code);
+   writer.writeDWord(0);
 
    token.read();
 
 	while (!token.check("end")) {
       compileCommand(token, writer, info, binary);
 	}
+
+   (*code)[0] = writer.Position() - 4;
+
 }
 
 void ECodesAssembler :: compile(TextReader* source, const tchar_t* outputPath)

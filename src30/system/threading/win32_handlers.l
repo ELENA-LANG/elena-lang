@@ -1,27 +1,24 @@
 #define system.
-#define system'io.
 
-#symbol(const)INFINITE = 0FFFFFFFFh.
-
-// --- ThreadStarter ---
-
-#symbol $threadStarter = <thread_start>.
+#symbol(const,type:int)INFINITE = 0FFFFFFFFh.
 
 // --- ThreadHandle ---
 
-#class ThreadHandle : Handle
+#class(struct:embeddable,sealed) ThreadHandle
 {
-    #constructor new &action:anAction
+    #field(type:handle) theHandle.
+    #field(type:ptr)    theActionPtr.
+    
+    #constructor new &func:anAction
     [
-        #var(type:int)param.
+        theActionPtr := Pointer new:anAction.
 
-        referenceTableControl allocate:anAction &out'int:param.
-                        
-        theData := system'external'KERNEL32 CreateThread
+        #var(type:int)aParamIndex := theActionPtr int.
+        theHandle := system'external'KERNEL32 CreateThread
                         &int:0
                         &int:0
-                        &intptr: #symbol $threadStarter
-                        &int:param
+                        &ptr:system'internal'thread_start
+                        &int:aParamIndex
                         &int:4
                         &int:0.
     ]
@@ -29,7 +26,7 @@
     #method start
     [
         system'external'KERNEL32 ResumeThread
-            &handle:$self.
+            &handle:theHandle.
     ]
 
     #method join
@@ -38,11 +35,12 @@
     #method join &int:aTimeOut
     [
         system'external'KERNEL32 WaitForSingleObject
-            &handle:$self
+            &handle:theHandle
             &int:aTimeOut.
     ]     
                                                                    
     #method close
     [
+        
     ]
 }

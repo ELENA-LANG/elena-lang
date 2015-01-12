@@ -35,6 +35,8 @@ io\files.l
 dynamic\groups.l
 dynamic\reflection.l
 dynamic\interpreters.l
+threading\win32_handlers.l
+threading\thread.l
 
 [forwards]
 '$import=system'core_routines

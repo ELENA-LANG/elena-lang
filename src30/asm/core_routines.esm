@@ -2138,3 +2138,55 @@ labNext2:
   quitn 2
 
 end
+
+procedure api_alloc_index
+
+  pusha
+  callr api : coreapi'alloc_index
+  bcopya
+  aloadsi 3
+  set  
+  popb
+  nsave
+  acopyb
+
+  quitn 2
+
+end
+
+procedure api_free_index
+                      
+  aloadsi 1
+  nload
+  callr api : coreapi'free_index
+  quitn 2
+  
+end
+
+procedure save_int
+
+  bloadsi 2
+  nload
+  nsave
+  quitn 2
+
+end
+
+procedure thread_start
+
+  acopys 1  
+  pusha
+  callr api : coreapi'resolve_index
+  pusha
+  callr api : coreapi'start_thread
+  ifr labError 0
+  quitn 1
+
+labError:
+  callr system'NotSupportedException
+  pusha
+  copym NEW_MESSAGE_ID
+  acallvi 0
+  throw
+  
+end

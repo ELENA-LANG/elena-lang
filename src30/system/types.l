@@ -6,7 +6,6 @@
 #type(class:system'LongNumber)  long.
 #type(class:system'RealNumber)  real.
 
-//#type(size:4)intptr.
 #type(class:system'Signature)subject.
 
 #type(class:system'ByteArray)  bytearray.
@@ -85,3 +84,4 @@
 
 // === system handles ===
 #type(class:Handle) handle.
+#type(class:system'Pointer)ptr.

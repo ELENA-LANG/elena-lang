@@ -16,3 +16,17 @@
             &handle:$self.
     ]
 }
+
+// --- IntPtr ---
+
+#class(sealed,pointer) Pointer
+{
+    #constructor new : anObject
+        => system'internal'api_alloc_index.
+
+    #method read &out'int:aRetVal
+        => system'internal'save_int.
+
+    #method close
+        => system'internal'api_free_index.
+}

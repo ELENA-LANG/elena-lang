@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -151,6 +151,7 @@ namespace _ELENA_
       mskPreloadDataRef      = 0xAC000000,
       mskNativeVariable      = 0xAD000000,
 
+      mskInternalRef         = 0x13000000,   // symbol code
       mskSymbolRef           = 0x12000000,   // symbol code
       mskSymbolRelRef        = 0x32000000,   // symbol code
       mskVMTRef              = 0x41000000,   // class VMT
@@ -290,6 +291,7 @@ namespace _ELENA_
    const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
    const int elDebugChars          = 0x00080000;
+   const int elDebugPTR            = 0x00090000; 
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -429,6 +431,7 @@ namespace _ELENA_
    #define HINT_FLOAT_NUMBER       "floating"
    #define HINT_BINARY             "stringof"
    #define HINT_DYNAMIC            "dynamic"
+   #define HINT_POINTER            "pointer"
 //  //// #define HINT_SAFEPOINT          "safepoint"
 //  //// #define HINT_LOCK               "sync"
    #define HINT_SEALED             "sealed"

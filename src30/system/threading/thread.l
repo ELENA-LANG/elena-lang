@@ -1,12 +1,14 @@
+#define system.
+
 // --- Thread ---
 
 #class Thread
 {
     #field theHandle.
     
-    #constructor new &action:anAction
+    #constructor new &func:anAction
     [
-        theHandle := ThreadHandle new &action:anAction.
+        theHandle := ThreadHandle new &func:anAction.
     ]
     
     #method start
@@ -24,17 +26,3 @@
         theHandle close.
     ]
 }
-
-// --- threadControl ---
-
-#symbol threadControl =
-{
-    start : anAction
-    [
-        #var aThread := Thread new &action:anAction.
-        
-        aThread start.
-        
-        ^ aThread.
-    ]
-}.

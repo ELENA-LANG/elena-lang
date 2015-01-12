@@ -821,6 +821,9 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
 //         case mskClassRef:
             vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask));
             break;
+         case mskInternalRef:
+            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, 0));
+            break;
          case mskSymbolRelRef:
 //         case mskClassRelRef:
             vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef));

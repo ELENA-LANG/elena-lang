@@ -8,6 +8,16 @@ define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
 define LOAD_CLASSNAME       10018h
+define OPENFRAME            10019h
+define CLOSEFRAME           1001Ah
+define NEWTHREAD            1001Bh
+define CLOSETHREAD          1001Ch
+define EXIT                 1001Dh
+define CALC_SIZE            1001Eh
+define SET_COUNT            1001Fh
+define GET_COUNT            10020h
+define LOCK                 10021h
+define UNLOCK               10022h
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
@@ -1065,6 +1075,113 @@ procedure % LOAD_CLASSNAME
 
 labEnd:
   lea  esp, [esp+0Ch]  
+  ret
+
+end
+
+procedure % OPENFRAME
+
+  // ; save return pointer
+  pop  ecx  
+
+  xor  edi, edi
+
+  mov  esi, [data : %CORE_GC_TABLE + gc_ext_stack_frame]
+  // ; save previous pointer / size field
+  push ebp
+  push esi                                
+  push edi                              
+  mov  ebp, esp
+  
+  // ; restore return pointer
+  push ecx   
+  ret
+
+end
+
+procedure % CLOSEFRAME
+
+  // ; save return pointer
+  pop  ecx  
+  
+  lea  esp, [esp+8]
+  pop  ebp
+  
+  // ; restore return pointer
+  push ecx   
+  ret
+
+end
+
+procedure % NEWTHREAD
+
+  xor eax, eax
+  ret
+
+end
+
+procedure % CLOSETHREAD
+
+  xor eax, eax
+  ret
+  
+end
+
+procedure % EXIT
+  
+  mov  eax, 0                         
+  push eax
+  // ; exit
+  call extern 'dlls'KERNEL32.ExitProcess     
+
+end
+
+// ; ebx - a new length
+procedure % CALC_SIZE
+
+  shl  ebx, 2
+  add  ebx, page_ceil
+  and  ebx, page_mask  
+  ret
+
+end
+
+procedure % SET_COUNT
+
+  mov  ebx, [eax - elSizeOffset]
+  mov  edx, esi
+  lea  ebx, [ebx - elObjectOffset]
+
+  shl  edx, 2
+  cmp  ebx, edx
+  jl   short labErr
+
+  mov  [eax - elCountOffset], edx
+  ret
+
+labErr:
+  xor  esi, esi
+  ret
+
+end
+
+procedure % GET_COUNT
+
+  mov  esi, [eax - elCountOffset]
+  shr  esi, 2
+  ret
+
+end
+
+procedure % LOCK
+
+  ret
+
+end
+
+// ; does not affect esi
+procedure % UNLOCK
+
   ret
 
 end
