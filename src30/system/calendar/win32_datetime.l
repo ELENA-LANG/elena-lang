@@ -1,7 +1,7 @@
 #define system.
 
-#symbol(const) DATE_SHORTDATE  = 00000001h.
-#symbol(const) DATE_LONGDATE   = 00000002h.
+#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
+#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
 
 // --- SystemTime ---
 
@@ -206,7 +206,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int).
+        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
         #var aTime := aSystemTime get &literal &int_time_attributes:0.
 
         ^ aDate + " " + aTime.
@@ -218,7 +218,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int).
+        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
 
         ^ aDate.
     ]

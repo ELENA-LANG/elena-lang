@@ -21,34 +21,16 @@ v  - vm script
 Currently:
 ------
 
-              idev - usability
-                       * get rid of vm path option
+              xdev - usability
                        * warn if the dot is missing #var(type:bool) b := nil equal:theCurrent not ]
-
-              idev - debugger - call stack
-                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
 
               idev - debugger - watch
                        * show shortarray and bytearray
-                       * show real variable
+                       * show data variables (currently only int / short are displayed)
                        * show output argument
                        
               xdev - redesign
-                       * enumeration : check why bool is called for every next call, though it is declared as bool method
-
                        * operator or, do we need it (or bitwise operators at all)
-
-                       * enumeration pattern : bool action is sent after each next call, get rid of extra bool check
-
-                       * BoxingTester add &int:(n + 3 * 4). - get rid of the type mismatch warning
-
-                       * TextBuffer: ShortArray new &length:($TextPageSize int) - constant should be typed, so no need to call int
-
-                       * dateTimeControl : aSystemTime get &literal &int_date_attributes:(DATE_SHORTDATE int)  - constant should be typed, so no need to call int
-
-                       * #type(type:enumerable)filter ; so anObject~enumerable filter:xxx select:xxx                     
-      
-                       * do we need compileSignatureReference method?
                         
               xdev - redesign
                        * create installation package
@@ -58,12 +40,8 @@ Currently:
 
                        * exception : message, [ the object, the stack ] in #exception structure
 
-                       * call stack should be created in catch statement
-                       
                        * multi-exception catch block - how to preseave the exception (in normal case methodnotfound will be raised if
                          no handler where found)
-
-                       * generate call stack
 
                        * call stack : using ebp it is possible to reconstruct call stack - how to get the call context - method name + call
                          coordinate - load dm module - looking throug the code to find out the procedure name
@@ -71,7 +49,7 @@ Currently:
                        * Review exception handling mechanism : how to provide the exception parameters and the exception call stack
                                               
                        * Exception object should generate the exception info on 
-
+                       
                        * exceptions : provide call stack info
                        
                        * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
@@ -83,9 +61,6 @@ Currently:
               idev - usability
                        * output window should be selected (if presented) and focus set after successful compile
                        * message window should be selected (if presented) and focus set after unsuccessful compile
-
-              xmaint - structure
-                       * remove unused files (like commands.l, ....)
 
 <=================> 
 
@@ -739,13 +714,16 @@ week1:
                        * port elide to linux
                        * port elenasm to linux
                        * port elt to linux
-
+                       
               idev - usability
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
+
+              idev - debugger - call stack
+                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
 
               idev - debugger
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)

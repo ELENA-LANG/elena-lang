@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "windialogs.h"
@@ -333,7 +333,6 @@ void ProjectSettingsDialog :: onCreate()
    setText(IDC_SETTINGS_OUTPUT, ParamString(Project::getOutputPath()));
    setText(IDC_SETTINGS_ARGUMENT, ParamString(Project::getArguments()));
    setText(IDC_SETTINGS_OPTIONS, ParamString(Project::getOptions()));
-   setText(IDC_SETTINGS_VMPATH, ParamString(Project::getVMPath()));
 
    //setCheckState(IDC_SETTINGS_DEBUG, );
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
@@ -371,10 +370,6 @@ void ProjectSettingsDialog :: onOK()
    getText(IDC_SETTINGS_OUTPUT, (wchar_t**)(&path), MAX_PATH);
    Project::setOutputPath(SettingString(path));
 
-   getText(IDC_SETTINGS_VMPATH, (wchar_t**)(&path), MAX_PATH);
-   if (!_ELENA_::emptystr(path))
-      Project::setVMPath(SettingString(path));
-
    getText(IDC_SETTINGS_OPTIONS, (wchar_t**)(&path), MAX_PATH);
    Project::setOptions(SettingString(path));
 
@@ -389,9 +384,9 @@ void ProjectSettingsDialog :: onOK()
 
    int index = getComboBoxIndex(IDC_SETTINGS_DEBUG);
    if (index == 1) {
-      Project::setDebugMode(_ELENA_::dbmActive);
+      Project::setDebugMode(-1);
    }
-   else Project::setDebugMode(_ELENA_::dbmNone);
+   else Project::setDebugMode(0);
 
    Project::setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
 }

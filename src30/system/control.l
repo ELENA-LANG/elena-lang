@@ -106,6 +106,59 @@
     #method clone = $self.
 }.
 
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+#class(limited) Enumerator
+{
+    #method enumerator = $self.
+    
+    #method get = nil.
+    
+    #method(type:bool) next = false.
+    
+    #method reset []
+}
+
+// --- Iterator ---
+
+#class(limited) Iterator
+{
+    #method iterator = $self.
+    
+    #method(type:bool) available = false.
+
+    #method get = nil.
+    
+    #method set : anObject []
+    
+    #method read &out'index:anIndex []
+    
+    #method index
+    [
+        #var(type:int)anIndex := $self index.
+                        
+        ^ IntNumber new &int:anIndex.
+    ]                
+    
+    #method write &index:anIndex [] 
+    
+    #method append &index:anOffset
+    [
+        #var(type:int)anIndex := $self index.
+        
+        $self write &index:(anIndex + anOffset).
+    ]
+        
+    #method reduce &index:anOffset
+    [
+        #var(type:int)anIndex := $self index.
+        
+        $self write &index:(anIndex - anOffset).
+    ]
+}
+
 // --- base functions ---
 
 #class(limited)BaseFunction
@@ -484,55 +537,3 @@
     #method => theValue.
 }
 
-// === Basic prototypes ===
-
-// --- Enumerator ---
-
-#class(limited) Enumerator
-{
-    #method enumerator = $self.
-    
-    #method get = nil.
-    
-    #method(type:bool) next = false.
-    
-    #method reset []
-}
-
-// --- Iterator ---
-
-#class(limited) Iterator
-{
-    #method iterator = $self.
-    
-    #method(type:bool) available = false.
-
-    #method get = nil.
-    
-    #method set : anObject []
-    
-    #method read &out'index:anIndex []
-    
-    #method index
-    [
-        #var(type:int)anIndex := $self index.
-                        
-        ^ IntNumber new &int:anIndex.
-    ]                
-    
-    #method write &index:anIndex [] 
-    
-    #method append &index:anOffset
-    [
-        #var(type:int)anIndex := $self index.
-        
-        $self write &index:(anIndex + anOffset).
-    ]
-        
-    #method reduce &index:anOffset
-    [
-        #var(type:int)anIndex := $self index.
-        
-        $self write &index:(anIndex - anOffset).
-    ]
-}

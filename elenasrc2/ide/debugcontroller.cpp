@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -503,7 +503,7 @@ void DebugController :: clearBreakpoints()
    _debugger.clearBreakpoints();
 }
 
-bool DebugController :: start(const tchar_t* programPath, const tchar_t* arguments, DebugMode debugMode, List<Breakpoint>& breakpoints)
+bool DebugController :: start(const tchar_t* programPath, const tchar_t* arguments, bool debugMode, List<Breakpoint>& breakpoints)
 {
    _currentModule = NULL;
    _started = false;
@@ -513,7 +513,7 @@ bool DebugController :: start(const tchar_t* programPath, const tchar_t* argumen
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
 
-   if (debugMode != dbmNone) {
+   if (debugMode) {
       _entryPoint = findEntryPoint(programPath);
 
       _debugger.setInitHook();
@@ -1111,7 +1111,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
             length >>= 2;
             readList(watch, list, length);
          }
-         else if (ConstantIdentifier::compare(className, NIL_CLASS)) {
+         else if (ConstantIdentifier::compare(className, "system'nil")) {
             watch->write(this, _T("<nil>"));
          }
          else readFields(watch, info, selfPtr);

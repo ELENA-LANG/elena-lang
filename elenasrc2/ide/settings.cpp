@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Settings class implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "settings.h"
@@ -313,11 +313,6 @@ const char* Project :: getOutputPath()
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_OUTPUT_SETTING);
 }
 
-const char* Project :: getVMPath()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_VMPATH_SETTING);
-}
-
 const char* Project :: getArguments()
 {
    return _config.getSetting(IDE_PROJECT_SECTION, IDE_ARGUMENT_SETTING);
@@ -370,11 +365,6 @@ void Project :: setTemplate(const char* templateName)
 void Project :: setOutputPath(const char* path)
 {
    setSectionOption(IDE_OUTPUT_SETTING, path);
-}
-
-void Project :: setVMPath(const char* path)
-{
-   setSectionOption(IDE_VMPATH_SETTING, path);
 }
 
 void Project :: setOptions(const char* options)

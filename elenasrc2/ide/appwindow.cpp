@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class implementation
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "appwindow.h"
@@ -489,8 +489,8 @@ bool IDE :: startDebugger(bool stepMode)
       commandLine.append(_T(" "));
       commandLine.append(arguments);
 
-      _ELENA_::DebugMode mode = (_ELENA_::DebugMode)Project::getDebugMode();
-      if (mode != _ELENA_::dbmNone) {
+      bool mode = Project::getDebugMode() != 0;
+      if (mode) {
          if (!_debugController->start(exePath, commandLine, mode, _breakpoints)) {
             MsgBox::showError(_appWindow->getHandle(), ERROR_DEBUG_FILE_NOT_FOUND_COMPILE, NULL);
 
@@ -504,7 +504,7 @@ bool IDE :: startDebugger(bool stepMode)
          return false;
       }
       else {
-         if (!_debugController->start(exePath, commandLine, _ELENA_::dbmNone, _breakpoints)) {
+         if (!_debugController->start(exePath, commandLine, false, _breakpoints)) {
             MsgBox::showError(_appWindow->getHandle(), ERROR_RUN_NEED_RECOMPILE, NULL);
 
             return false;

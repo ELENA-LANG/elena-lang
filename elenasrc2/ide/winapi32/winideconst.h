@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winideconstH
@@ -11,7 +11,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define APP_VERSION                             "Version 1.9.18.0"
+#define APP_VERSION                             "Version 1.9.18.1"
 
 // --- Command line arguments ---
 
@@ -188,7 +188,6 @@
 #define IDC_SETTINGS_TEPMPLATE                 (IDD_SETTINGS + 12)
 #define IDC_SETTINGS_ARGUMENT                  (IDD_SETTINGS + 13)
 #define IDC_SETTINGS_OPTIONS                   (IDD_SETTINGS + 14)
-#define IDC_SETTINGS_VMPATH                    (IDD_SETTINGS + 15)
 
 #define IDD_GOTOLINE                            600
 #define	IDC_GOTOLINE_LINENUMBER                (IDD_GOTOLINE + 3)

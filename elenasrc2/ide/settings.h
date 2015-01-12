@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Settings class header
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef settingsH
@@ -146,7 +146,6 @@ public:
    static const char* getOptions();
    static const char* getTarget();
    static const char* getOutputPath();
-   static const char* getVMPath();
    static const char* getArguments();
 
    static int getDebugMode();
@@ -169,7 +168,6 @@ public:
    static void setTarget(const char* target);
    static void setArguments(const char* target);
    static void setOutputPath(const char* path);
-   static void setVMPath(const char* path);
    static void setOptions(const char* options);
    static void setPackage(const char* package);
    static void setTemplate(const char* target);

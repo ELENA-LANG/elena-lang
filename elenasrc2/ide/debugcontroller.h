@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debugcontrollerH
@@ -293,7 +293,7 @@ public:
       showCurrentModule(lineInfo, moduleName, sourcePath);
    }
 
-   bool start(const tchar_t* programPath, const tchar_t* arguments, DebugMode debugMode, List<Breakpoint>& _breakpoints);
+   bool start(const tchar_t* programPath, const tchar_t* arguments, bool debugMode, List<Breakpoint>& _breakpoints);
    void run();
    void runToCursor(const tchar_t* name, const tchar_t* path, int col, int row);
    void stepOver();

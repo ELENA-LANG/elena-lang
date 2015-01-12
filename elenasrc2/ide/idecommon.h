@@ -21,7 +21,6 @@ namespace _GUI_
 #define IDE_COMPILER_OPTIONS                    "options"
 #define IDE_EXECUTABLE_SETTING                  "executable"
 #define IDE_OUTPUT_SETTING                      "output"
-#define IDE_VMPATH_SETTING                      "vmpath"
 #define IDE_ARGUMENT_SETTING                    "arguments"
 #define IDE_DEBUGINFO_SETTING                   "debuginfo"
 

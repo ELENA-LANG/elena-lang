@@ -1,7 +1,7 @@
 #define system. 
 #define system'routines. 
 
-#symbol(const)$TextPageSize = 128.
+#symbol(const,type:int)$TextPageSize = 128.
 
 #type(class:system'text'TextBuffer) textbuffer.
 
@@ -14,7 +14,7 @@
 
     #constructor new
     [
-        theBuffer := ShortArray new &length:($TextPageSize int).
+        theBuffer := ShortArray new &length:$TextPageSize.
         theLength := Integer new &int:0.
     ]
 
