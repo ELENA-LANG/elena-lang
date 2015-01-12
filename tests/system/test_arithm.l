@@ -9,8 +9,13 @@
 
 #symbol XTester =
 {
+    run : anAction []
+    
     test
     [
+        #var r := 2.
+        #var l := Integer new:0 write:2.
+//        l write:r.
     ]
 }.
 

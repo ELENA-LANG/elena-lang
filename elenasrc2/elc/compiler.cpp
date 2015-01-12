@@ -39,7 +39,7 @@ inline bool isCollection(DNode node)
    return (node == nsExpression && node.nextNode()==nsExpression);
 }
 
-inline bool isNestedLazyExpression(DNode expr)
+inline bool isReturnExpression(DNode expr)
 {
    return (expr == nsExpression && expr.nextNode() == nsNone);
 }
@@ -2998,6 +2998,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          directCall = true;
       }
       else if (object.kind == okAccumulator && object.param != 0) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
          classReference = object.param;
          directCall = true;
       }
@@ -3302,7 +3304,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
 
 void Compiler :: compileAction(DNode node, InlineClassScope& scope, DNode argNode)
 {
-   bool lazyExpression = isNestedLazyExpression(node.firstChild());
+   bool lazyExpression = isReturnExpression(node.firstChild());
 //   bool stackSafeFunc = false;
 
    _writer.declareClass(scope.tape, scope.reference);
@@ -4474,8 +4476,11 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope, int mode)
    codeScope.level++;
 
    declareParameterDebugInfo(scope, codeScope.tape, false, true);
-
-   compileCode(node, codeScope);
+   
+   if (isReturnExpression(node.firstChild())) {
+      compileRetExpression(node.firstChild(), codeScope, 0);
+   }
+   else compileCode(node, codeScope);
 
    _writer.endMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
 }

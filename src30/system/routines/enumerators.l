@@ -45,8 +45,6 @@
         
         #loop (anIndex < aLength) ?
         [            
-            #var o := anIndexFunc eval &index:anIndex.
-            
             anArray setAt &index:anIndex &object:(anIndexFunc eval &index:anIndex).
             
             anIndex := anIndex + 1.
