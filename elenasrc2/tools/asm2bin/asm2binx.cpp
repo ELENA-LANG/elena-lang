@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -15,7 +15,7 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#define BUILD_NUMBER 19
+#define BUILD_NUMBER 21
 
 int main(int argc, char* argv[])
 {

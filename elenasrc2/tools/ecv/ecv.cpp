@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   4
+#define BUILD_VERSION   5
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -185,6 +185,9 @@ ref_t resolveMessage(_Module* module, const wchar16_t* method)
       if (StringHelper::compare(verbName, _T("dispatch"))) {
          verb = DISPATCH_MESSAGE_ID;
       }
+      else if (StringHelper::compare(verbName, _T("#new"))) {
+         verb = NEWOBJECT_MESSAGE_ID;
+      }
       else {
          wprintf(_T("Unknown verb %s\n"), (const wchar16_t*)verbName);
 
@@ -298,7 +301,7 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       command.append(_T("dispatch"));
    }
    else if (verb == NEWOBJECT_MESSAGE_ID) {
-      command.append(_T("new[0]"));
+      command.append(_T("#new"));
    }
    else {
       const wchar16_t* verbName = retrieveKey(_verbs.start(), verb, (const wchar16_t*)NULL);

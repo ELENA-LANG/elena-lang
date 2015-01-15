@@ -18,6 +18,8 @@ define SET_COUNT            1001Fh
 define GET_COUNT            10020h
 define LOCK                 10021h
 define UNLOCK               10022h
+define LOAD_ADDRESSINFO     10023h
+define LOAD_CALLSTACK       10024h
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
@@ -1054,6 +1056,9 @@ procedure % RESTORE_ET
 
 end 
 
+// ; get class name
+// ; in:  esi - max length, eax - PWSTR, edi - object
+// ; out: eax - PWSTR, esi - length
 procedure % LOAD_CLASSNAME
 
   push esi
@@ -1183,6 +1188,62 @@ end
 procedure % UNLOCK
 
   ret
+
+end
+
+// ; load address info
+// ; in:  esi - max length, eax - PWSTR, ecx - address
+// ; out: eax - PWSTR, esi - length
+procedure % LOAD_ADDRESSINFO
+
+  push esi
+  push eax
+  push ecx
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadAddressInfo (instance, ret point,out buffer, maxlength)
+  push eax
+  mov  edx, [esi + rt_loadaddrinfo] 
+  call edx
+  lea  esp, [esp+4]  
+
+labEnd:
+  lea  esp, [esp+0Ch]  
+  ret
+  
+end
+
+// ; eax - buffer, ecx - max length ; esi - actual length
+procedure % LOAD_CALLSTACK
+
+  mov  edx, [esp]
+  xor  esi, esi                                                                             
+  mov  ebx, ebp
+
+labNext:
+  mov  edx, [ebx + 4]
+  cmp  [ebx], 0
+  jnz  short labSave
+  test edx, edx
+  jz   short labEnd
+  mov  ebx, edx
+  jmp  short labNext                              
+
+labSave:
+  mov  [eax + esi * 4], edx
+  add  esi, 1
+  cmp  esi, ecx
+  jge  short labEnd
+  mov  ebx, [ebx]
+  jmp  short labNext                              
+
+labEnd:
+  ret  
 
 end
 
@@ -1381,7 +1442,7 @@ inline % 31h
 
 end
 
-// ; getwlen
+// ; wlen
 // ;in : eax - object, esi - size
 inline % 32h
 
@@ -1397,6 +1458,16 @@ inline % 33h
 
   mov  ebx, [eax - 4]
   mov  esi, [ebx - elVMTFlagOffset]
+  
+end
+
+// ; nlen
+// ;in : eax - object, esi - size
+inline % 34h
+
+  mov  esi, [eax-8]
+  neg  esi
+  shr  esi, 2
   
 end
 
@@ -1546,14 +1617,14 @@ inline % 46h
 
 end
 
-// ; nwrite
+// ; nsave
 inline % 47h
 
   mov [edi], esi
 
 end
 
-// ; nread
+// ; nload
 inline % 48h
 
   mov esi, [eax]
@@ -2351,6 +2422,20 @@ labNext:
 
 labEnd:
 
+end
+
+// ; nread
+inline % 5Bh
+
+  mov ecx, [eax + esi * 4]
+
+end
+
+// ; nwrite
+inline % 5Ch
+
+  mov [edi + esi * 4], ecx
+  
 end
 
 // ; wcreate

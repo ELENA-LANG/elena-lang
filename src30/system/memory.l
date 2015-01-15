@@ -104,6 +104,35 @@
     #method shortarray = $self.
 }
 
+// --- BaseIntArray ---
+
+#class(stringof:4) BaseIntArray
+{
+    #constructor new &length : aLength
+        => system'internal'ns_create.
+}
+
+// --- IntArray ---
+
+#class(sealed) IntArray :: BaseIntArray
+{
+    #constructor new  &length:aLength &index:anIndex &intarray:anArray
+        => system'internal'ns_copysubarr.
+        
+    #method read &index:anIndex &out'int:anInt
+        => system'internal'ns_readdword.
+        
+    #method read &out'length:aLength
+        => system'internal'ns_getlen.
+        
+    #method length
+    [
+        #var(type:int)aLength := $self length.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+}
+
 // --- emptyliteralvalue ---
 
 #symbol(const,type:literal) emptyLiteralValue = "".

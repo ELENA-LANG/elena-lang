@@ -26,6 +26,18 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define ENDFRAME             0x10016
 #define RESTORE_ET           0x10017
 #define LOAD_CLASSNAME       0x10018
+#define OPENFRAME            0x10019
+#define CLOSEFRAME           0x1001A
+#define NEWTHREAD            0x1001B
+#define CLOSETHREAD          0x1001C
+#define EXIT                 0x1001D
+#define CALC_SIZE            0x1001E
+#define SET_COUNT            0x1001F
+#define GET_COUNT            0x10020
+#define LOCK                 0x10021
+#define UNLOCK               0x10022
+#define LOAD_ADDRESSINFO     0x10023
+#define LOAD_CALLSTACK       0x10024
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
 #define CORE_GC_SIZE         0x20003
@@ -43,15 +55,17 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 9;
+const int coreFunctionNumber = 21;
 const int coreFunctions[coreFunctionNumber] =
 {
    GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
-   LOAD_CLASSNAME
+   LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
+   CALC_SIZE, SET_COUNT, GET_COUNT, LOCK, UNLOCK, LOAD_ADDRESSINFO,
+   LOAD_CALLSTACK
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 133;
+const int gcCommandNumber = 136;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
@@ -80,7 +94,8 @@ const int gcCommands[gcCommandNumber] =
    bcSubCopy, bcNSubCopy, bcXSeek, bcNext, bcXClone,
    bcLRndNew, bcLRndNext, bcRAbs, bcRExp, bcRInt, 
    bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
-   bcAddress, bcBWriteW, bcNCopyR, bcXJumpRM
+   bcAddress, bcBWriteW, bcNCopyR, bcXJumpRM, bcNLen,
+   bcNRead, bcNWrite
 };
 
 // command table
@@ -95,14 +110,14 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileExtDec, &compileExtInc, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
+   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp,

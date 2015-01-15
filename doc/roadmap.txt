@@ -35,6 +35,9 @@ Version 2.2.0
 Version 2.3.0
 -------------
 - linux version (console & windowsx)
+- optimize elenavm
+- optimize elenart
+- optimize elenasm
 
 Version 2.3.0
 -------------
@@ -42,7 +45,6 @@ Version 2.3.0
 
 Version 2.x.x
 -------------
-- custom verb dispatching (through implicit adapter)??
 - system'dynamics'tape optimization, currently every object is checked if it is a message,
   could it be optimized (move the check to the message, the only question how one can
   check if it is a tape call)?
@@ -69,14 +71,12 @@ Version 2.x.x
   the link time)? maybe some numeric value which should be synchronized between modules?
   the literal string in that case will be defined by subject symbol name (what about
   private messages in that case?)
-- debugger call list
 - debugger thread list
 - upndown: work on net game
 - eldoc
 - asm2binx should use assembler style comments
 - gcx optimization: should promotion happens less (the object should survive at least
   two collection?)
-- ide: support call list
 - LibraryManager: should be redisgned in such way, that multiple instances have common
   library container
 - gcx: try to optimize write barrier supporting code (now it is 11 commands)
@@ -149,10 +149,6 @@ Version 2.x.x
 - ide enhancements: add project wizard
 - ide enhancements: make possible to change the module order
 - gcx optimization: could we optimize calculating of header position for compact phase 
-- modify VMT structure to allow optimize the search
-  (VMT should have at the top subject table), or probably VMT
-  should contain only verb handlers and inside the handler it will
-  redirect to the appropriate method 
 - start to create basic unit tests to test lib25
 - flagship project: tiny script language: lika
 - ide2: new file should add default import statements, based on project template
@@ -160,14 +156,12 @@ Version 2.x.x
   (e.g. yg page 10h, and mg - 20?)
 - forward module implementation: is it possible to optimize the implementation?
   (probably map it only if the reference exists)
-- no need to reserve the place for a role if the class does not use it
 - replace external functions with inline one if is does not call OS routine
 - dsa rules: it should be possible to use syntax to generate source code
   (compiler compiler mode)
 - ide2: win32 plug-ins
 - full linux support (x64 + x32, console, gui)
 - advanced native code optimization
-- object should be able to have several data fields (currently only one is supported)
 
 - elt: code generation, it should be possible to create a code based on syntax
   expression

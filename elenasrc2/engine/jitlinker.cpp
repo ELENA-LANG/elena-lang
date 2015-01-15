@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -822,7 +822,8 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
             vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask));
             break;
          case mskInternalRef:
-            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, 0));
+         case mskInternalRelRef:
+            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0));
             break;
          case mskSymbolRelRef:
 //         case mskClassRelRef:

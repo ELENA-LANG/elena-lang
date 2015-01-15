@@ -23,14 +23,14 @@ const char* _fnOpcodes[256] =
    "ecopyd", "dcopye", "pushd", "popd", "edec", "einc", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "unknown", "len", "wlen", "flag", "unknown", "unknown", "class", "mindex",
+   "unknown", "len", "wlen", "flag", "nlen", "unknown", "class", "mindex",
    "ecall", "acallvd", "unknown", "unknown", "unknown", "unknown", "xclone", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
    "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
 
    "wequal", "wless", "wread", "winsert", "ntow", "ltow", "rtow", "wseek",
-   "wwrite", "wadd", "wsubcopy", "unknown", "unknown", "unknown", "unknown", "wcreate",
+   "wwrite", "wadd", "wsubcopy", "nread", "nwrite", "unknown", "unknown", "wcreate",
 
    "breadw", "bread", "insert", "ninsert", "xseek", "breadb", "rsin", "rcos",
    "rarctab", "bwrite", "subcopy", "nsubcopy", "bwriteb", "bwritew", "unknown", "bcreate",

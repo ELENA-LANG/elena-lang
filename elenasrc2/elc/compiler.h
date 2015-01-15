@@ -751,8 +751,10 @@ protected:
 
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);
+   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info, int mode);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope);
+   void compileConstructorDispatchExpression(DNode node, CodeScope& scope, ClassScope& classClassScope);
    void compileResendExpression(DNode node, CodeScope& scope);
    void compileDispatchExpression(DNode node, CodeScope& scope);
 

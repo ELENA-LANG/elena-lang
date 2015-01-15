@@ -10,6 +10,7 @@
 
 #type(class:system'ByteArray)  bytearray.
 #type(class:system'ShortArray) shortarray.
+#type(class:system'IntArray)   intarray.
 #type(class:system'Array)      array.
 
 // === basic dynamic types ===

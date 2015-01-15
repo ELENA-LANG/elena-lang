@@ -243,6 +243,8 @@ public:
 
    void selectConstant(CommandTape& tape, ref_t r1, ref_t r2);
 
+   void freeVirtualStack(CommandTape& tape, int count);
+
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
 

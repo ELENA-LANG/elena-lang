@@ -34,7 +34,37 @@ void RTManager :: readCallStack(StreamReader& stack, size_t startPosition, size_
    } while (position != 0);
 }
 
-bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager, 
+size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+{
+   MemoryDump retPoints;
+   MemoryWriter writer(&retPoints);
+
+   readCallStack(reader, framePosition, currentAddress, writer);
+
+   size_t index = 0;
+   size_t current = 0;
+   while (current < retPoints.Length()) {
+      if (startLevel == 0) {
+         if (index == maxLength - 2) {
+            buffer[index] = 0;
+            index++;
+            buffer[index] = retPoints[retPoints.Length() - 4];
+         }
+         else {
+            buffer[index] = retPoints[current];
+
+            index++;
+         }
+      }
+      else startLevel--;
+
+      current += 4;
+   }
+
+   return index + 1;
+}
+
+bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
                                   const wchar16_t* &symbol, const wchar16_t* &method, const wchar16_t* &path, int& row)
 {
    int index = 0;
@@ -77,7 +107,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
       size_t position = 0;
       // load the appropriate debug module
       module = manager->resolveDebugModule(symbol, result, position);
-      if (result == LoadResult::lrSuccessful) {
+      if (result == lrSuccessful) {
          // load the object debug section
          MemoryReader lineReader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
          MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));

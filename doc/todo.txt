@@ -12,7 +12,7 @@ v  - vm script
                                                                                                                  
 - dev                                                                                                      
 - maint                                                                                                                                          
-- rev
+- rev                                                                                                                 
 - opt
 - port
 - doc
@@ -25,27 +25,26 @@ Currently:
                        * warn if the dot is missing #var(type:bool) b := nil equal:theCurrent not ]
 
               idev - debugger - watch
-                       * show shortarray and bytearray
+                       * show shortarray, bytearray, intarray
                        * show data variables (currently only int / short are displayed)
                        * show output argument
                        
               xdev - redesign
                        * operator or, do we need it (or bitwise operators at all)
                         
-              xdev - redesign
+              xmaint - package
                        * create installation package
               
               xdev - exception handling
-                       * create a call stack
+                       * Exception : new field theCallStack
+
+                       * exception : get&literal$ should returns the message + callstack
 
                        * exception : message, [ the object, the stack ] in #exception structure
 
                        * multi-exception catch block - how to preseave the exception (in normal case methodnotfound will be raised if
                          no handler where found)
-
-                       * call stack : using ebp it is possible to reconstruct call stack - how to get the call context - method name + call
-                         coordinate - load dm module - looking throug the code to find out the procedure name
-
+                       
                        * Review exception handling mechanism : how to provide the exception parameters and the exception call stack
                                               
                        * Exception object should generate the exception info on 
@@ -70,9 +69,6 @@ week1:
               xdev - generic development                                                      
                        * think over object serialization, for example - save the object into file and load back
 
-                       * should index allocateing / referring / releasing be done as commands ; review reference table design , could it be done
-                         differently ? optimize current implementation
-
                        * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
                          not correctly programmed)
 
@@ -82,9 +78,6 @@ week1:
 
                        * MemoryWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group
-
-                       * okFieldAddress : it should be possible to have several primitive fields - the value should be copied to stack allocated
-                         object if offset is not zero
 
                        * exception handling, if the handler does not react on the current exception for ifFailed&on call - different error is thrown
                          (NotFound) and the original exception is lost
@@ -204,21 +197,6 @@ week1:
                        
               idev - script engine
                        * build-in script into IDE
-
-              xdev - multithreading       
-                       * implement lock / unlock
-                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
-                       * threadhandle - remove the object from the reference table on closing
-                       * reference table should be created on the program start for multy thread version
-                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
-                         storage ; maybe better to store there data duplication? 
-                       * static object should be thread safe
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * threadhandle - provide safe region like it was in 1.7
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-                       * compile pi with mt
-                       * compile anagram with mt
 
               xdev - boxing optimization
                        * could we simplify stack allocated object check
@@ -774,6 +752,20 @@ week1:
 
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
 
+              xdev - multithreading       
+                       * implement lock / unlock
+                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
+                       * threadhandle - remove the object from the reference table on closing
+                       * reference table should be created on the program start for multy thread version
+                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
+                         storage ; maybe better to store there data duplication? 
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * threadhandle - provide safe region like it was in 1.7
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+                       * compile pi with mt
+                       * compile anagram with mt
 
 1.9.20
 --------

@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Project routine functions
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef toolsH
@@ -175,6 +175,11 @@ inline bool test(int number, int mask)
 inline bool test(int number, int mask, int value)
 {
    return ((number & mask) == value);
+}
+
+inline bool testany(int number, int mask)
+{
+   return ((number & mask) != 0);
 }
 
 inline bool isbetween(int starting, int len , int value)

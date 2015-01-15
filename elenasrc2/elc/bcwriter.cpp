@@ -478,6 +478,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okExternal:
          // ignore virtual symbols
          break;
+      case okInternal:
+         tape.write(bcEvalR, object.param | mskInternalRef);
+         tape.write(bcPushA);
+         break;
       case okSymbol:
          tape.write(bcEvalR, object.param | mskSymbolRef);
          tape.write(bcPushA);
@@ -594,6 +598,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
    switch (object.kind) {
       case okSymbol:
          tape.write(bcEvalR, object.param | mskSymbolRef);
+         break;
+      case okInternal:
+         tape.write(bcCallR, object.param | mskInternalRef);
          break;
       case okConstantSymbol:
       case okConstantClass:
@@ -853,6 +860,11 @@ void ByteCodeWriter :: popObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcPopE);
          break;
    }
+}
+
+void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
+{
+   tape.write(bcFreeStack, count);
 }
 
 void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)

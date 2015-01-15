@@ -289,6 +289,8 @@ ELENA byte codes (or ecodes)
 
  class                       - base::VMT >> acc
 
+ setclass                      base::VMT << acc
+ 
  mindex                      - search for ext in acc:VMT; out: index or -1
 
  xindexrm r, m               - directly resolve message mapping for the spcified class
@@ -308,7 +310,7 @@ ELENA byte codes (or ecodes)
  bcreate                     - create the object with size=index and vmt=acc, out : acc  
  
  ncreate                     - create the object with size=index*4 and vmt=acc, out : acc  
- 
+                                                                                                                                                
  wcreate                     - create the object with size=index*2 and vmt=acc, out : acc  
  
  create                      - create the object with length=index and vmt=acc, out : acc  
@@ -344,6 +346,10 @@ ELENA byte codes (or ecodes)
  bwrite                     - base[index] << ext
  
  bread                      - acc[index] >> ext                               
+ 
+ nread                      - acc[index * 4] >> ext                               
+ 
+ nwrite                     - base[index * 4] << ext
  
  breadw                     - acc[index] >> [short]ext
  
@@ -486,6 +492,8 @@ ELENA byte codes (or ecodes)
  byte array commands:
  -----------------    
  len                        - [acc].Length >> index ; where acc is a object
+
+ nlen                       - [acc].Length >> index / 4 ; where acc is a object
 
  insert                     - copy acc content to base, at index, ext times, at the end - index += ext
  

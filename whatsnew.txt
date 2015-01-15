@@ -26,10 +26,12 @@ ELC:
 IDE:
 [+] Project - View - Call stack
 [-] Project - Options - Debug Mode : Enabled for VM Client is no longer supported
+[-] Project - Options - VM Path is no longer supported / required (SHARED path is used)
 
 [LIB]
-[*] system : Object#class.new
+[*] system : Object#class.new, Exception::theCallStack, Exception.get&literal$
 [*] system'control => extensions'control
+[+] system : CallStack, IntArray
     
 Misc:
 [+] installation package is introduced

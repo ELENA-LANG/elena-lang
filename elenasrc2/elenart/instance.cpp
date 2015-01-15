@@ -60,6 +60,16 @@ void Instance :: init(void* debugSection, const wchar16_t* package)
    _loader.setPackage(package);
 }
 
+int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+{
+   RTManager manager;
+
+   ImageSection image;
+   MemoryReader reader(&image);
+
+   return manager.readCallStack(reader, framePosition, currentAddress, startLevel, buffer, maxLength);
+}
+
 int Instance :: loadAddressInfo(size_t retPoint, wchar16_t* buffer, size_t maxLength)
 {
    RTManager manager;

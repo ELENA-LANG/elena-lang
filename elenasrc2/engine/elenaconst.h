@@ -151,7 +151,8 @@ namespace _ELENA_
       mskPreloadDataRef      = 0xAC000000,
       mskNativeVariable      = 0xAD000000,
 
-      mskInternalRef         = 0x13000000,   // symbol code
+      mskInternalRef         = 0x13000000,   // internal code
+      mskInternalRelRef      = 0x33000000,   // internal code
       mskSymbolRef           = 0x12000000,   // symbol code
       mskSymbolRelRef        = 0x32000000,   // symbol code
       mskVMTRef              = 0x41000000,   // class VMT
@@ -270,11 +271,12 @@ namespace _ELENA_
    const int elStructureRole       = 0x00000008;
    const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
-//   const int elVMTCustomDispatcher = 0x00000040;
+   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
+   const int elNonStructureRole    = 0x00001000; 
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
@@ -443,6 +445,7 @@ namespace _ELENA_
    #define HINT_WRAPPER            "class"
    #define HINT_GENERIC            "generic"
    #define HINT_EMBEDDABLE         "embeddable"
+   #define HINT_NONSTRUCTURE       "nonstructural"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

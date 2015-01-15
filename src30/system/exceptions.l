@@ -1,3 +1,47 @@
+// --- CallStack ---
+
+#class(sealed,nonstructural) CallStack
+{
+    #field(type:intarray) theStack.
+    
+    #constructor new
+    [
+        #var(type:intarray,size:64)aStack.
+        #var(type:int)aLength.
+        
+        system'internal'callstack_load eval
+            &intarray:aStack
+            &length:64
+            &out'length:aLength.
+            
+        theStack := IntArray new &length:aLength &index:0 &intarray:aStack.            
+    ]
+    
+    #method read &index:anIndex &shortarray:aBuffer &length:aMaxLength &out'length:aLength
+        => system'internal'callstack_readaddressinfo.
+    
+    #method literal
+    [
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength := theStack length.
+
+        #var(type:length)aBufferLength := 0.
+        #var(type:shortarray,size:128)aBuffer.
+        #var(type:literal)aCallStackText := emptyLiteralValue.
+                
+        #loop (anIndex < aLength) ?
+        [
+            aBufferLength := $self read &index:anIndex &shortarray:aBuffer &length:128.
+            
+            aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &shortarray:aBuffer) add &literal:"%r%n".
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ aCallStackText.
+    ]
+}
+
 // --- Exception ---
 
 #class Exception

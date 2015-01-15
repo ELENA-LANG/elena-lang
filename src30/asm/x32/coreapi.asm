@@ -14,6 +14,8 @@ define SET_COUNT         1001Fh
 define GET_COUNT         10020h
 define LOCK              10021h
 define UNLOCK            10022h
+define LOAD_ADDRESSINFO  10023h
+define LOAD_CALLSTACK    10024h
 
 // verbs
 define EXEC_MESSAGE_ID  085000000h
@@ -231,4 +233,40 @@ procedure coreapi'start_thread
 lErr:
   
   ret 4
+end
+
+// ; load_addressinfo(array,index,out buffer, out length)
+procedure coreapi'load_addressinfo
+
+  mov  eax, [esp + 4]
+  mov  ebx, [esp + 8]
+  mov  edx, [ebx]
+  mov  ecx, [eax + edx * 4]
+
+  mov  eax, [esp + 16]
+  mov  esi, [eax]
+  mov  eax, [esp + 12]
+
+  call code : % LOAD_ADDRESSINFO
+
+  mov  edi, [esp + 16]
+  mov  [edi], eax
+  
+  ret 16
+                                                     
+end
+
+// ; load_addressinfo(array,max length,out length)
+procedure coreapi'load_callstack
+
+  mov  eax, [esp + 4]
+  mov  ecx, [esp + 8]
+
+  call code : % LOAD_CALLSTACK
+
+  mov  edi, [esp + 12]
+  mov  [edi], esi
+
+  ret 12
+
 end

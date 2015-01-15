@@ -84,6 +84,8 @@ private:
    bool loadConfig();
 
 public:
+   int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+
    int loadAddressInfo(size_t retPoint, wchar16_t* lineInfo, size_t length);
 
    void init(void* debugSection, const wchar16_t* package);

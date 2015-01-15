@@ -63,6 +63,7 @@ enum ByteCode
    bcLen            = 0x31, 
    bcWLen           = 0x32,
    bcFlag           = 0x33, 
+   bcNLen           = 0x34,
    bcClass          = 0x36,
    bcMIndex         = 0x37,
    bcECall          = 0x38,
@@ -97,6 +98,8 @@ enum ByteCode
    bcWWrite         = 0x58,
    bcWAdd           = 0x59,   
    bcWSubCopy       = 0x5A,
+   bcNRead          = 0x5B,
+   bcNWrite         = 0x5C,
    bcWCreate        = 0x5F,  
 
    bcBReadW         = 0x60,

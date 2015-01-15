@@ -17,7 +17,9 @@ namespace _ELENA_
 class RTManager
 {
 public:
-   static void readCallStack(StreamReader& stack, size_t startPosition, size_t currentAddress, StreamWriter& output);
+   static void readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, StreamWriter& output);
+
+   size_t readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
    bool readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, 
       const wchar16_t* &symbol, const wchar16_t* &method, const wchar16_t* &path, int& row);

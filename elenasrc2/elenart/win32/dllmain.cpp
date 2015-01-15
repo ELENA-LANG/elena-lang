@@ -31,6 +31,11 @@ EXTERN_DLL_EXPORT void* Init(void* debugSection, const wchar16_t* package)
    else return 0;
 }
 
+EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+{
+   return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
+}
+
 EXTERN_DLL_EXPORT int LoadAddressInfo(void* instance, size_t retPoint, wchar16_t* lineInfo, int length)
 {
    return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
