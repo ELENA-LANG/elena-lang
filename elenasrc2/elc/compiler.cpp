@@ -1565,7 +1565,7 @@ ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)
    return moduleScope->module->mapReference(name);
 }
 
-void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage)
+void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1594,8 +1594,7 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
    if (withSelf)
       _writer.declareSelfInfo(*tape, -1);
 
-   if (withMessage)
-      _writer.declareMessageInfo(*tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
+   _writer.declareMessageInfo(*tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* referenceProperName)
@@ -3902,31 +3901,11 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
 
 void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
 {
-   // NOTE : throw statement is a special case and compiled as a tape,
-   // because the throw expression should be executed in catch statement
+   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
 
-   DNode member = node.firstChild();
-   ObjectInfo object = compileObject(member, scope, mode);
+   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
-   member = member.nextNode();
-   if (member != nsNone) {
-      size_t spaceToRelease = 0;
-      ref_t messageRef = compileMessageParameters(member, scope, object, mode, spaceToRelease);
-
-      IdentifierString message;
-      message.append('0' + getParamCount(messageRef));
-      message.append('#');
-      message.append(getVerb(messageRef) + 0x20);
-      ref_t signRef = getSignature(messageRef);
-      if (signRef != 0) {
-         message.append('&');
-         message.append(scope.moduleScope->module->resolveSubject(signRef));
-      }
-
-      _writer.pushObject(*scope.tape, ObjectInfo(okMessageConstant, scope.moduleScope->module->mapReference(message)));
-   }
-   else _writer.pushObject(*scope.tape, object);
-
+   _writer.pushObject(*scope.tape, object);
    _writer.throwCurrent(*scope.tape);
 }
 
@@ -3983,7 +3962,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
             compileExpression(statement, scope, HINT_ROOTEXPR);
             break;
          case nsThrow:
-            compileThrow(statement.firstChild(), scope, 0);
+            compileThrow(statement, scope, 0);
             break;
          case nsLoop:
             compileLoop(statement, scope, HINT_LOOP);
@@ -4751,9 +4730,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
          codeScope.mapLocal(ConstantIdentifier(SUBJECT_VAR), codeScope.level, 0);
       }
 
-      declareParameterDebugInfo(scope, codeScope.tape, true,
-         test(codeScope.getClassFlags(), elRole),
-         test(mode, HINT_GENERIC_METH));
+      declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
 
       DNode body = node.select(nsSubCode);
       // if method body is a return expression

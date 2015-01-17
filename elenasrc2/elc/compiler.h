@@ -667,7 +667,7 @@ protected:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf, bool withMessage = false);
+   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 
    ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, int mode);
 

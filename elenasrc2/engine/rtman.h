@@ -19,12 +19,12 @@ class RTManager
 public:
    static void readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, StreamWriter& output);
 
-   size_t readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
-
    bool readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, 
       const wchar16_t* &symbol, const wchar16_t* &method, const wchar16_t* &path, int& row);
 
-   bool readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t& length);
+   size_t readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+
+   size_t readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t maxLength);
 };
 
 

@@ -522,21 +522,21 @@
 [
     ExecTester break | if &Error: e [ console writeLine:"Throw works!". ].
     
-    ExecTester break | if &Error: e [ console writeLine:(e message). ].
+    ExecTester break | if &Error: e [ console writeLine:(e literal). ].
     
     ExecTester break2 
     | on:
     {
         MyError = e [ console writeLine:"!!Wrong handler". ].
         
-        MyError2 = e [ console writeLine:(e message). ].
+        MyError2 = e [ console writeLine:(e literal). ].
     }.
     
     control do:
     [
         ExecTester break3 | if &MyError: e [ console writeLine:"!!Wrong handler". ].
     ]
-    | if &MyError2: e [ console writeLine:(e message). ].
+    | if &MyError2: e [ console writeLine:(e literal). ].
     
 ].
 

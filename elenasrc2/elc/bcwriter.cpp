@@ -53,8 +53,10 @@ ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, Mess
       decodeMessage(message, subjectRef, verb, paramCount);
 
       IdentifierString name(retrieveKey(verbs.start(), verb, DEFAULT_STR));
-      name.append('&');
-      name.append(module->resolveSubject(subjectRef));
+      if (subjectRef != 0) {
+         name.append('&');
+         name.append(module->resolveSubject(subjectRef));
+      }
       name.append('[');
       name.appendInt(paramCount);
       name.append(']');

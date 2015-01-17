@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2014, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -50,6 +50,7 @@ bool Instance :: loadConfig()
       _loader.setRootPath(path);
    }
 
+   return true;
 }
 
 void Instance :: init(void* debugSection, const wchar16_t* package)
@@ -75,9 +76,5 @@ int Instance :: loadAddressInfo(size_t retPoint, wchar16_t* buffer, size_t maxLe
    RTManager manager;
    MemoryReader reader(&_debugSection, 4);
 
-   if(manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength))
-   {
-      return maxLength;
-   }
-   else return 0;
+   return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }

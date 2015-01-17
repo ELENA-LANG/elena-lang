@@ -1365,11 +1365,11 @@ inline % 1Dh
   mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
   mov  ebp, [data : %CORE_EXCEPTION_TABLE + 8]
   pop  ebx
-  mov [data : %CORE_EXCEPTION_TABLE + 8], ebx
-  pop  ebx
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], ebx
+  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebx
   pop  edx
-  mov  [data : %CORE_EXCEPTION_TABLE], edx
+  mov  [data : %CORE_EXCEPTION_TABLE + 4], edx
+  pop  ebx
+  mov  [data : %CORE_EXCEPTION_TABLE], ebx
   
 end
 

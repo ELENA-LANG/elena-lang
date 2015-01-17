@@ -13,6 +13,7 @@ define GET_MESSAGE_ID       086000000h
 procedure dispatch
 
   bsredirect  
+  open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw
@@ -61,6 +62,7 @@ procedure int_copystr
   quitn    2
 
 labErr:
+  open 1
   pushr class : system'FormatException
   pushr const : %new[0]
   throw
@@ -85,6 +87,8 @@ procedure int_saveshort
   nless
   ifn     labEnd 0
 
+  pop
+  open 1
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw  
@@ -268,6 +272,7 @@ procedure long_copystr
   quitn    2
 
 labErr:
+  open 1
   pushr class : system'FormatException
   pushr const : %new[0]
   throw
@@ -464,6 +469,7 @@ procedure real_copystr
   quitn    2
 
 labErr:
+  open 1
   pushr class : system'FormatException
   pushr const : %new[0]
   throw
@@ -776,6 +782,7 @@ procedure ws_getat
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw
@@ -936,6 +943,7 @@ labFalse:
   quitn 3
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -973,6 +981,7 @@ procedure sa_write
   quitn 4
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1010,6 +1019,7 @@ procedure sa_read
   quitn 4
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1089,6 +1099,7 @@ procedure sa_writeword
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw  
@@ -1141,6 +1152,7 @@ labFalse:
   quitn 3
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1171,6 +1183,7 @@ labFalse:
   quitn 3
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1205,6 +1218,7 @@ procedure bs_readword
   quitn 2
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1230,6 +1244,7 @@ procedure bs_readdword
   quitn 2
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1255,6 +1270,7 @@ procedure bs_readqword
   quitn 2
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1280,6 +1296,7 @@ procedure bs_read
   quitn 2
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1303,6 +1320,7 @@ procedure bs_writeword
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1326,6 +1344,7 @@ procedure bs_writedword
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1347,6 +1366,7 @@ procedure bs_writeqword
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1375,6 +1395,8 @@ procedure bs_write
   quitn 4
 
 labErr:
+  pop
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
@@ -1446,6 +1468,7 @@ procedure arr_getat
   quitn 2
 
 labErr:
+  open 1
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw
@@ -1466,6 +1489,7 @@ procedure arr_setat
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw
@@ -1513,6 +1537,7 @@ procedure handle_message
   aloadsi 1
   ajumpvi 0
 labEnd:
+  open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw
@@ -1631,6 +1656,8 @@ labQuit:
   quitn 1
   
 labEnd:
+  popi 3
+  open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw
@@ -1668,6 +1695,8 @@ labNext:
   count
   less labNext
 
+  pop
+  open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw
@@ -1752,12 +1781,12 @@ labReturn:
   equit  
   
 labNotFound:  
-//  elser labContinueError const : system'MethodNotFoundException
-  dloadsi 2
+  dloadsi 3
   address labReturn
   else labContinueError
 
-  popi 3
+  close
+  pop
   bloadfi 1
   jump labNext
 
@@ -1794,6 +1823,8 @@ procedure get_property
   quitn 1
 
 labEnd:
+  pop
+  open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw
@@ -1907,10 +1938,10 @@ procedure symbol_new
   quitn 2
 
 labError:
-  callr system'InvalidArgumentException
-  pusha
-  copym NEW_MESSAGE_ID
-  acallvi 0
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
   throw
 
 end
@@ -1968,10 +1999,9 @@ procedure load_classname
   quitn 4
  
 labErr:
-  callr system'InvalidArgumentException
-  pusha
-  copym NEW_MESSAGE_ID
-  acallvi 0
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
   throw
 
 end
@@ -2009,10 +2039,9 @@ procedure arrptr_get
   quitn 2
 
 labErr:
-  callr system'OutOfRangeException
-  pusha
-  copym NEW_MESSAGE_ID
-  acallvi 0
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
   throw
   
 end
@@ -2060,10 +2089,9 @@ procedure arrptr_set
   quitn 3
 
 labErr:
-  callr system'OutOfRangeException
-  pusha
-  copym NEW_MESSAGE_ID
-  acallvi 0
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
   throw
   
 end
@@ -2087,6 +2115,7 @@ procedure sa_readword
   quitn 3
 
 labErr:
+  open 1
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw
@@ -2183,10 +2212,9 @@ procedure thread_start
   quitn 1
 
 labError:
-  callr system'NotSupportedException
-  pusha
-  copym NEW_MESSAGE_ID
-  acallvi 0
+  open 1
+  pushr class : system'NotSupportedException
+  pushr const : %new[0]
   throw
   
 end
@@ -2282,6 +2310,7 @@ procedure ns_readdword
   quitn 2
   
 labErr:
+  open 1
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  

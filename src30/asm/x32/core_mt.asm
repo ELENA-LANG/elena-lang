@@ -15,6 +15,8 @@ define CLOSETHREAD          1001Ch
 define EXIT                 1001Dh
 define LOCK                 10021h
 define UNLOCK               10022h
+define LOAD_CALLSTACK       10024h
+define REFRESH_CALLSTACK    10025h
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
@@ -1459,7 +1461,6 @@ procedure % UNLOCK
   ret
 
 end
-
 
 // ; ==== Command Set ==
 

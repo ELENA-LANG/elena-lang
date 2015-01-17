@@ -46,13 +46,15 @@
 
 #class Exception
 {
-    #field theMessage.
+    #field(type:literal) theMessage.
+    #field theCallStack.
     #field(type:subject) theError.
     
     #constructor new &message:aMessage &error_type:anError
     [
-        theMessage := aMessage.
+        theMessage := aMessage literal.
         theError := anError.
+        theCallStack := CallStack new.
     ]    
     
     #method if &Error:aHandler
@@ -70,7 +72,7 @@
         (aCatchBlock::theError get) eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
     ]
     
-//    #method literal => theMessage.
+    #method literal = theMessage add &literal:"%nCall stack:%n" add &literal:(theCallStack literal).
     
     #method message = theMessage.
 }

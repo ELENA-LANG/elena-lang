@@ -134,7 +134,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
             else if ((info.symbol & dsDebugMask) == dsStep) {
                index--;
                if (index == 0) {
-                  if (info.row != 0) {
+                  if (info.row >= 0) {
                      row = info.row;
                   }
                   break;
@@ -176,31 +176,31 @@ void copy(wchar16_t* buffer, int value, int& copied)
    copied += getlength(tmp);
 }
 
-bool RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t& length)
+size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t maxLength)
 {
-   const wchar16_t* symbol;
-   const wchar16_t* method;
-   const wchar16_t* path;
-   int row;
+   const wchar16_t* symbol = NULL;
+   const wchar16_t* method = NULL;
+   const wchar16_t* path = NULL;
+   int row = -1;
 
    if (readAddressInfo(debug, retAddress, manager, symbol, method, path, row)) {
       int copied = 0;
-      copy(buffer, symbol, copied, length - 2);
-      buffer[copied++] = '.';
-      copy(buffer, method, copied, length - 1);
-      buffer[copied++] = ':';
-      copy(buffer, path, copied, length - 6);
-      buffer[copied++] = '(';
-      copy(buffer, row, copied);
-      buffer[copied++] = ')';
+      copy(buffer, symbol, copied, maxLength - 2);
+      if (!emptystr(method)) {
+         buffer[copied++] = '.';
+         copy(buffer, method, copied, maxLength - 1);
+      }
+      if (!emptystr(path)) {
+         buffer[copied++] = ':';
+         copy(buffer, path, copied, maxLength - 6);
+      }
+      if (row != -1) {
+         buffer[copied++] = '(';
+         copy(buffer, row + 1, copied);
+         buffer[copied++] = ')';
+      }
 
-      length = copied;
-
-      return true;
+      return copied;
    }
-   else {
-      length = 0;
-
-      return false;
-   }
+   else return 0;
 }

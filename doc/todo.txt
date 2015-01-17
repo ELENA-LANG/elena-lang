@@ -34,29 +34,8 @@ Currently:
                         
               xmaint - package
                        * create installation package
+                       * release : compile / copy elenart
               
-              xdev - exception handling
-                       * Exception : new field theCallStack
-
-                       * exception : get&literal$ should returns the message + callstack
-
-                       * exception : message, [ the object, the stack ] in #exception structure
-
-                       * multi-exception catch block - how to preseave the exception (in normal case methodnotfound will be raised if
-                         no handler where found)
-                       
-                       * Review exception handling mechanism : how to provide the exception parameters and the exception call stack
-                                              
-                       * Exception object should generate the exception info on 
-                       
-                       * exceptions : provide call stack info
-                       
-                       * aCatchBlock if::$self | if &MethodNotFoundError...   -  in that case any method not found error inside exception handler raises 
-                         the same error -> probably aCatchBlock if::$self || raise:$self should be used ; where || check if the method supports the message
-                         if not - goes to the alternative branch (what about dynamic objects in that case)
-
-                       * method not found event should provides the way to specify the object where the method was not found
-
               idev - usability
                        * output window should be selected (if presented) and focus set after successful compile
                        * message window should be selected (if presented) and focus set after unsuccessful compile
@@ -210,7 +189,6 @@ week1:
 
                        * should for "expr ? !" on both branches the value is checked (used for the case when the returning value is not bool 
                          - e.g. nil or any other object)
-                       * unused code for EException handler after bsredirect (?? should exception be thrown after it)
                        * GC: card table scanning; could we optimize it ?
 
                        * simplify ansi constants / wideliteral interaction
@@ -707,6 +685,8 @@ week1:
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
 
               xdev - generic development                                                      
+                       * constructor / method resend should be done without opening a new frame
+
                        * make possible to create private type
 
                        * IntNumber.add&long$ is not stack safe : the possible solution - does not allow any operation with the strong type until the wrapping
@@ -744,7 +724,6 @@ week1:
                        
                        * do ^ operation should be allowed in nested action?
                        * probably only one nested expression can be allowed without dot
-                       * special case to ignore the exception (without creating stack info)
 
                        * check if the class constructor really exists before direct call
 
