@@ -20,12 +20,18 @@ literal
 long
 numeric_value
 numeric_variable
+object
 real
 short
 typecaster
 value
 variable
 variant
+
+[object]
+#shortdescr=A generic instance
+#method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.
+#method=clone,,object;Creates the object copy
 
 [literal]
 #shortdescr=A literal protocol

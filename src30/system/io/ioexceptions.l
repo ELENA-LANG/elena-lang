@@ -8,4 +8,7 @@
 {
     #constructor new
         <= %new &message:"The process terminated" &error_type: %IOError.
+        
+    #constructor new &message:aMessage
+        <= %new &message:aMessage &error_type: %IOError.
 }

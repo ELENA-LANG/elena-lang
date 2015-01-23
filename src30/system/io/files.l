@@ -31,7 +31,7 @@
                       &int:0.
                       
         (-1 == theHandle)
-            ? [ #throw IOException new:"Cannot open the file". ].
+            ? [ #throw IOException new &message:"Cannot open the file". ].
     ]
     
     #method write &bytearray:aDump &length:aLength

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                               (C)2011-2014 by Alexei Rakov
+//                                               (C)2011-2015 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -9,7 +9,7 @@
 #include "session.h"
 #include "cfparser.h"
 //#include "inlineparser.h"
-#include "elenavm.h"
+//#include "elenavm.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -99,22 +99,22 @@ Session :: ~Session()
 {
 }
 
-//void* Session :: translateScript(const wchar16_t* name, TextReader* source)
-//{
-//   ScriptVMCompiler compiler;
-//
-//   _Parser* parser = _parsers.get(name);
-//   if (parser == NULL) {
-//      parser = new CFParser();
-//
-//      _parsers.add(name, parser, true);
-//   }
-//
-//   parser->parse(source, &compiler);
-//
-//   // the tape should be explicitly releases with FreeLVMTape function
-//   return compiler.generate();
-//}
+////void* Session :: translateScript(const wchar16_t* name, TextReader* source)
+////{
+////   ScriptVMCompiler compiler;
+////
+////   _Parser* parser = _parsers.get(name);
+////   if (parser == NULL) {
+////      parser = new CFParser();
+////
+////      _parsers.add(name, parser, true);
+////   }
+////
+////   parser->parse(source, &compiler);
+////
+////   // the tape should be explicitly releases with FreeLVMTape function
+////   return compiler.generate();
+////}
 
 void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
 {
@@ -126,13 +126,24 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
       token = reader.read();
       while (!ConstantIdentifier::compare(token, "]]")) {
          if(ConstantIdentifier::compare(token, "#define")) {
-            if (!_currentParser) {
+            if (_currentParser == NULL) {
                _currentParser = new CFParser();
 
-               _parsers.add(ConstantIdentifier("default"), _currentParser);
+               _parsers.insert(_currentParser);
             }
 
             _currentParser->parseGrammarRule(reader);
+         }
+         else if(ConstantIdentifier::compare(token, "#grammar")) {
+            token = reader.read();
+            if (ConstantIdentifier::compare(token, "new")) {
+               _currentParser = NULL;
+            }
+            else if (ConstantIdentifier::compare(token, "clear")) {
+               _parsers.clear();
+
+               _currentParser = NULL;
+            }
          }
          else if(ConstantIdentifier::compare(token, "#mode")) {
             _currentParser->parseDirective(reader);
@@ -158,17 +169,25 @@ void Session :: parseScript(_Parser* parser, MemoryDump& tape, _ScriptReader& re
 
       _currentParser->parse(reader, log);
 
-      parseScript(tape, (const wchar16_t*)log.getBody());
+      int index = retrieveIndex(_parsers.start(), _currentParser);
+      if (index >= 0) {
+         Parsers::Iterator it = _parsers.get(index + 1);
+         if (!it.Eof()) {
+            parseScript(*it, tape, (const wchar16_t*)log.getBody());
+         }
+         else parseScript(NULL, tape, (const wchar16_t*)log.getBody());
+      }
+      else parseScript(NULL, tape, (const wchar16_t*)log.getBody());      
    }
    else _scriptParser.parseScript(tape, reader);
 }
 
-void Session :: parseScript(MemoryDump& tape, const wchar16_t* script)
+void Session :: parseScript(_Parser* parser, MemoryDump& tape, const wchar16_t* script)
 {
    WideLiteralTextReader reader(script);
    CachedScriptReader scriptReader(&reader);
 
-   parseScript(NULL, tape, scriptReader);
+   parseScript(parser, tape, scriptReader);
 }
 
 int Session :: translate(TextReader* source, bool standalone)
@@ -181,13 +200,15 @@ int Session :: translate(TextReader* source, bool standalone)
    parseMetaScript(tape, scriptReader);
    parseScript(_currentParser, tape, scriptReader);
 
-   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
+//   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
+//
+//   // copy vm error if retVal is zero
+//   if (!retVal)
+//      _lastError.copy(GetLVMStatus());
 
-   // copy vm error if retVal is zero
-   if (!retVal)
-      _lastError.copy(GetLVMStatus());
+//   return retVal;
 
-   return retVal;
+   return 0; // !! temp
 }
 
 int Session :: translate(const wchar16_t* script, bool standalone)

@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef listsH
@@ -3519,6 +3519,20 @@ template<class Iterator> const char* retrieve(Iterator it, const char* value, co
       it++;
    }
    return defaultValue;
+}
+
+template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
+{
+   int index = 0;
+   while (!it.Eof()) {
+      if (*it == value)
+         return index;
+
+      index++;
+      it++;
+   }
+
+   return -1;
 }
 
 } // _ELENA_

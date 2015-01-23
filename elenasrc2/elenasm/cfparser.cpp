@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
-//		e l e n a   p r o j e c t:  elena vm script engine
+//		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
 //
-//                                              (c)2011-2014, by alexei rakov
+//                                              (C)2011-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

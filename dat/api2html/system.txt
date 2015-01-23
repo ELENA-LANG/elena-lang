@@ -59,6 +59,7 @@ Variant
 [Object]
 #title=Class Object
 #shortdescr=A common ancestor
+#constructor=new,,object;Creates the object
 #method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.
 
 [objectOp]
@@ -68,7 +69,8 @@ Variant
 
 [nil]
 #title=Symbol nil
-#shortdescr=A nil value symbol
+#shortdescr=A nil value
+#method=clone,,object;Returns itself
 
 [LiteralValue]
 #title=Class LiteralValue
@@ -441,7 +443,7 @@ Variant
 
 [BaseValue]
 #title=Class BaseValue
-#shortdescr=A base value class
+#shortdescr=A base value
 #protocol=value
 #parent=system.html#Object:system'Object
 #method=equal,value,bool;Compares the values
@@ -450,7 +452,7 @@ Variant
 
 [BaseNumber]
 #title=Class BaseNumber
-#shortdescr=A base numeric value class
+#shortdescr=A base numeric value
 #protocol=numeric_value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
@@ -461,7 +463,7 @@ Variant
 
 [IntBaseNumber]
 #title=Class IntBaseNumber
-#shortdescr=A base integer value class
+#shortdescr=A base integer value
 #protocol=numeric_value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
@@ -512,13 +514,17 @@ Variant
 [literalConvertor]
 #title=Symbol literalConvertor
 #shortdescr=A literal convertor
+#method=convert,&byte:byte,literal;Converts the parameter to the literal value
+#method=convert,&byte:byte&index:int,literal;Converts the parameter to the literal value with the provided radix
 #method=convert,&int:int,literal;Converts the parameter to the literal value
-#method=convert,&int:int&base:int,literal;Converts the parameter to the literal value with the provided radix
+#method=convert,&int:int&index:int,literal;Converts the parameter to the literal value with the provided radix
 #method=convert,&literal:literal,literal;Returns the parameter
 #method=convert,&long:long,literal;Converts the parameter to the literal value
-#method=convert,&long:long&base:int,literal;Converts the parameter to the literal value with the provided radix
-#method=convert,&object:object,literal;Converts the parameter to the literal value
+#method=convert,&long:long&index:int,literal;Converts the parameter to the literal value with the provided radix
 #method=convert,&real:real,literal;Converts the parameter to the literal value
+#method=convert,&short:short,literal;Converts the parameter to the literal value
+#method=convert,&short:short&index:int,literal;Converts the parameter to the literal value with the provided radix
+#method=convert,object,literal;Converts the parameter to the literal value
 
 [Real]
 #title=Class Real
@@ -758,7 +764,7 @@ Variant
 
 [IntBaseVariable]
 #title=Class IntBaseVariable
-#shortdescr=A base integer variable class
+#shortdescr=A base integer variable
 #protocol=numeric_variable
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
@@ -772,26 +778,82 @@ Variant
 
 [BaseVariable]
 #title=Class BaseVariable
-#shortdescr=A base numeric variable class
+#shortdescr=A base numeric variable
 #protocol=numeric_value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
-#method=append,numeric_value;Appends the numeric value
-#method=divideInto,numeric_value;Divides into the numeric value and reassigns the value
-#method=multiplyBy,numeric_value;Multiplies by the numeric value and reassigns the value
-#method=reduce,numeric_value;Subtracts the numeric value and reassigns the value
-#method=write,numeric_value;Assigns the numeric value
+#method=append,value;Appends the value
+#method=divideInto,value;Divides into the value and reassigns the value
+#method=multiplyBy,value;Multiplies by the value and reassigns the value
+#method=reduce,value;Subtracts the value and reassigns the value
+#method=write,value;Assigns the value
 
 [ByteNumber]
 #title=Class ByteNumber
-#shortdescr=A byte numeric value class
+#shortdescr=An unsigned 8 bit integer
 #protocol=numeric_value
 #protocol=byte
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#BaseNumber:system'BaseNumber
 #parent=system.html#IntBaseNumber:system'IntBaseNumber
+#constructor=new,,byte;Creates the object with a minimal value (0)
+#constructor=new,&byte:byte,byte;Creates the object with specified value
+#constructor=new,&int:int,byte;Creates the object with specified value. If the value is bigger than a byte, it is truncated
+#constructor=new,&short:short,byte;Creates the object with specified value
+#constructor=min,,byte;Returns the minimal value (0)
+#constructor=max,,byte;Returns the maxial value (255)
+#method=add,&byte:byte,byte;Returns the sum
+#method=add,&int:int,int;Returns the sum
+#method=add,&long:long,long;Returns the sum
+#method=add,&real:real,real;Returns the sum
+#method=add,&short:short,short;Returns the sum
+#method=and,&byte:byte,byte;Returns the result of bitwise AND operation
+#method=and,&int:int,int;Returns the result of bitwise AND operation
+#method=and,&long:long,long;Returns the result of bitwise AND operation
+#method=and,&short:short,short;Returns the result of bitwise AND operation
+#method=byte,,byte;Returns itself
+#method=cast,verb,&to:object;Casts the value
+#method=clone,,byte;Clones the value
+#method=divide,&byte:byte,byte;Returns the result of integer division
+#method=divide,&int:int,int;Returns the result of integer division
+#method=divide,&long:long,long;Returns the result of integer division
+#method=divide,&real:real,real;Returns the result of a division
+#method=divide,&short:short,short;Returns the result of integer division
+#method=equal,&byte:byte,bool;Compares the value
+#method=equal,&int:int,bool;Compares the value
+#method=equal,&long:long,bool;Compares the value
+#method=equal,&real:real,bool;Compares the value
+#method=equal,&short:short,bool;Compares the value
+#method=int,,int;Returns the value as an integer
+#method=less,&byte:byte,bool;Compares the values
+#method=less,&int:int,bool;Compares the values
+#method=less,&long:long,bool;Compares the values
+#method=less,&real:real,bool;Compares the values
+#method=less,&short:short,bool;Compares the values
+#method=literal,,literal;Returns the literal presentation
+#method=multiply,&byte:byte,byte;Returns the product
+#method=multiply,&int:int,int;Returns the product
+#method=multiply,&long:long,long;Returns the product
+#method=multiply,&real:real,real;Returns the product
+#method=multiply,&short:short,short;Returns the product
+#method=not,,int;Bitwise inversion
+#method=or,&byte:byte,byte;Returns the result of bitwise OR operation
+#method=or,&int:int,int;Returns the result of bitwise OR operation
+#method=or,&long:long,long;Returns the result of bitwise OR operation
+#method=or,&short:short,short;Returns the result of bitwise OR operation
+#method=shift,&index:int,byte;Bitwise shift operation
+#method=short,,short;Returns the value as a short integer
+#method=subtract,&byte:byte,byte;Returns the difference
+#method=subtract,&int:int,int;Returns the difference
+#method=subtract,&long:long,long;Returns the difference
+#method=subtract,&real:real,real;Returns the difference
+#method=subtract,&short:short,short;Returns the difference
+#method=xor,&byte:byte,byte;Returns the result of bitwise XOR operation
+#method=xor,&int:int,int;Returns the result of bitwise XOR operation
+#method=xor,&long:long,long;Returns the result of bitwise XOR operation
+#method=xor,&short:short,short;Returns the result of bitwise XOR operation
 
 [ShortNumber]
 #title=Class ShortNumber

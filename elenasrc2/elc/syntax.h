@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser Symbol constants
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxH
@@ -92,6 +92,7 @@ enum Symbol
    nsErrNestedMemberExpected        = 0x04003,               
    nsErrObjectExpected              = 0x04004,
    nsErrMessageExpected             = 0x04005,
+   nsDirectiveEndExpected           = 0x04006,
 };
 
 //inline bool ifAny(Symbol target, Symbol value1, Symbol value2)

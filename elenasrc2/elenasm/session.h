@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2014, by Alexei Rakov
+//                                              (C)2011-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sessionH
@@ -84,7 +84,7 @@ public:
    virtual void parse(_ScriptReader& reader, ScriptLog& log) = 0;
 };
 
-typedef Map<const wchar16_t*, _Parser*, true> ParserMap;
+typedef List<_Parser*> Parsers;
 
 typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
 
@@ -154,8 +154,8 @@ class Session
       }
    };
 
-   ParserMap          _parsers;
-   _Parser*           _currentParser;  
+   Parsers          _parsers;
+   _Parser*         _currentParser;  
 
    InlineScriptParser _scriptParser;
 
@@ -163,7 +163,7 @@ class Session
 
    void parseMetaScript(MemoryDump& tape, CachedScriptReader& reader);
    void parseScript(_Parser* parser, MemoryDump& tape, _ScriptReader& reader);
-   void parseScript(MemoryDump& tape, const wchar16_t* script);
+   void parseScript(_Parser* parser, MemoryDump& tape, const wchar16_t* script);
 
    int translate(TextReader* source, bool standalone);
 
@@ -182,6 +182,6 @@ public:
    virtual ~Session();
 };
 
-} // _ELENA_
+} // _elena_
 
-#endif // sessionH
+#endif // sessionh

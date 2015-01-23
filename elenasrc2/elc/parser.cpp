@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser class implementation.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2014, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -39,6 +39,7 @@ inline const char* getError(Symbol symbol)
    {
    case nsDeclarationEndExpected:
    case nsStatementEndExpected:
+   case nsDirectiveEndExpected:
       return errDotExpectedSyntax;
    case nsErrClosingSBracketExpected:
       return errCSBrExpectedSyntax;

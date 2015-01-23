@@ -21,31 +21,25 @@ v  - vm script
 Currently:
 ------
 
-              xdev - usability
-                       * warn if the dot is missing #var(type:bool) b := nil equal:theCurrent not ]
+              adev - lib30                                        
+                       * byte should correctly deal with signed numbers - less operations
+                       * short -> int, int -> short should correctly set sign
+                       * support operations with byte, short, int, long and real for all numeric types
+                       * char should be embeddable primitive type
+                       * new class : chararray, should be used instead of shortarray for literal operations
+
+              xdev - generic development                                                      
+                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
 
               idev - debugger - watch
                        * show shortarray, bytearray, intarray
-                       * show data variables (currently only int / short are displayed)
-                       * show output argument
                        
               xdev - redesign
                        * operator or, do we need it (or bitwise operators at all)
                         
-              xmaint - package
-                       * create installation package
-                       * release : compile / copy elenart
-              
-              idev - usability
-                       * output window should be selected (if presented) and focus set after successful compile
-                       * message window should be selected (if presented) and focus set after unsuccessful compile
-
-<=================> 
-
-1.9.18
---------
-week1:
               xdev - generic development                                                      
+                       * class methods : Byte / Short / IntNumber - min, max ??
+                       
                        * think over object serialization, for example - save the object into file and load back
 
                        * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
@@ -99,6 +93,19 @@ week1:
                          the nested action 
                        * no need to check if the object is stack allocated - box it directly, so we could get rid of extra command ifheap                       
                                               
+              xmaint - package
+                       * create installation package
+                       * release : compile / copy elenart
+              
+              idev - usability
+                       * output window should be selected (if presented) and focus set after successful compile
+                       * message window should be selected (if presented) and focus set after unsuccessful compile
+
+<=================> 
+
+1.9.18
+--------
+week1:
               xdev - general implementation
                        * could we simplify typecasting messaging - e.g. - a literal -, if it is a predefined type - first try to chevk the object
                          type and only if it is unsuccessful - call the full search
@@ -273,14 +280,16 @@ week2:
                        * support GUI application
                        
               adev - lib30                                        
-                       * find out if the bool is called after each enumeration step - next call
+                       * serialization to and from : xml, binary
 
+                       * find out if the bool is called after each enumeration step - next call
+                       
                        * migrate all the code from old version
                        * test dynamic_test
                        * test dynamic samples
                        * test literalOp.trim method
 
-                       * implement basic operations with short and byte
+                       * implement basic operations with short
 
                        * uncomment Real#class.new&int[1] and Real#class.new&long[1]
 
@@ -680,8 +689,10 @@ week1:
 
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
-
+                       
               idev - debugger
+                       * show data variables (currently only int / short are displayed)
+                       * show output argument
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
 
               xdev - generic development                                                      

@@ -708,6 +708,22 @@ procedure ws_copyint_radix
 
 end
 
+procedure ws_copylong_radix
+
+  dcopy 25
+  acopyr class : system'LiteralValue
+  wcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  aloadsi 2
+  ltow
+  acopyb
+  quitn 3
+
+end
+
 procedure ws_copylong
 
   dcopy 64
@@ -2323,6 +2339,186 @@ procedure ns_getlen
   nlen
   bloadsi 2
   nsave
+  quitn 2
+
+end
+
+procedure byte_min
+
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 1
+
+end
+
+procedure byte_max
+
+  bcopya
+  dcopy 0FFh
+  nsave
+  acopyb
+  quitn 1
+
+end
+
+procedure byte_copyint
+
+  bcopya
+  aloadsi 2
+  nload
+  andn 0FFh
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure byte_add
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nadd
+  acopyb
+  nload
+  andn 0FFh
+  nsave
+  quitn 2
+
+end
+
+procedure byte_sub
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nsub
+  acopyb
+  nload
+  andn 0FFh
+  nsave
+  quitn 2
+
+end
+
+procedure byte_mul
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nmul
+  acopyb
+  nload
+  andn 0FFh
+  nsave
+  quitn 2
+
+end
+
+procedure byte_div
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  ndiv
+  acopyb
+  nload
+  andn 0FFh
+  nsave
+  quitn 2
+
+end
+
+procedure byte_and
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nand
+  acopyb
+  quitn 2
+
+end
+
+procedure byte_or
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nor
+  acopyb
+  quitn 2
+
+end
+
+procedure byte_xor
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nxor
+  acopyb
+  quitn 2
+
+end
+
+procedure byte_not
+
+  newn   class : system'ByteNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+                 
+procedure byte_shift
+
+  pusha
+  newn   class : system'ByteNumber 4
+  bcopya
+  aloadsi 3    // ; load index
+  nload
+  popa
+  nshift
+  acopyb
+
+  nload
+  andn 0FFh
+  nsave
+
+  quitn 2
+  
+end
+
+procedure int_save
+
+  bloadsi 2
+  ncopy
   quitn 2
 
 end
