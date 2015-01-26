@@ -120,6 +120,7 @@ namespace _ELENA_
    #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
    #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
    #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
+   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack   
    #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
 
    #define VA_ALIGNMENT       0x08

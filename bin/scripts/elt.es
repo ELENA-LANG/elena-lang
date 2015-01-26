@@ -4,3 +4,5 @@
    #map 'globals = extensions'dynamic'globals
    #start;
 ]]
+
+( system'console "Hello" ) . writeLine

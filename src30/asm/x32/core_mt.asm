@@ -1204,6 +1204,8 @@ end
 // ; init exception table, ebx contains default handler address
 procedure % INIT_ET
 
+  pop esi
+
   mov edx, ebx
 
   // ; GCXT: get current thread frame
@@ -1216,6 +1218,7 @@ procedure % INIT_ET
   mov  [ebx + tls_catch_level], esp
   mov  [ebx + tls_catch_frame], ebp
 
+  push esi
   ret
 
 end 

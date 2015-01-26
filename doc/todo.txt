@@ -21,8 +21,51 @@ v  - vm script
 Currently:
 ------
 
+              xdev - script engine
+                       * system'console writeLine:"Hello"
+
+                         ( system'console "Hello" ) . writeLine
+
+                         [ 100 200 ] : system'Array
+
+                         [ ( system'console "Hello" ) % writeLine ] : system'dynamic'Tape
+
+                         
+
+
+
+
+
+                         
+
+
+                       
+                         
+
+
+
+                         [ 1 2 3 ]=Array
+
+
+
+                       
+                         system'console "Hello" ^ writeLine [ 1 ]
+
+                         ($reference $literal).$message 
+
+
+
+                         system'console writeLine("Hello")
+
+                       * system'console writeLine:(2 add:3)
+
+                       * ELENA: evaluation the script
+
+                       * ELENA: return the result of the script evaluation
+
+                       * migrate
+
               adev - lib30                                        
-                       * byte should correctly deal with signed numbers - less operations
                        * short -> int, int -> short should correctly set sign
                        * support operations with byte, short, int, long and real for all numeric types
                        * char should be embeddable primitive type

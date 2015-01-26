@@ -9,7 +9,7 @@
 #include "session.h"
 #include "cfparser.h"
 //#include "inlineparser.h"
-//#include "elenavm.h"
+#include "elenavm.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -200,15 +200,13 @@ int Session :: translate(TextReader* source, bool standalone)
    parseMetaScript(tape, scriptReader);
    parseScript(_currentParser, tape, scriptReader);
 
-//   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
-//
-//   // copy vm error if retVal is zero
-//   if (!retVal)
-//      _lastError.copy(GetLVMStatus());
+   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
 
-//   return retVal;
+   // copy vm error if retVal is zero
+   if (!retVal)
+      _lastError.copy(GetLVMStatus());
 
-   return 0; // !! temp
+   return retVal;
 }
 
 int Session :: translate(const wchar16_t* script, bool standalone)

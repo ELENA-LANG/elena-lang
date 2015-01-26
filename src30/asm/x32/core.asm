@@ -1038,9 +1038,11 @@ end
 procedure % INIT_ET
 
   // ; set default exception handler
+  pop  ecx
   mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
   mov  [data : %CORE_EXCEPTION_TABLE], ebx
   mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
+  push ecx
 
   ret
 

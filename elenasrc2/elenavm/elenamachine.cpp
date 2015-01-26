@@ -599,6 +599,29 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             ecodes.writeByte(bcPopI);
             ecodes.writeDWord(param);
             break;
+         case REVERSE_TAPE_MESSAGE_ID:
+            if (param == 2) {
+               // swapsi 1
+               ecodes.writeByte(bcSwapSI);
+               ecodes.writeDWord(1);
+            }
+            else {
+               int length = param >> 1;
+               param--;
+
+               ecodes.writeByte(bcSwapSI);
+               ecodes.writeDWord(param);
+
+               for (int i = 1 ; i < length ; i++) {
+                  // aloadsi i
+                  // aswapsi n - 1 - i
+                  ecodes.writeByte(bcALoadSI);
+                  ecodes.writeDWord(i);
+                  ecodes.writeByte(bcASwapSI);
+                  ecodes.writeDWord(param - i);
+               }
+            }
+            break;
          case SEND_TAPE_MESSAGE_ID:
             //copym message
             //aloadsi 0

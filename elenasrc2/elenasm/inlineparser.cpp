@@ -62,19 +62,19 @@ InlineScriptParser :: InlineScriptParser()
    ByteCodeCompiler::loadVerbs(_verbs);
 }
 
-//int InlineScriptParser :: mapVerb(const wchar16_t* literal)
+int InlineScriptParser :: mapVerb(const wchar16_t* literal)
+{
+   if (_verbs.Count() == 0) {
+      ByteCodeCompiler::loadVerbs(_verbs);
+   }
+
+   return _verbs.get(literal);
+}
+
+//void InlineScriptParser :: writeTerminal(TapeWriter& writer, const wchar16_t* token, char state, int col, int row)
 //{
-//   if (_verbs.Count() == 0) {
-//      ByteCodeCompiler::loadVerbs(_verbs);
-//   }
-//
-//   return _verbs.get(literal);
 //}
 //
-////void InlineScriptParser :: writeTerminal(TapeWriter& writer, const wchar16_t* token, char state, int col, int row)
-////{
-////}
-////
 ////int InlineScriptParser :: parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode)
 ////{  
 //   //int tapeLength = 0;
@@ -267,51 +267,131 @@ InlineScriptParser :: InlineScriptParser()
 //
 //   return counter;
 //}
+
+void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& message)
+{   
+   message[0] = '0';
+   message[1] = 0;
+
+   const wchar16_t* token = reader.read();
+
+   int verbId = mapVerb(token);
+   if (verbId != 0) {
+      message.append('#');
+      message.append(0x20 + verbId);
+   }
+   else {
+      message.append('#');
+      message.append(EVAL_MESSAGE_ID + 0x20);
+      message.append('&');
+      message.append(token);
+   }
+
+   token = reader.read();
+   // check if it is a field
+   while (token[0]=='&') {
+      message.append(token);
+
+      token = reader.read();
+      message.append(token);
+
+      token = reader.read();
+   }
+}
+
+int InlineScriptParser :: parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter)
+{
+   IdentifierString message; 
+   readMessage(reader, message);
+
+   if (counter > 1) 
+      writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter);
+
+   message[0] = message[0] + (counter - 1);
+
+   writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
+
+   return 1;
+}
+
+int InlineScriptParser :: parseReverseList(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
+{
+   int paramCount = 0;
+   reader.read();
+
+   while (reader.token[0]!=')') {
+      paramCount += parseExpression(writer, reader);
+
+      reader.read();
+   }
+
+//   do {
+//            reader.read();
+//            if (reader.token[0] == ')' && paramCount == 0) {
+//               // replace EVAL with GET if required
+//               if (message[2] == 0x20 + EVAL_MESSAGE_ID) {
+//                  message[2] = 0x20 + GET_MESSAGE_ID;
+//               }
+//            }
+//            else {
+//               paramCount++;
+//               counter += parseExpression(paramWriter, reader, locals, currentLevel++, mode);
 //
-//void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& message)
-//{   
-//   message[0] = '0';
-//   message[1] = 0;
-//
-//   const wchar16_t* token = reader.read();
-//
-//   int verbId = mapVerb(token);
-//   if (verbId != 0) {
-//      message.append('#');
-//      message.append(0x20 + verbId);
+//               writer.insert(bookmark, &paramTape);
+//               paramTape.clear();
+//            }
 //   }
-//   else {
-//      message.append('#');
-//      message.append(EVAL_MESSAGE_ID + 0x20);
-//      message.append('&');
-//      message.append(token);
-//   }
-//
-//   token = reader.read();
-//   // check if it is a field
-//   if (verbId == 0 && token[0] != '&' && token[0] != '(') {
-//      // replace EVAL with GET
-//      message[2] = 0x20 + GET_MESSAGE_ID;
-//   }
-//   else {
-//      while (token[0]!='(') {
-//         if (token[0] == '&') {
-//            message.append(token);
-//         }
-//         else throw EParseError(reader.info.column, reader.info.row);
-//
-//         token = reader.read();
-//         message.append(token);
-//
-//         token = reader.read();
-//      }
-//   }
-//}
-//
-//int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode)
-//{
+//   while (reader.token[0]==',');
+
+   return paramCount;
+}
+
+int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
+{
 //   size_t bookmark = writer.Position();
-//   int counter = parseObject(writer, reader, locals, level++, mode);
+   int counter = 1;
+
+   if (reader.token[0]=='(') {
+      counter = parseReverseList(writer, reader);
+
+      reader.read();
+      if (reader.token[0] == '.') {
+         counter = parseMessage(writer, reader, counter);
+      }
+   }
+   else {
+      switch (reader.info.state) {
+//         case dfaInteger:
+//            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
+//            break;
+//         case dfaReal:
+//            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
+//            break;
+//         case dfaLong:
+//            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
+//            break;
+         case dfaQuote:
+            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
+            break;
+         case dfaFullIdentifier:
+            writer.writeCallCommand(reader.token);
+            break;
+//         case dfaIdentifier:
+//         {
+//            int index = locals.get(reader.token);
+//            if (index != 0) {
+//               counter = writeVariable(writer, index, level, mode);
+//            }
+//            else throw EParseError(reader.info.column, reader.info.row);
+//
+//            break;
+//         }
+//         default:
+//            throw EParseError(reader.info.column, reader.info.row);
+      }
+   }
+
+
 //   int currentLevel = level;
 //
 //   if (mode == mdRoot)
@@ -373,10 +453,10 @@ InlineScriptParser :: InlineScriptParser()
 //      counter++;
 //      currentLevel = level;
 //   }
-//   return counter;
-//}
-//
-//int InlineScriptParser :: parseStatement(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode)
+   return counter;
+}
+
+//int InlineScriptParser :: parseStatement(/*TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
 //{
 //   bool tapeMode = (mode == mdTape);
 //
@@ -435,31 +515,32 @@ InlineScriptParser :: InlineScriptParser()
 //      // do nothing
 //   }
 //   else throw EParseError(reader.info.column, reader.info.row);
-//
+
 //   return counter;
 //}
 
 void InlineScriptParser :: parseScript(MemoryDump& tape, _ScriptReader& reader)
 {
-//   TapeWriter                 writer(&tape);
-//   Map<const wchar16_t*, int> locals;
-//
-//   reader.read();
-//   do {
-//      const wchar16_t* token = reader.token;
-//      char state = reader.info.state;
-//
-//      if (state == dfaEOF) {
-//         break;
-//      }
-//      else if (token[0] == ';') {
-//         reader.read();
-//      }
-//      else parseStatement(writer, reader, locals, locals.Count(), mdRoot);
-//
-//   } while (true);
-//
-//   writer.writeEndCommand();
+   TapeWriter                 writer(&tape);
+   Map<const wchar16_t*, int> locals;
+
+   reader.read();
+   int counter = 0;
+   do {
+      const wchar16_t* token = reader.token;
+      char state = reader.info.state;
+
+      if (state == dfaEOF) {
+         break;
+      }
+      //else if (token[0] == ';') {
+      //   reader.read();
+      //}
+      else parseExpression(writer, reader/*, locals, locals.Count(), mdRoot*/);
+
+   } while (true);
+
+   writer.writeEndCommand();
 }
 
 void InlineScriptParser :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
@@ -469,64 +550,64 @@ void InlineScriptParser :: parseDirectives(MemoryDump& tape, _ScriptReader& read
    do {
       const wchar16_t* token = reader.read();
 
-//      if (token[0]==';') {
+      if (token[0]==';') {
          break;
-//      }
-//      else if(ConstantIdentifier::compare(token, "#start")) {
-//         writer.writeCommand(START_VM_MESSAGE_ID);
-//      }
-//      else if(ConstantIdentifier::compare(token, "#config")) {
-//         token = reader.read();
-//         if (reader.info.state == dfaIdentifier) {
-//            writer.writeCommand(LOAD_VM_MESSAGE_ID, token);
-//         }
-//         else throw EParseError(reader.info.column, reader.info.row);
-//      }
-//      else if(ConstantIdentifier::compare(token, "#map")) {
-//         token = reader.read();
-//
-//         IdentifierString forward;
-//         if (reader.info.state == dfaFullIdentifier) {
-//            forward.append(token);
-//
-//            token = reader.read();
-//            if(!ConstantIdentifier::compare(token, "="))
-//               throw EParseError(reader.info.column, reader.info.row);
-//
-//            token = reader.read();
-//            if (reader.info.state == dfaFullIdentifier) {
-//               forward.append('=');
-//               forward.append(token);
-//               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
-//         }
-//         else throw EParseError(reader.info.column, reader.info.row);
-//      }
-//      else if(ConstantIdentifier::compare(token, "#use")) {
-//         token = reader.read();
-//
-//         if (reader.info.state == dfaQuote) {
-//            writer.writeCommand(USE_VM_MESSAGE_ID, reader.token);
-//         }
-//         else {
-//            Path package;
-//            package.append(token);
-//
-//            token = reader.read();
-//            if(!ConstantIdentifier::compare(token, "="))
-//               throw EParseError(reader.info.column, reader.info.row);
-//
-//            token = reader.read();
-//            if (reader.info.state == dfaQuote) {
-//               package.append('=');
-//               package.append(reader.token);
-//               writer.writeCommand(USE_VM_MESSAGE_ID, package);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
-//         }
-//      }
-//      else return;
+      }
+      else if(ConstantIdentifier::compare(token, "#start")) {
+         writer.writeCommand(START_VM_MESSAGE_ID);
+      }
+      else if(ConstantIdentifier::compare(token, "#config")) {
+         token = reader.read();
+         if (reader.info.state == dfaIdentifier) {
+            writer.writeCommand(LOAD_VM_MESSAGE_ID, token);
+         }
+         else throw EParseError(reader.info.column, reader.info.row);
+      }
+      else if(ConstantIdentifier::compare(token, "#map")) {
+         token = reader.read();
+
+         IdentifierString forward;
+         if (reader.info.state == dfaFullIdentifier) {
+            forward.append(token);
+
+            token = reader.read();
+            if(!ConstantIdentifier::compare(token, "="))
+               throw EParseError(reader.info.column, reader.info.row);
+
+            token = reader.read();
+            if (reader.info.state == dfaFullIdentifier) {
+               forward.append('=');
+               forward.append(token);
+               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
+         else throw EParseError(reader.info.column, reader.info.row);
+      }
+      else if(ConstantIdentifier::compare(token, "#use")) {
+         token = reader.read();
+
+         if (reader.info.state == dfaQuote) {
+            writer.writeCommand(USE_VM_MESSAGE_ID, reader.token);
+         }
+         else {
+            Path package;
+            package.append(token);
+
+            token = reader.read();
+            if(!ConstantIdentifier::compare(token, "="))
+               throw EParseError(reader.info.column, reader.info.row);
+
+            token = reader.read();
+            if (reader.info.state == dfaQuote) {
+               package.append('=');
+               package.append(reader.token);
+               writer.writeCommand(USE_VM_MESSAGE_ID, package);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
+      }
+      else return;
    }
    while(true);
 }
