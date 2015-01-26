@@ -19,7 +19,7 @@
         #var(type:length)aRead := $self read &bytearray:anArray &length:aLength.
          
         (aLength > aRead)
-            ? [ #throw IOException new. ]
+            ? [ #throw IOException new. ].
     ]
 
     #method read &out'int:anInt

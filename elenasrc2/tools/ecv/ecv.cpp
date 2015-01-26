@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2013, by Alexei Rakov
+//                                              (C)2012-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   5
+#define BUILD_VERSION   6
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -441,6 +441,8 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcQuitN:
       case bcDCopy:
       case bcECopy:
+      case bcAndN:
+      case bcOrN:
          command.append(opcode);
          command.append(_T(' '));
          command.appendHex(argument);

@@ -5,7 +5,7 @@
 #define extensions.
 
 #type matrix.
-#type(class:system'IndexFunction2) everyMatrixItem.
+#type(class:system'IndexFunction2) everyij.
 
 // --- MatrixException ---
 
@@ -138,7 +138,7 @@
                 [
                     (a@i)setAt:k:((a@i@k) - (a@i@j) * (a@j@k)).
                 ].
-            ]
+            ].
         ].
         
         ^ Extension({ Even = even value. }, a).
@@ -195,7 +195,7 @@
 
 #symbol matrixControl =
 {
-    new &n:anN &m:anM &everyMatrixItem:anAction
+    new &n:anN &m:anM &everyij:anAction
         = Array new &length:(anN int) set &every: (&index: i)
             [ Array new &length:(anM int) set &every: (&index: j) [ anAction eval &index:i &index:j ] ].
 

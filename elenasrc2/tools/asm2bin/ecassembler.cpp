@@ -372,6 +372,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcSetVerb:
          case bcSetSubj:
          case bcAndN:
+         case bcOrN:
          case bcPushN:
             compileNCommand(opcode, token, writer);
             break;

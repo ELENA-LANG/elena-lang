@@ -104,7 +104,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &compileNop, &compilePushE, &compileDCopyVerb, &loadOneByteOp,
    &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDCopySubj,
 
-   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
+   &compileNot, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoad, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileExtDec, &compileExtInc, &compileNop, &compileNop,
@@ -140,7 +140,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &loadFPOp, &loadIndexOp, &compileNop, &compileNop, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
-   &compilePopN, &compileNop, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileNop,
+   &compilePopN, &compileNop, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -903,6 +903,13 @@ void _ELENA_::compileDAndN(int opcode, x86JITScope& scope)
    scope.code->writeDWord(scope.argument);
 }
 
+void _ELENA_::compileDOrN(int opcode, x86JITScope& scope)
+{
+   // or esi, mask
+   scope.code->writeWord(0xCE81);
+   scope.code->writeDWord(scope.argument);
+}
+
 void _ELENA_::compileDAddN(int opcode, x86JITScope& scope)
 {
    // add esi, n
@@ -1273,6 +1280,12 @@ void _ELENA_::compileACopyF(int opcode, x86JITScope& scope)
    // lea eax, [ebp+nn]
    scope.code->writeWord(0x858D);
    scope.code->writeDWord(-(scope.argument << 2));
+}
+
+void _ELENA_::compileNot(int opcode, x86JITScope& scope)
+{
+   // not esi
+   scope.code->writeWord(0xD6F7);
 }
 
 // --- x86JITScope ---

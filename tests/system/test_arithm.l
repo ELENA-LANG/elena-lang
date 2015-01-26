@@ -11,6 +11,7 @@
 {
     test
     [
+        #var b := (2 == 3 ) and: [ 2 == "a" ].
     ]
 }.
 
@@ -482,7 +483,7 @@
 [
     #var n := 2.
     
-    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ]
+    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
 ].
 
 // --- LoopTest ---

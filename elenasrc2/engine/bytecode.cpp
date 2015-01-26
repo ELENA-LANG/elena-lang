@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "pushb", "pop", "unknown", "pushe", "dcopyverb", "throw",
    "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
-   "unknown", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
+   "not", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "aload", "unhook", "add", "create",
 
    "ecopyd", "dcopye", "pushd", "popd", "edec", "einc", "unknown", "unknown",
@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "asavebi", "swapsi", "aswapsi", "asavesi", "asavefi", "unknown", "unknown", "unknown",
    "bloadfi", "bloadsi", "unknown", "unknown", "asaver", "aloadai", "aloadbi", "axsavebi",
 
-   "popi", "unknown", "scopyf", "setverb", "setsubj", "andn", "addn", "unknown",
+   "popi", "unknown", "scopyf", "setverb", "setsubj", "andn", "addn", "orn",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",

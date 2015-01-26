@@ -149,11 +149,13 @@ protected:
    friend void compileDAdd(int opcode, x86JITScope& scope);
    friend void compileDSub(int opcode, x86JITScope& scope);
    friend void compileDAndN(int opcode, x86JITScope& scope);
+   friend void compileDOrN(int opcode, x86JITScope& scope);
    friend void compileDAddN(int opcode, x86JITScope& scope);
    friend void compileDCopyVerb(int opcode, x86JITScope& scope);
    friend void compileDCopyCount(int opcode, x86JITScope& scope);
    friend void compileDCopySubj(int opcode, x86JITScope& scope);
    friend void compileALoad(int opcode, x86JITScope& scope);
+   friend void compileNot(int opcode, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -268,12 +270,14 @@ void compileECopy(int opcode, x86JITScope& scope);
 void compileDAdd(int opcode, x86JITScope& scope);
 void compileDSub(int opcode, x86JITScope& scope);
 void compileDAndN(int opcode, x86JITScope& scope);
+void compileDOrN(int opcode, x86JITScope& scope);
 void compileDAddN(int opcode, x86JITScope& scope);
 void compileDCopyVerb(int opcode, x86JITScope& scope);
 void compileDCopyCount(int opcode, x86JITScope& scope);
 void compileDCopyCount(int opcode, x86JITScope& scope);
 void compileDCopySubj(int opcode, x86JITScope& scope);
 void compileALoad(int opcode, x86JITScope& scope);
+void compileNot(int opcode, x86JITScope& scope);
 
 } // _ELENA_
 

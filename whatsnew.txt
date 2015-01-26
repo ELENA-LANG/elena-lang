@@ -18,6 +18,7 @@ ELENA:
 [*] syntax : class syntax changed - "::" should be used to provide the class parent
 [+] new hint : type can be provided for the method result
 [-] direct dispatching no longer supported
+[-] statement terminator can be ommited only in lazy expression
 
 ELC:
 [*] codebase refactored
@@ -29,10 +30,13 @@ IDE:
 [-] Project - Options - VM Path is no longer supported / required (SHARED path is used)
 
 [LIB]
-[*] system : ByteNumber
+[*] system : ByteNumber, ShortNumber
 [*] system : Object#class.new, Exception::theCallStack, Exception.get&literal$
 [*] system'control => extensions'control
 [+] system : CallStack, IntArray
+
+ElenaScript:
+[*] refactored / syntax modified
     
 Misc:
 [+] installation package is introduced

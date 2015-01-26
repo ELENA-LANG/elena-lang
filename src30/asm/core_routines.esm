@@ -81,23 +81,36 @@ end
 
 procedure int_saveshort
 
-  pusha
   bcopya
-  acopyr  const : system'shortMaximalValue
-  nless
-  ifn     labEnd 0
+  aloadsi 2
+  bswap
 
-  pop
-  open 1
+  nload
+  lessn labNegative 0
+
+  lessn labCopy 8000h
+
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
-  throw  
+  throw    
 
-labEnd:
-  popa
-  bloadsi 2
-  ncopy
-  quitn 2
+labCopy:
+  nsave
+  quitn 2  
+  
+labNegative:
+  not
+
+  lessn labCopyNeg 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+  
+labCopyNeg:
+  not
+  nsave
+  quitn 2  
 
 end
 
@@ -2521,4 +2534,231 @@ procedure int_save
   ncopy
   quitn 2
 
+end
+
+procedure short_min
+
+  bcopya
+  dcopy 0FFFF8000h
+  nsave
+  acopyb
+  quitn 1
+
+end
+
+procedure short_max
+
+  bcopya
+  dcopy 0FFFFh
+  nsave
+  acopyb
+  quitn 1
+
+end
+
+procedure short_copyint
+
+  bcopya
+  aloadsi 2
+
+  nload
+  lessn labNegative 0
+
+  lessn labCopy 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  nsave
+  quitn 2  
+  
+labNegative:
+  not
+
+  lessn labCopyNeg 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+  
+labCopyNeg:
+  not
+  nsave
+  quitn 2  
+
+end
+
+procedure short_add
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nadd
+  acopyb
+  nload
+  lessn labNegative 0
+
+  andn 0FFFFh
+  nsave
+  quitn 2
+
+labNegative:
+  orn 0FFFF0000h
+  nsave
+  quitn 2
+
+end
+
+procedure short_sub
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nsub
+  acopyb
+  nload
+  lessn labNegative 0
+
+  andn 0FFFFh
+  nsave
+  quitn 2
+
+labNegative:
+  orn 0FFFF0000h
+  nsave
+  quitn 2
+
+end
+
+procedure short_mul
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nmul
+  acopyb
+  nload
+  lessn labNegative 0
+
+  andn 0FFFFh
+  nsave
+  quitn 2
+
+labNegative:
+  orn 0FFFF0000h
+  nsave
+  quitn 2
+
+end
+
+procedure short_div
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  ndiv
+  acopyb
+  nload
+  lessn labNegative 0
+
+  andn 0FFFFh
+  nsave
+  quitn 2
+
+labNegative:
+  orn 0FFFF0000h
+  nsave
+  quitn 2
+  
+end
+
+procedure short_and
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nand
+  acopyb
+  quitn 2
+
+end
+
+procedure short_or
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nor
+  acopyb
+  quitn 2
+
+end
+
+procedure short_xor
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  popa
+  ncopy
+  aloadsi 2
+  nxor
+  acopyb
+  quitn 2
+
+end
+
+procedure short_shift
+
+  pusha
+  newn   class : system'ShortNumber 4
+  bcopya
+  aloadsi 3    // ; load index
+  nload
+  popa
+  nshift
+  acopyb
+  nload
+  lessn labNegative 0
+
+  andn 0FFFFh
+  nsave
+  quitn 3
+
+labNegative:
+  orn 0FFFF0000h
+  nsave
+  quitn 3
+
+end
+
+procedure short_not
+
+  newn   class : system'ShortNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
 end

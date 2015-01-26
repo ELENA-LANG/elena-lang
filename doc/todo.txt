@@ -22,57 +22,19 @@ Currently:
 ------
 
               xdev - script engine
-                       * system'console writeLine:"Hello"
-
-                         ( system'console "Hello" ) . writeLine
-
-                         [ 100 200 ] : system'Array
-
-                         [ ( system'console "Hello" ) % writeLine ] : system'dynamic'Tape
-
-                         
-
-
-
-
-
-                         
-
-
-                       
-                         
-
-
-
-                         [ 1 2 3 ]=Array
-
-
-
-                       
-                         system'console "Hello" ^ writeLine [ 1 ]
-
-                         ($reference $literal).$message 
-
-
-
-                         system'console writeLine("Hello")
-
                        * system'console writeLine:(2 add:3)
 
                        * ELENA: evaluation the script
 
                        * ELENA: return the result of the script evaluation
 
-                       * migrate
+                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
 
               adev - lib30                                        
-                       * short -> int, int -> short should correctly set sign
+                       * test short -> int, int -> short should correctly set sign
                        * support operations with byte, short, int, long and real for all numeric types
                        * char should be embeddable primitive type
                        * new class : chararray, should be used instead of shortarray for literal operations
-
-              xdev - generic development                                                      
-                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
 
               idev - debugger - watch
                        * show shortarray, bytearray, intarray
@@ -81,8 +43,11 @@ Currently:
                        * operator or, do we need it (or bitwise operators at all)
                         
               xdev - generic development                                                      
-                       * class methods : Byte / Short / IntNumber - min, max ??
-                       
+                       * only [ expr ] can be allowed, x [ expr ] should not be possible ???
+
+
+
+
                        * think over object serialization, for example - save the object into file and load back
 
                        * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
@@ -132,9 +97,6 @@ Currently:
                          raise an error ; do we need it? - better always box into array
                        * split hook into two : address , hook ; or use internal function for exception raising / handling?
                        * enumerations
-                       * ambiguity : [ console writeLine:"abc" ] - will be compiled as lazy expression, when the programmer may expect
-                         the nested action 
-                       * no need to check if the object is stack allocated - box it directly, so we could get rid of extra command ifheap                       
                                               
               xmaint - package
                        * create installation package
@@ -784,6 +746,8 @@ week1:
                        * in the following expression - aTarget::aVerb int:self - typecast should be implemented
 
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
+
+                       * constructor may return constant objects as well (see min / max)
 
               xdev - multithreading       
                        * implement lock / unlock

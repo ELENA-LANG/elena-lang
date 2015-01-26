@@ -33,6 +33,7 @@ enum ByteCode
    bcBSRedirect     = 0x0E,
    bcDCopySubj      = 0x0F,
 
+   bcNot            = 0x10,
    bcCount          = 0x11,
    bcBCopyA         = 0x12,
    bcDec            = 0x13,
@@ -218,6 +219,7 @@ enum ByteCode
    bcSetSubj        = 0xD4,
    bcAndN           = 0xD5,
    bcAddN           = 0xD6,
+   bcOrN            = 0xD7,
 
    bcNew            = 0xF0,
    bcNewN           = 0xF1,

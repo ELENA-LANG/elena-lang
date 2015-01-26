@@ -1206,7 +1206,7 @@ multiply &short:<A HREF="protocol.html#short">short</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-not = <A HREF="protocol.html#int">int</A>
+not = <A HREF="protocol.html#byte">byte</A>
 </TD>
 <TD><CODE>Bitwise inversion</CODE>
 </TD>
@@ -5536,12 +5536,9 @@ Class ShortNumber</H2>
 <DT>
 <A HREF="protocol.html#short">short</A>
 </DT>
-<DT>
-<A HREF="protocol.html#int">int</A>
-</DT>
 </DL>
 <P>
-A short integer value class
+A signed 16 bit integer
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
@@ -5550,6 +5547,31 @@ A short integer value class
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TD COLSPAN=2><FONT SIZE="+2">
 <B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+min = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the minimal value (-32768)</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+max = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the maxial value (32767)</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Creates the object with specified value</CODE>
+</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
@@ -5578,6 +5600,202 @@ new &short:<A HREF="protocol.html#short">short</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+add &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the sum</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+and &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of bitwise AND operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+byte = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Returns the byte value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+cast  : <A HREF="protocol.html#verb">verb</A>
+ = <A HREF="protocol.html#&to:object">&to:object</A>
+</TD>
+<TD><CODE>Casts the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clone = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Clones the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the result of a division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+divide &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of integer division</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 int = <A HREF="protocol.html#int">int</A>
 </TD>
 <TD><CODE>Returns the integer value</CODE>
@@ -5586,9 +5804,257 @@ int = <A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+less &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#bool">bool</A>
+</TD>
+<TD><CODE>Compares the values</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+literal = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the literal presentation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+long = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+multiply &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the product</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+not = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Bitwise inversion</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the result of bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the result of bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+or &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of bitwise OR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+real = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+shift &index:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Bitwise shift operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 short = <A HREF="protocol.html#short">short</A>
 </TD>
-<TD><CODE>Returns the short integer value</CODE>
+<TD><CODE>Returns itself</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the difference</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Returns the result of bitwise XOR operation</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+xor &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the result of bitwise XOR operation</CODE>
 </TD>
 </TR>
 </TABLE>

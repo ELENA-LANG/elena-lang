@@ -130,6 +130,8 @@ ELENA byte codes (or ecodes)
   
  andn n                     - index && n => index
  
+ orn n                      - index || n => index
+ 
  dcopy i                    - i => index
 
  dcopye                     - index << ext
@@ -137,6 +139,8 @@ ELENA byte codes (or ecodes)
  dec                        - index--
 
  inc                        - index++
+
+ not                        - !index => index
  
  edec                       - ext--
 
@@ -289,8 +293,6 @@ ELENA byte codes (or ecodes)
 
  class                       - base::VMT >> acc
 
- setclass                      base::VMT << acc
- 
  mindex                      - search for ext in acc:VMT; out: index or -1
 
  xindexrm r, m               - directly resolve message mapping for the spcified class
