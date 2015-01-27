@@ -104,24 +104,26 @@ class InlineScriptParser
 ////   //void parseVariable(_ELENA_TOOL_::TextSourceReader& source, wchar16_t* token);
 
    int mapVerb(const wchar16_t* literal);
-
-//   //void writeTerminal(TapeWriter& writer, const wchar16_t* token, char state, int col, int row);
 //
-//   int writeVariable(TapeWriter& writer, int index, int level, Mode mode);
-//
-//   ////int parseOperations(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
-//   ////int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
-//   ////void parseAction(TapeWriter& writer, _ScriptReader& reader);
+////   //void writeTerminal(TapeWriter& writer, const wchar16_t* token, char state, int col, int row);
+////
+////   int writeVariable(TapeWriter& writer, int index, int level, Mode mode);
+////
+////   ////int parseOperations(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+////   ////int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
+////   ////void parseAction(TapeWriter& writer, _ScriptReader& reader);
 
    void readMessage(_ScriptReader& reader, IdentifierString& message);
 
-   int parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter);
-   int parseReverseList(TapeWriter& writer, _ScriptReader& reader);
-//   int parseAction(TapeWriter& writer, _ScriptReader& reader);
-//   int parseStruct(TapeWriter& writer, _ScriptReader& rveader, Map<const wchar16_t*, int>& locals);
-//   int parseObject(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
-   int parseExpression(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
-//   int parseStatement(/*TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
+//   int parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter);
+//   int parseReverseList(TapeWriter& writer, _ScriptReader& reader);
+////   int parseAction(TapeWriter& writer, _ScriptReader& reader);
+////   int parseStruct(TapeWriter& writer, _ScriptReader& rveader, Map<const wchar16_t*, int>& locals);
+////   int parseObject(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode);
+//   int parseExpression(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
+////   int parseStatement(/*TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
+
+   void writeObject(TapeWriter& writer, _ScriptReader& reader);
 
 public:
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);

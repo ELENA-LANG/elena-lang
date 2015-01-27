@@ -11,13 +11,13 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-//#define REFERENCE_KEYWORD     "$reference"
-//#define IDENTIFIER_KEYWORD    "$identifier"
+#define REFERENCE_KEYWORD     "$reference"
+#define IDENTIFIER_KEYWORD    "$identifier"
 #define LITERAL_KEYWORD       "$literal"
-#define NUMERIC_KEYWORD       "$numeric"
+//#define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
-#define EOF_KEYWORD           "$eof"
-#define ANY_KEYWORD           "$any"
+//#define EOF_KEYWORD           "$eof"
+//#define ANY_KEYWORD           "$any"
 
 const char* dfaSymbolic[4] =
 {
@@ -136,109 +136,115 @@ bool normalLiteralApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token,
    return true;
 }
 
-bool normalNumericApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//bool normalNumericApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//{
+//   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
+//      return false;
+//
+//   token.writeLog();
+//
+//   if (!apply(rule, token, reader))
+//      return false;
+//
+//   return true;
+//}
+//
+//bool normalNumericApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//{
+//   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
+//      return false;
+//
+//   if (rule.prefixPtr)
+//      rule.applyPrefixDSARule(token);
+//
+//   token.writeLog();
+//
+//   if (!apply(rule, token, reader))
+//      return false;
+//
+//   if (rule.postfixPtr)
+//      rule.applyPostfixDSARule(token);
+//
+//   return true;
+//}
+
+bool normalIdentifierApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
-   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
+   if (token.state != dfaIdentifier)
       return false;
 
    token.writeLog();
 
-   if (!apply(rule, token, reader))
-      return false;
-
-   return true;
+   return apply(rule, token, reader);
 }
 
-bool normalNumericApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+bool normalIdentifierApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
-   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
+   if (token.state != dfaIdentifier)
       return false;
 
-   if (rule.prefixPtr)
+   if (rule.prefixPtr) {
       rule.applyPrefixDSARule(token);
+   }
 
    token.writeLog();
 
    if (!apply(rule, token, reader))
       return false;
 
-   if (rule.postfixPtr)
+   if (rule.postfixPtr) {
       rule.applyPostfixDSARule(token);
+   }
 
    return true;
 }
 
-//bool normalIdentifierApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaIdentifier)
-//      return false;
-//
-//   return apply(rule, token, reader);
-//}
-//
-//bool normalIdentifierApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaIdentifier)
-//      return false;
-//
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//
-//   return true;
-//}
-//
-//bool normalReferenceApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaFullIdentifier)
-//      return false;
-//
-//   return apply(rule, token, reader);
-//}
-//
-//bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, CFParser::CachedScriptReader& reader)
-//{
-//   if (token.state != dfaFullIdentifier)
-//      return false;
-//
-//   Terminal terminal;
-//   token.copyTo(&terminal);
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token.parser, token.compiler, &terminal);
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token.parser, token.compiler, &terminal);
-//
-//   return true;
-//}
-
-bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+bool normalReferenceApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
-   return token.state == dfaEOF;
-}
-
-bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-{
-   if (token.state != dfaEOF)
+   if (token.state != dfaFullIdentifier)
       return false;
 
-   if (rule.prefixPtr)
+   token.writeLog();
+
+   return apply(rule, token, reader);
+}
+
+bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.state != dfaFullIdentifier)
+      return false;
+
+   if (rule.prefixPtr) {
       rule.applyPrefixDSARule(token);
+   }
+
+   token.writeLog();
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr) {
+      rule.applyPostfixDSARule(token);
+   }
 
    return true;
 }
+
+//bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//{
+//   return token.state == dfaEOF;
+//}
+//
+//bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//{
+//   if (token.state != dfaEOF)
+//      return false;
+//
+//   if (rule.prefixPtr)
+//      rule.applyPrefixDSARule(token);
+//
+//   return true;
+//}
 
 bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
@@ -253,9 +259,6 @@ bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptR
 
 bool chomskiApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
-   if (rule.prefixPtr)
-      rule.applyPrefixDSARule(token);
-
    if (applyNonterminalDSA(rule, token, reader)) {
       // additional nonterminal should be resolved as well
       if (!applyNonterminal(rule, token, reader, true))
@@ -285,30 +288,30 @@ bool epsApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptRe
    return true;
 }
 
-bool anyApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-{
-   if(token.state == dfaEOF)
-      return false;
-
-   return apply(rule, token, reader);
-}
-
-bool anyApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-{
-   if(token.state == dfaEOF)
-      return false;
-
-   if (rule.prefixPtr)
-      rule.applyPrefixDSARule(token);
-
-   if (apply(rule, token, reader)) {
-      if (rule.postfixPtr)
-         rule.applyPostfixDSARule(token);
-
-      return true;
-   }
-   else return false;
-}
+//bool anyApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//{
+//   if(token.state == dfaEOF)
+//      return false;
+//
+//   return apply(rule, token, reader);
+//}
+//
+//bool anyApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+//{
+//   if(token.state == dfaEOF)
+//      return false;
+//
+//   if (rule.prefixPtr)
+//      rule.applyPrefixDSARule(token);
+//
+//   if (apply(rule, token, reader)) {
+//      if (rule.postfixPtr)
+//         rule.applyPostfixDSARule(token);
+//
+//      return true;
+//   }
+//   else return false;
+//}
 
 size_t CFParser :: writeBodyText(const wchar16_t* text)
 {
@@ -343,24 +346,24 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtLiteral:
          rule.apply = dsaRule ? normalLiteralApplyRuleDSA : normalLiteralApplyRule;
          break;
-      case rtNumeric:
-         rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
+      //case rtNumeric:
+      //   rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
+      //   break;
+      case rtReference:
+         rule.apply = dsaRule ? normalReferenceApplyRuleDSA : normalReferenceApplyRule;
          break;
-//      case rtReference:
-//         rule.apply = dsaRule ? normalReferenceApplyRuleDSA : normalReferenceApplyRule;
-//         break;
-//      case rtIdentifier:
-//         rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
-//         break;
-      case rtAny:
-         rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
+      case rtIdentifier:
+         rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
          break;
+      //case rtAny:
+      //   rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
+      //   break;
       case rtEps:
          rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
          break;
-      case rtEof:
-         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
-         break;
+      //case rtEof:
+      //   rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
+      //   break;
    }
 }
 
@@ -421,7 +424,7 @@ size_t CFParser :: defineDSARule(TokenInfo& token, _ScriptReader& reader)
    else return 0;
 }
 
-size_t CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader)
+size_t CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, size_t nonterminal)
 {
    ReferenceNs ns;
    int   index = 0;
@@ -437,6 +440,7 @@ size_t CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader)
    size_t ruleId = mapRuleId(ns);
 
    Rule rule;
+   rule.nonterminal = nonterminal;
 
    defineGrammarRule(token, reader, rule);
 
@@ -485,24 +489,24 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             if (ConstantIdentifier::compare(token.value, LITERAL_KEYWORD)) {
                type = rtLiteral;
             }
-            else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
-               type = rtNumeric;
-            }
+      //      else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
+      //         type = rtNumeric;
+      //      }
             else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
                type = rtEps;
             }
-            else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
-               type = rtEof;
-            }
-      //      else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
-      //         type = rtReference;
+      //      else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
+      //         type = rtEof;
       //      }
-            else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
-               type = rtAny;
+            else if (ConstantIdentifier::compare(token.value, REFERENCE_KEYWORD)) {
+               type = rtReference;
             }
-      //      else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
-      //         type = rtIdentifier;
+      //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
+      //         type = rtAny;
       //      }
+            else if (ConstantIdentifier::compare(token.value, IDENTIFIER_KEYWORD)) {
+               type = rtIdentifier;
+            }
          }
       }
       else if (token.state == dfaIdentifier) {
@@ -515,6 +519,10 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             type = rtChomski;
 
             rule.terminal = mapRuleId(token.value);
+         }
+         else {
+            rule.nonterminal = defineGrammarRule(token, reader, rule.nonterminal);
+            break;
          }
       }
 

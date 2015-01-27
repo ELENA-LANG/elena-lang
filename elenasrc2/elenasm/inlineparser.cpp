@@ -299,162 +299,151 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
    }
 }
 
-int InlineScriptParser :: parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter)
-{
-   IdentifierString message; 
-   readMessage(reader, message);
-
-   if (counter > 1) 
-      writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter);
-
-   message[0] = message[0] + (counter - 1);
-
-   writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
-
-   return 1;
-}
-
-int InlineScriptParser :: parseReverseList(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
-{
-   int paramCount = 0;
-   reader.read();
-
-   while (reader.token[0]!=')') {
-      paramCount += parseExpression(writer, reader);
-
-      reader.read();
-   }
-
-//   do {
-//            reader.read();
-//            if (reader.token[0] == ')' && paramCount == 0) {
-//               // replace EVAL with GET if required
-//               if (message[2] == 0x20 + EVAL_MESSAGE_ID) {
-//                  message[2] = 0x20 + GET_MESSAGE_ID;
-//               }
-//            }
-//            else {
-//               paramCount++;
-//               counter += parseExpression(paramWriter, reader, locals, currentLevel++, mode);
+//int InlineScriptParser :: parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter)
+//{
+//}
 //
-//               writer.insert(bookmark, &paramTape);
-//               paramTape.clear();
-//            }
+//int InlineScriptParser :: parseReverseList(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
+//{
+//   int paramCount = 0;
+//   reader.read();
+//
+//   while (reader.token[0]!=')') {
+//      paramCount += parseExpression(writer, reader);
+//
+//      reader.read();
 //   }
-//   while (reader.token[0]==',');
-
-   return paramCount;
-}
-
-int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
-{
-//   size_t bookmark = writer.Position();
-   int counter = 1;
-
-   if (reader.token[0]=='(') {
-      counter = parseReverseList(writer, reader);
-
-      reader.read();
-      if (reader.token[0] == '.') {
-         counter = parseMessage(writer, reader, counter);
-      }
-   }
-   else {
-      switch (reader.info.state) {
-//         case dfaInteger:
-//            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
-//            break;
-//         case dfaReal:
-//            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
-//            break;
-//         case dfaLong:
-//            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
-//            break;
-         case dfaQuote:
-            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
-            break;
-         case dfaFullIdentifier:
-            writer.writeCallCommand(reader.token);
-            break;
-//         case dfaIdentifier:
-//         {
-//            int index = locals.get(reader.token);
-//            if (index != 0) {
-//               counter = writeVariable(writer, index, level, mode);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
 //
-//            break;
-//         }
-//         default:
-//            throw EParseError(reader.info.column, reader.info.row);
-      }
-   }
-
-
-//   int currentLevel = level;
+////   do {
+////            reader.read();
+////            if (reader.token[0] == ')' && paramCount == 0) {
+////               // replace EVAL with GET if required
+////               if (message[2] == 0x20 + EVAL_MESSAGE_ID) {
+////                  message[2] = 0x20 + GET_MESSAGE_ID;
+////               }
+////            }
+////            else {
+////               paramCount++;
+////               counter += parseExpression(paramWriter, reader, locals, currentLevel++, mode);
+////
+////               writer.insert(bookmark, &paramTape);
+////               paramTape.clear();
+////            }
+////   }
+////   while (reader.token[0]==',');
 //
-//   if (mode == mdRoot)
-//      mode = mdRootOp;
+//   return paramCount;
+//}
 //
-//   if (reader.token[0]=='~') {
-//      int roleCounter = 1;
-//      while (reader.token[0]=='~') {
-//         reader.read();
+//int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
+//{
+////   size_t bookmark = writer.Position();
+//   int counter = 1;
 //
-//         parseObject(writer, reader, locals, currentLevel, mode);
+//   if (reader.token[0]=='(') {
+//      counter = parseReverseList(writer, reader);
 //
-//         currentLevel++;
-//         roleCounter++;
+//      reader.read();
+//      if (reader.token[0] == '.') {
+//         counter = parseMessage(writer, reader, counter);
 //      }
-//
-//      writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(WRAP_CLASS));
-//      writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter << 1);
-//
-//      currentLevel = level;
 //   }
-//
-//   while (reader.token[0]=='.') {
-//      IdentifierString message; 
-//      readMessage(reader, message);
-//
-//      // if it is a method
-//      if (reader.token[0] == '(') {
-//         MemoryDump paramTape;
-//         TapeWriter paramWriter(&paramTape);
-//
-//         int paramCount = 0;
-//         do {
-//            reader.read();
-//            if (reader.token[0] == ')' && paramCount == 0) {
-//               // replace EVAL with GET if required
-//               if (message[2] == 0x20 + EVAL_MESSAGE_ID) {
-//                  message[2] = 0x20 + GET_MESSAGE_ID;
-//               }
-//            }
-//            else {
-//               paramCount++;
-//               counter += parseExpression(paramWriter, reader, locals, currentLevel++, mode);
-//
-//               writer.insert(bookmark, &paramTape);
-//               paramTape.clear();
-//            }
-//         }
-//         while (reader.token[0]==',');
-//
-//         message[0] = message[0] + paramCount;
-//
-//         if (reader.token[0] != ')')
-//            throw EParseError(reader.info.column, reader.info.row);
-//
-//         reader.read();
+//   else {
+//      switch (reader.info.state) {
+////         case dfaInteger:
+////            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
+////            break;
+////         case dfaReal:
+////            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
+////            break;
+////         case dfaLong:
+////            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
+////            break;
+//         case dfaQuote:
+//            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
+//            break;
+//         case dfaFullIdentifier:
+//            writer.writeCallCommand(reader.token);
+//            break;
+////         case dfaIdentifier:
+////         {
+////            int index = locals.get(reader.token);
+////            if (index != 0) {
+////               counter = writeVariable(writer, index, level, mode);
+////            }
+////            else throw EParseError(reader.info.column, reader.info.row);
+////
+////            break;
+////         }
+////         default:
+////            throw EParseError(reader.info.column, reader.info.row);
 //      }
-//      writer.writeCommand(mode == mdTape ? PUSHM_TAPE_MESSAGE_ID : SEND_TAPE_MESSAGE_ID, message);
-//      counter++;
-//      currentLevel = level;
 //   }
-   return counter;
-}
+//
+//
+////   int currentLevel = level;
+////
+////   if (mode == mdRoot)
+////      mode = mdRootOp;
+////
+////   if (reader.token[0]=='~') {
+////      int roleCounter = 1;
+////      while (reader.token[0]=='~') {
+////         reader.read();
+////
+////         parseObject(writer, reader, locals, currentLevel, mode);
+////
+////         currentLevel++;
+////         roleCounter++;
+////      }
+////
+////      writer.writeCommand(ARG_TAPE_MESSAGE_ID, ConstantIdentifier(WRAP_CLASS));
+////      writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter << 1);
+////
+////      currentLevel = level;
+////   }
+////
+////   while (reader.token[0]=='.') {
+////      IdentifierString message; 
+////      readMessage(reader, message);
+////
+////      // if it is a method
+////      if (reader.token[0] == '(') {
+////         MemoryDump paramTape;
+////         TapeWriter paramWriter(&paramTape);
+////
+////         int paramCount = 0;
+////         do {
+////            reader.read();
+////            if (reader.token[0] == ')' && paramCount == 0) {
+////               // replace EVAL with GET if required
+////               if (message[2] == 0x20 + EVAL_MESSAGE_ID) {
+////                  message[2] = 0x20 + GET_MESSAGE_ID;
+////               }
+////            }
+////            else {
+////               paramCount++;
+////               counter += parseExpression(paramWriter, reader, locals, currentLevel++, mode);
+////
+////               writer.insert(bookmark, &paramTape);
+////               paramTape.clear();
+////            }
+////         }
+////         while (reader.token[0]==',');
+////
+////         message[0] = message[0] + paramCount;
+////
+////         if (reader.token[0] != ')')
+////            throw EParseError(reader.info.column, reader.info.row);
+////
+////         reader.read();
+////      }
+////      writer.writeCommand(mode == mdTape ? PUSHM_TAPE_MESSAGE_ID : SEND_TAPE_MESSAGE_ID, message);
+////      counter++;
+////      currentLevel = level;
+////   }
+//   return counter;
+//}
 
 //int InlineScriptParser :: parseStatement(/*TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
 //{
@@ -519,13 +508,53 @@ int InlineScriptParser :: parseExpression(TapeWriter& writer, _ScriptReader& rea
 //   return counter;
 //}
 
+void InlineScriptParser :: writeObject(TapeWriter& writer, _ScriptReader& reader)
+{
+   switch (reader.info.state) {
+//         case dfaInteger:
+//            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
+//            break;
+//         case dfaReal:
+//            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
+//            break;
+//         case dfaLong:
+//            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
+//            break;
+      case dfaQuote:
+         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
+         break;
+      case dfaFullIdentifier:
+         writer.writeCallCommand(reader.token);
+         break;
+//         case dfaIdentifier:
+//         {
+//            int index = locals.get(reader.token);
+//            if (index != 0) {
+//               counter = writeVariable(writer, index, level, mode);
+//            }
+//            else throw EParseError(reader.info.column, reader.info.row);
+//
+//            break;
+//         }
+//         default:
+//            throw EParseError(reader.info.column, reader.info.row);
+   }
+
+   reader.read();
+}
+
 void InlineScriptParser :: parseScript(MemoryDump& tape, _ScriptReader& reader)
 {
    TapeWriter                 writer(&tape);
-   Map<const wchar16_t*, int> locals;
+   //Map<const wchar16_t*, int> locals;
+   Stack<int> levels;
+   Stack<int> args;
+   int        level = 0;
+   int        counter = 0;
+
+   MemoryDump arguments;
 
    reader.read();
-   int counter = 0;
    do {
       const wchar16_t* token = reader.token;
       char state = reader.info.state;
@@ -533,12 +562,56 @@ void InlineScriptParser :: parseScript(MemoryDump& tape, _ScriptReader& reader)
       if (state == dfaEOF) {
          break;
       }
+      else if (token[0] == '(') {
+         levels.push(level);
+         counter = 0;
+
+         reader.read();
+      }
+      else if (token[0] == ')') {
+         counter = level - levels.pop();
+
+         reader.read();
+      }
+      else if(ConstantIdentifier::compare(token, "#reverse")) {
+         if (counter > 1) 
+            writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter);
+
+         reader.read();
+      }
+      else if(ConstantIdentifier::compare(token, "#message")) {
+         IdentifierString message; 
+         readMessage(reader, message);
+
+         MemoryWriter argWriter(&arguments);
+
+         args.push(argWriter.Position());
+         argWriter.writeWideLiteral(message);
+      }
+      else if(ConstantIdentifier::compare(token, "#send")) {
+         int pos = args.pop();
+
+         IdentifierString message; 
+         MemoryReader argReader(&arguments, pos);
+         argReader.readWideString(message);
+
+         message[0] = message[0] + counter - 1;
+         level -= (counter - 1);
+
+         writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
+         arguments.trim(pos);
+
+         reader.read();
+      }
       //else if (token[0] == ';') {
       //   reader.read();
       //}
-      else parseExpression(writer, reader/*, locals, locals.Count(), mdRoot*/);
-
-   } while (true);
+      else {
+         writeObject(writer, reader);
+         level++;
+      }
+   } 
+   while (true);
 
    writer.writeEndCommand();
 }

@@ -22,11 +22,12 @@ Currently:
 ------
 
               xdev - script engine
-                       * system'console writeLine:(2 add:3)
-
-                       * ELENA: evaluation the script
-
                        * ELENA: return the result of the script evaluation
+
+                       * variables
+                       * objects
+                       * branching
+                       * looping
 
                        * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
 
@@ -43,8 +44,7 @@ Currently:
                        * operator or, do we need it (or bitwise operators at all)
                         
               xdev - generic development                                                      
-                       * only [ expr ] can be allowed, x [ expr ] should not be possible ???
-
+                       * widechar constant : special symbol or we could use literal constant with length=1
 
 
 
@@ -69,7 +69,6 @@ Currently:
                        * generic handlers : should not be allowed for roles ??
                        * uncomment : declareGenericMethod / jumpIfNotEqualN
                        
-                       * widechar constant : special symbol or we could use literal constant with length=1
                        * multiple parameter dispatching (see extensions'convertor)
                              save&to => save&int&to | save&long&to ; 
                              can we simplify the following syntax : self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest.

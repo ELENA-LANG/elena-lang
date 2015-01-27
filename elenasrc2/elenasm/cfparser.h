@@ -149,12 +149,12 @@ public:
       rtNormal,
       rtChomski,
       rtLiteral,
-      rtNumeric,
-//      rtReference,
-//      rtIdentifier,
-      rtAny,
+//      rtNumeric,
+      rtReference,
+      rtIdentifier,
+//      rtAny,
       rtEps,
-      rtEof
+//      rtEof
    };
 
    // --- Rule ---
@@ -214,7 +214,7 @@ protected:
 
 //   void compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler);
 
-   size_t defineGrammarRule(TokenInfo& token, _ScriptReader& reader);
+   size_t defineGrammarRule(TokenInfo& token, _ScriptReader& reader, size_t nonterminal = 0);
    void defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule& rule);
 
    void saveScript(TokenInfo& token, _ScriptReader& reader, Rule& rule);
