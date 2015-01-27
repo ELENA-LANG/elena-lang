@@ -2549,7 +2549,7 @@ end
 procedure short_max
 
   bcopya
-  dcopy 0FFFFh
+  dcopy 07FFFh
   nsave
   acopyb
   quitn 1
@@ -2761,4 +2761,24 @@ procedure short_not
   acopyb
   quitn 1
   
+end
+
+procedure int_min
+
+  bcopya
+  dcopy 80000000h
+  nsave
+  acopyb
+  quitn 1
+
+end
+
+procedure int_max
+
+  bcopya
+  dcopy 07FFFFFFFh
+  nsave
+  acopyb
+  quitn 1
+
 end

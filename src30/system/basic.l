@@ -497,11 +497,20 @@
 
 #class(sealed,integer:4) IntNumber :: IntBaseNumber
 {
+    #constructor min
+        => system'internal'int_min.
+    
+    #constructor max
+        => system'internal'int_max.
+    
     #constructor new &int:anOperand
         => system'internal'int_copy.
 
     #constructor new &short:anOperand
         => system'internal'int_copyshort.
+
+    #constructor new &byte:anOperand
+        => system'internal'int_copy.
 
     #constructor new
         => system'internal'int_init.
@@ -510,62 +519,137 @@
 
     #method short = ShortNumber new &int:$self.
 
+    #method byte = ByteNumber new &int:$self.
+
+    #method long = LongNumber new &int:$self long.
+
+    #method real = RealNumber new &int:$self real.
+
     #method(type:bool) equal &int:anOperand 
         => system'internal'int_equal.
         
-    #method(type:bool) less &int:anOperand
-        => system'internal'int_less.
-
-    #method(type:int) add &int:anOperand
-        => system'internal'int_add.
-
-    #method(type:int) subtract &int:anOperand
-        => system'internal'int_sub.
-
-    #method(type:int) multiply &int:anOperand
-        => system'internal'int_mul.
-
-    #method(type:int) divide &int:anOperand
-        => system'internal'int_div.
-
-    #method(type:int) and &int:anOperand
-        => system'internal'int_and.
-
-    #method(type:int) or &int:anOperand
-        => system'internal'int_or.
-
-    #method(type:int) xor &int:anOperand
-        => system'internal'int_xor.
-
+    #method(type:bool) equal &short:anOperand 
+        => system'internal'int_equal.
+        
+    #method(type:bool) equal &byte:anOperand 
+        => system'internal'int_equal.
+        
     #method equal &long:anOperand 
         = LongNumber new &int:$self equal &long:anOperand.
 
+    #method equal &real:anOperand 
+        = RealNumber new &int:$self equal &real:anOperand.
+
+    #method(type:bool) less &int:anOperand
+        => system'internal'int_less.
+
+    #method(type:bool) less &short:anOperand
+        => system'internal'int_less.
+
+    #method(type:bool) less &byte:anOperand
+        => system'internal'int_less.
+        
     #method less &long:anOperand 
         = LongNumber new &int:$self less &long:anOperand.
+
+    #method less &real:anOperand 
+        = RealNumber new &int:$self less &real:anOperand.
+
+    #method(type:int) add &int:anOperand
+        => system'internal'int_add.
+        
+    #method(type:int) add &short:anOperand
+        => system'internal'int_add.
+
+    #method(type:int) add &byte:anOperand
+        => system'internal'int_add.
 
     #method add &long:anOperand
         = LongNumber new &int:$self add &long:anOperand.
 
-    #method subtract &long:anOperand
-        = LongNumber new &int:$self subtract &long:anOperand.
-
-    #method multiply &long:anOperand
-        = LongNumber new &int:$self multiply &long:anOperand.
-
-    #method divide &long:anOperand
-        = LongNumber new &int:$self divide &long:anOperand.
-
     #method add &real:anOperand
         = RealNumber new &int:$self add &real:anOperand.
+
+    #method(type:int) subtract &int:anOperand
+        => system'internal'int_sub.
+
+    #method(type:int) subtract &short:anOperand
+        => system'internal'int_sub.
+
+    #method(type:int) subtract &byte:anOperand
+        => system'internal'int_sub.
+
+    #method subtract &long:anOperand
+        = LongNumber new &int:$self subtract &long:anOperand.
 
     #method subtract &real:anOperand
         = RealNumber new &int:$self subtract &real:anOperand.
 
+    #method(type:int) multiply &int:anOperand
+        => system'internal'int_mul.
+        
+    #method(type:int) multiply &short:anOperand
+        => system'internal'int_mul.
+
+    #method(type:int) multiply &byte:anOperand
+        => system'internal'int_mul.
+
+    #method multiply &long:anOperand
+        = LongNumber new &int:$self multiply &long:anOperand.
+
     #method multiply &real:anOperand
         = RealNumber new &int:$self multiply &real:anOperand.
 
+    #method(type:int) divide &int:anOperand
+        => system'internal'int_div.
+
+    #method(type:int) divide &short:anOperand
+        => system'internal'int_div.
+
+    #method(type:int) divide &byte:anOperand
+        => system'internal'int_div.
+
+    #method divide &long:anOperand
+        = LongNumber new &int:$self divide &long:anOperand.
+
     #method divide &real:anOperand
         = RealNumber new &int:$self divide &real:anOperand.
+
+    #method(type:int) and &int:anOperand
+        => system'internal'int_and.
+
+    #method(type:int) and &short:anOperand
+        => system'internal'int_and.
+
+    #method(type:int) and &byte:anOperand
+        => system'internal'int_and.
+
+    #method and &long:anOperand
+        = LongNumber new &int:$self and &long:anOperand.
+
+    #method(type:int) or &int:anOperand
+        => system'internal'int_or.
+
+    #method(type:int) or &short:anOperand
+        => system'internal'int_or.
+
+    #method(type:int) or &byte:anOperand
+        => system'internal'int_or.
+
+    #method or &long:anOperand
+        = LongNumber new &int:$self or &long:anOperand.
+
+    #method(type:int) xor &int:anOperand
+        => system'internal'int_xor.
+
+    #method(type:int) xor &short:anOperand
+        => system'internal'int_xor.
+
+    #method(type:int) xor &byte:anOperand
+        => system'internal'int_xor.
+
+    #method xor &long:anOperand
+        = LongNumber new &int:$self xor &long:anOperand.
 
     #method(type:int) shift &index:anOrder
         => system'internal'int_shift.
