@@ -17,6 +17,7 @@ text\words.l
 text\enumerating.l
 text\strings.l
 routines\combinations.l
+dynamic\interpreter.l
 
 [forwards]
 '$import=system'ext_routines

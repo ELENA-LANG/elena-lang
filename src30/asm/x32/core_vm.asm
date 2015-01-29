@@ -1,8 +1,11 @@
+
 // --- System Core API  --
 define NEWFRAME          10014h
 define INIT_ET           10015h
 define ENDFRAME          10016h
 define RESTORE_ET        10017h
+define OPENFRAME         10019h
+define CLOSEFRAME        1001Ah
 
 rstructure core_vm'dll_name
 
@@ -277,6 +280,30 @@ procedure core_vm'start_n_eval
   call code : % ENDFRAME
   
   pop ebp
+  pop esi
+  pop edi
+  pop ecx
+  pop ebx
+  ret
+
+end
+
+procedure core_vm'eval
+
+  mov eax, [esp+4]
+
+  push ebx
+  push ecx
+  push edi
+  push esi
+  
+  call code : % OPENFRAME
+
+  // invoke symbol
+  call eax
+
+  call code : % CLOSEFRAME
+
   pop esi
   pop edi
   pop ecx

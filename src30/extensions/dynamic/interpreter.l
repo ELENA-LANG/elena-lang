@@ -1,30 +1,45 @@
-//#define system.
+#define system.
+#define extensions.
 //#define system'dynamic.
-//
-//// --- ScriptEngineException --
-//
-//#class(type:ScriptFailed)ScriptEngineException : Exception
-//{
-//    #constructor new
-//    [
-//        theMessage := "A Script engine error".
-//    ]    
-//}
-//
-//// --- scriptEngine ---
-//
-//#symbol scriptEngine =
-//{
-//    evaluate &literal:aScript
-//        <evaluate>.
-//        
-//    load &path:aPath
-//        <= %loadScript &literal::aPath &int:0 &int:-1.
-//        
-//    loadScript &literal:aLiteral &int:anEncoding &int:anAutoDetect
-//        <load>.
-//}.
-//
+
+#type(class:system'BaseFunction1) ScriptError.
+#type(class:system'LiteralValue)  script.
+
+// --- IOException ---
+
+#symbol $lastScriptError = control do:
+[
+    #var(type:shortarray,size:256)aBuffer.
+    #var(type:int)aLength := system'external'elenasm GetStatus
+        &shortarray:aBuffer
+        &int:255.
+        
+    ^ LiteralValue new &length:aLength &shortarray:aBuffer.
+].
+
+#class ScriptEngineException :: Exception
+{
+    #constructor new
+        <= %new &message:$lastScriptError &error_type: %ScriptError.
+        
+    #constructor new &message:aMessage
+        <= %new &message:aMessage &error_type: %ScriptError.
+}
+
+// --- scriptEngine ---
+
+#symbol scriptEngine =
+{
+    evaluate &script:aScript
+        => system'internal'evaluate.
+        
+    load &path:aPath
+        <= %load &path:aPath &int:0 &int:-1.
+        
+    load &path:aPath &int:anEncoding &int:anAutoDetect
+        => system'internal'load.
+}.
+
 //// --- globlas ---
 //
 //#static globals = DynamicStruct new.

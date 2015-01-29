@@ -14,7 +14,7 @@ using namespace _ELENA_TOOL_;
 #define REFERENCE_KEYWORD     "$reference"
 #define IDENTIFIER_KEYWORD    "$identifier"
 #define LITERAL_KEYWORD       "$literal"
-//#define NUMERIC_KEYWORD       "$numeric"
+#define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
 //#define EOF_KEYWORD           "$eof"
 //#define ANY_KEYWORD           "$any"
@@ -136,37 +136,37 @@ bool normalLiteralApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token,
    return true;
 }
 
-//bool normalNumericApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
-//      return false;
-//
-//   token.writeLog();
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   return true;
-//}
-//
-//bool normalNumericApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
-//      return false;
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token);
-//
-//   token.writeLog();
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token);
-//
-//   return true;
-//}
+bool normalNumericApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
+      return false;
+
+   token.writeLog();
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   return true;
+}
+
+bool normalNumericApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
+      return false;
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token);
+
+   token.writeLog();
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr)
+      rule.applyPostfixDSARule(token);
+
+   return true;
+}
 
 bool normalIdentifierApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
@@ -346,9 +346,9 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtLiteral:
          rule.apply = dsaRule ? normalLiteralApplyRuleDSA : normalLiteralApplyRule;
          break;
-      //case rtNumeric:
-      //   rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
-      //   break;
+      case rtNumeric:
+         rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
+         break;
       case rtReference:
          rule.apply = dsaRule ? normalReferenceApplyRuleDSA : normalReferenceApplyRule;
          break;
@@ -489,9 +489,9 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             if (ConstantIdentifier::compare(token.value, LITERAL_KEYWORD)) {
                type = rtLiteral;
             }
-      //      else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
-      //         type = rtNumeric;
-      //      }
+            else if (ConstantIdentifier::compare(token.value, NUMERIC_KEYWORD)) {
+               type = rtNumeric;
+            }
             else if (ConstantIdentifier::compare(token.value, EPS_KEYWORD)) {
                type = rtEps;
             }

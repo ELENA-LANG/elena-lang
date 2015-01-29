@@ -59,10 +59,14 @@
 
 #symbol InterpreterTest =
 [
-    #var s := scriptEngine eval &literal:"{ x : 2 , y : 3 , writeLine : &x[ system'console.writeLine(x) ] }".
-    #var x := s x.
-    #var y := s y.
-    s writeLine:"Hello".
+    scriptEngine load &path:"D:\Alex\ELENA\bin\scripts\basic.es".
+    
+    #var n := scriptEngine eval &script:"2 . add ( 3 )".
+    
+//    #var s := scriptEngine eval &literal:"{ x : 2 , y : 3 , writeLine : &x[ system'console.writeLine(x) ] }".
+//    #var x := s x.
+//    #var y := s y.
+//    s writeLine:"Hello".
 //    
 //    #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
 //
@@ -89,34 +93,34 @@
 //    #var y := aTape Y.
 //].  
 
-#symbol ReflectionTester =
-[
-    #var s := 2~textserializable literal. 
-        
-    #var anObject := String new:"abd".
+//#symbol ReflectionTester =
+//[
+//    #var s := 2~textserializable literal. 
+//        
+//    #var anObject := String new:"abd".
+//
+//    #var aPresentation := anObject~textserializable literal. 
+////    
+//].
 
-    #var aPresentation := anObject~textserializable literal. 
-//    
-].
-
-#symbol TapeTest =
-[
-   #var aTape := Tape(
-       1, 
-       system'dynamic'tapeControl,
-       %read(1,),
-       system'console,
-       %writeLine(1),
-       system'console,
-       %readChar(0)).
-
-    aTape eval:"Hello World".
-].
+//#symbol TapeTest =
+//[
+//   #var aTape := Tape(
+//       1, 
+//       system'dynamic'tapeControl,
+//       %read(1,),
+//       system'console,
+//       %writeLine(1),
+//       system'console,
+//       %readChar(0)).
+//
+//    aTape eval:"Hello World".
+//].
 
 //#symbol ClassTest =
 //[
 //    #var n := Integer new.
-//
+//  
 //    #var g := system'dynamic'Class(%next(0), system'dynamic'Tape(1, 1, system'dynamic'tapeControl, %read(1,), %index(0), %append(1)), %index(0), [ n ]).
 //
 //    g next.
@@ -124,15 +128,14 @@
 
 #symbol Program =
 [ 
-    classControl test.
-
 //    #var aClass := Symbol new &literal:"system'Integer".
 //    #var anInstance := aClass new.
 
-//    InterpreterTest eval.
+    InterpreterTest eval
+        | if &ScriptError: e [ console writeLine:(e message). ].
 
 //    ClassTest eval.
 //    GetPropertyTester eval.
-    ReflectionTester eval.
-    TapeTest eval.
+//    ReflectionTester eval.
+//    TapeTest eval.
 ].

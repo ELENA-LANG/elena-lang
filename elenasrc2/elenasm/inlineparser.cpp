@@ -511,15 +511,15 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
 void InlineScriptParser :: writeObject(TapeWriter& writer, _ScriptReader& reader)
 {
    switch (reader.info.state) {
-//         case dfaInteger:
-//            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
-//            break;
-//         case dfaReal:
-//            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
-//            break;
-//         case dfaLong:
-//            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
-//            break;
+      case dfaInteger:
+         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
+         break;
+      case dfaReal:
+         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
+         break;
+      case dfaLong:
+         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
+         break;
       case dfaQuote:
          writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
          break;

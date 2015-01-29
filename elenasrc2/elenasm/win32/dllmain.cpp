@@ -48,11 +48,21 @@ EXTERN_DLL_EXPORT int EvaluateFile(const wchar16_t* path, int encoding, bool aut
    return session->translate(path, encoding, autoDetect, false);
 }
 
-EXTERN_DLL_EXPORT const wchar16_t* GetStatus()
+EXTERN_DLL_EXPORT int GetStatus(wchar16_t* buffer, int maxLength)
 {
    _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
 
-   return session ? session->getLastError() : NULL;
+   if (session) {
+      const wchar16_t* error = session->getLastError();
+      int length = _ELENA_::getlength(error);
+      if (length > maxLength)
+         length = maxLength;
+
+      _ELENA_::StringHelper::copy(buffer, error, length);
+
+      return length;
+   }
+   else return 0;
 }
 
 // --- dllmain ---

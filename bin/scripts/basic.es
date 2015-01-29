@@ -9,4 +9,5 @@
 #define next_parameter ::= ")";
 #define object ::= $reference;
 #define object ::= $literal;
+#define object ::= $numeric;
 ]]                     

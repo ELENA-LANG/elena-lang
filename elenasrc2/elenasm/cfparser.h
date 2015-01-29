@@ -149,7 +149,7 @@ public:
       rtNormal,
       rtChomski,
       rtLiteral,
-//      rtNumeric,
+      rtNumeric,
       rtReference,
       rtIdentifier,
 //      rtAny,

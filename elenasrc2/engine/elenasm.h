@@ -20,6 +20,6 @@ extern "C" __declspec(dllimport) int EvaluateScript(const wchar_t* script);
 // should be used from ELENA program
 extern "C" __declspec(dllimport) int EvaluateFile(const wchar_t* path, int encoding, bool autoDetect);
 
-extern "C" __declspec(dllimport) const wchar_t* GetStatus();
+extern "C" __declspec(dllimport) int GetStatus(wchar_t* error, int maxLength);
 
 #endif // elenasmH

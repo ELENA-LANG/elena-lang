@@ -171,7 +171,7 @@ namespace _ELENA_
       mskInt64Ref            = 0x04000000,   // reference to constant 64bit integer number
       mskRealRef             = 0x05000000,   // reference to constant real number
       mskMessage             = 0x06000000,   // message constant
-//      mskLinkerConstant      = 0x07000000,   // linker constant
+      mskCharRef             = 0x07000000,   // reference to character constant
       mskSymbolLoaderRef     = 0x08000000,   // reference to symbol loader
       mskSignature           = 0x09000000,   // message signature constant
       mskVerb                = 0x0A000000,   // message signature constant
