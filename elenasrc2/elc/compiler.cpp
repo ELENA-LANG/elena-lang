@@ -1960,6 +1960,11 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
+      // HOT FIX : to support 0r constant
+      if (s.Length() == 1) {
+         s.append(".0");
+      }
+
       object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
    }
    else if (!emptystr(terminal)) {

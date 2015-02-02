@@ -2782,3 +2782,29 @@ procedure int_max
   quitn 1
 
 end
+
+procedure long_min
+
+  bcopya
+  dcopy 80000000h
+  nsave
+  dcopy 32
+  lshift
+  acopyb
+  quitn 1
+
+end
+
+procedure long_max
+
+  bcopya
+  dcopy 07FFFFFFFh
+  nsave
+  dcopy 32
+  lshift
+  dcopy 0FFFFFFFFh
+  nsave
+  acopyb
+  quitn 1
+
+end

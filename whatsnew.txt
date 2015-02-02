@@ -21,6 +21,7 @@
 [-] statement terminator can be ommited only in lazy expression
 [+] character constant (e.g. "a" is CharValue rather than LiteralValue)
 [*] escape sequence, \ symbol is used instead of %
+[*] 0r, 1.0e2r constants are correctly recognized
 
 [ELC]
 [*] codebase refactored
@@ -32,7 +33,7 @@
 [-] Project - Options - VM Path is no longer supported / required (SHARED path is used)
 
 [LIB]
-[*] system : ByteNumber, ShortNumber, IntNumber
+[*] system : ByteNumber, ShortNumber, IntNumber, LongNumber
 [*] system : Object#class.new, Exception::theCallStack, Exception.get&literal$
 [*] system'control => extensions'control
 [+] system : CallStack, IntArray
