@@ -1,8 +1,10 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Implementation File
-//                                               (C)2005-2010, by Alexei Rakov
+//                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
+
+#define TEXTVIEW_MONO_FONT 1
 
 #include "wintextview.h"
 
@@ -485,6 +487,8 @@ void TextView :: _onContextMenu(HWND, short x, short y)
 
 void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
 {
+   Point caret = _document->getCaret(false) - _document->getFrame();
+
    Style defaultStyle = _styles[STYLE_DEFAULT];
    Style marginStyle = _styles[STYLE_MARGIN];
    size_t lineHeight = _styles.getLineHeight();
@@ -578,7 +582,18 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
             reader.bandStyle = false;
          }
 
+#if TEXTVIEW_MONO_FONT
          width = (style.avgCharWidth) * length;
+#else
+         width = canvas.TextWidth(&style, buffer, length);
+
+         //if (caret.y == reader.row) {
+         //   int col =  reader.bm.getColumn();
+         //   if (caret.x >= col && caret.x < col + length) {
+         //      _caret_x = x + canvas.TextWidth(&style, buffer, col - caret.x);
+         //   }
+         //}
+#endif         
 
          //if (defaultStyle._background != style._background) {
          if (length==0 && reader.style==STYLE_SELECTION) {
@@ -597,11 +612,15 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
    
       _cached = true;
    }
-   Point caret = _document->getCaret(false) - _document->getFrame();
 
    if (caret.x >= 0 && caret.y >= 0) {
+//#if TEXTVIEW_MONO_FONT
       _locateCaret(clientRect.topLeft.x + marginWidth + defaultStyle.avgCharWidth * caret.x,
           lineHeight * caret.y + 1);
+//#else
+//      _locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,
+//          lineHeight * caret.y + 1);      
+//#endif
 
       _caretVisible = true;
    }

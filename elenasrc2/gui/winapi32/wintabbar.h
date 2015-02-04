@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TablBar Header File
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef wintabbarH
@@ -85,6 +85,7 @@ public:
    void addTabChild(const wchar_t* name, Control* window);
    void removeTabChild(Control* window);
 
+   void selectTabChild(Control* window);
    void selectTabChild(int index);
    void selectLastTabChild()
    {

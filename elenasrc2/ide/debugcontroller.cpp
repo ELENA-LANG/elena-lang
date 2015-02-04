@@ -243,7 +243,7 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, const wchar16_t* 
    return NULL;
 }
 
-size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* path, size_t row, size_t col)
+size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* path, size_t row)
 {
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
    _Memory* strings = module->mapSection(DEBUG_STRINGS_ID, true);
@@ -253,7 +253,7 @@ size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* pat
 
    // scanning the array of debug lines until closest step is found
    size_t address = (size_t)-1;
-   int nearestCol = -1;
+   int nearestRow = 0;
    bool skipping = true;
    for (int i = 0 ; i < count ; i++) {
       if (info[i].symbol == dsProcedure) {
@@ -266,13 +266,21 @@ size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* pat
          skipping = true;
       }
       else if (!skipping && (info[i].symbol & dsDebugMask) == dsStep) {
-         if (row == info[i].row) {
-            int lineCol = info[i].col & 0xFFFF;
-            if (nearestCol == -1 || ( (size_t)lineCol >= col && lineCol < nearestCol)) {
-               nearestCol = lineCol;
-               address = info[i].addresses.step.address;
-            }
+         if (__abs(nearestRow - row) > __abs(info[i].row - row)) {
+            nearestRow = info[i].row;
+
+            address = info[i].addresses.step.address;
+            if (info[i].row == row)
+               break;
          }
+
+         //if (row == info[i].row) {
+         //   int lineCol = info[i].col & 0xFFFF;
+         //   if (nearestCol == -1 || ( (size_t)lineCol >= col && lineCol < nearestCol)) {
+         //      nearestCol = lineCol;
+         //      address = info[i].addresses.step.address;
+         //   }
+         //}
       }
    }
    return address;
@@ -473,7 +481,7 @@ void DebugController :: loadBreakpoints(List<Breakpoint>& breakpoints)
    while (!breakpoint.Eof()) {
       _Module* module = _modules.get((*breakpoint).module);
       if (module != NULL) {
-         size_t address = findNearestAddress(module, (*breakpoint).source, (*breakpoint).row, 0);
+         size_t address = findNearestAddress(module, (*breakpoint).source, (*breakpoint).row);
          if (address != 0xFFFFFFFF) {
             _debugger.addBreakpoint(address);
          }
@@ -487,7 +495,7 @@ void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
    if (_debugger.isStarted()) {
       _Module* module = _modules.get(breakpoint.module);
       if (module != NULL) {
-         size_t address = findNearestAddress(module, breakpoint.source, breakpoint.row, 0);
+         size_t address = findNearestAddress(module, breakpoint.source, breakpoint.row);
          if (address != 0xFFFFFFFF) {
             if (adding) {
                _debugger.addBreakpoint(address);
@@ -557,7 +565,7 @@ void DebugController :: runToCursor(const tchar_t* name, const tchar_t* path, in
    else {
       _Module* module = _modules.get(name);
       if (module != NULL) {
-         size_t address = findNearestAddress(module, path, row, col);
+         size_t address = findNearestAddress(module, path, row);
          if (address != 0xFFFFFFFF) {
             _debugger.setBreakpoint(address, false);
          }
@@ -588,7 +596,7 @@ void DebugController :: stepOverLine()
       // if next step is available set the breakpoint
       DebugLineInfo* nextStep = getEndStep(lineInfo);
 
-      if (nextStep) {
+      if (nextStep && nextStep->symbol != dsVirtualEnd) {
          _debugger.setBreakpoint(nextStep->addresses.step.address, true);
       }
       // else set step mode
@@ -620,9 +628,12 @@ void DebugController :: stepInto()
       DebugLineInfo* nextStep = getNextStep(lineInfo);
       // if the address is the same perform the virtual step
       if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
-         _debugger.processVirtualStep(nextStep);
-         processStep();
-         return;
+         if (nextStep->symbol != dsVirtualEnd) {
+            _debugger.processVirtualStep(nextStep);
+            processStep();
+            return;
+         }
+         else _debugger.setStepMode();
       }
       else if (test(lineInfo->symbol, dsAtomicStep)) {
          _debugger.setBreakpoint(nextStep->addresses.step.address, true);
@@ -1005,11 +1016,11 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
             readShortArray(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
          }
-         else if (lineInfo[index].symbol == dsMessage) {
-            // write local variable
-            int message = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readMessage(watch, message);
-         }
+         //else if (lineInfo[index].symbol == dsMessage) {
+         //   // write local variable
+         //   int message = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+         //   readMessage(watch, message);
+         //}
          else if (lineInfo[index].symbol == dsStack) {
             // write local variable
             int localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);

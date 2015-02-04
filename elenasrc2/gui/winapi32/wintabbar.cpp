@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TabBar Implementation
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "wintabbar.h"
@@ -242,7 +242,6 @@ void TabBar :: addTabChild(const wchar_t* name, Control* child)
    child->hide();
 
    _children.add(child);
-   _child = child;
 
    addTab(_children.Count(), name, NULL);
 }
@@ -270,9 +269,25 @@ void TabBar :: removeTabChild(Control* window)
    refresh();
 }
 
+void TabBar :: selectTabChild(Control* window)
+{
+   int index = 0;
+   _ELENA_::List<Control*>::Iterator it = _children.start();
+   while (!it.Eof()) {
+      if (*it == window) {
+         selectTabChild(index);
+
+         break;
+      }
+      index++;
+      it++;
+   }
+}
+
 void TabBar :: selectTabChild(int index)
 {
-   _child->hide();
+   if (_child)
+      _child->hide();
 
    _child = *_children.get(index);
    if (_child) {

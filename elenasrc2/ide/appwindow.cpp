@@ -288,8 +288,8 @@ void IDE :: onIDEInit()
    #ifdef _WIN32
 
    doShowCallStack(Settings::callStack, true);
-   doShowMessages(Settings::messages, true);
    doShowCompilerOutput(Settings::compilerOutput, true);
+   doShowMessages(Settings::messages, true);
 
    _statusBar->setText(0, EDITOR_READY);
 
@@ -1260,14 +1260,11 @@ void IDE :: doShowCompilerOutput(bool checked, bool forced)
 
       if (checked) {
          _outputBar->addTabChild(OUTPUT_TAB, _output);
-
-         _outputBar->selectLastTabChild();
-
+         _outputBar->selectTabChild(_output);
          _outputBar->show();
       }
       else {
          _outputBar->removeTabChild(_output);
-         _output->hide();
 
          if (_outputBar->getTabCount() == 0) {
             _outputBar->hide();
@@ -1291,11 +1288,10 @@ void IDE :: doShowMessages(bool checked, bool forced)
       if (checked) {
          _outputBar->addTabChild(MESSAGES_TAB, _messageList);
          _outputBar->show();
-         _outputBar->selectLastTabChild();
+         _outputBar->selectTabChild(_messageList);
       }
       else {
          _outputBar->removeTabChild(_messageList);
-         _messageList->hide();
 
          if (_outputBar->getTabCount() == 0) {
             _outputBar->hide();
@@ -1318,17 +1314,14 @@ void IDE :: doShowCallStack(bool checked, bool forced)
 
       if (checked) {
          _outputBar->addTabChild(CALLSTACK_TAB, _callStackList);
-         _callStackList->show();
          _outputBar->show();
+         _outputBar->selectTabChild(_callStackList);
 
          if (_debugController->isStarted())
             _callStackList->refresh(_debugController);
-
-         _outputBar->selectLastTabChild();
       }
       else {
          _outputBar->removeTabChild(_callStackList);
-         _callStackList->hide();
 
          if (_outputBar->getTabCount() == 0) {
             _outputBar->hide();
@@ -1773,7 +1766,7 @@ void IDE :: onCompilationStart()
 {
    #ifdef _WIN32
 
-   _outputBar->selectTab(0);
+   _outputBar->selectTabChild(_output);
 
 //  !! _debugger.clear();
    _messageList->clear();

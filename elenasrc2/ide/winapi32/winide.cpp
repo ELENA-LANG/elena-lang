@@ -701,7 +701,10 @@ void WIN32IDE :: displayErrors()
       //break;
    }
    doShowCompilerOutput(true);
-   _outputBar->selectTab(1);
+   if (_messageList->isVisible()) {
+      _outputBar->selectTabChild(_messageList);
+   }
+   else doShowMessages(true);
 
    _ELENA_::freestr(buffer);
 }

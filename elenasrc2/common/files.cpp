@@ -231,10 +231,10 @@ bool File :: readLiteral(wchar16_t* s, size_t length, size_t& wasread)
       size_t count;
       while (length > 0) {
          count = (length > 0x100) ? 0x100 : length;
-
-         fread(temp, 1, count, _file);
-
          length -= count;
+
+         count = fread(temp, 1, count, _file);
+         
          StringHelper::copy(s, temp, count);
          wasread += count;
          s += count;

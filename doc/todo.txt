@@ -20,141 +20,16 @@ v  - vm script
 ------                                 
 Currently:
 ------
-
-              xdev - general implementation
-                       * boxing : object saving should be done only if the object was boxed
-
-                       * constant array
+              idev - debugger - watch
+                       * show shortarray, bytearray, intarray
                        
-                       * probably we have to caching type wrapper, so no need to load every time
-
-                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well
-                       
-                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
-                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
-                         so boxing mechanism can be simplified
-                       * try to avoid duplciate checks (for example check for methods / types)
-                       * check if the method is stack safe only if the argument contains boxable objects
-                       * cache check operation results
-                       * see FileStream.close -> the operation with theHandle leads to boxing the object - could we optimize?
-                       * fix the error for DateTime.subtract&datetime
-                       * simplify primitive loop implementing
-                       * message/subject should be constant which is boxed when it is required ??
-                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
-                       * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
-                         not correctly programmed)
-                       * implement dispatching with several parameters
-                         (see Compiler::compileDispatcher)              
-                       * rename / refactor weval - misleading name
-                       * generic handlers : resend handler - if no match found call the super handler
-                       * extender : if no match found call the super handler
-                                              
 <=================> 
 
 1.9.18
 --------
 week1:
-              xdev - GC
-                       * heap mg size should reserved but not committed and can grow
-                       * out of memory exception should be correctly raised
-                       * destructors
-                       
-              idev - script engine
-                       * build-in script into IDE
-
-              xdev - boxing optimization
-                       * could we simplify stack allocated object check
-                       * review all the code and maximally simplify / reduce boxing operations
-
-              xdev - general optimization                               
-                       * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
-
-              xdev - byte code optimization                               
-                       * review system test for possible byte code optimization
-
-                       * should for "expr ? !" on both branches the value is checked (used for the case when the returning value is not bool 
-                         - e.g. nil or any other object)
-                       * GC: card table scanning; could we optimize it ?
-
-                       * simplify ansi constants / wideliteral interaction
-                       
-                       * pi (3506) => ~2000
- 
-                       * maybe replace { push 0 }n-times, with lea esp, [esp+n], xor ebx, ebx @loop: mov [esi], ebx, sub ecx, 1, jnz @loop
-                         (for long list > 6??)
-                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
-                         better to compare value ?? (if it is true / false constants for example)
-                       * could direct parameter allocation be used for open argument list?
-                       * review / simplify idle constructor
-                       * boolean inverting opzimizing
-                       * filling with zero / nil should be done inside constructor
-                       * stack allocated byte array should not be reserved second time
-                       * hook: maybe offset should exclude call command size, so no need
-                         in adjucment
-                       * simplify typecasting should notb be done for operations like length, index
-                       * boxing after primtive operation should be done probably directly, i.e. implicitly create an object (int, long or real)
-                       * compiler option : switch off jump optimization
-                       * compiler option : switch off direct calls
-                       * optimize type cast call (dispatch handler should be used) 
-                        * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
-                         byte array used?
-                       * simplify external call
-                       * could we somehow store tls table address?
-                       * if no calls / GC operation do not use stack frame excluding
-                       * if only method parameter is used, no need to use frame / self commands
-                       * ByteCodeWriter::checkIfBaseUsed: extension commands should be checked as well 
-                       * x : p = p eval. and x : p = p eval:$self. should be optimized
-                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)
-
-                       * branching : if the result of the operation is known (e.g. it is predefined operation) - no need to typecast the result
-                       * Object.equal[1] - resend operation can be implemented without a new frame
-                       * true.and[1] - can resend with dispatch be optimized?
-                       * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
-                       * can we implement #break statement which will not create a breakexception for every call?
-                       * optimize comparision operation with nil (see ListEnumerator)
-                       * optimize output code: system'object
-                       * optimize - operation with nil (==, !=)
-                       * optimize hook / unhook commands
-                       * should ret be followed with several nops?
-
-              idev - generic development                                          
-                       * test utf16 text with Supplementary characters (chinese)
-                       * some phantom ending in the file open with utf8 mode
-                       * refresh / reload documents after changing encoding ??
-                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
-                         utf-16 for windows?
-
-              xdev - dynamic programming                                             
-                       * implement trace mode
-                       * it should be possible Tape to debug  (see 1.x implementation)
-
-              idev - debugger
-                       * f4 - goto closest code (e.g. $ConsoleReader.read&out'short - f4 on the function)
-                       * nested expression should display all its fields as variables
-                       * implement watch
-                       * should $self be displayed for nested classes / action / expression ...
-                       * show self only for roles
-                       * fix debugger to correctly show arrays
-                       * tune debugger, make possible to use step over / step into everywhere
-                       * step over #break / #throw does not work correctly
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * debug script
-                       
             xtools - usability
                        * print symbol (special keyword to distinguish from class)
-                       
-              xdev - elenavm
-                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
-                       * elenavm: use reverse instead of set of swaps
-
-              adev - lib30                                        
-                       * test short -> int, int -> short should correctly set sign
-                       * support operations with byte, short, int, long and real for all numeric types
-                       * char should be embeddable primitive type
-                       * new class : chararray, should be used instead of shortarray for literal operations
-
-              idev - debugger - watch
-                       * show shortarray, bytearray, intarray
                        
               xdev - redesign
                        * operator or, do we need it (or bitwise operators at all)
@@ -164,14 +39,6 @@ week1:
                          in general it should be possible to convert int constant to int / short / byte / long ; literal constant to
                          char / literal in run time, 
                        * \ is used as an escape sequence ??
-
-              xmaint - package
-                       * create installation package
-                       * release : compile / copy elenart
-              
-              idev - usability
-                       * output window should be selected (if presented) and focus set after successful compile
-                       * message window should be selected (if presented) and focus set after unsuccessful compile
 
 week2:
               adev - gui
@@ -185,6 +52,11 @@ week2:
                        
               adev - lib30                                        
                        * lib30 review : LongNumber
+
+                       * test short -> int, int -> short should correctly set sign
+                       * support operations with byte, short, int, long and real for all numeric types
+                       * char should be embeddable primitive type
+                       * new class : chararray, should be used instead of shortarray for literal operations
 
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
                          call parameter
@@ -318,6 +190,9 @@ week2:
                        * look at all wrapper around out parameter, replace the shortcut code with direct use of internal code
                        * implement LiteralValue.indexOf&index&char:aChar&out'int
                        * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
+
+              sdev - samples
+                       * migrate all samples (mt, vm, interpreter, calc, scripts)
 
               sdev - api doc
                        * create API : system'CharValue
@@ -568,10 +443,10 @@ week 4:
                        * fix bestshuffle
                        * calendar
 
-              xmaint - hotfix : unicode
-                       * u_helloworld does not show russian text correctly in just installed IDE
-                       * problem with compiling the text with national letters
-
+              xmaint - package
+                       * create installation package
+                       * release : compile / copy elenart
+              
               xmaint - test
                        * test system'io'StreamWriter
                        * test system'io'BinarayReader / system'io'BinarayWriter
@@ -588,6 +463,9 @@ week 4:
 1.9.19
 --------
 week1:
+              idev - script engine
+                       * build-in script into IDE
+
               xdev - linux
                        * linux linker
 
@@ -616,15 +494,22 @@ week1:
 
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
-                       
+                                              
               idev - debugger
+                       * fix debugger to correctly show arrays
+                       * tune debugger, make possible to use step over / step into everywhere
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * debug script
+                       * implement watch
                        * show data variables (currently only int / short are displayed)
                        * show output argument
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-
+                       * show built-in variable $subject
+                     
               xdev - generic development                                                      
                        * elenart : implement basic reflection functions
-
+                       * message/subject should be constant which is boxed when it is required ??
+                       
                        * constructor / method resend should be done without opening a new frame
 
                        * make possible to create private type
@@ -673,7 +558,11 @@ week1:
 
                        * constructor may return constant objects as well (see min / max)
 
+                       * boolean invert operator (and, or, ...)??
+
               xdev - general implementation
+                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
+                       * constant array
                        * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group
                        * every action code is a new class, is it possible to design it so no need to create a new class for every sub code?
@@ -690,6 +579,17 @@ week1:
                        * hook and unhook consume stack, it should be reflected in bytecodewriter::save
                        * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
                          recognition), instead of symbol reference?
+                       * probably we have to caching type wrapper, so no need to load every time                      
+                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well                       
+                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
+                       * try to avoid duplciate checks (for example check for methods / types)
+                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
+                         so boxing mechanism can be simplified
+                       * simplify primitive loop implementing
+                       * rename / refactor weval - misleading name
+                       * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
+                         not correctly programmed)
+                       * boxing : object saving should be done only if the object was boxed
                        
               xdev - multithreading       
                        * implement lock / unlock
@@ -705,6 +605,42 @@ week1:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        * compile anagram with mt
+
+              xdev - byte code optimization                               
+                       * stack allocated objects should be boxed directly (without ifHeap check)
+                       * compiler option : switch off jump optimization
+                       * compiler option : switch off direct calls
+                       * hook: maybe offset should exclude call command size, so no need
+                         in adjucment
+                       * pi (3506) => ~2000 
+                       * review system test for possible byte code optimization                       
+                       * optimize type cast call (dispatch handler should be used) 
+                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
+                         byte array used?
+                       * simplify external call
+                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
+                         better to compare value ?? (if it is true / false constants for example)
+                       * if no calls / GC operation do not use stack frame excluding
+                       * if only method parameter is used, no need to use frame / self commands
+                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)                       
+                       * branching : if the result of the operation is known (e.g. it is predefined operation) - no need to typecast the result
+                       * Object.equal[1] - resend operation can be implemented without a new frame
+                       * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
+                       * can we implement #break statement which will not create a breakexception for every call?
+                       * optimize output code: system'object
+                       * optimize - operation with nil (==, !=)
+                       * optimize hook / unhook commands
+                       * should ret be followed with several nops?
+                       * x : p = p eval. and x : p = p eval:$self. should be optimized
+                       * operator == / != should support comparision with nil (direct implementation)
+
+              idev - generic development                                          
+                       * show the file encoding
+                       * refresh / reload documents after changing encoding ??
+                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
+                         utf-16 for windows?
+                       * chinese (or others two or more UTF8 ) characters should take two columns (similar like tab)
+                       * wintextview : reimplement the cursor locating code if it is not a monofont
 
 week2:
               adev - gui
@@ -723,10 +659,31 @@ week3:
                        
 1.9.20
 --------
+week1:
+              xdev - general optimization                               
+                       * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
+                       * GC: card table scanning; could we optimize it ?                       
+
+              xdev - boxing optimization
+                       * could we simplify stack allocated object check
+                       * review all the code and maximally simplify / reduce boxing operations
+
+              xdev - dynamic programming                                             
+                       * implement trace mode
+                       * it should be possible Tape to debug  (see 1.x implementation)
 
 2.0.0
 -----
 week1:
+              xdev - elenavm
+                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
+                       * elenavm: use reverse instead of set of swaps
+
+              xdev - GC
+                       * heap mg size should reserved but not committed and can grow
+                       * out of memory exception should be correctly raised
+                       * destructors
+                       
               xdev - generic development
                        * private class - could we declare one class inside another (so it will be accessible only within its owner)
 
@@ -758,6 +715,7 @@ week1:
                        * refactor / optimize script engine
 
               xdev - byte code optimization                               
+                       * direct parameter allocation can be used for open argument list : e.g. OpenArgTester testParamsCopy &args:1:"a":3
                        * optimized switch statement implementation (e.g. ordered ??)                       
                        * optimize !=, <= and >= implementation
                        * optimize index operation (literal / array) ; indexer should use more optimize algorithm

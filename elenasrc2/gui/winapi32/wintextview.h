@@ -86,6 +86,7 @@ protected:
    bool        _needToResize;
    bool        _tabUsing;
    size_t      _tabSize;
+   //size_t      _caret_x;
 
    Document::Reader* _docReader;
 

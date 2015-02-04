@@ -200,7 +200,7 @@ protected:
    DebugLineInfo* getNextStep(DebugLineInfo* step);
    DebugLineInfo* getEndStep(DebugLineInfo* step);
 
-   size_t findNearestAddress(_Module* module, const tchar_t* path, size_t row, size_t col);
+   size_t findNearestAddress(_Module* module, const tchar_t* path, size_t row);
 
    void readFields(_DebuggerWatch* watch, DebugLineInfo* self, size_t address);
    void readList(_DebuggerWatch* watch, int* list, int length);
