@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arithmeticint.exe
-options=-xembed-
 namespace=arithmeticint
 template=console
 debuginfo=-1

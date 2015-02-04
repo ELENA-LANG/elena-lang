@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=median.exe
-options=-xembed-
 namespace=median
 template=console
 debuginfo=-1

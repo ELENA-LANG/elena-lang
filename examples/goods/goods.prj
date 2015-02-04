@@ -1,8 +1,7 @@
-[project]
+﻿[project]
 debug=goods.dm
 executable=goods.exe
 arguments=list.txt
-options=-xembed-
 namespace=goods
 template=console
 debuginfo=-1
@@ -13,3 +12,4 @@ main.l
 
 [forwards]
 'program=goods'Program
+

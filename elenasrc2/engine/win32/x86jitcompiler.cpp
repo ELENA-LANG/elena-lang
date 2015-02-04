@@ -527,15 +527,7 @@ void _ELENA_::loadCode(int opcode, x86JITScope& scope)
 {
    // if it is a symbol reference
    if ((scope.argument & mskAnyRef) == mskSymbolRef) {
-      // if embedded symbol mode is on
-      if (scope.embeddedSymbols) {
-         SectionInfo  info = scope.getSection(scope.argument);
-         MemoryReader reader(info.section);
-
-         scope.compiler->embedSymbol(*scope.helper, reader, *scope.code, info.module);
-      }
-      // otherwise treat like calling a symbol
-      else compileCallR(bcCallR, scope);
+      compileCallR(bcCallR, scope);
    }
    else {
       // otherwise a primitive code
@@ -1290,7 +1282,7 @@ void _ELENA_::compileNot(int opcode, x86JITScope& scope)
 
 // --- x86JITScope ---
 
-x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler, bool embeddedSymbols)
+x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler)
    : lh(code)
 {
    this->tape = tape;
@@ -1299,7 +1291,6 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->compiler = compiler;
    this->withDebugInfo = compiler->isWithDebugInfo();
    this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
-   this->embeddedSymbols = embeddedSymbols;
    this->module = NULL;
 
 //   this->prevFSPOffs = 0;
@@ -1307,9 +1298,8 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
 
 // --- x86JITCompiler ---
 
-x86JITCompiler :: x86JITCompiler(bool debugMode, bool embeddedSymbolMode)
+x86JITCompiler :: x86JITCompiler(bool debugMode)
 {
-   _embeddedSymbolMode = embeddedSymbolMode;
    _debugMode = debugMode;
 }
 
@@ -1335,7 +1325,7 @@ void x86JITCompiler :: writeCoreReference(x86JITScope& scope, ref_t reference, i
       // due to optimization section must be ROModule::ROSection instance
       SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
       // separate scope should be used to prevent overlapping
-      x86JITScope newScope(NULL, &writer, scope.helper, this, _embeddedSymbolMode);
+      x86JITScope newScope(NULL, &writer, scope.helper, this);
       newScope.module = info.module;
 
       loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
@@ -1350,7 +1340,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _Memory* data, _Mem
    MemoryWriter sdataWriter(sdata);
    MemoryWriter codeWriter(code);
 
-   x86JITScope dataScope(NULL, &dataWriter, &helper, this, _embeddedSymbolMode);
+   x86JITScope dataScope(NULL, &dataWriter, &helper, this);
    for (int i = 0 ; i < coreVariableNumber ; i++) {
       if (!_preloaded.exist(coreVariables[i])) {
          _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
@@ -1384,7 +1374,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _Memory* data, _Mem
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadAddrInfo));
    
-   x86JITScope scope(NULL, &codeWriter, &helper, this, _embeddedSymbolMode);
+   x86JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0 ; i < coreFunctionNumber ; i++) {
       if (!_preloaded.exist(coreFunctions[i])) {
          _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
@@ -1496,21 +1486,9 @@ inline void compileTape(MemoryReader& tapeReader, int endPos, x86JITScope& scope
    }
 }
 
-void x86JITCompiler :: embedSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter, _Module* module)
-{
-   x86JITScope scope(&tapeReader, &codeWriter, &helper, this, _embeddedSymbolMode);
-   scope.withDebugInfo = false;   // embedded symbol does not provide a debug info
-   scope.module = module;
-
-   size_t codeSize = tapeReader.getDWord();
-   size_t endPos = tapeReader.Position() + codeSize;
-
-   compileTape(tapeReader, endPos, scope);
-}
-
 void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   x86JITScope scope(&tapeReader, &codeWriter, &helper, this, _embeddedSymbolMode);
+   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
 
    size_t codeSize = tapeReader.getDWord();
    size_t endPos = tapeReader.Position() + codeSize;
@@ -1531,7 +1509,7 @@ void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tap
 
 void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   x86JITScope scope(&tapeReader, &codeWriter, &helper, this, _embeddedSymbolMode);
+   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
 //   scope.prevFSPOffs = 4;
 
    size_t codeSize = tapeReader.getDWord();

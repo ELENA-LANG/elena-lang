@@ -1,7 +1,6 @@
 ﻿[project]
 executable=matrix.exe
 output=obj
-options=-xembed-
 namespace=matrix
 template=console
 debuginfo=-1

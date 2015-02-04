@@ -1,6 +1,5 @@
 ﻿[project]
 executable=amb.exe
-options=-xembed-
 namespace=amb
 template=console
 debuginfo=-1

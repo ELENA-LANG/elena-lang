@@ -27,7 +27,7 @@
 #endif
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0040
+#define ELC_BUILD_NUMBER             0x0041
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
@@ -45,7 +45,6 @@
 #define ELC_PRM_PROJECTPATH         "xpath"
 #define ELC_PRM_CODEPAGE            "xcp"
 #define ELC_PRM_OPTOFF              "xo-"
-#define ELC_PRM_SYMBOLEMBEDOFF      "xembed-"
 
 // --- ELC config categories ---
 #define COMPILER_CATEGORY           "compiler"
@@ -79,7 +78,6 @@
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "ygsize"
 #define ELC_L0                      "l0"                // optimization: byte code optimization
-#define ELC_SYMBOLINFO              "symbolembed"
 
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2014 by Alex Rakov\n"

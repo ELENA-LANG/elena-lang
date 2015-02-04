@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arithmmean.exe
-options=-xembed-
 namespace=arithmmean
 template=console
 debuginfo=-1

@@ -37,12 +37,12 @@
                     #var aNumber := convertor toInt:(ch literal).
                     
                     // check range
-                    (aNumber > 0)and:(aNumber < 10)
+                    ((aNumber > 0)and:(aNumber < 10))
                         ! [ #throw InvalidArgumentException new. ].
                     
                     // check duplicates
                     #var duplicate := control run:aGuess &seeking: x [ (x == ch)and:[ x equal &reference:ch not ] ].
-                    nil != duplicate ?
+                    (nil != duplicate) ?
                     [
                         #throw InvalidArgumentException new.
                     ].
@@ -50,7 +50,7 @@
                     (aNumber == (theNumbers@i))
                         ? [ aBulls += 1. ]
                         ! [
-                            control ifExist:aNumber &in:theNumbers
+                            (control ifExist:aNumber &in:theNumbers)
                                 ? [ aCows += 1. ].
                         ].
                 ]

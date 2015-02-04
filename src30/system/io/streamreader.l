@@ -96,7 +96,7 @@
                 aLine := theOutput literal.                
                 theOutput clear.
                 
-                aLine isEmpty
+                (aLine isEmpty)
                     ? [ ^ nil. ].
             ]
             ! [ 

@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=intsum.exe
-options=-xembed-
 namespace=sum
 template=console
 debuginfo=-1

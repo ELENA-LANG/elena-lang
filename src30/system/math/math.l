@@ -10,7 +10,7 @@
     [
         #var(type:int)n := self int.
         
-        ^ n < 0 ? [ -1 * n ] ! [ n ].
+        ^ (n < 0) ? [ -1 * n ] ! [ n ].
     ]
     
     #method mod : anOperand
@@ -65,6 +65,9 @@
     exp &real:aReal &out'real:aRetVal
         => system'internal'r_exp.
         
+    abs &real:aReal &out'real:aRetVal
+        => system'internal'r_abs.
+        
     ln &real:aReal &out'real:aRetVal
         => system'internal'r_ln.
         
@@ -85,7 +88,15 @@
         ^ RealNumber new &real:aRetVal.
     ]        
         
-    #method exp
+    #method(type:real) absolute
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal := realOpController abs &real:n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+        
+    #method(type:real) exp
     [
         #var(type:real)n := self real.        
         #var(type:real)aRetVal := realOpController exp &real:n.
@@ -93,7 +104,7 @@
         ^ RealNumber new &real:aRetVal.
     ]
     
-    #method ln
+    #method(type:real) ln
     [
         #var(type:real)n := self real.        
         #var(type:real)aRetVal := realOpController ln &real:n.
@@ -101,7 +112,7 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
-    #method rounded
+    #method(type:real) rounded
     [
         #var(type:real)n := self real.        
         #var(type:real)aRetVal := realOpController round &real:n.
@@ -109,7 +120,7 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
-    #method integer
+    #method(type:real) integer
     [
         #var(type:real)n := self real.        
         #var(type:real)aRetVal := realOpController truncate &real:n.
@@ -117,7 +128,7 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
-    #method frac
+    #method(type:real) frac
     [
         #var(type:real)n := self real.        
         #var(type:real)aRetVal := realOpController modulus &real:n.

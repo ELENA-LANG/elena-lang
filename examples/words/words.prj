@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=words.exe
-options=-xembed-
 namespace=words
 template=console
 debuginfo=-1

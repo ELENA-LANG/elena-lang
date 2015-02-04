@@ -22,7 +22,7 @@
     [
         theTotal += 1.
 
-        control ifExist:aWord &in:theList
+        (control ifExist:aWord &in:theList)
             ! [ theList append:aWord. ].
     ]
 

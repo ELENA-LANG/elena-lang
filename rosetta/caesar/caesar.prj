@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=caesar.exe
-options=-xembed-
 namespace=caesar
 template=console
 debuginfo=-1

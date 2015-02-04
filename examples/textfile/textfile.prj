@@ -1,7 +1,6 @@
 ﻿[project]
 executable=textfile.exe
 arguments=sample.txt
-options=-xembed-
 namespace=textfile
 template=console
 debuginfo=-1

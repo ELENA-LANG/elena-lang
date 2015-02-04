@@ -234,7 +234,7 @@
                                     
     #method append &char:ch
     [
-        (ch >= 48) and:(ch < 58)
+        ((ch >= 48) and:(ch < 58))
             ? [ theToken append &char:ch. ]
             ! [ #throw Exception new:"Invalid expression". ].
     ]

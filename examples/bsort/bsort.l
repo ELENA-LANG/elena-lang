@@ -23,11 +23,11 @@
             #var(type:int)aMaxChild.
             #var(type:int)aChild := (aCurrent * 2) + 1.
 
-            (aChild == anEnd)or:[(anArray@aChild) > (anArray@(aChild + 1))]
+            ((aChild == anEnd)or:[ (anArray@aChild) > (anArray@(aChild + 1))])
                 ? [ aMaxChild := aChild. ]  
                 ! [ aMaxChild := aChild + 1. ].
 
-            (anArray@aCurrent) < (anArray@aMaxChild)
+            ((anArray@aCurrent) < (anArray@aMaxChild))
                 ? [
                     anArray exchange &index:aCurrent &index:aMaxChild.
 

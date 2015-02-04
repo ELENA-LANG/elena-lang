@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arrays.exe
-options=-xembed-
 namespace=arrays
 template=console
 debuginfo=-1

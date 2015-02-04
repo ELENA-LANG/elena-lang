@@ -71,7 +71,7 @@
             #loop (j < aLength) ?
             [
                 aNext := anArray getAt &index:j.
-                aCompareFunc eval:aCurrent:aNext
+                (aCompareFunc eval:aCurrent:aNext)
                     ! [                        
                         anArray setAt &index:i &object:aNext.
                         anArray setAt &index:j &object:aCurrent.
@@ -467,7 +467,7 @@
             
             #loop (aLater available) ?
             [
-                aCondition eval:(aFormer get):(aLater get)
+                (aCondition eval:(aFormer get):(aLater get))
                     ! [
                         #var aTmp := aFormer get.
                         aFormer set:(aLater get).

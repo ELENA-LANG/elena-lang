@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=realsum.exe
-options=-xembed-
 namespace=sum
 template=console
 debuginfo=-1

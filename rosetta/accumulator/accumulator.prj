@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=accumulator.exe
-options=-xembed-
 namespace=accumulator
 template=console
 debuginfo=-1

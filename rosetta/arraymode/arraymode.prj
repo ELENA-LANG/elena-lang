@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arraymode.exe
-options=-xembed-
 namespace=arraymode
 template=console
 debuginfo=-1

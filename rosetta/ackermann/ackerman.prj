@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=ackermann.exe
-options=-xembed-
 namespace=ackerman
 template=console
 debuginfo=-1

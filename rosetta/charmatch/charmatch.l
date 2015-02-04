@@ -5,17 +5,17 @@
 
 #symbol program =
 [
-    literalControl starting:"hello" &with:"hel" ?
+    (literalControl starting:"hello" &with:"hel") ?
     [
         consoleEx writeLine:"hello starts with hel".
     ].
     
-    literalControl ending:"hello" &with:"llo" ?
+    (literalControl ending:"hello" &with:"llo") ?
     [
         consoleEx writeLine:"hello ends with llo".
     ].
 
-    literalControl contain:"el" &in:"hello" ?
+    (literalControl contain:"el" &in:"hello") ?
     [
         consoleEx writeLine:"hello contains el".
     ].

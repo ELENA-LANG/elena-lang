@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=aplusb.exe
-options=-xembed-
 namespace=aplusb
 template=console
 debuginfo=-1

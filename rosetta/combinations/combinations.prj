@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=combinations.exe
-options=-xembed-
 namespace=combinations
 template=console
 debuginfo=-1

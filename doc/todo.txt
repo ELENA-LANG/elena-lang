@@ -21,40 +21,15 @@ v  - vm script
 Currently:
 ------
 
-              xdev - script engine
-                       * global variables
-                       * build structure
-
-                       * build class
-                       * local variables
-                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
-                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
-                       * script engine - ~ to indicate relative to elena bin folder
               xdev - general implementation
-                       * implement long hexadecimal constant
-
-                       * do we need opEmbeddedSymbolMode?
-                       * do we need opModuleForwards?
-                       * do we need opTemplate?
-
-                       * module system should be inclduded automatically ??
                        * boxing : object saving should be done only if the object was boxed
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
 
-                       * warn if number of subjects / verbs are overflown
                        * constant array
                        
                        * probably we have to caching type wrapper, so no need to load every time
 
                        * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well
-
-                       * direct message parameters can be used for the following construction if all the parameters of the second message
-                         are constants / locals / fields  
-                               presenterClassFactory new::anObject new:anObject &radix:aRadix.
-
-                       * class wrapper : validate if the class wrapper is of this type, should be done later, otherwise generate error
-                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
-                        recognition), instead of symbol reference?
+                       
                        * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
                        * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
                          so boxing mechanism can be simplified
@@ -65,7 +40,6 @@ Currently:
                        * fix the error for DateTime.subtract&datetime
                        * simplify primitive loop implementing
                        * message/subject should be constant which is boxed when it is required ??
-                       * fix bug : #loop aFormer available ? is not correctly compiled
                        * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
                        * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
                          not correctly programmed)
@@ -210,6 +184,8 @@ week2:
                        * support GUI application
                        
               adev - lib30                                        
+                       * lib30 review : LongNumber
+
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
                          call parameter
 
@@ -454,6 +430,15 @@ week2:
 
 week3:
               xdev - script engine
+                       * global variables
+                       * build structure
+
+                       * build class
+                       * local variables
+                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
+                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
+                       * script engine - ~ to indicate relative to elena bin folder
+
                        * migrate
 
                        * if the script contains only grammar, virtual machine should not be called
@@ -579,6 +564,10 @@ week3:
                        * script program - calculator
 
 week 4:
+              smaint - rosetta samples
+                       * fix bestshuffle
+                       * calendar
+
               xmaint - hotfix : unicode
                        * u_helloworld does not show russian text correctly in just installed IDE
                        * problem with compiling the text with national letters
@@ -696,6 +685,11 @@ week1:
                        * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
                        * elenart, should support the similar functionality with elenavm (except script support)
                        * split hook into two : address , hook ; or use internal function for exception raising / handling?
+                       * implement long hexadecimal constant
+                       * opTemplate is used only for vm client, probably it should be replaced with a namespace used by a stand alone application
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
+                         recognition), instead of symbol reference?
                        
               xdev - multithreading       
                        * implement lock / unlock
@@ -712,10 +706,21 @@ week1:
                        * compile pi with mt
                        * compile anagram with mt
 
+week2:
+              adev - gui
+                       * general architecture
+                       * class function
+                       * eventhandle group object
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * support GUI mode
+                       * support GUI application
+
+week3:
               xdev - script engine
                        * branching
                        * looping
-
+                       
 1.9.20
 --------
 
@@ -741,6 +746,9 @@ week1:
                          values)
                        * to move all the code from core_routines into coreapi, implement coreapi in ecodes, get rid of import statement in the
                          code
+
+              xdev - general implementation
+                       * warn if number of subjects / verbs are overflown
 
               xdev - stack allocated variable
                        * long

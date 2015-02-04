@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arrayconcat.exe
-options=-xembed-
 namespace=arrayconcat
 template=console
 debuginfo=-1

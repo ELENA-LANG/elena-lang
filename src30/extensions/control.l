@@ -41,12 +41,12 @@
         = nil != (control run:aList &seeking: x [ aValue equal:x ]).
 
     run &int:aStart &int:anEnd &forEvery:aFunction
-        = aStart < anEnd
+        = (aStart < anEnd)
             ? [ aFunction run &range &int:aStart &int:anEnd &int:1 ]
             ! [ aFunction rewind &range &int:aStart &int:anEnd &int:1 ].
     
     run &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
-        = aStart < anEnd
+        = (aStart < anEnd)
             ? [ aFunction run &range &int:aStart &int:anEnd &int:aStep ]
             ! [ aFunction rewind &range &int:aStart &int:anEnd &int:aStep ].
 

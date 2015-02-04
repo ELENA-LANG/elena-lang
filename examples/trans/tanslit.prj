@@ -1,7 +1,6 @@
-[project]
-executable=translit.exe
+﻿[project]
 vmpath=..\..\bin
-options=-xembed-
+executable=translit.exe
 namespace=translit
 template=console
 debuginfo=-1

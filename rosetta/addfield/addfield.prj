@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=addfield.exe
-options=-xembed-
 namespace=addfield
 template=console
 debuginfo=-1

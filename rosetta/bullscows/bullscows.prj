@@ -1,6 +1,5 @@
 ﻿[project]
 executable=bullscows.exe
-options=-xembed-
 namespace=bullscows
 template=console
 debuginfo=-1

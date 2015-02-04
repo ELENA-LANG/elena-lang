@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arraycallback.exe
-options=-xembed-
 namespace=arraycallback
 template=console
 debuginfo=-1

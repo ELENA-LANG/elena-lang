@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=arithmeval.exe
-options=-xembed-
 namespace=arithmeval
 template=console
 debuginfo=-1

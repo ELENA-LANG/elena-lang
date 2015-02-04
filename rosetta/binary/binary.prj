@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=binary.exe
-options=-xembed-
 namespace=binary
 template=console
 debuginfo=-1

@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=anagram.exe
-options=-xembed-
 namespace=anagram
 template=console
 debuginfo=-1

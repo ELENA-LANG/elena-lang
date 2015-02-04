@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=associatearrays.exe
-options=-xembed-
 namespace=associatearrays
 template=console
 debuginfo=-1

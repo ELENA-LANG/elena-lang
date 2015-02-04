@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=pi.exe
-options=-xembed-
 namespace=pi
 template=console
 debuginfo=-1

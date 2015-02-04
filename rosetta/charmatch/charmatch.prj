@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=charmatch.exe
-options=-xembed-
 namespace=charmatch
 template=console
 debuginfo=-1

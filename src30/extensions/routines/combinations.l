@@ -32,7 +32,7 @@
     [
         (nil equal:(control run:Indexers &seeking: anIndexer 
                 [
-                    anIndexer append &index:1 available
+                    (anIndexer append &index:1 available)
                         ! [ anIndexer write &index:0. ^ false. ].
                         
                     ^ true.

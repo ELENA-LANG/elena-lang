@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=replace.exe
-options=-xembed-
 namespace=replace
 template=console
 debuginfo=-1

@@ -182,7 +182,7 @@
         #loop (aCurrentIndex > 0) ?
         [
             anItem := anItem nextItem.
-            anItem == nil
+            (anItem == nil)
                 ? [ #throw OutOfRangeException new. ].
             
             aCurrentIndex := aCurrentIndex - 1.
@@ -201,7 +201,7 @@
         (0 == anIndex)
             ? [
                 theTop := theTop nextItem.
-                theTop == nil
+                (theTop == nil)
                     ? [ theLast := nil. theState := %empty. ].
             ]
             ! [
@@ -210,7 +210,7 @@
                 
                 aPrevious set &nextItem:(anItem nextItem).
                 
-                anItem equal &reference:theLast
+                (anItem equal &reference:theLast)
                     ? [ theLast := aPrevious ].
             ].
             

@@ -30,7 +30,6 @@ struct x86JITScope
    MemoryReader*     tape;
    x86LabelHelper    lh;
 
-   bool              embeddedSymbols;
    bool              withDebugInfo;
    int               objectSize;
 
@@ -52,7 +51,7 @@ struct x86JITScope
       return helper->getSection(reference, module);
    }
 
-   x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler, bool embeddedSymbols);
+   x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler);
 };
 
 // --- x86JITCompiler ---
@@ -61,7 +60,6 @@ class x86JITCompiler : public JITCompiler32
 {
 protected:
    bool _debugMode;
-   bool _embeddedSymbolMode;
 
    friend void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
    friend void loadCoreOp(x86JITScope& scope, char* code);
@@ -177,7 +175,6 @@ public:
    virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber);
    virtual void compileTLS(_JITLoader* loader);
 
-   virtual void embedSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter, _Module* module);
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
 
@@ -185,7 +182,7 @@ public:
 
    virtual void setStaticRootCounter(_JITLoader* loader, int counter, bool virtualMode);
 
-   x86JITCompiler(bool debugMode, bool embeddedSymbolMode);
+   x86JITCompiler(bool debugMode);
 };
 
 // --- compiler friend functions---

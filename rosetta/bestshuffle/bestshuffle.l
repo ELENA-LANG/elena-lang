@@ -17,7 +17,7 @@
             control run &int:0 &int:(aLength-1) &forEvery: (&index:j)
             [
                 #var anAltChar := aShuffled@j.
-                (anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)] ?
+                ((anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)]) ?
                     [
                         aShuffled~indexable exchange:i:j.
                         
@@ -39,7 +39,7 @@
     #var aScore := Integer new.
     
     control run &int:0 &int:(anOriginal length - 1) &forEvery: (&index:i)
-        [ (anOriginal @ i) == (aShuffled @ i) ? [ aScore += 1. ]. ].
+        [ ((anOriginal @ i) == (aShuffled @ i)) ? [ aScore += 1. ]. ].
     
     ^ aScore value.
 ].

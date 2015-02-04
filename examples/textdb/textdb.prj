@@ -1,7 +1,6 @@
-[project]
+﻿[project]
 executable=textdb.exe
 arguments=db.txt
-options=-xembed-
 namespace=textdb
 template=console
 debuginfo=-1

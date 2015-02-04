@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=anonymrec.exe
-options=-xembed-
 namespace=anonymrec
 template=console
 debuginfo=-1

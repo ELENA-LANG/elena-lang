@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=smavg.exe
-options=-xembed-
 namespace=smavg
 template=console
 debuginfo=-1

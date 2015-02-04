@@ -2,7 +2,6 @@
 projecttype=1
 package=date
 executable=dtcalculator.exe
-options=-xembed-
 namespace=datetime
 template=console
 debuginfo=-1

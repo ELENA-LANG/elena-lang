@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=bitwise.exe
-options=-xembed-
 namespace=bitwise
 template=console
 debuginfo=-1

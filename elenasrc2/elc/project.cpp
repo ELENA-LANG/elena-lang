@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA Project interface.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -159,15 +159,8 @@ void Project :: loadForwardCategory(_ConfigFile& config)
       key.copy(it.key());
 
       value.copy((char*)*it);
-
-      // if it is a wildcard
-      if (key[getlength(key) - 1] == '*') {
-         NamespaceName alias(key);
-         NamespaceName module(value);
-
-         _settings.add(opModuleForwards, alias, module.clone());
-      }
-      else _settings.add(opForwards, key, value.clone());
+      
+      _settings.add(opForwards, key, value.clone());
 
       it++;
    }
@@ -234,7 +227,6 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
    loadOption(config, opTemplate);
-   loadBoolOption(config, opEmbeddedSymbolMode);
 
    // load compiler settings
    loadIntOption(config, opThreadMax, 0, 60);
@@ -326,23 +318,7 @@ void Project :: saveModule(_Module* module, const tchar_t* extension)
 
 const wchar16_t* Project :: resolveForward(const wchar16_t* forward)
 {
-   const wchar16_t* reference = _settings.get(opForwards, forward, DEFAULT_STR);
-   // if no forward mapping was found try to resolve on the module level
-   if (emptystr(reference)) {
-      NamespaceName alias(forward);
-
-      const wchar16_t* module = _settings.get(opModuleForwards, alias, DEFAULT_STR);
-      // if there is a module mapping create an appropriate forward
-      if (!emptystr(module)) {
-         ReferenceName name(forward);
-         ReferenceNs newRefeference(module, name);
-
-         _settings.add(opForwards, forward, newRefeference.clone());
-
-         reference = _settings.get(opForwards, forward, DEFAULT_STR);
-      }
-   }
-   return reference;
+   return _settings.get(opForwards, forward, DEFAULT_STR);
 }
 
 _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& reference, bool silentMode)

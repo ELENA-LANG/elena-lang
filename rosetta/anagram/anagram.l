@@ -29,7 +29,7 @@
     [    
         #var aKey := Normalized:aWord.
         #var anItem := aDictionary getAt &key:aKey.
-        nil == anItem ?
+        (nil == anItem) ?
         [
             anItem := List new.
             aDictionary set &key:aKey &value:anItem.

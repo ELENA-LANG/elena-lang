@@ -209,7 +209,7 @@
         [
             anItem := anEnumerator get.
             
-            $self eval:anItem ?
+            ($self eval:anItem) ?
                 [ ^ anItem. ].
         ].        
         

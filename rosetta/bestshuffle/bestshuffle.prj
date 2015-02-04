@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=bestshuffle.exe
-options=-xembed-
 namespace=bestshuffle
 template=console
 debuginfo=-1

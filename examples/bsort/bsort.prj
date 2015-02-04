@@ -1,6 +1,5 @@
-[project]
+﻿[project]
 executable=bsort.exe
-options=-xembed-
 namespace=bsort
 template=console
 debuginfo=-1

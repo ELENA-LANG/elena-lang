@@ -3,7 +3,7 @@
 
 #symbol fibo = (:n)
 [
-    n < 0
+    (n < 0)
         ? [ #throw InvalidArgumentException new &message:"Must be non negative". ].
  
     ^ { eval:n [ ^ (n > 1) ? [ ($self:(n - 2)) + ($self:(n - 1)) ] ! [ n ]. ] }:n.

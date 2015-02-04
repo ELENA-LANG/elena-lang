@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the base class implementing
 //      ELENA Project interface.
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef projectH
@@ -37,7 +37,6 @@ enum ProjectSetting
    opEntry                 = 0x0009,
    opDebugMode             = 0x000A,
    opTemplate              = 0x000C,
-   opEmbeddedSymbolMode    = 0x000D,
    opThreadMax             = 0x0013,
 
    // linker options
@@ -65,7 +64,6 @@ enum ProjectSetting
    opForwards              = 0x0061,
    opSources               = 0x0062,
    opTemplates             = 0x0063,
-   opModuleForwards        = 0x0067
 };
 
 // --- ModuleInfo ---

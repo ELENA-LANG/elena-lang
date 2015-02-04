@@ -122,7 +122,7 @@
             aLength := $self read &shortarray:aBuffer &length:aLength.
             
             #var(type:short)aShort := aBuffer read &index:(aLength - 1).
-            aShort equal &int:0Ah
+            (aShort equal &int:0Ah)
                 ? [
                     aLength := aLength - 2.
                     

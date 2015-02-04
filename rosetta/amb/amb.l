@@ -55,7 +55,7 @@
     #method do : aFunction
     [
         #var aResult := theCombinator get.
-        nil != aResult
+        (nil != aResult)
             ? [ aFunction cast:%eval &with:aResult &to:dispatcher. ]
             ! [ #throw InvalidArgumentException new. ].
     ]
