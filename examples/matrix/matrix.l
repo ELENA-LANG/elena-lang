@@ -28,7 +28,7 @@
     prompt : anOutput
     [
         anOutput
-            writeLine:"%nChoose an option"
+            writeLine:#10"Choose an option"
             writeLine:"[1] - Sum Matrix"
             writeLine:"[2] - Subtract Matrix"
             writeLine:"[3] - Multiply Matrix"

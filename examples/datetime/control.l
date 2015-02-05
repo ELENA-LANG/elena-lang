@@ -8,7 +8,7 @@
 {
     prompt : anOutput
     [
-        consoleEx writeLine:"%nPlease select your option:"
+        consoleEx writeLine:#10"Please select your option:"
               writeLine:" 1 - current local date"
               writeLine:" 2 - current UTC date"
               writeLine:" 3 - current year"

@@ -3,7 +3,7 @@
 // --- LRLN ---
 
 #symbol(const) newLine
-    = "%r%n".
+    = #13#10.
 
 // --- $ConsoleHandleFactory --
 

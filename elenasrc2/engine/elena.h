@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -364,43 +364,52 @@ public:
 
    QuoteTemplate(const wchar16_t* string)
    {
-      for (size_t i = 1 ; i < getlength(string) ; i++) {
-         if (string[i]=='%') {
-            i++;
-            if (string[i]=='n') {
-               _string.append('\n');
-            }
-            else if (string[i]=='r') {
-               _string.append('\r');
-            }
-            else if (string[i]=='t') {
-               _string.append('\t');
-            }
-            else if (string[i]=='a') {
-               _string.append('\a');
-            }
-            else if (string[i]=='b') {
-               _string.append('\b');
-            }
-            else if (string[i]!='%') {
-               size_t j = i;
-               while (string[i] >= '0' && string[i]<='9')
-                  i++;
+      int mode = 0; // 1 - normal, 2 - character code
+      int index = 0;
+      for (size_t i = 0 ; i <= getlength(string) ; i++) {
+         switch (mode) {
+            case 0:
+               if (string[i]=='"') {
+                  mode = 1;
+               }
+               else if (string[i]=='#') {
+                  mode = 2;
+                  index = i + 1;
+               }
+               else return;
 
-               String<wchar16_t, 12> number(string + j, i - j);
-               i--;
-
-               _string.append((wchar16_t)number.toInt());
-            }
-            else _string.append(string[i]);
-         }
-         else if (string[i]=='"') {
-            if (string[i+1]!='"') {
                break;
-            }
-            else _string.append(string[i++]);
+            case 1:
+               if (string[i]==0) {
+                  mode = 0;
+               }
+               else if (string[i]=='"') {
+                  if (string[i + 1]=='"')
+                     _string.append(string[i]);
+
+                  mode = 0;
+               }
+               else _string.append(string[i]);
+               break;
+            case 2:
+               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
+                  String<wchar16_t, 12> number(string + index, i - index);
+                  if (string[i] == 'h') {
+                     _string.append((wchar16_t)number.toLong(16));
+                  }
+                  else _string.append((wchar16_t)number.toInt());
+
+                  if(string[i] == '"') {
+                     mode = 1;
+                  }
+                  else if(string[i] == '#') {
+                     index = i + 1;
+                     mode = 2;
+                  }
+                  else mode = 0;
+               }
+               break;
          }
-         else _string.append(string[i]);
       }
    }
 };

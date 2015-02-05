@@ -701,7 +701,7 @@ void WIN32IDE :: displayErrors()
       //break;
    }
    doShowCompilerOutput(true);
-   if (_messageList->isVisible()) {
+   if (Settings::messages) {
       _outputBar->selectTabChild(_messageList);
    }
    else doShowMessages(true);

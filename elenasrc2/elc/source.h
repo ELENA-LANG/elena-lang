@@ -38,6 +38,7 @@ const char dfaHexInteger     = 't';
 const char dfaSignStart      = 'u';
 const char dfaQuote          = 'w';
 const char dfaPrivate        = 'x';
+const char dfaCharacter      = '}';
 
 class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {

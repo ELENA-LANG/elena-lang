@@ -182,7 +182,7 @@
             ].
             
             anOutput set &length:(-1 + anOutput length).
-            anOutput write:"%n".
+            anOutput write:'newLine.
             
             i := i + 1.
         ].

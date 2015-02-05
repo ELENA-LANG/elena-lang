@@ -20,12 +20,14 @@
 [-] direct dispatching no longer supported
 [-] statement terminator can be ommited only in lazy expression
 [+] character constant (e.g. "a" is CharValue rather than LiteralValue)
-[*] escape sequence, \ symbol is used instead of %
+[-] escape sequence is no longer supported (e.g. "Hello%n" => "Hello"#10 )
 [*] 0r, 1.0e2r constants are correctly recognized
+[*] ? and ! operators require an object now (e.g. a == b ? [ .. ]  is no longer possible, correct syntax is (a==b) ? [ ... ])
 
 [ELC]
 [*] codebase refactored
 [*] output code optimized
+[-] compiler option is no longer supported : -xembed-
 
 [IDE]
 [+] Project - View - Call stack

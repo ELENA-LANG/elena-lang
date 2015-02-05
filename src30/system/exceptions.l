@@ -33,7 +33,7 @@
         [
             aBufferLength := $self read &index:anIndex &shortarray:aBuffer &length:128.
             
-            aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &shortarray:aBuffer) add &literal:"%r%n".
+            aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &shortarray:aBuffer) add &literal:'newLine.
             
             anIndex := anIndex + 1.
         ].

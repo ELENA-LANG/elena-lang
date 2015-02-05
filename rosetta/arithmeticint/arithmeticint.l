@@ -13,5 +13,5 @@
     consoleEx writeLine:a:" - ": b:" = ":(a - b).
     consoleEx writeLine:a:" * ": b:" = ":(a * b).
     consoleEx writeLine:a:" / ": b:" = ":(a / b).   // truncates towards 0
-    consoleEx writeLine:a:" %% ":b:" = ":(a mod:b). // matches sign of first operand
+    consoleEx writeLine:a:" % ":b:" = ":(a mod:b). // matches sign of first operand
 ].

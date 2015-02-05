@@ -57,13 +57,13 @@
         = String new 
             append:"Name:"
             append:theName
-            append:"%n"
+            append:'newLine
             append:"Age:"
             append:(theAge literal)
-            append:"%n"
+            append:'newLine
             append:"Phone:"
             append:thePhone
-            append:"%n"
+            append:'newLine
             literal.
 }
 

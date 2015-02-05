@@ -20,26 +20,26 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              idev - debugger - watch
-                       * show shortarray, bytearray, intarray
-                       
+              xdev - generic development                                                      
+                       * operator or, do we need it (or bitwise operators at all)
+
+                       * single sequence literal constant is treated like a character constant (CharValue) ;
+                         in general it should be possible to convert int constant to int / short / byte / long ; literal constant to
+                         char / literal in run time, 
+                         
+
 <=================> 
 
 1.9.18
 --------
 week1:
+
+              idev - debugger - watch
+                       * show shortarray, bytearray, intarray
+                       
             xtools - usability
                        * print symbol (special keyword to distinguish from class)
-                       
-              xdev - redesign
-                       * operator or, do we need it (or bitwise operators at all)
                                                                                                         
-              xdev - generic development                                                      
-                       * single sequence literal constant is treated like a character constant (CharValue) ;
-                         in general it should be possible to convert int constant to int / short / byte / long ; literal constant to
-                         char / literal in run time, 
-                       * \ is used as an escape sequence ??
-
 week2:
               adev - gui
                        * general architecture
