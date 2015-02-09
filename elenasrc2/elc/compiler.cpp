@@ -26,6 +26,7 @@ using namespace _ELENA_;
 #define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define HINT_TYPEENFORCING    0x00800000
 #define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
+#define HINT_HEAP_MODE        0x00400000
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 #define HINT_SELFEXTENDING    0x00040000
@@ -349,6 +350,7 @@ void Compiler::ModuleScope :: init(_Module* module, _Module* debugModule)
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
    realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
+   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
@@ -1924,6 +1926,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    if (terminal==tsLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
    }
+   else if (terminal==tsCharacter) {
+      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
+   }
    else if (terminal == tsInteger) {
       int integer = StringHelper::strToInt(terminal.value);
       if (errno == ERANGE)
@@ -1987,7 +1992,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          // field address cannot be used directly and should be boxed
          // if it is not an assignment target
          if (node.nextNode() != nsAssigning)
-            object = boxStructureField(scope, object);
+            object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1));
 
          break;
       case okOutputParam:
@@ -2242,41 +2247,52 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object)
    return object;
 }
 
-ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo object)
+ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisParam, int mode)
 {
-   int offset = object.param;
+   bool presavedAcc = thisParam.kind == okAccumulator;
+
+   int offset = field.param;
    ref_t classReference = 0;
-   int size = scope.moduleScope->defineTypeSize(object.extraparam, classReference);
+   int size = scope.moduleScope->defineTypeSize(field.extraparam, classReference);
 
-   if (size == 2 || size == 4) {
-      allocateStructure(scope, 0, object);
+   if (test(mode, HINT_HEAP_MODE) || size > 8) {
+      if (presavedAcc)
+         _writer.pushObject(*scope.tape, thisParam);
 
-      _writer.loadBase(*scope.tape, object);
-      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-      if (size == 2) {
-         _writer.copyShort(*scope.tape, offset);
+      // otherwise create a dynamic object and copy the content
+      _writer.newStructure(*scope.tape, size, classReference);
+      _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
+
+      if (presavedAcc) {
+         _writer.popObject(*scope.tape, thisParam);
       }
-      else _writer.copyInt(*scope.tape, offset);
+      else _writer.loadObject(*scope.tape, thisParam);
 
+      field = ObjectInfo(okAccumulator);
+   }
+   else {
+      allocateStructure(scope, 0, field, presavedAcc);
+
+      _writer.loadBase(*scope.tape, field);
+      _writer.loadObject(*scope.tape, thisParam);
+   }
+
+   if (size == 2) {
+      _writer.copyShort(*scope.tape, offset);
+   }
+   else if (size == 4) {
+      _writer.copyInt(*scope.tape, offset);
    }
    else if (size == 8) {
-      allocateStructure(scope, 0, object);
-
-      _writer.loadBase(*scope.tape, object);
-      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
       _writer.copyStructure(*scope.tape, offset, size);
       _writer.loadObject(*scope.tape, ObjectInfo(okBase));
    }
    else if (size > 0) {
-      // otherwise create a dynamic object and copy the content
-      _writer.newStructure(*scope.tape, size, classReference);
-      _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
-      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-      _writer.copyStructure(*scope.tape, object.param, size);
+      _writer.copyStructure(*scope.tape, field.param, size);
       _writer.loadObject(*scope.tape, ObjectInfo(okBase));
    }
 
-   return ObjectInfo(okAccumulator, object.extraparam);
+   return ObjectInfo(okAccumulator, field.extraparam);
 }
 
 void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count)
@@ -3594,6 +3610,9 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
          else if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(type_ref, moduleScope->literalReference)) {
             return ObjectInfo(okAccumulator, 0, type_ref);
          }
+         else if (object.kind == okCharConstant && moduleScope->typeHints.exist(type_ref, moduleScope->charReference)) {
+            return ObjectInfo(okAccumulator, 0, type_ref);
+         }
          else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(type_ref, moduleScope->signatureReference)) {
             return ObjectInfo(okAccumulator, 0, type_ref);
          }
@@ -4227,7 +4246,7 @@ void Compiler :: reserveSpace(CodeScope& scope, int size)
    }
 }
 
-bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand)
+bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand, bool presavedAccumulator)
 {
    bool bytearray = false;
    int size = 0;
@@ -4264,8 +4283,14 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
 
       // reserve place for byte array header if required
       if (bytearray) {
+         if (presavedAccumulator)
+            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+
          _writer.loadObject(*scope.tape, exprOperand);
          _writer.saveIntConstant(*scope.tape, -dynamicSize);
+
+         if (presavedAccumulator)
+            _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
 
          exprOperand.param -= 2;
       }
@@ -4483,10 +4508,23 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 
          // !! currently only simple construction is supported
          if (node == nsObject && node.firstChild() == nsNone && nextNode == nsNone) {
-            ObjectInfo extension = compileTerminal(node, codeScope, 0);
-            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+            TerminalInfo target = node.Terminal();
 
-            _writer.resend(*codeScope.tape, extension, 0);
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+            // if the target is a data field
+            if (test(classScope->info.header.flags, elStructureRole) && classScope->info.fields.exist(target)) {
+               int offset = classScope->info.fields.get(target);
+
+               _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
+
+               boxStructureField(codeScope, 
+                  ObjectInfo(okFieldAddress, offset, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), HINT_HEAP_MODE);
+
+               _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
+
+               _writer.resend(*codeScope.tape, ObjectInfo(okAccumulator), 0);
+            }
+            else _writer.resend(*codeScope.tape, compileTerminal(node, codeScope, 0), 0);
          }
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }

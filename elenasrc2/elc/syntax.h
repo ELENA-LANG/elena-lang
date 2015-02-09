@@ -32,7 +32,7 @@ enum Symbol
    tsInteger                    = 0x03008,
    tsHexInteger                 = 0x03009,
    tsReal                       = 0x0300A,
-   //tsWildcard                   = 0x0300B,
+   tsCharacter                  = 0x0300B,
    tsLong                       = 0x0300C,
 
    nsClass                      = 0x0100E,               // non-terminals

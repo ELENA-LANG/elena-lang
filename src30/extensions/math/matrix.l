@@ -4,12 +4,12 @@
 #define system'text.
 #define extensions.
 
-#type matrix.
-#type(class:system'IndexFunction2) everyij.
+#subject matrix.
+#subject(class:system'IndexFunction2) everyij.
 
 // --- MatrixException ---
 
-#type(class:system'BaseFunction1) MatrixError.
+#subject(class:system'BaseFunction1) MatrixError.
 
 #class MatrixException :: Exception
 {

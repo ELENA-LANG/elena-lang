@@ -1,14 +1,14 @@
 #define system. 
 
 // === basic interfaces ===
-#type(class:system'io'Stream)stream.
-#type(class:system'io'Encoder)encoder.
+#subject(class:system'io'Stream)stream.
+#subject(class:system'io'Encoder)encoder.
 
 // === i/o interfaces ===
-#type(class:system'io'TextReader)textreader.
-#type(class:system'io'BinaryReader)binaryreader.
-#type(class:system'io'TextWriter)textwriter.
-#type(class:system'io'BinaryWriter)binarywriter.
+#subject(class:system'io'TextReader)textreader.
+#subject(class:system'io'BinaryReader)binaryreader.
+#subject(class:system'io'TextWriter)textwriter.
+#subject(class:system'io'BinaryWriter)binarywriter.
 
 // --- Stream ---
 

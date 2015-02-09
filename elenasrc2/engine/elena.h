@@ -101,6 +101,7 @@ public:
    virtual size_t getLinkerConstant(int id) = 0;
 
    virtual const wchar16_t* getLiteralClass() = 0;
+   virtual const wchar16_t* getCharacterClass() = 0;
    virtual const wchar16_t* getIntegerClass() = 0;
    virtual const wchar16_t* getRealClass() = 0;
    virtual const wchar16_t* getLongClass() = 0;
@@ -360,6 +361,8 @@ template<class S> class QuoteTemplate
    S _string;
 
 public:
+   size_t Length() { return _string.Length(); }
+
    operator const wchar16_t*() const { return _string; }
 
    QuoteTemplate(const wchar16_t* string)

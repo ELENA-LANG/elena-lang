@@ -455,6 +455,8 @@ inline ref_t defineConstantMask(ObjectKind type)
          return mskVMTRef;
       case okLiteralConstant:
          return mskLiteralRef;
+      case okCharConstant:
+         return mskCharRef;
       case okIntConstant:
          return mskInt32Ref;
       case okLongConstant:
@@ -1864,15 +1866,23 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
 
 void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
 {
-   // dcopy index
-   // bread
-   // dcopye
+   if (offset != 0) {
+      // dcopy index
+      // bread
+      // dcopye
+
+      tape.write(bcDCopy, offset);
+      tape.write(bcBRead);
+      tape.write(bcDCopyE);
+   }
+   else {
+      // nload
+      tape.write(bcNLoad);
+   }
+
    // nsave
    // acopyb
 
-   tape.write(bcDCopy, offset);
-   tape.write(bcBRead);
-   tape.write(bcDCopyE);
    tape.write(bcNSave);
    tape.write(bcACopyB);
 }

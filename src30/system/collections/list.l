@@ -1,7 +1,7 @@
 #define system.
 
-#type(class:system'collections'List)list.
-#type(class:system'collections'Dictionary)dictionary.
+#subject(class:system'collections'List)list.
+#subject(class:system'collections'Dictionary)dictionary.
 
 // --- ListItem ---
 

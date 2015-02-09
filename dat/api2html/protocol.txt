@@ -16,12 +16,15 @@ enumerable
 enumerator
 function
 int
+int_variable
 literal
 long
+long_variable
 numeric_value
 numeric_variable
 object
 real
+real_variable
 short
 typecaster
 value
@@ -145,3 +148,12 @@ variant
 #method=literal,literal,object;Casts a literal value
 #method=long,long,object;Casts a long integer value
 #method=real,real,object;Casts a real value
+
+[int_variable]
+#shortdescr=An integer variable protocol
+
+[long_variable]
+#shortdescr=A long integer variable protocol
+
+[real_variable]
+#shortdescr=A long integer variable protocol

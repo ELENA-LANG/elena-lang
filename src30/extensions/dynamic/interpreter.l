@@ -2,8 +2,8 @@
 #define extensions.
 //#define system'dynamic.
 
-#type(class:system'BaseFunction1) ScriptError.
-#type(class:system'LiteralValue)  script.
+#subject(class:system'BaseFunction1) ScriptError.
+#subject(class:system'LiteralValue)  script.
 
 // --- IOException ---
 

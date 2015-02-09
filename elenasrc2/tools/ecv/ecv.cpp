@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   6
+#define BUILD_VERSION   8
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -92,12 +92,12 @@ void printHelp()
 {
    wprintf(_T("-q                       - quit\n"));
    wprintf(_T("-h                       - help\n"));
-   wprintf(_T("-?<class>.<method name>  - view method byte codes\n"));
-   wprintf(_T("-?<class>                - list all class methods\n"));
-   wprintf(_T("-s<symbol>               - view symbol byte codes\n"));
+   wprintf(_T("?<class>.<method name>  - view method byte codes\n"));
+   wprintf(_T("?<class>                - list all class methods\n"));
+   wprintf(_T("??<symbol>              - view symbol byte codes\n"));
    wprintf(_T("-o<path>                 - save the output\n"));
    wprintf(_T("-c<path>                 - save the output\n"));
-   wprintf(_T("-l                       - list all classes\n"));
+   wprintf(_T("?                        - list all classes\n"));
 }
 
 _Memory* findClassMetaData(_Module* module, const wchar16_t* referenceName)
@@ -450,6 +450,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPushSI:
       case bcALoadSI:
       case bcASaveSI:
+      case bcBLoadSI:
          command.append(opcode);
          command.append(_T(" sp["));
          command.appendInt(argument);
@@ -790,7 +791,10 @@ void runSession(_Module* module)
 
       // execute command
       if (line[0]=='?') {
-         if (StringHelper::find(line + 1, '.') != -1) {
+         if (line[1]=='?') {
+            printSymbol(module, line + 2, pageSize);
+         }
+         else if (StringHelper::find(line + 1, '.') != -1) {
             printMethod(module, line + 1, pageSize);   
          }
          else if (line[1]==0) {
@@ -808,9 +812,6 @@ void runSession(_Module* module)
             //case 'c':
             //   printConstructor(module, line + 2, pageSize);
             //   break;
-            case 's':
-               printSymbol(module, line + 2, pageSize);
-               break;
             case 'o':
                setOutputMode(line + 2);
                break;
@@ -824,7 +825,7 @@ void runSession(_Module* module)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-	printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2012-2013 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
+	printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2012-2015 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");

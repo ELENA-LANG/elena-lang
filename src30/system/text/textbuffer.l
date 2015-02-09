@@ -3,7 +3,7 @@
 
 #symbol(const,type:int)$TextPageSize = 128.
 
-#type(class:system'text'TextBuffer) textbuffer.
+#subject(class:system'text'TextBuffer) textbuffer.
 
 // --- TextBuffer ---
 

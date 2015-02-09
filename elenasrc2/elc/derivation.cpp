@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Derivation Tree class implementation
 //
-//                                              (C)2005-2009, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -23,13 +23,20 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 
 void DerivationWriter :: writeTerminal(TerminalInfo terminal)
 {
+   // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
+   if (terminal==tsCharacter && getlength(terminal.value) < 0x100) {
+      QuoteTemplate<TempString> quote(terminal.value);
+      if (quote.Length() > 1)
+         terminal.symbol = tsLiteral;
+   }
+
    _writer->writeDWord(terminal.symbol);
    _writer->writeDWord(terminal.disp);
    _writer->writeDWord(terminal.row);
    _writer->writeDWord(terminal.col);
    _writer->writeDWord(terminal.length);
 
-   if (terminal==tsLiteral) {
+   if (terminal==tsLiteral || terminal==tsCharacter) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<TempString> quote(terminal.value);

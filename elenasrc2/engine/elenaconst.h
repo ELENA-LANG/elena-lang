@@ -474,6 +474,7 @@ namespace _ELENA_
    #define LONG_FORWARD             "'$long" 
    #define REAL_FORWARD             "'$real" 
    #define WSTR_FORWARD             "'$literal" 
+   #define WCHAR_FORWARD            "'$char" 
    #define TRUE_FORWARD             "'$true"
    #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"

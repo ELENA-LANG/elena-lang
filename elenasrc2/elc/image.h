@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image class declarations
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef imageH
@@ -22,6 +22,7 @@ class ExecutableImage : public Image, public _ImageLoader
    void*    _entryPoint;
 
    ConstantIdentifier _literal;
+   ConstantIdentifier _character;
    ConstantIdentifier _int;
    ConstantIdentifier _long;
    ConstantIdentifier _real;
@@ -56,6 +57,7 @@ public:
    virtual size_t getLinkerConstant(int id);
 
    virtual const wchar16_t* getLiteralClass();
+   virtual const wchar16_t* getCharacterClass();
    virtual const wchar16_t* getIntegerClass();
    virtual const wchar16_t* getRealClass();
    virtual const wchar16_t* getLongClass();

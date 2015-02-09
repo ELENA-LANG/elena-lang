@@ -135,6 +135,7 @@ protected:
       ref_t longReference;
       ref_t realReference;
       ref_t literalReference;
+      ref_t charReference;
       ref_t trueReference;
       ref_t falseReference;
       ref_t paramsReference;
@@ -680,7 +681,7 @@ protected:
 
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object);
-   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo object);
+   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
 
    bool overridePrimitiveAssigning(CodeScope& scope, ref_t targetType, ObjectInfo object, ref_t& message);
 
@@ -747,7 +748,7 @@ protected:
    void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
 
    void reserveSpace(CodeScope& scope, int size);
-   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand);
+   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand, bool presavedAccumulator = false);
 
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);

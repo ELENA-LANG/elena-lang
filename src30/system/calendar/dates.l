@@ -1,7 +1,7 @@
 #define system.
 
-#type(class:system'calendar'Date) datetime.
-#type(class:system'calendar'TimeSpan) timespan.
+#subject(class:system'calendar'Date) datetime.
+#subject(class:system'calendar'TimeSpan) timespan.
 
 // --- TimeSpan --
 

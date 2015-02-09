@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -24,6 +24,9 @@ void _ImageLoader :: mapReference(const wchar16_t* reference, void* vaddress, si
       case mskInt32Ref:
       case mskRealRef:
          _numberReferences.add(reference, (size_t)vaddress);
+         break;
+      case mskCharRef:
+         _characterReferences.add(reference, (size_t)vaddress);
          break;
       case mskLiteralRef:
          _literalReferences.add(reference, (size_t)vaddress);
@@ -78,6 +81,8 @@ void* _ImageLoader :: resolveReference(const wchar16_t* reference, size_t mask)
          case mskInt32Ref:
          case mskRealRef:
             return (void*)_numberReferences.get(reference);
+         case mskCharRef:
+            return (void*)_characterReferences.get(reference);
          case mskLiteralRef:
             return (void*)_literalReferences.get(reference);
          case mskSymbolRelRef:

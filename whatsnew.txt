@@ -35,7 +35,7 @@
 [-] Project - Options - VM Path is no longer supported / required (SHARED path is used)
 
 [LIB]
-[*] system : ByteNumber, ShortNumber, IntNumber, LongNumber
+[*] system : ByteNumber, ShortNumber, IntNumber, LongNumber, Integer
 [*] system : Object#class.new, Exception::theCallStack, Exception.get&literal$
 [*] system'control => extensions'control
 [+] system : CallStack, IntArray

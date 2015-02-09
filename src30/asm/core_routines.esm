@@ -267,8 +267,8 @@ end
 
 procedure long_copyint
   
-  bloadsi 2
-  aloadsi 1
+  bcopya
+  aloadsi 2
   lcopyn
   acopyb
   quitn 2

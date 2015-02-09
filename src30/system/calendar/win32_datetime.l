@@ -5,10 +5,10 @@
 
 // --- SystemTime ---
 
-#type(class:system'calendar'Win32SystemTime)systemtime.
+#subject(class:system'calendar'Win32SystemTime)systemtime.
 
-#type(class:system'IntNumber) int_time_attributes.
-#type(class:system'IntNumber) int_date_attributes.
+#subject(class:system'IntNumber) int_time_attributes.
+#subject(class:system'IntNumber) int_date_attributes.
 
 #class(struct:embeddable,sealed) Win32SystemTime
 {
@@ -78,37 +78,37 @@
 
     #method set &year:aValue 
     [ 
-        theYear := aValue int short.
+        theYear := aValue short.
     ]
 
     #method set &month:aValue 
     [ 
-        theMonth := aValue int short.
+        theMonth := aValue short.
     ]
 
     #method set &day:aValue 
     [ 
-        theDay := aValue int short.
+        theDay := aValue short.
     ]
 
     #method set &hour:aValue 
     [ 
-        theHour := aValue int short.
+        theHour := aValue short.
     ]
 
     #method set &minute:aValue 
     [ 
-        theMinute := aValue int short.
+        theMinute := aValue short.
     ]
 
     #method set &second:aValue 
     [ 
-        theSecond := aValue int short.
+        theSecond := aValue short.
     ]
 
     #method set &millisecond:aValue 
     [ 
-        theMillisecond := aValue int short.
+        theMillisecond := aValue short.
     ]
 
     #method set &years:aValue
@@ -128,17 +128,17 @@
 
     #method set &hours:aValue 
     [ 
-        theHour := aValue int short.
+        theHour := aValue short.
     ]
 
     #method set &minutes:aValue 
     [ 
-        theMinute := aValue int short.
+        theMinute := aValue short.
     ]
 
     #method set &seconds:aValue 
     [ 
-        theSecond := aValue int short.
+        theSecond := aValue short.
     ]
 
     #method read &out'long:aRetVal

@@ -23,6 +23,7 @@ enum ObjectKind
 
    okConstant,                     // param - reference, extraparam - class reference
    okLiteralConstant,              // param - reference 
+   okCharConstant,                 // param - reference
    okIntConstant,                  // param - reference 
    okLongConstant,                 // param - reference 
    okRealConstant,                 // param - reference 

@@ -494,6 +494,10 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
       value = reference;
       vmtReference = _loader->getLiteralClass();
    }
+   else if (mask == mskCharRef) {
+      value = reference;
+      vmtReference = _loader->getCharacterClass();
+   }
    else if (mask == mskInt32Ref) {
       value = reference;
       vmtReference = _loader->getIntegerClass();
@@ -528,7 +532,7 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
    _loader->mapReference(reference, vaddress, mask);
 
    size_t position = writer.Position();
-   if (mask == mskLiteralRef) {
+   if (mask == mskLiteralRef || mask == mskCharRef) {
       _compiler->compileWideLiteral(&writer, value);
    }
    else if (mask == mskInt32Ref) {
@@ -842,6 +846,7 @@ void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode
             break;
          case mskConstantRef:
          case mskLiteralRef:
+         case mskCharRef:
          case mskInt32Ref:
          case mskRealRef:
          case mskInt64Ref:

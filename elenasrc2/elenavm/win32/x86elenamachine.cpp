@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2012, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -125,7 +125,7 @@ bool x86Instance :: restart(bool debugMode)
    freeobj(_linker);
 
    // create new compiler & linker (in debug mode we do not use embedded symbols)
-   _compiler = new _ELENA_::x86JITCompiler(debugMode, !debugMode);
+   _compiler = new _ELENA_::x86JITCompiler(debugMode);
    _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/);
 
    return Instance::restart(debugMode);

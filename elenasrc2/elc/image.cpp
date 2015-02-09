@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -28,6 +28,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
 
    // load default forwards
    _literal.copy(project->resolveForward(WSTR_FORWARD));
+   _character.copy(project->resolveForward(WCHAR_FORWARD));
    _int.copy(project->resolveForward(INT_FORWARD));
    _long.copy(project->resolveForward(LONG_FORWARD));
    _real.copy(project->resolveForward(REAL_FORWARD));
@@ -172,6 +173,11 @@ const wchar16_t* ExecutableImage :: getLiteralClass()
    return _literal;
 }
 
+const wchar16_t* ExecutableImage :: getCharacterClass()
+{
+   return _character;
+}
+
 const wchar16_t* ExecutableImage :: getIntegerClass()
 {
    return _int;
@@ -209,7 +215,7 @@ const wchar16_t* ExecutableImage :: getNamespace()
 
 const wchar16_t* ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
-   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref) {
+   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef) {
       return module->resolveConstant(reference);
    }
    // if it is a message

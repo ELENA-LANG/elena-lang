@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
 
-#define ELENAVM_BUILD_NUMBER    0x000B             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x000C             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -185,6 +185,7 @@ protected:
    JITLinker*      _linker;
 
    ConstantIdentifier _literalClass;
+   ConstantIdentifier _characterClass;
    ConstantIdentifier _intClass;
    ConstantIdentifier _longClass;
    ConstantIdentifier _realClass;
@@ -266,6 +267,11 @@ public:
    virtual const wchar16_t* getLiteralClass()
    {
       return _literalClass;
+   }
+
+   virtual const wchar16_t* getCharacterClass()
+   {
+      return _characterClass;
    }
 
    virtual const wchar16_t* getIntegerClass()

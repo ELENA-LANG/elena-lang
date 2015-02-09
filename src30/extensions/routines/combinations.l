@@ -2,7 +2,7 @@
 #define system'routines.
 #define extensions.
 
-#type(class:BaseStrategy)$strategy.
+#subject(class:BaseStrategy)$strategy.
 
 // --- Strategy ---
 

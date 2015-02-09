@@ -1,6 +1,6 @@
 #define system.
 
-#type(class:system'BaseFunction1) IOError.
+#subject(class:system'BaseFunction1) IOError.
 
 // --- IOException ---
 
