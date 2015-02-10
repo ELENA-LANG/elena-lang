@@ -1344,6 +1344,90 @@ xor &short:<A HREF="protocol.html#short">short</A>
 </TD>
 </TR>
 </TABLE>
+<A NAME="byteConvertor">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol byteConvertor</H2>
+<P>
+A byte convertor
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Returns the parameter</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &char:<A HREF="protocol.html#char">char</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Converts to a byte value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Converts to a byte value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &literal:<A HREF="protocol.html#literal">literal</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Converts to a byte value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Converts to a byte value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Converts to a byte value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#byte">byte</A>
+</TD>
+<TD><CODE>Converts to a byte value</CODE>
+</TD>
+</TR>
+</TABLE>
 <A NAME="CharValue">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -2674,6 +2758,24 @@ An integer convertor
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+convert &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &char:<A HREF="protocol.html#char">char</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 convert &int:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#int">int</A>
 </TD>
@@ -2687,6 +2789,33 @@ convert &literal:<A HREF="protocol.html#literal">literal</A>
  = <A HREF="protocol.html#int">int</A>
 </TD>
 <TD><CODE>Converts the literal value to the integer number</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#int">int</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -3421,6 +3550,15 @@ convert &byte:<A HREF="protocol.html#byte">byte</A>
  = <A HREF="protocol.html#literal">literal</A>
 </TD>
 <TD><CODE>Converts the parameter to the literal value with the provided radix</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &char:<A HREF="protocol.html#char">char</A>
+ = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Converts the parameter to the literal value</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -4316,7 +4454,7 @@ xor &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-dispatch = <A HREF="protocol.html#int">int</A>
+dispatch = <A HREF="protocol.html#long">long</A>
 </TD>
 <TD><CODE>Dispatches others messages to its value</CODE>
 </TD>
@@ -4345,6 +4483,33 @@ A long integer convertor
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+convert &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &char:<A HREF="protocol.html#char">char</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 convert &literal:<A HREF="protocol.html#literal">literal</A>
  = <A HREF="protocol.html#long">long</A>
 </TD>
@@ -4358,6 +4523,24 @@ convert &long:<A HREF="protocol.html#long">long</A>
  = <A HREF="protocol.html#long">long</A>
 </TD>
 <TD><CODE>Returns the parameter</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#long">long</A>
+</TD>
+<TD><CODE>Converts to the integer value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -5599,6 +5782,14 @@ write &short:<A HREF="protocol.html#short">short</A>
 <TD><CODE>Copies the integer value</CODE>
 </TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+dispatch = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Dispatches others messages to its value</CODE>
+</TD>
+</TR>
 </TABLE>
 <A NAME="realConvertor">
 <HR>
@@ -5619,6 +5810,15 @@ A real number convertor
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TD COLSPAN=2><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Converts to to the real number</CODE>
+</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
@@ -5654,6 +5854,15 @@ convert &real:<A HREF="protocol.html#real">real</A>
  = <A HREF="protocol.html#real">real</A>
 </TD>
 <TD><CODE>Returns the parameter</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#real">real</A>
+</TD>
+<TD><CODE>Converts the integer value to the real number</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -6077,6 +6286,90 @@ subtract &short:<A HREF="protocol.html#short">short</A>
  = <A HREF="protocol.html#real">real</A>
 </TD>
 <TD><CODE>Returns the difference of numbers</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="shortConvertor">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system</FONT>
+<BR>
+Symbol shortConvertor</H2>
+<P>
+A 16bit integer convertor
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &byte:<A HREF="protocol.html#byte">byte</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Converts to a short integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &char:<A HREF="protocol.html#char">char</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Converts to a short integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &int:<A HREF="protocol.html#int">int</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Converts to a short integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &literal:<A HREF="protocol.html#literal">literal</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Converts to a short integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &long:<A HREF="protocol.html#long">long</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Converts to a short integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &real:<A HREF="protocol.html#real">real</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Converts to a short integer value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+convert &short:<A HREF="protocol.html#short">short</A>
+ = <A HREF="protocol.html#short">short</A>
+</TD>
+<TD><CODE>Returns the parameter</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -6953,7 +7246,7 @@ Class Variable</H2>
 </DT>
 </DL>
 <P>
-A variable
+A generic variable. Extends an assigned value
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
@@ -6970,6 +7263,14 @@ new : <A HREF="protocol.html#numeric_value">numeric_value</A>
  = <A HREF="protocol.html#variable">variable</A>
 </TD>
 <TD><CODE>Creates the variable</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new = <A HREF="protocol.html#variable">variable</A>
+</TD>
+<TD><CODE>Creates the empty variable</CODE>
 </TD>
 </TR>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -6997,14 +7298,6 @@ divideInto : <A HREF="protocol.html#numeric_value">numeric_value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-get = <A HREF="protocol.html#numeric_value">numeric_value</A>
-</TD>
-<TD><CODE>Returns the object</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
 multiplyBy : <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
 <TD><CODE>Multiplies by the value</CODE>
@@ -7021,9 +7314,25 @@ reduce : <A HREF="protocol.html#numeric_value">numeric_value</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
+value = <A HREF="protocol.html#numeric_value">numeric_value</A>
+</TD>
+<TD><CODE>Returns the object</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
 write : <A HREF="protocol.html#numeric_value">numeric_value</A>
 </TD>
 <TD><CODE>Assigns the variable</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+dispatch = <A HREF="protocol.html#value">value</A>
+</TD>
+<TD><CODE>Dispatches others messages to its value</CODE>
 </TD>
 </TR>
 </TABLE>

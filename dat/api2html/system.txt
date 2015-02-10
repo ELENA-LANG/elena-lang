@@ -13,6 +13,7 @@ Boolean
 BreakException
 ByteArray
 ByteNumber
+byteConvertor
 CharValue
 console
 control
@@ -42,6 +43,7 @@ OutOfRangeException
 Real
 realConvertor
 RealNumber
+shortConvertor
 ShortNumber
 String
 true
@@ -564,28 +566,41 @@ Variant
 [intConvertor]
 #title=Symbol intConvertor
 #shortdescr=An integer convertor
+#method=convert,&byte:byte,int;Converts to the integer value
+#method=convert,&char:char,int;Converts to the integer value
 #method=convert,&int:int,int;Returns the parameter
 #method=convert,&literal:literal,int;Converts the literal value to the integer number
+#method=convert,&long:long,int;Converts to the integer value
+#method=convert,&real:real,int;Converts to the integer value
+#method=convert,&short:short,int;Converts to the integer value
 
 [longConvertor]
 #title=Symbol longConvertor
 #shortdescr=A long integer convertor
+#method=convert,&byte:byte,long;Converts to the integer value
+#method=convert,&char:char,long;Converts to the integer value
+#method=convert,&int:int,long;Converts to the integer value
 #method=convert,&literal:literal,long;Converts the literal value to the integer number
 #method=convert,&long:long,long;Returns the parameter
+#method=convert,&real:real,long;Converts to the integer value
+#method=convert,&short:short,long;Converts to the integer value
 
 [realConvertor]
 #title=Symbol realConvertor
 #shortdescr=A real number convertor
+#method=convert,&byte:byte,real;Converts to to the real number
 #method=convert,&int:int,real;Converts the integer value to the real number
 #method=convert,&literal:literal,real;Converts the literal value to the real number
 #method=convert,&long:long,real;Converts the integer value to the real number
 #method=convert,&real:real,real;Returns the parameter
+#method=convert,&short:short,real;Converts the integer value to the real number
 
 [literalConvertor]
 #title=Symbol literalConvertor
 #shortdescr=A literal convertor
 #method=convert,&byte:byte,literal;Converts the parameter to the literal value
 #method=convert,&byte:byte&index:int,literal;Converts the parameter to the literal value with the provided radix
+#method=convert,&char:char,literal;Converts the parameter to the literal value
 #method=convert,&int:int,literal;Converts the parameter to the literal value
 #method=convert,&int:int&index:int,literal;Converts the parameter to the literal value with the provided radix
 #method=convert,&literal:literal,literal;Returns the parameter
@@ -650,6 +665,7 @@ Variant
 #method=write,&long:long;Copies the integer value
 #method=write,&real:real;Copies the real number value
 #method=write,&short:short;Copies the integer value
+#method=dispatch,,real;Dispatches others messages to its value
 
 [Long]
 #title=Class Long
@@ -706,7 +722,7 @@ Variant
 #method=write,&long:long;Copies the integer value
 #method=write,&short:short;Copies the integer value
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
-#method=dispatch,,int;Dispatches others messages to its value
+#method=dispatch,,long;Dispatches others messages to its value
 
 [Boolean]
 #title=Class Boolean
@@ -725,16 +741,18 @@ Variant
 
 [Variable]
 #title=Class Variable
-#shortdescr=A variable
+#shortdescr=A generic variable. Extends an assigned value
 #protocol=numeric_variable
 #parent=system.html#Object:system'Object
 #constructor=new,numeric_value,variable;Creates the variable
+#constructor=new,,variable;Creates the empty variable
 #method=append,numeric_value;Appends the value
 #method=divideInto,numeric_value;Divides into the value
-#method=get,,numeric_value;Returns the object
 #method=multiplyBy,numeric_value;Multiplies by the value
 #method=reduce,numeric_value;Subtructs the value
+#method=value,,numeric_value;Returns the object
 #method=write,numeric_value;Assigns the variable
+#method=dispatch,,value;Dispatches others messages to its value
 
 [OutOfRangeException]
 #title=Class OutOfRangeException
@@ -991,3 +1009,25 @@ Variant
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
 #method=xor,&short:short,short;Returns the result of bitwise XOR operation
+
+[byteConvertor]
+#title=Symbol byteConvertor
+#shortdescr=A byte convertor
+#method=convert,&byte:byte,byte;Returns the parameter
+#method=convert,&char:char,byte;Converts to a byte value
+#method=convert,&int:int,byte;Converts to a byte value
+#method=convert,&literal:literal,byte;Converts to a byte value
+#method=convert,&long:long,byte;Converts to a byte value
+#method=convert,&real:real,byte;Converts to a byte value
+#method=convert,&short:short,byte;Converts to a byte value
+
+[shortConvertor]
+#title=Symbol shortConvertor
+#shortdescr=A 16bit integer convertor
+#method=convert,&byte:byte,short;Converts to a short integer value
+#method=convert,&char:char,short;Converts to a short integer value
+#method=convert,&int:int,short;Converts to a short integer value
+#method=convert,&literal:literal,short;Converts to a short integer value
+#method=convert,&long:long,short;Converts to a short integer value
+#method=convert,&real:real,short;Converts to a short integer value
+#method=convert,&short:short,short;Returns the parameter

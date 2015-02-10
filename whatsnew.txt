@@ -35,10 +35,11 @@
 [-] Project - Options - VM Path is no longer supported / required (SHARED path is used)
 
 [LIB]
-[*] system : ByteNumber, ShortNumber, IntNumber, LongNumber, Integer
+[*] system : ByteNumber, ShortNumber, IntNumber, LongNumber, RealNumber, Integer, Long, Real, CharValue
+[*] system : intConvertor, literalConvertor, longConvertor, realConvertor
 [*] system : Object#class.new, Exception::theCallStack, Exception.get&literal$
 [*] system'control => extensions'control
-[+] system : CallStack, IntArray
+[+] system : CallStack, IntArray, byteConvertor, shortConvertor
 [+] extensions'dynamic: scriptEngine, ScriptEngineException
 
 [ElenaScript]
