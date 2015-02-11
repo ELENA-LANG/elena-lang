@@ -316,6 +316,8 @@
     #method clone = ByteNumber new &byte:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb byte:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &byte:$self.
 }
 
 // --- ShortNumber ---
@@ -484,6 +486,8 @@
     #method clone = ShortNumber new &short:$self.    
                 
     #method cast : aVerb &to:aTarget = aTarget::aVerb short:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &short:$self.
 }
 
 // --- IntNumber ---
@@ -657,6 +661,8 @@
     #method clone = IntNumber new &int:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb int:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &int:$self.
 }
 
 // --- longnumber ---
@@ -833,6 +839,8 @@
     #method clone = LongNumber new &long:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb long:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &long:$self.
 }
 
 // --- realNumber ---
@@ -962,6 +970,8 @@
     #method clone = RealNumber new &real:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb real:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &real:$self.
 }
 
 // --- Integer ---
@@ -1531,6 +1541,8 @@
     #method clone = CharValue new &char:$self.
     
     #method cast:aVerb &to:aTarget = aTarget::aVerb char:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &char:$self.
 
     #method literal = system'LiteralValue new &length:1 &char:$self literal.
 }

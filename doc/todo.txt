@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 review : BaseBoolValue
+                       * lib30 review : BaseByteArray
 
                        * new class : chararray, should be used instead of shortarray for literal operations
 
@@ -78,6 +78,7 @@ Currently:
                        * literalOp : uppercase / lowercase
                        * charOp : isUppercase / isLowercase
                        * charConvertor - convert int / short / byte / literal
+                       * BaseBoolValue should be private
 
 <=================> 
 

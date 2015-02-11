@@ -15,11 +15,25 @@ char
 enumerable
 enumerator
 function
+func2
+func3
+func4
+func5
+func6
+func7
+func8
+func9
+func10
+func11
 int
 int_variable
+iterator
 literal
 long
 long_variable
+n3func
+nfunc
+nnfunc
 numeric_value
 numeric_variable
 object
@@ -30,6 +44,7 @@ typecaster
 value
 variable
 variant
+verb
 
 [object]
 #shortdescr=A generic instance
@@ -157,3 +172,48 @@ variant
 
 [real_variable]
 #shortdescr=A long integer variable protocol
+
+[iterator]
+#shortdescr=An iterator protocol
+
+[verb]
+#shortdescr=A verb symbol
+
+[func2]
+#shortdescr=A 2 variable function protocol
+
+[func3]
+#shortdescr=A 3 variable function protocol
+
+[func4]
+#shortdescr=A 4 variable function protocol
+
+[func5]
+#shortdescr=A 5 variable function protocol
+
+[func6]
+#shortdescr=A 6 variable function protocol
+
+[func7]
+#shortdescr=A 7 variable function protocol
+
+[func8]
+#shortdescr=A 8 variable function protocol
+
+[func9]
+#shortdescr=A 9 variable function protocol
+
+[func10]
+#shortdescr=A 10 variable function protocol
+
+[func11]
+#shortdescr=A 11 variable function protocol
+
+[nfunc]
+#shortdescr=An index function protocol
+
+[nnfunc]
+#shortdescr=A 2 variable index function protocol
+
+[n3func]
+#shortdescr=A 3 variable index function protocol

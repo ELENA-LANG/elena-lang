@@ -3,51 +3,70 @@
 #shortdescr=Contains the basic functionality
 
 [#list#]
-actionOp
-Array
-ArrayIterator
+BaseFunction
+BaseFunction1
+BaseFunction10
+BaseFunction11
+BaseFunction2
+BaseFunction3
+BaseFunction4
+BaseFunction5
+BaseFunction6
+BaseFunction7
+BaseFunction8
+BaseFunction9
 BaseNumber
 BaseValue
 BaseVariable
 Boolean
-BreakException
-ByteArray
-ByteNumber
 byteConvertor
+ByteNumber
 CharValue
-console
-control
-emptyLiteralValue
-Exception
+Enumerator
 false
-FormatException
-functionOp
-Integer
+IndexFunction1
+IndexFunction2
+IndexFunction3
 IntBaseNumber
 IntBaseVariable
 intConvertor
+Integer
 IntNumber
-intOp
-InvalidArgumentException
+Iterator
 literalConvertor
-LiteralIterator
-LiteralValue
 Long
 longConvertor
 LongNumber
-mathOp
 nil
 Object
-objectOp
-OutOfRangeException
 Real
 realConvertor
 RealNumber
 shortConvertor
 ShortNumber
-String
 true
 Variable
+
+
+actionOp
+Array
+ArrayIterator
+BreakException
+ByteArray
+console
+control
+emptyLiteralValue
+Exception
+FormatException
+functionOp
+intOp
+InvalidArgumentException
+LiteralIterator
+LiteralValue
+mathOp
+objectOp
+OutOfRangeException
+String
 Variant
 
 [console]
@@ -132,7 +151,8 @@ Variant
 #method=and,&long:long,long;Returns the result of bitwise AND operation
 #method=and,&short:short,int;Returns the result of bitwise AND operation
 #method=byte,,byte;Returns the byte value
-#method=cast,typecaster;Casts the value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with int subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with int subject
 #method=clone,,int;Clones the value
 #method=divide,&byte:byte,int;Returns the result of division
 #method=divide,&int:int,int;Returns the result of integer division
@@ -186,7 +206,8 @@ Variant
 #constructor=min,,char;Returns the minimal possible character value (0)
 #constructor=new,,char;Creates the object with zero value
 #constructor=new,&char:char,char;Creates the object with specified numeric value
-#method=cast,typecaster;Casts the value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with char subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with char subject
 #method=char,,value;Returns itself
 #method=clone,,char;Clones the value
 #method=equal,&char:char,bool;Compares the value with value
@@ -221,44 +242,37 @@ Variant
 #shortdescr=A true value symbol
 #protocol=bool
 #method=and,object,bool;Executes logical AND operation
-#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
-#method=and,&bool:bool,bool;Executes logical AND operation with a boolean value
-#method=and,&int:int,bool;Executes logical AND operation with an integer value
 #method=bool,,bool;Returns itself.
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with bool subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with bool subject
+#method=clone,,object;Returns itself.
 #method=else,action;Always returns nil.
-#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
-#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current boolean expression.
 #method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
+#method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
 #method=literal,,literal;Returns literal representation.
 #method=not,,bool;Always returns false.
 #method=or,object,bool;Executes logical OR operation<br/>Always return true
 #method=then,action;Executes the action;
 #method=then,action&else:action;Executes then-action;
 #method=xor,object,bool;Executes logical XOR operation
-#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
-#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
 
 [false]
 #title=Symbol false
 #shortdescr=A false value symbol
 #protocol=bool
 #method=and,object,bool;Executes logical AND operation<br/>Always return false
-#method=and,&action:bool_action,bool;Executes logical AND operation with a boolean expression
 #method=bool,,bool;Returns itself.
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with bool subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with bool subject
+#method=clone,,object;Returns itself.
 #method=else,action;Executes the action;
 #method=equal,object,bool;Determines whether the specified object is equal to the current object boolean value / expression.
-#method=equal,&action:bool_action,bool;Determines whether the specified object is equal to the current boolean expression.
-#method=equal,&bool:bool,bool;Determines whether the specified object is equal to the current object boolean value.
 #method=literal,,literal;Returns literal representation.
-#method=not,,bool;Always returns true.
 #method=or,object,bool;Executes logical OR operation
-#method=or,&action:bool_action,bool;Executes logical OR operation with a boolean expression
-#method=or,&bool:bool,bool;Executes logical OR operation with a boolean value
+#method=not,,bool;Always returns true.
 #method=then,action;Always returns nil.
 #method=then,action&else:action;Executes else-action;
 #method=xor,object,bool;Executes logical XOR operation
-#method=xor,&action:bool_action,bool;Executes logical XOR operation with a boolean expression
-#method=xor,&bool:bool,bool;Executes logical XOR operation with a boolean value
 
 [Integer]
 #title=Class Integer
@@ -418,7 +432,8 @@ Variant
 #method=and,&long:long,long;Returns the result of bitwise AND operation
 #method=and,&short:short,long;Returns the result of bitwise AND operation
 #method=byte,,byte;Returns the byte value
-#method=cast,typecaster,object;Casts long integer value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with long subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with long subject
 #method=clone,,long;Clones the value
 #method=divide,&byte:byte,long;Returns the result of division
 #method=divide,&int:int,long;Returns the result of integer division
@@ -482,7 +497,8 @@ Variant
 #method=add,&long:long,real;Returns the sum of numbers
 #method=add,&real:real,real;Returns the sum of numbers
 #method=add,&short:short,real;Returns the sum of numbers
-#method=cast,typecaster,object;Casts real numeric value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with real subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with real subject
 #method=clone,,real;Clones the value
 #method=divide,&byte:byte,real;Returns the result of the division
 #method=divide,&int:int,real;Returns the result of the division
@@ -726,18 +742,20 @@ Variant
 
 [Boolean]
 #title=Class Boolean
-#shortdescr=A boolean variable
+#shortdescr=A boolean variable. Extends an boolean value
 #protocol=bool
-#protocol=value
 #protocol=variable
-#constructor=new,value,variable;Creates a boolean variable with specified value
-#method=append,value,bool;Executes logical OR operation
+#constructor=new,,variable;Creates a boolean variable with an initial value
+#constructor=new,object,variable;Creates a boolean variable with specified value
+#constructor=new,&bool:bool,variable;Creates a boolean variable with specified value
+#method=append,object,variable;Executes logical OR operation
+#method=bool,,bool;Returns the boolean value
 #method=clone,,object;Clones the object
-#method=equal,value,bool;Compares the value
 #method=invert,,;Inverts the boolean value
-#method=multiplyBy,value,bool;Executes logical AND operation
+#method=multiplyBy,object,variable;Executes logical AND operation
 #method=value,,bool;Returns the boolean value
 #method=write,value,;Writes the value
+#method=write,&bool:bool,;Writes the value
 
 [Variable]
 #title=Class Variable
@@ -768,11 +786,9 @@ Variant
 #parent=system.html#Object:system'Object
 #protocol=function
 #method=retrieve,&enumerator:enumerator,object;Executes the function for every value in the specified range until the function returns true
-#method=rewind,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified integer range (starting value, ending value, -step)
 #method=run,&enumerator:enumerator,object;Executes the function for every enumeration item
 #method=run,&enumerator:enumerator&where:bool_function,object;Executes the function for every enumeration item when the condition is true
 #method=run,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified generic range
-#method=run,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting value, ending value, step)
 
 [ArrayIterator]
 #title=Class ArrayIterator
@@ -901,7 +917,8 @@ Variant
 #method=and,&long:long,long;Returns the result of bitwise AND operation
 #method=and,&short:short,short;Returns the result of bitwise AND operation
 #method=byte,,byte;Returns itself
-#method=cast,verb,&to:object;Casts the value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with byte subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with byte subject
 #method=clone,,byte;Clones the value
 #method=divide,&byte:byte,byte;Returns the result of integer division
 #method=divide,&int:int,int;Returns the result of integer division
@@ -967,7 +984,8 @@ Variant
 #method=and,&long:long,long;Returns the result of bitwise AND operation
 #method=and,&short:short,short;Returns the result of bitwise AND operation
 #method=byte,,byte;Returns the byte value
-#method=cast,verb,&to:object;Casts the value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with short subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with short subject
 #method=clone,,short;Clones the value
 #method=divide,&byte:byte,short;Returns the result of integer division
 #method=divide,&int:int,int;Returns the result of integer division
@@ -1031,3 +1049,191 @@ Variant
 #method=convert,&long:long,short;Converts to a short integer value
 #method=convert,&real:real,short;Converts to a short integer value
 #method=convert,&short:short,short;Returns the parameter
+
+[Enumerator]
+#title=Class Enumerator
+#shortdescr=An enumerator prototype
+#protocol=enumerator
+#parent=system.html#Object:system'Object
+#method=get,,object;Returns the current object
+#method=enumerator,,enumerator;Returns itself
+#method=next,,bool;Goes to the next enumeration member and returns true if it is not the last member
+#method=reset,,;Resets the enumerator
+
+[Iterator]
+#title=Class Iterator
+#shortdescr=An iterator prototype
+#protocol=iterator
+#parent=system.html#Object:system'Object
+#method=append,&index:int;Increaments the index by specified value
+#method=available,,bool;Returns false if the index out of range
+#method=get,,value;Returns the current member
+#method=index,,int;Returns the index value.
+#method=iterator,,iterator;Returns itself
+#method=reduce,&index:int;Decreaments the index by specified value
+#method=set,object;Sets the current member
+#method=write,&index:int;Sets the index by specified value
+
+[BaseFunction]
+#title=Class BaseFunction
+#shortdescr=A base action
+#protocol=action
+#parent=system.html#Object:system'Object
+#method=eval,,object;Executes the action
+#method=run,&if:bool,;Executes the action until the condition is false
+#method=run,&until:bool,;Executes the action while the condition is false</br>Executes at least once
+
+[BaseFunction1]
+#title=Class BaseFunction1
+#shortdescr=A base function
+#protocol=function
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func1 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func1 subject
+#method=eval,object,object;Executes the function
+#method=retrieve,&enumerator:enumerator,object;Executes the function for every enumeration item until it returns true
+#method=run,&enumerator:enumerator,object;Executes the function for every enumeration item
+
+[BaseFunction2]
+#title=Class BaseFunction2
+#shortdescr=A base two variable function
+#protocol=func2
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func2 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func2 subject
+#method=eval,object&:object,object;Executes the function
+#method=retrieve,&:object&enumerator:enumerator,object;Executes the function for a parameter and every enumeration item until it returns true
+#method=run,&:object&enumerator:enumerator,object;Executes the function for a parameter and every enumeration item
+
+[BaseFunction3]
+#title=Class BaseFunction3
+#shortdescr=A base three variable function
+#protocol=func3
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func3 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func3 subject
+#method=eval,object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction4]
+#title=Class BaseFunction4
+#shortdescr=A base four variable function
+#protocol=func4
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func4 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func4 subject
+#method=eval,object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction5]
+#title=Class BaseFunction5
+#shortdescr=A base five variable function
+#protocol=func5
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func5 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func5 subject
+#method=eval,object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction6]
+#title=Class BaseFunction6
+#shortdescr=A base six variable function
+#protocol=func6
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func6 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func6 subject
+#method=eval,object&:object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction7]
+#title=Class BaseFunction7
+#shortdescr=A base seven variable function
+#protocol=func7
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func7 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func7 subject
+#method=eval,object&:object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction8]
+#title=Class BaseFunction8
+#shortdescr=A base eight variable function
+#protocol=func8
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func8 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func8 subject
+#method=eval,object&:object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction9]
+#title=Class BaseFunction9
+#shortdescr=A base nine variable function
+#protocol=func9
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func9 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func9 subject
+#method=eval,object&:object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction10]
+#title=Class BaseFunction10
+#shortdescr=A base ten variable function
+#protocol=func10
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func10 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func10 subject
+#method=eval,object&:object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[BaseFunction11]
+#title=Class BaseFunction11
+#shortdescr=A base eleven variable function
+#protocol=func11
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with func11 subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with func11 subject
+#method=eval,object&:object&:object&:object&:object&:object,object;Executes the function
+#method=retrieve,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item until it returns true
+#method=run,&:object&:object&:object&:object&:object&enumerator:enumerator,object;Executes the function for parameters and every enumeration item
+
+[IndexFunction1]
+#title=Class IndexFunction1
+#shortdescr=A base index function
+#protocol=nfunc
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with nfunc subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with nfunc subject
+#method=eval,&index:int,object;Executes the function
+#method=retrieve,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting value, ending value, step) until it returns true
+#method=rewind,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified integer range (starting value, ending value, -step)
+#method=run,&range&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting value, ending value, step)
+
+[IndexFunction2]
+#title=Class IndexFunction2
+#shortdescr=A base two variable index function
+#protocol=nnfunc
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with nnfunc subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with nnfunc subject
+#method=eval,&index:int&index:int,object;Executes the function
+#method=rewind,&area&int:int&int:int&int:int&int:int&int:int,object;Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
+#method=run,&area&int:int&int:int&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
+
+[IndexFunction3]
+#title=Class IndexFunction3
+#shortdescr=A base three variable index function
+#protocol=n3func
+#parent=system.html#Object:system'Object
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with n3func subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with n3func subject
+#method=eval,&index:int&index:int&index:int,object;Executes the function
+#method=rewind,&space&int:int&int:int&int:int&int:int&int:int&int:int&int:int,object;Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
+#method=run,&space&int:int&int:int&int:int&int:int&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)

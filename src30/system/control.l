@@ -28,6 +28,10 @@
     #method bool = $self.
 
     #method clone = $self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb bool:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
 }
 
 #symbol true = BaseBoolValue
@@ -224,6 +228,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func2:$self.
     
     #method eval : aParam1 : aParam2 []
+    
+    #method run : aParam &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction3
@@ -233,6 +259,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func3:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 []
+    
+    #method run : aParam1 : aParam2 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction4
@@ -242,6 +290,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func4:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
+    
+    #method run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction5
@@ -251,6 +321,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func5:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction6
@@ -260,6 +352,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func6:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction7
@@ -269,6 +383,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func7:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction8
@@ -278,6 +414,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func8:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction9
@@ -287,6 +445,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func9:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction10
@@ -296,6 +476,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func10:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 #class(limited)BaseFunction11
@@ -305,6 +507,28 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func11:$self.
     
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
+    
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:(anEnumerator get).
+        ].        
+    ]
+    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ nil.        
+    ]
 }
 
 // --- base lazy expression ---
@@ -498,9 +722,19 @@
 {
     #field(type:bool) theValue.
 
+    #constructor new
+    [        
+        theValue := false.
+    ]
+
     #constructor new : aValue
     [        
         theValue := true equal &bool:(aValue bool).
+    ]
+    
+    #constructor new &bool:aValue
+    [        
+        theValue := aValue.
     ]
 
     #method value = theValue.
@@ -510,16 +744,21 @@
         theValue := true equal &bool:(aValue bool).
     ]
 
+    #method write &bool:aValue
+    [
+        theValue := aValue.
+    ]
+
     #method bool = theValue.
 
     #method append : aValue
     [
-        theValue := theValue or:aValue bool.
+        theValue := theValue or:aValue.
     ]
             
     #method multiplyBy : aValue
     [
-        theValue := theValue and:aValue bool.
+        theValue := theValue and:aValue.
     ]
             
     #method invert
@@ -527,12 +766,7 @@
         theValue := theValue not bool.
     ]            
 
-    #method equal &bool:aValue
-        => theValue.
-            
     #method clone = Boolean new:theValue.
-
-    #method cast:aVerb &to:aTareget = aTareget::aVerb bool:theValue.
             
     #method => theValue.
 }

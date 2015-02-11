@@ -79,7 +79,7 @@ void writeSummaryHeader(TextFileWriter& writer, const char* name, const char* sh
    writer.writeTextNewLine("</TR>");
 }
 
-void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const char* name, const _text_t* bodyFileName)
+void writeSummaryTable(TextFileWriter& writer, IniConfigFile& config, const char* name, const wchar16_t* bodyFileName)
 {
    writer.writeTextNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
    writer.writeText("<TD WIDTH=\"15%\"><B><A HREF=\"");
@@ -135,7 +135,7 @@ inline void writeLeft(TextFileWriter& writer, const char* s, const char* right)
    else writer.write(s, right - s - 1);
 }
 
-void writeLink(TextFileWriter& writer, const char* link, const _text_t* file = NULL)
+void writeLink(TextFileWriter& writer, const char* link, const wchar16_t* file = NULL)
 {
    const char* body = find(link, ':');
 
@@ -159,7 +159,7 @@ void writeLink(TextFileWriter& writer, const char* link, const _text_t* file = N
    writer.writeTextNewLine("</A>");
 }
 
-void writeParamLink(TextFileWriter& writer, const char* link, const char* right, const _text_t* file)
+void writeParamLink(TextFileWriter& writer, const char* link, const char* right, const wchar16_t* file)
 {
    writer.writeText("<A HREF=\"");
 
@@ -192,16 +192,22 @@ void writeSignature(TextFileWriter& writer, const char* parameters)
    }
 
    while (!emptystr(parameters)) {
-      if (parameters[0]!='&')
-         writer.writeText("&");
-
       const char* subj = parameters;
       const char* param = find(parameters, ':');
       const char* next_subj = find(param, '&');
 
-      writeLeft(writer, subj, param);
-      writer.writeText(":");
-      writeParamLink(writer, param, next_subj, _T("protocol.html"));
+      if (subj[0] == ':' || (subj[0] == '&' && subj[1] == ':')) {
+         writer.writeText(": ");
+         writeParamLink(writer, param, next_subj, _T("protocol.html"));
+      }
+      else {
+         if (parameters[0]!='&')
+            writer.writeText("&");
+
+         writeLeft(writer, subj, param);
+         writer.writeText(":");
+         writeParamLink(writer, param, next_subj, _T("protocol.html"));
+      }
 
       parameters = next_subj;
    }
@@ -526,7 +532,7 @@ void writeSummaryFooter(TextFileWriter& writer)
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line Html Documentation generator (C)2006-14 by Alexei Rakov\n");
+   printf("ELENA command line Html Documentation generator (C)2006-15 by Alexei Rakov\n");
 
    IniConfigFile config(true);
 
