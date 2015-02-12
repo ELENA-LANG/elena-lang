@@ -12,48 +12,19 @@
 
 #class(sealed) ByteArray :: BaseByteArray
 {
+    #constructor new &length : aLength
+        => system'internal'bs_create.
+    
+    #constructor new &length:aLength &bytearray:anArray
+        => system'internal'bs_copy.
+    
+    #constructor new &length:aLength &index:anIndex &bytearray:anArray
+        => system'internal'bs_copysubarr.
+    
     #method bytearray = $self.
-
-    #method write &index:anIndex &short:anInt
-        => system'internal'bs_writeword.
-
-    #method write &index:anIndex &int:anInt
-        => system'internal'bs_writedword.
-
-    #method write &index:anIndex &long:aLong
-        => system'internal'bs_writeqword.
-
-    #method write &index:anIndex &length:aLength &bytearray:aDump
-        => system'internal'bs_write.
-
-    #method read &index:anIndex &out'short:aChar
-        => system'internal'bs_readword.
-
-    #method read &index:anIndex &out'int:anInt
-        => system'internal'bs_readdword.
-
-    #method read &index:anIndex &out'long:aLong
-        => system'internal'bs_readqword.
-
-    #method read &index:anIndex &length:aLength &bytearray:aDump
-        => system'internal'bs_read.
 
     #method read &out'length:aLength
         => system'internal'bs_getlen.
-
-    #method equal &index:anIndex &int:aValue
-    [
-        #var(type:int)anInt := $self read &index:anIndex.
-        
-        ^ anInt equal &int:aValue.
-    ]
-
-    #method equal &index:anIndex &short:aValue
-    [
-        #var(type:short)anInt := $self read &index:anIndex.
-        
-        ^ anInt equal &short:aValue.
-    ]
         
     #method length
     [
@@ -61,6 +32,54 @@
         
         ^ IntNumber new &int:aLength.
     ]
+
+    #method read &index:anIndex &length:aLength &bytearray:aDump
+        => system'internal'bs_read.
+
+    #method write &index:anIndex &length:aLength &bytearray:aDump
+        => system'internal'bs_write.
+
+    #method write &index:anIndex &byte:anInt
+        => system'internal'bs_writebyte.
+
+    #method read &index:anIndex &out'byte:anInt
+        => system'internal'bs_readbyte.
+
+    #method write &index:anIndex &short:anInt
+        => system'internal'bs_writeword.
+
+    #method read &index:anIndex &out'short:aChar
+        => system'internal'bs_readword.
+
+    #method write &index:anIndex &char:anInt
+        => system'internal'bs_writeword.
+
+    #method read &index:anIndex &out'char:aChar
+        => system'internal'bs_readword.
+
+    #method write &index:anIndex &int:anInt
+        => system'internal'bs_writedword.
+
+    #method read &index:anIndex &out'int:anInt
+        => system'internal'bs_readdword.
+
+    #method write &index:anIndex &long:aLong
+        => system'internal'bs_writeqword.
+
+    #method read &index:anIndex &out'long:aLong
+        => system'internal'bs_readqword.
+
+    #method write &index:anIndex &real:aLong
+        => system'internal'bs_writeqword.
+
+    #method read &index:anIndex &out'real:aLong
+        => system'internal'bs_readqword.
+        
+    #method clone = ByteArray new &length:($self length) &bytearray:$self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb bytearray:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bytearray:$self.
 }
 
 // --- ShortArray ---
@@ -70,29 +89,16 @@
     #constructor new &length : aLength
         => system'internal'sa_create.
     
-    #method equal &index:anIndex &short:aValue
-        => system'internal'ws_equalword.
-        
-    #method indexOf &index:anIndex &length:aLength &short:aLiteral &out'int:aRetVal
-        => system'internal'sa_indexof.
-        
-    #method write &index:anIndex &short:aValue
-        => system'internal'sa_writeword.
-        
-    #method write &index:anIndex &length:aLength &literal:aLiteral
-        => system'internal'sa_write.
-        
-    #method write &index:anIndex &length:aLength &shortarray:anArray
-        => system'internal'sa_write.
-        
-    #method read &index:anIndex &length:aLength &shortarray:anArray
-        => system'internal'sa_read.
-        
+    #constructor new &length:aLength &shortarray:anArray
+        => system'internal'sa_copy.
+    
+    #constructor new &length:aLength &index:anIndex &shortarray:anArray
+        => system'internal'sa_copysubarr.
+
+    #method shortarray = $self.
+
     #method read &out'length:aLength
         => system'internal'sa_getlen.
-        
-    #method read &index:anIndex &out'short:aValue
-        => system'internal'sa_readword.
         
     #method length
     [
@@ -101,7 +107,23 @@
         ^ IntNumber new &int:aLength.
     ]
 
-    #method shortarray = $self.
+    #method read &index:anIndex &length:aLength &shortarray:anArray
+        => system'internal'sa_read.
+        
+    #method write &index:anIndex &length:aLength &shortarray:anArray
+        => system'internal'sa_write.
+
+    #method write &index:anIndex &short:aValue
+        => system'internal'sa_writeword.
+
+    #method read &index:anIndex &out'short:aValue
+        => system'internal'sa_readword.
+
+    #method clone = ShortArray new &length:($self length) &shortaray:$self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb shortarray:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &shortarray:$self.
 }
 
 // --- BaseIntArray ---
@@ -116,11 +138,14 @@
 
 #class(sealed) IntArray :: BaseIntArray
 {
+    #constructor new &length : aLength
+        => system'internal'ns_create.
+
+    #constructor new &length:aLength &intarray:anArray
+        => system'internal'ns_copy.
+    
     #constructor new  &length:aLength &index:anIndex &intarray:anArray
         => system'internal'ns_copysubarr.
-        
-    #method read &index:anIndex &out'int:anInt
-        => system'internal'ns_readdword.
         
     #method read &out'length:aLength
         => system'internal'ns_getlen.
@@ -131,6 +156,86 @@
         
         ^ IntNumber new &int:aLength.
     ]
+    
+    #method intarray = $self.
+
+    #method read &index:anIndex &length:aLength &intarray:anArray
+        => system'internal'ns_read.
+
+    #method write &index:anIndex &length:aLength &intarray:anArray
+        => system'internal'ns_write.
+
+    #method write &index:anIndex &int:aValue
+        => system'internal'ns_writedword.
+
+    #method read &index:anIndex &out'int:anInt
+        => system'internal'ns_readdword.
+
+    #method clone = IntArray new &length:($self length) &intaray:$self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb intarray:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &intarray:$self.    
+}
+
+// --- CharArray ---
+
+#class(sealed,stringof:2) CharArray
+{
+    #constructor new &length : aLength
+        => system'internal'sa_create.
+    
+    #constructor new &length:aLength &chararray:anArray
+        => system'internal'sa_copy.
+    
+    #constructor new &length:aLength &index:anIndex &chararray:anArray
+        => system'internal'sa_copysubarr.
+
+    #method chararray = $self.
+
+    #method read &out'length:aLength
+        => system'internal'sa_getlen.
+        
+    #method length
+    [
+        #var(type:int)aLength := $self length.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
+    #method read &index:anIndex &length:aLength &chararray:anArray
+        => system'internal'sa_read.
+        
+    #method write &index:anIndex &length:aLength &chararray:anArray
+        => system'internal'sa_write.
+
+    #method write &index:anIndex &char:aValue
+        => system'internal'sa_writeword.
+
+    #method read &index:anIndex &out'char:aValue
+        => system'internal'sa_readword.
+
+    #method clone = CharArray new &length:($self length) &chararay:$self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb chararray:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &chararray:$self.
+        
+    #method equal &index:anIndex &char:aValue
+        => system'internal'ws_equalword.
+
+    #method indexOf &index:anIndex &length:aLength &char:aChar &out'int:aRetVal
+        => system'internal'sa_indexof.
+
+    #method indexOf &index:anIndex &length:aLength &char:aChar
+    [
+        #var(type:int)aRetVal := $self indexOf &index:anIndex &length:aLength &char:aChar.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
+    #method write &index:anIndex &length:aLength &literal:aLiteral
+        => system'internal'sa_write.
 }
 
 // --- emptyliteralvalue ---

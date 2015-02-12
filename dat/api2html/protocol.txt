@@ -12,6 +12,7 @@ bool_function
 byte
 bytearray
 char
+chararray
 enumerable
 enumerator
 function
@@ -27,6 +28,7 @@ func10
 func11
 int
 int_variable
+intarray
 iterator
 literal
 long
@@ -40,6 +42,7 @@ object
 real
 real_variable
 short
+shortarray
 typecaster
 value
 variable
@@ -217,3 +220,12 @@ verb
 
 [n3func]
 #shortdescr=A 3 variable index function protocol
+
+[shortarray]
+#shortdescr=A shortarray protocol
+
+[intarray]
+#shortdescr=A intarray protocol
+
+[chararray]
+#shortdescr=A chararray protocol

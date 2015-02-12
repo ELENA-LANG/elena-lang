@@ -2462,7 +2462,7 @@ end
 inline % 60h
 
   mov ecx, [eax + esi]
-  and ecx, 0FFFFh
+  and ecx, 0FFFFh  
 
 end
 

@@ -3,6 +3,7 @@
 #shortdescr=Contains the basic functionality
 
 [#list#]
+BaseByteArray
 BaseFunction
 BaseFunction1
 BaseFunction10
@@ -15,12 +16,15 @@ BaseFunction6
 BaseFunction7
 BaseFunction8
 BaseFunction9
+BaseIntArray
 BaseNumber
 BaseValue
 BaseVariable
 Boolean
+ByteArray
 byteConvertor
 ByteNumber
+CharArray
 CharValue
 Enumerator
 false
@@ -30,6 +34,7 @@ IndexFunction3
 IntBaseNumber
 IntBaseVariable
 intConvertor
+IntArray
 Integer
 IntNumber
 Iterator
@@ -42,6 +47,7 @@ Object
 Real
 realConvertor
 RealNumber
+ShortArray
 shortConvertor
 ShortNumber
 true
@@ -52,7 +58,6 @@ actionOp
 Array
 ArrayIterator
 BreakException
-ByteArray
 console
 control
 emptyLiteralValue
@@ -857,15 +862,30 @@ Variant
 #title=Class ByteArray
 #shortdescr=A byte array
 #parent=system.html#Object:system'Object
+#parent=system.html#BaseByteArray:system'BaseByteArray
 #protocol=bytearray
 #constructor=new,&length:int,bytearray;Creates the byte array with the specified length
+#constructor=new,&length:int&bytearray:bytearray,bytearray;Creates the byte array copy
+#constructor=new,&length:int&index:int&bytearray:bytearray,bytearray;Creates the copy of a byte subarray
 #method=bytearray,,bytearray;Returns itself
-#method=indexOf,&index:int&length:int&byte:byte&out'int:int;Returns the index of the first occurence of the specified byte starting from the index.<br/>If the substring is not found. returns -1
-#method=indexOf,&index:int&length:int&short:short&out'int:int;Returns the index of the first occurence of the specified word starting from the index.<br/>If the substring is not found. returns -1
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with bytearray subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with bytearray subject
+#method=clone,,bytearray;Creates the object copy
 #method=length,,int;Returns the byte array length
+#method=read,&index:int&out'byte:byte;Reads a byte value at the specified position and saves it into an output variable
+#method=read,&index:int&out'char:char;Reads a character value at the specified position and saves it into an output variable
+#method=read,&index:int&out'int:int;Reads an integer value at the specified position and saves it into an output variable
+#method=read,&index:int&out'long:long;Reads a long integer value at the specified position and saves it into an output variable
+#method=read,&index:int&out'real:real;Reads a real value at the specified position and saves it into an output variable
+#method=read,&index:int&out'short:short;Reads a short integer value at the specified position and saves it into an output variable
 #method=read,&index:int&length:int&bytearray:bytearray;Copies a sub array to the provided one at the specified position
+#method=write,&index:int&byte:byte;Writes the byte value at specified position
+#method=write,&index:int&char:char;Writes a character value at the specified position
+#method=write,&index:int&int:int;Writes an integer value at the specified position
 #method=write,&index:int&length:int&bytearray:bytearray;Copies the byte array at the specified position
-#method=write,&index:int&literal:literal;Copies the literal value at the specified position
+#method=write,&index:int&long:long;Writes a long integer value at the specified position
+#method=write,&index:int&real:real;Writes a real value at the specified position
+#method=write,&index:int&short:short;Writes a short integer value at the specified position
 
 [IntBaseVariable]
 #title=Class IntBaseVariable
@@ -1237,3 +1257,72 @@ Variant
 #method=eval,&index:int&index:int&index:int,object;Executes the function
 #method=rewind,&space&int:int&int:int&int:int&int:int&int:int&int:int&int:int,object;Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
 #method=run,&space&int:int&int:int&int:int&int:int&int:int&int:int&int:int,object;Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
+
+[BaseByteArray]
+#title=Class BaseByteArray
+#shortdescr=A base byte array
+#parent=system.html#Object:system'Object
+#constructor=new,&length:int,object;Creates the byte array with the specified length
+
+[ShortArray]
+#title=Class ShortArray
+#shortdescr=A short integer array
+#parent=system.html#Object:system'Object
+#protocol=shortarray
+#constructor=new,&length:int,shortarray;Creates the short array with the specified length
+#constructor=new,&length:int&index:int&shortarray:shortarray,shortarray;Creates the copy of a short subarray
+#constructor=new,&length:int&shortarray:shortarray,shortarray;Creates the short array copy
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with shortarray subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with shortarray subject
+#method=clone,,shortarray;Creates the object copy
+#method=length,,int;Returns the array length
+#method=read,&index:int&length:int&shortarray:shortarray;Copies a sub array to the provided one at the specified position
+#method=read,&index:int&out'short:short;Reads a short integer value at the specified position and saves it into an output variable
+#method=shortarray,,shortarray;Returns itself
+#method=write,&index:int&length:int&shortarray:shortarray;Copies the short array at the specified position
+#method=write,&index:int&short:short;Writes a short integer value at the specified position
+
+[BaseIntArray]
+#title=Class BaseIntArray
+#shortdescr=A base integer array
+#parent=system.html#Object:system'Object
+#constructor=new,&length:int,object;Creates the integer array with the specified length
+
+[IntArray]
+#title=Class IntArray
+#shortdescr=An array of integers
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseIntArray:system'BaseIntArray
+#protocol=intarray
+#constructor=new,&length:int,intarray;Creates the array with the specified length
+#constructor=new,&length:int&index:int&intarray:intarray,intarray;Creates the copy of a subarray
+#constructor=new,&length:int&intarray:intarray,intarray;Creates the array copy
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with intarray subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with intarray subject
+#method=clone,,intarray;Creates the object copy
+#method=intarray,,intarray;Returns itself
+#method=length,,int;Returns the array length
+#method=read,&index:int&length:int&intarray:intarray;Copies a sub array to the provided one at the specified position
+#method=read,&index:int&out'int:int;Reads an integer value at the specified position and saves it into an output variable
+#method=write,&index:int&int:int;Writes an integer value at the specified position
+#method=write,&index:int&length:int&intarray:intarray;Copies the short array at the specified position
+
+[CharArray]
+#title=Class CharArray
+#shortdescr=An array of UTF16 characters
+#parent=system.html#Object:system'Object
+#protocol=chararray
+#constructor=new,&length:int,chararray;Creates the short array with the specified length
+#constructor=new,&length:int&chararray:chararray,chararray;Creates the short array copy
+#constructor=new,&length:int&index:int&chararray:chararray,chararray;Creates the copy of a sub array
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with chararray subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with chararray subject
+#method=chararray,,chararray;Returns itself
+#method=clone,,chararray;Creates the object copy
+#method=indexOf,&index:int&length:int&char:char,int;Returns the index of the first occurence of the specified symbol in the given range.<br/>If the character is not found. returns -1
+#method=length,,int;Returns the array length
+#method=read,&index:int&length:int&chararray:chararray;Copies a sub array to the provided one at the specified position
+#method=read,&index:int&out'char:char;Reads a character value at the specified position and saves it into an output variable
+#method=write,&index:int&char:char;Writes a character value at the specified position
+#method=write,&index:int&length:int&chararray:chararray;Copies the short array at the specified position
+#method=write,&index:int&length:int&literal:literal;Copies the literal at the specified position

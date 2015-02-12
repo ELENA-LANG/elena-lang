@@ -11,6 +11,7 @@
 #subject(class:system'ByteArray)  bytearray.
 #subject(class:system'ShortArray) shortarray.
 #subject(class:system'IntArray)   intarray.
+#subject(class:system'CharArray)  chararray.
 #subject(class:system'Array)      array.
 
 // === basic dynamic types ===

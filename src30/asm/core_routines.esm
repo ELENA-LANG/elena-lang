@@ -1154,6 +1154,22 @@ procedure bs_create
   acopyb
   acallvi 1
   quitn 2
+  
+end
+
+procedure bs_copy
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+  
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 3
 
 end
 
@@ -1225,6 +1241,32 @@ procedure bs_getlen
   bloadsi 2
   nsave
   quitn 2
+
+end
+
+procedure bs_readbyte
+
+  bcopya
+  len
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  breadb
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 2
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
 
 end
 
@@ -1324,6 +1366,30 @@ procedure bs_read
   subcopy
   quitn 2
   
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure bs_writebyte
+
+  len
+  bcopya
+  aloadsi 2
+  nload
+  addn 3
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwriteb
+  quitn 3
+
 labErr:
   open 1
   pushr class : system'InvalidArgumentException
@@ -2298,6 +2364,22 @@ procedure ns_create
 
 end
 
+procedure ns_copy
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+  
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 3
+
+end
+
 procedure ns_copysubarr
 
   bcopya
@@ -2317,6 +2399,62 @@ procedure ns_copysubarr
   
   acopyb
   quitn 4
+  
+end
+
+procedure ns_read
+
+  bcopya
+  nlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  aloadsi 3
+  nload
+  acopyb
+
+  bloadsi 4
+  nsubcopy
+  quitn 2
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure ns_write
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  acopyb
+  nlen
+  eswap
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  ninsert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
 
 end
 
@@ -2338,6 +2476,30 @@ procedure ns_readdword
 
   quitn 2
   
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure ns_writedword
+
+  nlen
+  bcopya
+  aloadsi 2
+  nload
+  addn 1
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  nwrite
+  quitn 3
+
 labErr:
   open 1
   pushr class : system'InvalidArgumentException
@@ -3098,5 +3260,65 @@ procedure long_copyreal
   bwrite
   aloadsi 1
   quitn 3
+
+end
+
+procedure bs_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 4
+  subcopy
+  
+  acopyb
+  quitn 4
+
+end
+
+procedure sa_copy
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 3
+
+end
+
+procedure sa_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 4
+  wsubcopy
+  
+  acopyb
+  quitn 4
 
 end

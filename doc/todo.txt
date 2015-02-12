@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 review : BaseByteArray
+                       * lib30 review : ShortArray
 
                        * new class : chararray, should be used instead of shortarray for literal operations
 
@@ -156,6 +156,8 @@ week2:
                        * comparing literal and char (see for example trans sample)
                        * optimize extensions'convertor.save&to ; when literal to integer converted, int value is created which has no use,
                          nested class is dynamic as well
+                       * ShortNumber.less&short - review current implementation, it may not work correctly with negative short values if
+                         hiword == 0 (it is presumed that for negative word, hiword = -1, which is not always the case)
                                                       
               adev - lib30 optimization
                        * review $ConsoleWriter.write&literal[1]

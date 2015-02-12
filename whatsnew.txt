@@ -36,10 +36,11 @@
 
 [LIB]
 [*] system : ByteNumber, ShortNumber, IntNumber, LongNumber, RealNumber, Integer, Long, Real, CharValue
-[*] system : intConvertor, literalConvertor, longConvertor, realConvertor
+[*] system : intConvertor, literalConvertor, longConvertor, realConvertor, FunctionX, IndexFunctionX
 [*] system : Object#class.new, Exception::theCallStack, Exception.get&literal$
+[*] system : ByteArray, ShortArray
 [*] system'control => extensions'control
-[+] system : CallStack, IntArray, byteConvertor, shortConvertor
+[+] system : CallStack, IntArray, byteConvertor, shortConvertor, CharArray
 [+] extensions'dynamic: scriptEngine, ScriptEngineException
 
 [ElenaScript]
