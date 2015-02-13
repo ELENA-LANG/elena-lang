@@ -3,6 +3,10 @@
 #shortdescr=Contains the basic functionality
 
 [#list#]
+Array
+ArrayEnumerator
+ArrayIterator
+BaseArray
 BaseByteArray
 BaseFunction
 BaseFunction1
@@ -25,7 +29,9 @@ ByteArray
 byteConvertor
 ByteNumber
 CharArray
+charConvertor
 CharValue
+emptyLiteralValue
 Enumerator
 false
 IndexFunction1
@@ -39,6 +45,9 @@ Integer
 IntNumber
 Iterator
 literalConvertor
+LiteralEnumerator
+LiteralIterator
+LiteralValue
 Long
 longConvertor
 LongNumber
@@ -50,29 +59,24 @@ RealNumber
 ShortArray
 shortConvertor
 ShortNumber
+String
 true
 Variable
+Variant
 
 
 actionOp
-Array
-ArrayIterator
 BreakException
 console
 control
-emptyLiteralValue
 Exception
 FormatException
 functionOp
 intOp
 InvalidArgumentException
-LiteralIterator
-LiteralValue
 mathOp
 objectOp
 OutOfRangeException
-String
-Variant
 
 [console]
 #title=Symbol console
@@ -103,32 +107,36 @@ Variant
 #shortdescr=A wide literal value
 #protocol=enumerable
 #protocol=literal
-#protocol=value
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
+#constructor=min,,literal;Creates the empty literal
 #constructor=new,&length:int,literal;Creates the literal string with specified length
+#constructor=new,&length:int&char:char,literal;Creates the literal string with specified length fills with spciefied character value
+#constructor=new,&length:int&chararray:chararray,literal;Creates the literal string with specified length and copies the parameter value
+#constructor=new,&length:int&&index:int&chararray:chararray,literal;Creates the literal string with specified length and copies a sub array
 #constructor=new,&length:int&literal:literal,literal;Creates the literal string with specified length and copies the parameter value
-#constructor=new,&length:int&char:value,literal;Creates the literal string with specified length fills with spciefied character value
 #constructor=new,&literal:literal,literal;Creates the literal string copy
 #method=add,object,literal;Concatinates the values
-#method=add,&char:value,literal;Concatinates the values
+#method=add,&char:char,literal;Concatinates the values
 #method=add,&literal:literal,literal;Concatinates the values
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with literal subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with literal subject
 #method=clone,,literal;Clones the value
 #method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
 #method=enumerator,,enumerator;Returns the object enumerator
-#method=equal,&char:value,bool;Compares the values
+#method=equal,&char:char,bool;Compares the values
 #method=equal,&literal:literal,bool;Compares the values
-#method=getAt,object,value;Returns the character with specified index
-#method=getAt,&index:int&out'short:short;Copies the character value to the stack allocated variable
+#method=getAt,object,char;Returns the character with specified index
+#method=getAt,&index:int,char;Returns the character with specified index
+#method=indexOf,&index:int&char:char,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
 #method=indexOf,&index:int&literal:literal,int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
-#method=indexOf,&index:int&literal:literal&out'int:int;Copies the index of the first occurence of the specified substring to the stack allocated variable.<br/>If the substring is not found. returns -1
-#method=indexOf,&index:int&char:value,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
+#method=insert,&index:int&char:char,literal;Inserts a character into and returns the new one
 #method=insert,&index:int&literal:literal,literal;Inserts the substring into and returns the new one
+#method=iterator,,iterator;Returns the object iterator
 #method=length,,int;Returns the string length
-#method=literal,,literal;Returns itself
+#method=less,&char:char,bool;Compares the values
 #method=less,&literal:literal,bool;Compares the values
-#method=less,&char:value,bool;Compares the values
-#method=notless,&literal:literal,bool;Compares the values
+#method=literal,,literal;Returns itself
 #method=Substring,&index:int&length:int,literal;Returns the substring
 
 [IntNumber]
@@ -348,42 +356,51 @@ Variant
 #method=length,,int;Returns 0
 #method=less,&literal:literal,bool;Compares with literal value
 #method=literal,,literal;Returns empty literal value
-#method=notless,&literal:literal,bool;Compares with literal value
 
 [String]
 #title=Class String
-#shortdescr=A wide literal variable
-#protocol=enumerable
+#shortdescr=A wide literal variable. Extends system'LiteralValue value
 #protocol=literal
-#protocol=value
 #protocol=variable
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #field=theValue;The literal value
 #constructor=new,,variable;Creates an empty literal variable 
 #constructor=new,value,variable;Creates a literal variable with specified value
+#constructor=new,&char:char,variable;Creates a literal variable with specified value
+#constructor=new,&literal:literal,variable;Creates a literal variable with specified value
 #method=append,value,;Appends the value
+#method=append,&char:char,;Appends the value
 #method=append,&literal:literal,;Appends the value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with literal subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with literal subject
 #method=clear,,;Clears the variable value
 #method=clone,,object;Clones the object
 #method=delete,&index:int&length:int,;Deletes a sub string
+#method=insert,&index:int&char:char,;Inserts a character
 #method=insert,&index:int&literal:literal,;Inserts a sub string
+#method=literal,,literal;Returns the literal value
+#method=value,,literal;Returns the literal value
 #method=write,value,;Writes the value
+#method=write,char:char,;Writes the value
 #method=write,&literal:literal,;Writes the value
+#method=dispatch,,literal;Dispatches others messages to its value
 
 [Variant]
 #title=Class Variant
 #shortdescr=A basic type variant class
-#protocol=enumerable
 #protocol=variant
 #protocol=variable
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
 #parent=system.html#String:system'String
 #field=theValue;The literal value
-#method=int,,int;Tries to convert the value to the integer number
-#method=long,,long;Tries to convert the value to the integer number
-#method=real,,real;Tries to convert the value to the real number
+#method=byte,,byte;Tries to convert the literal value to a byte number
+#method=char,,char;Tries to convert the literal value to a character
+#method=int,,int;Tries to convert the literal value to the integer number
+#method=long,,long;Tries to convert the literal value to the long integer number
+#method=real,,real;Tries to convert the literal value to the real number
+#method=short,,short;Tries to convert the literal value to a short integer number
 
 [Exception]
 #title=Class Exception
@@ -571,18 +588,16 @@ Variant
 [LiteralIterator]
 #title=Class LiteralIterator
 #shortdescr=A literal value iterator
+#protocol=iterator
 #parent=system.html#Object:system'Object
-#protocol=enumerator
+#parent=system.html#Iterator:system'Iterator
 #field=theIndex;The current index
 #field=theLiteral;The target
-#constructor=new,&literal:literal,enumerator;Returns the parameter iterator
-#method=append,&index:int;Increaments the index by specified value
+#constructor=new,&literal:literal,iterator;Returns the literal iterator
 #method=available,,bool;Returns false if the index out of range
-#method=get,,value;Returns the current character
-#method=index,,int;Returns the index value.
-#method=next,,bool;Goes to the next character and returns true if the index is not out of range
+#method=get,,char;Returns the current character
 #method=set,&index:int;Sets the index by specified value
-#method=reset,,;Resets the enumerator
+#method=write,&index:int;Sets the index by specified value
 
 [intConvertor]
 #title=Symbol intConvertor
@@ -799,37 +814,44 @@ Variant
 #title=Class ArrayIterator
 #shortdescr=An array iterator
 #parent=system.html#Object:system'Object
-#protocol=enumerator
+#parent=system.html#Iterator:system'Iterator
+#protocol=iterator
 #field=theArray;The target
-#field=theCount;The array length
 #field=theIndex;The current index
-#constructor=new,&array:array,enumerator;Returns the parameter iterator
-#method=append,&index:int;Increaments the index by specified value
+#constructor=new,&array:array,iterator;Returns the parameter iterator
 #method=available,,bool;Returns false if the index out of range
 #method=get,,value;Returns the current member
-#method=index,,int;Returns the index value.
-#method=next,,bool;Goes to the next character and returns true if the index is not out of range
-#method=set,object;Sets the current array member
-#method=set,&index:int;Sets the index by specified value
-#method=reset,,;Resets the enumerator
+#method=set,object;Sets the current member
+#method=write,&index:int;Sets the index by specified value
 
 [Array]
 #title=Class Array
 #shortdescr=An array
 #parent=system.html#Object:system'Object
+#parent=system.html#BaseArray:system'BaseArray
 #protocol=enumerable
 #protocol=array
-#constructor=new,&length:int,array;Creates the array with the specified length
+#constructor=min,,array;Creates an empty array
+#constructor=new,&array:array,array;Creates a copy of the provided array
+#constructor=new,&length:int,array;Creates an array with the specified length
+#constructor=new,&length:int&array:array,array;Creates an array with the specified length
+#constructor=new,&length:int&index:int&array:array,array;Creates a copy of the provided sub array
 #method=add,array,array;Concatinates the arrays
 #method=add,&array:array,array;Concatinates the arrays
 #method=array,,array;Returns itself
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with array subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with array subject
 #method=clone,,array;Clones the array
 #method=enumerator,,enumerator;Returns the array enumerator
 #method=getAt,int,object;Returns the specified array member
 #method=getAt,&index:int,object;Returns the specified array member
+#method=iterator,,iterator;Returns the array iterator
 #method=length,,int;Returns the array length
-#method=setAt,int,object;Sets the specified array member
-#method=setAt,&index:int,object;Sets the specified array member
+#method=setAt,int&:object,object;Sets the specified array member
+#method=setAt,&index:int&object:object,object;Sets the specified array member
+
+
+
 
 [mathOp]
 #title=Class mathOp
@@ -1326,3 +1348,42 @@ Variant
 #method=write,&index:int&char:char;Writes a character value at the specified position
 #method=write,&index:int&length:int&chararray:chararray;Copies the short array at the specified position
 #method=write,&index:int&length:int&literal:literal;Copies the literal at the specified position
+
+[charConvertor]
+#title=Symbol charConvertor
+#shortdescr=A wide character convertor
+#method=convert,&byte:byte,char;Converts to a character value
+#method=convert,&char:char,char;Returns the parameter
+#method=convert,&int:int,char;Converts to a character value
+#method=convert,&literal:literal,char;Converts to a character value
+#method=convert,&short:short,char;Converts to a character value
+
+[BaseArray]
+#title=Class BaseByteArray
+#shortdescr=A base array
+#parent=system.html#Object:system'Object
+#constructor=new,&length:int,object;Creates the array with the specified length
+
+[LiteralEnumerator]
+#title=Class LiteralEnumerator
+#shortdescr=A literal enumerator
+#protocol=enumerator
+#parent=system.html#Object:system'Object
+#parent=system.html#Enumerator:system'Enumerator
+#constructor=new&literal:literal,enumerator
+#method=get,,char;Returns the current character
+#method=enumerator,,enumerator;Returns itself
+#method=next,,bool;Goes to the next enumeration member and returns true if it is not the last member
+#method=reset,,;Resets the enumerator
+
+[ArrayEnumerator]
+#title=Class ArrayEnumerator
+#shortdescr=An array enumerator
+#protocol=enumerator
+#parent=system.html#Object:system'Object
+#parent=system.html#Enumerator:system'Enumerator
+#constructor=new,&array:array,enumerator;Createa an array enumerator
+#method=get,,object;Returns the current object
+#method=enumerator,,enumerator;Returns itself
+#method=next,,bool;Goes to the next enumeration member and returns true if it is not the last member
+#method=reset,,;Resets the enumerator

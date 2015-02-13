@@ -37,6 +37,18 @@ Contains the basic functionality
 <B>Class Summary</B></FONT></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#Array">Array</A></B></TD>
+<TD>An array</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#ArrayEnumerator">ArrayEnumerator</A></B></TD>
+<TD>An array enumerator</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#ArrayIterator">ArrayIterator</A></B></TD>
+<TD>An array iterator</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#BaseArray">BaseArray</A></B></TD>
+<TD>A base array</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#BaseByteArray">BaseByteArray</A></B></TD>
 <TD>A base byte array</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -103,8 +115,14 @@ Contains the basic functionality
 <TD WIDTH="15%"><B><A HREF="system.html#CharArray">CharArray</A></B></TD>
 <TD>An array of UTF16 characters</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#charConvertor">charConvertor</A></B></TD>
+<TD>A wide character convertor</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#CharValue">CharValue</A></B></TD>
 <TD>A UTF16 character symbol</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#emptyLiteralValue">emptyLiteralValue</A></B></TD>
+<TD>An empty literal value</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#Enumerator">Enumerator</A></B></TD>
 <TD>An enumerator prototype</TD></TR>
@@ -145,6 +163,15 @@ Contains the basic functionality
 <TD WIDTH="15%"><B><A HREF="system.html#literalConvertor">literalConvertor</A></B></TD>
 <TD>A literal convertor</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#LiteralEnumerator">LiteralEnumerator</A></B></TD>
+<TD>A literal enumerator</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#LiteralIterator">LiteralIterator</A></B></TD>
+<TD>A literal value iterator</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#LiteralValue">LiteralValue</A></B></TD>
+<TD>A wide literal value</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#Long">Long</A></B></TD>
 <TD>A 64bit signed integer variable. It extends system'LongNumber class</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -178,20 +205,20 @@ Contains the basic functionality
 <TD WIDTH="15%"><B><A HREF="system.html#ShortNumber">ShortNumber</A></B></TD>
 <TD>A signed 16 bit integer</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#String">String</A></B></TD>
+<TD>A wide literal variable. Extends system'LiteralValue value</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#true">true</A></B></TD>
 <TD>A true value symbol</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#Variable">Variable</A></B></TD>
 <TD>A generic variable. Extends an assigned value</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="system.html#Variant">Variant</A></B></TD>
+<TD>A basic type variant class</TD></TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#actionOp">actionOp</A></B></TD>
 <TD>An action role</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Array">Array</A></B></TD>
-<TD>An array</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ArrayIterator">ArrayIterator</A></B></TD>
-<TD>An array iterator</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#BreakException">BreakException</A></B></TD>
 <TD>A break exception</TD></TR>
@@ -201,9 +228,6 @@ Contains the basic functionality
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#control">control</A></B></TD>
 <TD>A control helper symbol</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#emptyLiteralValue">emptyLiteralValue</A></B></TD>
-<TD>An empty literal value</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#Exception">Exception</A></B></TD>
 <TD>A basic exception</TD></TR>
@@ -220,12 +244,6 @@ Contains the basic functionality
 <TD WIDTH="15%"><B><A HREF="system.html#InvalidArgumentException">InvalidArgumentException</A></B></TD>
 <TD>An out of range argument exception</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#LiteralIterator">LiteralIterator</A></B></TD>
-<TD>A literal value iterator</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#LiteralValue">LiteralValue</A></B></TD>
-<TD>A wide literal value</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#mathOp">mathOp</A></B></TD>
 <TD>A mathematical operation extension</TD></TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -234,12 +252,6 @@ Contains the basic functionality
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="system.html#OutOfRangeException">OutOfRangeException</A></B></TD>
 <TD>An out of range exception</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#String">String</A></B></TD>
-<TD>A wide literal variable</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Variant">Variant</A></B></TD>
-<TD>A basic type variant class</TD></TR>
 </TABLE>
 <HR>
 <A NAME="navbar_top"><!-- --></A>

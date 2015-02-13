@@ -79,41 +79,6 @@ procedure int_copyreal
 
 end
 
-procedure int_saveshort
-
-  bcopya
-  aloadsi 2
-  bswap
-
-  nload
-  lessn labNegative 0
-
-  lessn labCopy 8000h
-
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-
-labCopy:
-  nsave
-  quitn 2  
-  
-labNegative:
-  not
-
-  lessn labCopyNeg 8000h
-
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-  
-labCopyNeg:
-  not
-  nsave
-  quitn 2  
-
-end
-
 procedure int_equal
 
   bloadsi 2
@@ -468,7 +433,7 @@ procedure real_saveint
   aloadsi 2
   rcopyn
   acopyb
-  quitn 2
+  quitn 3
 
 end
 
@@ -3320,5 +3285,106 @@ procedure sa_copysubarr
   
   acopyb
   quitn 4
+
+end
+
+procedure ws_empty
+
+  dcopy 1
+  acallvi 1
+
+  ecopy 0
+  dcopy 0
+  wwrite
+  quitn 1
+
+end
+
+procedure ws_indexof_char
+
+  bcopya
+  // ; save the searching value
+  aloadsi 3
+  nload
+  pushd
+  
+  // ; save the length
+  acopyb
+  wlen
+  dec
+  pushd
+
+  // ; save the index
+  aloadsi 3
+  nload
+  pushd
+
+  acopyb
+labNext:
+  dsavesi 0
+  wread
+  dloadsi 2
+  if labFound
+
+  eloadsi 1
+  dloadsi 0
+  next labNext
+
+  dcopy 0FFFFFFFFh
+  bloadsi 7
+  nsave
+  acopyb
+  popi 3
+  quitn 4
+
+labFound:
+  dloadsi 0
+  bloadsi 7
+  nsave
+  acopyb
+  popi 3
+  quitn 4
+  
+end
+
+procedure char_save
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  acopyb
+  quitn 3
+
+end
+
+procedure char_saveint
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+
+  lessn labErr 0
+  lessn labCopy 0FFFFh
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+labCopy:
+
+  nsave
+  acopyb
+  quitn 3
+
+end
+
+procedure arr_empty
+
+  dcopy 0
+  acallvi 1
+  quitn 1
 
 end

@@ -246,21 +246,24 @@
 
 #class(sealed) LiteralValue :: BaseValue
 {
-    #field(type:shortarray)theValue.
+    #field(type:chararray)theValue.
 
+    #constructor min
+        => system'internal'ws_empty.
+        
     #constructor new &length:aSize 
         => system'internal'ws_create.
 
     #constructor new &length:aSize &literal:aLiteral
         => system'internal'ws_copy.
-
-    #constructor new &length:aSize &shortarray:anArray
+    
+    #constructor new &length:aSize &chararray:anArray
         => system'internal'ws_copyarr.
 
-    #constructor new &length:aSize &index:anIndex &shortarray:anArray
+    #constructor new &length:aSize &index:anIndex &chararray:anArray
         => system'internal'ws_copysubarr.
 
-    #constructor new &length:aSize &short:aChar
+    #constructor new &length:aSize &char:aChar
         => system'internal'ws_fill.
 
     #constructor new &literal:aLiteral
@@ -268,11 +271,17 @@
 
     #method literal = $self.
 
-    #method equal &literal : aLiteral
+    #method(type:bool) equal &literal : aLiteral
         => system'internal'ws_equal.
 
-    #method less &literal : aLiteral
+    #method(type:bool) less &literal : aLiteral
         => system'internal'ws_less.
+
+    #method(type:bool) equal &char : aChar
+        <= %equal &literal:(aChar literal).
+
+    #method(type:bool) less &char : aChar
+        <= %less &literal:(aChar literal).
 
     #method(type:literal) add &literal : aLiteral
         => system'internal'ws_add.
@@ -280,30 +289,33 @@
     #method(type:literal) add &char:aChar
         = $self add &literal:(aChar literal).
 
-    #method add : anObject
+    #method(type:literal) add : anObject
         = $self add &literal:(anObject literal).
 
     #method getAt : aParam
         <= %getAt &index:(aParam int).
 
-    #method read &index:anIndex &out'short:aChar
+    #method read &index:anIndex &out'char:aChar
         => system'internal'ws_getat.
 
-    #method getAt &index:anIndex
+    #method(type:char) getAt &index:anIndex
     [
-        #var(type:short)aChar := $self read &index:anIndex.
+        #var(type:char)aChar := $self read &index:anIndex.
         
-        ^ CharValue new &short:aChar.
+        ^ CharValue new &char:aChar.
     ]
 
     #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
         => system'internal'ws_indexof.
 
     #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+        => system'internal'ws_indexof_char.
+
+    #method indexOf &index:anIndex &char:aChar
     [
-        #var(type:int)anIndex := $self indexOf &index:anIndex &literal:(aChar literal).
+        #var(type:int)aRetVal := $self indexOf &index:anIndex &char:aChar.
         
-        aRetVal := anIndex.
+        ^ IntNumber new &int:aRetVal.
     ]
 
     #method indexOf &index:anIndex &literal:aLiteral
@@ -313,14 +325,11 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
-//    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
-//        <= %indexOf &index:anIndex &literal:aChar &out'int:aRetVal.
-
-    #method indexOf &index:anIndex &char:aChar
-        <= %indexOf &index:anIndex &literal:(aChar literal).
-
     #method(type:literal) insert &index:anIndex &literal:aLiteral
         => system'internal'ws_insert.
+
+    #method(type:literal) insert &index:anIndex &char:aChar
+        = $self insert &index:anIndex &literal:(aChar literal).
 
     #method(type:literal) delete &index:anIndex &length:aLength
         => system'internal'ws_delete.
@@ -343,6 +352,8 @@
     #method iterator = system'LiteralIterator new &literal:$self.
     
     #method cast:aVerb &to:aTarget = aTarget::aVerb literal:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &literal:$self.
     
     #method clone = LiteralValue new &literal:$self.
 }
@@ -368,6 +379,11 @@
         theValue := aValue.
     ]
     
+    #constructor new &char:aValue
+    [
+        theValue := aValue literal.
+    ]
+    
     #method write : anOperand
     [
         theValue := anOperand literal.
@@ -376,6 +392,11 @@
     #method write &literal:aLiteral
     [
         theValue := aLiteral.
+    ]
+    
+    #method write &char:aChar
+    [
+        theValue := aChar literal.
     ]
     
     #method append : anOperand
@@ -388,11 +409,23 @@
         theValue := theValue add &literal:anOperand.
     ]
     
+    #method append &char:anOperand
+    [
+        theValue := theValue add &literal:(anOperand literal).
+    ]
+    
     #method insert &index:anIndex &literal:aLiteral
     [
         (anIndex == 0)
             ? [ theValue := aLiteral add &literal:theValue. ]
             ! [ theValue := theValue insert &index:anIndex &literal:aLiteral. ].
+    ]
+    
+    #method insert &index:anIndex &char:aChar
+    [
+        (anIndex == 0)
+            ? [ theValue := aChar literal add &literal:theValue. ]
+            ! [ theValue := theValue insert &index:anIndex &literal:(aChar literal). ].
     ]
             
     #method delete &index:anIndex &length:aLength
@@ -409,6 +442,8 @@
                 
     #method cast:aVerb &to:aTarget = aTarget::aVerb literal:theValue.
     
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &literal:theValue.
+    
     #method literal = theValue.
     
     #method value = theValue.
@@ -420,6 +455,27 @@
 
 #class Variant :: String
 {
+    #method byte
+    [
+        #var(type:byte)retVal := byteConvertor convert &literal:theValue.
+        
+        ^ ByteNumber new &byte:retVal.
+    ]
+
+    #method short
+    [
+        #var(type:short)retVal := shortConvertor convert &literal:theValue.
+        
+        ^ ShortNumber new &short:retVal.
+    ]
+
+    #method char
+    [
+        #var(type:char)retVal := charConvertor convert &literal:theValue.
+        
+        ^ CharValue new &char:retVal.
+    ]
+
     #method int
     [
         #var(type:int)retVal := intConvertor convert &literal:theValue.
@@ -456,6 +512,39 @@
 
 #class(sealed) Array :: BaseArray
 {
+    #constructor min
+        => system'internal'arr_empty.
+    
+    #constructor new &length:aLength
+        => system'internal'arr_create.
+    
+    #constructor new &length:aLength &array:anArray
+        <= (%new &length:aLength)
+    [
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            $self setAt &index:anIndex &object:(anArray getAt &index:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+    ]
+    
+    #constructor new &length:aLength &index:anIndex &array:anArray
+        <= (%new &length:aLength)
+    [
+        #var(type:int)i := 0.
+        #loop (i < aLength) ?
+        [
+            $self setAt &index:i &object:(anArray getAt &index:(anIndex + i)).
+            
+            i := i + 1.
+        ].
+    ]
+    
+    #constructor new &array:anArray
+        <= %new &length:(anArray length) &array:anArray.
+        
     #method getAt : anIndex
         = $self getAt &index:(anIndex int).
 
@@ -469,7 +558,7 @@
     
     #method setAt &index:anIndex &object:anObject
         => system'internal'arr_setat.
-
+    
     #method add : anObject
         = $self add &array:(anObject array).
 
@@ -518,23 +607,11 @@
     #method iterator = system'ArrayIterator new &array:$self.
 
     #method cast : aVerb &to:aTarget = aTarget::aVerb array:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &array:$self.
 
     #method clone 
-    [
-        #var(type:int)aLength := $self length.
-        
-        #var aRetVal := Array new &length:aLength.
-        
-        #var(type:int)anIndex := 0.
-        #loop (anIndex < aLength) ?
-        [
-            aRetVal setAt &index:anIndex &object:($self getAt &index:anIndex).
-            
-            anIndex := anIndex + 1.
-        ].
-            
-        ^ aRetVal.
-    ]
+        = Array new &array:$self.
 }
 
 // --- OpenArgs ---
@@ -585,9 +662,9 @@
     [
         #var(type:int)anIndex := theIndex int.
         
-        #var(type:short)aChar := theLiteral read &index:anIndex.
+        #var(type:char)aChar := theLiteral read &index:anIndex.
         
-        ^ CharValue new &short:aChar.
+        ^ CharValue new &char:aChar.
     ]
 }
 
@@ -614,9 +691,9 @@
     #method get
     [
         #var(type:int)anIndex := theIndex int.        
-        #var(type:short)aChar := theLiteral read &index:anIndex.
+        #var(type:char)aChar := theLiteral read &index:anIndex.
         
-        ^ CharValue new &short:aChar.
+        ^ CharValue new &char:aChar.
     ]
     
     #method set : anObject 

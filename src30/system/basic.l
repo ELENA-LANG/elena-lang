@@ -1736,6 +1736,52 @@
     ]
 }.
 
+#symbol charConvertor =
+{
+    #method convert &byte:aValue &out'char:aRetVal
+        => system'internal'char_save.
+        
+    #method convert &short:aValue &out'char:aRetVal
+        => system'internal'char_save.
+        
+    #method convert &int:aValue &out'char:aRetVal
+        => system'internal'char_saveint.
+        
+    #method(type:char)convert &char:aChar
+        = aChar.
+  
+    #method(type:char) convert &literal:aLiteral
+    [
+        #var(type:int)aLength := aLiteral length.
+        
+        (aLength != 1)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        ^ aLiteral getAt &index:0 char.
+    ]
+        
+    #method(type:char) convert &byte:aValue
+    [
+        #var(type:char)aRetVal := $self convert &byte:aValue.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+        
+    #method(type:char) convert &short:aValue
+    [
+        #var(type:char)aRetVal := $self convert &short:aValue.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+        
+    #method(type:char) convert &int:aValue
+    [
+        #var(type:char)aRetVal := $self convert &int:aValue.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+}.
+
 #symbol intConvertor =
 {
     convert &literal:aValue &out'int:aRetVal
