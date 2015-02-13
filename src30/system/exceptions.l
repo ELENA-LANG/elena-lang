@@ -17,7 +17,7 @@
         theStack := IntArray new &length:aLength &index:0 &intarray:aStack.            
     ]
     
-    #method read &index:anIndex &shortarray:aBuffer &length:aMaxLength &out'length:aLength
+    #method read &index:anIndex &chararray:aBuffer &length:aMaxLength &out'length:aLength
         => system'internal'callstack_readaddressinfo.
     
     #method literal
@@ -26,14 +26,14 @@
         #var(type:int)aLength := theStack length.
 
         #var(type:length)aBufferLength := 0.
-        #var(type:shortarray,size:128)aBuffer.
+        #var(type:chararray,size:128)aBuffer.
         #var(type:literal)aCallStackText := emptyLiteralValue.
                 
         #loop (anIndex < aLength) ?
         [
-            aBufferLength := $self read &index:anIndex &shortarray:aBuffer &length:128.
+            aBufferLength := $self read &index:anIndex &chararray:aBuffer &length:128.
             
-            aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &shortarray:aBuffer) add &literal:'newLine.
+            aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &chararray:aBuffer) add &literal:'newLine.
             
             anIndex := anIndex + 1.
         ].

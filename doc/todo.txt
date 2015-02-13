@@ -21,7 +21,9 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 review : Array
+                       * lib30 system'collection
+
+                       * lib30 extensions
 
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
                          call parameter

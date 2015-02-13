@@ -1,18 +1,20 @@
 // === basic stack allocated types ===
 
-#subject(class:system'ByteNumber)  byte.
-#subject(class:system'ShortNumber) short.
-#subject(class:system'IntNumber)   int.
-#subject(class:system'LongNumber)  long.
-#subject(class:system'RealNumber)  real.
+#subject(class:system'ByteNumber)   byte.
+#subject(class:system'ShortNumber)  short.
+#subject(class:system'IntNumber)    int.
+#subject(class:system'LongNumber)   long.
+#subject(class:system'RealNumber)   real.
 
-#subject(class:system'Signature)subject.
+#subject(class:system'Signature)    subject.
+#subject(class:system'Message)      mssg.
+#subject(class:system'Message)      verb.
 
-#subject(class:system'ByteArray)  bytearray.
-#subject(class:system'ShortArray) shortarray.
-#subject(class:system'IntArray)   intarray.
-#subject(class:system'CharArray)  chararray.
-#subject(class:system'Array)      array.
+#subject(class:system'ByteArray)    bytearray.
+#subject(class:system'ShortArray)   shortarray.
+#subject(class:system'IntArray)     intarray.
+#subject(class:system'CharArray)    chararray.
+#subject(class:system'Array)        array.
 
 // === basic dynamic types ===
 #subject(class:system'LiteralValue) literal.
@@ -24,16 +26,16 @@
 #subject(class:system'CharValue)    char.
 
 // === int synonyms ===
-#subject(class:system'IntNumber) length.
-#subject(class:system'IntNumber) index.
-#subject(class:system'IntNumber) int_attributes.
+#subject(class:system'IntNumber)    length.
+#subject(class:system'IntNumber)    index.
+#subject(class:system'IntNumber)    int_attributes.
 
 // === literal synonyms ===
-#subject(class:system'LiteralValue)name.
-#subject(class:system'LiteralValue)path.
+#subject(class:system'LiteralValue) name.
+#subject(class:system'LiteralValue) path.
 
 // === subject synonyms ===
-#subject(class:system'Signature) error_type.
+#subject(class:system'Signature)    error_type.
 
 // === logical types ===
 #subject(class:system'BaseBoolValue) bool.

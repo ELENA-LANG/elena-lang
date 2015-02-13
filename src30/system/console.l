@@ -37,9 +37,9 @@
 
     #method readChar
     [
-        #var(type:short)aRetVal := theReader short.
+        #var(type:char)aRetVal := theReader char.
       
-        ^ CharValue new &short:aRetVal.
+        ^ CharValue new &char:aRetVal.
     ]
 
     #method readKey

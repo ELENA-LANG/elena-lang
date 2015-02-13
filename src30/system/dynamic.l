@@ -14,23 +14,27 @@
 
 #class(message) Message
 {
+    #constructor new &mssg:aMessage
+        => system'internal'int_copy.
+
+    #method => system'internal'handle_message.
 }
 
 // --- Verb ---
 
 #class(sealed,signature) Verb
 {
-    #constructor new &int:aVerb
+    #constructor new &verb:aVerb
         => system'internal'int_copy.
 
-    #method => system'internal'handle_message.
+    #method => system'internal'handle_verb.
 }
 
 // --- Signature ---
 
 #class(sealed,signature) Signature
 {
-    #constructor new &int:aSubject
+    #constructor new &subject:aSubject
         => system'internal'int_copy.
 
     #method => system'internal'qualify_message.

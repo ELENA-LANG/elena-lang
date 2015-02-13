@@ -3,6 +3,7 @@
 #shortdescr=Contains the basic functionality
 
 [#list#]
+AbortException
 Array
 ArrayEnumerator
 ArrayIterator
@@ -28,12 +29,19 @@ Boolean
 ByteArray
 byteConvertor
 ByteNumber
+CallStack
+characterController
 CharArray
 charConvertor
 CharValue
+commandLine
+console
 emptyLiteralValue
 Enumerator
+Exception
 false
+FormatException
+Handle
 IndexFunction1
 IndexFunction2
 IndexFunction3
@@ -43,6 +51,7 @@ intConvertor
 IntArray
 Integer
 IntNumber
+InvalidArgumentException
 Iterator
 literalConvertor
 LiteralEnumerator
@@ -51,40 +60,47 @@ LiteralValue
 Long
 longConvertor
 LongNumber
+Message
+MethodNotFoundException
 nil
+NotSupportedException
 Object
+objectOp
+OutOfRangeException
+Pointer
 Real
 realConvertor
 RealNumber
 ShortArray
 shortConvertor
 ShortNumber
+Signature
 String
+subjectOp
+Symbol
 true
 Variable
 Variant
+Verb
 
 
 actionOp
 BreakException
-console
 control
-Exception
-FormatException
 functionOp
 intOp
-InvalidArgumentException
 mathOp
-objectOp
-OutOfRangeException
 
 [console]
 #title=Symbol console
 #shortdescr=A console
-#method=readChar,,char;	Reads the next character from the standard input stream.
-#method=write,literal;Writes the specified literal value to the standard output stream.
-#method=writeLine,literal;Writes the specified literal value, followed by the current line terminator, to the standard output stream.
 #method=readLine,,literal;Reads the next line of characters from the standard input stream.
+#method=write,literal;Writes the specified literal value to the standard output stream.
+#method=write,&literal:literal;Writes the specified literal value to the standard output stream.
+#method=writeLine,,;Writes the current line terminator to the standard output stream.
+#method=writeLine,literal;Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+
+#method=readChar,,char;	Reads the next character from the standard input stream.
 
 [Object]
 #title=Class Object
@@ -95,7 +111,13 @@ OutOfRangeException
 [objectOp]
 #title=Extension objectOp
 #shortdescr=A generic extension
+#method=back,object,object;Returns the parameter
 #method=equal,&reference:object,bool;Returns true if the specified object instances are equal; otherwise, false.
+#method=is,&integer,,bool;Returns true if the object is integer numereric
+#method=is,&literal,,bool;Returns true if the object is literal or character
+#method=is,&numeric,,bool;Returns true if the object is numereric
+#method=isNil,,bool;Returns true if the object is nil
+#method=safeEqual,object,bool;Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 
 [nil]
 #title=Symbol nil
@@ -406,10 +428,15 @@ OutOfRangeException
 #title=Class Exception
 #shortdescr=A basic exception
 #parent=system.html#Object:system'Object
-#field=theMessage
-#constructor=new,literal;Creates the exception with the provided message
-#method=literal,,literal;Returns the message
-#method=Messages,,literal;Returns the message
+#field=theCallStack;The exception call stack
+#field=theError;The exception type
+#field=theMessage;The message
+#constructor=new,&message:literal&error_type:subject,object;Creates the exception with the provided message and error type
+#method=if,&Error:function;Executes the generic exception handler
+#method=if,&error_type:function;If incoming subject equals to the exception type, executes the exception handler<br/>Otherwise goes to the next exception handler
+#method=literal,,literal;Returns the message and the call stack
+#method=messages,,literal;Returns the message
+#method=on,object;Executes the exception handler for the current exception if available<br/>Otherwise goes to the next exception handler
 
 [FormatException]
 #title=Class FormatException
@@ -417,15 +444,25 @@ OutOfRangeException
 #parent=system.html#Object:system'Object
 #parent=system.html#Exception:system'Exception
 #constructor=new,,;Creates the exception
-#method=onFormatError,function;Executes the exception handling code
+#method=if,&FormatError:function;Executes the exception handling code
 
-[InvalidArgumentException]
-#title=Class InvalidArgumentException
+[OutOfRangeException]
+#title=Class OutOfRangeException
 #shortdescr=An out of range argument exception
 #parent=system.html#Object:system'Object
 #parent=system.html#Exception:system'Exception
 #constructor=new,,;Creates the exception
-#method=onInvalidArgumentError,function;Executes the exception handling code
+#constructor=new,&message:literal,;Creates an exception with a custom error message
+#method=if,&OutOfRangeError:function;Executes the exception handling code
+
+[InvalidArgumentException]
+#title=Class InvalidArgumentException
+#shortdescr=An invalid argumemt exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#constructor=new,&message:literal,;Creates an exception with a custom error message
+#method=if,&InvalidArgumentError:function;Executes the exception handling code
 
 [LongNumber]
 #title=Class LongNumber
@@ -791,14 +828,6 @@ OutOfRangeException
 #method=value,,numeric_value;Returns the object
 #method=write,numeric_value;Assigns the variable
 #method=dispatch,,value;Dispatches others messages to its value
-
-[OutOfRangeException]
-#title=Class OutOfRangeException
-#shortdescr=An out of range exception
-#parent=system.html#Object:system'Object
-#parent=system.html#Exception:system'Exception
-#constructor=new,,;Creates the exception
-#method=onOutOfRangeError,function;Executes the exception handling code
 
 [functionOp]
 #title=Class functionOp
@@ -1387,3 +1416,104 @@ OutOfRangeException
 #method=enumerator,,enumerator;Returns itself
 #method=next,,bool;Goes to the next enumeration member and returns true if it is not the last member
 #method=reset,,;Resets the enumerator
+
+[Symbol]
+#title=Class Symbol
+#shortdescr=A dynamic symbol
+#parent=system.html#Object:system'Object
+#constructor=new,&name:literal,object;Creates a symbol
+#method=dispatch,,object;Redirects incoming messages to the symbol
+
+[Message]
+#title=Class Message
+#shortdescr=A message extensions
+#protocol=mssg
+#parent=system.html#Object:system'Object
+#constructor=new,&mssg:mssg,mssg;Creates a dynamic message
+#method=dispatch,,object;Dequalifies incoming messages if they are equal to its value and redirects to the target
+
+[Verb]
+#title=Class Verb
+#shortdescr=A verb extensions
+#protocol=verb
+#parent=system.html#Object:system'Object
+#constructor=new,&verb:verb,verb;Creates a dynamic verb
+#method=dispatch,,object;Dispatches incoming messages and redirects to the target
+
+[Signature]
+#title=Class Signature
+#shortdescr=A signature extensions
+#protocol=subject
+#parent=system.html#Object:system'Object
+#constructor=new,&subject:subject,subject;Creates a dynamic signature
+#method=dispatch,,object;Qualifies incoming messages and redirects to the target
+
+[subjectOp]
+#title=Extension Signature
+#shortdescr=A subject extensions
+#method=equal,&subject:subject,bool;Compares subject values
+
+[CallStack]
+#title=Class CallStack
+#shortdescr=A call stack
+#parent=system.html#Object:system'Object
+#constructor=new,,object;Creates a current call stack
+#method=literal,,literal;Generates the call stack literal representation
+
+[MethodNotFoundException]
+#title=Class MethodNotFoundException
+#shortdescr=A method not found exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#method=if,&MethodNotFoundError:function;Executes the exception handling code
+
+[NotSupportedException]
+#title=Class NotSupportedException
+#shortdescr=A not supported exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#constructor=new,&message:literal,;Creates an exception with a custom error message
+#method=if,&NotSupportedError:function;Executes the exception handling code
+
+[AbortException]
+#title=Class AbortException
+#shortdescr=An abort exception
+#parent=system.html#Object:system'Object
+#parent=system.html#Exception:system'Exception
+#constructor=new,,;Creates the exception
+#constructor=new,&message:literal,;Creates an exception with a custom error message
+#method=if,&Abort:function;Executes the exception handling code
+
+[Handle]
+#title=Class Handle
+#shortdescr=An WinAPI object handle wrapper
+#parent=system.html#Object:system'Object
+#protocol=handle
+#constructor=new,&handle:handle,handle;Creates a handle
+#method=close,,;Closes an open handle
+#method=equal,&handle:handle,bool;Compares handles
+#method=handle,,handle;Returns itself
+
+[Pointer]
+#title=Class Pointer
+#shortdescr=A safe object reference
+#parent=system.html#Object:system'Object
+#constructor=new,&object,object;Creates a pointer referring to the specified object
+#method=get,,object;Returns an object referred by
+#method=index,,int;Returns the index in the global reference table
+#method=close,,;Closes the pointer<br/>Releases a place in the global reference table
+
+[commandLine]
+#title=Symbol commandLine
+#shortdescr=The command-line string for the current process
+#protocol=literal
+
+[characterController]
+#title=Symbol characterController
+#shortdescr=The OS specific character routine controller
+#method=isLowerCase,&char:char,bool;Determines whether a character is lowercase
+#method=isUpperCase,&char:char,bool;Determines whether a character is uppercase
+#method=toLowerCase,&chararray:chararray&length:int;Converts a character string to lowercase
+#method=toUpperCase,&chararray:chararray&length:int;Converts a character string to uppercase

@@ -1588,12 +1588,27 @@ procedure exception_dispatch
 
 end
 
-procedure handle_message
+procedure handle_verb
 
   setverb 0
   nload
   or
   ecopyd
+  aloadsi 1
+  ajumpvi 0
+labEnd:
+  open 1
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure handle_message
+
+  nload
+  else labEnd
+  setverb EVAL_MESSAGE_ID
   aloadsi 1
   ajumpvi 0
 labEnd:
@@ -2240,6 +2255,15 @@ procedure api_alloc_index
   acopyb
 
   quitn 2
+
+end
+
+procedure ptr_get
+
+  pusha
+  callr api : coreapi'resolve_index
+
+  quitn 1
 
 end
 

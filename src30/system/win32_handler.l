@@ -5,7 +5,7 @@
     #constructor new &handle:aHandle
         => system'internal'int_copy.
 
-    #method equal &handle:anOperand 
+    #method(type:bool) equal &handle:anOperand 
         => system'internal'int_equal.
 
     #method handle = $self.
@@ -26,6 +26,16 @@
 
     #method read &out'int:aRetVal
         => system'internal'save_int.
+
+    #method index
+    [
+        #var(type:int)anIndex := $self int.
+        
+        ^ IntNumber new &int:anIndex.
+    ]
+
+    #method get
+        => system'internal'ptr_get.
 
     #method close
         => system'internal'api_free_index.

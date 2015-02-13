@@ -26,6 +26,7 @@ func8
 func9
 func10
 func11
+handle
 int
 int_variable
 intarray
@@ -33,6 +34,7 @@ iterator
 literal
 long
 long_variable
+mssg
 n3func
 nfunc
 nnfunc
@@ -229,3 +231,9 @@ verb
 
 [chararray]
 #shortdescr=A chararray protocol
+
+[mssg]
+#shortdescr=A message protocol
+
+[handle]
+#shortdescr=A Windows object handle

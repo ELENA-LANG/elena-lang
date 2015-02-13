@@ -16,7 +16,7 @@
         
     #method back : anObject = anObject.
 
-    #method isNil
+    #method(type:bool) isNil
         = nil == self.
         
     #method is &literal
