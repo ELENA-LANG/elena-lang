@@ -1,0 +1,18 @@
+[#general#]
+#name=system'collections
+#shortdescr=Provides classes that describe the basic operations with the collections.
+
+[#list#]
+ListItem
+
+[ListItem]
+#title=Class ListItem
+#shortdescr=A list item
+#parent=system.html#Object:system'Object
+#field=theContext;The item object
+#field=theNext;The next list item
+#constructor=new,object,object;Creates the list item
+#method=get,,object;Returns the item object
+#method=nextItem,,object;Returns the next list item
+#method=set,object;Sets the item object
+#method=set,&nextItem:object;Sets the next list item
