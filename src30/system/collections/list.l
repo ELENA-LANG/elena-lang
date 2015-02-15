@@ -37,22 +37,24 @@
 #class KeyValue
 {
     #field theKey.
-    #field theValue.
+    #field theObject.
     
-    #constructor new &key:aKey &value:anObject
+    #constructor new &key:aKey &object:anObject
     [
         theKey := aKey.
-        theValue := anObject.
+        theObject := anObject.
     ]
     
     #method key = theKey.
     
-    #method value = theValue.
+    #method $getObject = theObject.
     
-    #method $setValue : aValue
+    #method $setObject : anObject
     [
-        theValue := aValue.
+        theObject := anObject.
     ]
+    
+    #method => theObject.
 }
 
 // --- ListEnumerator ---
@@ -153,7 +155,7 @@
 
     #method topItem = theTop.
 
-    #method first = theTop get.    
+    #method first = theTop get.
 
     #method last = theLast get.    
 
@@ -165,16 +167,29 @@
         theState := %active.
     ]
 
+    #method insert&empty : anObject
+        <= %append &empty:anObject.
+
     #method append&active : anObject
     [
         theCount += 1.
         theLast := theLast set &nextItem:(ListItem new:anObject).
     ]
+
+    #method insert&active : anObject
+    [
+        theCount += 1.
+        
+        theTop := ListItem new:anObject set &nextItem:theTop.
+    ]
     
     #method getAt : anIndex
-        = $self getAt &index:(anIndex int) get.
+        = $self getAt &index:(anIndex int).
 
     #method getAt &index:anIndex
+        = $self getItemAt &index:anIndex get.
+
+    #method getItemAt &index:anIndex
     [
         #var(type:int)aCurrentIndex := anIndex.
         #var anItem := theTop.
@@ -192,6 +207,20 @@
     ]
 
     #method append : anObject => theState.
+
+    #method insert : anObject => theState.
+
+    #method insert &index:anIndex &object:anObject
+    [
+        (anIndex == 0)
+            ? [ $self insert:anObject. ]
+            ! [
+                #var aPrevious := $self getItemAt &index:(anIndex - 1).
+                #var aNext := aPrevious Next.
+                
+                aPrevious set &nextItem:(ListItem new:anObject set &nextItem:aNext).                
+            ].
+    ]
 
     #method remove &index:anIndex
     [
@@ -224,11 +253,22 @@
         aLength := theCount int.
     ]
     
+    #method clear 
+    [
+        theCount write &int:0.
+        
+        theState := %empty.
+        theTop := nil.
+        theLast := nil.
+    ]
+    
     #method enumerator = ListEnumerator new:$self.
     
     #method iterator = ListIterator new:$self.
     
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &enumerable:$self.
 }
 
 // --- List ---
@@ -236,6 +276,19 @@
 #class(sealed) List :: BaseList
 {
     #method list = $self.
+    
+    #method clone 
+    [
+        #var aList := List new.
+        
+        #var anItem := theTop.        
+        #loop (anItem != nil) ?
+        [
+            aList append:(anItem get).
+            
+            anItem := anItem nextItem.
+        ].
+    ]
 }
 
 // --- Dictionary ---
@@ -255,8 +308,14 @@
         theDefaultValue := aValue.
     ]
 
-    #method append &key:aKey &value:aValue
-        <= %append:(KeyValue new &key:aKey &value:aValue).
+    #method append &key:aKey &object:aValue
+        <= %append:(KeyValue new &key:aKey &object:aValue).
+
+    #method insert &key:aKey &object:aValue
+        <= %insert:(KeyValue new &key:aKey &object:aValue).
+
+    #method insert &index:anIndex &key:aKey &object:aValue
+        <= %insert &index:anIndex &object:(KeyValue new &key:aKey &object:aValue).
 
     #method findItem &key:aKey
         = x [ x key safeEqual:aKey ] retrieve &enumerator:($self enumerator).
@@ -266,16 +325,31 @@
         #var anItem := $self findItem &key:aKey.
         ^ (nil == anItem)
             ? [ theDefaultValue ]
-            ! [ anItem value ].
+            ! [ anItem ].
     ]
 
-    #method set &key:aKey &value:aValue
+    #method set &key:aKey &object:aValue
     [
         #var anItem := $self findItem &key:aKey.
         (nil == anItem)
-            ? [ $self append &key:aKey &value:aValue. ]
-            ! [ anItem $setValue:aValue ].
+            ? [ $self append &key:aKey &object:aValue. ]
+            ! [ anItem $setObject:aValue ].
     ]
 
     #method dictionary = $self.
+    
+    #method clone 
+    [
+        #var aList := Dictionary new.
+        
+        #var anItem := theTop.        
+        #loop (anItem != nil) ?
+        [
+            #var aKeyValue := anItem get.
+            
+            aList append &key:(aKeyValue key) &object:(aKeyValue $getObject).
+            
+            anItem := anItem nextItem.
+        ].
+    ]
 }

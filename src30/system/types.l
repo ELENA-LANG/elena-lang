@@ -72,6 +72,9 @@
 #subject(class:system'Enumerator)enumerator.
 #subject(class:system'Iterator)iterator.
 
+// --- basic properties ---
+#subject key.
+
 // === extension types ===
 #subject textio.
 #subject enumerable.

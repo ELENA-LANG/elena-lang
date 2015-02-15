@@ -31,6 +31,7 @@ int
 int_variable
 intarray
 iterator
+list
 literal
 long
 long_variable
@@ -237,3 +238,6 @@ verb
 
 [handle]
 #shortdescr=A Windows object handle
+
+[list]
+#shortdescr=A list protocol
