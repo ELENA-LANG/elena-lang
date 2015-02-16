@@ -3,3 +3,17 @@
 #shortdescr=Provides basic mathematic extensions
 
 [#list#]
+byteOp
+
+[byteOp]
+#title=Extension byteOp
+#shortdescr=A byte number extension
+#protocol=byte
+#method=absolute,,byte;Returns absolute value
+#method=is,&even,bool;Returns true if the number is even
+#method=is,&negative,bool;Returns true if the number is negative
+#method=is,&nonnegative,bool;Returns true if the number is negative
+#method=is,&odd,bool;Returns true if the number is odd
+#method=is,&positive,bool;Returns true if the number is positive
+#method=is,&zero,bool;Returns true if the number is zero
+#method=mod,byte,byte;Returns the divisiob remainder

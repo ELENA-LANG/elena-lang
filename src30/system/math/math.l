@@ -2,6 +2,93 @@
 
 // --- Operations ---
 
+// --- byteOp ---
+
+#class(extension:byte) byteOp
+{
+    #method absolute
+    [
+        #var(type:byte)n := self byte.
+        (n < 0)
+            ? [ n := n * -1. ].
+                
+        ^ ByteNumber new &byte:n.
+    ]
+    
+    #method mod : anOperand
+        = self - (self / anOperand * anOperand).
+                
+    #method is &odd
+        = self::byteOp mod:2 != 0.
+        
+    #method is &even
+        = self::byteOp mod:2 == 0.
+        
+    #method is &zero
+        = self equal &int:0.
+        
+    #method is &positive
+        = self > 0.
+        
+    #method is &negative
+        = self < 0.
+        
+    #method is &nonnegative
+        = self <= 0.
+}
+
+// --- intOp ---
+
+#class(extension:short) shortOp
+{
+    #method absolute
+    [
+        #var(type:short)n := self short.
+        (n < 0)
+            ? [ n := n * -1. ].
+                
+        ^ ShortNumber new &short:n.
+    ]
+    
+    #method mod : anOperand
+        = self - (self / anOperand * anOperand).
+                
+    #method is &odd
+        = self::shortOp mod:2 != 0.
+        
+    #method is &even
+        = self::shortOp mod:2 == 0.
+        
+    #method is &zero
+        = self equal &int:0.
+        
+    #method is &positive
+        = self > 0.
+        
+    #method is &negative
+        = self < 0.
+        
+    #method is &nonnegative
+        = self <= 0.
+    
+    #method hiByte
+    [
+        #var(type:short)aWord := self short.
+        aWord := aWord && 0FF00h.
+        aWord := aWord shift &index:8.
+        
+        ^ byteConvertor convert &short:aWord.
+    ]
+        
+    #method loByte
+    [
+        #var(type:short)aWord := self short.
+        aWord := aWord && 0FFh.
+        
+        ^ byteConvertor convert &short:aWord.
+    ]
+}
+
 // --- intOp ---
 
 #class(extension:int) intOp
@@ -24,6 +111,15 @@
         
     #method is &zero
         = self equal &int:0.
+        
+    #method is &positive
+        = self > 0.
+        
+    #method is &negative
+        = self < 0.
+        
+    #method is &nonnegative
+        = self <= 0.
 
     #method hiWord
     [
@@ -31,7 +127,7 @@
         aWord := aWord && 0FFFF0000h.
         aWord := aWord shift &index:16.
         
-        ^ IntNumber new &int:aWord.
+        ^ shortConvertor convert &int:aWord.
     ]
 
     #method loWord
@@ -39,20 +135,58 @@
         #var(type:int)aWord := self int.
         aWord := aWord && 0FFFFh.
         
-        ^ IntNumber new &int:aWord.
+        ^ shortConvertor convert &int:aWord.
+    ]
+}
+
+// --- longOp ---
+
+#class(extension:long) longOp
+{
+    #method absolute
+    [
+        #var(type:long)n := self long.
+        
+        ^ (n < 0l) ? [ -1l * n ] ! [ n ].
     ]
     
-    #method hiByte
+    #method mod : anOperand
+        = self - (self / anOperand * anOperand).
+                
+    #method is &odd
+        = self::longOp mod:2l != 0.
+        
+    #method is &even
+        = self::longOp mod:2l == 0.
+        
+    #method is &zero
+        = self equal &long:0l.
+        
+    #method is &positive
+        = self > 0l.
+        
+    #method is &negative
+        = self < 0l.
+        
+    #method is &nonnegative
+        = self <= 0l.
+
+    #method hiDWord
     [
-        #var(type:int)aWord := self int.
-        aWord := aWord && 0FF00h.
-        aWord := aWord shift &index:8.
+        #var(type:long)aWord := self long.
+        aWord := aWord && -4294967296l.
+        aWord := aWord shift &index:32.
         
-        ^ IntNumber new &int:aWord.
+        ^ intConvertor convert &long:aWord.
     ]
+
+    #method loDWord
+    [
+        #var(type:long)aWord := self long.
+        aWord := aWord && 4294967295l.
         
-    #method loByte
-        = self int and &int:0FFh.
+        ^ intConvertor convert &long:aWord.
+    ]
 }
 
 // --- realOp ---
@@ -136,15 +270,15 @@
         ^ RealNumber new &real:(n subtract &real:aRetVal).
     ]
     
-    #method isZero
+    #method is &zero
         = self == 0.
         
-    #method isPositive
+    #method is &positive
         = self > 0.
         
-    #method isNegative
+    #method is &negative
         = self < 0.
         
-    #method isNonnegative
+    #method is &nonnegative
         = self <= 0.
 }

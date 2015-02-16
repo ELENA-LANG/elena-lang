@@ -1853,6 +1853,9 @@ void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectIn
          else if (size == 2) {
             _writer.assignShort(*scope.tape, variableInfo);
          }
+         else if (size == 1) {
+            _writer.assignByte(*scope.tape, variableInfo);
+         }
          else if (size == 8) {
             _writer.assignLong(*scope.tape, variableInfo);
          }

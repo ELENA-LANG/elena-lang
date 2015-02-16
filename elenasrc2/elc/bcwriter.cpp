@@ -1797,6 +1797,33 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, ObjectInfo target)
    }
 }
 
+void ByteCodeWriter :: assignByte(CommandTape& tape, ObjectInfo target)
+{
+   if (target.kind == okFieldAddress) {
+      // nload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param / 4
+      // wwrite
+
+      tape.write(bcNLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, target.param >> 2);
+      tape.write(bcWWrite);
+   }
+   else if (target.kind == okLocal || target.kind == okOutputParam) {
+      // bloadfi param
+      // ncopy
+      tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcNCopy);
+   }
+   else if (target.kind == okBase) {
+      // ncopy
+      tape.write(bcNCopy);
+   }
+}
+
 void ByteCodeWriter :: assignLong(CommandTape& tape, ObjectInfo target)
 {
    if (target.kind == okFieldAddress) {

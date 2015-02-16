@@ -826,14 +826,14 @@
     #method xor &byte:anOperand
         = $self xor &long:(system'LongNumber new &byte:anOperand).
 
-    #method shift &index:anOrder
+    #method(type:long) shift &index:anOrder
         => system'internal'long_shift.
 
     #method literal = literalConvertor convert &long:$self.
 
-    #method negative = 0l - $self.
+    #method(type:long) negative = 0l - $self.
 
-    #method not
+    #method(type:long) not
         => system'internal'long_not.
 
     #method clone = LongNumber new &long:$self.
