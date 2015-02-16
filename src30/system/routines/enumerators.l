@@ -154,6 +154,9 @@
     #method indexOf &literal:aLiteral
         = self indexOf &index:0 &literal:aLiteral.
 
+    #method indexOf &char:aChar
+        = self indexOf &index:0 &char:aChar.
+
     #method(type:literal) Substring &index:anIndex
     [
         #var(type:literal)aLiteral := self literal.        
@@ -168,51 +171,70 @@
     [
         #var(type:literal)aLiteral := self literal.        
         #var(type:int)anIndex := 0.
-        #loop (aLiteral getAt &index:anIndex equal &char:aChar) 
-            ? [ anIndex := anIndex + 1. ].
+        #var(type:int)aLength := aLiteral length.
+        #var(type:char)aCurrent.
         
-        ^ aLiteral delete &index:0 &length:anIndex.
+        #loop (anIndex < aLength) ?
+        [
+            aCurrent := aLiteral getAt &index:anIndex.
+            
+            (aChar equal &char:aChar)
+                ! [ ^ aLiteral delete &index:0 &length:anIndex. ].
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ emptyLiteralValue.
     ]
-     
+    
+    #method trimLeft
+        = self::literalOp trimLeft &char:#32.
+       
     #method trimRight &char:aChar
     [
         #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength := aLiteral length.
-        
+        #var(type:int)aLength := aLiteral length.        
         #var(type:int)anIndex := aLength - 1.
+        #var(type:char)aCurrent.
         
-        #loop (aLiteral getAt &index:anIndex equal &char:aChar) 
-            ? [ anIndex := anIndex - 1. ].
+        #loop (anIndex >= 0) ?
+        [
+            aCurrent := aLiteral getAt &index:anIndex.
+            
+            (aChar equal &char:aChar)
+                ! [ ^ aLiteral delete &index:anIndex &length:(aLength - anIndex). ].
+            
+            anIndex := anIndex - 1.
+        ].
         
-        ^ aLiteral delete &index:anIndex &length:(aLength - anIndex).
+        ^ emptyLiteralValue.
     ]
     
+    #method trimRight
+        = self::literalOp trimRight &char:#32.
+       
     #method trim &char:aChar
         = self::literalOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method trim
+        = self::literalOp trimLeft &char:#32 trimRight &char:#32.
     
     #method padLeft &char:aChar &length:aLength
     [
         #var(type:literal)aLiteral := self literal.
-        #var(type:literal)padding := aChar literal.
-        
         #var(type:int)aCurrentLength := aLiteral length.
-
-        #loop (aLength > aCurrentLength)?
-            [ aLiteral := padding add &literal:aLiteral. aCurrentLength := aCurrentLength + 1. ].
-            
-        ^ aLiteral.
+        
+        (aCurrentLength < aLength)
+            ? [ ^ LiteralValue new &length:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
     ]
     
     #method padRight &char:aChar &length:aLength
     [
-        #var(type:literal)aLiteral := self literal.
-        
+        #var(type:literal)aLiteral := self literal.        
         #var(type:int)aCurrentLength := aLiteral length.
 
-        #loop (aLength > aCurrentLength)?
-            [ aLiteral := aLiteral add &char:aChar. aCurrentLength := aCurrentLength + 1. ].
-            
-        ^ aLiteral.
+        (aCurrentLength < aLength)
+            ? [ ^ aLiteral add &literal:(LiteralValue new &length:(aLength - aCurrentLength) &char:aChar). ].
     ]
 
     #method startingWith &literal:s
@@ -234,7 +256,7 @@
         ^ n != -1.
     ]
 
-    #method replace &first &literal:aReplacee &literal:aReplacer
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
     [
         #var(type:literal)aLiteral := self literal.
         #var(type:int) aReplaceeLen := aReplacee length.
@@ -276,7 +298,7 @@
         
         #var aRetVal := emptyLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:shortarray,size:128)aTemp.
+        #var(type:chararray,size:128)aTemp.
         #var(type:int)aLength := aLiteral length.
         
         #loop (aLength > 0)?
@@ -285,18 +307,18 @@
                 ? [
                     aTemp write &index:anIndex &length:127 &literal:aLiteral.
                 
-                    characterController toUpperCase &shortarray:aTemp &length:127.
+                    characterController toUpperCase &chararray:aTemp &length:127.
                     
-                    aRetVal := aRetVal add &literal:(LiteralValue new &length:127 &shortarray:aTemp).                            
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:127 &chararray:aTemp).                            
                     anIndex := anIndex + 127.
                     aLength := aLength - 127.
                 ]
                 ! [
                     aTemp write &index:anIndex &length:aLength &literal:aLiteral.
                 
-                    characterController toUpperCase &shortarray:aTemp &length:aLength.
+                    characterController toUpperCase &chararray:aTemp &length:aLength.
                     
-                    aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &shortarray:aTemp).                            
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &chararray:aTemp).                            
                     aLength := 0.
                 ].
         ].
@@ -310,7 +332,7 @@
         
         #var aRetVal := emptyLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:shortarray,size:128)aTemp.
+        #var(type:chararray,size:128)aTemp.
         #var(type:int)aLength := aLiteral length.
         
         #loop (aLength > 0)?
@@ -319,18 +341,18 @@
                 ? [
                     aTemp write &index:anIndex &length:127 &literal:aLiteral.
                 
-                    characterController toLowerCase &shortarray:aTemp &length:127.
+                    characterController toLowerCase &chararray:aTemp &length:127.
                     
-                    aRetVal := aRetVal add &literal:(LiteralValue new &length:127 &shortarray:aTemp).                            
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:127 &chararray:aTemp).                            
                     anIndex := anIndex + 127.
                     aLength := aLength - 127.
                 ]
                 ! [
                     aTemp write &index:anIndex &length:aLength &literal:aLiteral.
                 
-                    characterController toLowerCase &shortarray:aTemp &length:aLength.
+                    characterController toLowerCase &chararray:aTemp &length:aLength.
                     
-                    aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &shortarray:aTemp).                            
+                    aRetVal := aRetVal add &literal:(LiteralValue new &length:aLength &chararray:aTemp).                            
                     aLength := 0.
                 ].
         ].
@@ -338,20 +360,12 @@
         ^ aRetVal.
     ]
 
-    #method isEmpty
+    #method is &empty
     [
         #var(type:literal)aLiteral := self literal.        
         #var(type:int)aLength := aLiteral length.
         
         ^ aLength == 0.
-    ]
-    
-    #method isNotEmpty
-    [
-        #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength := aLiteral length.
-        
-        ^ aLength != 0.
     ]
 
     #method split &char:aChar
@@ -400,11 +414,11 @@
         ^ aList::enumerableOp array.
     ]
 
-    #method split &by:aChar
+    #method split &by:aSplitter
     [
         #var(type:literal) aLiteral := self literal.
         
-        ^ aChar cast:%eval &to:
+        ^ aSplitter cast:%eval &to:
             {
                 eval &char:aChar = aLiteral::literalOp split &char:aChar.
                 

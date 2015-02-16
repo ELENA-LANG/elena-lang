@@ -46,6 +46,7 @@ real
 real_variable
 short
 shortarray
+text
 typecaster
 value
 variable
@@ -241,3 +242,6 @@ verb
 
 [list]
 #shortdescr=A list protocol
+
+[text]
+#shortdescr=A text variable protocol

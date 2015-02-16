@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 system'routines
+                       * lib30 system'routines : indexableOp
 
                        * lib30 extensions
 

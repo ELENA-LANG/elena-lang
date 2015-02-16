@@ -84,10 +84,7 @@ Variant
 Verb
 
 
-actionOp
-BreakException
 control
-functionOp
 intOp
 mathOp
 
@@ -264,14 +261,6 @@ mathOp
 #method=while,bool_expr;Checks the condition until it is true
 #method=while,bool_expr&do:action;Executes the action while the condition is true
 
-[actionOp]
-#title=Class actionOp
-#shortdescr=An action role
-#parent=system.html#Object:system'Object
-#protocol=action
-#method=run,&if:bool_expr;Executes the action while the parameter is true
-#method=run,&until:bool_expr;Executes the action while the parameter is false
-
 [true]
 #title=Symbol true
 #shortdescr=A true value symbol
@@ -360,13 +349,6 @@ mathOp
 #method=write,&short:short;Copies the integer value
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 #method=dispatch,,int;Dispatches others messages to its value
-
-[BreakException]
-#title=Class BreakException
-#shortdescr=A break exception
-#parent=system.html#Object:system'Object
-#field=theResult
-#method=stop,,;Returns the result
 
 [emptyLiteralValue]
 #title=Symbol emptyLiteralValue
@@ -828,16 +810,6 @@ mathOp
 #method=value,,numeric_value;Returns the object
 #method=write,numeric_value;Assigns the variable
 #method=dispatch,,value;Dispatches others messages to its value
-
-[functionOp]
-#title=Class functionOp
-#shortdescr=A function role
-#parent=system.html#Object:system'Object
-#protocol=function
-#method=retrieve,&enumerator:enumerator,object;Executes the function for every value in the specified range until the function returns true
-#method=run,&enumerator:enumerator,object;Executes the function for every enumeration item
-#method=run,&enumerator:enumerator&where:bool_function,object;Executes the function for every enumeration item when the condition is true
-#method=run,&for:variable&from:value&to:value&by:value,object;Executes the function for every value in the specified generic range
 
 [ArrayIterator]
 #title=Class ArrayIterator
