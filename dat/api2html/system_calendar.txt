@@ -1,0 +1,5 @@
+[#general#]
+#name=system'calendar
+#shortdescr=Provides basic operations with date / time
+
+[#list#]

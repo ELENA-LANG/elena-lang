@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 system'math
+                       * lib30 system'calendar
 
                        * lib30 extensions
 

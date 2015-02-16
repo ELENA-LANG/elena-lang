@@ -16,7 +16,13 @@
     ]
     
     #method mod : anOperand
-        = self - (self / anOperand * anOperand).
+    [
+        #var(type:byte)n := self byte.        
+        
+        #var r := n / anOperand * anOperand.
+        
+        ^ n - r.
+    ]    
                 
     #method is &odd
         = self::byteOp mod:2 != 0.
@@ -25,16 +31,16 @@
         = self::byteOp mod:2 == 0.
         
     #method is &zero
-        = self equal &int:0.
+        = self byte equal &int:0.
         
     #method is &positive
-        = self > 0.
+        = self byte > 0.
         
     #method is &negative
-        = self < 0.
+        = self byte < 0.
         
     #method is &nonnegative
-        = self <= 0.
+        = self byte <= 0.
 }
 
 // --- intOp ---
@@ -51,7 +57,11 @@
     ]
     
     #method mod : anOperand
-        = self - (self / anOperand * anOperand).
+    [
+        #var(type:short)n := self short.
+        
+        ^ n - (n / anOperand * anOperand).
+    ]
                 
     #method is &odd
         = self::shortOp mod:2 != 0.
@@ -60,18 +70,18 @@
         = self::shortOp mod:2 == 0.
         
     #method is &zero
-        = self equal &int:0.
+        = self short equal &int:0.
         
     #method is &positive
-        = self > 0.
+        = self short > 0.
         
     #method is &negative
-        = self < 0.
+        = self short < 0.
         
     #method is &nonnegative
-        = self <= 0.
+        = self short <= 0.
     
-    #method hiByte
+    #method high
     [
         #var(type:short)aWord := self short.
         aWord := aWord && 0FF00h.
@@ -80,7 +90,7 @@
         ^ byteConvertor convert &short:aWord.
     ]
         
-    #method loByte
+    #method low
     [
         #var(type:short)aWord := self short.
         aWord := aWord && 0FFh.
@@ -101,7 +111,11 @@
     ]
     
     #method mod : anOperand
-        = self - (self / anOperand * anOperand).
+    [
+        #var(type:int)n := self int.
+        
+        ^ n - (n / anOperand * anOperand).
+    ]
                 
     #method is &odd
         = self::intOp mod:2 != 0.
@@ -110,18 +124,18 @@
         = self::intOp mod:2 == 0.
         
     #method is &zero
-        = self equal &int:0.
+        = self int equal &int:0.
         
     #method is &positive
-        = self > 0.
+        = self int > 0.
         
     #method is &negative
-        = self < 0.
+        = self int < 0.
         
     #method is &nonnegative
-        = self <= 0.
+        = self int <= 0.
 
-    #method hiWord
+    #method high
     [
         #var(type:int)aWord := self int.
         aWord := aWord && 0FFFF0000h.
@@ -130,7 +144,7 @@
         ^ shortConvertor convert &int:aWord.
     ]
 
-    #method loWord
+    #method low
     [
         #var(type:int)aWord := self int.
         aWord := aWord && 0FFFFh.
@@ -151,7 +165,11 @@
     ]
     
     #method mod : anOperand
-        = self - (self / anOperand * anOperand).
+    [
+        #var(type:long)n := self long.
+        
+        ^ n - (n / anOperand * anOperand).
+    ]
                 
     #method is &odd
         = self::longOp mod:2l != 0.
@@ -160,18 +178,18 @@
         = self::longOp mod:2l == 0.
         
     #method is &zero
-        = self equal &long:0l.
+        = self long equal &long:0l.
         
     #method is &positive
-        = self > 0l.
+        = self long > 0l.
         
     #method is &negative
-        = self < 0l.
+        = self long < 0l.
         
     #method is &nonnegative
-        = self <= 0l.
+        = self long <= 0l.
 
-    #method hiDWord
+    #method high
     [
         #var(type:long)aWord := self long.
         aWord := aWord && -4294967296l.
@@ -180,7 +198,7 @@
         ^ intConvertor convert &long:aWord.
     ]
 
-    #method loDWord
+    #method low
     [
         #var(type:long)aWord := self long.
         aWord := aWord && 4294967295l.
@@ -193,9 +211,6 @@
 
 #symbol realOpController =
 {
-    modulus &real:aReal &out'real:aRetVal
-        => system'internal'r_abs.
-        
     exp &real:aReal &out'real:aRetVal
         => system'internal'r_exp.
         
@@ -214,14 +229,6 @@
 
 #class(extension:real) realOp
 {        
-    #method modulus
-    [
-        #var(type:real)n := self real.        
-        #var(type:real)aRetVal := realOpController modulus &real:n.
-        
-        ^ RealNumber new &real:aRetVal.
-    ]        
-        
     #method(type:real) absolute
     [
         #var(type:real)n := self real.        
@@ -265,7 +272,7 @@
     #method(type:real) frac
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal := realOpController modulus &real:n.
+        #var(type:real)aRetVal := realOpController abs &real:n.
         
         ^ RealNumber new &real:(n subtract &real:aRetVal).
     ]

@@ -85,8 +85,6 @@ Verb
 
 
 control
-intOp
-mathOp
 
 [console]
 #title=Symbol console
@@ -850,36 +848,6 @@ mathOp
 #method=length,,int;Returns the array length
 #method=setAt,int&:object,object;Sets the specified array member
 #method=setAt,&index:int&object:object,object;Sets the specified array member
-
-
-
-
-[mathOp]
-#title=Class mathOp
-#shortdescr=A mathematical operation extension
-#parent=system.html#Object:system'Object
-#method=Abs,,real;Returns the absolute value of the number
-#method=Exp,,real;Returns the exponent of the number
-#method=Frac,,real;Returns the fractional part of the number
-#method=Int,,real;Returns the integer part
-#method=isNegative,,bool;Determines if the numer is negative
-#method=isNonnegative,,bool;Determines if the numer is greater or equal to zero
-#method=isPositive,,bool;Determines if the numer is positive
-#method=isZero,,bool;Determines if the number is zero
-#method=Ln,,real;Returns the natural logarithm of the number
-#method=Rounded,,real;Rounds the number to the closest integer value
-
-[intOp]
-#title=Class intOp
-#shortdescr=An integer number extension
-#parent=system.html#Object:system'Object
-#method=HiByte,,int;Returns the high byte
-#method=HiWord,,int;Returns the high word
-#method=isEven,,bool;Determines if the integer number is even
-#method=isOdd,,bool;Determines if the integer number is odd
-#method=LoByte,,int;Returns the low byte
-#method=LoWord,,int;Returns the low word
-#method=mod,value,value;Returns the remained of the division
 
 [ByteArray]
 #title=Class ByteArray
