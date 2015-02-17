@@ -3,3 +3,84 @@
 #shortdescr=Provides basic operations with date / time
 
 [#list#]
+Date
+now
+TimeSpan
+utcNow
+
+[TimeSpan]
+#title=Class TimeSpan
+#shortdescr=A time span
+#protocol=timespan
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#constructor=min,,timespan;Creates a minimal time span
+#constructor=new,long,timespan;Creates a new time span
+#constructor=new,&days:int&hours:int&minutes:int&seconds:int,timespan;Creates a new time span
+#constructor=new,&hours:int&minutes:int&seconds:int,timespan;Creates a new time span
+#method=add,&datetime:datetime,datetime;Returns a new date
+#method=add,&long:long,timespan;Returns the new timespans
+#method=add,&timespan:timespan,timespan;Returns the sum of two timespans
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with timespan subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with timespan subject
+#method=clone,,timespan;Returns the copy
+#method=days,,int;Gets the days component of the time interval 
+#method=equal,&timespan:timespan,bool;Compares time spans
+#method=hours,,int;Gets the hours component of the time interval 
+#method=less,&timespan:timespan,bool;Compares time spans
+#method=literal,,literal;Returns the literal presentation
+#method=long,,long;Returns a number of ticks
+#method=milliseconds,,int;Gets the milliseconds component of the time interval 
+#method=minutes,,int;Gets the minutes component of the time interval 
+#method=seconds,,int;Gets the seconds component of the time interval 
+#method=subtract,&long:long,timespan;Returns the new timespan
+#method=subtract,&timespan:timespan,timespan;Retuns the difference between two timespans
+#method=timespan,,timespan;Returns itself
+
+[Date]
+#title=Class Date
+#shortdescr=A date
+#protocol=datetime
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#parent=system.html#BaseNumber:system'BaseNumber
+#constructor=min,,datetime;Creates a minimal time span
+#constructor=new,long,datetime;Creates a new time span
+#constructor=new,&year:int&month:int&day:int,datetime;Creates a new date
+#constructor=new,&year:int&month:int&day:int&hour:int&minute:int&second:int,datetime;Creates a new date
+#constructor=now,,datetime;Returns a current date / time
+#method=add,&day:int,datetime;Retuns the new date
+#method=add,&hour:int,datetime;Retuns the new date
+#method=add,&long:long,datetime;Retuns the new date
+#method=add,&minute:int,datetime;Retuns the new date
+#method=add,&month:int,datetime;Retuns the new date
+#method=add,&second:int,datetime;Retuns the new date
+#method=add,&timespan:timespan,datetime;Retuns the new date
+#method=add,&year:int,datetime;Retuns the new date
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with datetmime subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with datetmime subject
+#method=clone,,datetime;Returns the copy
+#method=day,,int;Gets the day component of the date
+#method=dayOfWeek,,int;Gets the day of week component of the date
+#method=equal,&datetime:datetime,bool;Compares dates
+#method=hour,,int;Gets the hour component of the date
+#method=less,&datetime:datetime,bool;Compares dates
+#method=literal,,literal;Returns the literal presentation
+#method=long,,long;Returns a number of ticks
+#method=millosecond,,int;Gets the millisecond component of the date
+#method=minute,,int;Gets the minute component of the date
+#method=month,,int;Gets the month component of the date
+#method=second,,int;Gets the second component of the date
+#method=subtract,&datetime:datetime,timespan;Returns the difference between two dates
+#method=subtract,&long:long,datetime;Returns the new date
+#method=subtract,&timespan:timespan,datetime;Returns the new date
+#method=year,,int;Gets the year component of the date
+
+[now]
+#title=Symbol now
+#shortdescr=A current date / time
+
+[utcNow]
+#title=Symbol utcNow
+#shortdescr=A current UTC date / time

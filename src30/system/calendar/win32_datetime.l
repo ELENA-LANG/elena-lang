@@ -153,36 +153,36 @@
    
     #method get &literal &int_date_attributes:Flags
     [
-        #var(type:shortarray,size:127)aBuffer.
+        #var(type:chararray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
             &int:Flags
             &systemtime:$self
             &int:0
-            &shortarray:aBuffer
+            &chararray:aBuffer
             &int:255
             &int:0
             | raise:(FormatException new:"Invalid date").
 
-        ^ LiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
+        ^ LiteralValue new &length:(aLength - 1) &chararray:aBuffer.                
     ]
     
     #method get &literal &int_time_attributes:Flags
     [
-        #var(type:shortarray,size:127)aBuffer.
+        #var(type:chararray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
             &int:Flags
             &systemtime:$self
             &int:0
-            &shortarray:aBuffer
+            &chararray:aBuffer
             &int:255
             &int:0
             | raise:(FormatException new:"Invalid time").
 
-        ^ LiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
+        ^ LiteralValue new &length:(aLength - 1) &chararray:aBuffer.                
     ]
 }
 

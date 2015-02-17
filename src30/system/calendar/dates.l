@@ -9,9 +9,31 @@
 {
     #field(type:long)theValue.
 
+    #constructor min <= %new &long:0l.
+
     #constructor new &long:aValue
     [
         theValue := aValue.
+    ]
+            
+    #constructor new &hours:Hours &minutes:Minutes &seconds:Seconds
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime write &long:0l.
+        
+        aSystemTime set &days:0 set &hours:Hours set &minutes:Minutes set &seconds:Seconds.
+        
+        theValue := aSystemTime long.
+    ]
+            
+    #constructor new &days:Days &hours:Hours &minutes:Minutes &seconds:Seconds
+    [
+        #var(type:systemtime)aSystemTime.
+        aSystemTime write &long:0l.
+        
+        aSystemTime set &days:Days set &hours:Hours set &minutes:Minutes set &seconds:Seconds.
+        
+        theValue := aSystemTime long.
     ]
             
     #method read &out'long : aRetVal
@@ -20,23 +42,9 @@
     ]
 
     #method long = theValue.
-    
-    #method years
-    [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
-        
-        ^ aSystemTime years.
-    ]
 
-    #method months
-    [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
-        
-        ^ aSystemTime months.
-    ]
-                        
+    #method timespan = $self.
+            
     #method days
     [
         #var(type:systemtime)aSystemTime.
@@ -76,8 +84,61 @@
         
         ^ aSystemTime milliseconds.
     ]
+   
+    #method equal &timespan:aSpan
+    [
+        #var(type:long)aValue := aSpan long.
+        
+        ^ aValue == theValue.
+    ]
 
-    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timepspan:$self.
+    #method less &timespan:aSpan
+    [
+        #var(type:long)aValue := aSpan long.
+        
+        ^ aValue < theValue.
+    ]
+
+    #method add &datetime:aDate
+        = aDate add &timespan:$self.
+    
+    #method add &timespan:aSpan
+    [
+        #var(type:long)aValue := aSpan long.
+        
+        ^ TimeSpan new &long:(aValue + theValue).
+    ]
+    
+    #method add &long:aValue
+    [
+        ^ TimeSpan new &long:(aValue + theValue).
+    ]
+
+    #method subtract &timespan:aSpan
+    [
+        #var(type:long)aValue := aSpan long.
+        
+        ^ TimeSpan new &long:(theValue - aValue).
+    ]
+    
+    #method subtract &long:aValue
+    [
+        ^ TimeSpan new &long:(theValue - aValue).
+    ]
+
+    #method literal
+    [
+        #var aValue := dateTimeControl toShortDateTime &long:theValue.
+        
+         ^ ($self days literal + "." + aValue) literal.
+    ]
+
+    #method clone
+        = TimeSpan new &long:theValue.
+
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timespan:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &timespan:$self.
 }
 
 // --- Date ---
@@ -85,7 +146,18 @@
 #class(sealed,struct:embeddable) Date :: BaseNumber
 {
     #field(type:long)theValue.
-    
+
+    #constructor min <= %new &long:0l.
+
+    #constructor now
+    [
+        #var(type:long)aValue := dateTimeControl read &CurrentUTCTime.
+        
+        aValue := dateTimeControl convertUTC2Local &long:aValue.
+        
+        theValue := aValue.
+    ]
+            
     #constructor new &long:aValue
     [
         theValue := aValue.
@@ -114,6 +186,20 @@
     [
         aRetVal := theValue.
     ]
+   
+    #method equal &datetime:aDate
+    [
+        #var(type:long)aValue := aDate long.
+        
+        ^ aValue == theValue.
+    ]
+
+    #method less &datetime:aDate
+    [
+        #var(type:long)aValue := aDate long.
+        
+        ^ aValue < theValue.
+    ]
 
     #method add &long:aValue
         = Date new &long:(theValue + aValue).
@@ -126,6 +212,13 @@
         #var(type:long)aLongValue := aDate long.
         
         ^ TimeSpan new &long:(theValue - aLongValue).
+    ]
+  
+    #method subtract &timespan:aTimeSpan
+    [
+        #var(type:long)aLongValue := aTimeSpan long.
+        
+        ^ Date new &long:(theValue + aLongValue).
     ]
   
     #method add &timespan:aTimeSpan
@@ -294,19 +387,18 @@
         
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
     
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &datetime:$self.
+    
     #method datetime = $self.
+
+    #method clone
+        = Date new &long:theValue.
+    
 }
 
 // --- now ---
 
-#symbol now =
-[
-    #var(type:long)aValue := dateTimeControl read &CurrentUTCTime.
-    
-    aValue := dateTimeControl convertUTC2Local &long:aValue.
-    
-    ^ Date new &long:aValue.
-] eval.
+#symbol now = Date now.
 
 #symbol utcNow =
 [

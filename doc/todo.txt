@@ -21,9 +21,13 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 system'calendar
-
+                       * lib30 system'text
+                       
                        * lib30 extensions
+
+                       * TimeSpan : difference between two dates should be in days, hours, seconds is calclulated not correctly
+                       * TimeSpan : test constructors
+                       * Date : convert to utc and back
 
                        * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
                          call parameter
@@ -567,6 +571,7 @@ week2:
                        * support GUI application
 
               adev - lib30                                        
+                       * TimeSpan : TotalDays, TotalHours, TotalMinutes, TotalSeconds
                        * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
                        * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
                        * support sin, cos, arctan
