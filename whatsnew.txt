@@ -43,6 +43,8 @@
 [*] system'collections : List, Dictionary
 [*] system'routines : literalOp
 [*] system'math : intOp, realOp
+[*] system'calendar : Date, TimeSpan
+[*] system'text : TextBuffer
 [+] system : CallStack, IntArray, byteConvertor, shortConvertor, CharArray
 [+] extensions'dynamic: scriptEngine, ScriptEngineException
 [+] system'math : byteOp, shortOp, longOp

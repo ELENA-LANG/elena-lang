@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 system'text
+                       * lib30 system'io
                        
                        * lib30 extensions
 
