@@ -10,6 +10,6 @@
     convert  &chararray:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
         => system'internal'ws_copy2buf.
         
-//    convert  &literal:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
-//        => system'internal'ws_copy2buf.
+    convert  &literal:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
+        => system'internal'ws_copy2buf.
 }.

@@ -3,17 +3,57 @@
 #shortdescr=Contains classes supporting run-time code evaluation
 
 [#list#]
-DispatchSubject
-Signature
+classOp
+DynamicStruct
+Extension
+Group
+Struct
+Tape
+Wrap
 
-[Signature]
-#title=Class Signature
-#shortdescr=A signature role
+[Wrap]
+#title=Class Wrap
+#shortdescr=A wrap array
 #parent=system.html#Object:system'Object
+#parent=system.html#BaseArray:system'BaseArray
 
-[DispatchSubject]
-#title=Class DispatchSubject
-#shortdescr=A dispatch subject 
+[Extension]
+#title=Class Extension
+#shortdescr=An extension array
 #parent=system.html#Object:system'Object
-#parent=system_dynamic.html#DispatchSubject:system'dynamic'Signature
-#constructor=new,object,object;Copies the parameter dispatch subject
+#parent=system.html#BaseArray:system'BaseArray
+
+[Group]
+#title=Class Group
+#shortdescr=A group object
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseArray:system'BaseArray
+
+[classOp]
+#title=Extension classOp
+#shortdescr=A generic class extension
+#parent=system.html#Object:system'Object
+#method=class,,object;Returns the object class
+#method=name,,literal;Returns the object class name
+#method=respondsTo,&message:message;Checks if the object handles the message
+
+[Tape]
+#title=Class Tape
+#shortdescr=A tape
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseArray:system'BaseArray
+
+[Struct]
+#title=Class Struct
+#shortdescr=A dynamic structure
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseArray:system'BaseArray
+
+[DynamicStruct]
+#title=Class DynamicStruct
+#shortdescr=A variable extensing a dynamic structure
+#parent=system.html#Object:system'Object
+#constructor=new,,;Creates an empty structure
+#constructor=new,object;Creates a structure
+#method=get,&#generic,,object;Returns the field value
+#method=set,&#generic:object;Sets or adds the field value

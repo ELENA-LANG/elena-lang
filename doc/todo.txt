@@ -21,8 +21,6 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 system'io'FileStream
-                       
                        * lib30 extensions
 
                        * TimeSpan : difference between two dates should be in days, hours, seconds is calclulated not correctly

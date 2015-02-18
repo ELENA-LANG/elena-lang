@@ -11,7 +11,7 @@
 
 // --- Struct ---
 
-#class Struct :: Tape
+#class(group) Struct :: BaseArray
 {
     #method => system'internal'handle_selector.
 }

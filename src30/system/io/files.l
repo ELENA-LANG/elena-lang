@@ -20,6 +20,12 @@
 {
     #field(type:handle) theHandle.
     
+    #constructor openForRead &path:aPath
+        <= %new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
+    
+    #constructor openForReWrite &path:aPath
+        <= %new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
+    
     #constructor new &path:aPath &int_attributes:dwDesiredAccess &int_attributes:dwShareMode &int_attributes:dwCreationDisposition &int_attributes:dwFlagsAndAttributes
     [
         theHandle := system'external'KERNEL32 CreateFileW
@@ -61,17 +67,6 @@
     ]
 }
 
-// --- fileControl ---
-
-#symbol fileControl =
-{
-    #method(type:stream) openForRead &path:aPath
-        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
-        
-    #method(type:stream) openForReWrite &path:aPath
-        = FileStream new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
-}.
-
 // --- StreamWriter ---
 
 #class StreamWriter :: TextWriter
@@ -88,7 +83,11 @@
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(fileControl openForReWrite &path:aPath) &encoder:ansiEncoder.
+        <= %new &stream:(FileStream openForReWrite &path:aPath) &encoder:ansiEncoder.
+        
+    #method stream = theStream.        
+        
+    #method encoder = theEncoder.        
         
     #method write &chararray:anInput &length:aLength
     [
@@ -102,7 +101,7 @@
                 ? [ aBlockLength := aTotal. ]
                 ! [ aBlockLength := 64. ].
                 
-            aBlockLength := theEncoder convert &shortarray:anInput &length:aBlockLength &bytearray:aBuffer.
+            aBlockLength := theEncoder convert &chararray:anInput &length:aBlockLength &bytearray:aBuffer.
             
             theStream write &bytearray:aBuffer &length:aBlockLength.
             
@@ -129,6 +128,11 @@
             aTotal := aTotal - aBlockLength.
         ].
     ]
+    
+    #method close
+    [
+        theStream close.
+    ]
 }
 
 // --- StreamReader ---
@@ -146,7 +150,7 @@
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(fileControl openForRead &path:aPath) &encoder:ansiEncoder.
+        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:ansiEncoder.
 
     #method stream = theStream.
 
@@ -158,7 +162,7 @@
         #var(type:bytearray,size:64)aBuffer.
         aLength := theStream read &bytearray:aBuffer &length:aMaxLength.
                 
-        anActualLength := theEncoder convert &bytearray:aBuffer &length:aLength &shortarray:anOutput.
+        anActualLength := theEncoder convert &bytearray:aBuffer &length:aLength &chararray:anOutput.
     ]
     
     #method close

@@ -5,8 +5,11 @@
 [#list#]
 BinaryReader
 BinaryWriter
+FileStream
 IOException
 Stream
+StreamWriter
+StreamReader
 TextReader
 TextWriter
 
@@ -79,3 +82,40 @@ TextWriter
 #method=write,&literal:literal;Writes the literal into the stream
 #method=write,&literal:literal&length:int;Writes the specified number of characters into the stream
 #method=writeLine,literal;Writes a literal into the current stream and a new line symbols.
+
+[FileStream]
+#title=Class Stream
+#shortdescr=A file stream
+#protocol=stream
+#parent=system.html#Object:system'Object
+#parent=system_io.html#Object:system'io'Stream
+#constructor=openForRead,&path:literal;Opens a file stream for reading
+#constructor=openForReWrite,&path:literal;Opens a file stream for writing
+#method=close,,;Closes the current stream and releases any resources associated with the current stream
+#method=read,&bytearray:bytearray&length:int&out'int:int;Reads a sequence of bytes from the current stream
+#method=write,&bytearray:bytearray&length:int;Writes a sequence of bytes into the current stream
+
+[StreamWriter]
+#title=Class StreamWriter
+#shortdescr=A text file writer
+#parent=system.html#Object:system'Object
+#parent=system_io.html#TextWriter:system'io'TextWriter
+#constructor=new,&path:literal;Creates a new Ansi file
+#constructor=new,&stream:stream&encoder:encoder;Creates a text writer for the provided stream and encoding
+#method=close,,;Closes the reader and its stream
+#method=encoder,,encoder;Returns the current encoder
+#method=stream,,stream;Returns the owner stream
+#method=write,&chararray:chararray&length:int;Writes the specified number of characters into the stream
+#method=write,&literal:literal&length:int;Writes the specified number of characters into the stream
+
+[StreamReader]
+#title=Class StreamReader
+#shortdescr=A text file reader
+#parent=system.html#Object:system'Object
+#parent=system_io.html#TextReader:system'io'TextReader
+#constructor=new,&path:literal;Opens an existing Ansi file
+#constructor=new,&stream:stream&encoder:encoder;Creates a text reader for the provided stream and encoding
+#method=close,,;Closes the reader and its stream
+#method=encoder,,encoder;Returns the current encoder
+#method=stream,,stream;Returns the owner stream
+#method=read,&chararray:chararray&length:int&out'length:int;Reads the specified number of characters from the stream

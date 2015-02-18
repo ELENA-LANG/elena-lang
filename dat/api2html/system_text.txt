@@ -13,6 +13,7 @@ TextBuffer
 #parent=system.html#Object:system'Object
 #method=convert,&bytearray:bytearray&length:int&chararray:chararray&out'length:int;Converts an encoded character sequence into an array of Unicode characters and stores the result in another buffer
 #method=convert,&chararray:chararray&length:int&bytearray:bytearray&out'length:int;Converts an array of Unicode characters to an encoded byte sequence and stores the result in an array of bytes.
+#method=convert,&literal:literal&length:int&bytearray:bytearray&out'length:int;Converts an array of Unicode characters to an encoded byte sequence and stores the result in an array of bytes.
 #method=encoder,,encoder;Returns itself
 
 [TextBuffer]

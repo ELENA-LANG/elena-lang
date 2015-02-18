@@ -26,23 +26,71 @@ ELENA&nbsp;Standard&nbsp;Library<br>2.0</b></EM>
 </TABLE>
 <DL>
 <HR>
-<A NAME="DispatchSubject">
+<A NAME="classOp">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
 system'dynamic</FONT>
 <BR>
-Class DispatchSubject</H2>
+Extension classOp</H2>
 <PRE>
 <A HREF="system.html#Object">system'Object</A>
  |
- +--<A HREF="system_dynamic.html#DispatchSubject">system'dynamic'Signature</A>
-   |
-   +--<B>system'dynamic'DispatchSubject</B>
+ +--<B>system'dynamic'classOp</B>
 </PRE>
 <P>
-A dispatch subject
+A generic class extension
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+class = <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Returns the object class</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+name = <A HREF="protocol.html#literal">literal</A>
+</TD>
+<TD><CODE>Returns the object class name</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+respondsTo &message:<A HREF="protocol.html#message">message</A>
+</TD>
+<TD><CODE>Checks if the object handles the message</CODE>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DynamicStruct">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic</FONT>
+<BR>
+Class DynamicStruct</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<B>system'dynamic'DynamicStruct</B>
+</PRE>
+<P>
+A variable extensing a dynamic structure
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
@@ -55,29 +103,151 @@ A dispatch subject
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-new : <A HREF="protocol.html#object">object</A>
- = <A HREF="protocol.html#object">object</A>
+new</TD>
+<TD><CODE>Creates an empty structure</CODE>
 </TD>
-<TD><CODE>Copies the parameter dispatch subject</CODE>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new : <A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Creates a structure</CODE>
 </TD>
 </TR>
 <!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get &#generic:<A HREF="protocol.html#"></A>
+ = <A HREF="protocol.html#,object">,object</A>
+</TD>
+<TD><CODE>Returns the field value</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set &#generic:<A HREF="protocol.html#object">object</A>
+</TD>
+<TD><CODE>Sets or adds the field value</CODE>
+</TD>
+</TR>
 </TABLE>
-<A NAME="Signature">
+<A NAME="Extension">
 <HR>
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
 system'dynamic</FONT>
 <BR>
-Class Signature</H2>
+Class Extension</H2>
 <PRE>
 <A HREF="system.html#Object">system'Object</A>
  |
- +--<B>system'dynamic'Signature</B>
+ +--<A HREF="system.html#BaseArray">system'BaseArray</A>
+   |
+   +--<B>system'dynamic'Extension</B>
 </PRE>
 <P>
-A signature role
+An extension array
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="Group">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic</FONT>
+<BR>
+Class Group</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseArray">system'BaseArray</A>
+   |
+   +--<B>system'dynamic'Group</B>
+</PRE>
+<P>
+A group object
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="Struct">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic</FONT>
+<BR>
+Class Struct</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseArray">system'BaseArray</A>
+   |
+   +--<B>system'dynamic'Struct</B>
+</PRE>
+<P>
+A dynamic structure
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="Tape">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic</FONT>
+<BR>
+Class Tape</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseArray">system'BaseArray</A>
+   |
+   +--<B>system'dynamic'Tape</B>
+</PRE>
+<P>
+A tape
+<P>
+<P>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== METHOD SUMMARY =========== -->
+</TABLE>
+<A NAME="Wrap">
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic</FONT>
+<BR>
+Class Wrap</H2>
+<PRE>
+<A HREF="system.html#Object">system'Object</A>
+ |
+ +--<A HREF="system.html#BaseArray">system'BaseArray</A>
+   |
+   +--<B>system'dynamic'Wrap</B>
+</PRE>
+<P>
+A wrap array
 <P>
 <P>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
