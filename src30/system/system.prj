@@ -24,13 +24,15 @@ routines\patterns.l
 math\math.l
 calendar\win32_datetime.l
 calendar\dates.l
+text\common.l
+text\encoder.l
+text\win32_encoder.l
 text\textbuffer.l
 io\common.l
 io\ioexceptions.l
 io\streamreader.l
 io\streamwriter.l
 io\win32_console.l
-io\win32_encoder.l
 io\files.l
 dynamic\groups.l
 dynamic\reflection.l

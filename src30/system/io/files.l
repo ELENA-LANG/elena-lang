@@ -1,4 +1,5 @@
 #define system.
+#define system'text.
 
 // --- File Access Modes ---
 #symbol(const,type:int) $FILE_READ_DATA     = 00000001h.
@@ -87,9 +88,9 @@
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(fileControl openForReWrite &path:aPath) &encoder:ansiLiteralEncoder.
+        <= %new &stream:(fileControl openForReWrite &path:aPath) &encoder:ansiEncoder.
         
-    #method write &shortarray:anInput &length:aLength
+    #method write &chararray:anInput &length:aLength
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
@@ -145,13 +146,13 @@
     ]
 
     #constructor new &path:aPath
-        <= %new &stream:(fileControl openForRead &path:aPath) &encoder:ansiLiteralEncoder.
+        <= %new &stream:(fileControl openForRead &path:aPath) &encoder:ansiEncoder.
 
-    #method source = theStream.
+    #method stream = theStream.
 
     #method encoder = theEncoder.
 
-    #method read &shortarray:anOutput &length:aMaxLength &out'length:anActualLength
+    #method read &chararray:anOutput &length:aMaxLength &out'length:anActualLength
     [
         #var(type:int)aLength.
         #var(type:bytearray,size:64)aBuffer.

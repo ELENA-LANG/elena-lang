@@ -14,6 +14,7 @@ bytearray
 char
 chararray
 datetime
+encoder
 enumerable
 enumerator
 function
@@ -47,6 +48,7 @@ real
 real_variable
 short
 shortarray
+stream
 text
 timespan
 typecaster
@@ -253,3 +255,9 @@ verb
 
 [datetime]
 #shortdescr=A date protocol
+
+[stream]
+#shortdescr=A stream protocol
+
+[encoder]
+#shortdescr=An encoder protocol

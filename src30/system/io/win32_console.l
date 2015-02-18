@@ -1,10 +1,5 @@
 #define system.
 
-// --- LRLN ---
-
-#symbol(const) newLine
-    = #13#10.
-
 // --- $ConsoleHandleFactory --
 
 #symbol $ConsoleHandleFactory =
@@ -59,10 +54,12 @@
         theHandle := aHandle.
     ]
 
-    #method read &out'short:aChar
+    #method read &out'char:aChar
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
+        #var(type:short)anEventType.
+        #var(type:int)aKeyDown.
         
         #var found := false.
         #loop found !
@@ -73,7 +70,14 @@
                 &int           : 1
                 &out'int       : aNumberRead.
 
-            found := (aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
+            anEventType := aDump read &index:0.
+            (anEventType == 1)
+                ? [  
+                    aKeyDown := aDump read &index:4.
+                    
+                    found := aKeyDown == 1.
+                ]
+                ! [ found := false. ].
         ].
 
         aChar := aDump read &index:14.
@@ -83,6 +87,8 @@
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
+        #var(type:short)anEventType.
+        #var(type:int)aKeyDown.
         
         #var found := false.
         #loop found !
@@ -93,17 +99,24 @@
                 &int           : 1
                 &out'int       : aNumberRead.
 
-            found := (aDump equal &index:0 &short:1)and:(aDump equal &index:4 &int:1).
+            anEventType := aDump read &index:0.
+            (anEventType == 1)
+                ? [  
+                    aKeyDown := aDump read &index:4.
+                    
+                    found := aKeyDown == 1.
+                ]
+                ! [ found := false. ].
         ].
                     
         aKey := aDump read &index:8.
     ]
 
-    #method read &shortarray:aBuffer &length:aLength &out'length:aRetVal
+    #method read &chararray:aBuffer &length:aLength &out'length:aRetVal
     [
         system'external'KERNEL32 ReadConsoleW
             &handle     : theHandle
-            &shortarray : aBuffer
+            &chararray : aBuffer
             &int        : aLength
             &out'length : aRetVal
             &int        : 0.
@@ -111,7 +124,7 @@
     
     #method read &line
     [
-        #var(type:shortarray,size:127)aBuffer.
+        #var(type:chararray,size:127)aBuffer.
         #var(type:length)aLength.
         #var anOutput := emptyLiteralValue.
         
@@ -119,17 +132,17 @@
         #loop continue ?
         [
             aLength := 127.
-            aLength := $self read &shortarray:aBuffer &length:aLength.
+            aLength := $self read &chararray:aBuffer &length:aLength.
             
-            #var(type:short)aShort := aBuffer read &index:(aLength - 1).
-            (aShort equal &int:0Ah)
+            #var(type:char)aShort := aBuffer read &index:(aLength - 1).
+            (aShort equal &char:#0Ah)
                 ? [
                     aLength := aLength - 2.
                     
                     continue := false.
                 ].
             
-            #var aTemp := LiteralValue new &length:aLength &shortarray:aBuffer.
+            #var aTemp := LiteralValue new &length:aLength &chararray:aBuffer.
             
             anOutput := anOutput + aTemp.
         ].
@@ -144,11 +157,11 @@
         ^ IntNumber new &int:aRetVal.
     ]
             
-    #method short
+    #method char
     [
-        #var(type:short)aRetVal := $self short.
+        #var(type:char)aRetVal := $self char.
         
-        ^ ShortNumber new &short:aRetVal.
+        ^ CharValue new &char:aRetVal.
     ]
             
     #method close

@@ -36,9 +36,23 @@
         theLength write &int:aLength.
     ]
 
+    #method chararray = theBuffer chararray.
+
+    #method literal
+    [
+        #var(type:int)aLength := theLength int.
+        
+        ^ LiteralValue new &length:aLength &chararray:theBuffer.
+    ]
+
     #method write : aLine
     [
         $self write &literal:(aLine literal).
+    ]
+
+    #method writeLine : aLine
+    [
+        $self write &literal:(aLine literal) write &literal:('newLine literal).
     ]
 
     #method append : aLine
@@ -133,6 +147,28 @@
         aRetVal := theBuffer indexOf &index:aPosition &length:aLength &char:aValue.
     ]
 
+    #method indexOf &index:aPosition &literal:aLiteral &out'int:aRetVal
+    [
+        #var(type:literal) aContent := $self literal.
+        #var(type:int)anIndex := aContent indexOf &index:aPosition &literal:aLiteral.
+        
+        aRetVal := anIndex.
+    ]
+
+    #method indexOf &index:aPosition &char:aValue    
+    [
+        #var(type:int)aRetVal := $self indexOf &index:aPosition &char:aValue.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf &index:aPosition &literal:aValue
+    [
+        #var(type:int)aRetVal := $self indexOf &index:aPosition &literal:aValue.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
     #method(type:literal) Substring &index:anIndex &length:aLength
     [
         (aLength == 0)
@@ -155,14 +191,5 @@
                 
                 $self clear write &literal:aLeftLiteral write &literal:aRightLiteral.
             ].
-    ]
-    
-    #method chararray = theBuffer chararray.
-
-    #method literal
-    [
-        #var(type:int)aLength := theLength int.
-        
-        ^ LiteralValue new &length:aLength &chararray:theBuffer.
     ]
 }

@@ -2,7 +2,6 @@
 
 // === basic interfaces ===
 #subject(class:system'io'Stream)stream.
-#subject(class:system'io'Encoder)encoder.
 
 // === i/o interfaces ===
 #subject(class:system'io'TextReader)textreader.
@@ -21,17 +20,4 @@
     #method write &bytearray:aDump &length:aLength []
     
     #method close []
-}
-
-// --- Encoder ---
-
-#class(limited)Encoder
-{
-    #method encoder = $self.
-
-    #method convert &bytearray:aByteArray &length:aLength &shortarray:anOutput &out'length:anOutputLength []
-        
-    #method convert  &shortarray:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength []
-        
-    #method convert  &literal:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength []
 }

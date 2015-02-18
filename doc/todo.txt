@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 system'io
+                       * lib30 system'io'FileStream
                        
                        * lib30 extensions
 
@@ -415,6 +415,8 @@ week1:
                        * show built-in variable $subject
                      
               xdev - generic development                                                      
+                       * it should be possible to return nil as typed object??
+
                        * get rid of bitwise operators
                        * and, or, xor, add, subtract, divide, multiply, getAt, setAt generic messages or appropriate operators (+, /, *, -, @, @:=)
                          can be replaced with inline code for known data types (or arrays)
