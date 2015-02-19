@@ -21,8 +21,6 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * TimeSpan : difference between two dates should be in days, hours, seconds is calclulated not correctly
-                       * TimeSpan : test constructors
                        * Should stream protocol support reset, clone methods?
                        * Date : convert to utc and back
                        

@@ -9,7 +9,7 @@
     [
         theWriter := aWriter.
         theReader := aReader.
-        theNewLineConstant := system'io'newLine literal.
+        theNewLineConstant := 'newLine literal.
     ]
 
     #method writeLine : anObject

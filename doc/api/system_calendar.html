@@ -118,7 +118,7 @@ now = <A HREF="protocol.html#datetime">datetime</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &day:<A HREF="protocol.html#int">int</A>
+add &days:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
 <TD><CODE>Retuns the new date</CODE>
@@ -127,7 +127,7 @@ add &day:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &hour:<A HREF="protocol.html#int">int</A>
+add &hours:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
 <TD><CODE>Retuns the new date</CODE>
@@ -145,7 +145,7 @@ add &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &minute:<A HREF="protocol.html#int">int</A>
+add &minutes:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
 <TD><CODE>Retuns the new date</CODE>
@@ -154,7 +154,7 @@ add &minute:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &month:<A HREF="protocol.html#int">int</A>
+add &months:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
 <TD><CODE>Retuns the new date</CODE>
@@ -163,7 +163,7 @@ add &month:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &second:<A HREF="protocol.html#int">int</A>
+add &seconds:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
 <TD><CODE>Retuns the new date</CODE>
@@ -172,16 +172,16 @@ add &second:<A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &timespan:<A HREF="protocol.html#timespan">timespan</A>
+add &amp;timespan:<A HREF="protocol.html#timespan">timespan</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
-<TD><CODE>Retuns the new date</CODE>
+<TD><CODE>timespan:timespan,datetime;Retuns the new date</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &year:<A HREF="protocol.html#int">int</A>
+add &years:<A HREF="protocol.html#int">int</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
 <TD><CODE>Retuns the new date</CODE>
@@ -327,10 +327,10 @@ subtract &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-subtract &timespan:<A HREF="protocol.html#timespan">timespan</A>
+subtract &amp;timespan:<A HREF="protocol.html#timespan">timespan</A>
  = <A HREF="protocol.html#datetime">datetime</A>
 </TD>
-<TD><CODE>Returns the new date</CODE>
+<TD><CODE>timespan:timespan,datetime;Returns the new date</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -458,10 +458,10 @@ add &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-add &timespan:<A HREF="protocol.html#timespan">timespan</A>
+add &amp;timespan:<A HREF="protocol.html#timespan">timespan</A>
  = <A HREF="protocol.html#timespan">timespan</A>
 </TD>
-<TD><CODE>Returns the sum of two timespans</CODE>
+<TD><CODE>timespan:timespan,timespan;Returns the sum of two timespans</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -504,10 +504,10 @@ days = <A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-equal &timespan:<A HREF="protocol.html#timespan">timespan</A>
+equal &amp;timespan:<A HREF="protocol.html#timespan">timespan</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
-<TD><CODE>Compares time spans</CODE>
+<TD><CODE>timespan:timespan,bool;Compares time spans</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -521,10 +521,10 @@ hours = <A HREF="protocol.html#int">int</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-less &timespan:<A HREF="protocol.html#timespan">timespan</A>
+less &amp;timespan:<A HREF="protocol.html#timespan">timespan</A>
  = <A HREF="protocol.html#bool">bool</A>
 </TD>
-<TD><CODE>Compares time spans</CODE>
+<TD><CODE>timespan:timespan,bool;Compares time spans</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -579,10 +579,10 @@ subtract &long:<A HREF="protocol.html#long">long</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-subtract &timespan:<A HREF="protocol.html#timespan">timespan</A>
+subtract &amp;timespan:<A HREF="protocol.html#timespan">timespan</A>
  = <A HREF="protocol.html#timespan">timespan</A>
 </TD>
-<TD><CODE>Retuns the difference between two timespans</CODE>
+<TD><CODE>timespan:timespan,timespan;Retuns the difference between two timespans</CODE>
 </TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">

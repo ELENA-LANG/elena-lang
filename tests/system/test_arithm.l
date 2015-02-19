@@ -9,7 +9,7 @@
 
 #symbol XTester =
 {
-    test
+    test    
     [
     ]
 }.
@@ -263,7 +263,7 @@
     #var a := 1.
     #var b := "abc".
     
-    (a equal &reference:a)and:[ a equal &reference:b not ]
+    ( a equal &reference:a and:[ a equal &reference:b not ])
         ? [ console writeLine:"Reference comparison works" ]
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
@@ -395,7 +395,7 @@
 [
     #var n := convertor toInt:"23".
     #var sn := n literal.
-    sn == "23"
+    (sn == "23")
         ! [ console writeLine:"Int conversion does not work" ].
     
     #var l := convertor toLong:"1234567890123456".

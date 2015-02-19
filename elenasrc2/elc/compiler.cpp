@@ -1025,8 +1025,8 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
          if (test(info.header.flags, elStructureRole)) {
             int offset = reference;
 
-            // HOTFIX : if it is a first data field, $self can be used instead
-            if (offset == 0) {
+            // HOTFIX : if it is a single data field, $self can be used instead
+            if (offset == 0 && info.fields.Count() == 1) {
                return ObjectInfo(okLocal, 1, info.fieldTypes.get(offset));
             }
             else return ObjectInfo(okFieldAddress, offset, info.fieldTypes.get(offset));
@@ -2256,6 +2256,7 @@ ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, Obj
 
    int offset = field.param;
    ref_t classReference = 0;
+   ref_t type = field.extraparam;
    int size = scope.moduleScope->defineTypeSize(field.extraparam, classReference);
 
    if (test(mode, HINT_HEAP_MODE) || size > 8) {
@@ -2295,7 +2296,7 @@ ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, Obj
       _writer.loadObject(*scope.tape, ObjectInfo(okBase));
    }
 
-   return ObjectInfo(okAccumulator, field.extraparam);
+   return ObjectInfo(okAccumulator, field.extraparam, type);
 }
 
 void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count)
@@ -5064,10 +5065,6 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 
                if (sizeValue == -2)
                   scope.info.header.flags |= elDebugLiteral;
-            }
-            else {
-               scope.info.fields.add(member.Terminal(), 0);
-               scope.info.fieldTypes.add(0, typeRef);
             }
 
             scope.info.fields.add(member.Terminal(), 0);

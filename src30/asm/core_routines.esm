@@ -2697,7 +2697,7 @@ end
 
 procedure word_copyint
 
-  bcopya
+  bloadsi 3
   aloadsi 2
 
   nload
@@ -3409,6 +3409,22 @@ procedure arr_empty
 
   dcopy 0
   acallvi 1
+  quitn 1
+
+end
+
+procedure dlong_empty
+
+  bcopya
+  ecopy 0
+  dcopy 0
+  nwrite
+  dcopy 1
+  nwrite
+  dcopy 2
+  nwrite
+  dcopy 3
+  nwrite
   quitn 1
 
 end

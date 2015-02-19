@@ -1,4 +1,5 @@
 #define system.
+#define system'math.
 
 #subject(class:system'calendar'Date) datetime.
 #subject(class:system'calendar'TimeSpan) timespan.
@@ -18,22 +19,25 @@
             
     #constructor new &hours:Hours &minutes:Minutes &seconds:Seconds
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:0l.
+        #var(type:long)aValue := 0l.
         
-        aSystemTime set &days:0 set &hours:Hours set &minutes:Minutes set &seconds:Seconds.
+        aValue := Hours long * 36000000000l.
+        aValue := aValue + Minutes long multiply &long:600000000l.
+        aValue := aValue + Seconds long multiply &long:10000000l.
         
-        theValue := aSystemTime long.
+        theValue := aValue.
     ]
             
     #constructor new &days:Days &hours:Hours &minutes:Minutes &seconds:Seconds
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:0l.
+        #var(type:long)aValue := 0l.
         
-        aSystemTime set &days:Days set &hours:Hours set &minutes:Minutes set &seconds:Seconds.
+        aValue := Hours long * 36000000000l.
+        aValue := aValue + Minutes long multiply &long:600000000l.
+        aValue := aValue + Seconds long multiply &long:10000000l.
+        aValue := aValue + Days long multiply &long:864000000000l.
         
-        theValue := aSystemTime long.
+        theValue := aValue.
     ]
             
     #method read &out'long : aRetVal
@@ -47,42 +51,47 @@
             
     #method days
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
+        #var(type:long)aRetVal := theValue.
         
-        ^ aSystemTime days.
+        aRetVal := aRetVal / 864000000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
     ]
                         
     #method hours
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
+        #var(type:long)aRetVal := theValue.
         
-        ^ aSystemTime hours.
+        aRetVal := aRetVal / 36000000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
     ]
                         
     #method minutes
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
+        #var(type:long)aRetVal := theValue.
         
-        ^ aSystemTime minutes.
+        aRetVal := aRetVal / 600000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
     ]
                         
     #method seconds
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
+        #var(type:long)aRetVal := theValue.
         
-        ^ aSystemTime seconds.
+        aRetVal := aRetVal / 10000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
     ]
 
     #method milliseconds
     [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime write &long:theValue.
+        #var(type:long)aRetVal := theValue.
         
-        ^ aSystemTime milliseconds.
+        aRetVal := aRetVal / 10000l.
+        
+        ^ LongNumber new &long:aRetVal.
     ]
    
     #method equal &timespan:aSpan
@@ -128,7 +137,7 @@
 
     #method literal
     [
-        #var aValue := dateTimeControl toShortDateTime &long:theValue.
+        #var aValue := dateTimeControl toShortTime &long:theValue.
         
          ^ ($self days literal + "." + aValue) literal.
     ]
@@ -292,95 +301,52 @@
         ^ aSystemTime millisecond.
     ]
 
-    #method add &year:aYears
+    #method add &years:aYears
     [
         #var(type:systemtime)aSystemTime.
-        aSystemTime set &years:aYears.
-        aSystemTime set &months:0.
-        aSystemTime set &days:0.
-        aSystemTime set &hours:0.
-        aSystemTime set &minutes:0.
-        aSystemTime set &seconds:0.
+        aSystemTime write &long:theValue.
         
-        #var(type:long)aValue := aSystemTime long.
+        #var m := aSystemTime month.
         
-        ^ $self add &long:aValue.
+        aSystemTime set &year:(aSystemTime year + aYears).
+        
+        #var m2 := aSystemTime month.
+        
+        #var(type:long)aRetVal := aSystemTime long.
+        
+        ^ Date new &long:aRetVal.
     ]
 
-    #method add &month:aMonths
+    #method add &months:Months
     [
+        #var aMonths:= Months::intOp mod:12.
+        #var Years := Months / 12.
+        
+        ($self month + aMonths > 12)
+            ? [ Years := Years + 1. aMonths := 12 - ($self month + aMonths). ].
+
         #var(type:systemtime)aSystemTime.
-        aSystemTime set &years:0.
-        aSystemTime set &months:aMonths.
-        aSystemTime set &days:0.
-        aSystemTime set &hours:0.
-        aSystemTime set &minutes:0.
-        aSystemTime set &seconds:0.
+        aSystemTime write &long:theValue.
         
-        #var(type:long)aValue := aSystemTime long.
+        aSystemTime set &year:(aSystemTime year add &int:Years).
+        aSystemTime set &month:(aSystemTime month add &int:aMonths).
         
-        ^ $self add &long:aValue.
+        #var(type:long)aRetVal := aSystemTime long.
+        
+        ^ Date new &long:aRetVal.
     ]
 
-    #method add &day:aDays
-    [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime set &years:0.
-        aSystemTime set &months:0.
-        aSystemTime set &days:aDays.
-        aSystemTime set &hours:0.
-        aSystemTime set &minutes:0.
-        aSystemTime set &seconds:0.
-        
-        #var(type:long)aValue := aSystemTime long.
-        
-        ^ $self add &long:aValue.
-    ]
+    #method add &days:aDays
+        = $self add &timespan:(TimeSpan new &days:aDays &hours:0 &minutes:0 &seconds:0).
 
-    #method add &hour:anHours
-    [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime set &years:0.
-        aSystemTime set &months:0.
-        aSystemTime set &days:0.
-        aSystemTime set &hours:anHours.
-        aSystemTime set &minutes:0.
-        aSystemTime set &seconds:0.
-        
-        #var(type:long)aValue := aSystemTime long.
-        
-        ^ $self add &long:aValue.
-    ]
+    #method add &hours:anHours
+        = $self add &timespan:(TimeSpan new &days:0 &hours:anHours &minutes:0 &seconds:0).
 
-    #method add &minute:aMinutes
-    [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime set &years:0.
-        aSystemTime set &months:0.
-        aSystemTime set &days:0.
-        aSystemTime set &hours:0.
-        aSystemTime set &minutes:aMinutes.
-        aSystemTime set &seconds:0.
-        
-        #var(type:long)aValue := aSystemTime long.
-        
-        ^ $self add &long:aValue.
-    ]
+    #method add &minutes:aMinutes
+        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:aMinutes &seconds:0).
 
-    #method add &second:aSeconds
-    [
-        #var(type:systemtime)aSystemTime.
-        aSystemTime set &years:0.
-        aSystemTime set &months:0.
-        aSystemTime set &days:0.
-        aSystemTime set &hours:0.
-        aSystemTime set &minutes:0.
-        aSystemTime set &seconds:aSeconds.
-        
-        #var(type:long)aValue := aSystemTime long.
-        
-        ^ $self add &long:aValue.
-    ]
+    #method add &seconds:Seconds
+        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:0 &seconds:Seconds).
 
     #method literal
         = dateTimeControl toShortDateTime &long:theValue literal.

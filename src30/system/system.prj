@@ -22,6 +22,7 @@ collections\list.l
 routines\enumerators.l
 routines\patterns.l
 math\math.l
+calendar\types.l
 calendar\win32_datetime.l
 calendar\dates.l
 text\common.l
@@ -42,3 +43,4 @@ threading\thread.l
 
 [forwards]
 '$import=system'core_routines
+

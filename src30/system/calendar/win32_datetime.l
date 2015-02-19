@@ -22,8 +22,7 @@
     #field(type:short)theMillisecond.
     
     #constructor new
-    [
-    ]
+        => system'internal'dlong_empty.
     
     #method year = IntNumber new &short:theYear.
 
@@ -40,41 +39,6 @@
     #method second = IntNumber new &short:theSecond.
 
     #method millisecond = IntNumber new &short:theMillisecond.
-
-    #method years
-    [
-        #var(type:short)aValue := theYear - 1601.
-        
-        ^ IntNumber new &short:aValue.
-    ]
-
-    #method months
-    [
-        #var(type:short)aValue := theMonth - 1.
-        
-        ^ IntNumber new &short:aValue.
-    ]
-
-    #method days
-    [
-        #var(type:short)aValue := theDay - 1.
-        
-        ^ IntNumber new &short:aValue.
-    ]
-
-    #method hours = IntNumber new &short:theHour.
-
-    #method minutes = IntNumber new &short:theMinute.
-
-    #method seconds = IntNumber new &short:theSecond.
-
-    #method milliseconds
-    [
-        #var(type:long)aValue.
-        system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &out'long:aValue.
-        
-        ^ LongNumber new &long:(aValue / 10000l).
-    ]
 
     #method set &year:aValue 
     [ 
@@ -109,36 +73,6 @@
     #method set &millisecond:aValue 
     [ 
         theMillisecond := aValue short.
-    ]
-
-    #method set &years:aValue
-    [
-        theYear := (aValue int + 1601) short.
-    ]
-
-    #method set &months:aValue
-    [
-        theMonth := (aValue int + 1) short.
-    ]
-
-    #method set &days:aValue
-    [
-        theDay := (aValue int + 1) short.
-    ]
-
-    #method set &hours:aValue 
-    [ 
-        theHour := aValue short.
-    ]
-
-    #method set &minutes:aValue 
-    [ 
-        theMinute := aValue short.
-    ]
-
-    #method set &seconds:aValue 
-    [ 
-        theSecond := aValue short.
     ]
 
     #method read &out'long:aRetVal
