@@ -162,10 +162,10 @@
 [
     #var aList := Dictionary new.
     
-    aList append &key:1 &value:"1a".
-    aList append &key:2 &value:"2".
+    aList append &key:1 &object:"1a".
+    aList append &key:2 &object:"2".
     
-    aList set &key:1 &value:"1".
+    aList set &key:1 &object:"1".
     
     #var anN1 := aList getAt &key:1.
     #var anN2 := aList getAt &key:2.

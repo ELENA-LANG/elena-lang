@@ -34,7 +34,10 @@
     [
         theLine := theReader readLine.
         
-        ^ nil equal:theLine not.
+        (nil equal:theLine)
+            ? [  theReader close. ^ false. ].
+            
+        ^ true.            
     ]
     
     #method get = theLine.

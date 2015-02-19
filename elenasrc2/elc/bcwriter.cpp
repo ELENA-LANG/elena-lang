@@ -494,6 +494,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okConstantClass:
       case okConstant:
       case okLiteralConstant:
+      case okCharConstant:
       case okIntConstant:
       case okLongConstant:
       case okRealConstant:
@@ -610,6 +611,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okConstantClass:
       case okConstant:
       case okLiteralConstant:
+      case okCharConstant:
       case okIntConstant:
       case okLongConstant:
       case okRealConstant:
@@ -1006,6 +1008,7 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatch
       case okConstantClass:
       case okConstant:
       case okLiteralConstant:
+      case okCharConstant:
       case okIntConstant:
       case okLongConstant:
       case okRealConstant:

@@ -20,319 +20,19 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              adev - lib30                                        
-                       * Should stream protocol support reset, clone methods?
-                       * Date : convert to utc and back
-                       
-                       * characterController.isUpperCase / isLowerCase - simplify short to int converting or allow to pass short as an extenal
-                         call parameter
-
-                       * ShortNumber.get&int - could we simplify the code, currently we have to call int explicitly because IntNumber is not yet defined
-                       * uncomment all tape_tester tests
-
-                       * think over object serialization, for example - save the object into file and load back
-
-                       * serialization to and from : xml, binary
-
-                       * find out if the bool is called after each enumeration step - next call
-                       
-                       * migrate all the code from old version
-                       * test dynamic_test
-                       * test dynamic samples
-                       * test literalOp.trim method
-
-                       * uncomment Real#class.new&int[1] and Real#class.new&long[1]
-
-                       * uncomment all code
-
-                       * FileStream - implements clone
-
-                       * literalConvertor.convert&long&base - reimplement
-
-                       * mathOp.mod -- fix implemention for real number
-                           #method mod : anOperand
-                           [
-                              #var(type:real) aux.
-                              (self/anOperand)~realOp Round &out'real:aux.
-                              ^(self - (aux*anOperand)).
-                           ]  
-                       * make sure the stream is correctly closed after the operations with files
-                       * move Array.add(1) method to the extension ??
-                       * should control foreach&until be implemented in EFunction?
-                       * implement: extensions'math'power - support integer values as well                       
-                       * combinators should work both with list and array
-                       * system'$consolehandler: if the returning handler is -1
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * EReflector: raise an exception if NameOf returns zero
-                       * timespan: constructor?
-                       * date: custom presenter / formatter / custom formatter
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * date - return utc time
-                       * implement analog of String.Format
-                       * calender: custom formatting
-                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
-                         and could be invoked by eval
-                       * classOp : test if object is subclass of ??
-                       * literalOp : uppercase / lowercase
-                       * charOp : isUppercase / isLowercase
-                       * charConvertor - convert int / short / byte / literal
-                       * BaseBoolValue should be private
-
-<=================> 
-
-1.9.18
---------
-week2:
-              sdev - samples
-                       * migrate all samples (mt, vm, interpreter, calc, scripts)
-
-              sdev - api doc
-                       * create API : system'CharValue
-                       * create API : ...
-                       * it should be listed extensions per supported protocol
-                       * create API doc
-                       * change api faq
-                       * copy protocols to doc\protocols
-                       * support dispatch method
-                       * support redirect method                       
-
-               adev - console operations:  
-                       * read / write operation: complex types
-                       * write formatted numbers
-                       * write formatted string (with parameters)
-              arev - general review
-                       * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
-                         the second method call is excessive
-                       * bsort example, sortRange method : variable is used because of loop implementation
-                       * goods : Record.get&literal : 
-                                  #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
-                       * review loop code (see system'io'$ConsoleReader) :
-                             #loop
-                             [
-                                 ...        
-                                 continue   // -- should be correctly loaded into accumulator
-                             ].
-                       * review literalControl.split&by - could we ismplify / beautify the code
-                       * review all samples : simplify / refactore (look if the code can be reused)
-                                                                                                                             
-              arev - lib30 review
-                       * review extensions'math'EMatrix, simplify / optimize the code
-
-                       * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
-
-                       * LiteralIndexer implementation : try to optimize to minimize new object creating
-
-                       * system'primitive should be private symbol? (but it should be accessed throughout system packages, e.g. system'io and so on)
-
-                       * review: system'routines'indexable
-                       * review samples
-                       * review rosetta samples
-                       * int and index subjects should be synonym ?? (side effect if int could be used instead of index for the operation with literals
-                         for example)
-                       * CharValue: short and char in some form are interdependant, maybe should be synonym as well?
-                       
-                       * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
-                         is not safe , if for some reason the compiler optimization is turned off (replacing operation with the direct action) the code
-                         will raise out of stack error
-                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
-                       * system'LiteralValue : probably getAt&index&out'short and indexOf&index&literal&out'int should be implemented
-                         in literalPrimitive like other operations?
-                       * system'Array : probably getAt&index&out'short  should be implemented
-                         in arrayPrimitive like other operations?
-                       * Real should support operation with long numbers
-                       * system'ByteArray : should support indexOf operation without out parameter, should the ones with out parameters
-                         be implemented in byteArrayPrimitive ?
-                       * should clone be implemented in system'Object and be overridden only when it is required?                                                
-                       * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
-                       * optimize control.forrange implementation
-
-                       * fix warnings for system'String
-                       * pattern : for i,j - forregion &int:0 &int:0 &int:n &int:m
-                       * should get&length be moved into generic extension?
-                       * review all classes : simplify / refactore (look if the code can be reused)
-                       * review extensions'consoleEx implementation - do we need Wrap?
-                       * comparing literal and char (see for example trans sample)
-                       * optimize extensions'convertor.save&to ; when literal to integer converted, int value is created which has no use,
-                         nested class is dynamic as well
-                       * ShortNumber.less&short - review current implementation, it may not work correctly with negative short values if
-                         hiword == 0 (it is presumed that for negative word, hiword = -1, which is not always the case)
-                                                      
-              adev - lib30 optimization
-                       * review $ConsoleWriter.write&literal[1]
-                       * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
-                       * optimize output code: system'Object 
-                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
-                       
-                       * start to use stack allocated variables to optimize the code : console operation, ...
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
-                       * TextBuffer : redesign delete operation, it should not create new literal classes
-                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                         modify the code, from reading bool values from stack to constant array
-                       * system'LiteralIterator - operation available and next should not creates a new object , try
-                         to use stack allocated object for the length operations
-                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
-                       * review ws_insert function (in assembler), try to simplify it
-                       * Real#class.new&int[1] - optimize
-
-              srev - console samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-                       * vmconsole
-
-              adev - dynamic programming
-                       * deserialize object
-                       
             smaint - testing
+                       * test matrix
+                       * test all rosetta samples
                        * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
                        * extend realtest with comparision operation test
                        * modify system test, it should raise an exception if any of the tests fails
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object
 
-week3:
-              xdev - script engine
-                       * global variables
-                       * build structure
+<=================> 
 
-                       * build class
-                       * local variables
-                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
-                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
-                       * script engine - ~ to indicate relative to elena bin folder
-
-                       * migrate
-
-                       * if the script contains only grammar, virtual machine should not be called
-
-                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
-                           - text generating
-                           - construct objects - implement expression, with variables
-                           - using roles
-                           - branching
-                           - branching in code
-                           - assigning values to dynamic objects
-                           - global variables
-                           - script engine support in ELENA code : text generating                           
-
-                       * use script to build objects
-                       * use script to parse
-                       * use script generate code
-                       * current implementation is done in two passes, simplify to one
-                       
-              sdev - c# samples
-                       * try to implement c# reflection samples
-                       * try to implement c# lamda examples (lists)
-                       * parse an object to xml and back
-
-              xdev - elenasm
-                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-
-              sdev - prime project
-                       * interpreter : execute simple sample3.txt
-                       * interpreter : execute sample1.txt
-                       * interpreter : execute sample2.txt
-                       * interpreter : find out why the debugger does not work after script engine call
-
-              sdev - elenasm
-                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
-                       * using script engine from ELENA program - return the result
-                       * using script engine from ELENA program - error handling
-                       * support several grammar rules
-                       * methods - variables
-                       * methods - roles
-                       * if
-                       * if in the method
-                       * while
-                       * while in the method
-                       * method - clear stack after the last operation?
-                       * extends the object with dynamic code
-                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
-                       * inject vm console into IDE
-
-              sdev - prime project
-                       * simple calculator
-                       * vm console
-                       * calculator
-                       
-                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
-                         for all neighbours)
-                         
-              sdev - rosetta samples              
-                       * Call a function
-                       * Call an object method
-                       * Canny edge detector
-                       * Carmichael 3 strong pseudoprimes
-                       * Casting out nines
-                       * modify amb operator using open argument list 
-                       * arraymode: support collection of different types
-                       * update amb sample on rosetta code site
-                       * C samples
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull       * Atomic updates
-                       * Cholesky decomposition
-                       * 24 sample
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              sdev - calculator
-                       * review
-
-              sdev - elenasm
-                       * refactor & optimize the engine code
-                       * should the parameters be saved in the correct order, so no need in reverse command?
-                       * should the object and role be saved in the correct order, so no need in reverse command?
-
-              sdev - interpreter
-                       * fix interpreter.bat (should start vm somehow)                       
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                       * trace could print the result directly to console?? (so it will simplify script debugging)
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-                                                         
-              sdev - prime project
-                       * eldoc: dynamic parser
-                       * upndown
-                       * script program - calculator
-
+1.9.18
+--------
 week 4:
               smaint - rosetta samples
                        * fix bestshuffle
@@ -473,6 +173,15 @@ week1:
                        * boolean invert operator (and, or, ...)??
                        
               xdev - general implementation
+                       * e.g. extensions'text'ReaderEnumerator.next
+
+                         raise unnessessary typecasting warning for the following ending code:
+
+                          (nil equal:theLine)
+                              ? [  theReader close. ^ false. ]
+                              ! [ ^ true. ].
+                          (cannot predict that both branches return boolean value, so no need in an extra typecast)                          
+
                        * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
                        * constant array
                        * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
@@ -567,8 +276,47 @@ week2:
                        * support GUI mode
                        * support GUI application
 
+
               adev - lib30                                        
-                       * TimeSpan : TotalDays, TotalHours, TotalMinutes, TotalSeconds
+                       * uncomment all tape_tester tests
+
+                       * Date : convert to utc and back
+                       
+                       * think over object serialization, for example - save the object into file and load back
+
+                       * serialization to and from : xml, binary
+
+                       * find out if the bool is called after each enumeration step - next call
+                       
+                       * migrate all the code from old version
+                       * test dynamic_test
+                       * test dynamic samples
+                       * test literalOp.trim method
+
+                       * uncomment Real#class.new&int[1] and Real#class.new&long[1]
+
+                       * uncomment all code
+
+                       * FileStream - implements clone
+                       * combinators should work both with list and array
+                       * system'$consolehandler: if the returning handler is -1
+                       * system'$consolewriter - the exception should be raised if the operation
+                         is unsuccessful
+                       * EReflector: raise an exception if NameOf returns zero
+                       * timespan: constructor?
+                       * date: custom presenter / formatter / custom formatter
+                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
+                       * date - return utc time
+                       * implement analog of String.Format
+                       * calender: custom formatting
+                       * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
+                         and could be invoked by eval
+                       * classOp : test if object is subclass of ??
+                       * literalOp : uppercase / lowercase
+                       * charOp : isUppercase / isLowercase
+                       * charConvertor - convert int / short / byte / literal
+                       * BaseBoolValue should be private
+                       * TimeSpan : Day, Hour, Minute, Second??
                        * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
                        * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
                        * support sin, cos, arctan
@@ -642,12 +390,256 @@ week2:
                        * look at all wrapper around out parameter, replace the shortcut code with direct use of internal code
                        * implement LiteralValue.indexOf&index&char:aChar&out'int
                        * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
+                       * Should stream protocol support reset, clone methods?
+                                                                                                                             
+              arev - lib30 review
+                       * mathOp.mod -- fix implemention for real number
+                           #method mod : anOperand
+                           [
+                              #var(type:real) aux.
+                              (self/anOperand)~realOp Round &out'real:aux.
+                              ^(self - (aux*anOperand)).
+                           ]  
+                       * system'IntNumber : #method literal = literalConvertor convert &int:$self literal - we do know the result, so
+                         the second method call is excessive
+                       * bsort example, sortRange method : variable is used because of loop implementation
+                       * goods : Record.get&literal : 
+                                  #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
+                       * review loop code (see system'io'$ConsoleReader) :
+                             #loop
+                             [
+                                 ...        
+                                 continue   // -- should be correctly loaded into accumulator
+                             ].
+                       * review literalControl.split&by - could we ismplify / beautify the code
+                       
+                       * ShortNumber.get&int - could we simplify the code, currently we have to call int explicitly because IntNumber is not yet defined
+
+                       * review extensions'math'Matrix, simplify / optimize the code
+
+                       * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
+
+                       * LiteralIndexer implementation : try to optimize to minimize new object creating
+
+                       * system'primitive should be private symbol? (but it should be accessed throughout system packages, e.g. system'io and so on)
+
+                       * review: system'routines'indexable
+                       * review samples
+                       * review rosetta samples
+                       * int and index subjects should be synonym ?? (side effect if int could be used instead of index for the operation with literals
+                         for example)
+                       * CharValue: short and char in some form are interdependant, maybe should be synonym as well?
+                       
+                       * system'intnumber, ... - modify the current implementation for the basic operations should be external , current implementation
+                         is not safe , if for some reason the compiler optimization is turned off (replacing operation with the direct action) the code
+                         will raise out of stack error
+                       * LiteralValue : indexOf&index&out'short and getAt&index&out'short should be moved to primitive object                                         
+                       * system'LiteralValue : probably getAt&index&out'short and indexOf&index&literal&out'int should be implemented
+                         in literalPrimitive like other operations?
+                       * system'Array : probably getAt&index&out'short  should be implemented
+                         in arrayPrimitive like other operations?
+                       * Real should support operation with long numbers
+                       * system'ByteArray : should support indexOf operation without out parameter, should the ones with out parameters
+                         be implemented in byteArrayPrimitive ?
+                       * should clone be implemented in system'Object and be overridden only when it is required?                                                
+                       * do we need system'dynamic'Class, system'dynamic'Struct can be used instead
+                       * optimize control.forrange implementation
+
+                       * fix warnings for system'String
+                       * pattern : for i,j - forregion &int:0 &int:0 &int:n &int:m
+                       * review all classes : simplify / refactore (look if the code can be reused)
+                       * review extensions'consoleEx implementation - do we need Wrap?
+                       * comparing literal and char (see for example trans sample)
+                       * optimize extensions'convertor.save&to ; when literal to integer converted, int value is created which has no use,
+                         nested class is dynamic as well
+                       * ShortNumber.less&short - review current implementation, it may not work correctly with negative short values if
+                         hiword == 0 (it is presumed that for negative word, hiword = -1, which is not always the case)
+                       
+              sdev - api doc
+                       * describe protocol methods
+                       * support dispatch method
+                       * support redirect method                       
+                                                      
+              adev - lib30 optimization
+                       * review $ConsoleWriter.write&literal[1]
+                       * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
+                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
+                       * optimize output code: system'Object 
+                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
+                       
+                       * start to use stack allocated variables to optimize the code : console operation, ...
+                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
+                       * TextBuffer : redesign delete operation, it should not create new literal classes
+                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
+                         modify the code, from reading bool values from stack to constant array
+                       * system'LiteralIterator - operation available and next should not creates a new object , try
+                         to use stack allocated object for the length operations
+                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
+                       * review ws_insert function (in assembler), try to simplify it
+                       * Real#class.new&int[1] - optimize
+
+               adev - console operations:  
+                       * read / write operation: complex types
+                       * write formatted numbers
+                       * write formatted string (with parameters)
+
+              srev - console samples
+                       * simplify goods (Record.get&Literal implementation)
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * vmconsole
+
+              adev - dynamic programming
+                       * deserialize object
 
 week3:
+              xdev - script engine
+                       * global variables
+                       * build structure
+
+                       * build class
+                       * local variables
+                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
+                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
+                       * script engine - ~ to indicate relative to elena bin folder
+
+                       * migrate
+
+                       * if the script contains only grammar, virtual machine should not be called
+
+                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
+                           - text generating
+                           - construct objects - implement expression, with variables
+                           - using roles
+                           - branching
+                           - branching in code
+                           - assigning values to dynamic objects
+                           - global variables
+                           - script engine support in ELENA code : text generating                           
+
+                       * use script to build objects
+                       * use script to parse
+                       * use script generate code
+                       * current implementation is done in two passes, simplify to one
+                       
+              sdev - c# samples
+                       * try to implement c# reflection samples
+                       * try to implement c# lamda examples (lists)
+                       * parse an object to xml and back
+
+              xdev - elenasm
+                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
+                       * inline script improve error handling
+                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
+
+              sdev - prime project
+                       * interpreter : execute simple sample3.txt
+                       * interpreter : execute sample1.txt
+                       * interpreter : execute sample2.txt
+                       * interpreter : find out why the debugger does not work after script engine call
+
+              sdev - elenasm
+                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
+                       * using script engine from ELENA program - return the result
+                       * using script engine from ELENA program - error handling
+                       * support several grammar rules
+                       * methods - variables
+                       * methods - roles
+                       * if
+                       * if in the method
+                       * while
+                       * while in the method
+                       * method - clear stack after the last operation?
+                       * extends the object with dynamic code
+                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
+                       * inject vm console into IDE
+
+              sdev - prime project
+                       * simple calculator
+                       * vm console
+                       * calculator
+                       
+                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
+                         for all neighbours)
+                         
+              sdev - rosetta samples              
+                       * Call a function
+                       * Call an object method
+                       * Canny edge detector
+                       * Carmichael 3 strong pseudoprimes
+                       * Casting out nines
+                       * modify amb operator using open argument list 
+                       * arraymode: support collection of different types
+                       * update amb sample on rosetta code site
+                       * C samples
+                       * Averages/Pythagorean means
+                       * D samples
+                       * Catalan numbers
+                       * Brownian tree
+                       * E samples
+                       * Catmull       * Atomic updates
+                       * Cholesky decomposition
+                       * 24 sample
+                       * Animate pendium
+                       * Animation
+                       * Binary strings
+                       * Bulls and cows/Player
+                       * Chat server 
+                       * Checkpoint synchronization
+                       * ...
+
+              sdev - calculator
+                       * review
+
+              sdev - elenasm
+                       * refactor & optimize the engine code
+                       * should the parameters be saved in the correct order, so no need in reverse command?
+                       * should the object and role be saved in the correct order, so no need in reverse command?
+
+              sdev - interpreter
+                       * fix interpreter.bat (should start vm somehow)                       
+
+              fdev - virtual workshop
+                       * create a new object interactively
+                       * send a message / test it
+
+              sdev - vmconsole
+                       * migrate
+
+              sdoc - tutorials
+                       * post sum sample
+                       
+              sdev - eldoc
+                       * review possible solution using script engine to define parsing rules
+                       
+              sdev - visualizer
+                       * build hello world sample by constructing / view / edit
+                         tape
+
+              sdev - script engine
+                       * trace could print the result directly to console?? (so it will simplify script debugging)
+                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
+                         cannot be abused for nasty injection
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
+                                                         
+              sdev - prime project
+                       * eldoc: dynamic parser
+                       * upndown
+                       * script program - calculator
+
               xdev - script engine
                        * branching
                        * looping
                        
+              sdev - samples
+                       * migrate all script samples
+
 1.9.20
 --------
 week1:

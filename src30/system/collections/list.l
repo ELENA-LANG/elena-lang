@@ -325,7 +325,7 @@
         #var anItem := $self findItem &key:aKey.
         ^ (nil == anItem)
             ? [ theDefaultValue ]
-            ! [ anItem ].
+            ! [ anItem $getObject ].
     ]
 
     #method set &key:aKey &object:aValue

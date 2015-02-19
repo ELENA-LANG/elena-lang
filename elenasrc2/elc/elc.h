@@ -27,7 +27,7 @@
 #endif
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0047
+#define ELC_BUILD_NUMBER             0x0048
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
