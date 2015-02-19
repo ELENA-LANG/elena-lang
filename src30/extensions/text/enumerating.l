@@ -27,7 +27,7 @@
     
     #method reset 
     [
-        theReader := StreamReader new &stream:(theReader source clone) &encoder:(theReader encoder).
+        theReader := StreamReader new &stream:(theReader stream clone) &encoder:(theReader encoder).
     ]
     
     #method next

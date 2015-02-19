@@ -6,33 +6,24 @@
 #symbol mathControl =
 {
     exp : x
-        = x cast:%eval &to:
-            {
-                eval &int : aValue = RealNumber new &int:aValue exp.
-                
-                eval &real : aValue = aValue exp.
-            }.
+        = x real exp.
             
     ln : x
-        = x cast:%eval &to:
-            {
-                eval &int : aValue = RealNumber new &int:aValue ln.
-                
-                eval &real : aValue = aValue ln.
-            }.
+        = x real ln.
             
     round : x
-        = x cast:%eval &to:
-            {
-                eval &int : aValue = RealNumber new &int:aValue.
-                
-                eval &real : aValue = aValue rounded.
-            }.
+        = x real rounded.
             
     abs : x
         = x cast:%eval &to:
             {
                 eval &int : aValue = aValue absolute.
+                
+                eval &long : aValue = aValue absolute.
+                
+                eval &byte : aValue = aValue absolute.
+                
+                eval &short : aValue = aValue absolute.
                 
                 eval &real : aValue = aValue absolute.
             }.
@@ -41,10 +32,5 @@
         = x - (x / y * y).
         
     power : x : y
-        = x cast:%eval &to:
-            {
-                eval &int : aValue = RealNumber new &int:aValue ln exp * y.
-                
-                eval &real : aValue = aValue ln exp * y.
-            }.
+       = x real ln multiply:y real exp.
 }.

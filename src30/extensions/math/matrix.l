@@ -4,8 +4,10 @@
 #define system'text.
 #define extensions.
 
-#subject matrix.
-#subject(class:system'IndexFunction2) everyij.
+#subject(class:Matrix) matrix.
+#subject(class:system'IntNumber) n.
+#subject(class:system'IntNumber) m.
+#subject(class:system'IndexFunction2) every_ij.
 
 // --- MatrixException ---
 
@@ -17,91 +19,99 @@
         <= %new &message:aMessage &error_type: %MatrixError.
 }
 
-// --- EMatrix ---
+// --- Matrix ---
 
-#class(extension:matrix) matrixOp
+#class Matrix
 {
-    #method add : aMatrix
-    [
-        #var(type:array) a := self array.
-        #var(type:int) n := a length.
-        #var(type:int) m := a getAt &index:0 length.
-
-        #var(type:array) b := aMatrix array.
+    #field(type:array) the2DArray.
+    #field(type:int)theN.
+    #field(type:int)theM.
     
-        ^ Array new &length:n set &every: (&index: i)
-            [ Array new &length:m set &every: (&index: j) [ a getAt &index:i getAt &index:j + b getAt &index:(i int) getAt &index:j ] ].
+    #constructor new &n:n &m:m &every_ij:aFunction
+    [
+        theN := n.
+        theM := m.
+        
+        the2DArray := Array new &length:n set &every: (&index: i)
+            [ Array new &length:m set &every: (&index: j) [ aFunction eval &index:i &index:j ] ].
     ]
     
-    #method subtract : aMatrix
+    #constructor new &matrix:aMatrix
     [
-        #var(type:array) a := self array.
-        #var(type:int) n := a length.
-        #var(type:int) m := a getAt &index:0 length.
-
-        #var(type:array) b := aMatrix array.
-    
-        ^ Array new &length:n set &every: (&index: i)
-            [ Array new &length:m set &every: (&index: j) [ a getAt &index:i getAt &index:j - b getAt &index:(i int) getAt &index:j ] ].
+        theN := aMatrix n.
+        theM := aMatrix m.
+        
+        the2DArray := Array new &length:theN set &every: (&index: i)
+            [ Array new &length:theM set &every: (&index: j) [ aMatrix getAt &index:i &index:j clone ] ].
     ]
+    
+    #method n = theN.
+    
+    #method m = theM.
+        
+    #method matrix = $self.
+    
+    #method getAt &index:i &index:j
+        = the2DArray getAt &index:i getAt &index:j.
+    
+    #method setAt &index:i &index:j &value:aValue
+        = the2DArray getAt &index:i setAt &index:j &object:aValue.
+    
+    #method add &matrix:aMatrix
+        = Matrix new &n:theN &m:theM &every_ij:(&index:i &index:j) [ $self getAt &index:i &index:j + aMatrix getAt &index:i &index:j ].
+    
+    #method subtract &matrix:aMatrix
+        = Matrix new &n:theN &m:theM &every_ij:(&index:i &index:j) [ $self getAt &index:i &index:j - aMatrix getAt &index:i &index:j ].
 
-    #method multiply : aMatrix
+    #method multiply &matrix:aMatrix
     [
-        #var(type:array) a := self array.
-        #var(type:array) b := aMatrix array.
-        #var(type:int) n := a length.
+        (theM != aMatrix n)
+            ? [ #throw MatrixException new:"Invalid argument". ].
         
-        #var(type:array)c := Array new &length:n set &every: (&index: i) [ Array new &length:n ] array.
-        
-        (&index:i &index:j &index:k)
+        ^ Matrix new &n:theN &m:(aMatrix m) &every_ij:(&index:i &index:j) 
             [
-                #var aValue := c getAt &index:i getAt &index:j.
-                
-                (nil == aValue)
-                    ? [ aValue := a getAt &index:i getAt &index:k * b getAt &index:k getAt &index:j. ]
-                    ! [ aValue := aValue + (a getAt &index:i getAt &index:k * b getAt &index:k getAt &index:j). ].
+                #var aResult := Variable new.
+                #var(type:int)k := 0.
+                #loop (k < theM) ?
+                [
+                    aResult add:(self getAt &index:i &index:k * aMatrix getAt &index:k &index:j).
                     
-                c getAt &index:i setAt &index:j &object:aValue.
-            ]
-            run &space &int:0 &int:0 &int:0 &int:(n - 1) &int:(n - 1) &int:(n - 1) &int:1.
-        
-        ^ c.            
+                    k := k + 1.
+                ].
+                
+                ^ aResult value.
+            ].
     ]
-
-    #method deepClone
-    [
-        #var(type:array) anArray := self array.
-        
-        ^ Array new &length:(anArray length) set &every: (&index:i)
-            [ (self@i)::arrayOp deepClone ].
-    ]
+    
+    #method clone
+        = Matrix new &matrix:$self.
     
     #method decomposed
     [
-        #var(type:array) anArray := self array.
-        #var(type:int) aCount := anArray length.
+        (theM != theN)
+            ? [ #throw MatrixException new:"Invalid operation". ].
         
         // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
         #var even := Boolean new:true.          
 
         // create matrix copy
-        #var a := anArray::matrixOp deepClone.
-        
+        #var a := $self clone.
+
         // permutation matrix
-        #var pm := Array new &length:aCount set &every: (&index:i) [ IntNumber new &int:i ].
+        #var pm := Array new &length:theN set &every: (&index:i) [ IntNumber new &int:i ].
          
         // each column, j is counter for coulmns
         #var max_row := Integer new:0.
-        #var max := Real new:0.0r.
-        control run &int:0 &int:(aCount - 2) &forEvery: (&index:j)
+        #var max := Variable new:0.
+        control run &int:0 &int:(theN - 2) &forEvery: (&index:j)
         [
             // find largest value in col j
-            max << mathControl abs:(a@j@j).
+            max << mathControl abs:(a getAt &index:j &index:j).
             max_row << j.
             
-            control run &int:(j + 1) &int:(aCount-1) &forEvery: (&index:i)
+            control run &int:(j + 1) &int:(theN-1) &forEvery: (&index:i)
             [
-                #var val := mathControl abs:(a@i@j).
+                #var val := mathControl abs:(a getAt &index:i &index:j).
                 (val > max)
                     ? [
                         max << val.
@@ -112,12 +122,12 @@
             // if largest value not on pivot, swap rows
             (max_row != j) ?
             [
-                control run &int:0 &int:(aCount-1) &forEvery: (&index:k)
+                control run &int:0 &int:(theN-1) &forEvery: (&index:k)
                 [ 
-                    #var tmp := a@j@k.
+                    #var tmp := a getAt &index:j &index:k.
                     
-                    (a@j) setAt:k:(a@max_row@k).
-                    (a@max_row) setAt:k:tmp.
+                    a setAt &index:j &index:k &value:(a getAt &index:max_row &index:k).
+                    a setAt &index:max_row &index:k &value:tmp.
                 ].
                     
                  // switch two rows in permutation matrix
@@ -129,14 +139,14 @@
             (0.0r == max)
                 ? [ #throw MatrixException new:"The matrix is singular!". ].
 
-            #var val := a@j@j.
-            control run &int:(j + 1) &int:(aCount-1) &forEvery: (&index:i)
+            #var val := a getAt &index:j &index:j.
+            control run &int:(j + 1) &int:(theN-1) &forEvery: (&index:i)
             [
-                (a@i)setAt:j:((a@i@j) / val).
+                a setAt &index:i &index:j &value:(a getAt &index:i &index:j / val).
                 
-                control run &int:(j+1) &int:(aCount-1) &forEvery: (&index:k)
+                control run &int:(j+1) &int:(theN - 1) &forEvery: (&index:k)
                 [
-                    (a@i)setAt:k:((a@i@k) - (a@i@j) * (a@j@k)).
+                    a setAt &index:i &index:k &value:(a getAt &index:i &index:k - a getAt &index:i &index:j * a getAt &index:j &index:k).
                 ].
             ].
         ].
@@ -146,37 +156,34 @@
 
     #method determinant
     [
-        #var(type:array) anArray := self array.
-        #var lum := anArray::matrixOp decomposed.
+        #var lum := $self decomposed.
         #var deter := Real new &int:1.
 
         (lum Even)
             ! [ deter *= -1. ].
         
-        control run &int:0 &int:(anArray length - 1) &forEvery: (&index:i)
-            [ deter << deter * (lum@i@i). ].
+        control run &int:0 &int:(theN - 1) &forEvery: (&index:i)
+            [ deter << deter * (lum getAt &index:i &index:i). ].
             
        ^ deter value.
     ]
+
+    #method cast : aVerb &to:aTarget = aTarget::aVerb matrix:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &matrix:$self.
             
     #method literal
     [
         #var(type:textbuffer) anOutput := TextBuffer new.
         
-        #var(type:array)matrix := self array.
-        #var(type:int)n := matrix length.
-        
         #var(type:int)i := 0.
         #var(type:int)j := 0.
-        #loop (i < n) ?
+        #loop (i < theN) ?
         [
-            #var(type:array)row := matrix getAt &index:i array.
-            #var(type:int)m := row length.
-            
             j := 0.
-            #loop (j < m) ?
+            #loop (j < theM) ?
             [
-                anOutput write &literal:(convertor toLiteral:(row getAt &index:j)) write:",".
+                anOutput write &literal:(convertor toLiteral:($self getAt &index:i &index:j)) write:",".
                 
                 j := j + 1.
             ].
@@ -190,27 +197,3 @@
         ^ anOutput literal.
     ]
 }
-
-// --- matrixControl ---
-
-#symbol matrixControl =
-{
-    new &n:anN &m:anM &everyij:anAction
-        = Array new &length:(anN int) set &every: (&index: i)
-            [ Array new &length:(anM int) set &every: (&index: j) [ anAction eval &index:i &index:j ] ].
-
-    sumOf : aMatrix1 : aMatrix2
-        = aMatrix1~matrix add:aMatrix2.
-            
-    differenceOf : aMatrix1 : aMatrix2
-        = aMatrix1~matrix subtract:aMatrix2.
-        
-    productOf : aMatrix1 : aMatrix2
-        = aMatrix1~matrix multiply:aMatrix2.
-  
-    determinantOf : aMatrix        
-        = aMatrix~matrix determinant.
-                    
-    toLiteral : aMatrix
-        = aMatrix~matrix literal.
-}.

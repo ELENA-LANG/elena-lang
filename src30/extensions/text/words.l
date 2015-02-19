@@ -19,33 +19,13 @@
         theIndex write &int:0.
     ]
     
-//    #method next &space
-//    [
-//        #var(type:short)aChar.
-//        theIndexer read &out'short:aChar.
-//        
-//        (aChar == 32)
-//            ? [ ^ theIndexer next. ]
-//            ! [ theRole := %word. ^ true. ].
-//    ]
-//    
-//    #method next &word
-//    [
-//        #var(type:short)aChar.
-//        theIndexer read &out'short:aChar.
-//        
-//        (aChar == 32)
-//            ? [ ^ false. ]
-//            ! [ theWord write &short:aChar. ^ theIndexer next. ].
-//    ]
-    
     #method next
     [
         theBuffer clear.
 
         #var(type:int)aLength := theLiteral length.
         #var(type:int)aCurrent := theIndex int.
-        #var(type:short)aChar.
+        #var(type:char)aChar.
         #var(type:bool)aSpaceMode := true.
         
         #loop (aCurrent < aLength) ?
@@ -58,7 +38,7 @@
                 ! [
                     aSpaceMode ? [ aSpaceMode := false. ].
                         
-                    theBuffer write &short:aChar.
+                    theBuffer write &char:aChar.
                 ].
                 
             aCurrent := aCurrent + 1.

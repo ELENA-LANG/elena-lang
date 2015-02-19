@@ -1,0 +1,30 @@
+[#general#]
+#name=extensions
+#shortdescr=Contains text operation extensions
+
+[#list#]
+ReaderEnumerator
+WordEnumerator
+
+[WordEnumerator]
+#title=Class WordEnumerator
+#shortdescr=A word enumerator
+#protocol=enumerator
+#parent=system.html#Object:system'Object
+#parent=system.html#Enumerator:system'Enumerator
+#constructor=new,&literal:literal,enumerator;Createa an enumerator
+#method=get,,object;Returns the current object
+#method=next,,bool;Reads the next word and returns true if it is not the last one
+#method=reset,,;Resets the enumerator
+
+[ReaderEnumerator]
+#title=Class ReaderEnumerator
+#shortdescr=A reader enumerator
+#protocol=enumerator
+#parent=system.html#Object:system'Object
+#parent=system.html#Enumerator:system'Enumerator
+#constructor=new,&path:literal;Opens an existing Ansi file
+#constructor=new,&stream:stream&encoder:encoder;Creates a text reader for the provided stream and encoding
+#method=get,,object;Returns the current object
+#method=next,,bool;Reads the next line and returns true if it is not the last one
+#method=reset,,;Resets the enumerator

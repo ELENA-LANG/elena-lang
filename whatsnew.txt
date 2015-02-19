@@ -44,17 +44,19 @@
 [*] system'routines : literalOp
 [*] system'math : intOp, realOp
 [*] system'calendar : Date, TimeSpan
-[*] system'text : TextBuffer, Encoder
-[*] system'io : BinaryReader, StreamReader, BinaryWriter, StreamWriter
+[*] system'text : TextBuffer, Encoder, ansiEncoder
+[*] system'io : BinaryReader, StreamReader, BinaryWriter, StreamWriter, FileStream, TextReader, TextWriter
+[*] extensions: inputOp, outputOp, convetor
 [+] system : CallStack, IntArray, byteConvertor, shortConvertor, CharArray
 [+] extensions'dynamic: scriptEngine, ScriptEngineException
-[+] system'math : byteOp, shortOp, longOp
+[+] system'math : byteOp, shortOp, longOp, Matrix
 
 [ElenaScript]
 [*] refactored / syntax modified
     
 [Misc]
 [+] installation package is introduced
+[*] ELENA API documentation (see doc\api) is up to date now
 
 ******************************************************************************
                     What's New in 1.9.17 (pre release)
