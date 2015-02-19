@@ -244,6 +244,18 @@
             
        ^ self.
     ]
+    
+    #method writeLine &args:Arguments
+    [
+        #var(type:int)aLength := Arguments length.
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            self write &literal:(convertor toLiteral:(Arguments @ anIndex)).
+            
+            anIndex := anIndex + 1.
+        ].
+    ]
 }
 
 // --- inputOp ---
@@ -261,7 +273,7 @@
     [
         #var aLine := self readLine.
         
-        #var aParams := aLine ::literalOp split &char:(CharValue new &short:32).
+        #var aParams := aLine ::literalOp split &char:#32.
         
         convertor save:(aParams@0) &to:anObject1.
         convertor save:(aParams@1) &to:anObject2.
@@ -273,7 +285,7 @@
         
         self readLine:aBuffer.
         
-        #var aParams := aBuffer ::literalOp split &char:(CharValue new &short:32).
+        #var aParams := aBuffer ::literalOp split &char:#32.
         
         convertor save:(aParams@0) &to:anObject1.
         convertor save:(aParams@1) &to:anObject2.
@@ -286,12 +298,61 @@
         
         self readLine:aBuffer.
         
-        #var aParams := aBuffer ::literalOp split &char:(CharValue new &short:32).
+        #var aParams := aBuffer ::literalOp split &char:#32.
         
         convertor save:(aParams@0) &to:anObject1.
         convertor save:(aParams@1) &to:anObject2.
         convertor save:(aParams@2) &to:anObject3.
         convertor save:(aParams@3) &to:anObject4.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
+    [
+        #var aBuffer := String new.
+        
+        self readLine:aBuffer.
+        
+        #var aParams := aBuffer ::literalOp split &char:#32.
+        
+        convertor save:(aParams@0) &to:anObject1.
+        convertor save:(aParams@1) &to:anObject2.
+        convertor save:(aParams@2) &to:anObject3.
+        convertor save:(aParams@3) &to:anObject4.
+        convertor save:(aParams@4) &to:anObject5.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
+    [
+        #var aBuffer := String new.
+        
+        self readLine:aBuffer.
+        
+        #var aParams := aBuffer ::literalOp split &char:#32.
+        
+        convertor save:(aParams@0) &to:anObject1.
+        convertor save:(aParams@1) &to:anObject2.
+        convertor save:(aParams@2) &to:anObject3.
+        convertor save:(aParams@3) &to:anObject4.
+        convertor save:(aParams@4) &to:anObject5.
+        convertor save:(aParams@5) &to:anObject6.
+    ]
+    
+    #method readLine &args:Arguments
+    [
+        #var aBuffer := String new.
+        
+        self readLine:aBuffer.
+        
+        #var aParams := aBuffer ::literalOp split &char:#32.
+        
+        #var(type:int)aLength := Arguments length.
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            convertor save:(aParams @ anIndex) &to:(Arguments @ anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
     ]
 }
 

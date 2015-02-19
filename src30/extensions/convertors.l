@@ -23,6 +23,12 @@
 
 #symbol convertor =
 {
+    #method(type:byte) toByte : anObject
+        = anObject cast:%convert &to:byteConvertor byte.
+
+    #method(type:short) toShort : anObject
+        = anObject cast:%convert &to:shortConvertor short.
+
     #method(type:int) toInt : anObject
         = anObject cast:%convert &to:intConvertor int.
 
@@ -45,7 +51,14 @@
      #method(type:literal) toLiteral : anObject &base:aBase
         = anObject cast:%eval &to:
                    { 
+                      eval &byte : anInt = literalConvertor convert &byte:anInt &index:(aBase int).
+                      
+                      eval &short : anInt = literalConvertor convert &short:anInt &index:(aBase int).
+                      
                       eval &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
+                      
+                      eval &long : anInt = literalConvertor convert &long:anInt &index:(aBase int).
+                      
                    } literal.
                    
     #method(type:array) toArray : anEnumerable

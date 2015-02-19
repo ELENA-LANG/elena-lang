@@ -83,9 +83,6 @@ Variable
 Variant
 Verb
 
-
-control
-
 [console]
 #title=Symbol console
 #shortdescr=A console
@@ -244,20 +241,6 @@ control
 #method=int,,int;Returns the numeric value
 #method=less,&char:char,bool;Compares the value with value
 #method=literal,,literal;Returns the literal value
-
-[control]
-#title=Symbol control
-#shortdescr=A control helper symbol
-#method=do,action;Executes the action
-#method=do,action&until:bool_expr;Executes the action until the condition is met
-#method=for,enumerator&do:function;Executes the function for every step of the enumerator
-#method=foreach,enumerable&do:function;Executes the function for every member of the enumerable object
-#method=foreach,enumerable&until:bool_function;Executes the function until the condition is true
-#method=forrange,&int:int&int:int&do:function;Executes the function for every value in the specified range
-#method=forrange,&int:int&int:int&&int:int&do:function;Executes the function for every value in the specified range
-#method=from,value&to:value&do:function;Executes the function for every value in the specified range
-#method=while,bool_expr;Checks the condition until it is true
-#method=while,bool_expr&do:action;Executes the action while the condition is true
 
 [true]
 #title=Symbol true

@@ -3,10 +3,109 @@
 #shortdescr=Contains the functionality extensions
 
 [#list#]
+arguments
+consoleEx
+control
 convertor
+inputOp
+literalControl
+outputOp
+RandomGenerator
+randomOp
 
 [convertor]
+#title=Symbol convertor
+#shortdescr=A convertor
+#method=save,object&to:variable;Converts the object value to the variable type and saves it
+#method=toArray,object,array;Converts the object into an array
+#method=toByte,object,byte;Converts the object into a byte
+#method=toInt,object,int;Converts the object into an integer
+#method=toLiteral,object,literal;Converts the object into a literal value
+#method=toLong,object,long;Converts the object into a long integer
+#method=toReal,object,real;Converts the object into a real number
+#method=toShort,object,short;Converts the object into a short integer
+
+[control]
 #title=Symbol control
 #shortdescr=A control helper symbol
-#method=save,object&to:variable;Converts the object value to the variable type and saves it
-#method=saveVariant,variant&to:variable;Converts the object value to the variable basic type and saves it
+#method=do,action;Executes the action
+#method=do,action&until:function;Executes the action until the condition is met
+#method=find,object&in:enumerable,object;Finds the enumeration member equals to the provided one
+#method=getAt,int&args:args;Returns the argument list member at the specified position
+#method=ifExist,object&in:enumerable,bool;Returns true is there is a member in the enumeration equals to the provided one
+#method=run,enumerable&forEach:function;Executes the function for every step of the enumerator
+#method=run,literal&forEachWord:function;Executes the function for every word in the text
+#method=run,enumerable&seeking:function;Executes the function until the function returns true
+#method=run,&int:int&int:int&forEvery:nfunc;Executes the function for every value in the specified range
+#method=run,&int:int&int:int&int:int&forEvery:nfunc;Executes the function for every value in the specified range
+#method=run,&path:literal&literal&forEachLine:function;Executes the function for every line in the file
+#method=seek,&int:int&int:int&every:nfunc;Executes the function for every value in the specified range until the function returns true
+#method=seek,&int:int&int:int&int:int&every:nfunc;Executes the function for every value in the specified range until the function returns true
+#method=sort,indexable;Sorts the indexable object
+#method=try,action;Executes the action<br/>Any possible exception is ignored
+#method=while,bool;Checks the condition until it is true
+#method=while,bool&do:action;Executes the action while the condition is true
+
+[literalControl]
+#title=Symbol literalControl
+#shortdescr=A literal helper symbol
+#method=containing,literal&in:literal;bool;Checks if the substring is contained in the second one
+#method=ending,literal&with:literal;bool;Checks if the literal ends with a provide one
+#method=starting,literal&with:literal;bool;Checks if the literal starts with a provide one
+#method=toArray,,array;Converts the literal into an array of characters
+#method=toCharArray,,chararray;Converts the literal into a character array
+
+[outputOp]
+#title=Extension outputOp
+#shortdescr=A literal output extensions
+#protocol=textio
+#parent=system.html#Object:system'Object
+#method=write,object;Converts a parameter into a literal and writes it into the extending object
+#method=write,object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object&:object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,object&:object&:object&:object&:object&:object&:object&:object&:object&:object&:object;Converts parameters into a literal and writes them into the extending object
+#method=write,&args:args;Converts parameters into a literal and writes them into the extending object
+
+[intputOp]
+#title=Extension inputOp
+#shortdescr=A literal input extensions
+#protocol=textio
+#parent=system.html#Object:system'Object
+#method=readLine,variable;Reads the inputed line and saves it into a parameter
+#method=readLine,variable&:variable;Reads the inputed line, splits it into and saves them into parameters
+#method=readLine,variable&:variable&:variable;Reads the inputed line, splits it into and saves them into parameters
+#method=readLine,variable&:variable&:variable&:variable;Reads the inputed line, splits it into and saves them into parameters
+#method=readLine,variable&:variable&:variable&:variable&:variable;Reads the inputed line, splits it into and saves them into parameters
+#method=readLine,variable&:variable&:variable&:variable&:variable&:variable;Reads the inputed line, splits it into and saves them into parameters
+#method=readLine,&args:args;Reads the inputed line, splits it into and saves them into parameters
+
+[consoleEx]
+#title=Symbol consoleEx
+#shortdescr=A console extension
+#protocol=textio
+
+[arguments]
+#title=Symbol arguments
+#shortdescr=A program command line arguments
+#protocol=array
+
+[RandomGenerator]
+#title=Class RandomGenerator
+#shortdescr=A random generator
+#parent=system.html#Object:system'Object
+#constructor=new,,Creates the random generator and initializes it
+#method=eval,int,int;Returns a random number in the range from 0 to a provided parameter value
+
+[intputOp]
+#title=Extension randomOp
+#shortdescr=An indexable extension
+#protocol=indexable
+#parent=system.html#Object:system'Object
+#method=randomize,int;Randomizes the extendable object n times

@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30                                        
-                       * lib30 extensions
+                       * lib30 extensions : literalControl
 
                        * TimeSpan : difference between two dates should be in days, hours, seconds is calclulated not correctly
                        * TimeSpan : test constructors

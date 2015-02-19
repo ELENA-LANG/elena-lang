@@ -80,6 +80,15 @@
     toArray : aLiteral
         = aLiteral ~indexable array.
 
+    toCharArray : aLiteral
+    [
+        #var anArray := CharArray new &length:(aLiteral length).
+        
+        anArray write &index:0 &length:(aLiteral length) &literal:(aLiteral literal).
+        
+        ^ anArray.
+    ]
+
     starting : anS &with:aSubS
     [
         #var(type:literal)s := anS literal.

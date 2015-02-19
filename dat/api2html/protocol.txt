@@ -4,6 +4,7 @@
 
 [#list#]
 action
+args
 array
 bool
 bool_action
@@ -261,3 +262,6 @@ verb
 
 [encoder]
 #shortdescr=An encoder protocol
+
+[args]
+#shortdescr=An open argument list protocol
