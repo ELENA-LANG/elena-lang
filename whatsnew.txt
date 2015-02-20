@@ -57,6 +57,7 @@
 [Misc]
 [+] installation package is introduced
 [*] ELENA API documentation (see doc\api) is up to date now
+[*] Visual Studio Projects are migrated to Visual Studio Community 2013
 
 ******************************************************************************
                     What's New in 1.9.17 (pre release)

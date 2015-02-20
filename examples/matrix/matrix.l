@@ -6,9 +6,9 @@
 #define extensions'math.
 
 // --- factory ---
-#symbol newMatrix = (&n:anN &m:anM &name:aName)
+#symbol newMatrix = (&n:anN &name:aName)
     [ 
-        matrixControl new &n:anN &m:anM &everyij: (&index:i &index:j)
+        Matrix new &n:anN &every_ij: (&index:i &index:j)
         [  
             consoleEx write:"Enter " write:aName write:"[" write:i write:"," write:j write:"]=" readLine:(Real new)
         ]
@@ -16,8 +16,8 @@
 
 #symbol IdentityMatrix = 
 {
-    new : aCount
-        = matrixControl new &n:aCount &m:aCount &everyij: (&index:i &index:j)
+    new &n:aCount
+        = Matrix new &n:aCount &m:aCount &every_ij: (&index:i &index:j)
         [ (i == j) ? [ 1 ] ! [ 0 ] ].
 }.
 
@@ -48,67 +48,67 @@
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
                 
                 consoleEx writeLine.
                 
-                #var aMatrixB := newMatrix eval &n:N &m:N &name:"B".
+                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
                 
                 consoleEx writeLine writeLine:"Output:".
 
-                #var aSum := matrixControl sumOf:aMatrixA:aMatrixB.
+                #var aSum := aMatrixA + aMatrixB.
 
-                ^ matrixControl toLiteral:aSum.
+                ^ aSum literal.
             ]
             2 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
                 
                 consoleEx writeLine.
                 
-                #var aMatrixB := newMatrix eval &n:N &m:N &name:"B".
+                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
                 
                 consoleEx writeLine writeLine:"Output:".
 
-                #var aDiff := matrixControl differenceOf:aMatrixA:aMatrixB.
+                #var aDiff := aMatrixA - aMatrixB.
 
-                ^ matrixControl toLiteral:aDiff.
+                ^ aDiff literal.
             ]
             3 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
                 
                 consoleEx writeLine.
                 
-                #var aMatrixB := newMatrix eval &n:N &m:N &name:"B".
+                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
                 
                 consoleEx writeLine writeLine:"Output:".
 
-                #var aProduct := matrixControl productOf:aMatrixA:aMatrixB.
+                #var aProduct := aMatrixA * aMatrixB.
 
-                ^ matrixControl toLiteral:aProduct.
+                ^ aProduct literal.
             ]
             4 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
 
-                #var aMatrixA := newMatrix eval &n:N &m:N &name:"A".
+                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
                                 
                 consoleEx writeLine writeLine:"Output:".
 
-                ^ matrixControl determinantOf:aMatrixA.
+                ^ aMatrixA determinant.
             ]
             5 ? [
                 consoleEx write:"Enter the order of matrix: ".
                 #var N := anInput readLine:(Integer new).
 
-                #var identity := IdentityMatrix new:N.
+                #var identity := IdentityMatrix new &n:(N int).
 
-                ^ matrixControl toLiteral:identity.
+                ^ identity literal.
             ]
             6 ? [
                 'program stop.

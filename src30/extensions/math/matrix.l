@@ -35,14 +35,17 @@
         the2DArray := Array new &length:n set &every: (&index: i)
             [ Array new &length:m set &every: (&index: j) [ aFunction eval &index:i &index:j ] ].
     ]
-    
+
+    #constructor new &n:n &every_ij:aFunction
+        <= %new &n:n &m:n &every_ij:aFunction.
+        
     #constructor new &matrix:aMatrix
     [
         theN := aMatrix n.
         theM := aMatrix m.
         
         the2DArray := Array new &length:theN set &every: (&index: i)
-            [ Array new &length:theM set &every: (&index: j) [ aMatrix getAt &index:i &index:j clone ] ].
+            [ Array new &length:(theN int) set &every: (&index: j) [ aMatrix getAt &index:i &index:j clone ] ].
     ]
     
     #method n = theN.
@@ -57,12 +60,21 @@
     #method setAt &index:i &index:j &value:aValue
         = the2DArray getAt &index:i setAt &index:j &object:aValue.
     
+    #method add : anObject
+        = $self add &matrix:(anObject matrix).
+    
     #method add &matrix:aMatrix
         = Matrix new &n:theN &m:theM &every_ij:(&index:i &index:j) [ $self getAt &index:i &index:j + aMatrix getAt &index:i &index:j ].
+        
+    #method subtract : anObject
+        = $self subtract &matrix:(anObject matrix).
     
     #method subtract &matrix:aMatrix
         = Matrix new &n:theN &m:theM &every_ij:(&index:i &index:j) [ $self getAt &index:i &index:j - aMatrix getAt &index:i &index:j ].
 
+    #method multiply : anObject
+        = $self multiply &matrix:(anObject matrix).
+    
     #method multiply &matrix:aMatrix
     [
         (theM != aMatrix n)
@@ -74,7 +86,7 @@
                 #var(type:int)k := 0.
                 #loop (k < theM) ?
                 [
-                    aResult add:(self getAt &index:i &index:k * aMatrix getAt &index:k &index:j).
+                    aResult append:(self getAt &index:i &index:k * aMatrix getAt &index:k &index:j).
                     
                     k := k + 1.
                 ].
@@ -126,8 +138,8 @@
                 [ 
                     #var tmp := a getAt &index:j &index:k.
                     
-                    a setAt &index:j &index:k &value:(a getAt &index:max_row &index:k).
-                    a setAt &index:max_row &index:k &value:tmp.
+                    a setAt &index:(j int) &index:k &value:(a getAt &index:(max_row int) &index:k).
+                    a setAt &index:(max_row int) &index:k &value:tmp.
                 ].
                     
                  // switch two rows in permutation matrix
@@ -142,11 +154,11 @@
             #var val := a getAt &index:j &index:j.
             control run &int:(j + 1) &int:(theN-1) &forEvery: (&index:i)
             [
-                a setAt &index:i &index:j &value:(a getAt &index:i &index:j / val).
+                a setAt &index:i &index:j &value:(a getAt &index:i &index:(j int) / val).
                 
                 control run &int:(j+1) &int:(theN - 1) &forEvery: (&index:k)
                 [
-                    a setAt &index:i &index:k &value:(a getAt &index:i &index:k - a getAt &index:i &index:j * a getAt &index:j &index:k).
+                    a setAt &index:i &index:k &value:(a getAt &index:(i int) &index:k - a getAt &index:(i int) &index:(j int) * a getAt &index:(j int) &index:k).
                 ].
             ].
         ].

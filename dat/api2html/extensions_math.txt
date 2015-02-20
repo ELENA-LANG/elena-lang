@@ -18,8 +18,10 @@ MatrixException
 #title=Class Matrix
 #shortdescr=A matrix
 #parent=system.html#Object:system'Object
+#constructor=new,&n:int&every_ij:nnfunc;Creates a square initialized matrix
 #constructor=new,&n:int&m:int&every_ij:nnfunc;Creates an initialized matrix
 #constructor=new,&matrix:object;Creates an initialized matrix
+#method=add,object,object;Sums two matrix
 #method=add,&matrix:object,object;Sums two matrix
 #method=cast,verb&to:object,object;Dispatches the verb to the target object with matrix subject
 #method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with matrix subject
@@ -30,6 +32,8 @@ MatrixException
 #method=n,,int;Returns the number of rows
 #method=m,,int;Returns the number of columns
 #method=matrix,,object;Returns itself
+#method=multiply,object,object;Returns the product of two matrix
 #method=multiply,&matrix:object,object;Returns the product of two matrix
 #method=setAt,&index:int&index:int&value:object;Sets the matrix ij element
+#method=subtract,object,object;Returns the difference between two matrix
 #method=subtract,&matrix:object,object;Returns the difference between two matrix
