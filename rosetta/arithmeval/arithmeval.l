@@ -227,7 +227,7 @@
     #method close &bracket
     [
         (theLevel < 10)
-            ? [ #throw Exception new:"Invalid expression". ].
+            ? [ #throw InvalidArgumentException new &message:"Invalid expression". ].
         
         theLevel := theLevel - 10.
     ]            
@@ -236,7 +236,7 @@
     [
         ((ch >= 48) and:(ch < 58))
             ? [ theToken append &char:ch. ]
-            ! [ #throw Exception new:"Invalid expression". ].
+            ! [ #throw InvalidArgumentException new &message:"Invalid expression". ].
     ]
             
     #method append &literal:aLiteral

@@ -10,18 +10,18 @@
     #var aCountMap := Dictionary new &default:0.
     control run:anArray &forEach: anItem
     [
-        aCountMap set &key:anItem &value:(aCountMap getAt &key:anItem + 1).
+        aCountMap set &key:anItem &object:(aCountMap getAt &key:anItem + 1).
     ].
 
     aCountMap~indexable sort:(:p:n)
-        [ p value > n value ].
+        [ p > n ].
 
-    #var aMax := aCountMap first value.
+    #var aMax := aCountMap first.
 
     ^ convertor toArray:(
         control run:(
                     aCountMap~enumerable 
-                        filter &each:kv [ aMax safeEqual:(kv value) ] 
+                        filter &each:kv [ aMax safeEqual:kv ] 
                         select &each:kv [ kv key ]
                     ) 
                     &forEach:(Summing new:(List new))).

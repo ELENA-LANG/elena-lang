@@ -32,15 +32,15 @@
         (nil == anItem) ?
         [
             anItem := List new.
-            aDictionary set &key:aKey &value:anItem.
+            aDictionary set &key:aKey &object:anItem.
         ].
     
         anItem += aWord.
     ].
 
-    aDictionary~indexable sort: (:aFormer:aLater) [ aFormer value length > aLater value length ].
+    aDictionary~indexable sort: (:aFormer:aLater) [ aFormer length > aLater length ].
 
-    control run:(aDictionary~enumerable top:20) &forEach: aPair [ consoleEx writeLine:(aPair value) ].
+    control run:(aDictionary~enumerable top:20) &forEach: aPair [ consoleEx writeLine:aPair ].
     
     #var anEnd := now.
    

@@ -21,8 +21,14 @@ v  - vm script
 Currently:
 ------
             smaint - testing
-                       * test matrix
                        * test all rosetta samples
+                       * test arraymode
+                       * test arithmeval
+                       * test aplusb
+                       * test brackets
+                       * test bullscows
+                       * test caesar
+                       * test calendar
                        * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
                        * extend realtest with comparision operation test
                        * modify system test, it should raise an exception if any of the tests fails
@@ -171,6 +177,9 @@ week1:
                        * constructor may return constant objects as well (see min / max)
 
                        * boolean invert operator (and, or, ...)??
+
+                       * critical bug with dynamic signature : signature class should validate strong types - signature code should have
+                         reserved bit to indicate it is a strong one, so typecasting should be executed
                        
               xdev - general implementation
                        * e.g. extensions'text'ReaderEnumerator.next

@@ -8,13 +8,13 @@
 [
     // 1. Create
     #var aMap := Dictionary new.
-    aMap set &key:"key" &value:"foox".
-    aMap set &key:"key" &value:"foo".
-    aMap set &key:"key2" &value:"foo2".
-    aMap set &key:"key3" &value:"foo3".
-    aMap set &key:"key4" &value:"foo4".
+    aMap set &key:"key" &object:"foox".
+    aMap set &key:"key" &object:"foo".
+    aMap set &key:"key2" &object:"foo2".
+    aMap set &key:"key3" &object:"foo3".
+    aMap set &key:"key4" &object:"foo4".
 
     // Enumerate
     control run:aMap &forEach: aKeyValue
-        [ console write:(aKeyValue key) write:" : " writeLine:(aKeyValue value) ].
+        [ console write:(aKeyValue key) write:" : " writeLine:aKeyValue ].
 ].

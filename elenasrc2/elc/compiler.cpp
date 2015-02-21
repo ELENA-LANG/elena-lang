@@ -3801,7 +3801,7 @@ bool Compiler :: overridePrimitiveAssigning(CodeScope& scope, ref_t targetType, 
 
       return true;
    }
-   else return false;
+   return false;
 }
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
@@ -4389,26 +4389,25 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
 void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 {
    IdentifierString signature;
+   ref_t verb_id = 0;
+   ref_t sign_id = 0;
+   bool first = true;
 
    TerminalInfo verb = node.Terminal();
-   ref_t verb_id = _verbs.get(verb.value);
-   ref_t sign_id = 0;
+   if (node != nsDefaultGeneric) {
+	   verb_id = _verbs.get(verb.value);
 
-   // if it is a generic verb, make sure no parameters are provided
-   if (verb_id == DISPATCH_MESSAGE_ID) {
-      scope.raiseError(errInvalidOperation, verb);
+	   // if it is a generic verb, make sure no parameters are provided
+	   if (verb_id == DISPATCH_MESSAGE_ID) {
+		   scope.raiseError(errInvalidOperation, verb);
+	   }
+	   else if (verb_id == 0) {
+		   scope.moduleScope->mapSubject(verb, signature);
+	   }
    }
 
    DNode arg = node.firstChild();
-
-   bool first = true;
-   int paramCount = 0;
-
    if (verb_id == 0) {
-      //scope.withCustomVerb = true;
-
-      scope.moduleScope->mapSubject(verb, signature);
-
       // if followed by argument list - it is a EVAL verb
       if (arg == nsSubjectArg || arg == nsMethodParameter) {
          verb_id = EVAL_MESSAGE_ID;
@@ -4418,6 +4417,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
       else verb_id = GET_MESSAGE_ID;
    }
 
+   int paramCount = 0;
    // if method has generic (unnamed) argument list
    while (arg == nsMethodParameter) {
       int index = 1 + scope.parameters.Count();
@@ -5005,10 +5005,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
          case nsDefaultGeneric:
          {
             MethodScope methodScope(&scope);
-            if (member.firstChild() == nsMethodParameter) {
-               methodScope.message = encodeMessage(0, EVAL_MESSAGE_ID, 1);
-            }
-            else methodScope.message = encodeVerb(GET_MESSAGE_ID);
+            declareArgumentList(member, methodScope);
 
             // override subject with generic postfix
             methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
@@ -5196,10 +5193,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
             methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
          }
          else if (member == nsDefaultGeneric) {
-            if (member.firstChild() == nsMethodParameter) {
-               methodScope.message = encodeMessage(0, EVAL_MESSAGE_ID, 1);
-            }
-            else methodScope.message = encodeVerb(GET_MESSAGE_ID);
+            declareArgumentList(member, methodScope);
 
             // override subject with generic postfix
             methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
