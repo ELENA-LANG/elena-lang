@@ -54,7 +54,7 @@ To install just unzip all the files into a directory you want.
 
 You may need to add a path to BIN folder to system environment (e.g. <app root>\bin). 
 
-Otherwise you may use setup executable - http://sourceforge.net/projects/elenalang/files/ELENA%202.x/
+Otherwise you may use setup executable - http://sourceforge.net/projects/elenalang/files/ELENA%202.x/ELENA%201.9.18/
 
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
 (<app root>\bin\elide.exe) or ELENA Command Line Compiler 
