@@ -52,7 +52,8 @@ ELENA Installation / Run
 
 To install just unzip all the files into a directory you want.
 
-You may need to add a path to BIN folder to system environment (e.g. \lapp root>\bin). 
+You may need to add a path to BIN folder to system environment (e.g.<pre><code><app root>\bin</code></pre>). 
+
 
 Otherwise you may use setup executable - http://sourceforge.net/projects/elenalang/files/ELENA%202.x/ELENA%201.9.18/
 
