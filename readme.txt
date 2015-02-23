@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 1.9.18
+                      ELENA Language Project V. 1.9.19
                         (C)2005-2015  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -47,7 +47,7 @@ License V2.0e, for more information read the file LICENSE.TXT.
 
 To install just unzip all the files into a directory you want.
 
-You may need to add a path to BIN folder to system environment (e.g. c:\elena\bin). 
+You may need to add a path to BIN folder to system environment (e.g. <app root>\bin). 
 
 Otherwise you may use setup executable.
 

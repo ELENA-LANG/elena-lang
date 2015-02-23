@@ -20,67 +20,20 @@ v  - vm script
 ------                                 
 Currently:
 ------
-<=================> 
-                                              
-1.9.19
---------
-week1:
-              idev - script engine
-                       * build-in script into IDE
-
-              xdev - linux
-                       * linux linker
-
-                       * paths: lib    - \usr\share\elena\lib30
-                                         \usr\share\elena\src30
-                                config - \etc\elena
-                                data   - \usr\share\elena - data
-
-                       * linux console operations
-                       * linux file operations
-                       * linux date / time operations
-                       * port elc to linux
-                       * port ecv to linux
-                       * review deployment mechanism
-                       * port elenavm to linux
-                       * port elide to linux
-                       * port elenasm to linux
-                       * port elt to linux
-                       
-              idev - usability
-                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
-                       * recognize out of memory exception
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-                       * test compilation with a very long identifier names                       
-
-              idev - debugger - call stack
-                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
-                                              
-              idev - debugger - watch
-                       * show shortarray, bytearray, intarray
-                       * fix debugger to correctly show arrays
-                       * tune debugger, make possible to use step over / step into everywhere
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * debug script
-                       * implement watch
-                       * show data variables (currently only int / short are displayed)
-                       * show output argument
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                       * show built-in variable $subject
-                     
               xdev - generic development                                                      
-                       * it should be possible to return nil as typed object??
+                       * operator redesign : \ alt send, || - or
 
-                       * get rid of bitwise operators
+                       * get rid of bitwise operators ; how could we implement elementary bitwise / bool operation in this case
+
+                       
+
                        * and, or, xor, add, subtract, divide, multiply, getAt, setAt generic messages or appropriate operators (+, /, *, -, @, @:=)
                          can be replaced with inline code for known data types (or arrays)
-                       
+
                        * it should be possible to convert int constant to int / short / byte / long ; literal constant to
                          char / literal in run time, 
                          
                        * elenart : implement basic reflection functions
-                       * message/subject should be constant which is boxed when it is required ??
                        
                        * constructor / method resend should be done without opening a new frame
 
@@ -124,18 +77,65 @@ week1:
 
                        * check if the class constructor really exists before direct call
 
-                       * in the following expression - aTarget::aVerb int:self - typecast should be implemented
-
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
 
                        * constructor may return constant objects as well (see min / max)
 
                        * boolean invert operator (and, or, ...)??
 
-                       * critical bug with dynamic signature : signature class should validate strong types - signature code should have
-                         reserved bit to indicate it is a strong one, so typecasting should be executed
                        
+<=================> 
+                                              
+1.9.19
+--------
+week1:
+              xdev - linux
+                       * linux linker
+
+                       * paths: lib    - \usr\share\elena\lib30
+                                         \usr\share\elena\src30
+                                config - \etc\elena
+                                data   - \usr\share\elena - data
+
+                       * linux console operations
+                       * linux file operations
+                       * linux date / time operations
+                       * port elc to linux
+                       * port ecv to linux
+                       * review deployment mechanism
+                       * port elenavm to linux
+                       * port elide to linux
+                       * port elenasm to linux
+                       * port elt to linux
+                       
+              idev - usability
+                       * step over does not always work  (instead turn into is used)
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
+                       * recognize out of memory exception
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
+
+              idev - debugger - call stack
+                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
+                                              
+              idev - debugger - watch
+                       * show shortarray, bytearray, intarray
+                       * fix debugger to correctly show arrays
+                       * tune debugger, make possible to use step over / step into everywhere
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * debug script
+                       * implement watch
+                       * show data variables (currently only int / short are displayed)
+                       * show output argument
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
+                       * show built-in variable $subject
+                     
               xdev - general implementation
+                       * in the following expression - aTarget::aVerb int:self - typecast should be implemented
+
+                       * message/subject should be constant which is boxed when it is required ??
+
                        * e.g. extensions'text'ReaderEnumerator.next
 
                          raise unnessessary typecasting warning for the following ending code:
@@ -641,6 +641,21 @@ week 4:
 1.9.20
 --------
 week1:
+              xdev - generic development                                                      
+                       * strong types may have reserved range, so special table will be created - pairing class reference with, or alternatively
+                         strong type may be used as message id + subject mask (what about Linux in this case - rdata should be located in 4FFFFFFF range)
+
+                       * it should be possible to return nil as typed object?? ; nil may have special handler which will turn any strong type
+                         request into sending min (or empty) message to the class wrapper ; as a result nil can be used as typed object
+                         (typecast warning may be muted in this case)
+
+                       * critical bug with dynamic signature : signature class should validate strong types - signature code should have
+                         reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
+                         signature
+
+              idev - script engine
+                       * build-in script into IDE
+
               idev - usability
                        * class view - make possible to browse the class methods
 

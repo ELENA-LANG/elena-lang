@@ -223,7 +223,7 @@ L7_OPERATIONS ->
 
 ALT_OPERATIONS ->
         || CATCH_MESSAGE
-        | &| ALT_MESSAGE
+        | \ ALT_MESSAGE
 	| eps
 	
 HINT -> identifier HINT_BODY
@@ -402,14 +402,15 @@ L3_OPERATION ->
 	| / L3_OPERAND
 	| *= L3_OPERAND
 	| /= L3_OPERAND
+	| && L3_OPERAND
+	| ^^ L3_OPERAND
 	
 L4_OPERATION ->
 	+ L4_OPERAND
 	| - L4_OPERAND
 	| += L4_OPERAND
 	| -= L4_OPERAND
-	| && L4_OPERAND
-	| ^^ L4_OPERAND
+	| &| L4_OPERAND
 
 L5_OPERATION ->
 	<< L5_OPERAND

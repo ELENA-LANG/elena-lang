@@ -1,8 +1,15 @@
 ﻿
                                 ELENA Language 
 
-                                Version 1.9.18
+                                Version 1.9.19
  
+******************************************************************************
+                    What's New in 1.9.19 (pre release)
+******************************************************************************
+
+[ELENA]
+[*] operator redesign : \ - alternative message call, || - or operator
+
 ******************************************************************************
                     What's New in 1.9.18 (pre release)
 ******************************************************************************
@@ -18,7 +25,7 @@
 [*] syntax : class syntax changed - "::" should be used to provide the class parent
 [+] new hint : type can be provided for the method result
 [-] direct dispatching no longer supported
-[-] statement terminator can be ommited only in lazy expression
+[-] statement terminator can be omitted only in lazy expression
 [+] character constant (e.g. "a" is CharValue rather than LiteralValue)
 [-] escape sequence is no longer supported (e.g. "Hello%n" => "Hello"#10 )
 [*] 0r, 1.0e2r constants are correctly recognized

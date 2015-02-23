@@ -16,7 +16,7 @@ using namespace _ELENA_ ;
 
 const char* DFA_table[29] =
 {
-        ".????????cc??c??????????????????cmvbxhmehhmmhyhinnnnnnnnnnmhmmmhhddddddddddddddddddddddddddh?hmd?ddddddddddddddddddddddddddhmhhd",
+        ".????????cc??c??????????????????cmvbxhmehhmmhyhinnnnnnnnnnmhmmmhhddddddddddddddddddddddddddhmhmd?ddddddddddddddddddddddddddhmhhd",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}}}}}}}}}}aaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbaaaababbbbbbbbbbbbbbbbbbbbbbbbbbaaaab",
         "*********cc*********************c***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeaaaaaaaaddddddddddaaaaaaaddddddddddddddddddddddddddaaaadaddddddddddddddddddddddddddaaaad",
