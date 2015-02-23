@@ -80,7 +80,7 @@
 #define ELC_L0                      "l0"                // optimization: byte code optimization
 
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2014 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2015 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_COMPILING               "Compiling..."
 #define ELC_LINKING                 "Linking..."

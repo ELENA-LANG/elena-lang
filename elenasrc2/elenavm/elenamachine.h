@@ -17,7 +17,7 @@
 #define VM_INTERPRET_EXT  _T("$native'core_vm'start_n_eval")
 
 // --- ELENAVM common constants ---
-#define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2014 by Alex Rakov")
+#define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov")
 
 #define ELENAVM_BUILD_NUMBER    0x000C             // ELENAVM build version
 

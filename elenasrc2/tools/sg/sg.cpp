@@ -51,7 +51,7 @@ int registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line syntax generator %d.%d.1 (C)2005-2014 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+   printf("ELENA command line syntax generator %d.%d.1 (C)2005-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
    if (argc < 2 || argc > 3) {
       printLine("sg <syntax_file> [-cp<codepage>]");
       return 0;

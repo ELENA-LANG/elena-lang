@@ -1,4 +1,68 @@
-echo compiling project..
+@echo off
+
+reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0" /v MSBuildToolsPath > nul 2>&1
+if ERRORLEVEL 1 goto MissingMSBuildRegistry
+
+for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0" /v MSBuildToolsPath') do SET MSBUILDDIR=%%B
+
+IF NOT EXIST %MSBUILDDIR%nul goto MissingMSBuildToolsPath
+IF NOT EXIST %MSBUILDDIR%msbuild.exe goto MissingMSBuildExe
+
+ECHO =========== Starting Release Compile ==================
+
+ECHO Command line Compiler compiling....
+ECHO -----------------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elc\vs\elc11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Virtual Machine compiling....
+ECHO -----------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenavm\vs\elenavm11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO IDE compiling....
+ECHO -----------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\ide\vs\elide11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Run-Time Engine compiling....
+ECHO -----------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenart\vs\elenart.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Script Engine compiling....
+ECHO ----------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Simplified Assembler compiling....
+ECHO -----------------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\asm2bin\vs\asm2binx11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO ECODES viewer compiling....
+ECHO ---------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\ecv\vs\ecv11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Virtual Machine Terminal compiling....
+ECHO --------------------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Optimization Rule Generator compiling....
+ECHO ------------------------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\og\vs\og11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Syntax Parse Table Generator compiling....
+ECHO ------------------------------------------
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\sg\vs\sg10.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO =========== Release Compiled ==================
+
+ECHO =========== Compiling ELENA files ==================
 
 %1\bin\sg %1\dat\sg\syntax.txt
 move %1\dat\sg\syntax.dat %1\bin
@@ -10,12 +74,13 @@ md lib30
 %1\bin\asm2binx %1\src30\asm\core_routines.esm lib30\system
 %1\bin\asm2binx %1\src30\asm\ext_routines.esm lib30\system
 
+%1\bin\asm2binx %1\src30\asm\x32\commands.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\coreapi.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core_vm.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core_rt.asm %1\bin\x32
 
-echo copying bin files..
+echo ========== copying bin files.. ===============
 
 md bin
 
@@ -419,4 +484,128 @@ copy %1\rebuild.bat
 copy %1\rebuildall.bat 
 copy %1\*.txt
 
+echo copying rosetta files
+
+md rosetta
+md rosetta\accumulator
+copy %1\rosetta\accumulator\*.l rosetta\accumulator
+copy %1\rosetta\accumulator\*.prj rosetta\accumulator
+
+md rosetta\ackermann 
+copy %1\rosetta\ackermann\*.l rosetta\ackermann
+copy %1\rosetta\ackermann\*.prj rosetta\ackermann
+
+md rosetta\addfield
+copy %1\rosetta\addfield\*.l rosetta\addfield 
+copy %1\rosetta\addfield\*.prj rosetta\addfield 
+
+md rosetta\amb 
+copy %1\rosetta\amb\*.l rosetta\amb
+copy %1\rosetta\amb\*.prj rosetta\amb
+
+md rosetta\aplusb
+copy %1\rosetta\aplusb\*.l rosetta\aplusb
+copy %1\rosetta\aplusb\*.prj rosetta\aplusb
+
+md rosetta\applycallback 
+copy %1\rosetta\applycallback\*.l rosetta\applycallback 
+copy %1\rosetta\applycallback\*.prj rosetta\applycallback 
+
+md rosetta\arithmeticint
+copy %1\rosetta\arithmeticint\*.l rosetta\arithmeticint
+copy %1\rosetta\arithmeticint\*.prj rosetta\arithmeticint
+
+md rosetta\arithmmean
+copy %1\rosetta\arithmmean\*.l rosetta\arithmmean 
+copy %1\rosetta\arithmmean\*.prj rosetta\arithmmean 
+
+md rosetta\associativearrays
+copy %1\rosetta\associativearrays\*.l rosetta\associativearrays
+copy %1\rosetta\associativearrays\*.prj rosetta\associativearrays
+
+md rosetta\arithmeval
+copy %1\rosetta\arithmeval\*.l rosetta\arithmeval
+copy %1\rosetta\arithmeval\*.prj rosetta\arithmeval
+
+md rosetta\arrays 
+copy %1\arrays\*.l rosetta\arrays
+copy %1\arrays\*.prj rosetta\arrays
+
+md rosetta\arrayconcat
+copy %1\rosetta\arrayconcat\*.l rosetta\arrayconcat
+copy %1\rosetta\arrayconcat\*.prj rosetta\arrayconcat
+
+md rosetta\smavg 
+copy %1\rosetta\smavg\*.l rosetta\smavg 
+copy %1\rosetta\smavg\*.prj rosetta\smavg 
+
+md rosetta\arraymode
+copy %1\rosetta\arraymode\*.l rosetta\arraymode
+copy %1\rosetta\arraymode\*.prj rosetta\arraymode
+
+md rosetta\anonymrec
+copy %1\rosetta\anonymrec\*.l rosetta\anonymrec
+copy %1\rosetta\anonymrec\*.prj rosetta\anonymrec
+
+md rosetta\median
+copy %1\rosetta\median\*.l rosetta\median
+copy %1\rosetta\median\*.prj rosetta\median
+
+md rosetta\bitwise
+copy %1\rosetta\bitwise\*.l rosetta\bitwise
+copy %1\rosetta\bitwise\*.prj rosetta\bitwise
+
+md rosetta\anagram
+copy %1\rosetta\anagram\*.l rosetta\anagram
+copy %1\rosetta\anagram\*.prj rosetta\anagram
+copy %1\rosetta\anagram\*.txt rosetta\anagram
+
+md rosetta\brackets
+copy %1\rosetta\brackets\*.l rosetta\brackets
+copy %1\rosetta\brackets\*.prj rosetta\brackets
+
+md rosetta\bestshuffle 
+copy %1\rosetta\bestshuffle\*.l rosetta\bestshuffle
+copy %1\rosetta\bestshuffle\*.prj rosetta\bestshuffle
+
+md rosetta\bullscows
+copy %1\rosetta\bullscows\*.l rosetta\bullscows
+copy %1\rosetta\bullscows\*.prj rosetta\bullscows
+
+md rosetta\binary
+copy %1\rosetta\binary\*.l rosetta\binary
+copy %1\rosetta\binary\*.prj rosetta\binary
+
+md rosetta\caesar
+copy %1\rosetta\caesar\*.l rosetta\caesar
+copy %1\rosetta\caesar\*.prj rosetta\caesar
+
+md rosetta\charmatch
+copy %1\rosetta\charmatch\*.l rosetta\charmatch
+copy %1\rosetta\charmatch\*.prj rosetta\charmatch
+
+md rosetta\combinations
+copy %1\rosetta\combinations\*.l rosetta\combinations
+copy %1\rosetta\combinations\*.prj rosetta\combinations
+
+md rosetta\calendar
+copy %1\rosetta\calendar\*.l rosetta\calendar
+copy %1\rosetta\calendar\*.prj rosetta\calendar
+
 rebuild.bat 
+
+goto:eof
+::ERRORS
+::---------------------
+:MissingMSBuildRegistry
+echo Cannot obtain path to MSBuild tools from registry
+goto:eof
+:MissingMSBuildToolsPath
+echo The MSBuild tools path from the registry '%MSBUILDDIR%' does not exist
+goto:eof
+:MissingMSBuildExe
+echo The MSBuild executable could not be found at '%MSBUILDDIR%'
+goto:eof
+:CompilerError
+echo The MSBuild returns error %ERRORLEVEL%
+goto:eof

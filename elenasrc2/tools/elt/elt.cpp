@@ -127,7 +127,7 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line VM terminal %d.%d.%d (C)2011-2014 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
+   printf("ELENA command line VM terminal %d.%d.%d (C)2011-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
    loadScript(ConstantIdentifier("scripts\\elt.es"));
 
