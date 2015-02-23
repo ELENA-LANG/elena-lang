@@ -52,9 +52,13 @@ ELENA Installation / Run
 
 To install just unzip all the files into a directory you want.
 
+You may need to add a path to BIN folder to system environment (e.g. c:\elena\bin). 
+
+Otherwise you may use setup executable.
+
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
 (<app root>\bin\elide.exe) or ELENA Command Line Compiler 
-(<app root>\bin\elc.exe)
+(<app root>\bin\elc.exe).
 
 In ELENA IDE you may select File-Open-Open Project option and open an 
 appropriate project file (*.prj). Then select Project-Compile option to 

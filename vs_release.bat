@@ -313,6 +313,10 @@ copy %1\elenasrc2\tools\og\codeblocks\*.cbp elenasrc2\tools\og\codeblocks
 md elenasrc2\tools\og\vs
 copy %1\elenasrc2\tools\og\vs\*.vcxproj elenasrc2\tools\og\vs
 
+md install
+copy %1\install\*.iss install
+
+
 echo copying examples files
 
 md examples 

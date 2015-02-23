@@ -20,46 +20,7 @@ v  - vm script
 ------                                 
 Currently:
 ------
-            smaint - testing
-                       * test calendar
-                       * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
-                       * extend realtest with comparision operation test
-                       * modify system test, it should raise an exception if any of the tests fails
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
 <=================> 
-
-1.9.18
---------
-week 4:
-              smaint - rosetta samples
-                       * fix bestshuffle
-                       * calendar
-
-              xmaint - package
-                       * create installation package
-                       * release : compile / copy elenart
-              
-              imaint - test
-                       * debugger does not show the integer value content correctly:
-                            #var n := Integer new.
-                            #var l := n long.
-                         after the second operation it says n content is 20h
-
-              xmaint - test
-                       * test short -> int, int -> short should correctly set sign
-                       * test system'io'StreamWriter
-                       * test system'io'BinarayReader / system'io'BinarayWriter
-                       * test ByteArray operations
-                       * test ShortArray operations
-
-                       * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)
-                       
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
-                       * boxing: message target / operand, operator target / operand
-                       * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
-                         script, so we could check if the caller stack is included correctly)
                                               
 1.9.19
 --------
@@ -641,6 +602,41 @@ week3:
                        
               sdev - samples
                        * migrate all script samples
+
+week 4:
+              smaint - rosetta samples
+                       * fix bestshuffle
+                       * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
+
+              xmaint - package
+                       * create installation package
+                       * release : compile / copy elenart
+              
+              imaint - test
+                       * debugger does not show the integer value content correctly:
+                            #var n := Integer new.
+                            #var l := n long.
+                         after the second operation it says n content is 20h
+
+              xmaint - test
+                       * test short -> int, int -> short should correctly set sign
+                       * test system'io'StreamWriter
+                       * test system'io'BinarayReader / system'io'BinarayWriter
+                       * test ByteArray operations
+                       * test ShortArray operations
+
+                       * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)
+                       
+                       * test operation with stack allocated binaray array (write / read / length / getAt)
+                       * boxing: message target / operand, operator target / operand
+                       * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
+                         script, so we could check if the caller stack is included correctly)
+
+            smaint - testing
+                       * extend realtest with comparision operation test
+                       * modify system test, it should raise an exception if any of the tests fails
+                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
+                         to any object
 
 1.9.20
 --------
