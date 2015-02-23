@@ -54,11 +54,11 @@ To install just unzip all the files into a directory you want.
 
 You may need to add a path to BIN folder to system environment (e.g. &lt;app root&gt;\bin</code></pre>). 
 
-Otherwise you may use setup executable - http://sourceforge.net/projects/elenalang/files/ELENA%202.x/ELENA%201.9.18/
+Otherwise you may use [http://sourceforge.net/projects/elenalang/files/ELENA%202.x/ELENA%201.9.18/](setup executable)
 
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
-(<app root>\bin\elide.exe) or ELENA Command Line Compiler 
-(<app root>\bin\elc.exe).
+(&lt;app root&gt;\bin\elide.exe) or ELENA Command Line Compiler 
+(&lt;app root&gt;\bin\elc.exe).
 
 In ELENA IDE you may select File-Open-Open Project option and open an 
 appropriate project file (*.prj). Then select Project-Compile option to 
