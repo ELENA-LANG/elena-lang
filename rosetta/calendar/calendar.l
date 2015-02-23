@@ -19,7 +19,7 @@
     #field theYear.
     #field theRow.
     
-    #constructor new &Year:aYear &Month:aMonth
+    #constructor new &year:aYear &month:aMonth
     [
         theMonth := aMonth.
         theYear := aYear.
@@ -30,7 +30,7 @@
     #method writeTitle
     [        
         theRow << 0.
-        theDate := Date new &year:theYear &month:theMonth &day:1.
+        theDate := Date new &year:(theYear int) &month:(theMonth int) &day:1.
         control run:DayNames &forEach: aName
             [ theLine write:" " write:aName ].
     ]
@@ -47,7 +47,7 @@
                 [
                     theLine::stringOp write:(theDate day) &paddingLeft:3 &with:" ".
                     
-                    theDate := theDate add &day:1.
+                    theDate := theDate add &days:1.
                 ]         
                 &until:[(theDate month != theMonth)or:[theDate dayOfWeek == 1]].
             ].
@@ -106,9 +106,9 @@
         anOutput::stringOp write:theYear &padding:(theRowLength * 25) &with:" ". 
         anOutput writeLine writeLine.
         
-        #var aRowCount := 12 / theRowLength.
-        #var Months := matrixControl new &n:aRowCount &m:theRowLength &everyij: 
-            (&index:i &index:j) [ CalendarMonthPrinter new &Year:theYear &Month:(i * theRowLength + j + 1) ].
+        #var(type:int) aRowCount := 12 / theRowLength.
+        #var Months := Matrix new &n:aRowCount &m:theRowLength &every_ij: 
+            (&index:i &index:j) [ CalendarMonthPrinter new &year:(theYear int) &month:((i * theRowLength + j + 1) int) ].
 
         control run:Months &forEach: aRow
         [

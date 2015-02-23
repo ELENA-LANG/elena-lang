@@ -54,6 +54,8 @@
         
     #method matrix = $self.
     
+    #method enumerator => the2DArray.
+    
     #method getAt &index:i &index:j
         = the2DArray getAt &index:i getAt &index:j.
     

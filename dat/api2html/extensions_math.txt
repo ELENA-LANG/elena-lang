@@ -18,6 +18,7 @@ MatrixException
 #title=Class Matrix
 #shortdescr=A matrix
 #parent=system.html#Object:system'Object
+#protocol=enumerable
 #constructor=new,&n:int&every_ij:nnfunc;Creates a square initialized matrix
 #constructor=new,&n:int&m:int&every_ij:nnfunc;Creates an initialized matrix
 #constructor=new,&matrix:object;Creates an initialized matrix
@@ -27,6 +28,7 @@ MatrixException
 #method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with matrix subject
 #method=clone,,object;Returns the matrix clone
 #method=determinant,,real;Returns the matrix determinant
+#method=enumerator,,enumerator;Returns the rwo enumerator
 #method=getAt,&index:int&index:int;Returns the matrix ij element
 #method=literal,,literal;Returns the literal presentation
 #method=n,,int;Returns the number of rows

@@ -118,7 +118,7 @@
 #symbol operatorState = (:ch)
 [
     ch =>
-        40 ? [      // (
+        #40 ? [      // (
             self new &bracket goto &start.
         ]
         ! [
@@ -129,19 +129,19 @@
 #symbol tokenState = (:ch)
 [
     ch =>
-        41 ? [      // )
+        #41 ? [      // )
             self close &bracket goto &token.
         ]
-        42 ? [      // *
+        #42 ? [      // *
             self new &product goto &operator.
         ]
-        43 ? [      // +
+        #43 ? [      // +
             self new &summary goto &operator.
         ]
-        45 ? [      // -
+        #45 ? [      // -
             self new &difference goto &operator.
         ]
-        47 ?       // /
+        #47 ?       // /
         [
             self new &fraction goto &operator.
         ]
@@ -153,10 +153,10 @@
 #symbol startState = (:ch)
 [
     ch =>
-        40 ? [      // (
+        #40 ? [      // (
             self new &bracket goto &start.
         ]
-        45 ? [ // -
+        #45 ? [ // -
             self new &token append &literal:"0" new &difference goto &operator.
         ]
         ! [

@@ -21,13 +21,6 @@ v  - vm script
 Currently:
 ------
             smaint - testing
-                       * test all rosetta samples
-                       * test arraymode
-                       * test arithmeval
-                       * test aplusb
-                       * test brackets
-                       * test bullscows
-                       * test caesar
                        * test calendar
                        * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
                        * extend realtest with comparision operation test

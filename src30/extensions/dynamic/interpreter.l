@@ -9,12 +9,12 @@
 
 #symbol $lastScriptError = control do:
 [
-    #var(type:shortarray,size:256)aBuffer.
+    #var(type:chararray,size:256)aBuffer.
     #var(type:int)aLength := system'external'elenasm GetStatus
-        &shortarray:aBuffer
+        &chararray:aBuffer
         &int:255.
         
-    ^ LiteralValue new &length:aLength &shortarray:aBuffer.
+    ^ LiteralValue new &length:aLength &chararray:aBuffer.
 ].
 
 #class ScriptEngineException :: Exception

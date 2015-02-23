@@ -29,5 +29,5 @@
         = self cast:%eval &to:{ int : anObject = true. long : anObject = true. real : anObject = true. ! : anObject = false. }.
         
     #method safeEqual : anObject
-        = anObject cast:%eval &with:self &to:{ ! : x : aTarget = aTarget::$subject equal:x || back:false. }.
+        = anObject cast:%eval &with:self &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject || back:false. }.
 }
