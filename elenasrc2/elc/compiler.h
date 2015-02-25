@@ -168,8 +168,30 @@ protected:
       {
          ObjectInfo info = mapReferenceInfo(referenceName, false);
 
-         if (constant)
-            defineConstantSymbol(info.param);
+         if (constant) {
+            ObjectInfo constantInfo = defineObjectInfo(info.param, true);
+            // try to correctly define typed constant
+            if (constantInfo.kind == okSymbol && constantInfo.extraparam != 0) {
+               ref_t typeClass = resolveStrongType(constantInfo.extraparam);
+               if (typeClass == intReference) {
+                  defineIntConstant(info.param);
+               }
+               else if (typeClass == longReference) {
+                  defineLongConstant(info.param);
+               }
+               else if (typeClass == realReference) {
+                  defineRealConstant(info.param);
+               }
+               else if (typeClass == literalReference) {
+                  defineLiteralConstant(info.param);
+               }
+               else if (typeClass == charReference) {
+                  defineCharConstant(info.param);
+               }
+               defineConstantSymbol(info.param);
+            }
+            else defineConstantSymbol(info.param);
+         }            
 
          return forwards.add(forward, info.param, true);
       }
@@ -192,9 +214,24 @@ protected:
          symbolHints.add(reference, okIntConstant, true);
       }
 
+      void defineLongConstant(ref_t reference)
+      {
+         symbolHints.add(reference, okLongConstant, true);
+      }
+
+      void defineRealConstant(ref_t reference)
+      {
+         symbolHints.add(reference, okRealConstant, true);
+      }
+
       void defineLiteralConstant(ref_t reference)
       {
          symbolHints.add(reference, okLiteralConstant, true);
+      }
+
+      void defineCharConstant(ref_t reference)
+      {
+         symbolHints.add(reference, okCharConstant, true);
       }
 
       void raiseError(const char* message, TerminalInfo terminal);

@@ -2003,7 +2003,7 @@ public:
    Iterator getIt(Key key)
    {
       if (_cached) {
-         for (int i = 0 ; i < _count ; i++) {
+         for (size_t i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key)
                return Iterator(this, i);
          }
@@ -2015,7 +2015,7 @@ public:
    T get(Key key) const
    {
       if (_cached) {
-         for (int i = 0 ; i < _count ; i++) {
+         for (size_t i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key)
                return _cache[i].item;
          }
@@ -2033,7 +2033,7 @@ public:
    bool exist(Key key, T item) const
    {
       if (_cached) {
-         for (int i = 0 ; i < _count ; i++) {
+         for (size_t i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key)
             if (_cache[i].key == key && _cache[i].item == item)
                return true;
@@ -2080,11 +2080,11 @@ public:
    T exclude(Key key)
    {
       if (_cached) {
-         for (int i = 0 ; i < _count ; i++) {
+         for (size_t i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key) {
                T item = _cache[i].item;
 
-               for (int j = i + 1 ; j < _count ; j++) {
+               for (size_t j = i + 1 ; j < _count ; j++) {
                   _cache[i] = _cache[j];
                }
 

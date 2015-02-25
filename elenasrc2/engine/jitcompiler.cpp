@@ -90,7 +90,7 @@ void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-length);
+   writer->writeDWord(-(int)length);
    writer->writeDWord(0);
 
    // object body

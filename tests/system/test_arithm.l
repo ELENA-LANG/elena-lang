@@ -7,10 +7,13 @@
 #define extensions.
 #define extensions'math.
 
+#define(const)emptyLiteralValue = system'emptyLiteralValue.
+
 #symbol XTester =
 {
     test    
     [
+        #var(type:literal)aLiteral := emptyLiteralValue.
     ]
 }.
 

@@ -544,8 +544,17 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    else if (symbolHints.exist(reference, okIntConstant)) {
       return ObjectInfo(okConstant, reference, intReference);
    }
+   else if (symbolHints.exist(reference, okLongConstant)) {
+      return ObjectInfo(okConstant, reference, longReference);
+   }
+   else if (symbolHints.exist(reference, okRealConstant)) {
+      return ObjectInfo(okConstant, reference, realReference);
+   }
    else if (symbolHints.exist(reference, okLiteralConstant)) {
       return ObjectInfo(okConstant, reference, literalReference);
+   }
+   else if (symbolHints.exist(reference, okCharConstant)) {
+      return ObjectInfo(okConstant, reference, charReference);
    }
    else if (checkState) {
       ClassInfo info;
@@ -5278,58 +5287,95 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
    CodeScope codeScope(&scope);
 
-//   DNode importBody = node.select(nsImport);
-//   // check if it is external code
-//   if (importBody == nsImport) {
-//      ReferenceNs reference(PACKAGE_MODULE, INLINE_MODULE);
-//      reference.combine(importBody.Terminal());
-//
-//      importCode(importBody, *scope.moduleScope, codeScope.tape, reference);
-//   }
-//   else {
-      // compile symbol body
-      ObjectInfo retVal = compileExpression(expression, codeScope, isSingleStatement(expression) ? HINT_ROOT : 0);
-      _writer.loadObject(*codeScope.tape, retVal);
+   // compile symbol body
+   ObjectInfo retVal = compileExpression(expression, codeScope, isSingleStatement(expression) ? HINT_ROOT : 0);
+   _writer.loadObject(*codeScope.tape, retVal);
 
       // create constant if required
-      if (scope.constant && (retVal.kind == okIntConstant || retVal.kind == okLiteralConstant)) {
+
+      //   okLiteralConstant,              // param - reference 
+      //   okCharConstant,                 // param - reference
+      //   okIntConstant,                  // param - reference 
+      //   okLongConstant,                 // param - reference 
+      //   okRealConstant,                 // param - reference 
+
+
+   if (scope.constant) {
+      if (retVal.kind == okIntConstant) {
          _Module* module = scope.moduleScope->module;
-
          MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-         if (retVal.kind == okIntConstant) {
-            int value = StringHelper::strToInt(module->resolveConstant(retVal.param));
 
-            dataWriter.writeDWord(value);
+         int value = StringHelper::strToInt(module->resolveConstant(retVal.param));
 
-            dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, -4);
+         dataWriter.writeDWord(value);
 
-            scope.moduleScope->defineIntConstant(scope.reference);
-         }
-         else if (retVal.kind == okLiteralConstant) {
-            const wchar16_t* value = module->resolveConstant(retVal.param);
+         dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, -4);
 
-            dataWriter.writeWideLiteral(value, getlength(value) + 1);
-
-            dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, -4);
-
-            scope.moduleScope->defineLiteralConstant(scope.reference);
-         }
+         scope.moduleScope->defineIntConstant(scope.reference);
       }
+      else if (retVal.kind == okLongConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      if (scope.typeRef != 0) {
-         bool mismatch = false;
-         compileTypecast(codeScope, retVal, scope.typeRef, mismatch, 0);
-         if (mismatch)
-            scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
+         long value = StringHelper::strToLongLong(module->resolveConstant(retVal.param) + 1, 10);
 
-         SymbolExpressionInfo info;
-         info.expressionTypeRef = scope.typeRef;
+         dataWriter.write(&value, 8);
 
-         // save class meta data
-         MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-         info.save(&metaWriter);
+         dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, -4);
+
+         scope.moduleScope->defineLongConstant(scope.reference);
       }
-   //}
+      else if (retVal.kind == okRealConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+         double value = StringHelper::strToDouble(module->resolveConstant(retVal.param));
+
+         dataWriter.write(&value, 8);
+
+         dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, -4);
+
+         scope.moduleScope->defineRealConstant(scope.reference);
+      }
+      else if (retVal.kind == okLiteralConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+         const wchar16_t* value = module->resolveConstant(retVal.param);
+
+         dataWriter.writeWideLiteral(value, getlength(value) + 1);
+
+         dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, -4);
+
+         scope.moduleScope->defineLiteralConstant(scope.reference);
+      }
+      else if (retVal.kind == okCharConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+         const wchar16_t* value = module->resolveConstant(retVal.param);
+
+         dataWriter.writeWideLiteral(value, 2);
+
+         dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, -4);
+
+         scope.moduleScope->defineCharConstant(scope.reference);
+      }
+   }
+
+   if (scope.typeRef != 0) {
+      bool mismatch = false;
+      compileTypecast(codeScope, retVal, scope.typeRef, mismatch, 0);
+      if (mismatch)
+         scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
+
+      SymbolExpressionInfo info;
+      info.expressionTypeRef = scope.typeRef;
+
+      // save class meta data
+      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+      info.save(&metaWriter);
+   }
 
    if (isStatic) {
       // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol

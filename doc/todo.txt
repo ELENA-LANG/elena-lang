@@ -21,34 +21,14 @@ v  - vm script
 Currently:
 ------
               xdev - generic development                                                      
-                       * operator redesign : \ alt send, || - or
-
-                       * get rid of bitwise operators ; how could we implement elementary bitwise / bool operation in this case
-
+                       * forward class declaration with a type (should be later verified)
                        
-
-                       * and, or, xor, add, subtract, divide, multiply, getAt, setAt generic messages or appropriate operators (+, /, *, -, @, @:=)
-                         can be replaced with inline code for known data types (or arrays)
-
-                       * it should be possible to convert int constant to int / short / byte / long ; literal constant to
-                         char / literal in run time, 
-                         
-                       * elenart : implement basic reflection functions
-                       
-                       * constructor / method resend should be done without opening a new frame
-
-                       * make possible to create private type
-
                        * IntNumber.add&long$ is not stack safe : the possible solution - does not allow any operation with the strong type until the wrapping
                          class is declared, the object can only be passed to another object - in normal case boxing operation should be called - if the size
                          is not declared raise the error                         
-                         
-                       * forward class declaration with a type (should be later verified)
-
+                       
                        * When boxed operation with embedable structure is executed -> the object change will be lost -> warn then the object
                          was boxed                         
-
-                       * variable should always have assign expression??
 
                        * warn if stack allocated object is boxed
 
@@ -56,22 +36,9 @@ Currently:
 
                        * in the following code:
                          int : anIndex = self find &index:anIndex. - anIndex does not have a type
-                       
-                       * it should be possible to provide the type for symbol / symbol constants
-
-                       * use directly constants declared in another modules
 
                        * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
 
-                       * dot syntax: 
-
-                         dot can be ommited if the nested expression contains only one expression ; in that case it will be compiled as lazy
-                         expression if it is function (eval[0]), or as return expression if it is part of ?-! operator / nested function;
-
-                         the problem is that if user write control do :[ console writeLine:"" ] - will raise an error                         
-
-                       * warn if ^ operator is used inside nested action - that it is not allowed / will only exit the current nested code??
-                       
                        * do ^ operation should be allowed in nested action?
                        * probably only one nested expression can be allowed without dot
 
@@ -80,9 +47,7 @@ Currently:
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
 
                        * constructor may return constant objects as well (see min / max)
-
-                       * boolean invert operator (and, or, ...)??
-
+                       
                        
 <=================> 
                                               
@@ -132,6 +97,12 @@ week1:
                        * show built-in variable $subject
                      
               xdev - general implementation
+                       * make possible to create private type
+
+                       * elenart : implement basic reflection functions
+                       
+                       * constructor / method resend should be done without opening a new frame
+
                        * in the following expression - aTarget::aVerb int:self - typecast should be implemented
 
                        * message/subject should be constant which is boxed when it is required ??
@@ -194,6 +165,8 @@ week1:
                        * compile anagram with mt
 
               xdev - byte code optimization                               
+                       * and, or, xor, add, subtract, divide, multiply, getAt, setAt appropriate operators (+, /, *, -, @, @:=, ||, &&, ^^)
+                         can be replaced with inline code for known data types (or arrays)
                        * stack allocated objects should be boxed directly (without ifHeap check)
                        * compiler option : switch off jump optimization
                        * compiler option : switch off direct calls
@@ -652,6 +625,9 @@ week1:
                        * critical bug with dynamic signature : signature class should validate strong types - signature code should have
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
                          signature
+
+              xdev - general implementation
+                       * think over forward typed declaration verification
 
               idev - script engine
                        * build-in script into IDE

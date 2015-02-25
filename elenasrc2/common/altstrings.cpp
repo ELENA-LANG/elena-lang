@@ -294,7 +294,7 @@ bool StringHelper :: copy(char* dest, const wchar_t* sour, size_t& length)
 
 wchar_t* StringHelper :: clone(const wchar_t* s)
 {
-   return wcsdup(s);
+   return _wcsdup(s);
 }
 
 void StringHelper :: append(wchar_t* dest, const wchar_t* sour, size_t length)
@@ -326,12 +326,12 @@ bool StringHelper :: append(char* dest, const wchar_t* sour, size_t length)
 
 wchar_t* StringHelper :: lower(wchar_t* s)
 {
-   return wcslwr(s);
+   return _wcslwr(s);
 }
 
 wchar_t* StringHelper :: upper(wchar_t* s)
 {
-   return wcsupr(s);
+   return _wcsupr(s);
 }
 
 bool StringHelper :: compare(const wchar_t* s1, const wchar_t* s2)
@@ -472,7 +472,7 @@ wchar_t StringHelper :: lower(wchar_t ch)
    s[0] = ch;
    s[1] = 0;
 
-   wcslwr(s);
+   _wcslwr(s);
    return s[0];
 }
 
@@ -1045,17 +1045,17 @@ void StringHelper :: copy(char* dest, const char* sour, int length)
 
 char* StringHelper :: lower(char* s)
 {
-   return strlwr(s);
+   return _strlwr(s);
 }
 
 char* StringHelper :: upper(char* s)
 {
-   return strupr(s);
+   return _strupr(s);
 }
 
 char* StringHelper :: clone(const char* s)
 {
-   return strdup(s);
+   return _strdup(s);
 }
 
 void StringHelper :: append(char* dest, const char* sour, int length)

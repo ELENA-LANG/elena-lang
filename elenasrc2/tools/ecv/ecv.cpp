@@ -361,7 +361,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       command.append(_T(' '));
    }
 
-   int tabbing = code == bcNop ? 24 : 31;
+   size_t tabbing = code == bcNop ? 24 : 31;
    while (getlength(command) < tabbing) {
       command.append(_T(' '));
    }
@@ -547,7 +547,7 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
       row++;
       if (row == pageSize) {
          wprintf(_T("Press any key to continue..."));
-         fgetchar();
+         _fgetchar();
          wprintf(_T("\n"));
 
          row = 0;
@@ -703,7 +703,7 @@ void listClassMethods(_Module* module, const wchar_t* className, int pageSize)
       row++;
       if (row == pageSize) {
          wprintf(_T("Press any key to continue..."));
-         fgetchar();
+         _fgetchar();
          wprintf(_T("\n"));
 
          row = 0;
@@ -752,7 +752,7 @@ void listClasses(_Module* module, int pageSize)
          row++;
          if (row == pageSize) {
             wprintf(_T("Press any key to continue..."));
-            fgetchar();
+            _fgetchar();
             wprintf(_T("\n"));
 
             row = 0;
