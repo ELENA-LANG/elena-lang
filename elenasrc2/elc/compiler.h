@@ -16,9 +16,9 @@
 namespace _ELENA_
 {
 
-//// Compiler optimization flags
-////const int optDirectConstant = 0x00000001;
-////const int optJumps          = 0x00000002;
+// Compiler optimization flags
+//const int optDirectConstant = 0x00000001;
+//const int optJumps          = 0x00000002;
 
 // --- Compiler class ---
 class Compiler
@@ -115,7 +115,7 @@ protected:
 
       // default namespaces
       List<const wchar16_t*> defaultNs;
-      ForwardMap             forwards;
+      ForwardMap             forwards;       // forward declarations
 
       // symbol hints
       Map<ref_t, ObjectKind> symbolHints;
@@ -125,7 +125,7 @@ protected:
       ExtensionMap           extensions;
 
       // type hints
-      ForwardMap             typeForwards;
+      ForwardMap             types;
       SubjectMap             typeHints;
 
       // cached references
@@ -157,13 +157,6 @@ protected:
 
       ObjectInfo mapReferenceInfo(const wchar16_t* reference, bool existing = false);
 
-//      ref_t mapConstantReference(const char* name)
-//      {
-//         ConstantIdentifier wsName(name);
-//
-//         return module->mapReference(wsName);
-//      }
-
       bool defineForward(const wchar16_t* forward, const wchar16_t* referenceName, bool constant)
       {
          ObjectInfo info = mapReferenceInfo(referenceName, false);
@@ -191,16 +184,10 @@ protected:
                defineConstantSymbol(info.param);
             }
             else defineConstantSymbol(info.param);
-         }            
+         }
 
          return forwards.add(forward, info.param, true);
       }
-//      bool defineForward(const wchar16_t* forward, const char* referenceName, bool constant)
-//      {
-//         IdentifierString wsReferenceName(referenceName);
-//
-//         return defineForward(forward, wsReferenceName, constant);
-//      }
 
       void compileForwardHints(DNode hints, bool& constant);
 
@@ -308,9 +295,7 @@ protected:
 
       int getClassFlags(ref_t reference);
 
-      void init(_Module* module, _Module* debugModule);
-
-      ModuleScope(Project* project, const tchar_t* sourcePath, Unresolveds* forwardsUnresolved);
+      ModuleScope(Project* project, const tchar_t* sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
 
    // - Scope -
@@ -380,7 +365,6 @@ protected:
    struct ClassScope : public SourceScope
    {
       ClassInfo info;
-      ref_t     extensionTypeRef;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -395,21 +379,11 @@ protected:
          else return Scope::getScope(level);
       }
 
-      void saveHeader()
-      {
-         // save class meta data
-         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
-         info.save(&metaWriter, true);
-      }
-
-      void save(ByteCodeWriter& writer)
+      void save()
       {
          // save class meta data
          MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
          info.save(&metaWriter);
-
-         // create byte code sections
-         writer.compile(tape, moduleScope->module, moduleScope->debugModule, moduleScope->sourcePathRef);
       }
 
       ClassScope(ModuleScope* parent, ref_t reference);
@@ -441,8 +415,6 @@ protected:
    {
       ref_t     message;
       LocalMap  parameters;
-////      bool      withCustomVerb;
-      //int       mode;               // used for optimization
       int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool      withOpenArg;
@@ -532,20 +504,6 @@ protected:
          else return parent->getScope(level);
       }
 
-//      ref_t getClassType()
-//      {
-//         MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
-//
-//         return methodScope->getClassType();
-//      }
-//
-////      //bool testMode(MethodScope::Mode mode)
-////      //{
-////      //   MethodScope* scope = (MethodScope*)getScope(slMethod);
-////
-////      //   return scope ? scope->testMode(mode) : false;
-////      //}
-
       int getMessageID()
       {
          MethodScope* scope = (MethodScope*)getScope(slMethod);
@@ -578,14 +536,13 @@ protected:
       {
          ClassScope* scope = (ClassScope*)getScope(slClass);
 
-         return scope ? scope->extensionTypeRef : 0;
+         return scope ? scope->info.extensionTypeRef : 0;
       }
 
       void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(MethodScope* parent, CodeType type);
       CodeScope(CodeScope* parent);
    };
 
@@ -620,14 +577,6 @@ protected:
          }
          else return Scope::getScope(level);
       }
-
-//      void mapOuterField(const wchar16_t* name, ObjectInfo object)
-//      {
-//         int offset = info.fields.Count();
-//
-//         info.fields.add(name, offset);
-//         outers.add(name, Outer(offset, object));
-//      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -717,7 +666,7 @@ protected:
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
-   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object);
+   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
 
    bool overridePrimitiveAssigning(CodeScope& scope, ref_t targetType, ObjectInfo object, ref_t& message);
@@ -738,8 +687,6 @@ protected:
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-   ObjectInfo compileGetProperty(DNode member, CodeScope& scope, int mode, ref_t vmtReference);
-   ObjectInfo compileGetProperty(DNode member, CodeScope& scope, int mode);
 
    void compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count);
 
@@ -750,7 +697,6 @@ protected:
    ObjectInfo compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t message, int paramCount, int& mode, size_t& spaceToRelease);
    ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease);
 
-////   ObjectInfo compileReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
@@ -802,6 +748,9 @@ protected:
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol);
 
+   void declareSingletonClass(DNode member, ClassScope& scope);
+   void compileSingletonClass(DNode member, ClassScope& scope);
+
    void compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function);
    void compileImportMethod(DNode node, CodeScope& scope, ref_t message, const wchar16_t* function, int mode);
 
@@ -816,20 +765,23 @@ protected:
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(DNode node, InlineClassScope& scope, DNode argNode);
-//   void compileLazyExpression(DNode node, InlineClassScope& scope);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);
 
    void compileFieldDeclarations(DNode& member, ClassScope& scope);
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
+   void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
+   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
    void compileForward(DNode node, ModuleScope& scope, DNode hints);
    void compileType(DNode& member, ModuleScope& scope, DNode hints);
 
-   void compileDeclarations(DNode& member, ModuleScope& scope);
+   void compileDeclarations(DNode member, ModuleScope& scope);
+   void compileImplementations(DNode member, ModuleScope& scope);
    void compileIncludeSection(DNode& node, ModuleScope& scope);
 
    virtual void compileModule(DNode node, ModuleScope& scope);
@@ -838,8 +790,6 @@ protected:
 
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
-
-   void createModuleInfo(ModuleScope& scope, const tchar_t* path, bool withDebugInfo, Map<const wchar16_t*, ModuleInfo>& modules);
 
 public:
 //   void setOptFlag(int flag)

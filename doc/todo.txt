@@ -21,16 +21,19 @@ v  - vm script
 Currently:
 ------
               xdev - generic development                                                      
-                       * forward class declaration with a type (should be later verified)
-                       
-                       * IntNumber.add&long$ is not stack safe : the possible solution - does not allow any operation with the strong type until the wrapping
-                         class is declared, the object can only be passed to another object - in normal case boxing operation should be called - if the size
-                         is not declared raise the error                         
-                       
-                       * When boxed operation with embedable structure is executed -> the object change will be lost -> warn then the object
-                         was boxed                         
+                       * compiler redesign : compile the module file in two passes, at first declare classes / methods,
+                         at second implement methods ; review Compiler code, some refactoring
 
-                       * warn if stack allocated object is boxed
+                       * make sure limited and sealed hints work correctly (cannot be inherited and no new methods are allowed) ; check if
+                         no duplicate methods / constructores are allowed
+                         
+                       * check if generic handlers work correctly
+
+                       * check structure array boxing
+
+                       * resend without % ??
+                       
+                       * private / protected / internal methods
 
                        * constant symbols should be sealed / closed ?
 
@@ -38,11 +41,6 @@ Currently:
                          int : anIndex = self find &index:anIndex. - anIndex does not have a type
 
                        * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
-
-                       * do ^ operation should be allowed in nested action?
-                       * probably only one nested expression can be allowed without dot
-
-                       * check if the class constructor really exists before direct call
 
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
 
@@ -147,7 +145,7 @@ week1:
                        * boxing : object saving should be done only if the object was boxed
                        * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
                          one for single constant #10 and another for several constant or literal + constant - #10#13)
-                         
+                       * check if the class constructor really exists before direct call
                        
               xdev - multithreading       
                        * implement lock / unlock
@@ -329,6 +327,8 @@ week2:
                        * Should stream protocol support reset, clone methods?
                                                                                                                              
               arev - lib30 review
+                       * review extensions package warnings, try to get rid of most of them
+
                        * mathOp.mod -- fix implemention for real number
                            #method mod : anOperand
                            [

@@ -119,7 +119,7 @@
     #method read &index:anIndex &out'short:aValue
         => system'internal'sa_readword.
 
-    #method clone = ShortArray new &length:($self length) &shortaray:$self.
+    #method clone = ShortArray new &length:($self length) &shortarray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb shortarray:$self.
     
@@ -171,7 +171,7 @@
     #method read &index:anIndex &out'int:anInt
         => system'internal'ns_readdword.
 
-    #method clone = IntArray new &length:($self length) &intaray:$self.
+    #method clone = IntArray new &length:($self length) &intarray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb intarray:$self.
     
@@ -215,7 +215,7 @@
     #method read &index:anIndex &out'char:aValue
         => system'internal'sa_readword.
 
-    #method clone = CharArray new &length:($self length) &chararay:$self.
+    #method clone = CharArray new &length:($self length) &chararray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb chararray:$self.
     
@@ -347,9 +347,9 @@
         ^ IntNumber new &int:aLength.
     ]
 
-    #method enumerator = system'LiteralEnumerator new &literal:$self.
+    #method enumerator = LiteralEnumerator new &literal:$self.
     
-    #method iterator = system'LiteralIterator new &literal:$self.
+    #method iterator = LiteralIterator new &literal:$self.
     
     #method cast:aVerb &to:aTarget = aTarget::aVerb literal:$self.
     
@@ -569,7 +569,7 @@
         #var(type:int)aLength2 := anArray length.
         //anArray read &out'length:aLength2.
         
-        #var aRetVal := Array new &length:(aLength1 + aLength2).
+        #var(type:array)aRetVal := Array new &length:(aLength1 + aLength2).
 
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength1) ?
@@ -602,9 +602,9 @@
         ^ IntNumber new &int:aLength.
     ]
 
-    #method enumerator = system'ArrayEnumerator new &array:$self.
+    #method enumerator = ArrayEnumerator new &array:$self.
 
-    #method iterator = system'ArrayIterator new &array:$self.
+    #method iterator = ArrayIterator new &array:$self.
 
     #method cast : aVerb &to:aTarget = aTarget::aVerb array:$self.
     

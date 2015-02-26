@@ -343,13 +343,13 @@
         
         self readLine:aBuffer.
         
-        #var aParams := aBuffer ::literalOp split &char:#32.
+        #var(type:array) aParams := aBuffer ::literalOp split &char:#32.
         
         #var(type:int)aLength := Arguments length.
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength) ?
         [
-            convertor save:(aParams @ anIndex) &to:(Arguments @ anIndex).
+            convertor save:(aParams getAt &index:anIndex) &to:(Arguments @ anIndex).
             
             anIndex := anIndex + 1.
         ].

@@ -8,7 +8,11 @@
 ******************************************************************************
 
 [ELENA]
+[!] binary incompatible due to changes in the compiler code
 [*] operator redesign : \ - alternative message call, || - or operator
+
+[ELC]
+[*] two passes compiling: at first declare, at second - implement
 
 ******************************************************************************
                     What's New in 1.9.18 (pre release)

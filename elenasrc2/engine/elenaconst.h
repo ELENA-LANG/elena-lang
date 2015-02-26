@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0004
+   #define ENGINE_MINOR_VERSION     0x0005
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -313,9 +313,9 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.04"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.04"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!8.04"          // the language version
+   #define ELENA_SIGNITURE          "ELENA.8.05"       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.05"    // the ELENAVM client
+   #define MODULE_SIGNATURE         "EN!8.05"          // the language version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.2"
 
   // --- ELENA core module names ---
@@ -485,13 +485,6 @@ namespace _ELENA_
    #define PARAMS_FORWARD           "'$params" 
    #define BOOL_FORWARD             "'$bool" 
    #define SUBJ_FORWARD             "'$sign" 
-
-//   //#define NOMETHOD_EXCEPTION_CLASS "system'MethodNotFoundException"          
-//   //#define TAPE_CLASS               "system'dynamic'Tape"            // the tape
-//   //#define TAPECONTROL_CLASS        "system'dynamic'tapeControl"     // the tape helper
-//   //#define SYMBOL_CLASS             "system'dynamic'Symbol"          // the special role class
-//   //#define STRUCT_CLASS             "system'dynamic'Struct"     
-//   //#define WRAP_CLASS               "system'dynamic'Wrap"
 
    #define STARTUP_CLASS            "'program"
 

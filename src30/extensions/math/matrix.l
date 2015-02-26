@@ -57,10 +57,10 @@
     #method enumerator => the2DArray.
     
     #method getAt &index:i &index:j
-        = the2DArray getAt &index:i getAt &index:j.
+        = the2DArray getAt &index:i array getAt &index:j.
     
     #method setAt &index:i &index:j &value:aValue
-        = the2DArray getAt &index:i setAt &index:j &object:aValue.
+        = the2DArray getAt &index:i array setAt &index:j &object:aValue.
     
     #method add : anObject
         = $self add &matrix:(anObject matrix).

@@ -41,7 +41,7 @@
         [
             #var j := randomGenerator eval:max.
             
-            self::indexableOp exchange:i:j.
+            self::indexableOp exchange &index:i &index:(j int).
             
             i := i + 1.
         ].

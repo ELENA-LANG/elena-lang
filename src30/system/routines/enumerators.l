@@ -15,7 +15,7 @@
         #var aTemp := anArray getAt &index:anIndex1.
         
         anArray setAt &index:anIndex1 &object:(anArray getAt &index:anIndex2).
-        self setAt &index:anIndex2 &object:aTemp.
+        anArray setAt &index:anIndex2 &object:aTemp.
     ]
 
     #method deepClone
@@ -152,10 +152,10 @@
 #class(extension:literal)literalOp
 {
     #method indexOf &literal:aLiteral
-        = self indexOf &index:0 &literal:aLiteral.
+        = self literal indexOf &index:0 &literal:aLiteral.
 
     #method indexOf &char:aChar
-        = self indexOf &index:0 &char:aChar.
+        = self literal indexOf &index:0 &char:aChar.
 
     #method(type:literal) Substring &index:anIndex
     [
@@ -368,7 +368,7 @@
         ^ aLength == 0.
     ]
 
-    #method split &char:aChar
+    #method(type:array) split &char:aChar
     [
         #var(type:literal)aLiteral := self literal.        
         #var aList := List new.
@@ -466,7 +466,11 @@
     ]
 
     #method Subarray &index:anIndex &length:aLength
-        = Array new &length:aLength set &every: (&index:i) [ self@(anIndex + i) ].
+    [
+        #var(type:iterator) it := self iterator.
+        
+        ^ Array new &length:aLength set &every: (&index:i) [ it write &index:(anIndex + i) get ].
+    ]
 
     #method sort : aCondition
     [
@@ -560,7 +564,7 @@
         
         #var(type:int)aLength := aLiteral length.        
         
-        (aLength < aWidth)
+        (aLength < aWidthInt)
             ? [
                 #var(type:int)aLen := aWidthInt - aLength.
                 #var(type:int)aLeftLen := aLen / 2.

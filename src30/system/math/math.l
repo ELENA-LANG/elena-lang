@@ -17,11 +17,9 @@
     
     #method mod : anOperand
     [
-        #var(type:byte)n := self byte.        
+        #var retVal := self byte / anOperand * anOperand.
         
-        #var r := n / anOperand * anOperand.
-        
-        ^ n - r.
+        ^ retVal cast:%convertor &to:byteConvertor.
     ]    
                 
     #method is &odd
@@ -58,9 +56,9 @@
     
     #method mod : anOperand
     [
-        #var(type:short)n := self short.
+        #var retVal := self short / anOperand * anOperand.
         
-        ^ n - (n / anOperand * anOperand).
+        ^ retVal cast:%convertor &to:shortConvertor.
     ]
                 
     #method is &odd
@@ -103,18 +101,25 @@
 
 #class(extension:int) intOp
 {
-    #method absolute
+    #method(type:int) absolute
     [
         #var(type:int)n := self int.
         
-        ^ (n < 0) ? [ -1 * n ] ! [ n ].
+        (n < 0)
+            ? [ n := n * -1. ].
+        
+        ^ IntNumber new &int:n.
     ]
     
-    #method mod : anOperand
+    #method(type:int) mod : anOperand
     [
-        #var(type:int)n := self int.
+        #var(type:int)x := self int.
+        #var(type:int)y := anOperand int.
         
-        ^ n - (n / anOperand * anOperand).
+        #var(type:int)z := x / y.
+        z := z * y.
+        
+        ^ IntNumber new &int:(x - z).
     ]
                 
     #method is &odd
@@ -160,15 +165,22 @@
     #method absolute
     [
         #var(type:long)n := self long.
-        
-        ^ (n < 0l) ? [ -1l * n ] ! [ n ].
+
+        (n < 0l)
+            ? [ n := n * -1l. ].
+                
+        ^ LongNumber new &long:n.
     ]
     
     #method mod : anOperand
     [
-        #var(type:long)n := self long.
+        #var(type:long)x := self long.
+        #var(type:long)y := anOperand long.
         
-        ^ n - (n / anOperand * anOperand).
+        #var(type:long)z := x / y.
+        z := z * y.
+        
+        ^ LongNumber new &long:(x - z).
     ]
                 
     #method is &odd

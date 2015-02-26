@@ -96,13 +96,19 @@
         
         ^ 0 == s indexOf &index:0 &literal:ss.
     ]
-        
+
     ending : anS &with:aSubS
     [
-        #var(type:literal)s := anS literal.
-        #var(type:literal)ss := aSubS literal.
+        #var(type:literal)s1 := anS literal.
+        #var(type:literal)s2 := aSubS literal.
         
-        ^ (s length - ss length) == s indexOf &index:0 &literal:ss.
+        #var(type:int)l1 := s1 length.
+        #var(type:int)l2 := s2 length.
+        
+        #var(type:int)n := s1 indexOf &index:0 &literal:s2.
+        
+        
+        ^ (l1 - l2) == n.
     ]
                 
     contain : aSubS &in:anS

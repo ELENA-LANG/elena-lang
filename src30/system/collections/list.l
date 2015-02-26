@@ -186,9 +186,6 @@
     #method getAt : anIndex
         = $self getAt &index:(anIndex int).
 
-    #method getAt &index:anIndex
-        = $self getItemAt &index:anIndex get.
-
     #method getItemAt &index:anIndex
     [
         #var(type:int)aCurrentIndex := anIndex.
@@ -205,6 +202,9 @@
         
         ^ anItem.
     ]
+
+    #method getAt &index:anIndex
+        = $self getItemAt &index:anIndex get.
 
     #method append : anObject => theState.
 

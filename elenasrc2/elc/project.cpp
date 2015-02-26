@@ -277,20 +277,13 @@ _Module* Project :: loadModule(const wchar16_t* package, bool silentMode)
    else return module;
 }
 
-_Module* Project :: createModule(const tchar_t* sourcePath)
+_Module* Project::createModule(const wchar16_t* name)
 {
-   Path modulePath;
-   modulePath.copyPath(sourcePath);
-
-   // build module namespace
-   ReferenceNs name(StrSetting(opNamespace));
-   name.pathToName(modulePath);
-
    LoadResult result = lrNotFound;
    _Module* module = _loader.createModule(name, result);
 
    if (result != lrSuccessful && result != lrDuplicate) {
-      raiseError(getLoadError(result), sourcePath);
+      raiseError(getLoadError(lrCannotCreate), name);
 
       return NULL;
    }

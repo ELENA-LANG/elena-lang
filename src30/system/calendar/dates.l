@@ -45,7 +45,7 @@
         aRetVal := theValue.
     ]
 
-    #method long = theValue.
+    #method long = LongNumber new &long:theValue.
 
     #method timespan = $self.
             
@@ -189,7 +189,7 @@
     #constructor new &year:aYear &month:aMonth &day:aDay
         <= %new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
   
-    #method long = theValue.
+    #method long = LongNumber new &long:(theValue).
 
     #method read &out'long : aRetVal
     [
@@ -319,8 +319,8 @@
 
     #method add &months:Months
     [
-        #var aMonths:= Months::intOp mod:12.
-        #var Years := Months / 12.
+        #var(type:int) aMonths:= Months::intOp mod:12.
+        #var(type:int) Years := Months / 12.
         
         ($self month + aMonths > 12)
             ? [ Years := Years + 1. aMonths := 12 - ($self month + aMonths). ].

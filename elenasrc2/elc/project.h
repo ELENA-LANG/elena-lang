@@ -207,7 +207,7 @@ public:
       else return false;
    }
 
-   virtual _Module* createModule(const tchar_t* sourcePath);
+   virtual _Module* createModule(const wchar16_t* name);
    virtual _Module* createDebugModule(const wchar16_t* name);
 
    virtual void saveModule(_Module* module, const tchar_t* extension);

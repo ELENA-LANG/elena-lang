@@ -1,8 +1,5 @@
 // --- true ---
 
-#define(const)true = system'true.
-#define(const)false = system'false.
-
 #class(limited) BaseBoolValue
 {
     #method then : aTrueAction = nil.

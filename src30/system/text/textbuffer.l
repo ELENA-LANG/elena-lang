@@ -36,7 +36,7 @@
         theLength write &int:aLength.
     ]
 
-    #method chararray = theBuffer chararray.
+    #method chararray = theBuffer.
 
     #method literal
     [

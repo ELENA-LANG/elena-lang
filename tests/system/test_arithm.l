@@ -7,13 +7,20 @@
 #define extensions.
 #define extensions'math.
 
-#define(const)emptyLiteralValue = system'emptyLiteralValue.
+#class $ConsoleWriter
+{
+    #field(type:handle) theHandle.
 
+    #constructor new &handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+}
+    
 #symbol XTester =
 {
     test    
     [
-        #var(type:literal)aLiteral := emptyLiteralValue.
     ]
 }.
 
@@ -356,7 +363,7 @@
 
 #symbol RealTest =
 [
-    console write:"(2 + 3 * 4) is " writeLine:(2.0r +  3.0r * 4.0r).
+    console write:"(2 + 3 * 4) is " writeLine:(2.0r + 3.0r * 4.0r).
     console write:"(10/3) is " writeLine:(10.0r / 3.0r).
     
     #var n := Real new write:1.0r.

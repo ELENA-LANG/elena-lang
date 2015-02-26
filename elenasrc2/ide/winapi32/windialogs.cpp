@@ -54,7 +54,7 @@ bool FileDialog :: openFiles(_ELENA_::List<wchar_t*>& files)
    if (::GetOpenFileName(&_struct)) {
       if (_ELENA_::emptystr(_fileName + _ELENA_::getlength(_fileName) + 1)) {
          // !! always case insensitive?
-         files.add(wcslwr(wcsdup(_fileName)));
+         files.add(_wcslwr(_wcsdup(_fileName)));
       }
       else {
          _ELENA_::Path path;
@@ -65,7 +65,7 @@ bool FileDialog :: openFiles(_ELENA_::List<wchar_t*>& files)
             path.combine(p);
 
             // !! always case insensitive?
-            files.add(wcslwr(wcsdup(path)));
+            files.add(_wcslwr(_wcsdup(path)));
 
             p += _ELENA_::getlength(p) + 1;
          }
@@ -81,7 +81,7 @@ const wchar_t* FileDialog :: openFile()
 
    if (::GetOpenFileName(&_struct)) {
       // !! always case insensitive?
-      wcslwr(_fileName);
+      _wcslwr(_fileName);
 
       return _fileName;
    }

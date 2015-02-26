@@ -34,7 +34,7 @@ enum ObjectKind
    okSignatureConstant,
    okMessageConstant,
 
-   okSymbol,                       // param - reference
+   okSymbol,                       // param - reference, extraparam - type reference
 //   okSymbolReference,              // param - reference
    okRole,
    okConstantRole,                 // param - role reference

@@ -1,46 +1,5 @@
 // === basic data classes ===
 
-// --- literalConvertor ---
-
-#symbol literalConvertor =
-{
-    #method(type:literal) convert &char:aValue
-        => system'internal'ws_copychar.
-    
-    #method(type:literal) convert &int:aNumber
-        => system'internal'ws_copyint.
-
-    #method(type:literal) convert &short:aNumber
-        => system'internal'ws_copyint.
-
-    #method(type:literal) convert &byte:aNumber
-        => system'internal'ws_copyint.
-
-    #method(type:literal) convert &long:aNumber
-        => system'internal'ws_copylong.
-
-    #method(type:literal) convert &int:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
-
-    #method(type:literal) convert &short:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
-
-    #method(type:literal) convert &byte:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
-
-    #method(type:literal) convert &long:aNumber &index:aRadix
-        => system'internal'ws_copylong_radix.
-
-    #method(type:literal) convert &real:aNumber
-        => system'internal'ws_copyreal.
-        
-    #method(type:literal) convert : anObject
-        = anObject literal.
-        
-    #method(type:literal) convert &literal:aLiteral
-        = aLiteral.
-}.
-
 // --- BaseValue ---
 
 #class BaseValue
@@ -162,13 +121,13 @@
 
     #method byte = $self.
 
-    #method short = ShortNumber new &byte:$self short.
+    #method short = ShortNumber new &byte:$self.
 
-    #method int = IntNumber new &byte:$self int.
+    #method int = IntNumber new &byte:$self.
 
-    #method long = LongNumber new &byte:$self long.
+    #method long = LongNumber new &byte:$self.
 
-    #method real = RealNumber new &byte:$self real.
+    #method real = RealNumber new &byte:$self.
 
     #method(type:bool) equal &byte:anOperand
         => system'internal'int_equal.
@@ -180,25 +139,25 @@
         => system'internal'int_equal.
         
     #method(type:bool) less &short:anOperand
-        = ShortNumber new &byte:$self less &short:anOperand bool.
+        = ShortNumber new &byte:$self less &short:anOperand.
 
     #method(type:bool) equal &int:anOperand
         => system'internal'int_equal.
         
     #method(type:bool) less &int:anOperand
-        = IntNumber new &byte:$self less &int:anOperand bool.
+        = IntNumber new &byte:$self less &int:anOperand.
 
     #method(type:bool) equal &long:anOperand
-        = LongNumber new &byte:$self equal &long:anOperand bool.
+        = LongNumber new &byte:$self equal &long:anOperand.
         
     #method(type:bool) less &long:anOperand
-        = LongNumber new &byte:$self less &long:anOperand bool.
+        = LongNumber new &byte:$self less &long:anOperand.
 
     #method(type:bool) equal &real:anOperand
-        = RealNumber new &byte:$self equal &real:anOperand bool.
+        = RealNumber new &byte:$self equal &real:anOperand.
         
     #method(type:bool) less &real:anOperand
-        = RealNumber new &byte:$self less &real:anOperand bool.
+        = RealNumber new &byte:$self less &real:anOperand.
 
     #method(type:byte) add &byte:anOperand
         => system'internal'byte_add.
@@ -336,15 +295,15 @@
     #constructor new &short:anOperand
         => system'internal'int_copy.
 
-    #method byte = system'byteConvertor convert &short:$self byte.
+    #method byte = byteConvertor convert &short:$self.
                 
     #method short = $self.
     
-    #method int = IntNumber new &short:$self int.
+    #method int = IntNumber new &short:$self.
     
-    #method long = LongNumber new &short:$self long.
+    #method long = LongNumber new &short:$self.
     
-    #method real = RealNumber new &short:$self real.
+    #method real = RealNumber new &short:$self.
     
     #method(type:bool) equal &int:anOperand 
         => system'internal'int_equal.
@@ -365,16 +324,16 @@
         => system'internal'int_less.
     
     #method(type:bool) equal &long:anOperand 
-        = LongNumber new &short:$self equal &long:anOperand bool.
+        = LongNumber new &short:$self equal &long:anOperand.
         
     #method(type:bool) less &long:anOperand
-        = LongNumber new &short:$self less &long:anOperand bool.
+        = LongNumber new &short:$self less &long:anOperand.
     
     #method(type:bool) equal &real:anOperand 
-        = RealNumber new &short:$self equal &real:anOperand bool.
+        = RealNumber new &short:$self equal &real:anOperand.
         
     #method(type:bool) less &real:anOperand
-        = RealNumber new &short:$self less &real:anOperand bool.
+        = RealNumber new &short:$self less &real:anOperand.
 
     #method(type:short) add &short:anOperand
         => system'internal'short_add.
@@ -389,16 +348,16 @@
         => system'internal'short_div.
 
     #method add &byte:anOperand
-        = $self add &short:(ShortNumber new &byte:anOperand short).
+        = $self add &short:(ShortNumber new &byte:anOperand).
 
     #method subtract &byte:anOperand
-        = $self subtract &short:(ShortNumber new &byte:anOperand short).
+        = $self subtract &short:(ShortNumber new &byte:anOperand).
 
     #method multiply &byte:anOperand
-        = $self multiply &short:(ShortNumber new &byte:anOperand short).
+        = $self multiply &short:(ShortNumber new &byte:anOperand).
 
     #method divide &byte:anOperand
-        = $self divide &short:(ShortNumber new &byte:anOperand short).
+        = $self divide &short:(ShortNumber new &byte:anOperand).
 
     #method add &int:anOperand
         = IntNumber new &short:$self add &int:anOperand.
@@ -514,13 +473,13 @@
 
     #method int = $self.
     
-    #method short = system'shortConvertor convert &int:$self short.
+    #method short = shortConvertor convert &int:$self.
     
-    #method byte = system'byteConvertor convert &int:$self byte.    
+    #method byte = byteConvertor convert &int:$self.
 
-    #method long = LongNumber new &int:$self long.
+    #method long = LongNumber new &int:$self.
 
-    #method real = RealNumber new &int:$self real.
+    #method real = RealNumber new &int:$self.
 
     #method(type:bool) equal &int:anOperand 
         => system'internal'int_equal.
@@ -690,15 +649,15 @@
     #constructor new &byte:anOperand 
         => system'internal'long_copyint.
         
-    #method int = system'intConvertor convert &long:$self int.
+    #method int = intConvertor convert &long:$self.
     
-    #method short = system'shortConvertor convert &long:$self short.
+    #method short = shortConvertor convert &long:$self.
     
-    #method byte = system'byteConvertor convert &long:$self byte.
+    #method byte = byteConvertor convert &long:$self.
 
     #method long = $self.
 
-    #method real = RealNumber new &long:$self real.
+    #method real = RealNumber new &long:$self.
 
     #method(type:bool) equal &long:anOperand
         => system'internal'long_equal.
@@ -1100,27 +1059,27 @@
         = theValue < anOperand.
                 
     #method(type:int) add &int:anOperand
-        = theValue + anOperand.
+        = IntNumber new &int:(theValue + anOperand).
     
     #method(type:int) subtract &int:anOperand
-        = theValue - anOperand.
+        = IntNumber new &int:(theValue - anOperand).
     
     #method(type:int) multiply &int:anOperand
-        = theValue * anOperand.
+        = IntNumber new &int:(theValue * anOperand).
     
     #method(type:int) divide &int:anOperand
-        = theValue + anOperand.
+        = IntNumber new &int:(theValue + anOperand).
         
     #method(type:int) and &int:anOperand
-        = theValue && anOperand.
+        = IntNumber new &int:(theValue && anOperand).
         
     #method(type:int) or &int:anOperand
-        => system'internal'int_or.
+        = IntNumber new &int:(theValue || anOperand).
         
     #method(type:int) xor &int:anOperand
-        = theValue ^^ anOperand.                            
+        = IntNumber new &int:(theValue ^^ anOperand).
 
-    #method value = theValue.
+    #method value = IntNumber new &int:theValue.
 
     #method literal = literalConvertor convert &int:theValue.
 
@@ -1287,27 +1246,27 @@
         = $self less &long:(LongNumber new &int:anOperand).
         
     #method(type:long) add &long:anOperand
-        = theValue + anOperand.
+        = LongNumber new &long:(theValue + anOperand).
     
     #method(type:long) subtract &long:anOperand
-        = theValue - anOperand.
+        = LongNumber new &long:(theValue - anOperand).
     
     #method(type:long) multiply &long:anOperand
-        = theValue * anOperand.
+        = LongNumber new &long:(theValue * anOperand).
     
     #method(type:long) divide &long:anOperand
-        = theValue + anOperand.
+        = LongNumber new &long:(theValue + anOperand).
         
     #method(type:long) and &long:anOperand
-        = theValue && anOperand.
+        = LongNumber new &long:(theValue && anOperand).
         
     #method(type:long) or &long:anOperand
-        => system'internal'long_or.
+        = LongNumber new &long:(theValue || anOperand).
         
     #method(type:long) xor &long:anOperand
-        = theValue ^^ anOperand.
+        = LongNumber new &long:(theValue ^^ anOperand).
 
-    #method value <= %long.
+    #method value = LongNumber new &long:theValue.
 
     #method literal = literalConvertor convert &long:theValue.
 
@@ -1492,18 +1451,18 @@
         = theValue < anOperand.
         
     #method add &real:anOperand
-        = theValue + anOperand.
+        = RealNumber new &real:(theValue + anOperand).
     
     #method subtract &real:anOperand
-        = theValue - anOperand.
+        = RealNumber new &real:(theValue - anOperand).
     
     #method multiply &real:anOperand
-        = theValue * anOperand.
+        = RealNumber new &real:(theValue * anOperand).
     
     #method divide &real:anOperand
-        = theValue / anOperand.
+        = RealNumber new &real:(theValue / anOperand).
 
-    #method value <= %real.
+    #method value = RealNumber new &real:theValue.
 
     #method literal = literalConvertor convert &real:theValue.
 
@@ -1530,7 +1489,7 @@
 
     #method char = $self.
 
-    #method int = intConvertor convert &char:$self int.
+    #method int = intConvertor convert &char:$self.
     
     #method equal &char:anOperand 
         => system'internal'int_equal.
@@ -1544,7 +1503,7 @@
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &char:$self.
 
-    #method literal = system'LiteralValue new &length:1 &char:$self literal.
+    #method literal = literalConvertor convert &char:$self.
 }
 
 // === Basic Factory symbols ==
@@ -1625,7 +1584,7 @@
         => system'internal'byte_copystr.
         
     #method(type:byte) convert &byte:anInt
-        = anInt.
+        = ByteNumber new &byte:(anInt).
         
     #method(type:byte) convert &char:aValue
     [
@@ -1691,7 +1650,7 @@
         => system'internal'word_copystr.
         
     #method(type:short) convert &short:anInt
-        = anInt.
+        = ShortNumber new &short:anInt.
         
     #method(type:short) convert &byte:aValue
     [
@@ -1748,7 +1707,7 @@
         => system'internal'char_saveint.
         
     #method(type:char)convert &char:aChar
-        = aChar.
+        = CharValue new &char:aChar.
   
     #method(type:char) convert &literal:aLiteral
     [
@@ -1845,7 +1804,7 @@
     ]
                                     
     #method(type:int) convert &int:anInt
-        = anInt.
+        = IntNumber new &int:anInt.
 }.
 
 #symbol longConvertor =
@@ -1887,7 +1846,7 @@
     ]
     
     convert &long:aLong
-        = aLong.
+        = LongNumber new &long:aLong.
 }.
 
 #symbol realConvertor =
@@ -1906,7 +1865,7 @@
     ]
 
     convert &real:aReal
-        = aReal.
+        = RealNumber new &real:aReal.
         
     convert &int:anInt
         = RealNumber new &int:anInt.
@@ -1919,6 +1878,47 @@
         
     convert &short:aValue
         = RealNumber new &short:aValue.
+}.
+
+// --- literalConvertor ---
+
+#symbol literalConvertor =
+{
+    #method(type:literal) convert &char:aValue
+        => system'internal'ws_copychar.
+    
+    #method(type:literal) convert &int:aNumber
+        => system'internal'ws_copyint.
+
+    #method(type:literal) convert &short:aNumber
+        => system'internal'ws_copyint.
+
+    #method(type:literal) convert &byte:aNumber
+        => system'internal'ws_copyint.
+
+    #method(type:literal) convert &long:aNumber
+        => system'internal'ws_copylong.
+
+    #method(type:literal) convert &int:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+    #method(type:literal) convert &short:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+    #method(type:literal) convert &byte:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+    #method(type:literal) convert &long:aNumber &index:aRadix
+        => system'internal'ws_copylong_radix.
+
+    #method(type:literal) convert &real:aNumber
+        => system'internal'ws_copyreal.
+        
+    #method(type:literal) convert : anObject
+        = anObject literal.
+        
+    #method(type:literal) convert &literal:aLiteral
+        = aLiteral.
 }.
 
 // === Typecaster ==

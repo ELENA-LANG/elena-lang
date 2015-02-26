@@ -14,7 +14,7 @@
 
 // --- ConsoleWriter ---
 
-#class $ConsoleWriter
+#class(struct:embeddable) $ConsoleWriter
 {
     #field(type:handle) theHandle.
 
@@ -45,7 +45,7 @@
 
 // --- ConsoleReader ---
 
-#class(sealed) $ConsoleReader
+#class(sealed,struct:embeddable) $ConsoleReader
 {
     #field(type:handle) theHandle.
     

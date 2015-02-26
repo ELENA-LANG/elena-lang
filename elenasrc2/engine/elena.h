@@ -446,6 +446,7 @@ struct ClassInfo
    ClassHeader   header;
    size_t        size;           // Object size
    ref_t         classClassRef;  // reference to class class VMT
+   ref_t         extensionTypeRef;
    MethodMap     methods;
    FieldMap      fields;
    FieldTypeMap  fieldTypes;
@@ -455,8 +456,9 @@ struct ClassInfo
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
+      writer->writeDWord(classClassRef);
+      writer->writeDWord(extensionTypeRef);
       if (!headerAndSizeOnly) {
-         writer->writeDWord(classClassRef);
          methods.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
@@ -469,6 +471,7 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       classClassRef = reader->getDWord();
+      extensionTypeRef = reader->getDWord();
       if (!headerOnly) {
          methods.read(reader);
          fields.read(reader);
@@ -481,6 +484,7 @@ struct ClassInfo
       : fields(-1), methods(0)
    {
       header.flags = 0;
+      classClassRef = extensionTypeRef = 0;
    }
 };
 
