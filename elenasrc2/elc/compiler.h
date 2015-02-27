@@ -746,9 +746,9 @@ protected:
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol);
+   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
-   void declareSingletonClass(DNode member, ClassScope& scope);
+   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
    void compileSingletonClass(DNode member, ClassScope& scope);
 
    void compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function);

@@ -3431,7 +3431,7 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 
    DNode member = node.firstChild();
 
-   declareVMT(member, scope, nsMethod);
+   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
 
    // nested class is sealed if it has no parent
    if (!test(scope.info.header.flags, elClosed))
@@ -4748,10 +4748,6 @@ void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t mes
 
 void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 {
-   // check if the method is inhreited and update vmt size accordingly
-   if(scope.include() && test(scope.getClassFlag(), elClosed))
-      scope.raiseError(errClosedParent, node.Terminal());
-
    int paramCount = getParamCount(scope.message);
 
    CodeScope codeScope(&scope);
@@ -5145,7 +5141,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    classClassScope.info.header.flags |= elStateless;
 
    DNode member = node.firstChild();
-   declareVMT(member, classClassScope, nsConstructor);
+   declareVMT(member, classClassScope, nsConstructor, false);
 
    // add virtual constructor
    MethodScope defaultScope(&classClassScope);
@@ -5192,7 +5188,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    _writer.compile(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol)
+void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
@@ -5220,9 +5216,9 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
          if (scope.info.methods.exist(methodScope.message, true))
             scope.raiseError(errDuplicatedMethod, member.Terminal());
 
-         if (!scope.info.methods.exist(methodScope.message)) {
-            scope.info.methods.add(methodScope.message, false);
-         }
+         if (methodScope.include() && closed)
+            scope.raiseError(errClosedParent, member.Terminal());
+         
       }
       member = member.nextNode();
    }
@@ -5240,10 +5236,10 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    int flagCopy = scope.info.header.flags;
    scope.compileClassHints(hints);
-
+ 
    compileFieldDeclarations(member, scope);
 
-   declareVMT(member, scope, nsMethod);
+   declareVMT(member, scope, nsMethod, test(flagCopy, elClosed));
 
    // if it is a role
    if (test(scope.info.header.flags, elRole)) {
@@ -5281,7 +5277,7 @@ void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler::declareSingletonClass(DNode node, ClassScope& scope)
+void Compiler::declareSingletonClass(DNode node, ClassScope& scope, bool closed)
 {
    // nested class is sealed if it has no parent
    if (!test(scope.info.header.flags, elClosed))
@@ -5290,7 +5286,7 @@ void Compiler::declareSingletonClass(DNode node, ClassScope& scope)
    // singleton is always stateless
    scope.info.header.flags |= elStateless;
 
-   declareVMT(node.firstChild(), scope, nsMethod);
+   declareVMT(node.firstChild(), scope, nsMethod, closed);
 
    scope.save();
 }
@@ -5329,7 +5325,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          if (classScope.info.fields.Count() > 0 || testany(classScope.info.header.flags, elStructureRole | elDynamicRole))
             scope.raiseError(errInvalidSymbolExpr, expression.Terminal());
 
-         declareSingletonClass(classNode.firstChild(), classScope);
+         declareSingletonClass(classNode.firstChild(), classScope, test(classScope.info.header.flags, elClosed));
       }
       // if it is normal nested class
       else {         
@@ -5337,7 +5333,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          
          compileParentDeclaration(DNode(), classScope);
 
-         declareSingletonClass(classNode.firstChild(), classScope);
+         declareSingletonClass(classNode.firstChild(), classScope, false);
       }
    }
 

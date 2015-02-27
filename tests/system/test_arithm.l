@@ -7,16 +7,6 @@
 #define extensions.
 #define extensions'math.
 
-#class $ConsoleWriter
-{
-    #field(type:handle) theHandle.
-
-    #constructor new &handle:aHandle
-    [
-        theHandle := aHandle.
-    ]
-}
-    
 #symbol XTester =
 {
     test    

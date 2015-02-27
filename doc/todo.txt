@@ -20,15 +20,7 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - generic development                                                      
-                       * compiler redesign : compile the module file in two passes, at first declare classes / methods,
-                         at second implement methods ; review Compiler code, some refactoring
-
-                       * make sure limited and sealed hints work correctly (cannot be inherited and no new methods are allowed) ; check if
-                         no duplicate methods / constructores are allowed
-                         
-                       * check if generic handlers work correctly
-
+              xdev - generic development  
                        * check structure array boxing
 
                        * resend without % ??
@@ -95,6 +87,8 @@ week1:
                        * show built-in variable $subject
                      
               xdev - general implementation
+                       * make boxing warning turned off by default (level 4), introduce options to turn on / off warnings
+
                        * make possible to create private type
 
                        * elenart : implement basic reflection functions
