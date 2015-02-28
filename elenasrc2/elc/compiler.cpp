@@ -818,7 +818,7 @@ void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t ref
          if (!refModule || refModule == module) {
             forwardsUnresolved->add(Unresolved(sourcePath, reference | mask, module, terminal.Row(), terminal.Col()));
          }
-         else raiseWarning(wrnUnresovableLink, terminal);
+         else raiseWarning(1, wrnUnresovableLink, terminal);
       }
    }
 }
@@ -828,9 +828,9 @@ void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo termi
    project->raiseError(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
 }
 
-void Compiler::ModuleScope :: raiseWarning(const char* message, TerminalInfo terminal)
+void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
 {
-   project->raiseWarning(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+   project->raiseWarning(level, message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
 }
 
 void Compiler::ModuleScope :: compileForwardHints(DNode hints, bool& constant)
@@ -841,7 +841,7 @@ void Compiler::ModuleScope :: compileForwardHints(DNode hints, bool& constant)
       if (ConstantIdentifier::compare(hints.Terminal(), HINT_CONSTANT)) {
          constant = true;
       }
-      else raiseWarning(wrnUnknownHint, hints.Terminal());
+      else raiseWarning(1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -891,7 +891,7 @@ void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* ext
 
                typeExtensions->add(message, role_ref);
             }
-            else raiseWarning(wrnDuplicateExtension, terminal);
+            else raiseWarning(1, wrnDuplicateExtension, terminal);
          }
       }
    }
@@ -977,7 +977,7 @@ void Compiler::SymbolScope :: compileHints(DNode hints)
          if (typeRef == 0)
             raiseError(wrnInvalidHint, terminal);
       }
-      else raiseWarning(wrnUnknownHint, hints.Terminal());
+      else raiseWarning(1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -1115,7 +1115,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             }
             else raiseError(wrnInvalidHint, terminal);
          }
-         else raiseWarning(wrnUnknownHint, terminal);
+         else raiseWarning(1, wrnUnknownHint, terminal);
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
@@ -1132,7 +1132,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             }
             else raiseError(wrnInvalidHint, terminal);
          }
-         else raiseWarning(wrnUnknownHint, terminal);
+         else raiseWarning(1, wrnUnknownHint, terminal);
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
@@ -1163,7 +1163,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             }
             else raiseError(wrnInvalidHint, terminal);
          }
-         else raiseWarning(wrnUnknownHint, terminal);
+         else raiseWarning(1, wrnUnknownHint, terminal);
 
          info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
       }
@@ -1177,7 +1177,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       else if (ConstantIdentifier::compare(terminal, HINT_NONSTRUCTURE)) {
          info.header.flags |= elNonStructureRole;
       }
-      else raiseWarning(wrnUnknownHint, terminal);
+      else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1202,9 +1202,9 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
 
             size = moduleScope->defineTypeSize(type);
          }
-         else raiseWarning(wrnInvalidHint, terminal);
+         else raiseWarning(1, wrnInvalidHint, terminal);
       }
-      else raiseWarning(wrnUnknownHint, terminal);
+      else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1295,7 +1295,7 @@ int Compiler::MethodScope::compileHints(DNode hints)
          }
          else raiseError(wrnInvalidHint, terminal);
       }
-      else raiseWarning(wrnUnknownHint, terminal);
+      else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1392,9 +1392,9 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
 
             size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
          }
-         else raiseWarning(wrnUnknownHint, terminal);
+         else raiseWarning(1, wrnUnknownHint, terminal);
       }
-      else raiseWarning(wrnUnknownHint, terminal);
+      else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1490,9 +1490,6 @@ Compiler :: Compiler(StreamReader* syntax)
 {
    ByteCodeCompiler::loadVerbs(_verbs);
    ByteCodeCompiler::loadOperators(_operators);
-
-//   // default settings
-//   _optFlag = 0;
 }
 
 void Compiler :: loadRules(StreamReader* optimization)
@@ -1758,7 +1755,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       bool boxed = false;
       boxObject(scope, optionValue, boxed);
       if (boxed)
-         scope.raiseWarning(wrnBoxingCheck, option.firstChild().Terminal());
+         scope.raiseWarning(4, wrnBoxingCheck, option.firstChild().Terminal());
 
       _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
       _writer.pushObject(*scope.tape, switchValue);
@@ -1809,7 +1806,7 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
       _writer.saveObject(*scope.tape, object);
    }
    else if ((object.kind == okOuter)) {
-      scope.raiseWarning(wrnOuterAssignment, node.Terminal());
+      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
       _writer.saveObject(*scope.tape, object);
    }
    else if (object.kind == okUnknown) {
@@ -2210,7 +2207,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
    }
    else if (object.kind == okLocalAddress) {
       int size = scope.moduleScope->defineStructSize(object.extraparam);
-      if (size > 0) {
+      if (size != 0) {
          boxed = true;
 
          _writer.boxObject(*scope.tape, size, object.extraparam | mskVMTRef, true);
@@ -2221,7 +2218,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
    {
       ref_t classReference = 0;
       int size = scope.moduleScope->defineTypeSize(object.extraparam, classReference);
-      if (size > 0) {
+      if (size != 0) {
          boxed = true;
 
          _writer.boxObject(*scope.tape, size, classReference | mskVMTRef);
@@ -2293,7 +2290,7 @@ void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, Code
          bool boxed = false;
          boxObject(scope, param, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, arg.firstChild().Terminal());
+            scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().Terminal());
       }
 
       if (type_ref != 0) {
@@ -2301,7 +2298,7 @@ void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, Code
          bool mismatch = false;
          compileTypecast(scope, param, type_ref, mismatch, mode);
          if (mismatch)
-            scope.raiseWarning(wrnTypeMismatch, arg.FirstTerminal());
+            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
       }
 
       if (test(mode, HINT_DIRECT_ORDER)) {
@@ -2433,7 +2430,7 @@ void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int
          bool boxed = false;
          boxObject(scope, param, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, arg.firstChild().FirstTerminal());
+            scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
 
          _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
       }
@@ -2477,7 +2474,7 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
       bool boxed = false;
       boxObject(scope, param, boxed);
       if (boxed)
-         scope.raiseWarning(wrnBoxingCheck, arg.firstChild().Terminal());
+         scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().Terminal());
 
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
 
@@ -2516,7 +2513,7 @@ void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, i
             bool boxed = false;
             boxObject(scope, retVal, boxed);
             if (boxed)
-               scope.raiseWarning(wrnBoxingCheck, arg.FirstTerminal());
+               scope.raiseWarning(4, wrnBoxingCheck, arg.FirstTerminal());
 
             _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
 
@@ -2554,7 +2551,7 @@ void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, i
       bool boxed = false;
       boxObject(scope, param, boxed);
       if (boxed)
-         scope.raiseWarning(wrnBoxingCheck, arg.firstChild().FirstTerminal());
+         scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
 
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
 
@@ -2667,7 +2664,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
          bool boxed = false;
          boxObject(scope, object, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, node.FirstTerminal());
+            scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
       }
 
       _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
@@ -2681,7 +2678,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
       bool boxed = false;
       object = boxObject(scope, object, boxed);
       if (boxed)
-         scope.raiseWarning(wrnBoxingCheck, node.FirstTerminal());
+         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 
       _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 
@@ -2700,7 +2697,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
          bool boxed = false;
          boxObject(scope, object, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, node.FirstTerminal());
+            scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
       }
 
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
@@ -2949,7 +2946,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          bool boxed = false;
          object = boxObject(scope, object, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, node.Terminal());
+            scope.raiseWarning(4, wrnBoxingCheck, node.Terminal());
 
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
       }
@@ -2959,7 +2956,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          bool boxed = false;
          operand = boxObject(scope, operand, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, node.firstChild().Terminal());
+            scope.raiseWarning(4, wrnBoxingCheck, node.firstChild().Terminal());
 
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
       }
@@ -2969,7 +2966,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          bool boxed = false;
          operand2 = boxObject(scope, operand2, boxed);
          if (boxed)
-            scope.raiseWarning(wrnBoxingCheck, node.nextNode().firstChild().FirstTerminal());
+            scope.raiseWarning(4, wrnBoxingCheck, node.nextNode().firstChild().FirstTerminal());
 
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
       }
@@ -3107,11 +3104,11 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
             bool boxed = false;
             boxObject(scope, object, boxed);
             if (boxed)
-               scope.raiseWarning(wrnBoxingCheck, node.Terminal());
+               scope.raiseWarning(4, wrnBoxingCheck, node.Terminal());
 
             // if the class found and the message is not supported - warn the programmer and raise an exception
             if (classFound && method == tpUnknown) {
-               scope.raiseWarning(wrnUnknownMessage, node.FirstTerminal());
+               scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
             }
             _writer.callMethod(*scope.tape, 0, paramCount);
          }
@@ -3164,7 +3161,7 @@ ObjectInfo Compiler :: compileEvalMessage(DNode& node, CodeScope& scope, ObjectI
    bool boxed;
    boxObject(scope, object, boxed);
    if (boxed)
-      scope.raiseWarning(wrnBoxingCheck, node.FirstTerminal());
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 
    _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
 
@@ -3703,7 +3700,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    bool boxed = false;
    boxObject(scope, info, boxed);
    if (boxed)
-      scope.raiseWarning(wrnBoxingCheck, node.FirstTerminal());
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 
    // type cast object if required
    int verb, paramCount;
@@ -3720,7 +3717,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
       bool mismatch = false;
       compileTypecast(scope, info, subj, mismatch, 0);
       if (mismatch)
-         scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
+         scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
    }
 
    scope.freeSpace();
@@ -3867,7 +3864,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          bool mismatch = false;
          compileTypecast(scope, info, target.extraparam, mismatch, 0);
          if (mismatch)
-            scope.raiseWarning(wrnTypeMismatch, node.Terminal());
+            scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 
          // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
          if (target.kind == okField) {
@@ -3875,7 +3872,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
                bool boxed = false;
                info = boxObject(scope, info, boxed);
                if (boxed)
-                  scope.raiseWarning(wrnBoxingCheck, exprNode.FirstTerminal());
+                  scope.raiseWarning(4, wrnBoxingCheck, exprNode.FirstTerminal());
             }               
 
             compileAssignment(node, scope, target);
@@ -3893,12 +3890,12 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       bool boxed = false;
       info = boxObject(scope, info, boxed);
       if (boxed)
-         scope.raiseWarning(wrnBoxingCheck, assigning.firstChild().FirstTerminal());
+         scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
 
       bool mismatch = false;
       compileTypecast(scope, info, target.extraparam, mismatch, 0);
       if (mismatch)
-         scope.raiseWarning(wrnTypeMismatch, node.Terminal());
+         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 
       compileAssignment(node, scope, target);
    }
@@ -4217,7 +4214,7 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
          bool mismatch = false;
          compileTypecast(scope, info, type, mismatch, 0);
          if (mismatch)
-            scope.raiseWarning(wrnTypeMismatch, arg.FirstTerminal());
+            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
 
          _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, index));
          index++;
@@ -4630,7 +4627,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    bool boxed = false;
    boxObject(scope, target, boxed);
    if (boxed)
-      scope.raiseWarning(wrnBoxingCheck, node.FirstTerminal());      
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());      
 
    _writer.loadObject(*scope.tape, target);
 
@@ -4803,7 +4800,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
             bool mismatch = false;
             compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodTypes.get(scope.message), mismatch, 0);
             if (mismatch)
-               scope.raiseWarning(wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
+               scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
          }
       }
 
@@ -5455,7 +5452,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       bool mismatch = false;
       compileTypecast(codeScope, retVal, scope.typeRef, mismatch, 0);
       if (mismatch)
-         scope.raiseWarning(wrnTypeMismatch, node.FirstTerminal());
+         scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
    }
 
    if (isStatic) {
@@ -5481,14 +5478,14 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hints)
 {
    if (hints != nsNone)
-      scope.raiseWarning(wrnUnknownHint, hints.Terminal());
+      scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
 
    TerminalInfo ns = node.Terminal();
 
    // check if the module exists
    _Module* module = scope.project->loadModule(ns, true);
    if (!module)
-      scope.raiseWarning(wrnUnknownModule, ns);
+      scope.raiseWarning(1, wrnUnknownModule, ns);
 
    const wchar16_t* value = retrieve(scope.defaultNs.start(), ns, NULL);
    if (value == NULL) {
@@ -5535,7 +5532,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
 
          scope.saveType(typeRef, classRef, internalType);
       }
-      else scope.raiseWarning(wrnUnknownHint, hints.Terminal());
+      else scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -5688,7 +5685,7 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, Project& project)
       if (!validate(project, (*it).module, (*it).reference)) {
          const wchar16_t* refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
 
-         project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
+         project.raiseWarning(1, wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
       }
    }
 }

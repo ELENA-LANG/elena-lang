@@ -20,24 +20,59 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - generic development  
-                       * check structure array boxing
-
-                       * resend without % ??
-                       
-                       * private / protected / internal methods
-
-                       * constant symbols should be sealed / closed ?
-
+              xdev - general implementation
                        * in the following code:
                          int : anIndex = self find &index:anIndex. - anIndex does not have a type
 
-                       * the operation with a type inside its implementer : probably no need to raise a warning (see for example system'calendar'DateTime)
-
-                       * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
-
-                       * constructor may return constant objects as well (see min / max)
+                       * elenart : implement basic reflection functions
                        
+                       * constructor / method resend should be done without opening a new frame
+
+                       * in the following expression - aTarget::aVerb int:self - typecast should be implemented
+
+                       * message/subject should be constant which is boxed when it is required ??
+
+                       * e.g. extensions'text'ReaderEnumerator.next
+
+                         raise unnessessary typecasting warning for the following ending code:
+
+                          (nil equal:theLine)
+                              ? [  theReader close. ^ false. ]
+                              ! [ ^ true. ].
+                          (cannot predict that both branches return boolean value, so no need in an extra typecast)                          
+
+                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
+                       * constant array
+                       * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
+                         so the actualy read size should be reduced to match the valid group
+                       * every action code is a new class, is it possible to design it so no need to create a new class for every sub code?
+                         (e.g. reference to the symbol code, known problem : mixing outer field with code reference) 
+                       * loop should contain snop
+                       * external call: stack should be excluded only if the method is marked as threadsafe
+                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
+                       * it should be possible to turn off control virtualization, direct calls, optimization code, jumps
+                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
+                       * elenart, should support the similar functionality with elenavm (except script support)
+                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
+
+                       * implement long hexadecimal constant
+                       * opTemplate is used only for vm client, probably it should be replaced with a namespace used by a stand alone application
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
+                         recognition), instead of symbol reference?
+                       * probably we have to caching type wrapper, so no need to load every time                      
+                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well                       
+                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
+                       * try to avoid duplciate checks (for example check for methods / types)
+                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
+                         so boxing mechanism can be simplified
+                       * simplify primitive loop implementing
+                       * rename / refactor weval - misleading name
+                       * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
+                         not correctly programmed)
+                       * boxing : object saving should be done only if the object was boxed
+                       * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
+                         one for single constant #10 and another for several constant or literal + constant - #10#13)
                        
 <=================> 
                                               
@@ -86,61 +121,6 @@ week1:
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
                        * show built-in variable $subject
                      
-              xdev - general implementation
-                       * make boxing warning turned off by default (level 4), introduce options to turn on / off warnings
-
-                       * make possible to create private type
-
-                       * elenart : implement basic reflection functions
-                       
-                       * constructor / method resend should be done without opening a new frame
-
-                       * in the following expression - aTarget::aVerb int:self - typecast should be implemented
-
-                       * message/subject should be constant which is boxed when it is required ??
-
-                       * e.g. extensions'text'ReaderEnumerator.next
-
-                         raise unnessessary typecasting warning for the following ending code:
-
-                          (nil equal:theLine)
-                              ? [  theReader close. ^ false. ]
-                              ! [ ^ true. ].
-                          (cannot predict that both branches return boolean value, so no need in an extra typecast)                          
-
-                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
-                       * constant array
-                       * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
-                         so the actualy read size should be reduced to match the valid group
-                       * every action code is a new class, is it possible to design it so no need to create a new class for every sub code?
-                         (e.g. reference to the symbol code, known problem : mixing outer field with code reference) 
-                       * loop should contain snop
-                       * external call: stack should be excluded only if the method is marked as threadsafe
-                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
-                       * it should be possible to turn off control virtualization, direct calls, optimization code, jumps
-                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
-                       * elenart, should support the similar functionality with elenavm (except script support)
-                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
-                       * implement long hexadecimal constant
-                       * opTemplate is used only for vm client, probably it should be replaced with a namespace used by a stand alone application
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
-                         recognition), instead of symbol reference?
-                       * probably we have to caching type wrapper, so no need to load every time                      
-                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well                       
-                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
-                       * try to avoid duplciate checks (for example check for methods / types)
-                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
-                         so boxing mechanism can be simplified
-                       * simplify primitive loop implementing
-                       * rename / refactor weval - misleading name
-                       * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
-                         not correctly programmed)
-                       * boxing : object saving should be done only if the object was boxed
-                       * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
-                         one for single constant #10 and another for several constant or literal + constant - #10#13)
-                       * check if the class constructor really exists before direct call
-                       
               xdev - multithreading       
                        * implement lock / unlock
                        * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
@@ -608,7 +588,23 @@ week 4:
 1.9.20
 --------
 week1:
-              xdev - generic development                                                      
+              xdev - generic development  
+                       * system'Signature should qualify only generic message with one parameter, there should be flag to indicate if it is strong
+                         one or not ; if it is the strong one the object should implicitly send typecasting message to the parameter
+
+                       * if we use 0 instead of nil, it could allow us to return nil as typed variable, any operation with it will raise an
+                         exception???
+                         
+                       * declaring variable without assigning a value should be allowed only for stack allocated types , in all other cases we may have
+                         nil object referred by strong typed variable
+
+                       * private / protected / internal methods / internal type
+                       
+                       * constant symbols should be sealed / closed ?
+
+                       * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
+
+                       * constructor may return constant objects as well (see min / max)
                        * strong types may have reserved range, so special table will be created - pairing class reference with, or alternatively
                          strong type may be used as message id + subject mask (what about Linux in this case - rdata should be located in 4FFFFFFF range)
 
@@ -619,9 +615,6 @@ week1:
                        * critical bug with dynamic signature : signature class should validate strong types - signature code should have
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
                          signature
-
-              xdev - general implementation
-                       * think over forward typed declaration verification
 
               idev - script engine
                        * build-in script into IDE
@@ -1132,10 +1125,6 @@ stack:
 --------------------------
 Documentation
 --------------------------
-    - rewrite specification page
-
-
-
     - update script blog posts
     - new post: sun two numbers (using lx script) 
     - documentation: vm hook
@@ -1154,7 +1143,6 @@ Documentation
     - full language description
 
     - rewrite Getting started
-    - link to rosetta codein in the project web page / blog
 
     - blog post: object model: extended version
 

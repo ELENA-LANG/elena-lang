@@ -222,7 +222,7 @@ protected:
       }
 
       void raiseError(const char* message, TerminalInfo terminal);
-      void raiseWarning(const char* message, TerminalInfo terminal);
+      void raiseWarning(int level, const char* message, TerminalInfo terminal);
 
       bool checkReference(const wchar16_t* referenceName);
 
@@ -318,9 +318,9 @@ protected:
          moduleScope->raiseError(message, terminal);
       }
 
-      void raiseWarning(const char* message, TerminalInfo terminal)
+      void raiseWarning(int level, const char* message, TerminalInfo terminal)
       {
-         moduleScope->raiseWarning(message, terminal);
+         moduleScope->raiseWarning(level, message, terminal);
       }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier)
@@ -629,7 +629,6 @@ protected:
    MessageMap     _operators;                        // list of operators
 //   MessageMap       _obsolete;                       // list of obsolete messages
 
-//   // optimization flags
 //   int _optFlag;
 
    // optimization rules

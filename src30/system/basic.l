@@ -635,7 +635,7 @@
         => system'internal'long_max.
     
     #constructor new
-        <= %new &long:0l.
+        <= new &long:0l.
 
     #constructor new &long:anOperand 
         => system'internal'long_copy.

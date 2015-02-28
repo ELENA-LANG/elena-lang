@@ -91,6 +91,7 @@ class Project
 protected:
    bool            _hasWarning;
    int             _numberOfWarnings;
+   int             _warningMasks;
 
    LibraryManager  _loader;
    ProjectSettings _settings;
@@ -155,8 +156,8 @@ public:
    virtual void raiseError(const char* msg, const wchar16_t* value) = 0;
    virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path) = 0;
 
-   virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
-   virtual void raiseWarning(const char* msg, const tchar_t* path) = 0;
+   virtual void raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
+   virtual void raiseWarning(int level, const char* msg, const tchar_t* path) = 0;
 
 ////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, const tchar_t* configPath);
@@ -196,8 +197,11 @@ public:
 
    virtual int getTabSize() { return 4; }
 
-   bool indicateWarning()
+   bool indicateWarning(int level)
    {
+      if (!test(_warningMasks, level))
+         return false;
+
       _hasWarning = true;
 
       if (_numberOfWarnings > 0) {

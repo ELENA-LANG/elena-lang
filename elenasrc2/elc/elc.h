@@ -27,7 +27,7 @@
 #endif
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0005
+#define ELC_BUILD_NUMBER             0x0006
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
@@ -40,6 +40,12 @@
 #define ELC_PRM_WARNING             'w'
 #define ELC_W_UNRESOLVED            "wun"
 #define ELC_W_WEAKUNRESOLVED        "wwun"
+#define ELC_W_LEVEL1                "w1"
+#define ELC_W_LEVEL2                "w2"
+#define ELC_W_LEVEL4                "w4"
+#define ELC_W_LEVEL1_OFF            "w1-"
+#define ELC_W_LEVEL2_OFF            "w2-"
+#define ELC_W_LEVEL4_OFF            "w4-"
 #define ELC_PRM_EXTRA               'x'
 #define ELC_PRM_TABSIZE             "xtab"
 #define ELC_PRM_PROJECTPATH         "xpath"
@@ -127,8 +133,8 @@ public:
 
    virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path);
 
-   virtual void raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
-   virtual void raiseWarning(const char* msg, const tchar_t* path);
+   virtual void raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
+   virtual void raiseWarning(int level, const char* msg, const tchar_t* path);
 
    void addSource(const tchar_t* path);
 

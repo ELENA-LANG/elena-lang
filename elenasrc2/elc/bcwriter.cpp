@@ -770,15 +770,49 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.write(bcIfHeap, baCurrentLabel);
    }
 
-   tape.write(bcBCopyA);
-   tape.write(bcNewN, vmtReference | mskVMTRef, size);
-   tape.write(bcBSwap);
+   if (size == -4) {
+      tape.write(bcNLen);
+      tape.write(bcBCopyA);
+      tape.write(bcACopyR, vmtReference | mskVMTRef);
+      tape.write(bcNCreate);
+      tape.write(bcBSwap);
+      tape.write(bcNLen);
+      tape.write(bcECopyD);
+      tape.write(bcDCopy, 0);
+      tape.write(bcNSubCopy);
 
-   if (size >0 && size <= 4) {
-      tape.write(bcNLoad);
-      tape.write(bcNSave);
    }
-   else tape.write(bcCopy);
+   else if (size == -2) {
+      tape.write(bcWLen);
+      tape.write(bcBCopyA);
+      tape.write(bcACopyR, vmtReference | mskVMTRef);
+      tape.write(bcWCreate);
+      tape.write(bcBSwap);
+      tape.write(bcWLen);
+      tape.write(bcECopyD);
+      tape.write(bcDCopy, 0);
+      tape.write(bcWSubCopy);
+   }
+   else if (size == -1) {
+      tape.write(bcLen);
+      tape.write(bcBCopyA);
+      tape.write(bcACopyR, vmtReference | mskVMTRef);
+      tape.write(bcCreate);
+      tape.write(bcBSwap);
+      tape.write(bcLen);
+      tape.write(bcCopy);
+   }
+   else {
+      tape.write(bcBCopyA);
+      tape.write(bcNewN, vmtReference | mskVMTRef, size);
+      tape.write(bcBSwap);
+
+      if (size >0 && size <= 4) {
+         tape.write(bcNLoad);
+         tape.write(bcNSave);
+      }
+      else tape.write(bcCopy);
+   }
 
    tape.write(bcACopyB);
 

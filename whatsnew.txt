@@ -13,6 +13,7 @@
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement
+[+] -wX / -wX- options turning on / off warnings
 
 ******************************************************************************
                     What's New in 1.9.18 (pre release)
