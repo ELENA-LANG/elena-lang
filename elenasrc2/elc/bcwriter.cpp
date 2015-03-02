@@ -1007,11 +1007,9 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 
 void ByteCodeWriter :: typecast(CommandTape& tape)
 {
-   //  setverb  GET_MESSAGE_ID
    //  pusha
    //  acallvi  0
 
-   tape.write(bcSetVerb, encodeVerb(GET_MESSAGE_ID));
    tape.write(bcPushA);
    tape.write(bcACallVI, 0);
    tape.write(bcFreeStack, 1);

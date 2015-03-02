@@ -182,7 +182,7 @@
        ^ deter value.
     ]
 
-    #method cast : aVerb &to:aTarget = aTarget::aVerb matrix:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &matrix:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &matrix:$self.
             

@@ -26,6 +26,9 @@ Version 2.1.0
 - x86 native code: optimize with pentium pro commands
 - basic linux version (only console)
 - gcx: thread pools
+- long hexadecimal constant
+- options to turn off control virtualization, direct calls, optimization code, jumps
+- optimization : use frame only when it is necessary
 
 Version 2.2.0
 -------------

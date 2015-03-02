@@ -10,6 +10,7 @@
 [ELENA]
 [!] binary incompatible due to changes in the compiler code
 [*] operator redesign : \ - alternative message call, || - or operator
+[!] a strong type cannot be used as a custom verb 
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement

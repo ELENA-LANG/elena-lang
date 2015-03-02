@@ -20,60 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - general implementation
-                       * in the following code:
-                         int : anIndex = self find &index:anIndex. - anIndex does not have a type
+              xdev - byte code optimization                               
+                       * optimize output code: system'ShortNumber
+                       * review system for possible byte code optimization                       
+                       * review extensions for possible byte code optimization                       
+                       * review samples for possible byte code optimization                       
+                       * review rosetta samples for possible byte code optimization                       
+                       * review internal core_routines
 
-                       * elenart : implement basic reflection functions
-                       
-                       * constructor / method resend should be done without opening a new frame
-
-                       * in the following expression - aTarget::aVerb int:self - typecast should be implemented
-
-                       * message/subject should be constant which is boxed when it is required ??
-
-                       * e.g. extensions'text'ReaderEnumerator.next
-
-                         raise unnessessary typecasting warning for the following ending code:
-
-                          (nil equal:theLine)
-                              ? [  theReader close. ^ false. ]
-                              ! [ ^ true. ].
-                          (cannot predict that both branches return boolean value, so no need in an extra typecast)                          
-
-                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
-                       * constant array
-                       * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
-                         so the actualy read size should be reduced to match the valid group
-                       * every action code is a new class, is it possible to design it so no need to create a new class for every sub code?
-                         (e.g. reference to the symbol code, known problem : mixing outer field with code reference) 
-                       * loop should contain snop
-                       * external call: stack should be excluded only if the method is marked as threadsafe
-                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
-                       * it should be possible to turn off control virtualization, direct calls, optimization code, jumps
-                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
-                       * elenart, should support the similar functionality with elenavm (except script support)
-                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
-
-                       * implement long hexadecimal constant
-                       * opTemplate is used only for vm client, probably it should be replaced with a namespace used by a stand alone application
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
-                         recognition), instead of symbol reference?
-                       * probably we have to caching type wrapper, so no need to load every time                      
-                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well                       
-                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
-                       * try to avoid duplciate checks (for example check for methods / types)
-                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
-                         so boxing mechanism can be simplified
-                       * simplify primitive loop implementing
-                       * rename / refactor weval - misleading name
-                       * for type wrapper - should not be possible to return $self without boxing??? (because it may break the code if
-                         not correctly programmed)
-                       * boxing : object saving should be done only if the object was boxed
-                       * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
-                         one for single constant #10 and another for several constant or literal + constant - #10#13)
-                       
 <=================> 
                                               
 1.9.19
@@ -135,36 +89,6 @@ week1:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        * compile anagram with mt
-
-              xdev - byte code optimization                               
-                       * and, or, xor, add, subtract, divide, multiply, getAt, setAt appropriate operators (+, /, *, -, @, @:=, ||, &&, ^^)
-                         can be replaced with inline code for known data types (or arrays)
-                       * stack allocated objects should be boxed directly (without ifHeap check)
-                       * compiler option : switch off jump optimization
-                       * compiler option : switch off direct calls
-                       * hook: maybe offset should exclude call command size, so no need
-                         in adjucment
-                       * pi (3506) => ~2000 
-                       * review system test for possible byte code optimization                       
-                       * optimize type cast call (dispatch handler should be used) 
-                       * external call: maybe in normal case we pass the literal reference directly and for all other cases stack allocated
-                         byte array used?
-                       * simplify external call
-                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
-                         better to compare value ?? (if it is true / false constants for example)
-                       * if no calls / GC operation do not use stack frame excluding
-                       * if only method parameter is used, no need to use frame / self commands
-                       * $self operation should be called directly without using redirect handler ?? (see system'routines'EnumerableIndexer)                       
-                       * branching : if the result of the operation is known (e.g. it is predefined operation) - no need to typecast the result
-                       * Object.equal[1] - resend operation can be implemented without a new frame
-                       * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
-                       * can we implement #break statement which will not create a breakexception for every call?
-                       * optimize output code: system'object
-                       * optimize - operation with nil (==, !=)
-                       * optimize hook / unhook commands
-                       * should ret be followed with several nops?
-                       * x : p = p eval. and x : p = p eval:$self. should be optimized
-                       * operator == / != should support comparision with nil (direct implementation)
 
               idev - generic development                                          
                        * show the file encoding
@@ -589,6 +513,12 @@ week 4:
 --------
 week1:
               xdev - generic development  
+                       * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
+                         not, than the operation with self should be boxed?
+                       * probably we should not directly call any coreapi functions, all functionality be implemented as byte codes ?
+                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
+                       * every action code is a new class, is it possible to design it so no need to create a new class for every sub code?
+                         (e.g. reference to the symbol code, known problem : mixing outer field with code reference) 
                        * system'Signature should qualify only generic message with one parameter, there should be flag to indicate if it is strong
                          one or not ; if it is the strong one the object should implicitly send typecasting message to the parameter
 
@@ -616,9 +546,36 @@ week1:
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
                          signature
 
+              xdev - general implementation
+                       * elenart : implement basic reflection functions
+                       * constructor / method resend should be done without opening a new frame
+                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
+                         so boxing mechanism can be simplified
+                       * constant array
+                       * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
+                         so the actualy read size should be reduced to match the valid group
+                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
+                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
+                       * loop should contain snop
+                       * external call: stack should be excluded only if the method is marked as threadsafe
+                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
+                       * try to avoid duplciate checks (for example check for methods / types)
+                       * boxing : object saving should be done only if the object was boxed
+                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
+                       * probably we have to caching type wrapper, so no need to load every time                      
+                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well                       
+                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
+                       * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
+                         one for single constant #10 and another for several constant or literal + constant - #10#13)
+                       * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
+                       * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation
+
+              xdev - byte code optimization                               
+                       * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
+
               idev - script engine
                        * build-in script into IDE
-
+                       
               idev - usability
                        * class view - make possible to browse the class methods
 
@@ -667,6 +624,18 @@ week1:
                          code
 
               xdev - general implementation
+                       * message/subject should be constant which is boxed when it is required ??
+                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
+                         recognition), instead of symbol reference?
+                       * e.g. extensions'text'ReaderEnumerator.next
+
+                         raise unnessessary typecasting warning for the following ending code:
+
+                          (nil equal:theLine)
+                              ? [  theReader close. ^ false. ]
+                              ! [ ^ true. ].
+                          (cannot predict that both branches return boolean value, so no need in an extra typecast)                          
+
                        * warn if number of subjects / verbs are overflown
 
               xdev - stack allocated variable
@@ -677,6 +646,8 @@ week1:
                        * refactor / optimize script engine
 
               xdev - byte code optimization                               
+                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
+                         better to compare value ?? (if it is true / false constants for example)
                        * direct parameter allocation can be used for open argument list : e.g. OpenArgTester testParamsCopy &args:1:"a":3
                        * optimized switch statement implementation (e.g. ordered ??)                       
                        * optimize !=, <= and >= implementation
@@ -687,6 +658,8 @@ week1:
                          message should be changed and resend further
 
               xdev - native code optimization
+                       * optimize hook / unhook commands
+                       * should ret be followed with several nops?
                        * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
                        * review commands, try to optimize, reduce number of jumps / commands, make them parallel
                        * review commands : use conditional moving
@@ -694,6 +667,8 @@ week1:
                        * starts to use Pentium commands: we need to introduce the mode for
                          i686 (cmov is not supported for older CPU, so we have to have two
                          set of commands)
+                       * hook: maybe offset should exclude call command size, so no need
+                         in adjucment
                        
               xdev - script support
                        * should be possible to debug vm scripts

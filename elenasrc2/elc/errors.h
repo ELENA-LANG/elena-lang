@@ -64,6 +64,7 @@ namespace _ELENA_
    #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
    #define errNotSupportedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n" 
    #define errInvalidHint           "%s(%d:%d): error 147: Invalid hint '%s'\n"
+   #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
 //   #define errInternalError         "internal error 599"

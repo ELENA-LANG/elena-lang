@@ -2323,10 +2323,14 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
    DNode            arg = node.firstChild();
 
    if (verb_id == 0) {
-      scope.moduleScope->mapSubject(verb, signature);
+      size_t id = scope.moduleScope->mapSubject(verb, signature);
 
       // if followed by argument list - it is EVAL verb
       if (arg != nsNone) {
+         // HOT FIX : strong types cannot be used as a custom verb with a parameter
+         if (scope.moduleScope->typeHints.exist(id))
+            scope.raiseError(errStrongTypeNotAllowed, verb);
+
          verb_id = EVAL_MESSAGE_ID;
 
          first = false;
@@ -3675,7 +3679,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                   // call typecast method
                   mismatch = true;
 
-                  _writer.setMessage(*scope.tape, encodeMessage(type_ref, 0, 0));
+                  _writer.setMessage(*scope.tape, encodeMessage(type_ref, GET_MESSAGE_ID, 0));
                   _writer.typecast(*scope.tape);
 
                   return ObjectInfo(okAccumulator, 0, type_ref);
@@ -4785,7 +4789,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
 
       DNode body = node.select(nsSubCode);
-      // if method body is a return expression
+      // if method body is a returning expression
       if (body==nsNone) {
          compileCode(node, codeScope);
       }
@@ -4913,10 +4917,13 @@ void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, Class
    }
    else if (!test(classScope->info.header.flags, elDynamicRole)) {
       _writer.newObject(*codeScope.tape, classScope->info.fields.Count(), classScope->reference);
-      _writer.loadBase(*codeScope.tape, ObjectInfo(okAccumulator));
-      _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->nilReference));
-      _writer.initBase(*codeScope.tape, classScope->info.fields.Count());
-      _writer.loadObject(*codeScope.tape, ObjectInfo(okBase));
+      size_t fieldCount = classScope->info.fields.Count();
+      if (fieldCount > 0) {
+         _writer.loadBase(*codeScope.tape, ObjectInfo(okAccumulator));
+         _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->nilReference));
+         _writer.initBase(*codeScope.tape, fieldCount);
+         _writer.loadObject(*codeScope.tape, ObjectInfo(okBase));
+      }
    }
 
    _writer.exitMethod(*codeScope.tape, 0, 0, false);

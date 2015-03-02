@@ -77,7 +77,7 @@
         
     #method clone = ByteArray new &length:($self length) &bytearray:$self.
     
-    #method cast : aVerb &to:aTarget = aTarget::aVerb bytearray:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bytearray:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bytearray:$self.
 }
@@ -121,7 +121,7 @@
 
     #method clone = ShortArray new &length:($self length) &shortarray:$self.
     
-    #method cast : aVerb &to:aTarget = aTarget::aVerb shortarray:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &shortarray:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &shortarray:$self.
 }
@@ -173,7 +173,7 @@
 
     #method clone = IntArray new &length:($self length) &intarray:$self.
     
-    #method cast : aVerb &to:aTarget = aTarget::aVerb intarray:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &intarray:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &intarray:$self.    
 }
@@ -217,7 +217,7 @@
 
     #method clone = CharArray new &length:($self length) &chararray:$self.
     
-    #method cast : aVerb &to:aTarget = aTarget::aVerb chararray:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &chararray:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &chararray:$self.
         
@@ -351,7 +351,7 @@
     
     #method iterator = LiteralIterator new &literal:$self.
     
-    #method cast:aVerb &to:aTarget = aTarget::aVerb literal:$self.
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &literal:$self.
     
@@ -440,7 +440,7 @@
     
     #method clone = String new &literal:theValue.
                 
-    #method cast:aVerb &to:aTarget = aTarget::aVerb literal:theValue.
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:theValue.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &literal:theValue.
     
@@ -606,7 +606,7 @@
 
     #method iterator = ArrayIterator new &array:$self.
 
-    #method cast : aVerb &to:aTarget = aTarget::aVerb array:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &array:$self.
 

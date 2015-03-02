@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   1
+#define BUILD_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -254,6 +254,51 @@ void printLabel(IdentifierString& command, int labelPosition, List<int>& labels)
    command.appendInt(index);
 }
 
+void parseMessageConstant(IdentifierString& message, const wchar16_t* reference)
+{
+   // message constant: nverb&signature
+
+   int verbId = 0;
+   int signatureId = 0;
+
+   // read the param counter
+   int count = reference[0] - '0';
+
+   // skip the param counter
+   reference++;
+
+   int index = StringHelper::find(reference, '&');
+   //HOTFIX: for generic GET message we have to ignore ampresand
+   if (reference[index + 1] == 0)
+      index = -1;
+
+   if (index != -1) {
+      //HOTFIX: for GET message we have &&, so the second ampersand should be used
+      if (reference[index + 1] == 0 || reference[index + 1] == '&')
+         index++;
+
+      IdentifierString verb(reference, index);
+      const wchar16_t* signature = reference + index + 1;
+
+      // if it is a predefined verb
+      if (verb[0] == '#') {
+         verbId = verb[1] - 0x20;
+      }
+
+      message.append(retrieveKey(_verbs.start(), verbId, (const wchar16_t*)NULL));
+      message.append(signature);
+   }
+   else {
+      // if it is a predefined verb
+      if (reference[0] == '#') {
+         verbId = reference[1] - 0x20;
+
+         message.append(retrieveKey(_verbs.start(), verbId, (const wchar16_t*)NULL));
+      }
+      else message.append(reference);
+   }
+}
+
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
    bool literalConstant = false;
@@ -279,6 +324,12 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 
    if (emptystr(referenceName)) {
       command.append(_T("unknown"));
+   }
+   else if (mask == mskVerb) {
+      command.append(_T("verb:"));
+      IdentifierString message;
+      parseMessageConstant(message, referenceName);
+      command.append(message);
    }
    else {
       command.append(referenceName);
@@ -384,6 +435,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcJump:
       case bcHook:
       case bcIf:
+      case bcIfB:
       case bcElse:
       case bcIfHeap:
       case bcAddress:
