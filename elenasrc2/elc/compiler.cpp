@@ -4642,7 +4642,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
-void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope)
+void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 {
    ModuleScope* moduleScope = scope.moduleScope;
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
@@ -4676,10 +4676,20 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
       }
    }
    if (found) {
-      DNode dummy;
-      compileExtensionMessage(node, dummy, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantSymbol, classRef), HINT_KNOWN_CALL);
+      if (count != 0 && methodScope->parameters.Count() != 0) {
+         withFrame = true;
 
-      _writer.saveObject(*scope.tape, ObjectInfo(okThisParam, 1));
+         // new stack frame
+         // stack already contains $self value
+         _writer.newFrame(*scope.tape);
+         scope.level++;
+      }
+
+      DNode dummy;
+      if (withFrame) {
+         compileExtensionMessage(node, dummy, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantSymbol, classRef), HINT_KNOWN_CALL);
+      }
+      else compileExtensionMessage(node, dummy, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantSymbol, classRef), HINT_KNOWN_CALL);
    }
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }
@@ -4844,14 +4854,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
    bool withFrame = false;
    if (resendBody != nsNone) {
-      withFrame = true;
-
-      // new stack frame
-      // stack already contains $self value
-      _writer.newFrame(*codeScope.tape);
-      codeScope.level++;
-
-      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope);
+      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
    }
    // if no redirect statement - call virtual constructor implicitly
    else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
@@ -4868,7 +4871,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       // NOTE : import code already contains quit command, so do not call "endMethod"
       return;
    }
-   else if (node.firstChild() != nsNone) {
+   else if (body != nsNone) {
       if (!withFrame) {
          withFrame = true;
 
@@ -4877,6 +4880,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
          _writer.newFrame(*codeScope.tape);
          codeScope.level++;
       }
+      else _writer.saveObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
 
       declareParameterDebugInfo(scope, codeScope.tape, true, false);
 

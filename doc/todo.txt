@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               xdev - byte code optimization                               
-                       * optimize output code: system'ShortNumber
+                       * optimize output code: system'BaseBoolValue
                        * review system for possible byte code optimization                       
                        * review extensions for possible byte code optimization                       
                        * review samples for possible byte code optimization                       
@@ -288,6 +288,12 @@ week2:
                          nested class is dynamic as well
                        * ShortNumber.less&short - review current implementation, it may not work correctly with negative short values if
                          hiword == 0 (it is presumed that for negative word, hiword = -1, which is not always the case)
+                       * IntNumber.get&negative - better to use primitive operation (after "n := n - $self" expression will be resolved at compile time)
+                             #var(type:int)n := 0.
+                             n := n - $self.
+                             ^ IntNumber new &int:n.
+                       * Variable.{append | reduce | multiplyBy | divideInto} : nil == theValue - the result of the operation is known so
+                         no need to typecast
                        
               sdev - api doc
                        * describe protocol methods
@@ -548,7 +554,6 @@ week1:
 
               xdev - general implementation
                        * elenart : implement basic reflection functions
-                       * constructor / method resend should be done without opening a new frame
                        * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
                          so boxing mechanism can be simplified
                        * constant array
@@ -572,6 +577,7 @@ week1:
 
               xdev - byte code optimization                               
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
+                       * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
 
               idev - script engine
                        * build-in script into IDE

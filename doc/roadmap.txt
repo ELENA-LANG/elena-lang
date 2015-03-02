@@ -28,7 +28,7 @@ Version 2.1.0
 - gcx: thread pools
 - long hexadecimal constant
 - options to turn off control virtualization, direct calls, optimization code, jumps
-- optimization : use frame only when it is necessary
+- optimization : use frame only when it is necessary (especially in dispatch / resend operations)
 
 Version 2.2.0
 -------------

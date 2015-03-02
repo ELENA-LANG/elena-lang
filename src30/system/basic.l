@@ -615,7 +615,8 @@
     #method(type:int) not
         => system'internal'int_not.
 
-    #method negative = 0 - $self.
+    #method negative
+        = 0 - $self.
 
     #method clone = IntNumber new &int:$self.
     
@@ -807,13 +808,13 @@
 #class(sealed,floating:8) RealNumber :: BaseNumber
 {
     #constructor min
-        <= %new &real: -1.7976931348623157e+308r.
+        <= new &real: -1.7976931348623157e+308r.
     
     #constructor max
-        <= %new &real: 1.7976931348623157e+308r.
+        <= new &real: 1.7976931348623157e+308r.
     
     #constructor new
-        <= %new &real:0.0r.
+        <= new &real:0.0r.
 
     #constructor new &real:anOperand 
         => system'internal'long_copy.
