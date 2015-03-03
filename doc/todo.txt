@@ -20,14 +20,15 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - byte code optimization                               
-                       * optimize output code: system'BaseBoolValue
-                       * review system for possible byte code optimization                       
-                       * review extensions for possible byte code optimization                       
-                       * review samples for possible byte code optimization                       
-                       * review rosetta samples for possible byte code optimization                       
-                       * review internal core_routines
-
+              idev - debugger - watch
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * debug script
+                       * implement watch
+                       * show data variables (currently only int / short are displayed)
+                       * show output argument
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
+                       * show built-in variable $subject
+                     
 <=================> 
                                               
 1.9.19
@@ -53,7 +54,6 @@ week1:
                        * port elt to linux
                        
               idev - usability
-                       * step over does not always work  (instead turn into is used)
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
                        * error: more accurate error messages
@@ -63,18 +63,6 @@ week1:
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
                                               
-              idev - debugger - watch
-                       * show shortarray, bytearray, intarray
-                       * fix debugger to correctly show arrays
-                       * tune debugger, make possible to use step over / step into everywhere
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * debug script
-                       * implement watch
-                       * show data variables (currently only int / short are displayed)
-                       * show output argument
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                       * show built-in variable $subject
-                     
               xdev - multithreading       
                        * implement lock / unlock
                        * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
@@ -108,9 +96,11 @@ week2:
                        * support GUI mode
                        * support GUI application
 
-
+                       
               adev - lib30                                        
-                       * uncomment all tape_tester tests
+                       * intarray, shortarray, bytearray, chararray should getAt and setAt messages
+                       
+                       * fix StructTest
 
                        * Date : convert to utc and back
                        
@@ -225,6 +215,8 @@ week2:
                        * Should stream protocol support reset, clone methods?
                                                                                                                              
               arev - lib30 review
+                       * fix bytearray read / write operation with byte, char, int, long, real
+
                        * review extensions package warnings, try to get rid of most of them
 
                        * mathOp.mod -- fix implemention for real number
@@ -551,8 +543,13 @@ week1:
                        * critical bug with dynamic signature : signature class should validate strong types - signature code should have
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
                          signature
-
+                         
               xdev - general implementation
+                       * probably for arithmetic and referring operation classes should be checked rather than debug flags (i.e. it is not possible
+                         to tell apart chararray from shortarray or getAt / setAt will be executed directly for any dynamic array) 
+                       * impelement array getat & setat operator
+                       * it should be possible to implement primitive operation with shortarray, chararray and bytearray
+                       * variable: no need to store nil if the variable statement has initializing part
                        * elenart : implement basic reflection functions
                        * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
                          so boxing mechanism can be simplified
@@ -573,11 +570,19 @@ week1:
                        * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
                          one for single constant #10 and another for several constant or literal + constant - #10#13)
                        * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
-                       * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation
+                       * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation                       
 
               xdev - byte code optimization                               
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
                        * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
+
+                       * optimize output code: system'BaseFunction2
+                       * review system for possible byte code optimization                       
+                       * review extensions for possible byte code optimization                       
+                       * review samples for possible byte code optimization                       
+                       * review rosetta samples for possible byte code optimization                       
+                       * review internal core_routines
+                       * optimize primitive operator implementations
 
               idev - script engine
                        * build-in script into IDE

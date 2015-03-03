@@ -1342,10 +1342,10 @@ end
 procedure bs_writebyte
 
   len
+  ecopyd
   bcopya
   aloadsi 2
   nload
-  addn 3
   notless labErr
   nload
   ecopyd
@@ -2477,11 +2477,11 @@ procedure ns_writedword
 
   nlen
   bcopya
+  ecopyd
   aloadsi 2
   nload
   addn 1
   notless labErr
-  nload
   ecopyd
   aloadsi 3
   nload

@@ -153,6 +153,11 @@ void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, const wchar
    tape.write(bdShortArrayLocal, (ref_t)localName, level);
 }
 
+void ByteCodeWriter::declareLocalIntArrayInfo(CommandTape& tape, const wchar16_t* localName, int level)
+{
+   tape.write(bdIntArrayLocal, (ref_t)localName, level);
+}
+
 void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level)
 {
    tape.write(bdParamsLocal, (ref_t)localName, level);
@@ -1641,6 +1646,9 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          case bdShortArrayLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsShortArrayLocal, frameLevel);
             break;
+         case bdIntArrayLocal:
+            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntArrayLocal, frameLevel);
+            break;
          case bdParamsLocal:
             writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
@@ -2135,6 +2143,78 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
          break;
       default:
          break;
+   }
+}
+
+void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // aswapsi 0
+         // popa
+         // nload
+         // popa
+         // nread
+         // nsave
+         tape.write(bcASwapSI, 0);
+         tape.write(bcPopA);
+         tape.write(bcNLoad);
+         tape.write(bcPopA);
+         tape.write(bcNRead);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // nload
+         // ecopyd
+         // popa
+         // nload
+         // eswap
+         // nwrite
+         tape.write(bcNLoad);
+         tape.write(bcECopyD);
+         tape.write(bcPopA);
+         tape.write(bcNLoad);
+         tape.write(bcESwap);
+         tape.write(bcNWrite);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter::doCharArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+   case REFER_MESSAGE_ID:
+      // aswapsi 0
+      // popa
+      // nload
+      // popa
+      // wread
+      // nsave
+      tape.write(bcASwapSI, 0);
+      tape.write(bcPopA);
+      tape.write(bcNLoad);
+      tape.write(bcPopA);
+      tape.write(bcWRead);
+      tape.write(bcNSave);
+      break;
+   case SET_REFER_MESSAGE_ID:
+      // nload
+      // ecopyd
+      // popa
+      // nload
+      // eswap
+      // wwrite
+      tape.write(bcNLoad);
+      tape.write(bcECopyD);
+      tape.write(bcPopA);
+      tape.write(bcNLoad);
+      tape.write(bcESwap);
+      tape.write(bcWWrite);
+      break;
+   default:
+      break;
    }
 }
 

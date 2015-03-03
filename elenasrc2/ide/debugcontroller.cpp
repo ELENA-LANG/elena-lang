@@ -596,7 +596,7 @@ void DebugController :: stepOverLine()
       // if next step is available set the breakpoint
       DebugLineInfo* nextStep = getEndStep(lineInfo);
 
-      if (nextStep && nextStep->symbol != dsVirtualEnd) {
+      if (nextStep/* && nextStep->symbol != dsVirtualEnd*/) {
          _debugger.setBreakpoint(nextStep->addresses.step.address, true);
       }
       // else set step mode
@@ -837,7 +837,24 @@ void DebugController :: readShortArray(_DebuggerWatch* watch, size_t address, co
    if (length > DEBUG_MAX_LIST_LENGTH)
       length = DEBUG_MAX_LIST_LENGTH;
 
-   getValue(address, (char*)list, length);
+   getValue(address, (char*)list, length << 1);
+
+   watch->write(this, address, name, list, length);
+}
+
+void DebugController::readIntArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name)
+{
+   int list[DEBUG_MAX_ARRAY_LENGTH];
+   int length = 0;
+
+   // get bytearray size
+   getValue(address - 8, (char*)&length, 4);
+   length = -length >> 2;
+
+   if (length > DEBUG_MAX_LIST_LENGTH)
+      length = DEBUG_MAX_LIST_LENGTH;
+
+   getValue(address, (char*)list, length << 2);
 
    watch->write(this, address, name, list, length);
 }
@@ -1016,6 +1033,12 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
             readShortArray(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
          }
+         else if (lineInfo[index].symbol == dsIntArrayLocal) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+
+            readIntArray(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+         }
          //else if (lineInfo[index].symbol == dsMessage) {
          //   // write local variable
          //   int message = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
@@ -1104,23 +1127,13 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
             readList(watch, list, length);
          }
          else if (type==elDebugBytes) {
-            //readByteArray(watch, selfPtr);
+            readByteArray(watch, selfPtr, NULL);
          }
          else if (type==elDebugChars) {
-            int list[DEBUG_MAX_LIST_LENGTH];
-            int length = 0;
-
-            // get array size
-            getValue(selfPtr - 8, (char*)&length, 4);
-
-            int s = sizeof(list);
-            if (length > sizeof(list))
-               length = sizeof(list);
-
-            getValue(selfPtr, (char*)list, length);
-
-            length >>= 2;
-            readList(watch, list, length);
+            readShortArray(watch, selfPtr, NULL);
+         }
+         else if (type == elDebugIntegers) {
+            readIntArray(watch, selfPtr, NULL);
          }
          else if (ConstantIdentifier::compare(className, "system'nil")) {
             watch->write(this, _T("<nil>"));

@@ -35,6 +35,7 @@ protected:
    virtual void writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address);
    virtual void writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address, char* byteArray, int length);
    virtual void writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address, short* shortArray, int length);
+   virtual void writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address, int* intArray, int length);
 
 public:
    virtual void expand();
@@ -52,6 +53,8 @@ public:
                         const wchar16_t* variableName, char* bytearray, int length);
    virtual void write(_ELENA_::DebugController* controller, size_t address, 
                         const wchar16_t* variableName, short* shortarray, int length);
+   virtual void write(_ELENA_::DebugController* controller, size_t address, 
+      const wchar16_t* variableName, int* intarray, int length);
    virtual void write(_ELENA_::DebugController* controller, const char* value);
    virtual void write(_ELENA_::DebugController* controller, const wchar16_t* value);
    virtual void write(_ELENA_::DebugController* controller, int value);

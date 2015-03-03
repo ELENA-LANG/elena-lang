@@ -185,6 +185,7 @@ public:
    void declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalByteArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalShortArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
+   void declareLocalIntArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ref_t nameRef);
@@ -283,6 +284,8 @@ public:
    void doRealOperation(CommandTape& tape, int operator_id);
    void doLiteralOperation(CommandTape& tape, int operator_id);
    void doArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doCharArrayOperation(CommandTape& tape, int operator_id);
 
    void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };

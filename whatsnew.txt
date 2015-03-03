@@ -17,6 +17,10 @@
 [+] -wX / -wX- options turning on / off warnings
 [*] optimization : a simple resend operation
 
+[IDE]
+[*] fixed "step over" implementations inside symbol
+[*] binaray arrays are displayed in the debug watch correctly
+
 ******************************************************************************
                     What's New in 1.9.18 (pre release)
 ******************************************************************************

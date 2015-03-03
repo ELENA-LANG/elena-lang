@@ -265,7 +265,7 @@ inline bool IsCompOperator(int operator_id)
 
 inline bool IsReferOperator(int operator_id)
 {
-   return operator_id == REFER_MESSAGE_ID;
+   return operator_id == REFER_MESSAGE_ID || operator_id == SET_REFER_MESSAGE_ID;
 }
 
 inline bool IsDoubleOperator(int operator_id)
@@ -1879,12 +1879,15 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          else if (flags == elDebugReal64) {
             _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
          }
-         //else if (typeInfo.size == -1) {
-         //   _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
-         //}
-         //else if (typeInfo.size == -2) {
-         //   _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
-         //}
+         else if (flags == elDebugBytes) {
+            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugChars) {
+            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugIntegers) {
+            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), level);
+         }
          else _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
       }
       else {
@@ -2751,6 +2754,9 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else if (operand.kind == okAccumulator && operand.param != 0) {
       return moduleScope.getClassFlags(operand.param) & elDebugMask;
    }
+   else if (operand.kind == okUnknown) {
+      return 0;
+   }
    else return moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam)) & elDebugMask;
 }
 
@@ -2865,19 +2871,74 @@ bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator
    return true;
 }
 
-bool Compiler :: compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result)
+bool Compiler::compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
+   int lflag = mapInlineOperandType(*moduleScope, loperand);
    int rflag = mapInlineOperandType(*moduleScope, roperand);
+   int rflag2 = mapInlineOperandType(*moduleScope, roperand2);
 
-   if (loperand.kind != okParams || rflag != elDebugDWORD)
-      return false;
+   if (operator_id == SET_REFER_MESSAGE_ID) {
+      if (lflag == elDebugIntegers && rflag == elDebugDWORD && rflag2 == elDebugDWORD) {
+         _writer.popObject(*scope.tape, ObjectInfo(okBase));
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
 
-   _writer.popObject(*scope.tape, ObjectInfo(okBase));
-   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+         _writer.doIntArrayOperation(*scope.tape, operator_id);
+      }
+      //else if (lflag == elDebugChars && rflag == elDebugDWORD && rflag2 == elDebugDWORD) {
+      //   _writer.popObject(*scope.tape, ObjectInfo(okBase));
+      //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
 
-   _writer.doArrayOperation(*scope.tape, operator_id);
+      //   _writer.doCharArrayOperation(*scope.tape, operator_id);
+      //}
+      else return false;
+   }
+   else {
+      if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+         result.param = moduleScope->intReference;
+
+         allocateStructure(scope, 0, result);
+         _writer.loadBase(*scope.tape, result);
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.doIntArrayOperation(*scope.tape, operator_id);
+      }
+      else if (loperand.kind == okParams && rflag == elDebugDWORD) {
+         _writer.popObject(*scope.tape, ObjectInfo(okBase));
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.doArrayOperation(*scope.tape, operator_id);
+      }
+      //else if (lflag == elDebugChars && rflag == elDebugDWORD) {
+      //   result.param = moduleScope->charReference;
+
+      //   allocateStructure(scope, 0, result);
+      //   _writer.loadBase(*scope.tape, result);
+      //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      //   _writer.doCharArrayOperation(*scope.tape, operator_id);
+      //}
+      else return false;
+   }
+
+   ////if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+   ////   if (operator_id == SET_REFER_MESSAGE_ID && rflag2 == elDebugDWORD) {
+   ////   }
+   ////   else return false;
+
+   ////   if (rflag2 == 0 || rflag2 == elDebugDWORD) {
+
+   ////   }
+   ////}
+
+   ////if (loperand.kind != okParams || rflag != elDebugDWORD)
+   ////   return false;
+
+   ////_writer.popObject(*scope.tape, ObjectInfo(okBase));
+   ////_writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+   ////_writer.doArrayOperation(*scope.tape, operator_id);
 
    return true;
 }
@@ -2919,8 +2980,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       if (dblOperator) {
          operand2 = compileExpression(node.nextNode().firstChild(), scope, 0);
+         _writer.loadObject(*scope.tape, operand2);
 
-         _writer.pushObject(*scope.tape, operand2);
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
       }
 
       operand = compileExpression(node, scope, 0);
@@ -2938,7 +3000,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       // if inline comparision operation is implemented
       // do nothing
    }
-   else if (IsReferOperator(operator_id) && compileInlineReferOperator(scope, operator_id, object, operand, retVal)) {
+   else if (IsReferOperator(operator_id) && compileInlineReferOperator(scope, operator_id, object, operand, operand2, retVal)) {
       // if inline referring operation is implemented
       // do nothing
    }
@@ -2990,6 +3052,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       retVal.extraparam = scope.moduleScope->boolType;
    }
+
+   if (dblOperator)
+      node = node.nextNode();
 
    return retVal;
 }
@@ -3914,7 +3979,7 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
    if (verb == IF_MESSAGE_ID || verb == IFNOT_MESSAGE_ID) {
       ref_t valueRef = (verb == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference;
 
-      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
       bool mismatch = false;
       compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, 0);
@@ -3969,13 +4034,14 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
    else {
       ObjectInfo retVal = compileExpression(expr, scope, mode);
 
-      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
       bool mismatch = false;
       compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, 0);
 
       _writer.endLoop(*scope.tape, scope.moduleScope->trueReference);
    }
+   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 }
 
 ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)

@@ -112,6 +112,18 @@ void DebuggerWatch :: writeSubWatch(_ELENA_::DebugController* controller, TreeVi
    else refreshNode(node);
 }
 
+void DebuggerWatch::writeSubWatch(_ELENA_::DebugController* controller, TreeViewItem node, size_t address, int* intArray, int length)
+{
+   if (_deepLevel < 3 || _browser->isExpanded(node)) {
+      DebuggerWatch watch(_browser, node, address, _deepLevel + 1);
+
+      for (int i = 0; i < length; i++) {
+         watch.write(controller, i, intArray[i]);
+      }
+   }
+   else refreshNode(node);
+}
+
 void DebuggerWatch :: write(DebugController* controller, size_t address, const wchar16_t* variableName, const wchar16_t* className)
 {
    wchar_t itemName[CAPTION_LEN + 1];
@@ -140,54 +152,101 @@ void DebuggerWatch :: write(DebugController* controller, size_t address, const w
 
 void DebuggerWatch :: write(DebugController* controller, size_t address, const wchar16_t* variableName, char* bytearray, int length)
 {
-   wchar_t itemName[CAPTION_LEN + 1];
-   size_t nameLen = getlength(variableName);
+   if (emptystr(variableName)) {
+      _browser->clear(_root);
 
-   TreeViewItem item = _browser->getChild(_root);
-   while (item != NULL) {
-      size_t itemAddress = _browser->getParam(item);
-      _browser->getCaption(item, itemName, CAPTION_LEN);
-
-      if ((getlength(itemName) > nameLen + 1) &&  StringHelper::compare(itemName, variableName, nameLen)
-         && itemName[nameLen] == ' ')
-      {
-         editNode(item, variableName, _T("<array>"), address);
-   
-         writeSubWatch(controller, item, address, bytearray, length);
-
-         return;
-      }
-      item = _browser->getNext(item);
+      writeSubWatch(controller, _root, address, bytearray, length);
    }
-   item = addNode(variableName, _T("<bytearray>"), address);
+   else {
+      wchar_t itemName[CAPTION_LEN + 1];
+      size_t nameLen = getlength(variableName);
 
-   writeSubWatch(controller, item, address, bytearray, length);
+      TreeViewItem item = _browser->getChild(_root);
+      while (item != NULL) {
+         size_t itemAddress = _browser->getParam(item);
+         _browser->getCaption(item, itemName, CAPTION_LEN);
+
+         if ((getlength(itemName) > nameLen + 1) && StringHelper::compare(itemName, variableName, nameLen)
+            && itemName[nameLen] == ' ')
+         {
+            editNode(item, variableName, _T("<bytearray>"), address);
+
+            writeSubWatch(controller, item, address, bytearray, length);
+
+            return;
+         }
+         item = _browser->getNext(item);
+      }
+      item = addNode(variableName, _T("<bytearray>"), address);
+
+      writeSubWatch(controller, item, address, bytearray, length);
+   }
 }
 
 void DebuggerWatch :: write(DebugController* controller, size_t address, const wchar16_t* variableName, short* shortarray, int length)
 {
-   wchar_t itemName[CAPTION_LEN + 1];
-   size_t nameLen = getlength(variableName);
+   if (emptystr(variableName)) {
+      _browser->clear(_root);
 
-   TreeViewItem item = _browser->getChild(_root);
-   while (item != NULL) {
-      size_t itemAddress = _browser->getParam(item);
-      _browser->getCaption(item, itemName, CAPTION_LEN);
-
-      if ((getlength(itemName) > nameLen + 1) &&  StringHelper::compare(itemName, variableName, nameLen)
-         && itemName[nameLen] == ' ')
-      {
-         editNode(item, variableName, _T("<shortarray>"), address);
-   
-         writeSubWatch(controller, item, address, shortarray, length);
-
-         return;
-      }
-      item = _browser->getNext(item);
+      writeSubWatch(controller, _root, address, shortarray, length);
    }
-   item = addNode(variableName, _T("<array>"), address);
+   else {
+      wchar_t itemName[CAPTION_LEN + 1];
+      size_t nameLen = getlength(variableName);
 
-   writeSubWatch(controller, item, address, shortarray, length);
+      TreeViewItem item = _browser->getChild(_root);
+      while (item != NULL) {
+         size_t itemAddress = _browser->getParam(item);
+         _browser->getCaption(item, itemName, CAPTION_LEN);
+
+         if ((getlength(itemName) > nameLen + 1) && StringHelper::compare(itemName, variableName, nameLen)
+            && itemName[nameLen] == ' ')
+         {
+            editNode(item, variableName, _T("<shortarray>"), address);
+
+            writeSubWatch(controller, item, address, shortarray, length);
+
+            return;
+         }
+         item = _browser->getNext(item);
+      }
+      item = addNode(variableName, _T("<shortarray>"), address);
+
+      writeSubWatch(controller, item, address, shortarray, length);
+   }
+}
+
+void DebuggerWatch::write(DebugController* controller, size_t address, const wchar16_t* variableName, int* intarray, int length)
+{
+   if (emptystr(variableName)) {
+      _browser->clear(_root);
+
+      writeSubWatch(controller, _root, address, intarray, length);
+   }
+   else {
+      wchar_t itemName[CAPTION_LEN + 1];
+      size_t nameLen = getlength(variableName);
+
+      TreeViewItem item = _browser->getChild(_root);
+      while (item != NULL) {
+         size_t itemAddress = _browser->getParam(item);
+         _browser->getCaption(item, itemName, CAPTION_LEN);
+
+         if ((getlength(itemName) > nameLen + 1) && StringHelper::compare(itemName, variableName, nameLen)
+            && itemName[nameLen] == ' ')
+         {
+            editNode(item, variableName, _T("<intarray>"), address);
+
+            writeSubWatch(controller, item, address, intarray, length);
+
+            return;
+         }
+         item = _browser->getNext(item);
+      }
+      item = addNode(variableName, _T("<intarray>"), address);
+
+      writeSubWatch(controller, item, address, intarray, length);
+   }
 }
 
 #ifdef _UNICODE

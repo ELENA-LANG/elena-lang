@@ -267,6 +267,7 @@ enum ByteCode
    bdParamsLocal    = 0x8443,
    bdByteArrayLocal = 0x8453,
    bdShortArrayLocal= 0x8463,
+   bdIntArrayLocal  = 0x8473,
 };
 
 #define MAX_SINGLE_ECODE 0x8F

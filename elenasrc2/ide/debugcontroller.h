@@ -40,6 +40,7 @@ public:
    virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, long long value) = 0;
    virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, char* bytearray, int length) = 0;
    virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, short* shortarray, int length) = 0;
+   virtual void write(_ELENA_::DebugController* controller, size_t address, const wchar16_t* variableName, int* intarray, int length) = 0;
    virtual void write(_ELENA_::DebugController* controller, const wchar16_t* value) = 0;
    virtual void write(_ELENA_::DebugController* controller, const char* value) = 0;
    virtual void write(_ELENA_::DebugController* controller, int value) = 0;
@@ -206,6 +207,7 @@ protected:
    void readList(_DebuggerWatch* watch, int* list, int length);
    void readByteArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name);
    void readShortArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name);
+   void readIntArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name);
    void readObject(_DebuggerWatch* watch, ref_t selfPtr, const wchar16_t* name, bool ignoreInline);
    void readMessage(_DebuggerWatch* watch, ref_t reference);
    void readPString(size_t address, IdentifierString& string);

@@ -45,7 +45,7 @@
 
     #method(type:bool) xor : aBool
     [
-        aBool ? [ ^ false bool. ].
+        aBool ? [ ^ false. ].
         
         ^ $self.
     ]
