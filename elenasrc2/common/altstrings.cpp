@@ -1029,7 +1029,7 @@ unsigned short* StringHelper :: longlongToStr(long long n, unsigned short* s, in
 double StringHelper :: strToDouble(const unsigned short* s)
 {
    // !! temporal solution
-   char tmp[15];
+   char tmp[31];
    size_t len = getlength(s);
    copy(tmp, s, len);
 

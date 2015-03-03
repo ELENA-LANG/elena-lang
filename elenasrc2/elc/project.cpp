@@ -109,7 +109,7 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, cons
    if (value) {
       Path path(rootPath, value);
 
-      _settings.add(setting, path.clone());
+      _settings.add(setting, ProjectParam(path).clone());
       return true;
    }
    else return false;
@@ -160,7 +160,7 @@ void Project :: loadForwardCategory(_ConfigFile& config)
       key.copy(it.key());
 
       value.copy((char*)*it);
-      
+
       _settings.add(opForwards, key, value.clone());
 
       it++;

@@ -24,6 +24,8 @@ namespace _ELENA_
 
 #include <ctype.h>
 
+#define _strdup strdup
+
 inline static size_t wcslen(const unsigned short* s)
 {
    const unsigned short* p = s;
@@ -33,7 +35,7 @@ inline static size_t wcslen(const unsigned short* s)
    return (size_t)(p - s);
 }
 
-inline char* strlwr(char* str)
+inline char* _strlwr(char* str)
 {
    char* it = str;
    while (*it != 0) { *it = tolower(*it); ++it; }
@@ -41,7 +43,7 @@ inline char* strlwr(char* str)
    return str;
 }
 
-inline char* strupr(char* str)
+inline char* _strupr(char* str)
 {
    char* it = str;
    while (*it != 0) { *it = toupper(*it); ++it; }

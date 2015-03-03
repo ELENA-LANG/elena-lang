@@ -76,6 +76,15 @@ void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
    throw _ELENA_::_Exception();
 }
 
+void _ELC_::Project :: raiseError(const char* msg, const wchar16_t wValue)
+{
+   _ELENA_::UTF8String s(&wValue, 1);
+
+   print(msg, (const char*)s);
+
+   throw _ELENA_::_Exception();
+}
+
 void _ELC_::Project :: printInfo(const char* msg, const char* value)
 {
    print(msg, value);
@@ -101,9 +110,9 @@ void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const 
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* wTerminal)
+void _ELC_::Project :: raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* wTerminal)
 {
-   if (!indicateWarning())
+   if (!indicateWarning(level))
       return;
 
    _ELENA_::UTF8String s(wTerminal);
@@ -111,9 +120,9 @@ void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path, int ro
    print(msg, path, row, column, (const char*)s);
 }
 
-void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path)
+void _ELC_::Project :: raiseWarning(int level, const char* msg, const tchar_t* path)
 {
-   if (!indicateWarning())
+   if (!indicateWarning(level))
       return;
 
    print(msg, path);
@@ -174,12 +183,6 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
    case _ELENA_::opDebugMode:
       return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
-   case _ELENA_::opEmbeddedSymbolMode:
-      return config.getSetting(PROJECT_CATEGORY, ELC_SYMBOLINFO);
-//   case _ELENA_::opStarter:
-//      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_ENTRY);
-   case _ELENA_::opVMPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_VM_PATH);
    case _ELENA_::opThreadMax:
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
@@ -188,8 +191,6 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
 //   case _ELENA_::opL2:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-//   case _ELENA_::opL3:
-//      return config.getSetting(COMPILER_CATEGORY, ELC_L3);
    case _ELENA_::opTemplate:
       return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
    default:
@@ -262,24 +263,12 @@ void _ELC_::Project :: loadConfig(const tchar_t* path, bool root, bool requiered
 void _ELC_::Project :: setOption(const tchar_t* value)
 {
    switch ((char)value[0]) {
-//      case ELC_PRM_LIB_PATH:
-//         _settings.add(_ELENA_::opLibPath, _ELENA_::StringHelper::clone(value + 1));
-//         break;
+      case ELC_PRM_LIB_PATH:
+         _settings.add(_ELENA_::opLibPath, _ELENA_::StringHelper::clone(value + 1));
+         break;
 //      case ELC_PRM_OUTPUT_PATH:
 //         _settings.add(_ELENA_::opOutputPath, _ELENA_::StringHelper::clone(value + 1));
 //         break;
-////      case ELC_PRM_PACKAGE:
-////         _settings.add(_ELENA_::opPackage, _ELENA_::StringHelper::clone(value + 1));
-////         break;
-////      case ELC_PRM_LIBRARY:
-////         if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_STANDART_LIBRARY)) {
-////            _settings.add(_ELENA_::opStandart, -1);
-////         }
-////         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_STANDART_LIBRARY_DBG)) {
-////            _settings.add(_ELENA_::opStandart, -2);
-////         }
-////         else raiseError(ELC_ERR_INVALID_OPTION, value);
-////         break;
 //      case ELC_PRM_EXTRA:
 //         if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_TABSIZE, 4)) {
 //            _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
@@ -396,6 +385,7 @@ int main(int argc, char* argv[])
          }
          else project.addSource(argv[i]);
       }
+
       project.initLoader();
 
 //      // Cleaning up

@@ -1,17 +1,19 @@
-﻿[project]
+[project]
 output=/usr/lib/elena/lib30
 namespace=system
 template=lib
 debuginfo=-1
 warn:unresolved=0
 
-[primitives]
-inline=/usr/lib/elena/lib30/inline/core_routines.bin
+[forwards]
+'$import=system'core_routines
 
 [files]
-object.l
 types.l
+object.l
 basic.l
 control.l
 memory.l
-exceptions.l
+dynamic.l
+extensions.l
+exceptions.l
