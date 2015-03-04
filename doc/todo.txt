@@ -29,22 +29,17 @@ Currently:
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
                        * show built-in variable $subject
                      
+              xdev - linux
+                       * linux linker
+
 <=================> 
                                               
 1.9.19
 --------
 week1:
               xdev - linux
-                       * linux linker
-
-                       * paths: lib    - \usr\share\elena\lib30
-                                         \usr\share\elena\src30
-                                config - \etc\elena
-                                data   - \usr\share\elena - data
-
-                       * linux console operations
-                       * linux file operations
-                       * linux date / time operations
+                       * port elenart to linux
+                       * port multi-threading
                        * port elc to linux
                        * port ecv to linux
                        * review deployment mechanism
@@ -87,6 +82,10 @@ week1:
                        * wintextview : reimplement the cursor locating code if it is not a monofont
 
 week2:
+              adev - linux lib30:
+                       * linux console operations
+                       * linux file operations
+                       * linux date / time operations
               adev - gui
                        * general architecture
                        * class function

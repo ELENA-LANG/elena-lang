@@ -76,6 +76,8 @@
 		<Unit filename="../errors.h" />
 		<Unit filename="../linux32/constants.h" />
 		<Unit filename="../linux32/elc.cpp" />
+		<Unit filename="../linux32/linker.cpp" />
+		<Unit filename="../linux32/linker.h" />
 		<Unit filename="../parser.cpp" />
 		<Unit filename="../parser.h" />
 		<Unit filename="../project.cpp" />

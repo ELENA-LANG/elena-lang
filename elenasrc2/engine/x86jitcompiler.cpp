@@ -1415,7 +1415,7 @@ void* x86JITCompiler :: getPreloadedReference(ref_t reference)
    return (void*)_preloaded.get(reference);
 }
 
-void x86JITCompiler :: compileThreadTable(_JITLoader* loader, int maxThreadNumber)
+void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
 {
    // get target image & resolve virtual address
    MemoryWriter dataWriter(loader->getTargetSection(mskDataRef));
@@ -1434,7 +1434,7 @@ void x86JITCompiler :: compileThreadTable(_JITLoader* loader, int maxThreadNumbe
    _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
 }
 
-void x86JITCompiler :: compileTLS(_JITLoader* loader)
+int x86JITCompiler::allocateTLSVariable(_JITLoader* loader)
 {
    MemoryWriter dataWriter(loader->getTargetSection(mskDataRef));
 
@@ -1448,28 +1448,7 @@ void x86JITCompiler :: compileTLS(_JITLoader* loader)
    loader->mapReference(tlsKey, (void*)(position | mskDataRef), mskDataRef);
    _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
 
-   // allocate tls section
-   MemoryWriter tlsWriter(loader->getTargetSection(mskTLSRef));
-   tlsWriter.writeDWord(0);   // stack frame pointer
-   tlsWriter.writeDWord(0);   // stack bottom pointer
-   tlsWriter.writeDWord(0);   // catch address
-   tlsWriter.writeDWord(0);   // catch stack level
-   tlsWriter.writeDWord(0);   // catch stack frame
-   tlsWriter.writeDWord(0);   // syncronization event
-   tlsWriter.writeDWord(0);   // thread flags
-
-   // map IMAGE_TLS_DIRECTORY
-   MemoryWriter rdataWriter(loader->getTargetSection(mskRDataRef));
-   loader->mapReference(tlsKey, (void*)(rdataWriter.Position() | mskRDataRef), mskRDataRef);
-
-   // create IMAGE_TLS_DIRECTORY
-   int tlsLength = tlsWriter.Position();
-   rdataWriter.writeRef(mskTLSRef, 0);          // StartAddressOfRawData
-   rdataWriter.writeRef(mskTLSRef, tlsLength);  // EndAddressOfRawData
-   rdataWriter.writeRef(mskDataRef, position);  // AddressOfIndex
-   rdataWriter.writeDWord(0);                   // AddressOfCallBacks
-   rdataWriter.writeDWord(0);                   // SizeOfZeroFill
-   rdataWriter.writeDWord(0);                   // Characteristics
+   return position;
 }
 
 inline void compileTape(MemoryReader& tapeReader, int endPos, x86JITScope& scope)

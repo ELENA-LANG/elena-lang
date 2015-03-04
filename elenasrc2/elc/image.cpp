@@ -21,7 +21,7 @@ using namespace _ELENA_;
 
 // --- ExecutableImage ---
 
-ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
+ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper)
    : Image(true)
 {
    _project = project;
@@ -38,14 +38,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
-   // compile TLS section if it is a multi-threading app
-   if (_project->IntSetting(opThreadMax) > 1) {
-      compiler->compileTLS(dynamic_cast<_JITLoader*>(this));
-
-      // load GC thread table, should be allocated before static roots
-      // thread table contains TLS reference
-      compiler->compileThreadTable(dynamic_cast<_JITLoader*>(this), _project->IntSetting(opThreadMax));
-   }
+   helper.beforeLoad(compiler, *this);
 
    // initialize compiler inline code
    linker.prepareCompiler();
@@ -53,6 +46,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
    // load starting symbol (it shouldn't be forward)
    const wchar16_t* entry = project->StrSetting(opEntry);
 
+   // create the image
    _entryPoint = linker.resolve(entry, mskNativeCodeRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
       throw JITUnresolvedException(project->StrSetting(opEntry));
@@ -60,12 +54,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler)
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 
-  // fix up debug section if required
-   if (_debug.Length() > 8) {
-      _debug.writeDWord(0, _debug.Length());
-      _debug.addReference(getDebugEntryPoint(), 4);
-   }
-   else _debug.clear();
+   helper.afterLoad(*this);
 }
 
 ref_t ExecutableImage :: getDebugEntryPoint()

@@ -86,6 +86,8 @@ class Linker
    bool createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory);
 
 public:
+   void prepareTLS(Image& image, int tls_variable, ref_t& tls_directory);
+
    void run(Project& project, Image& image, ref_t tls_directory);
 
    Linker()

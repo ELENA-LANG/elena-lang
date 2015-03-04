@@ -79,8 +79,8 @@
 		<Unit filename="../../engine/textparser.h" />
 		<Unit filename="../../engine/x86helper.cpp" />
 		<Unit filename="../../engine/x86helper.h" />
-		<Unit filename="../../engine/win32/x86jitcompiler.cpp" />
-		<Unit filename="../../engine/win32/x86jitcompiler.h" />
+		<Unit filename="../../engine/x86jitcompiler.cpp" />
+		<Unit filename="../../engine/x86jitcompiler.h" />
 		<Unit filename="../bcwriter.cpp" />
 		<Unit filename="../bcwriter.h" />
 		<Unit filename="../compiler.cpp" />

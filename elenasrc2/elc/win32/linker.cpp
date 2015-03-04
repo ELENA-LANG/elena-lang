@@ -510,3 +510,29 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
    if (!createExecutable(info, path, tls_directory))
       project.raiseError(errCannotCreate, path);
 }
+
+void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)
+{
+   // allocate tls section
+   MemoryWriter tlsWriter(image.getTLSSection());
+   tlsWriter.writeDWord(0);   // stack frame pointer
+   tlsWriter.writeDWord(0);   // stack bottom pointer
+   tlsWriter.writeDWord(0);   // catch address
+   tlsWriter.writeDWord(0);   // catch stack level
+   tlsWriter.writeDWord(0);   // catch stack frame
+   tlsWriter.writeDWord(0);   // syncronization event
+   tlsWriter.writeDWord(0);   // thread flags
+
+   // map IMAGE_TLS_DIRECTORY
+   MemoryWriter rdataWriter(image.getRDataSection());
+   tls_directory = rdataWriter.Position();
+
+   // create IMAGE_TLS_DIRECTORY
+   int tlsLength = tlsWriter.Position();
+   rdataWriter.writeRef(mskTLSRef, 0);              // StartAddressOfRawData
+   rdataWriter.writeRef(mskTLSRef, tlsLength);      // EndAddressOfRawData
+   rdataWriter.writeRef(mskDataRef, tls_variable);  // AddressOfIndex
+   rdataWriter.writeDWord(0);                       // AddressOfCallBacks
+   rdataWriter.writeDWord(0);                       // SizeOfZeroFill
+   rdataWriter.writeDWord(0);                       // Characteristics
+}

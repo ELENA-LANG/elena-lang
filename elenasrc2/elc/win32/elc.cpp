@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 command-line compiler
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #define __MSVCRT_VERSION__ 0x0800
@@ -16,7 +16,7 @@
 #include "compiler.h"
 #include "linker.h"
 #include "image.h"
-#include "win32\x86jitcompiler.h"
+#include "x86jitcompiler.h"
 
 #include <stdarg.h>
 #include <windows.h>
@@ -60,6 +60,50 @@ void print(const char* str, ...)
 
    fflush(stdout);
 }
+
+// --- ImageHelper ---
+
+class ImageHelper : public _ELENA_::ExecutableImage::_Helper
+{
+   _ELENA_::Linker* _linker;
+
+public:
+   ref_t tls_directory;
+
+   virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
+   {
+      _ELENA_::Project* project = image.getProject();
+
+      // compile TLS section if it is a multi-threading app
+      if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
+         _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
+
+         _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
+
+         // load GC thread table, should be allocated before static roots
+         // thread table contains TLS reference
+         compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
+      }
+   }
+
+   virtual void afterLoad(_ELENA_::ExecutableImage& image)
+   {
+      _ELENA_::Section* debug = image.getDebugSection();
+
+      // fix up debug section if required
+      if (debug->Length() > 8) {
+         debug->writeDWord(0, debug->Length());
+         debug->addReference(image.getDebugEntryPoint(), 4);
+      }
+      else debug->clear();
+   }
+
+   ImageHelper(_ELENA_::Linker* linker)
+   {
+      this->_linker = linker;
+      this->tls_directory = 0;
+   }
+};
 
 // --- Project ---
 
@@ -143,9 +187,9 @@ void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const 
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* wTerminal)
+void _ELC_::Project::raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* wTerminal)
 {
-   if (!indicateWarning())
+   if (!indicateWarning(level))
       return;
 
    MsgString wMsg(msg);
@@ -153,9 +197,9 @@ void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path, int ro
    print(wMsg, path, row, column, wTerminal);
 }
 
-void _ELC_::Project :: raiseWarning(const char* msg, const tchar_t* path)
+void _ELC_::Project::raiseWarning(int level, const char* msg, const tchar_t* path)
 {
-   if (!indicateWarning())
+   if (!indicateWarning(level))
       return;
 
    MsgString wMsg(msg);
@@ -218,8 +262,6 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
 //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
    case _ELENA_::opDebugMode:
       return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
-   case _ELENA_::opEmbeddedSymbolMode:
-      return config.getSetting(PROJECT_CATEGORY, ELC_SYMBOLINFO);
    case _ELENA_::opThreadMax:
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
@@ -320,9 +362,6 @@ void _ELC_::Project :: setOption(const tchar_t* value)
 //            _settings.add(_ELENA_::opL2, 0);
 //            _settings.add(_ELENA_::opL3, 0);
          }
-         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_SYMBOLEMBEDOFF)) {
-            _settings.add(_ELENA_::opEmbeddedSymbolMode, 0);
-         }
          else raiseError(ELC_ERR_INVALID_OPTION, value);
          break;
       case ELC_PRM_WARNING:
@@ -331,6 +370,24 @@ void _ELC_::Project :: setOption(const tchar_t* value)
          }
          else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_WEAKUNRESOLVED)) {
             _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
+         }
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_LEVEL1)) {
+            _warningMasks |= 1;
+         }
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_LEVEL2)) {
+            _warningMasks |= 3;
+         }
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_LEVEL4)) {
+            _warningMasks |= 7;
+         }
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_LEVEL1_OFF)) {
+            _warningMasks = 0;
+         }
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_LEVEL2_OFF)) {
+            _warningMasks = 1;
+         }
+         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_LEVEL4_OFF)) {
+            _warningMasks = 3;
          }
          else raiseError(ELC_ERR_INVALID_OPTION, value);
          break;
@@ -363,7 +420,7 @@ void _ELC_::Project :: setOption(const tchar_t* value)
 
 _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 {
-   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode), BoolSetting(_ELENA_::opEmbeddedSymbolMode));
+   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
 void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
@@ -373,7 +430,7 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
       _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
       _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
       if (!rulesFile.isOpened()) {
-         project.raiseWarning(errInvalidFile, rulesPath);
+         project.raiseWarning(1, errInvalidFile, rulesPath);
       }
       else compiler.loadRules(&rulesFile);
    }
@@ -440,8 +497,9 @@ int main()
       if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32Console) {
          print(ELC_LINKING);
 
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
          _ELENA_::Linker linker;
+         ImageHelper helper(&linker);
+         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
          linker.run(project, image, -1);
 
          print(ELC_SUCCESSFUL_LINKING);
@@ -449,12 +507,11 @@ int main()
       if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleMT) {
          print(ELC_LINKING);
 
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
          _ELENA_::Linker linker;
+         ImageHelper helper(&linker);
+         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
 
-         void* directory = image.resolveReference(_ELENA_::ConstantIdentifier(TLS_KEY), _ELENA_::mskNativeRDataRef);
-
-         linker.run(project, image, (ref_t)directory & ~_ELENA_::mskAnyRef);
+         linker.run(project, image, helper.tls_directory);
 
          print(ELC_SUCCESSFUL_LINKING);
       }

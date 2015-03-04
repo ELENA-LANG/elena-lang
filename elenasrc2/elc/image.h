@@ -13,11 +13,21 @@
 
 namespace _ELENA_
 {
-
 // --- ExecutableImage ---
 
 class ExecutableImage : public Image, public _ImageLoader
 {
+public:
+   // --- Helper ---
+   class _Helper
+   {
+   public:
+      virtual void beforeLoad(_JITCompiler* compiler, ExecutableImage& image) = 0;
+
+      virtual void afterLoad(ExecutableImage& image) = 0;
+   };
+
+private:
    Project* _project;
    void*    _entryPoint;
 
@@ -68,7 +78,9 @@ public:
 
    virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask);
 
-   ExecutableImage(Project* project, _JITCompiler* compiler);
+   Project* getProject() const { return _project; }
+
+   ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper);
 };
 
 // --- VirtualMachineClientImage ---

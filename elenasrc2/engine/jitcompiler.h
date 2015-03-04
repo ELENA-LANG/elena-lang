@@ -55,15 +55,14 @@ public:
    virtual void compileWideLiteral(MemoryWriter* writer, const wchar_t* value) = 0;
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
 
-   virtual void compileTLS(_JITLoader* loader) = 0;
-   virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber) = 0;
-
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
 
-   // return VMT field position
    virtual void allocateVariable(MemoryWriter& writer) = 0;
    virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;
+
+   virtual int allocateTLSVariable(_JITLoader* loader) = 0;
+   virtual void allocateThreadTable(_JITLoader* loader, int length) = 0;
 
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength) = 0;

@@ -172,8 +172,8 @@ public:
 
    virtual void prepareCore(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata, _Memory* code);
 
-   virtual void compileThreadTable(_JITLoader* loader, int maxThreadNumber);
-   virtual void compileTLS(_JITLoader* loader);
+   virtual int allocateTLSVariable(_JITLoader* loader);
+   virtual void allocateThreadTable(_JITLoader* loader, int length);
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
