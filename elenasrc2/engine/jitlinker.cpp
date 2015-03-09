@@ -609,6 +609,8 @@ void* JITLinker :: resolveStaticVariable(const wchar16_t*  reference, int mask)
 
    _compiler->allocateVariable(writer);
 
+   _statLength++;
+
    _loader->mapReference(reference, (void*)vaddress, mask);
 
    return (void*)vaddress;

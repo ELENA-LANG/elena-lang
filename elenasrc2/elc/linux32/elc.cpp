@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -12,11 +12,31 @@
 #include "constants.h"
 #include "errors.h"
 #include "compiler.h"
-//#include "linker.h"
-//#include "image.h"
-//#include "win32\x86jitcompiler.h"
+#include "linker.h"
+#include "image.h"
+#include "x86jitcompiler.h"
 
 #include <stdarg.h>
+
+#define ELC_BUILD_NUMBER 0x000B
+
+// --- ImageHelper ---
+
+class ImageHelper : public _ELENA_::ExecutableImage::_Helper
+{
+   virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
+   {
+   }
+
+   virtual void afterLoad(_ELENA_::ExecutableImage& image)
+   {
+   }
+
+public:
+   ImageHelper()
+   {
+   }
+};
 
 // --- Project ---
 
@@ -260,63 +280,65 @@ void _ELC_::Project :: loadConfig(const tchar_t* path, bool root, bool requiered
    loadConfig(config, configPath);
 }
 
-void _ELC_::Project :: setOption(const tchar_t* value)
+void _ELC_::Project :: setOption(const char* value)
 {
    switch ((char)value[0]) {
       case ELC_PRM_LIB_PATH:
          _settings.add(_ELENA_::opLibPath, _ELENA_::StringHelper::clone(value + 1));
          break;
-//      case ELC_PRM_OUTPUT_PATH:
-//         _settings.add(_ELENA_::opOutputPath, _ELENA_::StringHelper::clone(value + 1));
-//         break;
-//      case ELC_PRM_EXTRA:
-//         if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_TABSIZE, 4)) {
-//            _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
-//         }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_CODEPAGE, 3)) {
-//            _encoding = _ELENA_::StringHelper::strToInt(value + 3);
-//         }
-//////         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_UNICODE)) {
-//////            _settings.add(_ELENA_::opOutputPath, _ELENA_::StringHelper::clone(value + 1));
-//////         }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
-//            _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH)));
-//         }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_OPTOFF)) {
-//            _settings.add(_ELENA_::opL0, 0);
-////            _settings.add(_ELENA_::opL1, 0);
-////            _settings.add(_ELENA_::opL2, 0);
+      case ELC_PRM_OUTPUT_PATH:
+         _settings.add(_ELENA_::opOutputPath, _ELENA_::StringHelper::clone(value + 1));
+         break;
+      case ELC_PRM_EXTRA:
+         if (_ELENA_::StringHelper::compare(value, ELC_PRM_TABSIZE, 4)) {
+            _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
+            _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH)));
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_PRM_OPTOFF)) {
+            _settings.add(_ELENA_::opL0, 0);
+//            _settings.add(_ELENA_::opL1, 0);
+//            _settings.add(_ELENA_::opL2, 0);
 //            _settings.add(_ELENA_::opL3, 0);
-//         }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_PRM_SYMBOLEMBEDOFF)) {
-//            _settings.add(_ELENA_::opEmbeddedSymbolMode, 0);
-//         }
-////         else raiseError(ELC_ERR_INVALID_OPTION, value);
-//         break;
-//      case ELC_PRM_WARNING:
-//         if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_UNRESOLVED)) {
-//            _settings.add(_ELENA_::opWarnOnUnresolved, -1);
-//         }
-//         else if (_ELENA_::ConstantIdentifier::compare(value, ELC_W_WEAKUNRESOLVED)) {
-//            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
-//         }
-//         else raiseError(ELC_ERR_INVALID_OPTION, value);
-//         break;
-//      case ELC_PRM_TARGET:
-//         _settings.add(_ELENA_::opTarget, _ELENA_::StringHelper::clone(value + 1));
-//         break;
-//////      //case ELC_PRM_MAP:
-//////      //   _settings.add(_ELENA_::opMapFile, value + 1);
-//////      //   break;
-//////      case ELC_PRM_ENTRY:
-//////         loadForward(_ELENA_::ConstantIdentifier(STARTUP_CLASS), _ELENA_::StringHelper::clone(value + 1));
-//////         break;
-////      case ELC_PRM_START:
-////         _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(value + 1));
-////         break;
-//      case ELC_PRM_DEBUGINFO:
-//         _settings.add(_ELENA_::opDebugMode, -1);
-//         break;
+         }
+         else raiseError(ELC_ERR_INVALID_OPTION, value);
+         break;
+      case ELC_PRM_WARNING:
+         if (_ELENA_::StringHelper::compare(value, ELC_W_UNRESOLVED)) {
+            _settings.add(_ELENA_::opWarnOnUnresolved, -1);
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_WEAKUNRESOLVED)) {
+            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL1)) {
+            _warningMasks |= 1;
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL2)) {
+            _warningMasks |= 3;
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL4)) {
+            _warningMasks |= 7;
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL1_OFF)) {
+            _warningMasks = 0;
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL2_OFF)) {
+            _warningMasks = 1;
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL4_OFF)) {
+            _warningMasks = 3;
+         }
+         break;
+      case ELC_PRM_TARGET:
+         _settings.add(_ELENA_::opTarget, _ELENA_::StringHelper::clone(value + 1));
+         break;
+      case ELC_PRM_START:
+         _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(value + 1));
+         break;
+      case ELC_PRM_DEBUGINFO:
+         _settings.add(_ELENA_::opDebugMode, -1);
+         break;
       case ELC_PRM_CONFIG:
       {
          loadConfig(value + 1);
@@ -334,7 +356,7 @@ void _ELC_::Project :: setOption(const tchar_t* value)
 
 _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 {
-   return NULL; //!! new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode), BoolSetting(_ELENA_::opEmbeddedSymbolMode));
+   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
 void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
@@ -414,16 +436,17 @@ int main(int argc, char* argv[])
          print(ELC_WARNING_COMPILATION);
       }
 
-//      // Linking..
-//      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32Console) {
-//         print(ELC_LINKING);
-//
-//         _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
-//         _ELENA_::Linker linker;
-//         linker.run(project, image, -1);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
+      // Linking..
+      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptLinux32Console) {
+         print(ELC_LINKING);
+
+         ImageHelper helper;
+         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::I386Linker32 linker;
+         linker.run(project, image/*, -1*/);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
 //      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleMT) {
 //         print(ELC_LINKING);
 //
@@ -451,28 +474,28 @@ int main(int argc, char* argv[])
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
    }
-//   catch(_ELENA_::InternalError& e) {
-//      print(ELC_INTERNAL_ERROR, e.message);
-//      exitCode = -2;
-//
-//      project.cleanUp();
-//   }
-//   catch(_ELENA_::JITUnresolvedException& ex)
-//   {
-//      project.printInfo(errUnresovableLink, ex.reference);
-//      print(ELC_UNSUCCESSFUL);
-//      exitCode = -2;
-//
-//      project.cleanUp();
-//   }
-//   catch(_ELENA_::JITConstantExpectedException& ex)
-//   {
-//      project.printInfo(errConstantExpectedLink, ex.reference);
-//      print(ELC_UNSUCCESSFUL);
-//      exitCode = -2;
-//
-//      project.cleanUp();
-//   }
+   catch(_ELENA_::InternalError& e) {
+      print(ELC_INTERNAL_ERROR, e.message);
+      exitCode = -2;
+
+      project.cleanUp();
+   }
+   catch(_ELENA_::JITUnresolvedException& ex)
+   {
+      project.printInfo(errUnresovableLink, ex.reference);
+      print(ELC_UNSUCCESSFUL);
+      exitCode = -2;
+
+      project.cleanUp();
+   }
+   catch(_ELENA_::JITConstantExpectedException& ex)
+   {
+      project.printInfo(errConstantExpectedLink, ex.reference);
+      print(ELC_UNSUCCESSFUL);
+      exitCode = -2;
+
+      project.cleanUp();
+   }
    catch(_ELENA_::_Exception&) {
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;

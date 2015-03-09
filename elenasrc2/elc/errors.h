@@ -70,6 +70,7 @@ namespace _ELENA_
 //   #define errInternalError         "internal error 599"
 //   #define errInvalidDynamicError   "internal error 600"
    #define errCommandSetAbsent     "internal error 600: command set is not defined"
+   #define errFatalLinker          "internal error 601: linker fatal error"
 
   // --- Linker error messages ---
    #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"

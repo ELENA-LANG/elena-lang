@@ -110,7 +110,7 @@ public:
    virtual const wchar16_t* getVerbClass() = 0;
    virtual const wchar16_t* getNamespace() = 0;
 
-   virtual const wchar_t* retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+   virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
    virtual void* resolveReference(const wchar16_t* reference, size_t mask) = 0;
 

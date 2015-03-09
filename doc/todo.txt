@@ -30,7 +30,56 @@ Currently:
                        * show built-in variable $subject
                      
               xdev - linux
-                       * linux linker
+                       * file map
+
+
+
+                       * dynamic table   82E0
+
+                         1    1               DT_NEEDED
+                         0C   080482B0        DT_INIT
+                         0D   080484B4        DT_FINI
+
+                         19   08049F08                         
+                         1B   04
+                         1A   08049F0C                         
+                         1C   04
+
+                         05   0804821C        DT_STRTAB
+                         06   080481CC        DT_SYMTAB
+                         0A   4A              DT_STRZ
+                         0B   10              DT_SYMENT
+                         15   0               DT_DEBUG
+                         03   0804A000        DT_PLTGOT
+                         02   18              DT_PLTRELSZ
+                         14   11              DT_PLTREL
+                         17   08048298        DT_JMPREL         --> 80482F6  (first entry in relocation)
+                         11   08048290        DT_REL            [08049FFC ]
+                         12   08              DT_RELSZ
+                         13   08              DT_RELENT
+
+                         x    08048270
+                         x    1
+                         x
+                         0    0
+
+                         got : dynamic
+
+
+                         dt_needed  1 (offset in string table)
+
+                         dt_strtab virt addr  0x21C
+                         dt_symtab virt addr 0x1CC
+
+
+             a00 - got
+
+             298
+
+
+                       * linux linker 
+                       * dynamic loading : got and plt sections
+                       * store debug info in the exe file
 
 <=================> 
                                               
@@ -544,6 +593,7 @@ week1:
                          signature
                          
               xdev - general implementation
+                       * win32 linker : should stat + bss be combined into single section?
                        * probably for arithmetic and referring operation classes should be checked rather than debug flags (i.e. it is not possible
                          to tell apart chararray from shortarray or getAt / setAt will be executed directly for any dynamic array) 
                        * impelement array getat & setat operator

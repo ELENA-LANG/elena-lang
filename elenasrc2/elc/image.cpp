@@ -214,7 +214,7 @@ const wchar16_t* ExecutableImage :: retrieveReference(_Module* module, ref_t ref
    else {
       const wchar16_t* referenceName = module->resolveReference(reference);
       while (isWeakReference(referenceName)) {
-         const wchar_t* resolvedName = _project->resolveForward(referenceName);
+         const wchar16_t* resolvedName = _project->resolveForward(referenceName);
 
          if (!emptystr(resolvedName))  {
             referenceName = resolvedName;
@@ -280,7 +280,7 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    _Module* module = project->resolveModule(ReferenceNs(/*test(type, mtUIMask, mtGUI) ? VM_GUI_LOADER : */VM_LOADER), reference, true);
    _Memory* section = NULL;
 
-   if (module != NULL) {      
+   if (module != NULL) {
       section = module->mapSection(reference | mskNativeCodeRef, true);
    }
    if (section == NULL)
@@ -322,11 +322,11 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
    // CALL_TAPE_MESSAGE_ID 'program
    writeTapeRecord(tapeRef, data, CALL_TAPE_MESSAGE_ID, ConstantIdentifier(STARTUP_CLASS));
 
-   // SEND_MESSAGE 
+   // SEND_MESSAGE
    IdentifierString verb("0#");
    verb.append(0x20 + EVAL_MESSAGE_ID);
    writeTapeRecord(tapeRef, data, SEND_TAPE_MESSAGE_ID, verb);
-   
+
    data.writeDWord(0);
 
    return tapeRef;

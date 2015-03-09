@@ -126,3 +126,21 @@ be copied there;
   config - /etc/elena
   data   - /usr/share/elena
   
+8) Linux ELF format:
+
+-- header / text segment --
+ <header>                     
+ <program header>
+ <text>                  code section
+ <plt>
+-- rodata segment --
+ <rdata>                 rdata section
+ <dynamic>                    
+ <interpreter>
+-- data segment --
+ <got>                   import section
+ <relocation table>           
+ <symbol table>           
+ <string table>              
+ <stat>                  stat section
+ <bss>                   data section

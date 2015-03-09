@@ -8,6 +8,9 @@
 
 #define __MSVCRT_VERSION__ 0x0800
 
+// --- ELC common constants ---
+#define ELC_BUILD_NUMBER             0x000B
+
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elc.h"

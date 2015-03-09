@@ -104,6 +104,7 @@ class JITLinker
    bool           _virtualMode;
    bool           _withDebugInfo;
    void*          _codeBase;
+   int            _statLength;
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(const wchar16_t* reference, void* param, size_t& sizePtr);
@@ -160,6 +161,7 @@ public:
       _virtualMode = virtualMode;
       _withDebugInfo = compiler->isWithDebugInfo();
       _codeBase = codeBase;
+      _statLength = 0;
 
 //      _uniqueID = 0;
    }

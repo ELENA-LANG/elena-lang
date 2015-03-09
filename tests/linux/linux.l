@@ -1,0 +1,5 @@
+#define system.
+
+#symbol Program =
+[
+].

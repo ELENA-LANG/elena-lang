@@ -65,7 +65,7 @@ void x86Instance :: mapReference(const wchar16_t* reference, void* vaddress, siz
 
    if (mask == mskStatRef) {
       // fix up static table size
-      _compiler->setStaticRootCounter(this, _statProcess.Length() >> 2, false);
+      _compiler->setStaticRootCounter(this, _linker->getStaticCount(), false);
    }
 }
 

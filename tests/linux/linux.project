@@ -1,0 +1,11 @@
+[project]
+template=console
+executable=test
+namespace=test
+debuginfo=-1
+
+[files]
+linux.l
+
+[forwards]
+'program=test'Program

@@ -15,80 +15,92 @@
 namespace _ELENA_
 {
 
-//// --- ImageBaseMap ---
-//
-//struct ImageBaseMap
-//{
-//   int base;
-//   int code, rdata, bss, stat, tls, debug, import;
-//
-//   RelocationFixMap importMapping;
-//
-//   ImageBaseMap()
-//      : importMapping((size_t)-1)
-//   {
-//      base = code = rdata = bss = stat = tls = import = debug = 0;
-//   }
-//};
+// --- ImageBaseMap ---
+
+struct ImageBaseMap
+{
+   int base;
+   int code, rdata, bss, stat, /*tls, debug, */import;
+
+   RelocationFixMap importMapping;
+
+   ImageBaseMap()
+      : importMapping((size_t)-1)
+   {
+      base = code = rdata = bss = stat /*= tls = debug*/ = import = 0;
+   }
+};
 
 // --- Linker ---
 
-class Linker
+class Linker32
 {
-//   typedef Map<const wchar16_t*, ReferenceMap*>  ImportTable;
-//
-//   struct ImageInfo
-//   {
-//      Project*     project;
-//      Image*       image;
+   typedef Map<const char*, ref_t, true> ImportReferences;
+
+   struct ImageInfo
+   {
+      Project*     project;
+      Image*       image;
 //      bool         withDebugInfo;
-//
-//      // Import table
-//      ImportTable  importTable;   
-//
-//      // image base addresses
-//      ImageBaseMap map;
-//
-//      // Linker target image properties
-//      int  headerSize, imageSize;
-//      int  entryPoint; 
-//
-//      ImageInfo(Project* project, Image* image)
-//         : importTable(NULL, freeobj)
-//      {
-//         this->project = project;
-//         this->image = image;
-//         this->entryPoint = 0;
-//         this->headerSize = imageSize = 0;
+
+      // Import tables
+      ImportReferences functions;
+      List<char*>      libraries;
+
+      // image base addresses
+      ImageBaseMap map;
+
+      // Linker target image properties
+      int  headerSize, textSize, rdataSize, importSize, bssSize;
+      int  ph_length;      // number of entries in the program header table
+      int  interpreter, dynamic, entryPoint;
+
+      ImageInfo(Project* project, Image* image)
+         : libraries(NULL, freestr)
+      {
+         this->project = project;
+         this->image = image;
+         this->entryPoint = this->interpreter = this->dynamic = 0;
+         this->ph_length = 0;
+         this->headerSize = this->textSize = this->rdataSize = this->importSize = this->bssSize = 0;
 //         this->withDebugInfo = project->BoolSetting(opDebugMode);
-//      }
-//   };
-//
-//   int countSections(Image* image);
-//
-//   int fillImportTable(ImageInfo& info);
-//   void createImportTable(ImageInfo& info);
-//
-//   void mapImage(ImageInfo& info);
-//   void fixImage(ImageInfo& info);
-//
-//   void writeDOSStub(Project* project, FileWriter* file);
-//   void writeHeader(FileWriter* file, short characteristics, int sectionCount);
-//   void writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_directory);
-//
-//   void writeSectionHeader(FileWriter* file, const char* name, Section* section, int& tblOffset, 
-//                           int alignment, int sectionAlignment, int vaddress, int characteristics);
-//   void writeBSSSectionHeader(FileWriter* file, const char* name, size_t size, 
-//                              int sectionAlignment,  int vaddress, int characteristics);
-//   void writeSection(FileWriter* file, Section* section, int alignment);
-//   void writeSections(ImageInfo& info, FileWriter* file);
-//
-//   bool createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory);
+      }
+   };
+
+   int fillImportTable(ImageInfo& info);
+   void createImportData(ImageInfo& info);
+
+   void mapImage(ImageInfo& info);
+   void fixImage(ImageInfo& info);
+
+   void writeSection(FileWriter* file, Section* section, int alignment);
+
+   void writeELFHeader(ImageInfo& info, FileWriter* file);
+   void writePHTable(ImageInfo& info, FileWriter* file);
+   void writeSegments(ImageInfo& info, FileWriter* file);
+
+   bool createExecutable(ImageInfo& info, const tchar_t* exePath/*, ref_t tls_directory*/);
+
+protected:
+   virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;
+   virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex) = 0;
 
 public:
-   void run(Project& project, Image& image, ref_t tls_directory);
+   void run(Project& project, Image& image/*, ref_t tls_directory*/);
 
-   Linker()
+   Linker32()
+   {
+   }
+};
+
+class I386Linker32 : public Linker32
+{
+protected:
+   virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference);
+   virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex);
+
+public:
+   I386Linker32()
    {
    }
 };

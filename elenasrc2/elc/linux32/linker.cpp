@@ -9,19 +9,23 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "linker.h"
-//#include "errors.h"
-//
-//#include <windows.h>
-//
+#include "errors.h"
+
+#include <elf.h>
+#include <limits.h>
+
 //#include <time.h>
 //
+#define MAGIC_NUMBER "\127ELF"
+
 //#define MAJOR_OS           0x05
 //#define MINOR_OS           0x00
-//
-//#define FILE_ALIGNMENT     0x200
-//#define SECTION_ALIGNMENT  0x1000
-//#define IMAGE_BASE         0x00400000
-//
+
+#define FILE_ALIGNMENT     0x0008
+#define SECTION_ALIGNMENT  0x1000
+#define IMAGE_BASE         0x08048000
+#define HEADER_SIZE        0x0100
+
 //#define TEXT_SECTION       ".text"
 //#define RDATA_SECTION      ".rdata"
 //#define DATA_SECTION       ".data"
@@ -33,31 +37,35 @@
 //#ifndef IMAGE_SIZEOF_NT_OPTIONAL_HEADER
 //#define IMAGE_SIZEOF_NT_OPTIONAL_HEADER 224
 //#endif
+#define ELF_HEADER_SIZE    0x34
+#define ELF_PH_SIZE        0x20
+
+#define INTERPRETER_PATH   "/lib/ld-linux.so.2"
 
 using namespace _ELENA_;
 
-//inline int getSize(Section* section)
-//{
-//   return section ? section->Length() : 0;
-//}
-//
-//// --- Reallocate ---
-//
-//ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
-//{
-//   int base = ((ImageBaseMap*)map)->base + key & ~mskAnyRef;
-//
-//   switch(key & mskImageMask) {
-//      case mskCodeRef:
-//         return ((ImageBaseMap*)map)->code + base + disp;
-//      case mskRelCodeRef:
-//         return (key & ~mskAnyRef) + disp - pos - 4;
-//      case mskRDataRef:
-//         return ((ImageBaseMap*)map)->rdata + base + disp;
-//      case mskStatRef:
-//         return ((ImageBaseMap*)map)->stat + base + disp;
-//      case mskDataRef:
-//         return ((ImageBaseMap*)map)->bss + base + disp;
+inline int getSize(Section* section)
+{
+   return section ? section->Length() : 0;
+}
+
+// --- Reallocate ---
+
+ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
+{
+   int base = ((ImageBaseMap*)map)->base + key & ~mskAnyRef;
+
+   switch(key & mskImageMask) {
+      case mskCodeRef:
+         return ((ImageBaseMap*)map)->code + base + disp;
+      case mskRelCodeRef:
+         return (key & ~mskAnyRef) + disp - pos - 4;
+      case mskRDataRef:
+         return ((ImageBaseMap*)map)->rdata + base + disp;
+      case mskStatRef:
+         return ((ImageBaseMap*)map)->stat + base + disp;
+      case mskDataRef:
+         return ((ImageBaseMap*)map)->bss + base + disp;
 //      case mskTLSRef:
 //         return ((ImageBaseMap*)map)->tls + base + disp;
 //      case mskImportRef:
@@ -68,445 +76,463 @@ using namespace _ELENA_;
 //      }
 //      case mskDebugRef:
 //         return ((ImageBaseMap*)map)->debug + base + disp;
-//      default:
-//         return disp;
-//   }
-//}
-//
-//ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
-//{
-//   if ((key & mskImageMask)==mskImportRef) {
-//      return ((ImageBaseMap*)map)->import + disp + ((ImageBaseMap*)map)->importMapping.get(key);
-//   }
-//   else return disp;
-//}
-//
-//// --- Linker ---
-//
-//void Linker :: mapImage(ImageInfo& info)
-//{
-//   info.map.base = info.project->IntSetting(opImageBase, IMAGE_BASE);
-//
-//   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-//
-//   info.map.code = 0x1000;               // code section should always be first
-//   info.map.rdata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
-//   info.map.bss = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
-//   info.map.stat = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
-//   info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
-//   info.map.import = align(info.map.tls + getSize(info.image->getTLSSection()), alignment);
-//   info.map.debug = align(info.map.import + getSize(info.image->getImportSection()), alignment);
-//
-//   info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
-//}
-//
-//int Linker :: fillImportTable(ImageInfo& info)
-//{
-//   int count = 0;
-//
-//   ReferenceMap::Iterator it = info.image->getExternalIt();
-//   while (!it.Eof()) {
-//      String<wchar_t, MAX_PATH> external(it.key());
-//
-//      const wchar16_t* function = external + external.findLast('.') + 1;
-//      Path dll(external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
-//
-//      ReferenceMap* functions = info.importTable.get(dll);
-//      if (functions==NULL) {
-//         functions = new ReferenceMap(0);
-//
-//         info.importTable.add(dll, functions);
-//      }
-//      functions->add(function, *it);
-//
-//      it++;
-//      count++;
-//   }
-//   return count;
-//}
-//
-//void Linker :: createImportTable(ImageInfo& info)
-//{
-//   size_t count = fillImportTable(info);
-//   Section* import = info.image->getImportSection();
-//
-//   MemoryWriter writer(import);
-//
-//   // reference to the import section
-//   ref_t importRef = (count + 1) | mskImportRef;
-//   info.map.importMapping.add(importRef, 0);
-//
-//   MemoryWriter tableWriter(import);
-//   writer.writeBytes(0, (count + 1) * 20);               // fill import table
-//   MemoryWriter fwdWriter(import);
-//   writer.writeBytes(0, (info.importTable.Count()+count)*4);  // fill forward table
-//   MemoryWriter lstWriter(import);
-//   writer.writeBytes(0, (info.importTable.Count()+count)*4);  // fill import list
-//
-//   ImportTable::Iterator dll = info.importTable.start();
-//   while (!dll.Eof()) {
-//      tableWriter.writeRef(importRef, lstWriter.Position());              // OriginalFirstThunk
-//      tableWriter.writeDWord((int)time(NULL));                            // TimeDateStamp
-//      tableWriter.writeDWord(-1);                                         // ForwarderChain
-//      tableWriter.writeRef(importRef, import->Length());                  // Name
-//      const wchar16_t* dllname = dll.key();
-//      if (!Path::checkExtension(dllname, _T("dll"))) {
-//         writer.writeAsciiLiteral(dllname, getlength(dllname));
-//         writer.writeChar('.');
-//         writer.writeAsciiLiteral(_T("dll"));
-//      }
-//      else writer.writeAsciiLiteral(dllname);
-//      tableWriter.writeRef(importRef, fwdWriter.Position());              // ForwarderChain
-//
-//      // fill OriginalFirstThunk & ForwarderChain
-//      ReferenceMap::Iterator fun = (*dll)->start();
-//      while (!fun.Eof()) {
-//         info.map.importMapping.add(*fun, fwdWriter.Position());
-//
-//         fwdWriter.writeRef(importRef, import->Length());
-//         lstWriter.writeRef(importRef, import->Length());
-//
-//         writer.writeWord(1);                                             // Hint (not used)
-//         writer.writeAsciiLiteral(fun.key());
-//
-//         fun++;
-//      }
-//      lstWriter.writeDWord(0);                                            // mark end of chains
-//      fwdWriter.writeDWord(0);
-//
-//      dll++;
-//   }
-//}
-//
-//void Linker :: fixImage(ImageInfo& info)
-//{
-//   Section* text = info.image->getTextSection();
-//   Section* rdata = info.image->getRDataSection();
-//   Section* bss = info.image->getBSSSection();
-//   Section* stat = info.image->getStatSection();
+      default:
+         return disp;
+   }
+}
+
+ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
+{
+   if ((key & mskImageMask)==mskImportRef) {
+      return ((ImageBaseMap*)map)->import + disp + ((ImageBaseMap*)map)->importMapping.get(key);
+   }
+   else return disp;
+}
+
+// --- Linker ---
+
+void Linker32 :: mapImage(ImageInfo& info)
+{
+   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+
+   info.map.base = info.project->IntSetting(opImageBase, IMAGE_BASE);
+
+   info.ph_length = 4; // header + text + rdata + data
+
+   if (info.dynamic > 0) {
+      info.ph_length += 2; // if import table is not empty, append interpreter / dynamic
+   }
+
+   info.headerSize = align(HEADER_SIZE, FILE_ALIGNMENT);
+   info.textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
+   info.rdataSize = align(getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
+   info.importSize = align(getSize(info.image->getImportSection()), FILE_ALIGNMENT);
+   info.bssSize = align(getSize(info.image->getStatSection()), FILE_ALIGNMENT);
+   info.bssSize += align(getSize(info.image->getBSSSection()), FILE_ALIGNMENT);
+
+   // text segment
+   info.map.code = info.headerSize;               // code section should always be first
+
+   // rodata segment
+   info.map.rdata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
+
+   // data segment
+   info.map.import = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+   info.map.stat = align(info.map.import + getSize(info.image->getImportSection()), FILE_ALIGNMENT);
+   info.map.bss = align(info.map.stat + getSize(info.image->getStatSection()), FILE_ALIGNMENT);
+
+/*
+   info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
+   info.map.debug = align(info.map.import + getSize(info.image->getImportSection()), alignment);
+   info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
+*/
+
+/*
+   if (info.importTable.Length() > 0) {
+      info.map.interpreter = size;
+      size += align(getlength(INTERPRETER_PATH), 4);
+   }
+*/
+//   info.map.code = offset;
+
+//   offset += align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
+/*
+   info.textSize = align(size, 8); // due to gnu linux implementation - text segment includes the header
+   size = align(size, alignment);
+
+   info.map.rdata = size;
+   info.rdataSize = align(getSize(info.image->getRDataSection()), 8);
+   size += info.rdataSize;
+   size = align(size, alignment);
+
+   size += align(info.dynamicSize, 8);
+
+   info.map.stat = size;
+   info.dataSize = align(getSize(info.image->getRDataSection()), 4);
+   size += info.dataSize;
+
+   info.map.bss = size;
+   info.dataSize += align(getSize(info.image->getBSSSection()), 4);
+   size += getSize(info.image->getBSSSection());
+   size = align(size, alignment);
+*/
+}
+
+int Linker32 :: fillImportTable(ImageInfo& info)
+{
+   int count = 0;
+
+   ReferenceMap::Iterator it = info.image->getExternalIt();
+   while (!it.Eof()) {
+      String<wchar16_t, PATH_MAX> external(it.key());
+
+      int dotPos = external.findLast('.') + 1;
+      UTF8String function(external + dotPos);
+      Path dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - 1 - dotPos);
+
+      info.functions.add(function.clone(), *it);
+      if (!retrieve(info.libraries.start(), dll, (char*)NULL)) {
+          info.libraries.add(dll.clone());
+      }
+
+      it++;
+      count++;
+   }
+   return count;
+}
+
+void Linker32 :: createImportData(ImageInfo& info)
+{
+   size_t count = fillImportTable(info);
+   if (count == 0)
+      return;
+
+   Section* import = info.image->getImportSection();
+
+   // dynamic table
+   MemoryWriter dynamicWriter(info.image->getRDataSection());
+   dynamicWriter.align(FILE_ALIGNMENT, 0);
+
+   info.dynamic = dynamicWriter.Position();
+
+   // reference to GOT
+   ref_t importRef = (count + 1) | mskImportRef;
+   info.map.importMapping.add(importRef, 0);
+
+   // reserve got table
+   MemoryWriter gotWriter(import);
+   gotWriter.writeBytes(0, (count + 3) * 4);
+   gotWriter.writeRef(mskRDataRef, info.dynamic);
+
+   gotWriter.writeDWord(0);
+   gotWriter.writeDWord(0);
+
+   // reserve relocation table
+   MemoryWriter reltabWriter(import);
+   int relabOffset = reltabWriter.Position();
+   reltabWriter.writeBytes(0, count * 8);
+
+   // reserve symbol table
+   MemoryWriter symtabWriter(import);
+   int symtabOffset = symtabWriter.Position();
+   symtabWriter.writeBytes(0, (count + 1) * 16);
+
+   // string table
+   MemoryWriter strWriter(import);
+   int strOffset = strWriter.Position();
+   strWriter.writeChar(0);
+
+   // code writer
+   MemoryWriter codeWriter(info.image->getTextSection());
+   writePLTStartEntry(codeWriter, importRef);
+
+   ImportReferences::Iterator fun = info.functions.start();
+   int symbolIndex = 1;
+   int pltIndex = 1;
+   while (!fun.Eof()) {
+      int gotPosition = gotWriter.Position();
+
+      // map import reference
+      info.map.importMapping.add(*fun, gotWriter.Position());
+
+      int strIndex = strWriter.Position() - strOffset;
+
+      // symbol table entry
+      symtabWriter.writeDWord(strIndex);
+      symtabWriter.writeDWord(0);
+      symtabWriter.writeDWord(0);
+      symtabWriter.writeDWord(0x12);
+
+      // relocation table entry
+      reltabWriter.writeRef(importRef, gotPosition);
+      reltabWriter.writeDWord((symbolIndex << 8) + R_386_JMP_SLOT);
+
+      // string table entry
+      strWriter.writeLiteral(fun.key());
+
+      // got / plt entry
+      ref_t position = writePLTEntry(codeWriter, symbolIndex, importRef, gotPosition, pltIndex);
+      gotWriter.writeRef(mskCodeRef, position);
+
+      fun++;
+      symbolIndex++;
+      pltIndex++;
+   }
+
+   // write dynamic segment
+
+   // write libraries needed to be loaded
+   List<char*>::Iterator dll = info.libraries.start();
+   while (!dll.Eof()) {
+      dynamicWriter.writeDWord(DT_NEEDED);
+      dynamicWriter.writeDWord(strWriter.Position() - strOffset);
+
+      strWriter.writeLiteral(*dll);
+
+      dll++;
+   }
+   strWriter.writeChar(0);
+   int strLength = strWriter.Position() - strOffset;
+
+   dynamicWriter.writeDWord(DT_STRTAB);
+   dynamicWriter.writeRef(importRef, strOffset);
+
+   dynamicWriter.writeDWord(DT_SYMTAB);
+   dynamicWriter.writeRef(importRef, symtabOffset);
+
+   dynamicWriter.writeDWord(DT_STRSZ);
+   dynamicWriter.writeDWord(strLength);
+
+   dynamicWriter.writeDWord(DT_SYMENT);
+   dynamicWriter.writeDWord(0x10);
+
+   dynamicWriter.writeDWord(DT_PLTGOT);
+   dynamicWriter.writeRef(importRef, 0);
+
+   dynamicWriter.writeDWord(DT_PLTRELSZ);
+   dynamicWriter.writeDWord((count + 3) * 4);
+
+   dynamicWriter.writeDWord(DT_PLTREL);
+   dynamicWriter.writeDWord(DT_REL);
+
+   dynamicWriter.writeDWord(DT_JMPREL);
+   dynamicWriter.writeRef(importRef, relabOffset);
+
+   dynamicWriter.writeDWord(DT_REL);
+   dynamicWriter.writeRef(importRef, relabOffset);
+
+   dynamicWriter.writeDWord(DT_RELSZ);
+   dynamicWriter.writeDWord(count * 8);
+
+   dynamicWriter.writeDWord(DT_RELENT);
+   dynamicWriter.writeDWord(8);
+
+   // write interpreter path
+   dynamicWriter.align(FILE_ALIGNMENT, 0);
+
+   info.interpreter = dynamicWriter.Position();
+   dynamicWriter.writeLiteral(INTERPRETER_PATH, getlength(INTERPRETER_PATH) + 1);
+}
+
+void Linker32 :: fixImage(ImageInfo& info)
+{
+   Section* text = info.image->getTextSection();
+   Section* rdata = info.image->getRDataSection();
+   Section* import = info.image->getImportSection();
+   Section* stat = info.image->getStatSection();
+   Section* bss = info.image->getBSSSection();
 //   Section* tls = info.image->getTLSSection();
-//   Section* import = info.image->getImportSection();
-//
-//  // fix up text reallocate
-//   text->fixupReferences(&info.map, reallocate);
-//
-//  // fix up rdata section
-//   rdata->fixupReferences(&info.map, reallocate);
-//
-//  // fix up bss section
-//   bss->fixupReferences(&info.map, reallocate);
-//
-//  // fix up stat section
-//   stat->fixupReferences(&info.map, reallocate);
-//
+
+  // fix up text reallocate
+   text->fixupReferences(&info.map, reallocate);
+
+  // fix up rdata section
+   rdata->fixupReferences(&info.map, reallocate);
+
+  // fix up import section
+   import->fixupReferences(&info.map, reallocateImport);
+
+  // fix up stat section
+   stat->fixupReferences(&info.map, reallocate);
+
+  // fix up bss section
+   bss->fixupReferences(&info.map, reallocate);
+
 //  // fix up tls section
 //   tls->fixupReferences(&info.map, reallocate);
-//
-//  // fix up import section
-//   import->fixupReferences(&info.map, reallocateImport);
-//
+
 //  // fix up debug info if enabled
 //   if (info.withDebugInfo) {
 //      Section* debug = info.image->getDebugSection();
 //
 //      debug->fixupReferences(&info.map, reallocate);
 //   }
-//}
-//
-//int Linker :: countSections(Image* image)
-//{
-//   int count = 0;
-//
-//   if (getSize(image->getTextSection()))
-//      count++;
-//
-//   if (getSize(image->getRDataSection()))
-//      count++;
-//
-//   if (getSize(image->getBSSSection()))
-//      count++;
-//
-//   if (getSize(image->getStatSection()))
-//      count++;
-//
-//   if (getSize(image->getTLSSection()))
-//      count++;
-//
-//   if (getSize(image->getImportSection()))
-//      count++;
-//
-//   if (getSize(image->getDebugSection()))
-//      count++;
-//
-//   return count;
-//}
-//
-//void Linker :: writeDOSStub(Project* project, FileWriter* file)
-//{
-//   Path stubPath(project->StrSetting(opAppPath), "winstub.ex_");
-//   FileReader stub(stubPath, _T("rb"), feRaw, false);
-//
-//   if (stub.isOpened()) {
-//      file->read(&stub, stub.Length());
-//   }
-//   else project->raiseError(errInvalidFile, (const tchar_t*)stubPath);
-//}
-//
-//void Linker :: writeHeader(FileWriter* file, short characteristics, int sectionCount)
-//{
-//   IMAGE_FILE_HEADER   header;
-//
-//   header.Machine = IMAGE_FILE_MACHINE_I386; // !! machine type may be different;
-//   header.NumberOfSections = (short)sectionCount;
-//   header.TimeDateStamp = (int)time(NULL);
-//   header.SizeOfOptionalHeader = IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
-//   header.Characteristics = characteristics;
-//   header.Characteristics |= IMAGE_FILE_32BIT_MACHINE;
-//   header.Characteristics |= IMAGE_FILE_LOCAL_SYMS_STRIPPED;
-//   header.Characteristics |= IMAGE_FILE_LINE_NUMS_STRIPPED;
-//   header.PointerToSymbolTable = 0;
-//   header.NumberOfSymbols = 0;
-//
-//   file->write(&header, IMAGE_SIZEOF_FILE_HEADER);
-//}
-//
-//void Linker :: writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_directory)
-//{
-//   IMAGE_OPTIONAL_HEADER   header;
-//
-//   header.Magic = IMAGE_NT_OPTIONAL_HDR32_MAGIC;
-//   header.MajorLinkerVersion = 1;                                              // not used
-//   header.MinorLinkerVersion = 0;
-//   header.SizeOfCode = getSize(info.image->getTextSection());
-//   header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
-//   header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
-//
-//   header.AddressOfEntryPoint = info.map.code + info.entryPoint;
-//   header.BaseOfCode = info.map.code;
-//   header.BaseOfData = info.map.rdata;
-//
-//   header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
-//   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-//   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
-//
-//   header.MajorOperatingSystemVersion = MAJOR_OS;
-//   header.MinorOperatingSystemVersion = MINOR_OS;
-//   header.MajorImageVersion = 0;                                               // not used
-//   header.MinorImageVersion = 0;
-//   header.MajorSubsystemVersion = MAJOR_OS;                                    // set for Win 4.0
-//   header.MinorSubsystemVersion = MINOR_OS;
-//   #ifndef mingw49
-//   header.Win32VersionValue = 0;                                               // ??
-//   #endif
-//
-//   header.SizeOfImage = info.imageSize;
-//   header.SizeOfHeaders = info.headerSize;
-//   header.CheckSum = 0;                                                        // For EXE file
-//   switch (info.project->IntSetting(opPlatform, ptWin32Console) & mtUIMask)
-//   {
-//      case mtGUI:
-//         header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
-//         break;
-//      case mtCUI:
-//      default:
-//         header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
-//         break;
-//   }
-//
-//   header.DllCharacteristics = 0;                                              // For EXE file
-//   header.LoaderFlags = 0;                                                     // not used
-//
-//   header.SizeOfStackReserve = info.project->IntSetting(opSizeOfStackReserv, 0x100000); // !! explicit constant name
-//   header.SizeOfStackCommit = info.project->IntSetting(opSizeOfStackCommit, 0x1000);    // !! explicit constant name
-//   header.SizeOfHeapReserve = info.project->IntSetting(opSizeOfHeapReserv, 0x100000);   // !! explicit constant name
-//   header.SizeOfHeapCommit = info.project->IntSetting(opSizeOfHeapCommit, 0x10000);     // !! explicit constant name
-//
-//   header.NumberOfRvaAndSizes = IMAGE_NUMBEROF_DIRECTORY_ENTRIES;
-//   for (unsigned long i = 0 ; i < header.NumberOfRvaAndSizes ; i++) {
-//      header.DataDirectory[i].VirtualAddress = 0;
-//      header.DataDirectory[i].Size = 0;
-//   }
-//   //if (_sections.exist(IMPORT_SECTION)) { // !! temporal
-//      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress = info.map.import;
-//      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = getSize(info.image->getImportSection());
-//   //}
-//   
-//   // IMAGE_DIRECTORY_ENTRY_TLS
-//   if (tls_directory != 0xFFFFFFFF) {
-//      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = info.map.rdata + tls_directory;
-//      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = getSize(info.image->getTLSSection());
-//   }
-//   file->write((char*)&header, IMAGE_SIZEOF_NT_OPTIONAL_HEADER);
-//}
-//
-//void Linker :: writeSectionHeader(FileWriter* file, const char* name, Section* section, int& tblOffset, int alignment, int sectionAlignment,
-//                                  int vaddress, int characteristics)
-//{
-//   IMAGE_SECTION_HEADER header;
-//
-//   strncpy((char*)header.Name, name, 8);
-//   header.Misc.VirtualSize = align(section->Length(), sectionAlignment);
-//   header.SizeOfRawData = align(section->Length(), alignment);
-//   header.PointerToRawData = tblOffset;
-//
-//   header.PointerToRelocations = 0;
-//   header.PointerToLinenumbers = 0;
-//   header.NumberOfRelocations = 0;
-//   header.NumberOfLinenumbers = 0;
-//
-//   header.VirtualAddress = vaddress;
-//   header.Characteristics = characteristics;
-//
-//   file->write((char*)&header, IMAGE_SIZEOF_SECTION_HEADER);
-//
-//   tblOffset += header.SizeOfRawData;
-//}
-//
-//void Linker :: writeBSSSectionHeader(FileWriter* file, const char* name, size_t size, int sectionAlignment,
-//                                  int vaddress, int characteristics)
-//{
-//   IMAGE_SECTION_HEADER header;
-//
-//   strncpy((char*)header.Name, name, 8);
-//   header.Misc.VirtualSize = align(size, sectionAlignment);
-//   header.SizeOfRawData = 0;
-//   header.PointerToRawData = 0;
-//
-//   header.PointerToRelocations = 0;
-//   header.PointerToLinenumbers = 0;
-//   header.NumberOfRelocations = 0;
-//   header.NumberOfLinenumbers = 0;
-//
-//   header.VirtualAddress = vaddress;
-//   header.Characteristics = characteristics;
-//
-//   file->write((char*)&header, IMAGE_SIZEOF_SECTION_HEADER);
-//}
-//
-//void Linker :: writeSection(FileWriter* file, Section* section, int alignment)
-//{
-//   MemoryReader reader(section);
-//   file->read(&reader, section->Length());
-//   file->align(alignment);
-//}
-//
-//void Linker :: writeSections(ImageInfo& info, FileWriter* file)
-//{
-//   int tblOffset = info.headerSize;
-//   int alignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
-//   int sectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-//
-//   // text section header
-//   writeSectionHeader(file, TEXT_SECTION, info.image->getTextSection(), tblOffset, alignment, sectionAlignment,
-//      info.map.code, IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ);
-//
-//   // rdata section header
-//   int rdataSize = getSize(info.image->getRDataSection());
-//   if (rdataSize > 0) {
-//      writeSectionHeader(file, RDATA_SECTION, info.image->getRDataSection(), tblOffset, alignment, sectionAlignment,
-//         info.map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
-//   }
-//
-//   // bss section header
-//   int bssSize = getSize(info.image->getBSSSection());
-//   if (bssSize > 0) {
-//      writeBSSSectionHeader(file, BSS_SECTION, bssSize, sectionAlignment,
-//         info.map.bss, IMAGE_SCN_CNT_UNINITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
-//   }
-//
-//   // stat section header
-//   int statSize = getSize(info.image->getStatSection());
-//   if (statSize > 0) {
-//      writeBSSSectionHeader(file, DATA_SECTION, statSize, sectionAlignment,
-//         info.map.stat, IMAGE_SCN_CNT_UNINITIALIZED_DATA |IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
-//   }
-//
-//   // tls section header
-//   int tlsSize = getSize(info.image->getTLSSection());
-//   if (tlsSize > 0) {
-//      writeSectionHeader(file, TLS_SECTION, info.image->getTLSSection(), tblOffset, alignment, sectionAlignment,
-//         info.map.tls, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
-//   }
-//
-//   // import section header
-//   writeSectionHeader(file, IMPORT_SECTION, info.image->getImportSection(), tblOffset, alignment, sectionAlignment,
-//      info.map.import, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
-//
-//   // debug section header 
-//   int debugSize = getSize(info.image->getDebugSection());
-//   if (debugSize > 0) {
-//      writeSectionHeader(file, DEBUG_SECTION, info.image->getDebugSection(), tblOffset, alignment, sectionAlignment,
-//         info.map.debug, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
-//   }
-//
-//   file->align(alignment);
-//
-//   // text section
-//   writeSection(file, info.image->getTextSection(), alignment);
-//
-//   // rdata section
-//   if (rdataSize > 0)
-//      writeSection(file, info.image->getRDataSection(), alignment);
-//
-//   // tls section
-//   if (tlsSize > 0)
-//      writeSection(file, info.image->getTLSSection(), alignment);
-//
-//   // import section
-//   writeSection(file, info.image->getImportSection(), alignment);
-//
-//   // debug section
-//   if (debugSize > 0) {
-//      writeSection(file, info.image->getDebugSection(), alignment);
-//   }
-//}
-//
-//bool Linker :: createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory)
-//{
-//   // create a full path (including none existing directories)
-//   Path dirPath;
-//   dirPath.copyPath(exePath);
-//   Path::create(NULL, exePath);
-//
-//   FileWriter executable(exePath, feRaw, false);
-//
-//   if (!executable.isOpened())
-//      return false;
-//
-//   writeDOSStub(info.project, &executable);
-//
-//   executable.writeDWord((int)IMAGE_NT_SIGNATURE);
-//
-//   int sectionCount = countSections(info.image);
-//
-//   info.headerSize = executable.Length();
-//   info.headerSize += IMAGE_SIZEOF_FILE_HEADER + IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
-//
-//   info.headerSize += IMAGE_SIZEOF_SECTION_HEADER * sectionCount;
-//   info.headerSize = align(info.headerSize, info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT));
-//
-//   writeHeader(&executable, IMAGE_FILE_EXECUTABLE_IMAGE, sectionCount);
-//   writeNTHeader(info, &executable, tls_directory);
-//   writeSections(info, &executable);
-//
-//   return true;
-//}
+}
 
-void Linker :: run(Project& project, Image& image, ref_t tls_directory)
+void Linker32 :: writeSection(FileWriter* file, Section* section, int alignment)
 {
-//   ImageInfo info(&project, &image);
-//
-//   info.entryPoint = image.getEntryPoint();
-//
-//   createImportTable(info);
-//   mapImage(info);
-//   fixImage(info);
-//
-//   Path path(project.StrSetting(opTarget));
-//
-//   if (emptystr(path))
-//      throw InternalError(errEmptyTarget);
-//
-//   if (!createExecutable(info, path, tls_directory))
-//      project.raiseError(errCannotCreate, path);
+   MemoryReader reader(section);
+   file->read(&reader, section->Length());
+   file->align(alignment);
+}
+
+void Linker32 :: writeELFHeader(ImageInfo& info, FileWriter* file)
+{
+   Elf32_Ehdr header;
+
+   // e_ident
+   memset(header.e_ident, 0, EI_NIDENT);
+   memcpy(header.e_ident, MAGIC_NUMBER, 4);
+   header.e_ident[EI_CLASS] = ELFCLASS32;
+   header.e_ident[EI_DATA]  = ELFDATA2LSB;
+   header.e_ident[EI_VERSION]  = EV_CURRENT;
+
+   header.e_type = ET_EXEC;
+   header.e_machine = EM_386;
+   header.e_version = EV_CURRENT;
+   header.e_entry = info.map.base + info.map.code + info.entryPoint;
+   header.e_phoff = ELF_HEADER_SIZE;
+   header.e_shoff = 0;
+   header.e_flags = 0;
+   header.e_ehsize = 0;
+   header.e_phentsize = ELF_PH_SIZE;
+   header.e_phnum = info.ph_length;
+   header.e_shentsize = 0;
+   header.e_shnum = 0;
+   header.e_shstrndx = SHN_UNDEF;
+
+   file->write((char*)&header, ELF_HEADER_SIZE);
+}
+
+void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
+{
+   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+
+   Elf32_Phdr ph_header;
+
+   // Program header
+   ph_header.p_type = PT_PHDR;
+   ph_header.p_offset = ELF_HEADER_SIZE;
+   ph_header.p_vaddr = info.map.base + ELF_HEADER_SIZE;
+   ph_header.p_paddr = info.map.base + ELF_HEADER_SIZE;
+   ph_header.p_filesz = info.ph_length * ELF_PH_SIZE;
+   ph_header.p_memsz = info.ph_length * ELF_PH_SIZE;
+   ph_header.p_flags = PF_R;
+   ph_header.p_align = 4;
+   file->write((char*)&ph_header, ELF_PH_SIZE);
+
+   if (info.interpreter > 0) {
+      // Interpreter
+      ph_header.p_type = PT_INTERP;
+      ph_header.p_offset = info.textSize + info.headerSize + info.interpreter;
+      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.interpreter;
+      ph_header.p_memsz = ph_header.p_filesz = getlength(INTERPRETER_PATH) + 1;
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = 1;
+      file->write((char*)&ph_header, ELF_PH_SIZE);
+   }
+
+   // Text Segment
+   ph_header.p_type = PT_LOAD;
+   ph_header.p_offset = 0;
+   ph_header.p_vaddr = info.map.base;
+   ph_header.p_paddr = info.map.base;
+   ph_header.p_memsz = ph_header.p_filesz = info.headerSize + info.textSize;
+   ph_header.p_flags = PF_R + PF_X;
+   ph_header.p_align = alignment;
+   file->write((char*)&ph_header, ELF_PH_SIZE);
+
+   // RData Segment
+   ph_header.p_type = PT_LOAD;
+   ph_header.p_offset = info.headerSize + info.textSize;
+   ph_header.p_vaddr = info.map.base + info.map.rdata;
+   ph_header.p_paddr = info.map.base + info.map.rdata;
+   ph_header.p_memsz = ph_header.p_filesz = info.rdataSize;
+   ph_header.p_flags = PF_R;
+   ph_header.p_align = alignment;
+   file->write((char*)&ph_header, ELF_PH_SIZE);
+
+   // Data Segment
+   ph_header.p_type = PT_LOAD;
+   ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize;
+   ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.import;
+   ph_header.p_memsz = info.importSize + info.bssSize;
+   ph_header.p_filesz = info.importSize;
+   ph_header.p_flags = PF_R + PF_W;
+   ph_header.p_align = alignment;
+   file->write((char*)&ph_header, ELF_PH_SIZE);
+
+  if (info.dynamic > 0) {
+      // Dynamic
+      ph_header.p_type = PT_DYNAMIC;
+      ph_header.p_offset = info.headerSize + info.textSize + info.dynamic;
+      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.dynamic;
+      ph_header.p_filesz = ph_header.p_memsz = info.rdataSize - info.dynamic;
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = 8;
+      file->write((char*)&ph_header, ELF_PH_SIZE);
+   }
+}
+
+
+void Linker32 :: writeSegments(ImageInfo& info, FileWriter* file)
+{
+   // text section
+   writeSection(file, info.image->getTextSection(), FILE_ALIGNMENT);
+
+   // rdata section
+   writeSection(file, info.image->getRDataSection(), FILE_ALIGNMENT);
+
+   // import section
+   writeSection(file, info.image->getImportSection(), FILE_ALIGNMENT);
+}
+
+bool Linker32 :: createExecutable(ImageInfo& info, const tchar_t* exePath/*, ref_t tls_directory*/)
+{
+   // create a full path (including none existing directories)
+   Path dirPath;
+   dirPath.copyPath(exePath);
+   Path::create(NULL, exePath);
+
+   FileWriter executable(exePath, feRaw, false);
+
+   if (!executable.isOpened())
+      return false;
+
+   writeELFHeader(info, &executable);
+   writePHTable(info, &executable);
+
+   if (info.headerSize <= executable.Position()) {
+      executable.writeBytes(0, info.headerSize - executable.Position());
+   }
+   else throw InternalError(errFatalLinker);
+
+   writeSegments(info, &executable);
+
+   return true;
+}
+
+void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
+{
+   ImageInfo info(&project, &image);
+
+   info.entryPoint = image.getEntryPoint();
+
+   createImportData(info);
+   mapImage(info);
+   fixImage(info);
+
+   Path path(project.StrSetting(opTarget));
+
+   if (emptystr(path))
+      throw InternalError(errEmptyTarget);
+
+   if (!createExecutable(info, path/*, tls_directory*/))
+      project.raiseError(errCannotCreate, path);
+}
+
+// --- I386Linjer32 ---
+
+void I386Linker32 :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference)
+{
+   codeWriter.writeWord(0x35FF);
+   codeWriter.writeRef(gotReference, 4);
+   codeWriter.writeWord(0x25FF);
+   codeWriter.writeRef(gotReference, 8);
+   codeWriter.writeWord(0);
+}
+
+size_t I386Linker32 :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gotOffset, int entryIndex)
+{
+   codeWriter.writeWord(0x25FF);
+   codeWriter.writeRef(gotReference, gotOffset);
+
+   size_t position = codeWriter.Position();
+
+   codeWriter.writeByte(0x68);
+   codeWriter.writeDWord(symbolIndex);
+   codeWriter.writeByte(0xE9);
+   codeWriter.writeDWord(-(entryIndex * 0x10));
+
+   return position;
 }

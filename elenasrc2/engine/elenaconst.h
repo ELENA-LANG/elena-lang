@@ -120,7 +120,7 @@ namespace _ELENA_
    #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
    #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
    #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
-   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack   
+   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack
    #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
 
    #define VA_ALIGNMENT       0x08
@@ -231,15 +231,15 @@ namespace _ELENA_
   // --- ELENA Platform type ---
    enum PlatformType {
       // masks
-      mtPlatformMask     = 0x000FF, 
+      mtPlatformMask     = 0x000FF,
       mtWin32            = 0x00001,
       mtLinux32          = 0x00002,
 
-      mtTargetMask       = 0x00F00, 
+      mtTargetMask       = 0x00F00,
       mtStandalone       = 0x00000,
       mtVMClient         = 0x00100,
 
-      mtUIMask           = 0x0F000, 
+      mtUIMask           = 0x0F000,
       mtCUI              = 0x00000,
       mtGUI              = 0x01000,
 
@@ -252,6 +252,7 @@ namespace _ELENA_
       ptVMWin32GUI       = 0x01001,
       ptVMWin32Console   = 0x00101,
       ptWin32ConsoleMT   = 0x10001,
+      ptLinux32Console   = 0x00002,
    };
 
 //  // --- ELENA Debug Mode ---
@@ -278,7 +279,7 @@ namespace _ELENA_
    const int elSealed              = 0x00000120;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
-   const int elNonStructureRole    = 0x00001000; 
+   const int elNonStructureRole    = 0x00001000;
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
@@ -295,7 +296,7 @@ namespace _ELENA_
    const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
    const int elDebugChars          = 0x00080000;
-   const int elDebugPTR            = 0x00090000; 
+   const int elDebugPTR            = 0x00090000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -322,7 +323,7 @@ namespace _ELENA_
   // --- ELENA core module names ---
   #define CORE_ALIAS                "core"          // Core functionality
   // #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
-  #define IMPORT_FORWARD            "'$import" 
+  #define IMPORT_FORWARD            "'$import"
 
   // --- ELENA verb messages ---
    #define NEW_MESSAGE              "new"
@@ -471,21 +472,21 @@ namespace _ELENA_
    #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
    #define FUNCX_FORWARD            "'$function"                     // the base action / function class
    #define NFUNCX_FORWARD           "'$nfunction"                    // the base action / function class
-   #define INT_FORWARD              "'$int" 
-   #define LONG_FORWARD             "'$long" 
-   #define REAL_FORWARD             "'$real" 
-   #define WSTR_FORWARD             "'$literal" 
-   #define WCHAR_FORWARD            "'$char" 
+   #define INT_FORWARD              "'$int"
+   #define LONG_FORWARD             "'$long"
+   #define REAL_FORWARD             "'$real"
+   #define WSTR_FORWARD             "'$literal"
+   #define WCHAR_FORWARD            "'$char"
    #define TRUE_FORWARD             "'$true"
    #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
-   #define SIGNATURE_FORWARD        "'$signature"       
-   #define VERB_FORWARD             "'$verb"       
-   #define GETPROPERTY_FORWARD      "'$getProperty"     
-   #define ARRAY_FORWARD            "'$array" 
-   #define PARAMS_FORWARD           "'$params" 
-   #define BOOL_FORWARD             "'$bool" 
-   #define SUBJ_FORWARD             "'$sign" 
+   #define SIGNATURE_FORWARD        "'$signature"
+   #define VERB_FORWARD             "'$verb"
+   #define GETPROPERTY_FORWARD      "'$getProperty"
+   #define ARRAY_FORWARD            "'$array"
+   #define PARAMS_FORWARD           "'$params"
+   #define BOOL_FORWARD             "'$bool"
+   #define SUBJ_FORWARD             "'$sign"
 
    #define STARTUP_CLASS            "'program"
 
