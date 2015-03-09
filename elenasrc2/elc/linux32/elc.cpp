@@ -294,7 +294,7 @@ void _ELC_::Project :: setOption(const char* value)
             _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
-            _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH)));
+            _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(_ELENA_::ProjectParam(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH))));
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_PRM_OPTOFF)) {
             _settings.add(_ELENA_::opL0, 0);
@@ -345,7 +345,7 @@ void _ELC_::Project :: setOption(const char* value)
 
          _ELENA_::Path projectPath;
          projectPath.copyPath(value + 1);
-         _settings.add(_ELENA_::opProjectPath, projectPath.clone());
+         _settings.add(_ELENA_::opProjectPath, _ELENA_::ProjectParam(projectPath.clone()));
 
          break;
       }

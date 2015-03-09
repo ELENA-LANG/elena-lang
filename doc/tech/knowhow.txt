@@ -122,6 +122,7 @@ be copied there;
 7) Linux paths:
 
   lib    - /usr/lib/elena/lib30
+  core   - /usr/lib/elena/core/x32
   src    - /usr/share/elena/src30
   config - /etc/elena
   data   - /usr/share/elena

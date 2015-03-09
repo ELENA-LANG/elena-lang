@@ -834,7 +834,7 @@ long StringHelper :: strToLong(const unsigned short* s, int radix)
       neg = true;
    }
    while (*s) {
-      n *= 10;
+      n *= radix;
 
       unsigned short c = *s;
       if(c >= '0' && c <= '9') {
@@ -933,11 +933,16 @@ void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t l
 
 unsigned short* StringHelper :: clone(const unsigned short* s)
 {
-   size_t length = getlength(s) + 1;
-   unsigned short* dup = w_allocate(length);
-   copy(dup, s, length);
+   if (emptystr(s)) {
+      return NULL;
+   }
+   else {
+      size_t length = getlength(s) + 1;
+      unsigned short* dup = w_allocate(length);
+      copy(dup, s, length);
 
-   return dup;
+      return dup;
+   }
 }
 
 //unsigned short* StringHelper :: w_clone(const char* s)
@@ -1055,7 +1060,7 @@ char* StringHelper :: upper(char* s)
 
 char* StringHelper :: clone(const char* s)
 {
-   return _strdup(s);
+   return emptystr(s) ? NULL : _strdup(s);
 }
 
 void StringHelper :: append(char* dest, const char* sour, int length)

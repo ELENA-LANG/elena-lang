@@ -16,7 +16,7 @@
 
 //#include <time.h>
 //
-#define MAGIC_NUMBER "\127ELF"
+#define MAGIC_NUMBER "\x07F""ELF"
 
 //#define MAJOR_OS           0x05
 //#define MINOR_OS           0x00
@@ -377,7 +377,7 @@ void Linker32 :: writeELFHeader(ImageInfo& info, FileWriter* file)
    header.e_ehsize = 0;
    header.e_phentsize = ELF_PH_SIZE;
    header.e_phnum = info.ph_length;
-   header.e_shentsize = 0;
+   header.e_shentsize = 0x28;
    header.e_shnum = 0;
    header.e_shstrndx = SHN_UNDEF;
 
@@ -434,7 +434,10 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
 
    // Data Segment
    ph_header.p_type = PT_LOAD;
-   ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize;
+   if (info.importSize != 0) {
+      ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize;
+   }
+   else ph_header.p_offset = 0;
    ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.import;
    ph_header.p_memsz = info.importSize + info.bssSize;
    ph_header.p_filesz = info.importSize;
@@ -482,7 +485,7 @@ bool Linker32 :: createExecutable(ImageInfo& info, const tchar_t* exePath/*, ref
    writeELFHeader(info, &executable);
    writePHTable(info, &executable);
 
-   if (info.headerSize <= executable.Position()) {
+   if (info.headerSize >= executable.Position()) {
       executable.writeBytes(0, info.headerSize - executable.Position());
    }
    else throw InternalError(errFatalLinker);

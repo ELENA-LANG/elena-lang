@@ -234,7 +234,7 @@ bool File :: readLiteral(wchar16_t* s, size_t length, size_t& wasread)
          length -= count;
 
          count = fread(temp, 1, count, _file);
-         
+
          StringHelper::copy(s, temp, count);
          wasread += count;
          s += count;
@@ -541,7 +541,7 @@ bool TextFileReader :: read(char* s, size_t length)
 // --- FileReader ---
 
 FileReader :: FileReader(const tchar_t* path, int encoding, bool withBOM)
-   : _file(path, _T("rb+"), encoding, withBOM)
+   : _file(path, _T("rb"), encoding, withBOM)
 {
 }
 

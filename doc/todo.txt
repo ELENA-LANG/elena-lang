@@ -29,11 +29,15 @@ Currently:
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
                        * show built-in variable $subject
                      
+              xdev - executable
+                       * entry point - 8048850
+
               xdev - linux
-                       * file map
-
-
-
+                       * core : uncommand RaiseException function call
+                       * core : reimplement INIT_RND
+                       * core : reimplement INIT
+                       * core : reimplement EXIT
+                       
                        * dynamic table   82E0
 
                          1    1               DT_NEEDED

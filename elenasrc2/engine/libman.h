@@ -68,7 +68,6 @@ public:
    void addPrimitiveAlias(const wchar16_t* alias, const tchar_t* path)
    {
       _binaryAliases.erase(alias);
-
       _binaryAliases.add(alias, StringHelper::clone(path));
    }
 

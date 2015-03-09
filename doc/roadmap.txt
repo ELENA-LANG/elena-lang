@@ -39,13 +39,14 @@ Version 2.2.0
 Version 2.3.0
 -------------
 - linux version (console & windowsx)
+- start migrating all assembler code to c; either dll or import object code
+
+Version 2.4.0
+-------------
+- lib30 review -> lib31
 - optimize elenavm
 - optimize elenart
 - optimize elenasm
-
-Version 2.3.0
--------------
-- lib30 review -> lib31
 
 Version 2.x.x
 -------------
