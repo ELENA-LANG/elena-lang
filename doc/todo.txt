@@ -20,12 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - linux
-                       * test:
-                          rel - 804a950                 - 290 / 298
-                          sym - 804a958
-                          got - 804a940
+              adev - linux lib30:
+                       * core : implement INIT_RND
 
+                       * core : leave the common code in core, and move OS specific one to core_lnx / core_win
+                       * core : uncommand RaiseException function call
+                       * core : implement INIT_RND
+                       * core : reimplement INIT
+                       * core : reimplement EXIT
 <=================> 
                                               
 1.9.19
@@ -34,15 +36,8 @@ week2:
               adev - lib30                                        
                        * system'text : UTF8String
                        * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
-
-              adev - linux lib30:
-                       * fix elf linker
-                       * core : leave the common code in core, and move OS specific one to core_lnx / core_win
-                       * core : uncommand RaiseException function call
-                       * core : reimplement INIT_RND
-                       * core : reimplement INIT
-                       * core : reimplement EXIT
                        * linux console operations
+
               adev - gui
                        * general architecture
                        * class function
@@ -613,6 +608,7 @@ week1:
 
 week2:
               adev - linux lib30:
+                       * core : implement INIT_RND
                        * linux file operations
                        * linux date / time operations
 

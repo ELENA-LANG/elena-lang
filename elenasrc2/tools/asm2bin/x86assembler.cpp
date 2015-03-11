@@ -1378,6 +1378,16 @@ void x86Assembler :: compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWri
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler::compileINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
+   if (test(sour.type, x86Helper::otDB)) {
+      code->writeByte(0xCD);
+      code->writeByte(sour.offset);
+   }
+   else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
@@ -2630,7 +2640,11 @@ bool x86Assembler :: compileCommandI(TokenInfo& token, ProcedureInfo& info, Memo
 		compileINC(token, info, &writer);
       return true;
 	}
-	else if (token.check("imul")) {
+   else if (token.check("int")) {
+      compileINT(token, info, &writer);
+      return true;
+   }
+   else if (token.check("imul")) {
 		compileIMUL(token, info, &writer);
       return true;
 	}

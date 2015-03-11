@@ -20,6 +20,9 @@ define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_ADDRESSINFO     10023h
 define LOAD_CALLSTACK       10024h
+define NEW_HEAP             10025h
+define BREAK                10026h
+
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
@@ -69,8 +72,6 @@ define elCountOffset     0008h
 define elVMTOffset       0004h 
 define elVMTFlagOffset   0008h
 define elVMTSizeOffset   000Ch
-
-define GC_HEAP_ATTRIBUTE 00Dh
 
 define subj_mask         80FFFFF0h
 
@@ -484,11 +485,9 @@ labError:
   pop  edi 
 
 labError2:
-  push 0
-  push 0
-  push 1
-  push 0C0000017h
-  call extern 'dlls'KERNEL32.RaiseException
+
+  mov  ebx, 0C0000017h
+  call code : % BREAK
   ret  
 
   // start collecting: esi => ebp, [ebx, edx] ; ecx - count
@@ -893,24 +892,6 @@ procedure %HOOK
 
 end
 
-procedure % INIT_RND
-
-  sub  esp, 8h
-  mov  eax, esp
-  sub  esp, 10h
-  lea  ebx, [esp]
-  push eax 
-  push ebx
-  push ebx
-  call extern 'dlls'KERNEL32.GetSystemTime
-  call extern 'dlls'KERNEL32.SystemTimeToFileTime
-  add  esp, 10h
-  pop  eax
-  pop  edx
-  ret
-  
-end
-
 // --- System Core Functions --
 
 procedure % INIT
@@ -948,11 +929,7 @@ labNext:
   add  eax, ebx
 
   // ; create heap
-  push eax                
-  push GC_HEAP_ATTRIBUTE
-  call extern 'dlls'KERNEL32.GetProcessHeap
-  push eax 
-  call extern 'dlls'KERNEL32.HeapAlloc
+  call code : %NEW_HEAP
 
   shl  esi, page_size_order
   shl  edi, page_size_order
@@ -1132,15 +1109,6 @@ procedure % CLOSETHREAD
   xor eax, eax
   ret
   
-end
-
-procedure % EXIT
-  
-  mov  eax, 0                         
-  push eax
-  // ; exit
-  call extern 'dlls'KERNEL32.ExitProcess     
-
 end
 
 // ; ebx - a new length

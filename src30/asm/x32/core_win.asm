@@ -23,23 +23,17 @@ define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
 
-define PROT_READ_WRITE      03h
-define MAP_ANONYMOUS        20h
-define SIGABRT              06h
+define GC_HEAP_ATTRIBUTE 00Dh
 
 // ; in - eax - total size
 // ; out - eax - heap
 procedure % NEW_HEAP
 
-  // ; addr = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE,
-  // ;              MAP_ANONYMOUS, -1, 0);  
-  push 0
-  push eax
-  push PROT_READ_WRITE
-  push MAP_ANONYMOUS
-  push 0FFFFFFFFh
-  push 0
-  call extern : "libc.so.6.mmap"
+  push eax                
+  push GC_HEAP_ATTRIBUTE
+  call extern 'dlls'KERNEL32.GetProcessHeap
+  push eax 
+  call extern 'dlls'KERNEL32.HeapAlloc
   ret
 
 end
@@ -47,15 +41,16 @@ end
 // ; ebx - exception code
 procedure % BREAK
 
-  // ; SIGABRT
-  push SIGABRT
-  call extern : "libc.so.6.raise"
+  push 0
+  push 0
+  push 1
+  push ebx
+  call extern 'dlls'KERNEL32.RaiseException
 
 end
 
 procedure % INIT_RND
 
-/*
   sub  esp, 8h
   mov  eax, esp
   sub  esp, 10h
@@ -68,19 +63,15 @@ procedure % INIT_RND
   add  esp, 10h
   pop  eax
   pop  edx
-*/
-  // ; !  temporally
-  xor  eax
-  xor  edx  
-
   ret
   
 end
 
 procedure % EXIT
   
-  mov  eax, 1
-  mov  ebx, 0
-  int  80h
+  mov  eax, 0                         
+  push eax
+  // ; exit
+  call extern 'dlls'KERNEL32.ExitProcess     
 
 end

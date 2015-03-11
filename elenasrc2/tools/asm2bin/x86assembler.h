@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86assemblerH
@@ -141,7 +141,8 @@ protected:
 
 	void compileDEC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileNOT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

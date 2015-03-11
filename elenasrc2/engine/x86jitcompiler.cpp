@@ -38,6 +38,9 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define UNLOCK               0x10022
 #define LOAD_ADDRESSINFO     0x10023
 #define LOAD_CALLSTACK       0x10024
+#define NEW_HEAP             0x10025
+#define BREAK                0x10026
+
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
 #define CORE_GC_SIZE         0x20003
@@ -55,10 +58,10 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 21;
+const int coreFunctionNumber = 23;
 const int coreFunctions[coreFunctionNumber] =
 {
-   GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
+   NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
    CALC_SIZE, SET_COUNT, GET_COUNT, LOCK, UNLOCK, LOAD_ADDRESSINFO,
    LOAD_CALLSTACK

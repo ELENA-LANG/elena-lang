@@ -25,17 +25,6 @@ define EXEC_MESSAGE_ID  085000000h
 // ; console_entry()
 procedure coreapi'console_entry
 
-  // !! temporal
-  push 6Fh
-  push 48656C6Ch 
-  mov  ebx, esp
-  push ebx
-  call extern : "libc.so.6.puts"
-  add  esp, 8
-
-  ret
-
-/*
   call code : % INIT
   call code : % NEWFRAME
   mov  ebx, code : "$native'coreapi'default_handler"
@@ -55,7 +44,7 @@ procedure coreapi'console_entry
   call code : % EXIT
 
   ret
-*/  
+
 end
 
 procedure coreapi'default_handler                                                       
