@@ -11,11 +11,16 @@
 [!] binary incompatible due to changes in the compiler code
 [*] operator redesign : \ - alternative message call, || - or operator
 [!] a strong type cannot be used as a custom verb 
+[*] stripping CORE from OS dependant code and moving it into CORE_LNX and CORE_WIN
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement
 [+] -wX / -wX- options turning on / off warnings
 [*] optimization : a simple resend operation
+[+] linux ELF linker
+
+[LIB]
+[+]linux: support basic console operations
 
 [IDE]
 [*] fixed "step over" implementations inside symbol

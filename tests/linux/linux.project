@@ -9,3 +9,4 @@ linux.l
 
 [forwards]
 'program=test'Program
+'newLine=test'newLine

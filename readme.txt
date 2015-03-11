@@ -4,7 +4,7 @@
 The project includes ELENA documentation, standard library source code, 
 samples, command-line compiler, IDE.
 
-Currently only Win32-x86 (2000/XP/Vista/7/8) platform is supported.
+Currently Win32-x86 (2000/XP/Vista/7/8) / Linux-I386 (early alpha) platforms are supported.
 
 For more information see at http://elenalang.sourceforge.net/
 
@@ -28,11 +28,11 @@ For more information see at http://elenalang.sourceforge.net/
 - ELENA Virtual Machine Terminal
 
 ****************************************************************************
-* Minimum requirements
+* OS requirements
 ****************************************************************************
 
- - x86
- - Win2000/XP/Vista/Windows 7
+ - Win2000/XP/Vista/Windows 7 x86
+ - Linux I386
 
 ****************************************************************************
 * License

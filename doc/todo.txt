@@ -20,20 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              adev - linux lib30:
-                       * core : implement INIT_RND
-
-                       * core : leave the common code in core, and move OS specific one to core_lnx / core_win
-                       * core : uncommand RaiseException function call
-                       * core : implement INIT_RND
-                       * core : reimplement INIT
-                       * core : reimplement EXIT
 <=================> 
                                               
 1.9.19
 --------
 week2:
-              adev - lib30                                        
+              adev - lib30                       
+                       * linux : clear the argument list after the call
+                       * move newLine constant into os dependant file 
                        * system'text : UTF8String
                        * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
                        * linux console operations

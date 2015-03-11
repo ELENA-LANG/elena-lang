@@ -40,6 +40,7 @@ procedure % NEW_HEAP
   push 0FFFFFFFFh
   push 0
   call extern : "libc.so.6.mmap"
+  add  esp, 24
   ret
 
 end
@@ -70,8 +71,8 @@ procedure % INIT_RND
   pop  edx
 */
   // ; !  temporally
-  xor  eax
-  xor  edx  
+  xor  eax, eax
+  xor  edx, edx  
 
   ret
   
