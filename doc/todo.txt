@@ -20,124 +20,23 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - executable
-                       * entry point - 8048850
-
               xdev - linux
-                       * string / symbol table should be in rdata segment
-                       
-                       * dynamic table   82E0
-
-                         0C   080482B0        DT_INIT
-                         0D   080484B4        DT_FINI
-
-                         19   08049F08                         
-                         1B   04
-                         1A   08049F0C                         
-                         1C   04
-
-                         x    08048270
-                         x    1
-                         x
-                         0    0
-                         
-                         1    1               DT_NEEDED
-                         05   0804821C        DT_STRTAB
-                         06   080481CC        DT_SYMTAB
-                         0A   4A              DT_STRZ
-                         0B   10              DT_SYMENT
-                         15   0               DT_DEBUG
-                         03   0804A000        DT_PLTGOT
-                         02   18              DT_PLTRELSZ
-                         14   11              DT_PLTREL
-                         17   08048298        DT_JMPREL         --> 80482F6  (first entry in relocation)
-                         11   08048290        DT_REL            [08049FFC ]
-                         12   08              DT_RELSZ
-                         13   08              DT_RELENT
-
-
-                         
-                         1   6            DT_NEEDED
-                         5   0804A038     DT_STRTAB
-                         6   0804A018     DT_SYMTAB
-                         A   11           DT_STRZ
-                         B   10           DT_SYMENT
-                         3   0804A000     DT_PLTGOT
-                         2   10           DT_PLTRELSZ
-                         14  11           DT_PLTREL
-                         17  0804A010     DT_JMPREL                         
-                         11  0804A010     DT_REL
-                         12  8            DT_RELSZ
-                         13  8            DT_RELENT
-
-
-                       * linux linker 
+                       * test:
+                          rel - 804a950                 - 290 / 298
+                          sym - 804a958
+                          got - 804a940
 
 <=================> 
                                               
 1.9.19
 --------
-week1:
-              xdev - linux
-                       * store debug info in the exe file
-                       * port elenart to linux
-                       * port multi-threading
-                       * port elc to linux
-                       * port ecv to linux
-                       * review deployment mechanism
-                       * port elenavm to linux
-                       * port elide to linux
-                       * port elenasm to linux
-                       * port elt to linux
-                       
-              idev - debugger - watch
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * debug script
-                       * implement watch
-                       * show data variables (currently only int / short are displayed)
-                       * show output argument
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                       * show built-in variable $subject
-                     
-              idev - usability
-                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
-                       * recognize out of memory exception
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-                       * test compilation with a very long identifier names                       
-
-              idev - debugger - call stack
-                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
-                                              
-              xdev - multithreading       
-                       * implement lock / unlock
-                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
-                       * threadhandle - remove the object from the reference table on closing
-                       * reference table should be created on the program start for multy thread version
-                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
-                         storage ; maybe better to store there data duplication? 
-                       * static object should be thread safe
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * threadhandle - provide safe region like it was in 1.7
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-                       * compile pi with mt
-                       * compile anagram with mt
-
-              idev - generic development                                          
-                       * show the file encoding
-                       * refresh / reload documents after changing encoding ??
-                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
-                         utf-16 for windows?
-                       * chinese (or others two or more UTF8 ) characters should take two columns (similar like tab)
-                       * wintextview : reimplement the cursor locating code if it is not a monofont
-
 week2:
               adev - lib30                                        
                        * system'text : UTF8String
                        * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
 
               adev - linux lib30:
+                       * fix elf linker
                        * core : leave the common code in core, and move OS specific one to core_lnx / core_win
                        * core : uncommand RaiseException function call
                        * core : reimplement INIT_RND
@@ -642,12 +541,64 @@ week1:
                        * review internal core_routines
                        * optimize primitive operator implementations
 
+              xdev - linux
+                       * store debug info in the exe file
+                       * port elenart to linux
+                       * port multi-threading
+                       * port elc to linux
+                       * port ecv to linux
+                       * review deployment mechanism
+                       * port elenavm to linux
+                       * port elide to linux
+                       * port elenasm to linux
+                       * port elt to linux
+
+              xdev - multithreading       
+                       * implement lock / unlock
+                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
+                       * threadhandle - remove the object from the reference table on closing
+                       * reference table should be created on the program start for multy thread version
+                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
+                         storage ; maybe better to store there data duplication? 
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * threadhandle - provide safe region like it was in 1.7
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+                       * compile pi with mt
+                       * compile anagram with mt
+                       
               idev - script engine
                        * build-in script into IDE
                        
               idev - usability
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
+                       * recognize out of memory exception
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
                        * class view - make possible to browse the class methods
 
+              idev - debugger - watch
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * debug script
+                       * implement watch
+                       * show data variables (currently only int / short are displayed)
+                       * show output argument
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
+                       * show built-in variable $subject
+                                              
+              idev - generic development                                          
+                       * show the file encoding
+                       * refresh / reload documents after changing encoding ??
+                       * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
+                         utf-16 for windows?
+                       * chinese (or others two or more UTF8 ) characters should take two columns (similar like tab)
+                       * wintextview : reimplement the cursor locating code if it is not a monofont
+
+              idev - debugger - call stack
+                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
+                       
               xdev - general optimization                               
                        * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
                        * GC: card table scanning; could we optimize it ?                       

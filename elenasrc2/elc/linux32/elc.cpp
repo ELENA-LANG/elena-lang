@@ -18,7 +18,7 @@
 
 #include <stdarg.h>
 
-#define ELC_BUILD_NUMBER 0x000D
+#define ELC_BUILD_NUMBER 0x000E
 
 // --- ImageHelper ---
 

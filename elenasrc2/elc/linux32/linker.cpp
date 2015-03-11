@@ -21,7 +21,7 @@
 //#define MAJOR_OS           0x05
 //#define MINOR_OS           0x00
 
-#define FILE_ALIGNMENT     0x0008
+#define FILE_ALIGNMENT     0x0010
 #define SECTION_ALIGNMENT  0x1000
 #define IMAGE_BASE         0x08048000
 #define HEADER_SIZE        0x0100
@@ -124,9 +124,15 @@ void Linker32 :: mapImage(ImageInfo& info)
 
    // rodata segment
    info.map.rdata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
+   // due to loader requirement, adjust offset
+   info.map.rdata += ((info.headerSize + info.textSize) & (alignment - 1));
 
    // data segment
    info.map.import = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+   // due to loader requirement, adjust offset
+   if (info.importSize != 0)
+      info.map.import += ((info.headerSize + info.textSize + info.rdataSize) & (alignment - 1));
+
    info.map.stat = align(info.map.import + getSize(info.image->getImportSection()), FILE_ALIGNMENT);
    info.map.bss = align(info.map.stat + getSize(info.image->getStatSection()), FILE_ALIGNMENT);
 
@@ -191,9 +197,9 @@ void Linker32 :: createImportData(ImageInfo& info)
 
    // reserve relocation table
    MemoryWriter reltabWriter(import);
-   size_t relabOffset = reltabWriter.Position();
+   size_t reltabOffset = reltabWriter.Position();
    reltabWriter.writeBytes(0, count * 8);
-   reltabWriter.seek(relabOffset);
+   reltabWriter.seek(reltabOffset);
 
    // reserve symbol table
    MemoryWriter symtabWriter(import);
@@ -228,7 +234,7 @@ void Linker32 :: createImportData(ImageInfo& info)
       symtabWriter.writeDWord(0x12);
 
       // relocation table entry
-      size_t relPosition = reltabWriter.Position() - relabOffset;
+      size_t relPosition = reltabWriter.Position() - reltabOffset;
       reltabWriter.writeRef(importRef, gotPosition);
       reltabWriter.writeDWord((symbolIndex << 8) + R_386_JMP_SLOT);
 
@@ -275,16 +281,16 @@ void Linker32 :: createImportData(ImageInfo& info)
    dynamicWriter.writeRef(importRef, 0);
 
    dynamicWriter.writeDWord(DT_PLTRELSZ);
-   dynamicWriter.writeDWord((count + 3) * 4);
+   dynamicWriter.writeDWord(count * 8);
 
    dynamicWriter.writeDWord(DT_PLTREL);
    dynamicWriter.writeDWord(DT_REL);
 
    dynamicWriter.writeDWord(DT_JMPREL);
-   dynamicWriter.writeRef(importRef, relabOffset);
+   dynamicWriter.writeRef(importRef, reltabOffset);
 
    dynamicWriter.writeDWord(DT_REL);
-   dynamicWriter.writeRef(importRef, relabOffset);
+   dynamicWriter.writeRef(importRef, reltabOffset);
 
    dynamicWriter.writeDWord(DT_RELSZ);
    dynamicWriter.writeDWord(count * 8);
