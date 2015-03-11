@@ -13,6 +13,9 @@
 #include "config.h"
 #include "jitcompiler.h"
 
+// --- ELC common constants ---
+#define ELC_BUILD_NUMBER             0x0010
+
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -58,6 +61,8 @@
 #define PROJECT_CATEGORY            "project"
 #define SYSTEM_CATEGORY             "system"
 #define TEMPLATE_CATEGORY           "templates"
+#define WINAPI_CATEGORY             "winapi"
+#define EXTERNALS_CATEGORY          "externals"
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "debuginfo"

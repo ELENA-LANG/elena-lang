@@ -20,18 +20,16 @@ v  - vm script
 ------                                 
 Currently:
 ------
+              adev - lib30                       
+                       * system'text : UTF8String
+                       * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
+                       * linux console operations
+
 <=================> 
                                               
 1.9.19
 --------
 week2:
-              adev - lib30                       
-                       * linux : clear the argument list after the call
-                       * move newLine constant into os dependant file 
-                       * system'text : UTF8String
-                       * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
-                       * linux console operations
-
               adev - gui
                        * general architecture
                        * class function
@@ -503,7 +501,6 @@ week1:
                        * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group
                        * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
-                       * both external call modes should be supported: winapi / c (currently only winapi mode supported)                 
                        * loop should contain snop
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
@@ -517,6 +514,7 @@ week1:
                          one for single constant #10 and another for several constant or literal + constant - #10#13)
                        * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
                        * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation                       
+                       * literal constant should be converted into utf8 if it is passed as utf8_literal
 
               xdev - byte code optimization                               
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])

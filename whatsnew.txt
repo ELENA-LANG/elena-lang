@@ -18,6 +18,7 @@
 [+] -wX / -wX- options turning on / off warnings
 [*] optimization : a simple resend operation
 [+] linux ELF linker
+[*] both external call modes supported: winapi / c
 
 [LIB]
 [+]linux: support basic console operations

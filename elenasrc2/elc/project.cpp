@@ -135,13 +135,11 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const 
       if (!emptystr(path)) {
          Path filePath(path);
          filePath.combine(value);
-         filePath.lower();
 
          _settings.add(setting, key, filePath.clone());
       }
       else {
          param.copy(value);
-         param.lower();
 
          _settings.add(setting, key, param.clone());
       }
@@ -250,6 +248,10 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
    // load primitive aliases
    loadPrimitiveCategory(config, configPath);
 
+   // load external aliases
+   loadCategory(config, opExternals, NULL);
+   loadCategory(config, opWinAPI, NULL);
+
    // load sources
    loadSourceCategory(config, configPath);
 
@@ -353,4 +355,15 @@ _Module* Project :: resolveCore(ref_t reference, bool silentMode)
       return NULL;
    }
    else return module;
+}
+
+const wchar16_t* Project :: resolveExternalAlias(const wchar16_t* alias, bool& stdCall)
+{
+   const wchar16_t* dll = _settings.get(opExternals, alias, DEFAULT_STR);
+   if (!emptystr(dll)) {
+      stdCall = true;
+
+      return dll;
+   }
+   else return _settings.get(opWinAPI, alias, DEFAULT_STR);
 }

@@ -64,6 +64,8 @@ enum ProjectSetting
    opForwards              = 0x0061,
    opSources               = 0x0062,
    opTemplates             = 0x0063,
+   opExternals             = 0x0064,
+   opWinAPI                = 0x0065   // used only for WIN32
 };
 
 // --- ModuleInfo ---
@@ -146,6 +148,8 @@ public:
    {
       return _settings.getIt(opForwards);
    }
+
+   const wchar16_t* resolveExternalAlias(const wchar16_t* alias, bool& stdCall);
 
    virtual void printInfo(const char* msg, const char* value) = 0;
    virtual void printInfo(const char* msg, const wchar16_t* value) = 0;

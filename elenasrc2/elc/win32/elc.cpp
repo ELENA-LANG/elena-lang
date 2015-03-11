@@ -8,9 +8,6 @@
 
 #define __MSVCRT_VERSION__ 0x0800
 
-// --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x000D
-
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elc.h"
@@ -222,6 +219,10 @@ _ELENA_::ConfigCategoryIterator _ELC_::Project :: getCategory(_ELENA_::_ConfigFi
       return config.getCategoryIt(SOURCE_CATEGORY);
    case _ELENA_::opForwards:
       return config.getCategoryIt(FORWARD_CATEGORY);
+   case _ELENA_::opExternals:
+      return config.getCategoryIt(EXTERNALS_CATEGORY);
+   case _ELENA_::opWinAPI:
+      return config.getCategoryIt(WINAPI_CATEGORY);
    default:
       return _ELENA_::ConfigCategoryIterator();
    }

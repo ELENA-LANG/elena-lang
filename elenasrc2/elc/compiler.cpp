@@ -4214,14 +4214,20 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode)
+ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllAlias, int mode)
 {
    ObjectInfo retVal(okIndexAccumulator);
 
    ModuleScope* moduleScope = scope.moduleScope;
 
+   bool stdCall = false;
+   const wchar16_t* dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+   // legacy : if dll is not mapped, use its directly like winapi
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
    ReferenceNs name(DLL_NAMESPACE);
-   name.combine(dllName + strlen(EXTERNAL_MODULE) + 1);
+   name.combine(dllName);
    name.append(".");
    name.append(node.Terminal());
 
@@ -4239,6 +4245,9 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const w
 
    // call the function
    _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
+
+   if (stdCall)
+      _writer.releaseObject(*scope.tape, externalScope.operands.Count());
 
    //// indicate that the result is 0 or -1
    //if (test(mode, HINT_LOOP))

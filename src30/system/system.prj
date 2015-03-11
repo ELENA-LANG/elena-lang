@@ -25,7 +25,7 @@ math\math.l
 calendar\types.l
 calendar\win32_datetime.l
 calendar\dates.l
-text\common.l
+text\win32_common.l
 text\encoder.l
 text\win32_encoder.l
 text\textbuffer.l

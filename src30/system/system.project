@@ -17,3 +17,4 @@ memory.l
 dynamic.l
 extensions.l
 exceptions.l
+text/lnx32_common.l
