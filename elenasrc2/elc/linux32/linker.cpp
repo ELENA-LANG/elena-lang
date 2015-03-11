@@ -33,10 +33,7 @@
 //#define IMPORT_SECTION     ".import"
 //#define TLS_SECTION        ".tls"
 //#define DEBUG_SECTION      ".debug"
-//
-//#ifndef IMAGE_SIZEOF_NT_OPTIONAL_HEADER
-//#define IMAGE_SIZEOF_NT_OPTIONAL_HEADER 224
-//#endif
+
 #define ELF_HEADER_SIZE    0x34
 #define ELF_PH_SIZE        0x20
 
@@ -68,12 +65,12 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
          return ((ImageBaseMap*)map)->bss + base + disp;
 //      case mskTLSRef:
 //         return ((ImageBaseMap*)map)->tls + base + disp;
-//      case mskImportRef:
-//      {
-//         int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
-//
-//         return ((ImageBaseMap*)map)->import + address + disp;
-//      }
+      case mskImportRef:
+      {
+         int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
+
+         return ((ImageBaseMap*)map)->import + address + disp;
+      }
 //      case mskDebugRef:
 //         return ((ImageBaseMap*)map)->debug + base + disp;
       default:
@@ -84,7 +81,19 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
 ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
 {
    if ((key & mskImageMask)==mskImportRef) {
-      return ((ImageBaseMap*)map)->import + disp + ((ImageBaseMap*)map)->importMapping.get(key);
+      int base = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
+
+      return base + ((ImageBaseMap*)map)->import + disp;
+   }
+   else if ((key & mskImageMask)==mskRDataRef) {
+      int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
+
+      return ((ImageBaseMap*)map)->rdata + base + disp;
+   }
+   else if ((key & mskImageMask)==mskCodeRef) {
+      int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
+
+      return ((ImageBaseMap*)map)->code + base + disp;
    }
    else return disp;
 }
@@ -126,36 +135,6 @@ void Linker32 :: mapImage(ImageInfo& info)
    info.map.debug = align(info.map.import + getSize(info.image->getImportSection()), alignment);
    info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
 */
-
-/*
-   if (info.importTable.Length() > 0) {
-      info.map.interpreter = size;
-      size += align(getlength(INTERPRETER_PATH), 4);
-   }
-*/
-//   info.map.code = offset;
-
-//   offset += align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
-/*
-   info.textSize = align(size, 8); // due to gnu linux implementation - text segment includes the header
-   size = align(size, alignment);
-
-   info.map.rdata = size;
-   info.rdataSize = align(getSize(info.image->getRDataSection()), 8);
-   size += info.rdataSize;
-   size = align(size, alignment);
-
-   size += align(info.dynamicSize, 8);
-
-   info.map.stat = size;
-   info.dataSize = align(getSize(info.image->getRDataSection()), 4);
-   size += info.dataSize;
-
-   info.map.bss = size;
-   info.dataSize += align(getSize(info.image->getBSSSection()), 4);
-   size += getSize(info.image->getBSSSection());
-   size = align(size, alignment);
-*/
 }
 
 int Linker32 :: fillImportTable(ImageInfo& info)
@@ -167,8 +146,10 @@ int Linker32 :: fillImportTable(ImageInfo& info)
       String<wchar16_t, PATH_MAX> external(it.key());
 
       int dotPos = external.findLast('.') + 1;
+
       UTF8String function(external + dotPos);
-      Path dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - 1 - dotPos);
+
+      Path dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
 
       info.functions.add(function.clone(), *it);
       if (!retrieve(info.libraries.start(), dll, (char*)NULL)) {
@@ -201,21 +182,24 @@ void Linker32 :: createImportData(ImageInfo& info)
 
    // reserve got table
    MemoryWriter gotWriter(import);
-   gotWriter.writeBytes(0, (count + 3) * 4);
    gotWriter.writeRef(mskRDataRef, info.dynamic);
-
    gotWriter.writeDWord(0);
    gotWriter.writeDWord(0);
+   size_t gotStart = gotWriter.Position();
+   gotWriter.writeBytes(0, count * 4);
+   gotWriter.seek(gotStart);
 
    // reserve relocation table
    MemoryWriter reltabWriter(import);
-   int relabOffset = reltabWriter.Position();
+   size_t relabOffset = reltabWriter.Position();
    reltabWriter.writeBytes(0, count * 8);
+   reltabWriter.seek(relabOffset);
 
    // reserve symbol table
    MemoryWriter symtabWriter(import);
-   int symtabOffset = symtabWriter.Position();
+   size_t symtabOffset = symtabWriter.Position();
    symtabWriter.writeBytes(0, (count + 1) * 16);
+   symtabWriter.seek(symtabOffset + 16);
 
    // string table
    MemoryWriter strWriter(import);
@@ -244,6 +228,7 @@ void Linker32 :: createImportData(ImageInfo& info)
       symtabWriter.writeDWord(0x12);
 
       // relocation table entry
+      size_t relPosition = reltabWriter.Position() - relabOffset;
       reltabWriter.writeRef(importRef, gotPosition);
       reltabWriter.writeDWord((symbolIndex << 8) + R_386_JMP_SLOT);
 
@@ -251,7 +236,7 @@ void Linker32 :: createImportData(ImageInfo& info)
       strWriter.writeLiteral(fun.key());
 
       // got / plt entry
-      ref_t position = writePLTEntry(codeWriter, symbolIndex, importRef, gotPosition, pltIndex);
+      ref_t position = writePLTEntry(codeWriter, relPosition, importRef, gotPosition, pltIndex);
       gotWriter.writeRef(mskCodeRef, position);
 
       fun++;
@@ -522,7 +507,7 @@ void I386Linker32 :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotRefer
    codeWriter.writeRef(gotReference, 4);
    codeWriter.writeWord(0x25FF);
    codeWriter.writeRef(gotReference, 8);
-   codeWriter.writeWord(0);
+   codeWriter.writeDWord(0);
 }
 
 size_t I386Linker32 :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gotOffset, int entryIndex)
@@ -535,7 +520,7 @@ size_t I386Linker32 :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, 
    codeWriter.writeByte(0x68);
    codeWriter.writeDWord(symbolIndex);
    codeWriter.writeByte(0xE9);
-   codeWriter.writeDWord(-(entryIndex * 0x10));
+   codeWriter.writeDWord(-0x10-(entryIndex * 0x10));
 
    return position;
 }

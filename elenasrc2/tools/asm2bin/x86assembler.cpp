@@ -1619,6 +1619,16 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       else if (token.check(ARGUMENT2)) {
          code->writeRef(-2, 0);
       }
+      else if (token.value[0]==':') {
+         token.read();
+         IdentifierString s(token.terminal.line + 1, token.terminal.length-2);
+
+         ReferenceNs function(DLL_NAMESPACE, s);
+
+	      int ref = info.binary->mapReference(function) | mskImportRef;
+
+	      code->writeRef(ref, 0);
+      }
       else if (ConstantIdentifier::compare(token.value, "'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 

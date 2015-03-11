@@ -26,7 +26,14 @@ define EXEC_MESSAGE_ID  085000000h
 procedure coreapi'console_entry
 
   // !! temporal
-  ret 
+  push 6Fh
+  push 48656C6Ch 
+  mov  ebx, esp
+  push ebx
+  call extern : "libc.so.6.puts"
+  add  esp, 8
+
+  ret
 
 /*
   call code : % INIT

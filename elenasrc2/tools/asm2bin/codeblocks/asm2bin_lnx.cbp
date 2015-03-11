@@ -12,7 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters="/home/alex/elena/src30/asm/x32/core_lnx.asm" />
+				<Option parameters="/home/alex/elena/src30/asm/x32/coreapi.asm" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

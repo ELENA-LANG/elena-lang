@@ -20,27 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              idev - debugger - watch
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * debug script
-                       * implement watch
-                       * show data variables (currently only int / short are displayed)
-                       * show output argument
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                       * show built-in variable $subject
-                     
               xdev - executable
                        * entry point - 8048850
 
               xdev - linux
-                       * core : uncommand RaiseException function call
-                       * core : reimplement INIT_RND
-                       * core : reimplement INIT
-                       * core : reimplement EXIT
+                       * string / symbol table should be in rdata segment
                        
                        * dynamic table   82E0
 
-                         1    1               DT_NEEDED
                          0C   080482B0        DT_INIT
                          0D   080484B4        DT_FINI
 
@@ -49,6 +36,12 @@ Currently:
                          1A   08049F0C                         
                          1C   04
 
+                         x    08048270
+                         x    1
+                         x
+                         0    0
+                         
+                         1    1               DT_NEEDED
                          05   0804821C        DT_STRTAB
                          06   080481CC        DT_SYMTAB
                          0A   4A              DT_STRZ
@@ -62,28 +55,23 @@ Currently:
                          12   08              DT_RELSZ
                          13   08              DT_RELENT
 
-                         x    08048270
-                         x    1
-                         x
-                         0    0
 
-                         got : dynamic
-
-
-                         dt_needed  1 (offset in string table)
-
-                         dt_strtab virt addr  0x21C
-                         dt_symtab virt addr 0x1CC
-
-
-             a00 - got
-
-             298
+                         
+                         1   6            DT_NEEDED
+                         5   0804A038     DT_STRTAB
+                         6   0804A018     DT_SYMTAB
+                         A   11           DT_STRZ
+                         B   10           DT_SYMENT
+                         3   0804A000     DT_PLTGOT
+                         2   10           DT_PLTRELSZ
+                         14  11           DT_PLTREL
+                         17  0804A010     DT_JMPREL                         
+                         11  0804A010     DT_REL
+                         12  8            DT_RELSZ
+                         13  8            DT_RELENT
 
 
                        * linux linker 
-                       * dynamic loading : got and plt sections
-                       * store debug info in the exe file
 
 <=================> 
                                               
@@ -91,6 +79,7 @@ Currently:
 --------
 week1:
               xdev - linux
+                       * store debug info in the exe file
                        * port elenart to linux
                        * port multi-threading
                        * port elc to linux
@@ -101,6 +90,15 @@ week1:
                        * port elenasm to linux
                        * port elt to linux
                        
+              idev - debugger - watch
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * debug script
+                       * implement watch
+                       * show data variables (currently only int / short are displayed)
+                       * show output argument
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
+                       * show built-in variable $subject
+                     
               idev - usability
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
@@ -135,10 +133,17 @@ week1:
                        * wintextview : reimplement the cursor locating code if it is not a monofont
 
 week2:
+              adev - lib30                                        
+                       * system'text : UTF8String
+                       * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
+
               adev - linux lib30:
+                       * core : leave the common code in core, and move OS specific one to core_lnx / core_win
+                       * core : uncommand RaiseException function call
+                       * core : reimplement INIT_RND
+                       * core : reimplement INIT
+                       * core : reimplement EXIT
                        * linux console operations
-                       * linux file operations
-                       * linux date / time operations
               adev - gui
                        * general architecture
                        * class function
@@ -654,6 +659,11 @@ week1:
               xdev - dynamic programming                                             
                        * implement trace mode
                        * it should be possible Tape to debug  (see 1.x implementation)
+
+week2:
+              adev - linux lib30:
+                       * linux file operations
+                       * linux date / time operations
 
 2.0.0
 -----
