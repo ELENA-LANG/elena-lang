@@ -31,8 +31,6 @@ using namespace _ELENA_;
 #define LINKER_YGSIZE               "ygsize"
 #define LIBRARY_PATH                "path"
 
-typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
-
 // --- Wrapper Functions ---
 //
 //void* __getClassVMTRef(Instance* instance, void* referenceName)
@@ -42,16 +40,16 @@ typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
 
 void* __getSymbolRef(Instance* instance, void* referenceName)
 {
-   return instance->getSymbolRef((const wchar16_t*)referenceName);
+   return instance->getSymbolRef((ident_t)referenceName);
 }
 
-static size_t __getClassName(Instance* instance, void* vmtAddress, wchar16_t* buffer, size_t maxLength)
+static size_t __getClassName(Instance* instance, void* vmtAddress, ident_c* buffer, size_t maxLength)
 {
-   const wchar16_t* className = instance->getClassName(vmtAddress);
+   ident_t className = instance->getClassName(vmtAddress);
    size_t length = getlength(className);
    if (length > 0) {
       if (maxLength >= length) {
-         StringHelper::copy(buffer, className, length);
+         StringHelper::copy(buffer, className, length, length);
       }
       else buffer[0] = 0;
    }
@@ -66,18 +64,18 @@ static void* __interprete(Instance* instance, void* tape)
 
 static void* __getLastError(Instance* instance, void* retVal)
 {
-   const wchar16_t* error = instance->getStatus();
+   ident_t error = instance->getStatus();
    if (!emptystr(error)) {
-      int length = getlength(error);
-      StringHelper::copy((wchar16_t*)retVal, error, length);
-      ((wchar16_t*)retVal)[length] = 0;
+      size_t length = getlength(error);
+      StringHelper::copy((ident_c*)retVal, error, length, length);
+      ((ident_c*)retVal)[length] = 0;
 
       return retVal;
    }
    else return NULL;
 }
 
-static size_t __loadAddressInfo(Instance* instance, void* address, wchar16_t* buffer, size_t maxLength)
+static size_t __loadAddressInfo(Instance* instance, void* address, ident_c* buffer, size_t maxLength)
 {
    if (instance->loadAddressInfo(address, buffer, maxLength)) {
       return maxLength;
@@ -89,13 +87,10 @@ static size_t __loadAddressInfo(Instance* instance, void* address, wchar16_t* bu
 
 void InstanceConfig :: loadForwardList(IniConfigFile& config)
 {
-   ProjectParam key, value;
-
    ConfigCategoryIterator it = config.getCategoryIt(FORWARD_CATEGORY);
    while (!it.Eof()) {
-      // copy line key
-      key.copy(it.key());
-      value.copy((const char*)*it);
+      const char* key = it.key();
+      const char* value = (const char*)*it;
 
       // if it is a wildcard
       if (key[getlength(key) - 1] == '*') {
@@ -113,32 +108,30 @@ void InstanceConfig :: loadForwardList(IniConfigFile& config)
    }
 }
 
-void InstanceConfig :: loadList(IniConfigFile& config, const char* category, const wchar_t* path, Map<const wchar_t*, wchar_t*>* list)
+void InstanceConfig :: loadList(IniConfigFile& config, const char* category, const wchar_t* path, Map<ident_t, ident_c*>* list)
 {
-   ProjectParam key, value;
-
    ConfigCategoryIterator it = config.getCategoryIt(category);
    while (!it.Eof()) {
-      // copy line key
-      key.copy(it.key());
-      value.copy((char*)*it);
+      const char* key = it.key();
+      const char* value = (const char*)*it;
 
-      if(value.isEmpty())
-         value.copy(key);
+      if(emptystr(value))
+         value = key;
 
       // add path if provided
       if (!emptystr(path)) {
-         Path filePath(path, value);
+         Path filePath(path);
+         Path::combinePath(filePath, value);
 
-         list->add(key, StringHelper::clone(filePath));
+         list->add(key, IdentifierString::clone(filePath));
       }
-      else list->add(key, IdentifierString(value).clone());
+      else list->add(key, StringHelper::clone(value));
 
       it++;
    }
 }
 
-bool InstanceConfig :: load(const tchar_t* path, Templates* templates)
+bool InstanceConfig :: load(path_t path, Templates* templates)
 {
    IniConfigFile config;
    if (_ELENA_::emptystr(path) || !config.load(path, feUTF8)) {
@@ -150,12 +143,15 @@ bool InstanceConfig :: load(const tchar_t* path, Templates* templates)
       IdentifierString projectTemplate(config.getSetting(PROJECT_CATEGORY, PROJECT_TEMPLATE));
 
       if (!_ELENA_::emptystr(projectTemplate)) {
-         load(templates->get(projectTemplate), templates);
+         Path templatePath;
+         Path::loadPath(templatePath, templates->get(projectTemplate));
+
+         load(templatePath, templates);
       }
    }
 
    _ELENA_::Path configPath;
-   configPath.copyPath(path);
+   configPath.copySubPath(path);
 
    // init config
    init(configPath, config);
@@ -163,7 +159,7 @@ bool InstanceConfig :: load(const tchar_t* path, Templates* templates)
    return true;
 }
 
-void InstanceConfig :: init(const tchar_t* configPath, IniConfigFile& config)
+void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
 {
    // compiler options
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
@@ -174,7 +170,7 @@ void InstanceConfig :: init(const tchar_t* configPath, IniConfigFile& config)
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {
       libPath.copy(configPath);
-      libPath.combine(path);
+      Path::combinePath(libPath, path);
    }
 
    loadList(config, PRIMITIVE_CATEGORY, configPath, &primitives);
@@ -235,14 +231,14 @@ Instance :: Instance(ELENAMachine* machine)
    // init loader based on default machine config
    initLoader(_machine->config);
 
-   _literalClass.copy(_config.forwards.get(ConstantIdentifier(WSTR_FORWARD)));
-   _characterClass.copy(_config.forwards.get(ConstantIdentifier(WCHAR_FORWARD)));
-   _intClass.copy(_config.forwards.get(ConstantIdentifier(INT_FORWARD)));
-   _realClass.copy(_config.forwards.get(ConstantIdentifier(REAL_FORWARD)));
-   _longClass.copy(_config.forwards.get(ConstantIdentifier(LONG_FORWARD)));
-   _msgClass.copy(_config.forwards.get(ConstantIdentifier(MESSAGE_FORWARD)));
-   _signClass.copy(_config.forwards.get(ConstantIdentifier(SIGNATURE_FORWARD)));
-   _verbClass.copy(_config.forwards.get(ConstantIdentifier(VERB_FORWARD)));
+   _literalClass = _config.forwards.get(WSTR_FORWARD);
+   _characterClass = _config.forwards.get(WCHAR_FORWARD);
+   _intClass = _config.forwards.get(INT_FORWARD);
+   _realClass = _config.forwards.get(REAL_FORWARD);
+   _longClass = _config.forwards.get(LONG_FORWARD);
+   _msgClass = _config.forwards.get(MESSAGE_FORWARD);
+   _signClass = _config.forwards.get(SIGNATURE_FORWARD);
+   _verbClass = _config.forwards.get(VERB_FORWARD);
 
    // init Run-Time API
    _loadClassName = __getClassName;
@@ -258,20 +254,20 @@ Instance :: ~Instance()
    freeobj(_compiler);
 }
 
-const wchar16_t* Instance :: resolveForward(const wchar16_t* forward)
+ident_t Instance :: resolveForward(ident_t forward)
 {
-   const wchar16_t* reference = _config.forwards.get(forward);
+   ident_t reference = _config.forwards.get(forward);
    // if no forward mapping was found try to resolve on the module level
    if (emptystr(reference)) {
       NamespaceName alias(forward);
 
-      const wchar16_t* module = _config.moduleForwards.get(alias);
+      ident_t module = _config.moduleForwards.get(alias);
       // if there is a module mapping create an appropriate forward
       if (!emptystr(module)) {
          ReferenceName name(forward);
          ReferenceNs newRefeference(module, name);
 
-         _config.forwards.add(forward, wcsdup(newRefeference));
+         _config.forwards.add(forward, StringHelper::clone(newRefeference));
 
          reference = _config.forwards.get(forward);
       }
@@ -307,19 +303,19 @@ size_t Instance :: getLinkerConstant(int id)
    }
 }
 
-void Instance :: printInfo(const tchar_t* msg, ...)
+void Instance :: printInfo(const wchar_t* msg, ...)
 {
    va_list argptr;
    va_start(argptr, msg);
 
    vwprintf(msg, argptr);
    va_end(argptr);
-   wprintf(_T("\n"));
+   wprintf(L"\n");
 
    fflush(stdout);
 }
 
-const wchar16_t* Instance :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
+ident_t Instance :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
    if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref) {
       return module->resolveConstant(reference);
@@ -330,9 +326,9 @@ const wchar16_t* Instance :: retrieveReference(_Module* module, ref_t reference,
    }
    // if it is constant
    else {
-      const wchar16_t* referenceName = module->resolveReference(reference);
+      ident_t referenceName = module->resolveReference(reference);
       while (isWeakReference(referenceName)) {
-         const wchar16_t* resolvedName = resolveForward(referenceName);
+         ident_t resolvedName = resolveForward(referenceName);
          if (!emptystr(resolvedName)) {
             referenceName = resolvedName;
          }
@@ -342,17 +338,17 @@ const wchar16_t* Instance :: retrieveReference(_Module* module, ref_t reference,
    }
 }
 
-const wchar16_t* Instance :: retrieveReference(void* address, ref_t mask)
+ident_t Instance :: retrieveReference(void* address, ref_t mask)
 {
    switch(mask & mskImageMask) {
       case mskRDataRef:
-         return retrieveKey(_dataReferences.start(), (ref_t)address, (const wchar16_t*)NULL);
+         return retrieveKey(_dataReferences.start(), (ref_t)address, DEFAULT_STR);
       default:
          return NULL;
    }
 }
 
-_Module* Instance :: resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+_Module* Instance::resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
    while (isWeakReference(referenceName)) {
       referenceName = resolveForward(referenceName);
@@ -365,13 +361,13 @@ _Module* Instance :: resolveModule(const wchar16_t* referenceName, LoadResult& r
    return _loader.resolveModule(referenceName, result, reference);
 }
 
-SectionInfo Instance :: getSectionInfo(const wchar16_t* reference, size_t mask)
+SectionInfo Instance::getSectionInfo(ident_t reference, size_t mask)
 {
    SectionInfo sectionInfo;
 
    LoadResult result;
    ref_t      referenceID = 0;
-   if (ConstantIdentifier::compare(reference, NATIVE_MODULE, NMODULE_LEN) && reference[NMODULE_LEN]=='\'') {
+   if (StringHelper::compare(reference, NATIVE_MODULE, NMODULE_LEN) && reference[NMODULE_LEN]=='\'') {
       sectionInfo.module = _loader.resolveNative(reference, result, referenceID);
    }
    else sectionInfo.module = resolveModule(reference, result, referenceID);
@@ -400,7 +396,7 @@ SectionInfo Instance :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-ClassSectionInfo Instance :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode)
+ClassSectionInfo Instance::getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 
@@ -419,7 +415,7 @@ ClassSectionInfo Instance :: getClassSectionInfo(const wchar16_t* reference, siz
    return sectionInfo;
 }
 
-void Instance :: addForward(const wchar16_t* forward, const wchar16_t* reference)
+void Instance::addForward(ident_t forward, ident_t reference)
 {
    if (forward[getlength(forward) - 1] == '*') {
       NamespaceName alias(forward);
@@ -427,31 +423,31 @@ void Instance :: addForward(const wchar16_t* forward, const wchar16_t* reference
 
       _config.moduleForwards.erase(alias);
 
-      _config.moduleForwards.add(alias, StringHelper::cloneLowered(module));
+      _config.moduleForwards.add(alias, StringHelper::clone(module));
    }
    else {
       _config.forwards.erase(forward);
 
-      _config.forwards.add(forward, wcsdup(reference));
+      _config.forwards.add(forward, StringHelper::clone(reference));
    }
 }
 
-void Instance :: addForward(const wchar16_t* line)
+void Instance::addForward(ident_t line)
 {
    size_t sep = StringHelper::find(line, '=', -1);
    if(sep != -1) {
-      const wchar16_t* reference = line + sep + 1;
+      ident_t reference = line + sep + 1;
       IdentifierString forward(line, sep);
 
       addForward(forward, reference);
    }
 }
 
-void* Instance :: loadSymbol(const wchar16_t* reference, int mask)
+void* Instance::loadSymbol(ident_t reference, int mask)
 {
    // reference should not be a forward one
    while (isWeakReference(reference)) {
-      const wchar16_t* resolved = resolveForward(reference);
+      ident_t resolved = resolveForward(reference);
       if (emptystr(resolved)) {
          throw JITUnresolvedException(reference);
       }
@@ -468,11 +464,12 @@ bool Instance :: initLoader(InstanceConfig& config)
    // load primitives
    Primitives::Iterator it = config.primitives.start();
    while (!it.Eof()) {
-
-      if (ConstantIdentifier::compare(it.key(), CORE_ALIAS)) {
-         _loader.addCoreAlias(*it);
+      Path path;
+      Path::loadPath(path, *it);
+      if (StringHelper::compare(it.key(), CORE_ALIAS)) {
+         _loader.addCoreAlias(path);
       }
-      else _loader.addPrimitiveAlias(it.key(), *it);
+      else _loader.addPrimitiveAlias(it.key(), path);
 
       it++;
    }
@@ -483,13 +480,13 @@ bool Instance :: initLoader(InstanceConfig& config)
 bool Instance :: restart(bool debugMode)
 {
    printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_BUILD_NUMBER);
-   printInfo(_T("Initializing..."));
+   printInfo(L"Initializing...");
 
    clearReferences();
 
    // init debug section
    if (_linker->getDebugMode()) {
-      printInfo(_T("Debug mode..."));
+      printInfo(L"Debug mode...");
    }
 
    // load predefined code
@@ -503,7 +500,7 @@ bool Instance :: restart(bool debugMode)
 
    _initialized = true;
 
-   printInfo(_T("Done..."));
+   printInfo(L"Done...");
 
    return true;
 }
@@ -523,10 +520,10 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
    size_t command = reader.getDWord();
    void*  extra_param;
    while (command != terminator) {
-      const wchar16_t* arg = NULL;
+      ident_t arg = NULL;
       size_t param = reader.getDWord();
       if (test(command, LITERAL_ARG_MASK)) {
-         arg = (const wchar16_t*)reader.Address();
+         arg = (ident_t)reader.Address();
 
          reader.seek(reader.Position() + param);  // goes to the next record
       }
@@ -602,16 +599,25 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             break;
          case REVERSE_TAPE_MESSAGE_ID:
             if (param == 2) {
-               // swapsi 1
-               ecodes.writeByte(bcSwapSI);
-               ecodes.writeDWord(1);
+               // popa
+               // aswapsi 0
+               // pusha
+               ecodes.writeByte(bcPopA);
+               ecodes.writeByte(bcASwapSI);
+               ecodes.writeDWord(0);
+               ecodes.writeByte(bcPushA);
             }
             else {
                int length = param >> 1;
                param--;
 
-               ecodes.writeByte(bcSwapSI);
-               ecodes.writeDWord(param);
+               // popa
+               // aswapsi 0
+               // pusha
+               ecodes.writeByte(bcPopA);
+               ecodes.writeByte(bcASwapSI);
+               ecodes.writeDWord(param - 1);
+               ecodes.writeByte(bcPushA);
 
                for (int i = 1 ; i < length ; i++) {
                   // aloadsi i
@@ -683,10 +689,13 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
    dump[procPtr - 4] = ecodes.Position() - procPtr;
 }
 
-bool Instance :: loadTemplate(const wchar16_t* name)
+bool Instance::loadTemplate(ident_t name)
 {
-   if (!_config.load(_machine->templates.get(name), &_machine->templates)) {
-      setStatus(_T("Cannot load the template:"), name);
+   Path path;
+   Path::loadPath(path, _machine->templates.get(name));
+
+   if (!_config.load(path, &_machine->templates)) {
+      setStatus("Cannot load the template:", name);
 
       return false;
    }
@@ -694,21 +703,27 @@ bool Instance :: loadTemplate(const wchar16_t* name)
    return initLoader(_config);
 }
 
-void Instance :: setPackagePath(const wchar16_t* package, const tchar_t* path)
+void Instance::setPackagePath(ident_t package, path_t path)
 {
    _loader.setPackage(package, path);
 }
 
-void Instance :: setPackagePath(const wchar16_t* line)
+void Instance::setPackagePath(ident_t line)
 {
    size_t sep = StringHelper::find(line, '=', -1);
    if(sep != -1) {
-      Path path(line + sep + 1);
+      Path path;
+      Path::loadPath(path, line + sep + 1);
       IdentifierString package(line, sep);
 
       setPackagePath(package, path);
    }
-   else setPackagePath(NULL, line);
+   else {
+      Path path;
+      Path::loadPath(path, line);
+
+      setPackagePath(NULL, path);
+   }
 }
 
 void Instance :: configurate(MemoryReader& reader, int terminator)
@@ -717,10 +732,10 @@ void Instance :: configurate(MemoryReader& reader, int terminator)
 
    size_t command = reader.getDWord();
    while (command != terminator) {
-      const wchar16_t* arg = NULL;
+      ident_t arg = NULL;
       size_t param = reader.getDWord();
       if (test(command, LITERAL_ARG_MASK)) {
-         arg = (const wchar16_t*)reader.Address();
+         arg = (ident_t)reader.Address();
 
          reader.seek(reader.Position() + param);  // goes to the next record
       }
@@ -771,7 +786,7 @@ void Instance :: configurate(MemoryReader& reader, int terminator)
 //   return NULL;
 //}
 
-int Instance :: interprete(void* tape, const wchar16_t* interpreter)
+int Instance::interprete(void* tape, ident_t interpreter)
 {
    ByteArray    tapeArray(tape, -1);
    MemoryReader tapeReader(&tapeArray);
@@ -804,7 +819,7 @@ int Instance :: interprete(void* tape, const wchar16_t* interpreter)
    // compile byte code
    MemoryReader reader(&ecodes);
 
-   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, ConstantIdentifier(TAPE_SYMBOL), (void*)tape);
+   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, (void*)tape);
 
    // update debug section size if available
    if (_debugMode) {
@@ -822,12 +837,12 @@ int Instance :: interprete(void* tape, const wchar16_t* interpreter)
    int retVal = (*entry.evaluate)(vaddress);
 
    if (retVal == 0)
-      setStatus(_T("Broken"));
+      setStatus("Broken");
 
    return retVal;
 }
 
-bool Instance :: loadAddressInfo(void* address, wchar16_t* buffer, size_t& maxLength)
+bool Instance :: loadAddressInfo(void* address, ident_c* buffer, size_t& maxLength)
 {
    RTManager manager;
    MemoryReader reader(getTargetDebugSection(), 4);
@@ -837,12 +852,12 @@ bool Instance :: loadAddressInfo(void* address, wchar16_t* buffer, size_t& maxLe
 
 // --- ELENAMachine::Config ---
 
-bool ELENAMachine::Config :: load(const tchar_t* path, Templates* templates)
+bool ELENAMachine::Config :: load(path_t path, Templates* templates)
 {
    IniConfigFile config;
    _ELENA_::Path rootPath;
 
-   rootPath.copyPath(path);
+   rootPath.copySubPath(path);
 
    if (_ELENA_::emptystr(path) || !config.load(path, feUTF8)) {
       return false;
@@ -860,10 +875,11 @@ bool ELENAMachine::Config :: load(const tchar_t* path, Templates* templates)
 
 // --- ELENAMachine ---
 
-ELENAMachine :: ELENAMachine(const tchar_t* rootPath)
+ELENAMachine :: ELENAMachine(path_t rootPath)
    : templates(NULL, freestr), _rootPath(rootPath)
 {
-   Path configPath(rootPath, _T("elenavm.cfg"));
+   Path configPath(rootPath);
+   Path::combinePath(configPath, "elenavm.cfg");
 
    config.load(configPath, &templates);
 }

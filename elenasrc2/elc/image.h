@@ -31,14 +31,14 @@ private:
    Project* _project;
    void*    _entryPoint;
 
-   ConstantIdentifier _literal;
-   ConstantIdentifier _character;
-   ConstantIdentifier _int;
-   ConstantIdentifier _long;
-   ConstantIdentifier _real;
-   ConstantIdentifier _message;
-   ConstantIdentifier _signature;
-   ConstantIdentifier _verb;
+   ident_t _literal;
+   ident_t _character;
+   ident_t _int;
+   ident_t _long;
+   ident_t _real;
+   ident_t _message;
+   ident_t _signature;
+   ident_t _verb;
 
 public:
    virtual ref_t getEntryPoint()
@@ -55,8 +55,8 @@ public:
 
    virtual _Memory* getTargetSection(size_t mask);
 
-   virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
-   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode);
+   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask);
+   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
    virtual _Memory* getTargetDebugSection()
@@ -66,17 +66,17 @@ public:
 
    virtual size_t getLinkerConstant(int id);
 
-   virtual const wchar16_t* getLiteralClass();
-   virtual const wchar16_t* getCharacterClass();
-   virtual const wchar16_t* getIntegerClass();
-   virtual const wchar16_t* getRealClass();
-   virtual const wchar16_t* getLongClass();
-   virtual const wchar16_t* getMessageClass();
-   virtual const wchar16_t* getSignatureClass();
-   virtual const wchar16_t* getVerbClass();
-   virtual const wchar16_t* getNamespace();
+   virtual ident_t getLiteralClass();
+   virtual ident_t getCharacterClass();
+   virtual ident_t getIntegerClass();
+   virtual ident_t getRealClass();
+   virtual ident_t getLongClass();
+   virtual ident_t getMessageClass();
+   virtual ident_t getSignatureClass();
+   virtual ident_t getVerbClass();
+   virtual ident_t getNamespace();
 
-   virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask);
+   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
 
    Project* getProject() const { return _project; }
 
@@ -88,7 +88,7 @@ public:
 class VirtualMachineClientImage : public Image
 {
    ReferenceMap   _exportReferences;
-//   Project*       _project;
+   Project*       _project;
 
    class VMClientHelper : public _BinaryHelper
    {
@@ -98,7 +98,7 @@ class VirtualMachineClientImage : public Image
       _Module*                   _module;
 
    public:
-      virtual void writeReference(MemoryWriter& writer, const wchar16_t* reference, int mask);
+      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
 
       VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
       {
@@ -111,7 +111,7 @@ class VirtualMachineClientImage : public Image
 
    friend class VMClientHelper;
 
-   ref_t resolveExternal(const wchar16_t* function)
+   ref_t resolveExternal(ident_t function)
    {
       return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
    }
@@ -134,7 +134,7 @@ public:
       return 0; // !! temporal
    }
 
-   VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const tchar_t* appPath);
+   VirtualMachineClientImage(Project* project, _JITCompiler* compiler);
 };
 
 } // _ELENA_

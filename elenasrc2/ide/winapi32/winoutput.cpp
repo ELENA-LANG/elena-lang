@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Output class implementation
-//                                              (C)2005-2011, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //                                              (C)2001, by Jeff Lee
 //---------------------------------------------------------------------------
 
@@ -194,7 +194,7 @@ DWORD WINAPI Output :: OutputThread(LPVOID lpvThreadParam)
 
 int Output :: redirectStdout()
 {
-   wchar16_t szOutput[256];
+   wchar_t szOutput[256];
    for (;;) {
       DWORD dwAvail = 0;
       if (!::PeekNamedPipe(_hStdoutRead, NULL, 0, NULL, &dwAvail, NULL))
@@ -240,7 +240,7 @@ wchar_t* Output :: getOutput()
    int length = (int)SendMessage(_handle, WM_GETTEXTLENGTH, 0, 0);
 
    if (length > 0) {
-      wchar16_t* buffer = StringHelper::w_allocate(length + 1);
+      wchar_t* buffer = StringHelper::allocate(length + 1, (const wchar_t*)NULL);
 
       SendMessage(_handle, WM_GETTEXT, length + 1, (LPARAM)buffer);
 

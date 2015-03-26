@@ -43,153 +43,42 @@ namespace _GUI_
 
 // --- Paths ---
 
-struct Paths
+class Paths
 {
-   static _ELENA_::Path appPath;
-   static _ELENA_::Path defaultPath;
-   static _ELENA_::Path packageRoot;
-   static _ELENA_::Path libraryRoot;
-   static _ELENA_::Path lastPath;
+public:
+   static void init(Model* model, _ELENA_::path_t appPath, _ELENA_::path_t defaultPath);
 
-   static void init(const tchar_t* appPath, const tchar_t* defaultPath);
+   static void setLibraryRoot(Model* model, _ELENA_::path_t libraryPath);
 
-   static void setLibraryRoot(const tchar_t* libraryPath);
+   static void resolveRelativePath(_ELENA_::Path& path, _ELENA_::path_t rootPath);
 
-   static void resolveRelativePath(_ELENA_::Path& path, const tchar_t* rootPath);
-   static void resolveRelativePath(_ELENA_::Path& path)
-   {
-      resolveRelativePath(path, defaultPath);
-   }
-
-   static void makeRelativePath(_ELENA_::Path& path, const tchar_t* rootPath);
+   static void makeRelativePath(_ELENA_::Path& path, _ELENA_::path_t rootPath);
 };
 
 // --- Settings ---
 
 struct Settings
 {
-   typedef _ELENA_::Map<const char*, tchar_t*> PathMapping;
+   static void init(Model* model, _ELENA_::path_t packagePath, _ELENA_::path_t libraryPath);
+   static void load(Model* model, _ELENA_::IniConfigFile& config);
+   static void save(Model* model, _ELENA_::IniConfigFile& config);
 
-   static size_t tabSize;
-   static int    defaultEncoding;
+   static void onNewProjectTemplate(Model* model, _ProjectManager* project);
 
-   static bool hexNumberMode;
-   static bool testMode;
-   static bool tabCharUsing;
-   static bool appMaximized;
-   static bool compilerOutput;
-   static bool callStack;
-   static bool messages;
-   static bool lastPathRemember;
-   static bool lastProjectRemember;
-   static bool autoDetecting;
-   static bool lineNumberVisible;
-   static bool highlightSyntax;
-   static bool highlightBrackets;
-   static bool tabWithAboveScore;
-   static bool autoRecompile;
-   static bool debugTape;
+   static void addSearchHistory(Model* model, text_t line);
+   static void addReplaceHistory(Model* model, text_t line);
 
-   static size_t scheme;
-   static size_t font_size;
-
-   static _ELENA_::Path defaultProject;
-   static _ELENA_::List<tchar_t*> defaultFiles;
-
-   static _ELENA_::List<tchar_t*> searchHistory;
-   static _ELENA_::List<tchar_t*> replaceHistory;
-
-   static PathMapping packageRoots;
-   static PathMapping libraryRoots;
-
-   static void init(const tchar_t* packagePath, const tchar_t* libraryPath);
-   static void load(_ELENA_::IniConfigFile& config);
-   static void save(_ELENA_::IniConfigFile& config);
-
-   static void onNewProjectTemplate();
-
-   static void addSearchHistory(const tchar_t* line);
-   static void addReplaceHistory(const tchar_t* line);
-
-   static void addPackagePath(const char* projectTemplate, const tchar_t* path)
+   static void addPackagePath(Model* model, const char* projectTemplate, _ELENA_::path_t path)
    {
-      packageRoots.erase(projectTemplate);
-      packageRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
+      model->packageRoots.erase(projectTemplate);
+      model->packageRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
    }
 
-   static void addLibraryPath(const char* projectTemplate, const tchar_t* path)
+   static void addLibraryPath(Model* model, const char* projectTemplate, _ELENA_::path_t path)
    {
-      libraryRoots.erase(projectTemplate);
-      libraryRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
+      model->libraryRoots.erase(projectTemplate);
+      model->libraryRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
    }
-};
-
-// --- Project ---
-
-struct Project
-{
-private:
-   static bool _changed;
-
-   static _ELENA_::FileName      _name;
-   static _ELENA_::Path          _path;
-   static _ELENA_::IniConfigFile _config;
-
-public:
-   static bool isChanged() { return _changed; }
-   static bool isUnnamed() { return _name.isEmpty(); }
-
-   static const tchar_t* getName() { return _name; }
-   static const tchar_t* getPath() { return _path; }
-   static const char* getPackage();
-   static const char* getTemplate();
-   static const char* getOptions();
-   static const char* getTarget();
-   static const char* getOutputPath();
-   static const char* getArguments();
-
-   static int getDebugMode();
-
-   static bool getBoolSetting(const char* name);
-
-   static _ELENA_::ConfigCategoryIterator SourceFiles()
-   {
-      return _config.getCategoryIt(IDE_FILES_SECTION);
-   }
-
-   static _ELENA_::ConfigCategoryIterator Forwards()
-   {
-      return _config.getCategoryIt(IDE_FORWARDS_SECTION);
-   }
-
-   static void setSectionOption(const char* option, const char* value);
-   static void setBoolSetting(const char* key, bool value);
-
-   static void setTarget(const char* target);
-   static void setArguments(const char* target);
-   static void setOutputPath(const char* path);
-   static void setOptions(const char* options);
-   static void setPackage(const char* package);
-   static void setTemplate(const char* target);
-   static void setDebugMode(int mode);
-
-   static bool open(const tchar_t* path);
-   static void refresh();
-   static void reset();
-   static void save();
-
-   static void rename(const tchar_t* path);
-
-   static void retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name);
-
-   static bool isIncluded(const tchar_t* path);
-   static void includeSource(const tchar_t* path);
-   static void excludeSource(const tchar_t* path);
-
-   static void clearForwards();
-   static void addForward(const tchar_t* name, const tchar_t* reference);
-
-   static void retrievePath(const wchar16_t* reference, _ELENA_::Path & path, const tchar_t* extension);
 };
 
 } // _GUI_

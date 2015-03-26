@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 // --- ECodesAssembler ---
 
-int ECodesAssembler :: mapVerb(const wchar16_t* literal)
+int ECodesAssembler::mapVerb(ident_t literal)
 {
    if (verbs.Count() == 0) {
       ByteCodeCompiler::loadVerbs(verbs);
@@ -24,11 +24,11 @@ int ECodesAssembler :: mapVerb(const wchar16_t* literal)
    return verbs.get(literal);
 }
 
-void ECodesAssembler :: fixJump(const wchar16_t* label, MemoryWriter& writer, LabelInfo& info)
+void ECodesAssembler :: fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info)
 {
    _Memory* code = writer.Memory();
 
-   Map<const wchar16_t*, int>::Iterator it = info.fwdJumps.start();
+   Map<ident_t, int>::Iterator it = info.fwdJumps.start();
    while (!it.Eof()) {
       if (StringHelper::compare(it.key(), label)) {
          (*code)[*it] = writer.Position();
@@ -102,31 +102,31 @@ ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 {
-   const wchar16_t* word = token.read();
+   ident_t word = token.read();
 
    if (token.terminal.state == dfaFullIdentifier) {
       return binary->mapReference(token.value) | mskSymbolRelRef;
    }
-   else if (ConstantIdentifier::compare(word, "0")) {
+   else if (StringHelper::compare(word, "0")) {
       return 0;
    }
-   else if (ConstantIdentifier::compare(word, "const")) {
+   else if (StringHelper::compare(word, "const")) {
       token.read(":", "Invalid operand");
       token.read();
 
-      if (ConstantIdentifier::compare(word, "%")) {
+      if (StringHelper::compare(word, "%")) {
          token.read();
 
          return compileRMessageArg(token, binary);
       }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
-   else if (ConstantIdentifier::compare(word, "class")) {
+   else if (StringHelper::compare(word, "class")) {
       token.read(":", "Invalid operand");
       token.read();
       return binary->mapReference(token.value) | mskVMTRef;
    }
-   else if (ConstantIdentifier::compare(word, "api")) {
+   else if (StringHelper::compare(word, "api")) {
       token.read(":", "Invalid operand");
       token.read();
 
@@ -160,7 +160,7 @@ void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryW
 
 void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
-	const wchar16_t* word = token.read();
+   ident_t word = token.read();
    if (token.terminal.state == dfaInteger || constants.exist(word)) {
       int m = 0;
       if(token.getInteger(m, constants)) {
@@ -168,7 +168,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       }
       else token.raiseErr("Invalid number (%d)\n");
    }
-   else if (ConstantIdentifier::compare(word, "subject")) {
+   else if (StringHelper::compare(word, "subject")) {
       token.read(":", "Invalid operand");
       token.read();
 
@@ -224,11 +224,11 @@ void ECodesAssembler :: compileCreateCommand(ByteCode code, TokenInfo& token, Me
 
 void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
-   const wchar16_t* word = token.read();
-   if (ConstantIdentifier::compare(word, "extern")) {
+   ident_t word = token.read();
+   if (StringHelper::compare(word, "extern")) {
       token.read(":", "Invalid operand");
       token.read();
-      if (ConstantIdentifier::compare(token.value, "'dlls'", 6)) {
+      if (StringHelper::compare(token.value, "'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
 	      token.read(".", "dot expected (%d)\n");
@@ -347,6 +347,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcBLoadFI:
          case bcACopyS:
          case bcACopyF:
+         case bcBCopyS:
          case bcALoadAI:
          case bcALoadFI:
          case bcPushAI:
@@ -360,9 +361,15 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcReserve:
          case bcALoadBI:
          case bcASaveSI:
-         case bcMessage:
-         case bcELoadSI:
-         case bcESaveSI:
+         case bcNSaveI:
+         case bcNLoadI:
+         case bcESwapSI:
+         case bcBSwapSI:
+            //case bcMessage:
+         //case bcELoadSI:
+         //case bcESaveSI:
+         case bcShiftN:
+         case bcEAddN:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:
@@ -388,7 +395,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcNext:
          case bcJump:
          case bcHook:
-         case bcAddress:
+         //case bcAddress:
             compileJump(opcode, token, writer, info);
             break;
          case bcIfM:
@@ -456,11 +463,11 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 
 }
 
-void ECodesAssembler :: compile(TextReader* source, const tchar_t* outputPath)
+void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 {
    FileName moduleName(outputPath);
 
-   ReferenceNs name(ConstantIdentifier("system"), moduleName);
+   ReferenceNs name("system", IdentifierString(moduleName));
 
    Module       binary(name);
    SourceReader reader(4, source);

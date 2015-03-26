@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Text Reader class implementation.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -57,7 +57,7 @@ inline bool isDigit(wchar_t ch)
    return (ch >='0' && ch <= '9');
 }
 
-LineInfo TextSourceReader :: read(wchar16_t* token, size_t length)
+LineInfo TextSourceReader :: read(ident_c* token, size_t length)
 {
    LineInfo info(_position, _column, _row);
    char terminalState = readLineInfo(dfaStart, info);

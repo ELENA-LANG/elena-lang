@@ -342,7 +342,7 @@ size_t TextBookmark :: seekEOL()
       return 0;
 
    if (_CF != 0) {
-      tchar_t ch = (*bm._page).text[bm._offset];
+      text_c ch = (*bm._page).text[bm._offset];
       while (ch != _CF && ch != _LF) {
          if (!bm.move(1))
             break;
@@ -438,7 +438,7 @@ TextScanner :: TextScanner(Text* text)
    _text->validateBookmark(_bookmark);
 }
 
-const tchar_t* TextScanner :: getLine(size_t& length)
+text_t TextScanner :: getLine(size_t& length)
 {
    return _text->getLine(_bookmark, length);
 }
@@ -474,7 +474,7 @@ void Text :: create()
    _rowCount = 0;
 }
 
-bool Text :: load(const tchar_t* path, int encoding, bool autoDetecting)
+bool Text :: load(_ELENA_::path_t path, int encoding, bool autoDetecting)
 {
    _ELENA_::FileReader file(path, encoding, autoDetecting);
    encoding = file.getEncoding();
@@ -503,7 +503,7 @@ bool Text :: load(const tchar_t* path, int encoding, bool autoDetecting)
    return true;
 }
 
-void Text :: save(const tchar_t* path, int encoding)
+void Text :: save(_ELENA_::path_t path, int encoding)
 {
    _ELENA_::FileWriter writer(path, encoding, false);
 
@@ -518,7 +518,7 @@ void Text :: save(const tchar_t* path, int encoding)
 void Text :: refreshPage(Pages::Iterator page)
 {
    int used = (*page).used;
-   tchar_t* text = (*page).text;
+   text_c* text = (*page).text;
 
    (*page).rows = 0;
    for (int i = 0 ; i < used ; i++) {
@@ -582,7 +582,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
       if (count > length) {
          count = length;
       }
-      const tchar_t* line = (*bookmark._page).text + offset;
+      text_t line = (*bookmark._page).text + offset;
       for (size_t i = 0 ; i < count ; i++) {
          if (stopOnEOL && (line[i]==_CF || line[i]==_LF)) {
             bookmark.moveOn(i);
@@ -606,7 +606,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
    }
 }
 
-void Text :: copyTo(TextBookmark bookmark, tchar_t* buffer, int length)
+void Text :: copyTo(TextBookmark bookmark, text_c* buffer, int length)
 {
    validateBookmark(bookmark);
 
@@ -624,7 +624,7 @@ void Text :: copyTo(TextBookmark bookmark, tchar_t* buffer, int length)
       if (copied > (size_t)length) {
          copied = length;
       }
-      _ELENA_::StringHelper::copy(buffer, (*bookmark._page).text + bookmark._offset, copied);
+      _ELENA_::StringHelper::copy(buffer, (*bookmark._page).text + bookmark._offset, copied, copied);
 
       if (!copied)
          break;
@@ -635,7 +635,7 @@ void Text :: copyTo(TextBookmark bookmark, tchar_t* buffer, int length)
    }
 }
 
-const tchar_t* Text :: getLine(TextBookmark& bookmark, size_t& length)
+text_t Text :: getLine(TextBookmark& bookmark, size_t& length)
 {
    validateBookmark(bookmark);
 
@@ -651,7 +651,7 @@ const tchar_t* Text :: getLine(TextBookmark& bookmark, size_t& length)
    }
 }
 
-tchar_t Text :: getChar(TextBookmark& bookmark)
+text_c Text :: getChar(TextBookmark& bookmark)
 {
    validateBookmark(bookmark);
 
@@ -662,7 +662,7 @@ tchar_t Text :: getChar(TextBookmark& bookmark)
    else return *((*bookmark._page).text + bookmark._offset);
 }
 
-void Text :: insert(TextBookmark bookmark, const tchar_t* s, size_t length, bool checkRowCount)
+void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount)
 {
    ref_t position = bookmark.getPosition();
 
@@ -685,7 +685,7 @@ void Text :: insert(TextBookmark bookmark, const tchar_t* s, size_t length, bool
             (*page).used = offset;
 
             Page newPage(size);
-            _ELENA_::StringHelper::copy(newPage.text, (*page).text + offset, size);
+            _ELENA_::StringHelper::copy(newPage.text, (*page).text + offset, size, size);
 
             _pages.insertAfter(page, newPage);
 
@@ -709,7 +709,7 @@ void Text :: insert(TextBookmark bookmark, const tchar_t* s, size_t length, bool
          offset = bookmark._offset;
          continue;
       }
-      _ELENA_::StringHelper::copy((*page).text + offset, s, size);
+      _ELENA_::StringHelper::copy((*page).text + offset, s, size, size);
 
       (*page).used += size;
       if (checkRowCount) {
@@ -747,8 +747,8 @@ void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
          }
 
          if (offset + size < (*page).used) {
-            _ELENA_::StringHelper::copy((*page).text + offset, (*page).text + offset + size,
-                     (*page).used - offset);
+            size_t l = (*page).used - offset;
+            _ELENA_::StringHelper::copy((*page).text + offset, (*page).text + offset + size, l, l);
          }
          (*page).used -= size;
          length -= size;
@@ -771,7 +771,7 @@ void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
    }
 }
 
-bool Text :: insertChar(TextBookmark& bookmark, tchar_t ch)
+bool Text :: insertChar(TextBookmark& bookmark, text_c ch)
 {
    validateBookmark(bookmark);
 
@@ -788,7 +788,7 @@ bool Text :: insertChar(TextBookmark& bookmark, tchar_t ch)
    return true;
 }
 
-bool Text :: insertLine(TextBookmark& bookmark, const tchar_t* s, size_t length)
+bool Text :: insertLine(TextBookmark& bookmark, text_t s, size_t length)
 {
    validateBookmark(bookmark);
 
@@ -804,7 +804,7 @@ bool Text :: insertNewLine(TextBookmark& bookmark)
 {
    validateBookmark(bookmark);
 
-   tchar_t ch[2];
+   text_c ch[2];
    if (_CF != 0) {
       ch[0] = _CF;
       ch[1] = _LF;
@@ -855,7 +855,7 @@ bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
    return true;
 }
 
-inline bool check(tchar_t ch1, tchar_t ch2, bool matchCase)
+inline bool check(text_c ch1, text_c ch2, bool matchCase)
 {
    if (matchCase) {
       return (ch1==ch2);
@@ -863,7 +863,7 @@ inline bool check(tchar_t ch1, tchar_t ch2, bool matchCase)
    else return (_ELENA_::StringHelper::lower(ch1)==_ELENA_::StringHelper::lower(ch2));
 }
 
-bool Text :: compare(TextBookmark bookmark, const tchar_t* line, int len, bool matchCase, const tchar_t* terminators)
+bool Text :: compare(TextBookmark bookmark, text_t line, int len, bool matchCase, text_t terminators)
 {
    if (terminators) {
       if (bookmark.go(-1)) {
@@ -887,13 +887,13 @@ bool Text :: compare(TextBookmark bookmark, const tchar_t* line, int len, bool m
    else return true;
 }
 
-bool Text :: findWord(TextBookmark& bookmark, const tchar_t* line, bool matchCase, const tchar_t* terminators)
+bool Text :: findWord(TextBookmark& bookmark, text_t line, bool matchCase, text_t terminators)
 {
    validateBookmark(bookmark);
    bookmark.normalize();
 
    int len = getlength(line);
-   tchar_t ch = line[0];
+   text_c ch = line[0];
    while (true) {
       if (check((*bookmark._page).text[bookmark._offset], ch, matchCase)) {
          if (compare(bookmark, line, len, matchCase, terminators)) {
@@ -999,7 +999,7 @@ struct HistoryWriter
 
    void writeEndRecord(MemoryWriter& writer, int length)
    {
-      writer.writeWideChar(0);
+      writer.writeChar((text_c)0);
       writer.writeDWord(length);
    }
 
@@ -1153,7 +1153,7 @@ public:
 
    const wchar_t* readLine()
    {
-      return _reader.getWideLiteral();
+      return _reader.getLiteral(DEFAULT_TEXT);
    }
 #else
    int readLength()
@@ -1196,7 +1196,7 @@ TextHistory :: TextHistory(int capacity)
    _previous = NULL;
 }
 
-void TextHistory :: onInsert(size_t position, size_t length, const tchar_t* line)
+void TextHistory :: onInsert(size_t position, size_t length, text_t line)
 {
    if (_locking)
       return;
@@ -1206,7 +1206,7 @@ void TextHistory :: onInsert(size_t position, size_t length, const tchar_t* line
    addRecord(opInsert, position, length, (void*)line);
 }
 
-void TextHistory :: onErase(size_t position, size_t length, const tchar_t* line)
+void TextHistory :: onErase(size_t position, size_t length, text_t line)
 {
    if (_locking)
       return;
@@ -1289,7 +1289,7 @@ void TextHistory :: undo(Text* text, TextBookmark& caret)
    HistoryBackReader reader(_buffer, _offset);
 
    size_t length = reader.readLength();
-   const tchar_t* line = reader.readLine(length);
+   text_t line = reader.readLine(length);
 
    bool   eraseMode = false;
    size_t position = reader.readPosition(eraseMode);
@@ -1321,7 +1321,7 @@ void TextHistory :: redo(Text* text, TextBookmark& caret)
    bool   eraseMode = false;
    size_t position = reader.readPosition(eraseMode);
 
-   const tchar_t* line = reader.readLine();
+   text_t line = reader.readLine();
    size_t length = reader.readLength();
 
    _locking = true;

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Document class implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "document.h"
@@ -14,8 +14,8 @@ using namespace _GUI_;
 
 // --- LexicalStyler ---
 
-LexicalStyler :: LexicalStyler(Text* text, int defaultStyle, tchar_t lookaheadState, tchar_t startState,
-                               tchar_t(* makeStep)(tchar_t ch, tchar_t state), size_t(* defineStyle)(tchar_t state, size_t style))
+LexicalStyler::LexicalStyler(Text* text, int defaultStyle, text_c lookaheadState, text_c startState,
+   text_c(*makeStep)(text_c ch, text_c state), size_t(*defineStyle)(text_c state, size_t style))
 {
    _text = text;
    _defaultStyle = defaultStyle;
@@ -53,8 +53,8 @@ void LexicalStyler :: parse()
    _ELENA_::MemoryWriter writer(&_lexic, 0);
    size_t       indexedPos = INDEX_STEP;
 
-   tchar_t state = _startState;
-   const tchar_t* s;
+   text_c state = _startState;
+   text_t s;
    size_t length, style = _defaultStyle;
    bool lookAhead = false;
 
@@ -275,7 +275,7 @@ void Document :: moveLeftToken(bool selecting)
          break;
 
       size_t length;
-      const tchar_t* line = _text->getLine(_caret, length);
+      text_t line = _text->getLine(_caret, length);
 
       if (_ELENA_::StringHelper::find(WHITESPACE, line[0])!=-1) {
          if (_operator || newToken) {
@@ -314,7 +314,7 @@ void Document :: moveRightToken(bool selecting, bool trimWhitespace)
    while (first || _caret.getColumn() < _caret.getLength()) {
 
       size_t length;
-      const tchar_t* line = _text->getLine(_caret, length);
+      text_t line = _text->getLine(_caret, length);
       if (length == 0)
          break;
 
@@ -513,7 +513,7 @@ bool Document :: eraseSelection()
    return true;
 }
 
-void Document :: insertChar(tchar_t ch, int count)
+void Document :: insertChar(text_c ch, int count)
 {
    if (hasSelection()) {
       int rowCount = _text->getRowCount();
@@ -538,7 +538,7 @@ void Document :: insertChar(tchar_t ch, int count)
    }
 }
 
-void Document :: insertLine(const tchar_t* text, int length)
+void Document :: insertLine(text_t text, int length)
 {
    int rowCount = _text->getRowCount();
 
@@ -591,7 +591,7 @@ void Document :: onUpdate(size_t position)
 {
 }
 
-void Document :: onInsert(size_t position, size_t length, const tchar_t* line)
+void Document :: onInsert(size_t position, size_t length, text_t line)
 {
    _undoBuffer.onInsert(position, length, line);
 
@@ -604,7 +604,7 @@ void Document :: onInsert(size_t position, size_t length, const tchar_t* line)
    status.frameChanged = true;
 }
 
-void Document :: onErase(size_t position, size_t length, const tchar_t* line)
+void Document :: onErase(size_t position, size_t length, text_t line)
 {
    _undoBuffer.onErase(position, length, line);
 
@@ -653,7 +653,7 @@ int Document :: defineStyle(Reader& reader)
    else return length;
 }
 
-void Document :: copySelection(tchar_t* text)
+void Document :: copySelection(text_c* text)
 {
    if (_selection==0)  {
       text[0] = 0;
@@ -663,7 +663,7 @@ void Document :: copySelection(tchar_t* text)
    }
 }
 
-void Document :: copyText(tchar_t* text, int length)
+void Document :: copyText(text_c* text, int length)
 {
    if (length==0)  {
       text[0] = 0;
@@ -673,7 +673,7 @@ void Document :: copyText(tchar_t* text, int length)
    }
 }
 
-void Document :: tabbing(tchar_t space, size_t count, bool indent)
+void Document :: tabbing(text_c space, size_t count, bool indent)
 {
    _text->validateBookmark(_caret);
 
@@ -708,7 +708,7 @@ void Document :: tabbing(tchar_t space, size_t count, bool indent)
          else {
             size_t length;
             for (int i = 0 ; i < count ; i++) {
-               const tchar_t* s = _text->getLine(start, length);
+               text_t s = _text->getLine(start, length);
                if (length!=0 && (s[0]==' ' || s[0]=='\t')) {
                   bool tab = (s[0]=='\t');
 
@@ -751,7 +751,7 @@ void Document :: redo()
    setCaret(_caret.getCaret(false), false);
 }
 
-void Document :: save(const tchar_t* path)
+void Document :: save(_ELENA_::path_t path)
 {
    _text->save(path, _encoding);
 
@@ -775,7 +775,7 @@ void Document :: trim()
    }
    else while ((size_t)caret.x < _caret.getLength()) {
       size_t length;
-      const tchar_t* line = _text->getLine(_caret, length);
+      text_t line = _text->getLine(_caret, length);
 
       if (line[0]==' ' || line[0]=='\t') {
          _text->eraseChar(_caret);
@@ -800,7 +800,7 @@ void Document :: duplicateLine()
    bm.moveTo(_caret.getLength(), caret.y);
 
    size_t length = bm.getPosition() - _caret.getPosition();
-   tchar_t* buffer = _ELENA_::StringHelper::allocateText(length + 1);
+   text_c* buffer = _ELENA_::StringHelper::allocate(length + 1, DEFAULT_TEXT);
    _text->copyTo(_caret, buffer, length);
 
    _caret.moveTo(0, caret.y + 1);
@@ -854,7 +854,7 @@ void Document :: uncommentBlock()
    TextBookmark end = _caret;
    end.moveOn(selection);
 
-   tchar_t line[3];
+   text_c line[3];
    while ((size_t)caret.y <= end.getRow()) {
       if (!_caret.moveTo(0, caret.y))
          return;
@@ -872,7 +872,7 @@ void Document :: toUppercase()
 {
    int selection = getSelectionLength();
    if (selection > 0) {
-      tchar_t* buffer = _ELENA_::StringHelper::allocateText(selection + 1);
+      text_c* buffer = _ELENA_::StringHelper::allocate(selection + 1, DEFAULT_TEXT);
       copySelection(buffer);
 
       _ELENA_::StringHelper::upper(buffer);
@@ -882,7 +882,7 @@ void Document :: toUppercase()
       _ELENA_::freestr(buffer);
    }
    else {
-      tchar_t buffer[2];
+      text_c buffer[2];
       copyText(buffer, 1);
 
       if (_ELENA_::StringHelper::find(WHITESPACE, buffer[0])==-1) {
@@ -898,7 +898,7 @@ void Document :: toLowercase()
 {
    int selection = getSelectionLength();
    if (selection > 0) {
-      tchar_t* buffer = _ELENA_::StringHelper::allocateText(selection + 1);
+      text_c* buffer = _ELENA_::StringHelper::allocate(selection + 1, DEFAULT_TEXT);
       copySelection(buffer);
 
       _ELENA_::StringHelper::lower(buffer);
@@ -908,7 +908,7 @@ void Document :: toLowercase()
       _ELENA_::freestr(buffer);
    }
    else {
-      tchar_t buffer[2];
+      text_c buffer[2];
       copyText(buffer, 1);
 
       if (_ELENA_::StringHelper::find(WHITESPACE, buffer[0])==-1) {
@@ -922,7 +922,7 @@ void Document :: toLowercase()
 void Document :: swap()
 {
    if (_caret.getColumn() > 0 && _caret.getColumn() < _caret.getLength()) {
-      tchar_t pair[3];
+      text_c pair[3];
 
       _caret.moveOn(-1);
       _selection = 2;
@@ -930,7 +930,7 @@ void Document :: swap()
       copySelection(pair);
 
       // swap
-      tchar_t tmp = pair[0];
+      text_c tmp = pair[0];
       pair[0] = pair[1];
       pair[1] = tmp;
 
@@ -940,7 +940,7 @@ void Document :: swap()
    }
 }
 
-bool Document :: findLine(const tchar_t* text, bool matchCase, bool wholeWord)
+bool Document :: findLine(text_t text, bool matchCase, bool wholeWord)
 {
    TextBookmark bookmark = _caret;
    if (_text->findWord(bookmark, text, matchCase, wholeWord ? TERMINATORS : NULL)) {

@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Text Reader class declaration.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textsourceH
@@ -35,13 +35,14 @@ const char dfaMinusLA        = '-';
 class TextSourceReader : public _ELENA_::_TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {
 protected:
-   void copyToken(_ELENA_::LineInfo& info, wchar16_t* token, size_t length)
+   void copyToken(_ELENA_::LineInfo& info, _ELENA_::ident_c* token, size_t length)
    {
       info.length = _position - info.position;
       info.line = token;
 
-      _ELENA_::StringHelper::copy(token, _line + info.position, info.length);
-      token[info.length] = 0;
+      size_t len = info.length;
+      _ELENA_::StringHelper::copy(token, _line + info.position, len, len);
+      token[len] = 0;
    }
 
    void copyQuote(_ELENA_::LineInfo& info)
@@ -56,7 +57,7 @@ public:
       _dfa = dfa;
    }
 
-   _ELENA_::LineInfo read(wchar16_t* token, size_t length);
+   _ELENA_::LineInfo read(_ELENA_::ident_c* token, size_t length);
 
    TextSourceReader(const char** dfa, int tabSize, _ELENA_::TextReader* source);
    TextSourceReader(int tabSize, _ELENA_::TextReader* source);

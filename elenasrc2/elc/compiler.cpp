@@ -77,7 +77,7 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
 
    // otherwise signature and custom verb should be imported
    if (signRef != 0) {
-      const wchar16_t* subject = exporter->resolveSubject(signRef);
+      ident_t subject = exporter->resolveSubject(signRef);
 
       signRef = importer->mapSubject(subject, false);
    }
@@ -88,7 +88,7 @@ inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer
 {
    // otherwise signature and custom verb should be imported
    if (exportRef != 0) {
-      const wchar16_t* subject = exporter->resolveSubject(exportRef);
+      ident_t subject = exporter->resolveSubject(exportRef);
 
       exportRef = importer->mapSubject(subject, false);
    }
@@ -98,7 +98,7 @@ inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer
 inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    if (exportRef) {
-      const wchar16_t* reference = exporter->resolveReference(exportRef);
+      ident_t reference = exporter->resolveReference(exportRef);
 
       return importer->mapReference(reference);
    }
@@ -188,10 +188,10 @@ inline DNode goToLastSymbol(DNode node, Symbol symbol)
    return last;
 }
 
-//inline bool IsArgumentList(ObjectInfo object)
-//{
-//   return object.kind == okParams;
-//}
+inline bool IsArgumentList(ObjectInfo object)
+{
+   return object.kind == okParams;
+}
 
 inline bool isAssignOperation(DNode target, DNode operation)
 {
@@ -213,7 +213,7 @@ inline bool isImportRedirect(DNode node)
    if (node.firstChild() == nsNone) {
       TerminalInfo terminal = node.Terminal();
       if (terminal.symbol == tsReference) {
-         if (ConstantIdentifier::compare(terminal.value, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && terminal.value[strlen(INTERNAL_MODULE)]=='\'')
+         if (StringHelper::compare(terminal.value, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && terminal.value[strlen(INTERNAL_MODULE)]=='\'')
             return true;
       }
    }
@@ -295,7 +295,7 @@ inline bool IsInvertedOperator(int& operator_id)
 
 // --- Compiler::ModuleScope ---
 
-Compiler::ModuleScope::ModuleScope(Project* project, const tchar_t* sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
+Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
    : symbolHints(okUnknown), extensions(NULL, freeobj)
 {
    this->project = project;
@@ -372,9 +372,9 @@ ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
    else return ObjectInfo();
 }
 
-ref_t Compiler::ModuleScope :: resolveIdentifier(const wchar16_t* identifier)
+ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 {
-   List<const wchar16_t*>::Iterator it = defaultNs.start();
+   List<ident_t>::Iterator it = defaultNs.start();
    while (!it.Eof()) {
       ReferenceNs name(*it, identifier);
 
@@ -386,15 +386,15 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(const wchar16_t* identifier)
    return 0;
 }
 
-ref_t Compiler::ModuleScope :: mapNewType(const wchar16_t* terminal)
+ref_t Compiler::ModuleScope :: mapNewType(ident_t terminal)
 {
    IdentifierString fullName(terminal);
    fullName.append('$');
 
-   const wchar16_t* ns = module->Name();
-   if (ConstantIdentifier::compare(ns, STANDARD_MODULE)) {
+   ident_t ns = module->Name();
+   if (StringHelper::compare(ns, STANDARD_MODULE)) {
    }
-   else if (ConstantIdentifier::compare(ns, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
+   else if (StringHelper::compare(ns, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
       fullName.append(ns + STANDARD_MODULE_LEN + 1);
    }
    else fullName.append(ns);
@@ -404,13 +404,13 @@ ref_t Compiler::ModuleScope :: mapNewType(const wchar16_t* terminal)
 
 ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal, bool& out)
 {
-   const wchar16_t* identifier = NULL;
+   ident_t identifier = NULL;
    if (terminal.symbol == tsIdentifier || terminal.symbol == tsPrivate) {
       out = false;
 
       identifier = terminal.value;
    }
-   else if (terminal.symbol == tsReference && ConstantIdentifier::compare(terminal.value, "out'", 4)) {
+   else if (terminal.symbol == tsReference && StringHelper::compare(terminal.value, "out'", 4)) {
       out = true;
 
       identifier = terminal.value + 4;
@@ -425,14 +425,14 @@ ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal, bool& out)
    fullName.append('$');
 
    size_t tail = fullName.Length();
-   List<const wchar16_t*>::Iterator it = defaultNs.start();
+   List<ident_t>::Iterator it = defaultNs.start();
    while (!it.Eof()) {
       fullName.truncate(tail);
 
       // if it is a sytem root
-      if (ConstantIdentifier::compare(*it, STANDARD_MODULE)) {
+      if (StringHelper::compare(*it, STANDARD_MODULE)) {
       }
-      else if (ConstantIdentifier::compare(*it, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
+      else if (StringHelper::compare(*it, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
          fullName.append(*it + STANDARD_MODULE_LEN + 1);
       }
       else fullName.append(*it);
@@ -508,7 +508,7 @@ ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
    else return mapReference(terminal, existing);
 }
 
-bool Compiler::ModuleScope :: checkReference(const wchar16_t* referenceName)
+bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
 {
    ref_t moduleRef = 0;
    _Module* module = project->resolveModule(referenceName, moduleRef, true);
@@ -576,7 +576,7 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    return ObjectInfo(okSymbol, reference);
 }
 
-ref_t Compiler::ModuleScope :: mapReference(const wchar16_t* referenceName, bool existing)
+ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
 {
    if (emptystr(referenceName))
       return 0;
@@ -598,12 +598,12 @@ ref_t Compiler::ModuleScope :: mapReference(const wchar16_t* referenceName, bool
    return reference;
 }
 
-ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(const wchar16_t* reference, bool existing)
+ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 {
-   if (ConstantIdentifier::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
+   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
       return ObjectInfo(okExternal);
    }
-   else if (ConstantIdentifier::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)]=='\'') {
+   else if (StringHelper::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)] == '\'') {
       ReferenceNs fullName(project->resolveForward(IMPORT_FORWARD), reference + strlen(INTERNAL_MODULE) + 1);
 
       return ObjectInfo(okInternal, module->mapReference(fullName));
@@ -615,14 +615,14 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(const wchar16_t* reference,
    }
 }
 
-ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, const wchar16_t* vmtName, bool headerOnly)
+ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
    _Module* argModule;
 
    return loadClassInfo(argModule, info, vmtName, headerOnly);
 }
 
-ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& info, const wchar16_t* vmtName, bool headerOnly)
+ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
    if (emptystr(vmtName))
       return 0;
@@ -657,7 +657,7 @@ ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& inf
    return moduleRef;
 }
 
-ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, const wchar16_t* symbol)
+ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
 {
    if (emptystr(symbol))
       return 0;
@@ -838,7 +838,7 @@ void Compiler::ModuleScope :: compileForwardHints(DNode hints, bool& constant)
    constant = false;
 
    while (hints == nsHint) {
-      if (ConstantIdentifier::compare(hints.Terminal(), HINT_CONSTANT)) {
+      if (StringHelper::compare(hints.Terminal(), HINT_CONSTANT)) {
          constant = true;
       }
       else raiseWarning(1, wrnUnknownHint, hints.Terminal());
@@ -966,10 +966,10 @@ void Compiler::SymbolScope :: compileHints(DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (ConstantIdentifier::compare(terminal, HINT_CONSTANT)) {
+      if (StringHelper::compare(terminal, HINT_CONSTANT)) {
          constant = true;
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
+      else if (StringHelper::compare(terminal, HINT_TYPE)) {
          DNode value = hints.select(nsHintValue);
          TerminalInfo typeTerminal = value.Terminal();
 
@@ -1006,10 +1006,10 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 {
-   if (ConstantIdentifier::compare(identifier, SUPER_VAR)) {
+   if (StringHelper::compare(identifier, SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
-   else if (ConstantIdentifier::compare(identifier, SELF_VAR)) {
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
       return ObjectInfo(okParam, -1);
    }
    else {
@@ -1049,10 +1049,10 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (ConstantIdentifier::compare(terminal, HINT_GROUP)) {
+      if (StringHelper::compare(terminal, HINT_GROUP)) {
          info.header.flags |= elGroup;
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_MESSAGE)) {
+      else if (StringHelper::compare(terminal, HINT_MESSAGE)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1061,7 +1061,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elStructureRole | elMessage);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_SIGNATURE)) {
+      else if (StringHelper::compare(terminal, HINT_SIGNATURE)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1070,7 +1070,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elStructureRole | elSignature);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_EXTENSION)) {
+      else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
          info.header.flags |= elExtension;
          DNode value = hints.select(nsHintValue);
          if (value != nsNone) {
@@ -1079,13 +1079,13 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
                raiseError(errUnknownSubject, value.Terminal());
          }
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_SEALED)) {
+      else if (StringHelper::compare(terminal, HINT_SEALED)) {
          info.header.flags |= elSealed;
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_LIMITED)) {
+      else if (StringHelper::compare(terminal, HINT_LIMITED)) {
          info.header.flags |= elClosed;
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_STRUCT)) {
+      else if (StringHelper::compare(terminal, HINT_STRUCT)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1093,13 +1093,13 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          DNode option = hints.select(nsHintValue);
          if (option != nsNone) {
-            if (ConstantIdentifier::compare(option.Terminal(), HINT_EMBEDDABLE)) {
+            if (StringHelper::compare(option.Terminal(), HINT_EMBEDDABLE)) {
                info.header.flags |= elEmbeddable;
             }
             else raiseError(wrnInvalidHint, terminal);
          }
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_INTEGER_NUMBER)) {
+      else if (StringHelper::compare(terminal, HINT_INTEGER_NUMBER)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1119,7 +1119,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_FLOAT_NUMBER)) {
+      else if (StringHelper::compare(terminal, HINT_FLOAT_NUMBER)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1136,7 +1136,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_POINTER)) {
+      else if (StringHelper::compare(terminal, HINT_POINTER)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1144,7 +1144,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.header.flags |= elDebugPTR;
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_BINARY)) {
+      else if (StringHelper::compare(terminal, HINT_BINARY)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
@@ -1167,14 +1167,14 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_DYNAMIC)) {
+      else if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
 
          info.header.flags |= elDynamicRole;
          info.header.flags |= elDebugArray;
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_NONSTRUCTURE)) {
+      else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
          info.header.flags |= elNonStructureRole;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
@@ -1191,7 +1191,7 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
+      if (StringHelper::compare(terminal, HINT_TYPE)) {
          DNode value = hints.select(nsHintValue);
          if (value!=nsNone && type == 0) {
             TerminalInfo typeTerminal = value.Terminal();
@@ -1241,10 +1241,10 @@ bool Compiler::MethodScope :: include()
 
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 {
-   if (ConstantIdentifier::compare(identifier, THIS_VAR)) {
+   if (StringHelper::compare(identifier, THIS_VAR)) {
       return ObjectInfo(okThisParam, 1);
    }
-   else if (ConstantIdentifier::compare(identifier, SELF_VAR)) {
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
       ObjectInfo retVal = parent->mapObject(identifier);
 
       return retVal;
@@ -1272,7 +1272,7 @@ int Compiler::MethodScope::compileHints(DNode hints)
    int mode = 0;
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
-      if (ConstantIdentifier::compare(terminal, HINT_GENERIC)) {
+      if (StringHelper::compare(terminal, HINT_GENERIC)) {
          if (getSignature(message) != 0)
             raiseError(errInvalidHint, terminal);
 
@@ -1282,7 +1282,7 @@ int Compiler::MethodScope::compileHints(DNode hints)
 
          mode |= HINT_GENERIC_METH;
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
+      else if (StringHelper::compare(terminal, HINT_TYPE)) {
          DNode value = hints.select(nsHintValue);
          TerminalInfo typeTerminal = value.Terminal();
 
@@ -1312,7 +1312,7 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
 {
    // action does not support this variable
-   if (ConstantIdentifier::compare(identifier, THIS_VAR)) {
+   if (StringHelper::compare(identifier, THIS_VAR)) {
       return parent->mapObject(identifier);
    }
    else return MethodScope::mapObject(identifier);
@@ -1356,7 +1356,7 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      if (ConstantIdentifier::compare(identifier, SUBJECT_VAR)) {
+      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
          return ObjectInfo(okSubject, local.offset);
       }
       else return ObjectInfo(okLocal, local.offset, local.sign_ref);
@@ -1369,7 +1369,7 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (ConstantIdentifier::compare(terminal, HINT_TYPE)) {
+      if (StringHelper::compare(terminal, HINT_TYPE)) {
          TerminalInfo typeValue = hints.firstChild().Terminal();
 
          type = moduleScope->mapType(typeValue);
@@ -1378,7 +1378,7 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
 
          size = moduleScope->defineTypeSize(type, classReference);
       }
-      else if (ConstantIdentifier::compare(terminal, HINT_SIZE)) {
+      else if (StringHelper::compare(terminal, HINT_SIZE)) {
          int itemSize = moduleScope->defineTypeSize(type);
 
          TerminalInfo sizeValue = hints.firstChild().Terminal();
@@ -1411,7 +1411,7 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
 
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
-   String<wchar16_t, 10> thisVar(THIS_VAR);
+   String<ident_c, 10> thisVar(THIS_VAR);
 
    Outer owner = outers.get(thisVar);
    // if owner reference is not yet mapped, add it
@@ -1428,7 +1428,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
-   if (ConstantIdentifier::compare(identifier, THIS_VAR)) {
+   if (StringHelper::compare(identifier, THIS_VAR)) {
       //return ObjectInfo(okSelf, 0);
       Outer owner = mapSelf();
 
@@ -1467,7 +1467,7 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
             return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
          }
          // if inline symbol declared in symbol it treats self variable in a special way
-         else if (ConstantIdentifier::compare(identifier, SELF_VAR)) {
+         else if (StringHelper::compare(identifier, SELF_VAR)) {
             return ObjectInfo(okParam, -1);
          }
          else if (outer.outerObject.kind == okUnknown) {
@@ -1578,7 +1578,7 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
    _writer.declareMessageInfo(*tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
 }
 
-void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* referenceProperName)
+void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t referenceProperName)
 {
    ReferenceNs fullName(scope.project->resolveForward(IMPORT_FORWARD), referenceProperName + strlen(INTERNAL_MODULE) + 1);
 
@@ -1925,7 +1925,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(terminal));
    }
    else if (terminal == tsLong) {
-      String<wchar16_t, 30> s("_"); // special mark to tell apart from integer constant
+      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
       s.append(terminal.value, getlength(terminal.value) - 1);
 
       long long integer = StringHelper::strToLongLong(s + 1, 10);
@@ -1935,9 +1935,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
    }
    else if (terminal==tsHexInteger) {
-      String<wchar16_t, 20> s(terminal.value, getlength(terminal.value) - 1);
+      String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
 
-      long integer = s.toLong(16);
+      long integer = s.toULong(16);
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
@@ -1948,7 +1948,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
    }
    else if (terminal == tsReal) {
-      String<wchar16_t, 30> s(terminal.value, getlength(terminal.value) - 1);
+      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
       double number = StringHelper::strToDouble(s);
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
@@ -2855,9 +2855,10 @@ bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator
    else if (lflag == elDebugReal64) {
       _writer.doRealOperation(*scope.tape, operator_id);
    }
-   else if (lflag == elDebugChars) {
-      _writer.doLiteralOperation(*scope.tape, operator_id);
-   }
+   //else if (lflag == elDebugChars) {
+   //   _writer.doLiteralOperation(*scope.tape, operator_id);
+   //}
+   else return false;
 
    if (invertMode) {
        _writer.selectConstant(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
@@ -3532,7 +3533,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       int presaved = 0;
 
       // unbox all typed variables
-      Map<const wchar16_t*, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
@@ -4214,14 +4215,14 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllAlias, int mode)
+ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
 {
    ObjectInfo retVal(okIndexAccumulator);
 
    ModuleScope* moduleScope = scope.moduleScope;
 
    bool stdCall = false;
-   const wchar16_t* dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
    // legacy : if dll is not mapped, use its directly like winapi
    if (emptystr(dllName))
       dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
@@ -4392,20 +4393,20 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
 //{
 //   signature.append(module->resolveSubject(type));
 //}
-//
-////inline bool IsVarOperation(int operator_id)
-////{
-////   switch (operator_id) {
-////      case WRITE_MESSAGE_ID:
-////      case APPEND_MESSAGE_ID:
-////      case REDUCE_MESSAGE_ID:
-////      case SEPARATE_MESSAGE_ID:
-////      case INCREASE_MESSAGE_ID:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
+
+//inline bool IsVarOperation(int operator_id)
+//{
+//   switch (operator_id) {
+//      case WRITE_MESSAGE_ID:
+//      case APPEND_MESSAGE_ID:
+//      case REDUCE_MESSAGE_ID:
+//      case SEPARATE_MESSAGE_ID:
+//      case INCREASE_MESSAGE_ID:
+//         return true;
+//      default:
+//         return false;
+//   }
+//}
 
 ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
 {
@@ -4811,7 +4812,7 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
    _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
 
-void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function)
+void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function)
 {
    MethodScope methodScope(&scope);
    methodScope.message = message;
@@ -4822,10 +4823,10 @@ void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t messag
 
    CodeScope codeScope(&methodScope);
 
-   compileImportMethod(node, codeScope, message, ConstantIdentifier(function), 0);
+   compileImportMethod(node, codeScope, message, function, 0);
 }
 
-void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t message, const wchar16_t* function, int mode)
+void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t message, ident_t function, int mode)
 {
    _writer.declareIdleMethod(*codeScope.tape, message);
    importCode(node, *codeScope.moduleScope, codeScope.tape, function);
@@ -4868,7 +4869,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
          _writer.copySubject(*codeScope.tape);
          _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
          codeScope.level++;
-         codeScope.mapLocal(ConstantIdentifier(SUBJECT_VAR), codeScope.level, 0);
+         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
       }
 
       declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
@@ -5512,9 +5513,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          _Module* module = scope.moduleScope->module;
          MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-         const wchar16_t* value = module->resolveConstant(retVal.param);
+         ident_t value = module->resolveConstant(retVal.param);
 
-         dataWriter.writeWideLiteral(value, getlength(value) + 1);
+         dataWriter.writeLiteral(value, getlength(value) + 1);
 
          dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, -4);
 
@@ -5524,9 +5525,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          _Module* module = scope.moduleScope->module;
          MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-         const wchar16_t* value = module->resolveConstant(retVal.param);
+         ident_t value = module->resolveConstant(retVal.param);
 
-         dataWriter.writeWideLiteral(value, 2);
+         dataWriter.writeLiteral(value, 2);
 
          dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, -4);
 
@@ -5573,7 +5574,7 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hint
    if (!module)
       scope.raiseWarning(1, wrnUnknownModule, ns);
 
-   const wchar16_t* value = retrieve(scope.defaultNs.start(), ns, NULL);
+   ident_t value = retrieve(scope.defaultNs.start(), ns, NULL);
    if (value == NULL) {
       scope.defaultNs.add(ns.value);
 
@@ -5608,7 +5609,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (ConstantIdentifier::compare(terminal, HINT_WRAPPER)) {
+      if (StringHelper::compare(terminal, HINT_WRAPPER)) {
          weak = false;
 
          TerminalInfo roleValue = hints.select(nsHintValue).Terminal();
@@ -5759,7 +5760,7 @@ bool Compiler :: validate(Project& project, _Module* module, int reference)
 {
    int   mask = reference & mskAnyRef;
    ref_t extReference = 0;
-   const wchar16_t* refName = module->resolveReference(reference & ~mskAnyRef);
+   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
    _Module* extModule = project.resolveModule(refName, extReference, true);
 
    return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
@@ -5769,17 +5770,20 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, Project& project)
 {
    for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
       if (!validate(project, (*it).module, (*it).reference)) {
-         const wchar16_t* refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
+         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
 
          project.raiseWarning(1, wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
       }
    }
 }
 
-void Compiler :: compile(const tchar_t* source, MemoryDump* buffer, ModuleScope& scope)
+void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
 {
+   Path path;
+   Path::loadPath(path, source);
+
    // parse
-   TextFileReader sourceFile(source, scope.project->getDefaultEncoding(), true);
+   TextFileReader sourceFile(path, scope.project->getDefaultEncoding(), true);
    if (!sourceFile.isOpened())
       scope.project->raiseError(errInvalidFile, source);
 
@@ -5798,7 +5802,7 @@ void Compiler :: compile(const tchar_t* source, MemoryDump* buffer, ModuleScope&
 bool Compiler :: run(Project& project)
 {
    bool withDebugInfo = project.BoolSetting(opDebugMode);
-   Map<const wchar16_t*, ModuleInfo> modules(ModuleInfo(NULL, NULL));
+   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
 
    MemoryDump  buffer;                // temporal derivation buffer
    Unresolveds unresolveds(Unresolved(), NULL);
@@ -5809,7 +5813,7 @@ bool Compiler :: run(Project& project)
    for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
       try {
          // build module namespace
-         modulePath.copyPath(it.key());
+         Path::loadSubPath(modulePath, it.key());
          name.truncate(rootLength);
          name.pathToName(modulePath);
 
@@ -5837,7 +5841,12 @@ bool Compiler :: run(Project& project)
       }
       catch (InvalidChar& e)
       {
-         project.raiseError(errInvalidChar, it.key(), e.row, e.column, String<wchar16_t, 2>(&e.ch, 1));
+         size_t destLength = 6;
+
+         String<ident_c, 6> symbol;
+         StringHelper::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+
+         project.raiseError(errInvalidChar, it.key(), e.row, e.column, symbol);
       }
       catch (SyntaxError& e)
       {
@@ -5845,14 +5854,14 @@ bool Compiler :: run(Project& project)
       }
    }
 
-   Map<const wchar16_t*, ModuleInfo>::Iterator it = modules.start();
+   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
    while (!it.Eof()) {
       ModuleInfo info = *it;
 
-      project.saveModule(info.codeModule, _T("nl"));
+      project.saveModule(info.codeModule, "nl");
 
       if (info.debugModule)
-         project.saveModule(info.debugModule, _T("dnl"));
+         project.saveModule(info.debugModule, "dnl");
 
       it++;
    }

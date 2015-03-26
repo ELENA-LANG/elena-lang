@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Win32
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef linkerH
@@ -35,7 +35,7 @@ struct ImageBaseMap
 
 class Linker
 {
-   typedef Map<const wchar16_t*, ReferenceMap*>  ImportTable;
+   typedef Map<ident_t, ReferenceMap*>  ImportTable;
 
    struct ImageInfo
    {
@@ -83,7 +83,7 @@ class Linker
    void writeSection(FileWriter* file, Section* section, int alignment);
    void writeSections(ImageInfo& info, FileWriter* file);
 
-   bool createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory);
+   bool createExecutable(ImageInfo& info, path_t exePath, ref_t tls_directory);
 
 public:
    void prepareTLS(Image& image, int tls_variable, ref_t& tls_directory);

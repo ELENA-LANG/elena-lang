@@ -52,10 +52,10 @@
         => system'internal'bs_readword.
 
     #method write &index:anIndex &char:anInt
-        => system'internal'bs_writeword.
+        => system'internal'bs_writedword.
 
     #method read &index:anIndex &out'char:aChar
-        => system'internal'bs_readword.
+        => system'internal'bs_readdword.
 
     #method write &index:anIndex &int:anInt
         => system'internal'bs_writedword.
@@ -178,23 +178,18 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &intarray:$self.    
 }
 
-// --- CharArray ---
+// --- IntArray ---
 
-#class(sealed,stringof:2) CharArray
+#class(sealed) CharArray :: BaseIntArray
 {
     #constructor new &length : aLength
-        => system'internal'sa_create.
-    
-    #constructor new &length:aLength &chararray:anArray
-        => system'internal'sa_copy.
-    
-    #constructor new &length:aLength &index:anIndex &chararray:anArray
-        => system'internal'sa_copysubarr.
+        => system'internal'ns_create.
 
-    #method chararray = $self.
-
+    #constructor new  &length:aLength &index:anIndex &chararray:anArray
+        => system'internal'ns_copysubarr.
+        
     #method read &out'length:aLength
-        => system'internal'sa_getlen.
+        => system'internal'ns_getlen.
         
     #method length
     [
@@ -202,42 +197,28 @@
         
         ^ IntNumber new &int:aLength.
     ]
+    
+    #method chararray = $self.
 
     #method read &index:anIndex &length:aLength &chararray:anArray
-        => system'internal'sa_read.
-        
+        => system'internal'ns_read.
+
     #method write &index:anIndex &length:aLength &chararray:anArray
-        => system'internal'sa_write.
+        => system'internal'ns_write.
 
     #method write &index:anIndex &char:aValue
-        => system'internal'sa_writeword.
+        => system'internal'ns_writedword.
 
-    #method read &index:anIndex &out'char:aValue
-        => system'internal'sa_readword.
+    #method read &index:anIndex &out'char:anInt
+        => system'internal'ns_readdword.
 
-    #method clone = CharArray new &length:($self length) &chararray:$self.
+    #method clone = CharArray new &length:($self length) &index:0 &chararray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &chararray:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &chararray:$self.
-        
-    #method equal &index:anIndex &char:aValue
-        => system'internal'ws_equalword.
-
-    #method indexOf &index:anIndex &length:aLength &char:aChar &out'int:aRetVal
-        => system'internal'sa_indexof.
-
-    #method indexOf &index:anIndex &length:aLength &char:aChar
-    [
-        #var(type:int)aRetVal := $self indexOf &index:anIndex &length:aLength &char:aChar.
-        
-        ^ IntNumber new &int:aRetVal.
-    ]
-        
-    #method write &index:anIndex &length:aLength &literal:aLiteral
-        => system'internal'sa_write.
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &chararray:$self.    
 }
-
+        
 // --- emptyliteralvalue ---
 
 #symbol(const,type:literal) emptyLiteralValue = "".
@@ -246,36 +227,35 @@
 
 #class(sealed) LiteralValue :: BaseValue
 {
-    #field(type:chararray)theValue.
+    #field(type:bytearray)theValue.
 
     #constructor min
-        => system'internal'ws_empty.
+        => system'internal's_empty.
         
     #constructor new &length:aSize 
-        => system'internal'ws_create.
+        => system'internal's_create.
 
     #constructor new &length:aSize &literal:aLiteral
-        => system'internal'ws_copy.
-    
-    #constructor new &length:aSize &chararray:anArray
-        => system'internal'ws_copyarr.
-
-    #constructor new &length:aSize &index:anIndex &chararray:anArray
-        => system'internal'ws_copysubarr.
-
+        => system'internal's_copy.
+           
     #constructor new &length:aSize &char:aChar
-        => system'internal'ws_fill.
+        => system'internal's_fill.
 
     #constructor new &literal:aLiteral
         <= %new &length:(aLiteral length) &literal:aLiteral.
+        
+    #constructor new &length:aSize &index:anIndex &chararray:anArray
+        => system'internal's_copysubarr.
 
     #method literal = $self.
+    
+    #method wide = wideConvertor convert &literal:$self.
 
     #method(type:bool) equal &literal : aLiteral
-        => system'internal'ws_equal.
+        => system'internal's_equal.
 
     #method(type:bool) less &literal : aLiteral
-        => system'internal'ws_less.
+        => system'internal's_less.
 
     #method(type:bool) equal &char : aChar
         <= %equal &literal:(aChar literal).
@@ -284,7 +264,7 @@
         <= %less &literal:(aChar literal).
 
     #method(type:literal) add &literal : aLiteral
-        => system'internal'ws_add.
+        => system'internal's_add.
 
     #method(type:literal) add &char:aChar
         = $self add &literal:(aChar literal).
@@ -296,8 +276,11 @@
         <= %getAt &index:(aParam int).
 
     #method read &index:anIndex &out'char:aChar
-        => system'internal'ws_getat.
+        => system'internal's_getat.
 
+    #method read &index:anIndex &out'byte:anInt
+        => system'internal'bs_readbyte.
+        
     #method(type:char) getAt &index:anIndex
     [
         #var(type:char)aChar := $self read &index:anIndex.
@@ -306,10 +289,10 @@
     ]
 
     #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
-        => system'internal'ws_indexof.
+        => system'internal's_indexof.
 
     #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
-        => system'internal'ws_indexof_char.
+        => system'internal's_indexof_char.        
 
     #method indexOf &index:anIndex &char:aChar
     [
@@ -326,19 +309,19 @@
     ]
 
     #method(type:literal) insert &index:anIndex &literal:aLiteral
-        => system'internal'ws_insert.
+        => system'internal's_insert.
 
     #method(type:literal) insert &index:anIndex &char:aChar
         = $self insert &index:anIndex &literal:(aChar literal).
 
     #method(type:literal) delete &index:anIndex &length:aLength
-        => system'internal'ws_delete.
+        => system'internal's_delete.
 
     #method(type:literal) Substring &index:anIndex &length:aLength
-        => system'internal'ws_subs.
+        => system'internal's_subs.
 
     #method read &out'length:aLength
-        => system'internal'ws_getlen.
+        => system'internal's_getlen.
 
     #method length
     [
@@ -445,6 +428,221 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &literal:theValue.
     
     #method literal = theValue.
+    
+    #method value = theValue.
+    
+    #method => theValue.
+}
+
+// --- emptyWideLiteralValue ---
+
+#symbol(const,type:literal) emptyWideLiteralValue = #0 wide. // !! temporal
+
+// --- WideLiteralValue ---
+
+#class(sealed) WideLiteralValue :: BaseValue
+{
+    #field(type:shortarray)theValue.
+
+    #constructor min
+        => system'internal'ws_empty.
+        
+    #constructor new &length:aSize 
+        => system'internal'ws_create.
+
+    #constructor new &length:aSize &wide:aLiteral
+        => system'internal'ws_copy.
+    
+    #constructor new &length:aSize &char:aChar
+        => system'internal'ws_fill.
+
+    #constructor new &wide:aLiteral
+        <= %new &length:(aLiteral length) &wide:aLiteral.
+        
+    #constructor new &length:aSize &index:anIndex &chararray:anArray
+        => system'internal'ws_copysubarr.
+
+    #method wide = $self.
+
+    #method literal = literalConvertor convert &wide:$self.
+
+    #method(type:bool) equal &wide : aLiteral
+        => system'internal'ws_equal.
+
+    #method(type:bool) less &wide : aLiteral
+        => system'internal'ws_less.
+
+    #method(type:bool) equal &char : aChar
+        <= %equal &wide:(aChar wide).
+
+    #method(type:bool) less &char : aChar
+        <= %less &wide:(aChar wide).
+
+    #method(type:literal) add &wide : aLiteral
+        => system'internal'ws_add.
+
+    #method(type:literal) add &char:aChar
+        = $self add &wide:(aChar wide).
+
+    #method(type:literal) add : anObject
+        = $self add &wide:(anObject wide).
+
+    #method getAt : aParam
+        <= %getAt &index:(aParam int).
+
+    #method read &index:anIndex &out'char:aChar
+        => system'internal'ws_getat.
+
+    #method read &index:anIndex &out'short:aValue
+        => system'internal'sa_readword.
+        
+    #method(type:char) getAt &index:anIndex
+    [
+        #var(type:char)aChar := $self read &index:anIndex.
+        
+        ^ CharValue new &char:aChar.
+    ]
+
+    #method indexOf &index:anIndex &wide:aLiteral &out'int:aRetVal
+        => system'internal'ws_indexof.
+
+    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+        => system'internal'ws_indexof_char.
+
+    #method indexOf &index:anIndex &char:aChar
+    [
+        #var(type:int)aRetVal := $self indexOf &index:anIndex &char:aChar.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method indexOf &index:anIndex &wide:aLiteral
+    [
+        #var(type:int)aRetVal := $self indexOf &index:anIndex &wide:aLiteral.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method(type:literal) insert &index:anIndex &wide:aLiteral
+        => system'internal'ws_insert.
+
+    #method(type:literal) insert &index:anIndex &char:aChar
+        = $self insert &index:anIndex &wide:(aChar wide).
+
+    #method(type:literal) delete &index:anIndex &length:aLength
+        => system'internal'ws_delete.
+
+    #method(type:literal) Substring &index:anIndex &length:aLength
+        => system'internal'ws_subs.
+
+    #method read &out'length:aLength
+        => system'internal'ws_getlen.
+
+    #method length
+    [
+        #var(type:int)aLength := $self length.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
+    #method enumerator = WideLiteralEnumerator new &wide:$self.
+    
+    #method iterator = WideLiteralIterator new &wide:$self.
+    
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &wide:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &wide:$self.
+    
+    #method clone = WideLiteralValue new &wide:$self.
+}
+
+// --- WideString ---
+
+#class WideString :: BaseValue
+{
+    #field(type:wide)theValue.
+
+    #constructor new
+    [
+        theValue := emptyWideLiteralValue.
+    ]
+            
+    #constructor new : aValue
+    [
+        theValue := aValue wide.
+    ]
+    
+    #constructor new &wide:aValue
+    [
+        theValue := aValue.
+    ]
+    
+    #constructor new &char:aValue
+    [
+        theValue := aValue wide.
+    ]
+    
+    #method write : anOperand
+    [
+        theValue := anOperand wide.
+    ]
+    
+    #method write &wide:aLiteral
+    [
+        theValue := aLiteral.
+    ]
+    
+    #method write &char:aChar
+    [
+        theValue := aChar wide.
+    ]
+    
+    #method append : anOperand
+    [
+        theValue := theValue add &wide:(anOperand wide).
+    ]
+    
+    #method append &wide:anOperand
+    [
+        theValue := theValue add &wide:anOperand.
+    ]
+    
+    #method append &char:anOperand
+    [
+        theValue := theValue add &wide:(anOperand wide).
+    ]
+    
+    #method insert &index:anIndex &wide:aLiteral
+    [
+        (anIndex == 0)
+            ? [ theValue := aLiteral add &wide:theValue. ]
+            ! [ theValue := theValue insert &index:anIndex &wide:aLiteral. ].
+    ]
+    
+    #method insert &index:anIndex &char:aChar
+    [
+        (anIndex == 0)
+            ? [ theValue := aChar wide add &wide:theValue. ]
+            ! [ theValue := theValue insert &index:anIndex &wide:(aChar wide). ].
+    ]
+            
+    #method delete &index:anIndex &length:aLength
+    [
+        theValue := theValue delete &index:anIndex &length:aLength.
+    ]
+                        
+    #method clear
+    [
+        theValue := emptyWideLiteralValue.
+    ]
+    
+    #method clone = WideString new &wide:theValue.
+                
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &wide:theValue.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &wide:theValue.
+    
+    #method wide = theValue.
     
     #method value = theValue.
     
@@ -637,35 +835,47 @@
 {
     #field(type:literal) theLiteral.
     #field(type:intvar)  theIndex.
+    #field(type:intvar)  theDiff.
+    #field(type:char)    theChar.
     
     #constructor new &literal:aLiteral
     [
         theLiteral := aLiteral.
         theIndex := Integer new &int:(-1).
+        theDiff := Integer new &int:(-1).
+        theChar := #0.
     ]
 
     #method reset
     [
         theIndex write &int:-1.
+        theDiff write &int:1.
     ]
 
     #method next
     [
         #var(type:int)aLength := theLiteral length.
         
-        theIndex append &int:1.
+        theIndex append &int:theDiff.
+        
+        (theIndex less &int:aLength)
+            ? [
+                #var(type:char)aChar := theLiteral read &index:theIndex.
+                #var(type:int)aCharLen := aChar length.
+                
+                theChar := CharValue new &char:aChar.
+                theDiff write &int:aCharLen.
+                
+                ^ true.
+            ].
 
-        ^ theIndex less &int:aLength.
+        theDiff write &int:0.
+        theChar := #0.
+
+        ^ false.
     ]
     
-    #method get
-    [
-        #var(type:int)anIndex := theIndex int.
-        
-        #var(type:char)aChar := theLiteral read &index:anIndex.
-        
-        ^ CharValue new &char:aChar.
-    ]
+    #method get = theChar.
 }
 
 // --- LiteralIterator ---
@@ -676,6 +886,103 @@
     #field(type:intvar)  theIndex.
     
     #constructor new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := Integer new.
+    ]
+    
+    #method available
+    [
+        #var(type:int)aLength := theLiteral length.
+        
+        ^ theIndex less &int:aLength.
+    ]
+
+    #method get
+    [
+        #var(type:int)anIndex := theIndex int.        
+        #var(type:char)aChar := theLiteral read &index:anIndex.
+        
+        ^ CharValue new &char:aChar.
+    ]
+    
+    #method set : anObject 
+    [
+        #throw system'NotSupportedException new.
+    ]
+    
+    #method read &out'index:anIndex
+    [
+        #var(type:int)aValue := theIndex int.
+        
+        anIndex := aValue.
+    ]
+    
+    #method write &index:anIndex 
+    [
+        theIndex write &int:anIndex.
+    ]
+}
+
+// --- LiteralEnumerator ---
+
+#class WideLiteralEnumerator :: Enumerator
+{
+    #field(type:wide)   theLiteral.
+    #field(type:intvar) theIndex.
+    #field(type:intvar) theDiff.
+    #field(type:char)   theChar.
+    
+    #constructor new &wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := Integer new &int:(-1).
+        theDiff := Integer new &int:(-1).
+        theChar := #0.
+    ]
+
+    #method reset
+    [
+        theIndex write &int:-1.
+        theDiff write &int:1.
+    ]
+
+    #method next
+    [
+        #var(type:int)aLength := theLiteral length.
+        
+        theIndex append &int:theDiff.
+        
+        (theIndex less &int:aLength)
+            ? [
+                #var(type:char)aChar := theLiteral read &index:theIndex.
+                #var(type:int)aCharLen := aChar length.
+                aCharLen := aCharLen + 1.
+                aCharLen := aCharLen / 2.
+                
+                theChar := CharValue new &char:aChar.
+                theDiff write &int:aCharLen.
+                
+                ^ true.
+            ].
+
+        theDiff write &int:0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    #method get = theChar.
+}
+
+// --- WideLiteralIterator ---
+
+#class WideLiteralIterator :: Iterator
+{
+    #field(type:wide)   theLiteral.
+    #field(type:intvar) theIndex.
+    
+    #constructor new &wide:aLiteral
     [
         theLiteral := aLiteral.
         theIndex := Integer new.

@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef streamsH
@@ -61,9 +61,8 @@ public:
 
    virtual bool read(void* s, size_t length) = 0;
 
-   virtual const wchar16_t* getWideLiteral() = 0;
-
-   virtual const char* getLiteral() = 0;
+   virtual const char* getLiteral(const char* def) = 0;
+   virtual const wide_c* getLiteral(const wide_c* def) = 0;
 
    int getDWord()
    {
@@ -96,22 +95,17 @@ public:
       return read((void*)&ch, 1);
    }
 
-   bool readWideChar(wchar16_t& ch)
-   {
-      return read(&ch, 2);
-   }
-
    bool readChar(char& ch)
    {
       return read(&ch, 1);
    }
 
-   template<class String> bool readWideString(String& s)
+   template<class String> bool readString(String& s)
    {
       s.clear();
 
-      wchar16_t ch = 0;
-      while (readWideChar(ch)) {
+      ident_c ch = 0;
+      while (readChar(ch)) {
          if (ch != 0) {
             s.append(ch);
          }
@@ -134,39 +128,6 @@ public:
 
    virtual bool write(const void* s, size_t length) = 0;
 
-   bool writeWideLiteral(const wchar16_t* s)
-   {
-      return writeWideLiteral(s, getlength(s) + 1);
-   }
-
-   bool writeWideLiteral(const char* s)
-   {
-      return writeWideLiteral(s, getlength(s) + 1);
-   }
-
-   bool writeWideLiteral(const wchar16_t* s, size_t length)
-   {
-      return write((void*)s, length << 1);
-   }
-
-   bool writeWideLiteral(const char* s, size_t length)
-   {
-      while (length > 0) {
-         wchar16_t tmp[128];
-         size_t    subLength = length < 127 ? length : 127;
-         size_t    tmpLength = subLength;
-
-         StringHelper::copy(tmp, s, tmpLength);
-
-         writeWideLiteral(tmp, tmpLength);
-
-         length -= subLength;
-         s += subLength;
-      }
-
-      return true;
-   }
-
    bool writeLiteral(const char* s)
    {
       return writeLiteral(s, getlength(s) + 1);
@@ -177,12 +138,22 @@ public:
       return write((void*)s, length);
    }
 
-   bool writeWideChar(wchar16_t ch)
+   bool writeLiteral(const wide_c* s)
    {
-      return writeWideLiteral(&ch, 1);
+      return writeLiteral(s, getlength(s) + 1);
+   }
+
+   bool writeLiteral(const wide_c* s, size_t length)
+   {
+      return write((void*)s, length << 1);
    }
 
    bool writeChar(char ch)
+   {
+      return writeLiteral(&ch, 1);
+   }
+
+   bool writeChar(wide_c ch)
    {
       return writeLiteral(&ch, 1);
    }
@@ -212,18 +183,6 @@ public:
       return true;
    }
 
-   void writeAsciiLiteral(const wchar16_t* s, size_t length)
-   {
-      for (size_t i = 0 ; i < length ; i++) {
-         write((void*)&s[i], 1);
-      }
-   }
-
-   void writeAsciiLiteral(const wchar16_t* s)
-   {
-      writeAsciiLiteral(s, getlength(s) + 1);
-   }
-
    void read(StreamReader* reader, size_t length)
    {
       char    buffer[BLOCK_SIZE];
@@ -247,8 +206,7 @@ public:
 class TextReader
 {
 public:
-   virtual bool read(wchar16_t* s, size_t length) = 0;
-   virtual bool read(char* s, size_t length) = 0;
+   virtual bool read(ident_c* s, size_t length) = 0;
 
    template<class String, class T> bool readLine(String& s, T* buffer, size_t size = BLOCK_SIZE)
    {
@@ -271,7 +229,7 @@ class TextWriter
 {
 public:
    virtual bool writeNewLine() = 0;
-   virtual bool write(const wchar16_t* s, size_t length) = 0;
+   virtual bool write(const wide_c* s, size_t length) = 0;
    virtual bool write(const char* s, size_t length) = 0;
 
    virtual bool writeChar(char ch)
@@ -279,57 +237,57 @@ public:
       return write(&ch, 1);
    }
 
-   virtual bool writeWideChar (char ch)
+   virtual bool writeChar (wide_c ch)
    {
       return write(&ch, 1);
    }
 
-   virtual bool writeText(const wchar16_t* s)
+   virtual bool writeLiteral(const wide_c* s)
    {
       return write(s, getlength(s));
    }
-   virtual bool writeText(const char* s)
+   virtual bool writeLiteral(const char* s)
    {
       return write(s, getlength(s));
    }
 
-   virtual bool writeTextNewLine(const wchar16_t* s)
+   virtual bool writeLiteralNewLine(const wide_c* s)
    {
-      if (writeText(s)) {
+      if (writeLiteral(s)) {
          return writeNewLine();
       }
       else return false;
    }
 
-   virtual bool writeTextNewLine(const char* s)
+   virtual bool writeLiteralNewLine(const char* s)
    {
-      if (writeText(s)) {
+      if (writeLiteral(s)) {
          return writeNewLine();
       }
       else return true;
    }
 
-   virtual bool fillChar(char ch, size_t count)
-   {
-      while (count > 0) {
-         if (!write(&ch, 1))
-            return false;
-         count--;
-      }
-      return true;
-   }
+//   virtual bool fillChar(char ch, size_t count)
+//   {
+//      while (count > 0) {
+//         if (!write(&ch, 1))
+//            return false;
+//         count--;
+//      }
+//      return true;
+//   }
+//
+//   virtual bool fillWideChar(wchar16_t ch, size_t count)
+//   {
+//      while (count > 0) {
+//         if (!write(&ch, 1))
+//            return false;
+//         count--;
+//      }
+//      return true;
+//   }
 
-   virtual bool fillWideChar(wchar16_t ch, size_t count)
-   {
-      while (count > 0) {
-         if (!write(&ch, 1))
-            return false;
-         count--;
-      }
-      return true;
-   }
-
-   virtual bool fillText(wchar16_t* s, size_t length, size_t count)
+   virtual bool fillText(wide_c* s, size_t length, size_t count)
    {
       while (count > 0) {
          if (!write(s, length))
@@ -373,22 +331,24 @@ public:
       return false; // !!
    }
 
-   virtual bool write(const wchar16_t* s, size_t length)
+   virtual bool write(const wide_c* s, size_t length)
    {
-      if (_offset + length <= _size) {
-         StringHelper::copy(_text + _offset, s, length);
-         _offset += length;
+      size_t lenToWrite = _size - _offset;
+
+      if (StringHelper::copy(_text + _offset, s, length, lenToWrite)) {
+         _offset += lenToWrite;
 
          return true;
       }
       else return false;
    }
-
+   
    virtual bool write(const char* s, size_t length)
    {
-      if (_offset + length <= _size) {
-         StringHelper::copy(_text + _offset, s, length);
-         _offset += length;
+      size_t lenToWrite = _size - _offset;
+
+      if (StringHelper::copy(_text + _offset, s, length, lenToWrite)) {
+         _offset += lenToWrite;
 
          return true;
       }
@@ -432,65 +392,65 @@ public:
    virtual ~LiteralWriter() {}
 };
 
-// --- LiteralTextReader ---
-
-template<class CHAR> class LiteralTextReader : public TextReader
-{
-   const CHAR* _text;
-   size_t      _offset;
-   size_t      _length;
-
-public:
-   virtual bool read(wchar16_t* s, size_t length)
-   {
-      if (_offset + length > _length) {
-         length = _length - _offset;
-      }
-
-      if (length > 0) {
-         wcsncpy(s, _text + _offset, length);
-         s[length] = 0;
-         length = StringHelper::find(s, '\n', length - 1) + 1;
-         s[length] = 0;
-
-         _offset += length;
-
-         return true;
-      }
-      else return false;
-   }
-   virtual bool read(char* s, size_t length)
-   {
-      if (_offset + length > _length) {
-         length = _length - _offset;
-      }
-
-      if (length > 0) {
-         StringHelper::copy(s, _text + _offset, length);
-         s[length] = 0;
-
-         _offset += length;
-
-         return true;
-      }
-      else return false;
-   }
-
-   LiteralTextReader(const CHAR* text)
-   {
-      _text = text;
-      _offset = 0;
-      _length = getlength(text);
-   }
-   LiteralTextReader(const CHAR* text, int offset)
-   {
-      _text = text;
-      _offset = offset;
-      _length = getlength(text);
-   }
-};
-
-typedef LiteralTextReader<wchar16_t> WideLiteralTextReader;
+//// --- LiteralTextReader ---
+//
+//template<class CHAR> class LiteralTextReader : public TextReader
+//{
+//   const CHAR* _text;
+//   size_t      _offset;
+//   size_t      _length;
+//
+//public:
+//   virtual bool read(wchar16_t* s, size_t length)
+//   {
+//      if (_offset + length > _length) {
+//         length = _length - _offset;
+//      }
+//
+//      if (length > 0) {
+//         wcsncpy(s, _text + _offset, length);
+//         s[length] = 0;
+//         length = StringHelper::find(s, '\n', length - 1) + 1;
+//         s[length] = 0;
+//
+//         _offset += length;
+//
+//         return true;
+//      }
+//      else return false;
+//   }
+//   virtual bool read(char* s, size_t length)
+//   {
+//      if (_offset + length > _length) {
+//         length = _length - _offset;
+//      }
+//
+//      if (length > 0) {
+//         StringHelper::copy(s, _text + _offset, length);
+//         s[length] = 0;
+//
+//         _offset += length;
+//
+//         return true;
+//      }
+//      else return false;
+//   }
+//
+//   LiteralTextReader(const CHAR* text)
+//   {
+//      _text = text;
+//      _offset = 0;
+//      _length = getlength(text);
+//   }
+//   LiteralTextReader(const CHAR* text, int offset)
+//   {
+//      _text = text;
+//      _offset = offset;
+//      _length = getlength(text);
+//   }
+//};
+//
+//typedef LiteralTextReader<wchar16_t> WideLiteralTextReader;
 
 //// --- LiteralReader ---
 //
@@ -589,15 +549,15 @@ public:
       else return false;
    }
 
-   virtual bool read2(void* s, size_t length)
-   {
-      return read(s, length << 1);
-   }
-
-   virtual bool read4(void* s, size_t length)
-   {
-      return read(s, length << 4);
-   }
+//   virtual bool read2(void* s, size_t length)
+//   {
+//      return read(s, length << 1);
+//   }
+//
+//   virtual bool read4(void* s, size_t length)
+//   {
+//      return read(s, length << 4);
+//   }
 
    virtual bool read(void* s, size_t length, size_t& wasread)
    {
@@ -609,30 +569,30 @@ public:
       return (wasread > 0);
    }
 
-   virtual bool read2(void* s, size_t length, size_t& wasread)
-   {
-      return read(s, length << 1, wasread);
-   }
+//   virtual bool read2(void* s, size_t length, size_t& wasread)
+//   {
+//      return read(s, length << 1, wasread);
+//   }
+//
+//   virtual bool read4(void* s, size_t length, size_t& wasread)
+//   {
+//      return read(s, length << 4, wasread);
+//   }
 
-   virtual bool read4(void* s, size_t length, size_t& wasread)
-   {
-      return read(s, length << 4, wasread);
-   }
-
-   virtual const wchar16_t* getWideLiteral()
-   {
-      const wchar16_t* s = (const wchar16_t*)_memory->get(_position);
-
-      _position += ((getlength(s) + 1) << 1);
-
-      return s;
-   }
-
-   virtual const char* getLiteral()
+   virtual const char* getLiteral(const char* def)
    {
       const char* s = (const char*)_memory->get(_position);
 
       _position += (getlength(s) + 1);
+
+      return s;
+   }
+
+   virtual const wide_c* getLiteral(const wide_c* def)
+   {
+      const wide_c* s = (const wide_c*)_memory->get(_position);
+
+      _position += ((getlength(s) + 1) << 1);
 
       return s;
    }

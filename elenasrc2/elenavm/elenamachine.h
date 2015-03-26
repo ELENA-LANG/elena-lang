@@ -11,15 +11,15 @@
 #include "config.h"
 #include "libman.h"
 
-#define VM_INIT           _T("$native'coreapi'vm_console_entry")
+#define VM_INIT           "$native'coreapi'vm_console_entry"
 
-#define VM_INTERPRET      _T("$native'core_vm'eval")
-#define VM_INTERPRET_EXT  _T("$native'core_vm'start_n_eval")
+#define VM_INTERPRET      "$native'core_vm'eval"
+#define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
 // --- ELENAVM common constants ---
-#define ELENAVM_GREETING        _T("ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov")
+#define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
 
-#define ELENAVM_BUILD_NUMBER    0x0001             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0002             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -40,9 +40,9 @@ struct _Entry
    }
 };
 
-typedef Map<const wchar16_t*, wchar16_t*> Templates;
-typedef Map<const wchar16_t*, wchar16_t*> Primitives;
-typedef Map<const wchar16_t*, wchar16_t*> ForwardMap;
+typedef Map<ident_t, ident_c*> Templates;
+typedef Map<ident_t, ident_c*> Primitives;
+typedef Map<ident_t, ident_c*> ForwardMap;
 
 // --- InstanceConfig ---
 
@@ -63,10 +63,10 @@ struct InstanceConfig
    ForwardMap moduleForwards;
 
    void loadForwardList(IniConfigFile& config);
-   void loadList(IniConfigFile& config, const char* category, const tchar_t* path, Map<const wchar16_t*, wchar16_t*>* list);
-   void init(const tchar_t* configPath, IniConfigFile& config);
+   void loadList(IniConfigFile& config, const char* category, path_t path, Map<ident_t, ident_c*>* list);
+   void init(path_t configPath, IniConfigFile& config);
 
-   bool load(const tchar_t* path, Templates* templates);
+   bool load(path_t path, Templates* templates);
 
    InstanceConfig()
       : primitives(NULL, freestr), forwards(NULL, freestr)
@@ -90,7 +90,7 @@ struct InstanceConfig
       // copy forwards
       ForwardMap::Iterator it = parent.forwards.start();
       while (!it.Eof()) {
-         forwards.add(it.key(), wcsdup(*it));
+         forwards.add(it.key(), StringHelper::clone(*it));
 
          it++;
       }
@@ -98,7 +98,7 @@ struct InstanceConfig
       // copy module forwards
       it = parent.moduleForwards.start();
       while (!it.Eof()) {
-         moduleForwards.add(it.key(), wcsdup(*it));
+         moduleForwards.add(it.key(), StringHelper::clone(*it));
 
          it++;
       }
@@ -110,7 +110,7 @@ class ELENAMachine
 protected:
    struct Config : InstanceConfig
    {
-      bool load(const tchar_t* path, Templates* templates);
+      bool load(path_t path, Templates* templates);
    };
 
    Path _rootPath;
@@ -120,10 +120,10 @@ public:
    Templates templates;
    Config    config;
 
-   const tchar_t* getRootPath() { return _rootPath; }
+   path_t getRootPath() { return _rootPath; }
 //   void setLibPath(const TCHAR* path);    // !! temporal
 
-   ELENAMachine(const tchar_t* rootPath);
+   ELENAMachine(path_t rootPath);
    virtual ~ELENAMachine()
    {
    }
@@ -135,7 +135,7 @@ class Instance : public _ImageLoader
 {
 protected:
    typedef void*(*VMAPI)(Instance*, void*);
-   typedef size_t(*VMAPI_NAME)(Instance*, void*,wchar16_t*,size_t);
+   typedef size_t(*VMAPI_NAME)(Instance*, void*,ident_c*,size_t);
 
    // --- ImageReferenceHelper ---
    // in most cases the references are already real ones
@@ -184,14 +184,14 @@ protected:
    _JITCompiler*   _compiler;
    JITLinker*      _linker;
 
-   ConstantIdentifier _literalClass;
-   ConstantIdentifier _characterClass;
-   ConstantIdentifier _intClass;
-   ConstantIdentifier _longClass;
-   ConstantIdentifier _realClass;
-   ConstantIdentifier _msgClass;
-   ConstantIdentifier _signClass;
-   ConstantIdentifier _verbClass;
+   ident_t _literalClass;
+   ident_t _characterClass;
+   ident_t _intClass;
+   ident_t _longClass;
+   ident_t _realClass;
+   ident_t _msgClass;
+   ident_t _signClass;
+   ident_t _verbClass;
 
    LibraryManager  _loader;
    ELENAMachine*   _machine;
@@ -205,25 +205,25 @@ protected:
    VMAPI_NAME _loadAddrInfo;
 
    // status
-   String<wchar16_t, 255> _status;
+   IdentifierString _status;
 
-   virtual const wchar16_t* resolveForward(const wchar16_t* forward);
+   virtual ident_t resolveForward(ident_t forward);
 
-   virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask);
-   virtual const wchar16_t* retrieveReference(void* address, ref_t mask);
+   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
+   virtual ident_t retrieveReference(void* address, ref_t mask);
 
-   _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
+   _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
 
-   virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask);
-   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode);
+   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask);
+   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
    bool initLoader(InstanceConfig& config);
 
-   void setPackagePath(const wchar16_t* package, const tchar_t* path);
-   void setPackagePath(const wchar16_t* line);
+   void setPackagePath(ident_t package, path_t path);
+   void setPackagePath(ident_t line);
 
-   bool loadTemplate(const wchar16_t* name);
+   bool loadTemplate(ident_t name);
 
    virtual bool restart(bool debugMode);
 
@@ -232,23 +232,23 @@ protected:
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
-   void printInfo(const tchar_t* s, ...);
+   void printInfo(const wide_c* s, ...);
 
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;
 
 public:
-   const wchar16_t* getStatus() { return emptystr(_status) ? NULL : (const wchar16_t*)_status; }
+   ident_t getStatus() { return emptystr(_status) ? NULL : (ident_t)_status; }
 
-   void setStatus(const wchar16_t* s)
+   void setStatus(ident_t s)
    {
       _status.copy(s);
    }
 
-   void setStatus(const wchar16_t* s1, const wchar16_t* s2)
+   void setStatus(ident_t s1, ident_t s2)
    {
       _status.copy(s1);
-      _status.append(emptystr(s2) ? _T("(null)") : s2);
+      _status.append(emptystr(s2) ? "(null)" : s2);
    }
 
    virtual void raiseBreakpoint() = 0;
@@ -261,55 +261,55 @@ public:
    bool isDebugMode() const { return _debugMode; }
 //   bool isInitialized() const { return _initialized; }
 
-   void addForward(const wchar16_t* forward, const wchar16_t* reference);
-   void addForward(const wchar16_t* line);
+   void addForward(ident_t forward, ident_t reference);
+   void addForward(ident_t line);
 
-   virtual const wchar16_t* getLiteralClass()
+   virtual ident_t getLiteralClass()
    {
       return _literalClass;
    }
 
-   virtual const wchar16_t* getCharacterClass()
+   virtual ident_t getCharacterClass()
    {
       return _characterClass;
    }
 
-   virtual const wchar16_t* getIntegerClass()
+   virtual ident_t getIntegerClass()
    {
       return _intClass;
    }
 
-   virtual const wchar16_t* getLongClass()
+   virtual ident_t getLongClass()
    {
       return _longClass;
    }
 
-   virtual const wchar16_t* getRealClass()
+   virtual ident_t getRealClass()
    {
       return _realClass;
    }
 
-   virtual const wchar16_t* getSignatureClass()
+   virtual ident_t getSignatureClass()
    {
       return _signClass;
    }
 
-   virtual const wchar16_t* getMessageClass()
+   virtual ident_t getMessageClass()
    {
       return _msgClass;
    }
 
-   virtual const wchar16_t* getVerbClass()
+   virtual ident_t getVerbClass()
    {
       return _verbClass;
    }
 
-   virtual const wchar16_t* getNamespace()
+   virtual ident_t getNamespace()
    {
       return _loader.getPackage();
    }
 
-   virtual const wchar16_t* getClassName(void* vmtAddress)
+   virtual ident_t getClassName(void* vmtAddress)
    {
       return retrieveReference(vmtAddress, mskVMTRef);
    }
@@ -319,12 +319,12 @@ public:
    //   return loadSymbol(referenceName, mskVMTRef);
    //}
 
-   virtual void* getSymbolRef(const wchar16_t* referenceName)
+   virtual void* getSymbolRef(ident_t referenceName)
    {
       return loadSymbol(referenceName, mskSymbolRef);
    }
 
-   virtual bool initSymbolReference(void* object, const wchar16_t* referenceName)
+   virtual bool initSymbolReference(void* object, ident_t referenceName)
    {
       void* symbolAddress = loadSymbol(referenceName, mskSymbolRef);
       if (symbolAddress != LOADER_NOTLOADED) {
@@ -341,11 +341,11 @@ public:
 
 //   bool init();
 
-   void* loadSymbol(const wchar16_t* reference, int mask);
+   void* loadSymbol(ident_t reference, int mask);
 
-   int interprete(void* tape, const wchar16_t* interpreter);
+   int interprete(void* tape, ident_t interpreter);
 
-   bool loadAddressInfo(void* address, wchar16_t* buffer, size_t& maxLength);
+   bool loadAddressInfo(void* address, ident_c* buffer, size_t& maxLength);
 
    Instance(ELENAMachine* machine);
    virtual ~Instance();

@@ -20,7 +20,7 @@ void loadDLLPath(HMODULE hModule)
 
    ::GetModuleFileName(hModule, path, MAX_PATH);
 
-   rootPath.copyPath(path);
+   rootPath.copySubPath(path);
    rootPath.lower();
 }
 
@@ -46,13 +46,13 @@ EXTERN_DLL_EXPORT int Interpret(void* tape)
    }
    catch (JITUnresolvedException& e)
    {
-      instance->setStatus(_T("Cannot load "), e.reference);
+      instance->setStatus("Cannot load ", e.reference);
 
       return 0;
    }
    catch(InternalError& e)
    {
-      instance->setStatus(ConstantIdentifier(e.message));
+      instance->setStatus(e.message);
 
       return 0;
    }
@@ -75,13 +75,13 @@ EXTERN_DLL_EXPORT int Evaluate(void* tape)
    }
    catch (JITUnresolvedException& e)
    {
-      instance->setStatus(_T("Cannot load "), e.reference);
+      instance->setStatus("Cannot load ", e.reference);
 
       return 0;
    }
    catch(InternalError& e)
    {
-      instance->setStatus(ConstantIdentifier(e.message));
+      instance->setStatus(e.message);
 
       return 0;
    }
@@ -102,16 +102,16 @@ EXTERN_DLL_EXPORT size_t SetDebugMode()
    return (size_t)instance->loadDebugSection();
 }
 
-EXTERN_DLL_EXPORT const wchar16_t* GetLVMStatus()
+EXTERN_DLL_EXPORT ident_t GetLVMStatus()
 {
    Instance* instance = machine ? machine->getInstance(::GetCurrentProcessId()) : NULL;
 
-   return  instance ? instance->getStatus() : _T("Not initialized");
+   return  instance ? instance->getStatus() : "Not initialized";
 }
 
 // --- initmachine ---
 
-void initMachine(const tchar_t* rootPath)
+void initMachine(path_t rootPath)
 {
    machine = new x86ELENAMachine(rootPath);
 }

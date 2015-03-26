@@ -16,7 +16,7 @@ using namespace _ELENA_;
 
 #define NMODULE_LEN getlength(NATIVE_MODULE)
 
-inline const char* getLoadError(LoadResult result)
+inline ident_t getLoadError(LoadResult result)
 {
    switch(result)
    {
@@ -47,9 +47,9 @@ Project :: Project()
 
 bool Project :: loadOption(_ConfigFile& config, ProjectSetting setting)
 {
-   ProjectParam param(getOption(config, setting));
-   if (!param.isEmpty()) {
-      _settings.add(setting, param.clone());
+   ident_t param = getOption(config, setting);
+   if (!emptystr(param)) {
+      _settings.add(setting, StringHelper::clone(param));
 
       return true;
    }
@@ -58,7 +58,7 @@ bool Project :: loadOption(_ConfigFile& config, ProjectSetting setting)
 
 void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
 {
-   const char* value = getOption(config, setting);
+   ident_t value = getOption(config, setting);
    if (value) {
       _settings.add(setting, StringHelper::strToInt(value));
    }
@@ -66,7 +66,7 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
 
 void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
 {
-   const char* value = getOption(config, setting);
+   ident_t value = getOption(config, setting);
    if (value) {
       _settings.add(setting, (int)StringHelper::strToLong(value, 16));
    }
@@ -74,7 +74,7 @@ void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
 
 void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue)
 {
-   const char* value = getOption(config, setting);
+   ident_t value = getOption(config, setting);
    if (value) {
       int intValue = StringHelper::strToInt(value);
       if (minValue > intValue)
@@ -88,7 +88,7 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int m
 
 void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment)
 {
-   const char* value = getOption(config, setting);
+   ident_t value = getOption(config, setting);
    if (value) {
       _settings.add(setting, align(StringHelper::strToInt(value), alignment));
    }
@@ -96,53 +96,48 @@ void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting
 
 void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
 {
-   const char* value = getOption(config, setting);
+   ident_t value = getOption(config, setting);
    if (value) {
       if (StringHelper::strToInt(value) != 0)
          _settings.add(setting, -1);
    }
 }
 
-bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, const tchar_t* rootPath)
+bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t rootPath)
 {
-   const char* value = getOption(config, setting);
+   ident_t value = getOption(config, setting);
    if (value) {
-      Path path(rootPath, value);
+      Path path(rootPath);
+      Path::combinePath(path, value);
 
-      _settings.add(setting, ProjectParam(path).clone());
+      _settings.add(setting, IdentifierString::clone(path));
       return true;
    }
    else return false;
 }
 
-void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* path)
+void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t path)
 {
-   ProjectParam param;
-   ProjectParam key;
+   IdentifierString key;
 
    ConfigCategoryIterator it = getCategory(config, setting);
    while (!it.Eof()) {
       // copy line key
       key.copy(it.key());
-      key.lower();
 
       // copy value or key if the value is absent
-      const char* value = *it;
+      ident_t value = *it;
       if (emptystr(value))
          value = it.key();
 
       // add path if provided
       if (!emptystr(path)) {
          Path filePath(path);
-         filePath.combine(value);
+         Path::combinePath(filePath, value);
 
-         _settings.add(setting, key, filePath.clone());
+         _settings.add(setting, key, IdentifierString::clone(filePath));
       }
-      else {
-         param.copy(value);
-
-         _settings.add(setting, key, param.clone());
-      }
+      else _settings.add(setting, key, StringHelper::clone(value));
 
       it++;
    }
@@ -150,71 +145,51 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, const 
 
 void Project :: loadForwardCategory(_ConfigFile& config)
 {
-   ProjectParam key, value;
-
    ConfigCategoryIterator it = getCategory(config, opForwards);
    while (!it.Eof()) {
-      // copy line key
-      key.copy(it.key());
-
-      value.copy((char*)*it);
-
-      _settings.add(opForwards, key, value.clone());
+      _settings.add(opForwards, it.key(), StringHelper::clone(*it));
 
       it++;
    }
 }
 
-void Project :: loadPrimitiveCategory(_ConfigFile& config, const tchar_t* path)
+void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
 {
-   ProjectParam param;
-   ProjectParam key;
-
    ConfigCategoryIterator it = getCategory(config, opPrimitives);
    while (!it.Eof()) {
-      // copy line key
-      key.copy(it.key());
-      key.lower();
-
       // copy value or key if the value is absent
-      const char* value = *it;
+      ident_t value = *it;
       if (emptystr(value))
          value = it.key();
 
       // add path if provided
       Path filePath(path);
-      filePath.combine(value);
-      filePath.lower();
+      Path::combinePath(filePath, value);
 
-      if (ConstantIdentifier::compare(key, CORE_ALIAS)) {
+      if (StringHelper::compare(it.key(), CORE_ALIAS)) {
          _loader.addCoreAlias(filePath);
       }
-      else _loader.addPrimitiveAlias(key, filePath);
+      else _loader.addPrimitiveAlias(it.key(), filePath);
 
       it++;
    }
 }
 
-void Project :: loadSourceCategory(_ConfigFile& config, const tchar_t* path)
+void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
 {
-   ProjectParam key;
-
    ConfigCategoryIterator it = getCategory(config, opSources);
    while (!it.Eof()) {
-      Path name(it.key());
-
       // add path if provided
       Path filePath(path);
-      filePath.combine(it.key());
-      filePath.lower();
+      Path::combinePath(filePath, it.key());
 
-      _sources.add(name, filePath.clone());
+      _sources.add(it.key(), IdentifierString::clone(filePath));
 
       it++;
    }
 }
 
-void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
+void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 {
    // load project settings (if setting is absent previous value is used)
    loadOption(config, opNamespace);
@@ -266,7 +241,7 @@ void Project :: loadConfig(_ConfigFile& config, const tchar_t* configPath)
 //   _settings.add(opForwards, fwd, StringHelper::clone(reference));
 //}
 
-_Module* Project :: loadModule(const wchar16_t* package, bool silentMode)
+_Module* Project :: loadModule(ident_t package, bool silentMode)
 {
    LoadResult result = lrNotFound;
    _Module* module = _loader.loadModule(package, result);
@@ -280,7 +255,7 @@ _Module* Project :: loadModule(const wchar16_t* package, bool silentMode)
    else return module;
 }
 
-_Module* Project::createModule(const wchar16_t* name)
+_Module* Project::createModule(ident_t name)
 {
    LoadResult result = lrNotFound;
    _Module* module = _loader.createModule(name, result);
@@ -293,31 +268,34 @@ _Module* Project::createModule(const wchar16_t* name)
    else return module;
 }
 
-_Module* Project :: createDebugModule(const wchar16_t* name)
+_Module* Project :: createDebugModule(ident_t name)
 {
    return new Module(name);
 }
 
-void Project :: saveModule(_Module* module, const tchar_t* extension)
+void Project :: saveModule(_Module* module, ident_t extension)
 {
-   const wchar16_t* name = module->Name();
+   ident_t name = module->Name();
    Path path;
    _loader.nameToPath(name, path, extension);
 
-   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+   Path outputPath;
+   Path::loadPath(outputPath, StrSetting(opProjectPath));
+   Path::combinePath(outputPath, StrSetting(opOutputPath));
+
    Path::create(outputPath, path);
 
    FileWriter writer(path, feRaw, false);
    if(!module->save(writer))
-      raiseError(getLoadError(lrCannotCreate), (const tchar_t*)path);
+      raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
 }
 
-const wchar16_t* Project :: resolveForward(const wchar16_t* forward)
+ident_t Project :: resolveForward(ident_t forward)
 {
    return _settings.get(opForwards, forward, DEFAULT_STR);
 }
 
-_Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& reference, bool silentMode)
+_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
 {
    while (isWeakReference(referenceName)) {
       referenceName = resolveForward(referenceName);
@@ -328,7 +306,7 @@ _Module* Project :: resolveModule(const wchar16_t* referenceName, ref_t& referen
 
    LoadResult result = lrNotFound;
    _Module* module = NULL;
-   if (ConstantIdentifier::compare(referenceName, NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+   if (StringHelper::compare(referenceName, NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
       module = _loader.resolveNative(referenceName, result, reference);
    }
    else module = _loader.resolveModule(referenceName, result, reference);
@@ -357,9 +335,9 @@ _Module* Project :: resolveCore(ref_t reference, bool silentMode)
    else return module;
 }
 
-const wchar16_t* Project :: resolveExternalAlias(const wchar16_t* alias, bool& stdCall)
+ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
 {
-   const wchar16_t* dll = _settings.get(opExternals, alias, DEFAULT_STR);
+   ident_t dll = _settings.get(opExternals, alias, DEFAULT_STR);
    if (!emptystr(dll)) {
       stdCall = true;
 

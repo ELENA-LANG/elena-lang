@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Parser class declaration.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef parserH
@@ -16,24 +16,26 @@
 namespace _ELENA_
 {
 
+const ident_c _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i', 'l', 'e', '>', 0 };
+
 // --- SyntaxError ---
 
 class SyntaxError : _Exception
 {
 public:
-   const char*      error; 
-   const wchar16_t* token;
-   int              column, row;
+   const char* error; 
+   ident_t     token;
+   int         column, row;
 
-   SyntaxError(int column, int row, const wchar16_t* token);
-   SyntaxError(int column, int row, const wchar16_t* token, const char* error);
+   SyntaxError(int column, int row, ident_t token);
+   SyntaxError(int column, int row, ident_t token, const char* error);
 };
 
 // --- Parser class ---
 
 class Parser
 {
-   wchar16_t _buffer[IDENTIFIER_LEN + 1];
+   ident_c _buffer[IDENTIFIER_LEN + 1];
 
    ParserTable _table;
 

@@ -116,32 +116,32 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key > key);
    }
 
-   bool operator ==(const wchar16_t* key) const
+   bool operator ==(const wide_c* key) const
    {
       return StringHelper::compare(this->key, key);
    }
 
-   bool operator !=(const wchar16_t* key) const
+   bool operator !=(const wide_c* key) const
    {
       return !StringHelper::compare(this->key, key);
    }
 
-   bool operator <=(const wchar16_t* key) const
+   bool operator <=(const wide_c* key) const
    {
       return !StringHelper::greater(this->key, key);
    }
 
-   bool operator <(const wchar16_t* key) const
+   bool operator <(const wide_c* key) const
    {
       return StringHelper::greater(key, this->key);
    }
 
-   bool operator >=(const wchar16_t* key) const
+   bool operator >=(const wide_c* key) const
    {
       return StringHelper::greater(this->key, key) || compstr(this->key, key);
    }
 
-   bool operator >(const wchar16_t* key) const
+   bool operator >(const wide_c* key) const
    {
       return StringHelper::greater(this->key, key);
    }
@@ -176,44 +176,44 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return StringHelper::greater(this->key, key);
    }
 
-   void rename(const wchar16_t* key)
-   {
-      if (KeyStored) {
-         freeKey(this->key);
-
-         this->key = StringHelper::clone(key);
-      }
-      else this->key = key;
-   }
-
-   void rename(const char* key)
-   {
-      if (KeyStored) {
-         freeKey(this->key);
-
-         this->key = StringHelper::clone(key);
-      }
-      else this->key = key;
-   }
-
-   void freeKey(int key) { key = 0; }
+//   void rename(const wchar16_t* key)
+//   {
+//      if (KeyStored) {
+//         freeKey(this->key);
+//
+//         this->key = StringHelper::clone(key);
+//      }
+//      else this->key = key;
+//   }
+//
+//   void rename(const char* key)
+//   {
+//      if (KeyStored) {
+//         freeKey(this->key);
+//
+//         this->key = StringHelper::clone(key);
+//      }
+//      else this->key = key;
+//   }
+//
+//   void freeKey(int key) { key = 0; }
    void freeKey(size_t key) { key = 0; }
-   void freeKey(const wchar16_t* key) { freestr((wchar16_t*)key); }
+   void freeKey(const wide_c* key) { freestr((wide_c*)key); }
    void freeKey(const char* key) { freestr((char*)key); }
 
-   _MapItem(int key, T item, _MapItem* next)
-   {
-      this->key = key;
-      this->item = item;
-      this->next = next;
-   }
+//   _MapItem(int key, T item, _MapItem* next)
+//   {
+//      this->key = key;
+//      this->item = item;
+//      this->next = next;
+//   }
    _MapItem(size_t key, T item, _MapItem* next)
    {
       this->key = key;
       this->item = item;
       this->next = next;
    }
-   _MapItem(const wchar16_t* key, T item, _MapItem* next)
+   _MapItem(const wide_c* key, T item, _MapItem* next)
    {
       if (KeyStored) {
          this->key = StringHelper::clone(key);
@@ -319,108 +319,55 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key > key);
    }
 
-   const wchar16_t* getKey(const wchar16_t* key) const
+   ident_t getKey(ident_t key) const
    {
       if (KeyStored) {
-         return (wchar16_t*)((int)this + (int)this->key);
+         return (ident_c*)((int)this + (int)this->key);
       }
       else return key;
    }
 
-   bool operator ==(const wchar16_t* key) const
+   bool operator ==(ident_t key) const
    {
       if (KeyStored) {
-         return StringHelper::compare((wchar16_t*)((int)this + (int)this->key), key);
+         return StringHelper::compare((ident_c*)((int)this + (int)this->key), key);
       }
       else return StringHelper::compare(this->key, key);
    }
 
-   bool operator !=(const wchar16_t* key) const
+   bool operator !=(ident_t key) const
    {
       if (KeyStored) {
-         return !StringHelper::compare((wchar16_t*)((int)this + (int)this->key), key);
+         return !StringHelper::compare((ident_c*)((int)this + (int)this->key), key);
       }
       else return !StringHelper::compare(this->key, key);
    }
 
-   bool operator <=(const wchar16_t* key) const
+   bool operator <=(ident_t key) const
    {
       if (KeyStored) {
-         return !StringHelper::greater((wchar16_t*)((int)this + (int)this->key), key);
+         return !StringHelper::greater((ident_c*)((int)this + (int)this->key), key);
       }
       else return !StringHelper::greater(this->key, key);
    }
 
-   bool operator <(const wchar16_t* key) const
+   bool operator <(ident_t key) const
    {
       if (KeyStored) {
-         return StringHelper::greater(key, (wchar16_t*)((int)this + (int)this->key));
+         return StringHelper::greater(key, (ident_c*)((int)this + (int)this->key));
       }
       else return StringHelper::greater(key, this->key);
    }
 
-   bool operator >=(const wchar16_t* key) const
+   bool operator >=(ident_t key) const
    {
       return (this > key || this == key);
    }
 
-   bool operator >(const wchar16_t* key) const
+   bool operator >(ident_t key) const
    {
       if (KeyStored) {
-         return StringHelper::greater((wchar16_t*)((int)this + (int)this->key), key);
-      }
-      else return StringHelper::greater(this->key, key);
-   }
-
-   const char* getKey(const char* key) const
-   {
-      if (KeyStored) {
-         return (char*)((int)this + (int)this->key);
-      }
-      else return key;
-   }
-
-   bool operator ==(const char* key) const
-   {
-      if (KeyStored) {
-         return StringHelper::compare((char*)((int)this + (int)this->key), key);
-      }
-      else return StringHelper::compare(this->key, key);
-   }
-
-   bool operator !=(const char* key) const
-   {
-      if (KeyStored) {
-         return !StringHelper::compare((char*)((int)this + (int)this->key), key);
-      }
-      else return !StringHelper::compare(this->key, key);
-   }
-
-   bool operator <=(const char* key) const
-   {
-      if (KeyStored) {
-         return !StringHelper::greater((char*)((int)this + (int)this->key), key);
-      }
-      else return !StringHelper::greater(this->key, key);
-   }
-
-   bool operator <(const char* key) const
-   {
-      if (KeyStored) {
-         return StringHelper::greater(key, (char*)((int)this + (int)this->key));
-      }
-      else return StringHelper::greater(key, this->key);
-   }
-
-   bool operator >=(const char* key) const
-   {
-      return (this > key || this == key);
-   }
-
-   bool operator >(const char* key) const
-   {
-      if (KeyStored) {
-         return StringHelper::greater((char*)((int)this + (int)this->key), key);
+         return StringHelper::greater((ident_c*)((int)this + (int)this->key), key);
       }
       else return StringHelper::greater(this->key, key);
    }
@@ -510,10 +457,10 @@ public:
 
    Item* _item() const { return _current; }
 
-   void rename(Key key)
-   {
-      _current->rename(key);
-   }
+//   void rename(Key key)
+//   {
+//      _current->rename(key);
+//   }
 
    _Iterator(Item* current)
    {
@@ -1112,77 +1059,77 @@ public:
    }
 };
 
-// --- Queue template ---
-
-template <class T> class Queue
-{
-   _List<T> _list;
-   T        _defaultItem;
-
-public:
-   typedef _Iterator<T, _Item<T> >    Iterator;
-
-   Iterator start()
-   {
-      return _list.start();
-   }
-
-   Iterator end()
-   {
-      return _list.end();
-   }
-
-   size_t Count() const { return _list.Count(); }
-
-   void push (T item)
-   {
-      _list.addToTale(item);
-   }
-
-   T pop()
-   {
-      if (!_list.Eof()) {
-         return _list.cutTop();
-      }
-      else return _defaultItem;
-   }
-
-   Iterator get(int index)
-   {
-      Iterator it = start();
-      while (!it.Eof() && index > 0) {
-         index--;
-         it++;
-      }
-      return it;
-   }
-
-   void cut()
-   {
-      _list.clear();
-   }
-
-   void clear()
-   {
-      _list.clear();
-   }
-
-   Queue()
-      : _list(NULL)
-   {
-      _defaultItem = 0;
-   }
-   Queue(T defaultItem)
-      : _list(NULL)
-   {
-      _defaultItem = defaultItem;
-   }
-   Queue(T defaultItem, void(*freeT)(T))
-      : _list(freeT)
-   {
-      defaultItem = defaultItem;
-   }
-};
+//// --- Queue template ---
+//
+//template <class T> class Queue
+//{
+//   _List<T> _list;
+//   T        _defaultItem;
+//
+//public:
+//   typedef _Iterator<T, _Item<T> >    Iterator;
+//
+//   Iterator start()
+//   {
+//      return _list.start();
+//   }
+//
+//   Iterator end()
+//   {
+//      return _list.end();
+//   }
+//
+//   size_t Count() const { return _list.Count(); }
+//
+//   void push (T item)
+//   {
+//      _list.addToTale(item);
+//   }
+//
+//   T pop()
+//   {
+//      if (!_list.Eof()) {
+//         return _list.cutTop();
+//      }
+//      else return _defaultItem;
+//   }
+//
+//   Iterator get(int index)
+//   {
+//      Iterator it = start();
+//      while (!it.Eof() && index > 0) {
+//         index--;
+//         it++;
+//      }
+//      return it;
+//   }
+//
+//   void cut()
+//   {
+//      _list.clear();
+//   }
+//
+//   void clear()
+//   {
+//      _list.clear();
+//   }
+//
+//   Queue()
+//      : _list(NULL)
+//   {
+//      _defaultItem = 0;
+//   }
+//   Queue(T defaultItem)
+//      : _list(NULL)
+//   {
+//      _defaultItem = defaultItem;
+//   }
+//   Queue(T defaultItem, void(*freeT)(T))
+//      : _list(freeT)
+//   {
+//      defaultItem = defaultItem;
+//   }
+//};
 
 // --- BList template ---
 
@@ -1536,26 +1483,26 @@ public:
       _count--;
    }
 
-   void write(StreamWriter* writer)
-   {
-      writer->writeDWord(_count);
-      Iterator it = start();
-      while (!it.Eof()) {
-         _writeIterator(writer, it.key(), *it);
-
-         it++;
-      }
-   }
-
-   void read(StreamReader* reader)
-   {
-      Key key;
-      T   value = _defaultItem;
-
-      size_t counter = 0;
-      reader->readDWord(counter);
-      _readToMap(reader, this, counter, key, value);
-   }
+//   void write(StreamWriter* writer)
+//   {
+//      writer->writeDWord(_count);
+//      Iterator it = start();
+//      while (!it.Eof()) {
+//         _writeIterator(writer, it.key(), *it);
+//
+//         it++;
+//      }
+//   }
+//
+//   void read(StreamReader* reader)
+//   {
+//      Key key;
+//      T   value = _defaultItem;
+//
+//      size_t counter = 0;
+//      reader->readDWord(counter);
+//      _readToMap(reader, this, counter, key, value);
+//   }
 
    void clear()
    {
@@ -1769,26 +1716,14 @@ public:
       return key;
    }
 
-   const wchar16_t* storeKey(size_t position, const wchar16_t* key)
-   {
-      if (KeyStored) {
-         size_t keyPos = _buffer.Length();
-
-         _buffer.writeWideLiteral(keyPos, key);
-
-         return (const wchar16_t*)(keyPos - position);
-      }
-      else return key;
-   }
-
-   const char* storeKey(size_t position, const char* key)
+   ident_t storeKey(size_t position, ident_t key)
    {
       if (KeyStored) {
          size_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
-         return (const char*)(keyPos - position);
+         return (ident_t)(keyPos - position);
       }
       else return key;
    }
@@ -2532,26 +2467,14 @@ public:
       return key;
    }
 
-   const wchar16_t* storeKey(size_t position, const wchar16_t* key)
-   {
-      if (KeyStored) {
-         size_t keyPos = _buffer.Length();
-
-         _buffer.writeWideLiteral(keyPos, key);
-
-         return (const wchar16_t*)(keyPos - position);
-      }
-      else return key;
-   }
-
-   const char* storeKey(size_t position, const char* key)
+   ident_t storeKey(size_t position, ident_t key)
    {
       if (KeyStored) {
          size_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
-         return (const char*)(keyPos - position);
+         return (ident_t)(keyPos - position);
       }
       else return key;
    }
@@ -2679,22 +2602,12 @@ template<class Key, class T, size_t cacheSize> class Cache
          return (this->key != key);
       }
 
-      bool operator ==(const wchar16_t* key) const
+      bool operator ==(ident_t key) const
       {
          return StringHelper::compare(this->key, key);
       }
 
-      bool operator !=(const wchar16_t* key) const
-      {
-         return !StringHelper::compare(this->key, key);
-      }
-
-      bool operator ==(const char* key) const
-      {
-         return StringHelper::compare(this->key, key);
-      }
-
-      bool operator !=(const char* key) const
+      bool operator !=(ident_t key) const
       {
          return !StringHelper::compare(this->key, key);
       }
@@ -2883,6 +2796,11 @@ public:
       return it.Eof() ? _defaultValue : *it;
    }
 
+   T& operator[](size_t index)
+   {
+      return *(T*)(_buffer.get(8 + (sizeof(T) + 4) * index));
+   }
+
    T* getPtr(size_t key) const
    {
       int count = _buffer[0];
@@ -2976,18 +2894,14 @@ public:
 enum ValueType
 {
    stDWORD,
-   stString16,
-   stString8,
+   stString,
    stMap
 };
 
 template<class VItem> void freeVItem(VItem item)
 {
-   if (item.type == stString16) {
-      freestr((wchar16_t*)item.value.literal16);
-   }
-   else if (item.type == stString8) {
-      freestr((char*)item.value.literal8);
+   if (item.type == stString) {
+      freestr((ident_c*)item.value.literal);
    }
    else if (item.type == stMap) {
       freeobj(item.value.map);
@@ -3001,11 +2915,10 @@ public:
    {
       union Value
       {
-         const wchar16_t*   literal16;
-         const char*        literal8;
-         int                number;
-         bool               flag;
-         size_t             size;
+         ident_t             literal;
+         int                 number;
+         bool                flag;
+         size_t              size;
          Map<SubKey, VItem>* map;
       };
 
@@ -3014,13 +2927,13 @@ public:
 
       operator int() const { return value.number; }
 
-      operator wchar16_t*() const { return (wchar16_t*)value.literal16; }
+//      operator wchar16_t*() const { return (wchar16_t*)value.literal16; }
 
-      operator const wchar16_t*() const { return value.literal16; }
+      operator ident_t() const { return value.literal; }
 
-      operator char*() const { return (char*)value.literal8; }
-
-      operator const char*() const { return value.literal8; }
+//      operator char*() const { return (char*)value.literal8; }
+//
+//      operator const char*() const { return value.literal8; }
 
       operator Map<SubKey, VItem>*() const { return type==stMap ? value.map : NULL; }
 
@@ -3039,26 +2952,31 @@ public:
          value.size = number;
          type = stDWORD;
       }
-      VItem(wchar16_t* literal)
+      VItem(ident_c* literal)
       {
-         value.literal16 = literal;
-         type = stString16;
+         value.literal = literal;
+         type = stString;
       }
-      VItem(const wchar16_t* literal)
+      VItem(ident_t literal)
       {
-         value.literal16 = literal;
+         value.literal = literal;
          type = stDWORD;
       }
-      VItem(char* literal)
-      {
-         value.literal8 = literal;
-         type = stString8;
-      }
-      VItem(const char* literal)
-      {
-         value.literal8 = literal;
-         type = stDWORD;
-      }
+//      VItem(const wchar16_t* literal)
+//      {
+//         value.literal16 = literal;
+//         type = stDWORD;
+//      }
+//      VItem(char* literal)
+//      {
+//         value.literal8 = literal;
+//         type = stString8;
+//      }
+//      VItem(const char* literal)
+//      {
+//         value.literal8 = literal;
+//         type = stDWORD;
+//      }
       VItem(Map<SubKey, VItem>* map)
       {
          value.map = map;
@@ -3499,17 +3417,6 @@ template<class Key, class T, class Iterator> Key retrieveKey(Iterator it, T valu
    return defaultKey;
 }
 
-template<class Iterator> const wchar16_t* retrieve(Iterator it, const wchar16_t* value, const wchar16_t* defaultValue)
-{
-   while (!it.Eof()) {
-      if (StringHelper::compare(*it, value))
-         return *it;
-
-      it++;
-   }
-   return defaultValue;
-}
-
 template<class Iterator> const char* retrieve(Iterator it, const char* value, const char* defaultValue)
 {
    while (!it.Eof()) {
@@ -3521,19 +3428,30 @@ template<class Iterator> const char* retrieve(Iterator it, const char* value, co
    return defaultValue;
 }
 
-template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
+template<class Iterator> const wide_c* retrieve(Iterator it, const wide_c* value, const wide_c* defaultValue)
 {
-   int index = 0;
    while (!it.Eof()) {
-      if (*it == value)
-         return index;
+      if (StringHelper::compare(*it, value))
+         return *it;
 
-      index++;
       it++;
    }
-
-   return -1;
+   return defaultValue;
 }
+
+//template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
+//{
+//   int index = 0;
+//   while (!it.Eof()) {
+//      if (*it == value)
+//         return index;
+//
+//      index++;
+//      it++;
+//   }
+//
+//   return -1;
+//}
 
 } // _ELENA_
 

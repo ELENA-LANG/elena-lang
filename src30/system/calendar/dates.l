@@ -137,9 +137,16 @@
 
     #method literal
     [
-        #var aValue := dateTimeControl toShortTime &long:theValue.
+        #var aValue := dateTimeControl toShortTime &long:theValue literal.
         
          ^ ($self days literal + "." + aValue) literal.
+    ]
+
+    #method wide
+    [
+        #var aValue := dateTimeControl toShortTime &long:theValue literal.
+        
+         ^ ($self days literal + "." + aValue) wide.
     ]
 
     #method clone
@@ -350,6 +357,9 @@
 
     #method literal
         = dateTimeControl toShortDateTime &long:theValue literal.
+
+    #method wide
+        = dateTimeControl toShortDateTime &long:theValue wide.
         
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
     

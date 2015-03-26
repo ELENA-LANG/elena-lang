@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Document class implementation
-//                                              (C)2011-2012, by Alexei Rakov
+//                                              (C)2011-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sourcedoc.h"
@@ -10,7 +10,7 @@ using namespace _GUI_;
 
 // --- SourceDoc ---
 
-SourceDoc::IndentDirection SourceDoc :: IsAutoIndent(tchar_t ch)
+SourceDoc::IndentDirection SourceDoc :: IsAutoIndent(text_c ch)
 {
    if (ch == '[' || ch == '{')
       return idRight;
@@ -20,10 +20,10 @@ SourceDoc::IndentDirection SourceDoc :: IsAutoIndent(tchar_t ch)
    else return idNone;
 }
 
-tchar_t SourceDoc :: getCurrentChar()
+text_c SourceDoc::getCurrentChar()
 {
    size_t length = 0;
-   const tchar_t* line = NULL;
+   text_t line = NULL;
 
    TextBookmark bm = _caret;
    // return current or previous if EOL
@@ -38,7 +38,7 @@ tchar_t SourceDoc :: getCurrentChar()
    return (length > 0) ? line[0] : 0;
 }
 
-const tchar_t* SourceDoc :: getCurrentLine(int disp, size_t& length)
+text_t SourceDoc :: getCurrentLine(int disp, size_t& length)
 {
    TextBookmark bm = _caret;
    bm.moveTo(0, _caret.getRow());
@@ -56,7 +56,7 @@ void SourceDoc :: insertNewLine()
 {
    int disp = 0;
    size_t length = 0;
-   const tchar_t* line = getCurrentLine(0, length);
+   text_t line = getCurrentLine(0, length);
    while (length > 0) {
       IndentDirection dir = IsAutoIndent(getCurrentChar());
       for (size_t i = 0 ; i < length ; i++) {

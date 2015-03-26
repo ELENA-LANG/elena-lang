@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -119,12 +120,13 @@ bool x86Process :: read(size_t position, void* s, size_t length)
    else return false;
 }
 
-bool x86Process :: exportFunction(const tchar_t* rootPath, size_t position, const wchar16_t* dllName, const wchar16_t* funName)
+bool x86Process :: exportFunction(path_t rootPath, size_t position, path_t dllName, ident_t funName)
 {
    HMODULE handle = ::LoadLibrary(dllName);
    // if dll is not found, use root path
    if (handle == NULL) {
-      Path dllPath(rootPath, dllName);
+      Path dllPath(rootPath);
+      dllPath.combine(dllName);
 
       handle = ::LoadLibrary(dllPath);
    }

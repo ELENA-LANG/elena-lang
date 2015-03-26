@@ -20,107 +20,118 @@ namespace _ELENA_
 #define min(a, b)       ((a) < (b) ? (a) : (b))
 #endif
 
-#ifdef _LINUX32
-
-#include <ctype.h>
-
-#define _strdup strdup
-
-inline static size_t wcslen(const unsigned short* s)
-{
-   const unsigned short* p = s;
-
-   while (*p) p++;
-
-   return (size_t)(p - s);
-}
-
-inline char* _strlwr(char* str)
-{
-   char* it = str;
-   while (*it != 0) { *it = tolower(*it); ++it; }
-
-   return str;
-}
-
-inline char* _strupr(char* str)
-{
-   char* it = str;
-   while (*it != 0) { *it = toupper(*it); ++it; }
-
-   return str;
-}
-
-//int _itow(int val, wchar_t* s, int radix)
+//#ifdef _LINUX32
+//
+//#include <ctype.h>
+//
+//#define _strdup strdup
+//
+//inline static size_t wcslen(const unsigned short* s)
 //{
-//    int len = 0;
+//   const unsigned short* p = s;
 //
-//    if (val < 0) {
-//        *s++ = '-';
-//        val = 0 - val;
+//   while (*p) p++;
 //
-//        len++;
-//    }
-//
-//    wchar_t* current = s;
-//    unsigned int digit;
-//    do {
-//        digit = val % radix;
-//        val /= radix;
-//
-//        *current++ = digit + '0';
-//
-//    } while (val > 0);
-//
-//    len += (int)(current - s);
-//
-//    *current-- = 0;
-//
-//    //swap
-//    do {
-//        wchar_t temp = *current;
-//        *current = *s;
-//        *s = temp;
-//
-//        --current;
-//        ++s;
-//
-//    } while (s < current);
-//
-//    return len;
+//   return (size_t)(p - s);
 //}
 //
-#endif
+//inline char* _strlwr(char* str)
+//{
+//   char* it = str;
+//   while (*it != 0) { *it = tolower(*it); ++it; }
+//
+//   return str;
+//}
+//
+//inline char* _strupr(char* str)
+//{
+//   char* it = str;
+//   while (*it != 0) { *it = toupper(*it); ++it; }
+//
+//   return str;
+//}
+//
+////int _itow(int val, wchar_t* s, int radix)
+////{
+////    int len = 0;
+////
+////    if (val < 0) {
+////        *s++ = '-';
+////        val = 0 - val;
+////
+////        len++;
+////    }
+////
+////    wchar_t* current = s;
+////    unsigned int digit;
+////    do {
+////        digit = val % radix;
+////        val /= radix;
+////
+////        *current++ = digit + '0';
+////
+////    } while (val > 0);
+////
+////    len += (int)(current - s);
+////
+////    *current-- = 0;
+////
+////    //swap
+////    do {
+////        wchar_t temp = *current;
+////        *current = *s;
+////        *s = temp;
+////
+////        --current;
+////        ++s;
+////
+////    } while (s < current);
+////
+////    return len;
+////}
+////
+//#endif
 
 // --- miscellaneous string routines ---
 
-//inline wchar_t wchlwr(wchar_t ch)
-//{
-//   wchar_t temp[2];
-//   temp[0] = ch;
-//   temp[1] = 0;
-//
-//   wcslwr(temp);
-//
-//   return temp[0];
-//}
-//
-////inline char *strrev(char *str)
+inline bool emptystr(const char* s)
+{
+   return (s == NULL || s[0] == 0);
+}
+
+inline static size_t getlength(const char* s)
+{
+   return (s == NULL) ? 0 : strlen(s);
+}
+
+
+////inline wchar_t wchlwr(wchar_t ch)
 ////{
-////      char *p1, *p2;
+////   wchar_t temp[2];
+////   temp[0] = ch;
+////   temp[1] = 0;
 ////
-////      if (! str || ! *str)
-////            return str;
+////   wcslwr(temp);
 ////
-////      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
-////      {
-////            *p1 ^= *p2;
-////            *p2 ^= *p1;
-////            *p1 ^= *p2;
-////      }
-////      return str;
+////   return temp[0];
 ////}
-////#endif
+////
+//////inline char *strrev(char *str)
+//////{
+//////      char *p1, *p2;
+//////
+//////      if (! str || ! *str)
+//////            return str;
+//////
+//////      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
+//////      {
+//////            *p1 ^= *p2;
+//////            *p2 ^= *p1;
+//////            *p1 ^= *p2;
+//////      }
+//////      return str;
+//////}
+//////#endif
 
 // --- resource freeing routines ---
 
@@ -189,7 +200,7 @@ inline bool isbetween(int starting, int len , int value)
    return (starting < value && value < starting + len);
 }
 
-inline bool isNumeric(const wchar16_t* s, int length)
+inline bool isNumeric(ident_t s, int length)
 {
    for (int i = 0 ; i < length ; i++)
    {

@@ -17,50 +17,50 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "pushb", "pop", "unknown", "pushe", "dcopyverb", "throw",
    "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
-   "not", "count", "bcopya", "dec", "popb", "close", "sub", "quit",
-   "get", "set", "inc", "equit", "aload", "unhook", "add", "create",
+   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
+   "get", "set", "inc", "unknown", "unknown", "unhook", "add", "create",
 
-   "ecopyd", "dcopye", "pushd", "popd", "edec", "einc", "unknown", "unknown",
+   "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "unknown", "len", "wlen", "flag", "nlen", "unknown", "class", "mindex",
-   "ecall", "acallvd", "unknown", "unknown", "unknown", "unknown", "xclone", "unknown",
+   "unknown", "blen", "wlen", "flag", "nlen", "unknown", "class", "unknown",
+   "call", "acallvd", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
-   "nload", "wton", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
+   "nload", "unknown", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
 
-   "wequal", "wless", "wread", "winsert", "ntow", "ltow", "rtow", "wseek",
-   "wwrite", "wadd", "wsubcopy", "nread", "nwrite", "unknown", "unknown", "wcreate",
+   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "unknown", "unknown", "unknown", "nread", "nwrite", "unknown", "unknown", "wcreate",
 
-   "breadw", "bread", "insert", "ninsert", "xseek", "breadb", "rsin", "rcos",
-   "rarctab", "bwrite", "subcopy", "nsubcopy", "bwriteb", "bwritew", "unknown", "bcreate",
+   "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "unknown", "unknown",
+   "unknown", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",
 
-   "lcopy", "lcopyn", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
-   "land", "lor", "lxor", "lshift", "lnot", "wtol", "lrndnew", "lrndnext",
+   "lcopy", "unknown", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
+   "land", "lor", "lxor", "lshift", "lnot", "unknown", "unknown", "unknown",
 
-   "rcopy", "rcopyl", "rcopyn", "requal", "rless", "radd", "rsub", "rmul",
-   "rdiv", "wtor", "rexp", "rln", "rabs", "rround", "rint", "ncopyr",
+   "rcopy", "unknown", "rsave", "requal", "rless", "radd", "rsub", "rmul",
+   "rdiv", "unknown", "rexp", "rln", "rabs", "rround", "rint", "rload",
 
-   "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "unknown",
+   "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "bcopys",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
-   "jump", "ajumpvi", "acallvi", "callr", "evalr", "callextr", "hook", "address",
-   "message", "less", "notless", "ifb", "elseb", "if", "else", "next",
+   "jump", "ajumpvi", "acallvi", "callr", "unknown", "callextr", "hook", "unknown",
+   "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
-   "pushn", "unknown", "pushr", "pushbi", "pushai", "unknown", "pushfi", "dloadfi",
-   "dloadsi", "dsavefi", "pushsi", "dsavesi", "eloadsi", "pushf", "esavesi", "reserve",
+   "pushn", "unknown", "pushr", "unknown", "pushai", "unknown", "pushfi", "dloadfi",
+   "dloadsi", "dsavefi", "pushsi", "dsavesi", "unknown", "pushf", "unknown", "reserve",
 
-   "asavebi", "swapsi", "aswapsi", "asavesi", "asavefi", "unknown", "unknown", "unknown",
-   "bloadfi", "bloadsi", "unknown", "unknown", "asaver", "aloadai", "aloadbi", "axsavebi",
+   "asavebi", "unknown", "aswapsi", "asavesi", "asavefi", "bswapsi", "eswapsi", "dswapsi",
+   "bloadfi", "bloadsi", "nloadi", "nsavei", "asaver", "aloadai", "aloadbi", "axsavebi",
 
    "popi", "unknown", "scopyf", "setverb", "setsubj", "andn", "addn", "orn",
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "eaddn", "shiftn", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "new", "newn", "unknown", "unknown", "xindexrm", "xjumprm", "selectr", "lessn",
-   "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
+   "ifm", "lessm", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
 };
 
 using namespace _ELENA_;
@@ -70,7 +70,7 @@ inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
    if (ref != 0) {
       int mask = ref & mskAnyRef;
 
-      const wchar16_t* referenceName = sour->resolveReference(ref & ~mskAnyRef);
+      ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
 
       return dest->mapReference(referenceName) | mask;
    }
@@ -409,7 +409,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcElseM:              
             case bcNext:
             case bcHook:
-            case bcAddress:
+            //case bcAddress:
             case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);
@@ -617,9 +617,7 @@ bool TransformTape :: apply(CommandTape& commandTape)
 
 inline void addVerb(MessageMap& map, const char* verb, int id)
 {
-   String<wchar16_t, 20> verbName(verb);
-
-   map.add(verbName, id);
+   map.add(verb, id);
 }
 
 void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
@@ -712,10 +710,10 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
 }
 
-ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
+ByteCode ByteCodeCompiler :: code(ident_t s)
 {
    for(int i = 0 ; i < 255 ; i++) {
-      if (ConstantIdentifier::compare(s, _fnOpcodes[i])) {
+      if (StringHelper::compare(s, _fnOpcodes[i])) {
          return (ByteCode)i;
       }
    }
@@ -723,7 +721,7 @@ ByteCode ByteCodeCompiler :: code(const wchar16_t* s)
    return bcNone;
 }
 
-const wchar16_t* ByteCodeCompiler :: decode(ByteCode code, wchar16_t* s)
+ident_t ByteCodeCompiler :: decode(ByteCode code, ident_c* s)
 {
    copystr(s, _fnOpcodes[(int)code]);
 

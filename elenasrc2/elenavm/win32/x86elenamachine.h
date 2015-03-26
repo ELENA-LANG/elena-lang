@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2011, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86elenamachineH
@@ -19,17 +19,17 @@ namespace _ELENA_
 
 class x86Instance : public Instance
 {
-   const tchar_t* _rootPath;
+   path_t _rootPath;
 
    x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess;
 
-   virtual ref_t resolveExternal(const wchar16_t* reference);
+   virtual ref_t resolveExternal(ident_t reference);
 
 protected:
    virtual _Memory* getTargetSection(size_t mask);
    virtual _Memory* getTargetDebugSection();
 
-   virtual void mapReference(const wchar16_t* reference, void* vaddress, size_t mask);
+   virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
 
    virtual bool restart(bool debugMode);
 
@@ -71,7 +71,7 @@ public:
       _instances.erase(processID);
    }
 
-   x86ELENAMachine(const tchar_t* rootPath);
+   x86ELENAMachine(path_t rootPath);
 };
 
 } // _ELENA_

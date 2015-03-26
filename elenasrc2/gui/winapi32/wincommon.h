@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Header File
-//                                              (C)2005-2010, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef wincommonH
@@ -37,8 +37,9 @@ namespace _GUI_
 class _BaseControl
 {
 public:
-   virtual ~_BaseControl() {}
+   virtual bool checkHandle(void* param) const = 0;
 
+   virtual ~_BaseControl() {}
 };
 
 // --- Control ---
@@ -58,7 +59,7 @@ protected:
    size_t    _minHeight;
 
 public:
-   bool checkHandle(void* param) const
+   virtual bool checkHandle(void* param) const
    {
       return (_handle == (HWND)param);
    }
@@ -158,7 +159,6 @@ public:
    void close();
 };
 
-
 // --- DateTime ---
 
 struct DateTime
@@ -228,7 +228,7 @@ inline void canonicalize(_ELENA_::Path& path)
    path.copy(p);
 }
 
-inline void makePathRelative(_ELENA_::Path& path, const tchar_t* rootPath)
+inline void makePathRelative(_ELENA_::Path& path, const wchar_t* rootPath)
 {
    wchar_t tmpPath[MAX_PATH];
 

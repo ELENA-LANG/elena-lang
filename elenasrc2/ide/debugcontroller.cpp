@@ -11,13 +11,14 @@
 #include "debugcontroller.h"
 #include "rtman.h"
 //#include "messages.h"
+#include "module.h"
 
 using namespace _ELENA_;
 
-// --- verbs ---
-
-//MessageMap         _verbs;
-//ConstantIdentifier _tapeSymbol(TAPE_SYMBOL);
+//// --- verbs ---
+//
+////MessageMap         _verbs;
+////ConstantIdentifier _tapeSymbol(TAPE_SYMBOL);
 
 // --- DebugController ---
 
@@ -67,7 +68,7 @@ void DebugController :: debugThread()
    _currentModule = NULL;
    _events.close();
 
-   onStop(_debugger.proceedCheckPoint());
+   _listener->onStop(_debugger.proceedCheckPoint());
 }
 
 _Module* DebugController :: getDebugModule(size_t address)
@@ -86,7 +87,7 @@ _Module* DebugController :: getDebugModule(size_t address)
    return NULL;
 }
 
-DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, const wchar16_t* &moduleName, const wchar16_t* &sourcePath)
+DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, ident_t &moduleName, ident_t &sourcePath)
 {
    //// if it is a temporal tape line info
    //if (lineInfoAddress < _tape.Length()) {
@@ -107,7 +108,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, cons
          _Memory* section = module->mapSection(DEBUG_STRINGS_ID, true);
 
          if (section != NULL) {
-            sourcePath = (const wchar16_t*)section->get(current->addresses.source.nameRef);
+            sourcePath = (ident_t)section->get(current->addresses.source.nameRef);
          }
 
          return (DebugLineInfo*)lineInfoAddress;
@@ -116,7 +117,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, cons
 //   }
 }
 
-DebugLineInfo* DebugController :: seekClassInfo(size_t address, const wchar16_t* &className, int& flags)
+DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &className, int& flags)
 {
    // read class VMT address
    size_t vmtPtr = _debugger.Context()->ClassVMT(address);
@@ -198,8 +199,8 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
    return NULL;
 }
 
-DebugLineInfo* DebugController :: seekLineInfo(size_t address, const wchar16_t* &moduleName, const wchar16_t* &className, 
-                                               const wchar16_t* &methodName, const wchar16_t* &procPath)
+DebugLineInfo* DebugController::seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
+   ident_t &methodName, ident_t &procPath)
 {
    ModuleMap::Iterator it = _modules.start();
    while (!it.Eof()) {
@@ -213,15 +214,15 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, const wchar16_t* 
          int prev = 0;
          for (int i = 0 ; i < count ; i++) {
             if (info[i].symbol == dsClass || info[i].symbol == dsSymbol) {
-               className = (const wchar16_t*)strings->get(info[i].addresses.symbol.nameRef);
+               className = (ident_t)strings->get(info[i].addresses.symbol.nameRef);
             }
             else if (info[i].symbol == dsProcedure) {
-               procPath = (const wchar16_t*)strings->get(info[i].addresses.source.nameRef);
+               procPath = (ident_t)strings->get(info[i].addresses.source.nameRef);
                methodName = NULL;
                prev = 0;
             }
             else if (info[i].symbol == dsMessage) {
-               methodName = (const wchar16_t*)strings->get(info[i].addresses.source.nameRef);
+               methodName = (ident_t)strings->get(info[i].addresses.source.nameRef);
             }
             else if ((info[i].symbol & dsDebugMask) == dsStep) {
                // if it is a exact match
@@ -243,7 +244,7 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, const wchar16_t* 
    return NULL;
 }
 
-size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* path, size_t row)
+size_t DebugController :: findNearestAddress(_Module* module, ident_t path, size_t row)
 {
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
    _Memory* strings = module->mapSection(DEBUG_STRINGS_ID, true);
@@ -257,7 +258,7 @@ size_t DebugController :: findNearestAddress(_Module* module, const tchar_t* pat
    bool skipping = true;
    for (int i = 0 ; i < count ; i++) {
       if (info[i].symbol == dsProcedure) {
-         const wchar16_t* procPath = (const wchar16_t*)strings->get(info[i].addresses.source.nameRef);
+         ident_t procPath = (ident_t)strings->get(info[i].addresses.source.nameRef);
          if (StringHelper::compare(procPath, path)) {
             skipping = false;
          }
@@ -295,18 +296,18 @@ void DebugController :: processStep()
          return;
       }
 
-      const wchar16_t* moduleName = NULL;
-      const wchar16_t* sourcePath = NULL;
+      ident_t moduleName = NULL;
+      ident_t sourcePath = NULL;
       DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State(), moduleName, sourcePath);
       showCurrentModule(lineInfo, moduleName, sourcePath);
    }
    if (_debugger.Context()->checkFailed) {
-      onCheckPoint(_T("Operation failed"));
+      _listener->onCheckPoint(_T("Operation failed"));
    }
    if (_debugger.Exception()!=NULL) {
       ProcessException* exeption = _debugger.Exception();
 
-      onNotification(exeption->Text(), exeption->address, exeption->code);
+      _listener->onNotification(exeption->Text(), exeption->address, exeption->code);
    }
 }
 
@@ -319,12 +320,67 @@ bool DebugController :: start()
 
    while (_events.waitForEvent(DEBUG_ACTIVE, 0));
 
-   onStart();
+   _listener->onStart();
 
    return _debugger.isStarted();
 }
 
-bool DebugController :: loadSymbolDebugInfo(const wchar16_t* reference, StreamReader&  addressReader)
+void DebugController :: onInitBreakpoint()
+{
+   bool starting = _debugInfoSize == 0;
+   if (starting) {
+      // define if it is a vm client or stand-alone
+      char signature[0x10];
+      _debugger.findSignature(signature);
+
+      DebugReader reader(&_debugger/*, 0x400000, 0*/);
+      if (strcmp(signature, ELENACLIENT_SIGNITURE) == 0) {
+         if (!_debugger.initDebugInfo(false, reader, _debugInfoPtr))
+         {
+            // continue debugging
+            _events.setEvent(DEBUG_RESUME);
+            return;
+         }
+      }
+      else if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
+         DebugReader reader(&_debugger);
+
+         _debugger.initDebugInfo(true, reader, _debugInfoPtr);
+      }
+      // !! notify if the executable is not supported
+   }
+   
+   _listener->onDebuggerHook();
+
+   DebugReader reader(&_debugger, _debugInfoPtr, _debugInfoSize);
+      // the debug section starts with size field
+   reader.setSize(reader.getDWord());
+
+   // if there are new records in debug section
+   if (!reader.Eof()) {
+      loadDebugData(reader, starting);
+
+      _debugInfoSize = reader.Position();
+
+      // continue debugging
+      if (_postponed.stepMode) {
+         if (starting) {
+            _debugger.setBreakpoint(_entryPoint, false);
+         }
+         else _debugger.setStepMode();
+
+         _events.setEvent(DEBUG_RESUME);
+      }
+      else if (_postponed.gotoMode) {
+         runToCursor(_postponed.source, _postponed.path, _postponed.col, _postponed.row);
+      }
+      else run();
+   }
+   // otherwise continue
+   else _events.setEvent(DEBUG_RESUME);
+}
+//
+bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  addressReader)
 {
    bool isClass = true;
    _Module* module = NULL;
@@ -388,20 +444,20 @@ bool DebugController :: loadSymbolDebugInfo(const wchar16_t* reference, StreamRe
    else return false;
 }
 
-bool DebugController :: loadTapeDebugInfo(StreamReader& reader, size_t size)
-{
-   //// if tape debugging is allowed, debugger should switch to step mode
-   //_postponed.setStepMode();
-
-   //void* tape = (void*)reader.getDWord();
-   //size -= 4;
-
-   //// create temporal document
-   //int sourcePos = generateTape(tape, reader, size >> 2);
-   //onLoadTape(_tapeSymbol, sourcePos);
-
-   return true;
-}
+//bool DebugController :: loadTapeDebugInfo(StreamReader& reader, size_t size)
+//{
+//   //// if tape debugging is allowed, debugger should switch to step mode
+//   //_postponed.setStepMode();
+//
+//   //void* tape = (void*)reader.getDWord();
+//   //size -= 4;
+//
+//   //// create temporal document
+//   //int sourcePos = generateTape(tape, reader, size >> 2);
+//   //onLoadTape(_tapeSymbol, sourcePos);
+//
+//   return true;
+//}
 
 bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress)
 {
@@ -416,7 +472,7 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
    IdentifierString reference;
    while (!reader.Eof()) {
       // read reference
-      reader.readWideString(reference);
+      reader.readString(reference);
 
       // define the next record position
       int size = reader.getDWord() - 4;
@@ -441,38 +497,6 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
    }
 
    return true;
-}
-
-void DebugController :: onInitBreakpoint()
-{
-   bool starting = _debugInfoSize == 0;
-
-   DebugReader reader(&_debugger, _debugInfoPtr, _debugInfoSize);
-      // the debug section starts with size field
-   reader.setSize(reader.getDWord());
-
-   // if there are new records in debug section
-   if (!reader.Eof()) {
-      loadDebugData(reader, starting);
-
-      _debugInfoSize = reader.Position();
-
-      // continue debugging
-      if (_postponed.stepMode) {
-         if (starting) {
-            _debugger.setBreakpoint(_entryPoint, false);
-         }
-         else _debugger.setStepMode();
-
-         _events.setEvent(DEBUG_RESUME);
-      }
-      else if (_postponed.gotoMode) {
-         runToCursor(_postponed.source, _postponed.path, _postponed.col, _postponed.row);
-      }
-      else run();
-   }
-   // otherwise continue
-   else _events.setEvent(DEBUG_RESUME);
 }
 
 void DebugController :: loadBreakpoints(List<Breakpoint>& breakpoints)
@@ -506,12 +530,35 @@ void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
    }
 }
 
+_Module* DebugController :: loadDebugModule(ident_t reference)
+{
+   _ELENA_::NamespaceName name(reference);
+   _ELENA_::Path          path;
+
+   _manager->retrievePath(name, path, _T("dnl"));
+
+   Module* module = (Module*)_modules.get(name);
+   if (module == NULL) {
+      module = new Module();
+
+      _ELENA_::FileReader reader(path, _ELENA_::feRaw, false);
+      _ELENA_::LoadResult result = module->load(reader);
+      if (result != _ELENA_::lrSuccessful) {
+         delete module;
+
+         return NULL;
+      }
+      _modules.add(name, module);
+   }
+   return module;
+}
+
 void DebugController :: clearBreakpoints()
 {
    _debugger.clearBreakpoints();
 }
 
-bool DebugController :: start(const tchar_t* programPath, const tchar_t* arguments, bool debugMode, List<Breakpoint>& breakpoints)
+bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, List<Breakpoint>& breakpoints)
 {
    _currentModule = NULL;
    _started = false;
@@ -522,9 +569,9 @@ bool DebugController :: start(const tchar_t* programPath, const tchar_t* argumen
    _arguments.copy(arguments);
 
    if (debugMode) {
-      _entryPoint = findEntryPoint(programPath);
+      _entryPoint = _debugger.findEntryPoint(programPath);
 
-      _debugger.setInitHook();
+      _debugger.initHook();
    }
    else {
       _entryPoint = 0;
@@ -551,7 +598,7 @@ void DebugController :: run()
    _debugger.activate();
 }
 
-void DebugController :: runToCursor(const tchar_t* name, const tchar_t* path, int col, int row)
+void DebugController :: runToCursor(ident_t name, path_t path, int col, int row)
 {
    if (_running || !_debugger.isStarted())
       return;
@@ -565,7 +612,7 @@ void DebugController :: runToCursor(const tchar_t* name, const tchar_t* path, in
    else {
       _Module* module = _modules.get(name);
       if (module != NULL) {
-         size_t address = findNearestAddress(module, path, row);
+         size_t address = findNearestAddress(module, IdentifierString(path), row);
          if (address != 0xFFFFFFFF) {
             _debugger.setBreakpoint(address, false);
          }
@@ -695,17 +742,17 @@ const char* DebugController :: getValue(size_t address, char* value, size_t leng
    return value;
 }
 
-const wchar_t* DebugController :: getValue(size_t address, wchar16_t* value, size_t length)
-{
-   _debugger.Context()->readDump(address, (char*)value, length * 2);
-
-   return value;
-}
-
-int DebugController :: getEIP()
-{
-   return _debugger.Context()->EIP();
-}
+//const wchar_t* DebugController :: getValue(size_t address, wchar16_t* value, size_t length)
+//{
+//   _debugger.Context()->readDump(address, (char*)value, length * 2);
+//
+//   return value;
+//}
+//
+//int DebugController :: getEIP()
+//{
+//   return _debugger.Context()->EIP();
+//}
 
 void DebugController :: readCallStack(_DebuggerCallStack* watch)
 {
@@ -717,10 +764,10 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
    RTManager manager;
    manager.readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->EIP(), writer);
 
-   const wchar16_t* path = NULL;
-   const wchar16_t* moduleName = NULL;
-   const wchar16_t* className = NULL;
-   const wchar16_t* methodName = NULL;
+   ident_t path = NULL;
+   ident_t moduleName = NULL;
+   ident_t className = NULL;
+   ident_t methodName = NULL;
    for(size_t pos = 0 ; pos < retPoints.Length(); pos += 4) {
       DebugLineInfo* info = seekLineInfo((size_t)retPoints[pos], moduleName, className, methodName, path);
       if (info != NULL) {
@@ -734,7 +781,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
 {
    int index = 1;
    while (info[index].symbol == dsField) {
-      const wchar16_t* fieldName = (const wchar16_t*)info[index].addresses.field.nameRef;
+      ident_t fieldName = (ident_t)info[index].addresses.field.nameRef;
       int size = info[index].addresses.field.size;
       // if it is a data field
       if (size != 0) {
@@ -750,11 +797,11 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
       else {
          size_t fieldPtr = _debugger.Context()->ObjectPtr(address);
          if (fieldPtr==0) {
-            watch->write(this, fieldPtr, fieldName, _T("<nil>"));
+            watch->write(this, fieldPtr, fieldName, "<nil>");
          }
          else {
             int flags = 0;
-            const wchar16_t* className = NULL;
+            ident_t className = NULL;
             DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
             if (field) {
                watch->write(this, fieldPtr, fieldName, className);
@@ -767,7 +814,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
             //else if (test(flags, elGroup)) {
             //   watch->write(this, fieldPtr, fieldName, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
             //}
-            else watch->write(this, fieldPtr, fieldName, _T("<unknown>"));
+            else watch->write(this, fieldPtr, fieldName, "<unknown>");
          }
 
          address += 4;
@@ -779,18 +826,18 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
 
 void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
 {
-   String<tchar_t, 10> index;
+   String<ident_c, 10> index;
    for (int i = 0 ; i < length ; i++)  {
-      index.copy(_T("["));
+      index.copy("[");
       index.appendInt(i);
-      index.append(_T("]"));
+      index.append("]");
       size_t memberPtr = list[i];
       if (memberPtr==0) {
-         watch->write(this, memberPtr, index, _T("<nil>"));
+         watch->write(this, memberPtr, index, "<nil>");
       }
       else {
          int flags = 0;
-         const wchar16_t* className = NULL;
+         ident_t className = NULL;
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
             watch->write(this, memberPtr, index, className);
@@ -803,12 +850,12 @@ void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
          //else if (test(flags, elGroup)) {
          //   watch->write(this, memberPtr, index, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
          //}
-         else watch->write(this, memberPtr, index, _T("<unknown>"));
+         else watch->write(this, memberPtr, index, "<unknown>");
       }
    }
 }
 
-void DebugController :: readByteArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name)
+void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    char list[DEBUG_MAX_ARRAY_LENGTH];
    int  length = 0;
@@ -825,7 +872,7 @@ void DebugController :: readByteArray(_DebuggerWatch* watch, size_t address, con
    watch->write(this, address, name, list, length);
 }
 
-void DebugController :: readShortArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name)
+void DebugController::readShortArray(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    short list[DEBUG_MAX_ARRAY_LENGTH];
    int  length = 0;
@@ -842,7 +889,7 @@ void DebugController :: readShortArray(_DebuggerWatch* watch, size_t address, co
    watch->write(this, address, name, list, length);
 }
 
-void DebugController::readIntArray(_DebuggerWatch* watch, size_t address, const wchar16_t* name)
+void DebugController::readIntArray(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    int list[DEBUG_MAX_ARRAY_LENGTH];
    int length = 0;
@@ -861,17 +908,17 @@ void DebugController::readIntArray(_DebuggerWatch* watch, size_t address, const 
 
 void DebugController :: readMessage(_DebuggerWatch* watch, ref_t reference)
 {
-   String<tchar_t, 20> messageValue(_T("<"));
+   String<ident_c, 20> messageValue("<");
    messageValue.appendHex(reference);
-   messageValue.append(_T('>'));
+   messageValue.append('>');
 
-   watch->write(this, reference, _T("$message"), messageValue);
+   watch->write(this, reference, "$message", messageValue);
 }
 
-void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, const wchar16_t* name, bool ignoreInline)
+void DebugController::readObject(_DebuggerWatch* watch, ref_t address, ident_t name, bool ignoreInline)
 {
    if (address != 0) {
-      const wchar16_t* className = NULL;
+      ident_t className = NULL;
       int flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
@@ -889,15 +936,15 @@ void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, const w
       else if (test(flags, elDynamicSubjectRole)) {
          watch->write(this, address, name, _T("<subject>"));
       }*/
-      else watch->write(this, address, name, _T("<unknown>"));
+      else watch->write(this, address, name, "<unknown>");
    }
-   else watch->write(this, address, name, _T("<nil>"));
+   else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController :: readLocalInt(_DebuggerWatch* watch, ref_t address, const wchar16_t* name)
+void DebugController::readLocalInt(_DebuggerWatch* watch, ref_t address, ident_t name)
 {
    if (address != 0) {
-      const wchar16_t* className = NULL;
+      ident_t className = NULL;
       int flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
@@ -910,13 +957,13 @@ void DebugController :: readLocalInt(_DebuggerWatch* watch, ref_t address, const
          watch->write(this, address, name, value);
       }
    }
-   else watch->write(this, address, name, _T("<nil>"));
+   else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController :: readLocalLong(_DebuggerWatch* watch, ref_t address, const wchar16_t* name)
+void DebugController::readLocalLong(_DebuggerWatch* watch, ref_t address, ident_t name)
 {
    if (address != 0) {
-      const wchar16_t* className = NULL;
+      ident_t className = NULL;
       int flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
@@ -929,13 +976,13 @@ void DebugController :: readLocalLong(_DebuggerWatch* watch, ref_t address, cons
          watch->write(this, address, name, value);
       }
    }
-   else watch->write(this, address, name, _T("<nil>"));
+   else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController :: readLocalReal(_DebuggerWatch* watch, ref_t address, const wchar16_t* name)
+void DebugController::readLocalReal(_DebuggerWatch* watch, ref_t address, ident_t name)
 {
    if (address != 0) {
-      const wchar16_t* className = NULL;
+      ident_t className = NULL;
       int flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
@@ -948,19 +995,19 @@ void DebugController :: readLocalReal(_DebuggerWatch* watch, ref_t address, cons
          watch->write(this, address, name, value);
       }
    }
-   else watch->write(this, address, name, _T("<nil>"));
+   else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController :: readParams(_DebuggerWatch* watch, ref_t address, const wchar16_t* name, bool ignoreInline)
+void DebugController::readParams(_DebuggerWatch* watch, ref_t address, ident_t name, bool ignoreInline)
 {
    if (address != 0) {
 
-      String<tchar_t, 255> index;
+      String<ident_c, 255> index;
       for (int i = 0 ; i < 255 ; i++)  {
          index.copy(name);
-         index.append(_T("["));
+         index.append("[");
          index.appendInt(i);
-         index.append(_T("]"));
+         index.append("]");
 
          size_t memberPtr = 0;
          getValue(address, (char*)&memberPtr, 4);
@@ -969,7 +1016,7 @@ void DebugController :: readParams(_DebuggerWatch* watch, ref_t address, const w
             break;
 
          int flags = 0;
-         const wchar16_t* className = NULL;
+         ident_t className = NULL;
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
             watch->write(this, memberPtr, index, className);
@@ -982,12 +1029,12 @@ void DebugController :: readParams(_DebuggerWatch* watch, ref_t address, const w
          //else if (test(flags, elGroup)) {
          //   watch->write(this, memberPtr, index, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
          //}
-         else watch->write(this, memberPtr, index, _T("<unknown>"));
+         else watch->write(this, memberPtr, index, "<unknown>");
 
          address += 4;
       }
    }
-   else watch->write(this, address, name, _T("<nil>"));
+   else watch->write(this, address, name, "<nil>");
 }
 
 void DebugController :: readAutoContext(_DebuggerWatch* watch)
@@ -999,45 +1046,45 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          if (lineInfo[index].symbol == dsLocal) {
             // write local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readObject(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef, false);
+            readObject(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef, false);
          }
          else if (lineInfo[index].symbol == dsIntLocal) {
             // write stack allocated local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readLocalInt(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+            readLocalInt(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          else if (lineInfo[index].symbol == dsLongLocal) {
             // write stack allocated local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readLocalLong(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+            readLocalLong(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          else if (lineInfo[index].symbol == dsRealLocal) {
             // write stack allocated local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readLocalReal(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+            readLocalReal(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }  
          else if (lineInfo[index].symbol == dsParamsLocal) {
             // write stack allocated local variable
             int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-            readParams(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef, false);
+            readParams(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef, false);
          }
          else if (lineInfo[index].symbol == dsByteArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-            readByteArray(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+            readByteArray(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          else if (lineInfo[index].symbol == dsShortArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-            readShortArray(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+            readShortArray(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          else if (lineInfo[index].symbol == dsIntArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-            readIntArray(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef);
+            readIntArray(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          //else if (lineInfo[index].symbol == dsMessage) {
          //   // write local variable
@@ -1047,7 +1094,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          else if (lineInfo[index].symbol == dsStack) {
             // write local variable
             int localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);
-            readObject(watch, localPtr, (const wchar16_t*)lineInfo[index].addresses.local.nameRef, false);
+            readObject(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef, false);
          }
          index--;
       }
@@ -1058,7 +1105,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
 {
    if (_debugger.isStarted()) {
       int flags = 0;
-      const wchar16_t* className = NULL;
+      ident_t className = NULL;
       DebugLineInfo* info = seekClassInfo(selfPtr, className, flags);
    //   if (test(flags, elGroup)) {
    //      int list[DEBUG_MAX_LIST_LENGTH];
@@ -1078,7 +1125,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
       if (info) {
          int type = info->addresses.symbol.flags & elDebugMask;
          if (type==elDebugLiteral) {
-            wchar16_t value[DEBUG_MAX_STR_LENGTH + 1];
+            ident_c value[DEBUG_MAX_STR_LENGTH + 1];
             int length = 0;
             getValue(selfPtr - 8, (char*)&length, 4);
 
@@ -1135,32 +1182,32 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
          else if (type == elDebugIntegers) {
             readIntArray(watch, selfPtr, NULL);
          }
-         else if (ConstantIdentifier::compare(className, "system'nil")) {
-            watch->write(this, _T("<nil>"));
+         else if (StringHelper::compare(className, "system'nil")) {
+            watch->write(this, "<nil>");
          }
          else readFields(watch, info, selfPtr);
       }
    }
 }
 
-void DebugController :: readPString(size_t address, IdentifierString& string)
-{
-   string.clear();
-   wchar_t ch = 0;
-   do {
-      _debugger.Context()->readDump(address, (char*)&ch, 2);
-      address += 2;
-
-      string.append(ch);
-   } while (ch != 0);
-}
-
-//void DebugController :: readRegisters(_DebuggerWatch* watch)
+//void DebugController :: readPString(size_t address, IdentifierString& string)
 //{
-//   watch->write(this, _debugger.Context()->EIP(), _T("EIP"), EMPTY_STRING);
+//   string.clear();
+//   wchar_t ch = 0;
+//   do {
+//      _debugger.Context()->readDump(address, (char*)&ch, 2);
+//      address += 2;
+//
+//      string.append(ch);
+//   } while (ch != 0);
 //}
+//
+////void DebugController :: readRegisters(_DebuggerWatch* watch)
+////{
+////   watch->write(this, _debugger.Context()->EIP(), _T("EIP"), EMPTY_STRING);
+////}
 
-void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, const wchar16_t* moduleName, const wchar16_t* sourcePath)
+void DebugController::showCurrentModule(DebugLineInfo* lineInfo, ident_t moduleName, ident_t sourcePath)
 {
    if (lineInfo) {
       if (!StringHelper::compare(_currentModule, moduleName) || StringHelper::compare(_currentSource, sourcePath)) {
@@ -1169,225 +1216,225 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, const wchar16
          _currentModule = moduleName;
          _currentSource = sourcePath;
       }
-      onStep(moduleName, sourcePath, lineInfo->row, lineInfo->col, lineInfo->length);
+      _listener->onStep(moduleName, sourcePath, lineInfo->row, lineInfo->col, lineInfo->length);
    }
 }
 
-inline void writeStatement(MemoryWriter& writer, const wchar16_t* command)
-{
-   writer.writeWideLiteral(command, getlength(command));
-   writer.writeWideChar('\n');
-}
-
-inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* param)
-{
-   writer.writeWideLiteral(_T("   "), 3);
-
-   writer.writeWideLiteral(command, getlength(command));
-   writer.writeWideChar(' ');
-   writer.writeWideLiteral(param, getlength(param));
-   writer.writeWideChar('\n');
-}
-
-inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* paramPrefix, const wchar16_t* param,
-                         const wchar16_t* paramPostfix)
-{
-   writer.writeWideLiteral(_T("   "), 3);
-
-   writer.writeWideLiteral(command, getlength(command));
-   writer.writeWideChar(' ');
-   writer.writeWideLiteral(paramPrefix, getlength(paramPrefix));
-   writer.writeWideLiteral(param, getlength(param));
-   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
-   writer.writeWideChar('\n');
-}
-
-inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* paramPrefix, int param,
-                         const wchar16_t* paramPostfix)
-{
-   writer.writeWideLiteral(_T("   "), 3);
-
-   String<wchar16_t, 12> str;
-   str.appendHex(param);
-
-   writer.writeWideLiteral(command, getlength(command));
-   writer.writeWideChar(' ');
-   writer.writeWideLiteral(paramPrefix, getlength(paramPrefix));
-   writer.writeWideLiteral(str, getlength(str));
-   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
-   writer.writeWideChar('\n');
-}
-
-inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* param1, const wchar16_t* paramPrefix,
-                         int param2, const wchar16_t* paramPostfix)
-{
-   String<wchar16_t, 12> str;
-   str.appendHex(param2);
-
-   writer.writeWideLiteral(_T("   "), 3);
-   writer.writeWideLiteral(command, getlength(command));
-   writer.writeWideChar(' ');
-   writer.writeWideLiteral(param1, getlength(param1));
-   writer.writeWideLiteral(paramPrefix, getlength(paramPrefix));
-   writer.writeWideLiteral(str, getlength(str));
-   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
-   writer.writeWideChar('\n');
-}
-
-// !! could the code be refactored to reuse part of the code used in ELT as well
-int DebugController :: generateTape(void* tape, StreamReader& reader, int breakpointCount)
-{
-//   // load verbs global dictionary
-//   if (_verbs.Count() == 0)
-//      _ELENA_::loadVerbs(_verbs);
+//inline void writeStatement(MemoryWriter& writer, const wchar16_t* command)
+//{
+//   writer.writeWideLiteral(command, getlength(command));
+//   writer.writeWideChar('\n');
+//}
 //
-//   // save the length of debug info structure
-//   _tape.writeDWord(0, breakpointCount + 3);
+//inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* param)
+//{
+//   writer.writeWideLiteral(_T("   "), 3);
 //
-//   int debugPos = _tape.Length();
+//   writer.writeWideLiteral(command, getlength(command));
+//   writer.writeWideChar(' ');
+//   writer.writeWideLiteral(param, getlength(param));
+//   writer.writeWideChar('\n');
+//}
 //
-//   // reserve place for a debug section: number of breakpoints + header + current + previous
-//   _tape.writeBytes(debugPos, 0, (breakpointCount + 3)*sizeof(DebugLineInfo));
+//inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* paramPrefix, const wchar16_t* param,
+//                         const wchar16_t* paramPostfix)
+//{
+//   writer.writeWideLiteral(_T("   "), 3);
 //
-//   int textPos = _tape.Length();
+//   writer.writeWideLiteral(command, getlength(command));
+//   writer.writeWideChar(' ');
+//   writer.writeWideLiteral(paramPrefix, getlength(paramPrefix));
+//   writer.writeWideLiteral(param, getlength(param));
+//   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
+//   writer.writeWideChar('\n');
+//}
 //
-//   int row = 0;
-//   MemoryWriter writer(&_tape, debugPos);
-//   MemoryWriter textWriter(&_tape);
+//inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* paramPrefix, int param,
+//                         const wchar16_t* paramPostfix)
+//{
+//   writer.writeWideLiteral(_T("   "), 3);
 //
-//   // a tape beginning
-//   writeStatement(textWriter, _T("$tape"));
+//   String<wchar16_t, 12> str;
+//   str.appendHex(param);
 //
-//   DebugLineInfo begin(dsProcedure, 0, 0, row);
-//   writer.write(&begin, sizeof(DebugLineInfo));
+//   writer.writeWideLiteral(command, getlength(command));
+//   writer.writeWideChar(' ');
+//   writer.writeWideLiteral(paramPrefix, getlength(paramPrefix));
+//   writer.writeWideLiteral(str, getlength(str));
+//   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
+//   writer.writeWideChar('\n');
+//}
 //
-//   // a tape current variables
-//   DebugLineInfo current(dsStack, 0, 0, row);
-//   current.addresses.local.level = 0;
-//   current.addresses.local.nameRef = (int)_T("current");
+//inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* param1, const wchar16_t* paramPrefix,
+//                         int param2, const wchar16_t* paramPostfix)
+//{
+//   String<wchar16_t, 12> str;
+//   str.appendHex(param2);
 //
-//   writer.write(&current, sizeof(DebugLineInfo));
+//   writer.writeWideLiteral(_T("   "), 3);
+//   writer.writeWideLiteral(command, getlength(command));
+//   writer.writeWideChar(' ');
+//   writer.writeWideLiteral(param1, getlength(param1));
+//   writer.writeWideLiteral(paramPrefix, getlength(paramPrefix));
+//   writer.writeWideLiteral(str, getlength(str));
+//   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
+//   writer.writeWideChar('\n');
+//}
 //
-//   // a tape previous variables
-//   current.addresses.local.level = 1;
-//   current.addresses.local.nameRef = (int)_T("previous");
+//// !! could the code be refactored to reuse part of the code used in ELT as well
+//int DebugController :: generateTape(void* tape, StreamReader& reader, int breakpointCount)
+//{
+////   // load verbs global dictionary
+////   if (_verbs.Count() == 0)
+////      _ELENA_::loadVerbs(_verbs);
+////
+////   // save the length of debug info structure
+////   _tape.writeDWord(0, breakpointCount + 3);
+////
+////   int debugPos = _tape.Length();
+////
+////   // reserve place for a debug section: number of breakpoints + header + current + previous
+////   _tape.writeBytes(debugPos, 0, (breakpointCount + 3)*sizeof(DebugLineInfo));
+////
+////   int textPos = _tape.Length();
+////
+////   int row = 0;
+////   MemoryWriter writer(&_tape, debugPos);
+////   MemoryWriter textWriter(&_tape);
+////
+////   // a tape beginning
+////   writeStatement(textWriter, _T("$tape"));
+////
+////   DebugLineInfo begin(dsProcedure, 0, 0, row);
+////   writer.write(&begin, sizeof(DebugLineInfo));
+////
+////   // a tape current variables
+////   DebugLineInfo current(dsStack, 0, 0, row);
+////   current.addresses.local.level = 0;
+////   current.addresses.local.nameRef = (int)_T("current");
+////
+////   writer.write(&current, sizeof(DebugLineInfo));
+////
+////   // a tape previous variables
+////   current.addresses.local.level = 1;
+////   current.addresses.local.nameRef = (int)_T("previous");
+////
+////   writer.write(&current, sizeof(DebugLineInfo));
+////
+////   // a tape body
+////   IdentifierString prefix;
+////   IdentifierString reference;
+////
+////   size_t base    = (size_t)tape;
+////   size_t command = _debugger.Context()->readDWord(base);
+////   size_t tapePtr = 0;
+////   while (command != 0) {
+////      size_t param = _debugger.Context()->readDWord(base + tapePtr + 4);
+////      tapePtr = _debugger.Context()->readDWord(base + tapePtr + 8);         // goes to the next record
+////
+////      // skip VM commands
+////      if (!test(command, VM_MASK)) {
+////         if (command != PREFIX_TAPE_MESSAGE_ID) {
+////            // write a tape step record
+////            DebugLineInfo info(dsStep, 0, 0, ++row);
+////            info.addresses.step.address = reader.getDWord();
+////
+////            size_t position = writer.Position();
+////            writer.write(&info, sizeof(DebugLineInfo));
+////
+////            // !! should we add a flag to indicate temporal tape?
+////            _debugger.addStep(info.addresses.step.address, (void*)position);
+////         }
+////
+////         bool invoke = false;
+////         switch(command) {
+////            case PREFIX_TAPE_MESSAGE_ID:
+////               readPString(base + param, prefix);
+////               break;
+////            case PUSH_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("push"), reference);
+////               break;
+////            case PUSH_EMPTY_MESSAGE_ID:
+////               writeCommand(textWriter, _T("push <empty>"), NULL);
+////               break;
+////            case PUSHS_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("push"), _T("\""), reference, _T("\""));
+////               break;
+////            case PUSHN_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("push"), NULL, reference, NULL);
+////               break;
+////            case PUSHR_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("push"), NULL, reference, _T("r"));
+////               break;
+////            case PUSHL_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("push"), NULL, reference, _T("l"));
+////               break;
+////            case COPY_TAPE_MESSAGE_ID:
+////               writeCommand(textWriter, _T("push"), _T("sp ["), param, _T("h]"));
+////               break;
+////            case GET_TAPE_MESSAGE_ID:
+////               writeCommand(textWriter, _T("push"), _T("fp ["), param, _T("h]"));
+////               break;
+////            case CALL_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("call"), reference);
+////               break;
+////            case NEW_TAPE_MESSAGE_ID:
+////               writeCommand(textWriter, _T("new"), prefix, _T("["), param, _T("h]"));
+////               prefix.clear();
+////               break;
+////            case NEW_ARG_MESSAGE_ID:
+////               writeCommand(textWriter, _T("arg"), prefix, _T("["), param, _T("h]"));
+////               prefix.clear();
+////               break;
+////            case GROUP_TAPE_MESSAGE_ID:
+////               readPString(base + param, reference);
+////               writeCommand(textWriter, _T("group-add"), reference);
+////               break;
+////            case POP_TAPE_MESSAGE_ID:
+////               writeCommand(textWriter, _T("pop"), NULL, param, _T("h"));
+////               break;
+//////            case INVOKE_TAPE_MESSAGE_ID:
+//////               invoke = true;
+////            default:
+////            {
+////               const wchar16_t* message = retrieveKey(_verbs.start(), invoke ? param : command, (const wchar16_t*)NULL);
+////
+////               if(invoke) {
+////                  writeCommand(textWriter, _T("send"), _T("%0"), _T("."), message);
+////               }
+////               else if (!emptystr(prefix)) {
+////                  writeCommand(textWriter, _T("send"), prefix, _T("."), message);
+////
+////                  prefix.clear();
+////               }
+////               else writeCommand(textWriter, _T("send"), message);
+////               break;
+////            }
+////         }
+////      }
+////
+////      command = _debugger.Context()->readDWord(base + tapePtr);
+////   }
+////
+////   // a tape end
+////   // write an end of tape record
+////   DebugLineInfo eop(dsEOP, 0, 0, ++row);
+////   eop.addresses.step.address = reader.getDWord();
+////
+////   size_t position = writer.Position();
+////   writer.write(&eop, sizeof(DebugLineInfo));
+////   _debugger.addStep(eop.addresses.step.address, (void*)position);
+////
+////   writeStatement(textWriter, _T("end"));
+////   textWriter.writeWideChar(0);
+////
+////   return textPos;
 //
-//   writer.write(&current, sizeof(DebugLineInfo));
-//
-//   // a tape body
-//   IdentifierString prefix;
-//   IdentifierString reference;
-//
-//   size_t base    = (size_t)tape;
-//   size_t command = _debugger.Context()->readDWord(base);
-//   size_t tapePtr = 0;
-//   while (command != 0) {
-//      size_t param = _debugger.Context()->readDWord(base + tapePtr + 4);
-//      tapePtr = _debugger.Context()->readDWord(base + tapePtr + 8);         // goes to the next record
-//
-//      // skip VM commands
-//      if (!test(command, VM_MASK)) {
-//         if (command != PREFIX_TAPE_MESSAGE_ID) {
-//            // write a tape step record
-//            DebugLineInfo info(dsStep, 0, 0, ++row);
-//            info.addresses.step.address = reader.getDWord();
-//
-//            size_t position = writer.Position();
-//            writer.write(&info, sizeof(DebugLineInfo));
-//
-//            // !! should we add a flag to indicate temporal tape?
-//            _debugger.addStep(info.addresses.step.address, (void*)position);
-//         }
-//
-//         bool invoke = false;
-//         switch(command) {
-//            case PREFIX_TAPE_MESSAGE_ID:
-//               readPString(base + param, prefix);
-//               break;
-//            case PUSH_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("push"), reference);
-//               break;
-//            case PUSH_EMPTY_MESSAGE_ID:
-//               writeCommand(textWriter, _T("push <empty>"), NULL);
-//               break;
-//            case PUSHS_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("push"), _T("\""), reference, _T("\""));
-//               break;
-//            case PUSHN_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("push"), NULL, reference, NULL);
-//               break;
-//            case PUSHR_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("push"), NULL, reference, _T("r"));
-//               break;
-//            case PUSHL_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("push"), NULL, reference, _T("l"));
-//               break;
-//            case COPY_TAPE_MESSAGE_ID:
-//               writeCommand(textWriter, _T("push"), _T("sp ["), param, _T("h]"));
-//               break;
-//            case GET_TAPE_MESSAGE_ID:
-//               writeCommand(textWriter, _T("push"), _T("fp ["), param, _T("h]"));
-//               break;
-//            case CALL_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("call"), reference);
-//               break;
-//            case NEW_TAPE_MESSAGE_ID:
-//               writeCommand(textWriter, _T("new"), prefix, _T("["), param, _T("h]"));
-//               prefix.clear();
-//               break;
-//            case NEW_ARG_MESSAGE_ID:
-//               writeCommand(textWriter, _T("arg"), prefix, _T("["), param, _T("h]"));
-//               prefix.clear();
-//               break;
-//            case GROUP_TAPE_MESSAGE_ID:
-//               readPString(base + param, reference);
-//               writeCommand(textWriter, _T("group-add"), reference);
-//               break;
-//            case POP_TAPE_MESSAGE_ID:
-//               writeCommand(textWriter, _T("pop"), NULL, param, _T("h"));
-//               break;
-////            case INVOKE_TAPE_MESSAGE_ID:
-////               invoke = true;
-//            default:
-//            {
-//               const wchar16_t* message = retrieveKey(_verbs.start(), invoke ? param : command, (const wchar16_t*)NULL);
-//
-//               if(invoke) {
-//                  writeCommand(textWriter, _T("send"), _T("%0"), _T("."), message);
-//               }
-//               else if (!emptystr(prefix)) {
-//                  writeCommand(textWriter, _T("send"), prefix, _T("."), message);
-//
-//                  prefix.clear();
-//               }
-//               else writeCommand(textWriter, _T("send"), message);
-//               break;
-//            }
-//         }
-//      }
-//
-//      command = _debugger.Context()->readDWord(base + tapePtr);
-//   }
-//
-//   // a tape end
-//   // write an end of tape record
-//   DebugLineInfo eop(dsEOP, 0, 0, ++row);
-//   eop.addresses.step.address = reader.getDWord();
-//
-//   size_t position = writer.Position();
-//   writer.write(&eop, sizeof(DebugLineInfo));
-//   _debugger.addStep(eop.addresses.step.address, (void*)position);
-//
-//   writeStatement(textWriter, _T("end"));
-//   textWriter.writeWideChar(0);
-//
-//   return textPos;
-
-   return 0; // !! temporal
-}
+//   return 0; // !! temporal
+//}

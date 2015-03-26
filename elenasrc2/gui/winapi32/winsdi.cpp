@@ -1,11 +1,10 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Control Implementation File
-//                                               (C)2005-2012, by Alexei Rakov
+//                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "winsdi.h"
-//#include "ideconst.h"
 
 using namespace _GUI_;
 
@@ -160,14 +159,16 @@ void SDIWindow :: _onResizing(RECT* rect)
 
 void SDIWindow :: onResize()
 {
-   Rectangle clientRect = getRectangle();
-   clientRect.bottomRight.y -= _statusBar->getHeight();
-   
-   _layoutManager.resizeTo(clientRect);
+   if (_statusBar) {
+      Rectangle clientRect = getRectangle();
+      clientRect.bottomRight.y -= _statusBar->getHeight();
 
-   _statusBar->_setCoordinate(clientRect.topLeft.x, clientRect.topLeft.y + clientRect.bottomRight.y);
-   _statusBar->_setWidth(clientRect.bottomRight.x);
-   _statusBar->_resize();
+      _layoutManager.resizeTo(clientRect);
+
+      _statusBar->_setCoordinate(clientRect.topLeft.x, clientRect.topLeft.y + clientRect.bottomRight.y);
+      _statusBar->_setWidth(clientRect.bottomRight.x);
+      _statusBar->_resize();
+   }
 }
 
 void SDIWindow :: onActivate()

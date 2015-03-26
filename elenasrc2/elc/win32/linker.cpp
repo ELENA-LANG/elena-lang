@@ -106,10 +106,11 @@ int Linker :: fillImportTable(ImageInfo& info)
 
    ReferenceMap::Iterator it = info.image->getExternalIt();
    while (!it.Eof()) {
-      String<wchar_t, MAX_PATH> external(it.key());
+      ident_t external = it.key();
 
-      const wchar16_t* function = external + external.findLast('.') + 1;
-      Path dll(external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
+      ident_t function = external + StringHelper::findLast(external, '.') + 1;
+
+      IdentifierString dll(external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
 
       ReferenceMap* functions = info.importTable.get(dll);
       if (functions==NULL) {
@@ -149,13 +150,12 @@ void Linker :: createImportTable(ImageInfo& info)
       tableWriter.writeDWord((int)time(NULL));                            // TimeDateStamp
       tableWriter.writeDWord(-1);                                         // ForwarderChain
       tableWriter.writeRef(importRef, import->Length());                  // Name
-      const wchar16_t* dllname = dll.key();
-      if (!Path::checkExtension(dllname, _T("dll"))) {
-         writer.writeAsciiLiteral(dllname, getlength(dllname));
-         writer.writeChar('.');
-         writer.writeAsciiLiteral(_T("dll"));
-      }
-      else writer.writeAsciiLiteral(dllname);
+
+      const char* dllName = dll.key();
+      writer.write(dllName, getlength(dllName));
+      writer.writeChar('.');
+      writer.writeLiteral("dll");
+
       tableWriter.writeRef(importRef, fwdWriter.Position());              // ForwarderChain
 
       // fill OriginalFirstThunk & ForwarderChain
@@ -167,7 +167,7 @@ void Linker :: createImportTable(ImageInfo& info)
          lstWriter.writeRef(importRef, import->Length());
 
          writer.writeWord(1);                                             // Hint (not used)
-         writer.writeAsciiLiteral(fun.key());
+         writer.writeLiteral(fun.key());
 
          fun++;
       }
@@ -243,13 +243,16 @@ int Linker :: countSections(Image* image)
 
 void Linker :: writeDOSStub(Project* project, FileWriter* file)
 {
-   Path stubPath(project->StrSetting(opAppPath), "winstub.ex_");
-   FileReader stub(stubPath, _T("rb"), feRaw, false);
+   Path stubPath;
+   Path::loadPath(stubPath, project->StrSetting(opAppPath));
+   Path::combinePath(stubPath, "winstub.ex_");
+   
+   FileReader stub(stubPath, L"rb", feRaw, false);
 
    if (stub.isOpened()) {
       file->read(&stub, stub.Length());
    }
-   else project->raiseError(errInvalidFile, (const tchar_t*)stubPath);
+   else project->raiseError(errInvalidFile, IdentifierString(stubPath));
 }
 
 void Linker :: writeHeader(FileWriter* file, short characteristics, int sectionCount)
@@ -461,11 +464,11 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    }
 }
 
-bool Linker :: createExecutable(ImageInfo& info, const tchar_t* exePath, ref_t tls_directory)
+bool Linker :: createExecutable(ImageInfo& info, path_t exePath, ref_t tls_directory)
 {
    // create a full path (including none existing directories)
    Path dirPath;
-   dirPath.copyPath(exePath);
+   dirPath.copySubPath(exePath);
    Path::create(NULL, exePath);
 
    FileWriter executable(exePath, feRaw, false);
@@ -502,13 +505,14 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
    mapImage(info);
    fixImage(info);
 
-   Path path(project.StrSetting(opTarget));
+   Path path;
+   Path::loadPath(path, project.StrSetting(opTarget));
 
    if (emptystr(path))
       throw InternalError(errEmptyTarget);
 
    if (!createExecutable(info, path, tls_directory))
-      project.raiseError(errCannotCreate, path);
+      project.raiseError(errCannotCreate, project.StrSetting(opTarget));
 }
 
 void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)

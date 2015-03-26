@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -21,9 +21,9 @@ IniConfigFile :: IniConfigFile(bool allowDuplicates)
 {
 }
 
-bool IniConfigFile :: load(const tchar_t* path, int encoding)
+bool IniConfigFile :: load(path_t path, int encoding)
 {
-   UTF8String line, key, subKey;
+   String<char, 255> line, key, subKey;
    TextFileReader reader(path, encoding, true);
 
    if (!reader.isOpened())
@@ -60,7 +60,7 @@ bool IniConfigFile :: load(const tchar_t* path, int encoding)
    return true;
 }
 
-bool IniConfigFile :: save(const tchar_t* path, int encoding)
+bool IniConfigFile :: save(path_t path, int encoding)
 {
    TextFileWriter  writer(path, encoding, true);
 
@@ -72,16 +72,16 @@ bool IniConfigFile :: save(const tchar_t* path, int encoding)
    while (!it.Eof()) {
       ConfigCategoryIterator cat_it = _settings.getIt(it.key());
       if (!cat_it.Eof()) {
-         writer.writeText("[");
-         writer.writeText(it.key());
-         writer.writeTextNewLine("]");
+         writer.writeLiteral("[");
+         writer.writeLiteral(it.key());
+         writer.writeLiteralNewLine("]");
 
          while (!cat_it.Eof()) {
-            writer.writeText(cat_it.key());
+            writer.writeLiteral(cat_it.key());
             const char* value = *cat_it;
             if (!emptystr(value)) {
-               writer.writeText("=");
-               writer.writeTextNewLine(value);
+               writer.writeLiteral("=");
+               writer.writeLiteralNewLine(value);
             }
             else writer.writeNewLine();
 
@@ -120,7 +120,7 @@ void IniConfigFile :: setSetting(const char* category, const char* key, bool val
    _settings.add(category, key, value ? "-1" : "0");
 }
 
-const char* IniConfigFile :: getSetting(const char* category, const char* key, const char* defaultValue)
+ident_t IniConfigFile :: getSetting(ident_t category, ident_t key, ident_t defaultValue)
 {
    return _settings.get(category, key, defaultValue);
 }

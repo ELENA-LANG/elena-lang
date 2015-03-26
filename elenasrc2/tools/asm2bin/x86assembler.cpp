@@ -1639,7 +1639,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 	      code->writeRef(ref, 0);
       }
-      else if (ConstantIdentifier::compare(token.value, "'dlls'", 6)) {
+      else if (StringHelper::compare(token.value, "'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
 	      token.read(".", "dot expected (%d)\n");
@@ -1681,7 +1681,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       }
       else if (token.terminal.state==dfaQuote) {
          IdentifierString funRef(token.terminal.line + 1, token.terminal.length-2);
-         if (StringHelper::find(funRef, ConstantIdentifier(NATIVE_MODULE)) == 0) {
+         if (StringHelper::find(funRef, NATIVE_MODULE) == 0) {
             ref = info.binary->mapReference(funRef) | mskNativeRelCodeRef;
          }
          else ref = info.binary->mapReference(funRef) | mskSymbolRelRef;
@@ -3097,9 +3097,9 @@ void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool in
 	   writer.align(4, 0x90);
 }
 
-void x86Assembler :: compile(TextReader* source, const tchar_t* outputPath)
+void x86Assembler :: compile(TextReader* source, path_t outputPath)
 {
-   Module       binary(ConstantIdentifier("$binary"));
+   Module       binary("$binary");
    SourceReader reader(4, source);
 
    TokenInfo    token(&reader);

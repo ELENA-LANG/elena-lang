@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Engine Data Section
 //		classes.
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"

@@ -57,6 +57,7 @@ value
 variable
 variant
 verb
+wide
 
 [object]
 #shortdescr=A generic instance
@@ -66,7 +67,6 @@ verb
 [literal]
 #shortdescr=A literal protocol
 #method=length,,int;Returns the object length
-#method=literal,,literal;Returns the literal value
 
 [int]
 #shortdescr=An int protocol
@@ -236,9 +236,6 @@ verb
 [intarray]
 #shortdescr=A intarray protocol
 
-[chararray]
-#shortdescr=A chararray protocol
-
 [mssg]
 #shortdescr=A message protocol
 
@@ -265,3 +262,11 @@ verb
 
 [args]
 #shortdescr=An open argument list protocol
+
+[wide]
+#shortdescr=A wide literal protocol
+#method=length,,int;Returns the object length
+
+[chararray]
+#shortdescr=An array of characters protocol
+#method=length,,int;Returns the object length

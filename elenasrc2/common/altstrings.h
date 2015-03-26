@@ -3,7 +3,7 @@
 //
 //		This header contains String classes declarations
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef altstringsH
@@ -12,100 +12,79 @@
 namespace _ELENA_
 {
 
-inline bool emptystr(const wchar16_t* s)
-{
-   return (s == NULL || s[0]==0);
-}
-
-inline bool emptystr(const char* s)
-{
-   return (s == NULL || s[0]==0);
-}
-
-inline static size_t getlength(const wchar16_t* s)
-{
-   return (s==NULL) ? 0 : wcslen(s);
-}
-
-inline static size_t getlength(const char* s)
-{
-   return (s==NULL) ? 0 : strlen(s);
-}
-
 // --- StringHelper ---
 
 class StringHelper
 {
 public:
-   static char* allocate(size_t size);
+   static char* allocate(size_t size, const char* value);
+   static wide_c* allocate(size_t size, const wide_c* value);
    static char* reallocate(char* s, size_t size);
+   static wide_c* reallocate(wide_c* s, size_t size);
 
-   static wchar16_t* w_allocate(size_t size);
-   static wchar16_t* w_reallocate(wchar16_t* s, size_t size);
+   static bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
+   static bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+   static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 
-   static tchar_t* allocateText(size_t size);
-
-   static void copy(char* dest, const char* sour, int length);
-   static bool copy(wchar16_t* dest, const char* sour, size_t& length);
-   static void copy(wchar16_t* dest, const wchar16_t* sour, size_t length);
-   static bool copy(char* dest, const wchar16_t* sour, size_t& length);
-
-   static wchar16_t* clone(const wchar16_t* s);
+   static wide_c* clone(const wide_c* s);
    static char* clone(const char* s);
 
-   static void move(wchar16_t* s1, const wchar16_t* s2, size_t length);
+   static void move(wide_c* s1, const wide_c* s2, size_t length);
 
-   static void insert(wchar16_t* s, int pos, const wchar16_t* subs);
+   static void insert(ident_c* s, int pos, ident_t subs);
 
    static void append(char* dest, const char* sour, int length);
-   static void append(wchar16_t* dest, const wchar16_t* sour, size_t length);
-   static bool append(wchar16_t* dest, const char* sour, size_t length);
-   static bool append(char* dest, const wchar16_t* sour, size_t length);
+   static void append(wide_c* dest, const wide_c* sour, size_t length);
+//   static bool append(wchar16_t* dest, const char* sour, size_t length);
+//   static bool append(char* dest, const wchar16_t* sour, size_t length);
 
-   static wchar16_t  lower(wchar16_t s);
-   static wchar16_t* lower(wchar16_t* s);
+   static wide_c lower(wide_c s);
+   static wide_c* lower(wide_c* s);
    static char* lower(char* s);
-   static wchar16_t* upper(wchar16_t* s);
+   static char lower(char s);
+
+   static wide_c* upper(wide_c* s);
    static char* upper(char* s);
 
    static void trim(char* s, char c);
 
-   static bool compare(const wchar16_t* s1, const wchar16_t* s2);
-   static bool compare(const wchar16_t* s1, const wchar16_t* s2, size_t length);
+   static bool compare(const wide_c* s1, const wide_c* s2);
+   static bool compare(const wide_c* s1, const wide_c* s2, size_t length);
    static bool compare(const char* s1, const char* s2);
    static bool compare(const char* s1, const char* s2, size_t length);
 
-   static bool greater(const wchar16_t* s1, const wchar16_t* s2);
-   static bool greater(const wchar16_t* s1, const wchar16_t* s2, size_t length);
+   static bool greater(const wide_c* s1, const wide_c* s2);
+   static bool greater(const wide_c* s1, const wide_c* s2, size_t length);
    static bool greater(const char* s1, const char* s2);
    static bool greater(const char* s1, const char* s2, size_t length);
 
-   static int find(const wchar16_t* s, const wchar16_t* subs, int defValue = -1);
+   static int find(const char* s, const char* subs, int defValue = -1);
    static int find(const char* s, char c, int defValue = -1);
-   static int find(const wchar16_t* s, wchar16_t c, int defValue = -1);
-   static int findLast(const wchar16_t* s, wchar16_t c, int defValue = -1);
+   static int find(const wide_c* s, wide_c c, int defValue = -1);
+   static int findLast(const wide_c* s, wide_c c, int defValue = -1);
    static int findLast(const char* s, char c, int defValue = -1);
 
-   static int strToInt(const wchar16_t* s);
+   static int strToInt(const wide_c* s);
    static int strToInt(const char* s);
 
-   static wchar16_t* intToStr(int n, wchar16_t* s, int radix);
+   static wide_c* intToStr(int n, wide_c* s, int radix);
    static char* intToStr(int n, char* s, int radix);
 
-   static long strToLong(const wchar16_t* s, int radix);
+   static long strToLong(const wide_c* s, int radix);
    static long strToLong(const char* s, int radix);
+   static long strToULong(const char* s, int radix);
 
-   static long long strToLongLong(const wchar16_t* s, int radix);
+   static long long strToLongLong(const char* s, int radix);
+   static long long strToLongLong(const wide_c* s, int radix);
 
-   static double strToDouble(const wchar16_t* s);
+   static double strToDouble(const char* s);
+   static double strToDouble(const wide_c* s);
 
-   static wchar16_t* longlongToStr(long long n, wchar16_t* s, int radix);
-   static wchar16_t* doubleToStr(double value, int digit, wchar16_t* s);
-
-   static wchar16_t* cloneLowered(const wchar16_t* s)
-   {
-      return lower(clone(s));
-   }
+   static ident_c* longlongToStr(long long n, ident_c* s, int radix);
+   static ident_c* doubleToStr(double value, int digit, ident_c* s);
 };
 
 // --- String ---
@@ -117,6 +96,8 @@ protected:
 
 public:
    operator const T*() const { return _string; }
+
+   operator T*() { return _string; }
 
    T& operator[](size_t index)
    {
@@ -153,26 +134,12 @@ public:
 //      }
 //   }
 
-   void copy(const wchar16_t* s, size_t length)
+   void copy(const T* s, size_t length)
    {
-      StringHelper::copy(_string, s, length);
+      StringHelper::copy(_string, s, length, length);
       _string[length] = 0;
    }
-   void copy(const wchar16_t* s)
-   {
-      size_t length = getlength(s);
-      if (length == 0)
-         _string[0] = 0;
-      else if (length < size) {
-         copy(s, length);
-      }
-   }
-   void copy(const char* s, size_t length)
-   {
-      StringHelper::copy(_string, s, length);
-      _string[length] = 0;
-   }
-   void copy(const char* s)
+   void copy(const T* s)
    {
       size_t length = getlength(s);
       if (length == 0)
@@ -182,29 +149,15 @@ public:
       }
    }
 
-   void append(const wchar16_t* s, size_t length)
+   void append(const T* s, size_t length)
    {
-      size_t newLength = getlength(_string) + length + 1;
-      if (newLength > size)
-         length -= (newLength - size);
-
-      StringHelper::append(_string, s, length);
+      size_t newLength = getlength(_string) + length;
+      if (newLength < size) {
+         StringHelper::append(_string, s, length);
+         _string[newLength] = 0;
+      }
    }
-   void append(const wchar16_t* s)
-   {
-      size_t length = getlength(s);
-      if (length > 0)
-         append(s, length);
-   }
-   void append(const char* s, size_t length)
-   {
-      size_t newLength = getlength(_string) + length + 1;
-      if (newLength > size)
-         length -= (newLength - size);
-
-      StringHelper::append(_string, s, length);
-   }
-   void append(const char* s)
+   void append(const T* s)
    {
       size_t length = getlength(s);
       if (length > 0)
@@ -251,7 +204,7 @@ public:
       int pos = getlength(_string);
 
       StringHelper::longlongToStr(n, _string + pos, 16);
-      wcsupr(_string + pos);
+      StringHelper::upper(_string + pos);
    }
 
    void appendInt64(long long n)
@@ -259,7 +212,7 @@ public:
       int pos = getlength(_string);
 
       StringHelper::longlongToStr(n, _string + pos, 10);
-      wcsupr(_string + pos);
+      StringHelper::upper(_string + pos);
    }
 
    void lower()
@@ -276,11 +229,6 @@ public:
    {
       StringHelper::trim(_string, ch);
    }
-
-//   static char* clone(const char* s)
-//   {
-//      return StringHelper::clone(s);
-//   }
 
    T* clone()
    {
@@ -306,11 +254,10 @@ public:
       return StringHelper::strToLong(_string, radix);
    }
 
-//   void convertAnsi(char* s, size_t length)
-//   {
-//      String::convertAnsiToWide(s, _string, length);
-//      _string[length] = 0;
-//   }
+   long toULong(int radix)
+   {
+      return StringHelper::strToULong(_string, radix);
+   }
 
    void clear()
    {
@@ -322,7 +269,7 @@ public:
       _string[pos] = 0;
    }
 
-   size_t Length()
+   size_t Length() const
    {
       return getlength(_string);
    }
@@ -331,43 +278,29 @@ public:
    {
       _string[0] = 0;
    }
-   String(const wchar16_t* s)
+   String(const T* s)
    {
       copy(s);
    }
-   String(const char* s)
-   {
-      copy(s);
-   }
-   String(const wchar16_t* s1, const wchar16_t* s2)
+   String(const T* s1, const T* s2)
    {
       copy(s1);
       append(s2);
    }
-   String(const char* s1, const wchar16_t* s2)
-   {
-      copy(s1);
-      append(s2);
-   }
-   String(const wchar16_t* s1, const wchar16_t* s2, const wchar16_t* s3)
+   String(const T* s1, const T* s2, const T* s3)
    {
       copy(s1);
       append(s2);
       append(s3);
    }
-   String(const wchar16_t* s1, const wchar16_t* s2, const wchar16_t* s3, const wchar16_t* s4)
+   String(const T* s1, const T* s2, const T* s3, const T* s4)
    {
       copy(s1);
       append(s2);
       append(s3);
       append(s4);
    }
-   String(const wchar16_t* s, size_t length)
-   {
-      copy(s, length);
-      _string[length] = 0;
-   }
-   String(const char* s, size_t length)
+   String(const T* s, size_t length)
    {
       copy(s, length);
       _string[length] = 0;
@@ -382,34 +315,17 @@ protected:
    T*     _string;
    size_t _size;
 
-//   void assignOrCopy(const wchar16_t* value, wchar16_t* &ptr, size_t& size)
-//   {
-//      ptr = (wchar16_t*)value;
-//      size = 0;
-//   }
-
-   void create(wchar16_t*, size_t size)
+   void assignOrCopy(const T* value, T* &ptr, size_t& size)
    {
-      if (_size == 0) {
-         _size = align(size, pageSize);
-         _string = StringHelper::w_allocate(_size);
-         _string[0] = 0;
-      }
-      else {
-         int length = getlength(_string);
-
-         _size = align(size, pageSize);
-         _string = StringHelper::w_reallocate(_string, _size);
-
-         _string[length] = 0;
-      }
+      ptr = (wchar16_t*)value;
+      size = 0;
    }
 
-   void create(char*, size_t size)
+   void create(T*, size_t size)
    {
       if (_size == 0) {
          _size = align(size, pageSize);
-         _string = StringHelper::allocate(_size);
+         _string = StringHelper::allocate(_size, (const T*)NULL);
          _string[0] = 0;
       }
       else {
@@ -421,6 +337,7 @@ protected:
          _string[length] = 0;
       }
    }
+
 
 public:
    operator const T*() const { return _string; }
@@ -452,12 +369,12 @@ public:
       return StringHelper::find(_string + index, ch, -1);
    }
 
-   bool compare(const wchar16_t* s)
+   bool compare(const T* s)
    {
       return StringHelper::compare(_string, s);
    }
 
-   void copy(const wchar16_t* s, size_t length)
+   void copy(const T* s, size_t length)
    {
       if (_size <= length) {
          create(_string, length + 1);
@@ -465,23 +382,7 @@ public:
       StringHelper::copy(_string, s, length);
       _string[length] = 0;
    }
-   void copy(const wchar16_t* s)
-   {
-      size_t length = getlength(s);
-      if (length == 0) {
-         _string[0] = 0;
-      }
-      else copy(s, length);
-   }
-   void copy(const char* s, size_t length)
-   {
-      if (_size <= length) {
-         create(_string, length + 1);
-      }
-      StringHelper::copy(_string, s, length);
-      _string[length] = 0;
-   }
-   void copy(const char* s)
+   void copy(const T* s)
    {
       size_t length = getlength(s);
       if (length == 0) {
@@ -490,7 +391,7 @@ public:
       else copy(s, length);
    }
 
-   void append(const wchar16_t* s, size_t length)
+   void append(const T* s, size_t length)
    {
       size_t newLength = getlength(_string) + length + 1;
       if (newLength > _size)
@@ -498,22 +399,7 @@ public:
 
       StringHelper::append(_string, s, length);
    }
-   void append(const wchar16_t* s)
-   {
-      size_t length = getlength(s);
-      if (length > 0) {
-         append(s, length);
-      }
-   }
-   void append(const char* s, size_t length)
-   {
-      size_t newLength = getlength(_string) + length + 1;
-      if (newLength > _size)
-         create(_string, newLength);
-
-      StringHelper::append(_string, s, length);
-   }
-   void append(const char* s)
+   void append(const T* s)
    {
       size_t length = getlength(s);
       if (length > 0) {
@@ -537,12 +423,12 @@ public:
 
    T* clone()
    {
-      return clone(_string);
+      return StringHelper::clone(_string);
    }
 
    T* clone(int pos)
    {
-      return clone(_string + pos);
+      return StringHelper::clone(_string + pos);
    }
 
    int toInt()
@@ -566,12 +452,7 @@ public:
       _size = 0;
       _string = NULL;
    }
-   DynamicString(const char* value)
-   {
-      assignOrCopy(value, _string, _size);
-   }
-
-   DynamicString(const wchar16_t* value)
+   DynamicString(const T* value)
    {
       assignOrCopy(value, _string, _size);
    }
@@ -581,10 +462,10 @@ public:
 
 // --- conversion routines ---
 
-inline void copystr(wchar16_t* d, const char* s)
+inline void copystr(char* d, const char* s)
 {
    size_t len = strlen(s);
-   StringHelper::copy(d, s, len);
+   StringHelper::copy(d, s, len, len);
    d[len] = 0;
 }
 

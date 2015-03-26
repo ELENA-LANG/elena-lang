@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      MenuList class implementation
-//                                              (C)2005-2011, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "menulist.h"
@@ -21,10 +21,10 @@ MenuHistoryList :: MenuHistoryList(int maxCount, int menuBaseId, bool withSepara
    _withSeparator = withSeparator;
 }
 
-int MenuHistoryList :: getIndex(const tchar_t* item)
+int MenuHistoryList :: getIndex(text_t item)
 {
    int index = 0;
-   List<tchar_t*>::Iterator it = _list.start();
+   List<text_c*>::Iterator it = _list.start();
    while (!it.Eof()) {
       if (StringHelper::compare(item, *it)) {
          return index;
@@ -36,9 +36,9 @@ int MenuHistoryList :: getIndex(const tchar_t* item)
    return -1;
 }
 
-bool MenuHistoryList :: erase(const tchar_t* item)
+bool MenuHistoryList :: erase(text_t item)
 {
-   List<tchar_t*>::Iterator it = _list.start();
+   List<text_c*>::Iterator it = _list.start();
    while (!it.Eof()) {
       if (StringHelper::compare(item, *it)) {
          _list.cut(it);
@@ -56,16 +56,16 @@ void MenuHistoryList :: eraseLast()
    _list.cut(_list.end());
 }
 
-const tchar_t* MenuHistoryList :: get(int id)
+text_t MenuHistoryList :: get(int id)
 {
-   _ELENA_::List<tchar_t*>::Iterator it = _list.get(id - _menuBaseId - 1);
+   _ELENA_::List<text_c*>::Iterator it = _list.get(id - _menuBaseId - 1);
 
    return !it.Eof() ? *it : NULL;
 }
 
-void MenuHistoryList :: add(const tchar_t* item)
+void MenuHistoryList :: add(text_t item)
 {
-   tchar_t* itemCopy = StringHelper::clone(item);
+   text_c* itemCopy = StringHelper::clone(item);
 
    erase(item);
 
@@ -79,7 +79,6 @@ void MenuHistoryList :: add(const tchar_t* item)
 
 void MenuHistoryList :: clear()
 {
-   #ifdef _WIN32
    _list.clear();
 
    refresh();
@@ -87,12 +86,10 @@ void MenuHistoryList :: clear()
       _menu->eraseItemById(_menuBaseId);
       _menu->enableItemById(_menuBaseId + _maxCount + 1, false);
    }
-   #endif
 }
 
 void MenuHistoryList :: refresh()
 {
-   #ifdef _WIN32
    if (_menuSize == 0 && _list.Count() > 0 && _withSeparator) {
       // insert separator before clear command
       _menu->insertSeparatorById(_menuBaseId + _maxCount + 1, _menuBaseId);
@@ -111,7 +108,7 @@ void MenuHistoryList :: refresh()
 
    Path caption;
    int index = 1;
-   List<tchar_t*>::Iterator it = _list.start();
+   List<text_c*>::Iterator it = _list.start();
    while (!it.Eof()) {
       caption.clear();
 
@@ -125,5 +122,4 @@ void MenuHistoryList :: refresh()
       it++;
       index++;
    }
-#endif
 }

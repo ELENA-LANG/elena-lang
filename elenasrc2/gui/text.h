@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textH
@@ -27,8 +27,8 @@ class _TextWatcher
 {
 public:
    virtual void onUpdate(size_t position) = 0;
-   virtual void onInsert(size_t position, size_t length, const tchar_t* line) = 0;
-   virtual void onErase(size_t position, size_t length, const tchar_t* line) = 0;
+   virtual void onInsert(size_t position, size_t length, text_t line) = 0;
+   virtual void onErase(size_t position, size_t length, text_t line) = 0;
 };
 
 typedef _ELENA_::List<_TextWatcher*> TextWatchers;
@@ -39,7 +39,7 @@ struct Page
 {
    size_t  used;
    size_t  rows;
-   tchar_t text[PAGE_SIZE];
+   text_c  text[PAGE_SIZE];
 
    Page()
    {
@@ -55,7 +55,7 @@ struct Page
    {
       rows = page.rows;
       used = page.used;
-      _ELENA_::StringHelper::copy(text, page.text, used);
+      _ELENA_::StringHelper::copy(text, page.text, used, used);
    }
 };
 
@@ -69,7 +69,7 @@ struct TextBookmark
    friend struct TextScanner;
 
 private:
-   tchar_t        _LF, _CF;
+   text_c         _LF, _CF;
 
    // bookmark text position
    size_t         _column;
@@ -218,7 +218,7 @@ private:
 public:
    size_t getPosition() const { return _bookmark.getPosition(); }
 
-   const tchar_t* getLine(size_t& length);
+   text_t getLine(size_t& length);
 
    bool goTo(int disp)
    {
@@ -232,7 +232,7 @@ public:
 
 class Text
 {
-   tchar_t      _LF, _CF;
+   text_c       _LF, _CF;
 
    Pages        _pages;
    size_t       _rowCount;
@@ -244,7 +244,7 @@ class Text
    void refreshPage(Pages::Iterator page);
    void refreshNextPage(Pages::Iterator page);
 
-   void insert(TextBookmark bookmark, const tchar_t* s, size_t length, bool checkRowCount);
+   void insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount);
    void erase(TextBookmark bookmark, size_t length, bool checkRowCount);
 
 public:
@@ -256,24 +256,24 @@ public:
    void validateBookmark(TextBookmark& bookmark);
 
    void create();
-   bool load(const tchar_t* path, int encoding, bool autoDetecting);
-   void save(const tchar_t* path, int encoding);
+   bool load(_ELENA_::path_t path, int encoding, bool autoDetecting);
+   void save(_ELENA_::path_t path, int encoding);
 
    void copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, bool stopOnEOL);
-   void copyTo(TextBookmark bookmark, tchar_t* buffer, int length);
+   void copyTo(TextBookmark bookmark, text_c* buffer, int length);
 
-   const tchar_t* getLine(TextBookmark& bookmark, size_t& length);
-   tchar_t getChar(TextBookmark& bookmark);
+   text_t getLine(TextBookmark& bookmark, size_t& length);
+   text_c getChar(TextBookmark& bookmark);
 
-   bool insertChar(TextBookmark& bookmark, tchar_t ch);
-   bool insertLine(TextBookmark& bookmark, const tchar_t* s, size_t length);
+   bool insertChar(TextBookmark& bookmark, text_c ch);
+   bool insertLine(TextBookmark& bookmark, text_t s, size_t length);
    bool insertNewLine(TextBookmark& bookmark);
 
    bool eraseChar(TextBookmark& bookmark);
    bool eraseLine(TextBookmark& bookmark, size_t length);
 
-   bool compare(TextBookmark bookmark, const tchar_t* line, int len, bool matchCase, const tchar_t* terminators);
-   bool findWord(TextBookmark& bookmark, const tchar_t* text, bool matchCase, const tchar_t* terminators);
+   bool compare(TextBookmark bookmark, text_t line, int len, bool matchCase, text_t terminators);
+   bool findWord(TextBookmark& bookmark, text_t text, bool matchCase, text_t terminators);
 
    void attachWatcher(_TextWatcher* watcher);
    void detachWatcher(_TextWatcher* watcher);
@@ -319,8 +319,8 @@ public:
    {
    }
 
-   virtual void onInsert(size_t position, size_t length, const tchar_t* line);
-   virtual void onErase(size_t position, size_t length, const tchar_t* line);
+   virtual void onInsert(size_t position, size_t length, text_t line);
+   virtual void onErase(size_t position, size_t length, text_t line);
 
    void undo(Text* text, TextBookmark& caret);
    void redo(Text* text, TextBookmark& caret);

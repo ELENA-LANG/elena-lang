@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA RTManager.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -65,7 +65,7 @@ size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, si
 }
 
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
-                                  const wchar16_t* &symbol, const wchar16_t* &method, const wchar16_t* &path, int& row)
+   ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {
    int index = 0;
    bool found = false;
@@ -73,7 +73,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
    // search through debug section until the ret point is inside two consecutive steps within the same object
    while (!reader.Eof() && !found) {
       // read reference
-      symbol = reader.getWideLiteral();
+      symbol = reader.getLiteral(DEFAULT_STR);
 
       // define the next record position
       size_t size = reader.getDWord() - 4;
@@ -124,12 +124,12 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
             lineReader.read(&info, sizeof(DebugLineInfo));
             if (info.symbol == dsProcedure) {
                stringReader.seek(info.addresses.source.nameRef);
-               path = stringReader.getWideLiteral();
+               path = stringReader.getLiteral(DEFAULT_STR);
                method = NULL;
             }
             else if (info.symbol == dsMessage) {
                stringReader.seek(info.addresses.source.nameRef);
-               method = stringReader.getWideLiteral();
+               method = stringReader.getLiteral(DEFAULT_STR);
             }
             else if ((info.symbol & dsDebugMask) == dsStep) {
                index--;
@@ -153,34 +153,35 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
    return found;
 }
 
-void copy(wchar16_t* buffer, const wchar16_t* word, int& copied, int maxLength)
+void copy(ident_c* buffer, ident_t word, int& copied, int maxLength)
 {
-   int length = getlength(word);
+   size_t length = getlength(word);
 
    if (maxLength - copied < length)
       length = maxLength - copied;
 
    if (length > 0)
-      StringHelper::copy(buffer + copied, word, length);
+      StringHelper::copy(buffer + copied, word, length, length);
 
    copied += length;
 }
 
-void copy(wchar16_t* buffer, int value, int& copied)
+void copy(ident_c* buffer, int value, int& copied)
 {
-   wchar16_t tmp[10];
+   ident_c tmp[10];
    StringHelper::intToStr(value, tmp, 10);
 
-   StringHelper::copy(buffer + copied, tmp, getlength(tmp));
+   size_t length = getlength(tmp);
+   StringHelper::copy(buffer + copied, tmp, length, length);
 
-   copied += getlength(tmp);
+   copied += length;
 }
 
-size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t maxLength)
+size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, ident_c* buffer, size_t maxLength)
 {
-   const wchar16_t* symbol = NULL;
-   const wchar16_t* method = NULL;
-   const wchar16_t* path = NULL;
+   ident_t symbol = NULL;
+   ident_t method = NULL;
+   ident_t path = NULL;
    int row = -1;
 
    if (readAddressInfo(debug, retAddress, manager, symbol, method, path, row)) {

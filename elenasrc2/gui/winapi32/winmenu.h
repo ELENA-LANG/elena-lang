@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Menu Header File
-//                                              (C)2005-2010, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winmenuH
@@ -20,6 +20,11 @@ protected:
    HMENU  _hMenu;
 
 public:
+   virtual bool checkHandle(void* param) const
+   {
+      return (_hMenu == (HMENU)param);
+   }
+
    void enableItemById(int id, bool doEnable) const;
    void enableItemByIndex(int index, bool doEnable) const;
 

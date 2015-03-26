@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI EditFrame Implementation
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "wineditframe.h"
@@ -48,38 +48,47 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
 
 // --- EditFrame ---
 
-EditFrame :: EditFrame(Window* owner, bool withAbovescore, ContextMenu* contextMenu)
+EditFrame :: EditFrame(Window* owner, bool withAbovescore, ContextMenu* contextMenu, Model* model)
    : MultiTabView(owner, withAbovescore, NULL)
 {
-   _currentDoc = NULL;
    _contextMenu = contextMenu;
    _scheme = 0;
 
    _schemes[0] = defaultStyles;
    _schemes[1] = classicStyles;
+
+   _model = model;
 }
 
-void EditFrame :: selectDocumentTab(int index)
-{
-   selectTab(index);
-}
-
-int EditFrame :: getDocumentTabCount()
-{
-   return getTabCount();
-}
-
-int EditFrame :: addDocumentTab(const wchar_t* name, Document* doc)
+int EditFrame :: newDocument(const wchar_t* name, Document* doc)
 {
    return addTabView(name, doc);
 }
 
-void EditFrame :: eraseDocumentTab(int index)
-{
-   eraseTabView(index);
-}
+//void _EditFrame :: openDocument(_ELENA_::path_t path, Text* text, _GUI_::LexicalStyler* styler, int encoding)
+//{
+//   int index = addDocumentTab(_ELENA_::FileName(path), doc);
+//
+//   _mappings.add(path, index);
+//
+//   return doc;
+//}
 
-void EditFrame :: renameDocumentTab(int index, const tchar_t* newName)
+//void EditFrame :: selectDocumentTab(int index)
+//{
+//   selectTab(index);
+//}
+//
+//int EditFrame :: getDocumentTabCount()
+//{
+//   return getTabCount();
+//}
+//
+//int EditFrame :: addDocumentTab(const wchar_t* name, Document* doc)
+//{
+//}
+
+void EditFrame :: renameDocumentTab(int index, const wchar_t* newName)
 {
    renameTabView(index, newName);
 }
@@ -99,25 +108,25 @@ bool EditFrame :: resizeStyles(int size)
    return changed;
 }
 
-void EditFrame :: reloadSettings()
+void EditFrame :: init(Model* model)
 {
-   bool resized = resizeStyles(Settings::font_size);
+   bool resized = resizeStyles(model->font_size);
 
    if(_child) {
-      if (resized || _scheme != Settings::scheme)
-         ((TextView*)_child)->setStyles(STYLE_MAX + 1, _schemes[Settings::scheme], Settings::font_size + 5, 20);
+      if (resized || _scheme != model->scheme)
+         ((TextView*)_child)->setStyles(STYLE_MAX + 1, _schemes[model->scheme], model->font_size + 5, 20);
 
-      ((TextView*)_child)->applySettings(Settings::tabSize, Settings::tabCharUsing, 
-         Settings::lineNumberVisible, Settings::highlightSyntax);
+      ((TextView*)_child)->applySettings(model->tabSize, model->tabCharUsing,
+         model->lineNumberVisible, model->highlightSyntax);
    }
 
-   _scheme = Settings::scheme;
+   _scheme = model->scheme;
 }
 
 void EditFrame :: populate(TextView* textView)
 {
    textView->setStyles(STYLE_MAX + 1, _schemes[_scheme], 15, 20);
-   textView->applySettings(Settings::tabSize, Settings::tabCharUsing, Settings::lineNumberVisible, Settings::highlightSyntax);
+   textView->applySettings(_model->tabSize, _model->tabCharUsing, _model->lineNumberVisible, _model->highlightSyntax);
 
    setChild(textView);
 }
@@ -126,9 +135,9 @@ void EditFrame :: onTabChange(int)
 {
    int index = getCurrentIndex();
    if (index >= 0) {
-      _currentDoc = (Document*)getTabParam(index);
+      _model->currentDoc = (Document*)getTabParam(index);
 
-      ((TextView*)_child)->setDocument(_currentDoc);
+      ((TextView*)_child)->setDocument(_model->currentDoc);
       _child->show();
 
       refreshDocument();
@@ -136,13 +145,13 @@ void EditFrame :: onTabChange(int)
    else if (getTabCount() == 0) {
       _child->hide();
       _notSelected = true;
-      _currentDoc = NULL;
+      _model->currentDoc = NULL;
    }
 }
 
 void EditFrame :: markDocument(int index, bool modified)
 {
-   wchar16_t caption[0x100];
+   wchar_t caption[0x100];
    getTabName(index, caption, 0x100);
 
    int length = _ELENA_::getlength(caption);
@@ -162,45 +171,9 @@ void EditFrame :: markDocument(int index, bool modified)
    }
 }
 
-bool EditFrame :: copyClipboard(Clipboard& board)
+void EditFrame :: eraseDocumentTab(int index)
 {
-   if (_currentDoc && _currentDoc->hasSelection()) {
-      board.clear();
-
-      HGLOBAL buffer = board.create(_currentDoc->getSelectionLength());
-      wchar_t* text = board.allocate(buffer);
-
-      _currentDoc->copySelection(text);
-
-      board.free(buffer);
-      board.copy(buffer);
-
-      return true;
-   }
-   else return false;
-}
-
-void EditFrame :: eraseSelection()
-{
-   if (_currentDoc && !_currentDoc->status.readOnly) {
-      _currentDoc->eraseChar(false);
-
-      ((TextView*)_child)->refreshView();
-   }
-}
-
-void EditFrame :: pasteClipboard(Clipboard& board)
-{
-   if (_currentDoc && !_currentDoc->status.readOnly) {
-      HGLOBAL buffer = board.get();
-      wchar_t* text = board.allocate(buffer);
-      if  (!_ELENA_::emptystr(text)) {
-         _currentDoc->insertLine(text, _ELENA_::getlength(text));
-
-         board.free(buffer);
-      }
-      ((TextView*)_child)->refreshView();
-   }
+   eraseTabView(index);
 }
 
 void EditFrame :: refreshDocument()
@@ -208,28 +181,12 @@ void EditFrame :: refreshDocument()
    ((TextView*)_child)->refreshView();
 }
 
-void EditFrame :: indent()
-{
-   if (_currentDoc && !_currentDoc->status.readOnly) {
-      ((TextView*)_child)->indent();
-   }
-}
-
-void EditFrame :: outdent()
-{
-   if (_currentDoc && !_currentDoc->status.readOnly) {
-      ((TextView*)_child)->outdent();
-   }
-}
-
-void EditFrame :: showContextMenu(int x, int y)
+void EditFrame :: showContextMenu(int x, int y, bool hasSelection)
 {
    Point p(x, y);
 
-   bool selected = _currentDoc ? _currentDoc->hasSelection() : false;
-
-   _contextMenu->enableItemById(IDM_EDIT_CUT, selected);
-   _contextMenu->enableItemById(IDM_EDIT_COPY, selected);
+   _contextMenu->enableItemById(IDM_EDIT_CUT, hasSelection);
+   _contextMenu->enableItemById(IDM_EDIT_COPY, hasSelection);
    _contextMenu->enableItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
 
    _contextMenu->show(getOwner(), p);

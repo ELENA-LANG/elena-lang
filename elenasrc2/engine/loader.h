@@ -27,11 +27,11 @@ protected:
    ReferenceMap _subjects;         // subjects
 
 public:
-   virtual void* resolveReference(const wchar16_t* reference, size_t mask);
+   virtual void* resolveReference(ident_t reference, size_t mask);
 
-   virtual ref_t resolveExternal(const wchar16_t* external);
+   virtual ref_t resolveExternal(ident_t external);
 
-   virtual void mapReference(const wchar16_t* reference, void* vaddress, size_t mask);
+   virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
 
    void clearReferences()
    {

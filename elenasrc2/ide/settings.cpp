@@ -19,7 +19,7 @@
 using namespace _GUI_;
 using namespace _ELENA_;
 
-typedef String<char, 255> ParamString;
+//typedef String<char, 255> ParamString;
 
 // --- help functions ---
 
@@ -46,11 +46,11 @@ inline void loadSetting(const char* value, int& setting)
    }
 }
 
-inline void loadSection(ConfigCategoryIterator it, Settings::PathMapping& list)
+inline void loadSection(ConfigCategoryIterator it, PathMapping& list)
 {
-   IdentifierString value;
+   Path value;
    while (!it.Eof()) {
-      value.copy((char*)*it);
+      Path::loadPath(value, (const char*)(*it));
 
       list.erase(it.key());
       list.add(it.key(), value.clone(), true);
@@ -77,41 +77,33 @@ inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, con
       config.setSetting(section, setting, value);
 }
 
-inline void saveSection(_ELENA_::IniConfigFile& config, const char* section, Settings::PathMapping& list)
+inline void saveSection(_ELENA_::IniConfigFile& config, const char* section, PathMapping& list)
 {
-   for(Settings::PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
-      config.setSetting(section, it.key(), ParamString(*it));
+   for(PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
+      IdentifierString value(*it);
+
+      config.setSetting(section, it.key(), value);
    }
 }
 
 // -- Paths ---
 
-Path Paths :: appPath = Path();
-
-Path Paths :: defaultPath = Path();
-
-Path Paths :: packageRoot = Path();
-
-Path Paths :: libraryRoot = Path();
-
-Path Paths :: lastPath = Path();
-
-void Paths :: init(const tchar_t* appPath, const tchar_t* defaultPath)
+void Paths :: init(Model* model, path_t appPath, const path_t defaultPath)
 {
-   Paths::appPath.copy(appPath);
+   model->paths.appPath.copy(appPath);
 
-   Paths::defaultPath.copy(defaultPath);
-   Paths::lastPath.copy(defaultPath);
+   model->paths.defaultPath.copy(defaultPath);
+   model->paths.lastPath.copy(defaultPath);
 }
 
-void Paths :: setLibraryRoot(const tchar_t* libraryPath)
+void Paths::setLibraryRoot(Model* model, path_t libraryPath)
 {
-   Paths::libraryRoot.copy(libraryPath);
-   resolveRelativePath(libraryRoot, appPath);
-   Paths::libraryRoot.lower();
+   model->paths.libraryRoot.copy(libraryPath);
+   resolveRelativePath(model->paths.libraryRoot, model->paths.appPath);
+   model->paths.libraryRoot.lower();
 }
 
-void Paths :: resolveRelativePath(Path& path, const tchar_t* rootPath)
+void Paths :: resolveRelativePath(Path& path, path_t rootPath)
 {
    if (isPathRelative(path)) {
       Path fullPath(rootPath);
@@ -122,455 +114,108 @@ void Paths :: resolveRelativePath(Path& path, const tchar_t* rootPath)
    canonicalize(path);
 }
 
-void Paths :: makeRelativePath(Path& path, const tchar_t* rootPath)
+void Paths :: makeRelativePath(Path& path, path_t rootPath)
 {
    makePathRelative(path, rootPath);
 }
 
 // --- Settings ---
 
-size_t Settings :: scheme = 0;
-
-size_t Settings :: font_size = 10;
-
-size_t Settings :: tabSize = 4;
-
-bool Settings :: tabCharUsing = false;
-
-bool Settings :: appMaximized = true;
-
-bool Settings :: compilerOutput = true;
-
-bool Settings :: callStack = true;
-
-bool Settings :: messages = true;
-
-bool Settings :: lastPathRemember = true;
-
-bool Settings :: lastProjectRemember = true;
-
-int Settings :: defaultEncoding = _ELENA_::feUTF8;
-
-bool Settings :: autoDetecting = true;
-
-bool Settings :: lineNumberVisible = true;
-
-bool Settings :: highlightSyntax = true;
-
-bool Settings :: highlightBrackets = true;
-
-bool Settings :: tabWithAboveScore = true;
-
-bool Settings :: autoRecompile = true;
-
-bool Settings :: debugTape = false;
-
-bool Settings :: hexNumberMode = true;
-
-bool Settings :: testMode = false;
-
-Path Settings :: defaultProject = Path();
-
-List<tchar_t*> Settings :: defaultFiles = List<tchar_t*>(NULL, freestr);
-
-List<tchar_t*> Settings :: searchHistory = List<tchar_t*>(NULL, freestr);
-List<tchar_t*> Settings :: replaceHistory = List<tchar_t*>(NULL, freestr);
-
-Settings::PathMapping Settings :: packageRoots = PathMapping(NULL, freestr);
-
-Settings::PathMapping Settings :: libraryRoots = PathMapping(NULL, freestr);
-
-void Settings :: init(const tchar_t* packagePath, const tchar_t* libraryPath)
+void Settings :: init(Model* model, path_t packagePath, path_t libraryPath)
 {
-   packageRoots.add("default", StringHelper::clone(packagePath));
-   libraryRoots.add("default", StringHelper::clone(libraryPath));
+   model->packageRoots.add("default", StringHelper::clone(packagePath));
+   model->libraryRoots.add("default", StringHelper::clone(libraryPath));
 }
 
-void Settings :: load(_ELENA_::IniConfigFile& config)
+void Settings :: load(Model* model, _ELENA_::IniConfigFile& config)
 {
-   defaultProject.copy(config.getSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING));
+   Path::loadPath(model->defaultProject, config.getSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING));
 
-   loadSetting(config.getSetting(SETTINGS_SECTION, TAB_USING_SETTING), tabCharUsing);
-   loadSetting(config.getSetting(SETTINGS_SECTION, MAXIMIZED_SETTING), appMaximized);
-   loadSetting(config.getSetting(SETTINGS_SECTION, OUTPUT_SETTING), compilerOutput);
-   loadSetting(config.getSetting(SETTINGS_SECTION, CALLSTACK_SETTING), callStack);   
-   loadSetting(config.getSetting(SETTINGS_SECTION, MESSAGES_SETTING), messages);   
-   loadSetting(config.getSetting(SETTINGS_SECTION, PATH_REMEMBER_SETTING), lastPathRemember);
-   loadSetting(config.getSetting(SETTINGS_SECTION, PROJECT_REMEMBER_SETTING), lastProjectRemember);
-   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_DETECTING_SETTING), autoDetecting);
-   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_RECOMPILE_SETTING), autoRecompile);
-   loadSetting(config.getSetting(SETTINGS_SECTION, DEBUG_TAPE_SETTING), debugTape);
+   loadSetting(config.getSetting(SETTINGS_SECTION, TAB_USING_SETTING), model->tabCharUsing);
+   loadSetting(config.getSetting(SETTINGS_SECTION, MAXIMIZED_SETTING), model->appMaximized);
+   loadSetting(config.getSetting(SETTINGS_SECTION, OUTPUT_SETTING), model->compilerOutput);
+   loadSetting(config.getSetting(SETTINGS_SECTION, CALLSTACK_SETTING), model->callStack);
+   loadSetting(config.getSetting(SETTINGS_SECTION, MESSAGES_SETTING), model->messages);
+   loadSetting(config.getSetting(SETTINGS_SECTION, PATH_REMEMBER_SETTING), model->lastPathRemember);
+   loadSetting(config.getSetting(SETTINGS_SECTION, PROJECT_REMEMBER_SETTING), model->lastProjectRemember);
+   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_DETECTING_SETTING), model->autoDetecting);
+   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_RECOMPILE_SETTING), model->autoRecompile);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, DEBUG_TAPE_SETTING), model->debugTape);
 
-   loadSetting(config.getSetting(SETTINGS_SECTION, TAB_SIZE_SETTING), tabSize, 1, 20, 4);
-   loadSetting(config.getSetting(SETTINGS_SECTION, ENCODING_SETTING), defaultEncoding);
+   loadSetting(config.getSetting(SETTINGS_SECTION, TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
+   loadSetting(config.getSetting(SETTINGS_SECTION, ENCODING_SETTING), model->defaultEncoding);
 
-   loadSetting(config.getSetting(SETTINGS_SECTION, LINE_NUMBERS_SETTING), lineNumberVisible);
-   loadSetting(config.getSetting(SETTINGS_SECTION, HIGHLIGHT_SETTING), highlightSyntax);
-   loadSetting(config.getSetting(SETTINGS_SECTION, BRACKETS_SETTING), highlightBrackets);
-   loadSetting(config.getSetting(SETTINGS_SECTION, TABSCORE_SETTING), tabWithAboveScore);
-   loadSetting(config.getSetting(SETTINGS_SECTION, SCHEME_SETTING), scheme, 0, 1, 0);
-   loadSetting(config.getSetting(SETTINGS_SECTION, FONTSIZE_SETTING), font_size, 8, 24, 10);
+   loadSetting(config.getSetting(SETTINGS_SECTION, LINE_NUMBERS_SETTING), model->lineNumberVisible);
+   loadSetting(config.getSetting(SETTINGS_SECTION, HIGHLIGHT_SETTING), model->highlightSyntax);
+   loadSetting(config.getSetting(SETTINGS_SECTION, BRACKETS_SETTING), model->highlightBrackets);
+   loadSetting(config.getSetting(SETTINGS_SECTION, TABSCORE_SETTING), model->tabWithAboveScore);
+   loadSetting(config.getSetting(SETTINGS_SECTION, SCHEME_SETTING), model->scheme, 0, 1, 0);
+   loadSetting(config.getSetting(SETTINGS_SECTION, FONTSIZE_SETTING), model->font_size, 8, 24, 10);
 
-   loadSection(config.getCategoryIt(SRCPATH_SECTION), packageRoots);
-   loadSection(config.getCategoryIt(LIBPATH_SECTION), libraryRoots);
+   loadSection(config.getCategoryIt(SRCPATH_SECTION), model->packageRoots);
+   loadSection(config.getCategoryIt(LIBPATH_SECTION), model->libraryRoots);
 }
 
-void Settings :: save(_ELENA_::IniConfigFile& config)
+void Settings :: save(Model* model, _ELENA_::IniConfigFile& config)
 {
-   if (!defaultProject.isEmpty() && lastProjectRemember)
-      config.setSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING, ParamString(defaultProject));
+   if (!model->defaultProject.isEmpty() && model->lastProjectRemember)
+      config.setSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING, IdentifierString(model->defaultProject));
 
-   saveSetting(config, SETTINGS_SECTION, TAB_USING_SETTING, tabCharUsing, false);
-   saveSetting(config, SETTINGS_SECTION, MAXIMIZED_SETTING, appMaximized, true);
-   saveSetting(config, SETTINGS_SECTION, OUTPUT_SETTING, compilerOutput, true);
-   saveSetting(config, SETTINGS_SECTION, CALLSTACK_SETTING, callStack, true);
-   saveSetting(config, SETTINGS_SECTION, MESSAGES_SETTING, messages, true);   
-   saveSetting(config, SETTINGS_SECTION, PATH_REMEMBER_SETTING, lastPathRemember, true);
-   saveSetting(config, SETTINGS_SECTION, PROJECT_REMEMBER_SETTING, lastProjectRemember, true);
-   saveSetting(config, SETTINGS_SECTION, AUTO_DETECTING_SETTING, autoDetecting, true);
-   saveSetting(config, SETTINGS_SECTION, AUTO_RECOMPILE_SETTING, autoRecompile, true);
-   saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, debugTape, false);
+   saveSetting(config, SETTINGS_SECTION, TAB_USING_SETTING, model->tabCharUsing, false);
+   saveSetting(config, SETTINGS_SECTION, MAXIMIZED_SETTING, model->appMaximized, true);
+   saveSetting(config, SETTINGS_SECTION, OUTPUT_SETTING, model->compilerOutput, true);
+   saveSetting(config, SETTINGS_SECTION, CALLSTACK_SETTING, model->callStack, true);
+   saveSetting(config, SETTINGS_SECTION, MESSAGES_SETTING, model->messages, true);
+   saveSetting(config, SETTINGS_SECTION, PATH_REMEMBER_SETTING, model->lastPathRemember, true);
+   saveSetting(config, SETTINGS_SECTION, PROJECT_REMEMBER_SETTING, model->lastProjectRemember, true);
+   saveSetting(config, SETTINGS_SECTION, AUTO_DETECTING_SETTING, model->autoDetecting, true);
+   saveSetting(config, SETTINGS_SECTION, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
+   //saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, model->debugTape, false);
 
-   saveSetting(config, SETTINGS_SECTION, LINE_NUMBERS_SETTING, lineNumberVisible, true);
-   saveSetting(config, SETTINGS_SECTION, HIGHLIGHT_SETTING, highlightSyntax, true);
-   saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, highlightBrackets, true);
-   saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, tabWithAboveScore, true);
-   saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, scheme, 0u);
-   saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, font_size, 10u);
+   saveSetting(config, SETTINGS_SECTION, LINE_NUMBERS_SETTING, model->lineNumberVisible, true);
+   saveSetting(config, SETTINGS_SECTION, HIGHLIGHT_SETTING, model->highlightSyntax, true);
+   saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, model->highlightBrackets, true);
+   saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, model->tabWithAboveScore, true);
+   saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, model->scheme, 0u);
+   saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, model->font_size, 10u);
 
-   saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, tabSize, 4u);
-   saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, defaultEncoding, 0);
+   saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, model->tabSize, 4u);
+   saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, model->defaultEncoding, 0);
 
-   saveSection(config, SRCPATH_SECTION, packageRoots);
-   saveSection(config, LIBPATH_SECTION, libraryRoots);
+   saveSection(config, SRCPATH_SECTION, model->packageRoots);
+   saveSection(config, LIBPATH_SECTION, model->libraryRoots);
 }
 
-void Settings :: onNewProjectTemplate()
+void Settings :: onNewProjectTemplate(Model* model, _ProjectManager* project)
 {
-   const char* projectTemplate = Project::getTemplate();
+   const char* projectTemplate = project->getTemplate();
 
    // reload package root
-   const tchar_t* path = packageRoots.get(projectTemplate);
+   path_t path = model->packageRoots.get(projectTemplate);
    if (_ELENA_::emptystr(path))
-      path = packageRoots.get("default");
+      path = model->packageRoots.get("default");
 
-   Paths::packageRoot.copy(path);
-   Paths::resolveRelativePath(Paths::packageRoot, Paths::appPath);
-   Paths::packageRoot.lower();
+   model->paths.packageRoot.copy(path);
+   Paths::resolveRelativePath(model->paths.packageRoot, model->paths.appPath);
 
    // reload library root
-   path = libraryRoots.get(projectTemplate);
+   path = model->libraryRoots.get(projectTemplate);
    if (_ELENA_::emptystr(path))
-      path = libraryRoots.get("default");
+      path = model->libraryRoots.get("default");
 
-   Paths::libraryRoot.copy(path);
-   Paths::resolveRelativePath(Paths::libraryRoot, Paths::appPath);
-   Paths::libraryRoot.lower();
+   model->paths.libraryRoot.copy(path);
+   Paths::resolveRelativePath(model->paths.libraryRoot, model->paths.appPath);
 }
 
-void Settings :: addSearchHistory(const tchar_t* line)
+void Settings :: addSearchHistory(Model* model, text_t line)
 {
-   if (retrieve(searchHistory.start(), line, (const tchar_t*)NULL) == NULL)
-      searchHistory.add(StringHelper::clone(line));
+   if (retrieve(model->searchHistory.start(), (text_c*)line, (text_c*)NULL) == NULL)
+      model->searchHistory.add(StringHelper::clone(line));
 }
 
-void Settings :: addReplaceHistory(const tchar_t* line)
+void Settings :: addReplaceHistory(Model* model, text_t line)
 {
-   if (retrieve(replaceHistory.start(), line, (const tchar_t*)NULL) == NULL)
-      replaceHistory.add(StringHelper::clone(line));
-}
-
-// --- Projects ---
-
-bool Project :: _changed = false;
-
-IniConfigFile Project :: _config = IniConfigFile();
-Path          Project :: _path = Path();
-FileName      Project :: _name = FileName();
-
-const char* Project :: getPackage()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_PACKAGE_SETTING);
-}
-
-const char* Project :: getTemplate()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_TEMPLATE_SETTING);
-}
-
-const char* Project :: getOptions()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_COMPILER_OPTIONS);
-}
-
-const char* Project :: getTarget()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_EXECUTABLE_SETTING);
-}
-
-const char* Project :: getOutputPath()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_OUTPUT_SETTING);
-}
-
-const char* Project :: getArguments()
-{
-   return _config.getSetting(IDE_PROJECT_SECTION, IDE_ARGUMENT_SETTING);
-}
-
-int Project :: getDebugMode()
-{
-   const char* mode = _config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
-   if (_ELENA_::StringHelper::compare(mode, "-1")) {
-      return -1;
-   }
-   else if (_ELENA_::StringHelper::compare(mode, "-2")) {
-      return -2;
-   }
-   else return 0;
-}
-
-bool Project :: getBoolSetting(const char* name)
-{
-   const char* value = _config.getSetting(IDE_PROJECT_SECTION, name);
-
-   return _ELENA_::StringHelper::compare(value, "-1");
-}
-
-void Project :: setSectionOption(const char* option, const char* value)
-{
-   if (!_ELENA_::emptystr(value)) {
-      _config.setSetting(IDE_PROJECT_SECTION, option, value);
-   }
-   else _config.clear(IDE_PROJECT_SECTION, option);
-
-   _changed = true;
-}
-
-void Project :: setTarget(const char* target)
-{
-   setSectionOption(IDE_EXECUTABLE_SETTING, target);
-}
-
-void Project :: setArguments(const char* arguments)
-{
-   setSectionOption(IDE_ARGUMENT_SETTING, arguments);
-}
-
-void Project :: setTemplate(const char* templateName)
-{
-   setSectionOption(IDE_TEMPLATE_SETTING, templateName);
-}
-
-void Project :: setOutputPath(const char* path)
-{
-   setSectionOption(IDE_OUTPUT_SETTING, path);
-}
-
-void Project :: setOptions(const char* options)
-{
-   setSectionOption(IDE_COMPILER_OPTIONS, options);
-}
-
-void Project :: setPackage(const char* package)
-{
-   setSectionOption(IDE_PACKAGE_SETTING, package);
-}
-
-void Project:: setDebugMode(int mode)
-{
-   if (mode != 0) {
-      _config.setSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING, mode);
-   }
-   else _config.clear(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
-
-   _changed = true;
-}
-
-void Project :: setBoolSetting(const char* key, bool value)
-{
-   setSectionOption(key, value ? "-1" : "0");
-}
-
-void Project :: refresh()
-{
-   const char* projectTemplate = getTemplate();
-
-   // reload package root
-   const tchar_t* templatePath = Settings::packageRoots.get(projectTemplate);
-   if (_ELENA_::emptystr(templatePath))
-      templatePath = Settings::packageRoots.get("default");
-
-   Paths::packageRoot.copy(templatePath);
-   Paths::resolveRelativePath(Paths::packageRoot, Paths::appPath);
-   Paths::packageRoot.lower();
-
-   // reload library root
-   templatePath = Settings::libraryRoots.get(projectTemplate);
-   if (_ELENA_::emptystr(templatePath))
-      templatePath = Settings::libraryRoots.get("default");
-
-   Paths::libraryRoot.copy(templatePath);
-   Paths::resolveRelativePath(Paths::libraryRoot, Paths::appPath);
-   Paths::libraryRoot.lower();
-}
-
-bool Project :: open(const tchar_t* path)
-{
-   _config.clear();
-
-   if (!_config.load(path, _ELENA_::feUTF8))
-      return false;
-
-   rename(path);
-   refresh();
-
-   _changed = false;
-   return true;
-}
-
-void Project :: reset()
-{
-   _config.clear();
-
-   _name.clear();
-   _path.clear();
-
-   refresh();
-
-   // should be the last to prevent being marked as changed
-   _changed = false;
-}
-
-void Project :: save()
-{
-   Path cfgPath(_path, _name);
-   cfgPath.appendExtension(_T("prj"));
-
-   _config.save(cfgPath, _ELENA_::feUTF8);
-
-   _changed = false;
-}
-
-void Project :: rename(const tchar_t* path)
-{
-   _name.copyName(path);
-   _path.copyPath(path);
-   _path.lower();
-
-   Paths::resolveRelativePath(_path);
-
-   _changed = true;
-}
-
-void Project :: retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name)
-{
-   const tchar_t* root = _path;
-   size_t rootLength = getlength(root);
-
-   Path fullPath;
-   fullPath.copyPath(path);
-   Paths::resolveRelativePath(fullPath, root);
-   fullPath.lower();
-
-   if (!emptystr(root) && StringHelper::compare(fullPath, root, rootLength)) {
-      name.copy(getPackage());
-      if (getlength(fullPath) > rootLength)
-         name.pathToName(fullPath + rootLength + 1);
-
-      path.copy(path + rootLength + 1);
-   }
-   else {
-      root = Paths::packageRoot;
-      rootLength = getlength(root);
-
-      if (!emptystr(root) && StringHelper::compare(fullPath, root, rootLength)) {
-         name.pathToName(fullPath + rootLength + 1);
-
-         // skip the root path
-         path.copySubPath(path + rootLength + 1);
-      }
-      else {
-         FileName fileName(fullPath);
-
-         name.copy(fileName);
-      }
-   }
-}
-
-bool Project :: isIncluded(const tchar_t* path)
-{
-   Path relPath(path);
-   Paths::makeRelativePath(relPath, _path);
-
-   ConfigCategoryIterator it = SourceFiles();
-   while (!it.Eof()) {
-      if (ConstantIdentifier::compare(relPath, it.key())) {
-         return true;
-      }
-      it++;
-   }
-   return false;
-}
-
-void Project :: includeSource(const tchar_t* path)
-{
-   Path relPath(path);
-   Paths::makeRelativePath(relPath, _path);
-
-   ParamString value(relPath);
-
-   _config.setSetting(IDE_FILES_SECTION, value.clone(), (const char*)NULL);
-
-   _changed = true;
-}
-
-void Project :: excludeSource(const tchar_t* path)
-{
-   Path relPath(path);
-   Paths::makeRelativePath(relPath, _path);
-
-   _config.clear(IDE_FILES_SECTION, ParamString(relPath));
-
-   _changed = true;
-}
-
-void Project :: clearForwards()
-{
-   _config.clear(IDE_FORWARDS_SECTION);
-
-   _changed = true;
-}
-
-void Project :: addForward(const tchar_t* name, const tchar_t* reference)
-{
-   _config.setSetting(IDE_FORWARDS_SECTION, ParamString(name), ParamString(reference));
-
-   _changed = true;
-}
-
-void Project :: retrievePath(const wchar16_t* name, _ELENA_::Path & path, const tchar_t* extension)
-{
-   IdentifierString package(getPackage());
-
-   // if it is the root package
-   if (StringHelper::compare(name, package)) {
-      path.copy(_path);
-      path.combine(getOutputPath());
-      path.nameToPath(name, extension);
-   }
-   // if the class belongs to the project package
-   else if (StringHelper::compare(name, package, getlength(package)) && (name[getlength(package)] == '\'')) {
-      path.copy(_path);
-      path.combine(getOutputPath());
-
-      path.nameToPath(name, extension);
-   }
-   else {
-      // if file doesn't exist use package root
-      path.copy(Paths::libraryRoot);
-
-      path.nameToPath(name, extension);
-   }
+   if (retrieve(model->replaceHistory.start(), line, (text_c*)NULL) == NULL)
+      model->replaceHistory.add(StringHelper::clone(line));
 }
 

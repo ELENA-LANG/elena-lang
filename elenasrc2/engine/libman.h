@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA Library manager.
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef libmanH
@@ -16,7 +16,7 @@ namespace _ELENA_
 
 class LibraryManager : public _LibraryManager
 {
-   typedef Map<const wchar16_t*, tchar_t*> AliasMap;
+   typedef Map<ident_t, ident_c*> AliasMap;
 
    Path              _rootPath;
    IdentifierString  _package;
@@ -29,68 +29,71 @@ class LibraryManager : public _LibraryManager
    AliasMap          _binaryAliases;
 
 public:
-   const tchar_t* getRootPath() const { return _rootPath; }
-
-   const wchar16_t* getPackage() const
+//   const tchar_t* getRootPath() const { return _rootPath; }
+//
+   ident_t getPackage() const
    {
       return _package;
    }
 
-   void setRootPath(const tchar_t* root)
+   void setRootPath(path_t root)
    {
       _rootPath.copy(root);
    }
-   void setPackage(const wchar16_t* package, const tchar_t* path)
+   void setPackage(ident_t package, path_t path)
    {
       _package.copy(package);
       _packagePath.copy(path);
    }
-   void setPackage(const wchar16_t* package)
-   {
-      _package.copy(package);
-   }
+//   void setPackage(const wchar16_t* package)
+//   {
+//      _package.copy(package);
+//   }
 
-   void nameToPath(const wchar16_t* moduleName, Path& path, const tchar_t* extension)
+   void nameToPath(ident_t moduleName, Path& path, ident_t extension)
    {
+      Path ext;
+      Path::loadPath(ext, extension);
+
       // if the module belongs to the current project package
       if (StringHelper::compare(moduleName, _package))
       {
          path.copy(_packagePath);
-         path.nameToPath(moduleName, extension);
+         path.nameToPath(moduleName, ext);
       }
       // if it is the library module
       else {
          path.copy(_rootPath);
-         path.nameToPath(moduleName, extension);
+         path.nameToPath(moduleName, ext);
       }
    }
 
-   void addPrimitiveAlias(const wchar16_t* alias, const tchar_t* path)
+   void addPrimitiveAlias(ident_t alias, path_t path)
    {
       _binaryAliases.erase(alias);
-      _binaryAliases.add(alias, StringHelper::clone(path));
+      _binaryAliases.add(alias, IdentifierString::clone(path));
    }
 
-   void addCoreAlias(const tchar_t* path)
+   void addCoreAlias(path_t path)
    {
-      _binaryAliases.add(NULL, StringHelper::clone(path));
+      _binaryAliases.add(NULL, IdentifierString::clone(path));
    }
 
-   _Module* createModule(const wchar16_t* package, LoadResult& result);
+   _Module* createModule(ident_t package, LoadResult& result);
 
-   _Module* loadNative(const wchar16_t* package, LoadResult& result);
-   _Module* loadModule(const wchar16_t* package, LoadResult& result, bool readOnly = true);
-   _Module* loadDebugModule(const wchar16_t* package, LoadResult& result);
+   _Module* loadNative(ident_t package, LoadResult& result);
+   _Module* loadModule(ident_t package, LoadResult& result, bool readOnly = true);
+   _Module* loadDebugModule(ident_t package, LoadResult& result);
 
    bool loadCore(LoadResult& result);
 
-   _Module* resolveNative(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
+   _Module* resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference);
    _Module* resolveCore(ref_t reference, LoadResult& result);
-   virtual _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
-   virtual _Module* resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference);
+   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
 
    LibraryManager();
-   LibraryManager(const tchar_t* root, const wchar16_t* package);
+   LibraryManager(path_t root, ident_t package);
    virtual ~LibraryManager() {}
 };
 

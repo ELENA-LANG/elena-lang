@@ -26,28 +26,25 @@ void print(const wchar_t* msg, ...)
 
 void printLine(const char* msg)
 {
-   _ELENA_::String<wchar16_t, 255> wsMsg(msg);
-
-   print(wsMsg);
+   print(_ELENA_::WideString(msg));
 }
 
 void printLine(const char* msg, int id)
 {
-   _ELENA_::String<wchar16_t, 255> wsMsg(msg);
-
-   print(wsMsg, id);
+   print(_ELENA_::WideString(msg), id);
 }
 
 void printLine(const char* msg, int param1, int param2, wchar_t ch)
 {
-   _ELENA_::String<wchar16_t, 255> wsMsg(msg);
+   print(_ELENA_::WideString(msg), param1, param2, ch);
+}
 
-   print(wsMsg, param1, param2, ch);
+void printLine(const char* msg, const char* param)
+{
+   print(_ELENA_::WideString(msg), _ELENA_::WideString(param));
 }
 
 void printLine(const char* msg, const wchar_t* param)
 {
-   _ELENA_::String<wchar16_t, 255> wsMsg(msg);
-
-   print(wsMsg, param);
+   print(_ELENA_::WideString(msg), param);
 }

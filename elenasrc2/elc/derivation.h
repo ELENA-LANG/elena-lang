@@ -3,7 +3,7 @@
 //               
 //		This file contains ELENA Engine Derivation Tree classes
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef derivationH
@@ -23,15 +23,15 @@ public:
    // --- TerminalInfo structure ---
    struct TerminalInfo
    {
-      Symbol           symbol;
+      Symbol   symbol;
 
-      size_t           disp;          // number of symbols (tab considered as a single char)
-      size_t           row;
-      size_t           col;           // virtual column
-      size_t           length;
-      const wchar16_t* value;
+      size_t   disp;          // number of symbols (tab considered as a single char)
+      size_t   row;
+      size_t   col;           // virtual column
+      size_t   length;
+      ident_t  value;
 
-      operator const wchar16_t*() const { return value; }
+      operator ident_t() const { return value; }
 
       bool operator == (const TerminalInfo& terminal) const
       {

@@ -14,6 +14,7 @@ Selector
 stringOp
 Summing
 TopFilter
+wideOp
 
 [arrayOp]
 #title=Extension arrayOp
@@ -143,3 +144,29 @@ TopFilter
 #parent=system_routines.html#BasePattern:system'routines'BasePattern
 #constructor=new,variable;Creates a pattern and assigned the provided variable to the pattern result field
 #method=eval,object;Appends the parameter to the result varialble
+
+[wideOp]
+#title=Extension wideOp
+#shortdescr=A wide literal extension
+#protocol=wide
+#method=endingWith,&wide:wide,bool;Returns true if the object ends with a provided literal
+#method=indexOf,&char:char,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
+#method=indexOf,&wide:wide,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
+#method=is,&empty,,bool;Returns true if the literal is empty (a length is equal to 0)
+#method=lowerCase,,wide;Returns a copy of this literal converted to lowercase.
+#method=padLeft,&char:char&length:int,wide;Returns a new literal that right-aligns the characters in this instance by padding them on the left with a specified character
+#method=padRight,&char:char&length:int,wide;Returns a new literal that left-aligns the characters in this instance by padding them on the right with a specified character
+#method=replace,&wide:wide&wide:wide,wide;Replaces all occurences of the provided literal with a second one
+#method=replaceFirst,&wide:wide&wide:wide,wide;Replaces the first occurence of the provided literal with a second one
+#method=split,&by:object,array;Returns an array of literals that contains the substrings that are delimited by a provided splitter
+#method=split,&char:char,array;Returns an array of literals that contains the substrings that are delimited by a provided character
+#method=split,&literal:literal,array;Returns an array of literals that contains the substrings that are delimited by a provided literal
+#method=startingWith,&wide:wide,bool;Returns true if the object starts with a provided literal
+#method=Substring,&index:int,wide;Returns the substring
+#method=trim,,wide;Removes all leading and trailing spaces
+#method=trim,&char:char,wide;Removes all leading and trailing occurrences of a character
+#method=trimLeft,,wide;Removes all leading spaces
+#method=trimLeft,&char:char,wide;Removes all leading occurrences of a character
+#method=trimRight,,wide;Removes all trailing spaces
+#method=trimRight,&char:char,wide;Removes all trailing occurrences of a character
+#method=upperCase,,wide;Returns a copy of this literal converted to uppercase.

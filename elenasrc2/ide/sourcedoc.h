@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //                E L E N A P r o j e c t: ELENA IDE
 //                      SourceDoc class header
-//                                                 (C)2011, by Alexei Rakov
+//                                             (C)2011-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sourcedocH
@@ -21,10 +21,10 @@ class SourceDoc : public Document
       idRight
    };
 
-   IndentDirection IsAutoIndent(tchar_t ch);
+   IndentDirection IsAutoIndent(text_c ch);
 
-   tchar_t getCurrentChar();
-   const tchar_t* getCurrentLine(int disp, size_t& length);
+   text_c getCurrentChar();
+   text_t getCurrentLine(int disp, size_t& length);
 
 public:
    virtual void insertNewLine();

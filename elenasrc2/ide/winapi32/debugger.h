@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Debugger class and its helpers header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debuggerH
@@ -185,6 +185,7 @@ class Debugger
    bool              needToHandle;
    bool              exitCheckPoint;
    size_t            init_breakpoint;
+   size_t            _vmHook;
 
    BreakpointContext breakpoints;
 
@@ -229,7 +230,7 @@ public:
    void setCheckMode();
    void setAutoStepMode();
 
-   bool startThread(_Controller* controller);
+   bool startThread(_DebugController* controller);
 
    bool start(const wchar_t* exePath, const wchar_t* cmdLine);
    void run();
@@ -243,7 +244,11 @@ public:
 
    void activate();
 
-   void setInitHook() { init_breakpoint = -1; }
+   void initHook() { init_breakpoint = -1; }
+   bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
+
+   size_t findEntryPoint(const wchar_t* programPath);
+   bool findSignature(char* signature);
 
    Debugger();
 };

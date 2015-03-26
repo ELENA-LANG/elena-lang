@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textparserH
@@ -30,10 +30,10 @@ public:
 class InvalidChar : _Exception
 {
 public:
-   int       column, row;
-   wchar16_t ch;
+   int column, row;
+   int ch;
 
-   InvalidChar(int column, int row, wchar16_t ch)
+   InvalidChar(int column, int row, int ch)
    {
       this->column = column;
       this->row = row;
@@ -45,9 +45,9 @@ public:
 
 struct LineInfo
 {
-   const wchar16_t* line;
-   char             state;
-   int              length;
+   ident_t line;
+   char    state;
+   int     length;
 
    int position;
    int column, row;
@@ -71,11 +71,11 @@ template <char dfaMaxChar, char dfaStart, char dfaWhitespace, int maxLength> cla
 protected:
    const char** _dfa;
 
-   TextReader*       _source;
-   int               _tabSize;
-   wchar16_t*        _line;
-   size_t            _position;
-   size_t            _column, _row;
+   TextReader*  _source;
+   int          _tabSize;
+   ident_c*     _line;
+   size_t       _position;
+   size_t       _column, _row;
 
    void nextColumn(size_t& position)
    {
@@ -103,7 +103,7 @@ protected:
    }
 
 public:
-   void step(wchar16_t ch, char& state, char& terminateState)
+   void step(ident_c ch, char& state, char& terminateState)
    {
       if(ch > dfaMaxChar) ch = dfaMaxChar;
 
@@ -151,7 +151,7 @@ public:
       _tabSize = tabSize;
       _source = source;
       _row = 0;
-      _line = StringHelper::w_allocate(maxLength + 1);
+      _line = StringHelper::allocate(maxLength + 1, DEFAULT_STR);
 
       _dfa = dfa;
 

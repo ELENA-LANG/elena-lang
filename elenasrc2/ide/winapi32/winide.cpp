@@ -1,15 +1,37 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: IDE & IDE Controls
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "winide.h"
-#include "win32//pehelper.h"
+#include "winideconst.h"
+
+#include "winapi32\winstatusbar.h"
+#include "winapi32\wintabbar.h"
+#include "wineditframe.h"
+#include "winapi32\winsplitter.h"
+#include "winoutput.h"
+#include "winapi32\winlistview.h"
+#include "../settings.h"
 
 using namespace _GUI_;
 
+#define CTRL_MENU          1
+#define CTRL_CONTEXTMENU   2
+#define CTRL_STATUSBAR     3
+#define CTRL_TOOLBAR       4
+#define CTRL_EDITFRAME     5
+#define CTRL_TABBAR        6
+#define CTRL_OUTPUT        7
+#define CTRL_MESSAGELIST   8
+#define CTRL_CALLLIST      9
+#define CTRL_BSPLITTER     10
+#define CTRL_HSPLITTER     11
+#define CTRL_CONTEXTBOWSER 12
+
 int AppToolBarButtonNumber = 19;
+
 ToolBarButton AppToolBarButtons[] =
 {
    {IDM_FILE_NEW, IDR_FILENEW},
@@ -46,17 +68,134 @@ MenuInfo contextMenuInfo[8] = {
    {IDM_DEBUG_RUNTO, CONTEXT_MENU_RUNTO},
 };
 
+// --- MessageLog ---
+
+class MessageLog : public ListView
+{
+   _ELENA_::Map<int, MessageBookmark*> _bookmarks;
+
+public:
+   MessageBookmark* getBookmark(int index) { return _bookmarks.get(index); }
+
+   void addMessage(text_t message, text_t file, text_t row, text_t col)
+   {
+      MessageBookmark* bookmark = new MessageBookmark(file, col, row);
+
+      int index = addItem(message);
+      setItemText(file, index, 1);
+      setItemText(row, index, 2);
+      setItemText(col, index, 3);
+
+      _bookmarks.add(index, bookmark);
+   }
+
+   virtual void clear()
+   {
+      ListView::clear();
+
+      _bookmarks.clear();
+   }
+
+   MessageLog(Control* owner)
+      : ListView(owner), _bookmarks(NULL, _ELENA_::freeobj)
+   {
+      addLAColumn(_T("Description"), 0, 600);
+      addLAColumn(_T("File"), 1, 100);
+      addLAColumn(_T("Line"), 2, 100);
+      addLAColumn(_T("Column"), 3, 100);
+   }
+};
+
+// --- CallStackLog ---
+
+class CallStackLog : public ListView
+{
+   _ELENA_::Map<int, MessageBookmark*> _bookmarks;
+
+   class CallStackWatch : public _ELENA_::_DebuggerCallStack
+   {
+      CallStackLog* _log;
+
+   public:
+      virtual void write(_ELENA_::ident_t moduleName, _ELENA_::ident_t className, _ELENA_::ident_t methodName, _ELENA_::ident_t p, int col, int row, size_t address)
+      {
+         _ELENA_::IdentifierString source(className);
+         _ELENA_::Path path;
+         _ELENA_::Path::loadPath(path, p);
+
+         if (!_ELENA_::emptystr(methodName))
+         {
+            source.append('.');
+            source.append(methodName);
+         }
+         source.append(' ');
+         source.append('<');
+         source.appendHex(address);
+         source.append('>');
+         
+         int index = _log->addItem(_ELENA_::WideString(source));
+         _log->setItemText(path, index, 1);
+
+         wchar_t rowStr[10];
+         _ELENA_::StringHelper::intToStr(row, rowStr, 10);
+         _log->setItemText(rowStr, index, 2);
+
+         MessageBookmark* bookmark = new MessageBookmark(source, path, col, row);
+         _log->_bookmarks.add(index, bookmark);
+      }
+
+      virtual void write(size_t address)
+      {
+         _ELENA_::WideString source;
+         source.append('<');
+         source.appendHex(address);
+         source.append('>');
+
+         _log->addItem(source);
+      }
+
+      CallStackWatch(CallStackLog* log)
+      {
+         _log = log;
+      }
+   };
+
+   CallStackWatch watch;
+
+public:
+   MessageBookmark* getBookmark(int index) { return _bookmarks.get(index); }
+
+   virtual void clear()
+   {
+      ListView :: clear();
+
+      _bookmarks.clear();
+   }
+
+   void refresh(_ELENA_::_DebugController* controller)
+   {
+      if (isVisible()) {
+         CallStackWatch watch(this);
+      
+         clear();
+         controller->readCallStack(&watch);
+      }
+   }
+
+   CallStackLog(Control* owner)
+      : ListView(owner), _bookmarks(NULL, _ELENA_::freeobj), watch(this)
+   {
+      addLAColumn(_T("Method"), 0, 600);
+      addLAColumn(_T("File"), 1, 100);
+      addLAColumn(_T("Line"), 2, 100);
+   }
+};
+
 MenuInfo browserContextMenuInfo[3] = {
 	   {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
 	   {0, NULL},
 	   {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
 };
-
-// --- removeFile ---
-inline void removeFile(const wchar_t* name)
-{
-   _wremove(name);
-}
 
 // --- setForegroundWindow() ---
 inline void setForegroundWindow(HWND hwnd)
@@ -75,34 +214,151 @@ inline void setForegroundWindow(HWND hwnd)
    ::SystemParametersInfo (0x2001, 0, (LPVOID)dwTimeoutMS, 0);   //HWND hCurrWnd;
 }
 
-// --- Win32ContextBrowser ---
+// --- ContextBrowser ---
 
-Win32ContextBrowser :: Win32ContextBrowser(Control* owner)
-   : ContextBrowser(owner)
+MainWindow::ContextBrowser :: ContextBrowser(Model* model)
 {
-   _menu.create(3, browserContextMenuInfo);
+   _model = model;
+   _treeView = NULL;   
 }
 
-TreeViewItem Win32ContextBrowser :: hitTest(short x, short y)
+void MainWindow::ContextBrowser :: assign(Control* treeView)
+{
+   _treeView = treeView;
+   _menu.create(3, browserContextMenuInfo);
+
+   _watch = new DebugWatch(this);
+}
+
+bool MainWindow::ContextBrowser::isHexNumberMode()
+{
+   return _model->hexNumberMode;
+}
+
+TreeViewItem MainWindow::ContextBrowser :: hitTest(short x, short y)
 {
    TVHITTESTINFO hit;
 
    hit.pt.x = x;
    hit.pt.y = y;
 
-   ::ScreenToClient(_handle, &hit.pt);
+   ::ScreenToClient(_treeView->getHandle(), &hit.pt);
 
-   HTREEITEM i = TreeView_HitTest(_handle, &hit);
+   HTREEITEM i = TreeView_HitTest(_treeView->getHandle(), &hit);
 
    return i;
 }
 
-void Win32ContextBrowser :: showContextMenu(HWND owner, short x, short y)
+void MainWindow::ContextBrowser :: showContextMenu(HWND owner, short x, short y, Model* model)
 {
    Point p(x, y);
 
-   _menu.checkItemById(IDM_DEBUG_SWITCHHEXVIEW, Settings::hexNumberMode);
+   _menu.checkItemById(IDM_DEBUG_SWITCHHEXVIEW, model->hexNumberMode);
    _menu.show(owner, p);
+}
+
+bool MainWindow::ContextBrowser :: isExpanded(void* node)
+{
+   return ((TreeView*)_treeView)->isExpanded((TreeViewItem)node);
+}
+
+void MainWindow::ContextBrowser::expand(void* node)
+{
+   ((TreeView*)_treeView)->expand((TreeViewItem)node);
+}
+
+void MainWindow::ContextBrowser :: clear(void* node)
+{
+   ((TreeView*)_treeView)->clear((TreeViewItem)node);
+}
+
+void MainWindow::ContextBrowser :: erase(void* node)
+{
+   ((TreeView*)_treeView)->erase((TreeViewItem)node);
+}
+
+void* MainWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, int param)
+{
+   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param);
+}
+
+void MainWindow::ContextBrowser :: reset()
+{
+   _watch->reset();
+}
+
+void MainWindow::ContextBrowser :: refresh(_ELENA_::_DebugController* controller)
+{
+   _watch->refresh(controller);
+}
+
+void MainWindow::ContextBrowser :: getCaption(void* node, _ELENA_::ident_c* caption, size_t length)
+{
+   _ELENA_::WideString s;
+   ((TreeView*)_treeView)->getCaption((TreeViewItem)node, s, 0x100);
+
+   _ELENA_::StringHelper::copy(caption, s, _ELENA_::getlength(s), length);
+}
+
+void MainWindow::ContextBrowser :: setCaption(void* node, _ELENA_::ident_t caption)
+{
+   ((TreeView*)_treeView)->setCaption((TreeViewItem)node, _ELENA_::WideString(caption));
+}
+
+void MainWindow::ContextBrowser::setParam(void* node, size_t param)
+{
+   ((TreeView*)_treeView)->setParam((TreeViewItem)node, param);
+}
+
+size_t MainWindow::ContextBrowser::getParam(void* node)
+{
+   return ((TreeView*)_treeView)->getParam((TreeViewItem)node);
+}
+
+void* MainWindow::ContextBrowser::getCurrent()
+{
+   return ((TreeView*)_treeView)->getCurrent();
+}
+
+void* MainWindow::ContextBrowser :: findNodeStartingWith(void* node, _ELENA_::ident_t name)
+{
+   _ELENA_::WideString caption(name);
+
+   text_c itemName[CAPTION_LEN];
+   size_t nameLen = _ELENA_::getlength(name);
+
+   TreeView* browser = (TreeView*)_treeView;
+
+   TreeViewItem item = browser->getChild((TreeViewItem)node);
+   while (item != NULL) {
+   //   size_t itemAddress = _browser->getParam(item);
+      browser->getCaption(item, itemName, CAPTION_LEN);
+
+      if ((_ELENA_::getlength(itemName) > nameLen + 1) && _ELENA_::StringHelper::compare(itemName, caption, nameLen)
+         && itemName[nameLen] == ' ')
+      {
+         return item;
+      }
+      item = browser->getNext(item);
+   }
+
+   return NULL;
+}
+
+void MainWindow::ContextBrowser :: browse(_ELENA_::_DebugController* controller)
+{
+   browse(controller, getCurrent());
+   expand(getCurrent());
+}
+
+void MainWindow::ContextBrowser::browse(_ELENA_::_DebugController* controller, void* current)
+{
+   if (current) {
+      size_t address = getParam(current);
+      DebuggerWatch subWatch(this, current, address, 0);
+
+      subWatch.refresh(controller);
+   }
 }
 
 // --- IDEWindow ---
@@ -112,45 +368,44 @@ void MainWindow :: _onNotify(NMHDR* notification)
    switch (notification->code)
    {
       case TCN_SELCHANGE:
-         _ide->onClientChanged(TABCHANGED_NOTIFY, notification);
+         onClientChanged(TABCHANGED_NOTIFY, notification);
          break;
       case TEXT_VIEW_CHANGED:
-         _ide->onClientChanged(VIEWCHANGED_NOTIFY, notification);
+         onClientChanged(VIEWCHANGED_NOTIFY, notification);
          break;
       case CONTEXT_MENU_ON:
-         _ide->onContextMenu((ContextMenuNMHDR*)notification);
+         onContextMenu((ContextMenuNMHDR*)notification);
          break;
        case TEXT_VIEW_MARGINCLICKED:
-         _ide->toggleBreakpoint();
+          _controller->toggleBreakpoint();
          break;
-      case IDE_DEBUGGER_LOADMODULE:
-         _ide->loadModule(((Message3NMHDR*)notification)->message, ((Message3NMHDR*)notification)->param);
-         break;
-      case IDE_DEBUGGER_LOADTEMPMODULE:
-         _ide->loadTemporalModule(((MessageNMHDR*)notification)->message, ((MessageNMHDR*)notification)->param);
-         break;
+//      case IDE_DEBUGGER_LOADMODULE:
+//         _ide->loadModule(((Message3NMHDR*)notification)->message, ((Message3NMHDR*)notification)->param);
+//         break;
+//      case IDE_DEBUGGER_LOADTEMPMODULE:
+//         _ide->loadTemporalModule(((MessageNMHDR*)notification)->message, ((MessageNMHDR*)notification)->param);
+//         break;
       case IDE_DEBUGGER_START:
-         _ide->onDebuggerStart();
+         _controller->onDebuggerStart();
          break;
       case IDE_DEBUGGER_STEP:
-         _ide->onDebuggerStep(((LineInfoNMHDR*)notification)->ns, ((LineInfoNMHDR*)notification)->file,
-                        ((LineInfoNMHDR*)notification)->position);
+         onDebuggerStep((LineInfoNMHDR*)notification);
          break;
       case IDE_DEBUGGER_STOP:
-         _ide->onDebuggerStop(false);
+         onDebuggerStop(false);
          break;
       case IDE_DEBUGGER_BREAK:
-         _ide->onDebuggerStop(true);
+         onDebuggerStop(true);
          break;
       case IDE_DEBUGGER_CHECKPOINT:
-         _ide->onDebuggerCheckPoint(((MessageNMHDR*)notification)->message);
+         _controller->onDebuggerCheckPoint(((MessageNMHDR*)notification)->message);
          break;
       case IDE_DEBUGGER_HOOK:
-         _ide->onDebuggerVMHook();
+         _controller->onDebuggerVMHook();
          break;
       case IDM_DEBUGGER_EXCEPTION:
       {
-         _ELENA_::String<tchar_t, 255> message(_T("Exception "));
+         _ELENA_::String<wchar_t, 255> message(_T("Exception "));
          message.appendHex(((Message2NMHDR*)notification)->param2);
          message.append(_T(": "));
          message.append(((Message2NMHDR*)notification)->message);
@@ -159,7 +414,7 @@ void MainWindow :: _onNotify(NMHDR* notification)
          break;
       }
       case NM_DBLCLK:
-         _ide->onDoubleClick(notification);
+         onDoubleClick(notification);
          break;
       case TTN_GETDISPINFO:
          if (isTabToolTip(notification->hwndFrom)) {
@@ -168,25 +423,25 @@ void MainWindow :: _onNotify(NMHDR* notification)
          else _onToolTip((NMTTDISPINFO*)notification);
          break;
       case IDM_COMPILER_SUCCESSFUL:
-         _ide->onCompilationEnd(SUCCESSFULLY_COMPILED, true);
+         _controller->onCompilationEnd(SUCCESSFULLY_COMPILED, true);
 
          if (((ExtNMHDR*)notification)->extParam) {
             // repeat menu command after successful compilation
             _onMenuCommand(((ExtNMHDR*)notification)->extParam);
-            _ide->onAutoCompilationEnd();
+            _controller->onAutoCompilationEnd();
          }
          break;
       case IDM_COMPILER_UNSUCCESSFUL:
-         _ide->cleanUpProject();
-         _ide->displayErrors();
-         _ide->onCompilationEnd(COMPILED_WITH_ERRORS, false);
+         _controller->cleanUpProject();
+         displayErrors();
+         _controller->onCompilationEnd(COMPILED_WITH_ERRORS, false);
          break;
       case IDM_COMPILER_WITHWARNING:
-         _ide->displayErrors();
-         _ide->onCompilationEnd(COMPILED_WITH_WARNINGS, true);
+         displayErrors();
+         _controller->onCompilationEnd(COMPILED_WITH_WARNINGS, true);
          break;
       case NM_RCLICK :
-         _ide->onRClick(notification);
+         onRClick(notification);
          break;
       case TVN_KEYDOWN:
          _onChildKeyDown(notification);
@@ -194,13 +449,21 @@ void MainWindow :: _onNotify(NMHDR* notification)
       case IDM_LAYOUT_CHANGED:
          onResize();
          break;
-   //   case IDE_EDITOR_ROWCOUNT_CHANGED:
-   //      onRowCountChanged((ExtNMHDR2*)notification);
-   //      break;
+      //case IDE_EDITOR_ROWCOUNT_CHANGED:
+      //   onRowCountChanged((ExtNMHDR2*)notification);
+      //   break;
       case TVN_ITEMEXPANDING:
-         _ide->onTVItemExpanded((NMTREEVIEW*)notification);
+         onTVItemExpanded((NMTREEVIEW*)notification);
          break;
    }
+}
+
+bool MainWindow :: isTabToolTip(HWND handle)
+{
+   if (!_tabTTHandle)
+      _tabTTHandle = ((EditFrame*)_controls[CTRL_EDITFRAME])->getToolTipHandle();
+
+   return _tabTTHandle == handle;
 }
 
 void MainWindow :: _onToolTip(NMTTDISPINFO* toolTip)
@@ -261,58 +524,50 @@ void MainWindow :: _onToolTip(NMTTDISPINFO* toolTip)
 
 void MainWindow :: _onTabTip(NMTTDISPINFO* tip)
 {
-   tip->lpszText = (LPWSTR)_ide->getDocumentPath(tip->hdr.idFrom);
+   tip->lpszText = (LPWSTR)_model->getDocumentPath(tip->hdr.idFrom);
 }
 
 void MainWindow :: _onMenuCommand(int optionID)
 {
    switch (optionID) {
       case IDM_PROJECT_NEW:
-         _ide->doCreateProject();
+         _controller->doCreateProject();
          break;
       case IDM_FILE_NEW:
-         _ide->doCreateFile();
+         _controller->doCreateFile();
          break;
       case IDM_FILE_OPEN:
-         _ide->doOpenFile();
+         _controller->doOpenFile();
          break;
       case IDM_PROJECT_OPEN:
-         _ide->doOpenProject();
+         _controller->doOpenProject();
          break;
       case IDM_FILE_CLOSE:
-         _ide->doCloseFile();
-         _ide->onChange();
+         _controller->doCloseFile();         
          break;
       case IDM_FILE_CLOSEALL:
-         _ide->closeAll(false);
-         _ide->onChange();
+         _controller->doCloseAll(false);
          break;
       case IDM_FILE_CLOSEALLBUT:
-         _ide->doCloseAllButActive();
-         _ide->onChange();
+         _controller->doCloseAllButActive();
          break;
       case IDM_FILE_SAVE:
-         _ide->doSave(false);
-         _ide->onChange();
+         _controller->doSave(false);
          break;
       case IDM_FILE_SAVEAS:
-         _ide->doSave(true);
-         _ide->onChange();
+         _controller->doSave(true);
          break;
       case IDM_FILE_SAVEPROJECT:
-         _ide->doSaveProject(true);
-         _ide->onChange();
+         _controller->doSaveProject(true);
          break;
       case IDM_FILE_SAVEALL:
-         _ide->doSaveAll(true);
-         _ide->onChange();
+         _controller->doSaveAll(true);
          break;
       case IDM_FILE_EXIT:
-         _ide->doExit();
+         _controller->doExit();
          break;
       case IDM_PROJECT_CLOSE:
-         _ide->closeAll();
-         _ide->onChange();
+         _controller->doCloseAll(true);
          break;
       case IDM_FILE_FILES_1:
       case IDM_FILE_FILES_2:
@@ -324,10 +579,10 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_FILE_FILES_8:
       case IDM_FILE_FILES_9:
       case IDM_FILE_FILES_10:
-         _ide->doSelectFile(optionID);
+         _controller->doOpenFile(_recentFiles.get(optionID));
          break;
       case IDM_FILE_FILES_CLEAR:
-         _ide->doClearFileHistory();
+         _recentFiles.clear();
          break;
       case IDM_FILE_PROJECTS_1:
       case IDM_FILE_PROJECTS_2:
@@ -339,97 +594,96 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_FILE_PROJECTS_8:
       case IDM_FILE_PROJECTS_9:
       case IDM_FILE_PROJECTS_10:
-         _ide->doSelectProject(optionID);
+         _controller->doOpenProject(_recentProjects.get(optionID));
          break;
       case IDM_FILE_PROJECTS_CLEAR:
-         _ide->doClearProjectHistory();
+         _recentProjects.clear();
+         _model->defaultProject.clear();
          break;
       case IDM_EDIT_UNDO:
-         _ide->doUndo();
+         _controller->doUndo();
          break;
       case IDM_EDIT_REDO:
-         _ide->doRedo();
+         _controller->doRedo();
          break;
       case IDM_EDIT_CUT:
-         if (_ide->doEditCopy())
-            _ide->doEditDelete();
-         _ide->onFrameChange();
+         if (_controller->doEditCopy())
+            _controller->doEditDelete();
          break;
       case IDM_EDIT_COPY:
-         _ide->doEditCopy();
-         _ide->onFrameChange();
+         _controller->doEditCopy();
          break;
       case IDM_EDIT_PASTE:
-         _ide->doEditPaste();
+         _controller->doEditPaste();
          break;
       case IDM_EDIT_DELETE:
-         _ide->doEditDelete();
+         _controller->doEditDelete();
          break;
       case IDM_EDIT_INDENT:
-         _ide->doIndent();
+         _controller->doIndent();
          break;
       case IDM_EDIT_OUTDENT:
-         _ide->doOutdent();
+         _controller->doOutdent();
          break;
       case IDM_EDIT_SELECTALL:
-         _ide->doSelectAll();
+         _controller->doSelectAll();
          break;
       case IDM_EDIT_TRIM:
-         _ide->doTrim();
+         _controller->doTrim();
          break;
       case IDM_EDIT_DUPLICATE:
-         _ide->doDuplicateLine();
+         _controller->doDuplicateLine();
          break;
       case IDM_EDIT_ERASELINE:
-         _ide->doEraseLine();
+         _controller->doEraseLine();
          break;
       case IDM_EDIT_COMMENT:
-         _ide->doComment();
+         _controller->doComment();
          break;
       case IDM_EDIT_UNCOMMENT:
-         _ide->doUnComment();
+         _controller->doUnComment();
          break;
       case IDM_EDIT_UPPERCASE:
-         _ide->doUpperCase();
+         _controller->doUpperCase();
          break;
       case IDM_EDIT_LOWERCASE:
-         _ide->doLowerCase();
+         _controller->doLowerCase();
          break;
       case IDM_EDIT_SWAP:
-         _ide->doSwap();
+         _controller->doSwap();
          break;
       case IDM_VIEW_OUTPUT:
-         _ide->doShowCompilerOutput(!Settings::compilerOutput);
+         _controller->doShowCompilerOutput(!_model->compilerOutput);
          break;
       case IDM_VIEW_MESSAGES:
-         _ide->doShowMessages(!Settings::messages);
+         _controller->doShowMessages(!_model->messages);
          break;
       case IDM_VIEW_WATCH:
-         _ide->doShowDebugWatch();
+         _controller->doShowDebugWatch(!isControlVisible(CTRL_CONTEXTBOWSER));
          break;
       case IDM_VIEW_CALLSTACK:
-         _ide->doShowCallStack(!Settings::callStack);
+         _controller->doShowCallStack(!_model->callStack);
          break;
       case IDM_SEARCH_FIND:
-         _ide->doFind();
+         _controller->doFind();
          break;
       case IDM_SEARCH_FINDNEXT:
-         _ide->doFindNext();
+         _controller->doFindNext();
          break;;
       case IDM_SEARCH_REPLACE:
-         _ide->doReplace();
+         _controller->doReplace();
          break;
       case IDM_SEARCH_GOTOLINE:
-         _ide->doGoToLine();
+         _controller->doGoToLine();
          break;
       case IDM_WINDOW_NEXT:
-         _ide->doSwitchTab(true);
+         _controller->doSwitchTab(true);
          break;
       case IDM_WINDOW_PREVIOUS:
-         _ide->doSwitchTab(false);
+         _controller->doSwitchTab(false);
          break;
       case IDM_WINDOW_WINDOWS:
-         _ide->doSelectWindow();
+         _controller->doSelectWindow();
          break;
       case IDM_WINDOW_FIRST:
       case IDM_WINDOW_SECOND:
@@ -441,77 +695,126 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_WINDOW_EIGHTH:
       case IDM_WINDOW_NINTH:
       case IDM_WINDOW_TENTH:
-         _ide->doSelectWindow(optionID);
+         _controller->doSelectWindow(_windowList.get(optionID));
          break;
       case IDM_EDITOR_OPTIONS:
-         _ide->doSetEditorSettings();
+         _controller->doSetEditorSettings();
          break;
       case IDM_DEBUGGER_OPTIONS:
-         _ide->doSetDebuggerSettings();
+         _controller->doSetDebuggerSettings();
          break;
       case IDM_PROJECT_COMPILE:
-         _ide->doCompileProject();
+         _controller->doCompileProject();
          break;
       case IDM_PROJECT_CLEAN:
-         _ide->cleanUpProject();
+         _controller->cleanUpProject();
          break;
       case IDM_DEBUG_RUN:
-         _ide->doDebugRun();
+         _controller->doDebugRun();
          break;
       case IDM_DEBUG_RUNTO:
-         _ide->doDebugRunTo();
+         _controller->doDebugRunTo();
          break;
       case IDM_DEBUG_STEPOVER:
-         _ide->doStepOver();
+         _controller->doStepOver();
          break;
       case IDM_DEBUG_NEXTSTATEMENT:
-         _ide->doNextStatement();
+         _controller->doNextStatement();
          break;
       case IDM_DEBUG_STEPINTO:
-         _ide->doStepInto();
+         _controller->doStepInto();
          break;
       case IDM_DEBUG_STOP:
-         _ide->doDebugStop();
+         _controller->doDebugStop();
          break;
       case IDM_DEBUG_INSPECT:
-         _ide->doDebugInspect();
+         _controller->doDebugInspect();
          break;
       case IDM_DEBUG_SWITCHHEXVIEW:
-         _ide->doDebugSwitchHexMode();
+         _controller->doDebugSwitchHexMode();
          break;
       case IDM_DEBUG_BREAKPOINT:
-         _ide->toggleBreakpoint();
+         _controller->toggleBreakpoint();
          break;
       case IDM_DEBUG_CLEARBREAKPOINT:
-         _ide->clearBreakpoints();
+         _controller->clearBreakpoints();
          break;
       case IDM_DEBUG_GOTOSOURCE:
-         _ide->doGotoSource();
+         _controller->doGotoSource();
          break;
       case IDM_PROJECT_OPTION:
-         _ide->showProjectSettings();
+         _controller->doSetProjectSettings();
          break;
       case IDM_PROJECT_FORWARDS:
-         _ide->showProjectForwards();
+         _controller->doSetProjectForwards();
          break;
       case IDM_PROJECT_INCLUDE:
-         _ide->doInclude();
+         _controller->doInclude();
          break;
       case IDM_PROJECT_EXCLUDE:
-         _ide->doExclude();
+         _controller->doExclude();
          break;
       case IDM_HELP_API:
-         _ide->openHelp();
+         openHelp();
          break;
       case IDM_HELP_ABOUT:
-         _ide->doShowAbout();
+         _controller->doShowAbout();
          break;
    }
 }
 
+void MainWindow :: onClientChanged(int code, NMHDR* notification)
+{
+   switch(code) {
+      case TABCHANGED_NOTIFY:
+         onTabChanged(notification->hwndFrom, -1);
+         break;
+      case VIEWCHANGED_NOTIFY:
+         _controller->onCursorChange();
+         _controller->onFrameChange();
+         break;
+   }
+}
+
+bool MainWindow :: checkControlHandle(int index, HWND wnd)
+{
+   return _controls[index]->checkHandle(wnd);
+}
+
+bool MainWindow :: isControlVisible(int index)
+{
+   return ((Control*)_controls[index])->isVisible();
+}
+
+void MainWindow :: onTabChanged(HWND wnd, int index)
+{
+   if (checkControlHandle(CTRL_EDITFRAME, wnd)) {
+      EditFrame* mainFrame = (EditFrame*)_controls[CTRL_EDITFRAME];
+      mainFrame->onTabChange(index);
+
+      _windowList.add(_model->getDocumentPath(index));
+
+      mainFrame->setFocus();
+      _controller->onFrameChange();
+      _controller->onDocIncluded();
+   }
+   else if (checkControlHandle(CTRL_TABBAR, wnd)) {
+      ((TabBar*)_controls[CTRL_TABBAR])->onTabChange(index);
+
+      _controller->onFrameChange();
+   }
+}
+
+void MainWindow :: onContextMenu(ContextMenuNMHDR* notification)
+{
+   bool selected = _model->currentDoc ? _model->currentDoc->hasSelection() : false;
+
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->showContextMenu(notification->x, notification->y, selected);
+}
+
 void MainWindow :: _onChildKeyDown(NMHDR* notification)
 {
-   if (_ide->isBrowser(notification->hwndFrom)) {
+   if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
       switch (((LPNMLVKEYDOWN)notification)->wVKey) {
          case 73:
             _onMenuCommand(IDM_DEBUG_INSPECT); // !! check if ctrl was pressed too
@@ -522,136 +825,73 @@ void MainWindow :: _onChildKeyDown(NMHDR* notification)
 
 void MainWindow :: _onDrawItem(DRAWITEMSTRUCT* item)
 {
-   _ide->onCustomDraw(item->hwndItem, item);
+   if (checkControlHandle(CTRL_EDITFRAME, item->hwndItem)) {
+      ((EditFrame*)_controls[CTRL_EDITFRAME])->_onDrawItem((DRAWITEMSTRUCT*)item);
+   }
+   else if (checkControlHandle(CTRL_TABBAR, item->hwndItem)) {
+      ((EditFrame*)_controls[CTRL_TABBAR])->_onDrawItem((DRAWITEMSTRUCT*)item);
+   }
+}
+
+void MainWindow :: onTVItemExpanded(NMTREEVIEW* notification)
+{
+   if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hdr.hwndFrom)) {
+      _controller->doBrowseWatch((void*)notification->itemNew.hItem);
+   }
+}
+
+void MainWindow :: browseWatch(_ELENA_::_DebugController* debugController, void* watchNode)
+{
+   _contextBrowser.browse(debugController, watchNode);
+}
+
+void MainWindow::browseWatch(_ELENA_::_DebugController* debugController)
+{
+   _contextBrowser.browse(debugController);
 }
 
 void MainWindow :: onActivate()
 {
-   _ide->onActivate();
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->setFocus();
+}
+
+void MainWindow :: onDoubleClick(NMHDR* notification)
+{
+   if (checkControlHandle(CTRL_MESSAGELIST, notification->hwndFrom)) {
+      _controller->highlightMessage(((MessageLog*)_controls[CTRL_MESSAGELIST])->getBookmark(((LPNMITEMACTIVATE)notification)->iItem), STYLE_ERROR_LINE);
+   }
+   else if (checkControlHandle(CTRL_CALLLIST, notification->hwndFrom)) {
+      _controller->highlightMessage(((CallStackLog*)_controls[CTRL_CALLLIST])->getBookmark(((LPNMITEMACTIVATE)notification)->iItem), STYLE_TRACE_LINE);
+   }
+}
+
+void MainWindow :: onRClick(NMHDR* notification)
+{
+   if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
+      DWORD dwpos = ::GetMessagePos();
+
+      HTREEITEM item = _contextBrowser.hitTest(LOWORD(dwpos), HIWORD(dwpos));
+      if (item) {
+         ((TreeView*)_controls[CTRL_CONTEXTBOWSER])->select(item);
+      }
+      _contextBrowser.showContextMenu(_handle, LOWORD(dwpos), HIWORD(dwpos), _model);
+   }
 }
 
 bool MainWindow :: onClose()
 {
-   if (!_ide->onClose())
+   if (!_controller->onClose())
       return false;
 
    return Window::onClose();
 }
 
-MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, WIN32IDE* env)
-   : SDIWindow(instance, caption)
-{
-   _ide = env;
-   _tabTTHandle = NULL;
-}
-
-// -- WIN32IDE ---
-TabBar* WIN32IDE :: createOutputBar()
-{
-   TabBar* tabBar = new TabBar(_appWindow, Settings::tabWithAboveScore);
-
-   _output = new Output(tabBar, _appWindow);
-   _messageList = new MessageLog(tabBar);
-   _callStackList = new CallStackLog(tabBar);
-   
-   tabBar->_setHeight(120);
-
-   Splitter* bottomSplitter = new Splitter(_appWindow, tabBar, false, IDM_LAYOUT_CHANGED);
-
-   bottomSplitter->_setConstraint(60, 100);
-
-   _appWindow->_getLayoutManager()->setAsBottom(bottomSplitter);
-
-   controls.add(tabBar);
-   controls.add(_output);
-   controls.add(_messageList);
-   controls.add(_callStackList);
-   controls.add(bottomSplitter);
-
-   return tabBar;
-}
-
-ContextBrowser* WIN32IDE :: createContextBrowser()
-{
-   Win32ContextBrowser* browser = new Win32ContextBrowser(_appWindow);
-   Splitter* leftSplitter = new Splitter(_appWindow, browser, true, IDM_LAYOUT_CHANGED);
-
-   browser->_setWidth(200);
-
-   _appWindow->_getLayoutManager()->setAsLeft(leftSplitter);
-
-   controls.add(browser);
-   controls.add(leftSplitter);
-
-   return browser;
-}
-
-void WIN32IDE :: start(bool maximized)
-{
-   onIDEInit();
-
-   _appWindow->show(maximized);
-
-   IDE::start();
-}
-
-void WIN32IDE :: onProjectClose()
-{
-   ((Output*)_output)->clear();
-
-   IDE::onProjectClose();
-}
-
-bool WIN32IDE :: compileProject(int postponedAction)
-{
-   _ELENA_::Path path(Project::getPath(), Project::getName());
-   path.appendExtension(_T("prj"));
-
-   _ELENA_::Path appPath(Paths::appPath, _T("elc.exe"));
-   _ELENA_::Path curDir(path, _ELENA_::StringHelper::findLast(path, '\\'));
-
-   _ELENA_::Path cmdLine(/*Settings::unicodeELC ? _T("elc.exe -xunicode") : */_T("elc.exe"));
-
-   const char* options = Project::getOptions();
-   if (!_ELENA_::emptystr(options)) {
-      cmdLine.append(' ');
-      cmdLine.append(options);
-   }
-
-   if (_ELENA_::StringHelper::find(path, _T(' '))) {
-      cmdLine.append(_T(" \""));
-      cmdLine.append(_T("-c"));
-      cmdLine.append(path);
-      cmdLine.append(_T("\""));
-   }
-   else {
-      cmdLine.append(_T(" -c"));
-      cmdLine.append(path);
-   }
-
-   //!! HOT FIX to deal with variable tab size
-   cmdLine.append(_T(" -xtab"));
-   cmdLine.appendInt(Settings::tabSize);
-
-   return ((Output*)_output)->execute(appPath, cmdLine, curDir, postponedAction);
-}
-
-void WIN32IDE :: onCustomDraw(void* handle, void* item)
-{
-   if (handle == _mainFrame->getHandle()) {
-      _mainFrame->_onDrawItem((DRAWITEMSTRUCT*)item);
-   }
-   else if (handle==_outputBar->getHandle()) {
-      _outputBar->_onDrawItem((DRAWITEMSTRUCT*)item);
-   }
-}
-
-void WIN32IDE :: displayErrors()
+void MainWindow :: displayErrors()
 {
    _ELENA_::String<wchar_t, 266> message, file;
    _ELENA_::String<wchar_t, 15> colStr, rowStr;
 
-   wchar_t* buffer = ((Output*)_output)->getOutput();
+   wchar_t* buffer = ((Output*)_controls[CTRL_OUTPUT])->getOutput();
 
    const wchar_t* s = buffer;
    while (s) {
@@ -696,197 +936,376 @@ void WIN32IDE :: displayErrors()
             colStr.clear();
          }
       }
-      _messageList->addMessage(message, file, rowStr, colStr);
+      ((MessageLog*)_controls[CTRL_MESSAGELIST])->addMessage(message, file, rowStr, colStr);
 
       //break;
    }
-   doShowCompilerOutput(true);
-   if (Settings::messages) {
-      _outputBar->selectTabChild(_messageList);
+   _controller->doShowCompilerOutput(true);
+   if (_model->messages) {
+      ((TabBar*)_controls[CTRL_TABBAR])->selectTabChild((Control*)_controls[CTRL_MESSAGELIST]);
    }
-   else doShowMessages(true);
+   else _controller->doShowMessages(true);
 
    _ELENA_::freestr(buffer);
 }
 
-void WIN32IDE :: cleanUpProject()
+bool MainWindow :: copyToClipboard(Document* document)
 {
-   // clean exe and dm files
-   if (!_ELENA_::emptystr(Project::getTarget()))
-   {
-      _ELENA_::Path targetFile(Project::getPath(), Project::getTarget());
-      removeFile(targetFile);
+   if (_clipboard.begin(this)) {
+      _clipboard.clear();
+      
+      HGLOBAL buffer = _clipboard.create(document->getSelectionLength());
+      wchar_t* text = _clipboard.allocate(buffer);
+      
+      document->copySelection(text);
+      
+      _clipboard.free(buffer);
+      _clipboard.copy(buffer);
+      
+      _clipboard.end();
 
-      targetFile.changeExtension(_T("dn"));
-      removeFile(targetFile);
+      return true;
    }
-   // clean module files
+   else return false;
+}
 
+void MainWindow :: pasteFrameClipboard(Document* document)
+{
+   if (_clipboard.begin(this)) {
+      HGLOBAL buffer = _clipboard.get();
+      wchar_t* text = _clipboard.allocate(buffer);
+      if  (!_ELENA_::emptystr(text)) {
+         document->insertLine(text, _ELENA_::getlength(text));
+      
+         _clipboard.free(buffer);
+      }
 
-   _ELENA_::ConstantIdentifier ext("nl");
-   _ELENA_::ConstantIdentifier d_ext("dnl");
-   _ELENA_::Path rootPath(Project::getPath(), Project::getOutputPath());
-   for (_ELENA_::ConfigCategoryIterator it = Project::SourceFiles() ; !it.Eof() ; it++) {
-      _ELENA_::Path source(rootPath, it.key());
-
-      _ELENA_::Path module;
-      module.copyPath(it.key());
-
-      _ELENA_::ReferenceNs name(Project::getPackage());
-      name.pathToName(module);          // get a full name
-
-      // remove module
-      module.copy(rootPath);
-      module.nameToPath(name, ext);
-      removeFile(module);
-
-      // remove debug info module
-      module.changeExtension(d_ext);
-      removeFile(module);
+      _clipboard.end();
    }
 }
 
-void WIN32IDE :: openHelp()
+int MainWindow :: getCurrentDocumentIndex()
 {
-   _ELENA_::Path apiPath(Paths::appPath, _T("..\\doc\\api\\index.html"));
+   return ((EditFrame*)_controls[CTRL_EDITFRAME])->getCurrentDocumentIndex();
+}
+
+int MainWindow :: newDocument(text_t name, Document* doc)
+{
+   return ((EditFrame*)_controls[CTRL_EDITFRAME])->newDocument(name, doc);
+}
+
+MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller* controller, Model* model)
+   : SDIWindow(instance, caption), _windowList(10, IDM_WINDOW_WINDOWS), _recentFiles(10, IDM_FILE_FILES), _recentProjects(10, IDM_FILE_PROJECTS), _contextBrowser(model)
+{
+   _controller = controller;
+   _model = model;
+   _tabTTHandle = NULL;
+
+   _controlCount = 13;
+   _controls = (_BaseControl**)malloc(_controlCount << 2);
+
+   _controls[0] = NULL;
+   _controls[CTRL_MENU] = new Menu(instance, IDR_IDE_ACCELERATORS, ::GetMenu(getHandle()));
+   _controls[CTRL_CONTEXTMENU] = new ContextMenu();
+
+   _windowList.assign((Menu*)_controls[CTRL_MENU]);
+   _recentFiles.assign((Menu*)_controls[CTRL_MENU]);
+   _recentProjects.assign((Menu*)_controls[CTRL_MENU]);
+
+   ContextMenu* contextMenu = (ContextMenu*)_controls[CTRL_CONTEXTMENU];
+
+   contextMenu->create(8, contextMenuInfo);
+
+   _controls[CTRL_STATUSBAR] = new StatusBar(this, 5, StatusBarWidths);
+   _controls[CTRL_TOOLBAR] = new ToolBar(this, 16, AppToolBarButtonNumber, AppToolBarButtons);
+   _controls[CTRL_EDITFRAME] = new EditFrame(this, true, contextMenu, model);
+   _controls[CTRL_TABBAR] = new TabBar(this, _model->tabWithAboveScore);
+   _controls[CTRL_OUTPUT] = new Output((Control*)_controls[CTRL_TABBAR], this);
+   _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
+   _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
+   _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
+   _controls[CTRL_CONTEXTBOWSER] = new TreeView(this);
+   _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_CONTEXTBOWSER], true, IDM_LAYOUT_CHANGED);
+
+   ((Control*)_controls[CTRL_TABBAR])->_setHeight(120);
+   ((Control*)_controls[CTRL_BSPLITTER])->_setConstraint(60, 100);
+   ((Control*)_controls[CTRL_CONTEXTBOWSER])->_setWidth(200);
+
+   _statusBar = (StatusBar*)_controls[CTRL_STATUSBAR];
+
+   EditFrame* frame = (EditFrame*)_controls[CTRL_EDITFRAME];
+   TextView* textView = new TextView(frame, 5, 28, 400, 400);
+   frame->populate(textView);
+   textView->setReceptor(this);
+   _contextBrowser.assign((Control*)_controls[CTRL_CONTEXTBOWSER]);
+   
+   setLeft(CTRL_HSPLITTER);
+   setTop(CTRL_TOOLBAR);
+   setClient(CTRL_EDITFRAME);
+   setBottom(CTRL_BSPLITTER);
+
+   frame->init(model);
+
+   showControls(CTRL_STATUSBAR, CTRL_EDITFRAME);
+}
+
+MainWindow :: ~MainWindow()
+{
+   for (size_t i = 0; i < _controlCount; i++)
+      _ELENA_::freeobj(_controls[i]);
+
+   _ELENA_::freeobj(_controls);
+}
+
+void MainWindow :: setTop(int index)
+{
+   _layoutManager.setAsTop((Control*)_controls[index]);
+}
+
+void MainWindow :: setLeft(int index)
+{
+   _layoutManager.setAsLeft((Control*)_controls[index]);
+}
+
+void MainWindow::setBottom(int index)
+{
+   _layoutManager.setAsBottom((Control*)_controls[index]);
+}
+
+void MainWindow::setClient(int index)
+{
+   _layoutManager.setAsClient((Control*)_controls[index]);
+}
+
+void MainWindow :: showControls(int from, int till)
+{
+   for (int i = from ; i <= till ; i++) {
+      ((Control*)_controls[i])->show();
+   }
+}
+
+void MainWindow :: hideControl(int index)
+{
+   ((Control*)_controls[index])->hide();
+}
+
+void MainWindow :: refreshControl(int index)
+{
+   ((Control*)_controls[index])->refresh();
+}
+
+Menu* MainWindow :: getMenu()
+{
+   return (Menu*)_controls[CTRL_MENU];
+}
+
+ToolBar* MainWindow :: getToolBar()
+{
+   return (ToolBar*)_controls[CTRL_TOOLBAR];
+}
+
+void MainWindow :: showFrame()
+{
+   EditFrame* frame = (EditFrame*)_controls[CTRL_EDITFRAME];
+
+   frame->show();
+   frame->setFocus();
+}
+
+void MainWindow :: activateFrame()
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->setFocus();
+}
+
+void MainWindow :: hideFrame()
+{
+   EditFrame* frame = (EditFrame*)_controls[CTRL_EDITFRAME];
+
+   frame->hide();
+}
+
+void MainWindow :: selectDocument(int docIndex)
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->setFocus();
+
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->selectTab(docIndex);
+}
+
+void MainWindow :: closeDocument(int docIndex)
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->eraseDocumentTab(docIndex);
+}
+
+void MainWindow :: markDocumentTitle(int docIndex, bool changed)
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->markDocument(docIndex, changed);
+}
+
+void MainWindow :: refreshDocument()
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->refreshDocument();
+}
+
+void MainWindow :: setStatusBarText(int index, text_t message)
+{
+   ((StatusBar*)_statusBar)->setText(index, message);
+}
+
+void MainWindow :: renameDocument(int index, text_t name)
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->renameDocumentTab(index, name);
+}
+
+void MainWindow :: addToWindowList(const wchar_t* path)
+{
+   _windowList.add(path);
+}
+
+void MainWindow::removeFromWindowList(const wchar_t* path)
+{
+   _windowList.remove(path);
+}
+
+void MainWindow :: addToRecentFileList(const wchar_t* path)
+{
+   _recentFiles.add(path);
+}
+
+void MainWindow :: addToRecentProjectList(const wchar_t* path)
+{
+   _recentProjects.add(path);
+}
+
+void MainWindow :: reloadSettings()
+{
+   ((EditFrame*)_controls[CTRL_EDITFRAME])->init(_model);
+}
+
+void MainWindow :: openHelp()
+{
+   _ELENA_::Path apiPath(_model->paths.appPath);
+   apiPath.combine(_T("..\\doc\\api\\index.html"));
 
    ShellExecute(NULL, _T("open"), apiPath, NULL, NULL, SW_SHOW);
 }
 
-
-void WIN32IDE :: onDebuggerStep(const wchar16_t* ns, const wchar_t* source, HighlightInfo info)
+void MainWindow :: openOutput()
 {
-   HWND hwnd = _appWindow->getHandle();
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
 
-   setForegroundWindow(hwnd);
-
-   if (::IsIconic(hwnd))
-      ::ShowWindowAsync(hwnd, Settings::appMaximized ? SW_MAXIMIZE : SW_SHOWNORMAL);
-
-   IDE::onDebuggerStep(ns, source, info);
+   tabBar->addTabChild(OUTPUT_TAB, (Control*)_controls[CTRL_OUTPUT]);
+   tabBar->selectTabChild((Control*)_controls[CTRL_OUTPUT]);
+   tabBar->show();
 }
 
-void WIN32IDE :: onDebuggerStop(bool broken)
+void MainWindow::switchToOutput()
 {
-   HWND hwnd = _appWindow->getHandle();
-
-   setForegroundWindow(hwnd);
-
-   if (::IsIconic(hwnd))
-      ::ShowWindowAsync(hwnd, Settings::appMaximized ? SW_MAXIMIZE : SW_SHOWNORMAL);
-
-   IDE::onDebuggerStop(broken);
+   ((TabBar*)_controls[CTRL_TABBAR])->selectTabChild((Control*)_controls[CTRL_OUTPUT]);
 }
 
-void WIN32IDE :: onRClick(NMHDR* notification)
+void MainWindow :: clearMessageList()
 {
-   if (_contextBrowser->checkHandle(notification->hwndFrom)) {
-      DWORD dwpos = ::GetMessagePos();
+   ((MessageLog*)_controls[CTRL_MESSAGELIST])->clear();
+}
 
-      HTREEITEM item = ((Win32ContextBrowser*)_contextBrowser)->hitTest(LOWORD(dwpos), HIWORD(dwpos));
-      if (item) {
-         _contextBrowser->select(item);
-      }
-      ((Win32ContextBrowser*)_contextBrowser)->showContextMenu(_appWindow->getHandle(), LOWORD(dwpos), HIWORD(dwpos));
+void MainWindow :: closeOutput()
+{
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+   tabBar->removeTabChild((Control*)_controls[CTRL_OUTPUT]);
+   if (tabBar->getTabCount() == 0) {
+      tabBar->hide();
    }
 }
 
-void WIN32IDE :: onClientChanged(int code, NMHDR* notification)
+void MainWindow :: openMessageList()
 {
-   switch(code) {
-      case TABCHANGED_NOTIFY:
-         onTabChanged(notification->hwndFrom, -1);
-         break;
-      case VIEWCHANGED_NOTIFY:
-         onCursorChange();
-         onFrameChange();
-         break;
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+   tabBar->addTabChild(MESSAGES_TAB, (Control*)_controls[CTRL_MESSAGELIST]);
+   tabBar->show();
+   tabBar->selectTabChild((Control*)_controls[CTRL_MESSAGELIST]);
+}
+
+void MainWindow :: closeMessageList()
+{
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+   tabBar->removeTabChild((Control*)_controls[CTRL_MESSAGELIST]);
+
+   if (tabBar->getTabCount() == 0) {
+      tabBar->hide();
    }
 }
 
-void WIN32IDE :: onContextMenu(ContextMenuNMHDR* notification)
+void MainWindow::openCallList()
 {
-   _mainFrame->showContextMenu(notification->x, notification->y);
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+   tabBar->addTabChild(CALLSTACK_TAB, (Control*)_controls[CTRL_CALLLIST]);
+   tabBar->show();
+   tabBar->selectTabChild((Control*)_controls[CTRL_CALLLIST]);
 }
 
-void WIN32IDE :: onTabChanged(HWND wnd, int index)
+void MainWindow::closeCallList()
 {
-   if (_mainFrame->checkHandle(wnd)) {
-      _mainFrame->onTabChange(index);
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
 
-      _windowList.add(_mainFrame->getDocumentPath(index));
+   tabBar->removeTabChild((Control*)_controls[CTRL_CALLLIST]);
 
-      _mainFrame->setFocus();
-      onFrameChange();
-      onDocIncluded();
-   }
-   else if (_outputBar->checkHandle(wnd)) {
-      _outputBar->onTabChange(index);
-
-      onFrameChange();
+   if (tabBar->getTabCount() == 0) {
+      tabBar->hide();
    }
 }
 
-void WIN32IDE :: onActivate()
+bool MainWindow :: compileProject(_ProjectManager* project, int postponedAction)
 {
-   if (_mainFrame)
-      _mainFrame->setFocus();
+   _ELENA_::Path path(_model->project.path);
+   path.combine(_model->project.name);
+   path.appendExtension(_T("prj"));
+
+   _ELENA_::Path appPath(_model->paths.appPath);
+   appPath.combine(_T("elc.exe"));
+
+   _ELENA_::Path curDir(path, _ELENA_::StringHelper::findLast(path, '\\'));
+
+   _ELENA_::Path cmdLine(_T("elc.exe"));
+
+   const char* options = project->getOptions();
+   if (!_ELENA_::emptystr(options)) {
+      cmdLine.append(' ');
+      _ELENA_::Path::appendPath(cmdLine, options);
+   }
+
+   if (_ELENA_::StringHelper::find(path, _T(' '))) {
+      cmdLine.append(_T(" \""));
+      cmdLine.append(_T("-c"));
+      cmdLine.append(path);
+      cmdLine.append(_T("\""));
+   }
+   else {
+      cmdLine.append(_T(" -c"));
+      cmdLine.append(path);
+   }
+
+   //!! HOT FIX to deal with variable tab size
+   cmdLine.append(_T(" -xtab"));
+   cmdLine.appendInt(_model->tabSize);
+
+   return ((Output*)_controls[CTRL_OUTPUT])->execute(appPath, cmdLine, curDir, postponedAction);
 }
 
-WIN32IDE :: WIN32IDE(HINSTANCE instance, AppDebugController* debugController)
-   : IDE(debugController), controls(NULL, _ELENA_::freeobj)
-{
-   this->instance = instance;
-
-   // create main window & menu
-   _appWindow = new MainWindow(instance, _T("IDE"), this);
-   _appMenu = new Menu(instance, IDR_IDE_ACCELERATORS, ::GetMenu(_appWindow->getHandle()));
-   contextMenu.create(8, contextMenuInfo);
-
-   _appToolBar = new ToolBar(_appWindow, 16, AppToolBarButtonNumber, AppToolBarButtons);
-   _statusBar = new StatusBar(_appWindow, 5, StatusBarWidths);
-   _outputBar = createOutputBar();
-   _contextBrowser = createContextBrowser();
-
-   _mainFrame = new EditFrame(_appWindow, true, &contextMenu);
-   TextView* textView = new TextView(_mainFrame, 5, 28, 400, 400);
-   _mainFrame->populate(textView);
-   textView->setReceptor(_appWindow);
-
-   _mainFrame->show();
-   _appToolBar->show();
-   _statusBar->show();
-
-   _appWindow->_getLayoutManager()->setAsTop(_appToolBar);
-   _appWindow->_setStatusBar(_statusBar);
-   _appWindow->_getLayoutManager()->setAsClient(_mainFrame);
-
-   controls.add(_mainFrame);
-   controls.add(textView);
-   controls.add(_statusBar);
-   controls.add(_appToolBar);
-   controls.add(_appMenu);
-   controls.add(_appWindow);
-
-   // initialize recent files / projects / windows manager
-   _recentFiles.assign(_appMenu);
-   _recentProjects.assign(_appMenu);
-   _windowList.assign(_appMenu);
-}
-
-// --- Win32AppDebugController ---
-
-void Win32AppDebugController :: _notify(int code)
+void MainWindow :: _notify(int code)
 {
    NMHDR notification;
 
    notification.code = code;
    notification.hwndFrom = NULL;
 
-   ::SendMessage(_receptor->getHandle(), WM_NOTIFY, 0, (LPARAM)&notification);
+   ::SendMessage(_handle, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void Win32AppDebugController :: _notify(int code, const wchar_t* message, int param)
+void MainWindow :: _notify(int code, const wchar_t* message, int param)
 {
    MessageNMHDR notification;
 
@@ -895,10 +1314,10 @@ void Win32AppDebugController :: _notify(int code, const wchar_t* message, int pa
    notification.message = message;
    notification.param = param;
 
-   ::SendMessage(_receptor->getHandle(), WM_NOTIFY, 0, (LPARAM)&notification);
+   ::SendMessage(_handle, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void Win32AppDebugController :: _notify(int code, const wchar_t* message, const wchar_t* param)
+void MainWindow :: _notify(int code, const wchar_t* message, const wchar_t* param)
 {
    Message3NMHDR notification;
 
@@ -907,10 +1326,10 @@ void Win32AppDebugController :: _notify(int code, const wchar_t* message, const 
    notification.message = message;
    notification.param = param;
 
-   ::SendMessage(_receptor->getHandle(), WM_NOTIFY, 0, (LPARAM)&notification);
+   ::SendMessage(_handle, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void Win32AppDebugController :: _notify(int code, const wchar_t* message, int param1, int param2)
+void MainWindow :: _notify(int code, const wchar_t* message, int param1, int param2)
 {
    Message2NMHDR notification;
 
@@ -920,10 +1339,10 @@ void Win32AppDebugController :: _notify(int code, const wchar_t* message, int pa
    notification.param1 = param1;
    notification.param2 = param2;
 
-   ::SendMessage(_receptor->getHandle(), WM_NOTIFY, 0, (LPARAM)&notification);
+   ::SendMessage(_handle, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void Win32AppDebugController :: _notify(int code, const wchar_t* ns, const wchar_t* source, HighlightInfo info)
+void MainWindow :: _notify(int code, const wchar_t* ns, const wchar_t* source, HighlightInfo info)
 {
    LineInfoNMHDR notification;
 
@@ -933,50 +1352,50 @@ void Win32AppDebugController :: _notify(int code, const wchar_t* ns, const wchar
    notification.file = source;
    notification.position = info;
 
-   ::SendMessage(_receptor->getHandle(), WM_NOTIFY, 0, (LPARAM)&notification);
+   ::SendMessage(_handle, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-size_t Win32AppDebugController :: findEntryPoint(const tchar_t* programPath)
+void MainWindow :: resetDebugWindows()
 {
-   return _ELENA_::PEHelper::findEntryPoint(programPath);
+   _contextBrowser.reset();
+   ((CallStackLog*)_controls[CTRL_CALLLIST])->clear();
 }
 
-void Win32AppDebugController :: onInitBreakpoint()
+void MainWindow :: refreshDebugWindows(_ELENA_::_DebugController* debugController)
 {
-   if (_debugInfoPtr == 0) {
-      // define if it is a vm client or stand-alone
-
-      // !! hard-coded address; better propely to load part of NT_HEADER to correctly get bss address
-      size_t rdata = _debugger.Context()->readDWord(0x4000D0);
-
-      // load Executable image
-      char signature[0x10];
-      _debugger.Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE) + 1);
-
-      if (strcmp(signature, ELENACLIENT_SIGNITURE) == 0) {
-         if (_vmHook == 0) {
-            _vmHook = _debugger.Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE),4));
-
-            // enable debug mode
-            _debugger.Context()->writeDWord(_vmHook, -1);
-
-            // continue debugging
-            _events.setEvent(DEBUG_RESUME);
-            return;
-         }
-         // load VM debug section address
-         else _debugInfoPtr = _debugger.Context()->readDWord(_vmHook + 4);
-      }
-      else if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
-         DebugReader reader(&_debugger, 0x400000, 0);
-
-         _ELENA_::PEHelper::seekSection(reader, ".debug", _debugInfoPtr);
-      }
-      // !! notify if the executable is not supported
-   }
-
-   AppDebugController::onInitBreakpoint();
-
-   _notify(IDE_DEBUGGER_HOOK);
+   _contextBrowser.refresh(debugController);
+   ((CallStackLog*)_controls[CTRL_CALLLIST])->refresh(debugController);
 }
 
+void MainWindow :: openDebugWatch()
+{
+   showControls(CTRL_CONTEXTBOWSER, CTRL_CONTEXTBOWSER);
+   refreshControl(CTRL_CONTEXTBOWSER);
+   refresh();
+}
+
+void MainWindow :: closeDebugWatch()
+{
+   hideControl(CTRL_CONTEXTBOWSER);
+   refresh();
+}
+
+void MainWindow :: onDebuggerStep(LineInfoNMHDR* notification)
+{
+   setForegroundWindow(_handle);
+
+   if (::IsIconic(_handle))
+      ::ShowWindowAsync(_handle, _model->appMaximized ? SW_MAXIMIZE : SW_SHOWNORMAL);
+
+   _controller->onDebuggerStep(notification->ns, notification->file, notification->position);
+}
+
+void MainWindow :: onDebuggerStop(bool broken)
+{
+   setForegroundWindow(_handle);
+
+   if (::IsIconic(_handle))
+      ::ShowWindowAsync(_handle, _model->appMaximized ? SW_MAXIMIZE : SW_SHOWNORMAL);
+
+   _controller->onDebuggerStop(broken);
+}

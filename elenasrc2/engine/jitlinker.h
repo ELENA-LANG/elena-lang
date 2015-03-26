@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitlinkerH
@@ -20,9 +20,9 @@ namespace _ELENA_
 // --- JITUnresolvedException ---
 struct JITUnresolvedException
 {
-   const wchar16_t* reference;
+   ident_t reference;
 
-   JITUnresolvedException(const wchar16_t* reference)
+   JITUnresolvedException(ident_t reference)
    {
       this->reference = reference;
    }
@@ -30,9 +30,9 @@ struct JITUnresolvedException
 
 struct JITConstantExpectedException
 {
-   const wchar16_t* reference;
+   ident_t reference;
 
-   JITConstantExpectedException(const wchar16_t* reference)
+   JITConstantExpectedException(ident_t reference)
    {
       this->reference = reference;
    }
@@ -107,9 +107,9 @@ class JITLinker
    int            _statLength;
 //   int            _uniqueID;           // used for dynamic subject
 
-   void createNativeDebugInfo(const wchar16_t* reference, void* param, size_t& sizePtr);
-   void createNativeSymbolDebugInfo(const wchar16_t* reference, size_t& sizePtr);
-   void createNativeClassDebugInfo(const wchar16_t* reference, void* vaddress, size_t& sizePtr);
+   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
+   void createNativeSymbolDebugInfo(ident_t reference, size_t& sizePtr);
+   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
@@ -125,23 +125,23 @@ class JITLinker
    ref_t resolveMessage(_Module* module, ref_t reference);
 
 //   void* resolveNativeVariable(const wchar16_t*  reference);
-   void* resolveNativeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo);
-   void* resolveBytecodeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo);
-   void* createBytecodeVMTSection(const wchar16_t*  reference, int mask, ClassSectionInfo sectionInfo, References& references);
-   void* resolveBytecodeVMTSection(const wchar16_t*  reference, int mask, ClassSectionInfo sectionInfo);
-   void* resolveConstant(const wchar16_t*  reference, int mask);
-   void* resolveStaticVariable(const wchar16_t* reference, int mask);
+   void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
+   void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
+   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
+   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
+   void* resolveConstant(ident_t reference, int mask);
+   void* resolveStaticVariable(ident_t reference, int mask);
 ////   void* resolveDump(const wchar16_t*  reference, int size, int mask);
-   void* resolveMessage(const wchar16_t*  reference, const wchar16_t* vmt);
+   void* resolveMessage(ident_t reference, ident_t vmt);
 //   //void* resolveLoader(const wchar16_t*  reference);
 //////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
    void prepareCompiler();
 
-   void* resolve(const wchar16_t* reference, int mask, bool silentMode);
+   void* resolve(ident_t reference, int mask, bool silentMode);
 
-   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, const wchar16_t* reference, void* param);
+   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
 
    bool getDebugMode() const { return _withDebugInfo; }
 
@@ -152,7 +152,7 @@ public:
 
    void* calculateVAddress(MemoryWriter* writer, int mask);
 
-   ref_t parseMessage(const wchar16_t*  reference);
+   ref_t parseMessage(ident_t reference);
 
    JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase)
    {

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WindowList class header
-//                                              (C)2005-2011, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef windowlistH
@@ -18,8 +18,8 @@ namespace _GUI_
 class WindowList : public MenuHistoryList
 {
 public:
-   void add(const tchar_t* item);
-   void remove(const tchar_t* item);
+   void add(text_t item);
+   void remove(text_t item);
 
    WindowList(int maxCount, int menuBaseId);
 };

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //		Win32: Static dialogs header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef windialogsH
@@ -22,7 +22,7 @@ public:
 
 private:
    OPENFILENAME _struct;
-   wchar_t        _fileName[MAX_PATH * 8];        // ??
+   wchar_t      _fileName[MAX_PATH * 8];        // ??
    int          _defaultFlags;
 
 public:
@@ -104,6 +104,8 @@ public:
 
 class ProjectSettingsDialog : public Dialog
 {
+   _ProjectManager* _project;
+
    virtual int _getDialogID() const { return IDD_SETTINGS; }
 
    void loadTemplateList();
@@ -112,16 +114,20 @@ class ProjectSettingsDialog : public Dialog
    virtual void onOK();
 
 public:   
-   ProjectSettingsDialog(Control* owner) : Dialog(owner) {}
+   ProjectSettingsDialog(Control* owner, _ProjectManager* project) : Dialog(owner)
+   {
+      _project = project;
+   }
 };
-
 
 // --- ProjectForwardsDialog ---
 
 class ProjectForwardsDialog : public Dialog
 {
-   bool _changed;
-   int  _current;
+   _ProjectManager* _project;
+
+   bool  _changed;
+   int   _current;
 
    bool validateItem(wchar_t* &text);
 
@@ -138,11 +144,13 @@ class ProjectForwardsDialog : public Dialog
    virtual void doCommand(int id, int command);
 
 public:   
-   ProjectForwardsDialog(Control* owner)
+   ProjectForwardsDialog(Control* owner, _ProjectManager* project)
       : Dialog(owner) 
    { 
       _changed = false; 
-	  _current = -1;
+	   _current = -1;
+
+      _project = project;
    }
 };
 
@@ -210,6 +218,8 @@ public:
 
 class EditorSettings : public Dialog
 {
+   Model* _model;
+
    virtual int _getDialogID() const { return IDD_EDITOR_SETTINGS; }
 
    virtual void doCommand(int id, int command);
@@ -218,9 +228,10 @@ class EditorSettings : public Dialog
    virtual void onEditorHighlightSyntaxChanged();
 
 public:
-   EditorSettings(Control* owner)
+   EditorSettings(Control* owner, Model* model)
       : Dialog(owner)
    {
+      _model = model;
    }
 };
 
@@ -228,21 +239,22 @@ public:
 
 class DebuggerSettings : public Dialog
 {
+   Model* _model;
+
    virtual int _getDialogID() const { return IDD_DEBUGGER_SETTINGS; }
 
    virtual void onCreate();
    virtual void onOK();
 
 public:
-   DebuggerSettings(Control* owner)
+   DebuggerSettings(Control* owner, Model* model)
       : Dialog(owner)
    {
+      _model = model;
    }
 };
 
 // --- FindDialog ---
-
-typedef _ELENA_::List<wchar_t*> SearchHistory;
 
 class FindDialog : public Dialog
 {
@@ -271,7 +283,6 @@ public:
    }
 };
 
-
 // --- AboutDialog ---
 
 class AboutDialog : public Dialog
@@ -287,8 +298,6 @@ public:
    { 
    }
 };
-
-
 
 } // _GUI_
 

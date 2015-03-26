@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef assemblerH
@@ -31,7 +31,7 @@ struct AssemblerException
 struct TokenInfo
 {
    SourceReader* reader;
-   wchar16_t     value[50];
+   ident_c       value[50];
    LineInfo      terminal;
 
    bool Eof() const { return terminal.state == dfaEOF; }
@@ -42,7 +42,7 @@ struct TokenInfo
          throw AssemblerException(err, terminal.row);
    }
 
-	bool getInteger(int& integer, Map<const wchar16_t*, size_t>& constants)
+	bool getInteger(int& integer, Map<ident_t, size_t>& constants)
 	{
       if (terminal.state==dfaInteger) {
          integer = StringHelper::strToInt(value);
@@ -50,7 +50,7 @@ struct TokenInfo
       }
 		else if (terminal.state==dfaHexInteger) {
 			value[getlength(value)-1] = 0;
-         integer = StringHelper::strToLong(value, 16);
+         integer = StringHelper::strToULong(value, 16);
 			return true;
       }
       else if (terminal.state==dfaIdentifier && constants.exist(value)) {
@@ -64,14 +64,14 @@ struct TokenInfo
       else return false;
    }
 
-	const wchar16_t* read()
+	ident_t read()
 	{
 		terminal = reader->read(value, 50);
 
 		return value;
 	}
 
-	const wchar16_t* read(const char* word, const char* err)
+	ident_t read(const char* word, const char* err)
 	{
 		read();
 		if (!check(word))
@@ -80,7 +80,7 @@ struct TokenInfo
 		return value;
 	}
 
-	int readInteger(Map<const wchar16_t*, size_t>& constants)
+	int readInteger(Map<ident_t, size_t>& constants)
 	{
 		read();
 		int integer;
@@ -91,7 +91,7 @@ struct TokenInfo
 		return 0;
 	}
 
-	int readSignedInteger(Map<const wchar16_t*, size_t>& constants)
+	int readSignedInteger(Map<ident_t, size_t>& constants)
 	{
       bool negative = false;
 		read();
@@ -109,14 +109,9 @@ struct TokenInfo
 		return 0;
 	}
 
-   bool check(const wchar16_t* word)
+   bool check(ident_t word)
 	{
       return StringHelper::compare(value, word);
-	}
-
-   bool check(const char* word)
-	{
-      return ConstantIdentifier::compare(value, word);
 	}
 
    TokenInfo(SourceReader* reader)
@@ -130,7 +125,7 @@ struct TokenInfo
 class Assembler
 {
 public:
-	virtual void compile(TextReader* reader, const tchar_t* outputPath) = 0;
+	virtual void compile(TextReader* reader, path_t outputPath) = 0;
 
 	virtual ~Assembler() {}
 };

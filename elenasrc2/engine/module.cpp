@@ -3,7 +3,7 @@
 //
 //		This file contains the class implementing ELENA Engine Module class
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -20,9 +20,9 @@ _BaseModule  :: _BaseModule()
 {
 }
 
-const wchar16_t* _BaseModule :: resolveReference(ref_t reference)
+ident_t _BaseModule :: resolveReference(ref_t reference)
 {
-   const wchar16_t* key = _resolvedReferences.get(reference);
+   ident_t key = _resolvedReferences.get(reference);
    if (!key) {
       ReferenceMap::Iterator it = _references.start();
       key = goToKey(it, reference, DEFAULT_STR);
@@ -32,9 +32,9 @@ const wchar16_t* _BaseModule :: resolveReference(ref_t reference)
    return key;
 }
 
-const wchar16_t* _BaseModule :: resolveSubject(ref_t reference)
+ident_t _BaseModule :: resolveSubject(ref_t reference)
 {
-   const wchar16_t* key = _resolvedSubjects.get(reference);
+   ident_t key = _resolvedSubjects.get(reference);
    if (!key) {
       key = retrieveKey(_subjects.start(), reference, DEFAULT_STR);
 
@@ -43,7 +43,7 @@ const wchar16_t* _BaseModule :: resolveSubject(ref_t reference)
    return key;
 }
 
-const wchar16_t* _BaseModule :: resolveConstant(ref_t reference)
+ident_t _BaseModule :: resolveConstant(ref_t reference)
 {
    return retrieveKey(_constants.start(), reference, DEFAULT_STR);
 }
@@ -55,19 +55,19 @@ Module :: Module()
 {
 }
 
-Module :: Module(const wchar16_t* name)
+Module :: Module(ident_t name)
    : _name(name), _sections(NULL, freeobj)
 {
 }
 
-void Module :: mapPredefinedReference(const wchar16_t* name, ref_t reference)
+void Module :: mapPredefinedReference(ident_t name, ref_t reference)
 {
    _resolvedReferences.clear();
 
    _references.add(name, reference);
 }
 
-ref_t Module :: mapReference(const wchar16_t* reference)
+ref_t Module :: mapReference(ident_t reference)
 {
    bool f=false;
    if (getlength(reference) < 3)
@@ -88,7 +88,7 @@ ref_t Module :: mapReference(const wchar16_t* reference)
    return refId;
 }
 
-ref_t Module :: mapSubject(const wchar16_t* subject, bool existing)
+ref_t Module :: mapSubject(ident_t subject, bool existing)
 {
    if (existing)
       return _subjects.get(subject);
@@ -105,14 +105,14 @@ ref_t Module :: mapSubject(const wchar16_t* subject, bool existing)
    }
 }
 
-ref_t Module :: mapConstant(const wchar16_t* constant)
+ref_t Module :: mapConstant(ident_t constant)
 {
    size_t nextId = _constants.Count() + 1;
 
    return mapKey(_constants, constant, nextId);
 }
 
-ref_t Module :: mapReference(const wchar16_t* reference, bool existing)
+ref_t Module :: mapReference(ident_t reference, bool existing)
 {
    if (existing) {
       return _references.get(reference);
@@ -183,7 +183,7 @@ LoadResult Module :: load(StreamReader& reader)
    }
 
    // load name...
-   reader.readWideString(_name);
+   reader.readString(_name);
 
    // load references...
    _references.read(&reader);
@@ -209,7 +209,7 @@ bool Module :: save(StreamWriter& writer)
    writer.write(MODULE_SIGNATURE, strlen(MODULE_SIGNATURE));
 
    // save name...
-   writer.writeWideLiteral(_name, getlength(_name) + 1);
+   writer.writeLiteral(_name, getlength(_name) + 1);
 
    // save references...
    _references.write(&writer);
@@ -245,7 +245,7 @@ ROModule :: ROModule(StreamReader& reader, LoadResult& result)
    }
 
    // load name...
-   reader.readWideString(_name);
+   reader.readString(_name);
 
    // load references...
    _references.read(&reader);
@@ -285,12 +285,12 @@ void ROModule :: loadSections(StreamReader& reader)
    }
 }
 
-ref_t ROModule :: mapReference(const wchar16_t* reference)
+ref_t ROModule :: mapReference(ident_t reference)
 {
    return _references.get(reference);
 }
 
-ref_t ROModule :: mapReference(const wchar16_t* reference, bool existing)
+ref_t ROModule :: mapReference(ident_t reference, bool existing)
 {
    if (!existing) {
       throw InternalError("Read-only Module");
@@ -298,7 +298,7 @@ ref_t ROModule :: mapReference(const wchar16_t* reference, bool existing)
    else return _references.get(reference);
 }
 
-ref_t ROModule :: mapSubject(const wchar16_t* reference, bool existing)
+ref_t ROModule :: mapSubject(ident_t reference, bool existing)
 {
    if (!existing) {
       throw InternalError("Read-only Module");
@@ -306,7 +306,7 @@ ref_t ROModule :: mapSubject(const wchar16_t* reference, bool existing)
    else return _subjects.get(reference);
 }
 
-ref_t ROModule :: mapConstant(const wchar16_t* reference)
+ref_t ROModule :: mapConstant(ident_t reference)
 {
    return _constants.get(reference);
 }

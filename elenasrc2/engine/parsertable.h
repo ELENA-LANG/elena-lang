@@ -3,7 +3,7 @@
 //               
 //		This header contains ELENA Parser table class declaration.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef parserTableH
@@ -27,12 +27,12 @@ private:
    TableHash  _table;
 
 public:
-   const wchar16_t* retrieveSymbol(int symbol)
+   ident_t retrieveSymbol(int symbol)
    {
       return retrieveKey(_symbols.start(), symbol, DEFAULT_STR);
    }
 
-   bool registerSymbol(int symbol, const wchar16_t* value);
+   bool registerSymbol(int symbol, ident_t value);
    void registerRule(int l_symbol, int* r_symbols, size_t length);
 
    int generate();   
@@ -40,7 +40,7 @@ public:
    void load(StreamReader* reader);
    void save(StreamWriter* writer); 
 	
-   int defineSymbol(const wchar16_t* terminal);
+   int defineSymbol(ident_t terminal);
 
    bool read(int nonterminal, int terminal, ParserStack& derivationStack);
 

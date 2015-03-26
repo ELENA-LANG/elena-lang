@@ -21,19 +21,19 @@ namespace _ELENA_
 class _Module
 {
 public:
-   virtual const wchar16_t* Name() const = 0;
+   virtual ident_t Name() const = 0;
 
-   virtual const wchar16_t* resolveReference(ref_t reference) = 0;
-   virtual const wchar16_t* resolveSubject(ref_t reference) = 0;
-   virtual const wchar16_t* resolveConstant(ref_t reference) = 0;
+   virtual ident_t resolveReference(ref_t reference) = 0;
+   virtual ident_t resolveSubject(ref_t reference) = 0;
+   virtual ident_t resolveConstant(ref_t reference) = 0;
 
-   virtual ref_t mapReference(const wchar16_t* reference) = 0;
-   virtual ref_t mapReference(const wchar16_t* reference, bool existing) = 0;
+   virtual ref_t mapReference(ident_t reference) = 0;
+   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
 
-   virtual ref_t mapSubject(const wchar16_t* reference, bool existing) = 0;
-   virtual ref_t mapConstant(const wchar16_t* reference) = 0;
+   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
+   virtual ref_t mapConstant(ident_t reference) = 0;
 
-   virtual void mapPredefinedReference(const wchar16_t* name, ref_t reference) = 0;
+   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
@@ -47,8 +47,8 @@ public:
 class _LibraryManager
 {
 public:
-   virtual _Module* resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference) = 0;
-   virtual _Module* resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference) = 0;
+   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
 // --- SectionInfo ---
@@ -94,172 +94,139 @@ public:
 
    virtual _Memory* getTargetDebugSection() = 0;
 
-   virtual SectionInfo getSectionInfo(const wchar16_t* reference, size_t mask) = 0;
+   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask) = 0;
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask) = 0;
-   virtual ClassSectionInfo getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
+   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
 
-   virtual const wchar16_t* getLiteralClass() = 0;
-   virtual const wchar16_t* getCharacterClass() = 0;
-   virtual const wchar16_t* getIntegerClass() = 0;
-   virtual const wchar16_t* getRealClass() = 0;
-   virtual const wchar16_t* getLongClass() = 0;
-   virtual const wchar16_t* getMessageClass() = 0;
-   virtual const wchar16_t* getSignatureClass() = 0;
-   virtual const wchar16_t* getVerbClass() = 0;
-   virtual const wchar16_t* getNamespace() = 0;
+   virtual ident_t getLiteralClass() = 0;
+   virtual ident_t getCharacterClass() = 0;
+   virtual ident_t getIntegerClass() = 0;
+   virtual ident_t getRealClass() = 0;
+   virtual ident_t getLongClass() = 0;
+   virtual ident_t getMessageClass() = 0;
+   virtual ident_t getSignatureClass() = 0;
+   virtual ident_t getVerbClass() = 0;
+   virtual ident_t getNamespace() = 0;
 
-   virtual const wchar16_t* retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
-   virtual void* resolveReference(const wchar16_t* reference, size_t mask) = 0;
+   virtual void* resolveReference(ident_t reference, size_t mask) = 0;
 
-   virtual void mapReference(const wchar16_t* reference, void* vaddress, size_t mask) = 0;
+   virtual void mapReference(ident_t reference, void* vaddress, size_t mask) = 0;
 
    virtual ~_JITLoader() {}
 };
 
-// --- IdentifierString ---
-
-typedef String<wchar16_t, IDENTIFIER_LEN> IdentifierString;
-
-// --- ConstantIdentifier ---
-
-class ConstantIdentifier : public String<wchar16_t, 30>
+class IdentifierString : public String < ident_c, IDENTIFIER_LEN >
 {
 public:
-   // NOTE: Should be used only to compare with ANSI s2
-   static bool compare(const wchar16_t* s1, const char* s2)
+   static ident_c* clone(const wide_c* value)
    {
-      if (s1 && s2) {
-         while(*s1 && *s2) {
-            if (*s2 >= 0x80 || (short)*s1 != (short)*s2)
-               return false;
-
-            s1++;
-            s2++;
-         }
-
-         return (*s1 == *s2);
-      }
-      return (emptystr(s1) && emptystr(s2));
+      ident_c buf[IDENTIFIER_LEN];
+      size_t length = IDENTIFIER_LEN;
+      StringHelper::copy(buf, value, getlength(value), length);
+      return StringHelper::clone(buf);
    }
-
-   // NOTE: Should be used only to compare with ANSI s2
-   static bool compare(const wchar16_t* s1, const char* s2, size_t length)
+   IdentifierString()
    {
-      if (s1 && s2) {
-         while(length > 0) {
-            if (*s2 >= 0x80 || (short)*s1 != (short)*s2)
-               return false;
-
-            s1++;
-            s2++;
-
-            length--;
-         }
-
-         return true;
-      }
-      return (emptystr(s1) && emptystr(s2));
    }
-
-   ConstantIdentifier()
+   IdentifierString(ident_t value)
+      : String(value)
    {
-      _string[0] = 0;
    }
-   ConstantIdentifier(const char* s)
+   IdentifierString(ident_t value, size_t length)
+      : String(value, length)
    {
-      int length = getlength(s);
-      for(int i = 0 ; i <= length ; i++) {
-         _string[i] = s[i];
-      }
+   }
+   IdentifierString(ident_t value1, ident_t value2)
+      : String(value1, value2)
+   {
+   }
+   IdentifierString(ident_t value1, ident_t value2, ident_t value3)
+      : String(value1, value2, value3)
+   {
+   }
+   IdentifierString(ident_t value1, ident_t value2, ident_t value3, ident_t value4)
+      : String(value1, value2, value3, value4)
+   {
+   }
+   IdentifierString(const wide_c* value, size_t sourLength)
+   {
+      size_t length = IDENTIFIER_LEN;
+      StringHelper::copy(_string, value, sourLength, length);
+      _string[length] = 0;
+   }
+   IdentifierString(const wide_c* value)
+   {
+      size_t length = IDENTIFIER_LEN;
+      StringHelper::copy(_string, value, getlength(value), length);
+      _string[length] = 0;
    }
 };
 
-//typedef ConstantIdentifier ConstIdentifier;
-
 // --- ReferenceNs ---
 
-class ReferenceNs : public String<wchar16_t, IDENTIFIER_LEN * 2>
+class ReferenceNs : public String<ident_c, IDENTIFIER_LEN * 2>
 {
 public:
-   static bool compareNs(const wchar16_t* reference, const wchar16_t* ns)
-   {
-      int length = getlength(ns);
-      return StringHelper::compare(reference, ns, length) && reference[length] == '\'';
-   }
+//   static bool compareNs(const wchar16_t* reference, const wchar16_t* ns)
+//   {
+//      int length = getlength(ns);
+//      return StringHelper::compare(reference, ns, length) && reference[length] == '\'';
+//   }
 
-   void pathToName(const tchar_t* path)
+   void pathToName(path_t path)
    {
+      ident_c buf[IDENTIFIER_LEN];
+      size_t bufLen;
+
       while (!emptystr(path)) {
          if (!emptystr(_string)) {
             append('\'');
          }
          int pos = StringHelper::find(path, PATH_SEPARATOR);
          if (pos != -1) {
-            append(path, pos);
+            bufLen = IDENTIFIER_LEN;
+            StringHelper::copy(buf, path, pos, bufLen);
+
+            append(buf, bufLen);
             path += pos + 1;
          }
          else {
             pos = StringHelper::findLast(path, '.');
-            if (pos != -1) {
-               append(path, pos);
-            }
-            else append(path);
+            if (pos == -1)
+               pos = getlength(path);
+
+            bufLen = IDENTIFIER_LEN;
+            StringHelper::copy(buf, path, pos, bufLen);
+            append(buf, bufLen);
 
             break;
          }
       }
    }
 
-   void combine(const wchar16_t* s)
+   void combine(ident_t s)
    {
       append('\'');
       append(s);
    }
 
-   void combine(const char* s)
-   {
-      append('\'');
-      append(s);
-   }
-
-   void appendName(const wchar16_t* reference)
-   {
-      append(reference + StringHelper::findLast(reference, '\'') + 1);
-   }
+//   void appendName(const wchar16_t* reference)
+//   {
+//      append(reference + StringHelper::findLast(reference, '\'') + 1);
+//   }
 
    ReferenceNs()
    {
    }
-   ReferenceNs(const wchar16_t* properName)
-      : String<wchar16_t, IDENTIFIER_LEN * 2>(properName)
+   ReferenceNs(ident_t properName)
+      : String<ident_c, IDENTIFIER_LEN * 2>(properName)
    {
    }
-   ReferenceNs(const wchar16_t* moduleName, const wchar16_t* properName)
-   {
-      copy(moduleName);
-      if (!emptystr(_string)) {
-         combine(properName);
-      }
-      else copy(properName);
-   }
-   ReferenceNs(const wchar16_t* moduleName, const wchar16_t* ns, const wchar16_t* properName)
-   {
-      copy(moduleName);
-
-      if (!emptystr(_string)) {
-         combine(ns);
-      }
-      else copy(ns);
-
-      if (!emptystr(_string)) {
-         combine(properName);
-      }
-      else copy(properName);
-   }
-   ReferenceNs(const wchar16_t* moduleName, const char* properName)
+   ReferenceNs(ident_t moduleName, ident_t properName)
    {
       copy(moduleName);
       if (!emptystr(_string)) {
@@ -267,39 +234,61 @@ public:
       }
       else copy(properName);
    }
-   ReferenceNs(const char* moduleName, const wchar16_t* properName)
-   {
-      copy(moduleName);
-      if (!emptystr(_string)) {
-         combine(properName);
-      }
-      else copy(properName);
-   }
-   ReferenceNs(const char* moduleName, const char* properName)
-   {
-      copy(moduleName);
-      if (!emptystr(_string)) {
-         combine(properName);
-      }
-      else copy(properName);
-   }
-   ReferenceNs(const char* rootName, const char* moduleName, const char* properName)
-   {
-      copy(rootName);
-      if (!emptystr(_string)) {
-         combine(moduleName);
-      }
-      else copy(moduleName);
-
-      if (!emptystr(_string)) {
-         combine(properName);
-      }
-      else copy(properName);
-   }
-   ReferenceNs(const char* moduleName)
-   {
-      copy(moduleName);
-   }
+//   ReferenceNs(const wchar16_t* moduleName, const wchar16_t* ns, const wchar16_t* properName)
+//   {
+//      copy(moduleName);
+//
+//      if (!emptystr(_string)) {
+//         combine(ns);
+//      }
+//      else copy(ns);
+//
+//      if (!emptystr(_string)) {
+//         combine(properName);
+//      }
+//      else copy(properName);
+//   }
+//   ReferenceNs(const wchar16_t* moduleName, const char* properName)
+//   {
+//      copy(moduleName);
+//      if (!emptystr(_string)) {
+//         combine(properName);
+//      }
+//      else copy(properName);
+//   }
+//   ReferenceNs(const char* moduleName, const wchar16_t* properName)
+//   {
+//      copy(moduleName);
+//      if (!emptystr(_string)) {
+//         combine(properName);
+//      }
+//      else copy(properName);
+//   }
+//   ReferenceNs(const char* moduleName, const char* properName)
+//   {
+//      copy(moduleName);
+//      if (!emptystr(_string)) {
+//         combine(properName);
+//      }
+//      else copy(properName);
+//   }
+//   ReferenceNs(const char* rootName, const char* moduleName, const char* properName)
+//   {
+//      copy(rootName);
+//      if (!emptystr(_string)) {
+//         combine(moduleName);
+//      }
+//      else copy(moduleName);
+//
+//      if (!emptystr(_string)) {
+//         combine(properName);
+//      }
+//      else copy(properName);
+//   }
+//   ReferenceNs(const char* moduleName)
+//   {
+//      copy(moduleName);
+//   }
 };
 
 // --- ReferenceName ---
@@ -310,11 +299,11 @@ public:
    ReferenceName()
    {
    }
-   ReferenceName(const wchar16_t* reference)
+   ReferenceName(ident_t reference)
    {
       copy(reference + StringHelper::findLast(reference, '\'') + 1);
    }
-   ReferenceName(const wchar16_t* reference, const wchar16_t* package)
+   ReferenceName(ident_t reference, ident_t package)
    {
       int length = getlength(package);
 
@@ -327,22 +316,22 @@ public:
 
 // --- NamespaceName ---
 
-class NamespaceName : public IdentifierString
+class NamespaceName : public String < ident_c, IDENTIFIER_LEN >
 {
 public:
-   static bool hasNameSpace(const wchar16_t* reference)
-   {
-      return (StringHelper::findLast(reference, '\'', -1) != -1);
-   }
+//   static bool hasNameSpace(const wchar16_t* reference)
+//   {
+//      return (StringHelper::findLast(reference, '\'', -1) != -1);
+//   }
 
-   NamespaceName(const wchar16_t* reference)
+   NamespaceName(ident_t reference)
    {
       int pos = StringHelper::findLast(reference, '\'', 0);
       copy(reference, pos);
       _string[pos] = 0;
    }
 
-   bool compare(const wchar16_t* reference)
+   bool compare(ident_t reference)
    {
       size_t pos = StringHelper::findLast(reference, '\'', 0);
       if (pos == 0 && getlength(_string)==0)
@@ -363,9 +352,9 @@ template<class S> class QuoteTemplate
 public:
    size_t Length() { return _string.Length(); }
 
-   operator const wchar16_t*() const { return _string; }
+   operator ident_t() const { return _string; }
 
-   QuoteTemplate(const wchar16_t* string)
+   QuoteTemplate(ident_t string)
    {
       int mode = 0; // 1 - normal, 2 - character code
       int index = 0;
@@ -396,11 +385,11 @@ public:
                break;
             case 2:
                if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
-                  String<wchar16_t, 12> number(string + index, i - index);
+                  String<ident_c, 12> number(string + index, i - index);
                   if (string[i] == 'h') {
-                     _string.append((wchar16_t)number.toLong(16));
+                     _string.append((ident_c)number.toLong(16));
                   }
-                  else _string.append((wchar16_t)number.toInt());
+                  else _string.append((ident_c)number.toInt());
 
                   if(string[i] == '"') {
                      mode = 1;
@@ -438,10 +427,10 @@ struct ClassHeader
 
 struct ClassInfo
 {
-   typedef MemoryMap<ref_t, bool, false>          MethodMap;
-   typedef MemoryMap<const wchar16_t*, int, true> FieldMap;
-   typedef MemoryMap<int, ref_t>                  FieldTypeMap;
-   typedef MemoryMap<ref_t, ref_t>                MethodTypeMap;
+   typedef MemoryMap<ref_t, bool, false> MethodMap;
+   typedef MemoryMap<ident_t, int, true> FieldMap;
+   typedef MemoryMap<int, ref_t>         FieldTypeMap;
+   typedef MemoryMap<ref_t, ref_t>       MethodTypeMap;
 
    ClassHeader   header;
    size_t        size;           // Object size
@@ -584,10 +573,10 @@ inline size_t tableRule(size_t key)
 }
 
 // --- mapping keys ---
-inline size_t mapReferenceKey(const wchar16_t* key)
+inline size_t mapReferenceKey(ident_t key)
 {
    size_t index = StringHelper::findLast(key, '\'');
-   const wchar16_t* p = key + StringHelper::findLast(key, '\'', 0) + 1;
+   ident_t p = key + StringHelper::findLast(key, '\'', 0) + 1;
 
    int position = *p - 'a';
    if (position > 26)
@@ -600,23 +589,23 @@ inline size_t mapReferenceKey(const wchar16_t* key)
 
 // --- Common type definitions ---
 
-typedef Map<const wchar16_t*, _Module*> ModuleMap;
+typedef Map<ident_t, _Module*> ModuleMap;
 
 // --- Reference mapping types ---
-typedef MemoryHashTable<const wchar16_t*, ref_t, mapReferenceKey, 29> ReferenceMap;
+typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
 
 // --- Message mapping types ---
-typedef Map<const wchar16_t*, ref_t> MessageMap;
+typedef Map<ident_t, ref_t> MessageMap;
 
 // --- ParserTable auxiliary types ---
 typedef Stack<int>                                           ParserStack;
-typedef MemoryMap<const wchar16_t*, int>                     SymbolMap;
+typedef MemoryMap<ident_t, int>                              SymbolMap;
 typedef MemoryHashTable<size_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<size_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
 
-inline bool isWeakReference(const wchar16_t* referenceName)
+inline bool isWeakReference(ident_t referenceName)
 {
    return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
 }

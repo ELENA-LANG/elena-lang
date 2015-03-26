@@ -68,7 +68,7 @@ void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
    writer->write(&number, 8);
 }
 
-void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wchar16_t* value)
+void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
 {
    int length = getlength(value) + 1;
 
@@ -79,7 +79,7 @@ void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wchar16_t* 
    writer->writeDWord(0);
 
    // object body
-   writer->writeWideLiteral(value, length);
+   writer->writeLiteral(value, length);
    writer->align(4, 0);
 }
 

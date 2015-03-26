@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0010
+#define ELC_BUILD_NUMBER             0x0012
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -32,7 +32,6 @@
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
 #define ELC_PRM_DEBUGINFO           'd'
-////#define ELC_PRM_LIBRARY             'l'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
 #define ELC_PRM_START               's'
@@ -117,41 +116,37 @@ class Project : public _ELENA_::Project
    int _tabSize, _encoding;
 
    virtual _ELENA_::ConfigCategoryIterator getCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
-   virtual const char* getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
+   virtual _ELENA_::ident_t getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
 
 public:
    _ELENA_::Path appPath;
 
    _ELENA_::_JITCompiler* createJITCompiler();
 
-   virtual void printInfo(const char* msg, const char* value);
-   virtual void printInfo(const char* msg, const wchar16_t* param);
+   virtual void printInfo(const char* msg, _ELENA_::ident_t param);
 
-   virtual void raiseError(const char* msg);
-   virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
-   virtual void raiseError(const char* msg, const char* value);
-   virtual void raiseError(const char* msg, const wchar16_t* value);
-   virtual void raiseError(const char* msg, const wchar16_t value);
+   //virtual void raiseError(const char* msg);
+   virtual void raiseError(const char* msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value);
+   virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
-   virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path);
+   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
-   virtual void raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal);
-   virtual void raiseWarning(int level, const char* msg, const tchar_t* path);
+   void addSource(_ELENA_::path_t path);
 
-   void addSource(const tchar_t* path);
-
-   virtual void loadConfig(_ELENA_::_ConfigFile& config, const tchar_t* configPath)
+   virtual void loadConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath)
    {
       _ELENA_::Project::loadConfig(config, configPath);
    }
 
-   virtual void loadConfig(const tchar_t* path, bool root = false, bool requiered = true);
+   virtual void loadConfig(_ELENA_::path_t path, bool root = false, bool requiered = true);
 
-   void setOption(const tchar_t* value);
+   void setOption(_ELENA_::path_t value);
 
    virtual int getDefaultEncoding() { return _encoding; }
 
-   virtual int getTabSize() { return _tabSize; }
+   //virtual int getTabSize() { return _tabSize; }
 
    void cleanUp();
 

@@ -59,7 +59,7 @@ _Memory* x86Instance :: getTargetSection(size_t mask)
    }
 }
 
-void x86Instance :: mapReference(const wchar16_t* reference, void* vaddress, size_t mask)
+void x86Instance :: mapReference(ident_t reference, void* vaddress, size_t mask)
 {
    Instance::mapReference(reference, vaddress, mask);
 
@@ -69,12 +69,14 @@ void x86Instance :: mapReference(const wchar16_t* reference, void* vaddress, siz
    }
 }
 
-ref_t x86Instance :: resolveExternal(const wchar16_t* external)
+ref_t x86Instance :: resolveExternal(ident_t external)
 {
    ref_t reference = _exportReferences.get(external);
    if (reference == (size_t)-1) {
-      const wchar16_t* function = external + StringHelper::findLast(external, '.') + 1;
-      Path dll(external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
+      ident_t function = external + StringHelper::findLast(external, '.') + 1;
+
+      Path dll;
+      Path::loadPath(dll, external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
 
       // align memory
       MemoryWriter writer(&_dataProcess);
@@ -133,7 +135,7 @@ bool x86Instance :: restart(bool debugMode)
 
 // --- x86ELENAMachine ---
 
-x86ELENAMachine :: x86ELENAMachine(const tchar_t* rootPath)
+x86ELENAMachine :: x86ELENAMachine(path_t rootPath)
    : ELENAMachine(rootPath), _instances(NULL, freeobj)
 {
 }

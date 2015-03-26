@@ -2,19 +2,20 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Debugger class and its helpers implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "debugger.h"
 #include "..\idecommon.h"
+#include "win32\pehelper.h"
 
 using namespace _ELENA_;
 
 // --- main thread that is the debugger residing over a debuggee ---
 
-BOOL WINAPI debugEventThread(_Controller* controller)
+BOOL WINAPI debugEventThread(_DebugController* controller)
 {
    controller->debugThread();
 
@@ -350,6 +351,7 @@ Debugger :: Debugger()
 {
    started = false;
    init_breakpoint = 0;
+   _vmHook = 0;
    threadId = 0;
    current = NULL;
 
@@ -363,7 +365,7 @@ bool Debugger :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine)
    STARTUPINFO         si;
    Path				   currentPath;
 
-   currentPath.copyPath(exePath);
+   currentPath.copySubPath(exePath);
 
    memset(&si, 0, sizeof(si));
 
@@ -625,7 +627,7 @@ void Debugger :: clearBreakpoints()
    breakpoints.clear();
 }
 
-bool Debugger :: startThread(_Controller* controller)
+bool Debugger :: startThread(_DebugController* controller)
 {
    HANDLE hThread = CreateThread(NULL, 4096,
                      (LPTHREAD_START_ROUTINE)debugEventThread,
@@ -674,4 +676,42 @@ void Debugger :: activate()
    if (started) {
       EnumWindows(EnumThreadWndProc, dwCurrentThreadId);
    }
+}
+
+size_t Debugger :: findEntryPoint(const wchar_t* programPath)
+{
+  return _ELENA_::PEHelper::findEntryPoint(programPath);
+}
+
+bool Debugger::findSignature(char* signature)
+{
+   // !! hard-coded address; better propely to load part of NT_HEADER to correctly get bss address
+   size_t rdata = Context()->readDWord(0x4000D0);
+
+   // load Executable image
+   Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE) + 1);
+
+   return true;
+}
+
+bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
+{
+   if (standalone) {
+      reader.seek(0x400000);
+
+      _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
+   }
+   else if (_vmHook == 0) {
+      size_t rdata = Context()->readDWord(0x4000D0);
+      _vmHook = Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE), 4));
+
+      // enable debug mode
+      Context()->writeDWord(_vmHook, -1);
+
+      return false;
+   }
+   // load VM debug section address
+   else debugInfoPtr = Context()->readDWord(_vmHook + 4);
+
+   return true;
 }

@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 // --- ImageLoader ---
 
-void _ImageLoader :: mapReference(const wchar16_t* reference, void* vaddress, size_t mask)
+void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask)
 {
    switch (mask) {
       case mskConstantRef:
@@ -60,7 +60,7 @@ void _ImageLoader :: mapReference(const wchar16_t* reference, void* vaddress, si
    }
 }
 
-ref_t _ImageLoader :: resolveExternal(const wchar16_t* external)
+ref_t _ImageLoader :: resolveExternal(ident_t external)
 {
    ref_t reference = _exportReferences.get(external);
    if (reference == (size_t)-1) {
@@ -71,7 +71,7 @@ ref_t _ImageLoader :: resolveExternal(const wchar16_t* external)
    return reference;
 }
 
-void* _ImageLoader :: resolveReference(const wchar16_t* reference, size_t mask)
+void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
 {
    if (mask != 0) {
       switch (mask) {

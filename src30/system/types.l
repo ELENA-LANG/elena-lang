@@ -18,6 +18,8 @@
 
 // === basic dynamic types ===
 #subject(class:system'LiteralValue) literal.
+#subject(class:system'WideLiteralValue) wide.
+
 #subject(class:system'OpenArgs)     params.
 #subject(class:system'OpenArgs)     args.
 #subject(class:system'Integer)      intvar.

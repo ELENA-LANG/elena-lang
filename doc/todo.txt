@@ -20,11 +20,42 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              adev - lib30                       
-                       * system'text : UTF8String
-                       * system'text : utf8 <-> ansi, utf16 <-> ansi, utf8 <-> utf16, utf16 <-> win1251, utf16 <-> win1252
-                       * linux console operations
+              adev - lib30 : redesign
+                       * test all coreapi functions
 
+                       * uncomment textbuffer
+                       * uncomment all system code
+                       * uncomment all extension code
+                       * uncomment tests                       
+                       * tests
+                       * test rsave
+                       * test real to int / short / byte conversion
+                       * get rid of warnings
+                       * test vm samples
+                       * test thread operation
+
+                       * encoder -> converts to array of unicode characters, and then returns either literal or wide
+                       
+
+              adev - lib30                       
+                       * aload : unboxArgList, handle_tape, handle_group
+
+                       * test unboxArgList
+
+                       * 0xD8 - 0xDA - reserved for string operations, so  cinsert - 0xD8 0x0001, ninsert - 0xDA 0x0001, 
+
+                       * new ecodes : 
+
+                          wtoc, ctow, wtou, utow, ctou, utoc, cton, ctoa, ctol, ltoc, rtoc, ctor, cseek, ecqual, cless, cadd
+
+                       * literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
+                       * wliteral, WideLiteralValue and WideString
+                       * linux: support basic console operations
+                       * system'text : encodings utf8, ansi, utf16, win1251, win1252
+                       * system'text : UTF8String
+                       * linux : migrate lib30
+                       * Console / ConsoleEx - probably we should have two console objects - utf-16 one for windows and utf-8 for linux
+                       
 <=================> 
                                               
 1.9.19
@@ -135,6 +166,7 @@ week2:
                        * implement: position of highest bit set
                        * implement: test if all bits set in mask clear in receiver
                        * support: primitive operation int + long, long + int
+                       * bytenumber : bitwise operation with long number - incorrect code
                        
                        * convertor toArray , which converts list to elist wrap or returns itself
                          (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
@@ -156,6 +188,8 @@ week2:
                        * implement LiteralValue.indexOf&index&char:aChar&out'int
                        * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
                        * Should stream protocol support reset, clone methods?
+                       * LiteralValue#class : new&length&shortarray  - should the array be verified?
+                       * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
                                                                                                                              
               arev - lib30 review
                        * fix bytearray read / write operation with byte, char, int, long, real
@@ -416,6 +450,10 @@ week3:
                        * migrate all script samples
 
 week 4:
+              xdev - ide
+                       * ide : test with utf8, win1252, ...
+                       * elc : test with utf8, win1252, ...
+
               smaint - rosetta samples
                        * fix bestshuffle
                        * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
@@ -454,6 +492,7 @@ week 4:
 --------
 week1:
               xdev - generic development  
+                       * wide literal constant
                        * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
                          not, than the operation with self should be boxed?
                        * probably we should not directly call any coreapi functions, all functionality be implemented as byte codes ?
@@ -576,6 +615,7 @@ week1:
                        * show built-in variable $subject
                                               
               idev - generic development                                          
+                       * linux : debugger
                        * show the file encoding
                        * refresh / reload documents after changing encoding ??
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in

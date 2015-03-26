@@ -6,37 +6,36 @@
 
 #include "appwindow.h"
 #include "text.h"
-#include "module.h"
+#include "sourcedoc.h"
+#include "settings.h"
 
 using namespace _GUI_;
-
-#define EMPTY_STRING      _T("")
 
 #define OPENING_BRACKET   _T("({[")
 #define CLOSING_BRACKET   _T(")}]")
 
 // --- Lexical DFA Table ---
 
-const tchar_t lexStart        = 'a';
-const tchar_t lexCommentStart = 'b';
-const tchar_t lexKeyword      = 'c';
-const tchar_t lexOperator     = 'd';
-const tchar_t lexBrackets     = 'e';
-const tchar_t lexObject       = 'f';
-const tchar_t lexCloseBracket = 'g';
-const tchar_t lexStick        = 'h';
-const tchar_t lexDigit        = 'i';
-const tchar_t lexHint         = 'j';
-const tchar_t lexMessage      = 'k';
-const tchar_t lexLookahead    = 'l';
-const tchar_t lexLineComment  = 'm';
-const tchar_t lexComment      = 'n';
-const tchar_t lexComment2     = 'o';
-const tchar_t lexQuote        = 'p';
-const tchar_t lexQuote2       = 'q';
-const tchar_t lexHint2        = 'r';
+const text_c lexStart        = 'a';
+const text_c lexCommentStart = 'b';
+const text_c lexKeyword = 'c';
+const text_c lexOperator = 'd';
+const text_c lexBrackets = 'e';
+const text_c lexObject = 'f';
+const text_c lexCloseBracket = 'g';
+const text_c lexStick = 'h';
+const text_c lexDigit = 'i';
+const text_c lexHint = 'j';
+const text_c lexMessage = 'k';
+const text_c lexLookahead = 'l';
+const text_c lexLineComment = 'm';
+const text_c lexComment = 'n';
+const text_c lexComment2 = 'o';
+const text_c lexQuote = 'p';
+const text_c lexQuote2 = 'q';
+const text_c lexHint2 = 'r';
 
-const tchar_t* lexDFA[] =
+const text_c* lexDFA[] =
 {
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
@@ -58,12 +57,12 @@ const tchar_t* lexDFA[] =
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfjgddjddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
 };
 
-tchar_t makeStep(tchar_t ch, tchar_t state)
+text_c makeStep(text_c ch, text_c state)
 {
-   return (tchar_t)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
+   return (text_c)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
 }
 
-size_t defineStyle(tchar_t state, size_t style)
+size_t defineStyle(text_c state, size_t style)
 {
    switch (state) {
       case lexStart:
@@ -107,7 +106,7 @@ inline size_t evaluateLength(_GUI_::TextBookmark& bookmark, size_t column)
    return bm.getPosition() - bookmark.getPosition();
 }
 
-bool IDE::IDELexicalStyler :: checkMarker(MarkerInfo& marker, LexicalInfo& li, size_t& styleLen)
+bool IDEController::IDELexicalStyler :: checkMarker(MarkerInfo& marker, LexicalInfo& li, size_t& styleLen)
 {
    if (marker.info.row == li.row) {
       int col = marker.info.col;
@@ -130,7 +129,7 @@ bool IDE::IDELexicalStyler :: checkMarker(MarkerInfo& marker, LexicalInfo& li, s
    return false;
 }
 
-size_t IDE::IDELexicalStyler :: proceed(size_t position, LexicalInfo& li)
+size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& li)
 {
    size_t styleLen = 0xFF; // !! temporal
 
@@ -192,206 +191,110 @@ size_t IDE::IDELexicalStyler :: proceed(size_t position, LexicalInfo& li)
       else return LexicalStyler::proceed(position, li);
    }
 }
+////
+////bool IDE :: loadTemporalModule(const tchar_t* name, int param)
+////{
+//////!!temporal
+////#ifdef _WIN32
+////   if (!_debugController->isStarted())
+////      return false;
+////
+////   int index = _mainFrame->getDocumentIndex(name);
+////
+////   // if the temporal module is not yet opened - create it
+////   if (index == -1) {
+////      doCreateTempFile(name);
+////
+////      index = _mainFrame->getDocumentIndex(name);
+////   }
+////   Document* doc = _mainFrame->getDocument(index);
+////
+////   // clear all
+////   doc->moveFirst(false);
+////   doc->moveLast(true);
+////   doc->eraseChar(false);
+////
+////   // insert temporal content
+////   const tchar_t* source = _debugController->getTemporalSource(param);
+////   doc->insertLine(source, _ELENA_::getlength(source));
+////
+////   doc->status.modifiedMode = false;
+////#endif
+////   return true;
+////}
 
-// --- IDEWindowsDialog ---
+////void IDE :: doCreateTempFile(const tchar_t* name)
+////{
+////   _GUI_::Text* text = new _GUI_::Text();
+////   text->create();
+////
+////   Document* doc = _mainFrame->openDocument(name, text,
+////      new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
+////
+////   doc->status.readOnly = true;
+////   doc->setHighlightMode(false);
+////
+////   _windowList.add(name);
+////
+////   onFileOpen();
+////   onChange();
+////}
 
-IDE::IDEWindowsDialog :: IDEWindowsDialog(IDE* ide)
-   : WindowsDialog(ide->_appWindow)
+// --- IDEController ---
+
+void IDEController::start(_View* view, _DebugListener* listener, Model* model)
 {
-   _ide = ide;
-}
+   _view = view;
+   _model = model;
+   _project.assign(model);
+   _debugController.assignListener(listener);
+   _debugController.assignSourceManager(&_project);
 
-void IDE::IDEWindowsDialog :: onCreate()
-{
-   //!! temporal
-   #ifdef _WIN32
-   for (int i = 0 ; i < _ide->_mainFrame->getDocumentCount() ; i++) {
-      addWindow(_ide->_mainFrame->getDocumentPath(i));
-   }
-   selectWindow(_ide->_mainFrame->getCurrentIndex());
-   #endif
-}
+   onIDEInit();
 
-void IDE::IDEWindowsDialog :: onOK()
-{
-   //!! temporal
-   #ifdef _WIN32
-   _ide->_mainFrame->selectTab(getSelectedWindow());
-   #endif
-}
+   view->start(model->appMaximized);
 
-void IDE::IDEWindowsDialog :: onClose()
-{
-   //!! temporal
-   #ifdef _WIN32
-   int count = 0;
-   int* selected = getSelectedWindows(count);
-
-   int offset = 0;
-   for (int i = 0 ; i < count; i++) {
-      if(!_ide->closeFile(selected[i] - offset))
-         break;
-
-      offset++;
-   }
-   free(selected);
-   #endif
-}
-
-// --- AppDebugController ---
-
-#ifdef _WIN32
-_ELENA_::_Module* AppDebugController :: loadDebugModule(const wchar16_t* reference)
-{
-   _ELENA_::NamespaceName name(reference);
-   _ELENA_::Path          path;
-
-   Project::retrievePath(name, path, _T("dnl"));
-
-   _ELENA_::Module* module = (_ELENA_::Module*)_modules.get(name);
-   if (module == NULL) {
-      module = new _ELENA_::Module();
-
-      _ELENA_::FileReader reader(path, _ELENA_::feRaw, false);
-      _ELENA_::LoadResult result = module->load(reader);
-      if (result != _ELENA_::lrSuccessful) {
-         delete module;
-
-         return NULL;
-      }
-      _modules.add(name, module);
-   }
-   return module;
-}
-#endif
-
-// --- IDE ---
-
-IDE :: IDE(AppDebugController* debugController)
-   : _recentFiles(10, IDM_FILE_FILES),
-   _recentProjects(10, IDM_FILE_PROJECTS),
-   _windowList(10, IDM_WINDOW_WINDOWS)
-{
-   _unnamedIndex = 0;
-   _state = uiEmpty;
-   _previousState = 0xFFFFFFFF;
-#ifdef _WIN32
-   _debugController = debugController;
-#endif
-
-   _lastCaret.x = -1;
-   _lastCaret.y = -1;
-}
-
-void IDE :: onIDEInit()
-{
-   #ifdef _WIN32
-
-   doShowCallStack(Settings::callStack, true);
-   doShowCompilerOutput(Settings::compilerOutput, true);
-   doShowMessages(Settings::messages, true);
-
-   _statusBar->setText(0, EDITOR_READY);
-
-   _highlightBrackets = Settings::highlightBrackets;
-
-   // check debugger settings
-   if (Settings::debugTape)
-      _debugController->allowTapeDebug();
-
-   doShowDebugWatch(false);
-   #endif
-}
-
-void IDE :: start()
-{
-   Text::TabSize = Settings::tabSize;
-   _mainFrame->reloadSettings();
-
+   Text::TabSize = model->tabSize;
+   
    // open default project
-   if (!Settings::defaultProject.isEmpty())
-      openProject(Settings::defaultProject);
-
+   if (!model->defaultProject.isEmpty())
+      openProject(model->defaultProject);
+   
    // open default files
-   _ELENA_::List<tchar_t*>::Iterator it = Settings::defaultFiles.start();
+   _ELENA_::List<_ELENA_::path_c*>::Iterator it = model->defaultFiles.start();
    while (!it.Eof()) {
       openFile(*it);
-
+   
       it++;
    }
-
+   
    onChange();
 }
 
-void IDE :: exit()
-{
-   if(closeAll())
-      _appWindow->exit();
-}
-
-bool IDE :: openFile(const tchar_t* path)
-{
-   //!!temporal
-   #ifdef _WIN32
-   int index = _mainFrame->getDocumentIndex(path);
-   if (index >= 0) {
-      _mainFrame->selectDocument(path);
-
-      return true;
-   }
-
-   _GUI_::Text* text = new _GUI_::Text();
-   bool opened = text->load(path, Settings::defaultEncoding, Settings::autoDetecting);
-   if (opened) {
-      _mainFrame->openDocument(path, text,
-         new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
-
-	   // check if the file belongs to the project
-	   if (Project::isIncluded(path)) {
-         _mainFrame->markDocumentAsIncluded();
-	   }
-
-      _windowList.add(path);
-
-      onFileOpen();
-      return true;
-   }
-   else return false;
-   #else
-   return false;
-   #endif
-}
-
-bool IDE :: openProject(const tchar_t* path)
+bool IDEController :: openProject(_ELENA_::path_t path)
 {
    if (!closeAll())
       return false;
 
-//!!temporal
-#ifdef _WIN32
-   if (!Project::open(path)) {
-      MsgBox::showError(_appWindow->getHandle(), IDE_MSG_INVALID_PROJECT, path);
+   if (!_project.open(path)) {
+      _view->error(IDE_MSG_INVALID_PROJECT, path);
       return false;
    }
-#endif
 
-   if (Settings::lastProjectRemember)
-      Settings::defaultProject.copy(path);
+   if (_model->lastProjectRemember)
+      _model->defaultProject.copy(path);
 
-   if (Settings::lastPathRemember)
-      Paths::lastPath.copyPath(path);
+   if (_model->lastPathRemember)
+      _model->paths.lastPath.copySubPath(path);
 
    _ELENA_::Path sourcePath;
-   _ELENA_::ConfigCategoryIterator it = Project::SourceFiles();
+   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
    while (!it.Eof()) {
-      sourcePath.copy(it.key());
-      Paths::resolveRelativePath(sourcePath, Project::getPath());
+      _ELENA_::Path::loadPath(sourcePath, it.key());
+      Paths::resolveRelativePath(sourcePath, _model->project.path);
 
-//!!temporal
-#ifdef _WIN32
       if (!openFile(sourcePath))
-         MsgBox::showError(_appWindow->getHandle(), ERROR_CANNOT_OPEN_FILE, _ELENA_::ConstantIdentifier(it.key()));
-#endif
+         _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
 
       it++;
    }
@@ -400,262 +303,215 @@ bool IDE :: openProject(const tchar_t* path)
    return true;
 }
 
-bool IDE :: closeFile(int index)
+bool IDEController :: openFile(_ELENA_::path_t path)
 {
-//!!temporal
-#ifdef _WIN32
-   const tchar_t* path = _mainFrame->getDocumentPath(index);
+   int index = _model->getDocumentIndex(path);
+   if (index >= 0) {
+      _view->selectDocument(index);
 
-   if (_mainFrame->isDocumentModified()) {
-      int result = MsgBox::showQuestion(_appWindow->getHandle(), QUESTION_SAVE_FILECHANGES, path);
-      if (MsgBox::isCancel(result)) {
+      return true;
+   }
+
+   _GUI_::Text* text = new _GUI_::Text();
+   bool opened = text->load(path, _model->defaultEncoding, _model->autoDetecting);
+   if (opened) {
+      _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);
+
+      int index = _view->newDocument(_ELENA_::FileName(path), doc);
+
+      _model->mappings.add(path, index);
+      _model->documents.add(doc);
+
+	   // check if the file belongs to the project
+	   if (_project.isIncluded(path)) {
+         markDocumentAsIncluded(index);
+	   }
+
+      _view->addToWindowList(path);
+
+      onFileOpen();
+      return true;
+   }
+   else return false;
+}
+
+void IDEController :: exit()
+{
+   if(closeAll())
+      _view->exit();
+}
+
+bool IDEController :: closeFile(int index)
+{
+   if (index == -1)
+      index = _view->getCurrentDocumentIndex();
+
+   text_t path = _model->getDocumentPath(index);
+
+   if (_model->currentDoc->status.modifiedMode) {
+      _View::Answer result = _view->question(QUESTION_SAVE_FILECHANGES, path);
+      if (result == _View::Answer::Cancel) {
          return false;
       }
-      else if (MsgBox::isYes(result)) {
+      else if (result == _View::Answer::Yes) {
          if (!doSave(false))
             return false;
       }
    }
-   _windowList.remove(path);
-
-   _mainFrame->closeDocument(index);
+   _view->removeFromWindowList(path);
+   _model->removeDocument(index);
+   _view->closeDocument(index);
 
    onFileClose();
-#endif
+   onChange();
+
    return true;
 }
 
-bool IDE :: closeAll(bool closeProject)
+bool IDEController :: closeAll(bool closeProject)
 {
-//!!temporal
-#ifdef _WIN32
-   if (_ELENA_::test(_state, uiIDEBusy)) {
-      int result = MsgBox::showQuestion(_appWindow->getHandle(), ERROR_CANNOT_CLOSE_COMPILING);
-      if (MsgBox::isNo(result)) {
-         return false;
-      }
+   if (_ELENA_::test(_model->state, uiIDEBusy) && !_view->confirm(ERROR_CANNOT_CLOSE_COMPILING)) {
+      return false;
    }
 
-   while (_mainFrame->getDocumentCount() > 0) {
+   while (_model->documents.Count() > 0) {
       if (!doCloseFile())
          return false;
    }
-#endif
 
    return closeProject ? doCloseProject() : true;
 }
 
-void IDE :: setCaption(const tchar_t* projectName)
+void IDEController :: removeAllDocumentMarker(int bandStyle)
 {
-   _ELENA_::String<tchar_t, 0x100> title(APP_NAME);
+   Documents::Iterator it = _model->documents.start();
+   while (!it.Eof()) {
+      (*it)->removeMarker(-1, bandStyle);
+
+      it++;
+   }
+
+   if (_model->currentDoc)
+      _view->refresh();
+}
+
+void IDEController :: setCaption(text_t projectName)
+{
+   _ELENA_::String<text_c, 0x100> title(APP_NAME);
    if (!_ELENA_::emptystr(projectName)) {
       title.append(_T(" - ["));
       title.append(projectName);
       title.append(_T("]"));
    }
-
-//!!temporal
-#ifdef _WIN32
-   _appWindow->setCaption(title);
-#endif
+   
+   _view->setCaption(title);
 }
 
-void IDE :: renameFileAs(int index, const tchar_t* newPath, const tchar_t* oldPath, bool included)
+void IDEController :: clearBreakpoints()
 {
-//!!temporal
-#ifdef _WIN32
-   _mainFrame->renameDocument(index, newPath);
+   _breakpoints.clear();
 
-   if (included) {
-      Project::excludeSource(oldPath);
-      Project::includeSource(newPath);
-   }
-   _mainFrame->setFocus();
-#endif
+   if (_debugController.isStarted())
+      _debugController.clearBreakpoints();
+
+   removeAllDocumentMarker(STYLE_BREAKPOINT);
 }
 
-bool IDE :: startDebugger(bool stepMode)
+void IDEController :: cleanUpProject()
 {
-//!!temporal
-#ifdef _WIN32
-   const char* target = Project::getTarget();
-   const char* arguments = Project::getArguments();
+   // clean exe file
+   if (!_ELENA_::emptystr(_project.getTarget()))
+   {
+      _ELENA_::Path targetFile(_model->project.path);
+      _ELENA_::Path::combinePath(targetFile, _project.getTarget());
 
-   if (!_ELENA_::emptystr(target)) {
-      _ELENA_::Path exePath(Project::getPath(), target);
-
-      // provide the whole command line including the executable path and name
-      _ELENA_::Path commandLine(exePath);
-      commandLine.append(_T(" "));
-      commandLine.append(arguments);
-
-      bool mode = Project::getDebugMode() != 0;
-      if (mode) {
-         if (!_debugController->start(exePath, commandLine, mode, _breakpoints)) {
-            MsgBox::showError(_appWindow->getHandle(), ERROR_DEBUG_FILE_NOT_FOUND_COMPILE, NULL);
-
-            return false;
-         }
-         else return true;
-      }
-      else if(stepMode) {
-         MsgBox::showError(_appWindow->getHandle(), ERROR_DEBUG_FILE_NOT_FOUND_SETTING, NULL);
-
-         return false;
-      }
-      else {
-         if (!_debugController->start(exePath, commandLine, false, _breakpoints)) {
-            MsgBox::showError(_appWindow->getHandle(), ERROR_RUN_NEED_RECOMPILE, NULL);
-
-            return false;
-         }
-         else return true;
-      }
+      _view->removeFile(targetFile);
    }
-   else {
-      MsgBox::showError(_appWindow->getHandle(), ERROR_RUN_NEED_TARGET, NULL);
-
-      return false;
-   }
-#else
-   return false;
-#endif
-}
-
-bool IDE :: loadModule(const tchar_t* ns, const tchar_t* source)
-{
-//!!temporal
-#ifdef _WIN32
-   if (!_debugController->isStarted())
-      return false;
-
-   if (_ELENA_::ConstantIdentifier::compare(ns, Project::getPackage())) {
-      _ELENA_::Path path(Project::getPath(), source);
-
-      openFile(path);
-   }
-   else {
-      _ELENA_::Path path((const tchar_t*)Paths::packageRoot);
-      path.combine(ns, _ELENA_::StringHelper::find(ns, '\'', _ELENA_::getlength(ns)));
-      path.combine(source);
-
-      openFile(path);
-   }
-#endif
-   return true;
-}
-
-bool IDE :: loadTemporalModule(const tchar_t* name, int param)
-{
-//!!temporal
-#ifdef _WIN32
-   if (!_debugController->isStarted())
-      return false;
-
-   int index = _mainFrame->getDocumentIndex(name);
-
-   // if the temporal module is not yet opened - create it
-   if (index == -1) {
-      doCreateTempFile(name);
-
-      index = _mainFrame->getDocumentIndex(name);
-   }
-   Document* doc = _mainFrame->getDocument(index);
-
-   // clear all
-   doc->moveFirst(false);
-   doc->moveLast(true);
-   doc->eraseChar(false);
-
-   // insert temporal content
-   const tchar_t* source = _debugController->getTemporalSource(param);
-   doc->insertLine(source, _ELENA_::getlength(source));
-
-   doc->status.modifiedMode = false;
-#endif
-   return true;
-}
-
-void IDE :: runToCursor()
-{
-//!!temporal
-#ifdef _WIN32
-   int index = _mainFrame->getCurrentIndex();
-   Document* doc = _mainFrame->getDocument(index);
-   if (doc) {
-      _ELENA_::Path path(_mainFrame->getDocumentPath(index));
-      Point caret = doc->getCaret();
-
-      _ELENA_::ReferenceNs module;
-      Project::retrieveName(path, module);
-
-      _debugController->runToCursor(module, path, 0, caret.y);
-   }
-#endif
-}
-
-void IDE :: refreshDebugStatus()
-{
-}
-
-bool IDE :: isOutaged(bool noWarning)
-{
-#ifdef _WIN32
-   if (_mainFrame->isAnyModified()) {
-      if (!noWarning)
-         MsgBox::showError(_appWindow->getHandle(), ERROR_RUN_OUT_OF_DATE, NULL);
-
-      return false;
-   }
-
-   _ELENA_::ConstantIdentifier src("l");
-   _ELENA_::ConstantIdentifier ext("nl");
-   _ELENA_::Path rootPath(Project::getPath(), Project::getOutputPath());
-   for (_ELENA_::ConfigCategoryIterator it = Project::SourceFiles() ; !it.Eof() ; it++) {
-      _ELENA_::Path source(rootPath, it.key());
+   // clean module files
+   _ELENA_::Path rootPath(_model->project.path);
+   _ELENA_::Path::combinePath(rootPath, _project.getOutputPath());
+   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+      _ELENA_::Path source(rootPath);
+      _ELENA_::Path::combinePath(source, it.key());
 
       _ELENA_::Path module;
-      module.copyPath(it.key());
+      module.copySubPath(source);
 
-      _ELENA_::ReferenceNs name(Project::getPackage());
+      _ELENA_::ReferenceNs name(_project.getPackage());
       name.pathToName(module);          // get a full name
 
+      // remove module
       module.copy(rootPath);
-      module.nameToPath(name, ext);
+      module.nameToPath(name, _T("nl"));
+      _view->removeFile(module);
 
-      DateTime sourceDT = DateTime::getFileTime(source);
-      DateTime moduleDT = DateTime::getFileTime(module);
-
-      if (sourceDT > moduleDT) {
-         if (!noWarning)
-            MsgBox::showError(_appWindow->getHandle(), ERROR_RUN_OUT_OF_DATE, NULL);
-
-         return false;
-      }
+      // remove debug info module
+      module.changeExtension(_T("dnl"));
+      _view->removeFile(module);
    }
-
-   return true;
-#else
-   return false; // !! temporal
-#endif
 }
 
-void IDE :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
+void IDEController :: renameFileAs(int index, _ELENA_::path_t newPath, _ELENA_::path_t oldPath, bool included)
 {
-   //!!temporal
-#ifdef _WIN32
+   _model->mappings.erase(oldPath);
+   _model->mappings.add(newPath, index);
+
+   _view->renameDocument(index, _ELENA_::FileName(newPath));
+
+   if (included) {
+      _project.excludeSource(oldPath);
+      _project.includeSource(newPath);
+   }
+   _view->activateFrame();
+}
+
+void IDEController :: saveDocument(_ELENA_::path_t path, int index)
+{
+   Document* doc = _model->getDocument(index);
+   if (doc) {
+      doc->save(path);
+   }
+}
+
+void IDEController :: markDocumentAsIncluded(int index)
+{
+   Document* doc = _model->getDocument(index);
+   if (doc) {
+      doc->status.included = true;
+   }
+}
+
+void IDEController :: markDocumentAsExcluded(int index)
+{
+   Document* doc = _model->getDocument(index);
+   if (doc) {
+      doc->status.included = false;
+   }
+}
+
+void IDEController :: addDocumentMarker(int index, HighlightInfo info, int bandStyle, int style)
+{
+   Document* doc = _model->getDocument(index);
+
+   doc->addMarker(info, bandStyle, style);
+
+   _view->refresh();
+}
+
+void IDEController :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
+{
    if (bookmark) {
       //_ELENA_::ReferenceNs name;
       //Project::retrieveName(bookmark->file, name);
 
       _ELENA_::Path docPath;
-      if (bookmark->module == NULL || _ELENA_::ConstantIdentifier::compare(bookmark->module, Project::getPackage())) {
-         docPath.copy(Project::getPath());
+      if (bookmark->module == NULL || _ELENA_::StringHelper::compare(bookmark->module, _project.getPackage())) {
+         docPath.copy(_model->project.path);
          docPath.combine(bookmark->file);
       }
       else {
-         docPath.copy((const tchar_t*)Paths::packageRoot);
-         docPath.combine(bookmark->module, _ELENA_::StringHelper::find(bookmark->module, '\'', _ELENA_::getlength(bookmark->module)));
+         docPath.copy(_model->paths.packageRoot);
+         _ELENA_::Path::combinePath(docPath, bookmark->module, _ELENA_::StringHelper::find(bookmark->module, '\'', _ELENA_::getlength(bookmark->module)));
          docPath.combine(bookmark->file);
 
          openFile(docPath);
@@ -663,677 +519,126 @@ void IDE :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
 
       HighlightInfo hi(bookmark->col - 1, bookmark->row - 1, 0, 0);
 
-      _mainFrame->removeAllDocumentMarker(bandStyle);
+      removeAllDocumentMarker(bandStyle);
 
-      int index = _mainFrame->getDocumentIndex(docPath);
+      int index = _model->getDocumentIndex(docPath);
       if (index != -1) {
-         _mainFrame->setFocus();
-         _mainFrame->selectDocument(index);
+         _view->selectDocument(index);
 
-         _mainFrame->addDocumentMarker(index, hi, bandStyle, bandStyle);
-         _mainFrame->refreshDocument();
+         addDocumentMarker(index, hi, bandStyle, bandStyle);
 
-         _state |= uiHighlight;
+         _model->state |= uiHighlight;
       }
    }
-   #endif
 }
 
-bool IDE :: toggleBreakpoint(const tchar_t* module, const tchar_t* path, size_t row, Document* doc)
+void IDEController :: doSetProjectSettings()
 {
-//!!temporal
-#ifdef _WIN32
-   _ELENA_::List<_ELENA_::Breakpoint>::Iterator it = _breakpoints.start();
-   while (!it.Eof()) {
-      if (doc == (*it).param && row==(*it).row) {
-         if (_debugController->isStarted()) {
-            _debugController->toggleBreakpoint(*it, false);
-         }
-         _breakpoints.cut(it);
-         return false;
+   _view->configProject(&_project);
+
+   Settings::onNewProjectTemplate(_model, &_project);
+}
+
+void IDEController :: doSetEditorSettings()
+{
+   if (_view->configEditor(_model))
+   {
+      Text::TabSize = _model->tabSize;
+
+      _view->reloadSettings();
+   }
+}
+
+void IDEController :: doSetDebuggerSettings()
+{
+   if (_view->configDebugger(_model)) {
+      Settings::onNewProjectTemplate(_model, &_project);
+   }
+}
+
+void IDEController :: doSetProjectForwards()
+{
+   _view->configurateForwards(&_project);
+}
+
+bool IDEController :: findText(SearchOption& option)
+{
+   if (_model->currentDoc) {
+      if (_model->currentDoc->findLine(option.text, option.matchCase, option.wholeWord)) {
+         _view->refresh();
+
+         return true;
       }
-      it++;
    }
-   _ELENA_::Breakpoint breakpoint(module, path, row, doc);
-   _breakpoints.add(breakpoint);
-
-   if (_debugController->isStarted()) {
-      _debugController->toggleBreakpoint(breakpoint, true);
-   }
-#endif
-   return true;
+   return false;
 }
 
-void IDE :: toggleBreakpoint()
+bool IDEController :: replaceText(SearchOption& option)
 {
-//!!temporal
-#ifdef _WIN32
-   int index = _mainFrame->getCurrentIndex();
-   Document* doc = _mainFrame->getDocument(index);
-   if (doc) {
-      _ELENA_::Path path(_mainFrame->getDocumentPath(index));
-      Point caret = doc->getCaret();
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->insertLine(option.newText, _ELENA_::getlength(option.newText));
 
-      _ELENA_::ReferenceNs module;
-      Project::retrieveName(path, module);
+      _view->refresh();
 
-      toggleBreakpoint(module, path, caret.y, doc);
-
-      // forcee full repaint
-      doc->status.frameChanged = true;
-      _mainFrame->refreshDocument();
+      return true;
    }
-#endif
+   else return false;
 }
 
-void IDE :: clearBreakpoints()
+void IDEController::doCreateFile()
 {
-#ifdef _WIN32
-   _breakpoints.clear();
-
-   if (_debugController && _debugController->isStarted())
-      _debugController->clearBreakpoints();
-
-   _mainFrame->removeAllDocumentMarker(STYLE_BREAKPOINT);
-#endif
-}
-
-void IDE :: doCreateFile()
-{
-   _ELENA_::String<tchar_t, 30> path(_T("unnamed"));
-   path.appendInt(_unnamedIndex++);
+   _ELENA_::String<text_c, 30> name(_T("unnamed"));
+   name.appendInt(_model->unnamedIndex++);
 
    _GUI_::Text* text = new _GUI_::Text();
    text->create();
 
-   Document* doc = _mainFrame->openDocument(path, text,
-      new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
-
+   _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);
    doc->status.unnamed = true;
 
-   _windowList.add(path);
+   int index = _view->newDocument(name, doc);
 
+   _model->mappings.add(name, index);
+   _model->documents.add(doc);
+   
+   _view->addToWindowList(name);
+   
    onFileOpen();
    onChange();
 }
 
-void IDE :: doCreateTempFile(const tchar_t* name)
+void IDEController :: doOpenFile()
 {
-   _GUI_::Text* text = new _GUI_::Text();
-   text->create();
-
-   Document* doc = _mainFrame->openDocument(name, text,
-      new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
-
-   doc->status.readOnly = true;
-   doc->setHighlightMode(false);
-
-   _windowList.add(name);
-
-   onFileOpen();
-   onChange();
-}
-
-void IDE :: doCreateProject()
-{
-   if (!closeAll())
-      return;
-
-   onProjectOpen();
-
-   showProjectSettings();
-
-   onChange();
-}
-
-bool IDE :: doCloseFile()
-{
-   int index = _mainFrame->getCurrentDocumentIndex();
-   if (index != -1) {
-      return closeFile(index);
-   }
-   else return true;
-}
-
-bool IDE :: doCloseProject()
-{
-//!!temporal
-#ifdef _WIN32
-   if (Project::isChanged()) {
-      int result = MsgBox::showQuestion(_appWindow->getHandle(), QUESTION_SAVE_CHANGES);
-      if (MsgBox::isCancel(result)) {
-         return false;
-      }
-      else if (MsgBox::isYes(result)) {
-         doSaveProject(false);
-      }
-   }
-   Project::reset();
-
-   onProjectClose();
-#endif
-   return true;
-}
-
-void IDE :: doCloseAllButActive()
-{
-//!!temporal
-#ifdef _WIN32
-   int index = _mainFrame->getCurrentIndex();
-   for (int i = 0 ; i < index ; i++) {
-      _mainFrame->selectDocument(0);
-      if (!closeFile(0))
-         return;
-   }
-   int count = _mainFrame->getDocumentCount();
-   for (int i = 1 ; i < count ; i++) {
-      _mainFrame->selectDocument(1);
-      if (!closeFile(1))
-         return;
-   }
-#endif
-}
-
-void IDE :: doSelectFile(int optionID)
-{
-   const tchar_t* path = _recentFiles.get(optionID);
-   if(openFile(path)) {
-      _recentFiles.add(path);
-
-      onChange();
-   }
-}
-
-void IDE :: doSelectProject(int optionID)
-{
-   const tchar_t* path = _recentProjects.get(optionID);
-   if(openProject(path)) {
-      _recentProjects.add(path);
-
-      onChange();
-   }
-}
-
-void IDE :: doSelectWindow(int optionID)
-{
-//!!temporal
-#ifdef _WIN32
-   _mainFrame->selectDocument(_windowList.get(optionID));
-#endif
-}
-
-void IDE :: doOpenFile()
-{
-//!!temporal
-#ifdef _WIN32
-   FileDialog dialog(_appWindow, FileDialog::SourceFilter, OPEN_FILE_CAPTION, Paths::lastPath);
-
-   _ELENA_::List<tchar_t*> files(NULL, _ELENA_::freestr);
-   if (dialog.openFiles(files)) {
-      _ELENA_::List<tchar_t*>::Iterator it = files.start();
+   _ELENA_::List<text_c*> files(NULL, _ELENA_::freestr);
+   if (_view->selectFiles(_model, files)) {
+      _ELENA_::List<text_c*>::Iterator it = files.start();
       while (!it.Eof()) {
          if (openFile(*it))
-            _recentFiles.add(*it);
+            _view->addToRecentFileList(*it);
 
          it++;
       }
       onChange();
    }
-#endif
 }
 
-void IDE :: doOpenProject()
+void IDEController::doOpenFile(_ELENA_::path_t path)
 {
-//!!temporal
-#ifdef _WIN32
-   FileDialog dialog(_appWindow, FileDialog::ProjectFilter, OPEN_PROJECT_CAPTION, Paths::lastPath);
-   const tchar_t* path = dialog.openFile();
-   if (path) {
-      if (openProject(path))
-         _recentProjects.add(path);
+   if (openFile(path)) {
+      _view->addToRecentFileList(path);
 
       onChange();
    }
-#endif
 }
 
-bool IDE :: doSave(bool saveAsMode)
+void IDEController :: doExit()
 {
-//!!temporal
-#ifdef _WIN32
-   if (_mainFrame->isReadOnly())
-      return false;
+   exit();
 
-   if (Project::isUnnamed() && _mainFrame->isDocumentIncluded()) {
-      if (!doSaveProject(false))
-         return false;
-
-      if (!doSave(_mainFrame->getCurrentIndex(), saveAsMode))
-         return false;
-   }
-   else {
-      if (!doSave(_mainFrame->getCurrentIndex(), saveAsMode))
-         return false;
-   }
-#endif
-   return true;
+   onChange();
 }
 
-bool IDE :: doSave(int docIndex, bool saveAsMode)
-{
-//!!temporal
-#ifdef _WIN32
-   bool modified = _mainFrame->isDocumentModified(docIndex);
-   bool unnamed = _mainFrame->isDocumentUnnamed(docIndex);
-   bool included = _mainFrame->isDocumentIncluded(docIndex);
-   _ELENA_::Path oldPath(_mainFrame->getDocumentPath(docIndex));
-   if (unnamed || saveAsMode) {
-      FileDialog dialog(_appWindow, FileDialog::SourceFilter, SAVEAS_FILE_CAPTION, Project::getPath());
-
-      _ELENA_::Path newPath;
-	   if (dialog.saveFile(_T("l"), newPath)) {
-         renameFileAs(docIndex, newPath, oldPath, included);
-      }
-      else return false;
-
-      if(unnamed && !included) {
-         int result = MsgBox::showQuestion(_appWindow->getHandle(), QUESTION_INCLUDE_FILE1, newPath, QUESTION_INCLUDE_FILE2);
-         if (MsgBox::isYes(result)) {
-			   _mainFrame->markDocumentAsIncluded(docIndex);
-            Project::includeSource(newPath);
-         }
-      }
-      _mainFrame->saveDocument(newPath, docIndex);
-   }
-   else _mainFrame->saveDocument(oldPath, docIndex);
-
-   if (modified)
-      _mainFrame->markDocument(docIndex, false);
-#endif
-   return true;
-}
-
-bool IDE :: doSaveAll(bool forced)
-{
-//!!temporal
-#ifdef _WIN32
-   if (_mainFrame->isReadOnly())
-      return true;
-
-   if (Project::isUnnamed()) {
-      if (!doSaveProject(false))
-         return false;
-   }
-   for (int index = 0 ; index < _mainFrame->getDocumentCount() ; index++) {
-      if (_mainFrame->isDocumentModified(index) || _mainFrame->isDocumentUnnamed(index)) {
-         if (forced || _mainFrame->isDocumentUnnamed(index)) {
-            doSave(index, false);
-         }
-         else {
-            const wchar_t* path = _mainFrame->getDocumentPath(index);
-            int result = MsgBox::showQuestion(_appWindow->getHandle(), QUESTION_SAVE_FILECHANGES, path);
-            if (MsgBox::isCancel(result)) {
-               return false;
-            }
-            else if (MsgBox::isYes(result)) {
-               _mainFrame->saveDocument(path, index);
-               _mainFrame->markDocument(index, false);
-            }
-         }
-      }
-   }
-   if (Project::isChanged()) {
-      if (!forced && !Project::isUnnamed()) {
-         int result = MsgBox::showQuestion(_appWindow->getHandle(), QUESTION_SAVE_CHANGES);
-         if (MsgBox::isYes(result)) {
-            doSaveProject(false);
-         }
-      }
-      else doSaveProject(false);
-   }
-#endif
-
-   return true;
-}
-
-bool IDE :: doSaveProject(bool saveAsMode)
-{
-//!!temporal
-#ifdef _WIN32
-   if (saveAsMode || Project::isUnnamed()) {
-      FileDialog dialog(_appWindow, FileDialog::ProjectFilter, SAVEAS_PROJECT_CAPTION, Project::getPath());
-      _ELENA_::Path       path;
-
-      if (dialog.saveFile(_T("prj"), path)) {
-         Project::rename(path);
-
-         setCaption(Project::getName());
-      }
-	   else return false;
-   }
-   Project::save();
-#endif
-   return true;
-}
-
-bool IDE :: doEditCopy()
-{
-//!!temporal
-#ifdef _WIN32
-   if (_clipboard.begin(_appWindow)) {
-      bool result = _mainFrame->copyClipboard(_clipboard);
-
-      _clipboard.end();
-
-      return result;
-   }
-   else return false;
-#else
-return false;
-#endif
-}
-
-void IDE :: doEditPaste()
-{
-//!!temporal
-#ifdef _WIN32
-   if (_clipboard.begin(_appWindow)) {
-      _mainFrame->pasteClipboard(_clipboard);
-
-      _clipboard.end();
-   }
-#endif
-}
-
-void IDE :: doEditDelete()
-{
-   _mainFrame->eraseSelection();
-}
-
-void IDE :: doUndo()
-{
-   _mainFrame->undo();
-}
-
-void IDE :: doRedo()
-{
-   _mainFrame->redo();
-}
-
-void IDE :: doSelectWindow()
-{
-//!!temporal
-#ifdef _WIN32
-   IDEWindowsDialog dialog(this);
-
-   if (dialog.showModal()==-2) {
-      onChange();
-   }
-#endif
-}
-
-void IDE :: doSetEditorSettings()
-{
-//!!temporal
-#ifdef _WIN32
-   EditorSettings dlg(_appWindow);
-
-   if (dlg.showModal()) {
-      Text::TabSize = Settings::tabSize;
-      _mainFrame->reloadSettings();
-   }
-#endif
-}
-
-void IDE :: doSetDebuggerSettings()
-{
-//!!temporal
-#ifdef _WIN32
-   DebuggerSettings dlg(_appWindow);
-
-   if (dlg.showModal()) {
-      Settings::onNewProjectTemplate();
-   }
-#endif
-}
-
-void IDE :: doSwitchTab(bool forward)
-{
-//!!temporal
-#ifdef _WIN32
-
-   int index = _mainFrame->getCurrentIndex();
-   if (forward) {
-      index += 1;
-      if (index == _mainFrame->getDocumentCount())
-         index = 0;
-   }
-   else {
-      if (index == 0) {
-         index = _mainFrame->getDocumentCount() - 1;
-      }
-      else index--;
-   }
-   _mainFrame->selectDocument(index);
-#endif
-}
-
-void IDE :: doFind()
-{
-//!!temporal
-#ifdef _WIN32
-   FindDialog dialog(_appWindow, false, &_searchOption, &Settings::searchHistory, NULL);
-
-   if (dialog.showModal()) {
-      Settings::addSearchHistory(_searchOption.text);
-
-      if (_mainFrame->findText(_searchOption)) {
-         _appMenu->enableItemById(IDM_SEARCH_FINDNEXT, true);
-      }
-      else MsgBox::showError(_appWindow->getHandle(), NOT_FOUND_TEXT, NULL);
-   }
-#endif
-}
-
-void IDE :: doFindNext()
-{
-//!!temporal
-#ifdef _WIN32
-   if (!_mainFrame->findText(_searchOption)) {
-      MsgBox::showError(_appWindow->getHandle(), NOT_FOUND_TEXT, NULL);
-   }
-#endif
-}
-
-void IDE :: doReplace()
-{
-//!!temporal
-#ifdef _WIN32
-   FindDialog dialog(_appWindow, true, &_searchOption, &Settings::searchHistory, &Settings::replaceHistory);
-
-   if (dialog.showModal()) {
-      Settings::addSearchHistory(_searchOption.text);
-      Settings::addReplaceHistory(_searchOption.newText);
-
-      bool found = false;
-      while (_mainFrame->findText(_searchOption)) {
-         found = true;
-
-         int result = MsgBox::showQuestion(_appWindow->getHandle(), REPLACE_TEXT);
-         if (MsgBox::isCancel(result)) {
-            break;
-         }
-         else if (MsgBox::isYes(result)) {
-            if(!_mainFrame->replaceText(_searchOption))
-               break;
-         }
-      }
-      if (!found)
-         MsgBox::showError(_appWindow->getHandle(), NOT_FOUND_TEXT, NULL);
-   }
-#endif
-}
-
-void IDE :: doGoToLine()
-{
-   #ifdef _WIN32 // !! temporal
-   Document* doc = _mainFrame->getDocument(_mainFrame->getCurrentIndex());
-   if (doc) {
-      Point caret = doc->getCaret();
-
-      GoToLineDialog dlg(_appWindow, caret.y + 1);
-      if (dlg.showModal()) {
-         caret.y = dlg.getLineNumber() - 1;
-
-         doc->setCaret(caret, false);
-         _mainFrame->refreshDocument();
-      }
-   }
-   #endif
-}
-
-void IDE :: doShowAbout()
-{
-//!!temporal
-#ifdef _WIN32
-   AboutDialog dlg(_appWindow);
-
-   dlg.showModal();
-#endif
-}
-
-bool IDE :: doCompileProject(int postponedAction)
-{
-//!!temporal
-#ifdef _WIN32
-   onCompilationStart();
-
-   // exit if the operation was canceled
-   if(!doSaveAll(false)) {
-      onCompilationEnd(ERROR_CANCELED, false);
-
-      return false;
-   }
-
-   if (postponedAction) {
-      _state |= uiAutoRecompile;
-   }
-   if (!compileProject(postponedAction)) {
-      onCompilationEnd(ERROR_COULD_NOT_START, false);
-
-      return false;
-   }
-
-#endif
-
-   return true;
-}
-
-void IDE :: doShowDebugWatch(bool visible)
-{
-//!!temporal
-#ifdef _WIN32
-   _appMenu->checkItemById(IDM_VIEW_WATCH, visible);
-
-   // !! temporal
-   if (!_contextBrowser)
-      return;
-
-   if (visible) {
-      _contextBrowser->show();
-   }
-   else _contextBrowser->hide();
-
-   _contextBrowser->refresh();
-   _appWindow->refresh();
-#endif
-}
-
-void IDE :: doShowCompilerOutput(bool checked, bool forced)
-{
-//!!temporal
-#ifdef _WIN32
-   if (Settings::compilerOutput != checked || forced) {
-      Settings::compilerOutput = checked;
-
-      _appMenu->checkItemById(IDM_VIEW_OUTPUT, Settings::compilerOutput);
-
-      if (checked) {
-         _outputBar->addTabChild(OUTPUT_TAB, _output);
-         _outputBar->selectTabChild(_output);
-         _outputBar->show();
-      }
-      else {
-         _outputBar->removeTabChild(_output);
-
-         if (_outputBar->getTabCount() == 0) {
-            _outputBar->hide();
-         }
-      }
-
-      _appWindow->refresh();
-   }
-#endif
-}
-
-void IDE :: doShowMessages(bool checked, bool forced)
-{
-//!!temporal
-#ifdef _WIN32
-   if (Settings::messages != checked || forced) {
-      Settings::messages = checked;
-
-      _appMenu->checkItemById(IDM_VIEW_MESSAGES, Settings::messages);
-
-      if (checked) {
-         _outputBar->addTabChild(MESSAGES_TAB, _messageList);
-         _outputBar->show();
-         _outputBar->selectTabChild(_messageList);
-      }
-      else {
-         _outputBar->removeTabChild(_messageList);
-
-         if (_outputBar->getTabCount() == 0) {
-            _outputBar->hide();
-         }
-      }
-
-      _appWindow->refresh();
-   }
-#endif
-}
-
-void IDE :: doShowCallStack(bool checked, bool forced)
-{
-//!!temporal
-#ifdef _WIN32
-   if (Settings::callStack != checked || forced) {
-      Settings::callStack = checked;
-
-      _appMenu->checkItemById(IDM_VIEW_CALLSTACK, Settings::callStack);
-
-      if (checked) {
-         _outputBar->addTabChild(CALLSTACK_TAB, _callStackList);
-         _outputBar->show();
-         _outputBar->selectTabChild(_callStackList);
-
-         if (_debugController->isStarted())
-            _callStackList->refresh(_debugController);
-      }
-      else {
-         _outputBar->removeTabChild(_callStackList);
-
-         if (_outputBar->getTabCount() == 0) {
-            _outputBar->hide();
-         }
-      }
-
-      _appWindow->refresh();
-   }
-#endif
-}
-
-bool findBracket(Text* text, TextBookmark& bookmark, tchar_t starting, tchar_t ending, bool forward)
+bool findBracket(Text* text, TextBookmark& bookmark, text_c starting, text_c ending, bool forward)
 {
    // define the upper / lower border of bracket search
    size_t frameY = 0;
@@ -1342,7 +647,7 @@ bool findBracket(Text* text, TextBookmark& bookmark, tchar_t starting, tchar_t e
 
    int counter = 0;
    while (true) {
-      tchar_t ch = text->getChar(bookmark);
+      text_c ch = text->getChar(bookmark);
       if (ch == starting)
          counter++;
       else if (ch == ending) {
@@ -1363,7 +668,7 @@ bool findBracket(Text* text, TextBookmark& bookmark, tchar_t starting, tchar_t e
    return false;
 }
 
-void IDE :: doHighlightBrackets(Document* doc)
+void IDEController :: doHighlightBrackets(Document* doc)
 {
    if (!doc)
       return;
@@ -1371,14 +676,14 @@ void IDE :: doHighlightBrackets(Document* doc)
    Text* text = doc->getText();
    TextBookmark caret = doc->getCurrentTextBookmark();
 
-   tchar_t current_ch = text->getChar(caret);
+   text_c current_ch = text->getChar(caret);
 
    int pos = _ELENA_::StringHelper::find(OPENING_BRACKET, current_ch, -1);
    if (pos != -1) {
       Point frame = doc->getFrame();
       Point size = doc->getSize();
 
-      _state |= uiBracketBold;
+      _model->state |= uiBracketBold;
 
       int openBracketPos = caret.getPosition();
       int closeBracketPos = -1;
@@ -1388,14 +693,14 @@ void IDE :: doHighlightBrackets(Document* doc)
       }
 
       if (doc->addMarker(HighlightInfo(openBracketPos, closeBracketPos, -1, -1), STYLE_HIGHLIGHTED_BRACKET, STYLE_HIGHLIGHTED_BRACKET, false))
-         _mainFrame->refreshDocument();
+         _view->refresh();
 
       return;
    }
    pos = _ELENA_::StringHelper::find(CLOSING_BRACKET, current_ch, -1);
 
    if (_ELENA_::StringHelper::find(CLOSING_BRACKET, current_ch, -1) != -1) {
-      _state |= uiBracketBold;
+      _model->state |= uiBracketBold;
 
       int openBracketPos = -1;
       int closeBracketPos = caret.getPosition();
@@ -1405,67 +710,865 @@ void IDE :: doHighlightBrackets(Document* doc)
       }
 
       if (doc->addMarker(HighlightInfo(closeBracketPos, openBracketPos, -1, -1), STYLE_HIGHLIGHTED_BRACKET, STYLE_HIGHLIGHTED_BRACKET, false))
-         _mainFrame->refreshDocument();
+         _view->refresh();
 
       return;
    }
 
-   if(_ELENA_::test(_state, uiBracketBold)) {
-      _state &= ~uiBracketBold;
+   if(_ELENA_::test(_model->state, uiBracketBold)) {
+      _model->state &= ~uiBracketBold;
 
       doc->removeMarker(-1, STYLE_HIGHLIGHTED_BRACKET);
-      _mainFrame->refreshDocument();
+      _view->refresh();
    }
 }
 
-void IDE :: doInclude()
+bool IDEController :: doCloseFile()
 {
-   if (Project::isUnnamed()) {
+   if (_model->currentDoc) {
+      return closeFile(-1);
+   }
+   else return true;
+}
+
+bool IDEController :: doCloseFile(int index)
+{
+   return closeFile(index);
+}
+
+bool IDEController :: doCloseProject()
+{
+   if (_model->project.changed) {
+      _View::Answer result = _view->question(QUESTION_SAVE_CHANGES);
+      if (result == _View::Answer::Cancel) {
+         return false;
+      }
+      else if (result == _View::Answer::Yes) {
+         doSaveProject(false);
+      }
+   }
+   _project.reset();
+
+   onProjectClose();
+
+   return true;
+}
+
+void IDEController :: doInclude()
+{
+   if (_model->isProjectUnnamed()) {
       if (!doSaveProject(false))
          return;
    }
 
-   if (_mainFrame->getCurrentDocumentIndex() != -1) {
-      _mainFrame->markDocumentAsIncluded();
+   int index = _view->getCurrentDocumentIndex();
+   if (index != -1) {
+      markDocumentAsIncluded(index);
 
-      const tchar_t* path = _mainFrame->getDocumentPath(-1);
-      Project::includeSource(path);
+      _ELENA_::path_t path = _model->getDocumentPath(index);
+      _project.includeSource(path);
    }
    onDocIncluded();
 }
 
-void IDE :: doExclude()
+void IDEController :: doExclude()
 {
-   if (_mainFrame->getCurrentDocumentIndex() != -1) {
-      _mainFrame->markDocumentAsExcluded();
+   int index = _view->getCurrentDocumentIndex();
+   if (index != -1) {
+      markDocumentAsExcluded(index);
 
-      const tchar_t* path = _mainFrame->getDocumentPath(-1);
-      Project::excludeSource(path);
+      _ELENA_::path_t path = _model->getDocumentPath(index);
+      _project.excludeSource(path);
    }
    onDocIncluded();
 }
 
-void IDE :: showProjectSettings()
+bool IDEController :: doSaveProject(bool saveAsMode)
 {
-   #ifdef _WIN32 // !! temporal
-   ProjectSettingsDialog dlg(_appWindow);
+   if (saveAsMode || _model->project.name.isEmpty()) {
+      _ELENA_::Path path;
+      if (_view->saveProject(_model, path)) {
+         _project.rename(path);
 
-   dlg.showModal();
+         setCaption(_model->project.name);
+      }
+	   else return false;
+   }
+   _project.save();
 
-   Settings::onNewProjectTemplate();
-   #endif
+   onChange();
+
+   return true;
 }
 
-void IDE :: showProjectForwards()
+bool IDEController :: doSave(bool saveAsMode)
 {
-   #ifdef _WIN32 // !! temporal
-   ProjectForwardsDialog dlg(_appWindow);
+   if (_model->isDocumentReadOnly())
+      return false;
 
-   dlg.showModal();
-   #endif
+   if (_model->project.name.isEmpty() && _model->currentDoc->status.included) {
+      if (!doSaveProject(false))
+         return false;
+
+      if (!doSave(_view->getCurrentDocumentIndex(), saveAsMode))
+         return false;
+   }
+   else {
+      if (!doSave(_view->getCurrentDocumentIndex(), saveAsMode))
+         return false;
+   }
+   onChange();
+
+   return true;
 }
 
-bool IDE :: onClose()
+bool IDEController :: doSave(int docIndex, bool saveAsMode)
+{
+   Document* doc = _model->getDocument(docIndex);
+
+   bool modified = doc->status.modifiedMode;
+   bool unnamed = doc->status.unnamed;
+   bool included = doc->status.included;
+   _ELENA_::Path oldPath(_model->getDocumentPath(docIndex));
+   if (unnamed || saveAsMode) {
+      _ELENA_::Path newPath;
+      if (_view->saveFile(_model, newPath)) {
+         renameFileAs(docIndex, newPath, oldPath, included);
+      }
+      else return false;
+
+      if(unnamed && !included) {
+         if (_view->confirm(QUESTION_INCLUDE_FILE1, newPath, QUESTION_INCLUDE_FILE2)) {
+            markDocumentAsIncluded(docIndex);
+            _project.includeSource(newPath);
+         }
+      }
+      saveDocument(newPath, docIndex);
+   }
+   else saveDocument(oldPath, docIndex);
+
+   if (modified)
+      _view->markDocumentTitle(docIndex, false);
+
+   return true;
+}
+
+bool IDEController :: doSaveAll(bool forced)
+{
+   if (_model->isDocumentReadOnly())
+      return true;
+
+   if (_model->isProjectUnnamed()) {
+      if (!doSaveProject(false))
+         return false;
+   }
+   for (int index = 0 ; index < _model->mappings.Count() ; index++) {
+      if (_model->isDocumentModified(index) || _model->isDocumentUnnamed(index)) {
+         if (forced || _model->isDocumentUnnamed(index)) {
+            doSave(index, false);
+         }
+         else {
+            _ELENA_::path_t path = _model->getDocumentPath(index);
+            _View::Answer result = _view->question(QUESTION_SAVE_FILECHANGES, path);
+            if (result == _View::Answer::Cancel) {
+               onChange();
+
+               return false;
+            }
+            else if (result == _View::Answer::Yes) {
+               saveDocument(path, index);
+               _view->markDocumentTitle(index, false);
+            }
+         }
+      }
+   }
+   if (_model->isProjectChanged()) {
+      if (!forced && !_model->isProjectUnnamed()) {
+         if (_view->confirm(QUESTION_SAVE_CHANGES)) {
+            doSaveProject(false);
+         }
+      }
+      else doSaveProject(false);
+   }
+   onChange();
+
+   return true;
+}
+
+void IDEController :: doCreateProject()
+{
+   if (!closeAll())
+      return;
+
+   onProjectOpen();
+
+   doSetProjectSettings();
+
+   onChange();
+}
+
+void IDEController :: doOpenProject()
+{
+   _ELENA_::Path path;
+   if (_view->selectProject(_model, path)) {
+      if (openProject(path))
+         _view->addToRecentProjectList(path);
+
+      onChange();
+   }
+}
+
+void IDEController :: doOpenProject(_ELENA_::path_t path)
+{
+   if (openProject(path)) {
+      _view->addToRecentProjectList(path);
+
+      onChange();
+   }
+}
+
+void IDEController :: doCloseAll(bool closeProject)
+{
+   closeAll(closeProject);
+
+   onChange();
+}
+
+void IDEController :: doCloseAllButActive()
+{
+   int index = _view->getCurrentDocumentIndex();
+   for (int i = 0; i < index; i++) {
+      _view->selectDocument(0);
+      if (!closeFile(0)) {
+         onChange();
+
+         return;
+      }
+   }
+   int count = _model->mappings.Count();
+   for (int i = 1; i < count; i++) {
+      _view->selectDocument(1);
+      if (!closeFile(1)) {
+         onChange();
+
+         return;
+      }         
+   }
+   onChange();
+}
+
+void IDEController :: doUndo()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->undo();
+   
+      _view->refresh();
+   }
+}
+
+void IDEController :: doRedo()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->redo();
+
+      _view->refresh();
+   }
+}
+
+bool IDEController :: doEditCopy()
+{
+   if (_model->currentDoc && _model->currentDoc->hasSelection()) {
+      return _view->copyToClipboard(_model->currentDoc);
+   }
+   else return false;
+}
+
+void IDEController :: doEditPaste()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _view->pasteFromClipboard(_model->currentDoc);
+      _view->refresh();
+   }
+}
+
+void IDEController :: doEditDelete()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->eraseChar(false);
+      _view->refresh();
+   }
+}
+
+void IDEController :: indent(Document* doc)
+{
+   if (_model->tabCharUsing) {
+      doc->tabbing('\t', 1, true);
+   }
+   else {
+      if (!doc->hasSelection()) {
+         size_t shift = _ELENA_::calcTabShift(doc->getCaret().x, _model->tabSize);
+         doc->insertChar(' ', shift);
+      }
+      else doc->tabbing(' ', _model->tabSize, true);
+   }
+   _view->refresh();
+}
+
+void IDEController :: outdent(Document* doc)
+{
+   if (doc->hasSelection()) {
+      if (_model->tabCharUsing) {
+         doc->tabbing('\t', 1, false);
+      }
+      else doc->tabbing(' ', _model->tabSize, false);
+   }
+   _view->refresh();
+}
+
+void IDEController :: doIndent()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      indent(_model->currentDoc);
+   }
+}
+
+void IDEController :: doOutdent()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      outdent(_model->currentDoc);
+   }
+}
+
+void IDEController :: doSelectAll()
+{
+   if (_model->currentDoc) {
+      _model->currentDoc->moveFirst(false);
+      _model->currentDoc->moveLast(true);
+   }
+   _view->refresh();
+}
+
+void IDEController :: doTrim()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->trim();
+
+      _view->refresh();
+   }   
+}
+
+void IDEController :: doDuplicateLine()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->duplicateLine();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doEraseLine()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->eraseLine();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doComment()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->commentBlock();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doUnComment()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->uncommentBlock();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doUpperCase()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->toUppercase();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doLowerCase()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->toLowercase();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doSwap()
+{
+   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+      _model->currentDoc->swap();
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: doFind()
+{
+   if (_view->find(_model, &_searchOption, &_model->searchHistory)) {
+      Settings::addSearchHistory(_model, _searchOption.text);
+
+      if (findText(_searchOption)) {
+         _view->enableMenuItemById(IDM_SEARCH_FINDNEXT, true, false);
+      }
+      else _view->error(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEController :: doFindNext()
+{
+   if (!findText(_searchOption)) {
+      _view->error(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEController :: doReplace()
+{
+   if (_view->replace(_model, &_searchOption, &_model->searchHistory, &_model->replaceHistory)) {
+      Settings::addSearchHistory(_model, _searchOption.text);
+      Settings::addReplaceHistory(_model, _searchOption.newText);
+
+      bool found = false;
+      while (findText(_searchOption)) {
+         found = true;
+
+         _View::Answer result = _view->question(REPLACE_TEXT);
+         if (result == _View::Cancel) {
+            break;
+         }
+         else if (result == _View::Yes) {
+            if(!replaceText(_searchOption))
+               break;
+         }
+      }
+      if (!found)
+         _view->error(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEController :: doGoToLine()
+{
+   Document* doc = _model->currentDoc;
+   if (doc) {
+      Point caret = doc->getCaret();
+      
+      int row = caret.y + 1;
+      if (_view->gotoLine(row)) {
+         caret.y = row - 1;
+
+         doc->setCaret(caret, false);
+         _view->refresh();
+      }
+   }
+}
+
+void IDEController :: doSwitchTab(bool forward)
+{
+   int index = _view->getCurrentDocumentIndex();
+   if (forward) {
+      index += 1;
+      if (index == _model->mappings.Count())
+         index = 0;
+   }
+   else {
+      if (index == 0) {
+         index = _model->mappings.Count() - 1;
+      }
+      else index--;
+   }
+   _view->selectDocument(index);
+}
+
+void IDEController :: doSelectWindow()
+{
+   if (_view->selectWindow(_model, this)) {
+      onChange();
+   }
+}
+
+void IDEController :: doSelectWindow(int index)
+{
+   _view->selectDocument(index);
+}
+
+void IDEController :: doSelectWindow(text_t path)
+{
+   _view->selectDocument(_model->getDocumentIndex(path));
+}
+
+void IDEController :: doShowAbout()
+{
+   _view->about(_model);
+}
+
+bool IDEController :: doCompileProject(int postponedAction)
+{
+   onCompilationStart();
+
+   // exit if the operation was canceled
+   if(!doSaveAll(false)) {
+      onCompilationEnd(ERROR_CANCELED, false);
+
+      return false;
+   }
+
+   if (postponedAction) {
+      _model->state |= uiAutoRecompile;
+   }
+   if (!_view->compileProject(&_project, postponedAction)) {
+      onCompilationEnd(ERROR_COULD_NOT_START, false);
+
+      return false;
+   }
+
+   return true;
+}
+
+void IDEController :: doShowCompilerOutput(bool checked, bool forced)
+{
+   if (_model->compilerOutput != checked || forced) {
+      _model->compilerOutput = checked;
+
+      _view->checkMenuItemById(IDM_VIEW_OUTPUT, _model->compilerOutput);
+
+      if (checked) {
+         _view->openOutput();
+      }
+      else _view->closeOutput();
+
+      _view->refresh(false);
+   }
+}
+
+void IDEController :: doShowCallStack(bool checked, bool forced)
+{
+   if (_model->callStack != checked || forced) {
+      _model->callStack = checked;
+
+      _view->checkMenuItemById(IDM_VIEW_CALLSTACK, _model->callStack);
+
+      if (checked) {
+         _view->openCallList();
+
+         if (_debugController.isStarted())
+            _view->refreshDebugWindows(&_debugController);
+      }
+      else _view->closeCallList();
+
+      _view->refresh(false);
+   }
+}
+
+void IDEController :: doShowMessages(bool checked, bool forced)
+{
+   if (_model->messages != checked || forced) {
+      _model->messages = checked;
+
+      _view->checkMenuItemById(IDM_VIEW_MESSAGES, _model->messages);
+
+      if (checked) {
+         _view->openMessageList();
+      }
+      else _view->closeMessageList();
+
+      _view->refresh(false);
+   }
+}
+
+void IDEController :: doShowDebugWatch(bool visible)
+{
+   _view->checkMenuItemById(IDM_VIEW_WATCH, visible);
+
+   if (visible) {
+      _view->openDebugWatch();
+   }
+   else _view->closeDebugWatch();
+
+   _view->refresh(false);
+}
+
+void IDEController :: onIDEInit()
+{
+   doShowCallStack(_model->callStack, true);
+   doShowCompilerOutput(_model->compilerOutput, true);
+   doShowMessages(_model->messages, true);
+
+   _view->showStatus(0, EDITOR_READY);
+
+//   // check debugger settings
+//   if (Settings::debugTape)
+//      _debugController->allowTapeDebug();
+
+   doShowDebugWatch(false);
+}
+
+void IDEController :: onUIChange()
+{
+   bool hasDocument = _ELENA_::test(_model->state, uiFrameShown);
+   bool hasProject = _ELENA_::test(_model->state, uiProjectActive);
+   bool busy = _ELENA_::test(_model->state, uiIDEBusy);
+   bool debugging = _ELENA_::test(_model->state, uiDebugging);
+
+   bool hasDocumentPrev = _ELENA_::test(_model->previousState, uiFrameShown);
+   bool hasProjectPrev = _ELENA_::test(_model->previousState, uiProjectActive);
+   bool busyPrev = _ELENA_::test(_model->previousState, uiIDEBusy);
+   bool debuggingPrev = _ELENA_::test(_model->previousState, uiDebugging);
+
+   if (hasDocument != hasDocumentPrev) {
+      _view->enableMenuItemById(IDM_FILE_SAVE, hasDocument, true);
+      _view->enableMenuItemById(IDM_FILE_SAVEAS, hasDocument, false);
+      _view->enableMenuItemById(IDM_FILE_SAVEALL, hasDocument, true);
+      _view->enableMenuItemById(IDM_FILE_CLOSE, hasDocument, true);
+      _view->enableMenuItemById(IDM_FILE_CLOSEALL, hasDocument, false);
+      _view->enableMenuItemById(IDM_FILE_CLOSEALLBUT, hasDocument, false);
+
+      _view->enableMenuItemById(IDM_EDIT_SELECTALL, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_TRIM, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_ERASELINE, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_DUPLICATE, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_INDENT, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_OUTDENT, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_SWAP, hasDocument, false);
+      _view->enableMenuItemById(IDM_EDIT_PASTE, hasDocument, true);
+
+      _view->enableMenuItemById(IDM_SEARCH_FIND, hasDocument, false);
+      _view->enableMenuItemById(IDM_SEARCH_FINDNEXT, hasDocument, false);
+      _view->enableMenuItemById(IDM_SEARCH_GOTOLINE, hasDocument, false);
+      _view->enableMenuItemById(IDM_SEARCH_REPLACE, hasDocument, false);
+      _view->enableMenuItemById(IDM_DEBUG_BREAKPOINT, hasDocument, false);
+
+      _view->enableMenuItemById(IDM_WINDOW_NEXT, hasDocument, false);
+      _view->enableMenuItemById(IDM_WINDOW_PREVIOUS, hasDocument, false);
+      _view->enableMenuItemById(IDM_WINDOW_WINDOWS, hasDocument, false);
+
+      if (!hasDocument) {
+         onDocIncluded();
+
+         _view->enableMenuItemById(IDM_EDIT_UNDO, false, true);
+         _view->enableMenuItemById(IDM_EDIT_REDO, false, true);
+         _view->enableMenuItemById(IDM_EDIT_COPY, false, true);
+         _view->enableMenuItemById(IDM_EDIT_CUT, false, true);
+         _view->enableMenuItemById(IDM_EDIT_DELETE, false, false);
+         _view->enableMenuItemById(IDM_EDIT_UPPERCASE, false, false);
+         _view->enableMenuItemById(IDM_EDIT_LOWERCASE, false, false);
+         _view->enableMenuItemById(IDM_EDIT_COMMENT, false, false);
+         _view->enableMenuItemById(IDM_EDIT_UNCOMMENT, false, false);
+      }
+      else onFrameChange();
+   }
+
+   if (hasProject != hasProjectPrev) {
+      _view->enableMenuItemById(IDM_FILE_SAVEPROJECT, hasProject, false);
+      _view->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, hasProject, false);
+      _view->enableMenuItemById(IDM_PROJECT_CLOSE, hasProject, true);
+   }
+
+   if (hasProject != hasProjectPrev || busyPrev != busy || debuggingPrev != debugging) {
+      bool compileEnabled = hasProject && !busy && !debugging;
+
+      _view->enableMenuItemById(IDM_PROJECT_COMPILE, compileEnabled, false);
+      _view->enableMenuItemById(IDM_PROJECT_FORWARDS, compileEnabled, false);
+      _view->enableMenuItemById(IDM_PROJECT_OPTION, compileEnabled, false);
+      _view->enableMenuItemById(IDM_PROJECT_CLEAN, compileEnabled, false);
+
+      bool runEnabled = hasProject && !busy;
+      _view->enableMenuItemById(IDM_DEBUG_RUN, runEnabled, true);
+      _view->enableMenuItemById(IDM_DEBUG_RUNTO, runEnabled, false);
+      _view->enableMenuItemById(IDM_DEBUG_STEPOVER, runEnabled, true);
+      _view->enableMenuItemById(IDM_DEBUG_STEPINTO, runEnabled, true);
+      _view->enableMenuItemById(IDM_DEBUG_NEXTSTATEMENT, runEnabled, false);
+
+      bool stopEnabled = hasProject && debugging;
+      _view->enableMenuItemById(IDM_DEBUG_STOP, stopEnabled, true);
+
+      bool debugEnabled = hasProject && !busy && debugging;
+      _view->enableMenuItemById(IDM_DEBUG_GOTOSOURCE, debugEnabled, true);
+      _view->enableMenuItemById(IDM_DEBUG_INSPECT, debugEnabled, false);
+   }
+
+   _model->previousState = _model->state;
+}
+
+void IDEController::onDocIncluded()
+{
+	if (_model->currentDoc != NULL) {
+      _view->enableMenuItemById(IDM_PROJECT_INCLUDE, !_model->currentDoc->status.included, false);
+      _view->enableMenuItemById(IDM_PROJECT_EXCLUDE, _model->currentDoc->status.included, false);
+	}
+	else {
+      _view->enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
+      _view->enableMenuItemById(IDM_PROJECT_EXCLUDE, false, false);
+	}
+}
+
+void IDEController :: onChange()
+{
+   onUIChange();
+   onFrameChange();
+}
+
+void IDEController :: onFrameChange()
+{
+   FrameState state = _model->getFrameState();
+
+   bool hasDocument = (state != editEmpty);
+   bool hasSelection = hasDocument && _ELENA_::test(state, editHasSelection);
+   bool canUndo = hasDocument && _ELENA_::test(state, editCanUndo);
+   bool canRedo = hasDocument && _ELENA_::test(state, editCanRedo);
+   bool modeChange = hasDocument && _ELENA_::test(state, editModeChanged);
+
+   // update menu options
+   _view->enableMenuItemById(IDM_EDIT_COPY, hasSelection, true);
+   _view->enableMenuItemById(IDM_EDIT_CUT, hasSelection, true);
+   _view->enableMenuItemById(IDM_EDIT_DELETE, hasSelection, false);
+   _view->enableMenuItemById(IDM_EDIT_UNDO, canUndo, true);
+   _view->enableMenuItemById(IDM_EDIT_REDO, canRedo, true);
+   _view->enableMenuItemById(IDM_EDIT_UPPERCASE, hasDocument, false);
+   _view->enableMenuItemById(IDM_EDIT_LOWERCASE, hasDocument, false);
+   _view->enableMenuItemById(IDM_EDIT_COMMENT, hasSelection, false);
+   _view->enableMenuItemById(IDM_EDIT_UNCOMMENT, hasSelection, false);
+
+   // update status bar
+   if (hasDocument) {
+      if (_ELENA_::test(_model->state, uiHighlight)) {
+         _model->state &= ~uiHighlight;
+
+         removeAllDocumentMarker(STYLE_TRACE_LINE);
+      }
+
+      Point caret = _model->currentDoc->getCaret();
+
+      if (_model->currentDoc->status.rowDifference != 0) {
+         if (_model->lastCaret.x == 0) {
+            onRowChange(caret.y - 2);
+         }
+         else onRowChange(caret.y - 1);
+      }
+
+      if (_model->lastCaret != caret) {
+         _ELENA_::String<text_c, 30> line(_T("Ln "));
+         line.appendInt(caret.y + 1);
+         line.append(_T(" Col "));
+         line.appendInt(caret.x + 1);
+
+         _view->showStatus(1, line);
+
+         _model->lastCaret = caret;
+      }
+
+      if (modeChange) {
+         if (_ELENA_::test(state, editModifiedMode)) {
+            _view->showStatus(2, EDITOR_MODIFIED);
+
+            _view->markDocumentTitle(_view->getCurrentDocumentIndex(), true);
+         }
+         else _view->showStatus(2, DEFAULT_TEXT);
+
+         if (_ELENA_::test(state, editOverwriteMode)) {
+            _view->showStatus(3, _T("OVR"));
+         }
+         else _view->showStatus(3, _T("INS"));
+      }
+   }
+}
+
+void IDEController :: onRowChange(int row)
+{
+   int rowChange = _model->currentDoc->status.rowDifference;
+   _model->currentDoc->status.rowDifference = 0;
+
+   bool changed = false;
+   // shift breakpoints if the row number was changed
+   Breakpoints::Iterator it = _breakpoints.start();
+   while (!it.Eof()) {
+      if ((*it).row > (size_t)row && (*it).param == _model->currentDoc) {
+         (*it).row += rowChange;
+         changed = true;
+
+         break;
+      }
+      it++;
+   }
+   if (changed) {
+      // to force repaint
+      _model->currentDoc->status.frameChanged = true;
+
+      _view->refresh();
+   }
+}
+
+void IDEController :: onFileOpen()
+{
+   if (!_ELENA_::test(_model->state, uiFrameShown)) {
+      _view->showFrame();
+
+      _model->state |= uiFrameShown;
+
+      _view->showStatus(2, DEFAULT_TEXT);
+      _view->showStatus(3, DEFAULT_TEXT);
+   }
+
+   onDocIncluded();
+}
+
+void IDEController::onFileClose()
+{
+   if (_view->getCurrentDocumentIndex() == -1) {
+      _view->hideFrame();
+
+      _model->state &= ~uiFrameShown;
+
+      _model->unnamedIndex = 0;
+   }
+}
+
+void IDEController :: onCursorChange()
+{
+   if (_model->highlightBrackets) {
+      doHighlightBrackets(_model->currentDoc);
+   }
+}
+
+void IDEController :: onProjectOpen()
+{
+   setCaption(_model->project.name);
+
+   _model->state |= uiProjectActive;
+}
+
+void IDEController :: onProjectClose()
+{
+   setCaption(NULL);
+
+   clearBreakpoints();
+
+//   // !! temporal check
+//   if (_messageList)
+//      _messageList->clear();
+
+   _model->state &= ~uiProjectActive;
+
+//   ((Output*)_output)->clear();
+}
+
+bool IDEController :: onClose()
 {
    bool result = closeAll();
 
@@ -1474,337 +1577,45 @@ bool IDE :: onClose()
    return result;
 }
 
-void IDE :: onProjectOpen()
+void IDEController :: onCompilationStart()
 {
-   setCaption(Project::getName());
-
-   _state |= uiProjectActive;
-}
-
-void IDE :: onProjectClose()
-{
-   setCaption(NULL);
-
-   clearBreakpoints();
-
-   // !! temporal check
-   if (_messageList)
-      _messageList->clear();
-
-   _state &= ~uiProjectActive;
-}
-
-void IDE :: onFileOpen()
-{
-   if (!_ELENA_::test(_state, uiFrameShown)) {
-      _mainFrame->show();
-      _mainFrame->setFocus();
-
-      _state |= uiFrameShown;
-
-   #ifdef _WIN32
-      _statusBar->setText(2, EMPTY_STRING);
-      _statusBar->setText(3, EMPTY_STRING);
-   #endif
-   }
-   #ifdef _WIN32
-   onDocIncluded();
-   #endif
-}
-
-void IDE :: onFileClose()
-{
-   #ifdef _WIN32
-   if (_mainFrame->getCurrentIndex()==-1) {
-      _mainFrame->hide();
-
-      _state &= ~uiFrameShown;
-
-      _unnamedIndex = 0;
-   }
-#endif
-}
-
-void IDE :: onChange()
-{
-   onUIChange(_state);
-   onFrameChange(_mainFrame->getState());
-}
-
-void IDE :: onCursorChange()
-{
-   if (_highlightBrackets) {
-      doHighlightBrackets(_mainFrame->getDocument(-1));
-   }
-}
-
-void IDE :: onRowChange(Document* doc, int row)
-{
-   int rowChange = doc->status.rowDifference;
-   doc->status.rowDifference = 0;
-
-   bool changed = false;
-#ifdef _WIN32
-   // shift breakpoints if the row number was changed
-   Breakpoints::Iterator it = _breakpoints.start();
-   while (!it.Eof()) {
-      if ((*it).row > (size_t)row && (*it).param == doc) {
-         (*it).row += rowChange;
-         changed = true;
-
-         break;
-      }
-      it++;
-   }
-#endif
-   if (changed) {
-      // to force repaint
-      doc->status.frameChanged = true;
-
-      _mainFrame->refreshDocument();
-   }
-}
-
-void IDE :: onDocIncluded()
-{
-   #ifdef _WIN32
-	Document* doc = _mainFrame->getDocument(-1);
-	if (doc != NULL) {
-      _appMenu->enableItemById(IDM_PROJECT_INCLUDE, !doc->status.included);
-      _appMenu->enableItemById(IDM_PROJECT_EXCLUDE, doc->status.included);
-	}
-	else {
-      _appMenu->enableItemById(IDM_PROJECT_INCLUDE, false);
-      _appMenu->enableItemById(IDM_PROJECT_EXCLUDE, false);
-	}
-	#endif
-}
-
-void IDE :: onFrameChange(FrameState state)
-{
-   #ifdef _WIN32
-   bool hasDocument = (state != editEmpty);
-   bool hasSelection = hasDocument && _ELENA_::test(state, editHasSelection);
-   bool canUndo = hasDocument && _ELENA_::test(state, editCanUndo);
-   bool canRedo = hasDocument && _ELENA_::test(state, editCanRedo);
-   bool modeChange = hasDocument && _ELENA_::test(state, editModeChanged);
-
-   // update menu options
-   _appMenu->enableItemById(IDM_EDIT_COPY, hasSelection);
-   _appMenu->enableItemById(IDM_EDIT_CUT, hasSelection);
-   _appMenu->enableItemById(IDM_EDIT_DELETE, hasSelection);
-   _appMenu->enableItemById(IDM_EDIT_UNDO, canUndo);
-   _appMenu->enableItemById(IDM_EDIT_REDO, canRedo);
-   _appMenu->enableItemById(IDM_EDIT_UPPERCASE, hasDocument);
-   _appMenu->enableItemById(IDM_EDIT_LOWERCASE, hasDocument);
-   _appMenu->enableItemById(IDM_EDIT_COMMENT, hasSelection);
-   _appMenu->enableItemById(IDM_EDIT_UNCOMMENT, hasSelection);
-
-   // update toolbar options
-   _appToolBar->enableItemById(IDM_EDIT_CUT, hasSelection);
-   _appToolBar->enableItemById(IDM_EDIT_COPY, hasSelection);
-   _appToolBar->enableItemById(IDM_EDIT_UNDO, canUndo);
-   _appToolBar->enableItemById(IDM_EDIT_REDO, canUndo);
-
-   // update status bar
-   if (hasDocument) {
-      if (_ELENA_::test(_state, uiHighlight)) {
-         _state &= ~uiHighlight;
-
-         _mainFrame->removeAllDocumentMarker(STYLE_TRACE_LINE);
-      }
-
-      Document* doc = _mainFrame->getDocument(-1);
-      Point caret = doc->getCaret();
-
-      if (doc->status.rowDifference != 0) {
-         if (_lastCaret.x == 0) {
-            onRowChange(doc, caret.y - 2);
-         }
-         else onRowChange(doc, caret.y - 1);
-      }
-
-      if (_lastCaret != caret) {
-         _ELENA_::String<tchar_t, 30> line(_T("Ln "));
-         line.appendInt(caret.y + 1);
-         line.append(_T(" Col "));
-         line.appendInt(caret.x + 1);
-
-         _statusBar->setText(1, line);
-
-         _lastCaret = caret;
-      }
-
-      if (modeChange) {
-         if (_ELENA_::test(state, editModifiedMode)) {
-            _statusBar->setText(2, EDITOR_MODIFIED);
-
-            _mainFrame->markDocument(_mainFrame->getCurrentIndex(), true);
-         }
-         else _statusBar->setText(2, EMPTY_STRING);
-
-         if (_ELENA_::test(state, editOverwriteMode)) {
-            _statusBar->setText(3, _T("OVR"));
-         }
-         else _statusBar->setText(3, _T("INS"));
-      }
-   }
-   #endif
-}
-
-void IDE :: onUIChange(int state)
-{
-   #ifdef _WIN32
-   bool hasDocument = _ELENA_::test(state, uiFrameShown);
-   bool hasProject = _ELENA_::test(state, uiProjectActive);
-   bool busy = _ELENA_::test(state, uiIDEBusy);
-   bool debugging = _ELENA_::test(state, uiDebugging);
-
-   bool hasDocumentPrev = _ELENA_::test(_previousState, uiFrameShown);
-   bool hasProjectPrev = _ELENA_::test(_previousState, uiProjectActive);
-   bool busyPrev = _ELENA_::test(_previousState, uiIDEBusy);
-   bool debuggingPrev = _ELENA_::test(_previousState, uiDebugging);
-
-   if (hasDocument != hasDocumentPrev) {
-      _appMenu->enableItemById(IDM_FILE_SAVE, hasDocument);
-      _appMenu->enableItemById(IDM_FILE_SAVEAS, hasDocument);
-      _appMenu->enableItemById(IDM_FILE_SAVEALL, hasDocument);
-      _appMenu->enableItemById(IDM_FILE_CLOSE, hasDocument);
-      _appMenu->enableItemById(IDM_FILE_CLOSEALL, hasDocument);
-      _appMenu->enableItemById(IDM_FILE_CLOSEALLBUT, hasDocument);
-
-      _appToolBar->enableItemById(IDM_FILE_SAVE, hasDocument);
-      _appToolBar->enableItemById(IDM_FILE_SAVEALL, hasDocument);
-      _appToolBar->enableItemById(IDM_FILE_CLOSE, hasDocument);
-
-      _appMenu->enableItemById(IDM_EDIT_SELECTALL, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_TRIM, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_ERASELINE, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_DUPLICATE, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_INDENT, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_OUTDENT, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_SWAP, hasDocument);
-      _appMenu->enableItemById(IDM_EDIT_PASTE, hasDocument);
-
-      _appToolBar->enableItemById(IDM_EDIT_PASTE, hasDocument);
-
-      _appMenu->enableItemById(IDM_SEARCH_FIND, hasDocument);
-      _appMenu->enableItemById(IDM_SEARCH_FINDNEXT, hasDocument);
-      _appMenu->enableItemById(IDM_SEARCH_GOTOLINE, hasDocument);
-      _appMenu->enableItemById(IDM_SEARCH_REPLACE, hasDocument);
-      _appMenu->enableItemById(IDM_DEBUG_BREAKPOINT, hasDocument);
-
-      _appMenu->enableItemById(IDM_WINDOW_NEXT, hasDocument);
-      _appMenu->enableItemById(IDM_WINDOW_PREVIOUS, hasDocument);
-      _appMenu->enableItemById(IDM_WINDOW_WINDOWS, hasDocument);
-
-      if (!hasDocument) {
-         onDocIncluded();
-
-         _appMenu->enableItemById(IDM_EDIT_UNDO, false);
-         _appMenu->enableItemById(IDM_EDIT_REDO, false);
-         _appMenu->enableItemById(IDM_EDIT_COPY, false);
-         _appMenu->enableItemById(IDM_EDIT_CUT, false);
-         _appMenu->enableItemById(IDM_EDIT_DELETE, false);
-         _appMenu->enableItemById(IDM_EDIT_UPPERCASE, false);
-         _appMenu->enableItemById(IDM_EDIT_LOWERCASE, false);
-         _appMenu->enableItemById(IDM_EDIT_COMMENT, false);
-         _appMenu->enableItemById(IDM_EDIT_UNCOMMENT, false);
-
-         _appToolBar->enableItemById(IDM_EDIT_CUT, false);
-         _appToolBar->enableItemById(IDM_EDIT_COPY, false);
-         _appToolBar->enableItemById(IDM_EDIT_UNDO, false);
-         _appToolBar->enableItemById(IDM_EDIT_REDO, false);
-      }
-      else onFrameChange(_mainFrame->getState());
-   }
-
-   if (hasProject != hasProjectPrev) {
-      _appMenu->enableItemById(IDM_FILE_SAVEPROJECT, hasProject);
-      _appMenu->enableItemById(IDM_DEBUG_CLEARBREAKPOINT, hasProject);
-      _appMenu->enableItemById(IDM_PROJECT_CLOSE, hasProject);
-
-      _appToolBar->enableItemById(IDM_PROJECT_CLOSE, hasProject);
-   }
-
-   if (hasProject != hasProjectPrev || busyPrev != busy || debuggingPrev != debugging) {
-      bool compileEnabled = hasProject && !busy && !debugging;
-
-      _appMenu->enableItemById(IDM_PROJECT_COMPILE, compileEnabled);
-      _appMenu->enableItemById(IDM_PROJECT_FORWARDS, compileEnabled);
-      _appMenu->enableItemById(IDM_PROJECT_OPTION, compileEnabled);
-      _appMenu->enableItemById(IDM_PROJECT_CLEAN, compileEnabled);
-
-      bool runEnabled = hasProject && !busy;
-      _appMenu->enableItemById(IDM_DEBUG_RUN, runEnabled);
-      _appMenu->enableItemById(IDM_DEBUG_RUNTO, runEnabled);
-      _appMenu->enableItemById(IDM_DEBUG_STEPOVER, runEnabled);
-      _appMenu->enableItemById(IDM_DEBUG_STEPINTO, runEnabled);
-      _appMenu->enableItemById(IDM_DEBUG_NEXTSTATEMENT, runEnabled);
-
-      _appToolBar->enableItemById(IDM_DEBUG_RUN, runEnabled);
-      _appToolBar->enableItemById(IDM_DEBUG_STEPINTO, runEnabled);
-      _appToolBar->enableItemById(IDM_DEBUG_STEPOVER, runEnabled);
-
-      bool stopEnabled = hasProject && debugging;
-      _appMenu->enableItemById(IDM_DEBUG_STOP, stopEnabled);
-
-      _appToolBar->enableItemById(IDM_DEBUG_STOP, stopEnabled);
-
-      bool debugEnabled = hasProject && !busy && debugging;
-      _appMenu->enableItemById(IDM_DEBUG_GOTOSOURCE, debugEnabled);
-      _appMenu->enableItemById(IDM_DEBUG_INSPECT, debugEnabled);
-
-      _appToolBar->enableItemById(IDM_DEBUG_GOTOSOURCE, debugEnabled);
-   }
-
-   _previousState = _state;
-   #endif
-}
-
-void IDE :: onCompilationStart()
-{
-   #ifdef _WIN32
-
-   _outputBar->selectTabChild(_output);
+   _view->switchToOutput();
 
 //  !! _debugger.clear();
-   _messageList->clear();
+   _view->clearMessageList();
 
-   _state &= ~uiHighlight;
-   _mainFrame->removeAllDocumentMarker(STYLE_TRACE_LINE);
+   _model->state &= ~uiHighlight;
+   removeAllDocumentMarker(STYLE_TRACE_LINE);
 
-   _state |= uiIDEBusy;
+   _model->state |= uiIDEBusy;
 
-   onUIChange(_state);
+   onUIChange();
 
-   _statusBar->setText(0, PROJECT_COMPILING);
-#endif
+   _view->showStatus(0, PROJECT_COMPILING);
 }
 
-void IDE :: onCompilationEnd(const tchar_t* message, bool successful)
+void IDEController :: onCompilationEnd(text_t message, bool successful)
 {
    if (!successful) {
-      _state &= ~(uiIDEBusy | uiAutoRecompile);
+      _model->state &= ~(uiIDEBusy | uiAutoRecompile);
    }
-   else _state &= ~uiIDEBusy;
+   else _model->state &= ~uiIDEBusy;
 
-   onUIChange(_state);
+   onUIChange();
 
-   _statusBar->setText(0, message);
+   _view->showStatus(0, message);
 }
 
-bool IDE :: onDebugAction(int action, bool stepMode)
+bool IDEController :: onDebugAction(int action, bool stepMode)
 {
-   #ifdef _WIN32
-   if (_ELENA_::test(_state, uiIDEBusy))
+   if (_ELENA_::test(_model->state, uiIDEBusy))
       return false;
 
-   _mainFrame->removeAllDocumentMarker(STYLE_TRACE_LINE);
-   _statusBar->setText(0, NULL);
+   removeAllDocumentMarker(STYLE_TRACE_LINE);
+   _view->showStatus(0, NULL);
 
-   if (!_debugController->isStarted()) {
-      bool recompile = Settings::autoRecompile && !_ELENA_::test(_state, uiAutoRecompile);
+   if (!_debugController.isStarted()) {
+      bool recompile = _model->autoRecompile && !_ELENA_::test(_model->state, uiAutoRecompile);
       if (!isOutaged(recompile)) {
          if (recompile) {
             if(!doCompileProject(action))
@@ -1815,36 +1626,157 @@ bool IDE :: onDebugAction(int action, bool stepMode)
       if (!startDebugger(stepMode))
          return false;
    }
-#endif
    return true;
 }
 
-void IDE :: onDebuggerStart()
+void IDEController :: onDebuggerStart()
 {
-   _state |= uiDebugging;
+   _model->state |= uiDebugging;
 
-   doShowDebugWatch(true);
+   _view->openDebugWatch();
+   _view->checkMenuItemById(IDM_VIEW_WATCH, true);
 
-   _mainFrame->setReadOnlyMode(true);
+   _model->setReadOnlyMode(true);
 
    onChange();
 }
 
-void IDE :: onDebuggerStop(bool broken)
+bool IDEController :: startDebugger(bool stepMode)
 {
-   #ifdef _WIN32
-   _state &= ~uiDebugging;
+   const char* target = _project.getTarget();
+   const char* arguments = _project.getArguments();
 
-   doShowDebugWatch(false);
+   if (!_ELENA_::emptystr(target)) {
+      _ELENA_::Path exePath(_model->project.path);
+      _ELENA_::Path::combinePath(exePath, target);
 
-   _statusBar->setText(0, broken ? PROGRAM_BROKEN : PROGRAM_STOPPED);
+      // provide the whole command line including the executable path and name
+      _ELENA_::Path commandLine(exePath);
+      commandLine.append(_T(" "));
+      _ELENA_::Path::appendPath(commandLine, arguments);
 
-   _mainFrame->removeAllDocumentMarker(STYLE_TRACE_LINE);
-   _mainFrame->setReadOnlyMode(false);
-   _contextBrowser->reset();
-   _callStackList->clear();
+      bool mode = _project.getDebugMode() != 0;
+      if (mode) {
+         if (!_debugController.start(exePath, commandLine, mode, _breakpoints)) {
+            _view->error(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
 
-   _debugController->release();
+            return false;
+         }
+         else return true;
+      }
+      else if(stepMode) {
+         _view->error(ERROR_DEBUG_FILE_NOT_FOUND_SETTING);
+
+         return false;
+      }
+      else {
+         if (!_debugController.start(exePath, commandLine, false, _breakpoints)) {
+            _view->error(ERROR_RUN_NEED_RECOMPILE);
+
+            return false;
+         }
+         else return true;
+      }
+   }
+   else {
+      _view->error(ERROR_RUN_NEED_TARGET);
+
+      return false;
+   }
+}
+
+bool IDEController :: isOutaged(bool noWarning)
+{
+   if (_model->isAnyDocumentModified()) {
+      if (!noWarning)
+         _view->error(ERROR_RUN_OUT_OF_DATE);
+
+      return false;
+   }
+
+   _ELENA_::Path rootPath(_model->project.path);
+   _ELENA_::Path::combinePath(rootPath, _project.getOutputPath());
+   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+      _ELENA_::Path source(rootPath);
+      _ELENA_::Path::combinePath(source, it.key());
+
+      _ELENA_::Path module;
+      _ELENA_::Path::loadSubPath(module, it.key());
+
+      _ELENA_::ReferenceNs name(_project.getPackage());
+      name.pathToName(module);          // get a full name
+
+      module.copy(rootPath);
+      module.nameToPath(name, _T("nl"));
+
+      DateTime sourceDT = DateTime::getFileTime(source);
+      DateTime moduleDT = DateTime::getFileTime(module);
+
+      if (sourceDT > moduleDT) {
+         if (!noWarning)
+            _view->error(ERROR_RUN_OUT_OF_DATE);
+
+         return false;
+      }
+   }
+
+   return true;
+}
+
+void IDEController :: runToCursor()
+{
+   Document* doc = _model->currentDoc;
+   if (doc) {
+      _ELENA_::Path path(_model->getDocumentPath(_view->getCurrentDocumentIndex()));
+      Point caret = doc->getCaret();
+
+      _ELENA_::ReferenceNs module;
+      _project.retrieveName(path, module);
+
+      _debugController.runToCursor(module, path, 0, caret.y);
+   }
+}
+
+// --- SourceManager ---
+
+void IDEController::ProjectManager :: retrievePath(_ELENA_::ident_t name, _ELENA_::Path & path, _ELENA_::path_t extension)
+{
+   _ELENA_::ident_t  package = getPackage();
+
+      // if it is the root package
+   if (_ELENA_::StringHelper::compare(name, package)) {
+      path.copy(_model->project.path);
+      _ELENA_::Path::combinePath(path, getOutputPath());
+      path.nameToPath(name, extension);
+   }
+   // if the class belongs to the project package
+   else if (_ELENA_::StringHelper::compare(name, package, _ELENA_::getlength(package)) && (name[_ELENA_::getlength(package)] == '\'')) {
+      path.copy(_model->project.path);
+      _ELENA_::Path::combinePath(path, getOutputPath());
+
+      path.nameToPath(name, extension);
+   }
+   else {
+      // if file doesn't exist use package root
+      path.copy(_model->paths.libraryRoot);
+
+      path.nameToPath(name, extension);
+   }
+}
+
+void IDEController :: onDebuggerStop(bool broken)
+{
+   _model->state &= ~uiDebugging;
+
+   _view->closeDebugWatch();
+   _view->checkMenuItemById(IDM_VIEW_WATCH, false);
+
+   _view->showStatus(0, broken ? PROGRAM_BROKEN : PROGRAM_STOPPED);
+
+   removeAllDocumentMarker(STYLE_TRACE_LINE);
+   _model->setReadOnlyMode(false);
+
+   _debugController.release();
 
    //// close temporal document
    //// !! probably more generic solution should be used
@@ -1853,30 +1785,350 @@ void IDE :: onDebuggerStop(bool broken)
    //   _mainFrame->closeDocument(tempDocIndex);
 
    onChange();
-#endif
 }
 
-void IDE :: onDebuggerStep(const wchar16_t* ns, const tchar_t* source, HighlightInfo info)
+void IDEController :: onDebuggerStep(text_t ns, text_t source, HighlightInfo info)
 {
-   #ifdef _WIN32
    if (!loadModule(ns, source)) {
-      MsgBox::showError(_appWindow->getHandle(), ERROR_MOUDLE_NOT_FOUND, NULL);
+      _view->error(ERROR_MOUDLE_NOT_FOUND);
 
       return;
    }
 
-   _mainFrame->addDocumentMarker(-1, info, STYLE_TRACE_LINE, STYLE_TRACE);
-   _mainFrame->refreshDocument();
+   addDocumentMarker(-1, info, STYLE_TRACE_LINE, STYLE_TRACE);
 
-   _contextBrowser->refresh(_debugController);
-   _callStackList->refresh(_debugController);
-
-   refreshDebugStatus();
-#endif
+   _view->refreshDebugWindows(&_debugController);
 }
 
-void IDE :: onDebuggerCheckPoint(const tchar_t* message)
+void IDEController :: onDebuggerCheckPoint(text_t message)
 {
-   _statusBar->setText(0, message);
+   _view->showStatus(0, message);
 }
 
+bool IDEController :: loadModule(text_t ns, text_t source)
+{
+   if (!_debugController.isStarted())
+      return false;
+
+   if (_ELENA_::StringHelper::compare(ns, TextString(_project.getPackage()))) {
+      _ELENA_::Path path(_model->project.path);
+      path.combine(source);
+
+      openFile(path);
+   }
+   else {
+      _ELENA_::Path path(_model->paths.packageRoot);
+      path.combine(ns, _ELENA_::StringHelper::find(ns, '\'', _ELENA_::getlength(ns)));
+      path.combine(source);
+
+      openFile(path);
+   }
+
+   return true;
+}
+
+bool IDEController :: toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, size_t row, Document* doc)
+{
+   _ELENA_::List<_ELENA_::Breakpoint>::Iterator it = _breakpoints.start();
+   while (!it.Eof()) {
+      if (doc == (*it).param && row==(*it).row) {
+         if (_debugController.isStarted()) {
+            _debugController.toggleBreakpoint(*it, false);
+         }
+         _breakpoints.cut(it);
+         return false;
+      }
+      it++;
+   }
+   _ELENA_::Breakpoint breakpoint(module, path, row, doc);
+   _breakpoints.add(breakpoint);
+
+   if (_debugController.isStarted()) {
+      _debugController.toggleBreakpoint(breakpoint, true);
+   }
+
+   return true;
+}
+
+void IDEController :: toggleBreakpoint()
+{
+   int index = _view->getCurrentDocumentIndex();
+   Document* doc = _model->getDocument(index);
+   if (doc) {
+      _ELENA_::Path path(_model->getDocumentPath(index));
+         
+      Point caret = doc->getCaret();
+
+      _ELENA_::ReferenceNs module;
+      _project.retrieveName(path, module);
+
+      toggleBreakpoint(module, _ELENA_::IdentifierString(path), caret.y, doc);
+
+      // forcee full repaint
+      doc->status.frameChanged = true;
+      _view->refresh();
+   }
+}
+
+
+// --- Projects ---
+
+const char* IDEController::ProjectManager::getPackage()
+{
+   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_PACKAGE_SETTING);
+}
+
+const char* IDEController::ProjectManager::getTemplate()
+{
+   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_TEMPLATE_SETTING);
+}
+
+const char* IDEController::ProjectManager::getOptions()
+{
+   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_COMPILER_OPTIONS);
+}
+
+const char* IDEController::ProjectManager::getTarget()
+{
+   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_EXECUTABLE_SETTING);
+}
+
+const char* IDEController::ProjectManager::getOutputPath()
+{
+   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_OUTPUT_SETTING);
+}
+
+const char* IDEController::ProjectManager::getArguments()
+{
+   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_ARGUMENT_SETTING);
+}
+
+int IDEController::ProjectManager::getDebugMode()
+{
+   const char* mode = _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
+   if (_ELENA_::StringHelper::compare(mode, "-1")) {
+      return -1;
+   }
+   else if (_ELENA_::StringHelper::compare(mode, "-2")) {
+      return -2;
+   }
+   else return 0;
+}
+
+bool IDEController::ProjectManager::getBoolSetting(const char* name)
+{
+   const char* value = _model->project.config.getSetting(IDE_PROJECT_SECTION, name);
+
+   return _ELENA_::StringHelper::compare(value, "-1");
+}
+
+void IDEController::ProjectManager::setSectionOption(const char* option, const char* value)
+{
+   if (!_ELENA_::emptystr(value)) {
+      _model->project.config.setSetting(IDE_PROJECT_SECTION, option, value);
+   }
+   else _model->project.config.clear(IDE_PROJECT_SECTION, option);
+
+   _model->project.changed = true;
+}
+
+void IDEController::ProjectManager::setTarget(const char* target)
+{
+   setSectionOption(IDE_EXECUTABLE_SETTING, target);
+}
+
+void IDEController::ProjectManager::setArguments(const char* arguments)
+{
+   setSectionOption(IDE_ARGUMENT_SETTING, arguments);
+}
+
+void IDEController::ProjectManager::setTemplate(const char* templateName)
+{
+   setSectionOption(IDE_TEMPLATE_SETTING, templateName);
+}
+
+void IDEController::ProjectManager::setOutputPath(const char* path)
+{
+   setSectionOption(IDE_OUTPUT_SETTING, path);
+}
+
+void IDEController::ProjectManager::setOptions(const char* options)
+{
+   setSectionOption(IDE_COMPILER_OPTIONS, options);
+}
+
+void IDEController::ProjectManager::setPackage(const char* package)
+{
+   setSectionOption(IDE_PACKAGE_SETTING, package);
+}
+
+void IDEController::ProjectManager::setDebugMode(int mode)
+{
+   if (mode != 0) {
+      _model->project.config.setSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING, mode);
+   }
+   else _model->project.config.clear(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
+
+   _model->project.changed = true;
+}
+
+void IDEController::ProjectManager::setBoolSetting(const char* key, bool value)
+{
+   setSectionOption(key, value ? "-1" : "0");
+}
+
+void IDEController::ProjectManager::refresh()
+{
+   const char* projectTemplate = getTemplate();
+
+   // reload package root
+   _ELENA_::path_t templatePath = _model->packageRoots.get(projectTemplate);
+   if (_ELENA_::emptystr(templatePath))
+      templatePath = _model->packageRoots.get("default");
+
+   _model->paths.packageRoot.copy(templatePath);
+   Paths::resolveRelativePath(_model->paths.packageRoot, _model->paths.appPath);
+
+   // reload library root
+   templatePath = _model->libraryRoots.get(projectTemplate);
+   if (_ELENA_::emptystr(templatePath))
+      templatePath = _model->libraryRoots.get("default");
+
+   _model->paths.libraryRoot.copy(templatePath);
+   Paths::resolveRelativePath(_model->paths.libraryRoot, _model->paths.appPath);
+}
+
+bool IDEController::ProjectManager::open(_ELENA_::path_t path)
+{
+   _model->project.config.clear();
+
+   if (!_model->project.config.load(path, _ELENA_::feUTF8))
+      return false;
+
+   rename(path);
+   refresh();
+
+   _model->project.changed = false;
+   return true;
+}
+
+void IDEController::ProjectManager::reset()
+{
+   _model->project.config.clear();
+
+   _model->project.name.clear();
+   _model->project.path.clear();
+
+   refresh();
+
+   // should be the last to prevent being marked as changed
+   _model->project.changed = false;
+}
+
+void IDEController::ProjectManager::save()
+{
+   _ELENA_::Path cfgPath(_model->project.path);
+   cfgPath.combine(_model->project.name);
+   cfgPath.appendExtension(_T("prj"));
+
+   _model->project.config.save(cfgPath, _ELENA_::feUTF8);
+
+   _model->project.changed = false;
+}
+
+void IDEController::ProjectManager::rename(_ELENA_::path_t path)
+{
+   _model->project.name.copyName(path);
+   _model->project.path.copySubPath(path);
+
+   Paths::resolveRelativePath(_model->project.path, _model->paths.defaultPath);
+
+   _model->project.changed = true;
+}
+
+void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name)
+{
+   _ELENA_::path_t root = _model->project.path;
+   size_t rootLength = _ELENA_::getlength(root);
+
+   _ELENA_::Path fullPath;
+   fullPath.copySubPath(path);
+   Paths::resolveRelativePath(fullPath, root);
+   fullPath.lower();
+
+   if (!_ELENA_::emptystr(root) && _ELENA_::StringHelper::compare(fullPath, root, rootLength)) {
+      name.copy(getPackage());
+      if (_ELENA_::getlength(fullPath) > rootLength)
+         name.pathToName(fullPath + rootLength + 1);
+
+      path.copy(path + rootLength + 1);
+   }
+   else {
+      root = _model->paths.packageRoot;
+      rootLength = _ELENA_::getlength(root);
+
+      if (!_ELENA_::emptystr(root) && _ELENA_::StringHelper::compare(fullPath, root, rootLength)) {
+         name.pathToName(fullPath + rootLength + 1);
+
+         // skip the root path
+         path.copySubPath(path + rootLength + 1);
+      }
+      else {
+         _ELENA_::FileName fileName(fullPath);
+
+         name.copy(_ELENA_::IdentifierString(fileName));
+      }
+   }
+}
+
+bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
+{
+   _ELENA_::Path current;
+   _ELENA_::Path relPath(path);
+   Paths::makeRelativePath(relPath, _model->project.path);
+
+   _ELENA_::ConfigCategoryIterator it = SourceFiles();
+   while (!it.Eof()) {
+      _ELENA_::Path::loadPath(current, it.key());
+
+      if (_ELENA_::StringHelper::compare(relPath, current)) {
+         return true;
+      }
+      it++;
+   }
+   return false;
+}
+
+void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
+{
+   _ELENA_::Path relPath(path);
+   Paths::makeRelativePath(relPath, _model->project.path);
+
+   _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clone(relPath), (const char*)NULL);
+
+   _model->project.changed = true;
+}
+
+void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
+{
+   _ELENA_::Path relPath(path);
+   Paths::makeRelativePath(relPath, _model->project.path);
+
+   _model->project.config.clear(IDE_FILES_SECTION, _ELENA_::IdentifierString(relPath));
+
+   _model->project.changed = true;
+}
+
+void IDEController::ProjectManager::clearForwards()
+{
+   _model->project.config.clear(IDE_FORWARDS_SECTION);
+
+   _model->project.changed = true;
+}
+
+void IDEController::ProjectManager::addForward(const char* name, const char* reference)
+{
+   _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
+
+   _model->project.changed = true;
+}

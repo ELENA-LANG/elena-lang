@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,7 +14,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 4
+#define BUILD_VERSION 6
 
 typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
 typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;
@@ -51,7 +51,7 @@ void printLine(const wchar_t* msg, ...)
 }
 #endif
 
-ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineInfo& info)
+ByteCodePattern decodeCommand(TextSourceReader& source, ident_c* token, LineInfo& info)
 {
    ByteCodePattern pattern;
 
@@ -62,7 +62,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
    info = source.read(token, IDENTIFIER_LEN);
    // pattern arguments
-   if (ConstantIdentifier::compare(info.line, "+")) {
+   if (StringHelper::compare(info.line, "+")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braAdd;
@@ -70,7 +70,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (ConstantIdentifier::compare(info.line, "-")) {
+   else if (StringHelper::compare(info.line, "-")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braAdd;
@@ -78,7 +78,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (ConstantIdentifier::compare(info.line, "=")) {
+   else if (StringHelper::compare(info.line, "=")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braValue;
@@ -86,7 +86,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, wchar16_t* token, LineIn
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (ConstantIdentifier::compare(info.line, ":=")) {
+   else if (StringHelper::compare(info.line, ":=")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braMatch;
@@ -139,9 +139,9 @@ size_t addOpcode(MemoryByteTrie& trie, size_t parentPosition, ByteCodePattern pa
    return position;
 }
 
-size_t readTransform(size_t position, TextSourceReader& source, wchar16_t* token, LineInfo& info, MemoryByteTrie& trie)
+size_t readTransform(size_t position, TextSourceReader& source, ident_c* token, LineInfo& info, MemoryByteTrie& trie)
 {
-   if (!ConstantIdentifier::compare(token, ";")) {
+   if (!StringHelper::compare(token, ";")) {
       ByteCodePattern pattern = decodeCommand(source, token, info);
 
       // should be saved in reverse order, to simplify transform algorithm
@@ -152,14 +152,14 @@ size_t readTransform(size_t position, TextSourceReader& source, wchar16_t* token
    else return position;
 }
 
-void appendOpCodeString(TextSourceReader& source, wchar16_t* token, LineInfo& info, MemoryByteTrie& trie)
+void appendOpCodeString(TextSourceReader& source, ident_c* token, LineInfo& info, MemoryByteTrie& trie)
 {
    // save opcode pattern
    ByteCodePattern pattern = decodeCommand(source, token, info);
 
    size_t position = addOpcode(trie, 0, pattern);
 
-   while (!ConstantIdentifier::compare(token, "=>")) {
+   while (!StringHelper::compare(token, "=>")) {
       position = addOpcode(trie, position, decodeCommand(source, token, info));
    }
 
@@ -217,18 +217,19 @@ void generateSuffixLinks(MemoryByteTrie& trie)
 
 int main(int argc, char* argv[])
 {
-   printLine(_T("ELENA command line optimization table generator %d.%d.%d (C)2012-15 by Alexei Rakov\n"), ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
+   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-15 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
    if (argc != 2) {
-      printLine(_T("og <optimization_file>"));
+      printLine("og <optimization_file>");
       return 0;
    }
 
-   Path path(argv[1]);
+   Path path;
+   Path::loadPath(path, argv[1]);
 
    TextFileReader   sourceFile(path, feUTF8, false);
    TextSourceReader source(4, &sourceFile);
    LineInfo         info(0, 0, 0);
-   wchar16_t        token[IDENTIFIER_LEN + 1];
+   ident_c          token[IDENTIFIER_LEN + 1];
 
    ByteCodePattern defValue;
    MemoryByteTrie  trie(defValue);
@@ -251,16 +252,16 @@ int main(int argc, char* argv[])
 
       // save the result
       Path outputFile(path);
-      outputFile.changeExtension(_T("dat"));
+      outputFile.changeExtension("dat");
 
       FileWriter file(outputFile, feRaw, false);
       trie.save(&file);
 
-      printLine(_T("\nSuccessfully created\n"));
+      printLine("\nSuccessfully created\n");
    }
    catch(UnknownToken& token)
    {
-      printLine(_T("(%d): Invalid token %s\n"), token.line.row, token.line.line);
+      printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
    }
 
    return 0;

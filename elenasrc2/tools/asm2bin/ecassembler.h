@@ -3,7 +3,7 @@
 //
 //		This header contains abstract ECODES Assembler declarations
 //
-//                                             (C)2013-2014, by Alexei Rakov
+//                                             (C)2013-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ecassemblerH
@@ -20,18 +20,18 @@ namespace _ELENA_
 // --- ECodesAssembler ---
 class ECodesAssembler : public Assembler
 {
-	Map<const wchar16_t*, size_t> constants;
+   Map<ident_t, size_t> constants;
    MessageMap                    verbs;
 
    struct LabelInfo
    {
-      Map<const wchar16_t*, int> labels;
-      Map<const wchar16_t*, int> fwdJumps;
+      Map<ident_t, int> labels;
+      Map<ident_t, int> fwdJumps;
    };
 
-   int mapVerb(const wchar16_t* literal);
+   int mapVerb(ident_t literal);
 
-   void fixJump(const wchar16_t* label, MemoryWriter& writer, LabelInfo& info);
+   void fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);
    ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
@@ -57,7 +57,7 @@ class ECodesAssembler : public Assembler
    void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
 
 public:
-	virtual void compile(TextReader* reader, const tchar_t* outputPath);
+	virtual void compile(TextReader* reader, path_t outputPath);
 
 	ECodesAssembler()
 	{

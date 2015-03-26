@@ -16,9 +16,9 @@
 namespace _ELENA_
 {
 
-// Compiler optimization flags
-//const int optDirectConstant = 0x00000001;
-//const int optJumps          = 0x00000002;
+//// Compiler optimization flags
+////const int optDirectConstant = 0x00000001;
+////const int optJumps          = 0x00000002;
 
 // --- Compiler class ---
 class Compiler
@@ -77,17 +77,17 @@ protected:
 
    struct Unresolved
    {
-      const tchar_t* fileName;
-      ref_t          reference;
-      _Module*       module;
-      size_t         row;
-      size_t         col;           // virtual column
+      ident_t    fileName;
+      ref_t      reference;
+      _Module*   module;
+      size_t     row;
+      size_t     col;           // virtual column
 
       Unresolved()
       {
          reference = 0;
       }
-      Unresolved(const tchar_t* fileName, ref_t reference, _Module* module, size_t row, size_t col)
+      Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
       {
          this->fileName = fileName;
          this->reference = reference;
@@ -97,11 +97,11 @@ protected:
       }
    };
 
-   typedef Map<const wchar16_t*, ref_t, false>     ForwardMap;
-   typedef Map<const wchar16_t*, Parameter, false> LocalMap;
-   typedef Map<ref_t, ref_t>                       SubjectMap;
-   typedef List<Unresolved>                        Unresolveds;
-   typedef Map<ref_t, SubjectMap*>                 ExtensionMap;
+   typedef Map<ident_t, ref_t, false>     ForwardMap;
+   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef List<Unresolved>               Unresolveds;
+   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
    // - ModuleScope -
    struct ModuleScope
@@ -110,12 +110,12 @@ protected:
       _Module*       module;
       _Module*       debugModule;
 
-      const tchar_t* sourcePath;
+      ident_t        sourcePath;
       ref_t          sourcePathRef;
 
       // default namespaces
-      List<const wchar16_t*> defaultNs;
-      ForwardMap             forwards;       // forward declarations
+      List<ident_t> defaultNs;
+      ForwardMap    forwards;       // forward declarations
 
       // symbol hints
       Map<ref_t, ObjectKind> symbolHints;
@@ -153,11 +153,11 @@ protected:
 
       ObjectInfo mapObject(TerminalInfo identifier);
 
-      ref_t mapReference(const wchar16_t* reference, bool existing = false);
+      ref_t mapReference(ident_t reference, bool existing = false);
 
-      ObjectInfo mapReferenceInfo(const wchar16_t* reference, bool existing = false);
+      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-      bool defineForward(const wchar16_t* forward, const wchar16_t* referenceName, bool constant)
+      bool defineForward(ident_t forward, ident_t referenceName, bool constant)
       {
          ObjectInfo info = mapReferenceInfo(referenceName, false);
 
@@ -224,18 +224,11 @@ protected:
       void raiseError(const char* message, TerminalInfo terminal);
       void raiseWarning(int level, const char* message, TerminalInfo terminal);
 
-      bool checkReference(const wchar16_t* referenceName);
+      bool checkReference(ident_t referenceName);
 
-      ref_t resolveIdentifier(const wchar16_t* name);
+      ref_t resolveIdentifier(ident_t name);
 
-      ref_t mapNewType(const wchar16_t* terminal);
-
-      ref_t mapSubject(const char* name)
-      {
-         IdentifierString wsName(name);
-
-         return module->mapSubject(wsName, false);
-      }
+      ref_t mapNewType(ident_t terminal);
 
       ref_t mapType(TerminalInfo terminal, bool& out);
       ref_t mapType(TerminalInfo terminal);
@@ -246,14 +239,19 @@ protected:
          bool dummy;
          return mapSubject(terminal, output, dummy);
       }
+      ref_t mapSubject(ident_t name)
+      {
+         IdentifierString wsName(name);
+         return module->mapSubject(wsName, false);
+      }
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-      ref_t loadClassInfo(_Module* &classModule, ClassInfo& info, const wchar16_t* vmtName, bool headerOnly = false);
-      ref_t loadClassInfo(ClassInfo& info, const wchar16_t* vmtName, bool headerOnly = false);
-      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, const wchar16_t* symbol);
+      ref_t loadClassInfo(_Module* &classModule, ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       ref_t resolveStrongType(ref_t type_ref);
 
@@ -295,7 +293,7 @@ protected:
 
       int getClassFlags(ref_t reference);
 
-      ModuleScope(Project* project, const tchar_t* sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
+      ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
 
    // - Scope -
@@ -474,7 +472,7 @@ protected:
          return level;
       }
 
-      void mapLocal(const wchar16_t* local, int level, ref_t type)
+      void mapLocal(ident_t local, int level, ref_t type)
       {
          locals.add(local, Parameter(level, type));
       }
@@ -566,7 +564,7 @@ protected:
          }
       };
 
-      Map<const wchar16_t*, Outer> outers;
+      Map<ident_t, Outer> outers;
 
       Outer mapSelf();
 
@@ -649,7 +647,7 @@ protected:
    ref_t mapNestedExpression(CodeScope& scope, int mode);
    ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
-   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, const wchar16_t* reference);
+   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
@@ -733,7 +731,7 @@ protected:
    bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand, bool presavedAccumulator = false);
 
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
-   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, const wchar16_t* dllName, int mode);
+   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
    ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info, int mode);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -750,8 +748,8 @@ protected:
    void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
    void compileSingletonClass(DNode member, ClassScope& scope);
 
-   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, const char* function);
-   void compileImportMethod(DNode node, CodeScope& scope, ref_t message, const wchar16_t* function, int mode);
+   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
+   void compileImportMethod(DNode node, CodeScope& scope, ref_t message, ident_t function, int mode);
 
    void compileActionMethod(DNode member, MethodScope& scope, int mode);
    void compileLazyExpressionMethod(DNode member, MethodScope& scope);
@@ -785,7 +783,7 @@ protected:
 
    virtual void compileModule(DNode node, ModuleScope& scope);
 
-   void compile(const tchar_t* source, MemoryDump* buffer, ModuleScope& scope);
+   void compile(ident_t source, MemoryDump* buffer, ModuleScope& scope);
 
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);

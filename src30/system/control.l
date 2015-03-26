@@ -22,6 +22,8 @@
 
     #method literal = "unknown".
 
+    #method wide = "unknown" wide.  // !! temporal
+
     #method bool = $self.
 
     #method clone = $self.
@@ -57,6 +59,8 @@
     #method(type:bool) not = false.
 
     #method literal = "true".
+
+    #method wide = "true" wide. // !! temporal
 
     #method bool = $self.
 
@@ -101,6 +105,8 @@
     #method not = true.
 
     #method literal = "false".
+    
+    #method wide = "false" wide. // !! temporal
 
     #method bool = $self.
 

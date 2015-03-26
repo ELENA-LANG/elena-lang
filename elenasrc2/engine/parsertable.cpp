@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Parser table class implementation.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -71,12 +71,12 @@ ParserTable :: ParserTable()
 {
 }
 
-int ParserTable :: defineSymbol(const wchar16_t* terminal)
+int ParserTable :: defineSymbol(ident_t terminal)
 {
    return _symbols.get(terminal);
 }
 
-bool ParserTable :: registerSymbol(int symbol, const wchar16_t* value)
+bool ParserTable :: registerSymbol(int symbol, ident_t value)
 {
    return _symbols.add(value, symbol, true);
 }

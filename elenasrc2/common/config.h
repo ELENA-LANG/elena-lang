@@ -20,12 +20,12 @@ class IniConfigFile : public _ConfigFile
    ConfigSettings _settings;
 
 public:
-   virtual ConfigCategoryIterator getCategoryIt(const char* name)
+   virtual ConfigCategoryIterator getCategoryIt(ident_t name)
    {
       return _settings.getIt(name);
    }
 
-   virtual const char* getSetting(const char* category, const char* key, const char* defaultValue = NULL);
+   virtual ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
    void setSetting(const char* category, const char* key, const char* value);
    void setSetting(const char* category, const char* key, int value);
@@ -36,12 +36,8 @@ public:
    void clear(const char* category);
    void clear();
 
-   virtual bool load(const tchar_t* path, int encoding);
-   virtual bool save(const tchar_t* path, int encoding);
-   virtual bool save(const tchar_t* path)
-   {
-      return save(path, 0);
-   }
+   virtual bool load(path_t path, int encoding);
+   virtual bool save(path_t path, int encoding);
 
    IniConfigFile();
    IniConfigFile(bool allowDuplicates);

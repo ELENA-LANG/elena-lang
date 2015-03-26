@@ -2,7 +2,7 @@ ELENA byte codes (or ecodes)
 ============================
 
  ELENA virtual machine registers:
-
+ --------------------------------
    f(p)   - frame pointer     (positive values - pointing to the current frame, 
                                negative - to the previous frame)
    s(p)   - stack pointer     (only positive)
@@ -14,83 +14,34 @@ ELENA byte codes (or ecodes)
    d(ex)  - index             (data register) 
    
    e(xt)  - length / message  (data register) 
+ 
 
-   
- Legend:
-   a   - accumulator
-   b   - self
-   d   - index
-   l   - length
-   r   - reference
-   i   - index  
-   m   - message
-   n   - int
-   q   - long
-   f   - real
-   w   - short
+ Command set:
+ ----------- 
+ acallvd                    - call acc::VMT[index]
 
- 
- stack commands:
- ---------------
- pop                        - sp--; 
- 
- popa                       - acc <= [sp] ; sp--
+ acallvi i                  - call acc::VMT[i] method
 
- popb                       - base <= [sp] ; sp--
- 
- popi n                     - sp-=i; 
- 
- pope                       - ext <= [sp] ; sp--
- 
- popd                       - index <= [sp] ; sp--
- 
- pusha                      - acc => [sp+1] ; sp++                  
-    
- pushai i                   - [acc::i] => [sp+1] ; sp++
- 
- pushb                      - base => [sp+1] ; sp++
- 
- pushbi i                   - [base::i] => [sp+1] ; sp++ ;
- 
- pushf i                    - fp+i => [sp+1] ; sp++
- 
- pushfi i                   - [fp+i] => [sp+1] ; sp++
-
- pushe                      - ext => [sp+1] ; sp++;
-
- pushd                      - index => [sp+1] ; sp++;
-
- pushn n                    - n  => [sp+1] ; sp++
- 
- pushr r                    - r  => [sp+1] ; sp++
- 
- pushsi i                   - [sp+i] => [sp+1] ; sp++
-
- reserve i                  - exclude part of the stack from managed stack frame ;
-                              should follow "open" byte code
- 
- swapsi   i                 - [sp+i] <=> [sp]
-
- register commands:
- ------------------            
  acopyb                     - base => acc
  
  acopyf i                   - fp+i => acc
                               does not affect ext register (ECX)           
  
  acopyr r                   - r => acc
-
- bcopyr r                   - r => base
-
+ 
  acopys i                   - sp+i => acc
                               does not affect ext register (ECX)
+
+ add                        - index += ext
+
+ addn n                     - index += n
  
+ ajumpvi i                  - redirect to acc::VMT[i] method
+
  aloadai i                  - [acc::i] => acc
  
  aloadbi i                  - [base::i] => acc
  
- aload                      - [acc::index] => acc
-          
  aloadfi i                  - [fp+i] => acc
 
  aloadr r                   - [r] => acc
@@ -98,369 +49,393 @@ ELENA byte codes (or ecodes)
  aloadsi i                  - [sp+i] => acc;
                                does not affect m register (EDX)
  
- asavefi i                  - [fp+i] <= acc 
+ andn n                     - index && n => index
  
+ asavebi i                  - [base::i] <= acc;
+                               use GC reference bit masks
+
+ asavefi i                  - [fp+i] <= acc 
+          
  asaver r                   - [r] <= acc
  
  asavesi i                  - [sp+i] <= acc
-
+ 
  aswapsi i                  - [sp+i] <=> acc
  
- bswap                      - a <=> b
-
- eswap                      - index <=> ext
-
  axsavebi i                 - [base::i] <= acc;
                                direct
  
  bcopya                     - acc => base
-          
- bcopyf i                   - fp+i => base
+
+ bcopyf i                   - fp+i => base                                        
                               does not affect ext register (ECX)           
+          
+ bcopys i                   - sp+i => base                                        
+                              does not affect ext register (ECX)           
+          
+ bcopyr r                   - r => base
  
+ bcreate                    - create the object with size=index and vmt=acc, out : acc  
+ 
+ blen                       - [acc].Length >> index ; where acc is a object
+
  bloadfi i                  - [fp+i] => base
 
  bloadsi i                  - [sp+i] => base
-
- add                        - index += ext
-
- addn n                     - index += n
-
- or                         - index |= ext
-  
- andn n                     - index && n => index
  
- orn n                      - index || n => index
+ bread                      - acc[index] >> ext                               
  
- dcopy i                    - i => index
-
- dcopye                     - index << ext
+ breadb                     - acc[index] >> [byte]ext
  
- dec                        - index--
-
- inc                        - index++
-
- not                        - !index => index
+ breadw                     - acc[index] >> [short]ext
  
- edec                       - ext--
-
- einc                       - ext++
- 
- dloadfi i                  - [fp:i] => index
-
- dloadsi i                  - [sp:i] => index
- 
- dsavefi i                  - [fp:i] <= index
-
- dsavesi i                  - [sp:i] <= index
- 
- eloadsi i                  - [sp:i] => ext
- 
- esavesi i                  - [sp:i] <= ext
- 
- sub                        - index -= ext
- 
- dsubsi n                   - d << d - [sp:i]
-
- ecopy i                    - i => ext
-
- ecopyd                     - ext << index
- 
- dcopym m                   - index << message
-
- dcopyverb                  - index << ext.verb
- 
- dcopysubj                  - index << ext.subj
- 
- dcopycount                 - index << ext.paramcount
- 
- ecopym m                   - ext << message
- 
- setverb m                  - ext.verb << m
-
- setsubj m                  - ext.subject << m
-
- scopyf i                   - sp <= fp + i
-
- address label              - load label address to ext
-
-
- control commands:
- -----------------                     
  breakpoint                 - used for debugging
+
+ bsredirect                 - search acc::VMT for the message in ext;
+                              if found jumps to it; binary search is used ; index, ext, acc presaved
+                              
+ bswap                      - a <=> b                                              
+ 
+ bswapsi i                  - [sp+i] <=> base
+ 
+ bwrite                     - base[index] << ext
+ 
+ bwriteb                    - base[index] << [byte]ext
+ 
+ bwritew                    - base[index] << word[ext]
+ 
+ call                       - call [acc] procedure
+ 
+ callextr r                 - calls the external procedure ; index contains the result
+              
+ callr r                    - calls the procedure;
+                              acc contains the result
+ 
+ class                       - base::VMT >> acc
 
  close                      - restore the previous frame ;
                               should be paired with open
                               it should be only one command per procedure ; 
 
- exclude                    - exclude the stack content from managed space
+ copy                       - base << acc, base.Length
 
- include                    - restore managed stack
-                              (should be paired with exclude)
+ copym m                    - ext << message
+ 
+ create                     - create the object with length=index and vmt=acc, out : acc  
 
+ dcopy i                    - i => index
+ 
+ dcopycount                 - index << ext.paramcount
+ 
+ dcopye                     - index << ext
+ 
+ dcopysubj                  - index << ext.subj
+ 
+ dcopyverb                  - index << ext.verb
+ 
+ dec                        - index--
+
+ dloadfi i                  - [fp:i] => index
+ 
+ dloadsi i                  - [sp:i] => index
+ 
+ dreserve                   - exclude part of the stack from managed stack frame;
+                              should follow "open" byte code ;
+                              esp -= index * 4
+
+ dsavefi i                  - [fp:i] <= index
+
+ dsavesi i                  - [sp:i] <= index
+
+ dswapsi                    - ext <=> [sp:i]
+ 
+ eaddn                      - ext += n
+ 
+ ecopy i                    - i => ext
+ 
+ ecopyd                     - ext << index
+ 
+ eloadsi i                  - [sp:i] => ext
+ 
+ else label                 - jump to the label if index != ext
+ 
+ elseb label                - jump to the label if acc != base
+ 
+ elsem n, label             - jump to the label if ext != m
+ 
+ elsen n, label             - jump to the label if index != n
+ 
+ elser r, label             - jumps to the label if acc != r
+ 
+ esavesi i                  - [sp:i] <= ext
+                              
+ eswap                      - index <=> ext
+ 
+ eswapsi                    - ext <=> [sp:i]
+ 
+ flag                       - acc::VMT::flag >> index 
+
+ get                        - acc <= base[index] ;
+
+ hook label                 - assign a new exception handler ; ext affected
+ 
+ if label                   - jump to the label if index == ext                                                   
+
+ ifb label                  - jump to the label if acc == base
+
+ ifheap label               - jump to the label if acc is allocated in heap (more precisely - not in the stack)
+
+ ifm n, label               - jump to the label if ext == m
+ 
+ ifn n, label               - jump to the label if index == n
+ 
+ ifr r, label               - jumps to the label if acc == r
+
+ inc                        - index++
+ 
+ jump label                 - jumps to the label
+ 
+ ladd                       - long[base] += long[acc]
+ 
+ land                       - long[base] && long[acc]
+ 
+ lcopy                      - long[base] << long[acc]
+
+ ldiv                       - long[base] /= long[acc]
+
+ len                        - [base].Count >> ext ;
+
+ lequal                     - long[acc] == long[base] ; if true - index = 1, if false - index = 0
+ 
+ less label                 - jump to the label if index < ext
+
+ lessn n, label             - jump to the label if index < n
+
+ lless                      - long[acc] < [base] ; if true - index = 1, if false - index = 0
+ 
+ lmul                       - long[base] *= long[acc]
+ 
+ lnot                       - long[base] << not long[acc]
+ 
+ lor                        - long[base] || long[acc]
+ 
+ lshift                     - long[base] <<= index
+ 
+ lsub                       - long[base] -= long[acc]
+ 
+ lxor                       - long[base] ~~ long[acc]
+
+ shiftn n                   - index >> n  => index
+ 
+ nadd                       - int[base] += int[acc]
+ 
+ nand                       - int[base] && int[acc]
+ 
+ ncopy                      - int[base] << int[acc]
+ 
+ ncreate                    - create the object with size=index*4 and vmt=acc, out : acc  
+ 
+ ndiv                       - int[base] /= int[acc]
+ 
+ nequal                     - int[acc] == int[base] ; if true - index = 1, if false - index = 0
+
+ new vmt, i                 - create the object with the specified
+                               number of fields;
+                               out: acc contains the class instance
+                               
+ newn vmt, n                - create the binary object with the specified size ;
+                               out: acc contains the class instance
+
+ next label                 - index++; if index < ext, jump to the label
+
+ nlen                       - [acc].Length >> index / 4 ; where acc is a object
+
+ nless                      - int[acc] < int[base] ; if true - index = 1, if false - index = 0
+ 
+ nload                      - int[acc] >> index
+ 
+ nloadi                     - int[acc+i*4] >> index
+ 
+ nmul                       - int[base] *= int[acc]
+ 
+ nnot                       - int[base] << not int[acc]
+ 
+ nor                        - int[base] || int[acc]
+
+ not                        - !index => index
+ 
+ notless label              - jump to the label if index >= ext
+ 
+ nread                      - acc[index * 4] >> ext                               
+ 
+ nsave                      - int[base] << index
+ 
+ nsavei                     - int[base+i*4] << index
+ 
+ nshift                     - int[base] << int[acc] <<< index
+ 
+ nsub                       - int[base] -= int[acc]
+ 
+ nwrite                     - base[index * 4] << ext
+ 
+ nxor                       - int[base] ~~ int[acc]
+ 
  open i                     - save the last frame and open the new frame ; 
                               init the frame header offset
                               it should be only one command per procedure ; 
 
- restore n                  - remove the excluded stack
+ or                         - index || ext => index
+
+ orn n                      - index || n => index
+
+ pop                        - sp--; 
+
+ popa                       - acc <= [sp] ; sp--
  
+ popb                       - base <= [sp] ; sp--
+ 
+ popd                       - index <= [sp] ; sp--
+    
+ pope                       - ext <= [sp] ; sp--
+ 
+ popi n                     - sp-=i; 
+ 
+ pusha                      - acc => [sp+1] ; sp++                  
+
+ pushai i                   - [acc::i] => [sp+1] ; sp++
+ 
+ pushb                      - base => [sp+1] ; sp++
+ 
+ pushn n                    - n  => [sp+1] ; sp++
+ 
+ pushd                      - index => [sp+1] ; sp++;
+
+ pushe                      - ext => [sp+1] ; sp++;
+	
+ pushf i                    - fp+i => [sp+1] ; sp++
+ 
+ pushfi i                   - [fp+i] => [sp+1] ; sp++
+ 
+ pushr r                    - r  => [sp+1] ; sp++
+ 
+ pushsi i                   - [sp+i] => [sp+1] ; sp++
+ 
+ quit                       - terminates the procedure;
+
+ quitn                      - terminates the procedure;
+                              clear the stack parameters
+ 
+ rabs                       - base << abs(real:acc)
+ 
+ radd                       - real[base] += real[acc]
+
+ rdiv                       - real[base] /= real[acc]
+ 
+ requal                     - real[acc] == real[base] ; if true - index = 1, if false - index = 0
+
+ reserve i                  - exclude part of the stack from managed stack frame ;
+                              should follow "open" byte code
+ 
+ restore n                  - remove the excluded stack
+
+ rexp                       - base << exp(real:acc)
+ 
+ rint                       - base << int(real:acc)
+
+ rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
+                                                                                                     
+ rln                        - base << ln(real:acc)
+ 
+ rload                      - index << real[acc]
+ 
+ rmul                       - real[base] *= real[acc]
+
+ rround                     - base << round(real:acc)
+ 
+ rsave                      - real[base] << index
+
+ rsub                       - real[base] -= real[acc]
+ 
+ scopyf i                   - sp <= fp + i
+ 
+ selectr r1, r2             - acc = (index = 0 ? r1 : r2)
+ 
+ set                        - acc => base[index] ;
+ 
+ setsubj m                  - ext.subject << m
+
+ setverb m                  - ext.verb << m
+ 
+ throw                      - raise an exception (acc contains the exception object)
+
+ unhook                     - remove the current exception handler
+                                                                                                                                                
+ wcreate                    - create the object with size=index*2 and vmt=acc, out : acc  
+ 
+ wlen                       - [acc].Length / 2 >> index
+                              
+ xcallrm r, m               - calls directly the method resolved by JIT by r and m
+                              acc contains the result
+ 
+ xindexrm r, m              - directly resolve message mapping for the spcified class
+ 
+ xjumprm r, m               - jumps directly the method resolved by JIT by r and m
+ 
+ xset                       - acc => base[index] ;
+                              ; direct
+ 
+
+                              
+
+
+
+
+
+
+
+
+
+
+
+
+ register commands:
+ ------------------            
+ address label              - load label address to ext
+
+
+ control commands:
+ -----------------                     
+ exclude                    - exclude the stack content from managed space
+
+ include                    - restore managed stack
+                              (should be paired with exclude)
+                                                                                                       v
  saveparams i               - copy the message parameters;
                               [fp+i]::ext.param => [sp+1] ; sp++;
 
  
  calling commands:
  -----------------  
- ecall                      - call ext procedure
-
- acallvi i                  - call acc::VMT[i] method
-
- acallvd                    - call acc::VMT[index]
- 
- bsredirect                 - search acc::VMT for the message in ext;
-                              if found jumps to it; binary search is used ; index, ext, acc presaved
-                              
- callextr r                 - calls the external procedure ; index contains the result
-              
- callr r                    - calls the procedure;
-                              acc contains the result
- 
- evalr r                    - evaluate a reference ; if r is a symbol reference
-                              symbol code is executed ; acc contains the result
- 
  equit                      - terminates the procedure ; clear the stack parameters, based
                               on ext
- 
- quit                       - terminates the procedure;
-                              
- quitn                      - terminates the procedure;
-                              clear the stack parameters
-
- xcallrm r, m               - calls directly the method resolved by JIT by r and m
-                              acc contains the result
-
-
- branching commands:
- ------------------- 
- ajumpvi i                  - redirect to acc::VMT[i] method
-
- xjumprm r, m               - jumps directly the method resolved by JIT by r and m
-
- jump label                 - jumps to the label
-
- ifr r, label               - jumps to the label if acc == r
- 
- elser r, label             - jumps to the label if acc != r
- 
- ifb label                  - jump to the label if acc == base
- 
- elseb label                - jump to the label if acc != base
- 
- if label                   - jump to the label if index == ext                                                   
-
- else label                 - jump to the label if index != ext
- 
- less label                 - jump to the label if index < ext
- 
- notless label              - jump to the label if index >= ext
- 
- ifn n, label               - jump to the label if index == n
- 
- elsen n, label             - jump to the label if index != n
- 
- lessn n, label             - jump to the label if index < n
- 
- ifm n, label               - jump to the label if ext == m
- 
- elsem n, label             - jump to the label if ext != m
- 
- next label                 - index++; if index < ext, jump to the label
-
- ifheap label               - jump to the label if acc is allocated in heap (more precisely not in the stack)
 
                                                                       
  exception handling:
  --------------- 
- hook label                 - assign a new exception handler ; ext affected
-
- throw                      - raise an exception (acc contains the exception object)
-
- unhook                     - remove the current exception handler
-
                                                                       
  class handling:
  --------------- 
- flag                        - acc::VMT::flag >> index 
-
- class                       - base::VMT >> acc
-
  mindex                      - search for ext in acc:VMT; out: index or -1
-
- xindexrm r, m               - directly resolve message mapping for the spcified class
  
  message i                   - acc::VMT[i].message >> index
 
- 
- memory managing commands:
- -------------------------
- new vmt, i                  - create the object with the specified
-                               number of fields;
-                               out: acc contains the class instance
-                               
- newn vmt, n                 - create the binary object with the specified size ;
-                               out: acc contains the class instance
-
- bcreate                     - create the object with size=index and vmt=acc, out : acc  
- 
- ncreate                     - create the object with size=index*4 and vmt=acc, out : acc  
-                                                                                                                                                
- wcreate                     - create the object with size=index*2 and vmt=acc, out : acc  
- 
- create                      - create the object with length=index and vmt=acc, out : acc  
- 
- count                       - [base].Count >> ext ;
- 
-
- data manipulating commands:
- -----------------  
- get                         - acc <= base[index] ;
-
- set                         - acc => base[index] ;
-
- asavebi i                  - [base::i] <= acc;
-                               use GC reference bit masks
- 
- xset                       - acc => base[index] ;
-                              ; direct
- 
- nsave                      - int[base] << index
- 
- wwrite                     - base[index*2] << short(ext)
- 
- nload                      - int[acc] >> index
-
- copy                       - base << acc, base.Length
-
- xclone                     - base[i] << acc[i], base.Length ;
-                              does not use write barrier
-
- ncopy                      - int[base] << int[acc]
-
- bwrite                     - base[index] << ext
- 
- bread                      - acc[index] >> ext                               
- 
- nread                      - acc[index * 4] >> ext                               
- 
- nwrite                     - base[index * 4] << ext
- 
- breadw                     - acc[index] >> [short]ext
- 
- breadb                     - acc[index] >> [byte]ext
- 
- bwriteb                    - base[index] << [byte]ext
- 
  wread                      - [base][index*2] >> [short]ext
-
- bwritew                    - base[index] << [short]ext
- 
- selectr r1, r2             - acc = (index = 0 ? r1 : r2)
- 
- 
- int commands:
- -------------
- nequal                     - int[acc] == int[base] ; if true - index = 1, if false - index = 0
-
- nless                      - int[acc] < int[base] ; if true - index = 1, if false - index = 0
- 
- nadd                       - int[base] += int[acc]
- 
- nsub                       - int[base] -= int[acc]
- 
- nmul                       - int[base] *= int[acc]
- 
- ndiv                       - int[base] /= int[acc]
- 
- nand                       - int[base] && int[acc]
- 
- nor                        - int[base] || int[acc]
- 
- nxor                       - int[base] ~~ int[acc]
-
- wton                       - converts literal[acc] into int with base=index and copies to int[base] ; out index = 0 if error 
- 
- nshift                     - int[base] << int[acc] <<< index
- 
- nnot                       - int[base] << not int[acc]
-
- 
- long commands:
- -------------
- lcopy                      - long[base] << long[acc]
-
- lcopyn                     - long[base] << int[acc]
-
- lequal                     - long[acc] == long[base] ; if true - index = 1, if false - index = 0
-
- lless                      - long[acc] < [base] ; if true - index = 1, if false - index = 0
- 
- lshift                     - long[base] <<= index
- 
- lnot                       - long[base] << not long[acc]
- 
- ladd                       - long[base] += long[acc]
- 
- lsub                       - long[base] -= long[acc]
- 
- lmul                       - long[base] *= long[acc]
- 
- ldiv                       - long[base] /= long[acc]
- 
- land                       - long[base] && long[acc]
- 
- lor                        - long[base] || long[acc]
- 
- lxor                       - long[base] ~~ long[acc]
- 
- wtol                       - converts literal[acc] into long with base=index and copies to int[base] ; out index = 0 if error
  
  lrndnew                    - random number init >> long(self)
  
  lrndnext                   - long(self) : index >> acc
 
- 
- float commands:
- -----------------  
- rcopy                      - real[base] << real[acc]
-
- rcopyn                     - real[base] << int[acc]
-
- rcopyl                     - real[base] << long[acc] 
-
- ncopyr                     - int[base] << real[acc]
-
- requal                     - real[acc] == real[base] ; if true - index = 1, if false - index = 0
-
- rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
- 
- radd                       - real[base] += real[acc]
- 
- rsub                       - real[base] -= real[acc]
- 
- rmul                       - real[base] *= real[acc]
- 
- rdiv                       - real[base] /= real[acc]
- 
- wtor                       - converts literal[acc] into real with base=index and copies to int[base] ; out index = 0 if error
- 
- rabs                       - base << abs(real:acc)
-
- rround                     - base << round(real:acc)
-
- rexp                       - base << exp(real:acc)
-                                                                                                     
- rln                        - base << ln(real:acc)
- 
- rint                       - base << int(real:acc)
+ rcopy                      - real[base] << real[acc] ??
  
  rcos                       - base << cos(real:acc)
  
@@ -468,45 +443,12 @@ ELENA byte codes (or ecodes)
  
  rarctan                    - base << argtan(real:acc) 
 
- literal commands:
- -----------------  
- wequal                     - literal[acc] == literal[base] ; if true - index = 1, if false - index = 0
- 
- wless                      - literal[acc] < literal[base] ; if true - index = 1, if false - index = 0
- 
- wlen                       - [acc].Length / 2 >> index
-                                                   
- winsert                    - short[acc+i] >> short[base+index+i] ; i++ ; i < ext
-
- wsubcopy                   - short[acc+index+i] >> short[base+i] ; i++ ; i < ext
-
- wadd                       - short[base+index] << short[acc+ext] ; index++, ext++ ; ext < literal[acc].length
-   
- ntow                       - converts int[acc] into literal with base=index and copies to literal[base] 
- 
- ltow                       - converts long[acc] into literal with base=index and copies to literal[base]
- 
- rtow                       - converts real[acc] into literal with base=index and copies to literal[base]
- 
- wseek                      - search for string[acc] in string[base] starting from index ; out - index first occ, or -1
-
  
  byte array commands:
  -----------------    
- len                        - [acc].Length >> index ; where acc is a object
-
- nlen                       - [acc].Length >> index / 4 ; where acc is a object
-
  insert                     - copy acc content to base, at index, ext times, at the end - index += ext
- 
- ninsert                    - copy acc content to base, at index*4, ext*4 times, at the end - index += ext, aligned by 4
  
  insertn n1,n2              - copy acc content to base, at n1, n2 times
   
  ninsertn n1,n2             - copy acc content to base, at n1*4, n2*4 times
 
- subcopy                    - byte[acc+index+i] >> byte[base+i] ; i++ ; i < ext
-
- nsubcopy                   - int[acc+index+i] >> int[base+i] ; i++ ; i < ext
-
- xseek                      - search for ext in base, starting from index ; out - index first occ ; unsafe command - length is not checked

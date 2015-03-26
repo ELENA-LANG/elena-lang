@@ -68,37 +68,36 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 136;
+const int gcCommandNumber = 109;
 const int gcCommands[gcCommandNumber] =
 {   
-   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcMessage,
-   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
-   bcNewN, bcNew, bcSwapSI, bcASwapSI, bcXIndexRM,
+   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
+   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, //bcMIndex,
+   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
    bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
-   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
-   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
-   bcGet, bcSet, bcXSet, bcECall, bcBReadB,
-   bcRestore, bcCount, bcIfHeap, bcFlag, bcNCreate,
+   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, //bcELoadSI,
+   /*bcEQuit, */bcAJumpVI, bcASaveBI, bcXCallRM, //bcESaveSI,
+   bcGet, bcSet, bcXSet, bcCall, bcBReadB,
+   bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
-   bcNEqual, bcNLess, bcNCopy, bcNAdd,
-   bcNSub, bcNMul, bcNDiv, bcWEqual, bcWLess,
+   bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
+   bcNSub, bcNMul, bcNDiv, bcDReserve, bcDRestore,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
-   bcWWrite, bcBCreate, bcBWrite, bcLen, bcBReadW,
-   bcBRead, bcWRead, bcWInsert, bcESwap, bcBSwap,
-   bcWToN, bcNToW, bcNAnd, bcNOr, bcNXor,
-   bcLCopy, bcLCopyN, bcLEqual, bcLLess, bcLAdd,
+   bcBCreate, bcBWrite, bcBLen, bcBReadW,
+   bcBRead, /*bcWRead, */bcBSwap, bcDSwapSI, bcESwapSI,
+   /*bcWToN, bcNToW, */bcNAnd, bcNOr, bcNXor,
+   bcLCopy, /*bcLCopyN, */bcLEqual, bcLLess, bcLAdd,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
-   bcLXor, bcNShift, bcNNot, bcLShift, bcLToW,
-   bcLNot, bcRCopy, bcRCopyL, bcRCopyN, bcREqual,
+   bcLXor, bcNShift, bcNNot, bcLShift, //bcLToW,
+   bcLNot, bcRCopy, bcRSave, bcREqual,
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
-   bcRToW, bcInsert, bcCreate, bcWSeek, bcWAdd,
-   bcWSubCopy, bcNInsert, bcSelectR, bcWToL, bcWToR,
-   bcSubCopy, bcNSubCopy, bcXSeek, bcNext, bcXClone,
-   bcLRndNew, bcLRndNext, bcRAbs, bcRExp, bcRInt, 
-   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
-   bcAddress, bcBWriteW, bcNCopyR, bcXJumpRM, bcNLen,
-   bcNRead, bcNWrite
+   /*bcRToW, bcInsert, */bcCreate, //bcWSeek
+   bcSelectR, bcNext, //bcXClone,
+   /*bcLRndNew, bcLRndNext, */bcRAbs, bcRExp, bcRInt, 
+   bcRLn, bcRRound, //bcRSin, bcRCos, bcRArcTan,
+   /*bcAddress, */bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
+   bcNRead, bcNWrite, bcNLoadI, bcNSaveI
 };
 
 // command table
@@ -108,43 +107,43 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDCopySubj,
 
    &compileNot, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
-   &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteLOp, &compileALoad, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &compileNop, &compileNop, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
-   &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &compileExtDec, &compileExtInc, &compileNop, &compileNop,
+   &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
+   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &compileNop,
+   &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
+   &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
+   &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop,
+   &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
+   &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
+   &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
 
-   &compileDCopy, &compileECopy, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadROp,
+   &compileDCopy, &compileECopy, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &compileBCopyS,
    &compileOpen, &compileQuitN, &compileBCopyR, &compileBCopyF, &compileACopyF, &compileACopyS, &compileACopyR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &loadCode, &loadFunction, &compileHook, &compileHook,
-   &loadVMTMIndexOp, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileNop,
+   &compileNop, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
 
-   &compilePush, &compileNop, &compilePush, &compilePushBI, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
-   &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &loadIndexOp, &compilePushF, &loadIndexOp, &loadIndexOp,
+   &compilePush, &compileNop, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
+   &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &compileNop, &compilePushF, &compileNop, &loadIndexOp,
 
-   &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
-   &loadFPOp, &loadIndexOp, &compileNop, &compileNop, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
+   &loadIndexOp, &compileNop, &loadIndexOp, &loadIndexOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp,
+   &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &compileNop, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileEAddN, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -435,32 +434,32 @@ void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-void _ELENA_::loadVMTMIndexOp(int opcode, x86JITScope& scope)
-{
-   char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
-
-   // simply copy correspondent inline code
-   scope.code->write(code, length);
-
-   // resolve section references
-   int count = *(int*)(code + length);
-   int* relocation = (int*)(code + length + 4);
-   while (count > 0) {
-      // locate relocation position
-      scope.code->seek(position + relocation[1]);
-
-      if (relocation[0]==-1) {
-         scope.code->writeDWord(scope.argument << 3);
-      }
-      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-
-      relocation += 2;
-      count--;
-   }
-   scope.code->seekEOF();
-}
+//void _ELENA_::loadVMTMIndexOp(int opcode, x86JITScope& scope)
+//{
+//   char*  code = (char*)scope.compiler->_inlines[opcode];
+//   size_t position = scope.code->Position();
+//   size_t length = *(size_t*)(code - 4);
+//
+//   // simply copy correspondent inline code
+//   scope.code->write(code, length);
+//
+//   // resolve section references
+//   int count = *(int*)(code + length);
+//   int* relocation = (int*)(code + length + 4);
+//   while (count > 0) {
+//      // locate relocation position
+//      scope.code->seek(position + relocation[1]);
+//
+//      if (relocation[0]==-1) {
+//         scope.code->writeDWord(scope.argument << 3);
+//      }
+//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+//
+//      relocation += 2;
+//      count--;
+//   }
+//   scope.code->seekEOF();
+//}
 
 void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
 {
@@ -526,48 +525,48 @@ void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-void _ELENA_::loadCode(int opcode, x86JITScope& scope)
-{
-   // if it is a symbol reference
-   if ((scope.argument & mskAnyRef) == mskSymbolRef) {
-      compileCallR(bcCallR, scope);
-   }
-   else {
-      // otherwise a primitive code
-      SectionInfo   info = scope.getSection(scope.argument);
-      MemoryWriter* writer = scope.code;
-
-      // override module
-      scope.module = info.module;
-
-      char*  code = (char*)info.section->get(0);
-      size_t position = scope.code->Position();
-      size_t length = *(size_t*)(code - 4);
-
-      // simply copy correspondent inline code
-      writer->write(code, length);
-
-      // resolve section references
-      int count = *(int*)(code + length);
-      int* relocation = (int*)(code + length + 4);
-      int key, offset;
-      while (count > 0) {
-         key = relocation[0];
-         offset = relocation[1];
-
-         // locate relocation position
-         writer->seek(position + relocation[1]);
-
-         scope.writeReference(*writer, key, *(int*)(code + offset));
-
-         relocation += 2;
-         count--;
-      }
-      // clear module overriding
-      scope.module = NULL;
-      scope.code->seekEOF();
-   }
-}
+//void _ELENA_::loadCode(int opcode, x86JITScope& scope)
+//{
+//   // if it is a symbol reference
+//   if ((scope.argument & mskAnyRef) == mskSymbolRef) {
+//      compileCallR(bcCallR, scope);
+//   }
+//   else {
+//      // otherwise a primitive code
+//      SectionInfo   info = scope.getSection(scope.argument);
+//      MemoryWriter* writer = scope.code;
+//
+//      // override module
+//      scope.module = info.module;
+//
+//      char*  code = (char*)info.section->get(0);
+//      size_t position = scope.code->Position();
+//      size_t length = *(size_t*)(code - 4);
+//
+//      // simply copy correspondent inline code
+//      writer->write(code, length);
+//
+//      // resolve section references
+//      int count = *(int*)(code + length);
+//      int* relocation = (int*)(code + length + 4);
+//      int key, offset;
+//      while (count > 0) {
+//         key = relocation[0];
+//         offset = relocation[1];
+//
+//         // locate relocation position
+//         writer->seek(position + relocation[1]);
+//
+//         scope.writeReference(*writer, key, *(int*)(code + offset));
+//
+//         relocation += 2;
+//         count--;
+//      }
+//      // clear module overriding
+//      scope.module = NULL;
+//      scope.code->seekEOF();
+//   }
+//}
 
 void _ELENA_::compileNop(int opcode, x86JITScope& scope)
 {
@@ -885,12 +884,6 @@ void _ELENA_::compileECopy(int opcode, x86JITScope& scope)
    scope.code->writeDWord(scope.argument);
 }
 
-void _ELENA_::compileDAdd(int opcode, x86JITScope& scope)
-{
-   // add esi, ecx
-   scope.code->writeWord(0xF103);
-}
-
 void _ELENA_::compileDAndN(int opcode, x86JITScope& scope)
 {
    // and esi, mask
@@ -916,6 +909,13 @@ void _ELENA_::compileDSub(int opcode, x86JITScope& scope)
 {
    // sub esi, ecx
    scope.code->writeWord(0xF12B);
+}
+
+void _ELENA_::compileEAddN(int opcode, x86JITScope& scope)
+{
+   // add ecx, n
+   scope.code->writeWord(0xC181);
+   scope.code->writeDWord(scope.argument);
 }
 
 void _ELENA_::compileDCopyVerb(int opcode, x86JITScope& scope)
@@ -945,12 +945,12 @@ void _ELENA_::compileDCopySubj(int opcode, x86JITScope& scope)
    scope.code->writeDWord(SIGN_MASK | MESSAGE_MASK);   
 }
 
-void _ELENA_::compileALoad(int opcode, x86JITScope& scope)
-{
-   // mov eax, [eax + esi*4]
-   scope.code->writeWord(0x048B);
-   scope.code->writeByte(0xB0);
-}
+//void _ELENA_::compileLoad(int opcode, x86JITScope& scope)
+//{
+//   // mov eax, [edi + esi*4]
+//   scope.code->writeWord(0x048B);
+//   scope.code->writeByte(0xB7);
+//}
 
 void _ELENA_::compileALoadR(int opcode, x86JITScope& scope)
 {
@@ -995,13 +995,6 @@ void _ELENA_::compilePushD(int opcode, x86JITScope& scope)
 {
    // push esi
    scope.code->writeByte(0x56);
-}
-
-void _ELENA_::compilePushBI(int opcode, x86JITScope& scope)
-{
-   // push [edi + offset * 4]
-   scope.code->writeWord(0xB7FF);
-   scope.code->writeDWord(scope.argument << 2);
 }
 
 void _ELENA_::compileCallR(int opcode, x86JITScope& scope)
@@ -1053,6 +1046,20 @@ void _ELENA_::compileASaveR(int opcode, x86JITScope& scope)
 
    scope.code->writeWord(0x0589);
    scope.writeReference(*scope.code, scope.argument, 0);
+}
+
+void _ELENA_::compileIndexInc(int opcode, x86JITScope& scope)
+{
+   // add esi, 1
+   scope.code->writeWord(0xC683);
+   scope.code->writeByte(1);
+}
+
+void _ELENA_::compileIndexDec(int opcode, x86JITScope& scope)
+{
+   // sub esi, 1
+   scope.code->writeWord(0xEE83);
+   scope.code->writeByte(1);
 }
 
 void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
@@ -1191,34 +1198,6 @@ void _ELENA_::compileLessN(int opcode, x86JITScope& scope)
    compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
-void _ELENA_::compileIndexInc(int opcode, x86JITScope& scope)
-{
-   // add esi, 1
-   scope.code->writeWord(0xC683);
-   scope.code->writeByte(1);
-}
-
-void _ELENA_::compileIndexDec(int opcode, x86JITScope& scope)
-{
-   // sub esi, 1
-   scope.code->writeWord(0xEE83);
-   scope.code->writeByte(1);
-}
-
-void _ELENA_::compileExtInc(int opcode, x86JITScope& scope)
-{
-   // add ecx, 1
-   scope.code->writeWord(0xC183);
-   scope.code->writeByte(1);
-}
-
-void _ELENA_::compileExtDec(int opcode, x86JITScope& scope)
-{
-   // sub ecx, 1
-   scope.code->writeWord(0xE983);
-   scope.code->writeByte(1);
-}
-
 void _ELENA_::compileSetVerb(int opcode, x86JITScope& scope)
 {
    // and ecx, VERB_MASK
@@ -1237,12 +1216,6 @@ void _ELENA_::compileSetSubj(int opcode, x86JITScope& scope)
    scope.code->writeDWord(~SIGN_MASK);
    scope.code->writeWord(0xC981);
    scope.code->writeDWord(scope.resolveMessage(scope.argument));
-}
-
-void _ELENA_::compileOr(int opcode, x86JITScope& scope)
-{
-   // or esi, ecx
-   scope.code->writeWord(0xF10B);
 }
 
 void _ELENA_::compilePopB(int opcode, x86JITScope& scope)
@@ -1270,6 +1243,14 @@ void _ELENA_::compileBCopyF(int opcode, x86JITScope& scope)
    scope.code->writeDWord(-(scope.argument << 2));
 }
 
+void _ELENA_::compileBCopyS(int opcode, x86JITScope& scope)
+{
+   // lea edi, [esp+nn]
+   scope.code->writeWord(0xBC8D);
+   scope.code->writeByte(0x24);
+   scope.code->writeDWord(-(scope.argument << 2));
+}
+
 void _ELENA_::compileACopyF(int opcode, x86JITScope& scope)
 {
    // lea eax, [ebp+nn]
@@ -1277,10 +1258,36 @@ void _ELENA_::compileACopyF(int opcode, x86JITScope& scope)
    scope.code->writeDWord(-(scope.argument << 2));
 }
 
-void _ELENA_::compileNot(int opcode, x86JITScope& scope)
+void _ELENA_ :: compileNot(int opcode, x86JITScope& scope)
 {
    // not esi
    scope.code->writeWord(0xD6F7);
+}
+
+void _ELENA_ :: compileDShiftN(int opcode, x86JITScope& scope)
+{
+   if (scope.argument < 0) {
+      // shl esi, n
+      scope.code->writeWord(0xE6C1);
+      scope.code->writeByte(-scope.argument);
+   }
+   else {
+      // shr esi, n
+      scope.code->writeWord(0xEEC1);
+      scope.code->writeByte(scope.argument);
+   }
+}
+
+void _ELENA_::compileDAdd(int opcode, x86JITScope& scope)
+{
+   // add esi, ecx
+   scope.code->writeWord(0xF103);
+}
+
+void _ELENA_::compileOr(int opcode, x86JITScope& scope)
+{
+   // or esi, ecx
+   scope.code->writeWord(0xF10B);
 }
 
 // --- x86JITScope ---
@@ -1431,9 +1438,7 @@ void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumb
    allocateArray(dataWriter, maxThreadNumber);
 
    // map thread table
-   ConstantIdentifier reference(GC_THREADTABLE);
-
-   loader->mapReference(reference, (void*)(position | mskDataRef), mskDataRef);
+   loader->mapReference(GC_THREADTABLE, (void*)(position | mskDataRef), mskDataRef);
    _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
 }
 
@@ -1446,9 +1451,7 @@ int x86JITCompiler::allocateTLSVariable(_JITLoader* loader)
    allocateVariable(dataWriter);
 
    // map TLS index
-   ConstantIdentifier tlsKey(TLS_KEY);
-
-   loader->mapReference(tlsKey, (void*)(position | mskDataRef), mskDataRef);
+   loader->mapReference(TLS_KEY, (void*)(position | mskDataRef), mskDataRef);
    _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
 
    return position;
@@ -1514,7 +1517,7 @@ void x86JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& write
       int arg = *it;
       writer.seek(arg + position);
 
-      const wchar16_t* reference = binary->resolveReference(it.key() & ~mskAnyRef);
+      ident_t reference = binary->resolveReference(it.key() & ~mskAnyRef);
 
       helper.writeReference(writer, reference, it.key() & mskAnyRef);
 

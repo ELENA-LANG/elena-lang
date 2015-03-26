@@ -17,7 +17,7 @@ namespace _ELENA_
 class _BaseModule  : public _Module
 {
 protected:
-   typedef Cache<ref_t, const wchar16_t*, 20> ResolveMap;
+   typedef Cache<ref_t, ident_t, 20> ResolveMap;
 
    ReferenceMap _references;
    ReferenceMap _subjects;
@@ -27,9 +27,9 @@ protected:
    ResolveMap   _resolvedSubjects;
 
 public:
-   virtual const wchar16_t* resolveReference(ref_t reference);
-   virtual const wchar16_t* resolveSubject(ref_t reference);
-   virtual const wchar16_t* resolveConstant(ref_t reference);
+   virtual ident_t resolveReference(ref_t reference);
+   virtual ident_t resolveSubject(ref_t reference);
+   virtual ident_t resolveConstant(ref_t reference);
 
    _BaseModule ();
 };
@@ -46,17 +46,17 @@ class Module : public _BaseModule
    void saveSections(StreamWriter& writer);
 
 public:
-   virtual const wchar16_t* Name() const { return _name; }
+   virtual ident_t Name() const { return _name; }
 
    ReferenceMap::Iterator References() { return _references.start(); }
 
-   virtual void mapPredefinedReference(const wchar16_t* name, ref_t reference);
+   virtual void mapPredefinedReference(ident_t name, ref_t reference);
 
-   virtual ref_t mapReference(const wchar16_t* reference);
-   virtual ref_t mapReference(const wchar16_t* reference, bool existing);
+   virtual ref_t mapReference(ident_t reference);
+   virtual ref_t mapReference(ident_t reference, bool existing);
 
-   virtual ref_t mapSubject(const wchar16_t* message, bool existing);
-   virtual ref_t mapConstant(const wchar16_t* constant);
+   virtual ref_t mapSubject(ident_t message, bool existing);
+   virtual ref_t mapConstant(ident_t constant);
 
    virtual Section* mapSection(ref_t reference, bool existing);
 
@@ -64,7 +64,7 @@ public:
    virtual bool save(StreamWriter& writer);
 
    Module();
-   Module(const wchar16_t* name);
+   Module(ident_t name);
 };
 
 // --- ROModule ---
@@ -155,15 +155,15 @@ private:
    void loadSections(StreamReader& reader);
 
 public:
-   virtual const wchar16_t* Name() const { return _name; }
+   virtual ident_t Name() const { return _name; }
 
-   virtual ref_t mapReference(const wchar16_t* reference);
-   virtual ref_t mapReference(const wchar16_t* reference, bool existing);
+   virtual ref_t mapReference(ident_t reference);
+   virtual ref_t mapReference(ident_t reference, bool existing);
 
-   virtual ref_t mapSubject(const wchar16_t* reference, bool existing);
-   virtual ref_t mapConstant(const wchar16_t* reference);
+   virtual ref_t mapSubject(ident_t reference, bool existing);
+   virtual ref_t mapConstant(ident_t reference);
 
-   virtual void mapPredefinedReference(const wchar16_t* name, ref_t reference)
+   virtual void mapPredefinedReference(ident_t name, ref_t reference)
    {
       throw InternalError("Read-only Module");
    }

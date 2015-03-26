@@ -1,14 +1,14 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Control Header File
-//                                               (C)2005-2012, by Alexei Rakov
+//                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winsdiH
 #define winsdiH
 
 #include "wincommon.h"
-#include "winmenu.h"
+//#include "winmenu.h"
 
 namespace _GUI_
 {
@@ -62,25 +62,16 @@ protected:
    virtual void onActivate();
    virtual void _onMenuCommand(int id) = 0;
    virtual void _onNotify(NMHDR* notification) = 0;
-   virtual bool _onSetCursor();
-
+   virtual bool _onSetCursor();   
+   virtual void _onDrawItem(DRAWITEMSTRUCT* item);
+   
    virtual LRESULT _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
 
 public:
    static void _registerClass(HINSTANCE instance, HICON icon, wchar_t* menu);
 
-   LayoutManager* _getLayoutManager() { return &_layoutManager; }
-
-   void _setStatusBar(Control* statusBar)
-   {
-      _statusBar = statusBar;
-   }
-
    virtual void show() { Control::show(); }
    virtual void show(bool maximized);
-
-   virtual void _onDrawItem(DRAWITEMSTRUCT* item);
-
    virtual void exit();
 
    virtual void refresh()

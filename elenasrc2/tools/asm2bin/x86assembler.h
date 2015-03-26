@@ -26,7 +26,7 @@ class x86Assembler : public Assembler
    typedef x86Helper::OperandType   OperandType;
 
 protected:
-	Map<const wchar16_t*, size_t> constants;
+	Map<ident_t, size_t> constants;
 
    struct PrefixInfo
    {
@@ -50,7 +50,7 @@ protected:
       _Module* binary;
 
       ref_t reference;
-	   Map<const wchar16_t*, int> parameters;
+	   Map<ident_t, int> parameters;
       bool inlineMode;
 
       ProcedureInfo(_Module* binary, bool inlineMode)
@@ -236,7 +236,7 @@ protected:
    virtual void compileStructure(TokenInfo& token, _Module* binary, int mask);
 
 public:
-	virtual void compile(TextReader* reader, const tchar_t* outputPath);
+	virtual void compile(TextReader* reader, path_t outputPath);
 
 	x86Assembler()
 	{

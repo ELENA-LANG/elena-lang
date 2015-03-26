@@ -1,13 +1,31 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Common Header File
-//                                              (C)2005-2010, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef guicommonH
 #define guicommonH
 
 #include "common.h"
+
+#ifdef _WIN32
+
+typedef const wchar_t* text_t;
+typedef wchar_t        text_c;
+
+#define _T(x) L ## x
+
+#elif _LINUX32
+
+typedef const char* text_t;
+typedef char        text_c;
+
+#define _T(x) x
+
+#endif
+
+#define DEFAULT_TEXT (text_t)NULL
 
 namespace _GUI_
 {
@@ -125,6 +143,20 @@ struct HighlightInfo
       this->length = length;
    }
 };
+
+// --- ConstantIdentifier ---
+
+class TextString : public _ELENA_::String <text_c, 0x100>
+{
+public:
+   TextString(_ELENA_::ident_t message)
+   {
+      size_t length = 0x100;
+      _ELENA_::StringHelper::copy(_string, message, _ELENA_::getlength(message), length);
+      _string[length] = 0;
+   }
+};
+
 
 } // _GUI_
 

@@ -137,14 +137,14 @@ class ByteCodeWriter
    void writeNewStatement(MemoryWriter* debug);
    void writeNewBlock(MemoryWriter* debug);
    void writeSelf(Scope& scope, int level, int frameLevel);
-   void writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel);
-   void writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
    void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
    void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
-   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* className, int flags);
-   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* symbolName);
+   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
+   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
    void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
    void writeDebugInfoStopper(MemoryWriter* debug);
 
@@ -156,7 +156,7 @@ class ByteCodeWriter
    void compileClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 
 public:
-   ref_t writeSourcePath(_Module* debugModule, const tchar_t* path);
+   ref_t writeSourcePath(_Module* debugModule, ident_t path);
    ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 
    void declareClass(CommandTape& tape, ref_t reference);
@@ -179,14 +179,14 @@ public:
    void declareAlt(CommandTape& tape);
    void declarePrimitiveCatch(CommandTape& tape);
 
-   void declareLocalInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalIntInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalLongInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalByteArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalShortArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalIntArrayInfo(CommandTape& tape, const wchar16_t* localName, int level);
-   void declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level);
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ref_t nameRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -282,7 +282,7 @@ public:
    void doIntOperation(CommandTape& tape, int operator_id);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);
-   void doLiteralOperation(CommandTape& tape, int operator_id);
+   //void doLiteralOperation(CommandTape& tape, int operator_id);
    void doArrayOperation(CommandTape& tape, int operator_id);
    void doIntArrayOperation(CommandTape& tape, int operator_id);
    void doCharArrayOperation(CommandTape& tape, int operator_id);

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA PEHelper.
 //		Supported platforms: x86
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef pehelperH
@@ -15,7 +15,7 @@ namespace _ELENA_
 class PEHelper
 {
 public:
-   static size_t findEntryPoint(const tchar_t* path);
+   static size_t findEntryPoint(path_t path);
 
    static bool seekSection(StreamReader& reader, char* name, size_t& rvaAddress);
 };

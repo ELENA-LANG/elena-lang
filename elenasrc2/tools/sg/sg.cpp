@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 2
+#define BUILD_NUMBER 4
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
@@ -17,7 +17,7 @@ const int mskTraceble                  = 0x01000;
 
 int last_id = 0;
 
-int _registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
+int _registerSymbol(ParserTable& table, ident_t symbol, int new_id)
 {
    int id = (int)table.defineSymbol(symbol);
    if (id == 0) {
@@ -37,16 +37,16 @@ int _registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
    return id;
 }
 
-int registerSymbol(ParserTable& table, const wchar16_t* symbol, int new_id)
+int registerSymbol(ParserTable& table, ident_t symbol, int new_id)
 {
-   if (ConstantIdentifier::compare(symbol, "||")) {
-      return _registerSymbol(table, ConstantIdentifier("|"), new_id);
+   if (StringHelper::compare(symbol, "||")) {
+      return _registerSymbol(table, "|", new_id);
    }
-   else if (ConstantIdentifier::compare(symbol, "&|")) {
-      return _registerSymbol(table, ConstantIdentifier("||"), new_id);
+   else if (StringHelper::compare(symbol, "&|")) {
+      return _registerSymbol(table, "||", new_id);
    }
-   else if (ConstantIdentifier::compare(symbol, "-->")) {
-      return _registerSymbol(table, ConstantIdentifier("->"), new_id);
+   else if (StringHelper::compare(symbol, "-->")) {
+      return _registerSymbol(table, "->", new_id);
    }
    else return _registerSymbol(table, symbol, new_id);
 }
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
       }
 
       Path path;
-		path.copy(argv[1], strlen(argv[1]));
+      Path::loadPath(path, argv[1], strlen(argv[1]));
       TextFileReader   sourceFile(path, encoding, true);
       if (!sourceFile.isOpened()) {
          printLine("file not found %s", path);
@@ -81,27 +81,27 @@ int main(int argc, char* argv[])
       TextSourceReader source(4, &sourceFile);
       ParserTable      table;
       LineInfo         info(0, 0, 0);
-      wchar16_t        token[IDENTIFIER_LEN + 1];
+      ident_c          token[IDENTIFIER_LEN + 1];
       int              rule[20];
       int              rule_len = 0;
       bool             arrayCheck = false;
 
-      table.registerSymbol(ParserTable::nsEps, ConstantIdentifier("eps"));
+      table.registerSymbol(ParserTable::nsEps, "eps");
 
       while (true) {
          info = source.read(token, IDENTIFIER_LEN);
 
          if (info.state == dfaEOF) break;
 
-         if (ConstantIdentifier::compare(token, "__define")) {
+         if (StringHelper::compare(token, "__define")) {
             source.read(token, IDENTIFIER_LEN);
 
-            wchar16_t number[10];
+            ident_c number[10];
             source.read(number, 10);
 
             registerSymbol(table, token, StringHelper::strToInt(number));
          }
-         else if (ConstantIdentifier::compare(token, "->") && !arrayCheck) {
+         else if (StringHelper::compare(token, "->") && !arrayCheck) {
             if (rule_len > 2) {
                table.registerRule(rule[0], rule + 1, rule_len - 2);
 
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
             }
             arrayCheck = true;
          }
-         else if (ConstantIdentifier::compare(token, "|") && rule_len != 1) {
+         else if (StringHelper::compare(token, "|") && rule_len != 1) {
             arrayCheck = false;
             table.registerRule(rule[0], rule + 1, rule_len - 1);
 
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
          else {
             arrayCheck = false;
             rule[rule_len++] = registerSymbol(table, token, last_id + 1);
-            if (ConstantIdentifier::compare(token, "|"))
+            if (StringHelper::compare(token, "|"))
                source.read(token, IDENTIFIER_LEN);
          }
       }
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 
       printLine("saving...\n");
 
-      path.changeExtension(_T("dat"));
+      path.changeExtension("dat");
 
       FileWriter file(path, feRaw, false);
       table.save(&file);

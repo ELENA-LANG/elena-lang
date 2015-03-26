@@ -15,8 +15,8 @@ using namespace _GUI_;
 wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0All types\0*.*\0\0");
 wchar_t* FileDialog :: SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
-typedef _ELENA_::String<tchar_t, 255> ParamString;
-typedef _ELENA_::String<char, 255> SettingString;
+//typedef _ELENA_::String<tchar_t, 255> ParamString;
+//typedef _ELENA_::String<char, 255> SettingString;
 
 FileDialog :: FileDialog(Control* owner, const wchar_t* filter, const wchar_t* caption, const wchar_t* initialDir)
 {
@@ -110,7 +110,7 @@ int MsgBox :: showError(const wchar_t* message, const wchar_t* param)
 
 int MsgBox :: showError(HWND owner, const wchar_t* message, const wchar_t* param)
 {
-   _ELENA_::String<tchar_t, 255> string(message);
+   _ELENA_::String<wchar_t, 255> string(message);
    string.append(param);
 
    return show(owner, string, MB_OK | MB_ICONERROR);
@@ -123,7 +123,7 @@ int MsgBox :: showQuestion(HWND owner, const wchar_t* message)
 
 int MsgBox :: showQuestion(HWND owner, const wchar_t* message, const wchar_t* param)
 {
-   _ELENA_::String<tchar_t, 255> string(message);
+   _ELENA_::String<wchar_t, 255> string(message);
    string.append(param);
 
    return show(owner, string, MB_YESNOCANCEL | MB_ICONQUESTION);
@@ -131,7 +131,7 @@ int MsgBox :: showQuestion(HWND owner, const wchar_t* message, const wchar_t* pa
 
 int MsgBox :: showQuestion(HWND owner, const wchar_t* message, const wchar_t* param1, const wchar_t* param2)
 {
-   _ELENA_::String<tchar_t, 255> string(message);
+   _ELENA_::String<wchar_t, 255> string(message);
    string.append(param1);
    string.append(param2);
 
@@ -208,10 +208,10 @@ void Dialog :: setText(int id, const wchar_t* text)
 
 void Dialog :: setIntText(int id, int value)
 {
-   _ELENA_::String<tchar_t, 15> s;
+   _ELENA_::String<text_c, 15> s;
    s.appendInt(value);
 
-   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)((const tchar_t*)s));
+   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)((text_t)s));
 }
 
 void Dialog :: setCheckState(int id, bool value)
@@ -306,18 +306,18 @@ BOOL CALLBACK Dialog :: DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPA
 
 void ProjectSettingsDialog :: loadTemplateList()
 {
-   _ELENA_::Path configPath(Paths::appPath, _T("elc.cfg"));
+   _ELENA_::Path configPath(_project->getAppPath());
+   configPath.combine(_T("elc.cfg"));
+
    _ELENA_::IniConfigFile config;
    if (!config.load(configPath, _ELENA_::feAnsi))
       return;
 
-   const char* curTemplate = Project::getTemplate();
+   const char* curTemplate = _project->getTemplate();
 
    int current = 0;
    for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt("templates") ; !it.Eof() ; it++, current++) {
-      ParamString value(it.key());
-
-      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, value);
+      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, TextString(it.key()));
 
       if (_ELENA_::StringHelper::compare(curTemplate, it.key()))
          setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, current);
@@ -328,23 +328,23 @@ void ProjectSettingsDialog :: onCreate()
 {
    setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
 
-   setText(IDC_SETTINGS_PACKAGE, ParamString(Project::getPackage()));
-   setText(IDC_SETTINGS_TARGET, ParamString(Project::getTarget()));
-   setText(IDC_SETTINGS_OUTPUT, ParamString(Project::getOutputPath()));
-   setText(IDC_SETTINGS_ARGUMENT, ParamString(Project::getArguments()));
-   setText(IDC_SETTINGS_OPTIONS, ParamString(Project::getOptions()));
+   setText(IDC_SETTINGS_PACKAGE, TextString(_project->getPackage()));
+   setText(IDC_SETTINGS_TARGET, TextString(_project->getTarget()));
+   setText(IDC_SETTINGS_OUTPUT, TextString(_project->getOutputPath()));
+   setText(IDC_SETTINGS_ARGUMENT, TextString(_project->getArguments()));
+   setText(IDC_SETTINGS_OPTIONS, TextString(_project->getOptions()));
 
    //setCheckState(IDC_SETTINGS_DEBUG, );
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Enabled"));
 
-   int mode = Project::getDebugMode();
+   int mode = _project->getDebugMode();
    if (mode != 0) {
       setComboBoxIndex(IDC_SETTINGS_DEBUG, 1);
    }
    else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
-   setCheckState(IDC_SETTINGS_WARN_REF, Project::getBoolSetting("warn:unresolved"));
+   setCheckState(IDC_SETTINGS_WARN_REF, _project->getBoolSetting("warn:unresolved"));
 
    loadTemplateList();
 
@@ -360,38 +360,38 @@ void ProjectSettingsDialog :: onOK()
       if (_ELENA_::Path::checkExtension(path, NULL)) {
          wcsncat(path, _T(".exe"), 4);
       }
-      Project::setTarget(SettingString(path));
+      _project->setTarget(_ELENA_::IdentifierString(path));
    }
-   else Project::setTarget(NULL);
+   else _project->setTarget(NULL);
 
    getText(IDC_SETTINGS_ARGUMENT, (wchar_t**)(&path), MAX_PATH);
-   Project::setArguments(SettingString(path));
+   _project->setArguments(_ELENA_::IdentifierString(path));
 
    getText(IDC_SETTINGS_OUTPUT, (wchar_t**)(&path), MAX_PATH);
-   Project::setOutputPath(SettingString(path));
+   _project->setOutputPath(_ELENA_::IdentifierString(path));
 
    getText(IDC_SETTINGS_OPTIONS, (wchar_t**)(&path), MAX_PATH);
-   Project::setOptions(SettingString(path));
+   _project->setOptions(_ELENA_::IdentifierString(path));
 
    wchar_t name[IDENTIFIER_LEN + 1] ;
    getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), IDENTIFIER_LEN);
-   Project::setPackage(SettingString(name));
+   _project->setPackage(_ELENA_::IdentifierString(name));
 
    if (getComboBoxIndex(IDC_SETTINGS_TEPMPLATE) != -1) {
       getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), IDENTIFIER_LEN);
-      Project::setTemplate(SettingString(name));
+      _project->setTemplate(_ELENA_::IdentifierString(name));
    }
 
    int index = getComboBoxIndex(IDC_SETTINGS_DEBUG);
    if (index == 1) {
-      Project::setDebugMode(-1);
+      _project->setDebugMode(-1);
    }
-   else Project::setDebugMode(0);
+   else _project->setDebugMode(0);
 
-   Project::setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
+   _project->setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
 }
 
-// --- ProjectForwardsDialog ---
+//// --- ProjectForwardsDialog ---
 
 bool ProjectForwardsDialog :: validateItem(wchar_t* &text)
 {
@@ -467,17 +467,14 @@ void ProjectForwardsDialog :: deleteItem()
 
 void ProjectForwardsDialog :: onCreate()
 {
-   _ELENA_::ConfigCategoryIterator forwards = Project::Forwards();
-   _ELENA_::String<tchar_t, IDENTIFIER_LEN> item;
+   _ELENA_::ConfigCategoryIterator forwards = _project->Forwards();
+   _ELENA_::IdentifierString item;
    while (!forwards.Eof()) {
-      ParamString fwd(forwards.key());
-      ParamString value((char*)*forwards);
-
-      item.copy(fwd);
+      item.copy(forwards.key());
       item.append('=');
-      item.append(value);
+      item.append((const char*)*forwards);
 
-      addListItem(IDC_FORWARDS_LIST, item);
+      addListItem(IDC_FORWARDS_LIST, TextString(item));
 
       forwards++;
    }
@@ -486,18 +483,20 @@ void ProjectForwardsDialog :: onCreate()
 void ProjectForwardsDialog :: onOK()
 {
    if (_changed) {
-      Project::clearForwards();
+      _project->clearForwards();
 
       int count = getListCount(IDC_FORWARDS_LIST);
-      tchar_t item[IDENTIFIER_LEN * 2 + 1];
-      _ELENA_::String<tchar_t, IDENTIFIER_LEN> name;
+      text_c item[IDENTIFIER_LEN * 2 + 1];      
       for (int i = 0 ; i < count ; i++) {
          getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
 
-         int pos = _ELENA_::StringHelper::find(item, '=');
-         name.copy(item, pos);
+         _ELENA_::IdentifierString line(item);
 
-         Project::addForward(name, item + pos + 1);
+         int pos = _ELENA_::StringHelper::find(line, '=');
+
+         _ELENA_::IdentifierString name(line, pos);
+
+         _project->addForward(name, line + pos + 1);
       }
    }
 }
@@ -607,19 +606,19 @@ void EditorSettings :: onCreate()
    addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Classic"));
 
    // populate font size combo box
-   _ELENA_::String<wchar16_t, 4> size;
+   _ELENA_::String<wchar_t, 4> size;
    for(int i = 8 ; i < 25 ; i++) {
       size.appendInt(i);
       addComboBoxItem(IDC_EDITOR_FONTSIZE, size);
       size.clear();
    }   
 
-   setComboBoxIndex(IDC_EDITOR_COLORSCHEME, Settings::scheme);
-   setComboBoxIndex(IDC_EDITOR_FONTSIZE, Settings::font_size - 8);
+   setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->scheme);
+   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->font_size - 8);
 
-   setCheckState(IDC_EDITOR_LINENUMBERFLAG, Settings::lineNumberVisible);
-   setCheckState(IDC_EDITOR_USETAB, Settings::tabCharUsing);
-   setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, Settings::highlightSyntax);   
+   setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumberVisible);
+   setCheckState(IDC_EDITOR_USETAB, _model->tabCharUsing);
+   setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
 
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("ASCII"));
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1250"));
@@ -629,16 +628,16 @@ void EditorSettings :: onCreate()
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-16"));
    addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-8"));
 
-   setComboBoxIndex(IDC_EDITOR_ENCODING, encodingToIndex(Settings::defaultEncoding));
+   setComboBoxIndex(IDC_EDITOR_ENCODING, encodingToIndex(_model->defaultEncoding));
 
-   if (!Settings::highlightSyntax)
+   if (!_model->highlightSyntax)
       enable(IDC_EDITOR_COLORSCHEME, false);
 
-   size.appendInt(Settings::tabSize);
+   size.appendInt(_model->tabSize);
    setText(IDC_EDITOR_TABSIZE, size);
 
-   setCheckState(IDC_EDITOR_REMEMBERPATH, Settings::lastPathRemember);
-   setCheckState(IDC_EDITOR_REMEMBERPROJECT, Settings::lastProjectRemember);
+   setCheckState(IDC_EDITOR_REMEMBERPATH, _model->lastPathRemember);
+   setCheckState(IDC_EDITOR_REMEMBERPROJECT, _model->lastProjectRemember);
 }
 
 void EditorSettings :: doCommand(int id, int msg)
@@ -656,20 +655,20 @@ void EditorSettings :: onEditorHighlightSyntaxChanged()
 
 void EditorSettings :: onOK()
 {
-   Settings::scheme = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
-   Settings::font_size = 8 + getComboBoxIndex(IDC_EDITOR_FONTSIZE);
-   Settings::lineNumberVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
-   Settings::tabCharUsing = getCheckState(IDC_EDITOR_USETAB);
-   Settings::highlightSyntax = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
-   Settings::defaultEncoding = indexToEncoding(getComboBoxIndex(IDC_EDITOR_ENCODING));
-   Settings::lastPathRemember = getCheckState(IDC_EDITOR_REMEMBERPATH);
-   Settings::lastProjectRemember = getCheckState(IDC_EDITOR_REMEMBERPROJECT);
+   _model->scheme = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
+   _model->font_size = 8 + getComboBoxIndex(IDC_EDITOR_FONTSIZE);
+   _model->lineNumberVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
+   _model->tabCharUsing = getCheckState(IDC_EDITOR_USETAB);
+   _model->highlightSyntax = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
+   _model->defaultEncoding = indexToEncoding(getComboBoxIndex(IDC_EDITOR_ENCODING));
+   _model->lastPathRemember = getCheckState(IDC_EDITOR_REMEMBERPATH);
+   _model->lastProjectRemember = getCheckState(IDC_EDITOR_REMEMBERPROJECT);
 
    wchar_t size[12];
    getText(IDC_EDITOR_TABSIZE, (wchar_t**)(&size), 11);
-   Settings::tabSize = _ELENA_::StringHelper::strToInt(size);
-   if (Settings::tabSize <= 0 && Settings::tabSize > 20) {
-      Settings::tabSize = 4;
+   _model->tabSize = _ELENA_::StringHelper::strToInt(size);
+   if (_model->tabSize <= 0 && _model->tabSize > 20) {
+      _model->tabSize = 4;
    }
 }
 
@@ -677,8 +676,8 @@ void EditorSettings :: onOK()
 
 void DebuggerSettings :: onCreate()
 {
-   setText(IDC_DEBUGGER_SRCPATH, Paths::packageRoot);
-   setText(IDC_DEBUGGER_LIBPATH, Paths::libraryRoot);
+   setText(IDC_DEBUGGER_SRCPATH, _model->paths.packageRoot);
+   setText(IDC_DEBUGGER_LIBPATH, _model->paths.libraryRoot);
 }
 
 void DebuggerSettings :: onOK()
@@ -686,10 +685,10 @@ void DebuggerSettings :: onOK()
    wchar_t path[MAX_PATH + 1];   
 
    getText(IDC_DEBUGGER_SRCPATH, (wchar_t**)(&path), MAX_PATH);
-   Settings::addPackagePath("default", path);
+   Settings::addPackagePath(_model, "default", path);
 
    getText(IDC_DEBUGGER_LIBPATH, (wchar_t**)(&path), MAX_PATH);
-   Settings::addLibraryPath("default", path);
+   Settings::addLibraryPath(_model, "default", path);
 }
 
 // --- GoToLineDialog ---

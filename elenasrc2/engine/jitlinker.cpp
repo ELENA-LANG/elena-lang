@@ -36,7 +36,7 @@ SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* m
    if (!module)
       module = _module;
 
-   const wchar16_t* referenceName = module->resolveReference(reference & ~mskAnyRef);
+   ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
 
    return _owner->_loader->getSectionInfo(referenceName, reference & mskAnyRef);
 }
@@ -69,11 +69,11 @@ void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
    else writer.writeRef((ref_t)_owner->_codeBase, position);
 }
 
-////void ReferenceLoader::ReferenceHelper :: writeMethodReference(SectionWriter& writer, size_t tapeDisp)
-////{
-////   _relocations->add(tapeDisp, writer.Position());
-////   writer.writeRef(mskCodeRef, 0);
-////}
+//void ReferenceLoader::ReferenceHelper :: writeMethodReference(SectionWriter& writer, size_t tapeDisp)
+//{
+//   _relocations->add(tapeDisp, writer.Position());
+//   writer.writeRef(mskCodeRef, 0);
+//}
 
 void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module)
 {
@@ -142,7 +142,7 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 
    // otherwise signature and custom verb should be imported
    if (signRef != 0) {
-      const wchar16_t* subject = module->resolveSubject(signRef);
+      ident_t subject = module->resolveSubject(signRef);
       signRef = (ref_t)_loader->resolveReference(subject, 0);
    }
    return encodeMessage(signRef, verbId, paramCount) | MESSAGE_MASK;
@@ -206,7 +206,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 void* JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& references)
 {
    if (reference != 0) {
-      const wchar16_t* referenceName = _loader->retrieveReference(module, reference, mskVMTRef);
+      ident_t referenceName = _loader->retrieveReference(module, reference, mskVMTRef);
 
       void* vaddress = _loader->resolveReference(referenceName, mskVMTRef);
 
@@ -291,7 +291,7 @@ size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader,
    return _virtualMode ? position : (size_t)writer.Memory()->get(position);
 }
 
-void* JITLinker :: resolveNativeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo)
+void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == NULL)
       return LOADER_NOTLOADED;
@@ -353,7 +353,7 @@ void* JITLinker :: resolveNativeSection(const wchar16_t*  reference, int mask, S
 //   return vaddress;
 //}
 
-void* JITLinker :: resolveBytecodeSection(const wchar16_t*  reference, int mask, SectionInfo sectionInfo)
+void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == NULL)
       return LOADER_NOTLOADED;
@@ -396,7 +396,7 @@ void* JITLinker :: resolveBytecodeSection(const wchar16_t*  reference, int mask,
    return vaddress;
 }
 
-void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask, ClassSectionInfo sectionInfo, References& references)
+void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references)
 {
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
@@ -475,7 +475,7 @@ void* JITLinker :: createBytecodeVMTSection(const wchar16_t* reference, int mask
    return vaddress;
 }
 
-void* JITLinker :: resolveBytecodeVMTSection(const wchar16_t* reference, int mask, ClassSectionInfo sectionInfo)
+void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo)
 {
    References      references(RefInfo(0, NULL));
 
@@ -488,11 +488,11 @@ void* JITLinker :: resolveBytecodeVMTSection(const wchar16_t* reference, int mas
    return vaddress;
 }
 
-void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
+void* JITLinker :: resolveConstant(ident_t reference, int mask)
 {
    bool constantValue = true;
-   const wchar16_t* value = NULL;
-   const wchar16_t* vmtReference = reference;
+   ident_t value = NULL;
+   ident_t vmtReference = reference;
    if (mask == mskLiteralRef) {
       value = reference;
       vmtReference = _loader->getLiteralClass();
@@ -536,7 +536,7 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
 
    size_t position = writer.Position();
    if (mask == mskLiteralRef || mask == mskCharRef) {
-      _compiler->compileWideLiteral(&writer, value);
+      _compiler->compileLiteral(&writer, value);
    }
    else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, StringHelper::strToInt(value));
@@ -550,8 +550,8 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
    }
    else if (vmtVAddress == LOADER_NOTLOADED) {
       // check if it built-in constants
-      if (ConstantIdentifier::compare(reference, PACKAGE_KEY)) {
-         _compiler->compileWideLiteral(&writer, _loader->getNamespace());
+      if (StringHelper::compare(reference, PACKAGE_KEY)) {
+         _compiler->compileLiteral(&writer, _loader->getNamespace());
 
          vmtVAddress = resolve(_loader->getLiteralClass(), mskVMTRef, true);
       }
@@ -600,7 +600,7 @@ void* JITLinker :: resolveConstant(const wchar16_t* reference, int mask)
    return vaddress;
 }
 
-void* JITLinker :: resolveStaticVariable(const wchar16_t*  reference, int mask)
+void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
 {
    // get target image & resolve virtual address
    MemoryWriter writer(_loader->getTargetSection(mask));
@@ -630,7 +630,7 @@ void* JITLinker :: resolveStaticVariable(const wchar16_t*  reference, int mask)
 //   return (void*)vaddress;
 //}
 
-ref_t JITLinker :: parseMessage(const wchar16_t*  reference)
+ref_t JITLinker :: parseMessage(ident_t reference)
 {
    // message constant: nverb&signature
 
@@ -654,7 +654,7 @@ ref_t JITLinker :: parseMessage(const wchar16_t*  reference)
          index++;
       
       IdentifierString verb(reference, index);
-      const wchar16_t* signature = reference + index + 1;
+      ident_t signature = reference + index + 1;
 
       // if it is a predefined verb
       if (verb[0] == '#') {
@@ -675,7 +675,7 @@ ref_t JITLinker :: parseMessage(const wchar16_t*  reference)
    return MESSAGE_MASK | encodeMessage(signatureId, verbId, count);
 }
 
-void* JITLinker :: resolveMessage(const wchar16_t*  reference, const wchar16_t* vmt)
+void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection(mskRDataRef);
@@ -744,12 +744,12 @@ void* JITLinker :: resolveMessage(const wchar16_t*  reference, const wchar16_t* 
 //   return (void*)vaddress;
 //}
 
-void JITLinker :: createNativeDebugInfo(const wchar16_t* reference, void* param, size_t& sizePtr)
+void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
    MemoryWriter writer(debug);
-   writer.writeWideLiteral(reference);
+   writer.writeLiteral(reference);
 
    sizePtr = writer.Position();
    writer.writeDWord(0); // size place holder
@@ -757,25 +757,25 @@ void JITLinker :: createNativeDebugInfo(const wchar16_t* reference, void* param,
    writer.writeDWord((size_t)param);
 }
 
-void JITLinker :: createNativeSymbolDebugInfo(const wchar16_t* reference, size_t& sizePtr)
+void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, size_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
    MemoryWriter writer(debug);
    // start with # to distinguish the symbol debug info from the class one
-   writer.writeWideChar('#');
-   writer.writeWideLiteral(reference);
+   writer.writeChar('#');
+   writer.writeLiteral(reference);
 
    sizePtr = writer.Position();
    writer.writeDWord(0); // size place holder
 }
 
-void JITLinker :: createNativeClassDebugInfo(const wchar16_t* reference, void* vaddress, size_t& sizePtr)
+void JITLinker :: createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
    MemoryWriter writer(debug);
-   writer.writeWideLiteral(reference);
+   writer.writeLiteral(reference);
 
    sizePtr = writer.Position();   
    writer.writeDWord(0); // size place holder
@@ -794,7 +794,7 @@ void JITLinker :: endNativeDebugInfo(size_t sizePtr)
    (*debug)[sizePtr] = debug->Length() - sizePtr;
 }
 
-void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, const wchar16_t* reference, void* param)
+void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
 {
    _Memory* image = _loader->getTargetSection(mskCodeRef);
 
@@ -821,7 +821,7 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
 }
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
-void* JITLinker :: resolve(const wchar16_t* reference, int mask, bool silentMode)
+void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 {
    void* vaddress = _loader->resolveReference(reference, mask);
    if (vaddress==LOADER_NOTLOADED) {

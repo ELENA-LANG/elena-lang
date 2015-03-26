@@ -27,14 +27,14 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _project = project;
 
    // load default forwards
-   _literal.copy(project->resolveForward(WSTR_FORWARD));
-   _character.copy(project->resolveForward(WCHAR_FORWARD));
-   _int.copy(project->resolveForward(INT_FORWARD));
-   _long.copy(project->resolveForward(LONG_FORWARD));
-   _real.copy(project->resolveForward(REAL_FORWARD));
-   _message.copy(project->resolveForward(MESSAGE_FORWARD));
-   _signature.copy(project->resolveForward(SIGNATURE_FORWARD));
-   _verb.copy(project->resolveForward(VERB_FORWARD));
+   _literal = project->resolveForward(WSTR_FORWARD);
+   _character = project->resolveForward(WCHAR_FORWARD);
+   _int = project->resolveForward(INT_FORWARD);
+   _long = project->resolveForward(LONG_FORWARD);
+   _real = project->resolveForward(REAL_FORWARD);
+   _message = project->resolveForward(MESSAGE_FORWARD);
+   _signature = project->resolveForward(SIGNATURE_FORWARD);
+   _verb = project->resolveForward(VERB_FORWARD);
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
@@ -44,7 +44,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    linker.prepareCompiler();
 
    // load starting symbol (it shouldn't be forward)
-   const wchar16_t* entry = project->StrSetting(opEntry);
+   ident_t entry = project->StrSetting(opEntry);
 
    // create the image
    _entryPoint = linker.resolve(entry, mskNativeCodeRef, true);
@@ -59,7 +59,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
 
 ref_t ExecutableImage :: getDebugEntryPoint()
 {
-   const wchar16_t* starter = _project->resolveForward(STARTUP_CLASS);
+   ident_t starter = _project->resolveForward(STARTUP_CLASS);
    while (isWeakReference(starter)) {
       starter = _project->resolveForward(starter);
    }
@@ -89,7 +89,7 @@ _Memory* ExecutableImage :: getTargetSection(size_t mask)
    }
 }
 
-SectionInfo ExecutableImage :: getSectionInfo(const wchar16_t* reference, size_t mask)
+SectionInfo ExecutableImage :: getSectionInfo(ident_t reference, size_t mask)
 {
    SectionInfo sectionInfo;
 
@@ -124,7 +124,7 @@ SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-ClassSectionInfo ExecutableImage :: getClassSectionInfo(const wchar16_t* reference, size_t codeMask, size_t vmtMask, bool silentMode)
+ClassSectionInfo ExecutableImage :: getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 
@@ -157,52 +157,52 @@ size_t ExecutableImage :: getLinkerConstant(int id)
    }
 }
 
-const wchar16_t* ExecutableImage :: getLiteralClass()
+ident_t ExecutableImage::getLiteralClass()
 {
    return _literal;
 }
 
-const wchar16_t* ExecutableImage :: getCharacterClass()
+ident_t ExecutableImage::getCharacterClass()
 {
    return _character;
 }
 
-const wchar16_t* ExecutableImage :: getIntegerClass()
+ident_t ExecutableImage::getIntegerClass()
 {
    return _int;
 }
 
-const wchar16_t* ExecutableImage :: getLongClass()
+ident_t ExecutableImage::getLongClass()
 {
    return _long;
 }
 
-const wchar16_t* ExecutableImage :: getRealClass()
+ident_t ExecutableImage::getRealClass()
 {
    return _real;
 }
 
-const wchar16_t* ExecutableImage :: getMessageClass()
+ident_t ExecutableImage::getMessageClass()
 {
    return _message;
 }
 
-const wchar16_t* ExecutableImage :: getSignatureClass()
+ident_t ExecutableImage::getSignatureClass()
 {
    return _signature;
 }
 
-const wchar16_t* ExecutableImage :: getVerbClass()
+ident_t ExecutableImage::getVerbClass()
 {
    return _verb;
 }
 
-const wchar16_t* ExecutableImage :: getNamespace()
+ident_t ExecutableImage :: getNamespace()
 {
    return _project->StrSetting(opNamespace);
 }
 
-const wchar16_t* ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
+ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
    if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef) {
       return module->resolveConstant(reference);
@@ -212,9 +212,9 @@ const wchar16_t* ExecutableImage :: retrieveReference(_Module* module, ref_t ref
       return module->resolveSubject(reference);
    }
    else {
-      const wchar16_t* referenceName = module->resolveReference(reference);
+      ident_t referenceName = module->resolveReference(reference);
       while (isWeakReference(referenceName)) {
-         const wchar16_t* resolvedName = _project->resolveForward(referenceName);
+         ident_t resolvedName = _project->resolveForward(referenceName);
 
          if (!emptystr(resolvedName))  {
             referenceName = resolvedName;
@@ -233,36 +233,36 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command)
    tape.writeDWord(0);
 }
 
-inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, const wchar16_t* value)
+inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ident_t value)
 {
    tape.writeDWord(command);
 
    if (!emptystr(value)) {
       tape.writeDWord((getlength(value) + 1) << 1);
-      tape.writeWideLiteral(value, getlength(value) + 1);
+      tape.writeLiteral(value, getlength(value) + 1);
    }
    else tape.writeDWord(0);
 }
 
-inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, const wchar16_t* value1, const wchar16_t* value2)
+inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ident_t value1, ident_t value2)
 {
    tape.writeDWord(command);
    // write total length including equal sign
    tape.writeDWord((getlength(value1) + getlength(value2) + 2) << 1);
    if (!emptystr(value1)) {
-      tape.writeWideLiteral(value1, getlength(value1));
-      tape.writeWideChar('=');
+      tape.writeLiteral(value1, getlength(value1));
+      tape.writeChar('=');
    }
    if (!emptystr(value2)) {
-      tape.writeWideLiteral(value2);
+      tape.writeLiteral(value2);
    }
-   else tape.writeWideChar(0);
+   else tape.writeChar((ident_c)0);
 }
 
-VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, const tchar_t* appPath)
+VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler)
    : Image(false), _exportReferences((size_t)-1)
 {
-//   _project = project;
+   _project = project;
 
    MemoryWriter   data(&_data);
    MemoryWriter   code(&_text);
@@ -290,8 +290,8 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    ReferenceMap consts((size_t)-1);
    VMClientHelper helper(this, &consts, &data, module);
 
-   consts.add(ConstantIdentifier(VM_TAPE), createTape(data, project));
-   consts.add(ConstantIdentifier(VM_HOOK), vmHook);
+   consts.add(VM_TAPE, createTape(data, project));
+   consts.add(VM_HOOK, vmHook);
 
    compiler->loadNativeCode(helper, code, module, section);
 }
@@ -320,7 +320,7 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
    writeTapeRecord(tapeRef, data, START_VM_MESSAGE_ID);
 
    // CALL_TAPE_MESSAGE_ID 'program
-   writeTapeRecord(tapeRef, data, CALL_TAPE_MESSAGE_ID, ConstantIdentifier(STARTUP_CLASS));
+   writeTapeRecord(tapeRef, data, CALL_TAPE_MESSAGE_ID, STARTUP_CLASS);
 
    // SEND_MESSAGE
    IdentifierString verb("0#");
@@ -334,7 +334,7 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
 
 // --- VirtualMachineClientImage::VMClientHelper ---
 
-void VirtualMachineClientImage::VMClientHelper :: writeReference(MemoryWriter& writer, const wchar16_t* reference, int mask)
+void VirtualMachineClientImage::VMClientHelper :: writeReference(MemoryWriter& writer, ident_t reference, int mask)
 {
    if (mask == mskImportRef) {
       writer.writeRef(_owner->resolveExternal(reference), 0);

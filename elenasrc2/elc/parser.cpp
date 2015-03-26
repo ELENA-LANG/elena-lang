@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser class implementation.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,13 +11,11 @@
 #include "parser.h"
 #include "errors.h"
 
-const wchar16_t _eof_message[] = {'<','e','n','d',' ','o','f',' ','f','i','l','e','>',0};
-
 using namespace _ELENA_ ;
 
 // --- SyntaxError ---
 
-SyntaxError :: SyntaxError(int column, int row, const wchar16_t* token)
+SyntaxError :: SyntaxError(int column, int row, ident_t token)
 {
    this->error = errInvalidSyntax;
    this->column = column;
@@ -25,7 +23,7 @@ SyntaxError :: SyntaxError(int column, int row, const wchar16_t* token)
    this->token = token;
 }
 
-SyntaxError :: SyntaxError(int column, int row, const wchar16_t* token, const char* error)
+SyntaxError :: SyntaxError(int column, int row, ident_t token, const char* error)
 {
    this->error = error;
    this->column = column;

@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Memory dump
 //		classes.
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DumpH
@@ -53,13 +53,6 @@ public:
       return write(position, (void*)&value, 1);
    }
 
-   bool writeWideLiteral(size_t position, const wchar16_t* s)
-   {
-      if (!emptystr(s)) {
-         return write(position, s, (getlength(s) + 1) << 1);
-      }
-      else return writeWord(position, 0);
-   }
    bool writeLiteral(size_t position, const char* s)
    {
       if (!emptystr(s)) {
@@ -128,50 +121,50 @@ public:
 
 class LineReader : public TextReader
 {
-   TextReader* _reader;
-
-public:
-   virtual bool read(wchar16_t* s, size_t length)
-   {
-      const wchar16_t* start = s;
-      while (length > 0) {
-         if(!_reader->read(s, 1))
-            break;
-
-         if (s[0] == '\n') {
-            s[1] = 0;
-            return true;
-         }
-         length--;
-         s++;
-      }
-      s[0] = 0;
-
-      return s != start;
-   }
-
-   virtual bool read(char* s, size_t length)
-   {
-      while (length > 0) {
-         if(!_reader->read(s, 1))
-            return false;
-
-         if (s[0] == '\n') {
-            s[1] = 0;
-            return true;
-         }
-         length--;
-         s++;
-      }
-      s[0] = 0;
-
-      return true;
-   }
-
-   LineReader(TextReader* reader)
-   {
-      _reader = reader;
-   }
+//   TextReader* _reader;
+//
+//public:
+//   virtual bool read(wchar16_t* s, size_t length)
+//   {
+//      const wchar16_t* start = s;
+//      while (length > 0) {
+//         if(!_reader->read(s, 1))
+//            break;
+//
+//         if (s[0] == '\n') {
+//            s[1] = 0;
+//            return true;
+//         }
+//         length--;
+//         s++;
+//      }
+//      s[0] = 0;
+//
+//      return s != start;
+//   }
+//
+//   virtual bool read(char* s, size_t length)
+//   {
+//      while (length > 0) {
+//         if(!_reader->read(s, 1))
+//            return false;
+//
+//         if (s[0] == '\n') {
+//            s[1] = 0;
+//            return true;
+//         }
+//         length--;
+//         s++;
+//      }
+//      s[0] = 0;
+//
+//      return true;
+//   }
+//
+//   LineReader(TextReader* reader)
+//   {
+//      _reader = reader;
+//   }
 };
 
 } // _ELENA_

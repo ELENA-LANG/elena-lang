@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sourceH
@@ -86,12 +86,12 @@ class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LIN
       }
   }
 
-   void copyToken(LineInfo& info, wchar16_t* token, size_t length)
+   void copyToken(LineInfo& info, ident_c* token, size_t length)
    {
       info.length = _position - info.position;
       info.line = token;
 
-      StringHelper::copy(token, _line + info.position, info.length);
+      StringHelper::copy(token, _line + info.position, info.length, length);
       token[info.length] = 0;
    }
 
@@ -102,7 +102,7 @@ class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LIN
    }
 
 public:
-   LineInfo read(wchar16_t* token, size_t length);
+   LineInfo read(ident_c* token, size_t length);
 
    SourceReader(int tabSize, TextReader* source);
 };

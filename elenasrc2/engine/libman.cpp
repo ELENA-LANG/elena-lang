@@ -22,12 +22,12 @@ LibraryManager :: LibraryManager()
 {
 }
 
-LibraryManager :: LibraryManager(const tchar_t* path, const wchar16_t* package)
-   : _rootPath(path), _package(package), _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr)
+LibraryManager::LibraryManager(path_t root, ident_t package)
+   : _rootPath(root), _package(package), _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr)
 {
 }
 
-_Module* LibraryManager :: createModule(const wchar16_t* package, LoadResult& result)
+_Module* LibraryManager :: createModule(ident_t package, LoadResult& result)
 {
    _Module* module = _modules.get(package);
    if (module) {
@@ -43,12 +43,12 @@ _Module* LibraryManager :: createModule(const wchar16_t* package, LoadResult& re
    return module;
 }
 
-_Module* LibraryManager :: loadModule(const wchar16_t* package, LoadResult& result, bool readOnly)
+_Module* LibraryManager :: loadModule(ident_t package, LoadResult& result, bool readOnly)
 {
    _Module* module = _modules.get(package);
    if (!module) {
       Path path;
-      nameToPath(package, path, _T("nl"));
+      nameToPath(package, path, "nl");
 
       FileReader  reader(path, feRaw, false);
       if (!readOnly) {
@@ -69,12 +69,12 @@ _Module* LibraryManager :: loadModule(const wchar16_t* package, LoadResult& resu
    return module;
 }
 
-_Module* LibraryManager :: loadDebugModule(const wchar16_t* package, LoadResult& result)
+_Module* LibraryManager :: loadDebugModule(ident_t package, LoadResult& result)
 {
    _Module* module = _debugModules.get(package);
    if (!module) {
       Path path;
-      nameToPath(package, path, _T("dnl"));
+      nameToPath(package, path, "dnl");
 
       FileReader  reader(path, feRaw, false);
       module = new ROModule(reader, result);
@@ -91,18 +91,20 @@ _Module* LibraryManager :: loadDebugModule(const wchar16_t* package, LoadResult&
    return module;
 }
 
-_Module* LibraryManager :: loadNative(const wchar16_t* package, LoadResult& result)
+_Module* LibraryManager :: loadNative(ident_t package, LoadResult& result)
 {
    _Module* binary = _binaries.get(package);
    if (!binary) {
-      const tchar_t* path = _binaryAliases.get(package);
+      ident_t path = _binaryAliases.get(package);
       if (emptystr(path)) {
          result = lrNotFound;
 
          return NULL;
       }
 
-      FileReader reader(path, feRaw, false);
+      Path filePath;
+      Path::loadPath(filePath, path);
+      FileReader reader(filePath, feRaw, false);
 
       binary = new ROModule(reader, result);
       if (result != lrSuccessful) {
@@ -122,7 +124,10 @@ bool LibraryManager :: loadCore(LoadResult& result)
    AliasMap::Iterator it = _binaryAliases.start();
    while (!it.Eof()) {
       if (emptystr(it.key())) {
-         FileReader reader(*it, feRaw, false);
+         Path path;
+         Path::loadPath(path, *it);
+
+         FileReader reader(path, feRaw, false);
 
          _Module* binary = new ROModule(reader, result);
          if(result != lrSuccessful) {
@@ -164,7 +169,7 @@ _Module* LibraryManager :: resolveCore(ref_t reference, LoadResult& result)
    return NULL;
 }
 
-_Module* LibraryManager :: resolveNative(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+_Module* LibraryManager :: resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
    NamespaceName native(referenceName + NMODULE_LEN + 1);
 
@@ -175,7 +180,7 @@ _Module* LibraryManager :: resolveNative(const wchar16_t* referenceName, LoadRes
    return module;
 }
 
-_Module* LibraryManager :: resolveModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+_Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
    NamespaceName name(referenceName);
 
@@ -186,7 +191,7 @@ _Module* LibraryManager :: resolveModule(const wchar16_t* referenceName, LoadRes
    return module;
 }
 
-_Module* LibraryManager :: resolveDebugModule(const wchar16_t* referenceName, LoadResult& result, ref_t& reference)
+_Module* LibraryManager :: resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
    NamespaceName name(referenceName);
 

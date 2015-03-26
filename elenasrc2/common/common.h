@@ -3,7 +3,7 @@
 //
 //		This file contains the common templates, classes,
 //		structures, functions and constants
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef commonH
@@ -21,23 +21,51 @@
 
 #define PATH_SEPARATOR '\\'
 
-#define _T(x)       L ## x
+namespace _ELENA_ 
+{
+   typedef const wchar_t*  path_t;
+   typedef wchar_t         path_c;
+   typedef wchar_t         wide_c;
+   typedef unsigned int    unic_c;
 
-typedef wchar_t  wchar16_t;
-typedef wchar_t  tchar_t;
+   typedef const char*     ident_t;
+   typedef char            ident_c;
+   typedef size_t          ref_t;
+
+   // --- FileEncoding ---
+   enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
+
+   inline bool emptystr(const wchar_t* s)
+   {
+      return (s == NULL || s[0]==0);
+   }
+
+   inline static size_t getlength(const wchar_t* s)
+   {
+      return (s==NULL) ? 0 : wcslen(s);
+   }
+}
 
 #else
 
 #define PATH_SEPARATOR '/'
 
-#define _T(x)       x
+namespace _ELENA_ 
+{
+   typedef const char*     path_t;
+   typedef char            path_c;
+   typedef unsigned short  wide_c;
+   typedef unsigned int    unic_c;
 
-typedef unsigned short wchar16_t;
-typedef char           tchar_t;
+   typedef const char*     ident_t;
+   typedef char            ident_c;
+   typedef size_t          ref_t;
+
+   // --- FileEncoding ---
+   enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
+}
 
 #endif
-
-#define ref_t       size_t
 
 // --- Common headers ---
 #include "tools.h"
@@ -47,47 +75,32 @@ typedef char           tchar_t;
 #include "lists.h"
 #include "files.h"
 
-#define DEFAULT_STR (const wchar16_t*)NULL
+#define DEFAULT_STR (_ELENA_::ident_t)NULL
 
 namespace _ELENA_
 {
 
-#ifdef _WIN32
-
-// --- FileEncoding ---
-enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
-
-#else
-
-// --- FileEncoding ---
-enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
-
-#endif
-
-// --- Param string template ---
-typedef String<char, 255> UTF8String;
-
 // --- Common mapping type definitions ---
-typedef Dictionary2D<const char*, const char*> ConfigSettings;
-typedef _Iterator<ConfigSettings::VItem, _MapItem<const char*, ConfigSettings::VItem>, const char*> ConfigCategoryIterator;
+typedef Dictionary2D<ident_t, ident_t> ConfigSettings;
+typedef _Iterator<ConfigSettings::VItem, _MapItem<ident_t, ConfigSettings::VItem>, ident_t> ConfigCategoryIterator;
 
 // --- Base Config File ---
 class _ConfigFile
 {
 public:
-   virtual bool load(const tchar_t* path, int encoding) = 0;
+   virtual bool load(path_t path, int encoding) = 0;
 
-   virtual ConfigCategoryIterator getCategoryIt(const char* name) = 0;
+   virtual ConfigCategoryIterator getCategoryIt(ident_t name) = 0;
 
-   virtual const char* getSetting(const char* category, const char* key, const char* defaultValue = NULL) = 0;
-   virtual int getIntSetting(const char* category, const char* key, int defaultValue = 0)
+   virtual ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL) = 0;
+   virtual int getIntSetting(ident_t category, ident_t key, int defaultValue = 0)
    {
       String<char, 255> value(getSetting(category, key));
 
       return value.toInt(defaultValue);
    }
 
-   virtual bool getBoolSetting(const char* category, const char* key, bool defaultValue = false)
+   virtual bool getBoolSetting(ident_t category, ident_t key, bool defaultValue = false)
    {
       String<char, 255> value(getSetting(category, key));
 
@@ -98,6 +111,23 @@ public:
    }
 
    virtual ~_ConfigFile() {}
+};
+
+// --- ConstantIdentifier ---
+
+class WideString : public String <wide_c, 0x100>
+{
+public:
+   WideString()
+   {
+
+   }
+   WideString(ident_t message)
+   {
+      size_t length = 0x100;
+      StringHelper::copy(_string, message, getlength(message), length);
+      _string[length] = 0;
+   }
 };
 
 } // _ELENA_

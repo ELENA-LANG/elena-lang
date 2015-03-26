@@ -16,6 +16,7 @@ Version 2.0.0
 - migrate upndown to lib30
 - start work on eldoc
 - simple code optimization (pi ~ 2.3s)
+- api : optimize utf8 <-> utf16, utf8 <-> utf32, utf16 <-> utf32
 
 Version 2.1.0
 -------------

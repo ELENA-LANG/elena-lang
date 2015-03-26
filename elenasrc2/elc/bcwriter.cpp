@@ -27,14 +27,14 @@ void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 
 // --- ByteCodeWriter ---
 
-ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, const tchar_t* path)
+ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 {
    if (debugModule != NULL) {
       MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
 
       ref_t sourceRef = debugStringWriter.Position();
 
-      debugStringWriter.writeWideLiteral(path);
+      debugStringWriter.writeLiteral(path);
 
       return sourceRef;
    }
@@ -61,7 +61,7 @@ ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, Mess
       name.appendInt(paramCount);
       name.append(']');
 
-      debugStringWriter.writeWideLiteral(name);
+      debugStringWriter.writeLiteral(name);
 
       return sourceRef;
    }
@@ -123,42 +123,42 @@ void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
    tape.write(blDeclare, bsBranch);
 }
 
-void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdIntLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdLongLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdRealLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdByteArrayLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdShortArrayLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter::declareLocalIntArrayInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdIntArrayLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, const wchar16_t* localName, int level)
+void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
 {
    tape.write(bdParamsLocal, (ref_t)localName, level);
 }
@@ -488,11 +488,11 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          // ignore virtual symbols
          break;
       case okInternal:
-         tape.write(bcEvalR, object.param | mskInternalRef);
+         tape.write(bcCallR, object.param | mskInternalRef);
          tape.write(bcPushA);
          break;
       case okSymbol:
-         tape.write(bcEvalR, object.param | mskSymbolRef);
+         tape.write(bcCallR, object.param | mskSymbolRef);
          tape.write(bcPushA);
          break;
       case okConstantSymbol:
@@ -607,7 +607,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
       case okSymbol:
-         tape.write(bcEvalR, object.param | mskSymbolRef);
+         tape.write(bcCallR, object.param | mskSymbolRef);
          break;
       case okInternal:
          tape.write(bcCallR, object.param | mskInternalRef);
@@ -781,11 +781,7 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.write(bcACopyR, vmtReference | mskVMTRef);
       tape.write(bcNCreate);
       tape.write(bcBSwap);
-      tape.write(bcNLen);
-      tape.write(bcECopyD);
-      tape.write(bcDCopy, 0);
-      tape.write(bcNSubCopy);
-
+      tape.write(bcCopy);
    }
    else if (size == -2) {
       tape.write(bcWLen);
@@ -793,18 +789,14 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.write(bcACopyR, vmtReference | mskVMTRef);
       tape.write(bcWCreate);
       tape.write(bcBSwap);
-      tape.write(bcWLen);
-      tape.write(bcECopyD);
-      tape.write(bcDCopy, 0);
-      tape.write(bcWSubCopy);
+      tape.write(bcCopy);
    }
    else if (size == -1) {
-      tape.write(bcLen);
+      tape.write(bcBLen);
       tape.write(bcBCopyA);
       tape.write(bcACopyR, vmtReference | mskVMTRef);
       tape.write(bcCreate);
       tape.write(bcBSwap);
-      tape.write(bcLen);
       tape.write(bcCopy);
    }
    else {
@@ -827,33 +819,63 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
 
 void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
 {
-   // dcopy 0
    // bcopya
-   // ecopyd
-   // xseek
+   // dcopy 0
+   // labSearch:
+   // get
+   // inc
+   // elser labSearch
    // acopyr vmt
    // create
-   // bswap
-   // xclone
-   // acopyb
 
-   tape.write(bcDCopy, 0);
-   tape.write(bcECopyD);
-   tape.write(bcXSeek);
+   // pusha
+   // len
+   // dcopy 0
+   // labCopy:
+   // get
+   // bswapsi 0
+   // xset
+   // bswapsi 0
+   // next labCopy
+   // acopyb
+   // pop
+
    tape.write(bcBCopyA);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+
    tape.write(bcACopyR, vmtReference);
    tape.write(bcCreate);
-   tape.write(bcBSwap);
-   tape.write(bcXClone);
+
+   tape.write(bcPushA);
+   tape.write(bcLen);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcBSwapSI);
+   tape.write(bcXSet);
+   tape.write(bcBSwapSI);
+   tape.write(bcNext, baCurrentLabel);
+   tape.releaseLabel();
+
+   tape.write(bcPop);
    tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: unboxArgList(CommandTape& tape)
 {
-   // dcopy 0
    // bcopya
-   // ecopyd
-   // xseek
+   // dcopy 0
+   // labSearch:
+   // get
+   // inc
+   // elser labSearch
    // ecopyd
    // pushn 0
 
@@ -863,15 +885,16 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    // pusha
    // elsen labNext 0
 
-   // dcopye
    // acopys 0
-   // inc
-   // aload
 
-   tape.write(bcDCopy, 0);
    tape.write(bcBCopyA);
-   tape.write(bcECopyD);
-   tape.write(bcXSeek);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
    tape.write(bcECopyD);
    tape.write(bcPushN, 0);
 
@@ -883,10 +906,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
 
-   tape.write(bcDCopyE);
    tape.write(bcACopyS);
-   tape.write(bcInc);
-   tape.write(bcALoad);
 }
 
 void ByteCodeWriter :: popObject(CommandTape& tape, ObjectInfo object)
@@ -924,35 +944,14 @@ void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 
 void ByteCodeWriter :: releaseArgList(CommandTape& tape)
 {
-   // bcopya
-   // acopys 1
-   // bswap
-   // dcopy 0
-   // ecopyd
-   // xseek
-
-   // ; released
-
-   // labNext:
-   // pop
-   // dec
-   // elsen 0 labNext
+   // labSearch:
+   // popa
+   // elser labSearch
 
    tape.newLabel();
-
-   tape.write(bcBCopyA);
-   tape.write(bcACopyS, 1);
-   tape.write(bcBSwap);
-   tape.write(bcDCopy, 0);
-   tape.write(bcECopyD);
-   tape.write(bcXSeek);
-
    tape.setLabel(true);
-
-   tape.write(bcPop);
-   tape.write(bcDec);
-   tape.write(bcElseN, baCurrentLabel, 0);
-
+   tape.write(bcPopA);
+   tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
 }
 
@@ -1038,7 +1037,7 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatch
    switch (object.kind) {
       case okSymbol:
          tape.write(bcPushE);
-         tape.write(bcEvalR, object.param | mskSymbolRef);
+         tape.write(bcCallR, object.param | mskSymbolRef);
          tape.write(bcPopE);
          break;
       case okConstantSymbol:
@@ -1265,7 +1264,7 @@ void ByteCodeWriter :: writeNewBlock(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, int frameLevel)
+void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, int frameLevel)
 {
    writeLocal(scope, localName, level, dsLocal, frameLevel);
 }
@@ -1280,18 +1279,18 @@ void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
    info.addresses.local.nameRef = scope.debugStrings->Position();
 
    if (level < 0) {
-      scope.debugStrings->writeWideLiteral(SELF_VAR);
+      scope.debugStrings->writeLiteral(SELF_VAR);
 
       level -= frameLevel;
    }
-   else scope.debugStrings->writeWideLiteral(THIS_VAR);
+   else scope.debugStrings->writeLiteral(THIS_VAR);
 
    info.addresses.local.level = level;
 
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int level, DebugSymbol symbol, int frameLevel)
+void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel)
 {
    if (!scope.debug)
       return;
@@ -1305,7 +1304,7 @@ void ByteCodeWriter :: writeLocal(Scope& scope, const wchar16_t* localName, int 
    info.addresses.local.nameRef = scope.debugStrings->Position();
    info.addresses.local.level = level;
 
-   scope.debugStrings->writeWideLiteral(localName);
+   scope.debugStrings->writeLiteral(localName);
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
@@ -1368,7 +1367,7 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
             remainingSize -= symbolInfo.addresses.field.size;
          }
 
-         debugStrings->writeWideLiteral(it.key());
+         debugStrings->writeLiteral(it.key());
 
          writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
       }
@@ -1377,7 +1376,7 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
 }
 
 void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings,
-                                           const wchar16_t* className, int flags)
+                                           ident_t className, int flags)
 {
    // put place holder if debug section is empty
    if (debug->Position() == 0)
@@ -1390,7 +1389,7 @@ void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* d
 
    ref_t position = debugStrings->Position();
 
-   debugStrings->writeWideLiteral(className);
+   debugStrings->writeLiteral(className);
 
    DebugLineInfo symbolInfo(dsClass, 0, 0, 0);
    symbolInfo.addresses.symbol.nameRef = position;
@@ -1399,7 +1398,7 @@ void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* d
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, const wchar16_t* symbolName)
+void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName)
 {
    // put place holder if debug section is empty
    if (debug->Position() == 0)
@@ -1413,7 +1412,7 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
 
    ref_t position = debugStrings->Position();
 
-   debugStrings->writeWideLiteral(symbolName);
+   debugStrings->writeLiteral(symbolName);
 
    DebugLineInfo symbolInfo(dsSymbol, 0, 0, 0);
    symbolInfo.addresses.symbol.nameRef = position;
@@ -1629,28 +1628,28 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             writeSelf(scope, (*it).additional, frameLevel);
             break;
          case bdLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, frameLevel);
             break;
          case bdIntLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
             break;
          case bdLongLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
             break;
          case bdRealLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
             break;
          case bdByteArrayLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsByteArrayLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsByteArrayLocal, frameLevel);
             break;
          case bdShortArrayLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsShortArrayLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsShortArrayLocal, frameLevel);
             break;
          case bdIntArrayLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsIntArrayLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntArrayLocal, frameLevel);
             break;
          case bdParamsLocal:
-            writeLocal(scope, (const wchar16_t*)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (*it).additional);
@@ -1702,7 +1701,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          case bcNext:
          case bcJump:
          case bcHook:
-         case bcAddress:
+         //case bcAddress:
          case bcIfHeap:
             (*it).save(scope.code, true);
 
@@ -1775,18 +1774,6 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, ObjectInfo target)
          tape.write(bcBLoadFI, 1, bpFrame);
          tape.write(bcNCopy);
       }
-      // if it is aligned
-      else if (align(target.param, 4) == target.param) {
-         // bloadfi 1
-         // dcopy target.param / 4
-         // ecopy 2
-         // ninsert
-
-         tape.write(bcBLoadFI, 1, bpFrame);
-         tape.write(bcDCopy, target.param >> 2);
-         tape.write(bcECopy, 1);
-         tape.write(bcNInsert);
-      }
       else {
          // nload
          // ecopyd
@@ -1819,14 +1806,13 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, ObjectInfo target)
       // nload
       // ecopyd
       // bloadfi 1
-      // dcopy target.param / 2
-      // wwrite
-
+      // dcopy target.param
+      // bwritew
       tape.write(bcNLoad);
       tape.write(bcECopyD);
       tape.write(bcBLoadFI, 1, bpFrame);
-      tape.write(bcDCopy, target.param >> 1);
-      tape.write(bcWWrite);
+      tape.write(bcDCopy, target.param);
+      tape.write(bcBWriteW);
    }
    else if (target.kind == okLocal || target.kind == okOutputParam) {
       // bloadfi param
@@ -1846,14 +1832,14 @@ void ByteCodeWriter :: assignByte(CommandTape& tape, ObjectInfo target)
       // nload
       // ecopyd
       // bloadfi 1
-      // dcopy target.param / 4
-      // wwrite
+      // dcopy target.param
+      // bwriteb
 
       tape.write(bcNLoad);
       tape.write(bcECopyD);
       tape.write(bcBLoadFI, 1, bpFrame);
-      tape.write(bcDCopy, target.param >> 2);
-      tape.write(bcWWrite);
+      tape.write(bcDCopy, target.param);
+      tape.write(bcBWriteB);
    }
    else if (target.kind == okLocal || target.kind == okOutputParam) {
       // bloadfi param
@@ -1878,24 +1864,23 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, ObjectInfo target)
 
          tape.write(bcLCopy);
       }
-      // if it is aligned
-      else if (align(target.param, 4) == target.param) {
-         // dcopy target.param / 4
-         // ecopy 2
-         // ninsert
-
-         tape.write(bcDCopy, target.param >> 2);
-         tape.write(bcECopy, 2);
-         tape.write(bcNInsert);
-      }
       else {
-         // dcopy target.param
-         // ecopy 8
-         // insert
-
+         // dcopy 0
+         // bread
+         // dcopy prm
+         // bwrite
+         // dcopy 4
+         // bread
+         // dcopy prm + 4
+         // bwrite
+         tape.write(bcDCopy, 0);
+         tape.write(bcBRead);
          tape.write(bcDCopy, target.param);
-         tape.write(bcECopy, 8);
-         tape.write(bcInsert);
+         tape.write(bcBWrite);
+         tape.write(bcDCopy, 4);
+         tape.write(bcBRead);
+         tape.write(bcDCopy, target.param + 4);
+         tape.write(bcBWrite);
       }
    }
    else if (target.kind == okLocal || target.kind == okOutputParam) {
@@ -1915,22 +1900,46 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
 {
    // if it is alinged
    if ((offset & 3) == 0 && (size & 3) == 3) {
-      // dcopy index / 4
+      // dcopy 0
       // ecopy count / 4
-      // nsubcopy
+      // labCopy:
+      // addn (offset / 4)
+      // nread
+      // addn -offset
+      // nwrite
+      // next labCopy
 
-      tape.write(bcDCopy, offset >> 2);
+      tape.write(bcDCopy);
       tape.write(bcECopy, size >> 2);
-      tape.write(bcNSubCopy);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcAddN, offset >> 2);
+      tape.write(bcNRead);
+      tape.write(bcAddN, -(offset >> 2));
+      tape.write(bcNWrite);
+      tape.write(bcNext, baCurrentLabel);
+      tape.releaseLabel();
    }
    else {
-      // dcopy index
+      // dcopy 0
       // ecopy count
-      // subcopy
+      // labCopy:
+      // addn offset
+      // breadb
+      // addn -offset
+      // bwriteb
+      // next labCopy
 
-      tape.write(bcDCopy, offset);
+      tape.write(bcDCopy);
       tape.write(bcECopy, size);
-      tape.write(bcSubCopy);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcAddN, offset);
+      tape.write(bcBReadB);
+      tape.write(bcAddN, -offset);
+      tape.write(bcBWriteB);
+      tape.write(bcNext, baCurrentLabel);
+      tape.releaseLabel();
    }
 }
 
@@ -1959,30 +1968,17 @@ void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
 
 void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
 {
-   if ((offset & 1) == 0) {
-      // dcopy index / 2
-      // wread
-      // dcopye
-      // nsave
-
-      tape.write(bcDCopy, offset >> 1);
-      tape.write(bcWRead);
-      tape.write(bcDCopyE);
-      tape.write(bcNSave);
-   }
-   else {
-      // dcopy index
-      // bread
-      // dcopye
-      // andn 0FFFFh
-      // nsave
-      tape.write(bcDCopy, offset);
-      tape.write(bcBRead);
-      tape.write(bcDCopyE);
-      tape.write(bcAndN, 0xFFFF);
-      tape.write(bcNSave);
-   }
+   // dcopy index
+   // breadw
+   // dcopye
+   // nsave
    // acopyb
+
+   tape.write(bcDCopy, offset);
+   tape.write(bcBReadW);
+   tape.write(bcDCopyE);
+   tape.write(bcAndN, 0xFFFF);
+   tape.write(bcNSave);
    tape.write(bcACopyB);
 }
 
@@ -2118,19 +2114,19 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
    }
 }
 
-void ByteCodeWriter :: doLiteralOperation(CommandTape& tape, int operator_id)
-{
-   switch (operator_id) {
-      case EQUAL_MESSAGE_ID:
-         tape.write(bcWEqual);
-         break;
-      case LESS_MESSAGE_ID:
-         tape.write(bcWLess);
-         break;
-      default:
-         break;
-   }
-}
+//void ByteCodeWriter :: doLiteralOperation(CommandTape& tape, int operator_id)
+//{
+   //switch (operator_id) {
+   //   case EQUAL_MESSAGE_ID:
+   //      tape.write(bcWEqual);
+   //      break;
+   //   case LESS_MESSAGE_ID:
+   //      tape.write(bcWLess);
+   //      break;
+   //   default:
+   //      break;
+   //}
+//}
 
 void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
 {
@@ -2184,38 +2180,38 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
 
 void ByteCodeWriter::doCharArrayOperation(CommandTape& tape, int operator_id)
 {
-   switch (operator_id) {
-   case REFER_MESSAGE_ID:
-      // aswapsi 0
-      // popa
-      // nload
-      // popa
-      // wread
-      // nsave
-      tape.write(bcASwapSI, 0);
-      tape.write(bcPopA);
-      tape.write(bcNLoad);
-      tape.write(bcPopA);
-      tape.write(bcWRead);
-      tape.write(bcNSave);
-      break;
-   case SET_REFER_MESSAGE_ID:
-      // nload
-      // ecopyd
-      // popa
-      // nload
-      // eswap
-      // wwrite
-      tape.write(bcNLoad);
-      tape.write(bcECopyD);
-      tape.write(bcPopA);
-      tape.write(bcNLoad);
-      tape.write(bcESwap);
-      tape.write(bcWWrite);
-      break;
-   default:
-      break;
-   }
+   //switch (operator_id) {
+   //   case REFER_MESSAGE_ID:
+   //      // aswapsi 0
+   //      // popa
+   //      // nload
+   //      // popa
+   //      // wread
+   //      // nsave
+   //      tape.write(bcASwapSI, 0);
+   //      tape.write(bcPopA);
+   //      tape.write(bcNLoad);
+   //      tape.write(bcPopA);
+   //      tape.write(bcWRead);
+   //      tape.write(bcNSave);
+   //      break;
+   //   case SET_REFER_MESSAGE_ID:
+   //      // nload
+   //      // ecopyd
+   //      // popa
+   //      // nload
+   //      // eswap
+   //      // wwrite
+   //      tape.write(bcNLoad);
+   //      tape.write(bcECopyD);
+   //      tape.write(bcPopA);
+   //      tape.write(bcNLoad);
+   //      tape.write(bcESwap);
+   //      tape.write(bcWWrite);
+   //      break;
+   //   default:
+   //      break;
+   //}
 }
 
 void ByteCodeWriter :: selectConstant(CommandTape& tape, ref_t r1, ref_t r2)

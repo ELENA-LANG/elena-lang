@@ -85,38 +85,38 @@
         system'external'KERNEL32 FileTimeToSystemTime &long:aFileTime &systemtime:$self.
     ]
    
-    #method get &literal &int_date_attributes:Flags
+    #method get &wide &int_date_attributes:Flags
     [
-        #var(type:chararray,size:127)aBuffer.
+        #var(type:shortarray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
             &int:Flags
             &systemtime:$self
             &int:0
-            &chararray:aBuffer
+            &shortarray:aBuffer
             &int:255
             &int:0
             | raise:(FormatException new:"Invalid date").
 
-        ^ LiteralValue new &length:(aLength - 1) &chararray:aBuffer.                
+        ^ WideLiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
     ]
     
-    #method get &literal &int_time_attributes:Flags
+    #method get &wide &int_time_attributes:Flags
     [
-        #var(type:chararray,size:127)aBuffer.
+        #var(type:shortarray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
             &int:Flags
             &systemtime:$self
             &int:0
-            &chararray:aBuffer
+            &shortarray:aBuffer
             &int:255
             &int:0
             | raise:(FormatException new:"Invalid time").
 
-        ^ LiteralValue new &length:(aLength - 1) &chararray:aBuffer.                
+        ^ WideLiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
     ]
 }
 
@@ -140,8 +140,8 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
-        #var aTime := aSystemTime get &literal &int_time_attributes:0.
+        #var aDate := aSystemTime get &wide &int_date_attributes:DATE_SHORTDATE.
+        #var aTime := aSystemTime get &wide &int_time_attributes:0.
 
         ^ aDate + " " + aTime.
     ]
@@ -152,7 +152,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &literal &int_date_attributes:DATE_SHORTDATE.
+        #var aDate := aSystemTime get &wide &int_date_attributes:DATE_SHORTDATE.
 
         ^ aDate.
     ]
@@ -163,7 +163,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aTime := aSystemTime get &literal &int_time_attributes:0.
+        #var aTime := aSystemTime get &wide &int_time_attributes:0.
 
         ^ aTime.
     ]

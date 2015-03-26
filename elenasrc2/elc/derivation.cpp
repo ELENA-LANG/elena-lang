@@ -12,7 +12,7 @@
 
 using namespace _ELENA_;
 
-typedef String<wchar16_t, 0x100> TempString;
+typedef String<ident_c, 0x100> TempString;
 
 // --- DerivationWriter ---
 
@@ -41,15 +41,15 @@ void DerivationWriter :: writeTerminal(TerminalInfo terminal)
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<TempString> quote(terminal.value);
 
-         _writer->writeWideLiteral(quote);
+         _writer->writeLiteral(quote);
       }
       else {
-         QuoteTemplate<DynamicString<wchar16_t> > quote(terminal.value);
+         QuoteTemplate<DynamicString<ident_c> > quote(terminal.value);
 
-         _writer->writeWideLiteral(quote);
+         _writer->writeLiteral(quote);
       }
    }
-   else _writer->writeWideLiteral(terminal.value);
+   else _writer->writeLiteral(terminal.value);
 }
 
 // --- DerivationReader ---
@@ -142,7 +142,7 @@ TerminalInfo DerivationReader :: readTerminalInfo(Symbol symbol)
    _reader->readDWord(terminal.col);
    _reader->readDWord(terminal.length);
 
-   terminal.value = _reader->getWideLiteral();
+   terminal.value = _reader->getLiteral(DEFAULT_STR);
 
    return terminal;
 }

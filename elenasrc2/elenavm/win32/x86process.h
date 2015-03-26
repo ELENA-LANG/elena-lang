@@ -40,7 +40,7 @@ public:
 
    virtual bool writeBytes(size_t position, char value, size_t length);
 
-   virtual bool exportFunction(const tchar_t* rootPath, size_t position, const wchar16_t* dllName, const wchar16_t* funName);
+   virtual bool exportFunction(path_t rootPath, size_t position, path_t dllName, ident_t funName);
 
    virtual void trim(size_t size)
    {

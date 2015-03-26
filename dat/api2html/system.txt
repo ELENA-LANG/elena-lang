@@ -31,12 +31,13 @@ byteConvertor
 ByteNumber
 CallStack
 characterController
-CharArray
 charConvertor
+CharArray
 CharValue
 commandLine
 console
 emptyLiteralValue
+emptyWideLiteralValue
 Enumerator
 Exception
 false
@@ -82,6 +83,10 @@ true
 Variable
 Variant
 Verb
+WideLiteralEnumerator
+WideLiteralIterator
+WideLiteralValue
+WideString
 
 [console]
 #title=Symbol console
@@ -118,7 +123,7 @@ Verb
 
 [LiteralValue]
 #title=Class LiteralValue
-#shortdescr=A wide literal value
+#shortdescr=A UTF-8 literal value
 #protocol=enumerable
 #protocol=literal
 #parent=system.html#Object:system'Object
@@ -126,8 +131,7 @@ Verb
 #constructor=min,,literal;Creates the empty literal
 #constructor=new,&length:int,literal;Creates the literal string with specified length
 #constructor=new,&length:int&char:char,literal;Creates the literal string with specified length fills with spciefied character value
-#constructor=new,&length:int&chararray:chararray,literal;Creates the literal string with specified length and copies the parameter value
-#constructor=new,&length:int&&index:int&chararray:chararray,literal;Creates the literal string with specified length and copies a sub array
+#constructor=new,&length:int&index:int&chararray:chararray,literal;Creates the copy of a subarray
 #constructor=new,&length:int&literal:literal,literal;Creates the literal string with specified length and copies the parameter value
 #constructor=new,&literal:literal,literal;Creates the literal string copy
 #method=add,object,literal;Concatinates the values
@@ -152,6 +156,7 @@ Verb
 #method=less,&literal:literal,bool;Compares the values
 #method=literal,,literal;Returns itself
 #method=Substring,&index:int&length:int,literal;Returns the substring
+#method=wide,,wide;Converts to UTF-16 literal
 
 [IntNumber]
 #title=Class IntNumber
@@ -218,6 +223,7 @@ Verb
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
 #method=subtract,&short:short,int;Returns the difference of integers
+#method=wide,,wide;Returns the wide literal presentation
 #method=xor,&byte:byte,int;Returns the result of bitwise XOR operation
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 #method=xor,&long:long,int;Returns the result of bitwise XOR operation
@@ -225,7 +231,7 @@ Verb
 
 [CharValue]
 #title=Class CharValue
-#shortdescr=A UTF16 character symbol
+#shortdescr=An UTF-32 character symbol
 #protocol=char
 #parent=system.html#Object:system'Object
 #parent=system.html#BaseValue:system'BaseValue
@@ -239,8 +245,10 @@ Verb
 #method=clone,,char;Clones the value
 #method=equal,&char:char,bool;Compares the value with value
 #method=int,,int;Returns the numeric value
+#method=length,,int;Retuns the number of bytes to represent the symbol
 #method=less,&char:char,bool;Compares the value with value
 #method=literal,,literal;Returns the literal value
+#method=wide,,wide;Returns the wide literal value
 
 [true]
 #title=Symbol true
@@ -259,6 +267,7 @@ Verb
 #method=or,object,bool;Executes logical OR operation<br/>Always return true
 #method=then,action;Executes the action;
 #method=then,action&else:action;Executes then-action;
+#method=wide,,wide;Returns the wide literal representation.
 #method=xor,object,bool;Executes logical XOR operation
 
 [false]
@@ -277,6 +286,7 @@ Verb
 #method=not,,bool;Always returns true.
 #method=then,action;Always returns nil.
 #method=then,action&else:action;Executes else-action;
+#method=wide,,wide;Returns the wide literal representation.
 #method=xor,object,bool;Executes logical XOR operation
 
 [Integer]
@@ -325,6 +335,7 @@ Verb
 #method=reduce,&short:short;Reduces the integer value
 #method=subtract,&int:int,int;Returns the difference of integers
 #method=value,,int;Returns the integer value
+#method=wide,,wide;Returns the wide literal presentation
 #method=write,&byte:byte;Copies the integer value
 #method=write,&int:int;Copies the integer value
 #method=write,&short:short;Copies the integer value
@@ -400,6 +411,7 @@ Verb
 #method=literal,,literal;Returns the message and the call stack
 #method=messages,,literal;Returns the message
 #method=on,object;Executes the exception handler for the current exception if available<br/>Otherwise goes to the next exception handler
+#method=wide,,wide;Returns the message and the call stack
 
 [FormatException]
 #title=Class FormatException
@@ -493,6 +505,7 @@ Verb
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=subtract,&real:real,real;Returns the difference
 #method=subtract,&short:short,long;Returns the difference of integers
+#method=wide,,wide;Returns the wide literal presentation
 #method=xor,&byte:byte,long;Returns the result of bitwise XOR operation
 #method=xor,&int:int,long;Returns the result of bitwise XOR operation
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
@@ -550,6 +563,7 @@ Verb
 #method=subtract,&long:long,real;Returns the difference of numbers
 #method=subtract,&real:real,real;Returns the difference
 #method=subtract,&short:short,real;Returns the difference of numbers
+#method=wide,,wide;Returns the wide literal presentation
 
 [BaseValue]
 #title=Class BaseValue
@@ -609,6 +623,7 @@ Verb
 #method=convert,&long:long,int;Converts to the integer value
 #method=convert,&real:real,int;Converts to the integer value
 #method=convert,&short:short,int;Converts to the integer value
+#method=convert,&wide:wide,int;Converts the wide literal value to the integer number
 
 [longConvertor]
 #title=Symbol longConvertor
@@ -620,6 +635,7 @@ Verb
 #method=convert,&long:long,long;Returns the parameter
 #method=convert,&real:real,long;Converts to the integer value
 #method=convert,&short:short,long;Converts to the integer value
+#method=convert,&wide:wide,int;Converts the wide literal value to the integer number
 
 [realConvertor]
 #title=Symbol realConvertor
@@ -630,6 +646,7 @@ Verb
 #method=convert,&long:long,real;Converts the integer value to the real number
 #method=convert,&real:real,real;Returns the parameter
 #method=convert,&short:short,real;Converts the integer value to the real number
+#method=convert,&wide:wide,int;Converts the wide literal value to the integer number
 
 [literalConvertor]
 #title=Symbol literalConvertor
@@ -645,7 +662,25 @@ Verb
 #method=convert,&real:real,literal;Converts the parameter to the literal value
 #method=convert,&short:short,literal;Converts the parameter to the literal value
 #method=convert,&short:short&index:int,literal;Converts the parameter to the literal value with the provided radix
+#method=convert,&wide:wide,literal;Converts UTF-16 literal to UTF-8 one
 #method=convert,object,literal;Converts the parameter to the literal value
+
+[wideConvertor]
+#title=Symbol wideConvertor
+#shortdescr=A wide literal convertor
+#method=convert,&byte:byte,wide;Converts the parameter to the literal value
+#method=convert,&byte:byte&index:int,wide;Converts the parameter to the literal value with the provided radix
+#method=convert,&char:char,wide;Converts the parameter to the literal value
+#method=convert,&int:int,wide;Converts the parameter to the literal value
+#method=convert,&int:int&index:int,wide;Converts the parameter to the literal value with the provided radix
+#method=convert,&literal:literal,wide;Converts UTF-8 literal to UTF-16
+#method=convert,&long:long,wide;Converts the parameter to the literal value
+#method=convert,&long:long&index:int,wide;Converts the parameter to the literal value with the provided radix
+#method=convert,&real:real,wide;Converts the parameter to the literal value
+#method=convert,&short:short,wide;Converts the parameter to the literal value
+#method=convert,&short:short&index:int,wide;Converts the parameter to the literal value with the provided radix
+#method=convert,&wide:wide,wide;Returns the parameter
+#method=convert,object,wide;Converts the parameter to the literal value
 
 [Real]
 #title=Class Real
@@ -696,6 +731,7 @@ Verb
 #method=reduce,&short:short;Reduces the integer value
 #method=subtract,&real:real,real;Returns the difference
 #method=value,,real;Returns the value
+#method=wide,,wide;Returns the wide literal presentation
 #method=write,&byte:byte;Copies the integer value
 #method=write,&int:int;Copies the integer value
 #method=write,&long:long;Copies the integer value
@@ -753,6 +789,7 @@ Verb
 #method=reduce,&short:short;Reduces the integer value
 #method=subtract,&long:long,long;Returns the difference of integers
 #method=value,,long;Returns itself
+#method=wide,,wide;Returns the wide literal presentation
 #method=write,&byte:byte;Copies the integer value
 #method=write,&int:int;Copies the integer value
 #method=write,&long:long;Copies the integer value
@@ -950,6 +987,7 @@ Verb
 #method=subtract,&long:long,long;Returns the difference
 #method=subtract,&real:real,real;Returns the difference
 #method=subtract,&short:short,short;Returns the difference
+#method=wide,,wide;Returns the wide literal presentation
 #method=xor,&byte:byte,byte;Returns the result of bitwise XOR operation
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
@@ -1017,6 +1055,7 @@ Verb
 #method=subtract,&long:long,long;Returns the difference
 #method=subtract,&real:real,real;Returns the difference
 #method=subtract,&short:short,short;Returns the difference
+#method=wide,,wide;Returns the wide literal presentation
 #method=xor,&byte:byte,short;Returns the result of bitwise XOR operation
 #method=xor,&int:int,int;Returns the result of bitwise XOR operation
 #method=xor,&long:long,long;Returns the result of bitwise XOR operation
@@ -1032,6 +1071,7 @@ Verb
 #method=convert,&long:long,byte;Converts to a byte value
 #method=convert,&real:real,byte;Converts to a byte value
 #method=convert,&short:short,byte;Converts to a byte value
+#method=convert,&wide:wide,byte;Converts to a byte value
 
 [shortConvertor]
 #title=Symbol shortConvertor
@@ -1043,6 +1083,7 @@ Verb
 #method=convert,&long:long,short;Converts to a short integer value
 #method=convert,&real:real,short;Converts to a short integer value
 #method=convert,&short:short,short;Returns the parameter
+#method=convert,&wide:wide,byte;Converts to a byte value
 
 [Enumerator]
 #title=Class Enumerator
@@ -1281,26 +1322,6 @@ Verb
 #method=write,&index:int&int:int;Writes an integer value at the specified position
 #method=write,&index:int&length:int&intarray:intarray;Copies the short array at the specified position
 
-[CharArray]
-#title=Class CharArray
-#shortdescr=An array of UTF16 characters
-#parent=system.html#Object:system'Object
-#protocol=chararray
-#constructor=new,&length:int,chararray;Creates the short array with the specified length
-#constructor=new,&length:int&chararray:chararray,chararray;Creates the short array copy
-#constructor=new,&length:int&index:int&chararray:chararray,chararray;Creates the copy of a sub array
-#method=cast,verb&to:object,object;Dispatches the verb to the target object with chararray subject
-#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with chararray subject
-#method=chararray,,chararray;Returns itself
-#method=clone,,chararray;Creates the object copy
-#method=indexOf,&index:int&length:int&char:char,int;Returns the index of the first occurence of the specified symbol in the given range.<br/>If the character is not found. returns -1
-#method=length,,int;Returns the array length
-#method=read,&index:int&length:int&chararray:chararray;Copies a sub array to the provided one at the specified position
-#method=read,&index:int&out'char:char;Reads a character value at the specified position and saves it into an output variable
-#method=write,&index:int&char:char;Writes a character value at the specified position
-#method=write,&index:int&length:int&chararray:chararray;Copies the short array at the specified position
-#method=write,&index:int&length:int&literal:literal;Copies the literal at the specified position
-
 [charConvertor]
 #title=Symbol charConvertor
 #shortdescr=A wide character convertor
@@ -1309,6 +1330,7 @@ Verb
 #method=convert,&int:int,char;Converts to a character value
 #method=convert,&literal:literal,char;Converts to a character value
 #method=convert,&short:short,char;Converts to a character value
+#method=convert,&wide:wide,char;Converts to a character value
 
 [BaseArray]
 #title=Class BaseByteArray
@@ -1438,5 +1460,126 @@ Verb
 #shortdescr=The OS specific character routine controller
 #method=isLowerCase,&char:char,bool;Determines whether a character is lowercase
 #method=isUpperCase,&char:char,bool;Determines whether a character is uppercase
-#method=toLowerCase,&chararray:chararray&length:int;Converts a character string to lowercase
-#method=toUpperCase,&chararray:chararray&length:int;Converts a character string to uppercase
+#method=toLowerCase,&char:char,char;Converts a character to lowercase
+#method=toUpperCase,&char:char,char;Converts a character to uppercase
+
+[emptyWideLiteralValue]
+#title=Symbol emptyWideLiteralValue
+#shortdescr=An empty wide literal value
+#protocol=wide
+#method=add,object,wide;Returns the parameter literal value
+#method=add,&wide:wide,wide;Returns the parameter
+#method=equal,&wide:wide,bool;Compares with literal value
+#method=length,,int;Returns 0
+#method=less,&wide:wide,bool;Compares with literal value
+#method=wide,,wide;Returns empty wide literal value
+
+[WideLiteralValue]
+#title=Class WideLiteralValue
+#shortdescr=A UTF-18 literal value
+#protocol=enumerable
+#protocol=wide
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#constructor=min,,wide;Creates the empty literal
+#constructor=new,&length:int,wide;Creates the literal string with specified length
+#constructor=new,&length:int&char:char,wide;Creates the literal string with specified length fills with spciefied character value
+#constructor=new,&length:int&index:int&chararray:chararray,wide;Creates the copy of a subarray
+#constructor=new,&length:int&wide:wide,wide;Creates the literal string with specified length and copies the parameter value
+#constructor=new,&wide:wide,wide;Creates the literal string copy
+#method=add,object,wide;Concatinates the values
+#method=add,&char:char,literal;Concatinates the values
+#method=add,&wide:wide,wide;Concatinates the values
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with wide subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with wide subject
+#method=clone,,wide;Clones the value
+#method=delete,&index:int&length:int,wide;Deletes the substring from the object and returns the new one
+#method=enumerator,,enumerator;Returns the object enumerator
+#method=equal,&char:char,bool;Compares the values
+#method=equal,&wide:wide,bool;Compares the values
+#method=getAt,object,char;Returns the character with specified index
+#method=getAt,&index:int,char;Returns the character with specified index
+#method=indexOf,&index:int&char:char,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
+#method=indexOf,&index:int&wide:wide,int;Returns the index of the first occurence of the specified substring.<br/>If the substring is not found. returns -1
+#method=insert,&index:int&char:char,wide;Inserts a character into and returns the new one
+#method=insert,&index:int&wide:wide,wide;Inserts the substring into and returns the new one
+#method=iterator,,iterator;Returns the object iterator
+#method=length,,int;Returns the string length
+#method=less,&char:char,bool;Compares the values
+#method=less,&wide:wide,bool;Compares the values
+#method=literal,,literal;Converts to UTF-8 literal
+#method=Substring,&index:int&length:int,wide;Returns the substring
+#method=wide,,wide;Returns itself
+
+[WideLiteralIterator]
+#title=Class WideLiteralIterator
+#shortdescr=A literal value iterator
+#protocol=iterator
+#parent=system.html#Object:system'Object
+#parent=system.html#Iterator:system'Iterator
+#field=theIndex;The current index
+#field=theLiteral;The target
+#constructor=new,&wide:wide,iterator;Returns the literal iterator
+#method=available,,bool;Returns false if the index out of range
+#method=get,,char;Returns the current character
+#method=set,&index:int;Sets the index by specified value
+#method=write,&index:int;Sets the index by specified value
+
+[WideLiteralEnumerator]
+#title=Class WideLiteralEnumerator
+#shortdescr=A wide literal enumerator
+#protocol=enumerator
+#parent=system.html#Object:system'Object
+#parent=system.html#Enumerator:system'Enumerator
+#constructor=new&wide:wide,enumerator
+#method=get,,char;Returns the current character
+#method=enumerator,,enumerator;Returns itself
+#method=next,,bool;Goes to the next enumeration member and returns true if it is not the last member
+#method=reset,,;Resets the enumerator
+
+[WideString]
+#title=Class WideString
+#shortdescr=A wide literal variable. Extends system'LiteralValue value
+#protocol=wide
+#protocol=variable
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseValue:system'BaseValue
+#field=theValue;The wide literal value
+#constructor=new,,variable;Creates an empty literal variable 
+#constructor=new,value,variable;Creates a literal variable with specified value
+#constructor=new,&char:char,variable;Creates a literal variable with specified value
+#constructor=new,&literal:literal,variable;Creates a literal variable with specified value
+#method=append,value,;Appends the value
+#method=append,&char:char,;Appends the value
+#method=append,&wide:wide,;Appends the value
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with wide subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with wide subject
+#method=clear,,;Clears the variable value
+#method=clone,,object;Clones the object
+#method=delete,&index:int&length:int,;Deletes a sub string
+#method=insert,&index:int&char:char,;Inserts a character
+#method=insert,&index:int&wide:wide,;Inserts a sub string
+#method=wide,,wide;Returns the literal value
+#method=value,,wide;Returns the literal value
+#method=write,value,;Writes the value
+#method=write,char:char,;Writes the value
+#method=write,&wide:wide,;Writes the value
+#method=dispatch,,wide;Dispatches others messages to its value
+
+[CharArray]
+#title=Class CharArray
+#shortdescr=An array of unicode characters (UTF-32)
+#parent=system.html#Object:system'Object
+#parent=system.html#BaseIntArray:system'BaseIntArray
+#protocol=chararray
+#constructor=new,&length:int,chararray;Creates the new array with a specified length
+#constructor=new,&length:int&index:int&chararray:chararray,chararray;Creates the copy of a subarray
+#method=cast,verb&to:object,object;Dispatches the verb to the target object with chararray subject
+#method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with chararray subject
+#method=chararray,,chararray;Returns itself
+#method=clone,,chararray;Creates the object copy
+#method=length,,int;Returns the array length
+#method=read,&index:int&length:int&chararray:chararray;Copies a sub array to the provided one at the specified position
+#method=read,&index:int&out'char:char;Reads a character value at the specified position and saves it into an output variable
+#method=write,&index:int&char:char;Writes a character value at the specified position
+#method=write,&index:int&length:int&chararray:chararray;Copies the array at the specified position

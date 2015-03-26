@@ -36,7 +36,7 @@ public:
 class _BinaryHelper
 {
 public:
-   virtual void writeReference(MemoryWriter& writer, const wchar16_t* reference, int mask) = 0;
+   virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask) = 0;
 };
 
 // --- JITCompiler class ---
@@ -52,7 +52,7 @@ public:
    virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
    virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
    virtual void compileReal64(MemoryWriter* writer, double number) = 0;
-   virtual void compileWideLiteral(MemoryWriter* writer, const wchar16_t* value) = 0;
+   virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
@@ -92,7 +92,7 @@ public:
    virtual void compileInt32(MemoryWriter* writer, int integer);
    virtual void compileInt64(MemoryWriter* writer, long long integer);
    virtual void compileReal64(MemoryWriter* writer, double number);
-   virtual void compileWideLiteral(MemoryWriter* writer, const wchar16_t* value);
+   virtual void compileLiteral(MemoryWriter* writer, const char* value);
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
 
    virtual void allocateVariable(MemoryWriter& writer);

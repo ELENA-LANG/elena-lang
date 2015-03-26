@@ -15,12 +15,12 @@ namespace _ELENA_
 {
 
 // --- Project list types ---
-typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
-typedef Dictionary2D<int, const wchar16_t*>    ProjectSettings;
-typedef Map<const tchar_t*, tchar_t*>          Sources;
+//typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
+typedef Dictionary2D<int, ident_t>    ProjectSettings;
+typedef Map<ident_t, ident_c*>        Sources;
 
-typedef Map<const tchar_t*, tchar_t*> :: Iterator                                                               SourceIterator;
-typedef _Iterator<ProjectSettings::VItem, _MapItem<const wchar16_t*, ProjectSettings::VItem>, const wchar16_t*> ForwardIterator;
+typedef Map<ident_t, ident_c*> :: Iterator                                                    SourceIterator;
+typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 
 // --- ELENA Project options ---
 enum ProjectSetting
@@ -100,7 +100,7 @@ protected:
    Sources         _sources;
 
    virtual ConfigCategoryIterator getCategory(_ConfigFile& config, ProjectSetting setting) = 0;
-   virtual const char* getOption(_ConfigFile& config, ProjectSetting setting) = 0;
+   virtual ident_t getOption(_ConfigFile& config, ProjectSetting setting) = 0;
 
    bool loadOption(_ConfigFile& config, ProjectSetting setting);
    void loadIntOption(_ConfigFile& config, ProjectSetting setting);
@@ -108,11 +108,11 @@ protected:
    void loadHexOption(_ConfigFile& config, ProjectSetting setting);
    void loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment);
    void loadBoolOption(_ConfigFile& config, ProjectSetting setting);
-   bool loadPathOption(_ConfigFile& config, ProjectSetting setting, const tchar_t* path);
+   bool loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t path);
 
-   void loadCategory(_ConfigFile& config, ProjectSetting setting, const tchar_t* configPath);
-   void loadSourceCategory(_ConfigFile& config, const tchar_t* configPath);
-   void loadPrimitiveCategory(_ConfigFile& config, const tchar_t* configPath);
+   void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
+   void loadSourceCategory(_ConfigFile& config, path_t configPath);
+   void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
 
 public:
@@ -124,7 +124,7 @@ public:
       return _settings.get(key, defaultValue);
    }
 
-   virtual const wchar16_t* StrSetting(ProjectSetting key)
+   virtual ident_t StrSetting(ProjectSetting key)
    {
       return _settings.get(key, DEFAULT_STR);
    }
@@ -134,10 +134,10 @@ public:
       return (_settings.get(key, 0) != 0);
    }
 
-////   virtual bool testSetting(ProjectSetting key)
-////   {
-////      return _settings.exist(key);
-////   }
+//   virtual bool testSetting(ProjectSetting key)
+//   {
+//      return _settings.exist(key);
+//   }
 
    SourceIterator getSourceIt()
    {
@@ -149,52 +149,46 @@ public:
       return _settings.getIt(opForwards);
    }
 
-   const wchar16_t* resolveExternalAlias(const wchar16_t* alias, bool& stdCall);
+   ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
-   virtual void printInfo(const char* msg, const char* value) = 0;
-   virtual void printInfo(const char* msg, const wchar16_t* value) = 0;
+   virtual void printInfo(const char* msg, ident_t value) = 0;
 
-//   virtual void raiseError(const char* msg) = 0;
-   virtual void raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
-   virtual void raiseError(const char* msg, const char* value) = 0;
-   virtual void raiseError(const char* msg, const wchar16_t* value) = 0;
-   virtual void raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path) = 0;
+////   virtual void raiseError(const char* msg) = 0;
+   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseError(ident_t msg, ident_t value) = 0;
 
-   virtual void raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* terminal = NULL) = 0;
-   virtual void raiseWarning(int level, const char* msg, const tchar_t* path) = 0;
+   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
+
+   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
 
 ////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
-   virtual void loadConfig(_ConfigFile& config, const tchar_t* configPath);
+   virtual void loadConfig(_ConfigFile& config, path_t configPath);
 
    virtual void initLoader()
    {
       // if library path is set we need to set the loader root as well
-      if (!emptystr(StrSetting(opLibPath)))
-         _loader.setRootPath(Path(StrSetting(opLibPath)));
+      if (!emptystr(StrSetting(opLibPath))) {
+         Path libPath;
+         Path::loadPath(libPath, StrSetting(opLibPath));
 
+         _loader.setRootPath(libPath);
+      }
+         
       // if package is set we need to set the loader package as well
-      Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+      Path outputPath;
+      Path::loadPath(outputPath, StrSetting(opProjectPath));
+      Path::combinePath(outputPath, StrSetting(opOutputPath));
 
       _loader.setPackage(StrSetting(opNamespace), outputPath);
    }
 
-   virtual const wchar16_t* resolveForward(const wchar16_t* forward);
-   virtual const wchar16_t* resolveForward(const char* forward)
-   {
-      return resolveForward(ConstantIdentifier(forward));
-   }
+   virtual ident_t resolveForward(ident_t forward);
 
    // loader
-   virtual _Module* loadModule(const wchar16_t* package, bool silentMode);
+   virtual _Module* loadModule(ident_t package, bool silentMode);
 
-   virtual _Module* loadModule(const char* package, bool silentMode)
-   {
-      IdentifierString name(package);
-
-      return loadModule(name, silentMode);
-   }
-
-   virtual _Module* resolveModule(const wchar16_t* referenceName, ref_t& reference, bool silentMode = false);
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    bool HasWarnings() const { return _hasWarning; }
@@ -215,10 +209,10 @@ public:
       else return false;
    }
 
-   virtual _Module* createModule(const wchar16_t* name);
-   virtual _Module* createDebugModule(const wchar16_t* name);
+   virtual _Module* createModule(ident_t name);
+   virtual _Module* createDebugModule(ident_t name);
 
-   virtual void saveModule(_Module* module, const tchar_t* extension);
+   virtual void saveModule(_Module* module, ident_t extension);
 
    Project();
    virtual ~Project() {}

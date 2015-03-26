@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA RT manager.
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef rtmanH
@@ -20,13 +20,12 @@ public:
    static void readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, StreamWriter& output);
 
    bool readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, 
-      const wchar16_t* &symbol, const wchar16_t* &method, const wchar16_t* &path, int& row);
+      ident_t &symbol, ident_t &method, ident_t &path, int& row);
 
    size_t readCallStack(StreamReader& stack, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   size_t readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, wchar16_t* buffer, size_t maxLength);
+   size_t readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, ident_c* buffer, size_t maxLength);
 };
-
 
 } // _ELENA_
 

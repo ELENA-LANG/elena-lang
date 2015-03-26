@@ -31,7 +31,7 @@ public:
    int getTabCount();
 
    void* getTabParam(int index);
-   void getTabName(int index, wchar16_t* name, int length);
+   void getTabName(int index, wchar_t* name, int length);
 
    void addTab(int index, const wchar_t* name, void* param);
    void selectTab(int index);

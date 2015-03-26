@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA PEHelper implementation.
 //		Supported platforms: x86
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -13,7 +13,7 @@
 
 using namespace _ELENA_;
 
-size_t PEHelper :: findEntryPoint(const tchar_t* path)
+size_t PEHelper :: findEntryPoint(path_t path)
 {
    FileReader reader(path, feRaw, false);
    // !! hard-coded offset

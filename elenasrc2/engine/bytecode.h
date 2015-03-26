@@ -1,4 +1,3 @@
-//------------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains common ELENA byte code classes and constants
@@ -7,7 +6,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
-#define bytecodeH 1
+#define bytecbcpopodeH 1
 
 namespace _ELENA_
 {
@@ -16,225 +15,244 @@ namespace _ELENA_
 enum ByteCode
 {
    // commands:
-   bcNop            = 0x00,
-   bcBreakpoint     = 0x01,
-   bcPushB          = 0x02,
-   bcPop            = 0x03,
+   bcNop             = 0x00,
+   bcBreakpoint      = 0x01,
+   bcPushB           = 0x02,
+   bcPop             = 0x03,
    //bcSNop           = 0x04,
-   bcPushE          = 0x05,
-   bcDCopyVerb      = 0x06,
-   bcThrow          = 0x07,
-   bcDCopyCount     = 0x08,
-   bcOr             = 0x09,
-   bcPushA          = 0x0A,
-   bcPopA           = 0x0B,
-   bcACopyB         = 0x0C,
-   bcPopE           = 0x0D,
-   bcBSRedirect     = 0x0E,
-   bcDCopySubj      = 0x0F,
+   bcPushE           = 0x05,
+   bcDCopyVerb       = 0x06,
+   bcThrow           = 0x07,
+   bcDCopyCount      = 0x08,
+   bcOr              = 0x09,
+   bcPushA           = 0x0A,
+   bcPopA            = 0x0B,
+   bcACopyB          = 0x0C,
+   bcPopE            = 0x0D,
+   bcBSRedirect      = 0x0E,
+   bcDCopySubj       = 0x0F,
 
-   bcNot            = 0x10,
-   bcCount          = 0x11,
-   bcBCopyA         = 0x12,
-   bcDec            = 0x13,
-   bcPopB           = 0x14,
-   bcClose          = 0x15,
-   bcSub            = 0x16,   
-   bcQuit           = 0x17,
-   bcGet            = 0x18,
-   bcSet            = 0x19,
-   bcInc            = 0x1A,
-   bcEQuit          = 0x1B,
-   bcALoad          = 0x1C,
-   bcUnhook         = 0x1D,
-   bcAdd            = 0x1E,
-   bcCreate         = 0x1F,
+   bcNot             = 0x10,
+   bcLen             = 0x11,
+   bcBCopyA          = 0x12,
+   bcDec             = 0x13,
+   bcPopB            = 0x14,
+   bcClose           = 0x15,
+   bcSub             = 0x16,
+   bcQuit            = 0x17,
+   bcGet             = 0x18,
+   bcSet             = 0x19,
+   bcInc             = 0x1A,
+   //bcLoad            = 0x1C,
+   bcUnhook          = 0x1D,
+   bcAdd             = 0x1E,
+   bcCreate          = 0x1F,
 
-   bcECopyD         = 0x20,  
-   bcDCopyE         = 0x21,
-   bcPushD          = 0x22,
-   bcPopD           = 0x23,
-   bcEDec           = 0x24,
-   bcEInc           = 0x25,
-   bcESwap          = 0x2C,
-   bcBSwap          = 0x2D,
-   bcCopy           = 0x2E,           
-   bcXSet           = 0x2F,
+   bcECopyD          = 0x20,
+   bcDCopyE          = 0x21,
+   bcPushD           = 0x22,
+   bcPopD            = 0x23,
+   bcDReserve        = 0x24,
+   bcDRestore        = 0x25,
+   bcESwap           = 0x2C,
+   bcBSwap           = 0x2D,
+   bcCopy            = 0x2E,           
+   bcXSet            = 0x2F,
 
-   bcLen            = 0x31, 
-   bcWLen           = 0x32,
-   bcFlag           = 0x33, 
-   bcNLen           = 0x34,
-   bcClass          = 0x36,
-   bcMIndex         = 0x37,
-   bcECall          = 0x38,
-   bcACallVD        = 0x39,
-   bcXClone         = 0x3E,
+   bcBLen            = 0x31,
+   bcWLen            = 0x32,
+   bcFlag            = 0x33, 
+   bcNLen            = 0x34,
+   bcClass           = 0x36,
+   bcCall            = 0x38,
+   bcACallVD         = 0x39,
 
-   bcNEqual         = 0x40,
-   bcNLess          = 0x41,
-   bcNCopy          = 0x42,
-   bcNAdd           = 0x43,
-   bcNSub           = 0x44,
-   bcNMul           = 0x45,
-   bcNDiv           = 0x46,
-   bcNSave          = 0x47,
-   bcNLoad          = 0x48,
-   bcWToN           = 0x49,
-   bcNAnd           = 0x4A,
-   bcNOr            = 0x4B,
-   bcNXor           = 0x4C,
-   bcNShift         = 0x4D,
-   bcNNot           = 0x4E,
-   bcNCreate        = 0x4F,
+   bcNEqual          = 0x40,
+   bcNLess           = 0x41,
+   bcNCopy           = 0x42,
+   bcNAdd            = 0x43,
+   bcNSub            = 0x44,
+   bcNMul            = 0x45,
+   bcNDiv            = 0x46,
+   bcNSave           = 0x47,
+   bcNLoad           = 0x48,
+   bcNAnd            = 0x4A,
+   bcNOr             = 0x4B,
+   bcNXor            = 0x4C,
+   bcNShift          = 0x4D,
+   bcNNot            = 0x4E,
+   bcNCreate         = 0x4F,
 
-   bcWEqual         = 0x50,
-   bcWLess          = 0x51,
-   bcWRead          = 0x52,
-   bcWInsert        = 0x53,
-   bcNToW           = 0x54,
-   bcLToW           = 0x55,
-   bcRToW           = 0x56,
-   bcWSeek          = 0x57,
-   bcWWrite         = 0x58,
-   bcWAdd           = 0x59,   
-   bcWSubCopy       = 0x5A,
-   bcNRead          = 0x5B,
-   bcNWrite         = 0x5C,
-   bcWCreate        = 0x5F,  
+   bcNRead           = 0x5B,
+   bcNWrite          = 0x5C,
+   bcWCreate         = 0x5F,
 
-   bcBReadW         = 0x60,
-   bcBRead          = 0x61,
-   bcInsert         = 0x62,
-   bcNInsert        = 0x63,
-   bcXSeek          = 0x64,
-   bcBReadB         = 0x65,
-   bcRSin           = 0x66,
-   bcRCos           = 0x67,
-   bcRArcTan        = 0x68,
-   bcBWrite         = 0x69,
-   bcSubCopy        = 0x6A,
-   bcNSubCopy       = 0x6B,
-   bcBWriteB        = 0x6C,
-   bcBWriteW        = 0x6D,
-   bcBCreate        = 0x6F,  
+   bcBReadW          = 0x60,
+   bcBRead           = 0x61,
+   bcBReadB          = 0x65,
+   bcBWrite          = 0x69,
+   bcBWriteB         = 0x6C,
+   bcBWriteW         = 0x6D,
+   bcBCreate         = 0x6F,
 
-   bcLCopy          = 0x70,
-   bcLCopyN         = 0x71,
-   bcLEqual         = 0x72,
-   bcLLess          = 0x73,
-   bcLAdd           = 0x74,
-   bcLSub           = 0x75,
-   bcLMul           = 0x76,
-   bcLDiv           = 0x77,
-   bcLAnd           = 0x78,
-   bcLOr            = 0x79,
-   bcLXor           = 0x7A,
-   bcLShift         = 0x7B,
-   bcLNot           = 0x7C,
-   bcWToL           = 0x7D,
-   bcLRndNew        = 0x7E,
-   bcLRndNext       = 0x7F,
+   bcLCopy           = 0x70,
+   bcLEqual          = 0x72,
+   bcLLess           = 0x73,
+   bcLAdd            = 0x74,
+   bcLSub            = 0x75,
+   bcLMul            = 0x76,
+   bcLDiv            = 0x77,
+   bcLAnd            = 0x78,
+   bcLOr             = 0x79,
+   bcLXor            = 0x7A,
+   bcLShift          = 0x7B,
+   bcLNot            = 0x7C,
 
-   bcRCopy          = 0x80,
-   bcRCopyL         = 0x81,
-   bcRCopyN         = 0x82,
-   bcREqual         = 0x83,
-   bcRLess          = 0x84,
-   bcRAdd           = 0x85,
-   bcRSub           = 0x86,
-   bcRMul           = 0x87,
-   bcRDiv           = 0x88,
-   bcWToR           = 0x89,
-   bcRExp           = 0x8A,
-   bcRLn            = 0x8B,
-   bcRAbs           = 0x8C,
-   bcRRound         = 0x8D,
-   bcRInt           = 0x8E,
-   bcNCopyR         = 0x8F,
+   bcRCopy           = 0x80,
+   bcRSave           = 0x82,
+   bcREqual          = 0x83,
+   bcRLess           = 0x84,
+   bcRAdd            = 0x85,
+   bcRSub            = 0x86,
+   bcRMul            = 0x87,
+   bcRDiv            = 0x88,
+   bcRExp            = 0x8A,
+   bcRLn             = 0x8B,
+   bcRAbs            = 0x8C,
+   bcRRound          = 0x8D,
+   bcRInt            = 0x8E,
+   bcRLoad           = 0x8F,
 
-   bcDCopy          = 0x90,
-   bcECopy          = 0x91,
-   bcRestore        = 0x92,
-   bcALoadR         = 0x93,
-   bcALoadFI        = 0x94,
-   bcALoadSI        = 0x95,
-   bcIfHeap         = 0x96,
-   bcOpen           = 0x98,
-   bcQuitN          = 0x99,
-   bcBCopyR         = 0x9A,
-   bcBCopyF         = 0x9B,
-   bcACopyF         = 0x9C,
-   bcACopyS         = 0x9D,
-   bcACopyR         = 0x9E,
-   bcCopyM          = 0x9F,
+   bcDCopy           = 0x90,
+   bcECopy           = 0x91,
+   bcRestore         = 0x92,
+   bcALoadR          = 0x93,
+   bcALoadFI         = 0x94,
+   bcALoadSI         = 0x95,
+   bcIfHeap          = 0x96,
+   bcBCopyS          = 0x97,
+   bcOpen            = 0x98,
+   bcQuitN           = 0x99,
+   bcBCopyR          = 0x9A,
+   bcBCopyF          = 0x9B,
+   bcACopyF          = 0x9C,
+   bcACopyS          = 0x9D,
+   bcACopyR          = 0x9E,
+   bcCopyM           = 0x9F,
 
-   bcJump           = 0xA0,
-   bcAJumpVI        = 0xA1,
-   bcACallVI        = 0xA2,
-   bcCallR          = 0xA3,
-   bcEvalR          = 0xA4,
-   bcCallExtR       = 0xA5,
-   bcHook           = 0xA6,
-   bcAddress        = 0xA7,
-   bcMessage        = 0xA8,
-   bcLess           = 0xA9,
-   bcNotLess        = 0xAA,
-   bcIfB            = 0xAB,
-   bcElseB          = 0xAC,
-   bcIf             = 0xAD,
-   bcElse           = 0xAE,
-   bcNext           = 0xAF,
+   bcJump            = 0xA0,
+   bcAJumpVI         = 0xA1,
+   bcACallVI         = 0xA2,
+   bcCallR           = 0xA3,
+   bcCallExtR        = 0xA5,
+   bcHook            = 0xA6,
+   bcLess            = 0xA9,
+   bcNotLess         = 0xAA,
+   bcIfB             = 0xAB,
+   bcElseB           = 0xAC,
+   bcIf              = 0xAD,
+   bcElse            = 0xAE,
+   bcNext            = 0xAF,
 
-   bcPushN          = 0xB0,
-   bcPushR          = 0xB2,
-   bcPushBI         = 0xB3,
-   bcPushAI         = 0xB4,
-   bcPushFI         = 0xB6,
-   bcDLoadFI        = 0xB7,
-   bcDLoadSI        = 0xB8,
-   bcDSaveFI        = 0xB9,
-   bcPushSI         = 0xBA,
-   bcDSaveSI        = 0xBB,
-   bcELoadSI        = 0xBC,
-   bcPushF          = 0xBD,
-   bcESaveSI        = 0xBE,
-   bcReserve        = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
+   bcPushN           = 0xB0,
+   bcPushR           = 0xB2,
+   bcPushAI          = 0xB4,
+   bcPushFI          = 0xB6,
+   bcDLoadFI         = 0xB7,
+   bcDLoadSI         = 0xB8,
+   bcDSaveFI         = 0xB9,
+   bcPushSI          = 0xBA,
+   bcDSaveSI         = 0xBB,
+   //bcELoadSI         = 0xBC,
+   bcPushF           = 0xBD,
+   //bcESaveSI         = 0xBE,
+   bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
-   bcASaveBI        = 0xC0,
-   bcSwapSI         = 0xC1,
-   bcASwapSI        = 0xC2,
-   bcASaveSI        = 0xC3,
-   bcASaveFI        = 0xC4,
-   bcBLoadFI        = 0xC8,
-   bcBLoadSI        = 0xC9,
-   bcASaveR         = 0xCC,
-   bcALoadAI        = 0xCD,
-   bcALoadBI        = 0xCE,
-   bcAXSaveBI       = 0xCF,
+   bcASaveBI         = 0xC0,
+   bcASwapSI         = 0xC2,
+   bcASaveSI         = 0xC3,
+   bcASaveFI         = 0xC4,
+   bcBSwapSI         = 0xC5,
+   bcESwapSI         = 0xC6,
+   bcDSwapSI         = 0xC7,
+   bcBLoadFI         = 0xC8,
+   bcBLoadSI         = 0xC9,
+   bcNLoadI          = 0xCA,
+   bcNSaveI          = 0xCB,
+   bcASaveR          = 0xCC,
+   bcALoadAI         = 0xCD,
+   bcALoadBI         = 0xCE,
+   bcAXSaveBI        = 0xCF,
 
-   bcPopI           = 0xD0,
-   bcSCopyF         = 0xD2,
-   bcSetVerb        = 0xD3,
-   bcSetSubj        = 0xD4,
-   bcAndN           = 0xD5,
-   bcAddN           = 0xD6,
-   bcOrN            = 0xD7,
+   bcPopI            = 0xD0,
+   bcSCopyF          = 0xD2,
+   bcSetVerb         = 0xD3,
+   bcSetSubj         = 0xD4,
+   bcAndN            = 0xD5,
+   bcAddN            = 0xD6,
+   bcOrN             = 0xD7,
+   bcEAddN           = 0xD8,
+   bcShiftN          = 0xD9,
 
-   bcNew            = 0xF0,
-   bcNewN           = 0xF1,
-   
-   bcXIndexRM       = 0xF4,
-   bcXJumpRM        = 0xF5,
-   bcSelectR        = 0xF6,
-   bcLessN          = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-   bcIfM            = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-   bcElseM          = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
-   bcIfR            = 0xFA,   
-   bcElseR          = 0xFB,   
-   bcIfN            = 0xFC,
-   bcElseN          = 0xFD,   
-   bcXCallRM        = 0xFE,
+   bcNew             = 0xF0,
+   bcNewN            = 0xF1,
+   bcXIndexRM        = 0xF4,
+   bcXJumpRM         = 0xF5,
+   bcSelectR         = 0xF6,
+   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcElseM           = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
+   bcIfR             = 0xFA,
+   bcElseR           = 0xFB,   
+   bcIfN             = 0xFC,
+   bcElseN           = 0xFD,   
+   bcXCallRM         = 0xFE,
+
+
+
+
+
+
+
+
+
+
+
+
+   //bcEQuit          = 0x1B,
+
+
+   //bcMIndex         = 0x37,
+   //bcXClone         = 0x3E,
+
+   //bcWToN           = 0x49,
+
+   //bcWRead          = 0x52,
+   //bcNToW           = 0x54,
+   //bcLToW           = 0x55,
+   //bcRToW           = 0x56,
+   //bcWSeek          = 0x57,
+
+   //bcInsert         = 0x62,
+   //bcRSin           = 0x66,
+   //bcRCos           = 0x67,
+   //bcRArcTan        = 0x68,
+
+   //bcLCopyN         = 0x71,
+   //bcWToL           = 0x7D,
+   //bcLRndNew        = 0x7E,
+   //bcLRndNext       = 0x7F,
+
+   //bcWToR           = 0x89,
+
+
+   //bcAddress        = 0xA7,
+   //bcMessage        = 0xA8,
+
+
+
+
+   //
    bcReserved       = 0xFF,
 
    // labels
@@ -366,10 +384,10 @@ public:
    static void loadVerbs(MessageMap& verbs);
    static void loadOperators(MessageMap& operators);
 
-   static ByteCode code(const wchar16_t* s);
+   static ByteCode code(ident_t s);
 //   static FunctionCode codeFunction(const wchar16_t* s);
 
-   static const wchar16_t* decode(ByteCode code, wchar16_t* s);
+   static ident_t decode(ByteCode code, ident_c* s);
 //   static const wchar16_t* decodeFunction(FunctionCode code, wchar16_t* s);
 
    static bool IsJump(ByteCode code)
@@ -392,7 +410,7 @@ public:
          case bcNext:
          case bcIfHeap:
          case bcHook:
-         case bcAddress:
+         //case bcAddress:
          case bcXJumpRM:
             return true;
          default:
@@ -404,7 +422,7 @@ public:
    {
       switch(code) {
          case bcPushR:
-         case bcEvalR:
+         //case bcEvalR:
          case bcCallR:
          case bcALoadR:
          case bcASaveR:
@@ -444,7 +462,6 @@ public:
          case bcPushN:
          case bcPushR:
          case bcPushSI:
-         case bcPushBI:
          case bcPushAI:
          case bcPushF:
          case bcPushE:
@@ -469,7 +486,6 @@ public:
             return false;
       }
    }
-
 };
 
 // --- CommandTape ---

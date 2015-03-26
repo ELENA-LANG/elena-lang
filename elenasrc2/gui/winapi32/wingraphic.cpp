@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI graphical tools Implementation
-//                                              (C)2005-2010, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "wingraphic.h"
@@ -72,7 +72,10 @@ void Font :: create(HDC handler)
    lf.lfWeight = _bold ? FW_BOLD : FW_NORMAL;
    lf.lfItalic = (BYTE)(_italic ? 1 : 0);
    lf.lfCharSet = (BYTE)(_characterSet);
-   _ELENA_::StringHelper::copy(lf.lfFaceName, _fontName, _ELENA_::getlength(_fontName));
+
+   size_t length = LF_FACESIZE;
+   _ELENA_::StringHelper::copy(lf.lfFaceName, _fontName, _ELENA_::getlength(_fontName), length);
+   lf.lfFaceName[length] = 0;
 
    _fontID = ::CreateFontIndirect(&lf);
 }
