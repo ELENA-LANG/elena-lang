@@ -535,8 +535,11 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    _loader->mapReference(reference, vaddress, mask);
 
    size_t position = writer.Position();
-   if (mask == mskLiteralRef || mask == mskCharRef) {
+   if (mask == mskLiteralRef) {
       _compiler->compileLiteral(&writer, value);
+   }
+   else if (mask == mskCharRef) {
+      _compiler->compileChar32(&writer, value);
    }
    else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, StringHelper::strToInt(value));

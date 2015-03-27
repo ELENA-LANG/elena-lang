@@ -24,10 +24,8 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 void DerivationWriter :: writeTerminal(TerminalInfo terminal)
 {
    // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
-   if (terminal==tsCharacter && getlength(terminal.value) < 0x100) {
-      QuoteTemplate<TempString> quote(terminal.value);
-      if (quote.Length() > 1)
-         terminal.symbol = tsLiteral;
+   if (terminal==tsCharacter && StringHelper::find(terminal.value + 1, '#') != -1) {
+      terminal.symbol = tsLiteral;
    }
 
    _writer->writeDWord(terminal.symbol);

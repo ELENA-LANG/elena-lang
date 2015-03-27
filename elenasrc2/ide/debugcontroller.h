@@ -189,8 +189,8 @@ protected:
    void readParams(_DebuggerWatch* watch, ref_t selfPtr, ident_t name, bool ignoreInline);
 
    const char* getValue(size_t address, char* value, size_t length);
-//   const wchar_t* getValue(size_t address, wchar16_t* value, size_t length);
-//
+   const wide_c* getValue(size_t address, wide_c* value, size_t length);
+
 //   int generateTape(void* tape, StreamReader& reader, int breakpointCount);
 
    bool start();

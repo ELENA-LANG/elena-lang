@@ -17,7 +17,7 @@ define UNLOCK            10022h
 define LOAD_ADDRESSINFO  10023h
 define LOAD_CALLSTACK    10024h
 
-define elSizeOffset      000Ch
+define elSizeOffset      0008h
 
 // verbs
 define EXEC_MESSAGE_ID  085000000h
@@ -290,11 +290,11 @@ procedure coreapi'strtoint
   mov  ecx, [esi-8]
   xor  edx, edx                     // ; clear flag
   cmp  byte ptr [esi], 2Dh
-  lea  ecx, [ecx+2]                 // ; to skip zero
+  lea  ecx, [ecx+1]                 // ; to skip zero
   jnz  short Lab4
   lodsb
   mov  edx, 1                        // ; set flag
-  lea  ecx, [ecx+1]                 //  ; to skip minus
+  lea  ecx, [ecx+1]                  //  ; to skip minus
 Lab4:
   push edx
   xor  eax, eax
@@ -305,12 +305,12 @@ Lab1:
   xor  eax, eax
   lodsb
   cmp  eax, 3Ah
-  jb   short lab11
+  jl   short lab11
   sub  al, 7
 lab11:
   sub  al, 30h
   jb   short Lab2
-  cmp  ax, bx
+  cmp  eax, ebx
   ja   short Lab2
   add  eax, edx
   add  ecx, 1
@@ -325,6 +325,7 @@ Lab5:
   mov  eax, edi
   jmp  short Lab3
 Lab2:
+  add  esp, 4
   xor  eax, eax
 Lab3:
   ret
@@ -441,6 +442,7 @@ labSave:
   pop  esi
   pop  edi
 
+  mov  eax, edi
   mov  ecx, edx
   mov  esi, ebx
   jmp  short labEnd
@@ -451,6 +453,7 @@ labErr:
   pop  edi
 
 labEnd:
+  ret
 
 end
 
@@ -514,6 +517,7 @@ labSave:
   mov  edx, edi
   pop  esi
   pop  edi
+  mov  eax, edi
 
   mov  ecx, edx
   mov  esi, ebx
@@ -525,6 +529,7 @@ labErr:
   pop  edi
 
 labEnd:
+  ret
 
 end
 
@@ -651,7 +656,7 @@ integer1:
   test  bh,1
   jnz   atoflerr               // only one decimal point allowed
   or    bh, 1                  // use bh bit0 as the decimal point flag
-  lodsw
+  lodsb
 atof20:
   cmp   eax, 101                // "e"
   jnz   short atof30
@@ -818,6 +823,7 @@ atof200:
 
 atoflend:
    mov  eax, esi
+   ret
 
 end
 
@@ -1111,6 +1117,7 @@ atof200:
 
 atoflend:
    mov  eax, esi
+   ret
 
 end
 
@@ -1122,16 +1129,16 @@ procedure coreapi'chartostr
    mov  [edi+4], ecx
 
    mov  ebx, [eax]
-   cmp  ebx, 080h
-   jb   short lab1
+   cmp  ebx, 00000080h
+   jl   short lab1
    cmp  ebx, 0800h
-   jb   short lab2
+   jl   short lab2
    cmp  ebx, 10000h
-   jb   short lab3
+   jl   short lab3
    
    mov  edx, ebx
    and  edx, 03Fh
-   add  edx, 080h
+   add  edx, 00000080h
    shl  edx, 24
    mov  ecx, edx
 
@@ -1156,49 +1163,41 @@ procedure coreapi'chartostr
    mov  [edi], ecx
    mov  [edi-elSizeOffset], 0FFFFFFFBh
    ret
-
-lalb1:
+   
+lab1:
    mov  [edi], ebx
    mov  [edi-elSizeOffset], 0FFFFFFFEh
    ret
 
-lalb2:
+lab2:
    mov  edx, ebx
-   and  ebx, 0FC00h
-   shr  ebx, 6
-   add  ebx, 0C0h
-   mov  ecx, ebx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [edi], dl
+   
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [edi+1], bl
 
-   mov  edx, ebx
-   and  edx, 03Fh
-   add  edx, 080h
-   shl  edx, 8
-   or   ecx, ebx
-
-   mov  [edi], ecx
    mov  [edi-elSizeOffset], 0FFFFFFFDh
    ret
 
-lalb3:
+lab3:
    mov  edx, ebx
-   and  edx, 1F000h
-   shl  edx, 12
+   shr  edx, 12
    add  edx, 0E0h
-   mov  ecx, ebx
+   mov  byte ptr [edi], dl
 
    mov  edx, ebx
-   and  edx, 0FC0h   
-   shr  edx, 2
-   add  edx, 08000h
-   or   ecx, ebx
-
-   mov  edx, ebx
+   shr  edx, 6
    and  edx, 03Fh
-   add  edx, 080h
-   shr  edx, 16
-   or   ecx, ebx
+   add  edx, 00000080h
+   mov  byte ptr [edi+1], dl
 
-   mov  [edi], ecx
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [edi+2], bl
+
    mov  [edi-elSizeOffset], 0FFFFFFFCh
    ret
 
@@ -1213,7 +1212,7 @@ procedure coreapi'chartowstr
 
    mov  ebx, [eax]
    cmp  ebx, 010000h
-   jb   short lab1
+   jl   short lab1
 
    mov  edx, ebx
    shr  edx, 10
@@ -1238,16 +1237,16 @@ procedure coreapi'strtochar
 
   xor  ebx, ebx
   mov  bl, byte ptr [eax + esi]
-  cmp  ebx, 080h
-  jb   short lab1
+  cmp  ebx, 00000080h
+  jl   short lab1
   cmp  ebx, 0C2h
-  jb   short err
+  jl   short err
   cmp  ebx, 0E0h
-  jb   short lab2
+  jl   short lab2
   cmp  ebx, 0F0h
-  jb   short lab3
+  jl   short lab3
   cmp  ebx, 0F5h
-  jb   short lab4
+  jl   short lab4
 
 err:
   xor  eax, eax
@@ -1279,7 +1278,7 @@ lab3:
   cmp  ecx, 0E0h
   jnz  short lab3_1
   cmp  ebx, 0A0h
-  jb   short err
+  jl   short err
 
 lab3_1:
   shl  ecx, 12
@@ -1305,7 +1304,7 @@ lab4:
   cmp  ecx, 0F0h
   jnz  short lab4_1
   cmp  ebx, 090h
-  jb   short err
+  jl   short err
 
 lab4_1:
   cmp  ecx, 0F4h
@@ -1347,18 +1346,18 @@ procedure coreapi'wstrtochar
   mov  ebx, dword ptr [eax + esi * 2]
   and  ebx, 0FFFFh
   cmp  ebx, 0D800h
-  jb   short lab1
+  jl   short lab1
   cmp  ebx, 0DBFFh
-  ja   short lab1
+  jg   short lab1
 
   mov  ecx, ebx
   shl  ecx, 10
   mov  ebx, dword ptr [eax + esi * 2]
   and  ebx, 0FFFFh
   cmp  ebx, 0DC00h
-  jb   short lab2
+  jl   short lab2
   cmp  ebx, 0DFFFh
-  ja   short err
+  jg   short err
 
   add  ecx, ebx
   sub  ecx, 35FDC00h
@@ -1541,7 +1540,6 @@ Lab5:
 Lab7:
    mov  edx, ecx                                                                  
    add  ecx, 1    // ;  including trailing zero
-   shl  ecx, 1
    mov  esi, [ebp+8]
    neg  ecx
    mov  [esi-8], ecx
@@ -2383,12 +2381,12 @@ labNext:
 lab1:
   mov  ecx, ebx
 
-  cmp  ebx, 080h
-  jb   short labs1
+  cmp  ebx, 00000080h
+  jl   short labs1
   cmp  ebx, 0800h
-  jb   short labs2
+  jl   short labs2
   cmp  ebx, 10000h
-  jb   short labs3
+  jl   short labs3
   
   mov  edx, ebx
   shr  edx, 18
@@ -2399,20 +2397,20 @@ lab1:
   mov  edx, ecx
   shr  edx, 12
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
    
   mov  edx, ecx
   shr  edx, 6
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
    
   mov  edx, ecx
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   jmp  short labSave
@@ -2426,7 +2424,7 @@ labs2:
   
   mov  edx, ecx
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   jmp  short labSave
@@ -2441,13 +2439,13 @@ labs3:
   mov  edx, ecx
   shr  edx, 6
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   
   mov  edx, ecx
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   jmp  short labSave
@@ -2459,7 +2457,7 @@ lalbs1:
 labSave:  
   lea  eax, [eax + 2]
   sub  esi, 1
-  jnz  short labNext
+  jnz  labNext
 
   mov  ecx, edi
   pop  eax
@@ -2482,12 +2480,12 @@ labNext:
 
   xor  ebx, ebx
   mov  bl, byte ptr [eax]
-  cmp  ebx, 080h
-  jb   short lab1
-  cmp  ebx, 0E0h
-  jb   short lab2
-  cmp  ebx, 0F0h
-  jb   short lab3
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
 
   mov  ecx, ebx
   shl  ecx, 18
@@ -2547,7 +2545,7 @@ lab1:
 
 labCont:
   cmp  ecx, 010000h
-  jb   short labw1
+  jl   short labw1
 
   mov  edx, ecx
   shr  edx, 10
@@ -2564,7 +2562,7 @@ labw1:
 
   lea  eax, [eax + 1]
   sub  esi, 1
-  jnz  short labNext
+  jnz  labNext
   mov  ecx, edi
   pop  eax
   pop  edi
@@ -2964,7 +2962,7 @@ procedure coreapi'ws_copychars
 
   mov  ebx, [esi]
   cmp  ebx, 010000h
-  jb   short lab1
+  jl   short lab1
 
   mov  edx, ebx
   shr  edx, 10
@@ -2999,50 +2997,50 @@ procedure coreapi's_copychars
 
   mov  ebx, [esi]
   
-  cmp  ebx, 080h
-  jb   short labs1
+  cmp  ebx, 00000080h
+  jl   short labs1
   cmp  ebx, 0800h
-  jb   short labs2
+  jl   short labs2
   cmp  ebx, 10000h
-  jb   short labs3
+  jl   short labs3
   
   mov  edx, ebx
   shr  edx, 18
-  add  edx, 0F0h 
+  add  edx, 000000F0h 
   mov  byte ptr [edi], dl
   add  edi, 1
    
   mov  edx, ebx
   shr  edx, 12
-  and  edx, 03Fh
-  add  edx, 080h
+  and  edx, 0000003Fh
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
    
   mov  edx, ebx
   shr  edx, 6
-  and  edx, 03Fh
-  add  edx, 080h
+  and  edx, 0000003Fh
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
    
   mov  edx, ebx
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
-  jmp  short labSave
+  jmp  labSave
 
 labs2:
   mov  edx, ebx
   shr  edx, 6
-  add  edx, 0C0h
+  add  edx, 000000C0h
   mov  byte ptr [edi], dl
   add  edi, 1
   
   mov  edx, ebx
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   jmp  short labSave
@@ -3050,25 +3048,25 @@ labs2:
 labs3:
   mov  edx, ebx
   shr  edx, 12
-  add  edx, 0E0h
+  add  edx, 000000E0h
   mov  byte ptr [edi], dl
   add  edi, 1
 
   mov  edx, ebx
   shr  edx, 6
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   
   mov  edx, ebx
   and  edx, 03Fh
-  add  edx, 080h
+  add  edx, 00000080h
   mov  byte ptr [edi], dl
   add  edi, 1
   jmp  short labSave
   
-lalbs1:
+labs1:
   mov  byte ptr [edi], dl
   add  edi, 1
 

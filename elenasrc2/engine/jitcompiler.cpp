@@ -75,12 +75,28 @@ void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-(length << 1));
+   writer->writeDWord(-length);
    writer->writeDWord(0);
 
    // object body
    writer->writeLiteral(value, length);
    writer->align(4, 0);
+}
+
+void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
+{
+   size_t len = 1;
+   unic_c ch = 0;
+   StringHelper::copy(&ch, value, getlength(value), len);
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(-4);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(ch);
 }
 
 void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)

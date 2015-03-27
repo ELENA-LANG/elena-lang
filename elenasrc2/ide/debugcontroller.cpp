@@ -742,13 +742,13 @@ const char* DebugController :: getValue(size_t address, char* value, size_t leng
    return value;
 }
 
-//const wchar_t* DebugController :: getValue(size_t address, wchar16_t* value, size_t length)
-//{
-//   _debugger.Context()->readDump(address, (char*)value, length * 2);
-//
-//   return value;
-//}
-//
+const wide_c* DebugController :: getValue(size_t address, wide_c* value, size_t length)
+{
+   _debugger.Context()->readDump(address, (char*)value, length * 2);
+
+   return value;
+}
+
 //int DebugController :: getEIP()
 //{
 //   return _debugger.Context()->EIP();
@@ -1130,6 +1130,20 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
             getValue(selfPtr - 8, (char*)&length, 4);
 
             length = -length;
+
+            if (length > DEBUG_MAX_STR_LENGTH) {
+               length = DEBUG_MAX_STR_LENGTH;
+            }
+            getValue(selfPtr, value, length);
+            value[length] = 0;
+            watch->write(this, value);
+         }
+         if (type == elDebugWideLiteral) {
+            wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+            int length = 0;
+            getValue(selfPtr - 8, (char*)&length, 4);
+
+            length = -length;
             length >>= 1;
 
             if (length > DEBUG_MAX_STR_LENGTH) {
@@ -1139,7 +1153,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
             value[length] = 0;
             watch->write(this, value);
          }
-         else if (type==elDebugDWORD) {
+         else if (type == elDebugDWORD) {
             char value[4];
             getValue(selfPtr, value, 4);
 
@@ -1176,7 +1190,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
          else if (type==elDebugBytes) {
             readByteArray(watch, selfPtr, NULL);
          }
-         else if (type==elDebugChars) {
+         else if (type==elDebugShorts) {
             readShortArray(watch, selfPtr, NULL);
          }
          else if (type == elDebugIntegers) {
@@ -1280,161 +1294,161 @@ void DebugController::showCurrentModule(DebugLineInfo* lineInfo, ident_t moduleN
 //   writer.writeWideLiteral(paramPostfix, getlength(paramPostfix));
 //   writer.writeWideChar('\n');
 //}
-//
-//// !! could the code be refactored to reuse part of the code used in ELT as well
+
+// !! could the code be refactored to reuse part of the code used in ELT as well
 //int DebugController :: generateTape(void* tape, StreamReader& reader, int breakpointCount)
 //{
-////   // load verbs global dictionary
-////   if (_verbs.Count() == 0)
-////      _ELENA_::loadVerbs(_verbs);
-////
-////   // save the length of debug info structure
-////   _tape.writeDWord(0, breakpointCount + 3);
-////
-////   int debugPos = _tape.Length();
-////
-////   // reserve place for a debug section: number of breakpoints + header + current + previous
-////   _tape.writeBytes(debugPos, 0, (breakpointCount + 3)*sizeof(DebugLineInfo));
-////
-////   int textPos = _tape.Length();
-////
-////   int row = 0;
-////   MemoryWriter writer(&_tape, debugPos);
-////   MemoryWriter textWriter(&_tape);
-////
-////   // a tape beginning
-////   writeStatement(textWriter, _T("$tape"));
-////
-////   DebugLineInfo begin(dsProcedure, 0, 0, row);
-////   writer.write(&begin, sizeof(DebugLineInfo));
-////
-////   // a tape current variables
-////   DebugLineInfo current(dsStack, 0, 0, row);
-////   current.addresses.local.level = 0;
-////   current.addresses.local.nameRef = (int)_T("current");
-////
-////   writer.write(&current, sizeof(DebugLineInfo));
-////
-////   // a tape previous variables
-////   current.addresses.local.level = 1;
-////   current.addresses.local.nameRef = (int)_T("previous");
-////
-////   writer.write(&current, sizeof(DebugLineInfo));
-////
-////   // a tape body
-////   IdentifierString prefix;
-////   IdentifierString reference;
-////
-////   size_t base    = (size_t)tape;
-////   size_t command = _debugger.Context()->readDWord(base);
-////   size_t tapePtr = 0;
-////   while (command != 0) {
-////      size_t param = _debugger.Context()->readDWord(base + tapePtr + 4);
-////      tapePtr = _debugger.Context()->readDWord(base + tapePtr + 8);         // goes to the next record
-////
-////      // skip VM commands
-////      if (!test(command, VM_MASK)) {
-////         if (command != PREFIX_TAPE_MESSAGE_ID) {
-////            // write a tape step record
-////            DebugLineInfo info(dsStep, 0, 0, ++row);
-////            info.addresses.step.address = reader.getDWord();
-////
-////            size_t position = writer.Position();
-////            writer.write(&info, sizeof(DebugLineInfo));
-////
-////            // !! should we add a flag to indicate temporal tape?
-////            _debugger.addStep(info.addresses.step.address, (void*)position);
-////         }
-////
-////         bool invoke = false;
-////         switch(command) {
-////            case PREFIX_TAPE_MESSAGE_ID:
-////               readPString(base + param, prefix);
-////               break;
-////            case PUSH_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("push"), reference);
-////               break;
-////            case PUSH_EMPTY_MESSAGE_ID:
-////               writeCommand(textWriter, _T("push <empty>"), NULL);
-////               break;
-////            case PUSHS_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("push"), _T("\""), reference, _T("\""));
-////               break;
-////            case PUSHN_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("push"), NULL, reference, NULL);
-////               break;
-////            case PUSHR_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("push"), NULL, reference, _T("r"));
-////               break;
-////            case PUSHL_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("push"), NULL, reference, _T("l"));
-////               break;
-////            case COPY_TAPE_MESSAGE_ID:
-////               writeCommand(textWriter, _T("push"), _T("sp ["), param, _T("h]"));
-////               break;
-////            case GET_TAPE_MESSAGE_ID:
-////               writeCommand(textWriter, _T("push"), _T("fp ["), param, _T("h]"));
-////               break;
-////            case CALL_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("call"), reference);
-////               break;
-////            case NEW_TAPE_MESSAGE_ID:
-////               writeCommand(textWriter, _T("new"), prefix, _T("["), param, _T("h]"));
-////               prefix.clear();
-////               break;
-////            case NEW_ARG_MESSAGE_ID:
-////               writeCommand(textWriter, _T("arg"), prefix, _T("["), param, _T("h]"));
-////               prefix.clear();
-////               break;
-////            case GROUP_TAPE_MESSAGE_ID:
-////               readPString(base + param, reference);
-////               writeCommand(textWriter, _T("group-add"), reference);
-////               break;
-////            case POP_TAPE_MESSAGE_ID:
-////               writeCommand(textWriter, _T("pop"), NULL, param, _T("h"));
-////               break;
-//////            case INVOKE_TAPE_MESSAGE_ID:
-//////               invoke = true;
-////            default:
-////            {
-////               const wchar16_t* message = retrieveKey(_verbs.start(), invoke ? param : command, (const wchar16_t*)NULL);
-////
-////               if(invoke) {
-////                  writeCommand(textWriter, _T("send"), _T("%0"), _T("."), message);
-////               }
-////               else if (!emptystr(prefix)) {
-////                  writeCommand(textWriter, _T("send"), prefix, _T("."), message);
-////
-////                  prefix.clear();
-////               }
-////               else writeCommand(textWriter, _T("send"), message);
-////               break;
-////            }
-////         }
-////      }
-////
-////      command = _debugger.Context()->readDWord(base + tapePtr);
-////   }
-////
-////   // a tape end
-////   // write an end of tape record
-////   DebugLineInfo eop(dsEOP, 0, 0, ++row);
-////   eop.addresses.step.address = reader.getDWord();
-////
-////   size_t position = writer.Position();
-////   writer.write(&eop, sizeof(DebugLineInfo));
-////   _debugger.addStep(eop.addresses.step.address, (void*)position);
-////
-////   writeStatement(textWriter, _T("end"));
-////   textWriter.writeWideChar(0);
-////
-////   return textPos;
+//   // load verbs global dictionary
+//   if (_verbs.Count() == 0)
+//      _ELENA_::loadVerbs(_verbs);
 //
+//   // save the length of debug info structure
+//   _tape.writeDWord(0, breakpointCount + 3);
+//
+//   int debugPos = _tape.Length();
+//
+//   // reserve place for a debug section: number of breakpoints + header + current + previous
+//   _tape.writeBytes(debugPos, 0, (breakpointCount + 3)*sizeof(DebugLineInfo));
+//
+//   int textPos = _tape.Length();
+//
+//   int row = 0;
+//   MemoryWriter writer(&_tape, debugPos);
+//   MemoryWriter textWriter(&_tape);
+//
+//   // a tape beginning
+//   writeStatement(textWriter, _T("$tape"));
+//
+//   DebugLineInfo begin(dsProcedure, 0, 0, row);
+//   writer.write(&begin, sizeof(DebugLineInfo));
+//
+//   // a tape current variables
+//   DebugLineInfo current(dsStack, 0, 0, row);
+//   current.addresses.local.level = 0;
+//   current.addresses.local.nameRef = (int)_T("current");
+//
+//   writer.write(&current, sizeof(DebugLineInfo));
+//
+//   // a tape previous variables
+//   current.addresses.local.level = 1;
+//   current.addresses.local.nameRef = (int)_T("previous");
+//
+//   writer.write(&current, sizeof(DebugLineInfo));
+//
+//   // a tape body
+//   IdentifierString prefix;
+//   IdentifierString reference;
+//
+//   size_t base    = (size_t)tape;
+//   size_t command = _debugger.Context()->readDWord(base);
+//   size_t tapePtr = 0;
+//   while (command != 0) {
+//      size_t param = _debugger.Context()->readDWord(base + tapePtr + 4);
+//      tapePtr = _debugger.Context()->readDWord(base + tapePtr + 8);         // goes to the next record
+//
+//      // skip VM commands
+//      if (!test(command, VM_MASK)) {
+//         if (command != PREFIX_TAPE_MESSAGE_ID) {
+//            // write a tape step record
+//            DebugLineInfo info(dsStep, 0, 0, ++row);
+//            info.addresses.step.address = reader.getDWord();
+//
+//            size_t position = writer.Position();
+//            writer.write(&info, sizeof(DebugLineInfo));
+//
+//            // !! should we add a flag to indicate temporal tape?
+//            _debugger.addStep(info.addresses.step.address, (void*)position);
+//         }
+//
+//         bool invoke = false;
+//         switch(command) {
+//            case PREFIX_TAPE_MESSAGE_ID:
+//               readPString(base + param, prefix);
+//               break;
+//            case PUSH_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("push"), reference);
+//               break;
+//            case PUSH_EMPTY_MESSAGE_ID:
+//               writeCommand(textWriter, _T("push <empty>"), NULL);
+//               break;
+//            case PUSHS_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("push"), _T("\""), reference, _T("\""));
+//               break;
+//            case PUSHN_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("push"), NULL, reference, NULL);
+//               break;
+//            case PUSHR_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("push"), NULL, reference, _T("r"));
+//               break;
+//            case PUSHL_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("push"), NULL, reference, _T("l"));
+//               break;
+//            case COPY_TAPE_MESSAGE_ID:
+//               writeCommand(textWriter, _T("push"), _T("sp ["), param, _T("h]"));
+//               break;
+//            case GET_TAPE_MESSAGE_ID:
+//               writeCommand(textWriter, _T("push"), _T("fp ["), param, _T("h]"));
+//               break;
+//            case CALL_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("call"), reference);
+//               break;
+//            case NEW_TAPE_MESSAGE_ID:
+//               writeCommand(textWriter, _T("new"), prefix, _T("["), param, _T("h]"));
+//               prefix.clear();
+//               break;
+//            case NEW_ARG_MESSAGE_ID:
+//               writeCommand(textWriter, _T("arg"), prefix, _T("["), param, _T("h]"));
+//               prefix.clear();
+//               break;
+//            case GROUP_TAPE_MESSAGE_ID:
+//               readPString(base + param, reference);
+//               writeCommand(textWriter, _T("group-add"), reference);
+//               break;
+//            case POP_TAPE_MESSAGE_ID:
+//               writeCommand(textWriter, _T("pop"), NULL, param, _T("h"));
+//               break;
+////            case INVOKE_TAPE_MESSAGE_ID:
+////               invoke = true;
+//            default:
+//            {
+//               const wchar16_t* message = retrieveKey(_verbs.start(), invoke ? param : command, (const wchar16_t*)NULL);
+//
+//               if(invoke) {
+//                  writeCommand(textWriter, _T("send"), _T("%0"), _T("."), message);
+//               }
+//               else if (!emptystr(prefix)) {
+//                  writeCommand(textWriter, _T("send"), prefix, _T("."), message);
+//
+//                  prefix.clear();
+//               }
+//               else writeCommand(textWriter, _T("send"), message);
+//               break;
+//            }
+//         }
+//      }
+//
+//      command = _debugger.Context()->readDWord(base + tapePtr);
+//   }
+//
+//   // a tape end
+//   // write an end of tape record
+//   DebugLineInfo eop(dsEOP, 0, 0, ++row);
+//   eop.addresses.step.address = reader.getDWord();
+//
+//   size_t position = writer.Position();
+//   writer.write(&eop, sizeof(DebugLineInfo));
+//   _debugger.addStep(eop.addresses.step.address, (void*)position);
+//
+//   writeStatement(textWriter, _T("end"));
+//   textWriter.writeWideChar(0);
+//
+//   return textPos;
+
 //   return 0; // !! temporal
 //}

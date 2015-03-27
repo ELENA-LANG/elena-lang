@@ -295,9 +295,9 @@ namespace _ELENA_
    const int elDebugArray          = 0x00050000;
    const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
-   const int elDebugChars          = 0x00080000;
+   const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
-   const int elDebugWideChars      = 0x000A0000;
+   const int elDebugWideLiteral    = 0x000A0000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -429,7 +429,7 @@ namespace _ELENA_
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
-//  // #define HINT_ROLE               "role"
+// #define HINT_ROLE               "role"
    #define HINT_TYPE               "type"              // type hint
    #define HINT_SIZE               "size"
    #define HINT_STRUCT             "struct"
@@ -438,8 +438,10 @@ namespace _ELENA_
    #define HINT_BINARY             "stringof"
    #define HINT_DYNAMIC            "dynamic"
    #define HINT_POINTER            "pointer"
-//  //// #define HINT_SAFEPOINT          "safepoint"
-//  //// #define HINT_LOCK               "sync"
+   #define HINT_STRING             "string"
+   #define HINT_WIDESTRING         "widestring"
+// #define HINT_SAFEPOINT          "safepoint"
+// #define HINT_LOCK               "sync"
    #define HINT_SEALED             "sealed"
    #define HINT_LIMITED            "limited"
    #define HINT_MESSAGE            "message"

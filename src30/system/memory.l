@@ -225,7 +225,7 @@
 
 // --- LiteralValue ---
 
-#class(sealed) LiteralValue :: BaseValue
+#class(sealed,string) LiteralValue :: BaseValue
 {
     #field(type:bytearray)theValue.
 
@@ -440,7 +440,7 @@
 
 // --- WideLiteralValue ---
 
-#class(sealed) WideLiteralValue :: BaseValue
+#class(sealed,widestring) WideLiteralValue :: BaseValue
 {
     #field(type:shortarray)theValue.
 

@@ -11,10 +11,20 @@
 {
     test    
     [
-        #var n := 12345.
+        #var ch := CharValue new &char:#24h.
+        #var ch2 := CharValue new &char:#0A2h.
+        #var ch3 := CharValue new &char:#20ACh.
+        #var ch4 := CharValue new &char:#10348h.
         
-        #var s := n literal.
-        #var w := n wide.
+        #var s := literalConvertor convert &char:ch.
+        #var s2 := literalConvertor convert &char:ch2.
+        #var s3 := literalConvertor convert &char:ch3.
+        #var s4 := literalConvertor convert &char:ch4.
+        
+        #var l := s length.
+        #var l2 := s2 length.
+        #var l3 := s3 length.
+        #var l4 := s4 length.
     ]
 }.
 

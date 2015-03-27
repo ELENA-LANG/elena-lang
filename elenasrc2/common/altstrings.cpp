@@ -344,8 +344,8 @@ bool StringHelper :: copy(unic_c* dest, const char* sour, size_t sourLength, siz
 {
    bool result = true;
 
-   const char* s = sour;
-   const char* end = s + sourLength;
+   const unsigned char* s = (const unsigned char*)sour;
+   const unsigned char* end = s + sourLength;
 
    unsigned int* d = dest;
    const unsigned int* d_end = d + destLength;

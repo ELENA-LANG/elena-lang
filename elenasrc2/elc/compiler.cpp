@@ -1156,7 +1156,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
                info.header.flags |= elDebugBytes;
             }
             else if (info.size == -2) {
-               info.header.flags |= elDebugChars;
+               info.header.flags |= elDebugShorts;
             }
             else if (info.size == -4) {
                info.header.flags |= elDebugIntegers;
@@ -1176,6 +1176,12 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       }
       else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
          info.header.flags |= elNonStructureRole;
+      }
+      else if (StringHelper::compare(terminal, HINT_STRING)) {
+         info.header.flags |= elDebugLiteral;
+      }
+      else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
+         info.header.flags |= elDebugWideLiteral;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -1882,7 +1888,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          else if (flags == elDebugBytes) {
             _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
          }
-         else if (flags == elDebugChars) {
+         else if (flags == elDebugShorts) {
             _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
          }
          else if (flags == elDebugIntegers) {
@@ -5141,9 +5147,6 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 
             if (sizeValue < 0) {
                 scope.info.header.flags |= elDynamicRole;
-
-               if (sizeValue == -2)
-                  scope.info.header.flags |= elDebugLiteral;
             }
 
             scope.info.fields.add(member.Terminal(), 0);
@@ -5527,7 +5530,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          ident_t value = module->resolveConstant(retVal.param);
 
-         dataWriter.writeLiteral(value, 2);
+         dataWriter.writeLiteral(value, getlength(value));
 
          dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, -4);
 

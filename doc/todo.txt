@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30 : redesign
-                       * test all coreapi functions
+                       * test all coreapi functions : coreapi'chartowstr
 
                        * uncomment textbuffer
                        * uncomment all system code
@@ -36,6 +36,11 @@ Currently:
 
                        * encoder -> converts to array of unicode characters, and then returns either literal or wide
                        
+                       
+              idev - bugs:
+                       * fix call list
+                       * fix breakpoints
+                       * fix go to
 
               adev - lib30                       
                        * aload : unboxArgList, handle_tape, handle_group

@@ -1757,7 +1757,7 @@ procedure str_copywstr
   bcreate
   bcopya  
   aloadsi 2
-  callr api : coreapi'strtowstr
+  callr api : coreapi'wstrtostr
   acopyb
   quitn 2
   
@@ -1771,7 +1771,7 @@ procedure wstr_copystr
   wcreate
   bcopya  
   aloadsi 2
-  callr api : coreapi'wstrtostr
+  callr api : coreapi'strtowstr
   acopyb
   quitn 2  
 

@@ -386,10 +386,12 @@ public:
             case 2:
                if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
                   String<ident_c, 12> number(string + index, i - index);
-                  if (string[i] == 'h') {
-                     _string.append((ident_c)number.toLong(16));
-                  }
-                  else _string.append((ident_c)number.toInt());
+                  unic_c ch = (string[i] == 'h') ? number.toLong(16) : number.toInt();
+
+                  ident_c temp[5];
+                  size_t temp_len = 4;
+                  StringHelper::copy(temp, &ch, 1, temp_len);
+                  _string.append(temp, temp_len);
 
                   if(string[i] == '"') {
                      mode = 1;
