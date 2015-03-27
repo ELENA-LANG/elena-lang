@@ -1522,6 +1522,10 @@ end
 
 procedure s_copychar
 
+  aloadsi 2
+  nload
+  ifn labEmpty 0
+
   dcopy 8
   acopyr class : system'LiteralValue
   bcreate
@@ -1531,9 +1535,24 @@ procedure s_copychar
   acopyb
   quitn 2
 
+labEmpty:
+  dcopy 1
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 2
+  nload
+  nsave
+  acopyb
+  quitn 2
+
 end
 
 procedure ws_copychar
+
+  aloadsi 2
+  nload
+  ifn labEmpty 0
 
   dcopy 3
   acopyr class : system'WideLiteralValue
@@ -1541,6 +1560,17 @@ procedure ws_copychar
   bcopya
   aloadsi 2
   callr api : coreapi'chartowstr
+  acopyb
+  quitn 2
+
+labEmpty:
+  dcopy 1
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  nload
+  nsave
   acopyb
   quitn 2
 
@@ -2828,12 +2858,12 @@ procedure s_add
   dec
   ecopyd
   dcopy 0
-  acopyr api : coreapi'insert
+  callr api : coreapi'insert
   ecopyd
   aloadsi 2
   blen
   eswap
-  acopyr api : coreapi'insert
+  callr api : coreapi'insert
   acopyb
 
   quitn 2
@@ -2856,12 +2886,12 @@ procedure ws_add
   dec
   ecopyd
   dcopy 0
-  acopyr api : coreapi'winsert
+  callr api : coreapi'winsert
   ecopyd
   aloadsi 2
   wlen
   eswap
-  acopyr api : coreapi'winsert
+  callr api : coreapi'winsert
   acopyb
 
   quitn 2

@@ -1224,6 +1224,7 @@ procedure coreapi'chartowstr
    add  edx, 0DC00h
    mov  word ptr [edi+2], dx
    mov  [edi-elSizeOffset], 0FFFFFFFAh   
+   ret
    
 lab1:
    mov  [edi], ebx
@@ -1239,13 +1240,13 @@ procedure coreapi'strtochar
   mov  bl, byte ptr [eax + esi]
   cmp  ebx, 00000080h
   jl   short lab1
-  cmp  ebx, 0C2h
+  cmp  ebx, 000000C2h
   jl   short err
-  cmp  ebx, 0E0h
+  cmp  ebx, 000000E0h
   jl   short lab2
-  cmp  ebx, 0F0h
+  cmp  ebx, 000000F0h
   jl   short lab3
-  cmp  ebx, 0F5h
+  cmp  ebx, 000000F5h
   jl   short lab4
 
 err:
@@ -1261,7 +1262,7 @@ lab2:
   mov  bl, byte ptr [eax + esi + 1]
   mov  edx, ebx
   and  edx, 0C0h
-  cmp  edx, 80h
+  cmp  edx, 00000080h
   jnz  err
   shl  ecx, 6
   add  ecx, ebx
@@ -1273,22 +1274,22 @@ lab3:
   mov  bl, byte ptr [eax + esi + 1]
   mov  edx, ebx
   and  edx, 0C0h
-  cmp  edx, 80h
+  cmp  edx, 00000080h
   jnz  err
-  cmp  ecx, 0E0h
+  cmp  ecx, 000000E0h
   jnz  short lab3_1
-  cmp  ebx, 0A0h
+  cmp  ebx, 000000A0h
   jl   short err
 
 lab3_1:
   shl  ecx, 12
-  shl  ebx, 8
+  shl  ebx, 6
   add  ecx, ebx
   xor  ebx, ebx
   mov  bl, byte ptr [eax + esi + 2]
   mov  edx, ebx
   and  edx, 0C0h
-  cmp  edx, 80h
+  cmp  edx, 00000080h
   jnz  err
   add  ecx, ebx
   sub  ecx, 0E2080h
@@ -1299,17 +1300,17 @@ lab4:
   mov  bl, byte ptr [eax + esi + 1]
   mov  edx, ebx
   and  edx, 0C0h
-  cmp  edx, 80h
+  cmp  edx, 00000080h
   jnz  err
-  cmp  ecx, 0F0h
+  cmp  ecx, 000000F0h
   jnz  short lab4_1
-  cmp  ebx, 090h
+  cmp  ebx, 00000090h
   jl   short err
 
 lab4_1:
-  cmp  ecx, 0F4h
+  cmp  ecx, 000000F4h
   jnz  short lab4_2
-  cmp  ebx, 090h
+  cmp  ebx, 00000090h
   jae  short err
 
 lab4_2:
@@ -1320,8 +1321,8 @@ lab4_2:
   xor  ebx, ebx
   mov  bl, byte ptr [eax + esi + 2]
   mov  edx, ebx
-  and  edx, 0C0h
-  cmp  edx, 80h
+  and  edx, 000000C0h
+  cmp  edx, 00000080h
   jnz  err
 
   shl  ebx, 6
@@ -1330,8 +1331,8 @@ lab4_2:
   xor  ebx, ebx
   mov  bl, byte ptr [eax + esi + 3]
   mov  edx, ebx
-  and  edx, 0C0h
-  cmp  edx, 80h
+  and  edx, 000000C0h
+  cmp  edx, 00000080h
   jnz  err
 
   add  ecx, ebx
@@ -1348,17 +1349,18 @@ procedure coreapi'wstrtochar
   cmp  ebx, 0D800h
   jl   short lab1
   cmp  ebx, 0DBFFh
-  jg   short lab1
+  jg   short err
 
   mov  ecx, ebx
   shl  ecx, 10
-  mov  ebx, dword ptr [eax + esi * 2]
+  mov  ebx, dword ptr [eax + esi * 2 + 2]
   and  ebx, 0FFFFh
   cmp  ebx, 0DC00h
   jl   short lab2
   cmp  ebx, 0DFFFh
   jg   short err
-
+  
+lab2:
   add  ecx, ebx
   sub  ecx, 35FDC00h
   ret  
@@ -1805,7 +1807,7 @@ ftoa22:
    mov   al, 45               // insert sign if negative number
 ftoa5:
 
-   stosb
+   stosw
    mov   ecx,9
 ftoa6:
    sub   esi, 1
@@ -1813,7 +1815,7 @@ ftoa6:
    ror   ax,4
    ror   ah,4
    add   eax,3030h
-   stosb
+   stosw
    sub   ecx, 1
    jnz   short ftoa6
 
@@ -1828,12 +1830,10 @@ ftoa6:
    //************************
 
    movsb                      // insert sign
-   xor   eax, eax
-   stosb
 
    cmp   byte ptr[esi-1], 20h // test if we insert space
    jnz   short ftoa60
-   lea   edi, [edi-2]         // erase it
+   lea   edi, [edi-1]         // erase it
 
 ftoa60:
    mov   ecx,1                // at least 1 integer digit
@@ -1880,8 +1880,6 @@ ftoa9:
 
 scientific:
    movsb                      // insert sign
-   xor   eax, eax
-   stosb
 
    cmp   byte ptr[esi-1], 20h // test if we insert space
    jnz   short ftoa90
@@ -1959,20 +1957,20 @@ ftoa12:
    lea   edi, [edi+1]
 
 finish:
-   cmp   byte ptr [edi-2], 48 // '0'
+   cmp   byte ptr [edi-1], 48 // '0'
    jnz   short finish1
    lea   edi, [edi-1]
    jmp   short finish
 
 finish1:
-   cmp   byte ptr [edi-2], 46 // '.'
+   cmp   byte ptr [edi-1], 46 // '.'
    jnz   short finish2
    lea   edi, [edi+1]
 
 finish2:
    xor   ecx, ecx
    mov   byte ptr [edi], cl
-   lea   ebx, [edi+2]
+   lea   ebx, [edi+1]
    pop   edi
    add   esp, 52
    pop   ebp
@@ -2372,7 +2370,7 @@ labNext:
   mov  ecx, ebx
   shl  ecx, 10
   lea  eax, [eax + 2]
-  sub  esi, 1
+  sub  esi, 2
   mov  ebx, dword ptr [eax]
   and  ebx, 0FFFFh
   add  ebx, ecx
@@ -2450,13 +2448,13 @@ labs3:
   add  edi, 1
   jmp  short labSave
   
-lalbs1:
-  mov  byte ptr [edi], dl
+labs1:
+  mov  byte ptr [edi], bl
   add  edi, 1
   
 labSave:  
   lea  eax, [eax + 2]
-  sub  esi, 1
+  sub  esi, 2
   jnz  labNext
 
   mov  ecx, edi
@@ -2491,21 +2489,21 @@ labNext:
   shl  ecx, 18
   
   lea  eax, [eax + 1]
-  sub  ecx, 1  
+  sub  esi, 1  
   mov  bl, byte ptr [eax]
   shl  ebx, 12
   add  ecx, ebx
 
   xor  ebx, ebx
   lea  eax, [eax + 1]
-  sub  ecx, 1  
+  sub  esi, 1  
   mov  bl, byte ptr [eax]
   shl  ebx, 6
   add  ecx, ebx
 
   xor  ebx, ebx
   lea  eax, [eax + 1]
-  sub  ecx, 1  
+  sub  esi, 1  
   mov  bl, byte ptr [eax]
   add  ecx, ebx
   sub  ecx, 3C82080h
@@ -2516,7 +2514,7 @@ lab2:
   shl  ecx, 6
 
   lea  eax, [eax + 1]
-  sub  ecx, 1  
+  sub  esi, 1  
   mov  bl, byte ptr [eax]
   add  ecx, ebx
   sub  ecx, 3080h
@@ -2527,14 +2525,14 @@ lab3:
   shl  ecx, 12
 
   lea  eax, [eax + 1]
-  sub  ecx, 1  
+  sub  esi, 1  
   mov  bl, byte ptr [eax]
   shl  ebx, 6
   add  ecx, ebx
 
   xor  ebx, ebx
   lea  eax, [eax + 1]
-  sub  ecx, 1  
+  sub  esi, 1  
   mov  bl, byte ptr [eax]
   add  ecx, ebx
   sub  ecx, 0E2080h

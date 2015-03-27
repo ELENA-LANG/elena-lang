@@ -63,6 +63,7 @@ public:
 
    static int find(const char* s, const char* subs, int defValue = -1);
    static int find(const char* s, char c, int defValue = -1);
+   static int findSubStr(const char* s, char c, size_t length, int defValue = -1);
    static int find(const wide_c* s, wide_c c, int defValue = -1);
    static int findLast(const wide_c* s, wide_c c, int defValue = -1);
    static int findLast(const char* s, char c, int defValue = -1);

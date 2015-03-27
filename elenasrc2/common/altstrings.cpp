@@ -454,7 +454,17 @@ int StringHelper :: findLast(const char* s, char c, int defValue)
    else return p - s;
 }
 
-void StringHelper :: append(char* dest, const char* sour, int length)
+int StringHelper::findSubStr(const char* s, char c, size_t length, int defValue)
+{
+   for (size_t i = 0; i < length; i++) {
+      if (s[i] == c)
+         return i;
+   }
+
+   return defValue;
+}
+
+void StringHelper::append(char* dest, const char* sour, int length)
 {
    strncat(dest, sour, length);
 }
@@ -1262,3 +1272,4 @@ char* StringHelper :: longlongToStr(long long n, char* s, int radix)
 ////}
 ////
 ////#endif
+

@@ -24,7 +24,7 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 void DerivationWriter :: writeTerminal(TerminalInfo terminal)
 {
    // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
-   if (terminal==tsCharacter && StringHelper::find(terminal.value + 1, '#') != -1) {
+   if (terminal == tsCharacter && StringHelper::findSubStr(terminal.value + 1, '#', terminal.length) != -1) {
       terminal.symbol = tsLiteral;
    }
 

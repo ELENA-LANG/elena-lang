@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------
               adev - lib30 : redesign
-                       * test all coreapi functions : coreapi'chartowstr
+                       * test all coreapi functions : coreapi'strtowstr
 
                        * uncomment textbuffer
                        * uncomment all system code

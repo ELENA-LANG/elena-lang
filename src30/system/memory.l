@@ -436,7 +436,7 @@
 
 // --- emptyWideLiteralValue ---
 
-#symbol(const,type:literal) emptyWideLiteralValue = #0 wide. // !! temporal
+#symbol(const,type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
 
 // --- WideLiteralValue ---
 
