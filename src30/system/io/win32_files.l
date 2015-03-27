@@ -1,6 +1,6 @@
-//#define system.
+#define system.
 //#define system'text.
-//
+
 //// --- File Access Modes ---
 //#symbol(const,type:int) $FILE_READ_DATA     = 00000001h.
 //#symbol(const,type:int) $FILE_APPEND_DATA   = 00000004h.
@@ -13,13 +13,13 @@
 //
 //#symbol(const,type:int) $FILE_SHARE_READ    = 00000001h.
 //#symbol(const,type:int) $FILE_SHARE_WRITE   = 00000002h.
-//
-//// --- FileStream ---
-//
-//#class(struct) FileStream :: Stream
-//{
-//    #field(type:handle) theHandle.
-//    
+
+// --- FileStream ---
+
+#class(struct) FileStream :: Stream
+{
+    #field(type:handle) theHandle.
+    
 //    #constructor openForRead &path:aPath
 //        <= %new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
 //    
@@ -40,33 +40,33 @@
 //        (-1 == theHandle)
 //            ? [ #throw IOException new &message:"Cannot open the file". ].
 //    ]
-//    
-//    #method write &bytearray:aDump &length:aLength
-//    [
-//        system'external'KERNEL32 WriteFile
-//            &handle    : theHandle
-//            &bytearray : aDump
-//            &int       : aLength
-//            &int       : 0
-//            &int       : 0.
-//    ]
-//
-//    #method read &bytearray:aDump &length:aLength &out'int:aRead
-//    [
-//        system'external'KERNEL32 ReadFile
-//            &handle      : theHandle
-//            &bytearray   : aDump
-//            &int         : aLength
-//            &out'int     : aRead
-//            &int         : 0.
-//    ]
-//
-//    #method close
-//    [
-//        theHandle close.
-//    ]
-//}
-//
+    
+    #method write &bytearray:aDump &length:aLength
+    [
+        system'external'KERNEL32 WriteFile
+            &handle    : theHandle
+            &bytearray : aDump
+            &int       : aLength
+            &int       : 0
+            &int       : 0.
+    ]
+
+    #method read &bytearray:aDump &length:aLength &out'int:aRead
+    [
+        system'external'KERNEL32 ReadFile
+            &handle      : theHandle
+            &bytearray   : aDump
+            &int         : aLength
+            &out'int     : aRead
+            &int         : 0.
+    ]
+
+    #method close
+    [
+        theHandle close.
+    ]
+}
+
 //// --- StreamWriter ---
 //
 //#class StreamWriter :: TextWriter

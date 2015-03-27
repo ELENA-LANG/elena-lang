@@ -1859,7 +1859,7 @@ end
 
 procedure bs_getlen
 
-  len
+  blen
   bloadsi 2
   nsave
   quitn 2
@@ -1869,7 +1869,7 @@ end
 procedure bs_read
 
   bcopya
-  len
+  blen
   ecopyd  
   aloadsi 2
   nload
@@ -1902,9 +1902,9 @@ procedure bs_write
   nload
   pushd
   add
+  ecopyd
   acopyb
-  len
-  eswap
+  blen
   less labErr
   pope
   aloadsi 2
@@ -1924,7 +1924,7 @@ end
 
 procedure bs_writebyte
 
-  len
+  blen
   ecopyd
   bcopya
   aloadsi 2
@@ -1949,7 +1949,7 @@ end
 procedure bs_readbyte
 
   bcopya
-  len
+  blen
   ecopyd  
   aloadsi 2
   nload
@@ -1974,7 +1974,7 @@ end
 
 procedure bs_writeword
 
-  len
+  blen
   bcopya
   aloadsi 2
   nload
@@ -1999,7 +1999,7 @@ end
 procedure bs_readword
 
   bcopya
-  len
+  blen
   ecopyd  
   aloadsi 2
   nload
@@ -2024,7 +2024,7 @@ end
 
 procedure bs_writedword
 
-  len
+  blen
   bcopya
   aloadsi 2
   nload
@@ -2049,7 +2049,7 @@ end
 procedure bs_readdword
 
   bcopya
-  len
+  blen
   ecopyd  
   aloadsi 2
   nload
@@ -2074,7 +2074,7 @@ end
 
 procedure bs_writeqword
 
-  len
+  blen
   bcopya
   aloadsi 2
   nload
@@ -2097,7 +2097,7 @@ end
 procedure bs_readqword
 
   bcopya
-  len
+  blen
   ecopyd  
   aloadsi 2
   nload
@@ -2402,9 +2402,9 @@ procedure ns_write
   nload
   pushd
   add
+  ecopyd
   acopyb
   nlen
-  eswap
   less labErr
   pope
   aloadsi 2
@@ -2429,7 +2429,6 @@ procedure ns_writedword
   ecopyd
   aloadsi 2
   nload
-  addn 1
   notless labErr
   ecopyd
   aloadsi 3

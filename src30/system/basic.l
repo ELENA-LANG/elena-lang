@@ -1786,7 +1786,7 @@
         
     #method(type:char) convert &byte:aValue
     [
-        #var(type:char)aRetVal := $self convert &index:0 &byte:aValue.
+        #var(type:char)aRetVal := $self convert &byte:aValue.
         
         ^ CharValue new &char:aRetVal.
     ]        

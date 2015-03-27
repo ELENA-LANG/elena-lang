@@ -33,8 +33,8 @@
 #subject(class:system'IntNumber)    int_attributes.
 
 // === literal synonyms ===
-#subject(class:system'LiteralValue) name.
-#subject(class:system'LiteralValue) path.
+#subject name.
+#subject path.
 
 // === subject synonyms ===
 #subject(class:system'Signature)    error_type.

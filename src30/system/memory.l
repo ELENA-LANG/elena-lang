@@ -478,13 +478,13 @@
     #method(type:bool) less &char : aChar
         <= %less &wide:(aChar wide).
 
-    #method(type:literal) add &wide : aLiteral
+    #method(type:wide) add &wide : aLiteral
         => system'internal'ws_add.
 
-    #method(type:literal) add &char:aChar
+    #method(type:wide) add &char:aChar
         = $self add &wide:(aChar wide).
 
-    #method(type:literal) add : anObject
+    #method(type:wide) add : anObject
         = $self add &wide:(anObject wide).
 
     #method getAt : aParam
@@ -523,16 +523,16 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
-    #method(type:literal) insert &index:anIndex &wide:aLiteral
+    #method(type:wide) insert &index:anIndex &wide:aLiteral
         => system'internal'ws_insert.
 
-    #method(type:literal) insert &index:anIndex &char:aChar
+    #method(type:wide) insert &index:anIndex &char:aChar
         = $self insert &index:anIndex &wide:(aChar wide).
 
-    #method(type:literal) delete &index:anIndex &length:aLength
+    #method(type:wide) delete &index:anIndex &length:aLength
         => system'internal'ws_delete.
 
-    #method(type:literal) Substring &index:anIndex &length:aLength
+    #method(type:wide) Substring &index:anIndex &length:aLength
         => system'internal'ws_subs.
 
     #method read &out'length:aLength
@@ -856,11 +856,15 @@
     [
         #var(type:int)aLength := theLiteral length.
         
-        theIndex append &int:theDiff.
+        #var(type:int)n := theDiff int.
+                
+        theIndex append &int:n.
         
-        (theIndex less &int:aLength)
+        n := theIndex int.
+        
+        (n < aLength)
             ? [
-                #var(type:char)aChar := theLiteral read &index:theIndex.
+                #var(type:char)aChar := theLiteral read &index:n.
                 #var(type:int)aCharLen := aChar length.
                 
                 theChar := CharValue new &char:aChar.
@@ -950,12 +954,16 @@
     #method next
     [
         #var(type:int)aLength := theLiteral length.
+
+        #var(type:int)n := theDiff int.
+                
+        theIndex append &int:n.
         
-        theIndex append &int:theDiff.
+        n := theIndex int.
         
-        (theIndex less &int:aLength)
+        (n < aLength)
             ? [
-                #var(type:char)aChar := theLiteral read &index:theIndex.
+                #var(type:char)aChar := theLiteral read &index:n.
                 #var(type:int)aCharLen := aChar length.
                 aCharLen := aCharLen + 1.
                 aCharLen := aCharLen / 2.

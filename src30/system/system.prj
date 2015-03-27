@@ -34,7 +34,7 @@ io\ioexceptions.l
 io\streamreader.l
 io\streamwriter.l
 io\win32_console.l
-io\files.l
+io\win32_files.l
 dynamic\groups.l
 dynamic\reflection.l
 dynamic\interpreters.l
