@@ -23,14 +23,15 @@
     
     #method bytearray = $self.
 
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'bs_getlen.
         
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
 
     #method read &index:anIndex &length:aLength &bytearray:aDump
@@ -42,37 +43,37 @@
     #method write &index:anIndex &byte:anInt
         => system'internal'bs_writebyte.
 
-    #method read &index:anIndex &out'byte:anInt
+    #method read &index:anIndex &vbyte:anInt
         => system'internal'bs_readbyte.
 
     #method write &index:anIndex &short:anInt
         => system'internal'bs_writeword.
 
-    #method read &index:anIndex &out'short:aChar
+    #method read &index:anIndex &vshort:aChar
         => system'internal'bs_readword.
 
     #method write &index:anIndex &char:anInt
         => system'internal'bs_writedword.
 
-    #method read &index:anIndex &out'char:aChar
+    #method read &index:anIndex &vchar:aChar
         => system'internal'bs_readdword.
 
     #method write &index:anIndex &int:anInt
         => system'internal'bs_writedword.
 
-    #method read &index:anIndex &out'int:anInt
+    #method read &index:anIndex &vint:anInt
         => system'internal'bs_readdword.
 
     #method write &index:anIndex &long:aLong
         => system'internal'bs_writeqword.
 
-    #method read &index:anIndex &out'long:aLong
+    #method read &index:anIndex &vlong:aLong
         => system'internal'bs_readqword.
 
     #method write &index:anIndex &real:aLong
         => system'internal'bs_writeqword.
 
-    #method read &index:anIndex &out'real:aLong
+    #method read &index:anIndex &vreal:aLong
         => system'internal'bs_readqword.
         
     #method clone = ByteArray new &length:($self length) &bytearray:$self.
@@ -97,14 +98,15 @@
 
     #method shortarray = $self.
 
-    #method read &out'length:aLength
+    #method readLlength &vint:aLength
         => system'internal'sa_getlen.
         
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
 
     #method read &index:anIndex &length:aLength &shortarray:anArray
@@ -116,7 +118,7 @@
     #method write &index:anIndex &short:aValue
         => system'internal'sa_writeword.
 
-    #method read &index:anIndex &out'short:aValue
+    #method read &index:anIndex &vshort:aValue
         => system'internal'sa_readword.
 
     #method clone = ShortArray new &length:($self length) &shortarray:$self.
@@ -147,14 +149,15 @@
     #constructor new  &length:aLength &index:anIndex &intarray:anArray
         => system'internal'ns_copysubarr.
         
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'ns_getlen.
         
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
     
     #method intarray = $self.
@@ -168,7 +171,7 @@
     #method write &index:anIndex &int:aValue
         => system'internal'ns_writedword.
 
-    #method read &index:anIndex &out'int:anInt
+    #method read &index:anIndex &vint:anInt
         => system'internal'ns_readdword.
 
     #method clone = IntArray new &length:($self length) &intarray:$self.
@@ -188,14 +191,15 @@
     #constructor new  &length:aLength &index:anIndex &chararray:anArray
         => system'internal'ns_copysubarr.
         
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'ns_getlen.
         
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
     
     #method chararray = $self.
@@ -209,8 +213,11 @@
     #method write &index:anIndex &char:aValue
         => system'internal'ns_writedword.
 
-    #method read &index:anIndex &out'char:anInt
+    #method read &index:anIndex &vchar:anInt
         => system'internal'ns_readdword.
+
+    #method move &index:anIndex &length:aLength &offset:anOffset
+        => system'internal'ns_move.
 
     #method clone = CharArray new &length:($self length) &index:0 &chararray:$self.
     
@@ -275,37 +282,40 @@
     #method getAt : aParam
         <= %getAt &index:(aParam int).
 
-    #method read &index:anIndex &out'char:aChar
+    #method read &index:anIndex &vchar:aChar
         => system'internal's_getat.
 
-    #method read &index:anIndex &out'byte:anInt
+    #method read &index:anIndex &vbyte:anInt
         => system'internal'bs_readbyte.
         
     #method(type:char) getAt &index:anIndex
     [
-        #var(type:char)aChar := $self read &index:anIndex.
+        #var(type:vchar)aChar.
+        $self read &index:anIndex &vchar:aChar.
         
-        ^ CharValue new &char:aChar.
+        ^ CharValue new &vchar:aChar.
     ]
 
-    #method indexOf &index:anIndex &literal:aLiteral &out'int:aRetVal
+    #method indexOf &index:anIndex &literal:aLiteral &vint:aRetVal
         => system'internal's_indexof.
 
-    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+    #method indexOf &index:anIndex &char:aChar &vint:aRetVal
         => system'internal's_indexof_char.        
 
     #method indexOf &index:anIndex &char:aChar
     [
-        #var(type:int)aRetVal := $self indexOf &index:anIndex &char:aChar.
+        #var(type:vint)aRetVal.
+        $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new &vint:aRetVal.
     ]
 
     #method indexOf &index:anIndex &literal:aLiteral
     [
-        #var(type:int)aRetVal := $self indexOf &index:anIndex &literal:aLiteral.
+        #var(type:vint)aRetVal.
+        $self indexOf &index:anIndex &literal:aLiteral &vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new &vint:aRetVal.
     ]
 
     #method(type:literal) insert &index:anIndex &literal:aLiteral
@@ -320,14 +330,18 @@
     #method(type:literal) Substring &index:anIndex &length:aLength
         => system'internal's_subs.
 
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal's_getlen.
+
+    #method save &index:anIndex &chararray:anArray &vlength:aRetVal
+        => system'internal's_save.
 
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
 
     #method enumerator = LiteralEnumerator new &literal:$self.
@@ -490,37 +504,40 @@
     #method getAt : aParam
         <= %getAt &index:(aParam int).
 
-    #method read &index:anIndex &out'char:aChar
+    #method read &index:anIndex &vchar:aChar
         => system'internal'ws_getat.
 
-    #method read &index:anIndex &out'short:aValue
+    #method read &index:anIndex &vshort:aValue
         => system'internal'sa_readword.
         
     #method(type:char) getAt &index:anIndex
     [
-        #var(type:char)aChar := $self read &index:anIndex.
+        #var(type:vchar)aChar.
+        $self read &index:anIndex &vchar:aChar.
         
-        ^ CharValue new &char:aChar.
+        ^ CharValue new &vchar:aChar.
     ]
 
-    #method indexOf &index:anIndex &wide:aLiteral &out'int:aRetVal
+    #method indexOf &index:anIndex &wide:aLiteral &vint:aRetVal
         => system'internal'ws_indexof.
 
-    #method indexOf &index:anIndex &char:aChar &out'int:aRetVal
+    #method indexOf &index:anIndex &char:aChar &vint:aRetVal
         => system'internal'ws_indexof_char.
 
     #method indexOf &index:anIndex &char:aChar
     [
-        #var(type:int)aRetVal := $self indexOf &index:anIndex &char:aChar.
+        #var(type:vint)aRetVal.
+        $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new &vint:aRetVal.
     ]
 
     #method indexOf &index:anIndex &wide:aLiteral
     [
-        #var(type:int)aRetVal := $self indexOf &index:anIndex &wide:aLiteral.
+        #var(type:vint)aRetVal.
+        $self indexOf &index:anIndex &wide:aLiteral &vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new &vint:aRetVal.
     ]
 
     #method(type:wide) insert &index:anIndex &wide:aLiteral
@@ -535,15 +552,19 @@
     #method(type:wide) Substring &index:anIndex &length:aLength
         => system'internal'ws_subs.
 
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'ws_getlen.
 
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
+
+    #method save &index:anIndex &chararray:anArray &vlength:aLength
+        => system'internal'ws_save.
 
     #method enumerator = WideLiteralEnumerator new &wide:$self.
     
@@ -655,44 +676,50 @@
 {
     #method byte
     [
-        #var(type:byte)retVal := byteConvertor convert &literal:theValue.
+        #var(type:vbyte)retVal.
+        byteConvertor convert &literal:theValue &vbyte:retVal.
         
-        ^ ByteNumber new &byte:retVal.
+        ^ ByteNumber new &vbyte:retVal.
     ]
 
     #method short
     [
-        #var(type:short)retVal := shortConvertor convert &literal:theValue.
+        #var(type:vshort)retVal.
+        shortConvertor convert &literal:theValue &vshort:retVal.
         
-        ^ ShortNumber new &short:retVal.
+        ^ ShortNumber new &vshort:retVal.
     ]
 
     #method char
     [
-        #var(type:char)retVal := charConvertor convert &literal:theValue.
+        #var(type:vchar)retVal.
+        charConvertor convert &literal:theValue &vchar:retVal.
         
-        ^ CharValue new &char:retVal.
+        ^ CharValue new &vchar:retVal.
     ]
 
     #method int
     [
-        #var(type:int)retVal := intConvertor convert &literal:theValue.
+        #var(type:vint)retVal.
+        intConvertor convert &literal:theValue &vint:retVal.
         
-        ^ IntNumber new &int:retVal.
+        ^ IntNumber new &vint:retVal.
     ]
 
     #method long
     [
-        #var(type:long)retVal := longConvertor convert &literal:theValue.
+        #var(type:vlong)retVal.
+        longConvertor convert &literal:theValue &vlong:retVal.
         
-        ^ LongNumber new &long:retVal.
+        ^ LongNumber new &vlong:retVal.
     ]
 
     #method real
     [
-        #var(type:real)retVal := realConvertor convert &literal:theValue.
+        #var(type:vreal)retVal.
+        realConvertor convert &literal:theValue &vreal:retVal.
         
-        ^ RealNumber new &real:retVal.
+        ^ RealNumber new &vreal:retVal.
     ]
 
     #method literal = theValue.
@@ -762,10 +789,11 @@
 
     #method add &array:anArray
     [
-        #var(type:int)aLength1 := $self length.
+        #var(type:vint)aLength1.
+        #var(type:vint)aLength2.
         
-        #var(type:int)aLength2 := anArray length.
-        //anArray read &out'length:aLength2.
+        $self readLength &vint:aLength1.        
+        anArray readLength &vint:aLength2.
         
         #var(type:array)aRetVal := Array new &length:(aLength1 + aLength2).
 
@@ -790,14 +818,15 @@
 
     #method array = $self.
 
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'arr_getlen.
 
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
 
     #method enumerator = ArrayEnumerator new &array:$self.
@@ -816,14 +845,15 @@
 
 #class(sealed,dynamic)OpenArgs
 {
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'args_getlen.
         
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength.
+        $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ IntNumber new &vint:aLength.
     ]
 }
 
@@ -834,8 +864,8 @@
 #class LiteralEnumerator :: Enumerator
 {
     #field(type:literal) theLiteral.
-    #field(type:intvar)  theIndex.
-    #field(type:intvar)  theDiff.
+    #field(type:vint)    theIndex.
+    #field(type:vint)    theDiff.
     #field(type:char)    theChar.
     
     #constructor new &literal:aLiteral
@@ -854,20 +884,18 @@
 
     #method next
     [
-        #var(type:int)aLength := theLiteral length.
+        #var(type:vint)aLength.
+        #var(type:vint)aCharLen.
         
-        #var(type:int)n := theDiff int.
-                
-        theIndex append &int:n.
+        theLiteral readLength &vint:aLength.
         
-        n := theIndex int.
+        theIndex append &int:theDiff.
         
-        (n < aLength)
+        (theIndex < aLength)
             ? [
-                #var(type:char)aChar := theLiteral read &index:n.
-                #var(type:int)aCharLen := aChar length.
+                theChar := theLiteral getAt &index:theDiff.                
                 
-                theChar := CharValue new &char:aChar.
+                theChar readLength &vint:aCharLen.                
                 theDiff write &int:aCharLen.
                 
                 ^ true.
@@ -887,7 +915,7 @@
 #class LiteralIterator :: Iterator
 {
     #field(type:literal) theLiteral.
-    #field(type:intvar)  theIndex.
+    #field(type:vint)    theIndex.
     
     #constructor new &literal:aLiteral
     [
@@ -897,15 +925,16 @@
     
     #method available
     [
-        #var(type:int)aLength := theLiteral length.
+        #var(type:vint)aLength.
+        theLiteral readLength &vint:aLength.
         
-        ^ theIndex less &int:aLength.
+        ^ theIndex < aLength.
     ]
 
     #method get
     [
-        #var(type:int)anIndex := theIndex int.        
-        #var(type:char)aChar := theLiteral read &index:anIndex.
+        #var(type:vchar)aChar.
+        theLiteral read &index:theIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
     ]
@@ -915,11 +944,9 @@
         #throw system'NotSupportedException new.
     ]
     
-    #method read &out'index:anIndex
+    #method readIndex &vint:anIndex
     [
-        #var(type:int)aValue := theIndex int.
-        
-        anIndex := aValue.
+        anIndex << theIndex.
     ]
     
     #method write &index:anIndex 
@@ -932,10 +959,10 @@
 
 #class WideLiteralEnumerator :: Enumerator
 {
-    #field(type:wide)   theLiteral.
-    #field(type:intvar) theIndex.
-    #field(type:intvar) theDiff.
-    #field(type:char)   theChar.
+    #field(type:wide) theLiteral.
+    #field(type:vint) theIndex.
+    #field(type:vint) theDiff.
+    #field(type:char) theChar.
     
     #constructor new &wide:aLiteral
     [
@@ -953,22 +980,21 @@
 
     #method next
     [
-        #var(type:int)aLength := theLiteral length.
+        #var(type:vint)aLength.
+        #var(type:int)aCharLen.
+        
+        theLiteral readLength &vint:aLength.
 
-        #var(type:int)n := theDiff int.
-                
-        theIndex append &int:n.
+        theIndex append &int:theDiff.
         
-        n := theIndex int.
-        
-        (n < aLength)
+        (theIndex < aLength)
             ? [
-                #var(type:char)aChar := theLiteral read &index:n.
-                #var(type:int)aCharLen := aChar length.
-                aCharLen := aCharLen + 1.
-                aCharLen := aCharLen / 2.
+                theChar := theLiteral getAt &index:theIndex.
                 
-                theChar := CharValue new &char:aChar.
+                theChar readLength &vint:aCharLen.
+                aCharLen += 1.
+                aCharLen /= 2.
+                
                 theDiff write &int:aCharLen.
                 
                 ^ true.
@@ -987,8 +1013,8 @@
 
 #class WideLiteralIterator :: Iterator
 {
-    #field(type:wide)   theLiteral.
-    #field(type:intvar) theIndex.
+    #field(type:wide) theLiteral.
+    #field(type:vint) theIndex.
     
     #constructor new &wide:aLiteral
     [
@@ -998,29 +1024,23 @@
     
     #method available
     [
-        #var(type:int)aLength := theLiteral length.
+        #var(type:vint)aLength.
+        theLiteral readLength &vint:aLength.
         
-        ^ theIndex less &int:aLength.
+        ^ theIndex < aLength.
     ]
 
     #method get
-    [
-        #var(type:int)anIndex := theIndex int.        
-        #var(type:char)aChar := theLiteral read &index:anIndex.
-        
-        ^ CharValue new &char:aChar.
-    ]
+        = theLiteral getAt &index:theIndex.
     
     #method set : anObject 
     [
         #throw system'NotSupportedException new.
     ]
     
-    #method read &out'index:anIndex
+    #method readIndex &vint:anIndex
     [
-        #var(type:int)aValue := theIndex int.
-        
-        anIndex := aValue.
+        anIndex << theIndex.
     ]
     
     #method write &index:anIndex 
@@ -1034,7 +1054,7 @@
 #class ArrayIterator :: Iterator
 {
     #field(type:array) theArray.
-    #field(type:intvar) theIndex.
+    #field(type:vint)  theIndex.
 
     #constructor new &array:anArray
     [
@@ -1044,30 +1064,23 @@
     
     #method available
     [
-        #var(type:int)aLength := theArray length.
+        #var(type:vint)aLength.
+        theArray readLength &vint:aLength.
         
-        ^ theIndex less &int:aLength.
+        ^ theIndex < aLength.
     ]
 
     #method get
-    [
-        #var(type:int)anIndex := theIndex int.
-        
-        ^ theArray getAt &index:anIndex.
-    ]
+        = theArray getAt &index:theIndex.
     
     #method set : anObject
     [
-        #var(type:int)anIndex := theIndex int.
-        
-        theArray setAt &index:anIndex &object:anObject.
+        theArray setAt &index:theIndex &object:anObject.
     ]
     
-    #method read &out'index : anIndex
+    #method readIndex  &vint:anIndex
     [
-        #var(type:int)aValue := theIndex int.
-        
-        anIndex := aValue.
+        anIndex << theIndex.
     ]
     
     #method write &index:anIndex 
@@ -1080,8 +1093,8 @@
 
 #class ArrayEnumerator :: Enumerator
 {
-    #field(type:array)  theArray.
-    #field(type:intvar) theIndex.
+    #field(type:array) theArray.
+    #field(type:vint)  theIndex.
     
     #constructor new &array:anArray
     [
@@ -1096,17 +1109,14 @@
 
     #method next
     [
-        #var(type:int)aLength := theArray length.
+        #var(type:vint)aLength.
+        theArray readLength &vint:aLength.
         
         theIndex append &int:1.
 
-        ^ theIndex less &int:aLength.
+        ^ theIndex < aLength.
     ]
     
     #method get
-    [
-        #var(type:int)anIndex := theIndex int.
-        
-        ^ theArray getAt &index:anIndex.
-    ]
+        = theArray getAt &index:theIndex.
 }

@@ -45,7 +45,6 @@ enum ObjectKind
    okLocal,                         // param - local / out parameter offset, extraparam - type reference
    okParam,                         // param - parameter offset, extraparam - type reference
    okThisParam,                     // param - parameter offset, extraparam - type reference
-   okOutputParam,                   // param - target address, extraparam - type reference 
    okSuper,
    okLocalAddress,                  // param - local offset, extraparam - class reference
    okParams,                        // param - local offset

@@ -75,9 +75,9 @@
         theMillisecond := aValue short.
     ]
 
-    #method read &out'long:aRetVal
+    #method read &vlong:aRetVal
     [
-        system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &out'long:aRetVal.
+        system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &vlong:aRetVal.
     ]    
     
     #method write &long:aFileTime
@@ -124,14 +124,14 @@
 
 #symbol dateTimeControl =
 {
-    read &CurrentUTCTime &out'long:aRetVal
+    read &CurrentUTCTime &vlong:aRetVal
     [
-        system'external'KERNEL32 GetSystemTimeAsFileTime &out'long:aRetVal.
+        system'external'KERNEL32 GetSystemTimeAsFileTime &vlong:aRetVal.
     ]
 
-    convertUTC2Local &long:aSrcVal &out'long:aRetVal
+    convertUTC2Local &long:aSrcVal &vlong:aRetVal
     [
-        system'external'KERNEL32 FileTimeToLocalFileTime &long:aSrcVal &out'long:aRetVal.
+        system'external'KERNEL32 FileTimeToLocalFileTime &long:aSrcVal &vlong:aRetVal.
     ]
     
     toShortDateTime &long:aDateValue

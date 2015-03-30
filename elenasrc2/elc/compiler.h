@@ -230,15 +230,9 @@ protected:
 
       ref_t mapNewType(ident_t terminal);
 
-      ref_t mapType(TerminalInfo terminal, bool& out);
       ref_t mapType(TerminalInfo terminal);
 
-      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool& out);
-      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
-      {
-         bool dummy;
-         return mapSubject(terminal, output, dummy);
-      }
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
       ref_t mapSubject(ident_t name)
       {
          IdentifierString wsName(name);
@@ -585,16 +579,16 @@ protected:
    {
       struct ParamInfo
       {
+         bool       out;
          ref_t      subject;
          ObjectInfo info;
-         bool       output;
          int        size;
 
          ParamInfo()
          {
             subject = 0;
-            output = false;
             size = 0;
+            out = false;
          }
       };
 
@@ -666,8 +660,6 @@ protected:
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
 
-   bool overridePrimitiveAssigning(CodeScope& scope, ref_t targetType, ObjectInfo object, ref_t& message);
-
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
    {
@@ -699,8 +691,10 @@ protected:
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
    int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
+   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 
    bool compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
+   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
    bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool& invertMode);
    bool compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result);
 

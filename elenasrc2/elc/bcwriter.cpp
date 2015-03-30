@@ -517,7 +517,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
       case okParam:
       case okThisParam:
-      case okOutputParam:
          // pushfi index
          tape.write(bcPushFI, object.param, bpFrame);
          break;
@@ -638,7 +637,6 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
       case okParam:
       case okThisParam:
-      case okOutputParam:
          // aloadfi index
          tape.write(bcALoadFI, object.param, bpFrame);
          break;
@@ -731,12 +729,6 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
       case okCurrent:
          // asavesi index
          tape.write(bcASaveSI, object.param);
-         break;
-      case okOutputParam:
-         // bloadfi index
-         // axsavebi 0
-         tape.write(bcBLoadFI, object.param, bpFrame);
-         tape.write(bcAXSaveBI);
          break;
       case okField:
       case okOuter:
@@ -1745,7 +1737,7 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, ObjectInfo target)
       tape.write(bcBCopyF, target.param);
       tape.write(bcNSave);
    }
-   else if (target.kind == okLocal || target.kind == okOutputParam) {
+   else if (target.kind == okLocal) {
       // bloadfi param
       // nsave
       tape.write(bcBLoadFI, target.param, bpFrame);
@@ -1788,10 +1780,16 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, ObjectInfo target)
          tape.write(bcBWrite);
       }
    }
-   else if (target.kind == okLocal || target.kind == okOutputParam) {
+   else if (target.kind == okLocal) {
       // bloadfi param
       // ncopy
       tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcNCopy);
+   }
+   else if (target.kind == okLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, target.param);
       tape.write(bcNCopy);
    }
    else if (target.kind == okBase) {
@@ -1814,10 +1812,16 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, ObjectInfo target)
       tape.write(bcDCopy, target.param);
       tape.write(bcBWriteW);
    }
-   else if (target.kind == okLocal || target.kind == okOutputParam) {
+   else if (target.kind == okLocal) {
       // bloadfi param
       // ncopy
       tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcNCopy);
+   }
+   else if (target.kind == okLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, target.param);
       tape.write(bcNCopy);
    }
    else if (target.kind == okBase) {
@@ -1841,10 +1845,16 @@ void ByteCodeWriter :: assignByte(CommandTape& tape, ObjectInfo target)
       tape.write(bcDCopy, target.param);
       tape.write(bcBWriteB);
    }
-   else if (target.kind == okLocal || target.kind == okOutputParam) {
+   else if (target.kind == okLocal) {
       // bloadfi param
       // ncopy
       tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcNCopy);
+   }
+   else if (target.kind == okLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, target.param);
       tape.write(bcNCopy);
    }
    else if (target.kind == okBase) {
@@ -1883,11 +1893,17 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, ObjectInfo target)
          tape.write(bcBWrite);
       }
    }
-   else if (target.kind == okLocal || target.kind == okOutputParam) {
+   else if (target.kind == okLocal) {
       // bloadfi param
       // lcopy
 
       tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcLCopy);
+   }
+   else if (target.kind == okLocalAddress) {
+      // bcopyf param
+      // lcopy
+      tape.write(bcBCopyF, target.param);
       tape.write(bcLCopy);
    }
    else if (target.kind == okBase) {
@@ -2021,6 +2037,9 @@ void ByteCodeWriter :: copySubject(CommandTape& tape)
 void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
+      case WRITE_MESSAGE_ID:
+         tape.write(bcNCopy);
+         break;
       case ADD_MESSAGE_ID:
          tape.write(bcNAdd);
          break;

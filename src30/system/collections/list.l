@@ -90,9 +90,9 @@
 
 #class ListIterator :: Iterator
 {
-    #field              theList.
-    #field              theCurrent.
-    #field(type:intvar) theIndex.
+    #field            theList.
+    #field            theCurrent.
+    #field(type:vint) theIndex.
     
     #constructor new : aList
     [
@@ -110,16 +110,16 @@
         theCurrent set:anObject.
     ]
     
-    #method read &out'index:anIndex
+    #method readIndex &vint:anIndex
     [
-        anIndex := theIndex int.
+        anIndex << theIndex.
     ]
     
     #method write &index:anIndex
     [
-        #var(type:int)i := theIndex int.
+        #var(type:int)i := theIndex.
         
-        (i > anIndex) ?
+        (theIndex > i) ?
         [
             theCurrent := theList topItem.
             i := 0.
@@ -134,7 +134,7 @@
             i := i + 1.
         ].
         
-        theIndex write &int:anIndex.
+        theIndex write &int:i.
     ]
 }
 
@@ -143,7 +143,7 @@
 #class BaseList
 {
     #field theState.
-    #field(type:intvar)theCount.
+    #field(type:vint)theCount.
     #field theTop.
     #field theLast.
 
@@ -248,9 +248,9 @@
         
     #method length = theCount int.
     
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
     [
-        aLength := theCount int.
+        aLength << theCount.
     ]
     
     #method clear 

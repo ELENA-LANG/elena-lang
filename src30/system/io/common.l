@@ -15,7 +15,42 @@
 {
     #method stream = $self.
     
-    #method read &bytearray:aDump &length:aLength &out'int:aRead []
+    #method readIndex &vint:anIndex []
+
+    #method index
+    [
+        #var(type:vint)anIndex.
+        
+        $self readIndex &vint:anIndex.
+        
+        ^ IntNumber new &int:anIndex.
+    ]
+
+    #method write &index:anIndex []
+
+    #method append &index:anIndex 
+    [
+        #var(type:vint)aNewIndex.
+        $self readIndex &vint:aNewIndex.
+        
+        aNewIndex += anIndex.
+        
+        $self write &index:aNewIndex.
+    ]
+
+    #method reduce &index:anIndex 
+    [
+        #var(type:vint)aNewIndex.
+        $self readIndex &vint:aNewIndex.
+        
+        aNewIndex -= anIndex.
+        
+        $self write &index:aNewIndex.
+    ]
+
+    #method writeIndex &int:anIndex []
+        
+    #method read &bytearray:aDump &vlength:aLength []
     
     #method write &bytearray:aDump &length:aLength []
     

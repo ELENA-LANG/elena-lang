@@ -17,20 +17,28 @@
 #subject(class:system'Array)        array.
 
 // === basic dynamic types ===
-#subject(class:system'LiteralValue) literal.
+#subject(class:system'LiteralValue)     literal.
 #subject(class:system'WideLiteralValue) wide.
 
-#subject(class:system'OpenArgs)     params.
-#subject(class:system'OpenArgs)     args.
-#subject(class:system'Integer)      intvar.
-#subject(class:system'Long)         longvar.
-#subject(class:system'Real)         realvar.
-#subject(class:system'CharValue)    char.
+#subject(class:system'OpenArgs)         params.
+#subject(class:system'OpenArgs)         args.
+#subject(class:system'CharValue)        char.
+
+#subject(class:system'Integer)          vint.
+#subject(class:system'Long)             vlong.
+#subject(class:system'Real)             vreal.
+#subject(class:system'Byte)             vbyte.
+#subject(class:system'Short)            vshort.
+#subject(class:system'Char)             vchar.
 
 // === int synonyms ===
-#subject(class:system'IntNumber)    length.
-#subject(class:system'IntNumber)    index.
-#subject(class:system'IntNumber)    int_attributes.
+#subject(class:system'IntNumber)        length.
+#subject(class:system'IntNumber)        index.
+#subject(class:system'IntNumber)        offset.
+#subject(class:system'IntNumber)        int_attributes.
+
+// === vint synonyms ===
+#subject(class:system'Integer)          vlength.
 
 // === literal synonyms ===
 #subject name.

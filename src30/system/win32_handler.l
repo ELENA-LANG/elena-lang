@@ -24,12 +24,13 @@
     #constructor new : anObject
         => system'internal'api_alloc_index.
 
-    #method read &out'int:aRetVal
+    #method read &vint:aRetVal
         => system'internal'save_int.
 
     #method index
     [
-        #var(type:int)anIndex := $self int.
+        #var(type:vint)anIndex.
+        $self read &vint:anIndex.
         
         ^ IntNumber new &int:anIndex.
     ]

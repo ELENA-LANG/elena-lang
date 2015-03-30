@@ -7,31 +7,33 @@
     #constructor new
     [
         #var(type:intarray,size:64)aStack.
-        #var(type:int)aLength.
+        #var(type:vint)aLength.
         
         system'internal'callstack_load eval
             &intarray:aStack
             &length:64
-            &out'length:aLength.
+            &vint:aLength.
             
         theStack := IntArray new &length:aLength &index:0 &intarray:aStack.            
     ]
     
-    #method read &index:anIndex &bytearray:aBuffer &length:aMaxLength &out'length:aLength
+    #method read &index:anIndex &bytearray:aBuffer &vlength:aLength
         => system'internal'callstack_readaddressinfo.
     
     #method literal
     [
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength := theStack length.
+        #var(type:vint)aLength.
+        #var(type:vint)aBufferLength := 0.
+        
+        theStack readLength &vint:aLength.
 
-        #var(type:length)aBufferLength := 0.
         #var(type:bytearray,size:512)aBuffer.
-        #var(type:literal)aCallStackText := emptyLiteralValue.
-                
+        #var(type:literal)aCallStackText := emptyLiteralValue.                
         #loop (anIndex < aLength) ?
         [
-            aBufferLength := $self read &index:anIndex &bytearray:aBuffer &length:512.
+            aBufferLength << 512.
+            $self read &index:anIndex &bytearray:aBuffer &vlength:aBufferLength.
             
             aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &bytearray:aBuffer) add &literal:'newLine.
             

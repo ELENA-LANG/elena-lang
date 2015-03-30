@@ -140,13 +140,14 @@
     
     #method set : anObject []
     
-    #method read &out'index:anIndex []
+    #method readIndex &vint:anIndex []
     
     #method index
     [
-        #var(type:int)anIndex := $self index.
+        #var(type:vint)anIndex := 0.
+        $self readIndex &vint:anIndex.
                         
-        ^ IntNumber new &int:anIndex.
+        ^ IntNumber new &vint:anIndex.
     ]                
     
     #method write &index:anIndex [] 

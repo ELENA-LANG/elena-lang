@@ -6,7 +6,7 @@
 
 #class TopFilter :: Enumerator
 {
-    #field(type:intvar)theCounter.
+    #field(type:vint)theCounter.
     #field(type:enumerator)theEnumerator.
     
     #constructor new &length:aCounter &enumerator:anEnumerator
@@ -20,7 +20,7 @@
     #method next
     [
         ((theCounter > 0)and:[ theEnumerator next ])
-            ? [ theCounter reduce &int:1. ^ true. ].
+            ? [ theCounter -= 1. ^ true. ].
         
         ^ false.
     ]

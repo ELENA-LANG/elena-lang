@@ -3081,3 +3081,748 @@ labSave:
   ret
 
 end
+
+procedure coreapi'strtochararry
+
+  push eax
+  push edi
+  lea  edi, [edi + esi * 4]
+
+labStart:
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+  
+lab4:
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  shl  edx, 18
+  shl  ebx, 12
+  add  edx, ebx
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  ebx, 6
+  add  edx, ebx
+  
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  
+  add  edx, ebx
+  sub  edx, 3C82080h
+  jmp  labSave  
+
+lab2:  
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+
+  shl  edx, 6
+  add  edx, ebx
+  sub  edx, 3080h
+  jmp  short labSave  
+  
+lab3:
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  edx, 12
+  shl  ebx, 6
+  add  edx, ebx
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  add  edx, ebx
+  sub  edx, 0E2080h
+  jmp  short labSave  
+  
+lab1:
+  mov  edx, ebx
+
+labSave:
+  mov  [edi], edx
+  add  edi, 4
+  sub  ecx, 1
+  jnz  labStart
+
+  mov  ecx, edi
+  pop  edi
+  pop  eax
+  sub  ecx, edi
+  shr  ecx, 2
+
+  ret
+
+end
+
+procedure coreapi'wstrtochararry
+
+  push eax
+  push edi
+  lea  edi, [edi + esi * 4]
+
+labStart:
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+
+  mov  edx, ebx
+  shl  edx, 10
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  add  edx, ebx
+  sub  edx, 35FDC00h
+  jmp  short labSave
+
+lab1:
+  mov   ecx, ebx
+
+labSave:
+  mov  [edi], edx
+  add  edi, 4
+  sub  ecx, 1
+  jnz  labStart
+
+  mov  ecx, edi
+  pop  edi
+  pop  eax
+  sub  ecx, edi
+  shr  ecx, 2
+
+  ret
+
+end
+
+// ; [esp+4] -  offset, edi -target, esi - index, ecx - length
+procedure coreapi'nmove
+
+  test ecx, ecx
+  jz   short labEnd
+
+  mov  edx, [esp+4]
+  cmp  edx, 0
+  jl   short labDelete
+
+  add  esi, ecx
+  sub  esi, 1
+
+  add  edx, esi
+  shl  edx, 2
+
+  add  edx, edi
+  shl  esi, 2
+  add  esi, edi
+
+labNext:
+  mov  ebx, dword ptr [esi]
+  mov  dword ptr [edx], ebx
+  sub  esi, 4
+  sub  edx, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+labDelete:
+  add  edx, esi
+  shl  edx, 2
+
+  add  edx, edi
+  shl  esi, 2
+  add  esi, edi
+
+labNext2:
+  mov  ebx, dword ptr [esi]
+  mov  dword ptr [edx], ebx
+  add  esi, 4
+  add  edx, 4
+  sub  ecx, 1
+  jnz  short labNext2
+  ret
+
+end
+
+// ; eax - sour, edi - dest, ecx - length, esi offset
+procedure coreapi's_encode
+
+  push edi
+  push eax
+  push esi
+  add  eax, esi
+  
+labNext:
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000C2h
+  jl   err2
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+  cmp  ebx, 000000F5h
+  jl   short lab4
+
+lab2:  
+  sub  ecx, 2
+  jb   short err
+  mov  esi, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  shl  esi, 6
+  add  esi, ebx
+  sub  esi, 3080h
+  jmp  labSave
+  
+lab3:
+  sub  ecx, 3
+  jb   short err
+  mov  esi, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  cmp  esi, 000000E0h
+  jnz  short lab3_1
+  cmp  ebx, 000000A0h
+  jl   err2
+
+lab3_1:
+  shl  esi, 12
+  shl  ebx, 6
+  add  esi, ebx
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  add  esi, ebx
+  sub  esi, 0E2080h
+  jmp  labSave
+  
+lab4:
+  sub  ecx, 4
+  jb   short err
+  mov  esi, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  cmp  esi, 000000F0h
+  jnz  short lab4_1
+  cmp  ebx, 00000090h
+  jl   err2
+
+lab4_1:
+  cmp  esi, 000000F4h
+  jnz  short lab4_2
+  cmp  ebx, 00000090h
+  jae  err2
+
+lab4_2:
+  shl  esi, 18
+  shl  ebx, 12
+  add  esi, ebx
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 000000C0h
+  cmp  edx, 00000080h
+  jnz  err2
+
+  shl  ebx, 6
+  add  esi, ebx
+  
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 000000C0h
+  cmp  edx, 00000080h
+  jnz  err2
+
+  add  esi, ebx
+  sub  esi, 3C82080h
+  jmp  labSave
+
+lab1:
+  mov  esi, ebx  
+  sub  ecx, 1
+
+labSave:
+  mov  [edi], esi
+  add  edi, 4
+
+  test ecx, ecx
+  jnz  labNext
+
+err:
+  pop  esi
+  mov  edx, eax
+  pop  eax
+  sub  edx, eax
+  add  esi, edx
+  mov  ecx, edi
+  pop  edi
+  sub  ecx, edi
+  shr  ecx, 2
+
+  ret
+  
+err2:
+  add  esp, 12
+  xor  eax, eax
+  ret 
+
+end
+
+procedure coreapi'ws_encode
+
+  push edi
+  push eax
+  push esi
+  add  eax, esi
+
+labNext:
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+  cmp  ebx, 0DBFFh
+  jg   short err2
+
+  sub  ecx, 2
+  jl   short err
+
+  mov  esi, ebx
+  shl  esi, 10
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0DC00h
+  jl   short lab2
+  cmp  ebx, 0DFFFh
+  jg   short err2
+  
+lab2:
+  add  ebx, esi
+  sub  ebx, 35FDC00h
+
+lab1:
+  mov  esi, ebx
+  sub  ecx, 1
+
+labSave:
+  mov  [edi], esi
+  add  edi, 4
+
+  test ecx, ecx
+  jnz  labNext
+
+err:
+  pop  esi
+  mov  edx, eax
+  pop  eax
+  sub  edx, eax
+  shr  edx, 1
+  add  esi, edx
+  mov  ecx, edi
+  pop  edi
+  sub  ecx, edi
+  shr  ecx, 2
+
+  ret
+  
+err2:
+  add  esp, 12
+  xor  eax, eax
+  ret 
+
+end
+
+procedure coreapi's_decode
+
+   push edi
+   push eax
+   push esi
+   lea  eax, [eax + esi * 4]
+
+   mov  ebx, [eax]
+   cmp  ebx, 00000080h
+   jl   short lab1
+   cmp  ebx, 0800h
+   jl   short lab2
+   cmp  ebx, 10000h
+   jl   short lab3
+
+   sub  ecx, 4
+   jb   short err
+   mov  edx, ebx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   shr  edx, 12
+   and  edx, 0000003Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+   
+   mov  edx, ebx
+   shr  edx, 6
+   and  edx, 0000003Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+    
+   mov  edx, ebx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+   jmp  labSave
+
+lab2:
+   sub  ecx, 2
+   jb   short err
+
+   mov  edx, ebx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+   
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [edi], bl
+   add  edi, 1
+   jmp  labSave
+
+lab3:
+   sub  ecx, 2
+   jb   short err
+
+   mov  edx, ebx
+   shr  edx, 12
+   add  edx, 0E0h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   shr  edx, 6
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [edi], bl
+   add  edi, 1
+   jmp  short labSave
+   
+lab1:
+   mov  byte ptr [edi], bl
+   add  edi, 1
+   sub  ecx, 1
+
+labSave:
+   add  eax, 4
+   test ecx, ecx
+   jnz  labNext
+
+err:
+   pop  esi
+   mov  edx, eax
+   pop  eax
+   sub  edx, eax
+   shr  edx, 1
+   add  esi, edx
+   mov  ecx, edi
+   pop  edi
+   sub  ecx, edi
+   shr  ecx, 2
+
+   ret
+
+end
+
+procedure coreapi'ws_decode
+
+   push edi
+   push eax
+   push esi
+   lea  eax, [eax + esi * 4]
+
+   mov  ebx, [eax]
+   cmp  ebx, 010000h
+   jl   short lab1
+
+   sub  ecx, 2
+   jl   short err
+
+   mov  edx, ebx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [edi], dx
+   add  edi, 2
+
+   mov  edx, ebx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [edi], dx
+   add  edi, 2
+   jmp  short labSave
+   
+lab1:
+   mov  word ptr [edi], bx
+   add  edi, 2
+   sub  ecx, 1
+
+labSave:
+   add  eax, 4
+   test ecx, ecx
+   jnz  labNext
+
+err:
+   pop  esi
+   mov  edx, eax
+   pop  eax
+   sub  edx, eax
+   shr  edx, 1
+   add  esi, edx
+   mov  ecx, edi
+   pop  edi
+   sub  ecx, edi
+   shr  ecx, 2
+
+   ret
+  
+err2:
+   add  esp, 12
+   xor  eax, eax
+   ret    
+
+end
+
+procedure coreapi'strcharlen
+
+  push eax
+
+  xor  esi, esi
+  xor  ebx, ebx
+
+labNext:
+  mov  bl, byte ptr [eax]
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+  cmp  ebx, 000000F5h
+  jl   short lab4
+
+lab1:
+  add  esi, 1
+  add  eax, 1
+  sub  ecx, 1
+  jnz  short labNext
+  pop  eax
+  ret
+  
+lab2:
+  add  esi, 1
+  add  eax, 2
+  sub  ecx, 2
+  jnz  short labNext
+  pop  eax
+  ret
+  
+lab3:
+  add  esi, 1
+  add  eax, 3
+  sub  ecx, 3
+  jnz  short labNext
+  pop  eax
+  ret
+  
+lab4:
+  add  esi, 1
+  add  eax, 4
+  sub  ecx, 4
+  jnz  short labNext
+  pop  eax
+  ret
+
+end
+
+procedure coreapi'wstrcharlen
+
+  push eax
+  xor  esi, esi
+
+labNext:
+  mov  ebx, dword ptr [eax]
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+  
+  add  esi, 1
+  add  eax, 4
+  sub  ecx, 2
+  jnz  short labNext
+  pop  eax
+  ret
+
+lab1:
+  add  esi, 1
+  add  eax, 2
+  sub  ecx, 1
+  jnz  short labNext
+  pop  eax
+  ret
+
+end
+
+
+// ; (esi - index, ecx - char, edi - target ; out : ecx : length)
+procedure coreapi'chartobytes
+
+   cmp  ecx, 00000080h
+   jl   short lab1
+   cmp  ecx, 0800h
+   jl   short lab2
+   cmp  ecx, 10000h
+   jl   short lab3
+   
+   mov  edx, ecx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + esi], dl
+   add  esi, 1
+
+   mov  edx, ecx
+   shr  edx, 12
+   and  edx, 0000003Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + esi], dl
+   add  esi, 1
+   
+   mov  edx, ecx
+   shr  edx, 6
+   and  edx, 0000003Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + esi], dl
+   add  esi, 1
+    
+   mov  edx, ecx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + esi], dl
+   add  esi, 1
+   mov  ecx, 4
+   ret
+   
+lab1:
+   mov  byte ptr [edi + esi], cl
+   add  esi, 1
+   mov  ecx, 1
+   ret
+
+lab2:
+   mov  edx, ecx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [edi + esi], dl
+   add  esi, 1
+   
+   and  ecx, 03Fh
+   add  ecx, 00000080h
+   mov  byte ptr [edi+esi], cl
+   add  esi, 1
+   mov  ecx, 2
+   ret
+
+lab3:
+   mov  edx, ecx
+   shr  edx, 12
+   add  edx, 0E0h
+   mov  byte ptr [edi + esi], dl
+   add  esi, 1
+   
+   mov  edx, ecx
+   shr  edx, 6
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi+esi], dl
+   add  esi, 1
+
+   and  ecx, 03Fh
+   add  ecx, 00000080h
+   mov  byte ptr [edi+esi], cl
+   add  esi, 1
+   mov  ecx, 3
+   ret
+
+end
+
+// ; rcopyl (eax:char, edi - target)
+procedure coreapi'chartoshorts
+
+   cmp  ecx, 010000h
+   jl   short lab1
+   
+   mov  edx, ecx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [edi + esi * 2], dx
+   add  esi, 1
+
+   mov  edx, ecx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [edi+esi * 2], dx
+   add  esi, 1
+   mov  ecx, 2
+   ret
+   
+lab1:
+   mov  [edi + esi * 2], ecx
+   add  esi, 1
+   mov  ecx, 1
+   ret
+
+end

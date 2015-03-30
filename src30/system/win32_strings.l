@@ -18,27 +18,31 @@
         ^ (aRetVal != 0).
     ]
     
-    toUpperCase &char:aChar &out'char:aRetVal
+    toUpperCase &char:aChar &vchar:aRetVal
     [
-        #var s := aChar wide.
-        
+        #var(type:vint)aLength.
         #var(type:shortarray,size:3)aBuffer.
-        aBuffer write &index:0 &wide:(aChar wide).
+
+        charConvertor save &char:aChar &shortarray:aBuffer &index:0 &vlength:aLength.
+        
+        aBuffer write &index:aLength &short:0.
         
         system'external'USER32 CharUpperW &shortarray:aBuffer.
         
-        aRetVal := WideLiteralValue new &length:2 &shortarray:aBuffer getAt &index:0.
+        charConvertor convert &shortarray:aBuffer &index:0 &vchar:aRetVal.
     ]
     
-    toLowerCase &char:aChar &out'char:aRetVal
+    toLowerCase &char:aChar &vchar:aRetVal
     [
-        #var s := aChar wide.
-        
+        #var(type:vint)aLength.
         #var(type:shortarray,size:3)aBuffer.
-        aBuffer write &index:0 &wide:(aChar wide).
+
+        charConvertor save &char:aChar &shortarray:aBuffer &index:0 &vlength:aLength.
+        
+        aBuffer write &index:aLength &short:0.
         
         system'external'USER32 CharLowerW &shortarray:aBuffer.
         
-        aRetVal := WideLiteralValue new &length:2 &shortarray:aBuffer getAt &index:0.
+        charConvertor convert &shortarray:aBuffer &index:0 &vchar:aRetVal.
     ]
 }.

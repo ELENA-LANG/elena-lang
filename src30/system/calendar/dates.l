@@ -40,9 +40,9 @@
         theValue := aValue.
     ]
             
-    #method read &out'long : aRetVal
+    #method read &vlong : aRetVal
     [
-        aRetVal := theValue.
+        aRetVal << theValue.
     ]
 
     #method long = LongNumber new &long:theValue.
@@ -198,9 +198,9 @@
   
     #method long = LongNumber new &long:(theValue).
 
-    #method read &out'long : aRetVal
+    #method read &vlong : aRetVal
     [
-        aRetVal := theValue.
+        aRetVal << theValue.
     ]
    
     #method equal &datetime:aDate

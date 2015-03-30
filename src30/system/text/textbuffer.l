@@ -1,195 +1,335 @@
-//#define system. 
-//#define system'routines. 
-//
-//#symbol(const,type:int)$TextPageSize = 128.
-//
-//#subject(class:system'text'TextBuffer) textbuffer.
-//
-//// --- TextBuffer ---
-//
-//#class(sealed) TextBuffer
-//{
-//    #field(type:chararray) theBuffer.
-//    #field(type:intvar) theLength.
-//
-//    #constructor new
-//    [
-//        theBuffer := CharArray new &length:$TextPageSize.
-//        theLength := Integer new &int:0.
-//    ]
-//
-//    #method clear
-//    [
-//        theLength write &int:0.
-//    ]
-//
-//    #method read &out'length:aLength
-//    [
-//        aLength := theLength int.
-//    ]
-//
-//    #method length
-//        = theLength int.
-//
-//    #method set &length:aLength
-//    [
-//        theLength write &int:aLength.
-//    ]
-//
-//    #method chararray = theBuffer.
-//
-//    #method literal
-//    [
-//        #var(type:int)aLength := theLength int.
-//        
-//        ^ LiteralValue new &length:aLength &chararray:theBuffer.
-//    ]
-//
-//    #method write : aLine
-//    [
-//        $self write &literal:(aLine literal).
-//    ]
-//
-//    #method writeLine : aLine
-//    [
-//        $self write &literal:(aLine literal) write &literal:('newLine literal).
-//    ]
-//
-//    #method append : aLine
-//    [
-//        $self write &literal:(aLine literal).
-//    ]
-//                                    
-//    #method reserve &length:aLength
-//    [
-//        #var(type:int)anOldLength := theLength int.
-//        #var(type:int)aNewLength := aLength.
-//        
-//        aNewLength := aNewLength + anOldLength.
-//        
-//        #var(type:int)aBufferLength := theBuffer length.
-//        
-//        (aNewLength >= aBufferLength) ?
-//        [
-//            aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
-//            
-//            #var(type:chararray) aNewBuffer := CharArray new &length:aNewLength.
-//            
-//            aNewBuffer write &index:0 &length:aBufferLength &chararray:theBuffer.
-//            
-//            theBuffer := aNewBuffer.
-//        ].
-//    ]
-//
-//    #method write &literal:aLiteral
-//    [
-//        #var(type:int)anOldLength := theLength int.
-//        #var(type:int)aLength := aLiteral length.
-//        
-//        (0 == aLength) !
-//        [
-//            $self reserve &length:aLength.
-//            
-//            theBuffer write &index:anOldLength &length:aLength &literal:aLiteral.
-//            
-//            theLength append &int:aLength.
-//        ].
-//    ]
-//
-//    #method write &char:aChar
-//    [
-//        #var(type:int)anOldLength := theLength int.
-//        
-//        $self reserve &length:1.
-//        
-//        theBuffer write &index:anOldLength &char:aChar.
-//        
-//        theLength append &int:1.
-//    ]
-//
-//    #method write &chararray:anArray &length:aLength
-//    [
-//        #var(type:int)anOldLength := theLength int.
-//        
-//        (0 == aLength) !
-//        [
-//            $self reserve &length:aLength.
-//            
-//            theBuffer write &index:anOldLength &length:aLength &chararray:anArray.
-//            
-//            theLength append &int:aLength.
-//        ].
-//    ]
-//
-//    #method insert &index:anIndex &literal:aLiteral
-//    [
-//        (anIndex == 0)
-//            ? [
-//                #var(type:literal) aRightLiteral := $self literal.
-//                
-//                $self clear write &literal:aLiteral write &literal:aRightLiteral.
-//            ]
-//            ! [
-//                #var(type:literal) aLeftLiteral := $self Substring &index:0 &length:anIndex literal.
-//                #var(type:literal) aRightLiteral := $self::literalOp Substring &index:anIndex.
-//                
-//                $self clear write &literal:aLeftLiteral write:aLiteral write &literal:aRightLiteral.
-//            ].
-//    ]
-//    
-//    #method insert &index:anIndex &char:aChar
-//        <= %insert &index:anIndex &literal:(aChar literal).
-//
-//    #method indexOf &index:aPosition &char:aValue &out'int:aRetVal
-//    [
-//        #var(type:int)aLength := theLength int.
-//        
-//        aRetVal := theBuffer indexOf &index:aPosition &length:aLength &char:aValue.
-//    ]
-//
-//    #method indexOf &index:aPosition &literal:aLiteral &out'int:aRetVal
-//    [
-//        #var(type:literal) aContent := $self literal.
-//        #var(type:int)anIndex := aContent indexOf &index:aPosition &literal:aLiteral.
-//        
-//        aRetVal := anIndex.
-//    ]
-//
-//    #method indexOf &index:aPosition &char:aValue    
-//    [
-//        #var(type:int)aRetVal := $self indexOf &index:aPosition &char:aValue.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//    
-//    #method indexOf &index:aPosition &literal:aValue
-//    [
-//        #var(type:int)aRetVal := $self indexOf &index:aPosition &literal:aValue.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    #method(type:literal) Substring &index:anIndex &length:aLength
-//    [
-//        (aLength == 0)
-//            ? [ ^ emptyLiteralValue. ].
-//            
-//        ^ LiteralValue new &length:aLength &index:anIndex &chararray:theBuffer.
-//    ]
-//
-//    #method delete &index:anIndex &length:aLength
-//    [
-//        (anIndex == 0)
-//            ? [
-//                #var(type:literal) aRightLiteral := $self::literalOp Substring &index:aLength.
-//                
-//                $self clear write &literal:aRightLiteral.
-//            ]
-//            ! [
-//                #var(type:literal) aLeftLiteral := $self Substring &index:0 &length:anIndex.
-//                #var(type:literal) aRightLiteral := $self::literalOp Substring &index:(anIndex + aLength).
-//                
-//                $self clear write &literal:aLeftLiteral write &literal:aRightLiteral.
-//            ].
-//    ]
-//}
+#define system. 
+#define system'routines. 
+
+#symbol(const,type:int)$TextPageSize = 128.
+
+#subject(class:system'text'TextBuffer) textbuffer.
+
+// --- TextBuffer ---
+
+#class(sealed) TextBuffer
+{
+    #field(type:chararray) theBuffer.
+    #field(type:vint)      theLength.
+
+    #constructor new
+    [
+        theBuffer := CharArray new &length:$TextPageSize.
+        theLength := Integer new &int:0.
+    ]
+
+    #method clear
+    [
+        theLength write &int:0.
+    ]
+
+    #method readLength &vint:aLength
+    [
+        aLength << theLength.
+    ]
+
+    #method length
+        = theLength int.
+
+    #method set &length:aLength
+    [
+        theLength write &int:aLength.
+    ]
+
+    #method chararray = theBuffer.
+
+    #method literal
+        = LiteralValue new &length:theLength &chararray:theBuffer.
+
+    #method wide
+        = WideLiteralValue new &length:theLength &chararray:theBuffer.
+
+    #method write : aLine
+    [
+        aLine cast:%write &to:$self.
+    ]
+
+    #method writeLine : aLine
+    [
+        $self write:aLine write:'newLine.
+    ]
+
+    #method append : aLine
+    [
+        $self write:aLine.
+    ]
+                                    
+    #method reserve &length:aLength
+    [
+        #var(type:int)aNewLength := aLength.
+        
+        aNewLength := aNewLength + theLength.
+        
+        #var(type:vint)aBufferLength.
+        theBuffer readLength &vint:aBufferLength.
+        
+        (aNewLength >= aBufferLength) ?
+        [
+            aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
+            
+            #var(type:chararray) aNewBuffer := CharArray new &length:aNewLength.
+            
+            aNewBuffer write &index:0 &length:aBufferLength &chararray:theBuffer.
+            
+            theBuffer := aNewBuffer.
+        ].
+    ]
+
+    #method write &literal:aLiteral
+    [
+        #var(type:vint)aLength.
+        aLiteral readLength &vint:aLength.
+        
+        (0 == aLength) !
+        [
+            $self reserve &length:aLength.
+            
+            theBuffer write &index:theLength &length:aLength &literal:aLiteral.
+            
+            theLength += aLength.
+        ].
+    ]
+
+    #method write &wide:aLiteral
+    [
+        #var(type:vint)aLength.
+        aLiteral readLength &vint:aLength.
+        
+        (0 == aLength) !
+        [
+            $self reserve &length:aLength.
+            
+            aLength := aLiteral save &index:theLength &length:aLength &chararray:theBuffer.
+            
+            theLength += aLength.
+        ].
+    ]
+
+    #method write &char:aChar
+    [
+        $self reserve &length:1.
+        
+        theBuffer write &index:theLength &char:aChar.
+        
+        theLength += 1.
+    ]
+
+    #method(generic) write : anObject
+    [
+        $self write &literal:(anObject literal).
+    ]
+
+    #method write &chararray:anArray &length:aLength
+    [
+        (0 == aLength) !
+        [
+            $self reserve &length:aLength.
+            
+            theBuffer write &index:theLength &length:aLength &chararray:anArray.
+            
+            theLength += aLength.
+        ].
+    ]
+
+    #method insert &index:anIndex &length:aLength &chararray:anArray
+    [
+        $self reserve &length:aLength.
+        
+        theBuffer move &index:anIndex &length:theLength &offset:aLength.
+        
+        theBuffer write &index:anIndex &length:aLength &chararray:anArray.
+        
+        theLength += aLength.
+    ]
+
+    #method insert &index:anIndex &literal:aLiteral
+    [
+        #var(type:vint)aLength.
+        UTF8Encoding charCount &inLiteral:aLiteral &vint:aLength.
+
+        $self reserve &length:aLength.
+        
+        theBuffer move &index:anIndex &length:theLength &offset:aLength.
+        
+        aLiteral save &index:anIndex &length:aLength &chararray:theBuffer.
+        
+        theLength += aLength.
+    ]
+
+    #method insert &index:anIndex &wide:aLiteral
+    [
+        #var(type:vint)aLength.
+        UTF16Encoding charCount &inLiteral:aLiteral &vint:aLength.
+
+        $self reserve &length:aLength.
+        
+        theBuffer move &index:anIndex &length:theLength &offset:aLength.
+        
+        aLiteral save &index:anIndex &length:aLength &chararray:theBuffer.
+        
+        theLength += aLength.
+    ]
+    
+    #method insert &index:anIndex &char:aChar
+    [
+        $self reserve &length:1.
+        
+        theBuffer move &index:anIndex &length:theLength &offset:1.
+        
+        theBuffer write &index:anIndex &char:aChar.
+        
+        theLength += 1.
+    ]
+
+    #method indexOf &index:aPosition &char:aValue &vint:aRetVal
+    [
+        #var(type:int)anIndex := 0.
+        #var(type:vchar)aCurrent.
+        
+        #loop (anIndex < theLength)?
+        [
+            theBuffer getAt &index:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aValue)
+                ? [ aRetVal << anIndex. ^$self. ].
+                
+            anIndex := anIndex + 1.
+        ].
+        
+        aRetVal << -1.
+    ]
+
+    #method indexOf &index:aPosition &literal:aLiteral &vint:aRetVal
+    [
+        #var(type:vint)aLiteralLength.
+        #var(type:int)anIndex := 0.
+        #var(type:vchar)aCurrent.
+        #var(type:vchar)aFirstChar.
+        #var(type:vchar)aNextChar.
+        
+        aLiteral readLength &vint:aLiteralLength.
+        
+        aLiteral getAt &index:0 &vchar:aFirstChar.
+        
+        #loop (anIndex < theLength)?
+        [
+            theBuffer getAt &index:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aFirstChar) ?
+            [ 
+                #var(type:int)j := 1.
+                #loop (j < aLiteralLength) ?
+                [
+                    theBuffer getAt &index:anIndex &vchar:aCurrent.
+                    aLiteral getAt &index:j &vchar:aNextChar.
+                    
+                    (aNextChar != aCurrent)
+                        ? [ j := aLiteralLength. ].
+                    
+                    j := j + 1.
+                ].
+                
+                (j > aLiteralLength)
+                    ? [ aRetVal << anIndex. ^ $self. ].
+            ].
+                
+            anIndex := anIndex + 1.
+        ].
+        
+        aRetVal << -1.
+    ]
+
+    #method indexOf &index:aPosition &wide:aLiteral &vint:aRetVal
+    [
+        #var(type:vint)aLiteralLength.
+        #var(type:int)anIndex := 0.
+        #var(type:vchar)aCurrent.
+        #var(type:vchar)aFirstChar.
+        #var(type:vchar)aNextChar.
+        
+        aLiteral readLength &vint:aLiteralLength.
+        
+        aLiteral getAt &index:0 &vchar:aFirstChar.
+        
+        #loop (anIndex < theLength)?
+        [
+            theBuffer getAt &index:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aFirstChar) ?
+            [ 
+                #var(type:int)j := 1.
+                #loop (j < aLiteralLength) ?
+                [
+                    theBuffer getAt &index:anIndex &vchar:aCurrent.
+                    aLiteral getAt &index:j &vchar:aNextChar.
+                    
+                    (aNextChar != aCurrent)
+                        ? [ j := aLiteralLength. ].
+                    
+                    j := j + 1.
+                ].
+                
+                (j > aLiteralLength)
+                    ? [ aRetVal << anIndex. ^ $self. ].
+            ].
+                
+            anIndex := anIndex + 1.
+        ].
+        
+        aRetVal << -1.
+    ]
+
+    #method indexOf &index:aPosition &char:aValue    
+    [
+        #var(type:vint)aRetVal.
+        $self indexOf &index:aPosition &char:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf &index:aPosition &literal:aValue
+    [
+        #var(type:vint)aRetVal.
+        $self indexOf &index:aPosition &literal:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf &index:aPosition &wide:aValue
+    [
+        #var(type:vint)aRetVal.
+        $self indexOf &index:aPosition &wide:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method(type:literal) Substring &index:anIndex &length:aLength
+    [
+        (aLength == 0)
+            ? [ ^ emptyLiteralValue. ].
+            
+        ^ LiteralValue new &length:aLength &index:anIndex &chararray:theBuffer.
+    ]
+
+    #method(type:literal) SubWideString &index:anIndex &length:aLength
+    [
+        (aLength == 0)
+            ? [ ^ emptyLiteralValue. ].
+            
+        ^ WideLiteralValue new &length:aLength &index:anIndex &chararray:theBuffer.
+    ]
+
+    #method delete &index:anIndex &length:aLength
+    [
+        #var(type:int)n := 0 - aLength.
+        
+        theBuffer move &index:anIndex &length:theLength &offset:n.
+        
+        theLength -= aLength.
+    ]
+}

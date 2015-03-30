@@ -258,15 +258,6 @@
     #method(type:byte) shift &index:anOrder
         => system'internal'byte_shift.
 
-    #method read &out'byte:aLength
-        => system'internal'int_save.
-
-    #method read &out'short:aLength
-        => system'internal'int_save.
-
-    #method read &out'int:aLength
-        => system'internal'int_save.
-
     #method literal = literalConvertor convert &byte:$self.
 
     #method wide = wideConvertor convert &byte:$self.
@@ -435,9 +426,6 @@
 
     #method(type:short) shift &index:anOrder
         => system'internal'short_shift.
-
-    #method read &out'byte:aLength
-        => system'internal'int_save.
 
     #method literal = literalConvertor convert &short:$self.
 
@@ -944,9 +932,229 @@
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &real:$self.
 }
 
+// --- Byte ---
+
+#class(sealed,struct:embeddable) Byte :: IntBaseVariable
+{
+    #field(type:byte)theValue.
+    
+    #constructor new
+    [
+        theValue := 0.
+    ]
+    
+    #constructor new : aValue
+    [
+        theValue := aValue byte.
+    ]
+    
+    #constructor new &byte:aValue
+    [
+        theValue := aValue.
+    ]
+    
+    #method vbyte = $self.
+    
+    #method byte = ByteNumber new &byte:theValue.
+                                                
+    #method short = ShortNumber new &byte:theValue.
+                                                
+    #method int = IntNumber new &byte:theValue.
+                                                
+    #method real = RealNumber new &byte:theValue.
+    
+    #method long = LongNumber new &byte:theValue.
+    
+    #method write &byte:anOperand
+    [
+        theValue := anOperand.
+    ]
+
+    #method append &byte:anOperand
+    [
+        theValue := theValue + anOperand.
+    ]
+        
+    #method reduce &byte:anOperand
+    [
+        theValue := theValue - anOperand.
+    ]
+        
+    #method multiplyBy &byte:anOperand
+    [
+        theValue := theValue * anOperand.
+    ]        
+        
+    #method divideInto &byte:anOperand
+    [
+        theValue := theValue / anOperand.
+    ]
+    
+    #method(type:bool) equal &byte:anOperand 
+        = theValue == anOperand.
+
+    #method(type:bool) less &byte:anOperand
+        = theValue < anOperand.
+                
+    #method(type:byte) add &byte:anOperand
+        = ByteNumber new &byte:(theValue + anOperand).
+    
+    #method(type:byte) subtract &byte:anOperand
+        = ByteNumber new &byte:(theValue - anOperand).
+    
+    #method(type:byte) multiply &byte:anOperand
+        = ByteNumber new &byte:(theValue * anOperand).
+    
+    #method(type:byte) divide &byte:anOperand
+        = ByteNumber new &byte:(theValue + anOperand).
+        
+    #method(type:byte) and &byte:anOperand
+        = ByteNumber new &byte:(theValue && anOperand).
+        
+    #method(type:byte) or &byte:anOperand
+        = ByteNumber new &byte:(theValue || anOperand).
+        
+    #method(type:byte) xor &byte:anOperand
+        = ByteNumber new &byte:(theValue ^^ anOperand).
+
+    #method value = ByteNumber new &byte:theValue.
+
+    #method literal = literalConvertor convert &byte:theValue.
+
+    #method wide = wideConvertor convert &byte:theValue.
+
+    #method clone = Byte new &byte:theValue.
+
+    #method => theValue.    
+}
+
+// --- Short ---
+
+#class(sealed,struct:embeddable) Short :: IntBaseVariable
+{
+    #field(type:short)theValue.
+    
+    #constructor new
+    [
+        theValue := 0.
+    ]
+    
+    #constructor new : aValue
+    [
+        theValue := aValue short.
+    ]
+    
+    #constructor new &short:aValue
+    [
+        theValue := aValue.
+    ]
+    
+    #constructor new &byte:aValue
+    [
+        theValue := aValue short.
+    ]
+    
+    #method vshort = $self.
+    
+    #method short = ShortNumber new &short:theValue.
+                                                
+    #method int = IntNumber new &short:theValue.
+                                                
+    #method real = RealNumber new &short:theValue.
+    
+    #method long = LongNumber new &short:theValue.
+    
+    #method write &short:anOperand
+    [
+        theValue := anOperand.
+    ]
+
+    #method write &byte:anOperand
+    [
+        theValue := anOperand int.
+    ]
+
+    #method append &short:anOperand
+    [
+        theValue := theValue + anOperand.
+    ]
+
+    #method append &byte:anOperand
+    [
+        theValue := theValue + anOperand short.
+    ]
+        
+    #method reduce &short:anOperand
+    [
+        theValue := theValue - anOperand.
+    ]
+        
+    #method reduce &byte:anOperand
+    [
+        theValue := theValue - anOperand short.
+    ]
+        
+    #method multiplyBy &short:anOperand
+    [
+        theValue := theValue * anOperand.
+    ]        
+        
+    #method multiplyBy &byte:anOperand
+    [
+        theValue := theValue * anOperand short.
+    ]        
+        
+    #method divideInto &short:anOperand
+    [
+        theValue := theValue / anOperand.
+    ]
+        
+    #method divideInto &byte:anOperand
+    [
+        theValue := theValue / anOperand short.
+    ]
+    
+    #method(type:bool) equal &short:anOperand 
+        = theValue == anOperand.
+
+    #method(type:bool) less &short:anOperand
+        = theValue < anOperand.
+                
+    #method(type:short) add &short:anOperand
+        = IntNumber new &int:(theValue + anOperand).
+    
+    #method(type:short) subtract &short:anOperand
+        = IntNumber new &int:(theValue - anOperand).
+    
+    #method(type:short) multiply &short:anOperand
+        = IntNumber new &int:(theValue * anOperand).
+    
+    #method(type:short) divide &short:anOperand
+        = IntNumber new &int:(theValue + anOperand).
+        
+    #method(type:short) and &short:anOperand
+        = IntNumber new &int:(theValue && anOperand).
+        
+    #method(type:short) or &short:anOperand
+        = IntNumber new &int:(theValue || anOperand).
+        
+    #method(type:short) xor &short:anOperand
+        = IntNumber new &int:(theValue ^^ anOperand).
+
+    #method value = ShortNumber new &short:theValue.
+
+    #method literal = literalConvertor convert &short:theValue.
+
+    #method wide = wideConvertor convert &short:theValue.
+
+    #method clone = Short new &short:theValue.
+
+    #method => theValue.    
+}
+
 // --- Integer ---
 
-#class(sealed) Integer :: IntBaseVariable
+#class(sealed,struct:embeddable) Integer :: IntBaseVariable
 {
     #field(type:int)theValue.
     
@@ -975,18 +1183,13 @@
         theValue := aValue int.
     ]
     
-    #method intvar = $self.
+    #method vint = $self.
     
     #method int = IntNumber new &int:theValue.
                                                 
     #method real = RealNumber new &int:theValue.
     
     #method long = LongNumber new &int:theValue.
-    
-    #method read &out'int:aRetVal
-    [
-        aRetVal := theValue.
-    ]
     
     #method write &int:anOperand
     [
@@ -1103,7 +1306,7 @@
 
 // --- Long ---
 
-#class(sealed) Long :: IntBaseVariable
+#class(sealed,struct:embeddable) Long :: IntBaseVariable
 {
     #field(type:long)theValue.
     
@@ -1135,14 +1338,9 @@
         theValue := aValue long.
     ]
     
-    #method longvar = $self.
+    #method vlong = $self.
             
     #method long = LongNumber new &long:theValue.
-    
-    #method read &out'long:aRetVal
-    [
-        aRetVal := theValue.
-    ]
     
     #method real = RealNumber new &long:theValue.
 
@@ -1292,7 +1490,7 @@
 
 // --- Real ---
 
-#class(sealed) Real :: BaseVariable
+#class(sealed,struct:embeddable) Real :: BaseVariable
 {
     #field(type:real)theValue.
     
@@ -1325,14 +1523,9 @@
     #constructor new &byte:aValue
         => system'internal'real_copyint.
     
-    #method realvar = $self.
+    #method vreal = $self.
     
     #method real = RealNumber new &real:theValue.
-    
-    #method read &out'real:aRetVal
-    [
-        aRetVal := theValue.
-    ]
         
     #method write &real:anOperand
     [
@@ -1514,6 +1707,12 @@
     #method less &char:anOperand 
         => system'internal'int_less.
 
+    #method equal &int:anOperand 
+        => system'internal'int_equal.
+
+    #method less &int:anOperand 
+        => system'internal'int_less.
+
     #method clone = CharValue new &char:$self.
     
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &char:$self.
@@ -1524,15 +1723,63 @@
 
     #method wide = wideConvertor convert &char:$self.
     
-    #method read &out'length:aLength
+    #method readLength &vint:aLength
         => system'internal'char_getlen.
         
     #method length
     [
-        #var(type:int)aLength := $self length.
+        #var(type:vint)aLength := 0.
+        $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
     ]
+}
+
+// --- Char ---
+
+#class(sealed,struct:embeddable) Char :: BaseVariable
+{
+    #field(type:char)theValue.
+    
+    #constructor new
+    [
+        theValue := #0.
+    ]
+    
+    #constructor new : aValue   
+    [
+        theValue := aValue char.
+    ]
+    
+    #constructor new &char:aValue
+    [
+        theValue := aValue.
+    ]
+    
+    #method vchar = $self.
+    
+    #method char = CharValue new &char:theValue.
+    
+    #method write &char:anOperand
+    [
+        theValue := anOperand.
+    ]
+    
+    #method(type:bool) equal &char:anOperand 
+        = theValue == anOperand.
+
+    #method(type:bool) less &char:anOperand
+        = theValue < anOperand.
+        
+    #method value = CharValue new &char:theValue.
+
+    #method literal = literalConvertor convert &char:theValue.
+
+    #method wide = wideConvertor convert &char:theValue.
+
+    #method clone = Char new &char:theValue.
+
+    #method => theValue.    
 }
 
 // === Basic Factory symbols ==
@@ -1594,25 +1841,25 @@
 
 #symbol byteConvertor =
 {
-    #method convert &char:aValue &out'byte:aRetVal
+    #method convert &char:aValue &vbyte:aRetVal
         => system'internal'byte_copychar.
         
-    #method convert &short:aValue &out'byte:aRetVal
+    #method convert &short:aValue &vbyte:aRetVal
         => system'internal'byte_copyword.
         
-    #method convert &int:aValue &out'byte:aRetVal
+    #method convert &int:aValue &vbyte:aRetVal
         => system'internal'byte_copyint.
         
-    #method convert &long:aValue &out'byte:aRetVal
+    #method convert &long:aValue &vbyte:aRetVal
         => system'internal'byte_copylong.
         
-    #method convert &real:aValue &out'byte:aRetVal
+    #method convert &real:aValue &vbyte:aRetVal
         => system'internal'byte_copyreal.
         
-    #method convert &literal:aValue &out'byte:aRetVal
+    #method convert &literal:aValue &vbyte:aRetVal
         => system'internal'byte_copystr.
         
-    #method convert &wide:aValue &out'byte:aRetVal
+    #method convert &wide:aValue &vbyte:aRetVal
         => system'internal'byte_copywstr.
         
     #method(type:byte) convert &byte:anInt
@@ -1620,49 +1867,56 @@
         
     #method(type:byte) convert &char:aValue
     [
-        #var(type:byte)aValue := $self convert &char:aValue.
+        #var(type:vbyte)aValue := 0.
+        $self convert &char:aValue &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
         
     #method(type:byte) convert &short:aValue
     [
-        #var(type:byte)aValue := $self convert &short:aValue.
+        #var(type:vbyte)aValue.
+        $self convert &short:aValue &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
         
     #method(type:byte) convert &int:aValue
     [
-        #var(type:byte)aValue := $self convert &int:aValue.
+        #var(type:vbyte)aValue.
+        $self convert &int:aValue &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
         
     #method(type:byte) convert &long:aValue
     [
-        #var(type:byte)aValue := $self convert &long:aValue.
+        #var(type:vbyte)aValue.
+        $self convert &long:aValue &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
         
     #method(type:byte) convert &real:aValue
     [
-        #var(type:byte)aValue := $self convert &real:aValue.
+        #var(type:vbyte)aValue.
+        $self convert &real:aValue &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
                 
     #method(type:byte) convert &literal:aLiteral
     [
-        #var(type:byte)aValue := $self convert &literal:aLiteral.
+        #var(type:vbyte)aValue.
+        $self convert &literal:aLiteral &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
                 
     #method(type:byte) convert &wide:aLiteral
     [
-        #var(type:byte)aValue := $self convert &wide:aLiteral.
+        #var(type:vbyte)aValue. 
+        $self convert &wide:aLiteral &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
     ]
@@ -1670,25 +1924,25 @@
 
 #symbol shortConvertor =
 {
-    #method convert &char:aValue &out'short:aRetVal
+    #method convert &char:aValue &vshort:aRetVal
         => system'internal'word_copychar.
         
-    #method convert &byte:aValue &out'short:aRetVal
+    #method convert &byte:aValue &vshort:aRetVal
         => system'internal'word_copybyte.
         
-    #method convert &int:aValue &out'short:aRetVal
+    #method convert &int:aValue &vshort:aRetVal
         => system'internal'word_copyint.
         
-    #method convert &long:aValue &out'short:aRetVal
+    #method convert &long:aValue &vshort:aRetVal
         => system'internal'word_copylong.
         
-    #method convert &real:aValue &out'short:aRetVal
+    #method convert &real:aValue &vshort:aRetVal
         => system'internal'word_copyreal.
         
-    #method convert &literal:aValue &out'short:aRetVal
+    #method convert &literal:aValue &vshort:aRetVal
         => system'internal'word_copystr.
         
-    #method convert &wide:aValue &out'short:aRetVal
+    #method convert &wide:aValue &vshort:aRetVal
         => system'internal'word_copywstr.
         
     #method(type:short) convert &short:anInt
@@ -1696,49 +1950,56 @@
         
     #method(type:short) convert &byte:aValue
     [
-        #var(type:short)aValue := $self convert &byte:aValue.
+        #var(type:vshort)aValue.
+        $self convert &byte:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
         
     #method(type:short) convert &int:aValue
     [
-        #var(type:short)aValue := $self convert &int:aValue.
+        #var(type:short)aValue.
+        $self convert &int:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
         
     #method(type:short) convert &long:aValue
     [
-        #var(type:short)aValue := $self convert &long:aValue.
+        #var(type:short)aValue.
+        $self convert &long:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
         
     #method(type:short) convert &real:aValue
     [
-        #var(type:short)aValue := $self convert &real:aValue.
+        #var(type:short)aValue.
+        $self convert &real:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
         
     #method(type:short) convert &char:aValue
     [
-        #var(type:short)aValue := $self convert &char:aValue.
+        #var(type:short)aValue.
+        $self convert &char:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
         
     #method(type:short) convert &literal:aValue
     [
-        #var(type:short)aValue := $self convert &literal:aValue.
+        #var(type:short)aValue.
+        $self convert &literal:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
         
     #method(type:short) convert &wide:aValue
     [
-        #var(type:short)aValue := $self convert &wide:aValue.
+        #var(type:short)aValue.
+        $self convert &wide:aValue &vshort:aValue.
         
         ^ ShortNumber new &short:aValue.
     ]
@@ -1746,27 +2007,28 @@
 
 #symbol charConvertor =
 {
-    #method convert &byte:aValue &out'char:aRetVal
+    #method convert &byte:aValue &vchar:aRetVal
         => system'internal'char_savebyte.
         
-    #method convert &short:aValue &out'char:aRetVal
+    #method convert &short:aValue &vchar:aRetVal
         => system'internal'char_saveshort.
         
-    #method convert &int:aValue &out'char:aRetVal
+    #method convert &int:aValue &vchar:aRetVal
         => system'internal'char_saveint.
         
     #method(type:char)convert &char:aChar
         = CharValue new &char:aChar.
   
-    #method(type:char) convert &index:anIndex &literal:aLiteral &out'char:char
+    #method(type:char) convert &index:anIndex &literal:aLiteral &vchar:char
         => system'internal'char_copystr.
   
-    #method(type:char) convert &index:anIndex &wide:aLiteral &out'char:char
+    #method(type:char) convert &index:anIndex &wide:aLiteral &vchar:char
         => system'internal'char_copywstr.
         
     #method(type:char) convert &literal:aValue
     [
-        #var(type:char)aRetVal := $self convert &literal:aValue.
+        #var(type:vchar)aRetVal.
+        $self convert &index:0 &literal:aValue &vchar:aRetVal.
         
         (aRetVal length != aValue length)
             ? [ #throw system'InvalidArgumentException new. ].
@@ -1776,7 +2038,8 @@
         
     #method(type:char) convert &wide:aValue
     [
-        #var(type:char)aRetVal := $self convert &index:0 &wide:aValue.
+        #var(type:vchar)aRetVal.
+        $self convert &index:0 &wide:aValue &vchar:aRetVal.
         
         (((aRetVal length + 1) / 2) != aValue length)
             ? [ #throw system'InvalidArgumentException new. ].
@@ -1786,94 +2049,110 @@
         
     #method(type:char) convert &byte:aValue
     [
-        #var(type:char)aRetVal := $self convert &byte:aValue.
+        #var(type:vchar)aRetVal.
+        $self convert &byte:aValue &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
     ]        
         
     #method(type:char) convert &short:aValue
     [
-        #var(type:char)aRetVal := $self convert &short:aValue.
+        #var(type:vchar)aRetVal.
+        $self convert &short:aValue &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
     ]        
         
     #method(type:char) convert &int:aValue
     [
-        #var(type:char)aRetVal := $self convert &int:aValue.
+        #var(type:char)aRetVal.
+        $self convert &int:aValue &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
-    ]        
+    ]
+    
+    #method save &char:aChar &index:anIndex &shortarray:aCharArray &vlength:aLength
+        => system'internal'sa_copychar.
+    
+    #method save &char:aChar &index:anIndex &bytearray:aCharArray &vlength:aLength
+        => system'internal'ba_copychar.
 }.
 
 #symbol intConvertor =
 {
-    convert &literal:aValue &out'int:aRetVal
+    convert &literal:aValue &vint:aRetVal
         => system'internal'int_copystr.
 
-    convert &wide:aValue &out'int:aRetVal
+    convert &wide:aValue &vint:aRetVal
         => system'internal'int_copywstr.
 
-    convert &char:aValue &out'int:aRetVal
+    convert &char:aValue &vint:aRetVal
         => system'internal'int_saveint.
 
-    convert &short:aValue &out'int:aRetVal
+    convert &short:aValue &vint:aRetVal
         => system'internal'int_saveint.
 
-    convert &byte:aValue &out'int:aRetVal
+    convert &byte:aValue &vint:aRetVal
         => system'internal'int_saveint.
 
-    convert &long:aValue &out'int:aRetVal
+    convert &long:aValue &vint:aRetVal
         => system'internal'int_savelong.
         
-    convert &real:aReal &out'int:aRetVal
+    convert &real:aReal &vint:aRetVal
         => system'internal'int_copyreal.
         
     #method(type:int) convert &literal:aLiteral
     [
-        #var(type:int)aRetVal := $self convert &literal:aLiteral.
+        #var(type:vint)aRetVal.
+        $self convert &literal:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
         
     #method(type:int) convert &wide:aLiteral
     [
-        #var(type:int)aRetVal := $self convert &wide:aLiteral.
+        #var(type:vint)aRetVal.
+        $self convert &wide:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
         
     #method(type:int) convert &char:aValue
     [
-        #var(type:int)aRetVal := $self convert &char:aValue.
+        #var(type:vint)aRetVal.
+        $self convert &char:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
         
     #method(type:int) convert &byte:aValue
     [
-        #var(type:int)aRetVal := $self convert &byte:aValue.
+        #var(type:vint)aRetVal.
+        $self convert &byte:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
         
     #method(type:int) convert &short:aValue
     [
-        #var(type:int)aRetVal := $self convert &short:aValue.
+        #var(type:vint)aRetVal.
+        $self convert &short:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
         
     #method(type:int) convert &long:aValue
     [
-        #var(type:int)aRetVal := $self convert &long:aValue.
+        #var(type:vint)aRetVal.
+        $self convert &long:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
 
     #method(type:int) convert &real:aReal
     [
-        #var(type:int)aRetVal := $self convert &real:aReal.
+        #var(type:vint)aRetVal.
+        $self convert &real:aReal &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -1884,13 +2163,13 @@
 
 #symbol longConvertor =
 {
-    convert &literal:aValue &out'long:aRetVal
+    convert &literal:aValue &vlong:aRetVal
         => system'internal'long_copystr.
 
-    convert &wide:aValue &out'long:aRetVal
+    convert &wide:aValue &vlong:aRetVal
         => system'internal'long_copywstr.
 
-    convert &real:aValue &out'long:aRetVal
+    convert &real:aValue &vlong:aRetVal
         => system'internal'long_copyreal.
 
     convert &int:aValue
@@ -1904,28 +2183,32 @@
 
     convert &real:aValue
     [
-        #var(type:long)aRetVal := $self convert &real:aValue.
+        #var(type:vlong)aRetVal.
+        $self convert &real:aValue &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
     ]
 
     convert &char:aValue
     [
-        #var(type:int)aRetVal := intConvertor convert &char:aValue.
+        #var(type:vint)aRetVal.
+        intConvertor convert &char:aValue &vint:aRetVal.
         
-        ^ LongNumber new &int:aRetVal.
+        ^ aRetVal long.
     ]
 
     convert &literal:aLiteral
     [
-        #var(type:long)aRetVal := $self convert &literal:aLiteral.
+        #var(type:vlong)aRetVal.
+        $self convert &literal:aLiteral &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
     ]
 
     convert &wide:aLiteral
     [
-        #var(type:long)aRetVal := $self convert &wide:aLiteral.
+        #var(type:vlong)aRetVal.
+        $self convert &wide:aLiteral &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
     ]
@@ -1936,25 +2219,27 @@
 
 #symbol realConvertor =
 {
-    convert &int:aValue &out'real:aRetVal
+    convert &int:aValue &vreal:aRetVal
         => system'internal'real_saveint.
 
-    convert &literal:aValue &out'real:aRetVal
+    convert &literal:aValue &vreal:aRetVal
         => system'internal'real_copystr.
         
-    convert &wide:aValue &out'real:aRetVal
+    convert &wide:aValue &vreal:aRetVal
         => system'internal'real_copywstr.
         
     convert &literal:aLiteral
     [
-        #var(type:real)aRetVal := $self convert &literal:aLiteral.
+        #var(type:vreal)aRetVal.
+        $self convert &literal:aLiteral &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]
         
     convert &wide:aLiteral
     [
-        #var(type:real)aRetVal := $self convert &wide:aLiteral.
+        #var(type:vreal)aRetVal.
+        $self convert &wide:aLiteral &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]

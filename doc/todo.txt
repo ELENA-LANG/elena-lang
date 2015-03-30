@@ -20,14 +20,26 @@ v  - vm script
 ------                                 
 Currently:
 ------
+              xdev - redesign
+                       * get rid of out prefix, replace all out'int with intvar
+
+                       s read &length &intvar:n
+                       s read &lenvar:n
+
+                       s readLength &intvar:n
+                       s readLength &vint:n
+
+
               adev - lib30 : redesign
+                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
+                       * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
+                       * get rid of warnings
                        * uncomment all system code
                        * uncomment all extension code
                        * uncomment tests                       
                        * tests
                        * test rsave
                        * test real to int / short / byte conversion
-                       * get rid of warnings
                        * test vm samples
                        * test thread operation
 
@@ -96,6 +108,7 @@ week2:
                        * uncomment all code
 
                        * FileStream - implements clone
+                       * LiteralBuffer, WideBuffer
                        * combinators should work both with list and array
                        * system'$consolehandler: if the returning handler is -1
                        * system'$consolewriter - the exception should be raised if the operation
@@ -186,12 +199,11 @@ week2:
                        * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
                        * controlTape should verify the range
                        * Iterator.get&index - current implementation is looks like a short circite, though due to optimization it is correctly implemented
-                       * look at all wrapper around out parameter, replace the shortcut code with direct use of internal code
-                       * implement LiteralValue.indexOf&index&char:aChar&out'int
                        * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
                        * Should stream protocol support reset, clone methods?
                        * LiteralValue#class : new&length&shortarray  - should the array be verified?
                        * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
+                       * Literal operation like insert, delete, substring: there should be generic variant as well (e.g. s insert:s &at:3)
                                                                                                                              
               arev - lib30 review
                        * fix bytearray read / write operation with byte, char, int, long, real
@@ -527,6 +539,7 @@ week1:
                        * critical bug with dynamic signature : signature class should validate strong types - signature code should have
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
                          signature
+                       * break the loop
                          
               xdev - general implementation
                        * win32 linker : should stat + bss be combined into single section?

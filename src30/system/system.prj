@@ -1,5 +1,6 @@
 ﻿[project]
 output=..\..\lib30
+options=-w4
 namespace=system
 template=lib
 debuginfo=-1

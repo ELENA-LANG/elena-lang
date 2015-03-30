@@ -248,6 +248,20 @@ inline bool IsExprOperator(int operator_id)
    }
 }
 
+inline bool IsVarOperator(int operator_id)
+{
+   switch (operator_id) {
+   case WRITE_MESSAGE_ID:
+   case APPEND_MESSAGE_ID:
+   case REDUCE_MESSAGE_ID:
+   case INCREASE_MESSAGE_ID:
+   case SEPARATE_MESSAGE_ID:
+      return true;
+   default:
+      return false;
+   }
+}
+
 inline bool IsCompOperator(int operator_id)
 {
    switch(operator_id) {
@@ -402,18 +416,11 @@ ref_t Compiler::ModuleScope :: mapNewType(ident_t terminal)
    return module->mapSubject(fullName, false);
 }
 
-ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal, bool& out)
+ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal)
 {
    ident_t identifier = NULL;
    if (terminal.symbol == tsIdentifier || terminal.symbol == tsPrivate) {
-      out = false;
-
       identifier = terminal.value;
-   }
-   else if (terminal.symbol == tsReference && StringHelper::compare(terminal.value, "out'", 4)) {
-      out = true;
-
-      identifier = terminal.value + 4;
    }
    else raiseError(errInvalidSubject, terminal);
 
@@ -449,17 +456,7 @@ ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal, bool& out)
    return 0;
 }
 
-ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal)
-{
-   bool out;
-   ref_t typeRef = mapType(terminal, out);
-   if (out)
-      raiseError(errInvalidSubject, terminal);
-
-   return typeRef;
-}
-
-ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output, bool& out)
+ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output)
 {
    // add a namespace for the private message
    if (terminal.symbol == tsPrivate) {
@@ -469,14 +466,11 @@ ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierStrin
       return 0;
    }
 
-   ref_t typeRef = mapType(terminal, out);
+   ref_t typeRef = mapType(terminal);
    if (typeRef != 0) {
-      if (out) {
-         output.append("out'");
-      }
       output.append(module->resolveSubject(typeRef));
    }
-   else if (!out) {
+   else if (terminal.symbol != tsReference){
       typeRef = module->mapSubject(terminal, false);
 
       output.append(terminal.value);
@@ -1114,6 +1108,8 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
                info.header.flags |= elDebugQWORD;
             }
             else raiseError(wrnInvalidHint, terminal);
+
+            info.header.flags |= elReadOnlyRole;
          }
          else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -1131,6 +1127,8 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
                info.header.flags |= elDebugReal64;
             }
             else raiseError(wrnInvalidHint, terminal);
+
+            info.header.flags |= elReadOnlyRole;
          }
          else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -1204,7 +1202,7 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
 
             type = moduleScope->mapType(typeTerminal);
             if (type == 0)
-               raiseError(wrnInvalidHint, terminal);
+               raiseError(errInvalidHint, terminal);
 
             size = moduleScope->defineTypeSize(type);
          }
@@ -1263,7 +1261,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
          if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
             return ObjectInfo(okParams, -1 - local, param.sign_ref);
          }
-         else return ObjectInfo(param.output ? okOutputParam : okParam, -1 - local, param.sign_ref);
+         else return ObjectInfo(okParam, -1 - local, param.sign_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -1808,7 +1806,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
 void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo object)
 {
-   if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField || object.kind == okOutputParam) {
+   if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
       _writer.saveObject(*scope.tape, object);
    }
    else if ((object.kind == okOuter)) {
@@ -1823,8 +1821,10 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
 
 void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
 {
-   if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress || variableInfo.kind == okOutputParam) {
-      int size = scope.moduleScope->defineTypeSize(variableInfo.extraparam);
+   if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress || variableInfo.kind == okLocalAddress) {
+      int size = (variableInfo.kind == okLocalAddress) ? 
+         scope.moduleScope->defineStructSize(variableInfo.extraparam) : scope.moduleScope->defineTypeSize(variableInfo.extraparam);
+
       if (size <= 0)
          scope.raiseError(errInvalidOperation, node.Terminal());
 
@@ -1989,18 +1989,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          if (node.nextNode() != nsAssigning)
             object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1));
 
-         break;
-      case okOutputParam:
-         // field address cannot be used directly and should be boxed
-         // if it is not an assignment target
-         switch(node.nextNode().symbol) {
-            case nsAssigning:
-            case nsNone:
-               break;
-            default:
-               scope.raiseError(errInvalidOperation, node.Terminal());
-               break;
-         }
          break;
       case okSubject:
          // subject should be boxed into Subject class
@@ -2766,7 +2754,23 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else return moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam)) & elDebugMask;
 }
 
-bool Compiler :: compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
+int Compiler :: mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand)
+{
+   int flags = 0;
+
+   if (operand.kind == okAccumulator && operand.param != 0) {
+      flags = moduleScope.getClassFlags(operand.param);
+   }
+   else flags = moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam));
+
+   // read only classes cannot be used for variable operations
+   if (test(flags, elReadOnlyRole))
+      flags = 0;
+
+   return flags & elDebugMask;
+}
+
+bool Compiler::compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -2824,6 +2828,43 @@ bool Compiler :: compileInlineArithmeticOperator(CodeScope& scope, int operator_
    else if (lflag == elDebugReal64) {
       _writer.doRealOperation(*scope.tape, operator_id);
    }
+
+   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+
+   return true;
+}
+
+bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   int lflag = mapInlineTargetOperandType(*moduleScope, loperand);
+   int rflag = mapInlineOperandType(*moduleScope, roperand);
+
+   if (lflag == 0 || lflag != rflag) {
+      return false;
+   }
+
+   // check
+   if (lflag == elDebugDWORD) {
+      result.param = moduleScope->intReference;
+   }
+   else return false;
+
+   _writer.popObject(*scope.tape, ObjectInfo(okBase));
+   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+   result.kind = okIdle;
+
+   if (lflag == elDebugDWORD) {
+      _writer.doIntOperation(*scope.tape, operator_id);
+   }
+   //else if (lflag == elDebugQWORD) {
+   //   _writer.doLongOperation(*scope.tape, operator_id);
+   //}
+   //else if (lflag == elDebugReal64) {
+   //   _writer.doRealOperation(*scope.tape, operator_id);
+   //}
 
    _writer.loadObject(*scope.tape, ObjectInfo(okBase));
 
@@ -3001,6 +3042,10 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
    if (IsExprOperator(operator_id) && compileInlineArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
       // if inline arithmetic operation is implemented
+      // do nothing
+   }
+   else if (IsVarOperator(operator_id) && compileInlineVarArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
+      // if inline referring operation is implemented
       // do nothing
    }
    else if (IsCompOperator(operator_id) && compileInlineComparisionOperator(scope, operator_id, object, operand, retVal, notOperator)) {
@@ -3742,11 +3787,35 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                      }
                   }
                }
+               bool skipTypecast = false;
                ref_t strongReference = moduleScope->resolveStrongType(type_ref);
                if (strongReference != 0 && object.extraparam != 0 && strongReference == moduleScope->resolveStrongType(object.extraparam)) {
                   // skip the type check if they are compatible
+                  skipTypecast = true;
                }
                else {
+                  ref_t objectReference = 0;
+                  int targetSize = scope.moduleScope->defineTypeSize(type_ref);
+                  int objectSize = scope.moduleScope->defineTypeSize(object.extraparam, objectReference);
+                  // if implicit typecasting is possible
+                  if (targetSize != 0 && targetSize == objectSize) {
+                     ClassInfo info;
+                     if (moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(objectReference), false) != 0) {
+                        if (test(info.header.flags, elStructureWrapper) && info.fieldTypes.exist(0, type_ref)) {
+
+                           ObjectInfo primitive(okLocal, 0, type_ref);
+
+                           allocateStructure(scope, 0, primitive);
+
+                           compileContentAssignment(DNode(), scope, primitive, object);
+                           object = primitive;
+
+                           return object;
+                        }
+                     }
+                  }
+               }
+               if (!skipTypecast) {
                   // if type mismatch
                   // call typecast method
                   mismatch = true;
@@ -3824,60 +3893,6 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    return objectInfo;
 }
 
-bool Compiler :: overridePrimitiveAssigning(CodeScope& scope, ref_t targetType, ObjectInfo object, ref_t& message)
-{
-   if (targetType == 0)
-      return false;
-
-   ModuleScope* moduleScope = scope.moduleScope;
-
-   int verb, paramCount;
-   ref_t sign;
-   decodeMessage(message, sign, verb, paramCount);
-
-   ReferenceNs subject;
-
-   // if it is get message, replace GET with read
-   if (paramCount == 0 && verb == GET_MESSAGE_ID) {
-      paramCount = 1;
-      verb = READ_MESSAGE_ID;
-
-      subject.copy("out");
-      subject.combine(moduleScope->module->resolveSubject(sign));
-   }
-   else {
-      paramCount++;
-      subject.copy(moduleScope->module->resolveSubject(sign));
-      subject.append("&out'");
-      subject.append(moduleScope->module->resolveSubject(targetType));
-   }
-
-   sign = moduleScope->module->mapSubject(subject, false);
-
-   ref_t overriddenMessage = encodeMessage(sign, verb, paramCount);
-   if (object.kind == okThisParam) {
-      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-      if (test(classScope->info.header.flags, elClosed) && classScope->info.methods.exist(overriddenMessage)) {
-         message = overriddenMessage;
-
-         return true;
-      }
-   }
-   else if ((object.kind == okConstantSymbol || object.kind == okAccumulator) && object.param != 0 &&
-      moduleScope->checkMethod(object.param, overriddenMessage) != tpUnknown)
-   {
-      message = overriddenMessage;
-
-      return true;
-   }
-   else if (moduleScope->checkTypeMethod(getType(object), overriddenMessage) != tpUnknown) {
-      message = overriddenMessage;
-
-      return true;
-   }
-   return false;
-}
-
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
 {
    // if primitive data operation can be used
@@ -3890,48 +3905,13 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          }
       }
 
-      ObjectInfo info;
-      // check if the expression can be replaced with primitive code
-      bool overridden = false;
-      DNode exprNode = assigning.firstChild();
-      if (isSimpleExpression(exprNode.firstChild())) {
-
-         exprNode = exprNode.firstChild();
-         info = compileObject(exprNode, scope, assignMode);
-         if (info.kind == okExternal) {
-            info = compileOperations(exprNode, scope, info, assignMode);
-         }
-         else {
-            exprNode = exprNode.nextNode();
-
-            size_t paramCount = 0;
-            ref_t message = mapMessage(exprNode, scope, paramCount);
-
-            if(target.kind != okField && overridePrimitiveAssigning(scope, getType(target), info, message)) {
-               overridden = true;
-
-               _writer.pushObject(*scope.tape, target);
-            }
-
-            size_t spaceToRelease = 0;
-            info = compileMessageParameters(exprNode, scope, info, message, paramCount, assignMode, spaceToRelease);
-
-            if (spaceToRelease > 0) {
-               // if open argument list is used
-               info = compileMessage(node, scope, info, message, assignMode);
-
-               releaseOpenArguments(scope, spaceToRelease);
-            }
-            else info = compileMessage(node, scope, info, message, assignMode);
-         }
-      }
-      else info = compileExpression(exprNode, scope, assignMode);
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, assignMode);
 
       if (info.kind == okIndexAccumulator) {
          // if it is a primitive operation
          compileContentAssignment(node, scope, target, info);
       }
-      else if (overridden || info.kind == okIdle) {
+      else if (info.kind == okIdle) {
          // if assigning was already done - do nothing
       }
       else {
@@ -3948,7 +3928,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
                bool boxed = false;
                info = boxObject(scope, info, boxed);
                if (boxed)
-                  scope.raiseWarning(4, wrnBoxingCheck, exprNode.FirstTerminal());
+                  scope.raiseWarning(4, wrnBoxingCheck, assigning.FirstTerminal());
             }               
 
             compileAssignment(node, scope, target);
@@ -4113,7 +4093,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
       TerminalInfo terminal = arg.Terminal();
 
       ExternalScope::ParamInfo param;
-      param.subject = moduleScope->mapType(terminal, param.output);
+      param.subject = moduleScope->mapType(terminal);
 
       ref_t classReference = moduleScope->resolveStrongType(param.subject);
       // HOTFIX: problem with using a strong type inside its wrapper
@@ -4143,6 +4123,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          // if it is an integer number pass it directly
          if ((classInfo.header.flags & elDebugMask)==elDebugDWORD) {
             param.size = 4;
+            if (!test(classInfo.header.flags, elReadOnlyRole))
+               param.out = true;
          }
          else if ((classInfo.header.flags & elDebugMask)==elDebugPTR) {
             param.size = -2;
@@ -4157,12 +4139,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
             param.info.extraparam = param.subject;
          }
 
-         // only local variables can be used as output parameters
-         if (param.output) {
-            if((param.info.kind != okLocal && param.info.kind != okOutputParam) || param.subject != param.info.extraparam)
-               scope.raiseError(errInvalidOperation, terminal);
-         }
-         else if (param.size == -2 && param.info.kind == okInternal) {
+         if (param.size == -2 && param.info.kind == okInternal) {
          }
          else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
             // if direct pass is possible
@@ -4193,7 +4170,7 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
    while (!out_it.Eof()) {
       // if it is output parameter
-      if ((*out_it).output) {
+      if ((*out_it).out) {
          _writer.pushObject(*scope.tape, (*out_it).info);
       }
       else {
@@ -4285,17 +4262,12 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
    int index = 0;
    while (arg == nsSubjectArg) {
       TerminalInfo terminal = arg.Terminal();
-
-      bool out = false;
-      ref_t type = moduleScope->mapType(terminal, out);
+      ref_t type = moduleScope->mapType(terminal);
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
          ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
          _writer.loadObject(*scope.tape, info);
-
-         if (out && info.kind != okLocal)
-            scope.raiseError(errInvalidOperation, terminal);
 
          bool mismatch = false;
          compileTypecast(scope, info, type, mismatch, 0);
@@ -4453,8 +4425,7 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
       }
       else first = false;
 
-      bool out = false;
-      ref_t subj_ref = scope.moduleScope->mapSubject(subject, signature, out);
+      ref_t subj_ref = scope.moduleScope->mapSubject(subject, signature);
 
       // declare method parameter
       arg = arg.nextNode();
@@ -4465,7 +4436,7 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
             scope.raiseError(errDuplicatedLocal, arg.Terminal());
 
          int index = 1 + scope.parameters.Count();
-         scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref, out));
+         scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
 
          arg = arg.nextNode();
       }
@@ -4531,8 +4502,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
       }
       else first = false;
 
-      bool out = false;
-      ref_t subj_ref = scope.moduleScope->mapSubject(subject, signature, out);
+      ref_t subj_ref = scope.moduleScope->mapSubject(subject, signature);
 
       arg = arg.nextNode();
 
@@ -4561,7 +4531,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
 
-            scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref, out));
+            scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
 
             arg = arg.nextNode();
          }
@@ -5185,6 +5155,16 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
          break;
       }
       member = member.nextNode();
+   }
+
+   // mark the class as a wrapper if it is appropriate
+   if (test(scope.info.header.flags, elStructureRole | elSealed | elEmbeddable) && (scope.info.fieldTypes.Count() == 1) && scope.info.size > 0) {
+      int type = scope.info.header.flags & elDebugMask;
+      int fieldType = scope.moduleScope->getClassFlags(scope.moduleScope->resolveStrongType(*scope.info.fieldTypes.start())) & elDebugMask;
+      if (type == 0 && fieldType != 0) {
+         scope.info.header.flags |= elStructureWrapper;
+         scope.info.header.flags |= fieldType;
+      }      
    }
 }
 

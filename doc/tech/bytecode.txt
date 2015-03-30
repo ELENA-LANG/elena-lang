@@ -366,6 +366,8 @@ ELENA byte codes (or ecodes)
 
  setverb m                  - ext.verb << m
  
+ sub                        - index -= ext
+
  throw                      - raise an exception (acc contains the exception object)
 
  unhook                     - remove the current exception handler
