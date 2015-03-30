@@ -36,6 +36,8 @@ ELENA byte codes (or ecodes)
 
  addn n                     - index += n
  
+ address label              - load label address to ext
+
  ajumpvi i                  - redirect to acc::VMT[i] method
 
  aloadai i                  - [acc::i] => acc
@@ -167,6 +169,9 @@ ELENA byte codes (or ecodes)
  
  elser r, label             - jumps to the label if acc != r
  
+ equit                      - terminates the procedure ; clear the stack parameters, based
+                              on ext
+
  esavesi i                  - [sp:i] <= ext
                               
  eswap                      - index <=> ext
@@ -224,8 +229,8 @@ ELENA byte codes (or ecodes)
  lsub                       - long[base] -= long[acc]
  
  lxor                       - long[base] ~~ long[acc]
-
- shiftn n                   - index >> n  => index
+ 
+ mindex                      - search for ext in acc:VMT; out: index or -1
  
  nadd                       - int[base] += int[acc]
  
@@ -365,6 +370,8 @@ ELENA byte codes (or ecodes)
  setsubj m                  - ext.subject << m
 
  setverb m                  - ext.verb << m
+
+ shiftn n                   - index >> n  => index
  
  sub                        - index -= ext
 
@@ -400,11 +407,6 @@ ELENA byte codes (or ecodes)
 
 
 
- register commands:
- ------------------            
- address label              - load label address to ext
-
-
  control commands:
  -----------------                     
  exclude                    - exclude the stack content from managed space
@@ -418,17 +420,9 @@ ELENA byte codes (or ecodes)
  
  calling commands:
  -----------------  
- equit                      - terminates the procedure ; clear the stack parameters, based
-                              on ext
-
-                                                                      
- exception handling:
- --------------- 
                                                                       
  class handling:
  --------------- 
- mindex                      - search for ext in acc:VMT; out: index or -1
- 
  message i                   - acc::VMT[i].message >> index
 
  wread                      - [base][index*2] >> [short]ext

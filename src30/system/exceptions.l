@@ -35,7 +35,7 @@
             aBufferLength << 512.
             $self read &index:anIndex &bytearray:aBuffer &vlength:aBufferLength.
             
-            aCallStackText := aCallStackText add &literal:(LiteralValue new &length:aBufferLength &bytearray:aBuffer) add &literal:'newLine.
+            aCallStackText := aCallStackText add &literal:(LiteralValue $new &length:aBufferLength &index:0 &bytearray:aBuffer) add &literal:'newLine.
             
             anIndex := anIndex + 1.
         ].

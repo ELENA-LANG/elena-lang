@@ -348,6 +348,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcACopyS:
          case bcACopyF:
          case bcBCopyS:
+         case bcBCopyF:
          case bcALoadAI:
          case bcALoadFI:
          case bcPushAI:
@@ -395,7 +396,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcNext:
          case bcJump:
          case bcHook:
-         //case bcAddress:
+         case bcAddress:
             compileJump(opcode, token, writer, info);
             break;
          case bcIfM:

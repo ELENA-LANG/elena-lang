@@ -31,7 +31,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 
     #method read &index:anIndex &length:aLength &bytearray:aDump
@@ -98,7 +98,7 @@
 
     #method shortarray = $self.
 
-    #method readLlength &vint:aLength
+    #method readLength &vint:aLength
         => system'internal'sa_getlen.
         
     #method length
@@ -106,7 +106,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 
     #method read &index:anIndex &length:aLength &shortarray:anArray
@@ -157,7 +157,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
     
     #method intarray = $self.
@@ -199,7 +199,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
     
     #method chararray = $self.
@@ -254,6 +254,9 @@
     #constructor new &length:aSize &index:anIndex &chararray:anArray
         => system'internal's_copysubarr.
 
+    #constructor $new &length:aSize &index:anIndex &bytearray:anArray
+        => system'internal's_copybuf.
+
     #method literal = $self.
     
     #method wide = wideConvertor convert &literal:$self.
@@ -293,7 +296,7 @@
         #var(type:vchar)aChar.
         $self read &index:anIndex &vchar:aChar.
         
-        ^ CharValue new &vchar:aChar.
+        ^ CharValue new &char:aChar.
     ]
 
     #method indexOf &index:anIndex &literal:aLiteral &vint:aRetVal
@@ -307,7 +310,7 @@
         #var(type:vint)aRetVal.
         $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
         
-        ^ IntNumber new &vint:aRetVal.
+        ^ IntNumber new &int:aRetVal.
     ]
 
     #method indexOf &index:anIndex &literal:aLiteral
@@ -315,7 +318,7 @@
         #var(type:vint)aRetVal.
         $self indexOf &index:anIndex &literal:aLiteral &vint:aRetVal.
         
-        ^ IntNumber new &vint:aRetVal.
+        ^ IntNumber new &int:aRetVal.
     ]
 
     #method(type:literal) insert &index:anIndex &literal:aLiteral
@@ -341,7 +344,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 
     #method enumerator = LiteralEnumerator new &literal:$self.
@@ -476,6 +479,9 @@
     #constructor new &length:aSize &index:anIndex &chararray:anArray
         => system'internal'ws_copysubarr.
 
+    #constructor $new &length:aSize &index:anIndex &shortarray:anArray
+        => system'internal'ws_copybuf.
+
     #method wide = $self.
 
     #method literal = literalConvertor convert &wide:$self.
@@ -515,7 +521,7 @@
         #var(type:vchar)aChar.
         $self read &index:anIndex &vchar:aChar.
         
-        ^ CharValue new &vchar:aChar.
+        ^ CharValue new &char:aChar.
     ]
 
     #method indexOf &index:anIndex &wide:aLiteral &vint:aRetVal
@@ -529,7 +535,7 @@
         #var(type:vint)aRetVal.
         $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
         
-        ^ IntNumber new &vint:aRetVal.
+        ^ IntNumber new &int:aRetVal.
     ]
 
     #method indexOf &index:anIndex &wide:aLiteral
@@ -537,7 +543,7 @@
         #var(type:vint)aRetVal.
         $self indexOf &index:anIndex &wide:aLiteral &vint:aRetVal.
         
-        ^ IntNumber new &vint:aRetVal.
+        ^ IntNumber new &int:aRetVal.
     ]
 
     #method(type:wide) insert &index:anIndex &wide:aLiteral
@@ -560,7 +566,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 
     #method save &index:anIndex &chararray:anArray &vlength:aLength
@@ -679,7 +685,7 @@
         #var(type:vbyte)retVal.
         byteConvertor convert &literal:theValue &vbyte:retVal.
         
-        ^ ByteNumber new &vbyte:retVal.
+        ^ ByteNumber new &byte:retVal.
     ]
 
     #method short
@@ -687,15 +693,15 @@
         #var(type:vshort)retVal.
         shortConvertor convert &literal:theValue &vshort:retVal.
         
-        ^ ShortNumber new &vshort:retVal.
+        ^ ShortNumber new &short:retVal.
     ]
 
     #method char
     [
         #var(type:vchar)retVal.
-        charConvertor convert &literal:theValue &vchar:retVal.
+        charConvertor $convert &index:0 &literal:theValue &vchar:retVal.
         
-        ^ CharValue new &vchar:retVal.
+        ^ CharValue new &char:retVal.
     ]
 
     #method int
@@ -703,7 +709,7 @@
         #var(type:vint)retVal.
         intConvertor convert &literal:theValue &vint:retVal.
         
-        ^ IntNumber new &vint:retVal.
+        ^ IntNumber new &int:retVal.
     ]
 
     #method long
@@ -711,7 +717,7 @@
         #var(type:vlong)retVal.
         longConvertor convert &literal:theValue &vlong:retVal.
         
-        ^ LongNumber new &vlong:retVal.
+        ^ LongNumber new &long:retVal.
     ]
 
     #method real
@@ -719,7 +725,7 @@
         #var(type:vreal)retVal.
         realConvertor convert &literal:theValue &vreal:retVal.
         
-        ^ RealNumber new &vreal:retVal.
+        ^ RealNumber new &real:retVal.
     ]
 
     #method literal = theValue.
@@ -826,7 +832,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 
     #method enumerator = ArrayEnumerator new &array:$self.
@@ -853,7 +859,7 @@
         #var(type:vint)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &vint:aLength.
+        ^ IntNumber new &int:aLength.
     ]
 }
 
@@ -981,7 +987,7 @@
     #method next
     [
         #var(type:vint)aLength.
-        #var(type:int)aCharLen.
+        #var(type:vint)aCharLen.
         
         theLiteral readLength &vint:aLength.
 

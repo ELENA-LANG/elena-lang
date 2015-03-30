@@ -43,6 +43,7 @@ enum ByteCode
    bcGet             = 0x18,
    bcSet             = 0x19,
    bcInc             = 0x1A,
+   bcEQuit           = 0x1B,
    //bcLoad            = 0x1C,
    bcUnhook          = 0x1D,
    bcAdd             = 0x1E,
@@ -64,6 +65,7 @@ enum ByteCode
    bcFlag            = 0x33, 
    bcNLen            = 0x34,
    bcClass           = 0x36,
+   bcMIndex          = 0x37,
    bcCall            = 0x38,
    bcACallVD         = 0x39,
 
@@ -146,6 +148,7 @@ enum ByteCode
    bcCallR           = 0xA3,
    bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
+   bcAddress         = 0xA7,
    bcLess            = 0xA9,
    bcNotLess         = 0xAA,
    bcIfB             = 0xAB,
@@ -219,10 +222,8 @@ enum ByteCode
 
 
 
-   //bcEQuit          = 0x1B,
 
 
-   //bcMIndex         = 0x37,
    //bcXClone         = 0x3E,
 
    //bcWToN           = 0x49,
@@ -246,7 +247,6 @@ enum ByteCode
    //bcWToR           = 0x89,
 
 
-   //bcAddress        = 0xA7,
    //bcMessage        = 0xA8,
 
 
@@ -410,7 +410,7 @@ public:
          case bcNext:
          case bcIfHeap:
          case bcHook:
-         //case bcAddress:
+         case bcAddress:
          case bcXJumpRM:
             return true;
          default:

@@ -18,12 +18,12 @@ const char* _fnOpcodes[256] =
    "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
    "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
-   "get", "set", "inc", "unknown", "unknown", "unhook", "add", "create",
+   "get", "set", "inc", "equit", "unknown", "unhook", "add", "create",
 
    "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "unknown", "blen", "wlen", "flag", "nlen", "unknown", "class", "unknown",
+   "unknown", "blen", "wlen", "flag", "nlen", "unknown", "class", "mindex",
    "call", "acallvd", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "bcopys",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
-   "jump", "ajumpvi", "acallvi", "callr", "unknown", "callextr", "hook", "unknown",
+   "jump", "ajumpvi", "acallvi", "callr", "unknown", "callextr", "hook", "address",
    "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
    "pushn", "unknown", "pushr", "unknown", "pushai", "unknown", "pushfi", "dloadfi",
@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "new", "newn", "unknown", "unknown", "xindexrm", "xjumprm", "selectr", "lessn",
-   "ifm", "lessm", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
+   "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
 };
 
 using namespace _ELENA_;
@@ -409,7 +409,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcElseM:              
             case bcNext:
             case bcHook:
-            //case bcAddress:
+            case bcAddress:
             case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);

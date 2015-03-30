@@ -3082,7 +3082,7 @@ labSave:
 
 end
 
-procedure coreapi'strtochararry
+procedure coreapi'strtochararray
 
   push eax
   push edi
@@ -3165,7 +3165,7 @@ labSave:
 
 end
 
-procedure coreapi'wstrtochararry
+procedure coreapi'wstrtochararray
 
   push eax
   push edi

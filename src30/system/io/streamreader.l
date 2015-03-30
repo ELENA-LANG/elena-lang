@@ -16,7 +16,10 @@
     
     #method read &bytearray:anArray &length:aLength
     [
-        #var(type:length)aRead := $self read &bytearray:anArray &length:aLength.
+        #var(type:vlength)aRead.
+        aRead << aLength.
+        
+        $self read &bytearray:anArray &vlength:aRead.
          
         (aLength > aRead)
             ? [ #throw IOException new. ].
@@ -92,7 +95,7 @@
         #var(type:bytearray,size:8)aBuffer.
         #var(type:vlength)aRead := 8.
         
-        $self read &bytearray:aBuffer &length:8 &vlength:aRead.
+        $self read &bytearray:aBuffer &vlength:aRead.
         
         (aRead < 8)
             ? [ #throw IOException new. ].
@@ -147,9 +150,6 @@
             ? [
                 aLine := theOutput literal.                
                 theOutput clear.
-                
-                (aLine is &empty)
-                    ? [ ^ nil. ].
             ]
             ! [ 
                 aLine := theOutput Substring &index:0 &length:(aLength - 1).
@@ -171,7 +171,7 @@
             (aLength == -1)
                 ? [
                     #var(type:chararray,size:64)aBuffer.
-                    #var(type:length)aBufferLength := 64.
+                    #var(type:vlength)aBufferLength := 64.
                     
                     $self read &chararray:aBuffer &vlength:aBufferLength.
                     (aBufferLength == 0)
@@ -184,12 +184,9 @@
             ? [
                 aLine := theOutput wide.                
                 theOutput clear.
-                
-                (aLine is &empty)
-                    ? [ ^ nil. ].
             ]
             ! [ 
-                aLine := theOutput SubWideString &index:0 &length:(aLength - 1).
+                aLine := theOutput WideSubstring &index:0 &length:(aLength - 1).
                 theOutput delete &index:0 &length:(1 + aLength).
             ].            
 

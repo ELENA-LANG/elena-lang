@@ -20,16 +20,6 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              xdev - redesign
-                       * get rid of out prefix, replace all out'int with intvar
-
-                       s read &length &intvar:n
-                       s read &lenvar:n
-
-                       s readLength &intvar:n
-                       s readLength &vint:n
-
-
               adev - lib30 : redesign
                        * make sure intvar can be passed as int without major overhead (no explicit typecasting)
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
@@ -506,6 +496,7 @@ week 4:
 --------
 week1:
               xdev - generic development  
+                       * external call : vint can be passed as int (see ThreadHandle)
                        * wide literal constant
                        * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
                          not, than the operation with self should be boxed?

@@ -14,10 +14,17 @@
 
     #method writeLine : anObject
     [
-        theWriter write &literal:(anObject literal) write &literal:theNewLineConstant.
+        theWriter write &literal:(anObject literal).
+        
+        $self write:theNewLineConstant.
     ]
 
     #method write : anObject
+    [
+        anObject cast:%write &to:$self.
+    ]
+
+    #method(generic) write : anObject
     [
         theWriter write &literal:(anObject literal).
     ]
@@ -29,7 +36,7 @@
 
     #method writeLine
     [
-        theWriter write &literal:theNewLineConstant.
+        theWriter write:theNewLineConstant.
     ]
 
     #method readLine

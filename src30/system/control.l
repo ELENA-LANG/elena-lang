@@ -147,7 +147,7 @@
         #var(type:vint)anIndex := 0.
         $self readIndex &vint:anIndex.
                         
-        ^ IntNumber new &vint:anIndex.
+        ^ IntNumber new &int:anIndex.
     ]                
     
     #method write &index:anIndex [] 

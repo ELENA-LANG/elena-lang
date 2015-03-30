@@ -279,6 +279,7 @@ namespace _ELENA_
    const int elSealed              = 0x00000120;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000440;
+   const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;

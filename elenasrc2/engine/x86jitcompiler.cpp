@@ -68,16 +68,16 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 109;
+const int gcCommandNumber = 112;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
-   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, //bcMIndex,
+   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
    bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
    bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
    bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, //bcELoadSI,
-   /*bcEQuit, */bcAJumpVI, bcASaveBI, bcXCallRM, //bcESaveSI,
+   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, //bcESaveSI,
    bcGet, bcSet, bcXSet, bcCall, bcBReadB,
    bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
@@ -96,7 +96,7 @@ const int gcCommands[gcCommandNumber] =
    bcSelectR, bcNext, //bcXClone,
    /*bcLRndNew, bcLRndNext, */bcRAbs, bcRExp, bcRInt, 
    bcRLn, bcRRound, //bcRSin, bcRCos, bcRArcTan,
-   /*bcAddress, */bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
+   bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI
 };
 
@@ -107,12 +107,12 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDCopySubj,
 
    &compileNot, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
-   &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &compileNop, &compileNop, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteOp, &compileNop, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &compileNop,
+   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
    &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
@@ -133,7 +133,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDCopy, &compileECopy, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &compileBCopyS,
    &compileOpen, &compileQuitN, &compileBCopyR, &compileBCopyF, &compileACopyF, &compileACopyS, &compileACopyR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileNop,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileHook,
    &compileNop, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
 
    &compilePush, &compileNop, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,

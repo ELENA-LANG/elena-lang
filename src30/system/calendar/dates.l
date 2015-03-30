@@ -167,9 +167,10 @@
 
     #constructor now
     [
-        #var(type:long)aValue := dateTimeControl read &CurrentUTCTime.
+        #var(type:vlong)aValue.
+        dateTimeControl read &CurrentUTCTime &vlong:aValue.
         
-        aValue := dateTimeControl convertUTC2Local &long:aValue.
+        dateTimeControl convertUTC2Local &long:aValue &vlong:aValue.
         
         theValue := aValue.
     ]
@@ -190,7 +191,9 @@
         aSystemTime set &second:(aSecond int).
         aSystemTime set &millisecond:0.
         
-        theValue := aSystemTime long.
+        #var(type:vlong)aValue.
+        aSystemTime read &vlong:aValue.        
+        theValue := aValue.
     ]
     
     #constructor new &year:aYear &month:aMonth &day:aDay
@@ -205,14 +208,16 @@
    
     #method equal &datetime:aDate
     [
-        #var(type:long)aValue := aDate long.
+        #var(type:vlong)aValue.
+        aDate read &vlong:aValue.
         
         ^ aValue == theValue.
     ]
 
     #method less &datetime:aDate
     [
-        #var(type:long)aValue := aDate long.
+        #var(type:vlong)aValue.
+        aDate read &vlong:aValue.
         
         ^ aValue < theValue.
     ]
@@ -319,7 +324,8 @@
         
         #var m2 := aSystemTime month.
         
-        #var(type:long)aRetVal := aSystemTime long.
+        #var(type:vlong)aRetVal.
+        aSystemTime read &vlong:aRetVal.
         
         ^ Date new &long:aRetVal.
     ]
@@ -338,7 +344,8 @@
         aSystemTime set &year:(aSystemTime year add &int:Years).
         aSystemTime set &month:(aSystemTime month add &int:aMonths).
         
-        #var(type:long)aRetVal := aSystemTime long.
+        #var(type:vlong)aRetVal.
+        aSystemTime read &vlong:aRetVal.
         
         ^ Date new &long:aRetVal.
     ]
@@ -378,7 +385,8 @@
 
 #symbol utcNow =
 [
-    #var(type:long)aValue := dateTimeControl read &CurrentUTCTime.
+    #var(type:vlong)aValue.
+    dateTimeControl read &CurrentUTCTime &vlong:aValue.
     
     ^ Date new &long:aValue.
 ] eval.

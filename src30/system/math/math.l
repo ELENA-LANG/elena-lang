@@ -244,7 +244,7 @@
     #method(type:real) absolute
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal.
+        #var(type:vreal)aRetVal.
         
         realOpController abs &real:n &vreal:aRetVal.
         
@@ -254,7 +254,7 @@
     #method(type:real) exp
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal.
+        #var(type:vreal)aRetVal.
         
         realOpController exp &real:n &vreal:aRetVal.
         
@@ -264,7 +264,7 @@
     #method(type:real) ln
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal.
+        #var(type:vreal)aRetVal.
         
         realOpController ln &real:n &vreal:aRetVal.
         
@@ -274,7 +274,7 @@
     #method(type:real) rounded
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal.
+        #var(type:vreal)aRetVal.
         
         realOpController round &real:n &vreal:aRetVal.
         
@@ -284,7 +284,7 @@
     #method(type:real) integer
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal.
+        #var(type:vreal)aRetVal.
         
         realOpController truncate &real:n &vreal:aRetVal.
         
@@ -294,7 +294,7 @@
     #method(type:real) frac
     [
         #var(type:real)n := self real.        
-        #var(type:real)aRetVal.
+        #var(type:vreal)aRetVal.
         
         realOpController abs &real:n &vreal:aRetVal.
         

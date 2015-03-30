@@ -14,7 +14,7 @@
             &shortarray:aBuffer
             &int:aCommandLinePtr.
             
-        ^ WideLiteralValue new &length:aCommandLineLen &shortarray:aBuffer .
+        ^ WideLiteralValue $new &length:aCommandLineLen &index:0 &shortarray:aBuffer .
     ]
 }.
 

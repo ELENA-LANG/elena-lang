@@ -101,10 +101,10 @@
         #loop (aTotal > 0) ?
         [
             (aTotal < 64)
-                ? [ aBlockLength := aTotal. ]
-                ! [ aBlockLength := 64. ].
+                ? [ aBlockLength << aTotal. ]
+                ! [ aBlockLength << 64. ].
                 
-            theEncoder convert &chararray:anInput &vlength:aBlockLength &bytearray:aBuffer &vlength:aBufferLength.
+            theEncoder convert &index:0 &vlength:aBlockLength &chararray:anInput &bytearray:aBuffer &vlength:aBufferLength.
             
             theStream write &bytearray:aBuffer &length:aBufferLength.
             
@@ -147,7 +147,7 @@
                 
         #var(type:vint)aRead := aBufferLength.
                 
-        theEncoder convert &bytearray:aBuffer &vlength:aBufferLength &chararray:anOutput &vlength:aLength.
+        theEncoder convert &index:0 &vlength:aBufferLength &bytearray:aBuffer &chararray:anOutput &vlength:aLength.
         
         (aRead > aBufferLength)
             ? [ theStream reduce &index:(aRead - aBufferLength). ].

@@ -99,7 +99,7 @@
             &int:0
             | raise:(FormatException new:"Invalid date").
 
-        ^ WideLiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
+        ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                
     ]
     
     #method get &wide &int_time_attributes:Flags
@@ -116,7 +116,7 @@
             &int:0
             | raise:(FormatException new:"Invalid time").
 
-        ^ WideLiteralValue new &length:(aLength - 1) &shortarray:aBuffer.                
+        ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                
     ]
 }
 

@@ -1316,6 +1316,19 @@ lEnd:
 
 end
 
+// ; equit
+inline % 1Bh
+
+  mov  edx, ecx
+  pop  ebx
+  and  edx, 000000Fh
+  lea  esp, [esp + edx * 4 + 4]
+  jmp  ebx
+  nop
+  nop
+ 
+end
+
 // ; unhook
 inline % 1Dh
 
@@ -1450,6 +1463,39 @@ end
 inline % 36h
 
   mov eax, [edi - elVMTOffset]
+
+end
+
+// ; mindex
+inline % 37h
+
+  push edi
+  mov  edi, [eax-4]
+  xor  ebx, ebx
+  mov  edx, [edi - elVMTSizeOffset]
+
+labSplit:
+  test edx, edx
+  jz   short labEnd
+
+labStart:
+  shr  edx, 1
+  setnc bl
+  cmp  ecx, [edi+edx*8]
+  jb   short labSplit
+  nop
+  nop
+  jz   short labFound
+  lea  edi, [edi+edx*8+8]
+  sub  edx, ebx
+  jnz  short labStart
+  nop
+  nop
+labEnd:
+  mov  esi, -1  
+
+labFound:
+  pop  edi  
 
 end
 
@@ -2365,6 +2411,14 @@ inline % 0A6h
   mov  [data : %CORE_EXCEPTION_TABLE], ecx
   mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
   mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
+  
+end
+
+// ; address label (ecx - offset)
+
+inline % 0A7h
+
+  call code : %HOOK
   
 end
 

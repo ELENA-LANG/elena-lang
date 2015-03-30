@@ -23,13 +23,13 @@
         #var(type:vint)aLength.
         #var(type:shortarray,size:3)aBuffer.
 
-        charConvertor save &char:aChar &shortarray:aBuffer &index:0 &vlength:aLength.
+        charConvertor save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
         
         aBuffer write &index:aLength &short:0.
         
         system'external'USER32 CharUpperW &shortarray:aBuffer.
         
-        charConvertor convert &shortarray:aBuffer &index:0 &vchar:aRetVal.
+        charConvertor $convert &index:0 &shortarray:aBuffer &vchar:aRetVal.
     ]
     
     toLowerCase &char:aChar &vchar:aRetVal
@@ -37,12 +37,12 @@
         #var(type:vint)aLength.
         #var(type:shortarray,size:3)aBuffer.
 
-        charConvertor save &char:aChar &shortarray:aBuffer &index:0 &vlength:aLength.
+        charConvertor save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
         
         aBuffer write &index:aLength &short:0.
         
         system'external'USER32 CharLowerW &shortarray:aBuffer.
         
-        charConvertor convert &shortarray:aBuffer &index:0 &vchar:aRetVal.
+        charConvertor $convert &index:0 &shortarray:aBuffer &vchar:aRetVal.
     ]
 }.

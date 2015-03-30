@@ -2152,11 +2152,22 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
       ref_t wrapper = 0;
       int size = scope.moduleScope->defineTypeSize(object.extraparam, wrapper);
       if (size != 0) {
-         // if target is known and supports primitive type, boxing could be skipped
-         if (test(mode, HINT_KNOWN_CALL) && argType != 0 && wrapper == scope.moduleScope->resolveStrongType(argType)) {
-            return false;
+         if (test(mode, HINT_KNOWN_CALL) && argType != 0) {
+            // if target is known and supports primitive type, boxing could be skipped
+            if (wrapper == scope.moduleScope->resolveStrongType(argType)) {
+               return false;
+            }
+            // if the object can be implicitly typecasted to the target, boxing could be skipped
+            else if (size == scope.moduleScope->defineTypeSize(argType)) {
+               ClassInfo info;
+               if (scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(wrapper), false) != 0) {
+                  if (test(info.header.flags, elStructureWrapper) && scope.moduleScope->typeHints.exist(info.fieldTypes.get(0), scope.moduleScope->typeHints.get(argType)))
+                     return false;
+               }
+            }
          }
-         else return true;
+
+         return true;
       }
       else return false;
    }
@@ -2849,6 +2860,9 @@ bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator
    if (lflag == elDebugDWORD) {
       result.param = moduleScope->intReference;
    }
+   else if (lflag == elDebugQWORD) {
+      result.param = moduleScope->longReference;
+   }
    else return false;
 
    _writer.popObject(*scope.tape, ObjectInfo(okBase));
@@ -2859,9 +2873,9 @@ bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator
    if (lflag == elDebugDWORD) {
       _writer.doIntOperation(*scope.tape, operator_id);
    }
-   //else if (lflag == elDebugQWORD) {
-   //   _writer.doLongOperation(*scope.tape, operator_id);
-   //}
+   else if (lflag == elDebugQWORD) {
+      _writer.doLongOperation(*scope.tape, operator_id);
+   }
    //else if (lflag == elDebugReal64) {
    //   _writer.doRealOperation(*scope.tape, operator_id);
    //}
@@ -3801,8 +3815,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                   if (targetSize != 0 && targetSize == objectSize) {
                      ClassInfo info;
                      if (moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(objectReference), false) != 0) {
-                        if (test(info.header.flags, elStructureWrapper) && info.fieldTypes.exist(0, type_ref)) {
-
+                        if (test(info.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(info.fieldTypes.get(0), strongReference)) {
                            ObjectInfo primitive(okLocal, 0, type_ref);
 
                            allocateStructure(scope, 0, primitive);

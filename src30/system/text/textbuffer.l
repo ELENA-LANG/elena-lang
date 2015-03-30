@@ -39,10 +39,10 @@
     #method chararray = theBuffer.
 
     #method literal
-        = LiteralValue new &length:theLength &chararray:theBuffer.
+        = LiteralValue new &length:theLength &index:0 &chararray:theBuffer.
 
     #method wide
-        = WideLiteralValue new &length:theLength &chararray:theBuffer.
+        = WideLiteralValue new &length:theLength &index:0 &chararray:theBuffer.
 
     #method write : aLine
     [
@@ -89,7 +89,7 @@
         [
             $self reserve &length:aLength.
             
-            theBuffer write &index:theLength &length:aLength &literal:aLiteral.
+            aLiteral save &index:theLength &chararray:theBuffer &vlength:aLength.
             
             theLength += aLength.
         ].
@@ -104,7 +104,7 @@
         [
             $self reserve &length:aLength.
             
-            aLength := aLiteral save &index:theLength &length:aLength &chararray:theBuffer.
+            aLiteral save &index:theLength &chararray:theBuffer &vlength:aLength.
             
             theLength += aLength.
         ].
@@ -150,13 +150,13 @@
     #method insert &index:anIndex &literal:aLiteral
     [
         #var(type:vint)aLength.
-        UTF8Encoding charCount &inLiteral:aLiteral &vint:aLength.
+        UTF8Encoding charCount &literal:aLiteral &vint:aLength.
 
         $self reserve &length:aLength.
         
         theBuffer move &index:anIndex &length:theLength &offset:aLength.
         
-        aLiteral save &index:anIndex &length:aLength &chararray:theBuffer.
+        aLiteral save &index:anIndex &chararray:theBuffer &vlength:aLength.
         
         theLength += aLength.
     ]
@@ -164,13 +164,13 @@
     #method insert &index:anIndex &wide:aLiteral
     [
         #var(type:vint)aLength.
-        UTF16Encoding charCount &inLiteral:aLiteral &vint:aLength.
+        UTF16Encoding charCount &wide:aLiteral &vint:aLength.
 
         $self reserve &length:aLength.
         
         theBuffer move &index:anIndex &length:theLength &offset:aLength.
         
-        aLiteral save &index:anIndex &length:aLength &chararray:theBuffer.
+        aLiteral save &index:anIndex &chararray:theBuffer &vlength:aLength.
         
         theLength += aLength.
     ]
@@ -193,7 +193,7 @@
         
         #loop (anIndex < theLength)?
         [
-            theBuffer getAt &index:anIndex &vchar:aCurrent.
+            theBuffer read &index:anIndex &vchar:aCurrent.
             
             (aCurrent == aValue)
                 ? [ aRetVal << anIndex. ^$self. ].
@@ -214,19 +214,19 @@
         
         aLiteral readLength &vint:aLiteralLength.
         
-        aLiteral getAt &index:0 &vchar:aFirstChar.
+        aLiteral read &index:0 &vchar:aFirstChar.
         
         #loop (anIndex < theLength)?
         [
-            theBuffer getAt &index:anIndex &vchar:aCurrent.
+            theBuffer read &index:anIndex &vchar:aCurrent.
             
             (aCurrent == aFirstChar) ?
             [ 
                 #var(type:int)j := 1.
                 #loop (j < aLiteralLength) ?
                 [
-                    theBuffer getAt &index:anIndex &vchar:aCurrent.
-                    aLiteral getAt &index:j &vchar:aNextChar.
+                    theBuffer read &index:(anIndex + j) &vchar:aCurrent.
+                    aLiteral read &index:j &vchar:aNextChar.
                     
                     (aNextChar != aCurrent)
                         ? [ j := aLiteralLength. ].
@@ -254,19 +254,19 @@
         
         aLiteral readLength &vint:aLiteralLength.
         
-        aLiteral getAt &index:0 &vchar:aFirstChar.
+        aLiteral read &index:0 &vchar:aFirstChar.
         
         #loop (anIndex < theLength)?
         [
-            theBuffer getAt &index:anIndex &vchar:aCurrent.
+            theBuffer read &index:anIndex &vchar:aCurrent.
             
             (aCurrent == aFirstChar) ?
             [ 
                 #var(type:int)j := 1.
                 #loop (j < aLiteralLength) ?
                 [
-                    theBuffer getAt &index:anIndex &vchar:aCurrent.
-                    aLiteral getAt &index:j &vchar:aNextChar.
+                    theBuffer read &index:(anIndex + j) &vchar:aCurrent.
+                    aLiteral read &index:j &vchar:aNextChar.
                     
                     (aNextChar != aCurrent)
                         ? [ j := aLiteralLength. ].
@@ -316,10 +316,10 @@
         ^ LiteralValue new &length:aLength &index:anIndex &chararray:theBuffer.
     ]
 
-    #method(type:literal) SubWideString &index:anIndex &length:aLength
+    #method(type:wide) WideSubstring &index:anIndex &length:aLength
     [
         (aLength == 0)
-            ? [ ^ emptyLiteralValue. ].
+            ? [ ^ emptyWideLiteralValue. ].
             
         ^ WideLiteralValue new &length:aLength &index:anIndex &chararray:theBuffer.
     ]
