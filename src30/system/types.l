@@ -50,6 +50,8 @@
 // === logical types ===
 #subject(class:system'BaseBoolValue) bool.
 
+#subject string.
+
 // === nested functions ===
 
 #subject(class:system'IndexFunction1)nfunc.
@@ -86,7 +88,6 @@
 #subject key.
 
 // === extension types ===
-#subject textio.
 #subject enumerable.
 #subject indexable.
 

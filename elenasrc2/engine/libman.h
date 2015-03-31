@@ -45,10 +45,10 @@ public:
       _package.copy(package);
       _packagePath.copy(path);
    }
-//   void setPackage(const wchar16_t* package)
-//   {
-//      _package.copy(package);
-//   }
+   void setPackage(ident_t package)
+   {
+      _package.copy(package);
+   }
 
    void nameToPath(ident_t moduleName, Path& path, ident_t extension)
    {

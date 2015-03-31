@@ -124,16 +124,20 @@
 {
     #field(type:stream) theStream.
     #field(type:encoder) theEncoder.
+    #field(type:bool) theOpen.
 
     #constructor new &stream:aStream &encoder:anEncoder
         <= ( %new )
     [
         theStream := aStream.
         theEncoder := anEncoder.
+        theOpen := true.
     ]
 
     #constructor new &path:aPath
         <= %new &stream:(FileStream openForRead &path:aPath) &encoder:UTF8Encoder.
+
+    #method available = theOpen.
 
     #method stream = theStream.
 
@@ -144,13 +148,16 @@
         #var(type:vint)aBufferLength := 64.
         #var(type:bytearray,size:64)aBuffer.
         theStream read &bytearray:aBuffer &vlength:aBufferLength.
+        (aBufferLength == 0)
+            ? [ theOpen := false. ]
+            ! [
+                #var(type:vint)aRead := aBufferLength.
+                        
+                theEncoder convert &index:0 &vlength:aBufferLength &bytearray:aBuffer &chararray:anOutput &vlength:aLength.
                 
-        #var(type:vint)aRead := aBufferLength.
-                
-        theEncoder convert &index:0 &vlength:aBufferLength &bytearray:aBuffer &chararray:anOutput &vlength:aLength.
-        
-        (aRead > aBufferLength)
-            ? [ theStream reduce &index:(aRead - aBufferLength). ].
+                (aRead > aBufferLength)
+                    ? [ theStream reduce &index:(aRead - aBufferLength). ].
+            ].
     ]
     
     #method close

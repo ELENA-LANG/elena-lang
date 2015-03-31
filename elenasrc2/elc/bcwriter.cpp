@@ -817,11 +817,12 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    // get
    // inc
    // elser labSearch
+   // dec
    // acopyr vmt
    // create
 
    // pusha
-   // len
+   // xlen
    // dcopy 0
    // labCopy:
    // get
@@ -829,8 +830,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    // xset
    // bswapsi 0
    // next labCopy
-   // acopyb
-   // pop
+   // popa
 
    tape.write(bcBCopyA);
    tape.write(bcDCopy, 0);
@@ -841,11 +841,12 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
 
+   tape.write(bcDec);
    tape.write(bcACopyR, vmtReference);
    tape.write(bcCreate);
 
    tape.write(bcPushA);
-   tape.write(bcLen);
+   tape.write(bcXLen);
    tape.write(bcDCopy, 0);
    tape.newLabel();
    tape.setLabel(true);
@@ -856,8 +857,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcNext, baCurrentLabel);
    tape.releaseLabel();
 
-   tape.write(bcPop);
-   tape.write(bcACopyB);
+   tape.write(bcPopA);
 }
 
 void ByteCodeWriter :: unboxArgList(CommandTape& tape)
@@ -868,6 +868,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    // get
    // inc
    // elser labSearch
+   // dec
    // ecopyd
    // pushn 0
 
@@ -887,6 +888,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    tape.write(bcInc);
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
+   tape.write(bcDec);
    tape.write(bcECopyD);
    tape.write(bcPushN, 0);
 
@@ -936,15 +938,19 @@ void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 
 void ByteCodeWriter :: releaseArgList(CommandTape& tape)
 {
+   // bcopya
    // labSearch:
    // popa
    // elser labSearch
+   // acopyb
 
+   tape.write(bcBCopyA);
    tape.newLabel();
    tape.setLabel(true);
    tape.write(bcPopA);
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
+   tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)
@@ -2041,15 +2047,19 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
          tape.write(bcNCopy);
          break;
       case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
          tape.write(bcNAdd);
          break;
       case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
          tape.write(bcNSub);
          break;
       case MUL_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
          tape.write(bcNMul);
          break;
       case DIV_MESSAGE_ID:
+      case SEPARATE_MESSAGE_ID:
          tape.write(bcNDiv);
          break;
       case AND_MESSAGE_ID:

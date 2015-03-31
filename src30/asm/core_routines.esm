@@ -889,6 +889,7 @@ procedure char_getlen
   eaddn 1
   // ; - 4
 labEnd:
+  dcopye
   nsave  
   quitn 2
 
@@ -3366,6 +3367,7 @@ labSearch:
   get
   inc
   elser labSearch 0
+  dec
   ecopyd
   bloadsi 2
   nsave
@@ -3473,14 +3475,13 @@ end
 procedure callstack_readaddressinfo
 
   pusha
-  aloadsi 4
+  aloadsi 5
   pusha
-  aloadsi 3
+  aloadsi 5
   pusha
-  aloadsi 2
-  nload
-  pushd  
-  aloadsi 3
+  aloadsi 5
+  pusha
+  aloadsi 5
   aloadai 0
   pusha
 
@@ -3650,13 +3651,15 @@ procedure ws_copysubarr
   aloadsi 4
   open 1
   dreserve
-  bcopys -5
+  bcopys -2
   
   callr api : coreapi'ws_copychars
 
+  acopyr class : system'WideLiteralValue
+  inc
   wcreate
   bcopya
-  acopys -5
+  acopys 2
   copy
   
   acopyb
@@ -3681,20 +3684,23 @@ procedure s_copysubarr
   aloadsi 4
   open 1
   dreserve
-  bcopys -5
+  bcopys -2
   
   callr api : coreapi's_copychars
 
-  bcreate
+  acopyr class : system'LiteralValue
+  inc
+  wcreate
   bcopya
-  acopys -5
+  acopys 2
   copy
   
   acopyb
-  blen
+  wlen
   ecopy 0
   dec
-  bwriteb
+  shiftn -1
+  bwritew
   drestore
   close
   quitn 4
@@ -3731,16 +3737,19 @@ end
 
 procedure s_save
 
-  bloadsi 3
-  aloadsi 4
+  pusha
+  bloadsi 4
+  aloadsi 5
   nload
   ecopyd
-  aloadsi 2
+  aloadsi 3
   nload
+  aloadsi 0
   callr api : coreapi'strtochararray
-  aloadsi 4
+  bloadsi 5
   dcopye
   nsave
+  popa
 
   quitn 4
 
@@ -3748,16 +3757,20 @@ end
 
 procedure ws_save
 
-  bloadsi 3
-  aloadsi 4
+  pusha
+  bloadsi 4
+  aloadsi 5
   nload
   ecopyd
-  aloadsi 2
+  aloadsi 3
   nload
+  aloadsi 0
   callr api : coreapi'wstrtochararray
-  aloadsi 4
+  bloadsi 5
   dcopye
   nsave
+  popa
+  
   quitn 4
 
 end
@@ -3988,6 +4001,12 @@ end
 
 procedure s_copybuf
 
+  aloadsi 2
+  nload  
+  inc
+  acopyr class : system'LiteralValue
+  bcreate
+
   bcopya
   aloadsi 2
   nload
@@ -4004,6 +4023,12 @@ procedure s_copybuf
 end
 
 procedure ws_copybuf
+
+  aloadsi 2
+  nload  
+  inc
+  acopyr class : system'WideLiteralValue
+  wcreate
 
   bcopya
   aloadsi 2

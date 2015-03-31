@@ -13,7 +13,9 @@
     #method stream [ #throw NotSupportedException new. ]
 
     #method close [ ]
-    
+
+    #method(type:bool) available = false.
+            
     #method read &bytearray:anArray &length:aLength
     [
         #var(type:vlength)aRead.
@@ -125,6 +127,8 @@
 
     #method close [ ]
     
+    #method(type:bool) available = false.
+            
     #method(type:literal) read &literal
     [
         #var(type:literal) aLine := emptyLiteralValue.

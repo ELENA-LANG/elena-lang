@@ -3,7 +3,7 @@ define NEW_MESSAGE_ID       084000000h
 procedure rnd_init
 
   bcopya
-  lrndnew
+  callr api : coreapi'lrndnew
   acopyb
 
   quitn 1
@@ -17,13 +17,13 @@ procedure rnd_next
   aloadsi 2
   nload
   aloadsi 3
-  lrndnext  
+  callr api : lrndnext  
   acopyb
 
   quitn 3
 
 end
-
+/*
 procedure evaluate
 
   aloadsi 2
@@ -73,3 +73,4 @@ labErr:
   throw
   
 end
+*/

@@ -20,21 +20,18 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              adev - lib30 : redesign
-                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
+              adev - weekly
+                       * TextBuffer test : 
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
-                       * get rid of warnings
-                       * uncomment all system code
                        * uncomment all extension code
                        * uncomment tests                       
                        * tests
+                       * test basic samples
+                       * test rosettacode samples : amb, anagram, calender, caesar, bullscows, brackets, bestshuffle, arithmeval
                        * test rsave
                        * test real to int / short / byte conversion
-                       * test vm samples
+                       * test vm samples       
                        * test thread operation
-
-                       * encoder -> converts to array of unicode characters, and then returns either literal or wide
-                       
                        
               idev - bugs:
                        * fix call list
@@ -42,23 +39,9 @@ Currently:
                        * fix go to
 
               adev - lib30                       
-                       * aload : unboxArgList, handle_tape, handle_group
-
-                       * test unboxArgList
-
-                       * 0xD8 - 0xDA - reserved for string operations, so  cinsert - 0xD8 0x0001, ninsert - 0xDA 0x0001, 
-
-                       * new ecodes : 
-
-                          wtoc, ctow, wtou, utow, ctou, utoc, cton, ctoa, ctol, ltoc, rtoc, ctor, cseek, ecqual, cless, cadd
-
-                       * literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
-                       * wliteral, WideLiteralValue and WideString
                        * linux: support basic console operations
                        * system'text : encodings utf8, ansi, utf16, win1251, win1252
-                       * system'text : UTF8String
                        * linux : migrate lib30
-                       * Console / ConsoleEx - probably we should have two console objects - utf-16 one for windows and utf-8 for linux
                        
 <=================> 
                                               
@@ -73,10 +56,11 @@ week2:
                          dynamically for external operation
                        * support GUI mode
                        * support GUI application
-
                        
               adev - lib30                                        
                        * intarray, shortarray, bytearray, chararray should getAt and setAt messages
+
+                       * should cast, clone be part of system'Object - so it parts of any class, and direct call via VMT can be used for them
                        
                        * fix StructTest
 
@@ -92,6 +76,8 @@ week2:
                        * test dynamic_test
                        * test dynamic samples
                        * test literalOp.trim method
+
+                       * system'text : along with TextBuffer, it should be LiteralBuilder and WideBuilder - to be internally utf-8 and utf-16
 
                        * uncomment Real#class.new&int[1] and Real#class.new&long[1]
 
@@ -194,6 +180,7 @@ week2:
                        * LiteralValue#class : new&length&shortarray  - should the array be verified?
                        * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
                        * Literal operation like insert, delete, substring: there should be generic variant as well (e.g. s insert:s &at:3)
+                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
                                                                                                                              
               arev - lib30 review
                        * fix bytearray read / write operation with byte, char, int, long, real
@@ -221,7 +208,7 @@ week2:
                        * review literalControl.split&by - could we ismplify / beautify the code
                        
                        * ShortNumber.get&int - could we simplify the code, currently we have to call int explicitly because IntNumber is not yet defined
-
+                       
                        * review extensions'math'Matrix, simplify / optimize the code
 
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
@@ -531,6 +518,7 @@ week1:
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
                          signature
                        * break the loop
+                       * make posible to declare symbol which value can be defined in the project, e.g. constant forward (and typed constant forward)
                          
               xdev - general implementation
                        * win32 linker : should stat + bss be combined into single section?
@@ -560,11 +548,13 @@ week1:
                        * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
                        * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation                       
                        * literal constant should be converted into utf8 if it is passed as utf8_literal
+                       * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
 
               xdev - byte code optimization                               
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
                        * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
-
+                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
+                       
                        * optimize output code: system'BaseFunction2
                        * review system for possible byte code optimization                       
                        * review extensions for possible byte code optimization                       

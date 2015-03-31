@@ -10,9 +10,19 @@ using namespace _ELENA_;
 
 static Instance* instance = NULL;
 
+void loadDLLPath(HMODULE hModule, Path& rootPath)
+{
+   TCHAR path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   rootPath.copySubPath(path);
+   rootPath.lower();
+}
+
 // ==== DLL entries ====
 
-EXTERN_DLL_EXPORT void* Init(void* debugSection, const wchar16_t* package)
+EXTERN_DLL_EXPORT void* Init(void* debugSection, ident_t package)
 {
    if (instance) {
       if (debugSection == NULL) {
@@ -36,12 +46,12 @@ EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t
    return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-EXTERN_DLL_EXPORT int LoadAddressInfo(void* instance, size_t retPoint, wchar16_t* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadAddressInfo(void* instance, size_t retPoint, ident_c* lineInfo, int length)
 {
    return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, wchar16_t* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* lineInfo, int length)
 {
    // !! terminator code
    return 0;
@@ -76,8 +86,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    switch (ul_reason_for_call)
    {
    case DLL_PROCESS_ATTACH:
-      instance = new Instance();
+   {
+      Path rootPath;
+      loadDLLPath(hModule, rootPath);
+
+      instance = new Instance(rootPath);
       return TRUE;
+   }
    case DLL_THREAD_ATTACH:
    case DLL_THREAD_DETACH:
       return TRUE;

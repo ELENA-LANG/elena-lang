@@ -143,7 +143,7 @@ ELENA byte codes (or ecodes)
  
  dreserve                   - exclude part of the stack from managed stack frame;
                               should follow "open" byte code ;
-                              esp -= index * 4
+                              esp -= ext * 4
 
  dsavefi i                  - [fp:i] <= index
 
@@ -390,6 +390,8 @@ ELENA byte codes (or ecodes)
  
  xjumprm r, m               - jumps directly the method resolved by JIT by r and m
  
+ xlen                       - [acc].Count >> ext ;
+
  xset                       - acc => base[index] ;
                               ; direct
  

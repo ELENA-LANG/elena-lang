@@ -137,7 +137,9 @@
         
         self::enumerableOp run &each:anItem [ aList append:anItem ].
 
-        #var(type:int)aLength := aList length.
+        #var(type:vint)aLength.
+        aList readLength &vint:aLength.
+        
         #var(type:array) anArray := Array new &length:aLength.
         #var(type:enumerator)anEnumerator := aList enumerator.
         
@@ -801,7 +803,7 @@
     ]
 }
 
-#class(extension:textio)stringOp
+#class(extension:string) stringOp
 {
     #method write : aLiteral &length:aCounter
     [

@@ -74,7 +74,7 @@
         (aCatchBlock::theError get) eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
     ]
     
-    #method literal = theMessage add &literal:"%nCall stack:%n" add &literal:(theCallStack literal).
+    #method literal = theMessage add &literal:#10"Call stack:"#10 add &literal:(theCallStack literal).
     
     #method wide = $self literal wide.
     

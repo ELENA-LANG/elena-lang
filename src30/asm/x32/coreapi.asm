@@ -2958,6 +2958,7 @@ procedure coreapi'ws_copychars
   push edi
   lea  esi, [eax + esi * 4]
 
+labNext:
   mov  ebx, [esi]
   cmp  ebx, 010000h
   jl   short lab1
@@ -2968,12 +2969,11 @@ procedure coreapi'ws_copychars
   mov  word ptr [edi], dx
   add  edi, 2
 
-  mov  edx, ebx
-  and  edx, 03FFh
-  add  edx, 0DC00h
+  and  ebx, 03FFh
+  add  ebx, 0DC00h
    
 lab1:
-  mov  word ptr [edi], dx
+  mov  word ptr [edi], bx
   add  edi, 2
   lea  esi, [esi + 4]
   sub  ecx, 1
@@ -2993,6 +2993,7 @@ procedure coreapi's_copychars
   push edi
   lea  esi, [eax + esi * 4]
 
+labNext:
   mov  ebx, [esi]
   
   cmp  ebx, 00000080h
@@ -3065,18 +3066,17 @@ labs3:
   jmp  short labSave
   
 labs1:
-  mov  byte ptr [edi], dl
+  mov  byte ptr [edi], bl
   add  edi, 1
 
 labSave:
   lea  esi, [esi + 4]
   sub  ecx, 1
-  jnz  short labNext
+  jnz  labNext
 
   mov  esi,  edi
   pop  edi
   sub  esi, edi
-  shr  esi, 1
 
   ret
 
@@ -3823,6 +3823,59 @@ lab1:
    mov  [edi + esi * 2], ecx
    add  esi, 1
    mov  ecx, 1
+   ret
+
+end
+
+
+procedure coreapi'lrndnew
+
+  call code : % INIT_RND
+  mov  [edi], eax 
+  ret
+  
+end
+
+procedure coreapi'lrndnext
+
+   xor  edx, edx
+   mov  ecx, esi
+   cmp  ecx, edx
+   jz   short labEnd
+
+   push eax
+   push esi
+
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   mul  esi
+   add  eax, ecx
+   xchg eax, esi
+   mul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx] , esi
+   cdq
+   pop  ecx
+   idiv ecx
+   pop  eax
+labEnd:
+   mov  [eax], edx
    ret
 
 end

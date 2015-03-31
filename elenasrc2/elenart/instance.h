@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2014, by Alexei Rakov
+//                                              (C)2009-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -78,6 +78,7 @@ public:
    };
 
 private:
+   Path           _rootPath;
    ImageSection   _debugSection;
    LibraryManager _loader;
 
@@ -86,11 +87,11 @@ private:
 public:
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   int loadAddressInfo(size_t retPoint, wchar16_t* lineInfo, size_t length);
+   int loadAddressInfo(size_t retPoint, ident_c* lineInfo, size_t length);
 
-   void init(void* debugSection, const wchar16_t* package);
+   void init(void* debugSection, ident_t package);
 
-   Instance();
+   Instance(path_t rootPath);
 
    virtual ~Instance()
    {

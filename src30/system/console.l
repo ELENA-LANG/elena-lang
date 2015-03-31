@@ -36,17 +36,24 @@
 
     #method writeLine
     [
-        theWriter write:theNewLineConstant.
+        self write:theNewLineConstant.
     ]
 
     #method readLine
-        = theReader read &line.
+        = theReader read &literal.
+
+    #method read &literal
+        = theReader read &literal.
+
+    #method read &wide
+        = theReader read &wide.
 
     #method readChar
     [
-        #var(type:char)aRetVal := theReader char.
+        #var aRetVal := Char new.
+        theReader read &vchar:aRetVal.
       
-        ^ CharValue new &char:aRetVal.
+        ^ aRetVal char.
     ]
 
     #method readKey

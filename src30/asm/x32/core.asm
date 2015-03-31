@@ -1270,8 +1270,6 @@ inline % 11h
   mov  ecx, [edi-8]
   shr  ecx, 2
 
-labEnd:
-
 end
 
 // ; bcopya
@@ -1362,7 +1360,7 @@ end
 // ; dreserve
 inline % 24h
 
-  mov  ebx, esi
+  mov  ebx, ecx
   shl  ebx, 2
   sub  esp, ebx
   push ebp
@@ -1374,7 +1372,7 @@ end
 // ; drestore
 inline % 25h
                                                               
-  mov  ebp, [ebp - 8]
+  mov  ebp, [ebp + 4]
 
 end
 
@@ -1418,6 +1416,15 @@ end
 inline % 2Fh
                                 
    mov  [edi + esi * 4], eax
+
+end
+
+// ; xlen
+
+inline % 30h
+
+  mov  ecx, [eax-8]
+  shr  ecx, 2
 
 end
 

@@ -878,7 +878,7 @@
     [
         theLiteral := aLiteral.
         theIndex := Integer new &int:(-1).
-        theDiff := Integer new &int:(-1).
+        theDiff := Integer new &int:1.
         theChar := #0.
     ]
 
@@ -891,18 +891,16 @@
     #method next
     [
         #var(type:vint)aLength.
-        #var(type:vint)aCharLen.
         
         theLiteral readLength &vint:aLength.
         
-        theIndex append &int:theDiff.
+        theIndex += theDiff.
         
         (theIndex < aLength)
             ? [
-                theChar := theLiteral getAt &index:theDiff.                
+                theChar := theLiteral getAt &index:theIndex.                
                 
-                theChar readLength &vint:aCharLen.                
-                theDiff write &int:aCharLen.
+                theChar readLength &vint:theDiff.
                 
                 ^ true.
             ].
@@ -974,7 +972,7 @@
     [
         theLiteral := aLiteral.
         theIndex := Integer new &int:(-1).
-        theDiff := Integer new &int:(-1).
+        theDiff := Integer new &int:1.
         theChar := #0.
     ]
 
@@ -987,21 +985,18 @@
     #method next
     [
         #var(type:vint)aLength.
-        #var(type:vint)aCharLen.
         
         theLiteral readLength &vint:aLength.
 
-        theIndex append &int:theDiff.
+        theIndex += theDiff.
         
         (theIndex < aLength)
             ? [
                 theChar := theLiteral getAt &index:theIndex.
                 
-                theChar readLength &vint:aCharLen.
-                aCharLen += 1.
-                aCharLen /= 2.
-                
-                theDiff write &int:aCharLen.
+                theChar readLength &vint:theDiff.
+                theDiff += 1.
+                theDiff /= 2.
                 
                 ^ true.
             ].

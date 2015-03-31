@@ -34,18 +34,24 @@ bool Instance::ImageSection :: read(size_t position, void* s, size_t length)
 
 // --- Instance ---
 
-Instance :: Instance()
+Instance :: Instance(path_t rootPath)
+   : _rootPath(rootPath)
 {
 }
 
 bool Instance :: loadConfig()
 {
+   Path configPath(_rootPath);
+   Path::combinePath(configPath, "elc.cfg");
+
    IniConfigFile config;
-   if (!config.load(_T("elc.cfg"), feUTF8)) {
+   if (!config.load(configPath, feUTF8)) {
       return false;
    }
 
-   Path path(config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
+   Path path;
+   Path::loadPath(path, config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
+
    if (!emptystr(path)) {
       _loader.setRootPath(path);
    }
@@ -53,7 +59,7 @@ bool Instance :: loadConfig()
    return true;
 }
 
-void Instance :: init(void* debugSection, const wchar16_t* package)
+void Instance :: init(void* debugSection, ident_t package)
 {
    _debugSection.init(debugSection);
 
@@ -71,10 +77,10 @@ int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_
    return manager.readCallStack(reader, framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-int Instance :: loadAddressInfo(size_t retPoint, wchar16_t* buffer, size_t maxLength)
+int Instance :: loadAddressInfo(size_t retPoint, ident_c* buffer, size_t maxLength)
 {
    RTManager manager;
-   MemoryReader reader(&_debugSection, 4);
+   MemoryReader reader(&_debugSection, 8);
 
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
