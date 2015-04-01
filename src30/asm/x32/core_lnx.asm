@@ -24,7 +24,7 @@ define NEW_HEAP             10025h
 define BREAK                10026h
 
 define PROT_READ_WRITE      03h
-define MAP_ANONYMOUS        20h
+define MAP_ANONYMOUS        22h
 define SIGABRT              06h
 
 // ; in - eax - total size
@@ -34,10 +34,10 @@ procedure % NEW_HEAP
   // ; addr = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE,
   // ;              MAP_ANONYMOUS, -1, 0);  
   push 0
-  push eax
-  push PROT_READ_WRITE
-  push MAP_ANONYMOUS
   push 0FFFFFFFFh
+  push MAP_ANONYMOUS
+  push PROT_READ_WRITE
+  push eax
   push 0
   call extern : "libc.so.6.mmap"
   add  esp, 24

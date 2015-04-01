@@ -185,9 +185,9 @@ public:
    x86JITCompiler(bool debugMode);
 };
 
-//// --- compiler friend functions---
-//inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
-//void loadCoreOp(x86JITScope& scope, char* code);
+// --- compiler friend functions---
+inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+void loadCoreOp(x86JITScope& scope, char* code);
 void loadFunction(int opcode, x86JITScope& scope);
 //void loadExtensions(int opcode, x86JITScope& scope);
 //void loadCode(int opcode, x86JITScope& scope);
@@ -213,7 +213,7 @@ void compilePushB(int opcode, x86JITScope& scope);
 void compilePushE(int opcode, x86JITScope& scope);
 void compilePushD(int opcode, x86JITScope& scope);
 void compileCallR(int opcode, x86JITScope& scope);
-//void compileMCopy(int opcode, x86JITScope& scope);
+void compileMCopy(int opcode, x86JITScope& scope);
 void compileASaveR(int opcode, x86JITScope& scope);
 void compileSCopyF(int opcode, x86JITScope& scope);
 void compileJump(int opcode, x86JITScope& scope);

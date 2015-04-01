@@ -110,7 +110,7 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path
       Path path(rootPath);
       Path::combinePath(path, value);
 
-      _settings.add(setting, IdentifierString::clone(path));
+      _settings.add(setting, IdentifierString::clonePath(path));
       return true;
    }
    else return false;
@@ -135,7 +135,7 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t
          Path filePath(path);
          Path::combinePath(filePath, value);
 
-         _settings.add(setting, key, IdentifierString::clone(filePath));
+         _settings.add(setting, key, IdentifierString::clonePath(filePath));
       }
       else _settings.add(setting, key, StringHelper::clone(value));
 
@@ -183,7 +183,7 @@ void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
       Path filePath(path);
       Path::combinePath(filePath, it.key());
 
-      _sources.add(it.key(), IdentifierString::clone(filePath));
+      _sources.add(it.key(), IdentifierString::clonePath(filePath));
 
       it++;
    }

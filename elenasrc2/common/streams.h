@@ -138,14 +138,14 @@ public:
       return write((void*)s, length);
    }
 
-   bool writeLiteral(const wide_c* s)
-   {
-      return writeLiteral(s, getlength(s) + 1);
-   }
-
    bool writeLiteral(const wide_c* s, size_t length)
    {
       return write((void*)s, length << 1);
+   }
+
+   bool writeLiteral(const wide_c* s)
+   {
+      return writeLiteral(s, getlength(s) + 1);
    }
 
    bool writeChar(char ch)
@@ -342,7 +342,7 @@ public:
       }
       else return false;
    }
-   
+
    virtual bool write(const char* s, size_t length)
    {
       size_t lenToWrite = _size - _offset;

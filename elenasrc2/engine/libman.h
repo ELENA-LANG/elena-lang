@@ -71,12 +71,12 @@ public:
    void addPrimitiveAlias(ident_t alias, path_t path)
    {
       _binaryAliases.erase(alias);
-      _binaryAliases.add(alias, IdentifierString::clone(path));
+      _binaryAliases.add(alias, IdentifierString::clonePath(path));
    }
 
    void addCoreAlias(path_t path)
    {
-      _binaryAliases.add(NULL, IdentifierString::clone(path));
+      _binaryAliases.add(NULL, IdentifierString::clonePath(path));
    }
 
    _Module* createModule(ident_t package, LoadResult& result);

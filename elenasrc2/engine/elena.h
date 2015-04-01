@@ -122,11 +122,13 @@ public:
 class IdentifierString : public String < ident_c, IDENTIFIER_LEN >
 {
 public:
-   static ident_c* clone(const wide_c* value)
+   static ident_c* clonePath(path_t value)
    {
       ident_c buf[IDENTIFIER_LEN];
       size_t length = IDENTIFIER_LEN;
       StringHelper::copy(buf, value, getlength(value), length);
+      buf[length] = 0;
+
       return StringHelper::clone(buf);
    }
    IdentifierString()

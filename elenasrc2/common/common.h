@@ -21,7 +21,7 @@
 
 #define PATH_SEPARATOR '\\'
 
-namespace _ELENA_ 
+namespace _ELENA_
 {
    typedef const wchar_t*  path_t;
    typedef wchar_t         path_c;
@@ -34,23 +34,13 @@ namespace _ELENA_
 
    // --- FileEncoding ---
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
-
-   inline bool emptystr(const wchar_t* s)
-   {
-      return (s == NULL || s[0]==0);
-   }
-
-   inline static size_t getlength(const wchar_t* s)
-   {
-      return (s==NULL) ? 0 : wcslen(s);
-   }
 }
 
 #else
 
 #define PATH_SEPARATOR '/'
 
-namespace _ELENA_ 
+namespace _ELENA_
 {
    typedef const char*     path_t;
    typedef char            path_c;

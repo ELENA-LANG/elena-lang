@@ -1,7 +1,6 @@
 #define system.
 
-#symbol newLine = #10.
-
 #symbol Program =
 [
+   console writeLine:"Hello Linux World!".
 ].

@@ -20,37 +20,37 @@ namespace _ELENA_
 #define min(a, b)       ((a) < (b) ? (a) : (b))
 #endif
 
-//#ifdef _LINUX32
-//
-//#include <ctype.h>
-//
-//#define _strdup strdup
-//
-//inline static size_t wcslen(const unsigned short* s)
-//{
-//   const unsigned short* p = s;
-//
-//   while (*p) p++;
-//
-//   return (size_t)(p - s);
-//}
-//
-//inline char* _strlwr(char* str)
-//{
-//   char* it = str;
-//   while (*it != 0) { *it = tolower(*it); ++it; }
-//
-//   return str;
-//}
-//
-//inline char* _strupr(char* str)
-//{
-//   char* it = str;
-//   while (*it != 0) { *it = toupper(*it); ++it; }
-//
-//   return str;
-//}
-//
+#ifdef _LINUX32
+
+#include <ctype.h>
+
+#define _strdup strdup
+
+inline static size_t wcslen(const unsigned short* s)
+{
+   const unsigned short* p = s;
+
+   while (*p) p++;
+
+   return (size_t)(p - s);
+}
+
+inline char* _strlwr(char* str)
+{
+   char* it = str;
+   while (*it != 0) { *it = tolower(*it); ++it; }
+
+   return str;
+}
+
+inline char* _strupr(char* str)
+{
+   char* it = str;
+   while (*it != 0) { *it = toupper(*it); ++it; }
+
+   return str;
+}
+
 ////int _itow(int val, wchar_t* s, int radix)
 ////{
 ////    int len = 0;
@@ -89,8 +89,31 @@ namespace _ELENA_
 ////
 ////    return len;
 ////}
-////
-//#endif
+
+inline bool emptystr(const unsigned short* s)
+{
+   return (s == NULL || s[0]==0);
+}
+
+inline static size_t getlength(const unsigned short* s)
+{
+   return (s==NULL) ? 0 : wcslen(s);
+}
+
+#elif _WIN32
+
+
+inline bool emptystr(const wchar_t* s)
+{
+   return (s == NULL || s[0]==0);
+}
+
+inline static size_t getlength(const wchar_t* s)
+{
+   return (s==NULL) ? 0 : wcslen(s);
+}
+
+#endif
 
 // --- miscellaneous string routines ---
 
@@ -103,7 +126,6 @@ inline static size_t getlength(const char* s)
 {
    return (s == NULL) ? 0 : strlen(s);
 }
-
 
 ////inline wchar_t wchlwr(wchar_t ch)
 ////{

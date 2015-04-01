@@ -20,7 +20,7 @@ class Path : public String<path_c, LOCAL_PATH_LENGTH>
 {
 public:
    static bool create(path_t root, path_t path);
-   
+
    static bool isRelative(path_t path, size_t length);
 
    static void loadPath(Path& dest, ident_t sour)
@@ -105,6 +105,7 @@ public:
 
       changeExtension(ext);
    }
+
 #endif
 
    void combine(path_t path, size_t length)
@@ -156,7 +157,7 @@ public:
          if (pos == -1) {
             pos = getlength(name);
             stopped = true;
-         }            
+         }
 
          bufLen = maxLen;
          StringHelper::copy(buf, name, (size_t)pos, bufLen);
@@ -303,7 +304,7 @@ public:
    }
 
    virtual const char* getLiteral(const char* def) { return def; }
-   virtual const wchar_t* getLiteral(const wchar_t* def) { return def; }
+   virtual const wide_c* getLiteral(const wide_c* def) { return def; }
 
    FileReader(path_t path, int encoding, bool withBOM);
    FileReader(path_t path, path_t mode, int encoding, bool withBOM);

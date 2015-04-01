@@ -273,7 +273,7 @@ inline void createDir(const char* path)
 bool Path :: create(const char* root, const char* path)
 {
    Path dirPath;
-   dirPath.copyPath(path);
+   dirPath.copySubPath(path);
 
    if (checkDir(dirPath, 0)!=0) {
       if (!emptystr(dirPath) && !dirPath.compare(root)) {
@@ -351,13 +351,13 @@ bool File :: writeLiteral(const unsigned short* s, size_t length)
    }
    else {
       char temp[TEMP_SIZE];
-      size_t count;
+      size_t count, tmpCount;
       while (length > 0) {
          count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
 
-         StringHelper::copy(temp, s, count);
+         StringHelper::copy(temp, s, count, tmpCount);
 
-         if (fwrite(temp, 1, count, _file) <= 0)
+         if (fwrite(temp, 1, tmpCount, _file) <= 0)
             return false;
 
          length -= count;
@@ -392,14 +392,14 @@ FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
 
 // --- TextFileReader ---
 
-TextFileReader :: TextFileReader(const tchar_t* path, int encoding, bool withBOM)
+TextFileReader :: TextFileReader(path_t path, int encoding, bool withBOM)
    : _file(path, "rb", encoding, withBOM)
 {
 }
 
 // --- TextFileWriter ---
 
-TextFileWriter :: TextFileWriter(const char* path, int encoding, bool withBOM)
+TextFileWriter :: TextFileWriter(path_t path, int encoding, bool withBOM)
    : _file(path, "wb+", encoding, withBOM)
 {
    if (withBOM) {

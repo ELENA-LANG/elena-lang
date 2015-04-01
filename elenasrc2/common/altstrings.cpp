@@ -96,11 +96,11 @@ static bool isLegalUTF8(const unsigned char* source, int length)
       default:
          return false;
       /* Everything else falls through when "true"... */
-      case 4: 
+      case 4:
          if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
-      case 3: 
+      case 3:
          if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
-      case 2: 
+      case 2:
          if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
          switch (*source) {
             /* no fall-through in this inner switch */
@@ -180,7 +180,7 @@ bool StringHelper :: copy(wide_c* dest, const char* sour, size_t sourLength, siz
 
       if (d >= d_end) {
          s -= (extraBytesToRead + 1); /* Back up source pointer! */
-         result = false; 
+         result = false;
          break;
       }
       if (ch <= UNI_MAX_BMP) { /* Target is a character <= 0xFFFF */
@@ -266,8 +266,8 @@ bool StringHelper :: copy(char* dest, const wide_c* sour, size_t sourLength, siz
       d += bytesToWrite;
       if (d > d_end) {
          s = oldSource; /* Back up source pointer! */
-         d -= bytesToWrite; 
-         result = false; 
+         d -= bytesToWrite;
+         result = false;
          break;
       }
       switch (bytesToWrite)
@@ -287,7 +287,7 @@ bool StringHelper :: copy(char* dest, const wide_c* sour, size_t sourLength, siz
       d += bytesToWrite;
    }
    destLength = d - dest;
-   
+
    return result;
 }
 
@@ -323,8 +323,8 @@ bool StringHelper :: copy(char* dest, const unic_c* sour, size_t sourLength, siz
       d += bytesToWrite;
       if (d > d_end) {
          --s; /* Back up source pointer! */
-         d -= bytesToWrite; 
-         result = false; 
+         d -= bytesToWrite;
+         result = false;
          break;
       }
       switch (bytesToWrite) { /* note: everything falls through. */
@@ -359,7 +359,7 @@ bool StringHelper :: copy(unic_c* dest, const char* sour, size_t sourLength, siz
          break;
       }
       if (d >= d_end) {
-         result = false; 
+         result = false;
          break;
       }
       /* Do this check whether lenient or strict */
@@ -615,9 +615,14 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
 
 char* StringHelper :: doubleToStr(double value, int digit, char* s)
 {
-   _gcvt(value, digit, s);
+   gcvt(value, digit, s);
 
    return s;
+}
+
+double StringHelper :: strToDouble(const char* s)
+{
+   return atof(s);
 }
 
 void StringHelper :: trim(char* s, char ch)
@@ -760,11 +765,6 @@ long long StringHelper :: strToLongLong(const wchar_t* s, int radix)
    return number;
 }
 
-double StringHelper :: strToDouble(const char* s)
-{
-   return atof(s);
-}
-
 double StringHelper :: strToDouble(const wchar_t* s)
 {
    return wcstod(s, NULL);
@@ -784,7 +784,7 @@ char* StringHelper :: longlongToStr(long long n, char* s, int radix)
 
 unsigned short* StringHelper :: allocate(size_t size, const unsigned short* value)
 {
-   var s = (unsigned short*)malloc(size << 1);
+   unsigned short* s = (unsigned short*)malloc(size << 1);
    if (value)
       memcpy(s, value, size << 1);
 
@@ -911,8 +911,9 @@ unsigned short* StringHelper :: clone(const unsigned short* s)
    }
    else {
       size_t length = getlength(s) + 1;
-      unsigned short* dup = w_allocate(length);
-      copy(dup, s, length);
+      unsigned short* dup = allocate(length, (const unsigned short*)NULL);
+      copy(dup, s, length, length);
+      dup[length] = 0;
 
       return dup;
    }
@@ -985,10 +986,11 @@ long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
    long long number = 0;
 
    unsigned short dump[10];
-   int length = getlength(s);
+   size_t length = getlength(s);
    while (length > 9) {
-      copy(dump, (unsigned short*)s, 9);
-      dump[9] = 0;
+      size_t len = 9;
+      copy(dump, (unsigned short*)s, len, len);
+      dump[len] = 0;
 
       long long temp = strToLong(dump, radix);
       for (int i = 0 ; i < (length - 9) ; i++) {
@@ -999,7 +1001,7 @@ long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
       length -= 9;
       s += 9;
    }
-   copy(dump, s, length);
+   copy(dump, s, length, length);
    dump[length] = 0;
    long long temp = strToLong(dump, radix);
    number += temp;
@@ -1012,7 +1014,8 @@ double StringHelper :: strToDouble(const unsigned short* s)
    // !! temporal solution
    char tmp[31];
    size_t len = getlength(s);
-   copy(tmp, s, len);
+   copy(tmp, s, len, len);
+   tmp[len] = 0;
 
    return atof(tmp);
 }

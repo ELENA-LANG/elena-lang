@@ -108,7 +108,7 @@ public:
 _ELC_::Project :: Project()
 {
    getAppPath(appPath);
-   _settings.add(_ELENA_::opAppPath, _ELENA_::IdentifierString::clone(appPath));
+   _settings.add(_ELENA_::opAppPath, _ELENA_::IdentifierString::clonePath(appPath));
    _settings.add(_ELENA_::opNamespace, _ELENA_::StringHelper::clone("unnamed"));
 
    _tabSize = 4;
@@ -298,7 +298,7 @@ void _ELC_::Project :: addSource(_ELENA_::path_t path)
    _ELENA_::ident_c name[IDENTIFIER_LEN];
    _ELENA_::Path::savePath(path, name, IDENTIFIER_LEN);
 
-   _settings.add(_ELENA_::opSources, name, _ELENA_::IdentifierString::clone(fullPath));
+   _settings.add(_ELENA_::opSources, name, _ELENA_::IdentifierString::clonePath(fullPath));
 }
 
 void _ELC_::Project :: cleanUp()
@@ -433,7 +433,7 @@ void _ELC_::Project :: setOption(const wchar_t* value)
 
          _ELENA_::Path projectPath;
          projectPath.copySubPath(value + 1);
-         _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clone(projectPath));
+         _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clonePath(projectPath));
 
          break;
       }

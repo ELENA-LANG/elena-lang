@@ -318,7 +318,7 @@ protected:
 
    void assignOrCopy(const T* value, T* &ptr, size_t& size)
    {
-      ptr = (wchar16_t*)value;
+      ptr = value;
       size = 0;
    }
 

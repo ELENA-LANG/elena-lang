@@ -564,6 +564,7 @@ week1:
                        * optimize primitive operator implementations
 
               xdev - linux
+                       * implement debugger
                        * store debug info in the exe file
                        * port elenart to linux
                        * port multi-threading

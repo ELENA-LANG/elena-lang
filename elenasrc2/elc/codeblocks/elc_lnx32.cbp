@@ -12,7 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters="-c/home/alex/elena/tests/linux/linux.project" />
+				<Option parameters="-c/home/alex/elena/src30/system/system.project" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

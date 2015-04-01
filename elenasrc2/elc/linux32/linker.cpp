@@ -149,15 +149,15 @@ int Linker32 :: fillImportTable(ImageInfo& info)
 
    ReferenceMap::Iterator it = info.image->getExternalIt();
    while (!it.Eof()) {
-      String<wchar16_t, PATH_MAX> external(it.key());
+      String<char, PATH_MAX> external(it.key());
 
       int dotPos = external.findLast('.') + 1;
 
-      UTF8String function(external + dotPos);
+      char* function = external + dotPos;
 
       Path dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
 
-      info.functions.add(function.clone(), *it);
+      info.functions.add(StringHelper::clone(function), *it);
       if (!retrieve(info.libraries.start(), dll, (char*)NULL)) {
           info.libraries.add(dll.clone());
       }
@@ -210,7 +210,7 @@ void Linker32 :: createImportData(ImageInfo& info)
    // string table
    MemoryWriter strWriter(import);
    int strOffset = strWriter.Position();
-   strWriter.writeChar(0);
+   strWriter.writeChar('\0');
 
    // code writer
    MemoryWriter codeWriter(info.image->getTextSection());
@@ -262,7 +262,7 @@ void Linker32 :: createImportData(ImageInfo& info)
 
       dll++;
    }
-   strWriter.writeChar(0);
+   strWriter.writeChar('\0');
    int strLength = strWriter.Position() - strOffset;
 
    dynamicWriter.writeDWord(DT_STRTAB);
@@ -461,11 +461,11 @@ void Linker32 :: writeSegments(ImageInfo& info, FileWriter* file)
    writeSection(file, info.image->getImportSection(), FILE_ALIGNMENT);
 }
 
-bool Linker32 :: createExecutable(ImageInfo& info, const tchar_t* exePath/*, ref_t tls_directory*/)
+bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/)
 {
    // create a full path (including none existing directories)
    Path dirPath;
-   dirPath.copyPath(exePath);
+   dirPath.copySubPath(exePath);
    Path::create(NULL, exePath);
 
    FileWriter executable(exePath, feRaw, false);

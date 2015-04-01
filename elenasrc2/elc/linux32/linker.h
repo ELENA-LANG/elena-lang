@@ -79,7 +79,7 @@ class Linker32
    void writePHTable(ImageInfo& info, FileWriter* file);
    void writeSegments(ImageInfo& info, FileWriter* file);
 
-   bool createExecutable(ImageInfo& info, const tchar_t* exePath/*, ref_t tls_directory*/);
+   bool createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/);
 
 protected:
    virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;

@@ -18,8 +18,6 @@
 
 #include <stdarg.h>
 
-#define ELC_BUILD_NUMBER 0x000F
-
 // --- ImageHelper ---
 
 class ImageHelper : public _ELENA_::ExecutableImage::_Helper
@@ -64,21 +62,19 @@ _ELC_::Project :: Project()
    _encoding = _ELENA_::feUTF8;
 }
 
-void _ELC_::Project :: raiseError(const char* msg, const tchar_t* path, int row, int column, const wchar16_t* wTerminal)
+void _ELC_::Project :: raiseError(const char* msg, const char* path, int row, int column, const char* s)
 {
-   _ELENA_::UTF8String s(wTerminal);
-
-   print(msg, path, row, column, (const char*)s);
+   print(msg, path, row, column, s);
 
    throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseError(const char* msg)
-{
-   print(msg);
-
-   throw _ELENA_::_Exception();
-}
+//void _ELC_::Project :: raiseError(const char* msg)
+//{
+//   print(msg);
+//
+//   throw _ELENA_::_Exception();
+//}
 
 void _ELC_::Project :: raiseError(const char* msg, const char* value)
 {
@@ -87,34 +83,32 @@ void _ELC_::Project :: raiseError(const char* msg, const char* value)
    throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
+//void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
+//{
+//   _ELENA_::UTF8String s(wValue);
+//
+//   print(msg, (const char*)s);
+//
+//   throw _ELENA_::_Exception();
+//}
+
+//void _ELC_::Project :: raiseError(const char* msg, const wchar16_t wValue)
+//{
+//   _ELENA_::UTF8String s(&wValue, 1);
+//
+//   print(msg, (const char*)s);
+//
+//   throw _ELENA_::_Exception();
+//}
+
+//void _ELC_::Project :: printInfo(const char* msg, const char* value)
+//{
+//   print(msg, value);
+//}
+
+void _ELC_::Project :: printInfo(const char* msg, const char* s)
 {
-   _ELENA_::UTF8String s(wValue);
-
-   print(msg, (const char*)s);
-
-   throw _ELENA_::_Exception();
-}
-
-void _ELC_::Project :: raiseError(const char* msg, const wchar16_t wValue)
-{
-   _ELENA_::UTF8String s(&wValue, 1);
-
-   print(msg, (const char*)s);
-
-   throw _ELENA_::_Exception();
-}
-
-void _ELC_::Project :: printInfo(const char* msg, const char* value)
-{
-   print(msg, value);
-}
-
-void _ELC_::Project :: printInfo(const char* msg, const wchar16_t* wValue)
-{
-   _ELENA_::UTF8String s(wValue);
-
-   print(msg, (const char*)s);
+   print(msg, s);
 }
 
 //void _ELC_::Project :: printInfo(const wchar16_t* msg)
@@ -122,7 +116,7 @@ void _ELC_::Project :: printInfo(const char* msg, const wchar16_t* wValue)
 //   print(msg);
 //}
 
-void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const tchar_t* path)
+void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const char* path)
 {
    print(msg, path);
 
@@ -130,17 +124,15 @@ void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const 
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseWarning(int level, const char* msg, const tchar_t* path, int row, int column, const wchar16_t* wTerminal)
+void _ELC_::Project :: raiseWarning(int level, const char* msg, const char* path, int row, int column, const char* s)
 {
    if (!indicateWarning(level))
       return;
 
-   _ELENA_::UTF8String s(wTerminal);
-
-   print(msg, path, row, column, (const char*)s);
+   print(msg, path, row, column, s);
 }
 
-void _ELC_::Project :: raiseWarning(int level, const char* msg, const tchar_t* path)
+void _ELC_::Project :: raiseWarning(int level, const char* msg, const char* path)
 {
    if (!indicateWarning(level))
       return;
@@ -220,9 +212,10 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
    }
 }
 
-void _ELC_::Project :: addSource(const tchar_t* path)
+void _ELC_::Project :: addSource(const char* path)
 {
-   _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath), path);
+   _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
+   fullPath.combine(path);
    fullPath.lower();
 
    _sources.add(path, _ELENA_::StringHelper::clone(fullPath));
@@ -251,12 +244,12 @@ void _ELC_::Project :: cleanUp()
 //   }
 }
 
-void _ELC_::Project :: loadConfig(const tchar_t* path, bool root, bool requiered)
+void _ELC_::Project :: loadConfig(const char* path, bool root, bool requiered)
 {
    ElcConfigFile config;
    _ELENA_::Path configPath;
 
-   configPath.copyPath(path);
+   configPath.copySubPath(path);
 
    if (!config.load(path, getDefaultEncoding())) {
       raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, path);
@@ -268,8 +261,8 @@ void _ELC_::Project :: loadConfig(const tchar_t* path, bool root, bool requiered
       loadCategory(config, _ELENA_::opTemplates, configPath);
 
    // load template
-   _ELENA_::ProjectParam projectTemplate(config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE));
-   if (!projectTemplate.isEmpty()) {
+   const char* projectTemplate = config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
+   if (!_ELENA_::emptystr(projectTemplate)) {
       const char* templateFile = _settings.get(_ELENA_::opTemplates, projectTemplate, (const char*)NULL);
       if (_ELENA_::emptystr(templateFile)) {
         _ELENA_::String<char, 255> str(projectTemplate);
@@ -296,7 +289,7 @@ void _ELC_::Project :: setOption(const char* value)
             _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
-            _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(_ELENA_::ProjectParam(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH))));
+            _settings.add(_ELENA_::opProjectPath, _ELENA_::StringHelper::clone(value + _ELENA_::getlength(ELC_PRM_PROJECTPATH)));
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_PRM_OPTOFF)) {
             _settings.add(_ELENA_::opL0, 0);
@@ -346,8 +339,8 @@ void _ELC_::Project :: setOption(const char* value)
          loadConfig(value + 1);
 
          _ELENA_::Path projectPath;
-         projectPath.copyPath(value + 1);
-         _settings.add(_ELENA_::opProjectPath, _ELENA_::ProjectParam(projectPath.clone()));
+         projectPath.copySubPath(value + 1);
+         _settings.add(_ELENA_::opProjectPath, projectPath.clone());
 
          break;
       }
@@ -422,7 +415,7 @@ int main(int argc, char* argv[])
       _ELENA_::Path syntaxPath(SYNTAX_FILE);
       _ELENA_::FileReader syntaxFile(syntaxPath, _ELENA_::feRaw, false);
       if (!syntaxFile.isOpened())
-         project.raiseError(errInvalidFile, (const tchar_t*)syntaxPath);
+         project.raiseError(errInvalidFile, syntaxPath);
 
       // compile normal project
       bool result = false;
