@@ -7,7 +7,10 @@
 #define extensions.
 //#define extensions'math.
 
-#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+#symbol prompter = (&index:anIndex)
+[
+     consoleEx write:"Enter array[":anIndex:"]:" readLine:(Integer new) int
+].
 
 #symbol XTester =
 {

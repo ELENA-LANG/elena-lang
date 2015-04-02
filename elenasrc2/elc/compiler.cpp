@@ -5535,7 +5535,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(goToSymbol(node, nsInlineExpression), classScope, node, true);
+         compileAction(goToSymbol(classNode, nsInlineExpression), classScope, classNode, true);
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference);
       }

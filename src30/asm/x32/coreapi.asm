@@ -3086,6 +3086,7 @@ procedure coreapi'strtochararray
 
   push eax
   push edi
+  push esi
   lea  edi, [edi + esi * 4]
 
 labStart:
@@ -3156,10 +3157,12 @@ labSave:
   jnz  labStart
 
   mov  ecx, edi
+  pop  esi
   pop  edi
   pop  eax
   sub  ecx, edi
   shr  ecx, 2
+  sub  ecx, esi
 
   ret
 
@@ -3169,6 +3172,7 @@ procedure coreapi'wstrtochararray
 
   push eax
   push edi
+  push esi
   lea  edi, [edi + esi * 4]
 
 labStart:
@@ -3179,17 +3183,15 @@ labStart:
   cmp  ebx, 0D800h
   jl   short lab1
 
-  mov  edx, ebx
-  shl  edx, 10
-  mov  ebx, dword ptr [eax]
+  shl  ebx, 10
+  mov  edx, dword ptr [eax]
   add  eax, 2
-  and  ebx, 0FFFFh
-  add  edx, ebx
-  sub  edx, 35FDC00h
-  jmp  short labSave
+  and  edx, 0FFFFh
+  add  ebx, edx
+  sub  ebx, 35FDC00h
 
 lab1:
-  mov   ecx, ebx
+  mov   edx, ebx
 
 labSave:
   mov  [edi], edx
@@ -3198,10 +3200,12 @@ labSave:
   jnz  labStart
 
   mov  ecx, edi
+  pop  esi
   pop  edi
   pop  eax
   sub  ecx, edi
   shr  ecx, 2
+  sub  ecx, esi
 
   ret
 

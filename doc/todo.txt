@@ -30,6 +30,7 @@ Currently:
                        * linux : read line, read char, read key
                        
               idev - bugs:
+                       * fix watch : auto refresh local variables
                        * fix call list
 
 <=================> 
@@ -456,6 +457,7 @@ week 4:
                          after the second operation it says n content is 20h
 
               xmaint - test
+                       * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
                        * test system'io'StreamWriter
                        * test system'io'BinarayReader / system'io'BinarayWriter
