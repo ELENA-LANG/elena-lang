@@ -22,7 +22,7 @@ Currently:
 ------
               adev - weekly
                        * test basic samples
-                       * fix bsort
+                       * test matrix
                        * uncomment all extension code
                        * test rosettacode samples : amb, anagram, calender, caesar, bullscows, brackets, bestshuffle, arithmeval
                        * test vm samples       
@@ -62,6 +62,8 @@ week2:
                        * fix StructTest
 
                        * Date : convert to utc and back
+                       
+                       * it should be possible to return all object messages matching a pattern , e.g. by a verb and subject namespace
                        
                        * think over object serialization, for example - save the object into file and load back
 
@@ -547,8 +549,10 @@ week1:
                        * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation                       
                        * literal constant should be converted into utf8 if it is passed as utf8_literal
                        * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
-
+                       
               xdev - byte code optimization                               
+                       * optimize ByteCodeWriter::copyStructure                       
+
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
                        * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
                        * make sure intvar can be passed as int without major overhead (no explicit typecasting)

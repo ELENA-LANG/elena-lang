@@ -1922,46 +1922,106 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
 {
    // if it is alinged
    if ((offset & 3) == 0 && (size & 3) == 3) {
-      // dcopy 0
-      // ecopy count / 4
-      // labCopy:
-      // addn (offset / 4)
-      // nread
-      // addn -offset
-      // nwrite
-      // next labCopy
+      if (size == 8) {
+         // nloadi offset
+         // nsavei 0
+         // nloadi offset + 1
+         // nsavei 1
+         tape.write(bcNLoadI, offset);
+         tape.write(bcNSaveI, 0);
+         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNSaveI, 1);
+      }
+      else if (size == 12) {
+         // nloadi offset
+         // nsavei 0
+         // nloadi offset + 1
+         // nsavei 1
+         // nloadi offset + 2
+         // nsavei 2
+         tape.write(bcNLoadI, offset);
+         tape.write(bcNSaveI, 0);
+         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNSaveI, 1);
+         tape.write(bcNLoadI, offset + 2);
+         tape.write(bcNSaveI, 2);
+      }
+      else if (size == 16) {
+         // nloadi offset
+         // nsavei 0
+         // nloadi offset + 1
+         // nsavei 1
+         // nloadi offset + 2
+         // nsavei 2
+         // nloadi offset + 3
+         // nsavei 3
+         tape.write(bcNLoadI, offset);
+         tape.write(bcNSaveI, 0);
+         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNSaveI, 1);
+         tape.write(bcNLoadI, offset + 2);
+         tape.write(bcNSaveI, 2);
+         tape.write(bcNLoadI, offset + 3);
+         tape.write(bcNSaveI, 3);
+      }
+      else {
+         // dcopy 0
+         // ecopy count / 4
+         // pushe
+         // labCopy:
+         // esavesi 0
+         // addn (offset / 4)
+         // nread
+         // addn -offset
+         // nwrite
+         // eloadsi
+         // next labCopy
+         // pop
 
-      tape.write(bcDCopy);
-      tape.write(bcECopy, size >> 2);
-      tape.newLabel();
-      tape.setLabel(true);
-      tape.write(bcAddN, offset >> 2);
-      tape.write(bcNRead);
-      tape.write(bcAddN, -(offset >> 2));
-      tape.write(bcNWrite);
-      tape.write(bcNext, baCurrentLabel);
-      tape.releaseLabel();
+         tape.write(bcDCopy);
+         tape.write(bcECopy, size >> 2);
+         tape.write(bcPushE);
+         tape.newLabel();
+         tape.setLabel(true);
+         tape.write(bcESaveSI);
+         tape.write(bcAddN, offset >> 2);
+         tape.write(bcNRead);
+         tape.write(bcAddN, -(offset >> 2));
+         tape.write(bcNWrite);
+         tape.write(bcELoadSI);
+         tape.write(bcNext, baCurrentLabel);
+         tape.releaseLabel();
+         tape.write(bcPop);
+      }
    }
    else {
       // dcopy 0
       // ecopy count
+      // pushe
       // labCopy:
+      // esavesi 0
       // addn offset
       // breadb
       // addn -offset
       // bwriteb
+      // eloadsi 0
       // next labCopy
+      // pop
 
       tape.write(bcDCopy);
       tape.write(bcECopy, size);
+      tape.write(bcPushE);
       tape.newLabel();
       tape.setLabel(true);
+      tape.write(bcESaveSI);
       tape.write(bcAddN, offset);
       tape.write(bcBReadB);
       tape.write(bcAddN, -offset);
       tape.write(bcBWriteB);
+      tape.write(bcELoadSI);
       tape.write(bcNext, baCurrentLabel);
       tape.releaseLabel();
+      tape.write(bcPop);
    }
 }
 

@@ -103,7 +103,7 @@ protected:
    }
 
 public:
-   void step(ident_c ch, char& state, char& terminateState)
+   void step(uident_c ch, char& state, char& terminateState)
    {
       if(ch > dfaMaxChar) ch = dfaMaxChar;
 

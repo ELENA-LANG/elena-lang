@@ -190,8 +190,8 @@ bool File::readLiteral(wchar_t* s, size_t length, size_t& wasread)
          count = fread(temp, 1, count, _file);
 
          StringHelper::copy(s, temp, count, converted);
-         wasread += count;
-         s += count;
+         wasread += converted;
+         s += converted;
       }
       return (wasread > 0);
    }

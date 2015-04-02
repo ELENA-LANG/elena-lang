@@ -2476,11 +2476,27 @@ inline % 0BBh
 
 end
 
+// ; eloadsi
+
+inline % 0BCh
+
+  mov  ecx, [esp + __arg1]
+
+end
+
 // ; pushf
 inline % 0BDh
 
   lea  ebx, [ebp + __arg1]
   push ebx
+
+end
+
+// ; esavesi
+
+inline % 0BEh
+
+  mov  [esp + __arg1], ecx
 
 end
 

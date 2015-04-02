@@ -123,7 +123,7 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
          Path filePath(path);
          Path::combinePath(filePath, value);
 
-         list->add(key, IdentifierString::clone(filePath));
+         list->add(key, IdentifierString::clonePath(filePath));
       }
       else list->add(key, StringHelper::clone(value));
 

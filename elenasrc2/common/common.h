@@ -30,6 +30,7 @@ namespace _ELENA_
 
    typedef const char*     ident_t;
    typedef char            ident_c;
+   typedef unsigned char   uident_c;
    typedef size_t          ref_t;
 
    // --- FileEncoding ---

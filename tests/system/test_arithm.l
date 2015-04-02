@@ -7,18 +7,10 @@
 #define extensions.
 //#define extensions'math.
 
-#symbol prompter = (&index:anIndex)
-[
-     consoleEx write:"Enter array[":anIndex:"]:" readLine:(Integer new) int
-].
-
 #symbol XTester =
 {
     test        
     [
-        #var n := 2.
-        
-        control run:"abc" &forEach:printingLn.
     ]
 }.
 
