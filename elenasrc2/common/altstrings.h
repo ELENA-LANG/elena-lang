@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+   //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This header contains String classes declarations
@@ -73,6 +73,8 @@ public:
 
    static wide_c* intToStr(int n, wide_c* s, int radix);
    static char* intToStr(int n, char* s, int radix);
+   static wide_c* ulongToStr(unsigned long n, wide_c* s, int radix);
+   static char* ulongToStr(unsigned long n, char* s, int radix);
 
    static long strToLong(const wide_c* s, int radix);
    static long strToLong(const char* s, int radix);
@@ -180,7 +182,7 @@ public:
    {
       int pos = getlength(_string);
 
-      StringHelper::intToStr(n, _string + pos, 16);
+      StringHelper::ulongToStr(n, _string + pos, 16);
       StringHelper::upper(_string + pos);
    }
 
@@ -188,7 +190,7 @@ public:
    {
       int pos = getlength(_string);
 
-      StringHelper::intToStr(n, _string + pos, 10);
+      StringHelper::longToStr(n, _string + pos, 10);
    }
 
    void appendDouble(double n)

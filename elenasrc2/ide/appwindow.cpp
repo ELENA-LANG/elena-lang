@@ -2054,7 +2054,6 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
    _ELENA_::Path fullPath;
    fullPath.copySubPath(path);
    Paths::resolveRelativePath(fullPath, root);
-   fullPath.lower();
 
    if (!_ELENA_::emptystr(root) && _ELENA_::StringHelper::compare(fullPath, root, rootLength)) {
       name.copy(getPackage());
@@ -2067,11 +2066,11 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
       root = _model->paths.packageRoot;
       rootLength = _ELENA_::getlength(root);
 
-      if (!_ELENA_::emptystr(root) && _ELENA_::StringHelper::compare(fullPath, root, rootLength)) {
+      if (!_ELENA_::emptystr(root) && _ELENA_::Path::comparePaths(fullPath, root, rootLength)) {
          name.pathToName(fullPath + rootLength + 1);
 
          // skip the root path
-         path.copySubPath(path + rootLength + 1);
+         path.copy(path + rootLength + 1);
       }
       else {
          _ELENA_::FileName fileName(fullPath);
@@ -2104,7 +2103,7 @@ void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
    _ELENA_::Path relPath(path);
    Paths::makeRelativePath(relPath, _model->project.path);
 
-   _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clone(relPath), (const char*)NULL);
+   _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath), (const char*)NULL);
 
    _model->project.changed = true;
 }

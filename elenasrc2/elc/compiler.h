@@ -737,10 +737,13 @@ protected:
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
+   bool declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
    void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
    void compileSingletonClass(DNode member, ClassScope& scope);
+
+   void declareSingletonAction(DNode node, ClassScope& scope, ActionScope& methodScope);
 
    void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
    void compileImportMethod(DNode node, CodeScope& scope, ref_t message, ident_t function, int mode);
@@ -755,7 +758,7 @@ protected:
 
    void compileSymbolCode(ClassScope& scope);
 
-   void compileAction(DNode node, InlineClassScope& scope, DNode argNode);
+   void compileAction(DNode node, ClassScope& scope, DNode argNode);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);

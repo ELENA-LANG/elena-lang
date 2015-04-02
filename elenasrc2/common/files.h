@@ -23,6 +23,8 @@ public:
 
    static bool isRelative(path_t path, size_t length);
 
+   static bool comparePaths(path_t s1, path_t s2, size_t length);
+
    static void loadPath(Path& dest, ident_t sour)
    {
       size_t length = LOCAL_PATH_LENGTH;

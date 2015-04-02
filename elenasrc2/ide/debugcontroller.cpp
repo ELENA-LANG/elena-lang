@@ -246,6 +246,8 @@ DebugLineInfo* DebugController::seekLineInfo(size_t address, ident_t &moduleName
 
 size_t DebugController :: findNearestAddress(_Module* module, ident_t path, size_t row)
 {
+   path = path + StringHelper::find(path, PATH_SEPARATOR) + 1;
+
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
    _Memory* strings = module->mapSection(DEBUG_STRINGS_ID, true);
 
@@ -349,8 +351,6 @@ void DebugController :: onInitBreakpoint()
       }
       // !! notify if the executable is not supported
    }
-   
-   _listener->onDebuggerHook();
 
    DebugReader reader(&_debugger, _debugInfoPtr, _debugInfoSize);
       // the debug section starts with size field
@@ -359,6 +359,8 @@ void DebugController :: onInitBreakpoint()
    // if there are new records in debug section
    if (!reader.Eof()) {
       loadDebugData(reader, starting);
+
+      _listener->onDebuggerHook();
 
       _debugInfoSize = reader.Position();
 

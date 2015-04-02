@@ -70,6 +70,18 @@ bool Path :: create(const wchar_t* root, const wchar_t* path)
    else return false;
 }
 
+bool Path :: comparePaths(path_t s1, path_t s2, size_t length)
+{
+   for (size_t i = 0; i < length; i++) {
+      wchar_t ch1 = StringHelper::lower(s1[i]);
+      wchar_t ch2 = StringHelper::lower(s2[i]);
+
+      if (ch1 != ch2)
+         return false;
+   }
+   return true;
+}
+
 // --- File ---
 
 File::File(const wchar_t* path, const wchar_t* mode, int encoding, bool withBOM)
@@ -284,6 +296,11 @@ bool Path :: create(const char* root, const char* path)
       return true;
    }
    else return false;
+}
+
+bool Path :: comparePaths(path_t s1, path_t s2, size_t length)
+{
+   return StringHelper::compare(s1, s2, length);
 }
 
 // --- File ---

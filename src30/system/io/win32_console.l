@@ -130,11 +130,11 @@
             &int        : 0.
     ]
     
-    #method read &line
+    #method read &wide
     [
         #var(type:shortarray,size:127)aBuffer.
         #var(type:vlength)aLength.
-        #var anOutput := emptyLiteralValue.
+        #var anOutput := emptyWideLiteralValue.
         
         #var(type:bool) continue := true.
         #loop continue ?
@@ -158,6 +158,9 @@
 
         ^ anOutput.
     ]
+
+    #method read &literal
+        = $self read &wide literal.
 
     #method int
     [

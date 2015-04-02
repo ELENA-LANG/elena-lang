@@ -72,7 +72,7 @@
     #var aList := List new.
     #var anAdapter := Adapter new.
 
-    control run &path:(aFileName literal) &forEachLine: aLine
+    control run &path:aFileName &forEachLine: aLine
     [
         anAdapter write:aLine.
 

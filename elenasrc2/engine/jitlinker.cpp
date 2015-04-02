@@ -542,7 +542,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       _compiler->compileChar32(&writer, value);
    }
    else if (mask == mskInt32Ref) {
-      _compiler->compileInt32(&writer, StringHelper::strToInt(value));
+      _compiler->compileInt32(&writer, StringHelper::strToULong(value, 16));
    }
    else if (mask == mskInt64Ref) {
       // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number

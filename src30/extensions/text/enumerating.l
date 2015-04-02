@@ -37,11 +37,10 @@
             ? [
                 theLine := theReader read &literal.
                 
-                (nil equal:theLine)
-                    ? [  theReader close. ^ false. ].
-                    
                 ^ true.            
             ].
+        
+        theReader close.
         
         ^ false.
     ]

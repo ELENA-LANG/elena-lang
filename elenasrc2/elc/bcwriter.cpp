@@ -787,7 +787,7 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.write(bcBLen);
       tape.write(bcBCopyA);
       tape.write(bcACopyR, vmtReference | mskVMTRef);
-      tape.write(bcCreate);
+      tape.write(bcBCreate);
       tape.write(bcBSwap);
       tape.write(bcCopy);
    }

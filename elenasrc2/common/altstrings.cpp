@@ -573,7 +573,7 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
 
    do
    {
-      rem = n % radix;
+      rem = (unsigned int)n % radix;
       n /= radix;
       switch(rem) {
          case 10:
@@ -601,6 +601,53 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
       }
    }
    while( n != 0 );
+
+   s[pos] = 0;
+   pos--;
+   while (start < pos) {
+      char tmp = s[start];
+      s[start++] = s[pos];
+      s[pos--] = tmp;
+   }
+
+   return s;
+}
+
+char* StringHelper::ulongToStr(unsigned long n, char* s, int radix)
+{
+   int  rem = 0;
+   int  pos = 0;
+   int start = 0;
+
+   do
+   {
+      rem = n % radix;
+      n /= radix;
+      switch (rem) {
+      case 10:
+         s[pos++] = 'a';
+         break;
+      case 11:
+         s[pos++] = 'b';
+         break;
+      case 12:
+         s[pos++] = 'c';
+         break;
+      case 13:
+         s[pos++] = 'd';
+         break;
+      case 14:
+         s[pos++] = 'e';
+         break;
+      case 15:
+         s[pos++] = 'f';
+         break;
+      default:
+         if (rem < 10) {
+            s[pos++] = (rem + 0x30);
+         }
+      }
+   } while (n != 0);
 
    s[pos] = 0;
    pos--;
@@ -773,6 +820,11 @@ double StringHelper :: strToDouble(const wchar_t* s)
 wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
 {
    return _itow(n, s, radix);
+}
+
+wchar_t* StringHelper::ulongToStr(unsigned long n, wchar_t* s, int radix)
+{
+   return _ultow(n, s, radix);
 }
 
 char* StringHelper :: longlongToStr(long long n, char* s, int radix)

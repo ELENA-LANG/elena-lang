@@ -21,28 +21,17 @@ v  - vm script
 Currently:
 ------
               adev - weekly
-                       * TextBuffer test : 
-                       * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
-                       * uncomment all extension code
-                       * uncomment tests                       
-                       * tests
                        * test basic samples
+                       * fix bsort
+                       * uncomment all extension code
                        * test rosettacode samples : amb, anagram, calender, caesar, bullscows, brackets, bestshuffle, arithmeval
-                       * test rsave
-                       * test real to int / short / byte conversion
                        * test vm samples       
                        * test thread operation
+                       * linux : read line, read char, read key
                        
               idev - bugs:
                        * fix call list
-                       * fix breakpoints
-                       * fix go to
 
-              adev - lib30                       
-                       * linux: support basic console operations
-                       * system'text : encodings utf8, ansi, utf16, win1251, win1252
-                       * linux : migrate lib30
-                       
 <=================> 
                                               
 1.9.19
@@ -58,6 +47,13 @@ week2:
                        * support GUI application
                        
               adev - lib30                                        
+                       * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
+
+                       * test rsave
+                       * test real to int / short / byte conversion
+
+                       * extensions'text : StringBookmark and WideStringBookmark
+                       
                        * intarray, shortarray, bytearray, chararray should getAt and setAt messages
 
                        * should cast, clone be part of system'Object - so it parts of any class, and direct call via VMT can be used for them

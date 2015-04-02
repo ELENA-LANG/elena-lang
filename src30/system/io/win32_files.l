@@ -149,7 +149,7 @@
         #var(type:bytearray,size:64)aBuffer.
         theStream read &bytearray:aBuffer &vlength:aBufferLength.
         (aBufferLength == 0)
-            ? [ theOpen := false. ]
+            ? [ theOpen := false. aLength << 0. ]
             ! [
                 #var(type:vint)aRead := aBufferLength.
                         

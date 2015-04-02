@@ -327,8 +327,11 @@
     #method delete &index:anIndex &length:aLength
     [
         #var(type:int)n := 0 - aLength.
+        #var(type:int)l := theLength.
+        l := l - anIndex.
+        l := l - aLength.
         
-        theBuffer move &index:anIndex &length:theLength &offset:n.
+        theBuffer move &index:(anIndex + aLength) &length:l &offset:n.
         
         theLength -= aLength.
     ]

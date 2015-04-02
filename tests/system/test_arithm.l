@@ -6,11 +6,16 @@
 //#define system'math.
 #define extensions.
 //#define extensions'math.
-                                                                       
+
+#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+
 #symbol XTester =
 {
-    test    
+    test        
     [
+        #var n := 2.
+        
+        control run:"abc" &forEach:printingLn.
     ]
 }.
 

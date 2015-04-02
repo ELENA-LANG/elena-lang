@@ -1924,11 +1924,17 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
    }
    else if (terminal == tsInteger) {
-      int integer = StringHelper::strToInt(terminal.value);
+      String<ident_c, 20> s(terminal.value, getlength(terminal.value));
+
+      long integer = s.toInt();
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
-      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(terminal));
+      // convert back to string as a decimal integer
+      s.clear();
+      s.appendHex(integer);
+
+      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
    }
    else if (terminal == tsLong) {
       String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
@@ -1940,7 +1946,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 
       object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
    }
-   else if (terminal==tsHexInteger) {
+   else if (terminal == tsHexInteger) {
       String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
 
       long integer = s.toULong(16);
@@ -1949,7 +1955,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 
       // convert back to string as a decimal integer
       s.clear();
-      s.appendLong(integer);
+      s.appendHex(integer);
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
    }
@@ -3497,15 +3503,13 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
    return retVal;
 }
 
-void Compiler :: compileAction(DNode node, InlineClassScope& scope, DNode argNode)
+bool Compiler :: declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope)
 {
    bool lazyExpression = isReturnExpression(node.firstChild());
-//   bool stackSafeFunc = false;
+   //   bool stackSafeFunc = false;
 
-   _writer.declareClass(scope.tape, scope.reference);
-
-   ActionScope methodScope(&scope);
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
+
    if (argNode != nsNone) {
       // define message parameter
       methodScope.message = declareInlineArgumentList(argNode, methodScope);
@@ -3534,6 +3538,16 @@ void Compiler :: compileAction(DNode node, InlineClassScope& scope, DNode argNod
    }
    else if (res == irUnsuccessfull)
       scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
+
+   return lazyExpression;
+}
+
+void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode)
+{
+   _writer.declareClass(scope.tape, scope.reference);
+
+   ActionScope methodScope(&scope);
+   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope);
 
    // if it is single expression
    if (!lazyExpression) {
@@ -4189,7 +4203,7 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
       else {
          if ((*out_it).size == 4) {
             if ((*out_it).info.kind == okIntConstant) {
-               int value = StringHelper::strToInt(moduleScope->module->resolveConstant((*out_it).info.param));
+               int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
 
                externalScope.frameSize++;
                _writer.declarePrimitiveVariable(*scope.tape, value);
@@ -4634,6 +4648,9 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope, int mode)
 
    if (isReturnExpression(node.firstChild())) {
       compileRetExpression(node.firstChild(), codeScope, 0);
+   }
+   else if (node == nsInlineExpression) {
+      compileCode(node.firstChild(), codeScope);
    }
    else compileCode(node, codeScope);
 
@@ -5357,7 +5374,7 @@ void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler::declareSingletonClass(DNode node, ClassScope& scope, bool closed)
+void Compiler :: declareSingletonClass(DNode node, ClassScope& scope, bool closed)
 {
    // nested class is sealed if it has no parent
    if (!test(scope.info.header.flags, elClosed))
@@ -5367,6 +5384,16 @@ void Compiler::declareSingletonClass(DNode node, ClassScope& scope, bool closed)
    scope.info.header.flags |= elStateless;
 
    declareVMT(node.firstChild(), scope, nsMethod, closed);
+
+   scope.save();
+}
+
+void Compiler :: declareSingletonAction(DNode node, ClassScope& scope, ActionScope& methodScope)
+{
+   // singleton is always stateless
+   scope.info.header.flags |= elStateless;
+
+   methodScope.include();
 
    scope.save();
 }
@@ -5394,26 +5421,53 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
    DNode expression = node.firstChild();
    // if it is a singleton
-   if (isSingleStatement(expression) && expression.firstChild().firstChild() == nsNestedClass) {
-      DNode classNode = expression.firstChild();
+   if (isSingleStatement(expression)) {
+      DNode objNode = expression.firstChild().firstChild();
+      if (objNode == nsNestedClass) {
+         DNode classNode = expression.firstChild();
 
-      ClassScope classScope(scope.moduleScope, scope.reference);
+         ClassScope classScope(scope.moduleScope, scope.reference);
 
-      if (classNode.Terminal() != nsNone) {
-         // inherit parent
-         compileParentDeclaration(classNode, classScope);
-         if (classScope.info.fields.Count() > 0 || testany(classScope.info.header.flags, elStructureRole | elDynamicRole))
-            scope.raiseError(errInvalidSymbolExpr, expression.Terminal());
+         if (classNode.Terminal() != nsNone) {
+            // inherit parent
+            compileParentDeclaration(classNode, classScope);
+            if (classScope.info.fields.Count() > 0 || testany(classScope.info.header.flags, elStructureRole | elDynamicRole))
+               scope.raiseError(errInvalidSymbolExpr, expression.Terminal());
 
-         declareSingletonClass(classNode.firstChild(), classScope, test(classScope.info.header.flags, elClosed));
+            declareSingletonClass(classNode.firstChild(), classScope, test(classScope.info.header.flags, elClosed));
+         }
+         // if it is normal nested class
+         else {
+            classScope.info.header.flags |= elSealed;
+
+            compileParentDeclaration(DNode(), classScope);
+
+            declareSingletonClass(classNode.firstChild(), classScope, false);
+         }
       }
-      // if it is normal nested class
-      else {         
-         classScope.info.header.flags |= elSealed;
-         
-         compileParentDeclaration(DNode(), classScope);
+      else if (objNode == nsSubCode) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         ActionScope methodScope(&classScope);
 
-         declareSingletonClass(classNode.firstChild(), classScope, false);
+         declareActionScope(objNode, classScope, DNode(), methodScope);
+
+         declareSingletonAction(objNode, classScope, methodScope);
+      }
+      else if (objNode == nsInlineExpression) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         ActionScope methodScope(&classScope);
+
+         declareActionScope(objNode, classScope, expression.firstChild(), methodScope);
+
+         declareSingletonAction(objNode, classScope, methodScope);
+      }
+      else if (objNode == nsSubjectArg || objNode == nsMessageParameter) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         ActionScope methodScope(&classScope);
+
+         declareActionScope(objNode, classScope, objNode, methodScope);
+
+         declareSingletonAction(objNode, classScope, methodScope);
       }
    }
 
@@ -5434,23 +5488,48 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    ObjectInfo retVal;
    DNode expression = node.firstChild();
    // if it is a singleton
-   if (isSingleStatement(expression) && expression.firstChild().firstChild() == nsNestedClass) {
+   if (isSingleStatement(expression)) {
       DNode classNode = expression.firstChild().firstChild();
+      if (classNode == nsNestedClass) {
+         ModuleScope* moduleScope = scope.moduleScope;
 
-      ModuleScope* moduleScope = scope.moduleScope;
+         ClassScope classScope(moduleScope, scope.reference);
+         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-      ClassScope classScope(moduleScope, scope.reference);
-      moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
+         if (classNode.Terminal() != nsNone) {
+            compileSingletonClass(classNode.firstChild(), classScope);
+         }
+         // if it is normal nested class
+         else compileSingletonClass(classNode, classScope);
 
-      if (classNode.Terminal() != nsNone) {
-         compileSingletonClass(classNode.firstChild(), classScope);
+         if (test(classScope.info.header.flags, elStateless)) {
+            // if it is a stateless singleton
+            retVal = ObjectInfo(okConstantSymbol, scope.reference);
+         }
       }
-      // if it is normal nested class
-      else compileSingletonClass(classNode, classScope);
+      else if (classNode == nsSubCode) {
+         ModuleScope* moduleScope = scope.moduleScope;
 
-      if (test(classScope.info.header.flags, elStateless)) {
-         // if it is a stateless singleton
-         retVal = ObjectInfo(okConstantSymbol, scope.reference);
+         ClassScope classScope(moduleScope, scope.reference);
+         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
+
+         compileAction(classNode, classScope, DNode());
+      }
+      else if (classNode == nsInlineExpression) {
+         ModuleScope* moduleScope = scope.moduleScope;
+
+         ClassScope classScope(moduleScope, scope.reference);
+         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
+
+         compileAction(classNode, classScope, expression.firstChild());
+      }
+      else if (classNode == nsSubjectArg || classNode == nsMessageParameter) {
+         ModuleScope* moduleScope = scope.moduleScope;
+
+         ClassScope classScope(moduleScope, scope.reference);
+         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
+
+         compileAction(goToSymbol(node, nsInlineExpression), classScope, node);
       }
    }
 
@@ -5473,7 +5552,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          _Module* module = scope.moduleScope->module;
          MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-         int value = StringHelper::strToInt(module->resolveConstant(retVal.param));
+         size_t value = StringHelper::strToULong(module->resolveConstant(retVal.param), 16);
 
          dataWriter.writeDWord(value);
 

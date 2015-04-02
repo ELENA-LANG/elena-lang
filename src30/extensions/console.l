@@ -7,7 +7,7 @@
 
 // --- outputOp ---
 
-#class outputOp
+#symbol outputOp =
 {
     #method write:anObject
     [
@@ -256,11 +256,11 @@
             anIndex := anIndex + 1.
         ].
     ]
-}
+}.
 
-// --- outputOp ---
+// --- wideOutputOp ---
 
-#class wideOutputOp
+#symbol wideOutputOp =
 {
     #method write:anObject
     [
@@ -510,11 +510,11 @@
             anIndex := anIndex + 1.
         ].
     ]
-}
+}.
 
 // --- inputOp ---
 
-#class inputOp
+#symbol inputOp =
 {
     #method readLine : anObject
     [
@@ -610,11 +610,11 @@
             anIndex := anIndex + 1.
         ].
     ]
-}
+}.
 
 // --- wideInputOp ---
 
-#class wideInputOp
+#symbol wideInputOp =
 {
     #method readLine : anObject
     [
@@ -710,7 +710,7 @@
             anIndex := anIndex + 1.
         ].
     ]
-}
+}.
 
 // === helper symbols ==
 

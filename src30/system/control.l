@@ -196,6 +196,8 @@
 
 #class(limited)BaseFunction1
 {
+    #method func1 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func1:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func1:$self.
@@ -227,6 +229,8 @@
 
 #class(limited)BaseFunction2
 {
+    #method func2 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func2:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func2:$self.
@@ -258,6 +262,8 @@
 
 #class(limited)BaseFunction3
 {
+    #method func3 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func3:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func3:$self.
@@ -289,6 +295,8 @@
 
 #class(limited)BaseFunction4
 {
+    #method func4 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func4:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func4:$self.
@@ -320,6 +328,8 @@
 
 #class(limited)BaseFunction5
 {
+    #method func5 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func5:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func5:$self.
@@ -351,6 +361,8 @@
 
 #class(limited)BaseFunction6
 {
+    #method func6 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func6:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func6:$self.
@@ -382,6 +394,8 @@
 
 #class(limited)BaseFunction7
 {
+    #method func7 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func7:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func7:$self.
@@ -413,6 +427,8 @@
 
 #class(limited)BaseFunction8
 {
+    #method func8 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func8:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func8:$self.
@@ -444,6 +460,8 @@
 
 #class(limited)BaseFunction9
 {
+    #method func9 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func9:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func9:$self.
@@ -475,6 +493,8 @@
 
 #class(limited)BaseFunction10
 {
+    #method func10 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func10:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func10:$self.
@@ -506,6 +526,8 @@
 
 #class(limited)BaseFunction11
 {
+    #method func11 = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func11:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &func11:$self.
@@ -548,6 +570,8 @@
 
 #class(limited)IndexFunction1
 {
+    #method nfunc = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nfunc:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &nfunc:$self.
@@ -600,6 +624,8 @@
 
 #class(limited)IndexFunction2
 {
+    #method nnfunc = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nnfunc:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &nnfunc:$self.
@@ -653,6 +679,8 @@
 
 #class(limited)IndexFunction3
 {
+    #method n3func = $self.
+    
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &n3func:$self.
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &n3func:$self.

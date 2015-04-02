@@ -1535,7 +1535,7 @@ procedure s_copychar
   callr api : coreapi'chartostr
   acopyb
   quitn 2
-
+  
 labEmpty:
   dcopy 1
   acopyr class : system'LiteralValue
@@ -3645,6 +3645,8 @@ procedure ws_copysubarr
 
   aloadsi 2
   nload
+  ifn labEmpty 0
+
   ecopyd
   aloadsi 3
   nload
@@ -3671,13 +3673,25 @@ procedure ws_copysubarr
   drestore
   close
   quitn 4
-
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 4
+  
 end
 
 procedure s_copysubarr
 
   aloadsi 2
   nload
+  ifn labEmpty 0
+
   ecopyd
   aloadsi 3
   nload
@@ -3690,19 +3704,28 @@ procedure s_copysubarr
 
   acopyr class : system'LiteralValue
   inc
-  wcreate
+  bcreate
   bcopya
   acopys 2
   copy
   
   acopyb
-  wlen
+  blen
   ecopy 0
   dec
-  shiftn -1
-  bwritew
+  bwriteb
   drestore
   close
+  quitn 4
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
   quitn 4
 
 end
@@ -3777,20 +3800,22 @@ end
 
 procedure ns_move
 
+  pusha 
+
   // ; insert
-  aloadsi 3
+  aloadsi 4
   nload
   ecopyd
-  aloadsi 2
+  aloadsi 3
   nload
-  bcopya
-  aloadsi 4
+  bloadsi  0
+  aloadsi 5
   pushai 0
 
   callr api : coreapi'nmove
 
   pop  
-  acopyb
+  popa
   quitn 4
   
 end
@@ -3803,24 +3828,25 @@ procedure s_encode
   aloadsi 2
   nload
   aloadsi 4
-  bloadsi 6
+  bloadsi 5
   
   callr api : coreapi's_encode
   ifr labErr 0
 
   pushd
   dcopye  
-  aloadsi 7
+  bloadsi 7
   nsave
 
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
   popd
   sub    
 
-  aloadsi 5
+  bloadsi 6
   nsave
+  aloadsi 1
   
   quitn 7
 
@@ -3840,24 +3866,25 @@ procedure ws_encode
   aloadsi 2
   nload
   aloadsi 4
-  bloadsi 6
+  bloadsi 5
   
   callr api : coreapi'ws_encode
   ifr labErr 0
 
   pushd
   dcopye  
-  aloadsi 7
+  bloadsi 7
   nsave
 
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
   popd
   sub    
 
-  aloadsi 5
+  bloadsi 6
   nsave
+  aloadsi 1
   
   quitn 7
 
@@ -3877,24 +3904,25 @@ procedure s_decode
   aloadsi 2
   nload
   aloadsi 4
-  bloadsi 6
+  bloadsi 5
   
   callr api : coreapi's_decode
   ifr labErr 0
 
   pushd
   dcopye  
-  aloadsi 7
+  bloadsi 7
   nsave
 
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
   popd
   sub    
 
-  aloadsi 5
+  bloadsi 6
   nsave
+  aloadsi 1
   
   quitn 7
 
@@ -3914,7 +3942,7 @@ procedure ws_decode
   aloadsi 2
   nload
   aloadsi 4
-  bloadsi 6
+  bloadsi 5
   
   callr api : coreapi'ws_decode
   ifr labErr 0
@@ -3924,14 +3952,15 @@ procedure ws_decode
   aloadsi 7
   nsave
 
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
   popd
   sub    
 
-  aloadsi 5
+  bloadsi 6
   nsave
+  aloadsi 1
   
   quitn 7
 
