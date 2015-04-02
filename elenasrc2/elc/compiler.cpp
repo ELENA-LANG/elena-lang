@@ -3503,7 +3503,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
    return retVal;
 }
 
-bool Compiler :: declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope)
+bool Compiler :: declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared)
 {
    bool lazyExpression = isReturnExpression(node.firstChild());
    //   bool stackSafeFunc = false;
@@ -3517,37 +3517,39 @@ bool Compiler :: declareActionScope(DNode node, ClassScope& scope, DNode argNode
       node = node.select(nsSubCode);
    }
 
-   ref_t parentRef = scope.info.header.parentRef;
-   if (lazyExpression) {
-      parentRef = scope.moduleScope->getBaseLazyExpressionClass();
-   }
-   else if (getSignature(methodScope.message) == 0) {
-      parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
-   }
-   else {
-      // check if it is nfunc
-      ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
-      if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
-         parentRef = nfuncRef;
+   if (!alreadyDeclared) {
+      ref_t parentRef = scope.info.header.parentRef;
+      if (lazyExpression) {
+         parentRef = scope.moduleScope->getBaseLazyExpressionClass();
       }
-   }
+      else if (getSignature(methodScope.message) == 0) {
+         parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
+      }
+      else {
+         // check if it is nfunc
+         ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
+         if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
+            parentRef = nfuncRef;
+         }
+      }
 
-   InheritResult res = compileParentDeclaration(parentRef, scope, true);
-   if (res == irInvalid) {
-      scope.raiseError(errInvalidParent, node.Terminal());
+      InheritResult res = compileParentDeclaration(parentRef, scope, true);
+      if (res == irInvalid) {
+         scope.raiseError(errInvalidParent, node.Terminal());
+      }
+      else if (res == irUnsuccessfull)
+         scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
    }
-   else if (res == irUnsuccessfull)
-      scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
 
    return lazyExpression;
 }
 
-void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode)
+void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared)
 {
    _writer.declareClass(scope.tape, scope.reference);
 
    ActionScope methodScope(&scope);
-   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope);
+   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, alreadyDeclared);
 
    // if it is single expression
    if (!lazyExpression) {
@@ -5449,7 +5451,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
-         declareActionScope(objNode, classScope, DNode(), methodScope);
+         declareActionScope(objNode, classScope, DNode(), methodScope, false);
 
          declareSingletonAction(objNode, classScope, methodScope);
       }
@@ -5457,7 +5459,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
-         declareActionScope(objNode, classScope, expression.firstChild(), methodScope);
+         declareActionScope(objNode, classScope, expression.firstChild(), methodScope, false);
 
          declareSingletonAction(objNode, classScope, methodScope);
       }
@@ -5465,7 +5467,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
-         declareActionScope(objNode, classScope, objNode, methodScope);
+         declareActionScope(objNode, classScope, objNode, methodScope, false);
 
          declareSingletonAction(objNode, classScope, methodScope);
       }
@@ -5513,7 +5515,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(classNode, classScope, DNode());
+         compileAction(classNode, classScope, DNode(), true);
+
+         retVal = ObjectInfo(okConstantSymbol, scope.reference);
       }
       else if (classNode == nsInlineExpression) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -5521,7 +5525,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(classNode, classScope, expression.firstChild());
+         compileAction(classNode, classScope, expression.firstChild(), true);
+
+         retVal = ObjectInfo(okConstantSymbol, scope.reference);
       }
       else if (classNode == nsSubjectArg || classNode == nsMessageParameter) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -5529,7 +5535,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(goToSymbol(node, nsInlineExpression), classScope, node);
+         compileAction(goToSymbol(node, nsInlineExpression), classScope, node, true);
+
+         retVal = ObjectInfo(okConstantSymbol, scope.reference);
       }
    }
 

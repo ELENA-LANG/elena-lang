@@ -737,7 +737,7 @@ protected:
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-   bool declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope);
+   bool declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
    void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
@@ -758,7 +758,7 @@ protected:
 
    void compileSymbolCode(ClassScope& scope);
 
-   void compileAction(DNode node, ClassScope& scope, DNode argNode);
+   void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);
