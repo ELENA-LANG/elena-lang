@@ -17,7 +17,7 @@ procedure rnd_next
   aloadsi 2
   nload
   aloadsi 3
-  callr api : lrndnext  
+  callr api : coreapi'lrndnext  
   acopyb
 
   quitn 3

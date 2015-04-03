@@ -230,7 +230,7 @@ ELENA byte codes (or ecodes)
  
  lxor                       - long[base] ~~ long[acc]
  
- mindex                      - search for ext in acc:VMT; out: index or -1
+ mindex                     - search for ext in acc:VMT; out: index or -1
  
  nadd                       - int[base] += int[acc]
  

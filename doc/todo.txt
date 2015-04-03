@@ -21,12 +21,6 @@ v  - vm script
 Currently:
 ------
               adev - weekly
-                       * test amb
-                       * test anagram
-                       * test brackets
-                       * test bullscows
-                       * test caesar
-                       * test calendar
                        * test vm samples       
                        * test thread operation
                        * linux : read line, read char, read key

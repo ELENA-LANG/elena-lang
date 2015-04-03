@@ -868,8 +868,8 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    // get
    // inc
    // elser labSearch
-   // dec
    // ecopyd
+   // dec
    // pushn 0
 
    // labNext:
@@ -878,7 +878,9 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    // pusha
    // elsen labNext 0
 
-   // acopys 0
+   // dcopye
+   // bcopys 0
+   // get
 
    tape.write(bcBCopyA);
    tape.write(bcDCopy, 0);
@@ -888,8 +890,8 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    tape.write(bcInc);
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
-   tape.write(bcDec);
    tape.write(bcECopyD);
+   tape.write(bcDec);
    tape.write(bcPushN, 0);
 
    tape.newLabel();
@@ -900,7 +902,9 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
 
-   tape.write(bcACopyS);
+   tape.write(bcDCopyE);
+   tape.write(bcBCopyS);
+   tape.write(bcGet);
 }
 
 void ByteCodeWriter :: popObject(CommandTape& tape, ObjectInfo object)

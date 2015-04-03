@@ -119,7 +119,7 @@
     [
         #var(type:int)i := theIndex.
         
-        (theIndex > i) ?
+        (anIndex < i) ?
         [
             theCurrent := theList topItem.
             i := 0.

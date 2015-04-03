@@ -38,12 +38,14 @@
         anItem += aWord.
     ].
 
-    aDictionary~indexable sort: (:aFormer:aLater) [ aFormer length > aLater length ].
+    aDictionary~indexable 
+        sort: (:aFormer:aLater) [ aFormer length > aLater length ].
 
     control run:(aDictionary~enumerable top:20) &forEach: aPair [ consoleEx writeLine:aPair ].
     
     #var anEnd := now.
    
     #var aDiff := anEnd - aStart.
+
     consoleEx writeLine:"Time elapsed in msec:":(aDiff milliseconds).
 ].

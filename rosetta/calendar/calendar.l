@@ -63,7 +63,7 @@
     {
         available = theRow < 7.
 
-        read &out'index:anIndex [ anIndex := theRow int. ]
+        #method readIndex &vint:anIndex [ anIndex << theRow int. ]
 
         write &index:anIndex 
         [

@@ -737,7 +737,7 @@ protected:
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-   bool declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
+   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
    void declareSingletonClass(DNode member, ClassScope& scope, bool closed);

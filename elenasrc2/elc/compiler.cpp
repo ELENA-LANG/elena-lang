@@ -3503,7 +3503,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
    return retVal;
 }
 
-bool Compiler :: declareActionScope(DNode node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared)
+bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared)
 {
    bool lazyExpression = isReturnExpression(node.firstChild());
    //   bool stackSafeFunc = false;
@@ -4652,6 +4652,7 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope, int mode)
       compileRetExpression(node.firstChild(), codeScope, 0);
    }
    else if (node == nsInlineExpression) {
+      // !! this check should be removed, as it is no longer used
       compileCode(node.firstChild(), codeScope);
    }
    else compileCode(node, codeScope);

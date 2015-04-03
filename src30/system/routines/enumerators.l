@@ -771,7 +771,8 @@
 
         #loop (aFormer available) ?
         [
-            #var(type:int)i := aFormer index.
+            #var(type:vint)i.
+            aFormer readIndex &vint:i.
             
             aLater write &index:(i + 1).
             
