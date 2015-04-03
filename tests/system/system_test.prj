@@ -1,7 +1,6 @@
 ﻿[project]
 vmpath=..\..\bin\
 executable=system_test.exe
-options=-w4
 namespace=system_test
 template=console
 debuginfo=-1

@@ -5463,7 +5463,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
          declareSingletonAction(objNode, classScope, methodScope);
       }
-      else if (objNode == nsSubjectArg || objNode == nsMessageParameter) {
+      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
@@ -5529,7 +5529,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference);
       }
-      else if (classNode == nsSubjectArg || classNode == nsMessageParameter) {
+      else if (classNode == nsSubjectArg || classNode == nsMethodParameter) {
          ModuleScope* moduleScope = scope.moduleScope;
 
          ClassScope classScope(moduleScope, scope.reference);

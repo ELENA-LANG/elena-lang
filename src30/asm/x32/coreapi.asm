@@ -1707,12 +1707,12 @@ ftoa2:
    //-------------------------
          
 maybezero:
-   jpe   short getnumsize      // would be denormalized number
+   jpe   short getnumsize     // would be denormalized number
    fstp  st(0)                // flush that 0 value off the FPU
    mov   eax,2E30h            // ".0" szstring
-   stosd                      // write it
+   stosw                      // write it
    mov   eax,30h              // "0" szstring
-   stosd                      // write it
+   stosb                      // write it
    jmp   finish
 
    //---------------------------
@@ -2062,7 +2062,7 @@ maybezero:
    mov   eax,2E0030h          // ".0" szstring
    stosd                      // write it
    mov   eax,30h              // "0" szstring
-   stosd                      // write it
+   stosw                      // write it
    jmp   finish
 
    //---------------------------
@@ -2907,12 +2907,12 @@ end
 
 procedure coreapi'wadd
 
+  shl  esi, 1
+  shl  ecx, 1
+
   mov  edx, esi         // ; dst index
   mov  esi, ecx         // ; src index
-  shl  edx, 1
   
-  add  ecx, esi
-  shl  esi, 1
   add  ecx, [eax-8]  
 
   add  edx, edi
@@ -2935,7 +2935,6 @@ procedure coreapi'sadd
   mov  edx, esi         // ; dst index
   mov  esi, ecx         // ; src index
   
-  add  ecx, esi
   add  ecx, [eax-8]  
 
   add  edx, edi

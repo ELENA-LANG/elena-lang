@@ -2980,40 +2980,48 @@ end
 
 procedure s_indexof_char
 
-  aloadsi 3
+  pusha
+  aloadsi 4
   pushn 0
   pushn 0
   bcopys 0
+  pushn 0
+  pushn 0FFFFFFFEh
   callr api : coreapi'chartostr
 
-  aloadsi 4                 // ; load index
+  aloadsi 7                 // ; load index
   nload
-  acopys 0
+  acopys 2
+  bloadsi 4
   callr api : coreapi'sseek
-  acopyb
-  bloadsi 6                 // ; load target
+  bloadsi 9                // ; load target
   nsave                    // ; save index
-  popi 2
+  popi 4
+  popa
   quitn 4
 
 end
 
 procedure ws_indexof_char
 
-  aloadsi 3
+  pusha
+  aloadsi 4
   pushn 0
   pushn 0
   bcopys 0
+  pushn 0
+  pushn 0FFFFFFFEh
   callr api : coreapi'chartowstr
 
-  aloadsi 4                 // ; load index
+  aloadsi 7                 // ; load index
   nload
-  acopys 0
+  acopys 2
+  bloadsi 4
   callr api : coreapi'wseek
-  acopyb
-  bloadsi 6                 // ; load target
+  bloadsi 9                // ; load target
   nsave                    // ; save index
-  popi 2
+  popi 4
+  popa
   quitn 4
   
 end

@@ -21,10 +21,12 @@ v  - vm script
 Currently:
 ------
               adev - weekly
-                       * test basic samples
-                       * test matrix
-                       * uncomment all extension code
-                       * test rosettacode samples : amb, anagram, calender, caesar, bullscows, brackets, bestshuffle, arithmeval
+                       * test amb
+                       * test anagram
+                       * test brackets
+                       * test bullscows
+                       * test caesar
+                       * test calendar
                        * test vm samples       
                        * test thread operation
                        * linux : read line, read char, read key
@@ -157,6 +159,7 @@ week2:
                        * implement: test if all bits set in mask clear in receiver
                        * support: primitive operation int + long, long + int
                        * bytenumber : bitwise operation with long number - incorrect code
+                       * review extensions'math'Matrix
                        
                        * convertor toArray , which converts list to elist wrap or returns itself
                          (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
@@ -180,6 +183,7 @@ week2:
                        * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
                        * Literal operation like insert, delete, substring: there should be generic variant as well (e.g. s insert:s &at:3)
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
+                       * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char - optimize implementation
                                                                                                                              
               arev - lib30 review
                        * fix bytearray read / write operation with byte, char, int, long, real
@@ -299,6 +303,9 @@ week2:
 
 week3:
               xdev - script engine
+                       * review script
+                       * uncomment extension code
+                       * reimplement basic samples
                        * global variables
                        * build structure
 
@@ -327,6 +334,9 @@ week3:
                        * use script generate code
                        * current implementation is done in two passes, simplify to one
                        
+              sdev - eldoc
+                       * implement
+                       
               sdev - c# samples
                        * try to implement c# reflection samples
                        * try to implement c# lamda examples (lists)
@@ -336,7 +346,7 @@ week3:
                        * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
                        * inline script improve error handling
                        * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-
+                       
               sdev - prime project
                        * interpreter : execute simple sample3.txt
                        * interpreter : execute sample1.txt
@@ -413,9 +423,6 @@ week3:
 
               sdoc - tutorials
                        * post sum sample
-                       
-              sdev - eldoc
-                       * review possible solution using script engine to define parsing rules
                        
               sdev - visualizer
                        * build hello world sample by constructing / view / edit
