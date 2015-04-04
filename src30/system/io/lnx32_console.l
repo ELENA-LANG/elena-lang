@@ -15,8 +15,21 @@
 
     #method write &literal : aLiteral
     [
-        system'external'libc puts
-            &literal    :  aLiteral.             
+        #var(type:int)n := 0.
+        #var(type:vint)l.
+        #var(type:vbyte)vc.
+        #var(type:byte)c.
+
+        aLiteral readLength &vint:l.
+        #loop (n < l)?
+        [
+            aLiteral read &index:n &vbyte:vc.
+            c := vc. // !! temporal  
+
+            system'external'libc putchar &byte:c.             
+
+            n := n + 1.
+        ].
 
         // !!check the result of the operation
     ]
@@ -33,98 +46,58 @@
     #constructor new
     [
     ]
-/*  
-    #method read &vchar:aChar
-    [
-        #var(type:bytearray,size:20)aDump.
-        #var(type:vint)aNumberRead.
-        #var(type:vshort)anEventType.
-        #var(type:vint)aKeyDown.
-        
-        #var found := false.
-        #loop found !
-        [
-            system'external'KERNEL32 ReadConsoleInputW
-                &handle        : theHandle
-                &bytearray     : aDump
-                &int           : 1
-                &vint          : aNumberRead.
 
-            aDump read &index:0 &vshort:anEventType.
-            (anEventType == 1)
-                ? [  
-                    aDump read &index:4 &vint:aKeyDown.
-                    
-                    found := aKeyDown == 1.
-                ]
-                ! [ found := false. ].
+    #method read &vbyte:aRetVal
+    [    
+        #var(type:byte) ch := system'external'libc getchar.
+
+        aRetVal << ch.
+    ]
+
+    #method read &bytearray:aBuffer &vlength:aRetVal
+    [
+        #var(type:int) i := 0.
+        #loop (aRetVal > i) ?
+        [
+            #var(type:vbyte)ch.
+            $self read &vbyte:ch.
+               
+            aBuffer write &index:i &byte:ch.
+
+            i := i + 1.
+
+            (ch == 0Ah)
+               ? [ aRetVal << i.  ^ $self. ].
         ].
 
-        aDump read &index:14 &vchar:aChar.
+        aRetVal << i.
     ]
 
-    #method read &vint:aKey
-    [
-        #var(type:bytearray,size:20)aDump.
-        #var(type:vint)aNumberRead.
-        #var(type:vshort)anEventType.
-        #var(type:vint)aKeyDown.
-        
-        #var found := false.
-        #loop found !
-        [
-            system'external'KERNEL32 ReadConsoleInputW
-                &handle        : theHandle
-                &bytearray     : aDump
-                &int           : 1
-                &vint          : aNumberRead.
-
-            aDump read &index:0 &vshort:anEventType.
-            (anEventType == 1)
-                ? [  
-                    aDump read &index:4 &vint:aKeyDown.
-                    
-                    found := aKeyDown == 1.
-                ]
-                ! [ found := false. ].
-        ].
-                    
-        aDump read &index:8 &vint:aKey.
-    ]
-
-    #method read &shortarray:aBuffer &vlength:aRetVal
-    [
-        #var(type:int)aLength := aRetVal.
-        system'external'KERNEL32 ReadConsoleW
-            &handle     : theHandle
-            &shortarray : aBuffer
-            &int        : aLength
-            &vint       : aRetVal
-            &int        : 0.
-    ]
-    
     #method read &wide
+        = $self read &literal wide.
+
+    #method read &literal
     [
-        #var(type:shortarray,size:127)aBuffer.
+        #var(type:bytearray,size:127)aBuffer.
         #var(type:vlength)aLength.
-        #var anOutput := emptyWideLiteralValue.
+        #var anOutput := emptyLiteralValue.
         
         #var(type:bool) continue := true.
         #loop continue ?
         [
             aLength := 127.
-            $self read &shortarray:aBuffer &vlength:aLength.
+            $self read &bytearray:aBuffer &vlength:aLength.
             
-            #var(type:vshort)aShort.
-            aBuffer read &index:(aLength - 1) &vshort:aShort.
-            (aShort == 0Ah)
+            #var(type:vbyte)ch.
+            aBuffer read &index:(aLength - 1) &vbyte:ch.
+            (ch == 0Ah)
                 ? [
-                    aLength := aLength - 2.
+                    aLength := aLength - 1.
                     
                     continue := false.
                 ].
             
-            #var aTemp := WideLiteralValue $new &length:aLength &index:0 &shortarray:aBuffer.
+            #var aTemp := LiteralValue $new &length:aLength &index:0 &bytearray:aBuffer.
             
             anOutput := anOutput + aTemp.
         ].
@@ -132,23 +105,30 @@
         ^ anOutput.
     ]
 
-    #method read &literal
-        = $self read &wide literal.
-
+  /*  
     #method int
     [
         #var(type:int)aRetVal := $self int.
         
         ^ IntNumber new &int:aRetVal.
     ]
-            
+*/ 
+    #method read &vchar:aRetVal
+    [
+       #var(type:vbyte)ch.
+       $self read &vbyte:ch.
+
+       charConvertor convert &byte:ch &vchar:aRetVal.  
+    ]
+           
     #method char
     [
-        #var(type:char)aRetVal := $self char.
+        #var(type:vchar)aRetVal.
+        $self read &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
     ]
-*/            
+
     #method close
     [
     ]

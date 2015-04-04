@@ -21,8 +21,6 @@ v  - vm script
 Currently:
 ------
               adev - weekly
-                       * test vm samples       
-                       * test thread operation
                        * linux : read line, read char, read key
                        
               idev - bugs:
@@ -34,6 +32,16 @@ Currently:
 1.9.19
 --------
 week2:
+              adev - linux lib30:
+                       * core : implement INIT_RND
+                       * linux file operations
+                       * linux date / time operations
+                       * consoleReader should check if the char is multibyte
+                       
+              adev - lib30
+                       * test vm samples       
+                       * test thread operation
+
               adev - gui
                        * general architecture
                        * class function
@@ -484,7 +492,7 @@ week 4:
 --------
 week1:
               xdev - generic development  
-                       * external call : vint can be passed as int (see ThreadHandle)
+                       * external call : vint can be passed as int (see ThreadHandle, linux - consoleWriter)
                        * wide literal constant
                        * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
                          not, than the operation with self should be boxed?
@@ -640,9 +648,7 @@ week1:
 
 week2:
               adev - linux lib30:
-                       * core : implement INIT_RND
-                       * linux file operations
-                       * linux date / time operations
+                       * review console operation, optimize the code
 
 2.0.0
 -----

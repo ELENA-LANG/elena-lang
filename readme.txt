@@ -19,7 +19,7 @@ For more information see at http://elenalang.sourceforge.net/
 - ELENA Virtual machine (in developing)
 - Command line 32-bit compiler
 - GUI IDE & Debugger
-- Unicode support (utf16)
+- Unicode support (utf-8)
 - Complete source code
 - Number of samples, including a card game Up'N'Down (in development)
 - Getting started tutorial

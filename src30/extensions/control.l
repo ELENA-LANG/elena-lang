@@ -119,7 +119,7 @@
         ^ -1 != s indexOf &index:0 &literal:ss.
     ]
 }.
-
+/*
 // --- threadControl ---
 
 #symbol threadControl =
@@ -133,3 +133,4 @@
         ^ aThread.
     ]
 }.
+*/

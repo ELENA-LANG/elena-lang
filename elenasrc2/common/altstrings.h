@@ -186,13 +186,6 @@ public:
       StringHelper::upper(_string + pos);
    }
 
-   void appendLong(long n)
-   {
-      int pos = getlength(_string);
-
-      StringHelper::longToStr(n, _string + pos, 10);
-   }
-
    void appendDouble(double n)
    {
       int pos = getlength(_string);

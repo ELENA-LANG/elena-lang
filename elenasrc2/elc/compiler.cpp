@@ -1832,6 +1832,9 @@ void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectIn
          if (size == 4) {
             _writer.saveInt(*scope.tape, variableInfo);
          }
+         else if ((size == 2 || size == 1) && variableInfo.kind == okLocal) {
+            _writer.saveInt(*scope.tape, variableInfo);
+         }
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }
       else {

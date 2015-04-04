@@ -13,6 +13,7 @@
 
 #include <elf.h>
 #include <limits.h>
+#include <sys/stat.h>
 
 //#include <time.h>
 //
@@ -503,6 +504,8 @@ void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
 
    if (!createExecutable(info, path/*, tls_directory*/))
       project.raiseError(errCannotCreate, path);
+
+   chmod(path, S_IXOTH | S_IXUSR);
 }
 
 // --- I386Linjer32 ---
