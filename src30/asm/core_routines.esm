@@ -4449,3 +4449,21 @@ labEnd:
   throw
 
 end
+
+procedure thread_start
+
+  acopys 1  
+  pusha
+  callr api : coreapi'resolve_index
+  pusha
+  callr api : coreapi'start_thread
+  ifr labError 0
+  quitn 1
+
+labError:
+  open 1
+  pushr class : system'NotSupportedException
+  pushr const : %new[0]
+  throw
+  
+end
