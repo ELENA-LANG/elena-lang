@@ -11,10 +11,6 @@
 {
     test        
     [
-        #var n := 2.
-        #var r := 3.
-        
-        #var k := n + r.
     ]
 }.
 

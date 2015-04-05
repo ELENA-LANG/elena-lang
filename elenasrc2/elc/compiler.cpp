@@ -613,11 +613,6 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
 {
    _Module* argModule;
 
-   return loadClassInfo(argModule, info, vmtName, headerOnly);
-}
-
-ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& info, ident_t vmtName, bool headerOnly)
-{
    if (emptystr(vmtName))
       return 0;
 
@@ -634,8 +629,44 @@ ref_t Compiler::ModuleScope :: loadClassInfo(_Module* &argModule, ClassInfo& inf
       return 0;
 
    MemoryReader reader(metaData);
+   
+   if (!headerOnly && argModule != module) {
+      ClassInfo copy;
+      copy.load(&reader, headerOnly);
 
-   info.load(&reader, headerOnly);
+      info.header = copy.header;
+      info.classClassRef = copy.classClassRef;
+      info.extensionTypeRef = copy.extensionTypeRef;
+
+      // import method references and mark them as inherited
+      ClassInfo::MethodMap::Iterator it = copy.methods.start();
+      while (!it.Eof()) {
+         info.methods.add(importMessage(argModule, it.key(), module), false);
+
+         it++;
+      }
+
+      info.fields.add(copy.fields);
+
+      // import field types
+      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+      while (!type_it.Eof()) {
+         info.fieldTypes.add(type_it.key(), importSubject(argModule, *type_it, module));
+
+         type_it++;
+      }
+
+      // import method types
+      ClassInfo::MethodTypeMap::Iterator mtype_it = copy.methodTypes.start();
+      while (!mtype_it.Eof()) {
+         info.methodTypes.add(
+            importMessage(argModule, mtype_it.key(), module),
+            importSubject(argModule, *mtype_it, module));
+
+         mtype_it++;
+      }
+   }
+   else info.load(&reader, headerOnly);
 
    if (argModule != module) {
       // import class class reference
@@ -754,30 +785,12 @@ Compiler::MethodType Compiler::ModuleScope :: checkTypeMethod(ref_t type_ref, re
 
 Compiler::MethodType Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
 {
-   _Module* extModule = NULL;
    ClassInfo info;
-   found = loadClassInfo(extModule, info, module->resolveReference(reference)) != 0;
+   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
 
    if (found) {
-      ref_t extMessage = message;
-      bool methodFound = false;
-      if (module != extModule) {
-         int   verb, paramCount;
-         ref_t subj;
-         decodeMessage(message, subj, verb, paramCount);
-         if (subj != 0) {
-            ref_t extSubj = extModule->mapSubject(module->resolveSubject(subj), true);
-            if (extSubj != 0) {
-               extMessage = encodeMessage(extSubj, verb, paramCount);
-            }
-         }
-      }
-
-      methodFound = info.methods.exist(extMessage);
-      outputType = info.methodTypes.get(extMessage);
-      if (outputType != 0 && module != extModule) {
-         outputType = importSubject(extModule, outputType, module);
-      }
+      bool methodFound = info.methods.exist(message);
+      outputType = info.methodTypes.get(message);
 
       if (methodFound) {
          if (test(info.header.flags, elSealed)) {

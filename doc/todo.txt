@@ -21,8 +21,11 @@ v  - vm script
 Currently:
 ------
               adev - gui
+                       * window procedure function : should be implemented in ecodes (like thread_start) and call special method, passing
+                         message id, and message params 
+
+
                        * general architecture
-                       * class function
                        * eventhandle group object
                        * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
                          dynamically for external operation
@@ -181,6 +184,7 @@ week2:
                        * Literal operation like insert, delete, substring: there should be generic variant as well (e.g. s insert:s &at:3)
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
                        * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char - optimize implementation
+                       * default exception handlers should either print (or show error message for gui) a general error message (broken)
                                                                                                                              
               arev - lib30 review
                        * fix bytearray read / write operation with byte, char, int, long, real
@@ -553,6 +557,7 @@ week1:
                        * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation                       
                        * literal constant should be converted into utf8 if it is passed as utf8_literal
                        * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
+                       * if more than 11 parameters are passed, open argument list should be used automatically??
                        
               xdev - byte code optimization                               
                        * optimize ByteCodeWriter::copyStructure                       

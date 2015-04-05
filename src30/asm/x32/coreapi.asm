@@ -21,6 +21,7 @@ define elSizeOffset      0008h
 
 // verbs
 define EXEC_MESSAGE_ID  085000000h
+define START_MESSAGE_ID 0B7000000h
 
 // ; --- API ---
 
@@ -39,6 +40,31 @@ procedure coreapi'console_entry
   call code : "'program"
 
   mov  ecx, EXEC_MESSAGE_ID
+  mov  esi, [eax - 4]
+  call [esi + 4]
+
+  // ; exit code
+  call code : % EXIT
+
+  ret
+
+end
+
+// ; gui_entry()
+procedure coreapi'gui_entry
+
+  call code : % INIT
+  call code : % NEWFRAME
+  mov  ebx, code : "$native'coreapi'default_handler"
+  call code : % INIT_ET
+
+  call code : "$native'core_rt'init_rt_info"  
+
+  // 'program start
+  xor  edi, edi
+  call code : "'program"
+
+  mov  ecx, START_MESSAGE_ID
   mov  esi, [eax - 4]
   call [esi + 4]
 

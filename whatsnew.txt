@@ -9,9 +9,12 @@
 
 [ELENA]
 [!] binary incompatible due to changes in the compiler code
-[*] operator redesign : \ - alternative message call, || - or operator
 [!] a strong type cannot be used as a custom verb 
+[!] is 100% UTF-8 internally
+[*] operator redesign : \ - alternative message call, || - or operator
 [*] stripping CORE from OS dependant code and moving it into CORE_LNX and CORE_WIN
+[-] out prefix is no longer supported, variable should be used instead
+[*] gui platform is reintroduced
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement
@@ -21,7 +24,10 @@
 [*] both external call modes supported: winapi / c
 
 [LIB]
-[+]linux: support basic console operations
+[!] literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
+[+] wliteral, WideLiteralValue and WideString
+[+] linux: support basic console operations
+[+] system'winforms module implementing basic WIN32 GUI functionality
 
 [IDE]
 [*] fixed "step over" implementations inside symbol

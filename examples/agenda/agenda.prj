@@ -10,5 +10,5 @@ warn:unresolved=0
 form.l
 
 [forwards]
-'SDIWindow=agenda'Window
+'mainWindow=agenda'Window
 

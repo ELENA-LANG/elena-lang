@@ -243,7 +243,6 @@ protected:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-      ref_t loadClassInfo(_Module* &classModule, ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
