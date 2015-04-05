@@ -19,7 +19,7 @@
 //    BreakTest eval.
     MultiDispatchTest eval.
 
-    MultySelectTest eval.
+    MultySelectTest  eval.
     EnumTest eval.    
     TextBufferTest eval.
     LoopTest eval.

@@ -108,7 +108,7 @@ struct SearchOption
 
 struct MessageBookmark
 {
-   _ELENA_::ident_t  module;
+   _ELENA_::ident_c* module;
    _ELENA_::path_c*  file;
    size_t            col, row;
 
@@ -122,7 +122,7 @@ struct MessageBookmark
 
    MessageBookmark(_ELENA_::ident_t module, _ELENA_::path_t file, size_t col, size_t row)
    {
-      this->module = module;
+      this->module = _ELENA_::StringHelper::clone(module);
       this->file = _ELENA_::StringHelper::clone(file);
       this->col = col;
       this->row = row;
@@ -130,6 +130,7 @@ struct MessageBookmark
 
    ~MessageBookmark()
    {
+      _ELENA_::freestr(module);
       _ELENA_::freestr(file);
    }
 };

@@ -20,13 +20,16 @@ v  - vm script
 ------                                 
 Currently:
 ------
-              adev - weekly
-                       * linux : read line, read char, read key
+              adev - gui
+                       * general architecture
+                       * class function
+                       * eventhandle group object
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * support GUI mode
+                       * support GUI application
+                       * gui stand-alone, gui mt stand-alone, gui vm client
                        
-              idev - bugs:
-                       * fix watch : auto refresh local variables
-                       * fix call list
-
 <=================> 
                                               
 1.9.19
@@ -37,19 +40,11 @@ week2:
                        * linux file operations
                        * linux date / time operations
                        * consoleReader should check if the char is multibyte
+                       * read key
                        
               adev - lib30
                        * test vm samples       
                        * test thread operation
-
-              adev - gui
-                       * general architecture
-                       * class function
-                       * eventhandle group object
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
-                       * support GUI mode
-                       * support GUI application
                        
               adev - lib30                                        
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding

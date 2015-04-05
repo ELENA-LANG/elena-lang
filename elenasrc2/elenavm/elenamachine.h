@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
 
-#define ELENAVM_BUILD_NUMBER    0x0003             // ELENAVM build version
+#define ELENAVM_BUILD_NUMBER    0x0004             // ELENAVM build version
 
 namespace _ELENA_
 {
@@ -184,14 +184,14 @@ protected:
    _JITCompiler*   _compiler;
    JITLinker*      _linker;
 
-   ident_t _literalClass;
-   ident_t _characterClass;
-   ident_t _intClass;
-   ident_t _longClass;
-   ident_t _realClass;
-   ident_t _msgClass;
-   ident_t _signClass;
-   ident_t _verbClass;
+   IdentifierString _literalClass;
+   IdentifierString _characterClass;
+   IdentifierString _intClass;
+   IdentifierString _longClass;
+   IdentifierString _realClass;
+   IdentifierString _msgClass;
+   IdentifierString _signClass;
+   IdentifierString _verbClass;
 
    LibraryManager  _loader;
    ELENAMachine*   _machine;

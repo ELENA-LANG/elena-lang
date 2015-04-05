@@ -24,67 +24,6 @@
 
 namespace _GUI_
 {
-//// -- WIN32IDE ---
-//
-//class MainWindow;
-//
-//class WIN32IDE : public IDE
-//{
-//   friend class MainWindow;
-//
-//   HINSTANCE   instance;
-//   ContextMenu contextMenu;
-//
-//   _ELENA_::List<_BaseControl*> controls;
-//
-//   TabBar* createOutputBar();
-//   ContextBrowser* createContextBrowser();
-//
-//protected:
-//
-//   virtual bool compileProject(int postponedAction);
-//
-//   bool isBrowser(HWND handle)
-//   {
-//      return _contextBrowser->checkHandle(handle);
-//   }
-//
-//   const wchar16_t* getDocumentPath(int index)
-//   {
-//      return _mainFrame->getDocumentPath(index);
-//   }
-//
-//public:
-//   void start(bool maximized);
-//
-//   virtual void onCustomDraw(void* handle, void* item);
-//
-//   virtual void onDebuggerStep(const wchar16_t* ns, const wchar_t* source, HighlightInfo info);
-//   virtual void onDebuggerStop(bool broken);
-////
-//   void onChildKeyDown(NMHDR* notification);
-//   void onContextMenu(ContextMenuNMHDR* notification);
-//   void onTabChanged(HWND wnd, int index);
-//   void onActivate();
-//
-//   Menu* getMainMenu()
-//   {
-//      return _appMenu;
-//   }
-//
-//   SDIWindow* getAppWindow()
-//   {
-//      return _appWindow;
-//   }
-//
-//   void displayErrors();
-//
-//   void cleanUpProject();
-//
-//   virtual void openHelp();
-//
-//   WIN32IDE(HINSTANCE instance, AppDebugController* debugController);
-//};
 
 // --- MainWindow ---
 
@@ -257,44 +196,6 @@ public:
    MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller* controller, Model* model);
    virtual ~MainWindow();
 };
-//
-//// --- AppDebugController ---
-//
-//class Win32AppDebugController : public AppDebugController
-//{
-//   Window* _receptor;
-//
-//   virtual void clearDebugInfo()
-//   {
-//      _vmHook = 0;
-//
-//      AppDebugController::clearDebugInfo();
-//   }
-//
-//   virtual size_t findEntryPoint(const tchar_t* programPath);
-//
-//public:
-//   void assign(Window* receptor)
-//   {
-//      _receptor = receptor;
-//   }
-//
-//   virtual void onLoadModule(const wchar_t* name, const wchar16_t* path)
-//   {
-//      _notify(IDE_DEBUGGER_LOADMODULE, name, path);
-//   }
-//
-//   virtual void onLoadTape(const wchar_t* name, int tapePtr)
-//   {
-//      _notify(IDE_DEBUGGER_LOADTEMPMODULE, name, tapePtr);
-//   }
-//
-//   Win32AppDebugController()
-//   {
-//      _receptor = NULL;
-//      _vmHook = 0;
-//   }
-//};
 
 } // _GUI_
 

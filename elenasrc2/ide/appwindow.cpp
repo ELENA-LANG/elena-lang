@@ -136,7 +136,6 @@ size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& 
    if (_current.bandStyle != -1 && checkMarker(_current, li, styleLen)) {
       // set marker attribute if the breakpoint is set on the same line
       if (li.newLine) {
-         #ifdef _WIN32
          Breakpoints::Iterator it = _breakpoints->start();
          Document* doc = ((Document::Reader*)&li)->_doc;
          while (!it.Eof()) {
@@ -147,13 +146,11 @@ size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& 
             }
             it++;
          }
-         #endif
       }
       return styleLen;
    }
    else {
       if (li.newLine) {
-         #ifdef _WIN32
          Breakpoints::Iterator it = _breakpoints->start();
          Document* doc = ((Document::Reader*)&li)->_doc;
          while (!it.Eof()) {
@@ -166,7 +163,6 @@ size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& 
             }
             it++;
          }
-         #endif
       }
 
       // highlight bracket

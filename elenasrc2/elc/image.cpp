@@ -238,7 +238,7 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ide
    tape.writeDWord(command);
 
    if (!emptystr(value)) {
-      tape.writeDWord((getlength(value) + 1) << 1);
+      tape.writeDWord(getlength(value) + 1);
       tape.writeLiteral(value, getlength(value) + 1);
    }
    else tape.writeDWord(0);
@@ -248,7 +248,7 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ide
 {
    tape.writeDWord(command);
    // write total length including equal sign
-   tape.writeDWord((getlength(value1) + getlength(value2) + 2) << 1);
+   tape.writeDWord(getlength(value1) + getlength(value2) + 2);
    if (!emptystr(value1)) {
       tape.writeLiteral(value1, getlength(value1));
       tape.writeChar('=');

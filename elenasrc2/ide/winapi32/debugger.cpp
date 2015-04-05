@@ -659,6 +659,8 @@ void Debugger :: reset()
    stepMode = false;
    needToHandle = false;
    exitCheckPoint = false;
+
+   _vmHook = 0;
 }
 
 BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)

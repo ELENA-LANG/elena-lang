@@ -11,17 +11,6 @@
 #include "debugging.h"
 #include "debugcontroller.h"
 
-//#ifdef _WIN32
-
-//#include "browser.h"
-//#include "winapi32\windialogs.h "
-//
-//#elif _LINUX32
-//
-//#include "gtk-linux32/gtkdialogs.h"
-//
-//#endif
-
 namespace _GUI_
 {
 

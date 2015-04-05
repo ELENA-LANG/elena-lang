@@ -78,47 +78,47 @@ end
 rstructure core_vm'DllError  // Cannot load 
 
    dd 12
-   dw 067 // C
-   dw 097 // a
-   dw 110 // n
-   dw 110 // n
-   dw 111 // o
-   dw 116 // t
-   dw 032 //  
-   dw 108 // l
-   dw 111 // o
-   dw 097 // a
-   dw 100 // d
-   dw 032 //  
-   dw 0
+   db 067 // C
+   db 097 // a
+   db 110 // n
+   db 110 // n
+   db 111 // o
+   db 116 // t
+   db 032 //  
+   db 108 // l
+   db 111 // o
+   db 097 // a
+   db 100 // d
+   db 032 //  
+   db 0
 
 end
 
 rstructure core_vm'InvalidDllError  // Incorrect elenavm.dll\n
 
    dd 21
-   dw 073 // I
-   dw 110 // n
-   dw 099 // c
-   dw 111 // o
-   dw 114 // r
-   dw 101 // e
-   dw 099 // c
-   dw 116 // t
-   dw 032 //  
-   dw 101 // e
-   dw 108 // l
-   dw 101 // e 
-   dw 110 // n
-   dw 097 // a 
-   dw 118 // v 
-   dw 109 // m 
-   dw 046 // . 
-   dw 100 // d 
-   dw 108 // l 
-   dw 108 // l 
-   dw 010 // \n 
-   dw 0
+   db 073 // I
+   db 110 // n
+   db 099 // c
+   db 111 // o
+   db 114 // r
+   db 101 // e
+   db 099 // c
+   db 116 // t
+   db 032 //  
+   db 101 // e
+   db 108 // l
+   db 101 // e 
+   db 110 // n
+   db 097 // a 
+   db 118 // v 
+   db 109 // m 
+   db 046 // . 
+   db 100 // d 
+   db 108 // l 
+   db 108 // l 
+   db 010 // \n 
+   db 0
    
 end
 
@@ -217,10 +217,10 @@ lbFailed:
 
   xor  ecx, ecx
 lbNextLEn:
-  cmp word ptr [eax], 0
+  cmp byte ptr [eax], 0
   jz  lbError
   add ecx, 1
-  lea eax, [eax+2] 
+  lea eax, [eax+1] 
   jmp  short lbNextLEn
 
 lbCannotFindEntry:
@@ -244,7 +244,7 @@ lbError:
   push ebx
   push eax
 
-  call extern 'dlls'KERNEL32.WriteConsoleW
+  call extern 'dlls'KERNEL32.WriteConsoleA
   lea  esp, [esp+4]
 
   call extern 'dlls'KERNEL32.FreeLibrary

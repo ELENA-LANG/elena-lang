@@ -231,14 +231,14 @@ Instance :: Instance(ELENAMachine* machine)
    // init loader based on default machine config
    initLoader(_machine->config);
 
-   _literalClass = _config.forwards.get(WSTR_FORWARD);
-   _characterClass = _config.forwards.get(WCHAR_FORWARD);
-   _intClass = _config.forwards.get(INT_FORWARD);
-   _realClass = _config.forwards.get(REAL_FORWARD);
-   _longClass = _config.forwards.get(LONG_FORWARD);
-   _msgClass = _config.forwards.get(MESSAGE_FORWARD);
-   _signClass = _config.forwards.get(SIGNATURE_FORWARD);
-   _verbClass = _config.forwards.get(VERB_FORWARD);
+   _literalClass.copy(_config.forwards.get(WSTR_FORWARD));
+   _characterClass.copy(_config.forwards.get(WCHAR_FORWARD));
+   _intClass.copy(_config.forwards.get(INT_FORWARD));
+   _realClass.copy(_config.forwards.get(REAL_FORWARD));
+   _longClass.copy(_config.forwards.get(LONG_FORWARD));
+   _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
+   _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
+   _verbClass.copy(_config.forwards.get(VERB_FORWARD));
 
    // init Run-Time API
    _loadClassName = __getClassName;
@@ -327,6 +327,7 @@ ident_t Instance :: retrieveReference(_Module* module, ref_t reference, ref_t ma
    // if it is constant
    else {
       ident_t referenceName = module->resolveReference(reference);
+
       while (isWeakReference(referenceName)) {
          ident_t resolvedName = resolveForward(referenceName);
          if (!emptystr(resolvedName)) {
@@ -449,6 +450,7 @@ void* Instance::loadSymbol(ident_t reference, int mask)
    while (isWeakReference(reference)) {
       ident_t resolved = resolveForward(reference);
       if (emptystr(resolved)) {
+
          throw JITUnresolvedException(reference);
       }
       else reference = resolved;

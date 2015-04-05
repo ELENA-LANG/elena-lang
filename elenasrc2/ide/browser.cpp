@@ -124,13 +124,12 @@ void DebuggerWatch :: write(_DebugController* controller, size_t address, ident_
    void* item = _browser->findNodeStartingWith(_root, variableName);
    if (item != NULL) {
       //if (itemAddress != address) {
-         editNode(item, variableName, className, address);
+      editNode(item, variableName, className, address);
       //}
-      writeSubWatch(controller, item, address);
    }
-   else {
-      item = addNode(variableName, className, address);
-   }
+   else item = addNode(variableName, className, address);
+
+   writeSubWatch(controller, item, address);
 }
 
 void DebuggerWatch :: write(_DebugController* controller, size_t address, _ELENA_::ident_t variableName, char* bytearray, int length)

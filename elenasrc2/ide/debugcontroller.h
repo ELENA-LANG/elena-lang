@@ -84,10 +84,10 @@ protected:
 
       virtual bool seek(size_t position)
       {
-         if (_address == 0) {
-            _address = position;
-         }
-         else _position = position;
+         //if (_address == 0) {
+         //   _address = position;
+         //}
+         /*else */_position = position;
 
          return true;
       }

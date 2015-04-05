@@ -140,7 +140,7 @@ class CallStackLog : public ListView
          _ELENA_::StringHelper::intToStr(row, rowStr, 10);
          _log->setItemText(rowStr, index, 2);
 
-         MessageBookmark* bookmark = new MessageBookmark(source, path, col, row);
+         MessageBookmark* bookmark = new MessageBookmark(moduleName, path, col, row);
          _log->_bookmarks.add(index, bookmark);
       }
 
