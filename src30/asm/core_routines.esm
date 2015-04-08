@@ -10,10 +10,6 @@ define NEW_MESSAGE_ID       084000000h
 define EVAL_MESSAGE_ID      085000000h
 define GET_MESSAGE_ID       086000000h
 
-// ; win32 constants
-define WM_CREATE            1
-define GWL_USERDATA         0FFFFFFEBh
-
 procedure object_equal
 
   aloadsi 1
@@ -4498,47 +4494,34 @@ procedure win_fillWndClass
 
 end
 
+// ; win32 constants
+define WM_CREATE            1
+define WM_DESTROY           2
+define GWL_USERDATA         0FFFFFFEBh
+
 procedure win_WndProc
 
-  callr api : coreapi'openframe
-  
-  dloadfi -5
-  pushn 0FFFFFFFFh
-
+  dloadsi 2
   ifn labCreate WM_CREATE
-  
-  // ; (hWnd, GWL_USERDATA)
-  pushn GWL_USERDATA
-  aloadfi -4
-  pusha
-  callextr extern : 'dlls'USER32.GetWindowLongW
-  ifn labEnd 0
-
-  callr api : coreapi'resolve_index_value
-
-  bcopys 0
-  pushb
-  bcopyf -7
-  pushb
-  bcopyf -6
-  pushb
-  bcopyf -5
-  pushb
-  bcopyf -4
-  pushb
-  pusha
-  
-  xindexrm system'winforms'WindowCallback %eval&handle$&int$&int$&int$&vint$[5]
-  acallvd
+  ifn labDestroy WM_DESTROY
 
 labEnd:
-  popa
-  callr api : coreapi'closeframe
-
-  quit
-
+  eloadsi 4
+  pushe
+  eloadsi 4
+  pushe
+  pushd
+  eloadsi 4
+  pushe
+  callextr extern : 'dlls'USER32.DefWindowProcW
+  quitn 4
+  
 labCreate:
+  callr api : coreapi'openframe
+
+  pushn 0
   bcopys 0
+  
   pushb
   aloadfi -7
   pusha
@@ -4554,13 +4537,44 @@ labCreate:
   callr api : coreapi'resolve_index  
 
   pusha  
-  xindexrm system'winforms'WindowCallback %eval&wm_create&handle$&int$&int$&int$&vint$[5]
+  xindexrm system'winforms'WindowCallback %eval&wm_create&handle$&int$&int$&win_createstruct$winforms&vint$[5]
   acallvd
   popa
-  
+
   callr api : coreapi'closeframe
 
-  close
-  quit
+  quitn 4
+  
+labDestroy:
+  callr api : coreapi'openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callr api : coreapi'resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&handle$&int$&vint$[3]
+  acallvd
+  popa
+
+  callr api : coreapi'closeframe
+
+  quitn 4
+
+labEnd2:
+  callr api : coreapi'closeframe
+  jump  labEnd
   
 end

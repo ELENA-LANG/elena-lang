@@ -1064,6 +1064,7 @@ labEnd:
 end
 
 // ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
+// ; does not affect eax
 procedure % OPENFRAME
 
   // ; save return pointer

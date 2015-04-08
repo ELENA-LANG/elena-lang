@@ -28,6 +28,12 @@
 
 #class BaseWindowHandle :: ControlHandle
 {
+    #method destroy
+    [
+        #var(type:int)anIndex := system'external'USER32 GetWindowLongW &handle:theHandle &int:GWL_USERDATA.
+        
+        Pointer new &index:anIndex close.
+    ]
 }
 
 // --- SDIWindowCallback ---
@@ -41,10 +47,22 @@
         theOwner := anOwner.
     ]
     
-    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+    #method eval &handle:anHWND &int:aMessage &vint:aRetVal
     [
-        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
+        (aMessage == WM_DESTROY)
+            ? [
+                theOwner destroy.
+                
+                aRetVal << 0.
+            ].
+        
+        $super eval &handle:anHWND &int:aMessage &vint:aRetVal.
     ]
+    
+//    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+//    [
+//        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
+//    ]
 }
 
 // --- SDIWindowHandle ---
@@ -53,9 +71,16 @@
 {
     #constructor new &wide:aCaption &int:x &int:y &int:width &int:height
     [
-        $self create &int:WS_EX_OVERLAPPEDWINDOW &wide:SDIWindowClass &wide:aCaption &int:SDI_OVERLAPPEDWINDOW 
+        $self create &int:EX_SDI_OVERLAPPEDWINDOW &wide:SDIWindowClass &wide:aCaption &int:SDI_OVERLAPPEDWINDOW 
             &int:x &int:y &int:width &int:height &handle:(Handle min) &hinstance:CurrentInstance &object:(SDIWindowCallback new &win_sdiwindow:$self).
     ]
     
     #method win_sdiwindow = $self.
+    
+    #method destroy
+    [
+        $super destroy.
+        
+        'program stop.
+    ]
 }

@@ -32,6 +32,11 @@
             aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:0 &int:0 &int:0.
         ].
     ]
+    
+    #method stop
+    [
+        system'external'USER32 PostQuitMessage &int:0.
+    ]
 }
 
 #static program = SDIApplication new.

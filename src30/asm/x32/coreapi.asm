@@ -234,10 +234,10 @@ end
 // ; free_index
 procedure coreapi'free_index
 
-  mov  esi, [stat : "$elena'@referencetable"]
-  mov  [esi + esi * 4], 0
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  [ebx + esi * 4], 0
   
-  ret 4
+  ret
 
 end
 

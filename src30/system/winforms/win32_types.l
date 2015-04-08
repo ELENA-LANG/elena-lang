@@ -2,6 +2,7 @@
 #subject(class:system'winforms'HInstance)hinstance.
 
 #subject(class:system'winforms'MSG)win_msg.
+#subject(class:system'winforms'CREATESTRUCT)win_createstruct.
 
 #subject(class:system'winforms'SDIWindowHandle)win_sdiwindow.
 

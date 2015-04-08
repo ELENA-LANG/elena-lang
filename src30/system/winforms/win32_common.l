@@ -1,11 +1,14 @@
 #define system.
 
-#symbol(const,type:int)GWL_USERDATA           = -21.
+#symbol(const,type:int)GWL_USERDATA            = -21.
 
-#symbol(const,type:int)WS_OVERLAPPEDWINDOW    = 00CF0000h.
-#symbol(const,type:int)SDI_OVERLAPPEDWINDOW   = 10CF0000h.
+#symbol(const,type:int)WS_OVERLAPPEDWINDOW     = 00CF0000h.
+#symbol(const,type:int)SDI_OVERLAPPEDWINDOW    = 10CF0000h.
 
-#symbol(const,type:int)WS_EX_OVERLAPPEDWINDOW = 00000300h.
+#symbol(const,type:int)WS_EX_OVERLAPPEDWINDOW  = 00000300h.
+#symbol(const,type:int)EX_SDI_OVERLAPPEDWINDOW = 00040101h.
+
+#symbol(const,type:int)WM_DESTROY = 2.
 
 // --- Window Color Constants
 
@@ -21,19 +24,32 @@
 {
     #method win_callback = $self.
     
-    #method wm_create &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+    #method wm_create &handle:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct &vint:aRetVal
     [
-        system'external'USER32 SetWindowLongW &handle:anHWND &int:/*GWL_USERDATA*/-21 &int:aLParam.
+        #var(type:vint)param.
+        aCreateStruct readCreateParam &vint:param.
+        
+        #var(type:int)tmp := param.
+        system'external'USER32 SetWindowLongW &handle:anHWND &int:/*GWL_USERDATA*/-21 &int:tmp.
+        
+        system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct.
         
         aRetVal << 0.
     ]
     
-    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+    #method eval &handle:anHWND &int:aMessage &vint:aRetVal
     [
-        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &int:aLParam.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:0 &int:0.
         
         aRetVal << result.
     ]
+
+//    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+//    [
+//        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &int:aLParam.
+//        
+//        aRetVal << result.
+//    ]
 }
 
 // --- ControlHandle ---

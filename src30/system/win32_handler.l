@@ -27,6 +27,9 @@
     #constructor new : anObject
         => system'internal'api_alloc_index.
 
+    #constructor new &index:anIndex
+        => system'internal'int_copy.
+
     #method read &vint:aRetVal
         => system'internal'save_int.
 
