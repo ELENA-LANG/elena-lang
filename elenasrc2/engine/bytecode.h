@@ -159,8 +159,10 @@ enum ByteCode
    bcNext            = 0xAF,
 
    bcPushN           = 0xB0,
+   bcELoadFI         = 0xB1,
    bcPushR           = 0xB2,
    bcPushAI          = 0xB4,
+   bcESaveFI         = 0xB5,
    bcPushFI          = 0xB6,
    bcDLoadFI         = 0xB7,
    bcDLoadSI         = 0xB8,

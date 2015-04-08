@@ -2682,6 +2682,12 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
          else methodInfo = tpNormal;
       }
    }
+   else if (object.kind == okSuper) {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      if (scope.moduleScope->checkMethod(classScope->info.header.parentRef, messageRef) != tpUnknown) {
+         methodInfo = tpClosed;
+      }
+   }
    else methodInfo = scope.moduleScope->checkTypeMethod(getType(object), messageRef);
 
    if (methodInfo != tpUnknown)

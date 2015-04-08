@@ -596,7 +596,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
          }
          else {
             writer.write(&line[i], 1);
-            col++;
+            col++/* += TextBookmark::charLength(line, offset)*/;
          }
       }
       if (!bookmark.moveOn(count))

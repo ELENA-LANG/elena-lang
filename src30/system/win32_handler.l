@@ -5,6 +5,9 @@
     #constructor new &handle:aHandle
         => system'internal'int_copy.
 
+    #constructor min
+        => system'internal'int_init.
+
     #method(type:bool) equal &handle:anOperand 
         => system'internal'int_equal.
 

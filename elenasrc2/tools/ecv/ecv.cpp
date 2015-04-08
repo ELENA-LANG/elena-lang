@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE        256
-#define BUILD_VERSION   3
+#define BUILD_VERSION   4
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -438,6 +438,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIfB:
       case bcElse:
       case bcIfHeap:
+      case bcNotLess:
 //      case bcAddress:
          command.append(opcode);
          command.append(' ');
@@ -461,6 +462,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcIfN:
       case bcElseN:
+      case bcLessN:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);

@@ -47,7 +47,7 @@ const char* _fnOpcodes[256] =
    "jump", "ajumpvi", "acallvi", "callr", "unknown", "callextr", "hook", "address",
    "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
-   "pushn", "unknown", "pushr", "unknown", "pushai", "unknown", "pushfi", "dloadfi",
+   "pushn", "eloadfi", "pushr", "unknown", "pushai", "esavefi", "pushfi", "dloadfi",
    "dloadsi", "dsavefi", "pushsi", "dsavesi", "eloadsi", "pushf", "esavesi", "reserve",
 
    "asavebi", "unknown", "aswapsi", "asavesi", "asavefi", "bswapsi", "eswapsi", "dswapsi",
@@ -218,20 +218,20 @@ void CommandTape :: import(_Memory* section, bool withHeader)
          additional = reader.getDWord();
       }
       if (ByteCodeCompiler::IsJump(code)) {
-         int offset = 0;
+         int position = 0;
          int label = 0;
-         if (code >= MAX_DOUBLE_ECODE) {
-            offset = additional;
+         if (code > MAX_DOUBLE_ECODE) {
+            position = additional + reader.Position();
          }
-         else offset = argument;
+         else position = argument + reader.Position();
 
-         if (!extLabels.exist(offset)) {
+         if (!extLabels.exist(position)) {
             label = ++labelSeed;
-            extLabels.add(offset, label);
+            extLabels.add(position, label);
          }
-         else label = extLabels.get(offset);
+         else label = extLabels.get(position);
 
-         if (code >= MAX_DOUBLE_ECODE) {
+         if (code > MAX_DOUBLE_ECODE) {
             write(code, label, argument);
          }
          else write(code, label);

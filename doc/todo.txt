@@ -23,6 +23,7 @@ Currently:
               adev - gui
                        * window procedure function : should be implemented in ecodes (like thread_start) and call special method, passing
                          message id, and message params 
+                       * destroy window on close
 
 
                        * general architecture
@@ -32,6 +33,10 @@ Currently:
                        * support GUI mode
                        * support GUI application
                        * gui stand-alone, gui mt stand-alone, gui vm client
+
+              adev - lib30 utf:
+                       * fix utf-8 incorrect symbol error (see sytem_test)
+                       * test matrirx, identity matrix with length=50
                        
 <=================> 
                                               
@@ -265,6 +270,7 @@ week2:
                        * support redirect method                       
                                                       
               adev - lib30 optimization
+                       * reivew system'winforms'SDIApplication.start, optimize the main loop
                        * review $ConsoleWriter.write&literal[1]
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
                        * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
@@ -490,6 +496,9 @@ week 4:
 1.9.20
 --------
 week1:
+              idev - unicode
+                       * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
+                       
               xdev - generic development  
                        * external call : vint can be passed as int (see ThreadHandle, linux - consoleWriter)
                        * wide literal constant
@@ -529,6 +538,8 @@ week1:
                        * make posible to declare symbol which value can be defined in the project, e.g. constant forward (and typed constant forward)
                          
               xdev - general implementation
+                       * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
+                         (e.g. temporal object allocated and valie copied there)
                        * win32 linker : should stat + bss be combined into single section?
                        * probably for arithmetic and referring operation classes should be checked rather than debug flags (i.e. it is not possible
                          to tell apart chararray from shortarray or getAt / setAt will be executed directly for any dynamic array) 
@@ -558,8 +569,13 @@ week1:
                        * literal constant should be converted into utf8 if it is passed as utf8_literal
                        * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
                        * if more than 11 parameters are passed, open argument list should be used automatically??
+                       * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
+                         symbols as an argument
                        
               xdev - byte code optimization                               
+                       * call to $super should be direct
+                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+
                        * optimize ByteCodeWriter::copyStructure                       
 
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])

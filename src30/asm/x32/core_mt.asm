@@ -1238,6 +1238,7 @@ procedure % RESTORE_ET
 
 end 
 
+// ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
 procedure % OPENFRAME
 
   // ; GCXT: get thread table entry from tls
@@ -1263,6 +1264,7 @@ procedure % OPENFRAME
 
 end
 
+// ; does not affect eax
 procedure % CLOSEFRAME
 
   // ; GCXT: get thread table entry from tls

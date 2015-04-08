@@ -1,3 +1,5 @@
+#define system.
+
 // --- BaseApplication ---
 
 #class BaseApplication
@@ -12,18 +14,23 @@
     
     #constructor new
     [
+        Pointer new:$self.
+        
         theMainWindow := 'mainWindow new.
     ]
     
     #method start
     [
-////        #var(type:bytearray,size:28)theMsg.
-////        
-////        #loop system'external'KERNEL32 GetMessage &bytearray:theMsg &handle:0 &int:0 &int:0 ?
-////        [
-////            system'external'KERNEL32 TranslateMessage &bytearray:theMsg.
-////            system'external'KERNEL32 DispatchMessage &bytearray:theMsg.
-////        ].
+        #var(type:win_msg)aMsg.
+        
+        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:0 &int:0 &int:0.
+        #loop (aResult != 0)?
+        [
+            system'external'USER32 TranslateMessage &win_msg:aMsg.
+            system'external'USER32 DispatchMessageW &win_msg:aMsg.
+
+            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:0 &int:0 &int:0.
+        ].
     ]
 }
 

@@ -186,10 +186,18 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
       else if (token.check("code")) {
          token.read(":", err);
          token.read();
-         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
 
-         operand.type = x86Helper::otDD;
-         operand.reference = info.binary->mapReference(structRef) | mskNativeCodeRef;
+         if (token.check("%")) {
+            operand.type = x86Helper::otDD;
+            operand.reference = token.readInteger(constants) | mskPreloadCodeRef;
+            operand.offset = 0x0;
+         }
+         else {
+            IdentifierString structRef(token.terminal.line + 1, token.terminal.length - 2);
+
+            operand.type = x86Helper::otDD;
+            operand.reference = info.binary->mapReference(structRef) | mskNativeCodeRef;
+         }
       }
 		else if (token.check(ARGUMENT1)) {
          operand.type = x86Helper::otDD;

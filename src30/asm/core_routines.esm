@@ -10,6 +10,10 @@ define NEW_MESSAGE_ID       084000000h
 define EVAL_MESSAGE_ID      085000000h
 define GET_MESSAGE_ID       086000000h
 
+// ; win32 constants
+define WM_CREATE            1
+define GWL_USERDATA         0FFFFFFEBh
+
 procedure object_equal
 
   aloadsi 1
@@ -4450,7 +4454,7 @@ labEnd:
 
 end
 
-procedure thread_start
+procedure win_thread_start
 
   acopys 1  
   pusha
@@ -4465,5 +4469,98 @@ labError:
   pushr class : system'NotSupportedException
   pushr const : %new[0]
   throw
+  
+end
+
+procedure win_fillWndClass
+
+  bloadsi 2
+  aloadsi 4
+  nload
+  nsavei 0
+  aloadsi 5
+  nload
+  nsavei 4
+  aloadsi 6
+  nload
+  nsavei 7
+  aloadsi 3
+  axsavebi 9    
+  acopyr intern : system'core_routines'win_WndProc
+  axsavebi 1
+  dcopy 0
+  nsavei 2
+  nsavei 3
+  nsavei 5
+  nsavei 6
+  nsavei 8
+  quitn 6
+
+end
+
+procedure win_WndProc
+
+  callr api : coreapi'openframe
+  
+  dloadfi -5
+  pushn 0FFFFFFFFh
+
+  ifn labCreate WM_CREATE
+  
+  // ; (hWnd, GWL_USERDATA)
+  pushn GWL_USERDATA
+  aloadfi -4
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd 0
+
+  callr api : coreapi'resolve_index_value
+
+  bcopys 0
+  pushb
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+  pusha
+  
+  xindexrm system'winforms'WindowCallback %eval&handle$&int$&int$&int$&vint$[5]
+  acallvd
+
+labEnd:
+  popa
+  callr api : coreapi'closeframe
+
+  quit
+
+labCreate:
+  bcopys 0
+  pushb
+  aloadfi -7
+  pusha
+  acopyf -6
+  pusha
+  acopyf -5
+  pusha
+  acopyf -4
+  pusha
+
+  aloadfi -7
+  pusha
+  callr api : coreapi'resolve_index  
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&wm_create&handle$&int$&int$&int$&vint$[5]
+  acallvd
+  popa
+  
+  callr api : coreapi'closeframe
+
+  close
+  quit
   
 end

@@ -33,8 +33,11 @@ class ECodesAssembler : public Assembler
 
    void fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info);
 
+   void readMessage(TokenInfo& token, int& verbId, IdentifierString& subject, int& paramCount);
+
    ref_t compileRArg(TokenInfo& token, _Module* binary);
    ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
+   ref_t compileMessageArg(TokenInfo& token, _Module* binary);
 
    void writeCommand(ByteCommand command, MemoryWriter& writer);
 
@@ -44,6 +47,7 @@ class ECodesAssembler : public Assembler
    void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileCreateCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
 

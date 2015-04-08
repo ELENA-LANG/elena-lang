@@ -4,7 +4,7 @@
 //                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-#define TEXTVIEW_MONO_FONT 1
+#define TEXTVIEW_MONO_FONT 0
 
 #include "wintextview.h"
 

@@ -6,17 +6,21 @@
 //#define system'math.
 #define extensions.
 //#define extensions'math.
-
+        
 #symbol XTester =
 {
     test        
     [
+        #var l := "你好世!".
+    
+        #var c := l@0.
+        #var c2 := l@1.
     ]
 }.
 
 #symbol XTest =
 [
-    XTester test.
+//    XTester test.
 ].
 
 // --- OpenArgTest ---

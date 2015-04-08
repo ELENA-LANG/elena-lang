@@ -1063,6 +1063,7 @@ labEnd:
 
 end
 
+// ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
 procedure % OPENFRAME
 
   // ; save return pointer
@@ -1083,6 +1084,7 @@ procedure % OPENFRAME
 
 end
 
+// ; does not affect eax
 procedure % CLOSEFRAME
 
   // ; save return pointer
@@ -2437,10 +2439,26 @@ inline % 0AFh
 
 end
 
+// ; eloadfi
+
+inline % 0B1h
+
+  mov  ecx, [ebp + __arg1]
+
+end
+
 // ; pushai
 inline % 0B4h
 
   push [eax+__arg1]
+
+end
+
+// ; esavefi
+
+inline % 0B5h
+
+  mov  [ebp + __arg1], ecx
 
 end
 

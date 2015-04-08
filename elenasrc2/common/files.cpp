@@ -107,7 +107,7 @@ bool File :: writeLiteral(const wchar_t* s, size_t length)
       while (length > 0) {
          count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
 
-         size_t utfCount = count;
+         size_t utfCount = TEMP_SIZE * 4;
          StringHelper::copy(temp, s, count, utfCount);
 
          if (fwrite(temp, 1, utfCount, _file) <= 0)

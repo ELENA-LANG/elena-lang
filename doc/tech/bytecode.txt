@@ -157,6 +157,8 @@ ELENA byte codes (or ecodes)
  
  ecopyd                     - ext << index
  
+ eloadfi i                  - [fp:i] => ext
+ 
  eloadsi i                  - [sp:i] => ext
  
  else label                 - jump to the label if index != ext
@@ -172,6 +174,8 @@ ELENA byte codes (or ecodes)
  equit                      - terminates the procedure ; clear the stack parameters, based
                               on ext
 
+ esavefi i                  - [fp:i] <= ext
+                              
  esavesi i                  - [sp:i] <= ext
                               
  eswap                      - index <=> ext

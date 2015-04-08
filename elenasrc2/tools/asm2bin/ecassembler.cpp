@@ -31,7 +31,7 @@ void ECodesAssembler :: fixJump(ident_t label, MemoryWriter& writer, LabelInfo& 
    Map<ident_t, int>::Iterator it = info.fwdJumps.start();
    while (!it.Eof()) {
       if (StringHelper::compare(it.key(), label)) {
-         (*code)[*it] = writer.Position();
+         (*code)[*it] = writer.Position() - *it - 4;
       }
       it++;
    }
@@ -40,10 +40,10 @@ void ECodesAssembler :: fixJump(ident_t label, MemoryWriter& writer, LabelInfo& 
 void ECodesAssembler :: writeCommand(ByteCommand command, MemoryWriter& writer)
 {
    writer.writeByte(command.code);
-   if (command.code >= MAX_SINGLE_ECODE) {
+   if (command.code > MAX_SINGLE_ECODE) {
       writer.writeDWord(command.argument);
    }
-   if (command.code >= MAX_DOUBLE_ECODE) {
+   if (command.code > MAX_DOUBLE_ECODE) {
       writer.writeDWord(command.additional);
    }
 }
@@ -55,16 +55,43 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
-ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+void ECodesAssembler :: readMessage(TokenInfo& token, int& verbId, IdentifierString& subject, int& paramCount)
 {
-   int paramCount = 0; // NOTE: paramCount might be not equal to stackCount (the actual stack size) in the case if variables are used for virtual methods
-   int stackCount = 0;
-   int verbId = mapVerb(token.value);
+   verbId = mapVerb(token.value);
    if (verbId == 0) {
       verbId = EVAL_MESSAGE_ID;
    }
 
+   token.read();
+   while (token.value[0] == '&') {
+      subject.append(token.value);
+
+      token.read();
+      subject.append(token.value);
+      token.read();
+      if (token.value[0] == '$') {
+         subject.append(token.value);
+         token.read();
+      }
+   }
+   if (token.value[0] == '[') {
+      paramCount = token.readInteger(constants);
+   }
+   else token.raiseErr("Invalid operand");
+
+   token.read("]", "Invalid operand");
+}
+
+ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+{
    IdentifierString message;
+   IdentifierString subject;
+
+   int paramCount = 0;
+   int verbId = 0;
+   
+   readMessage(token, verbId, subject, paramCount);
+
    // reserve place for param counter
    message.append('0');
 
@@ -80,24 +107,25 @@ ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
       message.append(verbId + 0x20);
    }
 
-   token.read();
-   while(token.value[0] == '&') {
-      message.append(token.value);
-
-      token.read();
-      message.append(token.value);
-      token.read();
-   }
-   if (token.value[0] == '[') {
-      paramCount = token.readInteger(constants);
-   }
-   else token.raiseErr("Invalid operand");
-
-   token.read("]", "Invalid operand");
+   message.append(subject);
 
    message[0] = message[0] + paramCount;
 
    return binary->mapReference(message) | mskMessage;
+}
+
+ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
+{
+   IdentifierString subject;
+   int paramCount = 0;
+   int verbId = 0;
+
+   readMessage(token, verbId, subject, paramCount);
+
+   if (subject.Length() > 0) {
+      return encodeMessage(binary->mapSubject(subject + 1, false), verbId, paramCount);
+   }
+   else return encodeMessage(0, verbId, paramCount);
 }
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
@@ -133,6 +161,12 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       ReferenceNs functionName(NATIVE_MODULE, token.value);
       return binary->mapReference(functionName) | mskNativeCodeRef;
    }
+   else if (StringHelper::compare(word, "intern")) {
+      token.read(":", "Invalid operand");
+      token.read();
+
+      return binary->mapReference(token.value) | mskInternalRef;
+   }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 
@@ -149,6 +183,17 @@ void ECodesAssembler :: compileRRCommand(ByteCode code, TokenInfo& token, Memory
    size_t reference2 = compileRArg(token, binary);
 
    writeCommand(ByteCommand(code, reference1, reference2), writer);
+}
+
+void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   size_t reference1 = compileRArg(token, binary);
+
+   token.read("%", "Invalid operand");
+   token.read();
+   size_t reference2 = compileMessageArg(token, binary);
+
+   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, reference2), writer);
 }
 
 void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
@@ -254,15 +299,16 @@ void ECodesAssembler :: compileNJump(ByteCode code, TokenInfo& token, MemoryWrit
    token.read();
 
    if (info.labels.exist(token.value)) {
-      label = info.labels.get(token.value);
+      label = info.labels.get(token.value) - writer.Position() - 8;
    }
    else {
-      info.fwdJumps.add(token.value, 4 + writer.Position());
+      info.fwdJumps.add(token.value, writer.Position() + 4);
    }
 
    int n = token.readInteger(constants);
 
    writer.writeDWord(n);
+
    writer.writeDWord(label);
 }
 
@@ -275,10 +321,10 @@ void ECodesAssembler :: compileRJump(ByteCode code, TokenInfo& token, MemoryWrit
    token.read();
 
    if (info.labels.exist(token.value)) {
-      label = info.labels.get(token.value);
+      label = info.labels.get(token.value) - writer.Position() - 8;
    }
    else {
-      info.fwdJumps.add(token.value, 4 + writer.Position());
+      info.fwdJumps.add(token.value, writer.Position() + 4);
    }
    size_t reference = compileRArg(token, binary);
 
@@ -295,7 +341,7 @@ void ECodesAssembler :: compileMccJump(ByteCode code, TokenInfo& token, MemoryWr
    token.read();
 
    if (info.labels.exist(token.value)) {
-      label = info.labels.get(token.value);
+      label = info.labels.get(token.value) - writer.Position() - 8;
    }
    else {
       info.fwdJumps.add(token.value, 4 + writer.Position());
@@ -316,7 +362,7 @@ void ECodesAssembler :: compileJump(ByteCode code, TokenInfo& token, MemoryWrite
    token.read();
 
    if (info.labels.exist(token.value)) {
-      label = info.labels.get(token.value);
+      label = info.labels.get(token.value) - writer.Position() - 4;
    }
    else {
       info.fwdJumps.add(token.value, writer.Position());
@@ -366,9 +412,12 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcNLoadI:
          case bcESwapSI:
          case bcBSwapSI:
+         case bcAXSaveBI:
             //case bcMessage:
-         //case bcELoadSI:
-         //case bcESaveSI:
+         case bcELoadFI:
+         case bcELoadSI:
+         case bcESaveSI:
+         case bcESaveFI:
          case bcShiftN:
          case bcEAddN:
             compileICommand(opcode, token, writer);
@@ -417,6 +466,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             break;
          case bcSelectR:
             compileRRCommand(opcode, token, writer, binary);
+            break;
+         case bcXIndexRM:
+            compileRMCommand(opcode, token, writer, binary);
             break;
          default:
             writeCommand(ByteCommand(opcode), writer);

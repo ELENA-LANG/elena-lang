@@ -1669,6 +1669,8 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
          case bcBLoadFI:
          case bcDLoadFI:
          case bcDSaveFI:
+         case bcELoadFI:
+         case bcESaveFI:
             (*it).save(scope.code, true);
             if ((*it).predicate == bpBlock) {
                scope.code->writeDWord(stackLevels.peek() + (*it).argument);

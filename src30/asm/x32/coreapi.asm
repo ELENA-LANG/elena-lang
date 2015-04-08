@@ -6,6 +6,8 @@ define INIT              10013h
 define NEWFRAME          10014h
 define INIT_ET           10015h
 define LOAD_CLASSNAME    10018h
+define OPENFRAME         10019h
+define CLOSEFRAME        1001Ah
 define NEWTHREAD         1001Bh
 define CLOSETHREAD       1001Ch
 define EXIT              1001Dh
@@ -17,6 +19,8 @@ define UNLOCK            10022h
 define LOAD_ADDRESSINFO  10023h
 define LOAD_CALLSTACK    10024h
 
+
+
 define elSizeOffset      0008h
 
 // verbs
@@ -24,6 +28,20 @@ define EXEC_MESSAGE_ID  085000000h
 define START_MESSAGE_ID 0B7000000h
 
 // ; --- API ---
+
+procedure coreapi'openframe
+
+  mov ebx, code : % OPENFRAME
+  jmp ebx
+
+end
+
+procedure coreapi'closeframe
+
+  mov ebx, code : % CLOSEFRAME
+  jmp ebx
+
+end
 
 // ; console_entry()
 procedure coreapi'console_entry
@@ -232,6 +250,15 @@ procedure coreapi'resolve_index
   mov  eax, [esi + edx * 4]
   
   ret 4
+
+end
+
+procedure coreapi'resolve_index_value
+
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  eax, [ebx + esi * 4]
+  
+  ret
 
 end
 
