@@ -1,0 +1,25 @@
+sudo mkdir -p /usr/lib/elena/lib30
+sudo mkdir -p /usr/lib/elena/core/x32
+sudo mkdir -p /etc/elena/templates
+sudo mkdir -p /usr/share/elena
+
+sudo cp ./bin/*.config /etc/elena/
+sudo cp ./bin/templates/*.config /etc/elena/templates/
+
+bin/elog dat/og/rules.txt
+sudo cp dat/og/rules.dat /usr/share/elena/
+
+bin/elsg dat/sg/syntax.txt
+sudo cp dat/sg/syntax.dat /usr/share/elena/
+
+sudo bin/asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32/
+sudo bin/asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32/
+sudo bin/asm2binx src30/asm/x32/core_rt_lnx.asm /usr/lib/elena/core/x32/
+sudo bin/asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32/
+
+sudo bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system/
+
+sudo bin/elc2 -csrc30/system/system.project
+sudo bin/elc2 -csrc30/extensions/extensions.project
+
+exit 0
