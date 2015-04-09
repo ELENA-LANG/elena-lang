@@ -1,0 +1,13 @@
+﻿[project]
+executable=replace
+namespace=replace
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+replace.l
+
+[forwards]
+'program=replace'Program
+

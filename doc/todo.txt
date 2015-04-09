@@ -21,22 +21,12 @@ v  - vm script
 Currently:
 ------
               adev - gui
-                       * window procedure function : should be implemented in ecodes (like thread_start) and call special method, passing
-                         message id, and message params 
-                       * destroy window on close
-
-
                        * general architecture
-                       * eventhandle group object
                        * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
                          dynamically for external operation
                        * support GUI mode
                        * support GUI application
                        * gui stand-alone, gui mt stand-alone, gui vm client
-
-              adev - lib30 utf:
-                       * fix utf-8 incorrect symbol error (see sytem_test)
-                       * test matrirx, identity matrix with length=50
                        
 <=================> 
                                               
@@ -44,6 +34,7 @@ Currently:
 --------
 week2:
               adev - linux lib30:
+                       * cannot overwrite existing executable
                        * core : implement INIT_RND
                        * linux file operations
                        * linux date / time operations

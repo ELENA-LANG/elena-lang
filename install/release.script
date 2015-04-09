@@ -1,0 +1,109 @@
+mkdir -p ./new/bin/templates/
+mkdir -p ./new/dat/
+mkdir -p ./new/dat/sg/
+mkdir -p ./new/dat/og/
+mkdir -p ./new/doc/api/
+mkdir -p ./new/doc/lang/
+mkdir -p ./new/doc/tech/
+mkdir -p ./new/elenasrc2/common/
+mkdir -p ./new/elenasrc2/elc/codeblocks/
+mkdir -p ./new/elenasrc2/elc/linux32/
+mkdir -p ./new/elenasrc2/engine/
+mkdir -p ./new/elenasrc2/tools/asm2bin/codeblocks/
+mkdir -p ./new/elenasrc2/tools/sg/codeblocks/
+mkdir -p ./new/elenasrc2/tools/sg/linux32/
+mkdir -p ./new/elenasrc2/tools/og/codeblocks/
+mkdir -p ./new/examples/binary/
+mkdir -p ./new/examples/bsort/
+mkdir -p ./new/examples/helloworld/
+mkdir -p ./new/examples/replace/
+mkdir -p ./new/examples/sum/
+mkdir -p ./new/examples/words/
+mkdir -p ./new/src30/asm/x32/
+mkdir -p ./new/src30/system/
+mkdir -p ./new/src30/system/text/
+mkdir -p ./new/src30/system/collections/
+mkdir -p ./new/src30/system/routines/
+mkdir -p ./new/src30/system/math/
+mkdir -p ./new/src30/system/io/
+mkdir -p ./new/src30/system/dynamic/
+mkdir -p ./new/src30/extensions/
+mkdir -p ./new/src30/extensions/math/
+mkdir -p ./new/src30/extensions/routines/
+mkdir -p ./new/src30/extensions/text/
+
+cp ../bin/elc2 new/bin/
+cp ../bin/asm2binx new/bin/
+cp ../bin/elog new/bin/
+cp ../bin/elsg new/bin/
+cp ../bin/elc.config new/bin/
+cp ../bin/templates/*.config new/bin/templates/
+cp ../dat/og/rules.txt new/dat/og/
+cp ../dat/sg/syntax.txt new/dat/sg/
+cp ../doc/license.txt new/doc/
+cp ../doc/roadmap.txt new/doc/
+cp ../doc/api/*.html new/doc/api/
+cp ../doc/lang/dictionary.txt  new/doc/lang/
+cp ../doc/tech/bytecode.txt new/doc/tech/
+cp ../doc/tech/knowhow.txt new/doc/tech/
+
+cp ../elenasrc2/elena2.workspace new/elenasrc2/
+cp ../elenasrc2/common/*.cpp new/elenasrc2/common/
+cp ../elenasrc2/common/*.h new/elenasrc2/common/
+
+cp ../elenasrc2/elc/*.cpp new/elenasrc2/elc/
+cp ../elenasrc2/elc/*.h new/elenasrc2/elc/
+cp ../elenasrc2/elc/codeblocks/elc_lnx32.cbp new/elenasrc2/elc/codeblocks/
+cp ../elenasrc2/elc/linux32/*.cpp new/elenasrc2/elc/linux32/
+cp ../elenasrc2/elc/linux32/*.h new/elenasrc2/elc/linux32/
+cp ../elenasrc2/engine/*.cpp new/elenasrc2/engine/
+cp ../elenasrc2/engine/*.h new/elenasrc2/engine/
+cp ../elenasrc2/tools/asm2bin/*.cpp new/elenasrc2/tools/asm2bin/
+cp ../elenasrc2/tools/asm2bin/*.h new/elenasrc2/tools/asm2bin/
+cp ../elenasrc2/tools/asm2bin/codeblocks/asm2bin_lnx.cbp new/elenasrc2/tools/asm2bin/codeblocks/
+cp ../elenasrc2/tools/sg/*.cpp new/elenasrc2/tools/sg/
+cp ../elenasrc2/tools/sg/*.h new/elenasrc2/tools/sg/
+cp ../elenasrc2/tools/sg/linux32/*.h new/elenasrc2/tools/sg/linux32/
+cp ../elenasrc2/tools/sg/codeblocks/sg_lnx32.cbp new/elenasrc2/tools/sg/codeblocks/
+cp ../elenasrc2/tools/og/*.cpp new/elenasrc2/tools/og/
+cp ../elenasrc2/tools/og/*.h new/elenasrc2/tools/og/
+cp ../elenasrc2/tools/og/codeblocks/og_lnx32.cbp new/elenasrc2/tools/og/codeblocks/
+
+echo copying examples files
+
+cp ../examples/binary/*.l new/examples/binary/
+cp ../examples/binary/*.project new/examples/binary/
+cp ../examples/bsort/*.l new/examples/bsort/
+cp ../examples/bsort/*.project new/examples/bsort/
+cp ../examples/helloworld/*.l new/examples/helloworld/
+cp ../examples/helloworld/*.project new/examples/helloworld/
+cp ../examples/replace/*.l new/examples/replace/
+cp ../examples/replace/*.project new/examples/replace/
+cp ../examples/sum/*.l new/examples/sum/
+cp ../examples/sum/*.project new/examples/sum/
+cp ../examples/words/*.l new/examples/words/
+cp ../examples/words/*.project new/examples/words/
+
+echo coping src3 files
+
+cp ../src30/asm/x32/*.asm new/src30/asm/x32/
+cp ../src30/asm/*.esm new/src30/asm/
+
+cp ../src30/system/*.l new/src30/system/
+cp ../src30/system/*.project new/src30/system/
+cp ../src30/system/collections/*.l new/src30/system/collections/
+cp ../src30/system/dynamic/*.l new/src30/system/dynamic/
+cp ../src30/system/io/*.l new/src30/system/io/
+cp ../src30/system/math/*.l new/src30/system/math/
+cp ../src30/system/routines/*.l new/src30/system/routines/
+cp ../src30/system/text/*.l new/src30/system/text/
+
+cp ../src30/extensions/*.l new/src30/extensions/
+cp ../src30/extensions/math/*.l new/src30/extensions/math/
+cp ../src30/extensions/text/*.l new/src30/extensions/text/
+cp ../src30/extensions/routines/*.l new/src30/extensions/routines/
+cp ../src30/extensions/*.project new/src30/extensions/
+
+cp ../*.txt new/
+cp ./install.script new/
+sudo chmod +x install.script

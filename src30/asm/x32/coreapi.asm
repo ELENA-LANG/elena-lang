@@ -1300,7 +1300,7 @@ procedure coreapi'strtochar
   cmp  ebx, 000000F0h
   jl   short lab3
   cmp  ebx, 000000F5h
-  jl   short lab4
+  jl   lab4
 
 err:
   xor  eax, eax

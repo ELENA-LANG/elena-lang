@@ -3654,23 +3654,24 @@ procedure ws_copysubarr
   aloadsi 2
   nload
   ifn labEmpty 0
-
-  ecopyd
-  aloadsi 3
-  nload
+    
   aloadsi 4
-  open 1
-  dreserve
-  bcopys -2
-  
-  callr api : coreapi'ws_copychars
+  ecopyd
+  callr api : coreapi'wstrcharlen
 
   acopyr class : system'WideLiteralValue
   inc
   wcreate
   bcopya
-  acopys 2
-  copy
+  
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 4
+
+  callr api : coreapi'ws_copychars
   
   acopyb
   wlen
@@ -3678,8 +3679,6 @@ procedure ws_copysubarr
   dec
   shiftn -1
   bwritew
-  drestore
-  close
   quitn 4
   
 labEmpty:
@@ -3699,31 +3698,30 @@ procedure s_copysubarr
   aloadsi 2
   nload
   ifn labEmpty 0
-
-  ecopyd
-  aloadsi 3
-  nload
+    
   aloadsi 4
-  open 1
-  dreserve
-  bcopys -2
-  
-  callr api : coreapi's_copychars
+  ecopyd
+  callr api : coreapi'strcharlen
 
   acopyr class : system'LiteralValue
   inc
   bcreate
   bcopya
-  acopys 2
-  copy
+
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 4
+
+  callr api : coreapi's_copychars
   
   acopyb
   blen
   ecopy 0
   dec
   bwriteb
-  drestore
-  close
   quitn 4
   
 labEmpty:

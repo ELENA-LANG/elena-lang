@@ -1,5 +1,3 @@
-svn update
-
 bin/elog dat/og/rules.txt
 sudo cp dat/og/rules.dat /usr/share/elena
 
@@ -15,5 +13,13 @@ bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
 
 sudo bin/elc2 -csrc30/system/system.project
 sudo bin/elc2 -csrc30/extensions/extensions.project
+
+bin/elc2 -cexamples/helloworld/u_helloworld.project
+bin/elc2 -cexamples/sum/intsum.project
+bin/elc2 -cexamples/sum/realsum.project
+bin/elc2 -cexamples/binary/binary.project
+bin/elc2 -cexamples/words/words.project
+bin/elc2 -cexamples/bsort/bsort.project
+bin/elc2 -cexamples/replace/replace.project
 
 exit 0

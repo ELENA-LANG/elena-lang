@@ -32,8 +32,8 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Script Engine compiling....
 ECHO ----------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+rem "%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
+rem IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Simplified Assembler compiling....
 ECHO -----------------------------------
@@ -47,8 +47,8 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine Terminal compiling....
 ECHO --------------------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+rem "%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
+rem IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Optimization Rule Generator compiling....
 ECHO ------------------------------------------
@@ -79,6 +79,7 @@ md lib30
 %1\bin\asm2binx %1\src30\asm\x32\coreapi.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core_vm.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core_rt.asm %1\bin\x32
+%1\bin\asm2binx %1\src30\asm\x32\core_win.asm %1\bin\x32
 
 echo ========== copying bin files.. ===============
 
@@ -88,12 +89,13 @@ copy %1\bin\asm2binx.exe bin
 copy %1\bin\elc.exe bin
 copy %1\bin\elide.exe bin
 copy %1\bin\sg.exe bin
-copy %1\bin\elt.exe bin
+rem copy %1\bin\elt.exe bin
 copy %1\bin\ecv.exe bin
 copy %1\bin\og.exe bin
 
 copy %1\bin\elenavm.dll bin
-copy %1\bin\elenasm.dll bin
+copy %1\bin\elenart.dll bin
+rem copy %1\bin\elenasm.dll bin
 copy %1\bin\winstub.ex_ bin
 copy %1\bin\syntax.dat bin
 copy %1\bin\rules.dat bin
@@ -113,14 +115,13 @@ copy %1\bin\x32\*.bin bin\x32\
 
 echo copying bin\scripts files
 
-md bin\scripts
-copy %1\bin\scripts\*.es bin\scripts\
+rem md bin\scripts
+rem copy %1\bin\scripts\*.es bin\scripts\
 
 echo copying dat files
 
 md dat
 md dat\sg
-copy %1\dat\sg\sg.bat dat\sg
 copy %1\dat\sg\syntax.txt dat\sg
 
 md dat\og
@@ -158,11 +159,7 @@ copy %1\elenasrc2\elc\*.h elenasrc2\elc
 md elenasrc2\elc\codeblocks 
 copy %1\elenasrc2\elc\codeblocks\*.cbp elenasrc2\elc\codeblocks
 
-md elenasrc2\elc\linux32
-copy %1\elenasrc2\elc\linux32\*.cpp elenasrc2\elc\linux32
-
 md elenasrc2\elc\vs
-copy %1\elenasrc2\elc\vs\elc10.vcxproj elenasrc2\elc\vs
 copy %1\elenasrc2\elc\vs\elc11.vcxproj elenasrc2\elc\vs
 
 md elenasrc2\elc\win32 
@@ -177,12 +174,25 @@ md elenasrc2\elenavm\codeblocks
 copy %1\elenasrc2\elenavm\codeblocks\*.cbp elenasrc2\elenavm\codeblocks
 
 md elenasrc2\elenavm\vs
-copy %1\elenasrc2\elenavm\vs\elenavm.vcxproj elenasrc2\elenavm\vs
 copy %1\elenasrc2\elenavm\vs\elenavm11.vcxproj elenasrc2\elenavm\vs
 
 md elenasrc2\elenavm\win32 
 copy %1\elenasrc2\elenavm\win32\*.cpp elenasrc2\elenavm\win32
 copy %1\elenasrc2\elenavm\win32\*.h elenasrc2\elenavm\win32
+
+md elenasrc2\elenart
+copy %1\elenasrc2\elenart\*.cpp elenasrc2\elenart
+copy %1\elenasrc2\elenart\*.h elenasrc2\elenart
+
+md elenasrc2\elenart\codeblocks 
+copy %1\elenasrc2\elenart\codeblocks\*.cbp elenasrc2\elenart\codeblocks
+
+md elenasrc2\elenart\vs
+copy %1\elenasrc2\elenart\vs\elenart.vcxproj elenasrc2\elenart\vs
+
+md elenasrc2\elenart\win32 
+copy %1\elenasrc2\elenart\win32\*.cpp elenasrc2\elenart\win32
+copy %1\elenasrc2\elenart\win32\*.h elenasrc2\elenart\win32
 
 md elenasrc2\engine
 copy %1\elenasrc2\engine\*.cpp elenasrc2\engine
@@ -194,11 +204,6 @@ copy %1\elenasrc2\engine\win32\*.h elenasrc2\engine\win32
 
 md elenasrc2\gui
 copy %1\elenasrc2\gui\*.cpp elenasrc2\gui
-copy %1\elenasrc2\gui\*.h elenasrc2\gui
-
-md elenasrc2\gui\gtk-linux32
-copy %1\elenasrc2\gui\gtk-linux32\*.cpp elenasrc2\gui\gtk-linux32
-copy %1\elenasrc2\gui\gtk-linux32\*.h elenasrc2\gui\gtk-linux32
 
 md elenasrc2\gui\winapi32 
 copy %1\elenasrc2\gui\winapi32\*.cpp elenasrc2\gui\winapi32 
@@ -214,12 +219,7 @@ copy %1\elenasrc2\ide\codeblocks\*.cbp elenasrc2\ide\codeblocks
 md elenasrc2\ide\eng
 copy %1\elenasrc2\ide\eng\*.h elenasrc2\ide\eng
 
-md elenasrc2\ide\gtk-linux32
-copy %1\elenasrc2\ide\gtk-linux32\*.cpp elenasrc2\ide\gtk-linux32
-copy %1\elenasrc2\ide\gtk-linux32\*.h elenasrc2\ide\gtk-linux32
-
 md elenasrc2\ide\vs
-copy %1\elenasrc2\ide\vs\elide10.vcxproj elenasrc2\ide\vs
 copy %1\elenasrc2\ide\vs\elide11.vcxproj elenasrc2\ide\vs
 
 md elenasrc2\ide\winapi32 
@@ -231,31 +231,31 @@ md elenasrc2\ide\winapi32\icons
 copy %1\elenasrc2\ide\winapi32\icons\*.bmp elenasrc2\ide\winapi32\icons 
 copy %1\elenasrc2\ide\winapi32\icons\*.ico elenasrc2\ide\winapi32\icons 
 
-md elenasrc2\elenasm 
-copy %1\elenasrc2\elenasm\*.cpp elenasrc2\elenasm
-copy %1\elenasrc2\elenasm\*.h elenasrc2\elenasm
+rem md elenasrc2\elenasm 
+rem copy %1\elenasrc2\elenasm\*.cpp elenasrc2\elenasm
+rem copy %1\elenasrc2\elenasm\*.h elenasrc2\elenasm
 
-md elenasrc2\elenasm\win32
-copy %1\elenasrc2\elenasm\win32\*.cpp elenasrc2\elenasm\win32
-copy %1\elenasrc2\elenasm\win32\*.h elenasrc2\elenasm\win32
+rem md elenasrc2\elenasm\win32
+rem copy %1\elenasrc2\elenasm\win32\*.cpp elenasrc2\elenasm\win32
+rem copy %1\elenasrc2\elenasm\win32\*.h elenasrc2\elenasm\win32
 
-md elenasrc2\elenasm\vs
-copy %1\elenasrc2\elenasm\vs\*.vcxproj elenasrc2\elenasm\vs
+rem md elenasrc2\elenasm\vs
+rem copy %1\elenasrc2\elenasm\vs\*.vcxproj elenasrc2\elenasm\vs
 
-md elenasrc2\elenasm\codeblocks 
-copy %1\elenasrc2\elenasm\codeblocks\*.cbp elenasrc2\elenasm\codeblocks
+rem md elenasrc2\elenasm\codeblocks 
+rem copy %1\elenasrc2\elenasm\codeblocks\*.cbp elenasrc2\elenasm\codeblocks
 
 md elenasrc2\tools 
 
-md elenasrc2\tools\api2html
-copy %1\elenasrc2\tools\api2html\*.cpp elenasrc2\tools\api2html
-copy %1\elenasrc2\tools\api2html\*.h elenasrc2\tools\api2html
+rem md elenasrc2\tools\api2html
+rem copy %1\elenasrc2\tools\api2html\*.cpp elenasrc2\tools\api2html
+rem copy %1\elenasrc2\tools\api2html\*.h elenasrc2\tools\api2html
 
-md elenasrc2\tools\api2html\codeblocks 
-copy %1\elenasrc2\tools\api2html\codeblocks\*.cbp elenasrc2\tools\api2html\codeblocks
+rem md elenasrc2\tools\api2html\codeblocks 
+rem copy %1\elenasrc2\tools\api2html\codeblocks\*.cbp elenasrc2\tools\api2html\codeblocks
 
-md elenasrc2\tools\api2html\vs
-copy %1\elenasrc2\tools\api2html\vs\*.vcxproj elenasrc2\tools\api2html\vs
+rem md elenasrc2\tools\api2html\vs
+rem copy %1\elenasrc2\tools\api2html\vs\*.vcxproj elenasrc2\tools\api2html\vs
 
 md elenasrc2\tools\asm2bin
 copy %1\elenasrc2\tools\asm2bin\*.cpp elenasrc2\tools\asm2bin
@@ -271,9 +271,7 @@ md elenasrc2\tools\sg
 copy %1\elenasrc2\tools\sg\*.cpp elenasrc2\tools\sg
 copy %1\elenasrc2\tools\sg\*.h elenasrc2\tools\sg
 md elenasrc2\tools\sg\win32
-md elenasrc2\tools\sg\linux32
 copy %1\elenasrc2\tools\sg\win32\*.h elenasrc2\tools\sg\win32
-copy %1\elenasrc2\tools\sg\linux32\*.h elenasrc2\tools\sg\linux32
 
 md elenasrc2\tools\sg\codeblocks 
 copy %1\elenasrc2\tools\sg\codeblocks\*.cbp elenasrc2\tools\sg\codeblocks
@@ -281,15 +279,15 @@ copy %1\elenasrc2\tools\sg\codeblocks\*.cbp elenasrc2\tools\sg\codeblocks
 md elenasrc2\tools\sg\vs
 copy %1\elenasrc2\tools\sg\vs\*.vcxproj elenasrc2\tools\sg\vs
 
-md elenasrc2\tools\elt
-copy %1\elenasrc2\tools\elt\*.cpp elenasrc2\tools\elt
-copy %1\elenasrc2\tools\elt\*.h elenasrc2\tools\elt
+rem md elenasrc2\tools\elt
+rem copy %1\elenasrc2\tools\elt\*.cpp elenasrc2\tools\elt
+rem copy %1\elenasrc2\tools\elt\*.h elenasrc2\tools\elt
 
-md elenasrc2\tools\elt\vs
-copy %1\elenasrc2\tools\elt\vs\*.vcxproj elenasrc2\tools\elt\vs
+rem md elenasrc2\tools\elt\vs
+rem copy %1\elenasrc2\tools\elt\vs\*.vcxproj elenasrc2\tools\elt\vs
 
-md elenasrc2\tools\elt\codeblocks 
-copy %1\elenasrc2\tools\elt\codeblocks\*.cbp elenasrc2\tools\elt\codeblocks
+rem md elenasrc2\tools\elt\codeblocks 
+rem copy %1\elenasrc2\tools\elt\codeblocks\*.cbp elenasrc2\tools\elt\codeblocks
 
 md elenasrc2\tools\ecv
 copy %1\elenasrc2\tools\ecv\*.cpp elenasrc2\tools\ecv
@@ -314,7 +312,6 @@ copy %1\elenasrc2\tools\og\vs\*.vcxproj elenasrc2\tools\og\vs
 md install
 copy %1\install\*.iss install
 
-
 echo copying examples files
 
 md examples 
@@ -331,77 +328,77 @@ md examples\bsort
 copy %1\examples\bsort\*.l examples\bsort
 copy %1\examples\bsort\*.prj examples\bsort
 
-md examples\c_a_g
-copy %1\examples\c_a_g\*.l examples\c_a_g
-copy %1\examples\c_a_g\*.prj examples\c_a_g
+rem md examples\c_a_g
+rem copy %1\examples\c_a_g\*.l examples\c_a_g
+rem copy %1\examples\c_a_g\*.prj examples\c_a_g
 
-md examples\c_a_g\formulas
+rem md examples\c_a_g\formulas
 
-md examples\c_a_g\formulas\Circulo
-copy %1\examples\c_a_g\formulas\Circulo\*.bmp examples\c_a_g\formulas\Circulo
+rem md examples\c_a_g\formulas\Circulo
+rem copy %1\examples\c_a_g\formulas\Circulo\*.bmp examples\c_a_g\formulas\Circulo
 
-md examples\c_a_g\formulas\Paralelogramos 
-copy %1\examples\c_a_g\formulas\Paralelogramos\*.bmp examples\c_a_g\formulas\Paralelogramos 
+rem md examples\c_a_g\formulas\Paralelogramos 
+rem copy %1\examples\c_a_g\formulas\Paralelogramos\*.bmp examples\c_a_g\formulas\Paralelogramos 
 
-md examples\c_a_g\formulas\Trapezio 
-copy %1\examples\c_a_g\formulas\Trapezio\*.bmp examples\c_a_g\formulas\Trapezio
+rem md examples\c_a_g\formulas\Trapezio 
+rem copy %1\examples\c_a_g\formulas\Trapezio\*.bmp examples\c_a_g\formulas\Trapezio
 
-md examples\c_a_g\formulas\Triangulos 
-copy %1\examples\c_a_g\formulas\Triangulos\*.bmp examples\c_a_g\formulas\Triangulos 
+rem md examples\c_a_g\formulas\Triangulos 
+rem copy %1\examples\c_a_g\formulas\Triangulos\*.bmp examples\c_a_g\formulas\Triangulos 
 
-md examples\c_a_g\inf
-md examples\c_a_g\obj
-md examples\c_a_g\bin
+rem md examples\c_a_g\inf
+rem md examples\c_a_g\obj
+rem md examples\c_a_g\bin
 
-md examples\calculator 
-copy %1\examples\calculator\*.l examples\calculator 
-copy %1\examples\calculator\*.prj examples\calculator 
-copy %1\examples\calculator\calc.vl2 examples\calculator 
-copy %1\examples\calculator\calc.vl examples\calculator 
+rem md examples\calculator 
+rem copy %1\examples\calculator\*.l examples\calculator 
+rem copy %1\examples\calculator\*.prj examples\calculator 
+rem copy %1\examples\calculator\calc.vl2 examples\calculator 
+rem copy %1\examples\calculator\calc.vl examples\calculator 
 
 md examples\datetime 
 copy %1\examples\datetime\*.l examples\datetime 
 copy %1\examples\datetime\*.prj examples\datetime  
 
-md examples\dices
-copy %1\examples\dices\*.l examples\dices
-copy %1\examples\dices\*.prj examples\dices
+rem md examples\dices
+rem copy %1\examples\dices\*.l examples\dices
+rem copy %1\examples\dices\*.prj examples\dices
 
-md examples\dices\kniffel
-copy %1\examples\dices\kniffel\*.l examples\dices\kniffel
+rem md examples\dices\kniffel
+rem copy %1\examples\dices\kniffel\*.l examples\dices\kniffel
 
-md examples\eldoc 
-copy %1\examples\eldoc\*.l examples\eldoc
-copy %1\examples\eldoc\*.prj examples\eldoc
+rem md examples\eldoc 
+rem copy %1\examples\eldoc\*.l examples\eldoc
+rem copy %1\examples\eldoc\*.prj examples\eldoc
 
 md examples\goods 
 copy %1\examples\goods\*.l examples\goods 
 copy %1\examples\goods\*.txt examples\goods 
 copy %1\examples\goods\*.prj examples\goods 
 
-md examples\graphs
-copy %1\examples\graphs\*.l examples\graphs
-copy %1\examples\graphs\*.prj examples\graphs
+rem md examples\graphs
+rem copy %1\examples\graphs\*.l examples\graphs
+rem copy %1\examples\graphs\*.prj examples\graphs
 
 md examples\helloworld 
 copy %1\examples\helloworld\*.l examples\helloworld
 copy %1\examples\helloworld\*.prj examples\helloworld
-copy %1\examples\helloworld\*.es examples\helloworld
+rem copy %1\examples\helloworld\*.es examples\helloworld
 
-md examples\interpreter
-copy %1\examples\interpreter\*.l examples\interpreter
-copy %1\examples\interpreter\*.prj examples\interpreter
-copy %1\examples\interpreter\*.txt examples\interpreter
-copy %1\examples\interpreter\*.bat examples\interpreter
-copy %1\examples\interpreter\*.es examples\interpreter
+rem md examples\interpreter
+rem copy %1\examples\interpreter\*.l examples\interpreter
+rem copy %1\examples\interpreter\*.prj examples\interpreter
+rem copy %1\examples\interpreter\*.txt examples\interpreter
+rem copy %1\examples\interpreter\*.bat examples\interpreter
+rem copy %1\examples\interpreter\*.es examples\interpreter
 
 md examples\matrix 
 copy %1\examples\matrix\*.l examples\matrix 
 copy %1\examples\matrix\*.prj examples\matrix 
 
-md examples\opencalc
-copy %1\examples\opencalc\*.bat examples\opencalc
-copy %1\examples\opencalc\*.vl examples\opencalc
+rem md examples\opencalc
+rem copy %1\examples\opencalc\*.bat examples\opencalc
+rem copy %1\examples\opencalc\*.vl examples\opencalc
 
 md examples\pi
 copy %1\examples\pi\*.l examples\pi
@@ -429,36 +426,36 @@ md examples\words
 copy %1\examples\words\*.l examples\words
 copy %1\examples\words\*.prj examples\words
 
-md examples\upndown 
-md examples\upndown\bin
-copy %1\examples\upndown\*.l examples\upndown 
-copy %1\examples\upndown\*.prj examples\upndown 
+rem md examples\upndown 
+rem md examples\upndown\bin
+rem copy %1\examples\upndown\*.l examples\upndown 
+rem copy %1\examples\upndown\*.prj examples\upndown 
 
-md examples\upndown\gui
-copy %1\examples\upndown\gui\*.l examples\upndown\gui
+rem md examples\upndown\gui
+rem copy %1\examples\upndown\gui\*.l examples\upndown\gui
 
-md examples\upndown\upndown
-copy %1\examples\upndown\upndown\*.l examples\upndown\upndown 
+rem md examples\upndown\upndown
+rem copy %1\examples\upndown\upndown\*.l examples\upndown\upndown 
 
-md examples\upndown\dictionary
-copy %1\examples\upndown\dictionary\*.l examples\upndown\dictionary
+rem md examples\upndown\dictionary
+rem copy %1\examples\upndown\dictionary\*.l examples\upndown\dictionary
 
-md examples\notepad 
-md examples\notepad\bin
-copy %1\examples\notepad\*.l examples\notepad
-copy %1\examples\notepad\*.prj examples\notepad 
+rem md examples\notepad 
+rem md examples\notepad\bin
+rem copy %1\examples\notepad\*.l examples\notepad
+rem copy %1\examples\notepad\*.prj examples\notepad 
 
 md examples\trans
 copy %1\examples\trans\*.l examples\trans
 copy %1\examples\trans\*.prj examples\trans
 
-md examples\vmconsole
-copy %1\examples\vmconsole\*.l examples\vmconsole
-copy %1\examples\vmconsole\*.prj examples\vmconsole
+rem md examples\vmconsole
+rem copy %1\examples\vmconsole\*.l examples\vmconsole
+rem copy %1\examples\vmconsole\*.prj examples\vmconsole
 
-md examples\timer
-copy %1\examples\timer\*.l examples\timer
-copy %1\examples\timer\*.prj examples\timer
+rem md examples\timer
+rem copy %1\examples\timer\*.l examples\timer
+rem copy %1\examples\timer\*.prj examples\timer
 
 echo copying src3 files
 
@@ -478,9 +475,9 @@ md src30\extensions
 xcopy %1\src30\extensions\*.l src30\extensions /s
 xcopy %1\src30\extensions\*.prj src30\extensions /s
 
-md src30\forms
-xcopy %1\src30\forms\*.l src30\forms /s
-xcopy %1\src30\forms\*.prj src30\forms /s
+rem md src30\forms
+rem xcopy %1\src30\forms\*.l src30\forms /s
+rem xcopy %1\src30\forms\*.prj src30\forms /s
 
 copy %1\rebuild.bat 
 copy %1\rebuildall.bat 
