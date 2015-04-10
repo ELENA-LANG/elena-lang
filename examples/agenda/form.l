@@ -25,205 +25,106 @@
 {
     #field theHandle.
     
-////    // All Text Box's
-////    #field Name.
-////    #field SurName.
-////    #field OtName.
-////    #field Email.
-////    #field Age.
-////    #field PhoneNumber.
-////    
-////    // All Labels
-////    #field LabelName.
-////    #field LabelSurName.
-////    #field LabelOtName.
-////    #field LabelEmail.
-////    #field LabelAge.
-////    #field LabelPhoneNumber.
-////    #field LabelAbout.
-////    #field LabelDel.
-////
-////    // All Buttons
-////    #field BtmExit.
-////    #field BtmSave.
-////    #field BtmDelTxt.
-////    #field BtmInfo.
-////
-////    #field theSavedPath.
+    // All Text Box's
+    #field Name.
+    #field SurName.
+    #field OtName.
+    #field Email.
+    #field Age.
+    #field PhoneNumber.
+    
+    // All Labels
+    #field LabelName.
+    #field LabelSurName.
+    #field LabelOtName.
+    #field LabelEmail.
+    #field LabelAge.
+    #field LabelPhoneNumber.
+    #field LabelAbout.
+    #field LabelDel.
+
+    // All Buttons
+    #field BtmExit.
+    #field BtmSave.
+    #field BtmDelTxt.
+    #field BtmInfo.
+
+//    #field theSavedPath.
 
     #constructor new
     [
+        // Form
         theHandle := SDIWindowHandle new &wide:"Writer Account" &int:350 &int:250 &int:500 &int:265.
         
-//        super initializing:Args.
-//
-//        // --- Create controls the Labels ---
-//        LabelName := controls'StaticLabel::self.
-//        LabelSurName := controls'StaticLabel::self.
-//        LabelOtName := controls'StaticLabel::self.
-//        LabelEmail := controls'StaticLabel::self.
-//        LabelAge := controls'StaticLabel::self.
-//        LabelPhoneNumber := controls'StaticLabel::self.
-//        LabelAbout := controls'StaticLabel::self.
-//        LabelDel := controls'StaticLabel::self.
-//
-//        // --- Create the Text Box controls ---
-//        Name := controls'Edit::self.
-//        SurName := controls'Edit::self.
-//        OtName := controls'Edit::self.
-//        Email := controls'Edit::self.
-//        Age := controls'Edit::self.
-//        PhoneNumber := controls'Edit::self.
-//
-//        // --- Create controls of the Buttons ---
-//        BtmExit := controls'Button::self.
-//        BtmSave := controls'Button::self.
-//        BtmDelTxt := controls'Button::self.
-//        BtmInfo := controls'Button::self.
-//
-//        // -------------------------------------------------------------------------------
-//        
-//        // Form
-//        self
-//            dimensions'set &width:500 &height:265
-//            coordinates'set &x:350 &y:250
-//            caption'set:"Writer Account".
-//
-//        // ------------------------------------ Labels ------------------------------------
-//        // LabelName
-//        Labelname
-//            dimensions'set &width:70 &height:30
-//            coordinates'set &x:12 &y:10
-//            caption'set:"Name:"
-//            open.
-//        
-//        // LabelSurName
-//        LabelSurName
-//            dimensions'set &width:109 &height:20
-//            coordinates'set &x:12 &y:40
-//            caption'set:"Your Last Name:"
-//            open.
-//
-//        // LabelOtName
-//        LabelOtName
-//            dimensions'set &width:89 &height:20
-//            coordinates'set &x:12 &y:65
-//            caption'set:"Other Names:"
-//            open.
-//
-//        // LabelEmail
-//        LabelEmail
-//            dimensions'set &width:40 &height:20
-//            coordinates'set &x:12 &y:90
-//            caption'set:"Email:"
-//            open.
-//
-//        // LabelAge
-//        LabelAge
-//            dimensions'set &width:27 &height:20
-//            coordinates'set &x:12 &y:115
-//            caption'set:"Age:"
-//            open.
-//
-//        // LabelPhoneNumber
-//        LabelPhoneNumber
-//            dimensions'set &width:100 &height:20
-//            coordinates'set &x:12 &y:140
-//            caption'set:"Phone Number:"
-//            open.
-//
-//        // LabelAbout
-//        LabelAbout
-//            dimensions'set &width:250 &height:35
-//            coordinates'set &x:12 &y:165
-//            open.
-//        
-//        // LabelDel
-//        LabelDel
-//            dimensions'set &width:250 &height:35
-//            coordinates'set &x:300 &y:165
-//            open.
-//
-//        // ------------------------------------ Text Box's ------------------------------------
-//        // Name
-//        Name << "Your name".
-//        Name
-//            dimensions'set &width:200 &height:25
-//            coordinates'set &x:125 &y:10
-//            open.
-//
-//        // SurName
-//        SurName << "Your Last Name".
-//        SurName
-//            dimensions'set &width:200 &height:25
-//            coordinates'set &x:125 &y:35
-//            open.
-//
-//        // OtName
-//        OtName << "Other Name".
-//        OtName
-//            dimensions'set &width:200 &height:25
-//            coordinates'set &x:125 &y:60
-//            open.
-//
-//        // Email
-//        Email << "Email".
-//        Email
-//            dimensions'set &width:200 &height:25
-//            coordinates'set &x:125 &y:85
-//            open.
-//
-//        // Age
-//        Age << "Age".
-//        Age
-//            dimensions'set &width:200 &height:25
-//            coordinates'set &x:125 &y:110
-//            open.
-//
-//        // PhoneNumber
-//        PhoneNumber << "Phone Number".
-//        PhoneNumber
-//            dimensions'set &width:200 &height:25
-//            coordinates'set &x:125 &y:135
-//            open.
-//
-//        // ------------------------------------ Buttons ------------------------------------
-//        // BtmSave
-//        BtmSave
-//            dimensions'set &width:65 &height:20
-//            coordinates'set &x:410 &y:20
-//            caption'set:"Save"
-//            open.
-//
-//        // BtmDelTxt
-//        BtmDelTxt
-//            dimensions'set &width:65 &height:20
-//            coordinates'set &x:410 &y:50
-//            caption'set:"Del TXT"
+        // ------------------------------------ Labels ------------------------------------
+        // LabelName
+        LabelName := StaticLabelHandle new &handle:theHandle &wide:"Name" &int:12 &int:10 &int:70 &int:30.
+
+        // LabelSurName
+        LabelSurName := StaticLabelHandle new &handle:theHandle &wide:"Your Last Name:" &int:12 &int:40 &int:109 &int:20.
+
+        // LabelOtName
+        LabelOtName := StaticLabelHandle new &handle:theHandle &wide:"Other Names:" &int:12 &int:65 &int:89 &int:20.
+
+        // LabelEmail
+        LabelEmail := StaticLabelHandle new &handle:theHandle &wide:"Email:" &int:12 &int:90 &int:40 &int:20.
+
+        // LabelAge
+        LabelAge := StaticLabelHandle new &handle:theHandle &wide:"Age:" &int:12 &int:115 &int:27 &int:20.
+
+        // LabelPhoneNumber
+        LabelPhoneNumber := StaticLabelHandle new &handle:theHandle &wide:"Phone Number:" &int:12 &int:140 &int:100 &int:20.
+
+        // LabelAbout
+        LabelAbout := StaticLabelHandle new &handle:theHandle &wide:emptyWideLiteralValue &int:12 &int:165 &int:250 &int:35.
+        
+        // LabelDel
+        LabelDel := StaticLabelHandle new &handle:theHandle &wide:emptyWideLiteralValue &int:300 &int:165 &int:250 &int:35.
+
+        // ------------------------------------ Text Box's ------------------------------------
+        // Name
+        Name := EditHandle new &handle:theHandle &wide:"Your name" &int:125 &int:10 &int:200 &int:25.
+
+        // SurName
+        SurName := EditHandle new &handle:theHandle &wide:"Your Last Name" &int:125 &int:35 &int:200 &int:25.
+
+        // OtName
+        OtName := EditHandle new &handle:theHandle &wide:"Other Name" &int:125 &int:60 &int:200 &int:25.
+
+        // Email
+        Email := EditHandle new &handle:theHandle &wide:"Email" &int:125 &int:85 &int:200 &int:25.
+
+        // Age
+        Age := EditHandle new &handle:theHandle &wide:"Age" &int:125 &int:110 &int:200 &int:25.
+
+        // PhoneNumber
+        PhoneNumber := EditHandle new &handle:theHandle &wide:"Phone Number" &int:125 &int:135 &int:200 &int:25.
+
+        // ------------------------------------ Buttons ------------------------------------
+        // BtmSave
+        BtmSave := ButtonHandle new &handle:theHandle &wide:"Save" &int:390 &int:10 &int:85 &int:25.
+
+        // BtmDelTxt
+        BtmDelTxt := ButtonHandle new &handle:theHandle &wide:"Del TXT" &int:390 &int:50 &int:85 &int:25.
 //            enabled'set:false
-//            open.
-//
-//        // BtmInfo
-//        BtmInfo
-//            dimensions'set &width:65 &height:20
-//            coordinates'set &x:410 &y:80
-//            caption'set:"About"
-//            open.
-//
-//        // BtmExit
-//        BtmExit
-//            dimensions'set &width:65 &height:20
-//            coordinates'set &x:410 &y:110
-//            caption'set:"Exit"
-//            open.
-//
-//        // ------------------------------------ Handlers  ------------------------------------    
-//        // Exit
-//        BtmExit event_handle'append:
-//        {
-//            clicking : Args [ 'program stop. ]
-//        }.
-//
+
+        // BtmInfo
+        BtmInfo := ButtonHandle new &handle:theHandle &wide:"About" &int:390 &int:80 &int:85 &int:25.
+
+        // BtmExit
+        BtmExit := ButtonHandle new &handle:theHandle &wide:"Exit" &int:390 &int:110 &int:85 &int:25.
+
+        // ------------------------------------ Handlers  ------------------------------------    
+        theHandle set &win_listener:WindowListener
+        {
+            onclick &handle:aControl &vint:aResult
+            [
+                // Exit
+                (aControl == BtmExit handle)
+                    ? [ 'program stop. ].
+            ]
+        }.
+        
 //        // Save
 //        BtmSave event_handle'append:
 //        {
@@ -265,4 +166,6 @@
 //            ]
 //        }.
     ]
+    
+    #method => theHandle.
 }

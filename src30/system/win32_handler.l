@@ -20,9 +20,9 @@
     ]
 }
 
-// --- IntPtr ---
+// --- RTPointer ---
 
-#class(sealed,pointer) Pointer
+#class(sealed,pointer) RTPointer
 {
     #constructor new : anObject
         => system'internal'api_alloc_index.
@@ -46,4 +46,18 @@
 
     #method close
         => system'internal'api_free_index.
+}
+
+// --- UnsafePointer ---
+
+#class(sealed,pointer) UnsafePointer
+{
+    #constructor new &literal:aLiteral
+        => system'internal'int_copy.
+        
+    #constructor new &wide:aLiteral
+        => system'internal'int_copy.
+    
+    #method read &vint:aRetVal
+        => system'internal'save_int.    
 }

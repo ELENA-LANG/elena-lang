@@ -37,6 +37,11 @@
 #subject(class:system'IntNumber)        offset.
 #subject(class:system'IntNumber)        int_attributes.
 
+#subject(class:system'IntNumber)        x.
+#subject(class:system'IntNumber)        y.
+#subject(class:system'IntNumber)        width.
+#subject(class:system'IntNumber)        height.
+
 // === vint synonyms ===
 #subject(class:system'Integer)          vlength.
 
@@ -102,4 +107,5 @@
 
 // === system handles ===
 #subject(class:Handle) handle.
-#subject(class:system'Pointer)ptr.
+#subject(class:system'RTPointer)rt_ptr.
+#subject(class:system'UnsafePointer)dirty_ptr.

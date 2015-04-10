@@ -20,31 +20,50 @@ v  - vm script
 ------                                 
 Currently:
 ------
+
               adev - gui
-                       * general architecture
+                       * set text / get text
+                       * set location / get location
+                       * set size / get size
+                       * open / save file dialog
+                       * support default button style
+                       * new controls: panel, combobox, check box, radio box, paint box, image box, status bar, timer, updown, menu, memo
+                       * handle cursor event
+                       
+                       * implement forms package (native control wrappers)
                        * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
                          dynamically for external operation
-                       * support GUI mode
-                       * support GUI application
                        * gui stand-alone, gui mt stand-alone, gui vm client
                        
+              sdev - gui examples:  
+                       * agenda should have two version, one using system'winforms, another using forms
+
+              adev - linux lib30:
+                       * cannot overwrite existing executable
+                       * port trans
+                       * port matrix
+
 <=================> 
                                               
 1.9.19
 --------
 week2:
               adev - linux lib30:
-                       * cannot overwrite existing executable
                        * core : implement INIT_RND
                        * linux file operations
                        * linux date / time operations
                        * consoleReader should check if the char is multibyte
                        * read key
+                       * port console samples
+                       * port rosetta samples
                        
               adev - lib30
                        * test vm samples       
                        * test thread operation
                        
+              sdev - gui examples:  
+                       * reintroduce all gui samples
+
               adev - lib30                                        
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
 
@@ -254,11 +273,6 @@ week2:
                              ^ IntNumber new &int:n.
                        * Variable.{append | reduce | multiplyBy | divideInto} : nil == theValue - the result of the operation is known so
                          no need to typecast
-                       
-              sdev - api doc
-                       * describe protocol methods
-                       * support dispatch method
-                       * support redirect method                       
                                                       
               adev - lib30 optimization
                        * reivew system'winforms'SDIApplication.start, optimize the main loop
@@ -286,7 +300,7 @@ week2:
                        * read / write operation: complex types
                        * write formatted numbers
                        * write formatted string (with parameters)
-
+                       
               srev - console samples
                        * simplify goods (Record.get&Literal implementation)
                        * rewrite pi sample to use stack allocated variables / parallel calculating
@@ -491,6 +505,7 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development  
+                       * implicit converting vint to int, short to int , int to short
                        * external call : vint can be passed as int (see ThreadHandle, linux - consoleWriter)
                        * wide literal constant
                        * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
@@ -527,8 +542,10 @@ week1:
                          signature
                        * break the loop
                        * make posible to declare symbol which value can be defined in the project, e.g. constant forward (and typed constant forward)
+                       * show / hide should be verbs
                          
               xdev - general implementation
+                       * WS_CHILD || SS_SIMPLE || WS_VISIBLE should supported (see system'winforms)
                        * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
                          (e.g. temporal object allocated and valie copied there)
                        * win32 linker : should stat + bss be combined into single section?
@@ -562,8 +579,10 @@ week1:
                        * if more than 11 parameters are passed, open argument list should be used automatically??
                        * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
                          symbols as an argument
+                       * cache type checks
                        
               xdev - byte code optimization                               
+                       * review / optimize SDIApplication.start
                        * call to $super should be direct
                        * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
 

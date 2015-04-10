@@ -14,7 +14,7 @@
     
     #constructor new
     [
-        Pointer new:$self.
+        RTPointer new:$self.
         
         theMainWindow := 'mainWindow new.
     ]
@@ -22,14 +22,20 @@
     #method start
     [
         #var(type:win_msg)aMsg.
+        #var(type:handle)aHWND := theMainWindow handle.
+        #var(type:int)proceeded.
         
-        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:0 &int:0 &int:0.
+        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:aHWND &int:0 &int:0.
         #loop (aResult != 0)?
         [
-            system'external'USER32 TranslateMessage &win_msg:aMsg.
-            system'external'USER32 DispatchMessageW &win_msg:aMsg.
+            proceeded := system'external'USER32 IsDialogMessageW &handle:aHWND &win_msg:aMsg.
+            (proceeded == 0) ?
+                [
+                    system'external'USER32 TranslateMessage &win_msg:aMsg.
+                    system'external'USER32 DispatchMessageW &win_msg:aMsg.
+                ].
 
-            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:0 &int:0 &int:0.
+            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:aHWND &int:0 &int:0.
         ].
     ]
     

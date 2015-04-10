@@ -28,11 +28,29 @@
 
 #class BaseWindowHandle :: ControlHandle
 {
+    #field(type:win_listener)theListener.
+    
+    #method set &win_listener:aListener
+    [
+        theListener := aListener.
+    ]
+    
+    #method onclick &handle:aControl &vint:aRetVal
+    [
+        (nil == theListener)
+            ! [ theListener onclick &handle:aControl &vint:aRetVal. ].
+    ]
+    
+    #method close
+    [
+        system'external'USER32 DestroyWindow &handle:theHandle.
+    ]
+    
     #method destroy
     [
         #var(type:int)anIndex := system'external'USER32 GetWindowLongW &handle:theHandle &int:GWL_USERDATA.
         
-        Pointer new &index:anIndex close.
+        RTPointer new &index:anIndex close.
     ]
 }
 
@@ -49,14 +67,37 @@
     
     #method eval &handle:anHWND &int:aMessage &vint:aRetVal
     [
+        (aMessage == WM_CLOSE)
+            ? [
+                // NOTE: SDIWindow is the main program window, so closing it means exiting the program
+                // NOTE: !! if we close window using Window.close method, the main loop never ends
+                theOwner destroy.
+                
+                aRetVal << 0.
+                
+                ^ $self.
+            ].
+        
         (aMessage == WM_DESTROY)
             ? [
                 theOwner destroy.
                 
                 aRetVal << 0.
+                
+                ^ $self.
             ].
         
         $super eval &handle:anHWND &int:aMessage &vint:aRetVal.
+    ]
+    
+    #method wm_command &handle:anHWND &int:aMessage &int:aCode &handle:aControl &vint:aRetVal
+    [
+        (aControl == 0)
+            ? [ ^ $self. ]. // !! temporal
+
+        // !! note low word may contains the control ID, so only high word should be checked
+        (aCode == 0)
+            ? [ theOwner onclick &handle:aControl &vint:aRetVal. ].
     ]
     
 //    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
@@ -79,8 +120,8 @@
     
     #method destroy
     [
-        $super destroy.
-        
         'program stop.
+        
+        $super destroy.        
     ]
 }

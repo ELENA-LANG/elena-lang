@@ -441,7 +441,6 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
          tape.write(bcAXSaveBI, 5);
          break;
       default:
-         tape.write(bcBCopyA);
          tape.write(bcDCopy, 0);
          tape.write(bcECopy, fieldCount);
          tape.newLabel();

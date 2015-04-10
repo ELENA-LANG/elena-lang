@@ -1,6 +1,7 @@
 ﻿[project]
 debug=agenda.dm
 executable=agenda.exe
+options=-w2-
 namespace=agenda
 template=gui
 debuginfo=-1
