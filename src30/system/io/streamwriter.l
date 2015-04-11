@@ -102,16 +102,17 @@
     
     #method write &literal:aLine
     [
-        theBuffer write &literal:aLine.
+        theBuffer clear write &literal:aLine.
         
-        #var(type:int)aLength := theBuffer length.
+        #var(type:vint)aLength.
+        theBuffer readLength &vint:aLength.
         
         $self write &chararray:(theBuffer chararray) &length:aLength.
     ]
     
     #method write &wide:aLine
     [
-        theBuffer write &wide:aLine.
+        theBuffer clear write &wide:aLine.
         
         #var(type:int)aLength := theBuffer length.
         

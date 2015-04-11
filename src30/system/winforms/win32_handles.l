@@ -18,6 +18,9 @@
     #method $write &hinstance:anInstance
         => system'internal'int_copy.
 
+    #method $read &vint:aRetVal
+        => system'internal'int_save.
+
     #method hinstance = $self.
 }
 

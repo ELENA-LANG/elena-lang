@@ -29,6 +29,9 @@
 [+] linux: support basic console operations
 [+] system'winforms module implementing basic WIN32 GUI functionality
 
+Samples:
+[+] agenda / winagenda
+
 [IDE]
 [*] fixed "step over" implementations inside symbol
 [*] binaray arrays are displayed in the debug watch correctly

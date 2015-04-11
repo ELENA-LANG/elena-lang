@@ -26,6 +26,9 @@
     #constructor openForReWrite &path:aPath
         <= %new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
     
+    #constructor openForAppend &path:aPath
+        <= %new &path:aPath &int_attributes:$FILE_APPEND_DATA &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_ALWAYS &int_attributes:0.
+    
     #constructor new &path:aPath &int_attributes:dwDesiredAccess &int_attributes:dwShareMode &int_attributes:dwCreationDisposition &int_attributes:dwFlagsAndAttributes
     [
         theHandle := system'external'KERNEL32 CreateFileW
@@ -69,6 +72,18 @@
     ]
 }
 
+// --- fileStreamHelper ---
+
+#symbol $fileStreamHelper =
+{
+    #method(type:stream)openForWrite &path:aPath &bool:anAppendMode
+    [
+        anAppendMode ? [ ^ FileStream openForAppend &path:aPath. ].
+        
+        ^ FileStream openForReWrite &path:aPath.
+    ]
+}.
+
 // --- StreamWriter ---
 
 #class StreamWriter :: TextWriter
@@ -77,15 +92,19 @@
     #field(type:encoder) theEncoder.
 
     #constructor new &stream:aStream &encoder:anEncoder
+        <= (new)
     [
         theStream := aStream.
         theEncoder := anEncoder.
 
-        theNewLineConstant := system'io'newLine literal.
+        theNewLineConstant := system'text'newLine literal.
     ]
 
     #constructor new &path:aPath
         <= %new &stream:(FileStream openForReWrite &path:aPath) &encoder:UTF8Encoder.
+        
+    #constructor new &path:aPath &bool:anAppendMode
+        <= %new &stream:($fileStreamHelper openForWrite &path:aPath &bool:anAppendMode) &encoder:UTF8Encoder.
         
     #method stream = theStream.        
         
@@ -97,6 +116,7 @@
         #var(type:bytearray,size:64)aBuffer.
         #var(type:vlength)aBlockLength.
         #var(type:vlength)aBufferLength.
+        #var(type:int)anOffset := 0.
         
         #loop (aTotal > 0) ?
         [
@@ -104,11 +124,12 @@
                 ? [ aBlockLength << aTotal. ]
                 ! [ aBlockLength << 64. ].
                 
-            theEncoder convert &index:0 &vlength:aBlockLength &chararray:anInput &bytearray:aBuffer &vlength:aBufferLength.
+            theEncoder convert &index:anOffset &vlength:aBlockLength &chararray:anInput &bytearray:aBuffer &vlength:aBufferLength.
             
             theStream write &bytearray:aBuffer &length:aBufferLength.
             
             aTotal := aTotal - aBlockLength.
+            anOffset := anOffset + aBlockLength.
         ].
     ]
     

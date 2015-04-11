@@ -52,11 +52,17 @@
 
 #class(sealed,pointer) UnsafePointer
 {
-    #constructor new &literal:aLiteral
-        => system'internal'int_copy.
+    #method write &literal:aLiteral
+        => system'internal'dptr_copy.
         
-    #constructor new &wide:aLiteral
+    #method write &wide:aLiteral
+        => system'internal'dptr_copy.
+    
+    #method write &handle:aLiteral
         => system'internal'int_copy.
+    
+    #method write &shortarray:anArray
+        => system'internal'dptr_copy.
     
     #method read &vint:aRetVal
         => system'internal'save_int.    

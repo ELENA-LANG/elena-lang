@@ -21,11 +21,24 @@ v  - vm script
 Currently:
 ------
 
+              adev - linux lib30:
+                       * coreapi : function returning argument list parameters (check if os_table first field is zero - returns 0, otherwise read the argument parameter)
+                       * function - get the number of argument parameters (it is assumed the first argument parameter is a number of parameters)
+                       * function - copy argument parameter with specified number to the buffer (bytearray)
+
+                       * return a command line arguments
+                       * cannot overwrite existing executable
+                       * port trans
+                       * port matrix
+
+<=================> 
+                                              
+1.9.19
+--------
+week2:
               adev - gui
-                       * set text / get text
                        * set location / get location
                        * set size / get size
-                       * open / save file dialog
                        * support default button style
                        * new controls: panel, combobox, check box, radio box, paint box, image box, status bar, timer, updown, menu, memo
                        * handle cursor event
@@ -38,16 +51,6 @@ Currently:
               sdev - gui examples:  
                        * agenda should have two version, one using system'winforms, another using forms
 
-              adev - linux lib30:
-                       * cannot overwrite existing executable
-                       * port trans
-                       * port matrix
-
-<=================> 
-                                              
-1.9.19
---------
-week2:
               adev - linux lib30:
                        * core : implement INIT_RND
                        * linux file operations
@@ -63,6 +66,7 @@ week2:
                        
               sdev - gui examples:  
                        * reintroduce all gui samples
+                       * agenda : implement file deleting
 
               adev - lib30                                        
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
@@ -295,6 +299,7 @@ week2:
                        * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
                        * review ws_insert function (in assembler), try to simplify it
                        * Real#class.new&int[1] - optimize
+                       * ByteArray.fill&index&length&byte
 
                adev - console operations:  
                        * read / write operation: complex types
@@ -505,6 +510,8 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development  
+                       * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
+                         implemented
                        * implicit converting vint to int, short to int , int to short
                        * external call : vint can be passed as int (see ThreadHandle, linux - consoleWriter)
                        * wide literal constant
@@ -580,6 +587,18 @@ week1:
                        * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
                          symbols as an argument
                        * cache type checks
+                       * look at agenda sample:
+                             theHandle set &win_listener:WindowListener
+                             {
+                                onclick &handle:aControl &vint:aResult
+                                [
+                                   // Save
+                                   (aControl == BtmSave handle)
+                                        ? [ self saveFile. ].
+                                ]
+                             }.
+                          self cannot be used, because it points to a class, rather then the object
+
                        
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start
@@ -637,6 +656,7 @@ week1:
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
+                       * project view
                        * class view - make possible to browse the class methods
 
               idev - debugger - watch

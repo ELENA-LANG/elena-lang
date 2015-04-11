@@ -1,23 +1,6 @@
 #define system.
 #define system'winforms.
-////#define std'patterns'*.
-//#define forms.
-//#define controls'* = gui'controls'*.
-//#define io'*       = sys'io'*.
-////#define gui'common'*.
-//#define gui'dictionary'*.
-//#define gui'dialogs'*.
-//
-//// --- OpenFile ---
-//
-//#symbol OpenFile : aParent =
-//[
-//    #var aDialog := SaveFileDialog &&control_parent:aParent &caption:"Save Agenda" &:'dialogs'styles'AFileDialog.
-//    
-//    aDialog filter'write &caption:"Text Files" &io'file_mask:"*.txt".
-//
-//    ^ aDialog forms'modal'open io'path.
-//].
+#define system'io.
 
 // --- Main window ---
 
@@ -49,7 +32,7 @@
     #field BtmDelTxt.
     #field BtmInfo.
 
-//    #field theSavedPath.
+    #field theSavedPath.
 
     #constructor new
     [
@@ -76,10 +59,10 @@
         LabelPhoneNumber := StaticLabelHandle new &handle:theHandle &wide:"Phone Number:" &int:12 &int:140 &int:100 &int:20.
 
         // LabelAbout
-        LabelAbout := StaticLabelHandle new &handle:theHandle &wide:emptyWideLiteralValue &int:12 &int:165 &int:250 &int:35.
+        LabelAbout := StaticLabelHandle new &handle:theHandle &wide:emptyWideLiteralValue &int:12 &int:165 &int:400 &int:35.
         
         // LabelDel
-        LabelDel := StaticLabelHandle new &handle:theHandle &wide:emptyWideLiteralValue &int:300 &int:165 &int:250 &int:35.
+        LabelDel := StaticLabelHandle new &handle:theHandle &wide:emptyWideLiteralValue &int:300 &int:185 &int:400 &int:35.
 
         // ------------------------------------ Text Box's ------------------------------------
         // Name
@@ -106,7 +89,7 @@
 
         // BtmDelTxt
         BtmDelTxt := ButtonHandle new &handle:theHandle &wide:"Del TXT" &int:390 &int:50 &int:85 &int:25.
-//            enabled'set:false
+        BtmDelTxt setEnabled &int:0.
 
         // BtmInfo
         BtmInfo := ButtonHandle new &handle:theHandle &wide:"About" &int:390 &int:80 &int:85 &int:25.
@@ -114,38 +97,26 @@
         // BtmExit
         BtmExit := ButtonHandle new &handle:theHandle &wide:"Exit" &int:390 &int:110 &int:85 &int:25.
 
-        // ------------------------------------ Handlers  ------------------------------------    
+        // ------------------------------------ Handlers  ------------------------------------
+        #var wind := $self. 
         theHandle set &win_listener:WindowListener
         {
             onclick &handle:aControl &vint:aResult
             [
                 // Exit
                 (aControl == BtmExit handle)
-                    ? [ 'program stop. ].
+                    ? [ 'program stop. ^ $self. ].
+                    
+                // Save
+                (aControl == BtmSave handle)
+                    ? [ wind saveFile. ^ $self. ].
+                
+                // About
+                (aControl == BtmInfo handle)
+                    ? [ LabelAbout setCaption &wide:"Created by Alexandre Bencz."#10"Thanks Alex Rakov, for support.". ^ $self. ].
             ]
         }.
         
-//        // Save
-//        BtmSave event_handle'append:
-//        {
-//            clicking : Args
-//            [
-//                theSavedPath := OpenFile::self.
-//
-//                #var Writer := io'LogWriter::theSavedPath.
-//                Writer write:"//-------------------------------------------------------------------------------%n". 
-//                Writer write:"%r%nName: " write:Name write:" " write:SurName write:" " write:OtName.
-//                Writer write:"%r%nEmail: " write:Email.
-//                Writer write:"%r%nAge: " write:Age.
-//                Writer write:"%r%nPhoneNumber: " write:PhoneNumber.
-//                Writer write:"%r%n//-------------------------------------------------------------------------------%n".
-//
-//                Writer free.
-//                
-//                BtmDelTxt enabled'set:true.
-//            ]
-//        }.
-//
 //        // Del TXT
 //        BtmDelTxt event_handle'append:
 //        {
@@ -166,6 +137,25 @@
 //            ]
 //        }.
     ]
+    
+    #method saveFile
+    [
+        #var aDialog := SaveFileDialog new &handle:theHandle &filters:("Text Files","*.txt") &filter_index:0 &length:255 &wide:"Select a file".
+        theSavedPath := aDialog select.
+
+        #var aWriter := StreamWriter new &path:theSavedPath &bool:true.
+
+        aWriter writeLine:"//-------------------------------------------------------------------------------". 
+        aWriter write:"Name: " write:(Name getCaption) write:" " write:(SurName getCaption) write:" " writeLine:(OtName getCaption).
+        aWriter write:"Email: " writeLine:(Email getCaption).
+        aWriter write:"Age: " writeLine:(Age getCaption).
+        aWriter write:"PhoneNumber: " writeLine:(PhoneNumber getCaption).
+        aWriter writeLine:"//-------------------------------------------------------------------------------".
+
+        aWriter close.
+
+        BtmDelTxt setEnabled &int:-1.
+    ]    
     
     #method => theHandle.
 }

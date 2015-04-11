@@ -2026,10 +2026,11 @@ end
 procedure bs_writedword
 
   blen
+  ecopyd
   bcopya
   aloadsi 2
   nload
-  addn 5
+  addn 3
   notless labErr
   nload
   ecopyd
@@ -3533,6 +3534,16 @@ procedure ptr_get
 
 end
 
+procedure dptr_copy
+
+  bcopya
+  dloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end
+
 procedure api_free_index
                       
   aloadsi 1
@@ -3804,6 +3815,72 @@ procedure ws_save
 
 end
 
+procedure s_saveraw
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  breadb
+  inc
+  dswapsi 0
+  bwriteb
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
+end
+
+procedure ws_saveraw
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  wread
+  inc
+  dswapsi 0
+  wwrite
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
+end
+
 procedure ns_move
 
   pusha 
@@ -3925,8 +4002,8 @@ procedure s_decode
   ecopyd
   popd
   sub    
-
-  bloadsi 6
+  
+  bloadsi 3
   nsave
   aloadsi 1
   
@@ -3964,7 +4041,7 @@ procedure ws_decode
   popd
   sub    
 
-  bloadsi 6
+  bloadsi 3
   nsave
   aloadsi 1
   

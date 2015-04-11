@@ -48,9 +48,9 @@
     
     #method destroy
     [
-        #var(type:int)anIndex := system'external'USER32 GetWindowLongW &handle:theHandle &int:GWL_USERDATA.
-        
-        RTPointer new &index:anIndex close.
+        #var(type:int)anIndex := system'external'USER32 SetWindowLongW &handle:theHandle &int:GWL_USERDATA &int:0.
+        (anIndex != 0)
+            ? [ RTPointer new &index:anIndex close. ].
     ]
 }
 
@@ -69,9 +69,7 @@
     [
         (aMessage == WM_CLOSE)
             ? [
-                // NOTE: SDIWindow is the main program window, so closing it means exiting the program
-                // NOTE: !! if we close window using Window.close method, the main loop never ends
-                theOwner destroy.
+                theOwner close.
                 
                 aRetVal << 0.
                 
@@ -120,6 +118,7 @@
     
     #method destroy
     [
+        // NOTE: SDIWindow is the main program window, so closing it means exiting the program
         'program stop.
         
         $super destroy.        

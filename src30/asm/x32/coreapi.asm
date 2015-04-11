@@ -18,8 +18,9 @@ define LOCK              10021h
 define UNLOCK            10022h
 define LOAD_ADDRESSINFO  10023h
 define LOAD_CALLSTACK    10024h
+define PREPARE           10027h
 
-
+define CORE_OS_TABLE     20009h
 
 define elSizeOffset      0008h
 
@@ -46,6 +47,7 @@ end
 // ; console_entry()
 procedure coreapi'console_entry
 
+  call code : % PREPARE
   call code : % INIT
   call code : % NEWFRAME
   mov  ebx, code : "$native'coreapi'default_handler"
@@ -71,6 +73,7 @@ end
 // ; gui_entry()
 procedure coreapi'gui_entry
 
+  call code : % PREPARE
   call code : % INIT
   call code : % NEWFRAME
   mov  ebx, code : "$native'coreapi'default_handler"
@@ -3533,6 +3536,7 @@ procedure coreapi's_decode
    push esi
    lea  eax, [eax + esi * 4]
 
+labNext:
    mov  ebx, [eax]
    cmp  ebx, 00000080h
    jl   short lab1
@@ -3624,12 +3628,11 @@ err:
    mov  edx, eax
    pop  eax
    sub  edx, eax
-   shr  edx, 1
+   shr  edx, 2
    add  esi, edx
    mov  ecx, edi
    pop  edi
    sub  ecx, edi
-   shr  ecx, 2
 
    ret
 
@@ -3642,6 +3645,7 @@ procedure coreapi'ws_decode
    push esi
    lea  eax, [eax + esi * 4]
 
+labNext:
    mov  ebx, [eax]
    cmp  ebx, 010000h
    jl   short lab1
@@ -3677,12 +3681,12 @@ err:
    mov  edx, eax
    pop  eax
    sub  edx, eax
-   shr  edx, 1
+   shr  edx, 2
    add  esi, edx
    mov  ecx, edi
    pop  edi
    sub  ecx, edi
-   shr  ecx, 2
+   shr  ecx, 1
 
    ret
   
@@ -3882,7 +3886,6 @@ lab1:
    ret
 
 end
-
 
 procedure coreapi'lrndnew
 

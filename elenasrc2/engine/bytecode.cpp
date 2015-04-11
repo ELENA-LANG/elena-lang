@@ -30,7 +30,7 @@ const char* _fnOpcodes[256] =
    "nload", "unknown", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
-   "unknown", "unknown", "unknown", "nread", "nwrite", "unknown", "unknown", "wcreate",
+   "unknown", "wread", "wwrite", "nread", "nwrite", "unknown", "unknown", "wcreate",
 
    "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "unknown", "unknown",
    "unknown", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",

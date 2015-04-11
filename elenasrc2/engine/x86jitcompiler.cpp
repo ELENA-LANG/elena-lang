@@ -40,6 +40,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define LOAD_CALLSTACK       0x10024
 #define NEW_HEAP             0x10025
 #define BREAK                0x10026
+#define PREPARE              0x10027
 
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
@@ -49,26 +50,27 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define CORE_RT_TABLE        0x20006
 #define CORE_TLS_INDEX       0x20007
 #define CORE_THREADTABLE     0x20008
+#define CORE_OS_TABLE        0x20009
 
 // preloaded gc routines
-const int coreVariableNumber = 2;
+const int coreVariableNumber = 3;
 const int coreVariables[coreVariableNumber] =
 {
-   CORE_EXCEPTION_TABLE, CORE_GC_TABLE
+   CORE_EXCEPTION_TABLE, CORE_GC_TABLE, CORE_OS_TABLE
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 23;
+const int coreFunctionNumber = 24;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
    CALC_SIZE, SET_COUNT, GET_COUNT, LOCK, UNLOCK, LOAD_ADDRESSINFO,
-   LOAD_CALLSTACK
+   LOAD_CALLSTACK, PREPARE
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 117;
+const int gcCommandNumber = 119;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -85,20 +87,20 @@ const int gcCommands[gcCommandNumber] =
    bcNSub, bcNMul, bcNDiv, bcDReserve, bcDRestore,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
-   bcBRead, /*bcWRead, */bcBSwap, bcDSwapSI, bcESwapSI,
-   /*bcWToN, bcNToW, */bcNAnd, bcNOr, bcNXor,
-   bcLCopy, /*bcLCopyN, */bcLEqual, bcLLess, bcLAdd,
+   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI,
+   bcNAnd, bcNOr, bcNXor,
+   bcLCopy, bcLEqual, bcLLess, bcLAdd,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
-   bcLXor, bcNShift, bcNNot, bcLShift, //bcLToW,
+   bcLXor, bcNShift, bcNNot, bcLShift,
    bcLNot, bcRCopy, bcRSave, bcREqual,
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
-   /*bcRToW, bcInsert, */bcCreate, //bcWSeek
-   bcSelectR, bcNext, //bcXClone,
-   /*bcLRndNew, bcLRndNext, */bcRAbs, bcRExp, bcRInt, 
+   bcCreate, 
+   bcSelectR, bcNext,
+   bcRAbs, bcRExp, bcRInt, 
    bcRLn, bcRRound, //bcRSin, bcRCos, bcRArcTan,
    bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
-   bcESaveFI
+   bcESaveFI, bcWRead, bcWWrite
 };
 
 // command table
@@ -120,7 +122,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
+   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop,
    &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp,

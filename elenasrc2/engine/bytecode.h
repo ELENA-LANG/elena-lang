@@ -86,6 +86,8 @@ enum ByteCode
    bcNNot            = 0x4E,
    bcNCreate         = 0x4F,
 
+   bcWRead           = 0x59,
+   bcWWrite          = 0x5A,
    bcNRead           = 0x5B,
    bcNWrite          = 0x5C,
    bcWCreate         = 0x5F,

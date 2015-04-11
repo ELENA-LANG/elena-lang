@@ -387,6 +387,10 @@ ELENA byte codes (or ecodes)
  
  wlen                       - [acc].Length / 2 >> index
                               
+ wread                      - [acc][index*2] >> [short]ext
+
+ wwrite                     - [base][index*2] << [short]ext
+
  xcallrm r, m               - calls directly the method resolved by JIT by r and m
                               acc contains the result
  
@@ -409,33 +413,9 @@ ELENA byte codes (or ecodes)
 
 
 
-
-
-
-
- control commands:
- -----------------                     
- exclude                    - exclude the stack content from managed space
-
- include                    - restore managed stack
-                              (should be paired with exclude)
-                                                                                                       v
- saveparams i               - copy the message parameters;
-                              [fp+i]::ext.param => [sp+1] ; sp++;
-
- 
- calling commands:
- -----------------  
-                                                                      
  class handling:
  --------------- 
  message i                   - acc::VMT[i].message >> index
-
- wread                      - [base][index*2] >> [short]ext
- 
- lrndnew                    - random number init >> long(self)
- 
- lrndnext                   - long(self) : index >> acc
 
  rcopy                      - real[base] << real[acc] ??
  
@@ -444,13 +424,4 @@ ELENA byte codes (or ecodes)
  rsin                       - base << sin(real:acc)
  
  rarctan                    - base << argtan(real:acc) 
-
  
- byte array commands:
- -----------------    
- insert                     - copy acc content to base, at index, ext times, at the end - index += ext
- 
- insertn n1,n2              - copy acc content to base, at n1, n2 times
-  
- ninsertn n1,n2             - copy acc content to base, at n1*4, n2*4 times
-

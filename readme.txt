@@ -4,7 +4,7 @@
 The project includes ELENA documentation, standard library source code, 
 samples, command-line compiler, IDE.
 
-Currently Win32-x86 (2000/XP/Vista/7/8) / Linux-I386 (early alpha) platforms are supported.
+Currently Win32-x86 (Windows 7/8) / Linux-I386 (early alpha) platforms are supported.
 
 For more information see at http://elenalang.sourceforge.net/
 
@@ -31,7 +31,7 @@ For more information see at http://elenalang.sourceforge.net/
 * OS requirements
 ****************************************************************************
 
- - Win2000/XP/Vista/Windows 7 x86
+ - Windows XP/7/8 x86
  - Linux I386
 
 ****************************************************************************
@@ -45,6 +45,8 @@ License V2.0e, for more information read the file LICENSE.TXT.
 * ELENA Installation / Run
 ****************************************************************************
 
+Windows:
+--------
 To install just unzip all the files into a directory you want.
 
 You may need to add a path to BIN folder to system environment (e.g. <app root>\bin). 
@@ -59,8 +61,12 @@ In ELENA IDE you may select File-Open-Open Project option and open an
 appropriate project file (*.prj). Then select Project-Compile option to 
 compile the project and Project-Debug to debug it.
 
-NOTE: for some strange reasons F-Secure considers some binary files generated 
-with ELENA as infected ones.
+Linux:
+------
+To install just unzip all the files into a directory you want and execute 
+install.script.
+
+To compile the program types : ./bin/elc2 -c<path to .project file>
 
 ****************************************************************************
 * Documentation

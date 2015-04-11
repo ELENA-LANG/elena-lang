@@ -3,6 +3,7 @@
 #define system'collections.
 #define system'dynamic.
 #define system'calendar.
+#define system'text.
 //#define system'math.
 #define extensions.
 //#define extensions'math.

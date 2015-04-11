@@ -22,6 +22,7 @@ define LOAD_ADDRESSINFO     10023h
 define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
+define PREPARE              10027h
 
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
@@ -29,6 +30,7 @@ define CORE_GC_SIZE         20003h
 define CORE_STAT_COUNT      20004h
 define CORE_STATICROOT      20005h
 define CORE_RT_TABLE        20006h
+define CORE_OS_TABLE        20009h
 
 // CORE RT TABLE OFFSETS
 define rt_Instance      0000h
@@ -1678,6 +1680,20 @@ inline % 4Fh
   pop  ebx
   mov  [eax-4], ebx
 
+end
+
+// ; wread
+inline % 59h
+
+  mov ecx, [eax + esi * 2]
+
+end
+
+// ; wwrite
+inline % 5Ah
+
+  mov [edi + esi * 2], ecx
+  
 end
 
 // ; nread

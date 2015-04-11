@@ -1,10 +1,4 @@
 #define system.
-#define system'routines.
-//#define system'collections.
-
-// --- Arguments ---
-
-#static arguments = extensions'text'WordEnumerator new &literal:(commandLine literal) :: enumerableOp array.
 
 // --- ProgramLoop ---
 

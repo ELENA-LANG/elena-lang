@@ -23,11 +23,15 @@
 #symbol BS_PUSHBUTTON                          = 0. 
 
 // --- messages ---
-#symbol(const,type:int)WM_DESTROY = 02h.
-#symbol(const,type:int)WM_CLOSE   = 10h.
+#symbol(const,type:int)WM_DESTROY       = 02h.
+#symbol(const,type:int)WM_CLOSE         = 10h.
+
+#symbol(const,type:int)WM_SETTEXT       = 0Ch.
+#symbol(const,type:int)WM_GETTEXT       = 0Dh.
+#symbol(const,type:int)WM_GETTEXTLENGTH = 0Eh.
 
 // --- Notifications ---
-#symbol(const,type:int)BN_CLICKED = 0.
+#symbol(const,type:int)BN_CLICKED       = 0.
 
 // --- Window Color Constants
 
@@ -35,7 +39,7 @@
 
 // --- Window Styles ---
 
-#symbol(const,type:int)WS_ELENAWINDOW = 0100Bh.
+#symbol(const,type:int)WS_ELENAWINDOW   = 0100Bh.
 
 // --- WindowCallback ---
 
@@ -83,82 +87,6 @@
     #method onclick &handle:aControl &vint:aResult
     [
         aResult << 0.
-    ]
-}
-
-// --- ControlHandle ---
-
-#class ControlHandle
-{
-    #field(type:handle)theHandle.
-    
-    #constructor new &handle:aHandle
-    [
-        theHandle := Handle new &handle:aHandle.
-    ]
-
-    #method handle = theHandle.
-
-    #constructor new
-    [
-        theHandle := 0.
-    ]
-
-    #method create &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &handle:aParent &hinstance:instance &object:aParam
-    [
-        #var(type:int)lparam := 0.
-        (nil != aParam) ?
-        [
-            #var(type:rt_ptr)aPointer := RTPointer new:aParam.
-    
-            #var(type:vint)aParamIndex.
-            aPointer read &vint:aParamIndex.
-            
-            lparam := aParamIndex.
-        ].
-                
-        #var(type:handle)aHandle := system'external'USER32 CreateWindowExW
-            &int:       dwExStyle
-            &wide:      aClassName
-            &wide:      aWindowName  
-            &int:       aStyle
-            &int:       x
-            &int:       y
-            &int:       width
-            &int:       height
-            &handle:    aParent
-            &int:       0
-            &hinstance: instance
-            &int:       lparam.
-
-        (aHandle==0)
-            ? [ #throw WinFormsException new. ].
-
-        theHandle := Handle new &handle:aHandle.
-    ]
-            
-    #method setVisible &int:aValue
-    [
-        system'external'USER32 ShowWindow &handle:theHandle &int:aValue.
-    ]
-    
-    #method isVisible
-    [
-        #var(type:int)visible := system'external'USER32 IsWindowVisible &handle:theHandle.
-        
-        ^ (visible != 0).
-    ]
-    
-    #method setEnabled &int:aValue
-    [
-        system'external'USER32 EnableWindow &handle:theHandle &int:aValue.
-    ]            
-    
-    #method isEnabled
-    [
-        #var(type:int)visible := system'external'USER32 IsWindowEnabled &handle:theHandle.
-        
-        ^ (visible != 0).
     ]
 }
 

@@ -22,10 +22,27 @@ define LOAD_ADDRESSINFO     10023h
 define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
+define PREPARE              10027h
+
+define CORE_OS_TABLE        20007h
 
 define PROT_READ_WRITE      03h
 define MAP_ANONYMOUS        22h
 define SIGABRT              06h
+
+structure % CORE_OS_TABLE
+
+  dd 0 // ; vargs       : +x00   - program command line
+
+end
+
+procedure % PREPARE
+
+  lea  ebx, [esp + 0C]
+  mov  [data : %CORE_OS_TABLE], ebx
+  ret    // ; idle
+
+end
 
 // ; in - eax - total size
 // ; out - eax - heap

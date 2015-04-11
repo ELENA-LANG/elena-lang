@@ -420,6 +420,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcESaveFI:
          case bcShiftN:
          case bcEAddN:
+         case bcDSwapSI:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

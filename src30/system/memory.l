@@ -34,6 +34,28 @@
         ^ IntNumber new &int:aLength.
     ]
 
+    #method fill &index:anIndex &length:aLength &byte:aValue
+    [
+        #var(type:vint)aTotalLength.
+        $self readLength &vint:aTotalLength.
+        
+        #var(type:int)i := anIndex.
+        #var(type:int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &index:i &byte:aValue.
+            
+            i := i + 1.
+        ].
+    ]
+
     #method read &index:anIndex &length:aLength &bytearray:aDump
         => system'internal'bs_read.
 
@@ -339,6 +361,9 @@
     #method save &index:anIndex &chararray:anArray &vlength:aRetVal
         => system'internal's_save.
 
+    #method $save &index:anIndex &bytearray:anArray &length:aRetVal
+        => system'internal's_saveraw.
+
     #method length
     [
         #var(type:vint)aLength.
@@ -571,6 +596,9 @@
 
     #method save &index:anIndex &chararray:anArray &vlength:aLength
         => system'internal'ws_save.
+
+    #method $save &index:anIndex &shortarray:anArray &length:aRetVal
+        => system'internal'ws_saveraw.
 
     #method enumerator = WideLiteralEnumerator new &wide:$self.
     
