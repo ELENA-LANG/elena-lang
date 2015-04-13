@@ -3499,7 +3499,7 @@ lab2:
 
 lab1:
   mov  esi, ebx
-  sub  ecx, 1
+  sub  ecx, 2
 
 labSave:
   mov  [edi], esi
@@ -3936,5 +3936,43 @@ Lab1:
 labEnd:
    mov  [eax], edx
    ret
+
+end
+
+// esi - index, ecx - result
+procedure coreapi'getnarg
+
+  mov  ebx, [data : % CORE_OS_TABLE]
+  mov  ecx, [ebx + esi * 4]
+  ret
+
+end
+
+// esi - index, edi - taret, ecx - size
+procedure coreapi'copysarg
+
+  push edi
+  push eax
+  mov  ebx, [data : % CORE_OS_TABLE]
+  mov  eax, [ebx + esi * 4]
+
+labNext:
+  mov  ebx, [eax]
+  and  ebx, 0FFh
+  mov  byte ptr [edi], bl
+  add  eax, 1
+  add  edi, 1
+  test ebx, ebx
+  jz   short labEnd  
+  sub  ecx, 1
+  ja   short labNext
+
+labEnd:
+
+  pop  eax
+  mov  ecx, edi
+  pop  edi
+  sub  ecx, edi
+  ret
 
 end

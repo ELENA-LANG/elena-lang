@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK SDI Control Implementation File
-//                                               (C)2005-2012, by Alexei Rakov
+//                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtksdi.h"
@@ -11,31 +11,28 @@ using namespace _GUI_;
 
 // --- SDIWindow ---
 
-SDIWindow :: SDIWindow(const _text_t* caption)
+SDIWindow :: SDIWindow(const char* caption)
    : Gtk::Window(Gtk::WINDOW_TOPLEVEL), _box(Gtk::ORIENTATION_VERTICAL)
 {
+   set_title(caption);
+
    add(_box);
 
-   _refActionGroup = Gtk::ActionGroup::create();
    _refUIManager = Gtk::UIManager::create();
+   _refActionGroup = Gtk::ActionGroup::create();
 
    _refUIManager->insert_action_group(_refActionGroup);
 
    add_accel_group(_refUIManager->get_accel_group());
-
-   set_title(caption);
 }
 
-void SDIWindow :: loadUI(Glib::ustring ui_info)
+void SDIWindow :: loadUI(Glib::ustring ui_info, const char* name)
 {
    _refUIManager->add_ui_from_string(ui_info);
 
-   Gtk::Widget* pMenubar = _refUIManager->get_widget("/MenuBar");
+   Gtk::Widget* pMenubar = _refUIManager->get_widget(name);
    if(pMenubar)
       _box.pack_start(*pMenubar, Gtk::PACK_SHRINK);
-
-//   _box.pack_start(_vpaned, Gtk::PACK_EXPAND_WIDGET);
-//   _vpaned.set_position(0);
 }
 
 //void SDIWindow :: show(bool maximized)

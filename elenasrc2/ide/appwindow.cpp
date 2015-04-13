@@ -251,19 +251,19 @@ void IDEController::start(_View* view, _DebugListener* listener, Model* model)
    view->start(model->appMaximized);
 
    Text::TabSize = model->tabSize;
-   
+
    // open default project
    if (!model->defaultProject.isEmpty())
       openProject(model->defaultProject);
-   
+
    // open default files
    _ELENA_::List<_ELENA_::path_c*>::Iterator it = model->defaultFiles.start();
    while (!it.Eof()) {
       openFile(*it);
-   
+
       it++;
    }
-   
+
    onChange();
 }
 
@@ -346,10 +346,10 @@ bool IDEController :: closeFile(int index)
 
    if (_model->currentDoc->status.modifiedMode) {
       _View::Answer result = _view->question(QUESTION_SAVE_FILECHANGES, path);
-      if (result == _View::Answer::Cancel) {
+      if (result == _View::Cancel) {
          return false;
       }
-      else if (result == _View::Answer::Yes) {
+      else if (result == _View::Yes) {
          if (!doSave(false))
             return false;
       }
@@ -399,7 +399,7 @@ void IDEController :: setCaption(text_t projectName)
       title.append(projectName);
       title.append(_T("]"));
    }
-   
+
    _view->setCaption(title);
 }
 
@@ -596,9 +596,9 @@ void IDEController::doCreateFile()
 
    _model->mappings.add(name, index);
    _model->documents.add(doc);
-   
+
    _view->addToWindowList(name);
-   
+
    onFileOpen();
    onChange();
 }
@@ -736,10 +736,10 @@ bool IDEController :: doCloseProject()
 {
    if (_model->project.changed) {
       _View::Answer result = _view->question(QUESTION_SAVE_CHANGES);
-      if (result == _View::Answer::Cancel) {
+      if (result == _View::Cancel) {
          return false;
       }
-      else if (result == _View::Answer::Yes) {
+      else if (result == _View::Yes) {
          doSaveProject(false);
       }
    }
@@ -866,12 +866,12 @@ bool IDEController :: doSaveAll(bool forced)
          else {
             _ELENA_::path_t path = _model->getDocumentPath(index);
             _View::Answer result = _view->question(QUESTION_SAVE_FILECHANGES, path);
-            if (result == _View::Answer::Cancel) {
+            if (result == _View::Cancel) {
                onChange();
 
                return false;
             }
-            else if (result == _View::Answer::Yes) {
+            else if (result == _View::Yes) {
                saveDocument(path, index);
                _view->markDocumentTitle(index, false);
             }
@@ -948,7 +948,7 @@ void IDEController :: doCloseAllButActive()
          onChange();
 
          return;
-      }         
+      }
    }
    onChange();
 }
@@ -957,7 +957,7 @@ void IDEController :: doUndo()
 {
    if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
       _model->currentDoc->undo();
-   
+
       _view->refresh();
    }
 }
@@ -1050,7 +1050,7 @@ void IDEController :: doTrim()
       _model->currentDoc->trim();
 
       _view->refresh();
-   }   
+   }
 }
 
 void IDEController :: doDuplicateLine()
@@ -1164,7 +1164,7 @@ void IDEController :: doGoToLine()
    Document* doc = _model->currentDoc;
    if (doc) {
       Point caret = doc->getCaret();
-      
+
       int row = caret.y + 1;
       if (_view->gotoLine(row)) {
          caret.y = row - 1;
@@ -1852,7 +1852,7 @@ void IDEController :: toggleBreakpoint()
    Document* doc = _model->getDocument(index);
    if (doc) {
       _ELENA_::Path path(_model->getDocumentPath(index));
-         
+
       Point caret = doc->getCaret();
 
       _ELENA_::ReferenceNs module;

@@ -64,6 +64,12 @@
     #method write &shortarray:anArray
         => system'internal'dptr_copy.
     
+    #method write &bytearray:anArray
+        => system'internal'dptr_copy.
+    
+    #method append &int:aValue
+        => system'internal'dptr_append.
+    
     #method read &vint:aRetVal
         => system'internal'save_int.    
 }

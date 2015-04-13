@@ -1,15 +1,14 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK Common Header File
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtkcommonH
 #define gtkcommonH
 
-#include <gtkmm.h>
-
 #include "../guicommon.h"
+#include <gtkmm.h>
 
 namespace _GUI_
 {
@@ -35,16 +34,38 @@ public:
       //close();
    }
 
-   void settext(const _text_t* text);
+   void settext(const char* text);
 
-   _text_t* gettext();
+   char* gettext();
 
-   void freetext(_text_t* text);
+   void freetext(char* text);
 };
+
+// --- DateTime ---
+// !! temporal
+struct DateTime
+{
+private:
+   struct stat _time;
+
+public:
+   static DateTime getFileTime(const char* path);
+
+   bool operator > (const DateTime dt) const
+   {
+      return _time.st_mtime > dt._time.st_mtime;
+   }
+
+   DateTime()
+   {
+      memset(&_time, 0, sizeof(_time));
+   }
+};
+
 
 // --- misc functions ---
 
-inline bool isPathRelative(const _text_t* path)
+inline bool isPathRelative(const char* path)
 {
    return _ELENA_::Path::isRelative(path, _ELENA_::getlength(path));
 }
@@ -64,7 +85,7 @@ inline void canonicalize(_ELENA_::Path& path)
 //   path.copy(p);
 }
 
-inline void makePathRelative(_ELENA_::Path& path, const _path_t* rootPath)
+inline void makePathRelative(_ELENA_::Path& path, const char* rootPath)
 {
    int len = _ELENA_::getlength(rootPath);
    if (_ELENA_::StringHelper::compare(path, rootPath, len)) {

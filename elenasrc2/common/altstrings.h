@@ -1,4 +1,4 @@
-   //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This header contains String classes declarations
@@ -32,6 +32,7 @@ public:
    static wide_c* clone(const wide_c* s);
    static char* clone(const char* s);
 
+   static void move(char* s1, const char* s2, size_t length);
    static void move(wide_c* s1, const wide_c* s2, size_t length);
 
    static void insert(ident_c* s, int pos, ident_t subs);

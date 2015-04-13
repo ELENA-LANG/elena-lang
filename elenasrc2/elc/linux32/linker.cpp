@@ -505,7 +505,7 @@ void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
    if (!createExecutable(info, path/*, tls_directory*/))
       project.raiseError(errCannotCreate, path);
 
-   chmod(path, S_IXOTH | S_IXUSR);
+   chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
 }
 
 // --- I386Linjer32 ---

@@ -1,7 +1,8 @@
-// ==== ver 3.1.0 ===
+// ==== ver 3.1.1 ===
 
 #define system.
 #define system'routines.
+#define system'text.
 
 #subject(class:system'BaseFunction1)forEach.
 #subject(class:system'BaseFunction1)forEachWord.
@@ -62,6 +63,9 @@
         
     run &path:aPath &forEachLine:anAction
         = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath).
+
+    run &path:aPath &encoder:anEncoder &forEachLine:anAction
+        = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath &encoder:anEncoder).
 
     sort : anIndexable
         = anIndexable~indexable sort:ifOrdered.

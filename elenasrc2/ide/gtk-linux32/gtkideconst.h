@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //
-//                                              (C)2005-2011, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtkideconstH
@@ -89,6 +89,8 @@
 
 #define IDM_VIEW_OUTPUT                         0x601
 #define IDM_VIEW_WATCH                          0x602
+#define IDM_VIEW_CALLSTACK                      0x603
+#define IDM_VIEW_MESSAGES                       0x604
 
 #define IDM_PROJECT_COMPILE                     0x701
 #define IDM_PROJECT_OPTION                      0x702
@@ -106,6 +108,7 @@
 #define IDM_PROJECT_INCLUDE                     0x70E
 #define IDM_PROJECT_EXCLUDE                     0x70F
 #define IDM_PROJECT_CLEAN                       0x710
+#define IDM_DEBUG_NEXTSTATEMENT                 0x711
 
 
 #endif // gtkideconstH

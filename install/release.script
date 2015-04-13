@@ -19,6 +19,8 @@ mkdir -p ./new/examples/helloworld/
 mkdir -p ./new/examples/replace/
 mkdir -p ./new/examples/sum/
 mkdir -p ./new/examples/words/
+mkdir -p ./new/examples/matrix/
+mkdir -p ./new/examples/trans/
 mkdir -p ./new/src30/asm/x32/
 mkdir -p ./new/src30/system/
 mkdir -p ./new/src30/system/text/
@@ -47,7 +49,7 @@ cp ../doc/lang/dictionary.txt  new/doc/lang/
 cp ../doc/tech/bytecode.txt new/doc/tech/
 cp ../doc/tech/knowhow.txt new/doc/tech/
 
-cp ../elenasrc2/elena2.workspace new/elenasrc2/
+cp ../elena.workspace new/
 cp ../elenasrc2/common/*.cpp new/elenasrc2/common/
 cp ../elenasrc2/common/*.h new/elenasrc2/common/
 
@@ -83,6 +85,10 @@ cp ../examples/sum/*.l new/examples/sum/
 cp ../examples/sum/*.project new/examples/sum/
 cp ../examples/words/*.l new/examples/words/
 cp ../examples/words/*.project new/examples/words/
+cp ../examples/matrix/*.l new/examples/matrix/
+cp ../examples/matrix/*.project new/examples/matrix/
+cp ../examples/trans/*.l new/examples/trans/
+cp ../examples/trans/*.project new/examples/trans/
 
 echo coping src3 files
 

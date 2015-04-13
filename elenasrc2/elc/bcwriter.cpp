@@ -255,6 +255,8 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
    // labElse
    tape.write(bcJump, baPreviousLabel);
    tape.setLabel();
+
+   tape.write(bcResetStack);
 }
 
 void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
@@ -1185,6 +1187,7 @@ void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
 void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
 {
    tape.write(bcSCopyF, bsBranch);
+   tape.write(blEnd, bsBranch);
 }
 
 void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bool withFrame)
@@ -1566,6 +1569,9 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
       if(*it == bcAllocStack) {
          stackLevel += (*it).argument;
       }
+      else if (*it == bcResetStack) {
+         stackLevel = stackLevels.peek();
+      }
       else if (ByteCodeCompiler::IsPush(*it)) {
          stackLevel++;            
       }
@@ -1581,6 +1587,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
       switch (*it) {
          case bcFreeStack:
          case bcAllocStack:
+         case bcResetStack:
          case bcNone:
          case bcNop:
             // nop in command tape is ignored (used in replacement patterns)
@@ -1602,7 +1609,10 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             }
             break;
          case blEnd:
-            level--;
+            if ((*it).Argument() == bsBranch) {
+               stackLevels.pop();
+            }
+            else level--;
             break;
          case blStatement:
             // generate debug exception only if debug info enabled

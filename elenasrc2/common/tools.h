@@ -9,9 +9,6 @@
 #ifndef toolsH
 #define toolsH 1
 
-namespace _ELENA_
-{
-
 #if !defined(max)
 #define max(a, b)       ((a) > (b) ? (a) : (b))
 #endif
@@ -25,6 +22,9 @@ namespace _ELENA_
 #include <ctype.h>
 
 #define _strdup strdup
+
+namespace _ELENA_
+{
 
 inline static size_t wcslen(const unsigned short* s)
 {
@@ -102,6 +102,8 @@ inline static size_t getlength(const unsigned short* s)
 
 #elif _WIN32
 
+namespace _ELENA_
+{
 
 inline bool emptystr(const wchar_t* s)
 {

@@ -46,7 +46,7 @@ void DebugEventManager :: setEvent(int event)
 int DebugEventManager :: waitForAnyEvent()
 {
    //return WaitForMultipleObjects (MAX_DEBUG_EVENT, _events, FALSE, INFINITE);
-//   return 0; // !! temporal
+   return 0; // !! temporal
 }
 
 bool DebugEventManager :: waitForEvent(int event, int timeout)
@@ -67,7 +67,7 @@ void DebugEventManager :: close()
 
 // --- ProcessException---
 
-TCHAR* ProcessException :: Text()
+const char* ProcessException :: Text()
 {
 //   switch (code) {
 //      case EXCEPTION_ACCESS_VIOLATION:
@@ -179,7 +179,7 @@ void ThreadContext :: clearSoftwareBreakpoint(size_t breakpoint, char substitute
 
 unsigned char ThreadContext :: setSoftwareBreakpoint(size_t breakpoint)
 {
-   unsigned char code;
+   unsigned char code = 0;
 //   unsigned char terminator = 0xCC;
 //
 //   readDump(breakpoint, (char*)&code, 1);
@@ -516,6 +516,8 @@ bool Debugger :: proceedCheckPoint()
 //      return current->checkFailed;
 //   }
 //   else return exitCheckPoint;
+
+   return false; // !! temporal
 }
 
 void Debugger :: processVirtualStep(void* state)
@@ -558,7 +560,7 @@ void Debugger :: setCheckMode()
    //current->setCheckPoint();
 }
 
-bool Debugger :: start(const TCHAR* exePath, const TCHAR* cmdLine)
+bool Debugger :: start(const char* exePath, const char* cmdLine)
 {
 //   if (startProcess(exePath, cmdLine)) {
 //      processEvent(INFINITE);
@@ -605,7 +607,7 @@ void Debugger :: clearBreakpoints()
 //   breakpoints.clear();
 }
 
-bool Debugger :: startThread(_Controller* controller)
+bool Debugger :: startThread(_DebugController* controller)
 {
 //   HANDLE hThread = CreateThread(NULL, 4096,
 //                     (LPTHREAD_START_ROUTINE)debugEventThread,
@@ -654,4 +656,19 @@ void Debugger :: activate()
 //   if (started) {
 //      EnumWindows(EnumThreadWndProc, dwCurrentThreadId);
 //   }
+}
+
+size_t Debugger :: findEntryPoint(const char* programPath)
+{
+   return 0; // !! temporal
+}
+
+bool Debugger :: findSignature(char* signature)
+{
+   return false; // !! temporal
+}
+
+bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
+{
+   return false; // !! temporal
 }

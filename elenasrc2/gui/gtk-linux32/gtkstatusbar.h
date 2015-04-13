@@ -19,7 +19,7 @@ class StatusBar //: public Control
 //   GtkWidget** _items;
 
 public:
-   bool setText(int index, const _text_t* str);
+   bool setText(int index, const char* str);
 
 //   StatusBar(Window* owner, int partCount, int* widths);
 //   virtual ~StatusBar();

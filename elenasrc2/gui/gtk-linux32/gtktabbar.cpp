@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK Tabbar Implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtktabbar.h"
@@ -48,7 +48,7 @@ Gtk::Widget* TabBar :: _getTabControl(int index) const
 //   return NULL;
 //}
 
-int TabBar :: getTabIndex(const _text_t* name)
+int TabBar :: getTabIndex(const char* name)
 {
    int index = 0;
    TabPages::Iterator it = _tabs.start();
@@ -77,7 +77,7 @@ int TabBar :: getTabIndex(const _text_t* name)
 //   }
 //}
 
-void TabBar :: addTab(const _text_t* name, Gtk::Widget* control)
+void TabBar :: addTab(const char* name, Gtk::Widget* control)
 {
    TabPage* page = new TabPage(name);
    page->control = control;

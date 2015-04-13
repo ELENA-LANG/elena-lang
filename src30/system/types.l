@@ -1,4 +1,4 @@
-// ==== ver 3.1.1 ===
+// ==== ver 3.1.2 ===
 
 // === basic stack allocated types ===
 

@@ -24,7 +24,7 @@ define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
 
-define CORE_OS_TABLE        20007h
+define CORE_OS_TABLE        20009h
 
 define PROT_READ_WRITE      03h
 define MAP_ANONYMOUS        22h
@@ -38,9 +38,9 @@ end
 
 procedure % PREPARE
 
-  lea  ebx, [esp + 0C]
+  lea  ebx, [esp + 04h]
   mov  [data : %CORE_OS_TABLE], ebx
-  ret    // ; idle
+  ret  
 
 end
 

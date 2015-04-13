@@ -422,6 +422,11 @@ void StringHelper :: insert(char* s, int pos, const char* subs)
    strncpy(s + pos, subs, len);
 }
 
+void StringHelper :: move(char* s1, const char* s2, size_t length)
+{
+   memmove(s1, s2, length);
+}
+
 char* StringHelper :: reallocate(char* s, size_t size)
 {
    return (char*)realloc(s, size);
@@ -856,7 +861,7 @@ void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t l
 void StringHelper :: append(unsigned short* dest, const unsigned short* sour, size_t length)
 {
    unsigned short* p = dest + getlength(dest);
-   for(int i = 0 ; i < length ; i++)
+   for(size_t i = 0 ; i < length ; i++)
       p[i] = sour[i];
 
    p[length] = 0;
@@ -1045,7 +1050,7 @@ long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
       dump[len] = 0;
 
       long long temp = strToLong(dump, radix);
-      for (int i = 0 ; i < (length - 9) ; i++) {
+      for (size_t i = 0 ; i < (length - 9) ; i++) {
          temp *= radix;
       }
       number += temp;

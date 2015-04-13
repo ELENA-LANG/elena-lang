@@ -158,6 +158,9 @@
     #constructor new &path:aPath
         <= %new &stream:(FileStream openForRead &path:aPath) &encoder:UTF8Encoder.
 
+    #constructor new &path:aPath &encoder:anEncoder
+        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:anEncoder.
+
     #method available = theOpen.
 
     #method stream = theStream.

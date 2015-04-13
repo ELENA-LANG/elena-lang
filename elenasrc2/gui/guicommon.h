@@ -157,18 +157,6 @@ public:
    }
 };
 
-
 } // _GUI_
-
-////#ifdef _WIN32
-////
-////#include "winapi32\wincommon.h"
-////
-////#elif _LINUX32
-////
-////#include "gtk-linux32/gtkcommon.h"
-////
-////#endif
-//
 
 #endif // guicommonH

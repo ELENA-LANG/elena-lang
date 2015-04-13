@@ -3544,6 +3544,20 @@ procedure dptr_copy
 
 end
 
+procedure dptr_append
+
+  nload
+  ecopyd
+  bcopya
+  aloadsi 2
+  nload
+  add
+  nsave
+
+  quitn 2
+
+end
+
 procedure api_free_index
                       
   aloadsi 1
@@ -4689,3 +4703,33 @@ labEnd2:
   jump  labEnd
   
 end
+
+procedure lnx_getargc
+
+  dcopy 0
+  callr api : coreapi'getnarg
+  dcopye
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure lnx_getarg
+
+  pusha
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi 4
+  callr api : coreapi'copysarg
+  dcopye
+  bloadsi 5
+  nsave
+  popa
+  quitn 4
+
+end
+

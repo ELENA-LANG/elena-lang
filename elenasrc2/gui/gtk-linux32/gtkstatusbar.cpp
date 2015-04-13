@@ -38,7 +38,7 @@ using namespace _GUI_;
 //   }
 //}
 
-bool StatusBar :: setText(int index, const _text_t* str)
+bool StatusBar :: setText(int index, const char* str)
 {
 //   gtk_label_set_text(GTK_LABEL(_items[index]), str);
 

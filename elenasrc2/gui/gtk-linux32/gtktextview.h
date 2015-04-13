@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK TextView Control Header File
-//                                               (C)2005-2012, by Alexei Rakov
+//                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtktextviewH
@@ -19,7 +19,7 @@ struct StyleInfo
 {
    Colour      foreground;
    Colour      background;
-   const _text_t* faceName;
+   const char* faceName;
 };
 
 // --- ViewStyle ---
@@ -138,7 +138,6 @@ protected:
       virtual bool on_button_press_event(GdkEventButton* event);
       virtual bool on_button_release_event (GdkEventButton* event);
 
-      void onEditorChange();
       void onResize(int x, int y, int width, int height);
 
       void paint(Canvas& canvas, int width, int height);
@@ -173,6 +172,7 @@ protected:
 
       void onHScroll(int newPosition);
       void onVScroll(int newPosition);
+      void onEditorChange();
 
       void indent();
       void outdent();
@@ -194,6 +194,8 @@ protected:
       _area.grab_focus();
    }
 
+   void onEditorChange();
+
 public:
    void updateHScroller(bool resized);
    void updateVScroller(bool resized);
@@ -205,6 +207,13 @@ public:
    void setDocument(Document* document);
 
    void setStyles(int count, StyleInfo* styles, int lineHeight, int marginWidth);
+
+   void applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight);
+
+   virtual void refreshView()
+   {
+      _area.onEditorChange();
+   }
 
    TextView();
    //virtual ~TextView();

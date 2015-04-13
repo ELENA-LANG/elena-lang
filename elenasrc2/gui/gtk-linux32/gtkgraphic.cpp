@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI graphical tools Implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtkgraphic.h"
@@ -10,9 +10,9 @@ using namespace _GUI_;
 
 // --- Font ---
 
-_ELENA_::Map<const _text_t*, Font*, false> Font :: Cache = _ELENA_::Map<const _text_t*, Font*, false>(NULL, _ELENA_::freeobj);
+_ELENA_::Map<const char*, Font*, false> Font :: Cache = _ELENA_::Map<const char*, Font*, false>(NULL, _ELENA_::freeobj);
 
-Font* Font :: createFont(const _text_t* fontName)
+Font* Font :: createFont(const char* fontName)
 {
    Font* font = Cache.get(fontName);
    if (font == NULL) {
@@ -41,7 +41,7 @@ Font* Font :: createFont(const _text_t* fontName)
 //   _fontName = NULL;
 //}
 
-Font :: Font(const _text_t* fontName)
+Font :: Font(const char* fontName)
    : _font(fontName)
 {
 }
@@ -137,7 +137,7 @@ void Canvas :: fillRectangle(int x, int y, int width, int height, Style& style)
    cr->fill();
 }
 
-void Canvas :: drawText(int x, int y, const _text_t* s, Style& style)
+void Canvas :: drawText(int x, int y, const char* s, Style& style)
 {
    cr->set_source_rgb(style.foreground.red, style.foreground.green, style.foreground.blue);
 

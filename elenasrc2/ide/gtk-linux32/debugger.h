@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the Debugger class and its helpers header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtkdebuggerH
@@ -73,7 +73,7 @@ struct ProcessException
    int code;
    int address;
 
-   _text_t* Text();
+   const char* Text();
 
    ProcessException()
    {
@@ -101,19 +101,21 @@ public:
    bool checkFailed;
 
    void* State() const { return state; }
-   //size_t EIP() const { return context.Eip; } // !! temporal
-   //size_t Local(int offset) { return /*context.Ebp - offset * */4; } // !! temporal
-   //size_t Current(int offset) { return /*context.Esp + offset * */4; }
+   size_t EIP() const { return /*context.Eip*/0; } // !! temporal
+   size_t Frame() { return /*context.Ebp - offset * */4; } // !! temporal
+   size_t Local(int offset) { return /*context.Ebp - offset * */4; } // !! temporal
+   size_t Current(int offset) { return /*context.Esp + offset * */4; }// !! temporal
    size_t ClassVMT(size_t address);
    size_t VMTFlags(size_t address);
    size_t ObjectPtr(size_t address);
-   //size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
-   //size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
+   size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
+   size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
 
    void readDump(size_t address, char* dump, size_t length);
    void writeDump(size_t address, char* dump, size_t length);
 
-   size_t readDWord(size_t address) { return 0; }
+   size_t readDWord(size_t address) { return 0; } // !! temporal
+   size_t readWord(size_t address) { return 0; } // !! temporal
 
    void refresh();
 
@@ -189,7 +191,7 @@ public:
    bool isStarted() const { return started; }
    bool isTrapped() const { return trapped; }
    // !! temporal
-   bool isVMBreakpoint() const { return /*vmhookAddress == current->context.Eip;*/ false; }
+   bool isInitBreakpoint() const { return /*vmhookAddress == current->context.Eip;*/ false; }
 
    ThreadContext* Context() { return /*current*/NULL; }
    ProcessException* Exception() { return /*exception.code == 0 ? */NULL/* : &exception*/; } // !! temporal
@@ -206,9 +208,9 @@ public:
    void setBreakpoint(size_t address, bool withStackLevelControl);
    void setCheckMode();
 
-   bool startThread(_Controller* controller);
+   bool startThread(_DebugController* controller);
 
-   bool start(const _path_t* exePath, const _path_t* cmdLine);
+   bool start(const char* exePath, const char* cmdLine);
    void run();
    bool proceed(size_t timeout);
    void stop();
@@ -219,28 +221,16 @@ public:
    void reset();
 
    void activate();
+
    // !! temporal
-   void setVMHook() { /*vmhookAddress = -1;*/ }
+   void initHook() { /*vmhookAddress = -1;*/ }
+   bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
+
+   size_t findEntryPoint(const char* programPath);
+   bool findSignature(char* signature);
 
    Debugger();
 };
-
-////// --- setForegroundWindow() ---
-////inline void setForegroundWindow(HWND hwnd)
-////{
-////   DWORD dwTimeoutMS;
-////   // Get the current lock timeout.
-////   ::SystemParametersInfo (0x2000, 0, &dwTimeoutMS, 0);
-////
-////   // Set the lock timeout to zero
-////   ::SystemParametersInfo (0x2001, 0, 0, 0);
-////
-////   // Perform the SetForegroundWindow
-////   ::SetForegroundWindow (hwnd);
-////
-////   // Set the timeout back
-////   ::SystemParametersInfo (0x2001, 0, (LPVOID)dwTimeoutMS, 0);   //HWND hCurrWnd;
-////}
 
 } // _ELENA_
 

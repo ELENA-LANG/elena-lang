@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TabBar Header File
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtktabbarH
@@ -23,14 +23,14 @@ protected:
 
       Gtk::Widget* control;
 
-      TabPage(const _text_t* caption)
+      TabPage(const char* caption)
          : label(caption)
       {
          control = NULL;
       }
    };
 
-   typedef _ELENA_::Map<const _text_t*, TabPage*> TabPages;
+   typedef _ELENA_::Map<const char*, TabPage*> TabPages;
 
    Gtk::Widget* _current;
    TabPages     _tabs;
@@ -44,10 +44,10 @@ public:
 
    Gtk::Widget* _getTabControl(int index) const;
 //   const TCHAR* getTabName(int index);
-   int getTabIndex(const _text_t* name);
+   int getTabIndex(const char* name);
 //   void eraseTab(int index);
 
-   void addTab(const _text_t* name, Gtk::Widget* control);
+   void addTab(const char* name, Gtk::Widget* control);
 //   void deleteTab(int index);
    void selectTab(int index);
 

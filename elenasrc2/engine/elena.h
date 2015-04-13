@@ -579,7 +579,6 @@ inline size_t tableRule(size_t key)
 // --- mapping keys ---
 inline size_t mapReferenceKey(ident_t key)
 {
-   size_t index = StringHelper::findLast(key, '\'');
    ident_t p = key + StringHelper::findLast(key, '\'', 0) + 1;
 
    int position = *p - 'a';

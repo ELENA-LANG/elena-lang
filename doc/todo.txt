@@ -21,15 +21,20 @@ v  - vm script
 Currently:
 ------
 
-              adev - linux lib30:
-                       * coreapi : function returning argument list parameters (check if os_table first field is zero - returns 0, otherwise read the argument parameter)
-                       * function - get the number of argument parameters (it is assumed the first argument parameter is a number of parameters)
-                       * function - copy argument parameter with specified number to the buffer (bytearray)
+              xdev - general implementation
+                       * cannot pass int constant to the external function call (see win1252encoder), review the code, strange error when dirty_ptr is used as
+                         external argument ; doen not work if condition is uncommented, cannot assign vint , int, int constant to external call ;
+                         fix all the bugs
 
-                       * return a command line arguments
-                       * cannot overwrite existing executable
-                       * port trans
-                       * port matrix
+              adev - gui
+                       * set location / get location
+                       * set size / get size
+                       * support default button style
+                       * new controls: panel, combobox, check box, radio box, paint box, image box, status bar, timer, updown, menu, memo
+                       * handle cursor event
+
+              adev - linux lib30:
+                       * implement file i/o operations
 
 <=================> 
                                               
@@ -37,12 +42,6 @@ Currently:
 --------
 week2:
               adev - gui
-                       * set location / get location
-                       * set size / get size
-                       * support default button style
-                       * new controls: panel, combobox, check box, radio box, paint box, image box, status bar, timer, updown, menu, memo
-                       * handle cursor event
-                       
                        * implement forms package (native control wrappers)
                        * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
                          dynamically for external operation
@@ -51,25 +50,52 @@ week2:
               sdev - gui examples:  
                        * agenda should have two version, one using system'winforms, another using forms
 
+              idev - linux:
+                       * new source
+                       * open source
+                       * open project
+                       * new project
+                       * add menu items
+                       * add tool bar items
+                       * add hot keys
+                       * edit frame should support styles
+                       * migrate 
+                       * TextView: support highlight
+                       * TextView: support caching (cursor?)
+
               adev - linux lib30:
                        * core : implement INIT_RND
                        * linux file operations
                        * linux date / time operations
                        * consoleReader should check if the char is multibyte
                        * read key
-                       * port console samples
-                       * port rosetta samples
+                       * port console samples                                                                               
+                       * port rosetta samples                                                                               
                        
               adev - lib30
                        * test vm samples       
-                       * test thread operation
+                       * test thread operation                                                                               
                        
               sdev - gui examples:  
                        * reintroduce all gui samples
                        * agenda : implement file deleting
+                       
+              adev - lib30           
+                       * if we need to store wide literal directly, we have to convert it into chararray and then convert into 
+                         byte array, can we do it directly?
 
-              adev - lib30                                        
+                       * encoders : make code similar to c#, it should be possible to save literal / wide as
+                         bytearray and visa versa (currently we have to convert literal / wide to chararray and then save
+                         in appropriate encoding, could we simplify the routine?)
+
+                       * console : default exception handler should write a message
+                       * gui : default exception handler should open a message box
+
+                       * implement completly win1251, win1252 encoders
+                       
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
+
+                       * win1252encoder : converts to utf-16 and then to utf-32, can it be simplified?
 
                        * test rsave
                        * test real to int / short / byte conversion
@@ -552,6 +578,8 @@ week1:
                        * show / hide should be verbs
                          
               xdev - general implementation
+                       * cannot pass int constant to the external function call (see win1252encoder), review the code, strange error when dirty_ptr is used as
+                         external argument
                        * WS_CHILD || SS_SIMPLE || WS_VISIBLE should supported (see system'winforms)
                        * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
                          (e.g. temporal object allocated and valie copied there)
@@ -599,6 +627,11 @@ week1:
                              }.
                           self cannot be used, because it points to a class, rather then the object
 
+                       * review current primitive stack allocation ; probably primtive variables declared in the sub code,
+                         should be freed after the sub code is closed (currently the space is percist to fix the bug with
+                         external call (see NOTEs))
+
+                       * implicit variables (allocated for arithmetic or typecasting operations) should not be permanent
                        
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start
@@ -659,7 +692,8 @@ week1:
                        * project view
                        * class view - make possible to browse the class methods
 
-              idev - debugger - watch
+              idev - debugger
+                       * fix step over loop / if
                        * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
                        * debug script
                        * implement watch

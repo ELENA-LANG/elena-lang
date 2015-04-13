@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TextView Control Implementation File
-//                                               (C)2005-2012, by Alexei Rakov
+//                                               (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtktextview.h"
@@ -774,12 +774,12 @@ void TextView::TextDrawingArea :: paint(Canvas& /*extCanvas*/canvas , int viewWi
       int y = 0 - lineHeight + 1;
       int width = 0;
 
-      _text_t buffer[0x100];
+      char buffer[0x100];
       int   length = 0;
 
-      _text_t lineNumber[6];
+      char lineNumber[6];
 
-      _ELENA_::LiteralWriter<_text_t> writer(buffer, 0xFF);
+      _ELENA_::LiteralWriter<char> writer(buffer, 0xFF);
       Document::Reader reader(_document);
 
       reader.readFirst(writer, 0xFF);
@@ -1082,3 +1082,22 @@ void TextView::TextDrawingArea :: _releaseMouse()
 {
    _mouseCaptured = false;
 }
+
+void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight)
+{
+   _area._needToResize = (_area._lineNumbersVisible != lineNumberVisible);
+   bool tabChanged = (_area._tabSize != tabSize);
+   //_cached &= !(_area._needToResize || _area._tabSize != tabSize || _highlight != highlight);
+
+   _area._tabUsing = tabUsing;
+   _area._tabSize = tabSize;
+   _area._lineNumbersVisible = lineNumberVisible;
+   //_highlight = highlight;
+
+   if (_area._document) {
+      //_area._document->setHighlightMode(_highlight);
+
+      refreshView();
+   }
+}
+

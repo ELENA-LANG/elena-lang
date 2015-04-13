@@ -26,6 +26,12 @@
         theReader := StreamReader new &path:aPath.
     ]
     
+    #constructor new &path:aPath &encoder:anEncoder
+        <= (%new)
+    [
+        theReader := StreamReader new &path:aPath &encoder:anEncoder.
+    ]
+    
     #method reset 
     [
         theReader := StreamReader new &stream:(theReader stream clone) &encoder:(theReader encoder).

@@ -54,4 +54,7 @@
     
     charCount &wide:aLiteral &vint:aRetVal
         => system'internal'ws_charcount.
+        
+    $convert &index:anIndex &vlength:aLength &shortarray:aByteArray &chararray:anOutput &vlength:anOutputLength
+        => system'internal'ws_encode.
 }.

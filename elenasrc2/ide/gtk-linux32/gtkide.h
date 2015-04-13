@@ -1,155 +1,105 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winideH
 #define winideH
 
-//#include "winapi32\wincommon.h"
-//#include "winapi32\winsdi.h"
-//#include "winapi32\winmenu.h"
-//#include "winapi32\wintoolbar.h"
-//#include "winapi32\winstatusbar.h"
-//#include "winapi32\winsplitter.h"
-//#include "debugger.h"
-//#include "winoutput.h"
-//#include "wineditframe.h"
-//#include "winoutput.h"
-//#include "winideconst.h"
-#include "../appwindow.h"
+#include "gtk-linux32/gtksdi.h"
+#include "../ide.h"
 
 namespace _GUI_
 {
-// -- GTKIDE ---
-
-class MainWindow;
-
-class GTKIDE : public IDE
-{
-   friend class MainWindow;
-
-////   ContextMenu contextMenu;
-////
-////   Output*     _output;
-
-   _ELENA_::List<void*> controls;
-
-//   Menu* createMainMenu();
-////   TabBar* createOutputBar();
-////   ContextBrowser* createContextBrowser();
-////
-protected:
-   virtual void onIDEInit();
-
-//   virtual void onProjectClose();
-
-   virtual bool compileProject(int postponedAction)
-   {
-      return false; // !! temporal
-   }
-
-public:
-   void start(bool maximized);
-
-////   virtual void onCustomDraw(void* handle, void* item);
-////
-////   virtual void onDebuggerStep(const TCHAR* source, HighlightInfo info);
-////   virtual void onDebuggerStop(bool broken);
-////
-////   void onDoubleClick(NMHDR* notification)
-////   {
-////      if (_messageList->getHandle()==notification->hwndFrom) {
-////         highlightMessage(_messageList->getBookmark(((LPNMITEMACTIVATE)notification)->iItem));
-////      }
-////   }
-////
-////   void onRClick(NMHDR* notification);
-////   void onChildKeyDown(NMHDR* notification);
-////
-////   Menu* getMainMenu()
-////   {
-////      return _appMenu;
-////   }
-
-////   void displayErrors();
-////
-////   void cleanUpProject();
-
-   virtual void openHelp() {}
-
-   GTKIDE();
-};
-
-// --- MainWindow ---
+// --- GTKIDEView ---
 
 class MainWindow : public SDIWindow
 {
-   GTKIDE* _ide;
+   _Controller*  _controller;
+   Model*        _model;
+
+   Gtk::Toolbar* _toolbar;
+   EditFrame*    _mainFrame;
 
 protected:
    // event signals
    void on_menu_file_new_source()
    {
-      _ide->doCreateFile();
+      _controller->doCreateFile();
    }
-
+   void on_menu_file_new_project()
+   {
+      _controller->doCreateProject();
+   }
+   void on_menu_file_open_source()
+   {
+      _controller->doOpenFile();
+   }
+   void on_menu_file_open_project()
+   {
+      _controller->doOpenProject();
+   }
    void on_menu_file_quit()
    {
-      _ide->doExit();
+      _controller->doExit();
    }
-//   virtual void _onNotify(NMHDR* notification);
-//   void _onToolTip(NMTTDISPINFO* toolTip);
+////   virtual void _onNotify(NMHDR* notification);
+////   void _onToolTip(NMTTDISPINFO* toolTip);
+
+   void populateMenu();
+   void populateToolbar();
 
 public:
-   MainWindow(const _text_t* caption, GTKIDE* env);
+   int newDocument(const char* name, Document* doc);
+
+   MainWindow(const char* caption, _Controller* controller, Model* model);
 };
 
-//// --- Win32ContextBrowser ---
-//
-//class Win32ContextBrowser : public ContextBrowser
-//{
-//   ContextMenu _menu;
-//
-//public:
-//   TreeViewItem hitTest(short x, short y);
-//
-//   void showContextMenu(HWND owner, short x, short y);
-//
-//   Win32ContextBrowser(Control* owner);
-//};
-//
-//// --- AppDebugController ---
-//
-//class Win32AppDebugController : public AppDebugController
-//{
-//   Window* _receptor;
-//
-//   void _notify(int code);
-//   void _notify(int code, const TCHAR* message, int param = 0);
-//   void _notify(int code, const TCHAR* message, int param1, int param2);
-//   void _notify(int code, const TCHAR* source, HighlightInfo info);
-//
-//public:
-//   void assign(Window* receptor)
-//   {
-//      _receptor = receptor;
-//   }
-//
-//   virtual void onStart()
-//   {
-//      _notify(IDE_DEBUGGER_START);
-//   }
-//
-//   virtual void onStop(bool failed)
-//   {
-//      _notify(failed ? IDE_DEBUGGER_BREAK : IDE_DEBUGGER_STOP);
-//   }
-//
-//   virtual void onStep(const TCHAR* source, int row, int disp, int length)
-//   {
-//      _notify(IDE_DEBUGGER_STEP, source, HighlightInfo(row, disp, length));
+////// --- Win32ContextBrowser ---
+////
+////class Win32ContextBrowser : public ContextBrowser
+////{
+////   ContextMenu _menu;
+////
+////public:
+////   TreeViewItem hitTest(short x, short y);
+////
+////   void showContextMenu(HWND owner, short x, short y);
+////
+////   Win32ContextBrowser(Control* owner);
+////};
+////
+////// --- AppDebugController ---
+////
+////class Win32AppDebugController : public AppDebugController
+////{
+////   Window* _receptor;
+////
+////   void _notify(int code);
+////   void _notify(int code, const TCHAR* message, int param = 0);
+////   void _notify(int code, const TCHAR* message, int param1, int param2);
+////   void _notify(int code, const TCHAR* source, HighlightInfo info);
+////
+////public:
+////   void assign(Window* receptor)
+////   {
+////      _receptor = receptor;
+////   }
+////
+////   virtual void onStart()
+////   {
+////      _notify(IDE_DEBUGGER_START);
+////   }
+////
+////   virtual void onStop(bool failed)
+////   {
+////      _notify(failed ? IDE_DEBUGGER_BREAK : IDE_DEBUGGER_STOP);
+////   }
+////
+////   virtual void onStep(const TCHAR* source, int row, int disp, int length)
+////   {
+////      _notify(IDE_DEBUGGER_STEP, source, HighlightInfo(row, disp, length));
 //   }
 //
 //   void onCheckPoint(const TCHAR* message)

@@ -10,8 +10,49 @@
         
 #symbol XTester =
 {
+    #method convert &index:anIndex &vlength:aLength &bytearray:aByteArray &chararray:anOutput &vlength:anOutputLength 
+    [
+//        (aLength > 127)
+//            ? [ #throw InvalidArgumentException new. ].
+        
+        #var(type:shortarray,size:127)temp_buf.
+        #var(type:vint)aConverted := aLength.
+        #var(type:int)n := aLength.                
+        
+        // !! when the variables are inside the sub code, the else block does not work correctly
+        #var(type:int)nn.                
+        #var(type:vint)nptr.
+                        
+        (anIndex != 0)
+            ? [
+                // !!  the code below should be overwritten
+                #var(type:dirty_ptr)ptr.
+//                ptr write &bytearray:aByteArray.
+//                ptr append &int:anIndex.
+//
+//                ptr read &vint:nptr.
+//                nn := nptr.
+                                
+                system'external'KERNEL32 MultiByteToWideChar &int:1252 &int:/*$MB_ERR_INVALID_CHARS*/8 &int:nn &int:n &shortarray:temp_buf &vint:aConverted.
+            ]
+            ! [
+                system'external'KERNEL32 MultiByteToWideChar &int:1252 &int:/*$MB_ERR_INVALID_CHARS*/8 &bytearray:aByteArray &int:n &shortarray:temp_buf &vint:aConverted.
+            ].
+    ]
+    
     test        
     [
+        #var(type:chararray,size:5)d.
+        #var(type:bytearray,size:5)s.
+        #var(type:vint)l := 4.
+        #var(type:vint)m := 4.
+        
+        s write &index:0 &byte:64.
+        s write &index:1 &byte:65.
+        s write &index:2 &byte:66.
+        s write &index:3 &byte:67.
+        
+        $self convert &index:0 &vlength:l &bytearray:s &chararray:d &vlength:m.
     ]
 }.
 

@@ -4,12 +4,19 @@ sudo cp dat/og/rules.dat /usr/share/elena
 bin/elsg dat/sg/syntax.txt
 sudo cp dat/sg/syntax.dat /usr/share/elena
 
-bin/asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32
-bin/asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32
-bin/asm2binx src30/asm/x32/core_rt_lnx.asm /usr/lib/elena/core/x32
-bin/asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32
+echo core
+sudo bin/asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32
 
-bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
+echo core_lnx
+sudo bin/asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32
+
+echo core_rt_lnx
+sudo bin/asm2binx src30/asm/x32/core_rt_lnx.asm /usr/lib/elena/core/x32
+
+echo coreapi
+sudo bin/asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32
+
+sudo bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
 
 sudo bin/elc2 -csrc30/system/system.project
 sudo bin/elc2 -csrc30/extensions/extensions.project
@@ -21,5 +28,7 @@ bin/elc2 -cexamples/binary/binary.project
 bin/elc2 -cexamples/words/words.project
 bin/elc2 -cexamples/bsort/bsort.project
 bin/elc2 -cexamples/replace/replace.project
+bin/elc2 -cexamples/matrix/matrix.project
+bin/elc2 -cexamples/trans/tanslit.project
 
 exit 0

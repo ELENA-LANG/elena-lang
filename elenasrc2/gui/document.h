@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
-//      Document class header         
-//                                              (C)2005-2012, by Alexei Rakov
+//      Document class header
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef documentH
@@ -28,7 +28,7 @@ struct LexicalInfo
    int          row;
    TextBookmark bm;
 
-   bool         bandStyle;   
+   bool         bandStyle;
    bool         newLine;
    bool         marker;
 };
@@ -196,7 +196,7 @@ protected:
    Point         _size;
    TextBookmark  _frame;
    TextBookmark  _caret;
-   int           _selection; 
+   int           _selection;
 
    size_t        _maxColumn;
 
@@ -236,7 +236,7 @@ public:
    void setCaret(Point caret, bool selecting)
    {
       setCaret(caret.x, caret.y, selecting);
-   }   
+   }
 
    void setOverwriteMode(bool overwrite)
    {

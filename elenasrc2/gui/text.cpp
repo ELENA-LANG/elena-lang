@@ -1025,7 +1025,7 @@ struct HistoryWriter
 
    void writeEndRecord(MemoryWriter& writer, int length)
    {
-      writer.writeChar(0);
+      writer.writeChar((text_c)0);
       writer.writeDWord(length);
    }
 
@@ -1173,7 +1173,7 @@ public:
 
    const char* readLine()
    {
-      return _reader.getLiteral();
+      return _reader.getLiteral(DEFAULT_TEXT);
    }
 #endif
 

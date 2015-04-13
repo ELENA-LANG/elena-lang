@@ -269,6 +269,7 @@ enum ByteCode
    // meta commands:
    bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
    bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
+   bcResetStack     = 0x8103,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
 
    bcMatch          = 0x8FFE,  // used in optimization engine
    bcNone           = 0x8FFF,  // used in optimization engine

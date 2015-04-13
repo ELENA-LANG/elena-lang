@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 Common header
 //      GTK graphic tools header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtkgraphicH
@@ -72,9 +72,9 @@ struct Colour
 
 struct Font
 {
-   static _ELENA_::Map<const _text_t*, Font*, false> Cache;
+   static _ELENA_::Map<const char*, Font*, false> Cache;
 
-   static Font* createFont(const _text_t* fontName);
+   static Font* createFont(const char* fontName);
    static void releaseFontCache();
 
 public:
@@ -82,7 +82,7 @@ public:
 
 //   void release();
 
-   Font(const _text_t* faceName);
+   Font(const char* faceName);
 //   ~Font() { release(); }
 };
 
@@ -143,7 +143,7 @@ struct Canvas
 
 //   void fillRectangle(int x, int y, int width, int height, Style& style);
 
-   void drawText(int x, int y, const _text_t* s, Style& style);
+   void drawText(int x, int y, const char* s, Style& style);
    void drawCursor(int x, int y, Style& style);
    void drawOverwriteCursor(int x, int y, Style& style);
 
