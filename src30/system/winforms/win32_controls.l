@@ -4,6 +4,9 @@
 #symbol StaticClass = "Static" wide. // !! temporal
 #symbol EditClass   = "Edit" wide. // !! temporal
 #symbol ButtonClass = "Button" wide. // !! temporal
+#symbol ComboboxClass = "Combobox" wide. // !! temporal
+#static PanelClass = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND.
+#static PaintboxClass = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0.
 
 // --- ControlHandle ---
 
@@ -97,6 +100,22 @@
                 ^ aCaption.
             ].
     ]
+    
+    #method refresh
+    [
+        system'external'USER32 InvalidateRect &handle:theHandle &int:0 &int:1.
+        system'external'USER32 UpdateWindow &handle:theHandle.
+    ]
+    
+    #method setPosition &int:x &int:y &int:cx &int:cy &int_attributes:flags
+    [
+        system'external'USER32 SetWindowPos &handle:theHandle &int:0 &int:x &int:y &int:cx &int:cy &int:flags.
+    ]
+    
+    #method getClientRect &win_rect:aStruct
+    [
+        system'external'USER32 GetClientRect &win_rect:aStruct.
+    ]
 }
 
 // --- BaseLabelHandle ---
@@ -164,5 +183,94 @@
             &handle:aParent 
             &hinstance:CurrentInstance
             &object:nil.
+    ]
+}
+
+// --- BaseComboboxHandle ---
+
+#class BaseComboboxHandle :: ControlHandle
+{
+}
+
+// --- ComboboxHandle ---
+
+#class(sealed) ComboboxHandle :: BaseComboboxHandle
+{
+    #constructor new &handle:aParent &wide:aText &int:x &int:y &int:width &int:height
+    [
+        $self create 
+            &int:WS_EX_CLIENTEDGE
+            &wide:ComboboxClass &wide:aText
+            &int:(WS_CHILD or:CBS_DROPDOWNLIST or:WS_VISIBLE or:WS_TABSTOP) 
+            &int:x &int:y &int:width &int:height 
+            &handle:aParent 
+            &hinstance:CurrentInstance
+            &object:nil.
+    ]
+}
+
+// --- BasePanelHandle ---
+
+#class BasePanelHandle :: ControlHandle
+{
+}
+
+// --- PanelHandle ---
+
+#class PanelCallback :: WindowCallback
+{
+    #field(type:win_panel)theOwner.
+    
+    #constructor new &win_panel:anOwner
+    [
+        theOwner := anOwner.
+    ]
+}
+    
+#class(sealed) PanelHandle :: BasePanelHandle
+{
+    #constructor new &handle:aParent &int:x &int:y &int:width &int:height
+    [
+        $self create 
+            &int:WS_EX_CONTROLPARENT
+            &wide:PanelClass &int:0
+            &int:(WS_CHILD or:WS_CLIPSIBLINGS) 
+            &int:x &int:y &int:width &int:height 
+            &handle:aParent 
+            &hinstance:CurrentInstance
+            &object:(PanelCallback new &win_panel:$self).
+    ]
+}
+
+// --- BasePaintboxHandle ---
+
+#class BasePaintboxHandle :: ControlHandle
+{
+}
+
+// --- PaintboxHandle ---
+
+#class PaintboxCallback :: WindowCallback
+{
+    #field(type:win_paintbox)theOwner.
+    
+    #constructor new &win_paintbox:anOwner
+    [
+        theOwner := anOwner.
+    ]
+}
+    
+#class(sealed) PaintboxHandle :: BasePaintboxHandle
+{
+    #constructor new &handle:aParent &int:x &int:y &int:width &int:height
+    [
+        $self create 
+            &int:WS_EX_TRANSPARENT
+            &wide:PaintboxClass &int:0
+            &int:WS_CHILD 
+            &int:x &int:y &int:width &int:height 
+            &handle:aParent 
+            &hinstance:CurrentInstance
+            &object:(PaintboxCallback new &win_paintbox:$self).
     ]
 }

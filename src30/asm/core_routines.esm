@@ -4587,6 +4587,7 @@ end
 define WM_CREATE            1
 define WM_DESTROY           2
 define WM_CLOSE             0010h
+define WM_SETCURSOR         0020h
 define WM_COMMAND           0111h
 define GWL_USERDATA         0FFFFFFEBh
 
@@ -4597,6 +4598,7 @@ procedure win_WndProc
   ifn labDestroy WM_DESTROY
   ifn labDestroy WM_CLOSE
   ifn labCommand WM_COMMAND
+  ifn labCursor  WM_SETCURSOR
 
 labEnd:
   eloadsi 4
@@ -4691,6 +4693,38 @@ labCommand:
 
   pusha  
   xindexrm system'winforms'WindowCallback %eval&wm_command&handle$&int$&int$&handle$&vint$[5]  
+  acallvd
+  popa
+
+  callr api : coreapi'closeframe
+
+  quitn 4
+  
+labCursor:
+  callr api : coreapi'openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callr api : coreapi'resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&handle$&int$&handle$&int$&vint$[5]  
   acallvd
   popa
 

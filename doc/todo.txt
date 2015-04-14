@@ -21,35 +21,26 @@ v  - vm script
 Currently:
 ------
 
-              xdev - general implementation
-                       * cannot pass int constant to the external function call (see win1252encoder), review the code, strange error when dirty_ptr is used as
-                         external argument ; int constant to external call ;
-                         fix all the bugs
-
-              adev - gui
-                       * set location / get location
-                       * set size / get size
-                       * support default button style
-                       * new controls: panel, combobox, check box, radio box, paint box, image box, status bar, timer, updown, menu, memo
-                       * handle cursor event
-
-              adev - linux lib30:
-                       * implement file i/o operations
-
-<=================> 
-                                              
-1.9.19
---------
-week2:
               adev - gui
                        * implement forms package (native control wrappers)
                        * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
                          dynamically for external operation
                        * gui stand-alone, gui mt stand-alone, gui vm client
-                       
+                       * support default button style
+                       * new controls: check box, radio box, status bar, timer, updown, menu, memo, image box
+
               sdev - gui examples:  
                        * agenda should have two version, one using system'winforms, another using forms
-
+                       * migrate all gui samples (except upndown)
+                       
+              adev - linux lib30:
+                       * implement file i/o operations
+                    
+<=================> 
+                                              
+1.9.19
+--------
+week2:
               idev - linux:
                        * new source
                        * open source
