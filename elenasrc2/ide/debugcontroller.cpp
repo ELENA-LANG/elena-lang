@@ -572,6 +572,8 @@ bool DebugController :: start(path_t programPath, path_t arguments, bool debugMo
 
    if (debugMode) {
       _entryPoint = _debugger.findEntryPoint(programPath);
+      if (_entryPoint == (size_t)-1)
+         return false;
 
       _debugger.initHook();
    }

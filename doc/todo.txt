@@ -23,7 +23,7 @@ Currently:
 
               xdev - general implementation
                        * cannot pass int constant to the external function call (see win1252encoder), review the code, strange error when dirty_ptr is used as
-                         external argument ; doen not work if condition is uncommented, cannot assign vint , int, int constant to external call ;
+                         external argument ; int constant to external call ;
                          fix all the bugs
 
               adev - gui
@@ -96,6 +96,9 @@ week2:
                        * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
 
                        * win1252encoder : converts to utf-16 and then to utf-32, can it be simplified?
+                       * win1251encoder
+
+                       * shortarray, intarray, chararray, literal and wide should return bytearray (save / get)?
 
                        * test rsave
                        * test real to int / short / byte conversion
@@ -501,7 +504,11 @@ week 4:
               xmaint - package
                        * create installation package
                        * release : compile / copy elenart
-              
+
+              xmaint - scripts
+                       * use echo to say what project is compiled, or display this info in tool
+                       * if the compilation with an error go to an error label and stop
+
               imaint - test
                        * debugger does not show the integer value content correctly:
                             #var n := Integer new.
@@ -536,6 +543,7 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development  
+                       * should it be possible to typecast shortarray as byte array? (for stack allocated ones)
                        * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
                          implemented
                        * implicit converting vint to int, short to int , int to short
@@ -578,8 +586,7 @@ week1:
                        * show / hide should be verbs
                          
               xdev - general implementation
-                       * cannot pass int constant to the external function call (see win1252encoder), review the code, strange error when dirty_ptr is used as
-                         external argument
+                       * review all system warnings
                        * WS_CHILD || SS_SIMPLE || WS_VISIBLE should supported (see system'winforms)
                        * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
                          (e.g. temporal object allocated and valie copied there)

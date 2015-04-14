@@ -11,6 +11,7 @@
 #subject(class:system'Signature)    subject.
 #subject(class:system'Message)      mssg.
 #subject(class:system'Message)      verb.
+#subject(class:system'Symbol)       symbol_ref.
 
 #subject(class:system'ByteArray)    bytearray.
 #subject(class:system'ShortArray)   shortarray.

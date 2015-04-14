@@ -285,8 +285,8 @@ namespace _ELENA_
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
-//   const int elConstantSymbol      = 0x00000082;
-//   const int elWithLocker          = 0x00100000;
+   const int elSymbol              = 0x00100000;
+//   const int elWithLocker          = 0x00200000;
    const int elDebugMask           = 0x000F0000;
 
    const int elDebugDWORD          = 0x00010000;
@@ -299,6 +299,7 @@ namespace _ELENA_
    const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
+   const int elDebugReference      = 0x000B0000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -447,6 +448,7 @@ namespace _ELENA_
    #define HINT_LIMITED            "limited"
    #define HINT_MESSAGE            "message"
    #define HINT_SIGNATURE          "signature"
+   #define HINT_SYMBOL             "symbol"
    #define HINT_EXTENSION          "extension"
    #define HINT_GROUP              "group"
    #define HINT_WRAPPER            "class"

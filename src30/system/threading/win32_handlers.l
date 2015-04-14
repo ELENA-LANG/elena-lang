@@ -7,22 +7,20 @@
 #class(struct:embeddable,sealed) ThreadHandle
 {
     #field(type:handle) theHandle.
-    #field(type:ptr)    theActionPtr.
+    #field(type:rt_ptr) theActionPtr.
     
     #constructor new &func:anAction
     [
-        theActionPtr := Pointer new:anAction.
+        theActionPtr := RTPointer new:anAction.
 
         #var(type:vint)aParamIndex.
         theActionPtr read &vint:aParamIndex.
         
-        #var(type:int)tmp := aParamIndex.
-        
         theHandle := system'external'KERNEL32 CreateThread
                         &int:0
                         &int:0
-                        &ptr:system'internal'thread_start
-                        &int:tmp
+                        &symbol_ref:system'internal'win_thread_start
+                        &int:aParamIndex
                         &int:4
                         &int:0.
     ]

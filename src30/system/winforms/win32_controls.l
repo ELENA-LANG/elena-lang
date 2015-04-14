@@ -25,15 +25,12 @@
 
     #method create &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &handle:aParent &hinstance:instance &object:aParam
     [
-        #var(type:int)lparam := 0.
+        #var(type:vint)aParamIndex := 0.
         (nil != aParam) ?
         [
             #var(type:rt_ptr)aPointer := RTPointer new:aParam.
     
-            #var(type:vint)aParamIndex.
             aPointer read &vint:aParamIndex.
-            
-            lparam := aParamIndex.
         ].
                 
         #var(type:handle)aHandle := system'external'USER32 CreateWindowExW
@@ -48,7 +45,7 @@
             &handle:    aParent
             &int:       0
             &hinstance: instance
-            &int:       lparam.
+            &int:       aParamIndex.
 
         (aHandle==0)
             ? [ #throw WinFormsException new. ].

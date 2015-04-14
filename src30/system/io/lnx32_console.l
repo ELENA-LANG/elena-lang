@@ -18,15 +18,13 @@
         #var(type:int)n := 0.
         #var(type:vint)l.
         #var(type:vbyte)vc.
-        #var(type:byte)c.
 
         aLiteral readLength &vint:l.
         #loop (n < l)?
         [
             aLiteral read &index:n &vbyte:vc.
-            c := vc. // !! temporal  
 
-            system'external'libc putchar &byte:c.             
+            system'external'libc putchar &byte:vc.
 
             n := n + 1.
         ].

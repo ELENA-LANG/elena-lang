@@ -1,9 +1,7 @@
 // --- Symbol ---
 
-#class Symbol
+#class(symbol) Symbol
 {
-    #field(type:int)theReference.
-    
     #constructor new &name:aName
         => system'internal'symbol_new.
         

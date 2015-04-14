@@ -56,12 +56,10 @@
 
     #method read &bytearray:aDump &vlength:aLength
     [
-        #var(type:int)n := aLength.
-        
         system'external'KERNEL32 ReadFile
             &handle      : theHandle
             &bytearray   : aDump
-            &int         : n
+            &int         : aLength
             &vint        : aLength
             &int         : 0.
     ]

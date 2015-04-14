@@ -7,52 +7,46 @@
 //#define system'math.
 #define extensions.
 //#define extensions'math.
-        
+                
 #symbol XTester =
 {
-    #method convert &index:anIndex &vlength:aLength &bytearray:aByteArray &chararray:anOutput &vlength:anOutputLength 
+    #method(type:literal) read &literal
     [
-//        (aLength > 127)
-//            ? [ #throw InvalidArgumentException new. ].
+        #var(type:literal) aLine := emptyLiteralValue.
         
-        #var(type:shortarray,size:127)temp_buf.
-        #var(type:vint)aConverted := aLength.
-        #var(type:int)n := aLength.                
+        #var(type:vint)aLength := -1.
+        #loop (aLength == -1) ?
+        [
+            //theOutput indexOf &index:0 &char:10 &vint:aLength.
+            
+            (aLength == -1)
+                ? [
+                    #var(type:chararray,size:64)aBuffer.
+                    #var(type:vlength)aBufferLength := 64.
+                    
+                    $self read &chararray:aBuffer &vlength:aBufferLength.
+                    (aBufferLength == 0)
+                        ? [ aLength := -2. ]  // !! to indicate the eof
+                        ! [ /*theOutput write &chararray:aBuffer &length:aBufferLength.*/ ].
+                ].
+        ].
         
-        // !! when the variables are inside the sub code, the else block does not work correctly
-        #var(type:int)nn.                
-        #var(type:vint)nptr.
-                        
-        (anIndex != 0)
+        (aLength <= 0) 
             ? [
-                // !!  the code below should be overwritten
-                #var(type:dirty_ptr)ptr.
-//                ptr write &bytearray:aByteArray.
-//                ptr append &int:anIndex.
-//
-//                ptr read &vint:nptr.
-//                nn := nptr.
-                                
-                system'external'KERNEL32 MultiByteToWideChar &int:1252 &int:/*$MB_ERR_INVALID_CHARS*/8 &int:nn &int:n &shortarray:temp_buf &vint:aConverted.
+                //aLine := theOutput literal.                
+                //theOutput clear.
             ]
-            ! [
-                system'external'KERNEL32 MultiByteToWideChar &int:1252 &int:/*$MB_ERR_INVALID_CHARS*/8 &bytearray:aByteArray &int:n &shortarray:temp_buf &vint:aConverted.
-            ].
+            ! [ 
+                //aLine := theOutput Substring &index:0 &length:(aLength - 1).
+                //theOutput delete &index:0 &length:(1 + aLength).
+            ].            
+
+        ^ aLine.
     ]
     
     test        
     [
-        #var(type:chararray,size:5)d.
-        #var(type:bytearray,size:5)s.
-        #var(type:vint)l := 4.
-        #var(type:vint)m := 4.
-        
-        s write &index:0 &byte:64.
-        s write &index:1 &byte:65.
-        s write &index:2 &byte:66.
-        s write &index:3 &byte:67.
-        
-        $self convert &index:0 &vlength:l &bytearray:s &chararray:d &vlength:m.
+        XTester read &literal.
     ]
 }.
 

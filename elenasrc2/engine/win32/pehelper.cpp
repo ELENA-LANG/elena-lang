@@ -16,6 +16,9 @@ using namespace _ELENA_;
 size_t PEHelper :: findEntryPoint(path_t path)
 {
    FileReader reader(path, feRaw, false);
+   if (reader.Eof())
+      return (size_t)-1;
+
    // !! hard-coded offset
    reader.seek(0xC8);
 

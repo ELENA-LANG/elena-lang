@@ -1165,8 +1165,11 @@ void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
 
    tape.setLabel();
 
-   if (withStackControl)
+   if (withStackControl) {
       tape.write(bcSCopyF, bsBranch);
+      tape.write(blEnd, bsBranch);
+   }
+      
 }
 
 void ByteCodeWriter :: endLoop(CommandTape& tape)

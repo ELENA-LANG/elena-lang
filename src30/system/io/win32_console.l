@@ -33,11 +33,10 @@
         #var(type:vint)aLength.
         aLiteral readLength &vint:aLength.
 
-        #var(type:int)n := aLength.        
         system'external'KERNEL32 WriteConsoleW
             &handle  :  theHandle
             &wide    :  aLiteral
-            &int     :  n
+            &int     :  aLength
             &int     :  0                       // !! temporally we do not use it
             &int     :  0.             
 
@@ -121,11 +120,10 @@
 
     #method read &shortarray:aBuffer &vlength:aRetVal
     [
-        #var(type:int)aLength := aRetVal.
         system'external'KERNEL32 ReadConsoleW
             &handle     : theHandle
             &shortarray : aBuffer
-            &int        : aLength
+            &int        : aRetVal
             &vint       : aRetVal
             &int        : 0.
     ]

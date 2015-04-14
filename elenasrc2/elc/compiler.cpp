@@ -1068,6 +1068,15 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elStructureRole | elMessage);
       }
+      else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 4;
+         info.header.flags |= elDebugReference;
+
+         info.header.flags |= (elStructureRole | elSymbol);
+      }
       else if (StringHelper::compare(terminal, HINT_SIGNATURE)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
@@ -4147,6 +4156,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
       param.subject = moduleScope->mapType(terminal);
 
       ref_t classReference = moduleScope->resolveStrongType(param.subject);
+      int flags = 0;
       // HOTFIX: problem with using a strong type inside its wrapper
       if (scope.getClassRefId() == classReference) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -4154,14 +4164,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          if (classScope->info.size == 0)
             scope.raiseError(errInvalidOperation, terminal);
 
-         // if it is an integer number pass it directly
-         if ((classScope->info.header.flags & elDebugMask)==elDebugDWORD) {
-            param.size = 4;
-         }
-         else if ((classScope->info.header.flags & elDebugMask)==elDebugPTR) {
-            param.size = -2;
-         }
-         else param.size = -1;
+         flags = classScope->info.header.flags;
       }
       else {
          ClassInfo classInfo;
@@ -4171,17 +4174,21 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          if (classInfo.size == 0)
             scope.raiseError(errInvalidOperation, terminal);
 
-         // if it is an integer number pass it directly
-         if ((classInfo.header.flags & elDebugMask)==elDebugDWORD) {
-            param.size = 4;
-            if (!test(classInfo.header.flags, elReadOnlyRole))
-               param.out = true;
-         }
-         else if ((classInfo.header.flags & elDebugMask)==elDebugPTR) {
-            param.size = -2;
-         }
-         else param.size = -1;
+         flags = classInfo.header.flags;
       }
+      // if it is an integer number pass it directly
+      if ((flags & elDebugMask) == elDebugDWORD) {
+         param.size = 4;
+         if (!test(flags, elReadOnlyRole))
+            param.out = true;
+      }
+      else if ((flags & elDebugMask) == elDebugPTR) {
+         param.size = 4;
+      }
+      else if ((flags & elDebugMask) == elDebugReference) {
+         param.size = -2;
+      }
+      else param.size = -1;
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
@@ -4195,13 +4202,17 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
             // if direct pass is possible
          }
-         else if (param.subject == param.info.extraparam || classReference == moduleScope->resolveStrongType(param.info.extraparam)) {
+         else {
+            bool mismatch = false;
+            _writer.loadObject(*scope.tape, param.info);
+            param.info = compileTypecast(scope, param.info, param.subject, mismatch, 0);
+            if (mismatch)
+               scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
+
             saveObject(scope, param.info, 0);
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
          }
-         // raise an error if the subject type is not supported
-         else scope.raiseError(errInvalidOperation, terminal);
 
          arg = arg.nextNode();
       }

@@ -52,8 +52,7 @@
         #var(type:vint)param.
         aCreateStruct readCreateParam &vint:param.
         
-        #var(type:int)tmp := param.
-        system'external'USER32 SetWindowLongW &handle:anHWND &int:/*GWL_USERDATA*/-21 &int:tmp.
+        system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &int:param.
         
         system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct.
         
