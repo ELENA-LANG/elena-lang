@@ -3682,7 +3682,7 @@ procedure ws_copysubarr
     
   aloadsi 4
   ecopyd
-  callr api : coreapi'wstrcharlen
+  callr api : coreapi'wslen_ch
 
   acopyr class : system'WideLiteralValue
   inc
@@ -3726,8 +3726,8 @@ procedure s_copysubarr
     
   aloadsi 4
   ecopyd
-  callr api : coreapi'strcharlen
-
+  callr api : coreapi'slen_ch
+            
   acopyr class : system'LiteralValue
   inc
   bcreate

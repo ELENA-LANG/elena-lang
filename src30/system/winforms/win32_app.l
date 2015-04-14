@@ -18,13 +18,15 @@
         RTPointer new:$self.
         
         theMainWindow := 'mainWindow new.
-        theHandle := theMainWindow handle.
     ]
     
     #method start
     [
         #var(type:win_msg)aMsg.
         #var(type:int)proceeded.
+        
+        theMainWindow open.
+        theHandle := theMainWindow handle.
         
         #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:theHandle &int:0 &int:0.
         #loop (aResult != 0)?

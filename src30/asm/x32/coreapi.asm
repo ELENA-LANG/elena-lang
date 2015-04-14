@@ -3976,3 +3976,73 @@ labEnd:
   ret
 
 end
+
+// ; slen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'slen_ch
+
+   xor  esi, esi
+
+labNext:
+   mov  ebx, [eax]
+   cmp  ebx, 00000080h
+   jl   short lab1
+   cmp  ebx, 0800h
+   jl   short lab2
+   cmp  ebx, 10000h
+   jl   short lab3
+   
+   add  esi, 4
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+   
+lab1:
+   add  esi, 1
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+
+lab2:
+   add  esi, 2
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+
+lab3:
+   add  esi, 3
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+
+   ret
+
+end
+
+// ; wslen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'wslen_ch
+
+   xor  esi, esi
+
+labNext:
+   mov  ebx, [eax]
+   cmp  ebx, 010000h
+   jl   short lab1
+
+   add  esi, 2
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret   
+   
+lab1:
+   add  esi, 1
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret   
+
+end

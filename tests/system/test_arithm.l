@@ -7,46 +7,11 @@
 //#define system'math.
 #define extensions.
 //#define extensions'math.
-                
+
 #symbol XTester =
 {
-    #method(type:literal) read &literal
-    [
-        #var(type:literal) aLine := emptyLiteralValue.
-        
-        #var(type:vint)aLength := -1.
-        #loop (aLength == -1) ?
-        [
-            //theOutput indexOf &index:0 &char:10 &vint:aLength.
-            
-            (aLength == -1)
-                ? [
-                    #var(type:chararray,size:64)aBuffer.
-                    #var(type:vlength)aBufferLength := 64.
-                    
-                    $self read &chararray:aBuffer &vlength:aBufferLength.
-                    (aBufferLength == 0)
-                        ? [ aLength := -2. ]  // !! to indicate the eof
-                        ! [ /*theOutput write &chararray:aBuffer &length:aBufferLength.*/ ].
-                ].
-        ].
-        
-        (aLength <= 0) 
-            ? [
-                //aLine := theOutput literal.                
-                //theOutput clear.
-            ]
-            ! [ 
-                //aLine := theOutput Substring &index:0 &length:(aLength - 1).
-                //theOutput delete &index:0 &length:(1 + aLength).
-            ].            
-
-        ^ aLine.
-    ]
-    
     test        
     [
-        XTester read &literal.
     ]
 }.
 

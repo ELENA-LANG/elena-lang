@@ -2799,6 +2799,9 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else if (operand.kind == okUnknown) {
       return 0;
    }
+   else if (operand.kind == okConstant) {
+      return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
+   }
    else return moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam)) & elDebugMask;
 }
 

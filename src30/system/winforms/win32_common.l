@@ -4,7 +4,7 @@
 
 // --- styles ---
 #symbol(const,type:int)WS_OVERLAPPEDWINDOW     = 00CF0000h.
-#symbol(const,type:int)SDI_OVERLAPPEDWINDOW    = 10CF0000h.
+#symbol(const,type:int)SDI_OVERLAPPEDWINDOW    = 00CF0000h.
 #symbol(const,type:int)WS_CHILD                = 40000000h.
 #symbol(const,type:int)WS_VISIBLE              = 10000000h.
 #symbol(const,type:int)WS_BORDER               = 00800000h.
@@ -40,6 +40,8 @@
 
 // --- Notifications ---
 #symbol(const,type:int)BN_CLICKED       = 0.
+
+#symbol(const,type:int)SW_SHOW          = 5.
 
 // --- Window Color Constants
 

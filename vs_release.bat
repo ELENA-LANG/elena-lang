@@ -475,9 +475,9 @@ md src30\extensions
 xcopy %1\src30\extensions\*.l src30\extensions /s
 xcopy %1\src30\extensions\*.prj src30\extensions /s
 
-rem md src30\forms
-rem xcopy %1\src30\forms\*.l src30\forms /s
-rem xcopy %1\src30\forms\*.prj src30\forms /s
+md src30\forms
+xcopy %1\src30\forms\*.l src30\forms /s
+xcopy %1\src30\forms\*.prj src30\forms /s
 
 copy %1\rebuild.bat 
 copy %1\rebuildall.bat 

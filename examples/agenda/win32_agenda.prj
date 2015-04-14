@@ -1,0 +1,15 @@
+﻿[project]
+debug=agenda.dm
+executable=win32_agenda.exe
+options=-w2-
+namespace=agenda
+template=gui
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+win32_form.l
+
+[forwards]
+'mainWindow=agenda'Window
+
