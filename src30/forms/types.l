@@ -6,6 +6,8 @@
 #subject(class:forms'Region)region.
 
 // --- control types ---
+#subject(class:forms'IControl)    control.
+
 #subject(class:forms'StaticLabel) static.
 #subject(class:forms'Label)       label.
 #subject(class:forms'Edit)        edit.

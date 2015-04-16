@@ -32,7 +32,7 @@ Currently:
                        * gui stand-alone, gui mt stand-alone, gui vm client
                        * support default button style
                        * new controls: check box, radio box, status bar, timer, updown, menu, memo, image box
-                       
+
               sdev - gui examples:  
                        * agenda should have two version, one using system'winforms, another using forms
                        * migrate all gui samples (except upndown)
@@ -539,7 +539,9 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development  
-                       * typed list ; possible implementation
+                       * typed list ; possible implementation (see forms package)
+                       * method redirect to sealed / closed object - should be direct as well ; simplify forms package code using this feature
+                         (control adapters could be created directly in the code without need to explicitly declare them)
                        * should it be possible to typecast shortarray as byte array? (for stack allocated ones)
                        * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
                          implemented
@@ -555,8 +557,8 @@ week1:
                        * system'Signature should qualify only generic message with one parameter, there should be flag to indicate if it is strong
                          one or not ; if it is the strong one the object should implicitly send typecasting message to the parameter
 
-                       * if we use 0 instead of nil, it could allow us to return nil as typed variable, any operation with it will raise an
-                         exception???
+                       * nil should be allowed to be returned / passed as a typed argument (but not for data ones), probably check for nil
+                         before direct call in that case (and it should be possible to turn this check off)?
                          
                        * declaring variable without assigning a value should be allowed only for stack allocated types , in all other cases we may have
                          nil object referred by strong typed variable
@@ -741,6 +743,10 @@ week1:
 week2:
               adev - mt
                        * design basic classes / routines to implement multi-threading applications (events, semaphors, locks, threads, ...)
+
+              adev - gui
+                       * IControl.retrieve&hwnd - probably should always return control?
+                       * a lot of operations with controls should be implemented directly
 
               adev - linux lib30:
                        * review console operation, optimize the code

@@ -1,6 +1,19 @@
 #define system.
 #define system'winforms.
 
+// --- IControl ---
+
+#class(limited) IControl
+{
+    #method control = $self.
+    
+    #method object = nil.
+    
+    #method retrieve &hwnd:aHandle = nil.
+    
+    #method open []
+}
+
 // --- BaseWindowControl ---
 
 #class BaseWinControl :: BaseControl
@@ -92,7 +105,7 @@
     
     #method append : aControl
     [
-        $super append:aControl.
+        $super append:(aControl control).
         
         aControl $set &parent:theParent.
         
@@ -120,11 +133,14 @@
         (theHandle == aHandle)
             ? [ ^ $self. ].
 
+        #var(type:control)aCurrent.
         #var(type:enumerator)it := theControls enumerator.
         #var aRetVal := nil.
         #loop (it next)?
         [ 
-            aRetVal := it get retrieve &hwnd:aHandle.
+            aCurrent := it get control.
+        
+            aRetVal := aCurrent retrieve &hwnd:aHandle.
             (nil != aRetVal)
                 ? [ ^ aRetVal. ].
         ].
@@ -144,38 +160,26 @@
 
 // --- Label ---
 
-#class(sealed) StaticLabel :: BaseWinControl
+#class ILabel :: IControl
 {
-    #method static = $self.
+    #field(type:label)theLabel.
     
-    #method $createHandle
+    #constructor new &label:aLabel
     [
-        #var(type:hwnd)aParent := theParent hwnd.
-        (aParent == 0)
-            ? [ #throw InvalidOperationException new &message:"The parent window is closed". ].
-        
-        #var(type:int)Styles := WS_CHILD || SS_SIMPLE.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
-        
-        #var(type:vint)anX.
-        #var(type:vint)anY.
-        #var(type:vint)aWidth.
-        #var(type:vint)aHeight.
-        
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
-        
-        theHandle := WindowHandle new &int:0
-                        &wide:StaticClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:nil.
+        theLabel := aLabel.
     ]
+    
+    #method object = theLabel.
+    
+    #method open [ theLabel open. ]
+          
+    #method retrieve &hwnd:aHandle = theLabel retrieve &hwnd:aHandle.
 }
 
-// --- Label ---
-
-#class(sealed) Label :: BaseWinControl
+#class(limited) Label :: BaseWinControl
 {
+    #method control = ILabel new &label:$self.
+    
     #method label = $self.
     
     #method $createHandle
@@ -200,7 +204,51 @@
     ]
 }
 
+// --- Label ---
+
+#class StaticLabel :: Label
+{
+    #method $createHandle
+    [
+        #var(type:hwnd)aParent := theParent hwnd.
+        (aParent == 0)
+            ? [ #throw InvalidOperationException new &message:"The parent window is closed". ].
+        
+        #var(type:int)Styles := WS_CHILD || SS_SIMPLE.
+        theVisible
+            ? [ Styles := Styles || WS_VISIBLE. ].
+        
+        #var(type:vint)anX.
+        #var(type:vint)anY.
+        #var(type:vint)aWidth.
+        #var(type:vint)aHeight.
+        
+        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        
+        theHandle := WindowHandle new &int:0
+                        &wide:StaticClass &wide:(theCaption wide) &int:Styles
+                        &int:anX &int:anY &int:aWidth &int:aHeight 
+                        &hwnd:aParent &hinstance:CurrentInstance &object:nil.
+    ]
+}
+
 // --- Edit ---
+
+#class IEdit :: IControl
+{
+    #field(type:edit)theEdit.
+    
+    #constructor new &edit:anEdit
+    [
+        theEdit := anEdit.
+    ]
+    
+    #method object = theEdit.
+    
+    #method open [ theEdit open. ]
+          
+    #method retrieve &hwnd:aHandle = theEdit retrieve &hwnd:aHandle.
+}
 
 #class(sealed) Edit :: BaseWinControl
 {
@@ -209,6 +257,8 @@
     [
         theTabStop := true.
     ]
+    
+    #method control = IEdit new &edit:$self.
     
     #method edit = $self.
  
@@ -247,6 +297,22 @@
 
 // --- Button ---
 
+#class IButton :: IControl
+{
+    #field(type:button)theButton.
+    
+    #constructor new &button:aButton
+    [
+        theButton := aButton.
+    ]
+    
+    #method object = theButton.
+ 
+    #method open [ theButton open. ]
+          
+    #method retrieve &hwnd:aHandle = theButton retrieve &hwnd:aHandle.
+}
+
 #class(sealed) Button :: BaseWinControl
 {
     #field(type:func1)theClick.
@@ -261,6 +327,8 @@
     [
         theClick := aFunction.
     ]
+    
+    #method control = IButton new &button:$self.
     
     #method button = $self.
  

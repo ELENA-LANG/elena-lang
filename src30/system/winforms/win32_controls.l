@@ -118,6 +118,9 @@
     [
         system'external'USER32 DestroyWindow &hwnd:$self.
     ]
+    
+    #method $save &dirty_ptr:aPtr
+        => system'internal'int_save.
 }
 
 //// --- ComboboxHandle ---

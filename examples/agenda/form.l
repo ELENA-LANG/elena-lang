@@ -1,6 +1,6 @@
 #define system.
 #define forms.
-//#define system'io.
+#define system'io.
 
 // --- Main window ---
 
@@ -174,27 +174,43 @@
         BtmExit set &width:82 &height:25.
         
         // ------------------------------------ Handlers  ------------------------------------
-//        #var wind := $self. 
-//        theHandle set &win_listener:WindowListener
+        // Save
+        
+        // !! temporal
+        #var aWindow := $self.
+        BtmSave set &onClick: args 
+            [
+                #var aDialog := SaveFileDialog new:aWindow.
+                aDialog addFilter &caption:"Text Files" &extension:"*.txt".
+                aDialog set &caption:"Select a file".
+                
+                (aDialog run) ?
+                [
+                    #var aWriter := StreamWriter new &path:(aDialog selected) &bool:true.
+                    
+                    aWriter writeLine:"//-------------------------------------------------------------------------------". 
+                    aWriter write:"Name: " write:(Name literal) write:" " write:(SurName literal) write:" " writeLine:(OtName literal).
+                    aWriter write:"Email: " writeLine:(Email literal).
+                    aWriter write:"Age: " writeLine:(Age literal).
+                    aWriter write:"PhoneNumber: " writeLine:(PhoneNumber literal).
+                    aWriter writeLine:"//-------------------------------------------------------------------------------".
+
+                    aWriter close.
+
+                    BtmDelTxt set &enabled:true.
+                ].
+            ].
+        
+//        // Del TXT
+//        BtmDelTxt event_handle'append:
 //        {
-//            onclick &handle:aControl &vint:aResult
-//            [
-//                // Save
-//                (aControl == BtmSave handle)
-//                    ? [ wind saveFile. ^ $self. ].
+//            clicking : Args
+//            [     
+//                'io'FileManager delete &io'path:theSavedPath.
+//                
+//                BtmDelTxt enabled'set:false.
 //            ]
 //        }.
-//        
-////        // Del TXT
-////        BtmDelTxt event_handle'append:
-////        {
-////            clicking : Args
-////            [     
-////                'io'FileManager delete &io'path:theSavedPath.
-////                
-////                BtmDelTxt enabled'set:false.
-////            ]
-////        }.
 
         // Exit
         BtmExit set &onClick: args 
@@ -208,25 +224,4 @@
                 LabelAbout set &caption:"Created by Alexandre Bencz.%nThanks Alex Rakov, for support.".
             ].
     ]
-    
-//    #method saveFile
-//    [
-//        #var aDialog := SaveFileDialog new &handle:theHandle &filters:("Text Files","*.txt") &filter_index:0 &length:255 &wide:"Select a file".
-//        theSavedPath := aDialog select.
-//
-//        #var aWriter := StreamWriter new &path:theSavedPath &bool:true.
-//
-//        aWriter writeLine:"//-------------------------------------------------------------------------------". 
-//        aWriter write:"Name: " write:(Name getCaption) write:" " write:(SurName getCaption) write:" " writeLine:(OtName getCaption).
-//        aWriter write:"Email: " writeLine:(Email getCaption).
-//        aWriter write:"Age: " writeLine:(Age getCaption).
-//        aWriter write:"PhoneNumber: " writeLine:(PhoneNumber getCaption).
-//        aWriter writeLine:"//-------------------------------------------------------------------------------".
-//
-//        aWriter close.
-//
-//        BtmDelTxt setEnabled &int:-1.
-//    ]    
-//    
-//    #method => theHandle.
 }
