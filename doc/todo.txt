@@ -12,7 +12,7 @@ v  - vm script
                                                                                                                  
 - dev                                                                                                      
 - maint                                                                                                                                          
-- rev                                                                                                                 
+- rev                                                                                                                  
 - opt
 - port
 - doc
@@ -20,17 +20,18 @@ v  - vm script
 ------                                 
 Currently:
 ------
-
               adev - gui
-                       * implement forms package (native control wrappers)
-                       * SDIDialog should have fixed border (not resizable)
+                       * onclick : retrieve &hwnd is not directly resolved and requires boxing ; should be fixed - one possible way - list should be
+                         typed, every member of it is an adapter - ControlInterface - implemented limited set of actions
 
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
+                       * implement forms package (native control wrappers)
+                       * make possible to set / change / get the control color
+                       * make possible to set / change / get the control font
+
+                       * SDIDialog should have fixed border (not resizable)
                        * gui stand-alone, gui mt stand-alone, gui vm client
                        * support default button style
                        * new controls: check box, radio box, status bar, timer, updown, menu, memo, image box
-                       * why forms'Label is unresolvable
                        
               sdev - gui examples:  
                        * agenda should have two version, one using system'winforms, another using forms
@@ -323,6 +324,7 @@ week2:
                        * review ws_insert function (in assembler), try to simplify it
                        * Real#class.new&int[1] - optimize
                        * ByteArray.fill&index&length&byte
+                       * optimize typed list
 
                adev - console operations:  
                        * read / write operation: complex types
@@ -537,6 +539,7 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development  
+                       * typed list ; possible implementation
                        * should it be possible to typecast shortarray as byte array? (for stack allocated ones)
                        * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
                          implemented
@@ -578,6 +581,13 @@ week1:
                        * break the loop
                        * make posible to declare symbol which value can be defined in the project, e.g. constant forward (and typed constant forward)
                        * show / hide should be verbs
+                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
+                         dynamically for external operation
+                       * shoud is verb always return boolean?
+                       * it should be possible to inizialize stack allocated structure without actually creating the object, 
+                         e.g. BaseControl : theRegion := Region new.
+                       * operation with $self in normal class is resolved by binaray search. After the class is limited or sealed, such operations
+                         could be implemented directly, is there any other way to achieve this without duplicating source code?
                          
               xdev - general implementation
                        * review all system warnings
@@ -633,6 +643,7 @@ week1:
                          external call (see NOTEs))
 
                        * implicit variables (allocated for arithmetic or typecasting operations) should not be permanent
+                       * if the nested class owner is sealed / limited - direct operation should be used
                        
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start
@@ -728,6 +739,9 @@ week1:
                        * it should be possible Tape to debug  (see 1.x implementation)
 
 week2:
+              adev - mt
+                       * design basic classes / routines to implement multi-threading applications (events, semaphors, locks, threads, ...)
+
               adev - linux lib30:
                        * review console operation, optimize the code
 

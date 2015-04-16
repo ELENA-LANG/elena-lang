@@ -1,0 +1,321 @@
+actors
+======
+
+                             BaseControl
+                                 |
+                           BaseWinControl  
+                                 |
+      +--------------------------+--------------------+
+      |                                               |                                           
+      |                                         BaseWinContainer
+      |                                               |
+    Label                             +---------------+----------+
+                                      |                          |
+                                 BaseWinForm                BaseWinPanel
+                                      |
+                                   SDIForm
+                                      |
+                                 SDIDialogForm
+
+Control
+-------
+caption (*get / *set)
+visible (*is / *set)
+enabled (*is / *set)
+parent (*get / *$set)
+location(*get / *set)
+dimension(*get / *set)
+tabStop(*is / *set)
+font(*get / *set)
+backColor(*get / *set)
+foreColor(*get / *set)
+*open
+*close
+*setLocation&x&y
+*setSize&width&height
+*setFocus
+*$findControl(handle)     ; returns nil if the handle is not its own
+*refresh
+~onKeyPress (*set)
+~onKeyUp    (*set)
+~onKeyDown  (*set)
+~onMouseUp  (*set)                       
+~onMouseDown(*set)
+~onMouseMove(*set)
+~onEnter    (*set)
+~onLeave    (*set)
+~onCaptionChanged(*set)
+~onResize   (*set)
+~onPaint    (*set)
+
+Container
+---------
+*append
+*remove
+*$findControl(handle)     ; returns itself if the handle is its own, otherwise scans the ControlCollection (executing findControl for each member)
+
+ControlCollection
+-----------------
+enumerator (*get)                                                     
+*append
+*remove                                                                         
+
+SDIDialog
+---------
+maximized (*get / *set)
+*keyPreview (*is / *set)
+~onOpen    (*set)
+~onClose   (*set)
+? should have fixed border
+hasFocus(*is/*set)
+
+Label
+-----
+? auto size
+? text wrapping
+hasFocus(*is/*set)
+
+StaticLabel
+-----------
+hasFocus(*is/*set)
+
+Edit
+-----
+autoSize (*is / *set)
+value (*get/*set)
+hasFocus(*is/*set)
+
+Button
+------
+*click
+~onClick  (*set)
+hasFocus(*is/*set)
+
+routines:
+=========
+create form:
+----------
+                 Form                ControlCollection           Control
+                                            
+new ----------->  +                         
+                  |                         
+                  +--- new ---------------->+ 
+                                            |                                                                                                          
+                  +<------------------------+
+                  |
+<-----------------+
+
+create control:
+----------------
+
+                 Control   
+new ----------->  +                         
+                  |
+<-----------------+
+
+
+add control on start:
+---------------------
+
+                  Container (Form / Panel)            ControlCollection          Control
+
+append:control-------->+
+                       |
+                       +----------append:control ----------->+
+                                                             |
+                       +<------------------------------------+
+                       |
+                       +-------- set &parent:$self ------------------------------>+
+                                                                                  |
+                                                                               (if parent not nil)----> throw exception : "cannot be added to the container"
+                                                                                  |
+                                                                               (set parent)
+                                                                                  |
+                       +<---------------------------------------------------------+
+                       |
+                    (if handle is not nil) --------- open ----------------------->+
+                                                                                  |
+                                                                                 ...
+                       +<---------------------------------------------------------+
+                       |
+<----------------------+
+
+open form:
+----------
+                 Form                  ControlCollection           Control
+
+open ------------->+
+                   |
+                (if handle is not null) throw exception : "already open"
+                   |
+               ( create handle )
+                   |
+                   + ---> get'enumerator ----->+
+                                               |
+                   +<--------------------------+
+                   |
+             (for each control)
+                   |
+                   +------------------- open ------------------------>+
+                                                                      |
+                                                               (if parent is null) throw exception : "cannot create : no parent"
+                                                                      |
+                   +<---------------get'handle------------------------+
+                   |
+                   +------------------------------------------------->+  
+                                                                      |
+                                                               (if handle is not null) throw exception : "already open"
+                                                                      |
+                                                               ( create handle )
+                                                                      |
+                   +<-------------------------------------------------+
+                   |
+             (end for each)
+                   |
+<------------------+
+
+
+close form :
+------------
+
+                 Form                  ControlCollection           Control
+
+close ------------>+
+                   |
+                (if handle is null) throw exception : "already closed"
+                   |
+                   + ---> get'enumerator ----->+
+                                               |
+                   +<--------------------------+
+                   |
+             (for each control)
+                   |
+                   +-------------- $onParentClose ------------------->+
+                                                                      |
+                                                               ( set handle to nil )
+                                                                      |
+                   +<-------------------------------------------------+
+                   |
+             (end for each)
+                   |
+             ( destroy handle )
+                   |
+             ( set handle to nil )
+                   |
+<------------------+
+
+close control:
+--------------
+
+                Control 
+
+close ------------>+
+                   |
+                (if handle is null) throw exception : "already closed"
+                   |
+             ( destroy handle )
+                   |
+             ( set handle to nil )
+                   |
+<------------------+
+
+
+remove control dynamically
+---------------------------
+
+                  Container (Form / Panel)            ControlCollection          Control
+
+remove:control-------->+
+                       |
+                       +----------remove:control ----------->+
+                                                             |
+                       +<------------------------------------+
+                       |
+                       +-------- set &parent:nil -------------------------------->+
+                                                                                  |
+                                                                               (if parent nil)----> throw exception : "already removed"
+                                                                                  |
+                                                                               (clear parent)
+                                                                                  |
+                       +<---------------------------------------------------------+
+                       |
+                    (if handle is not nil) close
+                       |
+<----------------------+
+
+
+set property without recreating the handle
+------------------------------------------
+
+                Control 
+
+set&xx ----------->+
+                   |
+                set value
+                   |
+             ( if handle is not nil ) -> do the handle operation
+                   |
+<------------------+
+
+set property with recreating the handle
+------------------------------------------
+
+                Control 
+
+set&xx ----------->+
+                   |
+                set value
+                   |
+             ( if handle is not nil ) 
+                   |
+                 close
+                   |
+                 open
+                   |
+             (end if)
+                   |
+<------------------+
+
+on event
+--------
+                   Callback            WindowHandle            WindowListener            Form               Control
+
+eval &...------------>+
+                      |
+                      +-- eval &...------->+
+                                           |
+                                      (prepare an event argument if necessary)
+                                           |
+                                           +--- eval &... -------->+
+                                                                   |
+                                                                   +-- findControl ------->+
+                                                                                           |
+                                                                                          ...
+                                                                                           |
+                                                                   +<----------------------+
+                                                                   |
+                                                               (if control not found) exit
+                                                                   |
+                                                                (prepare an event argument if necessary)
+                                                                   |
+                                                                   +----- eval &... ---------------------------->
+                                                                                                                |
+                                                                                                              (if event action set) -- eval &... <------->
+                                                                                                                |
+                                                                   +<-------------------------------------------+
+                                                                   |
+                                           +<----------------------+
+                                           |
+                      +<-------------------+
+                      |
+<---------------------+
+
+
+set control parent : should be internal
+-------------------
+
+
+
+
+
+

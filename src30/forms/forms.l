@@ -1,8 +1,22 @@
 #define system.
+#define system'collections.
 
-// --- BaseForm ---
+// --- BaseControlCollection ---
 
-#class BaseForm :: BaseContainer
+#class BaseControlCollection
 {
+    #field(type:list) theList.
+    
+    #constructor new
+    [
+        theList := List new.
+    ]
+
+    #method enumerator => theList.
+            
+    #method append : aControl
+    [
+        theList append:aControl.
+    ]
 }
 

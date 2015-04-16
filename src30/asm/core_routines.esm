@@ -4632,7 +4632,9 @@ labCreate:
   callr api : coreapi'resolve_index  
 
   pusha  
-  xindexrm system'winforms'WindowCallback %eval&wm_create&handle$&int$&int$&win_createstruct$winforms&vint$[5]
+  xindexrm system'winforms'WindowCallback %eval&wm_create&hwnd$winforms&int$&int$&win_createstruct$winforms&vint$[5]
+
+
   acallvd
   popa
 
@@ -4660,7 +4662,7 @@ labDestroy:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %eval&handle$&int$&vint$[3]
+  xindexrm system'winforms'WindowCallback %eval&hwnd$winforms&int$&vint$[3]
   acallvd
   popa
 
@@ -4692,7 +4694,7 @@ labCommand:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %eval&wm_command&handle$&int$&int$&handle$&vint$[5]  
+  xindexrm system'winforms'WindowCallback %eval&wm_command&hwnd$winforms&int$&int$&hwnd$winforms&vint$[5]  
   acallvd
   popa
 
@@ -4724,7 +4726,7 @@ labCursor:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %eval&handle$&int$&handle$&int$&vint$[5]  
+  xindexrm system'winforms'WindowCallback %eval&hwnd$winforms&int$&hwnd$winforms&int$&vint$[5]
   acallvd
   popa
 

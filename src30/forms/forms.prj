@@ -8,6 +8,7 @@ warn:unresolved=0
 
 [files]
 types.l
+common.l
 win32_types.l
 controls.l
 forms.l

@@ -111,6 +111,16 @@
         <= %new &message:aMessage &error_type: %InvalidArgumentError.
 }
 
+// --- InvalidOperationException ---
+
+#class InvalidOperationException :: Exception
+{
+    #constructor new
+        <= %new &message:"Invalid operation" &error_type: %InvalidOperationError.
+        
+    #constructor new &message:aMessage
+        <= %new &message:aMessage &error_type: %InvalidOperationError.
+}
 // --- MethodNotFound ---
 
 #class MethodNotFoundException :: Exception

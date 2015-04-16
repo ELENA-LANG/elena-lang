@@ -107,6 +107,7 @@
 #subject(class:system'BaseFunction1) InvalidArgumentError.
 #subject(class:system'BaseFunction1) NotSupportedError.
 #subject(class:system'BaseFunction1) Abort.
+#subject(class:system'BaseFunction1) InvalidOperationError.
 
 // === system handles ===
 #subject(class:Handle) handle.
