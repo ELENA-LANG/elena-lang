@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerH

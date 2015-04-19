@@ -1,4 +1,4 @@
-// ==== ver 3.1.2 ===
+// ==== ver 3.1.3 ===
 
 // === basic stack allocated types ===
 
@@ -40,17 +40,16 @@
 #subject(class:system'IntNumber)        offset.
 #subject(class:system'IntNumber)        int_attributes.
 
-#subject(class:system'IntNumber)        x.
-#subject(class:system'IntNumber)        y.
-#subject(class:system'IntNumber)        width.
-#subject(class:system'IntNumber)        height.
-
 // === vint synonyms ===
 #subject(class:system'Integer)          vlength.
 
 // === literal synonyms ===
 #subject name.
 #subject path.
+#subject x.
+#subject y.
+#subject width.
+#subject height.
 
 // === subject synonyms ===
 #subject(class:system'Signature)    error_type.

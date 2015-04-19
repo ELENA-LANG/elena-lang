@@ -14,6 +14,18 @@
     round : x
         = x real rounded.
             
+    roundInt : x
+        = intConvertor convert &real:(x real rounded).
+            
+    sin : x
+        = x real sin.
+            
+    cos : x
+        = x real cos.
+            
+    arctan : x
+        = x real arctan.
+            
     abs : x
         = x cast:%eval &to:
             {
@@ -33,4 +45,12 @@
         
     power : x : y
        = x real ln multiply:y real exp.
+       
+    pi
+    [
+        #var(type:vreal)r.
+        realOpController pi &vreal:r.
+        
+        ^ RealNumber new &real:r.
+    ]       
 }.

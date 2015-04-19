@@ -4046,3 +4046,11 @@ lab1:
    ret   
 
 end
+
+procedure coreapi'rpi
+
+  fldpi
+  fstp  qword ptr [edi]    // store result 
+  ret
+
+end

@@ -6,7 +6,41 @@
 #symbol(const,type:wide) ButtonClass = "Button" wide. // !! temporal
 //#symbol ComboboxClass = "Combobox" wide. // !! temporal
 //#static PanelClass = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND.
-//#static PaintboxClass = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0.
+
+// --- PAINTSTRUCT ---
+
+#class(sealed,struct:embeddable)PAINTSTRUCT
+{
+    #field(type:hdc)      theHDC.
+    #field(type:int)      theErase.
+    #field(type:win_rect) theRect. 
+    #field(type:int)      theRestore.
+    #field(type:int)      theIncUpdate.
+    
+    #field(type:int)      dummy0.
+    #field(type:int)      dummy1.
+    #field(type:int)      dummy2.
+    #field(type:int)      dummy3.
+    #field(type:int)      dummy4.
+    #field(type:int)      dummy5.
+    #field(type:int)      dummy6.
+    #field(type:int)      dummy7.
+
+    #method read &hdc:aHandle
+        => system'internal'int_save.
+            
+    #method hdc = HDC new &hdc:theHDC.            
+            
+    #method begin &hwnd:aHandle
+    [
+        system'external'USER32 BeginPaint &hwnd:aHandle &win_paintstruct:$self.
+    ]
+    
+    #method end &hwnd:aHandle
+    [
+        system'external'USER32 EndPaint &hwnd:aHandle &win_paintstruct:$self.
+    ]
+}
 
 // --- WindowHandle ---
 
@@ -113,7 +147,14 @@
     [
         system'external'USER32 GetClientRect &hwnd:$self &win_rect:aStruct.
     ]
-    
+  
+    #method read &hdc:anHDC
+    [
+        #var(type:hdc)dc := system'external'USER32 GetDC &hwnd:$self.
+        
+        anHDC $save &hdc:dc.
+    ]
+      
     #method close
     [
         system'external'USER32 DestroyWindow &hwnd:$self.
@@ -164,32 +205,5 @@
 //            &handle:aParent 
 //            &hinstance:CurrentInstance
 //            &object:(PanelCallback new &win_panel:$self).
-//    ]
-//}
-//
-//// --- PaintboxHandle ---
-//
-//#class PaintboxCallback :: WindowCallback
-//{
-//    #field(type:win_paintbox)theOwner.
-//    
-//    #constructor new &win_paintbox:anOwner
-//    [
-//        theOwner := anOwner.
-//    ]
-//}
-//    
-//#class(sealed) PaintboxHandle :: BasePaintboxHandle
-//{
-//    #constructor new &handle:aParent &int:x &int:y &int:width &int:height
-//    [
-//        $self create 
-//            &int:WS_EX_TRANSPARENT
-//            &wide:PaintboxClass &int:0
-//            &int:WS_CHILD 
-//            &int:x &int:y &int:width &int:height 
-//            &handle:aParent 
-//            &hinstance:CurrentInstance
-//            &object:(PaintboxCallback new &win_paintbox:$self).
 //    ]
 //}

@@ -602,6 +602,9 @@
     #method(type:int) shift &index:anOrder
         => system'internal'int_shift.
 
+    #method(type:int) shift &index:anOrder &vint:aResult
+        => system'internal'int_shift2.
+
     #method literal = literalConvertor convert &int:$self.
 
     #method wide = wideConvertor convert &int:$self.

@@ -120,7 +120,14 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool with
 
 void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
 {
+   // exclude
    tape.write(blDeclare, bsBranch);
+}
+
+void ByteCodeWriter :: excludeFrame(CommandTape& tape)
+{
+   tape.write(bcExclude);
+   tape.write(bcAllocStack, 1);
 }
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)

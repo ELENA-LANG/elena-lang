@@ -15,6 +15,12 @@
     
     #constructor new &x:anX &y:anY
     [
+        theX := anX int.
+        theY := anY int.
+    ]
+    
+    #constructor new &int:anX &int:anY
+    [
         theX := anX.
         theY := anY.
     ]
@@ -39,12 +45,12 @@
     
     #method write &x:aValue
     [
-        theX := aValue.
+        theX := aValue int.
     ]
     
     #method write &y:aValue
     [
-        theY := aValue.
+        theY := aValue int.
     ]
     
     #method readX &vint:aValue
@@ -99,7 +105,7 @@
         aPoint readX &vint:anX.
         aPoint readY &vint:anY.
         
-        ^ Point new &x:(theX + anX) &y:(theY + anY).
+        ^ Point new &int:(theX + anX) &int:(theY + anY).
     ] 
     
     #method subtract &point:aPoint
@@ -110,7 +116,7 @@
         aPoint readX &vint:anX.
         aPoint readY &vint:anY.
         
-        ^ Point new &x:(theX - anX) &y:(theY - anY).
+        ^ Point new &int:(theX - anX) &int:(theY - anY).
     ] 
 }
 
@@ -129,6 +135,12 @@
     
     #constructor new &width:aWidth &height:aHeight
     [
+        theWidth := aWidth int.
+        theHeight := aHeight int.
+    ]
+    
+    #constructor new &int:aWidth &int:aHeight
+    [
         theWidth := aWidth.
         theHeight := aHeight.
     ]
@@ -141,12 +153,12 @@
     
     #method write &width:aValue
     [
-        theWidth := aValue.
+        theWidth := aValue int.
     ]
     
     #method write &height:aValue
     [
-        theHeight := aValue.
+        theHeight := aValue int.
     ]
     
     #method write &int:aWidth &int:aHeight
@@ -207,6 +219,14 @@
     
     #constructor new &x:anX &y:anY &width:aWidth &height:aHeight
     [
+        theX := anX int.
+        theY := anY int.
+        theWidth := aWidth int.
+        theHeight := aHeight int.
+    ]
+    
+    #constructor new &int:anX &int:anY &int:aWidth &int:aHeight
+    [
         theX := anX.
         theY := anY.
         theWidth := aWidth.
@@ -219,7 +239,7 @@
     
     #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &region:$self.
     
-    #method clone = Dimension new &width:theWidth &height:theHeight.
+    #method clone = Region new &int:theX &int:theY &int:theWidth &int:theHeight.
     
     #method x = IntNumber new &int:theX.
     
@@ -228,37 +248,13 @@
     #method width = IntNumber new &int:theWidth.
     
     #method height = IntNumber new &int:theHeight.
-    
-    #method write &x:anX &y:anY
+
+    #method write &int:anX &int:anY &int:aWidth &int:aHeight
     [
         theX := anX.
         theY := anY.
-    ]
-    
-    #method write &width:aWidth &height:aHeight
-    [
         theWidth := aWidth.
         theHeight := aHeight.
-    ]
-    
-    #method write &x:aValue
-    [
-        theX := aValue.
-    ]
-    
-    #method write &y:aValue
-    [
-        theY := aValue.
-    ]
-    
-    #method write &width:aValue
-    [
-        theWidth := aValue.
-    ]
-    
-    #method write &height:aValue
-    [
-        theHeight := aValue.
     ]
     
     #method read &vint:anX &vint:anY &vint:aWidth &vint:aHeight
@@ -268,6 +264,44 @@
         aWidth << theWidth.
         aHeight << theHeight.
     ]
+        
+    #method write &x:aValue
+    [
+        theX := aValue int.
+    ]
+    
+    #method write &y:aValue
+    [
+        theY := aValue int.
+    ]
+    
+    #method write &width:aValue
+    [
+        theWidth := aValue int.
+    ]
+    
+    #method write &height:aValue
+    [
+        theHeight := aValue int.
+    ]
+    
+    #method writeLocation &int:anX &int:anY
+    [
+        theX := anX.
+        theY := anY.
+    ]
+    
+    #method writeDimension &int:aWidth &int:aHeight
+    [
+        theWidth := aWidth.
+        theHeight := aHeight.
+    ]
+    
+    #method readLocation &vint:anX &vint:anY
+    [
+        anX << theX.
+        anY << theY.
+    ]
     
     #method readDimension &vint:aWidth &vint:aHeight
     [
@@ -275,31 +309,11 @@
         aHeight << theHeight.
     ]
     
-    #method readX &vint:aValue
-    [
-        aValue << theX.
-    ]
-    
-    #method readY &vint:aValue
-    [
-        aValue << theY.
-    ]
-    
-    #method readWidth &vint:aValue
-    [
-        aValue << theWidth.
-    ]
-    
-    #method readHeight &vint:aValue
-    [
-        aValue << theHeight.
-    ]
-    
     #method point
-        = Point new &x:theX &y:theY.
+        = Point new &int:theX &int:theY.
     
     #method dimension
-        = Dimension new &width:theWidth &height:theHeight.
+        = Dimension new &int:theWidth &int:theHeight.
     
     #method(type:bool) equal &region:aRegion
     [

@@ -20,7 +20,7 @@ const char* _fnOpcodes[256] =
    "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "unknown", "unhook", "add", "create",
 
-   "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "unknown", "unknown",
+   "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "exclude", "unknown",
    "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
    "xlen", "blen", "wlen", "flag", "nlen", "unknown", "class", "mindex",
@@ -32,8 +32,8 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "wread", "wwrite", "nread", "nwrite", "unknown", "unknown", "wcreate",
 
-   "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "unknown", "unknown",
-   "unknown", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",
+   "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "rsin", "rcos",
+   "rarctan", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",
 
    "lcopy", "unknown", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
    "land", "lor", "lxor", "lshift", "lnot", "unknown", "unknown", "unknown",

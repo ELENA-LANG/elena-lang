@@ -30,7 +30,7 @@
 [+] system'winforms module implementing basic WIN32 GUI functionality
 
 Samples:
-[+] agenda / winagenda
+[+] agenda, graphs
 
 [IDE]
 [*] fixed "step over" implementations inside symbol

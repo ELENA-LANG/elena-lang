@@ -181,6 +181,8 @@ ELENA byte codes (or ecodes)
  eswap                      - index <=> ext
  
  eswapsi                    - ext <=> [sp:i]
+
+ exclude                    - should be called before external call, excluding the stack starting from ESP from GC frames
  
  flag                       - acc::VMT::flag >> index 
 
@@ -402,26 +404,3 @@ ELENA byte codes (or ecodes)
 
  xset                       - acc => base[index] ;
                               ; direct
- 
-
-                              
-
-
-
-
-
-
-
-
- class handling:
- --------------- 
- message i                   - acc::VMT[i].message >> index
-
- rcopy                      - real[base] << real[acc] ??
- 
- rcos                       - base << cos(real:acc)
- 
- rsin                       - base << sin(real:acc)
- 
- rarctan                    - base << argtan(real:acc) 
- 

@@ -4289,6 +4289,9 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    compileExternalArguments(node.firstChild(), scope, externalScope);
 
+   // exclude stack if necessary
+   _writer.excludeFrame(*scope.tape);
+
    // save function parameters
    saveExternalParameters(scope, externalScope);
 

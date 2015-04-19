@@ -30,11 +30,13 @@
     #field BtmDelTxt.
     #field BtmInfo.
 
-//    #field theSavedPath.
+    #field theSavedPath.
 
     #constructor new
         <= (new)
     [
+        theSavedPath := String new.
+        
         // Controls
         LabelName := Label new.
         LabelSurName := Label new.
@@ -186,7 +188,9 @@
                 
                 (aDialog run) ?
                 [
-                    #var aWriter := StreamWriter new &path:(aDialog selected) &bool:true.
+                    theSavedPath << aDialog selected.
+                    
+                    #var aWriter := StreamWriter new &path:theSavedPath &bool:true.
                     
                     aWriter writeLine:"//-------------------------------------------------------------------------------". 
                     aWriter write:"Name: " write:(Name literal) write:" " write:(SurName literal) write:" " writeLine:(OtName literal).

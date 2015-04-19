@@ -1,122 +1,103 @@
-#define std'dictionary'*.
-#define gui'dictionary'*.
-//#define std'basic'*.
-#define std'patterns'*.
-#define ext'text'*.
-//#define ext'patterns'*.
+#define system.
+#define forms.
+#define extensions.
+#define extensions'math.
 
-#define math'* = std'math'*.
-#define gui'* = gui'common'*.
-#define controls'* = gui'controls'*.
-#define forms'* = gui'forms'*.
-#define graph'* = gui'graphics'*.
-
-// --- private subjects ---
-#subject $drawAxis, $drawGraph.
-
-// === code ===
-#symbol ScaleX   = 15.
-#symbol ScaleY   = 15.
+#symbol(const,type:int) ScaleX   = 15.
+#symbol(const,type:int) ScaleY   = 15.
 #symbol starting = 0.0r.
-#symbol ending   = math'Pi * 6.
+#symbol ending   = mathControl pi * 6.
 #symbol H        = 0.005r.
 #symbol A        = 5.0r.
-
-#static C        = 2.0r / 3.0r.
+#static C        = /*2.0r / 3.0r*/0.6666666666666666666667r.
 
 // --- function ---
 
-#symbol Function : T = gui'Point
-            &&x:(math'Rounded::(A * (c * math'cos::T + math'cos::(c*T)) * ScaleX))
-             &y:(math'Rounded::(A * (c * math'sin::T - math'sin::(c*T)) * ScaleY)).
+#symbol function = (:t) [ 
+            Point new 
+                &x:(mathControl roundInt:(A * (C * mathControl cos:t + mathControl cos:(C*t)) * ScaleX))
+                &y:(mathControl roundInt:(A * (C * mathControl sin:t - mathControl sin:(C*t)) * ScaleY))
+        ].
 
-#class Window (forms'SDIDialog)
+#symbol plotter =
 {
-    #field theImagebox.
-    #field theZeroX.
-    #field theZeroY.
-
-    #method $drawAxis : aCanvas
-    [
-        #var aSize := theImagebox dimensions.
-        theZeroX :=  aSize width / 2.
-        theZeroY := aSize height / 2 - 10.
-
-        #var aPlotter := graph'Plotter::aCanvas.
+    drawAxis &dimension:aSize &canvas:aCanvas
+    [        
+        #var(type:int) aZeroX :=  aSize width / 2.
+        #var(type:int) aZeroY := aSize height / 2 - 10.
 
         // X axis
-        aPlotter write &x:0 &y:theZeroY.
-        aPlotter append &x:(aSize width) &y:theZeroY.
-
-        aCanvas write &caption:"X" &x:(aSize width - 20) &y:(theZeroY + 2) &:graph'atextdrawing.
+        aCanvas setCaret &x:0 &y:aZeroY.
+        aCanvas lineCaretTo &x:(aSize width) &y:aZeroY.
+        
+        aCanvas write &caption:"X" &x:(aSize width - 20) &y:(aZeroY + 2).
 
         // Y axis
-        aPlotter write &x:theZeroX &y:0.
-        aPlotter append &x:theZeroX &y:(aSize height).
+        aCanvas setCaret &x:aZeroX &y:0.
+        aCanvas lineCaretTo &x:aZeroX &y:(aSize height).
 
-        aCanvas write &caption:"Y" &x:(theZeroX + 2) &y:2 &:graph'atextdrawing.
+        aCanvas write &caption:"Y" &x:(aZeroX + 2) &y:2.
 
-        loop &&from:-10 &to:10 &step:2 run: anIndex =
+        control run &int:-10 &int:10 &int:2 &forEvery: (&index:i)
         [
-            #if (anIndex != 0)?
+            (i != 0) ?
             [
-                aCanvas write 
-                    &caption:PrintableValue::anIndex &x:(theZeroX + (anIndex * ScaleX) - 4) &y:(theZeroY + 2) &:graph'atextdrawing.
+                aCanvas write &caption:(i literal) &x:(aZeroX + (i * ScaleX) - 4) &y:(aZeroY + 2).
                 
-                aCanvas write 
-                    &caption:PrintableValue::anIndex &x:(theZeroX + 8) &y:(theZeroY - (anIndex * ScaleY) - 2) &:graph'atextdrawing.
+                aCanvas write &caption:(i literal) &x:(aZeroX + 8) &y:(aZeroY - (i * ScaleY) - 2).
             ]
-            | [  
-                aCanvas write 
-                    &caption:"0" &x:(theZeroX + 2) &y:(theZeroY + 2) &:graph'atextdrawing.
-            ].
+            ! [ aCanvas write &caption:"0" &x:(aZeroX + 2) &y:(aZeroY + 2) ].
         ].
     ]
-
-    #method $drawGraph : aCanvas
+    
+    drawGraph &dimension:aSize &canvas:aCanvas
     [
-        #var aPlotter := graph'Plotter::aCanvas.
+        #var(type:int) aZeroX :=  aSize width / 2.
+        #var(type:int) aZeroY := aSize height / 2 - 10.
 
         #var t := starting.
         #var t2 := ending.
-        #var aZero := gui'PointVar &&x:theZeroX &y:theZeroY.
+        #var aZero := Point new &x:aZeroX &y:aZeroY.
 
-        #var B := H.
+        #var p := mathControl pi.
+        #var s := mathControl cos:(p / 2).
+        #var s2 := mathControl roundInt:s.
 
-        aPlotter << aZero add:(Function::t).
-        #while (t <= t2)?
+        #var p2 := aZero + function eval:1.825r.
+
+        aCanvas setCaret &point:(aZero + function eval:t).
+        #loop (t <= t2)?
         [
-            aPlotter += aZero add:(Function::t).
+            aCanvas lineCaretTo &point:(aZero + function eval:t).
 
             t := t + H.
         ].
     ]
+}.
 
-    #method painting &canvas:aCanvas
+#class Window :: SDIDialog
+{
+    #field theImagebox.
+
+    #constructor new
+        <= (new)
     [
-        aCanvas 
-            graph'pen'set:graph'WhitePen
-            graph'brush'set:graph'BlackBrush.
+        theImagebox := Imagebox new.
+        theControls append:theImagebox.
 
-        self $drawAxis:aCanvas $drawGraph:aCanvas.
-    ]
+        $self set &caption:"Graph sample".
+        $self set &x:50 &y:50.
+        $self set &width:400 &height:420.
 
-    #method initializing : Args
-    [
-        super initializing:Args.
+        theImagebox set &x:0 &y:0.
+        theImagebox set &width:400 &height:420.
+        theImagebox set &onPaint: (:sender &canvas:aCanvas)
+        [
+            aCanvas set &pen:WhitePen.
+            aCanvas set &brush:BlackBrush.
 
-        theImagebox := controls'Imagebox::self.
-
-        theImagebox event_handle'append:$self.
-
-        self
-            dimensions'set &width:400 &height:420
-            coordinates'set &x:50 &y:50
-            caption'set: "Graph sample".
-
-        theImagebox
-            dimensions'set &width:400 &height:420
-            coordinates'set &x:0 &y:0
-            open.
+            plotter drawAxis &dimension:(theImagebox dimension) &canvas:aCanvas.
+            plotter drawGraph &dimension:(theImagebox dimension) &canvas:aCanvas.
+        ].
     ]
 }

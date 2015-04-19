@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_BUILD_NUMBER             0x0031
+#define ELC_BUILD_NUMBER             0x0033
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -95,7 +95,7 @@
 #define ELC_WARNING_COMPILATION     "Compiled with warnings\n"
 #define ELC_UNSUCCESSFUL            "Compiled with errors\n"
 #define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
-#define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -e<symbol> - resolves the entry forward symbol\n      -g<name>   - specifies the package name\n      -lstd      - sets standard module flag\n      -m<path>   - generates the map file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -wun       - sets on the unresolved warnings\n      -xguit     - sets GUI application type\n"
+#define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -e<symbol> - resolves the entry forward symbol\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -wun       - sets on the unresolved warnings\n      -xguit     - sets GUI application type\n"
 
 // --- ELC error messages ---
 #define ELC_ERR_INVALID_OPTION	   "elc: error 401: Invalid command line parameter '%c'\n"

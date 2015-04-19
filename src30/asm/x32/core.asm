@@ -1093,7 +1093,9 @@ procedure % CLOSEFRAME
   // ; save return pointer
   pop  ecx  
   
-  lea  esp, [esp+8]
+  lea  esp, [esp+4]
+  pop  edx
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], edx
   pop  ebp
   
   // ; restore return pointer
@@ -1378,6 +1380,14 @@ end
 inline % 25h
                                                               
   mov  ebp, [ebp + 4]
+
+end
+
+// ; exclude
+inline % 26h
+                                                       
+  push ebp     
+  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
 
 end
 
@@ -1748,6 +1758,56 @@ inline % 65h
 
   mov ecx, [eax + esi]
   and ecx, 0FFh
+
+end
+
+// ; rsin
+
+inline % 66h
+
+//  fld   qword ptr [eax]  
+//  fsin
+//  fstp  qword ptr [edi]    // store result 
+
+  mov   ebx, eax
+  fld   qword ptr [eax]  
+  fldpi
+  fadd  st(0),st(0)       // ; ->2pi
+  fxch
+
+lReduce:
+  fprem                   // ; reduce the angle
+  fsin
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  // ; jc    short lErr        // ; clean-up and return error
+  sahf                    // ; transfer to the CPU flags
+  jpe   short lReduce     // ; reduce angle again if necessary
+  fstp  st(1)             // ; get rid of the 2pi
+
+  fstp  qword ptr [edi]    // ; store result 
+  mov   eax, ebx
+
+end
+
+// ; rcose
+
+inline % 67h
+
+  fld   qword ptr [eax]  
+  fcos
+  fstp  qword ptr [edi]    // store result 
+
+end
+
+// ; rarctan
+
+inline % 68h
+
+  fld   qword ptr [eax]  
+  fld1
+  fpatan                  // i.e. arctan(Src/1)
+  fstp  qword ptr [edi]    // store result 
 
 end
 

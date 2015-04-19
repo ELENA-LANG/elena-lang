@@ -43,6 +43,27 @@
     #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:0 &int:0.
+         
+        aRetVal << result.
+    ]
+    
+    #method eval &hwnd:anHWND &int:aMessage &int:wParam &int:lParam &vint:aRetVal
+    [
+        (aMessage == WM_SIZE)
+            ? [
+                theListener onsize &hwnd:anHWND &int:wParam &int:lParam &vint:aRetVal.
+                
+                ^ $self.
+            ].                
+                
+        #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:wParam &int:lParam.lParam.
+        
+        aRetVal << result.
+    ]
+    
+    #method wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
+    [
+        #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:0 &int:0.
         
         aRetVal << result.
     ]
@@ -107,11 +128,7 @@
                 // NOTE: SDIWindow is the main program window, so closing it means exiting the program
                 'program stop.
                 
-                #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:anHWND &int:GWL_USERDATA &int:0.
-                (anIndex != 0)
-                    ? [ RTPointer new &index:anIndex close. ].
-                
-                aRetVal << 0.
+                theListener ondestroy &hwnd:anHWND &vint:aRetVal.
                 
                 ^ $self.
             ].
@@ -128,19 +145,65 @@
         (aCode == 0)
             ? [ theListener onclick &hwnd:aControl &vint:aRetVal. ].
     ]
-    
+
 //    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
 //    [
 //        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
 //    ]
 }
 
+// --- SDIWindowCallback ---
+
+#class PaintboxCallback :: WindowCallback
+{
+    #constructor new &win_listener:aListener
+    [
+        theListener := aListener.
+    ]
+    
+    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    [
+        (aMessage == WM_DESTROY)
+            ? [
+                theListener ondestroy &hwnd:anHWND &vint:aRetVal.                            
+                
+                ^ $self.
+            ].
+        
+        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
+    ]
+    
+    #method wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
+    [
+        theListener onpaint &hwnd:anHWND &vint:aRetVal.
+    ]
+}
+
 // --- WindowListener ---
 
 #class(limited) WindowListener
 {
+    #method onpaint &hwnd:aControl &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
     #method onclick &hwnd:aControl &vint:aResult
     [
+        aResult << 0.
+    ]
+    
+    #method onsize &hwnd:aControl &int:wParam &int:lParam &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
+    #method ondestroy &hwnd:aControl &vint:aResult
+    [
+        #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:aControl &int:GWL_USERDATA &int:0.
+        (anIndex != 0)
+            ? [ RTPointer new &index:anIndex close. ].
+
         aResult << 0.
     ]
 }
@@ -148,6 +211,7 @@
 // --- SDIWindowClass ---
 
 #static SDIWindowClass = $windowClassControl createClass &name:"ELENA.SDIWINDOW.3.1" &hinstance:CurrentInstance &int:WS_ELENAWINDOW &int:COLOR_BACKGROUND.
+#static PaintboxClass = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0.
 
 //// --- BaseWindowHandle ---
 //

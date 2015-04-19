@@ -8,10 +8,12 @@
 // --- control types ---
 #subject(class:forms'IControl)    control.
 
+#subject(class:forms'Canvas)      canvas.
 #subject(class:forms'StaticLabel) static.
 #subject(class:forms'Label)       label.
 #subject(class:forms'Edit)        edit.
 #subject(class:forms'Button)      button.
+#subject(class:forms'Paintbox)    paintbox.
 #subject(class:forms'SDIForm)     sdiform.
 
 // --- properties ---
@@ -24,6 +26,8 @@
 #subject back_color.
 #subject fore_color.
 #subject opened.
+#subject(class:forms'Pen)      pen.
+#subject(class:forms'Brush)    brush.
 
 #subject(class:forms'Point)location.
 
@@ -31,3 +35,4 @@
 
 // --- event handlers ---
 #subject(class:system'BaseFunction1) onClick.
+#subject onPaint.

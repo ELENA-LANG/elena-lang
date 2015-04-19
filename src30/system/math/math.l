@@ -237,6 +237,18 @@
         
     truncate &real:aReal &vreal:aRetVal
         => system'internal'r_truncate.
+        
+    sin &real:aReal &vreal:aRetVal
+        => system'internal'r_sin.
+        
+    cos &real:aReal &vreal:aRetVal
+        => system'internal'r_cos.
+        
+    arctan &real:aReal &vreal:aRetVal
+        => system'internal'r_arctan.
+                
+    pi &vreal:aRetVal
+        => system'internal'r_pi.
 }.
 
 #class(extension:real) realOp
@@ -300,7 +312,37 @@
         
         ^ RealNumber new &real:(n - aRetVal).
     ]
-    
+
+    #method(type:real)sin
+    [
+        #var(type:real)n := self real.        
+        #var(type:vreal)aRetVal.
+        
+        realOpController sin &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(type:real)cos
+    [
+        #var(type:real)n := self real.        
+        #var(type:vreal)aRetVal.
+        
+        realOpController cos &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(type:real)arctan
+    [
+        #var(type:real)n := self real.        
+        #var(type:vreal)aRetVal.
+        
+        realOpController arctan &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+            
     #method is &zero
         = self == 0.
         

@@ -376,9 +376,9 @@ copy %1\examples\goods\*.l examples\goods
 copy %1\examples\goods\*.txt examples\goods 
 copy %1\examples\goods\*.prj examples\goods 
 
-rem md examples\graphs
-rem copy %1\examples\graphs\*.l examples\graphs
-rem copy %1\examples\graphs\*.prj examples\graphs
+md examples\graphs
+copy %1\examples\graphs\*.l examples\graphs
+copy %1\examples\graphs\*.prj examples\graphs
 
 md examples\helloworld 
 copy %1\examples\helloworld\*.l examples\helloworld

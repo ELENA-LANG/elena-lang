@@ -1278,7 +1278,9 @@ procedure % CLOSEFRAME
   pop  ecx  
 
   // ; GCXT
-  lea  esp, [esp+8]
+  lea  esp, [esp+4]
+  pop  edx
+  mov  [esi + tls_stack_frame], edx
   pop  ebp
   
   // ; restore return pointer
@@ -1515,6 +1517,17 @@ inline % 1Dh
   mov  [ebx + tls_catch_level], edx
   pop  edx
   mov  [ebx + tls_catch_addr], edx
+
+end
+
+// ; exclude
+inline % 26h
+                                                              
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  eax, [edx+eax*4]
+  push ebp     
+  mov  [eax + tls_stack_frame], esp
 
 end
 

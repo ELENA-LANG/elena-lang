@@ -164,6 +164,7 @@ public:
    void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
+   void excludeFrame(CommandTape& tape);
    void declareVariable(CommandTape& tape, ref_t nilReference);
    void declarePrimitiveVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);

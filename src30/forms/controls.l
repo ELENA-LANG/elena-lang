@@ -18,6 +18,7 @@
         theEnabled := true.
         theRegion := Region new.
         theTabStop := false.
+        theCaption := emptyWideLiteralValue.
     ]
     
     #method is &visible = theVisible.
@@ -66,7 +67,7 @@
         #var(type:vint)y.
         aPoint read &vint:x &vint:y.
         
-        theRegion write &x:x &y:y.
+        theRegion writeLocation &int:x &int:y.
     ]
     
     #method set &x:anX &y:anY
@@ -85,8 +86,7 @@
         
         aDimension read &vint:aWidth &vint:aHeight.
         
-        theRegion write &width:aWidth.
-        theRegion write &height:aHeight.
+        theRegion writeDimension &int:aWidth &int:aHeight.
     ]
     
     #method set &width:aWidth &height:aHeight

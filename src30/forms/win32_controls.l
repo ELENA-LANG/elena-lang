@@ -12,6 +12,8 @@
     #method retrieve &hwnd:aHandle = nil.
     
     #method open []
+    
+    #method close []
 }
 
 // --- BaseWindowControl ---
@@ -52,6 +54,18 @@
     
     #method hwnd = theHandle.
             
+    #method set &enabled : aValue
+    [
+        $super set &enabled:aValue.
+        
+        (nil == theHandle)
+            ! [
+                theEnabled
+                    ? [ theHandle setEnabled &int:-1. ]
+                    ! [ theHandle setEnabled &int:0. ].
+            ].
+    ]
+    
     #method set &caption : aCaption
     [
         $super set &caption:aCaption.
@@ -88,6 +102,11 @@
         
                 theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int_attributes:SWP_NOMOVE.
             ].
+    ]
+    
+    #method refresh
+    [
+        theHandle refresh.
     ]
 }    
 
@@ -359,5 +378,193 @@
     [
         (nil != theClick)
             ? [ theClick eval:$self. ].
+    ]
+}
+
+// --- Paintbox ---
+
+#class PaintboxListener :: WindowListener
+{
+    #field(type:paintbox)theOwner.
+    
+    #constructor new &paintbox:anOwner
+    [
+        theOwner := anOwner.
+    ]
+    
+    #method onpaint &hwnd:aControl &vint:aResult
+    [
+        theOwner $paint.
+        
+        aResult << 0.
+    ]
+    
+    #method onsize &hwnd:aControl &int:wParam &int:lParam &vint:aResult
+    [
+        #var(type:int)width.
+        #var(type:vint)height.
+        width := lParam.
+        width := width && 0FFFFh.
+        
+        lParam shift &index:16 &vint:height.
+        
+        theOwner $resize &int:width &int:height.
+        
+        aResult << 0.
+    ]
+    
+    #method ondestroy &hwnd:aControl &vint:aResult
+    [
+        theOwner $destroy.
+        
+        $super ondestroy &hwnd:aControl &vint:aResult.
+    ]
+}
+
+#class IPaintbox :: IControl
+{
+    #field(type:paintbox)thePaintbox.
+    
+    #constructor new &paintbox:aPaintbox
+    [
+        thePaintbox := aPaintbox.
+    ]
+    
+    #method object = thePaintbox.
+ 
+    #method open [ thePaintbox open. ]
+          
+    #method retrieve &hwnd:aHandle = thePaintbox retrieve &hwnd:aHandle.
+}
+
+#class(limited) Paintbox :: BaseWinControl
+{
+    #field(type:canvas) theCanvas.
+    #field(type:onPaint)thePaint.
+    
+    #constructor new
+        <= (new)
+    [
+        theCanvas := Canvas new.
+    ]
+    
+    #method control = IPaintbox new &paintbox:$self.
+    
+    #method paintbox = $self.
+
+    #method set &onPaint:aFunction
+    [
+        thePaint := aFunction.
+    ]
+   
+    #method $destroy
+    [
+        theCanvas free.
+    ]
+ 
+    #method $paint
+    [
+        #var(type:win_paintstruct)struct.
+        
+        struct begin &hwnd:theHandle.
+        
+        theCanvas open &win_paintstruct:struct.
+        
+        (nil == thePaint)
+            ! [ thePaint eval:$self &canvas:theCanvas. ].
+        
+        theCanvas close.
+
+        struct end &hwnd:theHandle.
+    ]
+ 
+    #method $resize &int:aWidth &int:aHeight
+    [
+    ]
+  
+    #method $createHandle
+    [
+        #var(type:hwnd)aParent := theParent hwnd.
+
+        #var(type:int)Styles := WS_CHILD.
+        theVisible
+            ? [ Styles := Styles || WS_VISIBLE. ].
+                        
+        #var(type:vint)anX.
+        #var(type:vint)anY.
+        #var(type:vint)aWidth.
+        #var(type:vint)aHeight.
+        
+        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        
+        theHandle := WindowHandle new &int:WS_EX_TRANSPARENT
+                        &wide:PaintboxClass &wide:(theCaption wide) &int:Styles
+                        &int:anX &int:anY &int:aWidth &int:aHeight 
+                        &hwnd:aParent &hinstance:CurrentInstance &object:(PaintboxCallback new &win_listener:(PaintboxListener new &paintbox:$self)).
+    ]
+}
+
+#class Imagebox :: Paintbox
+{
+    #field(type:hbitmap) theImage.
+    #field(type:hdc)     theImageDC.
+    
+    #constructor new
+        <= (new)
+    [
+    ]
+
+    #method $destroy
+    [
+        $super $destroy.
+        
+        theImage free.
+        theImageDC free.
+    ]
+    
+    #method $paint
+    [
+        #var(type:win_paintstruct)struct.
+        
+        struct begin &hwnd:theHandle.
+        
+        #var(type:vint)aWidth.
+        #var(type:vint)aHeight.
+        theRegion readDimension &vint:aWidth &vint:aHeight.
+        
+        #var(type:hdc)dc.
+        struct read &hdc:dc.
+        
+        dc copy &int:0 &int:0 &int:aWidth &int:aHeight &hdc:theImageDC &int:0 &int:0 &int:SRCCOPY.
+                
+        struct end &hwnd:theHandle.
+    ]
+ 
+    #method refresh
+    [
+        (nil == thePaint)
+            ! [ thePaint eval:$self &canvas:theCanvas. ].
+
+        $super refresh.
+    ]
+ 
+    #method $resize &int:aWidth &int:aHeight
+    [
+        (nil == theImage)
+            ! [
+                theImage free.
+                theImageDC free.
+            ].
+            
+        #var(type:hdc)dc.
+        theHandle read &hdc:dc.
+            
+        theImage := HBITMAP new &hdc:dc &int:aWidth &int:aHeight.
+        theImageDC := HDC newCompatible &hdc:dc.
+        theImage select &hdc:theImageDC.
+
+        theCanvas open &hdc:theImageDC.
+
+        $self refresh.
     ]
 }

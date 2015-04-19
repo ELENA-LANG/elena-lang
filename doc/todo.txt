@@ -19,22 +19,21 @@ v  - vm script
                                                                                
 ------                                 
 Currently:
-------
+------                                                                                                                        
               adev - gui
-                       * onclick : retrieve &hwnd is not directly resolved and requires boxing ; should be fixed - one possible way - list should be
-                         typed, every member of it is an adapter - ControlInterface - implemented limited set of actions
-
+                       * imagebox
+                       * imagebox : resize bitmap on wm_size event
                        * implement forms package (native control wrappers)
                        * make possible to set / change / get the control color
                        * make possible to set / change / get the control font
 
-                       * SDIDialog should have fixed border (not resizable)
                        * gui stand-alone, gui mt stand-alone, gui vm client
                        * support default button style
-                       * new controls: check box, radio box, status bar, timer, updown, menu, memo, image box
+                       * new controls: combo box, check box, radio box, status bar, timer, updown, menu, memo, image box
+                       * make sure all windows resources (hbitmap, hdc, ..) are properly released
 
               sdev - gui examples:  
-                       * agenda should have two version, one using system'winforms, another using forms
+                       * migrate graph sample
                        * migrate all gui samples (except upndown)
                        
               adev - linux lib30:
@@ -511,6 +510,9 @@ week 4:
                             #var l := n long.
                          after the second operation it says n content is 20h
 
+              xmaint - elc
+                       * update command line option help, a lot of not supported option, show new ones
+
               xmaint - test
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
@@ -539,6 +541,11 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development  
+                       * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
+                       * begin / end should be verbs?
+                       * initializing stack allocated variables
+                       * fixed sized data array (see system'winforms'PAINTSTRUCT)
+                       * free should be method to free the resoures (must be a verb)
                        * typed list ; possible implementation (see forms package)
                        * method redirect to sealed / closed object - should be direct as well ; simplify forms package code using this feature
                          (control adapters could be created directly in the code without need to explicitly declare them)
@@ -566,7 +573,7 @@ week1:
                        * private / protected / internal methods / internal type
                        
                        * constant symbols should be sealed / closed ?
-
+                       
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
 
                        * constructor may return constant objects as well (see min / max)
@@ -592,6 +599,12 @@ week1:
                          could be implemented directly, is there any other way to achieve this without duplicating source code?
                          
               xdev - general implementation
+                       * bug with stack allocated variable in symbol : #static C        = 2.0r / 3.0r.
+                       * review graph sample, get rid of warnings
+
+                       * constant symbols should be used directly
+                       * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
+
                        * review all system warnings
                        * WS_CHILD || SS_SIMPLE || WS_VISIBLE should supported (see system'winforms)
                        * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
@@ -628,17 +641,7 @@ week1:
                        * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
                          symbols as an argument
                        * cache type checks
-                       * look at agenda sample:
-                             theHandle set &win_listener:WindowListener
-                             {
-                                onclick &handle:aControl &vint:aResult
-                                [
-                                   // Save
-                                   (aControl == BtmSave handle)
-                                        ? [ self saveFile. ].
-                                ]
-                             }.
-                          self cannot be used, because it points to a class, rather then the object
+                       * look at graphica sample. self cannot be used in the constructor, because it points to a class, rather then the object
 
                        * review current primitive stack allocation ; probably primtive variables declared in the sub code,
                          should be freed after the sub code is closed (currently the space is percist to fix the bug with
@@ -646,6 +649,8 @@ week1:
 
                        * implicit variables (allocated for arithmetic or typecasting operations) should not be permanent
                        * if the nested class owner is sealed / limited - direct operation should be used
+                       * no need to provide exclude command for every external call, special hint to ignore it?
+                       * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
                        
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start
