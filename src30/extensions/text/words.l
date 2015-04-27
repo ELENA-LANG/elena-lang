@@ -23,11 +23,11 @@
     [
         theBuffer clear.
 
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         #var(type:int)aCurrent := theIndex.
-        #var(type:vchar)aChar.
+        #var(type:char)aChar.
         #var(type:bool)aSpaceMode := true.
-        #var(type:vint)aCharLen.
+        #var(type:int)aCharLen.
         
         theLiteral readLength &vint:aLength.
         

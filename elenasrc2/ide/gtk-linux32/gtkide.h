@@ -52,6 +52,8 @@ protected:
 
 public:
    int newDocument(const char* name, Document* doc);
+   void closeDocument(int index);
+   int getCurrentDocumentIndex();
 
    MainWindow(const char* caption, _Controller* controller, Model* model);
 };

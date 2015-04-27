@@ -28,7 +28,7 @@
         
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -36,7 +36,7 @@
 
     #method fill &index:anIndex &length:aLength &byte:aValue
     [
-        #var(type:vint)aTotalLength.
+        #var(type:int)aTotalLength.
         $self readLength &vint:aTotalLength.
         
         #var(type:int)i := anIndex.
@@ -125,7 +125,7 @@
         
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -176,7 +176,7 @@
         
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -218,7 +218,7 @@
         
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -315,7 +315,7 @@
         
     #method(type:char) getAt &index:anIndex
     [
-        #var(type:vchar)aChar.
+        #var(type:char)aChar.
         $self read &index:anIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
@@ -329,7 +329,7 @@
 
     #method indexOf &index:anIndex &char:aChar
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -337,7 +337,7 @@
 
     #method indexOf &index:anIndex &literal:aLiteral
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:anIndex &literal:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -366,7 +366,7 @@
 
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -543,7 +543,7 @@
         
     #method(type:char) getAt &index:anIndex
     [
-        #var(type:vchar)aChar.
+        #var(type:char)aChar.
         $self read &index:anIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
@@ -557,7 +557,7 @@
 
     #method indexOf &index:anIndex &char:aChar
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -565,7 +565,7 @@
 
     #method indexOf &index:anIndex &wide:aLiteral
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:anIndex &wide:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -588,7 +588,7 @@
 
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -710,7 +710,7 @@
 {
     #method byte
     [
-        #var(type:vbyte)retVal.
+        #var(type:byte)retVal.
         byteConvertor convert &literal:theValue &vbyte:retVal.
         
         ^ ByteNumber new &byte:retVal.
@@ -718,7 +718,7 @@
 
     #method short
     [
-        #var(type:vshort)retVal.
+        #var(type:short)retVal.
         shortConvertor convert &literal:theValue &vshort:retVal.
         
         ^ ShortNumber new &short:retVal.
@@ -726,7 +726,7 @@
 
     #method char
     [
-        #var(type:vchar)retVal.
+        #var(type:char)retVal.
         charConvertor $convert &index:0 &literal:theValue &vchar:retVal.
         
         ^ CharValue new &char:retVal.
@@ -734,7 +734,7 @@
 
     #method int
     [
-        #var(type:vint)retVal.
+        #var(type:int)retVal.
         intConvertor convert &literal:theValue &vint:retVal.
         
         ^ IntNumber new &int:retVal.
@@ -742,7 +742,7 @@
 
     #method long
     [
-        #var(type:vlong)retVal.
+        #var(type:long)retVal.
         longConvertor convert &literal:theValue &vlong:retVal.
         
         ^ LongNumber new &long:retVal.
@@ -750,7 +750,7 @@
 
     #method real
     [
-        #var(type:vreal)retVal.
+        #var(type:real)retVal.
         realConvertor convert &literal:theValue &vreal:retVal.
         
         ^ RealNumber new &real:retVal.
@@ -823,8 +823,8 @@
 
     #method add &array:anArray
     [
-        #var(type:vint)aLength1.
-        #var(type:vint)aLength2.
+        #var(type:int)aLength1.
+        #var(type:int)aLength2.
         
         $self readLength &vint:aLength1.        
         anArray readLength &vint:aLength2.
@@ -857,7 +857,7 @@
 
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -884,7 +884,7 @@
         
     #method length
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -918,7 +918,7 @@
 
     #method next
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         
         theLiteral readLength &vint:aLength.
         
@@ -957,7 +957,7 @@
     
     #method available
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theLiteral readLength &vint:aLength.
         
         ^ theIndex < aLength.
@@ -965,7 +965,7 @@
 
     #method get
     [
-        #var(type:vchar)aChar.
+        #var(type:char)aChar.
         theLiteral read &index:theIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
@@ -1012,7 +1012,7 @@
 
     #method next
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         
         theLiteral readLength &vint:aLength.
 
@@ -1053,7 +1053,7 @@
     
     #method available
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theLiteral readLength &vint:aLength.
         
         ^ theIndex < aLength.
@@ -1093,7 +1093,7 @@
     
     #method available
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theArray readLength &vint:aLength.
         
         ^ theIndex < aLength.
@@ -1138,7 +1138,7 @@
 
     #method next
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theArray readLength &vint:aLength.
         
         theIndex append &int:1.

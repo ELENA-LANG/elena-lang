@@ -500,7 +500,7 @@
     
     #method writeLine &args:Arguments
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         Arguments readLength &vint:aLength.
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength) ?
@@ -699,7 +699,7 @@
         
         #var(type:array) aParams := aBuffer ::literalOp split &char:#32.
         
-        #var(type:vint)aLength.        
+        #var(type:int)aLength.        
         Arguments readLength &vint:aLength.
         
         #var(type:int)anIndex := 0.

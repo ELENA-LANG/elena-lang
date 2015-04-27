@@ -15,6 +15,7 @@
 [*] stripping CORE from OS dependant code and moving it into CORE_LNX and CORE_WIN
 [-] out prefix is no longer supported, variable should be used instead
 [*] gui platform is reintroduced
+[+] built-in $nil symbol
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement

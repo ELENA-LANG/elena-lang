@@ -19,22 +19,25 @@ v  - vm script
                                                                                
 ------                                 
 Currently:
-------                                                                                                                        
+------                                              
+                       
               adev - gui
-                       * imagebox
-                       * imagebox : resize bitmap on wm_size event
+                       * image list, it could be possible to assign the image list to the image box and change the image list index to change the
+                         picture, so no need to override on paint event
                        * implement forms package (native control wrappers)
                        * make possible to set / change / get the control color
                        * make possible to set / change / get the control font
 
                        * gui stand-alone, gui mt stand-alone, gui vm client
                        * support default button style
-                       * new controls: combo box, check box, radio box, status bar, timer, updown, menu, memo, image box
+                       * new controls: combo box, check box, status bar, timer, updown, menu, memo, image box, list box
                        * make sure all windows resources (hbitmap, hdc, ..) are properly released
+                       * example with buttons, edit on panel
 
               sdev - gui examples:  
-                       * migrate graph sample
-                       * migrate all gui samples (except upndown)
+                       * migrate c_a_g
+                       * migrate notepad
+                       * migrate timer
                        
               adev - linux lib30:
                        * implement file i/o operations
@@ -44,19 +47,20 @@ Currently:
 1.9.19
 --------
 week2:
-              idev - linux:
-                       * new source
-                       * open source
+              idev - linux:              
+                       * TextView: support caching
+                       * TextView: cursor blinking
+
+                       * save source
+                       * close source
                        * open project
                        * new project
                        * add menu items
                        * add tool bar items
                        * add hot keys
-                       * edit frame should support styles
-                       * migrate 
-                       * TextView: support highlight
-                       * TextView: support caching (cursor?)
-
+                       * editor
+                       * project compilation / clean / run
+                       
               adev - linux lib30:
                        * core : implement INIT_RND
                        * linux file operations
@@ -66,6 +70,11 @@ week2:
                        * port console samples                                                                               
                        * port rosetta samples                                                                               
                        
+              adev - lib30           
+                       * cast should be implemented by every object (so it could be called directly)
+                       * review lib30, do not use vint, ... when declaring variables and fields
+                       * review samples
+
               adev - lib30
                        * test vm samples       
                        * test thread operation                                                                               
@@ -75,6 +84,9 @@ week2:
                        * agenda : implement file deleting
                        
               adev - lib30           
+                       * result of operation - #32 + #65 ?? 
+                       * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
+                       
                        * if we need to store wide literal directly, we have to convert it into chararray and then convert into 
                          byte array, can we do it directly?
 
@@ -488,6 +500,12 @@ week3:
                        * migrate all script samples
 
 week 4:
+              xmaint - elc
+                       * bug : two classes with the same name
+
+              xmaint - web page
+                       * update the web page using bootstrap
+
               xdev - ide
                        * ide : test with utf8, win1252, ...
                        * elc : test with utf8, win1252, ...
@@ -540,7 +558,41 @@ week1:
               idev - unicode
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
-              xdev - generic development  
+              xdev - stack allocated types
+                       * review code, consider the cases using int, vint; can we pass int as vint, allocate the space for variable and when copy back
+
+              xdev - generic development
+                       * #var(type:vint)n := Integer new.
+                         n := 4.  // value should be copied rather than the reference
+                       * could we simplify the way how to declare "interfaces"
+
+                       * if the array is declared without size - raise an error?
+
+                       * declaring stack allocated object without providing default value
+                          #var(type:int)n.
+                          #var(type:bytearray,size:5)fa.
+
+                         stack allocated types should be filled with zeros.
+
+                       * declaring stack allocated object without providing default value                       
+                          #var(type:bytearray)fa. - an empty object should be automatically created with 0 length
+                          
+                       * boxing, if the stack allocated object was boxed after the end of the operation it should be unboxed (if the type is read only - no
+                         need in unbox part)
+  
+                       * direct call method for stack allocated object - only safe one, or should be boxed
+
+                       * boxing not read only stack allocated objects - the dynamic object should copy its content to the original one
+                         
+                       * declaring variable without assigning a value should be allowed only for stack allocated types , in all other cases we may have
+                         nil object referred by strong typed variable
+                       * check the operation with nil (as a wrapper around $nil) 
+                       
+                       * primitive arithmetic operations "+","-","*","/" - the result should be IntNumber
+
+                       * structural types : you may specify the type of sructural class: integer, real, pointer, stringof (integer), subject, message
+                         implement primitive operations : + - * / += -= *= /= << == != < > >= <= @ @:= for all possible situations
+
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
                        * begin / end should be verbs?
                        * initializing stack allocated variables
@@ -563,12 +615,6 @@ week1:
                          (e.g. reference to the symbol code, known problem : mixing outer field with code reference) 
                        * system'Signature should qualify only generic message with one parameter, there should be flag to indicate if it is strong
                          one or not ; if it is the strong one the object should implicitly send typecasting message to the parameter
-
-                       * nil should be allowed to be returned / passed as a typed argument (but not for data ones), probably check for nil
-                         before direct call in that case (and it should be possible to turn this check off)?
-                         
-                       * declaring variable without assigning a value should be allowed only for stack allocated types , in all other cases we may have
-                         nil object referred by strong typed variable
 
                        * private / protected / internal methods / internal type
                        
@@ -599,6 +645,10 @@ week1:
                          could be implemented directly, is there any other way to achieve this without duplicating source code?
                          
               xdev - general implementation
+                       * handle access vialation exception : exception handler should be called
+
+                       * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
+
                        * bug with stack allocated variable in symbol : #static C        = 2.0r / 3.0r.
                        * review graph sample, get rid of warnings
 
@@ -651,6 +701,10 @@ week1:
                        * if the nested class owner is sealed / limited - direct operation should be used
                        * no need to provide exclude command for every external call, special hint to ignore it?
                        * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
+                       * invalid error for the following invalid code : #var(type:int)Styles.
+
+                       * direct call / virtual call : try to eliminate nil check when it is possible, for example, if the compiler
+                         detect early type check, when additional ones are not necessary
                        
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start
@@ -683,6 +737,9 @@ week1:
                        * port elide to linux
                        * port elenasm to linux
                        * port elt to linux
+
+              idev - linux:
+                       * make sure textview is really deleted when the page is closed
 
               xdev - multithreading       
                        * implement lock / unlock

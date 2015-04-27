@@ -49,6 +49,45 @@
 
 #symbol BlackBrush = Brush new &color:0.
 
+// --- Image ---
+
+#class Image
+{
+    #field(type:wide)thePath.
+    #field(type:hdc)theDC.
+    #field(type:hbitmap)theBitmap.
+    #field(type:dimension)theSize.
+    
+    #constructor new &path:aPath &dimension:aSize
+    [
+        thePath := aPath wide.
+        theSize := aSize.
+    ]
+    
+    #method open &hwnd:aParent
+    [
+        #var(type:hdc)aParentDC.
+        aParent read &hdc:aParentDC.
+
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
+        theSize read &vint:aWidth &vint:aHeight.
+ 
+        theBitmap := HBITMAP load &wide:thePath &int:aWidth &int:aHeight.
+        
+        theDC := HDC newCompatible &hdc:aParentDC.
+        theBitmap select &hdc:theDC. 
+    ]    
+    
+    #method hdc = theDC.
+
+    #method free
+    [
+        theDC free.
+        theBitmap free.
+    ]
+}
+
 // --- Canvas ---
 
 #class(sealed,struct) Canvas
@@ -118,8 +157,8 @@
  
     #method setCaret &point:p
     [
-        #var(type:vint)x.
-        #var(type:vint)y.
+        #var(type:int)x.
+        #var(type:int)y.
         p read &vint:x &vint:y.
         
         theHDC moveTo &int:x &int:y.
@@ -137,8 +176,8 @@
  
     #method lineCaretTo &point:p
     [
-        #var(type:vint)x.
-        #var(type:vint)y.
+        #var(type:int)x.
+        #var(type:int)y.
         p read &vint:x &vint:y.
         
         theHDC lineTo &int:x &int:y.
@@ -153,6 +192,13 @@
     [
         theHDC drawText &wide:aText &int:x &int:y.
     ]
+ 
+    #method write &image:anImage &int:x &int:y &int:aWidth &int:aHeight
+    [
+        #var(type:hdc)aDC := anImage hdc.
+        
+        theHDC copy &int:x &int:y &int:aWidth &int:aHeight &hdc:aDC &int:0 &int:0 &int:SRCCOPY.
+    ] 
  
     #method free
     [

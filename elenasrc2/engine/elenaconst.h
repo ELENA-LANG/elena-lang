@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0006
+   #define ENGINE_MINOR_VERSION     0x0007
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -318,9 +318,9 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.06"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.06"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!8.06"          // the language version
+   #define ELENA_SIGNITURE          "ELENA.8.07"       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.07"    // the ELENAVM client
+   #define MODULE_SIGNATURE         "EN!8.07"          // the language version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.3"
 
   // --- ELENA core module names ---
@@ -419,6 +419,7 @@ namespace _ELENA_
    #define THIS_VAR                "$self"            // the current class instance
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
+   #define NIL_VAR                 "$nil"             // the nil symbol
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
@@ -474,7 +475,6 @@ namespace _ELENA_
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
-   #define NIL_FORWARD              "'$nil"                          // the nil reference
    #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
    #define FUNCX_FORWARD            "'$function"                     // the base action / function class
    #define NFUNCX_FORWARD           "'$nfunction"                    // the base action / function class

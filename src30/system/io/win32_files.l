@@ -63,10 +63,11 @@
             &vint        : aLength
             &int         : 0.
     ]
-
+    
     #method close
     [
-        theHandle close.
+        system'external'KERNEL32 CloseHandle
+            &handle:theHandle.
     ]
 }
 
@@ -112,15 +113,15 @@
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
-        #var(type:vlength)aBlockLength.
-        #var(type:vlength)aBufferLength.
+        #var(type:length)aBlockLength.
+        #var(type:length)aBufferLength.
         #var(type:int)anOffset := 0.
         
         #loop (aTotal > 0) ?
         [
             (aTotal < 64)
-                ? [ aBlockLength << aTotal. ]
-                ! [ aBlockLength << 64. ].
+                ? [ aBlockLength := aTotal. ]
+                ! [ aBlockLength := 64. ].
                 
             theEncoder convert &index:anOffset &vlength:aBlockLength &chararray:anInput &bytearray:aBuffer &vlength:aBufferLength.
             
@@ -167,13 +168,13 @@
 
     #method read &chararray:anOutput &vlength:aLength
     [
-        #var(type:vint)aBufferLength := 64.
+        #var(type:int)aBufferLength := 64.
         #var(type:bytearray,size:64)aBuffer.
         theStream read &bytearray:aBuffer &vlength:aBufferLength.
         (aBufferLength == 0)
             ? [ theOpen := false. aLength << 0. ]
             ! [
-                #var(type:vint)aRead := aBufferLength.
+                #var(type:int)aRead := aBufferLength.
                         
                 theEncoder convert &index:0 &vlength:aBufferLength &bytearray:aBuffer &chararray:anOutput &vlength:aLength.
                 

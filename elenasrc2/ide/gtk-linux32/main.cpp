@@ -71,11 +71,34 @@ public:
 
    virtual bool selectFiles(Model* model, _ELENA_::List<text_c*>& selected)
    {
-//      FileDialog dialog(&appWindow, FileDialog::SourceFilter, OPEN_FILE_CAPTION, model->paths.lastPath);
-//
-//      return dialog.openFiles(selected);
-//
-      return false; // !!
+      Gtk::FileChooserDialog dialog(OPEN_FILE_CAPTION, Gtk::FILE_CHOOSER_ACTION_OPEN);
+      dialog.set_transient_for(appWindow);
+
+      //if (!_ELENA_::emptystr(_filePath))
+      //   gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(_dialog), _filePath);
+
+      dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+      dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+      filter_l->set_name("ELENA source file");
+      filter_l->add_pattern("*.l");
+      dialog.add_filter(filter_l);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+      filter_any->set_name("Any files");
+      filter_any->add_pattern("*");
+      dialog.add_filter(filter_any);
+
+      int result = dialog.run();
+      if (result == Gtk::RESPONSE_OK) {
+         std::string filename = dialog.get_filename();
+
+         selected.add(_ELENA_::StringHelper::clone(filename.c_str()));
+
+         return true;
+      }
+      else return false;
    }
 
    virtual bool selectProject(Model* model, _ELENA_::Path& path)
@@ -91,56 +114,96 @@ public:
 
    virtual void error(text_t message)
    {
-      //MsgBox::showError(appWindow.getHandle(), message, NULL);
+      Gtk::MessageDialog dialog(appWindow, message, false, Gtk::MESSAGE_ERROR);
+      dialog.run();
    }
 
    virtual void error(text_t message, text_t param)
    {
-      //MsgBox::showError(appWindow.getHandle(), message, param);
+      _ELENA_::String<char, 255> string(message);
+      string.append(param);
+
+      Gtk::MessageDialog dialog(appWindow, (const char*)string, false, Gtk::MESSAGE_ERROR);
+      dialog.run();
    }
 
    virtual bool confirm(text_t message, text_t param1, text_t param2)
    {
-//      int result = MsgBox::showQuestion(appWindow.getHandle(), message, param1, param2);
-//
-//      return MsgBox::isYes(result);
-//
-      return false; // !!
+      _ELENA_::String<char, 255> string(message);
+      string.append(param1);
+      string.append(param2);
+
+      Gtk::MessageDialog dialog(appWindow, (const char*)string, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+      int Answer=dialog.run();
+
+      // Process user choice
+      switch(Answer)
+      {
+         case(Gtk::RESPONSE_YES):
+            return true;
+         default:
+            return false;
+      }
    }
 
    virtual bool confirm(text_t message)
    {
-//      int result = MsgBox::showQuestion(appWindow.getHandle(), message);
-//
-//      return MsgBox::isYes(result);
+      Gtk::MessageDialog dialog(appWindow, message, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+      int Answer=dialog.run();
 
-      return false; // !!
+      // Process user choice
+      switch(Answer)
+      {
+         case(Gtk::RESPONSE_YES):
+            return true;
+         default:
+            return false;
+      }
    }
 
    virtual _View::Answer question(text_t message)
    {
-//      int result = MsgBox::showQuestion(appWindow.getHandle(), message);
-//
-//      if (MsgBox::isYes(result)) {
-//         return Answer::Yes;
-//      }
-//      else if (MsgBox::isCancel(result)) {
-//         return Answer::Cancel;
-//      }
-      /*else */return _View::No;
+      Gtk::MessageDialog dialog(appWindow, message, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE);
+      dialog.add_button("Yes", Gtk::RESPONSE_YES);
+      dialog.add_button("No", Gtk::RESPONSE_NO);
+      dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+
+      int Answer=dialog.run();
+
+      // Process user choice
+      switch(Answer)
+      {
+         case(Gtk::RESPONSE_YES):
+            return _View::Yes;
+         case(Gtk::RESPONSE_CANCEL):
+            return _View::Cancel;
+         default:
+            return _View::No;
+      }
    }
 
    virtual Answer question(text_t message, text_t param)
    {
-//      int result = MsgBox::showQuestion(appWindow.getHandle(), message, param);
-//
-//      if (MsgBox::isYes(result)) {
-//         return Answer::Yes;
-//      }
-//      else if (MsgBox::isCancel(result)) {
-//         return Answer::Cancel;
-//      }
-      /*else */return _View::No;
+      _ELENA_::String<char, 255> string(message);
+      string.append(param);
+
+      Gtk::MessageDialog dialog(appWindow, (const char*)string, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE);
+      dialog.add_button("Yes", Gtk::RESPONSE_YES);
+      dialog.add_button("No", Gtk::RESPONSE_NO);
+      dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+
+      int Answer=dialog.run();
+
+      // Process user choice
+      switch(Answer)
+      {
+         case(Gtk::RESPONSE_YES):
+            return _View::Yes;
+         case(Gtk::RESPONSE_CANCEL):
+            return _View::Cancel;
+         default:
+            return _View::No;
+      }
    }
 
    virtual int newDocument(text_t name, Document* doc)
@@ -150,7 +213,7 @@ public:
 
    virtual int getCurrentDocumentIndex()
    {
-     // return appWindow.getCurrentDocumentIndex();
+      return appWindow.getCurrentDocumentIndex();
    }
 
    virtual void selectDocument(int docIndex)
@@ -160,7 +223,7 @@ public:
 
    virtual void closeDocument(int index)
    {
-     // appWindow.closeDocument(index);
+      appWindow.closeDocument(index);
    }
 
    virtual void renameDocument(int index, text_t name)

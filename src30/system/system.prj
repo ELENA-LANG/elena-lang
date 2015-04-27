@@ -43,8 +43,8 @@ threading\win32_handlers.l
 threading\thread.l
 winforms\win32_types.l
 winforms\win32_exceptions.l
-winforms\win32_handles.l
 winforms\win32_common.l
+winforms\win32_handles.l
 winforms\win32_controls.l
 winforms\win32_windows.l
 winforms\win32_dialogs.l

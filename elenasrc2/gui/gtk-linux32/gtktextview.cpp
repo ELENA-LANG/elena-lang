@@ -206,12 +206,12 @@ void ViewStyles :: validate(Glib::RefPtr<Pango::Layout> layout)
    }
 }
 
-////// --- TextView Widget functions
-////
-////void TextView :: _dispose(GObject *object)
-////{
-////   G_OBJECT_CLASS (text_view_parent_class)->dispose(object);
-////}
+// --- TextView Widget functions
+
+//void TextView :: _dispose(GObject *object)
+//{
+//   G_OBJECT_CLASS (text_view_parent_class)->dispose(object);
+//}
 
 void TextView :: on_vscroll()
 {
@@ -317,6 +317,7 @@ TextView::TextDrawingArea :: TextDrawingArea(TextView* view) :
    _caretVisible = true;       // !! temporal
    _lineNumbersVisible = true; // !! temporal
    _mouseCaptured = false;
+   _highlight = false;
 
 //   _cached = false;
 }
@@ -326,12 +327,14 @@ TextView::TextDrawingArea :: TextDrawingArea(TextView* view) :
 TextView :: TextView()
    : _area(this)
 {
-   _vadjustment = get_vadjustment();
-   _hadjustment = get_hadjustment();
+   _vadjustment = _vscrollbar.get_adjustment();
+   _hadjustment = _hscrollbar.get_adjustment();
 
-   add(_area);
+   attach(_area, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
+   attach(_hscrollbar, 0, 1, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::FILL, 0, 0);
+   attach(_vscrollbar, 1, 2, 0, 1, Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
 
-   set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
+//   set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
 
    _hadjustment->signal_value_changed().connect(
       sigc::mem_fun(*this, &TextView::on_hscroll));
@@ -340,24 +343,6 @@ TextView :: TextView()
       sigc::mem_fun(*this, &TextView::on_vscroll));
 }
 
-//void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight)
-//{
-//   _needToResize = (_lineNumbersVisible != lineNumberVisible);
-//   bool tabChanged = (_tabSize != tabSize);
-//   _cached &= !(_needToResize || _tabSize != tabSize || _highlight != highlight);
-//
-//   _tabUsing = tabUsing;
-//   _tabSize = tabSize;
-//   _lineNumbersVisible = lineNumberVisible;
-//   _highlight = highlight;
-//
-//   if (_document) {
-//      _document->setHighlightMode(_highlight);
-//
-//      refreshView();
-//   }
-//}
-//
 //TextView :: ~TextView()
 //{
 //   // to remove cursor blink timeout
@@ -556,34 +541,34 @@ void TextView::TextDrawingArea :: onVScroll(int newPosition)
 
 Gtk::SizeRequestMode TextView::TextDrawingArea ::get_request_mode_vfunc() const
 {
-  //Accept the default value supplied by the base class.
-  return Gtk::DrawingArea::get_request_mode_vfunc();
+   //Accept the default value supplied by the base class.
+   return Gtk::DrawingArea::get_request_mode_vfunc();
 }
 
 void TextView::TextDrawingArea ::get_preferred_width_vfunc(int& minimum_width, int& natural_width) const
 {
-  minimum_width = 50;
-  natural_width = 0;
+   minimum_width = 50;
+   natural_width = 0;
 }
 
 void TextView::TextDrawingArea :: get_preferred_height_for_width_vfunc(int /* width */,
    int& minimum_height, int& natural_height) const
 {
-  minimum_height = 50;
-  natural_height = 0;
+   minimum_height = 50;
+   natural_height = 0;
 }
 
 void TextView::TextDrawingArea :: get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
 {
-  minimum_height = 50;
-  natural_height = 0;
+   minimum_height = 50;
+   natural_height = 0;
 }
 
 void TextView::TextDrawingArea :: get_preferred_width_for_height_vfunc(int /* height */,
    int& minimum_width, int& natural_width) const
 {
-  minimum_width = 50;
-  natural_width = 0;
+   minimum_width = 50;
+   natural_width = 0;
 }
 
 void TextView::TextDrawingArea :: on_size_allocate(Gtk::Allocation& allocation)
@@ -599,8 +584,8 @@ void TextView::TextDrawingArea :: on_size_allocate(Gtk::Allocation& allocation)
 //      gdk_window_move_resize (text_view->text_area, 0, 0, width, height);
 //
 //   }
-//
-//   /* Ensure h/v adj exist */
+
+   /* Ensure h/v adj exist */
    if(_view->setScrollerInfo(true, true, true)) {
 //      gtk_adjustment_set_value(text_view->vadjustment, MAX(0, text_view->vadjustment->upper - text_view->vadjustment->page_size));
 //      gtk_adjustment_set_value(text_view->hadjustment, MAX(0, text_view->hadjustment->upper - text_view->hadjustment->page_size));
@@ -771,7 +756,7 @@ void TextView::TextDrawingArea :: paint(Canvas& /*extCanvas*/canvas , int viewWi
 
       // Draw text
       int x = marginWidth;
-      int y = 0 - lineHeight + 1;
+      int y = 1 - lineHeight;
       int width = 0;
 
       char buffer[0x100];
@@ -906,6 +891,7 @@ void TextView ::TextDrawingArea :: update(bool resized)
 void TextView :: setDocument(Document* document)
 {
    _area._document = document;
+   _area._document->setHighlightMode(_area._highlight);
 
    _area._needToResize = true;
 //   _cached = false;
@@ -1083,6 +1069,18 @@ void TextView::TextDrawingArea :: _releaseMouse()
    _mouseCaptured = false;
 }
 
+//void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight)
+//{
+//   _highlight = highlight;
+//
+//   if (_document) {
+//      _document->setHighlightMode(_highlight);
+//
+//      refreshView();
+//   }
+//}
+//
+
 void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight)
 {
    _area._needToResize = (_area._lineNumbersVisible != lineNumberVisible);
@@ -1092,10 +1090,10 @@ void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisibl
    _area._tabUsing = tabUsing;
    _area._tabSize = tabSize;
    _area._lineNumbersVisible = lineNumberVisible;
-   //_highlight = highlight;
+   _area._highlight = highlight;
 
    if (_area._document) {
-      //_area._document->setHighlightMode(_highlight);
+      _area._document->setHighlightMode(_area._highlight);
 
       refreshView();
    }

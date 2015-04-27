@@ -13,14 +13,11 @@
     [
         theActionPtr := RTPointer new:anAction.
 
-        #var(type:vint)aParamIndex.
-        theActionPtr read &vint:aParamIndex.
-        
         theHandle := system'external'KERNEL32 CreateThread
                         &int:0
                         &int:0
                         &symbol_ref:system'internal'win_thread_start
-                        &int:aParamIndex
+                        &int:theActionPtr
                         &int:4
                         &int:0.
     ]

@@ -45,6 +45,7 @@ enum ObjectKind
    okLocal,                         // param - local / out parameter offset, extraparam - type reference
    okParam,                         // param - parameter offset, extraparam - type reference
    okThisParam,                     // param - parameter offset, extraparam - type reference
+   okNil,
    okSuper,
    okLocalAddress,                  // param - local offset, extraparam - class reference
    okParams,                        // param - local offset
@@ -165,8 +166,7 @@ public:
    void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
-   void declareVariable(CommandTape& tape, ref_t nilReference);
-   void declarePrimitiveVariable(CommandTape& tape, int value);
+   void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape, bool withStackControl = true);
@@ -243,7 +243,8 @@ public:
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-   void selectConstant(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
    void freeVirtualStack(CommandTape& tape, int count);
 

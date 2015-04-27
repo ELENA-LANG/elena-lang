@@ -111,6 +111,16 @@ int MainWindow :: newDocument(const char* name, Document* doc)
    return _mainFrame->newDocument(name, doc);
 }
 
+int MainWindow :: getCurrentDocumentIndex()
+{
+   return _mainFrame->getCurrentIndex();
+}
+
+void MainWindow :: closeDocument(int index)
+{
+   _mainFrame->eraseDocumentTab(index);
+}
+
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
    : SDIWindow(caption)
 {

@@ -9,13 +9,13 @@
 #symbol(const,type:int)WS_VISIBLE              = 10000000h.
 #symbol(const,type:int)WS_BORDER               = 00800000h.
 #symbol(const,type:int)WS_TABSTOP              = 00010000h.
-//#symbol(const,type:int)WS_CLIPSIBLINGS         = 04000000h.
+#symbol(const,type:int)WS_CLIPSIBLINGS         = 04000000h.
 
 // --- ex styles ---
 #symbol(const,type:int)WS_EX_OVERLAPPEDWINDOW  = 00000300h.
 #symbol(const,type:int)EX_SDI_OVERLAPPEDWINDOW = 00040101h.
 #symbol(const,type:int)WS_EX_CLIENTEDGE        = 00000200h.
-//#symbol(const,type:int)WS_EX_CONTROLPARENT     = 00010000h.
+#symbol(const,type:int)WS_EX_CONTROLPARENT     = 00010000h.
 //#symbol(const,type:int)WS_EX_NOPARENTNOTIFY    = 00000004h.
 #symbol(const,type:int)WS_EX_TRANSPARENT       = 00000020h.
 
@@ -23,8 +23,12 @@
 #symbol(const,type:int)SS_SIMPLE               = 0000000Bh.
 
 // --- button styles ---
-#symbol(const,type:int)BS_DEFPUSHBUTTON        = 1. 
+
 #symbol(const,type:int)BS_PUSHBUTTON           = 0. 
+#symbol(const,type:int)BS_DEFPUSHBUTTON        = 1. 
+#symbol(const,type:int)BS_AUTOCHECKBOX         = 3.
+#symbol(const,type:int)BS_GROUPBOX             = 7.
+#symbol(const,type:int)BS_AUTORADIOBUTTON      = 9.
 
 //// --- combobox styles ---
 //#symbol(const,type:int)CBS_DROPDOWNLIST        = 3.
@@ -65,6 +69,6 @@
 
 #symbol(const,type:int)SRCCOPY          = 00CC0020h.
 
-// --- HINSTANCE ---
+#symbol(const,type:int)IMAGE_BITMAP     = 0.
 
-#static(type:hinstance) CurrentInstance = HInstance current.
+#symbol(const,type:int)LR_LOADFROMFILE  = 0010h.

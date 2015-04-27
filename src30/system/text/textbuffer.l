@@ -20,12 +20,12 @@
 
     #method clear
     [
-        theLength write &int:0.
+        theLength << 0.
     ]
 
-    #method readLength &vint:aLength
+    #method readLength &vint:aRetVal
     [
-        aLength << theLength.
+        aRetVal << theLength.
     ]
 
     #method length
@@ -33,7 +33,7 @@
 
     #method set &length:aLength
     [
-        theLength write &int:aLength.
+        theLength << aLength.
     ]
 
     #method chararray = theBuffer.
@@ -65,7 +65,7 @@
         
         aNewLength := aNewLength + theLength.
         
-        #var(type:vint)aBufferLength.
+        #var(type:int)aBufferLength.
         theBuffer readLength &vint:aBufferLength.
         
         (aNewLength >= aBufferLength) ?
@@ -82,7 +82,7 @@
 
     #method write &literal:aLiteral
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         aLiteral readLength &vint:aLength.
         
         (0 == aLength) !
@@ -97,7 +97,7 @@
 
     #method write &wide:aLiteral
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         aLiteral readLength &vint:aLength.
         
         (0 == aLength) !
@@ -149,7 +149,7 @@
 
     #method insert &index:anIndex &literal:aLiteral
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         UTF8Encoding charCount &literal:aLiteral &vint:aLength.
 
         $self reserve &length:aLength.
@@ -163,7 +163,7 @@
 
     #method insert &index:anIndex &wide:aLiteral
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         UTF16Encoding charCount &wide:aLiteral &vint:aLength.
 
         $self reserve &length:aLength.
@@ -189,7 +189,7 @@
     #method indexOf &index:aPosition &char:aValue &vint:aRetVal
     [
         #var(type:int)anIndex := 0.
-        #var(type:vchar)aCurrent.
+        #var(type:char)aCurrent.
         
         #loop (anIndex < theLength)?
         [
@@ -206,11 +206,11 @@
 
     #method indexOf &index:aPosition &literal:aLiteral &vint:aRetVal
     [
-        #var(type:vint)aLiteralLength.
+        #var(type:int)aLiteralLength.
         #var(type:int)anIndex := 0.
-        #var(type:vchar)aCurrent.
-        #var(type:vchar)aFirstChar.
-        #var(type:vchar)aNextChar.
+        #var(type:char)aCurrent.
+        #var(type:char)aFirstChar.
+        #var(type:char)aNextChar.
         
         aLiteral readLength &vint:aLiteralLength.
         
@@ -246,11 +246,11 @@
 
     #method indexOf &index:aPosition &wide:aLiteral &vint:aRetVal
     [
-        #var(type:vint)aLiteralLength.
+        #var(type:int)aLiteralLength.
         #var(type:int)anIndex := 0.
-        #var(type:vchar)aCurrent.
-        #var(type:vchar)aFirstChar.
-        #var(type:vchar)aNextChar.
+        #var(type:char)aCurrent.
+        #var(type:char)aFirstChar.
+        #var(type:char)aNextChar.
         
         aLiteral readLength &vint:aLiteralLength.
         
@@ -286,7 +286,7 @@
 
     #method indexOf &index:aPosition &char:aValue    
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:aPosition &char:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -294,7 +294,7 @@
     
     #method indexOf &index:aPosition &literal:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:aPosition &literal:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -302,7 +302,7 @@
     
     #method indexOf &index:aPosition &wide:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self indexOf &index:aPosition &wide:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.

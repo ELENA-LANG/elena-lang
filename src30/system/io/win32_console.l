@@ -30,7 +30,7 @@
 
     #method write &wide : aLiteral
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         aLiteral readLength &vint:aLength.
 
         system'external'KERNEL32 WriteConsoleW
@@ -43,9 +43,10 @@
         // !!check the result of the operation
     ]
     
-    #method close
+    #method free
     [
-        theHandle close.
+        system'external'KERNEL32 CloseHandle
+            &handle:theHandle.
     ]
 }
 
@@ -63,9 +64,9 @@
     #method read &vchar:aChar
     [
         #var(type:bytearray,size:20)aDump.
-        #var(type:vint)aNumberRead.
-        #var(type:vshort)anEventType.
-        #var(type:vint)aKeyDown.
+        #var(type:int)aNumberRead.
+        #var(type:short)anEventType.
+        #var(type:int)aKeyDown.
         
         #var found := false.
         #loop found !
@@ -92,9 +93,9 @@
     #method read &vint:aKey
     [
         #var(type:bytearray,size:20)aDump.
-        #var(type:vint)aNumberRead.
-        #var(type:vshort)anEventType.
-        #var(type:vint)aKeyDown.
+        #var(type:int)aNumberRead.
+        #var(type:short)anEventType.
+        #var(type:int)aKeyDown.
         
         #var found := false.
         #loop found !
@@ -131,7 +132,7 @@
     #method read &wide
     [
         #var(type:shortarray,size:127)aBuffer.
-        #var(type:vlength)aLength.
+        #var(type:length)aLength.
         #var anOutput := emptyWideLiteralValue.
         
         #var(type:bool) continue := true.
@@ -140,7 +141,7 @@
             aLength := 127.
             $self read &shortarray:aBuffer &vlength:aLength.
             
-            #var(type:vshort)aShort.
+            #var(type:short)aShort.
             aBuffer read &index:(aLength - 1) &vshort:aShort.
             (aShort == 0Ah)
                 ? [
@@ -169,14 +170,16 @@
             
     #method char
     [
-        #var(type:char)aRetVal := $self char.
+        #var(type:char)aRetVal.
+        $self read &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
     ]
-            
-    #method close
+
+    #method free
     [
-        theHandle close.
+        system'external'KERNEL32 CloseHandle
+            &handle:theHandle.
     ]
 }
 

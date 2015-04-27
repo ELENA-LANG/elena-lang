@@ -23,7 +23,7 @@ using namespace _GUI_;
 
 StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Colour(0, 0, 0), Colour(1, 1, 1), _T("Monospace 10")},
-   {Colour(0, 0, 0), Colour(0.4, 0.4, 0.4), _T("Monospace 10")},
+   {Colour(0, 0, 0), Colour(0.84, 0.84, 0.84), _T("Monospace 10")},
 	{Colour(0, 0, 0), Colour(0.75, 0.75, 0.75), _T("Monospace 10")},
 	{Colour(0, 0, 1), Colour(1, 1, 1), _T("Monospace 10")},
    {Colour(0, 0.4, 0.5), Colour(1, 1, 1), _T("Monospace Bold 10")},
@@ -41,7 +41,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
 	{Colour(1, 1, 0), Colour(0, 0, 0.5), _T("Monospace 10")},
-	{Colour(0, 0, 0), Colour(0.4, 0.4, 0.4), _T("Monospace 10")},
+	{Colour(0, 0, 0), Colour(0.84, 0.84, 0.84), _T("Monospace 10")},
 	{Colour(0.37, 0.37, 0.37), Colour(1, 1, 1), _T("Monospace 10")},
 	{Colour(0.7, 0.7, 0.7), Colour(0, 0, 0.5), _T("Monospace 10")},
 	{Colour(1, 1, 1), Colour(0, 0, 0.5), _T("Monospace 10")},
@@ -111,25 +111,25 @@ int EditFrame :: newDocument(const char* name, Document* document)
 ////{
 ////   renameTab(index, name);
 ////}
-////
-////void EditFrame :: closeDocument(int index)
-////{
-////   _currentDoc = NULL;
-////
-////   deleteTab(index);
-////}
-////
-////void EditFrame :: onTabChange(int index)
-////{
-////   _currentDoc = NULL;
-////   TabBar::onTabChange(index);
-////
-////   if (_current != NULL) {
-////      _currentDoc = ((TextView*)_current)->getDocument();
-////   }
-////   else _currentDoc = NULL;
-////}
-////
+
+void EditFrame :: eraseDocumentTab(int index)
+{
+   _model->currentDoc = NULL;
+
+   deleteTab(index);
+}
+
+void EditFrame :: onTabChange(int index)
+{
+   TabBar::onTabChange(index);
+
+   if (_current != NULL) {
+      _model->currentDoc = ((TextView*)_current)->getDocument();
+
+   }
+   else _model->currentDoc = NULL;
+}
+
 ////void EditFrame :: selectDocument(const TCHAR* name)
 ////{
 ////   _currentDoc = NULL;

@@ -62,20 +62,20 @@ int TabBar :: getTabIndex(const char* name)
    return -1;
 }
 
-//void TabBar :: eraseTab(int index)
-//{
-//   TabPages::Iterator it = _tabs.start();
-//   while (!it.Eof()) {
-//      if (index==0) {
-//         _tabs.erase(it);
-//
-//         return;
-//      }
-//
-//      index--;
-//      it++;
-//   }
-//}
+void TabBar :: eraseTabPage(int index)
+{
+   TabPages::Iterator it = _tabs.start();
+   while (!it.Eof()) {
+      if (index==0) {
+         _tabs.erase(it);
+
+         return;
+      }
+
+      index--;
+      it++;
+   }
+}
 
 void TabBar :: addTab(const char* name, Gtk::Widget* control)
 {
@@ -113,25 +113,22 @@ void TabBar :: setFocus()
    }
 }
 
-//void TabBar :: onTabChange(int index)
-//{
-//   _current = _getTabControl(index);
-//
-//   refresh();
-//}
-//
-//void TabBar :: deleteTab(int index)
-//{
-//   _current = NULL;
-//   eraseTab(index);
-//
-//   gtk_notebook_remove_page(GTK_NOTEBOOK(_handle), index);
-//   gtk_widget_draw(_handle, NULL);
-//
-//   if (_tabs.Count() == 0)
-//      hide();
-//}
-//
+void TabBar :: onTabChange(int index)
+{
+   _current = _getTabControl(index);
+}
+
+void TabBar :: deleteTab(int index)
+{
+   _current = NULL;
+   eraseTabPage(index);
+
+    remove_page(index);
+
+   if (_tabs.Count() == 0)
+      hide();
+}
+
 //void TabBar :: renameTab(int index, const TCHAR* newName)
 //{
 //   // rename tab in the map

@@ -12,7 +12,7 @@
         
         control run:self &forEach: anItem [ theOutput write:(convertor toLiteral:anItem) write:"," ].
         
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theOutput readLength &vint:aLength.
 
         (0 < aLength)
@@ -27,7 +27,7 @@
         
         control run:self &forEach: anItem [ theOutput write:(convertor toWide:anItem) write:"," ].
         
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theOutput readLength &vint:aLength.
 
         (0 < aLength)

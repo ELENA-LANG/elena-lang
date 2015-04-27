@@ -6,15 +6,20 @@
 #subject(class:forms'Region)region.
 
 // --- control types ---
-#subject(class:forms'IControl)    control.
+#subject(class:forms'IControl)          control.
 
-#subject(class:forms'Canvas)      canvas.
-#subject(class:forms'StaticLabel) static.
-#subject(class:forms'Label)       label.
-#subject(class:forms'Edit)        edit.
-#subject(class:forms'Button)      button.
-#subject(class:forms'Paintbox)    paintbox.
-#subject(class:forms'SDIForm)     sdiform.
+#subject(class:forms'Canvas)            canvas.
+#subject(class:forms'Frame)             frame.
+#subject(class:forms'StaticLabel)       static.
+#subject(class:forms'Label)             label.
+#subject(class:forms'Edit)              edit.
+#subject(class:forms'Button)            button.
+#subject(class:forms'RadioButton)       radiobutton.
+#subject(class:forms'Paintbox)          paintbox.
+#subject(class:forms'Panel)             panel.
+#subject(class:forms'RadioButtonGroup)  radiogroup.
+#subject(class:forms'ImageList)         imagelist.
+#subject(class:forms'SDIForm)           sdiform.
 
 // --- properties ---
 #subject caption.
@@ -26,6 +31,8 @@
 #subject back_color.
 #subject fore_color.
 #subject opened.
+#subject items.
+#subject image.
 #subject(class:forms'Pen)      pen.
 #subject(class:forms'Brush)    brush.
 

@@ -132,6 +132,7 @@ echo copying doc files
 md doc
 copy %1\doc\license.txt doc\
 copy %1\doc\roadmap.txt doc\
+copy %1\doc\contributors doc\
 
 md doc\api
 copy %1\doc\api\*.html doc\api
@@ -328,27 +329,27 @@ md examples\bsort
 copy %1\examples\bsort\*.l examples\bsort
 copy %1\examples\bsort\*.prj examples\bsort
 
-rem md examples\c_a_g
-rem copy %1\examples\c_a_g\*.l examples\c_a_g
-rem copy %1\examples\c_a_g\*.prj examples\c_a_g
+md examples\c_a_g
+copy %1\examples\c_a_g\*.l examples\c_a_g
+copy %1\examples\c_a_g\*.prj examples\c_a_g
 
-rem md examples\c_a_g\formulas
+md examples\c_a_g\formulas
 
-rem md examples\c_a_g\formulas\Circulo
-rem copy %1\examples\c_a_g\formulas\Circulo\*.bmp examples\c_a_g\formulas\Circulo
+md examples\c_a_g\formulas\Circulo
+copy %1\examples\c_a_g\formulas\Circulo\*.bmp examples\c_a_g\formulas\Circulo
 
-rem md examples\c_a_g\formulas\Paralelogramos 
-rem copy %1\examples\c_a_g\formulas\Paralelogramos\*.bmp examples\c_a_g\formulas\Paralelogramos 
+md examples\c_a_g\formulas\Paralelogramos 
+copy %1\examples\c_a_g\formulas\Paralelogramos\*.bmp examples\c_a_g\formulas\Paralelogramos 
 
-rem md examples\c_a_g\formulas\Trapezio 
-rem copy %1\examples\c_a_g\formulas\Trapezio\*.bmp examples\c_a_g\formulas\Trapezio
+md examples\c_a_g\formulas\Trapezio 
+copy %1\examples\c_a_g\formulas\Trapezio\*.bmp examples\c_a_g\formulas\Trapezio
 
-rem md examples\c_a_g\formulas\Triangulos 
-rem copy %1\examples\c_a_g\formulas\Triangulos\*.bmp examples\c_a_g\formulas\Triangulos 
+md examples\c_a_g\formulas\Triangulos 
+copy %1\examples\c_a_g\formulas\Triangulos\*.bmp examples\c_a_g\formulas\Triangulos 
 
-rem md examples\c_a_g\inf
-rem md examples\c_a_g\obj
-rem md examples\c_a_g\bin
+md examples\c_a_g\inf
+md examples\c_a_g\obj
+md examples\c_a_g\bin
 
 rem md examples\calculator 
 rem copy %1\examples\calculator\*.l examples\calculator 

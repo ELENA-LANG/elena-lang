@@ -44,6 +44,7 @@ cp ../dat/og/rules.txt new/dat/og/
 cp ../dat/sg/syntax.txt new/dat/sg/
 cp ../doc/license.txt new/doc/
 cp ../doc/roadmap.txt new/doc/
+cp ../doc/contributors new/doc/
 cp ../doc/api/*.html new/doc/api/
 cp ../doc/lang/dictionary.txt  new/doc/lang/
 cp ../doc/tech/bytecode.txt new/doc/tech/

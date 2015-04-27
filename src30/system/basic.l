@@ -973,6 +973,11 @@
         theValue := anOperand.
     ]
 
+    #method read &vbyte:aRetVal
+    [
+        aRetVal << theValue.
+    ]
+
     #method append &byte:anOperand
     [
         theValue := theValue + anOperand.
@@ -1066,6 +1071,11 @@
     #method real = RealNumber new &short:theValue.
     
     #method long = LongNumber new &short:theValue.
+    
+    #method read &vshort:aRetVal
+    [
+        aRetVal << theValue.
+    ]
     
     #method write &short:anOperand
     [
@@ -1197,6 +1207,11 @@
     #method write &int:anOperand
     [
         theValue := anOperand.
+    ]
+
+    #method read &vint:aRetVal
+    [
+        aRetVal << theValue.
     ]
 
     #method write &short:anOperand
@@ -1350,6 +1365,11 @@
     #method write &long:anOperand
     [
         theValue := anOperand.
+    ]
+
+    #method read &vlong:aRetVal
+    [
+        aRetVal << theValue.
     ]
 
     #method write &int:anOperand
@@ -1534,6 +1554,11 @@
     [
         theValue := anOperand.
     ]
+    
+    #method read &vreal:aRetVal
+    [
+        aRetVal << theValue.
+    ]    
     
     #method write &int:anOperand
     [
@@ -1731,7 +1756,7 @@
         
     #method length
     [
-        #var(type:vint)aLength := 0.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -1768,6 +1793,11 @@
         theValue := anOperand.
     ]
     
+    #method read &vchar:aRetVal
+    [
+        aRetVal << theValue.
+    ]
+    
     #method(type:bool) equal &char:anOperand 
         = theValue == anOperand.
 
@@ -1787,7 +1817,7 @@
         
     #method length
     [
-        #var(type:vint)aLength := 0.
+        #var(type:int)aLength.
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -1820,28 +1850,28 @@
         
     #method append : aValue
     [
-        (nil == theValue)
+        ($nil == theValue)
             ? [ theValue := aValue. ]
             ! [ theValue := theValue + aValue. ].
     ]
     
     #method reduce : aValue
     [
-        (nil == theValue)
+        ($nil == theValue)
             ? [ theValue := aValue. ]
             ! [ theValue := theValue - aValue. ].
     ]
 
     #method multiplyBy : aValue
     [
-        (nil == theValue)
+        ($nil == theValue)
             ? [ theValue := aValue. ]
             ! [ theValue := theValue * aValue. ].
     ]
     
     #method divideInto : aValue
     [
-        (nil == theValue)
+        ($nil == theValue)
             ? [ theValue := aValue. ]
             ! [ theValue := theValue / aValue. ].
     ]
@@ -1881,7 +1911,7 @@
         
     #method(type:byte) convert &char:aValue
     [
-        #var(type:vbyte)aRetVal := 0.
+        #var(type:byte)aRetVal.
         $self convert &char:aValue &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
@@ -1889,7 +1919,7 @@
         
     #method(type:byte) convert &short:aValue
     [
-        #var(type:vbyte)aRetVal.
+        #var(type:byte)aRetVal.
         $self convert &short:aValue &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
@@ -1897,7 +1927,7 @@
         
     #method(type:byte) convert &int:aValue
     [
-        #var(type:vbyte)aRetVal.
+        #var(type:byte)aRetVal.
         $self convert &int:aValue &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
@@ -1905,7 +1935,7 @@
         
     #method(type:byte) convert &long:aValue
     [
-        #var(type:vbyte)aRetVal.
+        #var(type:byte)aRetVal.
         $self convert &long:aValue &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
@@ -1913,7 +1943,7 @@
         
     #method(type:byte) convert &real:aValue
     [
-        #var(type:vbyte)aRetVal.
+        #var(type:byte)aRetVal.
         $self convert &real:aValue &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
@@ -1921,7 +1951,7 @@
                 
     #method(type:byte) convert &literal:aLiteral
     [
-        #var(type:vbyte)aValue.
+        #var(type:byte)aValue.
         $self convert &literal:aLiteral &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
@@ -1929,7 +1959,7 @@
                 
     #method(type:byte) convert &wide:aLiteral
     [
-        #var(type:vbyte)aValue. 
+        #var(type:byte)aValue. 
         $self convert &wide:aLiteral &vbyte:aValue.
         
         ^ ByteNumber new &byte:aValue.
@@ -1964,7 +1994,7 @@
         
     #method(type:short) convert &byte:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &byte:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -1972,7 +2002,7 @@
         
     #method(type:short) convert &int:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &int:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -1980,7 +2010,7 @@
         
     #method(type:short) convert &long:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &long:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -1988,7 +2018,7 @@
         
     #method(type:short) convert &real:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &real:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -1996,7 +2026,7 @@
         
     #method(type:short) convert &char:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &char:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -2004,7 +2034,7 @@
         
     #method(type:short) convert &literal:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &literal:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -2012,7 +2042,7 @@
         
     #method(type:short) convert &wide:aValue
     [
-        #var(type:vshort)aRetVal.
+        #var(type:short)aRetVal.
         $self convert &wide:aValue &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
@@ -2047,7 +2077,7 @@
         
     #method(type:char) convert &literal:aValue
     [
-        #var(type:vchar)aRetVal.
+        #var(type:char)aRetVal.
         $self $convert &index:0 &literal:aValue &vchar:aRetVal.
         
         (aRetVal length != aValue length)
@@ -2058,7 +2088,7 @@
         
     #method(type:char) convert &wide:aValue
     [
-        #var(type:vchar)aRetVal.
+        #var(type:char)aRetVal.
         $self $convert &index:0 &wide:aValue &vchar:aRetVal.
         
         (((aRetVal length + 1) / 2) != aValue length)
@@ -2069,7 +2099,7 @@
         
     #method(type:char) convert &byte:aValue
     [
-        #var(type:vchar)aRetVal.
+        #var(type:char)aRetVal.
         $self convert &byte:aValue &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
@@ -2077,7 +2107,7 @@
         
     #method(type:char) convert &short:aValue
     [
-        #var(type:vchar)aRetVal.
+        #var(type:char)aRetVal.
         $self convert &short:aValue &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
@@ -2085,7 +2115,7 @@
         
     #method(type:char) convert &int:aValue
     [
-        #var(type:vchar)aRetVal.
+        #var(type:char)aRetVal.
         $self convert &int:aValue &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
@@ -2123,7 +2153,7 @@
         
     #method(type:int) convert &literal:aLiteral
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &literal:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2131,7 +2161,7 @@
         
     #method(type:int) convert &wide:aLiteral
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &wide:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2139,7 +2169,7 @@
         
     #method(type:int) convert &char:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &char:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2147,7 +2177,7 @@
         
     #method(type:int) convert &byte:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &byte:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2155,7 +2185,7 @@
         
     #method(type:int) convert &short:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &short:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2163,7 +2193,7 @@
         
     #method(type:int) convert &long:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &long:aValue &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2171,7 +2201,7 @@
 
     #method(type:int) convert &real:aReal
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         $self convert &real:aReal &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
@@ -2203,7 +2233,7 @@
 
     convert &real:aValue
     [
-        #var(type:vlong)aRetVal.
+        #var(type:long)aRetVal.
         $self convert &real:aValue &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
@@ -2211,7 +2241,7 @@
 
     convert &char:aValue
     [
-        #var(type:vint)aRetVal.
+        #var(type:int)aRetVal.
         intConvertor convert &char:aValue &vint:aRetVal.
         
         ^ aRetVal long.
@@ -2219,7 +2249,7 @@
 
     convert &literal:aLiteral
     [
-        #var(type:vlong)aRetVal.
+        #var(type:long)aRetVal.
         $self convert &literal:aLiteral &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
@@ -2227,7 +2257,7 @@
 
     convert &wide:aLiteral
     [
-        #var(type:vlong)aRetVal.
+        #var(type:long)aRetVal.
         $self convert &wide:aLiteral &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
@@ -2250,7 +2280,7 @@
         
     convert &literal:aLiteral
     [
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         $self convert &literal:aLiteral &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
@@ -2258,7 +2288,7 @@
         
     convert &wide:aLiteral
     [
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         $self convert &wide:aLiteral &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.

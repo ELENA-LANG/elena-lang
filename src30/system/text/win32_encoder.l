@@ -34,7 +34,7 @@
             ? [ #throw InvalidArgumentException new. ].
         
         #var(type:shortarray,size:127)temp_buf.
-        #var(type:vint)aConverted := aLength.
+        #var(type:int)aConverted := aLength.
         #var(type:int)n := aLength.                
         
         (anIndex != 0)

@@ -266,7 +266,7 @@
     #method(type:real) exp
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController exp &real:n &vreal:aRetVal.
         
@@ -276,7 +276,7 @@
     #method(type:real) ln
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController ln &real:n &vreal:aRetVal.
         
@@ -286,7 +286,7 @@
     #method(type:real) rounded
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController round &real:n &vreal:aRetVal.
         
@@ -296,7 +296,7 @@
     #method(type:real) integer
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController truncate &real:n &vreal:aRetVal.
         
@@ -306,7 +306,7 @@
     #method(type:real) frac
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController abs &real:n &vreal:aRetVal.
         
@@ -316,7 +316,7 @@
     #method(type:real)sin
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController sin &real:n &vreal:aRetVal.
         
@@ -326,7 +326,7 @@
     #method(type:real)cos
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController cos &real:n &vreal:aRetVal.
         
@@ -336,7 +336,7 @@
     #method(type:real)arctan
     [
         #var(type:real)n := self real.        
-        #var(type:vreal)aRetVal.
+        #var(type:real)aRetVal.
         
         realOpController arctan &real:n &vreal:aRetVal.
         

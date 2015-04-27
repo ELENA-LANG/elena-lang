@@ -40,7 +40,7 @@
         = control run:aList &seeking: x [ aValue safeEqual:x ].
 
     ifExist:aValue &in:aList
-        = nil != (control run:aList &seeking: x [ aValue equal:x ]).
+        = $nil != (control run:aList &seeking: x [ aValue equal:x ]).
 
     run &int:aStart &int:anEnd &forEvery:aFunction
         = (aStart < anEnd)
@@ -107,10 +107,12 @@
         #var(type:literal)s1 := anS literal.
         #var(type:literal)s2 := aSubS literal.
         
-        #var(type:int)l1 := s1 length.
-        #var(type:int)l2 := s2 length.
+        #var(type:int)l1.
+        s1 readLength &vint:l1.
+        #var(type:int)l2.
+        s2 readLength &vint:l2.
         
-        #var(type:vint)n.
+        #var(type:int)n.
         s1 indexOf &index:0 &literal:s2 &vint:n.        
         
         ^ (l1 - l2) == n.
@@ -120,7 +122,10 @@
     [
         #var(type:literal)s := anS literal.
         #var(type:literal)ss := aSubS literal.
-        
-        ^ -1 != s indexOf &index:0 &literal:ss.
+
+        #var(type:int)n.
+        s indexOf &index:0 &literal:ss &vint:n.
+                
+        ^ -1 != n.
     ]
 }.

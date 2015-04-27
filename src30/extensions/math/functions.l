@@ -48,7 +48,7 @@
        
     pi
     [
-        #var(type:vreal)r.
+        #var(type:real)r.
         realOpController pi &vreal:r.
         
         ^ RealNumber new &real:r.

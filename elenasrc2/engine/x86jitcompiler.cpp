@@ -70,7 +70,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 123;
+const int gcCommandNumber = 124;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -95,7 +95,7 @@ const int gcCommands[gcCommandNumber] =
    bcLNot, bcRCopy, bcRSave, bcREqual,
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
    bcCreate, bcExclude,
-   bcSelectR, bcNext,
+   bcSelectR, bcNext, bcXSelectR,
    bcRAbs, bcRExp, bcRInt, 
    bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
    bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
@@ -151,7 +151,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileCreate, &compileCreateN, &compileNop, &compileNop, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
+   &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
 };
 

@@ -73,16 +73,16 @@
     
     #method reset
     [
-        theCurrent := nil.
+        theCurrent := $nil.
     ]
 
     #method next
     [
-        (nil equal &reference:theCurrent)
+        ($nil == theCurrent)
             ? [ theCurrent := theList topItem. ]
             ! [ theCurrent := theCurrent nextItem. ].
             
-        ^ nil equal:theCurrent not.
+        ^ $nil != theCurrent.
     ]
 }
 
@@ -101,7 +101,7 @@
         theIndex := Integer new.
     ]
     
-    #method available = nil != theCurrent.
+    #method available = $nil != theCurrent.
 
     #method get = theCurrent get.
     
@@ -127,7 +127,7 @@
         
         #loop (i < anIndex) ?
         [
-            (nil == theCurrent)
+            ($nil == theCurrent)
                 ? [ #throw OutOfRangeException new. ].
             
             theCurrent := theCurrent nextItem.            
@@ -194,7 +194,7 @@
         #loop (aCurrentIndex > 0) ?
         [
             anItem := anItem nextItem.
-            (anItem == nil)
+            ($nil == anItem)
                 ? [ #throw OutOfRangeException new. ].
             
             aCurrentIndex := aCurrentIndex - 1.
@@ -224,14 +224,14 @@
 
     #method remove &index:anIndex
     [
-        (theTop == nil)
+        ($nil == theTop)
             ? [ #throw OutOfRangeException new. ].
         
         (0 == anIndex)
             ? [
                 theTop := theTop nextItem.
-                (theTop == nil)
-                    ? [ theLast := nil. theState := %empty. ].
+                ($nil == theTop)
+                    ? [ theLast := $nil. theState := %empty. ].
             ]
             ! [
                 #var aPrevious := $self getAt &index:(anIndex - 1).
@@ -258,8 +258,8 @@
         theCount write &int:0.
         
         theState := %empty.
-        theTop := nil.
-        theLast := nil.
+        theTop := $nil.
+        theLast := $nil.
     ]
     
     #method enumerator = ListEnumerator new:$self.
@@ -282,7 +282,7 @@
         #var aList := List new.
         
         #var anItem := theTop.        
-        #loop (anItem != nil) ?
+        #loop ($nil != anItem) ?
         [
             aList append:(anItem get).
             
@@ -323,7 +323,7 @@
     #method getAt &key:aKey
     [
         #var anItem := $self findItem &key:aKey.
-        ^ (nil == anItem)
+        ^ ($nil == anItem)
             ? [ theDefaultValue ]
             ! [ anItem $getObject ].
     ]
@@ -331,7 +331,7 @@
     #method set &key:aKey &object:aValue
     [
         #var anItem := $self findItem &key:aKey.
-        (nil == anItem)
+        ($nil == anItem)
             ? [ $self append &key:aKey &object:aValue. ]
             ! [ anItem $setObject:aValue ].
     ]
@@ -343,7 +343,7 @@
         #var aList := Dictionary new.
         
         #var anItem := theTop.        
-        #loop (anItem != nil) ?
+        #loop ($nil != anItem) ?
         [
             #var aKeyValue := anItem get.
             

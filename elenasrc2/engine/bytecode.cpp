@@ -59,7 +59,7 @@ const char* _fnOpcodes[256] =
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
-   "new", "newn", "unknown", "unknown", "xindexrm", "xjumprm", "selectr", "lessn",
+   "new", "newn", "unknown", "xselectr", "xindexrm", "xjumprm", "selectr", "lessn",
    "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
 };
 

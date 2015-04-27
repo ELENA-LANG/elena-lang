@@ -2,27 +2,29 @@
 
 // --- HInstance ---
 
-#class(sealed,integer:4) HInstance
+#class(sealed,struct:embeddable) HInstance
 {
-    #constructor new &hinstance:aHandle
-        => system'internal'int_copy.
+    #field(type:handle)theHandle.
+    
+    #constructor new &handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
         
     #constructor current
     //    <= new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0).
     [
-        #var(type:hinstance)aCurrent := system'external'KERNEL32 GetModuleHandleW &int:0.
+        #var(type:handle)aCurrent := system'external'KERNEL32 GetModuleHandleW &int:0.
         
-        $self $write &hinstance:aCurrent.
+        theHandle := aCurrent.
     ]
-
-    #method $write &hinstance:anInstance
-        => system'internal'int_copy.
-
-    #method $read &vint:aRetVal
-        => system'internal'int_save.
 
     #method hinstance = $self.
 }
+
+// --- HINSTANCE ---
+
+#static(type:hinstance) CurrentInstance = HInstance current.
 
 // --- MSG ---
 
@@ -120,59 +122,58 @@
 
 // --- HDC ---
 
-#class(sealed,integer:4) HDC
+#class(sealed,struct:embeddable) HDC
 {
+    #field(type:handle)theHandle.
+
     #constructor new &hdc:aHandle
         => system'internal'int_copy.
         
     #constructor newCompatible &hdc:aCompatible
     [
-        #var(type:hdc)aNewDC := system'external'GDI32 CreateCompatibleDC &hdc:aCompatible.
-        
-        $self $save &hdc:aNewDC.
+        #var(type:handle)aNewDC := system'external'GDI32 CreateCompatibleDC &handle:aCompatible.
+
+        theHandle := aNewDC.
     ]
     
-    #method $save &hdc:aHandle
-        => system'internal'int_copy.
-
     #method setTextColor &int:aColor
     [
-        system'external'GDI32 SetTextColor &hdc:$self &int:aColor.
+        system'external'GDI32 SetTextColor &handle:theHandle &int:aColor.
     ]        
 
     #method setBkColor &int:aColor
     [
-        system'external'GDI32 SetBkColor &hdc:$self &int:aColor.
+        system'external'GDI32 SetBkColor &handle:theHandle &int:aColor.
     ]        
                         
     #method select &hbitmap:aHandle
     [
-        system'external'GDI32 SelectObject &hdc:$self &hbitmap:aHandle.
+        system'external'GDI32 SelectObject &handle:theHandle &handle:aHandle.
     ]        
     
     #method select &hpen:aHandle
     [
-        system'external'GDI32 SelectObject &hdc:$self &hpen:aHandle.
+        system'external'GDI32 SelectObject &handle:theHandle &hpen:aHandle.
     ]        
     
     #method select &hbrush:aHandle
     [
-        system'external'GDI32 SelectObject &hdc:$self &hbrush:aHandle.
+        system'external'GDI32 SelectObject &handle:theHandle &handle:aHandle.
     ]        
     
     #method copy &int:destX &int:destY &int:width &int:height &hdc:dc &int:sourX &int:sourY &int:Flags
     [
-        system'external'GDI32 BitBlt &hdc:$self &int:destX &int:destY &int:width &int:height &hdc:dc &int:sourX &int:sourY &int:Flags.
+        system'external'GDI32 BitBlt &handle:theHandle &int:destX &int:destY &int:width &int:height &handle:dc &int:sourX &int:sourY &int:Flags.
     ]        
 
     #method moveTo &int:anX &int:anY
     [
-        system'external'GDI32 MoveToEx &hdc:$self &int:anX &int:anY &int:0.
+        system'external'GDI32 MoveToEx &handle:theHandle &int:anX &int:anY &int:0.
     ]
 
     #method lineTo &int:anX &int:anY
     [
-        system'external'GDI32 LineTo &hdc:$self &int:anX &int:anY.
+        system'external'GDI32 LineTo &handle:theHandle &int:anX &int:anY.
     ]
 
     #method drawText &wide:aText &int:anX &int:anY
@@ -180,7 +181,7 @@
         #var(type:vint)aLength.
         aText readLength &vint:aLength.
         
-        system'external'GDI32 TextOutW &hdc:$self &int:anX &int:anY &wide:aText &int:aLength.
+        system'external'GDI32 TextOutW &handle:theHandle &int:anX &int:anY &wide:aText &int:aLength.
     ]
         
     #method free
@@ -191,29 +192,40 @@
 
 // --- HBITMAP ---
 
-#class(sealed,integer:4) HBITMAP
+#class(sealed,struct:embeddable) HBITMAP
 {
+    #field(type:handle)theHandle.
+
     #constructor new &hbitmap:aHandle
         => system'internal'int_copy.
 
     #constructor new &hdc:aDC &int:aWidth &int:aHeight
     [
-        #var(type:hbitmap)h := system'external'GDI32 CreateCompatibleBitmap &hdc:aDC &int:aWidth &int:aHeight.
+        #var(type:handle)h := system'external'GDI32 CreateCompatibleBitmap &handle:aDC &int:aWidth &int:aHeight.
         
-        $self $save &hbitmap:h.
+        theHandle := h.
     ]
-                
-    #method $save &hbitmap:aHandle
-        => system'internal'int_copy.
+
+    #constructor load &wide:aPath &int:aWidth &int:aHeight
+    [
+        #var(type:handle)h := system'external'USER32 LoadImageW
+            &handle:CurrentInstance
+            &wide:aPath
+            &int:IMAGE_BITMAP
+            &int:aWidth &int:aHeight
+            &int:LR_LOADFROMFILE.
+        
+        theHandle := h.
+    ]                
         
     #method select &hdc:aHandle
     [
-        system'external'GDI32 SelectObject &hdc:aHandle &hbitmap:$self.
+        system'external'GDI32 SelectObject &handle:aHandle &handle:theHandle.
     ]        
     
     #method free
     [
-        system'external'GDI32 DeleteObject &hbitmap:$self.
+        system'external'GDI32 DeleteObject &handle:theHandle.
     ]
 }
 
@@ -244,25 +256,24 @@
 
 // --- HBRUSH ---
 
-#class(sealed,integer:4) HBRUSH
+#class(sealed,struct:embeddable) HBRUSH
 {
+    #field(type:handle)theHandle.
+
     #constructor new &hbrush:aHandle
         => system'internal'int_copy.
     
     #constructor new &int:aColor
     [
-        #var(type:hbrush)h := system'external'GDI32 CreateSolidBrush &int:aColor.
+        #var(type:handle)h := system'external'GDI32 CreateSolidBrush &int:aColor.
         
-        $self $save &hbrush:h.
+        theHandle := h.
     ]
 
     #method hbrush = $self.
-            
-    #method $save &hbrush:aHandle
-        => system'internal'int_copy.
         
     #method free
     [
-        system'external'GDI32 DeleteObject &hbrush:$self.
+        system'external'GDI32 DeleteObject &handle:theHandle.
     ]
 }

@@ -30,6 +30,7 @@ using namespace _ELENA_;
 #define HINT_SELFEXTENDING    0x00040000
 #define HINT_ACTION           0x00020000
 #define HINT_EXTERNAL_CALL    0x00010000
+#define HINT_CHECK_MODE       0x00008000     // to indicate that the call is test one and no code should be generated
 
 // --- Auxiliary routines ---
 
@@ -232,6 +233,17 @@ inline ref_t getType(ObjectInfo object)
    }
 }
 
+inline bool isLocal(ObjectInfo info)
+{
+   switch (info.kind) {
+   case okLocal:
+   case okLocalAddress:
+      return true;
+   default:
+      return false;
+   }
+}
+
 inline bool IsExprOperator(int operator_id)
 {
    switch(operator_id) {
@@ -325,7 +337,6 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 
    // cache the frequently used references
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
-   nilReference = mapReference(project->resolveForward(NIL_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
    realReference = mapReference(project->resolveForward(REAL_FORWARD));
@@ -378,7 +389,10 @@ ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
       return mapReferenceInfo(identifier, false);
    }
    else if (identifier==tsPrivate) {
-      return defineObjectInfo(mapTerminal(identifier, true), true);
+      if (StringHelper::compare(identifier.value, NIL_VAR)) {
+         return ObjectInfo(okNil);
+      }
+      else return defineObjectInfo(mapTerminal(identifier, true), true);
    }
    else if (identifier==tsIdentifier) {
       return defineObjectInfo(mapTerminal(identifier, true), true);
@@ -1922,7 +1936,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          else _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
       }
       else {
-         _writer.declareVariable(*scope.tape, scope.moduleScope->nilReference);
+         _writer.declareVariable(*scope.tape, 0);
          _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
       }
 
@@ -2190,11 +2204,11 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
             }
             // if the object can be implicitly typecasted to the target, boxing could be skipped
             else if (size == scope.moduleScope->defineTypeSize(argType)) {
-               ClassInfo info;
-               if (scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(wrapper), false) != 0) {
-                  if (test(info.header.flags, elStructureWrapper) && scope.moduleScope->typeHints.exist(info.fieldTypes.get(0), scope.moduleScope->typeHints.get(argType)))
-                     return false;
-               }
+               bool mismatch = false;
+               compileTypecast(scope, object, argType, mismatch, HINT_CHECK_MODE);
+
+               if (!mismatch)
+                  return false;
             }
          }
 
@@ -2903,6 +2917,9 @@ bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator
    else if (lflag == elDebugQWORD) {
       result.param = moduleScope->longReference;
    }
+   else if (lflag == elDebugReal64) {
+      result.param = moduleScope->realReference;
+   }
    else return false;
 
    _writer.popObject(*scope.tape, ObjectInfo(okBase));
@@ -2916,9 +2933,9 @@ bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator
    else if (lflag == elDebugQWORD) {
       _writer.doLongOperation(*scope.tape, operator_id);
    }
-   //else if (lflag == elDebugReal64) {
-   //   _writer.doRealOperation(*scope.tape, operator_id);
-   //}
+   else if (lflag == elDebugReal64) {
+      _writer.doRealOperation(*scope.tape, operator_id);
+   }
 
    _writer.loadObject(*scope.tape, ObjectInfo(okBase));
 
@@ -2962,11 +2979,11 @@ bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator
    else return false;
 
    if (invertMode) {
-       _writer.selectConstant(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
+       _writer.selectByIndex(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
 
        invertMode = false;
    }
-   else _writer.selectConstant(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
+   else _writer.selectByIndex(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
 
    result.extraparam = moduleScope->boolType;
 
@@ -3066,6 +3083,21 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
    ObjectInfo operand;
    ObjectInfo operand2;
+
+   // if it is comparing with nil
+   if (object.kind == okNil) {
+      // if operation with $nil
+      operand = compileExpression(node, scope, 0);
+
+      _writer.loadObject(*scope.tape, operand);
+
+      if (notOperator) {
+         _writer.selectByAcc(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
+      }
+      else _writer.selectByAcc(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
+      
+      return ObjectInfo(okAccumulator, 0, scope.moduleScope->boolType);
+   }
 
    // if the operation parameters can be compiled directly
    if (!dblOperator && object.kind != okAccumulator) {
@@ -3772,127 +3804,124 @@ ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode,
    return ObjectInfo(okAccumulator);
 }
 
-ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t type_ref, bool& mismatch, int mode)
+ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, int mode)
 {
-   if (type_ref != 0) {
-      ModuleScope* moduleScope = scope.moduleScope;
-
-      if (moduleScope->typeHints.get(type_ref) != 0) {
-         // typecast numeric constant
-         if (object.kind == okIntConstant) {
-            int flags = moduleScope->getClassFlags(moduleScope->resolveStrongType(type_ref));
-            if ((flags & elDebugMask) == elDebugDWORD) {
-               return ObjectInfo(okAccumulator, 0, type_ref);
-            }
-         }
-         else if (object.kind == okLongConstant && moduleScope->typeHints.exist(type_ref, moduleScope->longReference)) {
-            return ObjectInfo(okAccumulator, 0, type_ref);
-         }
-         else if (object.kind == okRealConstant && moduleScope->typeHints.exist(type_ref, moduleScope->realReference)) {
-            return ObjectInfo(okAccumulator, 0, type_ref);
-         }
-         else if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(type_ref, moduleScope->literalReference)) {
-            return ObjectInfo(okAccumulator, 0, type_ref);
-         }
-         else if (object.kind == okCharConstant && moduleScope->typeHints.exist(type_ref, moduleScope->charReference)) {
-            return ObjectInfo(okAccumulator, 0, type_ref);
-         }
-         else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(type_ref, moduleScope->signatureReference)) {
-            return ObjectInfo(okAccumulator, 0, type_ref);
-         }
-         if (object.extraparam != type_ref) {
-            // if it is $self, try to typecast it
-            if (object.kind == okThisParam && moduleScope->typeHints.exist(type_ref, scope.getClassRefId(false))) {
-               // skip the type check if the object supports the type
-               object.extraparam = type_ref;
-            }
-            else {
-               if (object.kind == okLocalAddress && object.extraparam != 0) {
-                  if (moduleScope->typeHints.exist(type_ref, object.extraparam)) {
-                     object.extraparam = type_ref;
-
-                     return object;
-                  }
-               }
-               else if (object.kind == okConstant && object.extraparam != 0) {
-                  if (moduleScope->typeHints.exist(type_ref, object.extraparam)) {
-                     return object;
-                  }
-               }
-               else if ((object.kind == okThisParam) || ((object.kind == okAccumulator || object.kind == okConstantSymbol)
-                  && object.param != 0 && object.extraparam == 0))
-               {
-                  if (object.kind != okThisParam && moduleScope->typeHints.exist(type_ref, object.param)) {
-                     object.extraparam = type_ref;
-
-                     return object;
-                  }
-                  else {
-                     ref_t reference = object.param;
-                     if (object.kind == okThisParam)
-                        reference = scope.getClassParentRefId(false);
-
-                     ClassInfo info;
-                     while (true) {
-                        // check if the class is closed than try to check its parent
-                        if (moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(reference), true) == 0)
-                           break;
-
-                        if (!test(info.header.flags, elClosed))
-                           break;
-
-                        if (moduleScope->typeHints.exist(type_ref, reference)) {
-                           object.extraparam = type_ref;
-
-                           return object;
-                        }
-
-                        reference = info.header.parentRef;
-                     }
-                  }
-               }
-               bool skipTypecast = false;
-               ref_t strongReference = moduleScope->resolveStrongType(type_ref);
-               if (strongReference != 0 && object.extraparam != 0 && strongReference == moduleScope->resolveStrongType(object.extraparam)) {
-                  // skip the type check if they are compatible
-                  skipTypecast = true;
-               }
-               else {
-                  ref_t objectReference = 0;
-                  int targetSize = scope.moduleScope->defineTypeSize(type_ref);
-                  int objectSize = scope.moduleScope->defineTypeSize(object.extraparam, objectReference);
-                  // if implicit typecasting is possible
-                  if (targetSize != 0 && targetSize == objectSize) {
-                     ClassInfo info;
-                     if (moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(objectReference), false) != 0) {
-                        if (test(info.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(info.fieldTypes.get(0), strongReference)) {
-                           ObjectInfo primitive(okLocal, 0, type_ref);
-
-                           allocateStructure(scope, 0, primitive);
-
-                           compileContentAssignment(DNode(), scope, primitive, object);
-                           object = primitive;
-
-                           return object;
-                        }
-                     }
-                  }
-               }
-               if (!skipTypecast) {
-                  // if type mismatch
-                  // call typecast method
-                  mismatch = true;
-
-                  _writer.setMessage(*scope.tape, encodeMessage(type_ref, GET_MESSAGE_ID, 0));
-                  _writer.typecast(*scope.tape);
-
-                  return ObjectInfo(okAccumulator, 0, type_ref);
-               }
-            }
-         }
-      }
-      object.extraparam = type_ref;
+   ModuleScope* moduleScope = scope.moduleScope;
+   ref_t source_type = 0;
+   ref_t sourceClassReference = 0;
+   if (object.kind == okConstant || object.kind == okConstantClass || object.kind == okLocalAddress) {
+      sourceClassReference = object.extraparam;
    }
+   else if (object.kind == okThisParam && (object.extraparam == 0)) {
+      sourceClassReference = scope.getClassRefId(false);
+   }
+   else source_type = getType(object);
+
+   if (source_type == 0 && object.param != 0 && (object.kind == okAccumulator || object.kind == okConstantSymbol)) {
+      sourceClassReference = object.param;
+   }
+
+   if (sourceClassReference == 0 && source_type != 0) {
+      sourceClassReference = scope.moduleScope->resolveStrongType(source_type);
+   }
+
+   if (target_type != source_type) {
+      // typecast literal constant
+      if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
+         return ObjectInfo(okAccumulator, 0, target_type);
+      }
+
+   // if target is an explicit type
+      if (moduleScope->typeHints.get(target_type) != 0) {
+         ref_t targetClassReference = scope.moduleScope->resolveStrongType(target_type);
+
+         ClassInfo targetInfo;
+         moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
+
+         ClassInfo sourceInfo;
+         if (sourceClassReference != 0)
+            moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(sourceClassReference), false);
+
+         // if the target is structure
+         if (test(targetInfo.header.flags, elStructureRole)) {
+            // typecast numeric constant
+            if (object.kind == okIntConstant) {
+               if ((targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+                  return ObjectInfo(okAccumulator, 0, target_type);
+               }
+            }
+            else if (object.kind == okLongConstant && moduleScope->typeHints.exist(target_type, moduleScope->longReference)) {
+               return ObjectInfo(okAccumulator, 0, target_type);
+            }
+            else if (object.kind == okRealConstant && moduleScope->typeHints.exist(target_type, moduleScope->realReference)) {
+               return ObjectInfo(okAccumulator, 0, target_type);
+            }
+            else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
+               return ObjectInfo(okAccumulator, 0, target_type);
+            }
+            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
+               return ObjectInfo(okAccumulator, 0, target_type);
+            }
+
+            // if the source is structure
+            if (test(sourceInfo.header.flags, elStructureRole)) {
+               // if source is target wrapper
+               if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
+                  ObjectInfo primitive(okLocal, 0, target_type);
+
+                  // do nothing for check mode
+                  if (!test(mode, HINT_CHECK_MODE)) {
+                     allocateStructure(scope, 0, primitive);
+
+                     compileContentAssignment(DNode(), scope, primitive, object);
+                  }
+                  object = primitive;
+
+                  return object;
+               }
+               // if target is a source wrapper
+               if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
+                  if (test(targetInfo.header.flags, elEmbeddable)) {
+                     // pass directly
+                     if (!object.extraparam)
+                        object.extraparam = target_type;
+
+                     return object;
+                  }
+               }
+            }
+         }
+
+         // pass $nil directly
+         if (object.kind == okNil)
+            return object;
+
+         // if source class inherites / is target class
+         while (sourceClassReference != 0) {
+            if (moduleScope->typeHints.exist(target_type, sourceClassReference))
+               return object;
+
+            sourceClassReference = sourceInfo.header.parentRef;
+
+            if (moduleScope->loadClassInfo(sourceInfo, moduleScope->module->resolveReference(sourceClassReference), true) == 0)
+               break;
+         }
+
+         // if type mismatch
+         // call typecast method
+         mismatch = true;
+
+         // do nothing for check mode
+         if (!test(mode, HINT_CHECK_MODE)) {
+            _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
+            _writer.typecast(*scope.tape);
+         }
+
+         return ObjectInfo(okAccumulator, 0, target_type);
+      }
+   }
+
+   object.extraparam = target_type;
    return object;
 }
 
@@ -4244,7 +4273,7 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
                int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
 
                externalScope.frameSize++;
-               _writer.declarePrimitiveVariable(*scope.tape, value);
+               _writer.declareVariable(*scope.tape, value);
             }
             else {
                _writer.loadObject(*scope.tape, (*out_it).info);
@@ -5048,7 +5077,7 @@ void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, Class
       size_t fieldCount = classScope->info.fields.Count();
       if (fieldCount > 0) {
          _writer.loadBase(*codeScope.tape, ObjectInfo(okAccumulator));
-         _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantSymbol, scope.moduleScope->nilReference));
+         _writer.loadObject(*codeScope.tape, ObjectInfo(okNil));
          _writer.initBase(*codeScope.tape, fieldCount);
          _writer.loadObject(*codeScope.tape, ObjectInfo(okBase));
       }

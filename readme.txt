@@ -76,7 +76,7 @@ Visit the project web site for the latest info on the project:
 http://elenalang.sourceforge.net/
 
 The documentation is available as HTML pages, and text. 
-These are all available on http://sourceforge.net/projects/elenalang
+These are all available on http://github.com/ELENA-LANG/elena-lang/wiki
 (see Docs page) and in <app root>\doc
 
 There you also can find Getting Started tutorial
@@ -89,12 +89,9 @@ Suggestions, Help ...
 ---------------------
 http://elenalang.blogspot.com/
     - blog devoted to the language
-
-http://sourceforge.net/projects/elenalang/forums/forum/585652
-    - general ELENA related questions
-
-http://sourceforge.net/projects/elenalang/forums/forum/581072
-    - help on IDE and compiler
+    
+http://www.elcdev.smffy.com/
+    - ELENA forum
 
 ****************************************************************************
 * ELENA Language modules and programs

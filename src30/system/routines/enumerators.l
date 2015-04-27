@@ -59,9 +59,10 @@
         
         #var(type:int)i := 0.
         #var(type:int)j := 0.
-        #var(type:int)aLength := anArray length.
-        #var aCurrent := nil.
-        #var aNext := nil.
+        #var(type:int)aLength.
+        anArray readLength &vint:aLength.
+        #var aCurrent := $nil.
+        #var aNext := $nil.
         
         #loop (i < aLength) ?
         [
@@ -108,13 +109,13 @@
         
         (anEnumerator next) 
             ? [ ^ anEnumerator get. ]
-            ! [ ^ nil. ].
+            ! [ ^ $nil. ].
     ]
 
     #method last
     [
         #var(type:enumerator)anEnumerator := self enumerator.
-        #var aLastItem := nil.
+        #var aLastItem := $nil.
         
         #loop (anEnumerator next) ?
             [ aLastItem := anEnumerator get. ].
@@ -137,7 +138,7 @@
         
         self::enumerableOp run &each:anItem [ aList append:anItem ].
 
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         aList readLength &vint:aLength.
         
         #var(type:array) anArray := Array new &length:aLength.
@@ -281,7 +282,7 @@
         #var(type:literal)aLiteral := self literal.        
         #var aTarget := String new.
         #var(type:int)aStart := 0.
-        #var(type:vint)anEnd.
+        #var(type:int)anEnd.
         
         aLiteral indexOf &index:aStart &literal:aReplacee &vint:anEnd.
         
@@ -307,10 +308,10 @@
         
         #var(type:literal)aRetVal := emptyLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:vint)aLength.
-        #var(type:vchar)aCurrent.
-        #var(type:vchar)aConverted.
-        #var(type:vint)aCurrentLen.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:char)aConverted.
+        #var(type:int)aCurrentLen.
         
         aLiteral readLength &vint:aLength.
         
@@ -335,10 +336,10 @@
         
         #var(type:literal)aRetVal := emptyLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:vint)aLength.
-        #var(type:vchar)aCurrent.
-        #var(type:vchar)aConverted.
-        #var(type:vint)aCurrentLen.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:char)aConverted.
+        #var(type:int)aCurrentLen.
         
         aLiteral readLength &vint:aLength.
         
@@ -360,7 +361,7 @@
     #method is &empty
     [
         #var(type:literal)aLiteral := self literal.        
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         aLiteral readLength &vint:aLength.
         
         ^ aLength == 0.
@@ -371,8 +372,8 @@
         #var(type:literal)aLiteral := self literal.        
         #var aList := List new.
         #var(type:int)aStart := 0.
-        #var(type:vint)anIndex := 0.
-        #var(type:vint)aCharLen.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aCharLen.
         
         aChar readLength &vint:aCharLen.
         
@@ -397,7 +398,7 @@
         #var(type:literal)aLiteral := self literal.        
         #var aList := List new.
         #var(type:int)aStart := 0.
-        #var(type:vint)anIndex := 0.
+        #var(type:int)anIndex := 0.
         
         #loop (anIndex >= 0)?        
         [
@@ -441,7 +442,7 @@
     #method(type:wide) Substring &index:anIndex
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         aLiteral readLength &vint:aLength.
         
         aLength := aLength - anIndex.
@@ -453,9 +454,9 @@
     [
         #var(type:wide)aLiteral := self wide.
         #var(type:int)anIndex := 0.
-        #var(type:vint)aLength.
-        #var(type:vchar)aCurrent.
-        #var(type:vint)aCharLen.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:int)aCharLen.
         
         aLiteral readLength &vint:aLength.
         aChar readLength &vint:aCharLen.
@@ -479,9 +480,9 @@
     #method trimRight &char:aChar
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:vint)aLength.
-        #var(type:vchar)aCurrent.
-        #var(type:vint)aCharLen.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:int)aCharLen.
 
         aLiteral readLength &vint:aLength.
         aChar readLength &vint:aCharLen.
@@ -512,7 +513,7 @@
     #method padLeft &char:aChar &length:aLength
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:vint)aCurrentLength.
+        #var(type:int)aCurrentLength.
         aLiteral readLength &vint:aCurrentLength.
         
         (aCurrentLength < aLength)
@@ -522,7 +523,7 @@
     #method padRight &char:aChar &length:aLength
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:vint)aCurrentLength.
+        #var(type:int)aCurrentLength.
         aLiteral readLength &vint:aCurrentLength.
 
         (aCurrentLength < aLength)
@@ -532,7 +533,7 @@
     #method startingWith &wide:s
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:vint)n.
+        #var(type:int)n.
         aLiteral indexOf &index:0 &wide:s &vint:n.
         
         ^ 0 == n.
@@ -541,9 +542,9 @@
     #method endingWith &wide:s
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:vint)l1.
-        #var(type:vint)l2.
-        #var(type:vint)n.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        #var(type:int)n.
         
         aLiteral readLength &vint:l1.
         s readLength &vint:l2.
@@ -556,8 +557,8 @@
     #method replaceFirst &wide:aReplacee &wide:aReplacer
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:vint) aReplaceeLen.
-        #var(type:vint)anIndex.
+        #var(type:int) aReplaceeLen.
+        #var(type:int)anIndex.
         
         aReplacee readLength &vint:aReplaceeLen.
         
@@ -574,7 +575,7 @@
         
         #var aTarget := String new.
         #var(type:int)aStart := 0.
-        #var(type:vint)anEnd.
+        #var(type:int)anEnd.
         aLiteral indexOf &index:aStart &wide:aReplacee &vint:anEnd.
         
         #loop (anEnd != -1) ?
@@ -599,10 +600,10 @@
         
         #var(type:wide)aRetVal := emptyWideLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:vint)aLength.
-        #var(type:vchar)aCurrent.
-        #var(type:vchar)aConverted.
-        #var(type:vint)aCurrentLen.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:char)aConverted.
+        #var(type:int)aCurrentLen.
 
         aLiteral readLength &vint:aLength.
                 
@@ -627,10 +628,10 @@
         
         #var(type:wide)aRetVal := emptyWideLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:vint)aLength.
-        #var(type:vchar)aCurrent.
-        #var(type:vchar)aConverted.
-        #var(type:vint)aCurrentLen.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:char)aConverted.
+        #var(type:int)aCurrentLen.
         
         aLiteral readLength &vint:aLength.
         
@@ -651,7 +652,7 @@
 
     #method is &empty
     [
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         #var(type:wide)aLiteral := self wide.        
         aLiteral readLength &vint:aLength.
         
@@ -663,8 +664,8 @@
         #var(type:wide)aLiteral := self wide.        
         #var aList := List new.
         #var(type:int)aStart := 0.
-        #var(type:vint)anIndex := 0.
-        #var(type:vint)aCharLen.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aCharLen.
         aChar readLength &vint:aCharLen.
         
         #loop (anIndex >= 0)?        
@@ -688,7 +689,7 @@
         #var(type:wide)aLiteral := self wide.
         #var aList := List new.
         #var(type:int)aStart := 0.
-        #var(type:vint)anIndex := 0.
+        #var(type:int)anIndex := 0.
         
         #loop (anIndex >= 0)?        
         [

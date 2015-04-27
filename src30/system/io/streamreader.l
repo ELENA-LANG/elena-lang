@@ -18,8 +18,7 @@
             
     #method read &bytearray:anArray &length:aLength
     [
-        #var(type:vlength)aRead.
-        aRead << aLength.
+        #var(type:length)aRead := aLength.
         
         $self read &bytearray:anArray &vlength:aRead.
          
@@ -30,7 +29,7 @@
     #method read &vbyte:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:vlength)aRead := 1.
+        #var(type:length)aRead := 1.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -43,7 +42,7 @@
     #method read &vshort:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:vlength)aRead := 2.
+        #var(type:length)aRead := 2.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -56,7 +55,7 @@
     #method read &vchar:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:vlength)aRead := 4.
+        #var(type:length)aRead := 4.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -69,7 +68,7 @@
     #method read &vint:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:vlength)aRead := 4.
+        #var(type:length)aRead := 4.
         
         $self read &bytearray:aBuffer &length:aRead.
         
@@ -82,7 +81,7 @@
     #method read &vlong:aLong
     [
         #var(type:bytearray,size:8)aBuffer.
-        #var(type:vlength)aRead := 8.
+        #var(type:length)aRead := 8.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -95,7 +94,7 @@
     #method read &vreal:aReal
     [
         #var(type:bytearray,size:8)aBuffer.
-        #var(type:vlength)aRead := 8.
+        #var(type:length)aRead := 8.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -133,7 +132,7 @@
     [
         #var(type:literal) aLine := emptyLiteralValue.
         
-        #var(type:vint)aLength := -1.
+        #var(type:int)aLength := -1.
         #loop (aLength == -1) ?
         [
             theOutput indexOf &index:0 &char:10 &vint:aLength.
@@ -141,7 +140,7 @@
             (aLength == -1)
                 ? [
                     #var(type:chararray,size:64)aBuffer.
-                    #var(type:vlength)aBufferLength := 64.
+                    #var(type:length)aBufferLength := 64.
                     
                     $self read &chararray:aBuffer &vlength:aBufferLength.
                     (aBufferLength == 0)
@@ -167,7 +166,7 @@
     [
         #var(type:wide) aLine := emptyWideLiteralValue.
         
-        #var(type:vint)aLength := -1.
+        #var(type:int)aLength := -1.
         #loop (aLength == -1) ?
         [
             theOutput indexOf &index:0 &char:10 &vint:aLength.

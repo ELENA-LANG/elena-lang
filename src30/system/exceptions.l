@@ -7,7 +7,7 @@
     #constructor new
     [
         #var(type:intarray,size:64)aStack.
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         
         system'internal'callstack_load eval
             &intarray:aStack
@@ -23,8 +23,8 @@
     #method literal
     [
         #var(type:int)anIndex := 0.
-        #var(type:vint)aLength.
-        #var(type:vint)aBufferLength := 0.
+        #var(type:int)aLength.
+        #var(type:int)aBufferLength := 0.
         
         theStack readLength &vint:aLength.
 
@@ -32,7 +32,7 @@
         #var(type:literal)aCallStackText := emptyLiteralValue.                
         #loop (anIndex < aLength) ?
         [
-            aBufferLength << 512.
+            aBufferLength := 512.
             $self read &index:anIndex &bytearray:aBuffer &vlength:aBufferLength.
             
             aCallStackText := aCallStackText add &literal:(LiteralValue $new &length:aBufferLength &index:0 &bytearray:aBuffer) add &literal:'newLine.

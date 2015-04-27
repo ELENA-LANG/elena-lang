@@ -191,7 +191,7 @@
         aSystemTime set &second:(aSecond int).
         aSystemTime set &millisecond:0.
         
-        #var(type:vlong)aValue.
+        #var(type:long)aValue.
         aSystemTime read &vlong:aValue.        
         theValue := aValue.
     ]
@@ -208,7 +208,7 @@
    
     #method equal &datetime:aDate
     [
-        #var(type:vlong)aValue.
+        #var(type:long)aValue.
         aDate read &vlong:aValue.
         
         ^ aValue == theValue.
@@ -216,7 +216,7 @@
 
     #method less &datetime:aDate
     [
-        #var(type:vlong)aValue.
+        #var(type:long)aValue.
         aDate read &vlong:aValue.
         
         ^ aValue < theValue.
@@ -324,7 +324,7 @@
         
         #var m2 := aSystemTime month.
         
-        #var(type:vlong)aRetVal.
+        #var(type:long)aRetVal.
         aSystemTime read &vlong:aRetVal.
         
         ^ Date new &long:aRetVal.
@@ -344,7 +344,7 @@
         aSystemTime set &year:(aSystemTime year add &int:Years).
         aSystemTime set &month:(aSystemTime month add &int:aMonths).
         
-        #var(type:vlong)aRetVal.
+        #var(type:long)aRetVal.
         aSystemTime read &vlong:aRetVal.
         
         ^ Date new &long:aRetVal.
@@ -385,7 +385,7 @@
 
 #symbol utcNow =
 [
-    #var(type:vlong)aValue.
+    #var(type:long)aValue.
     dateTimeControl read &CurrentUTCTime &vlong:aValue.
     
     ^ Date new &long:aValue.

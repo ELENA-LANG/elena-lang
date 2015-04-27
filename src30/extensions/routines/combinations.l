@@ -10,7 +10,7 @@
 {
     #method $strategy = $self.
     
-    #method getAt &indexers:Indexers &length:aLength = nil.
+    #method getAt &indexers:Indexers &length:aLength = $nil.
     
     #method(type:$strategy) eval &indexers:Indexers &length:aLength = $self.
     
@@ -30,7 +30,7 @@
     
     eval &indexers:Indexers &length:aLength
     [
-        (nil equal:(control run:Indexers &seeking: anIndexer 
+        ($nil == (control run:Indexers &seeking: anIndexer 
                 [
                     (anIndexer append &index:1 available)
                         ! [ anIndexer write &index:0. ^ false. ].
@@ -66,7 +66,7 @@
     
     eval &indexers:Indexers &length:aLength
     [
-        (nil != control run:Indexers &seeking: anIndexer [ anIndexer append &index:1 available not ])
+        ($nil != control run:Indexers &seeking: anIndexer [ anIndexer append &index:1 available not ])
             ? [ ^ combinationEnd. ].
             
         ^ $self.            

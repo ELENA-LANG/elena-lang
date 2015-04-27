@@ -33,8 +33,8 @@ public:
 
 //   virtual int getCurrentDocumentIndex() { return getCurrentIndex(); }
 //   virtual void markDocument(int index, bool modified);
-//   virtual void eraseDocumentTab(int index);
-//
+   void eraseDocumentTab(int index);
+
 //   virtual const char* getDocumentName(int index);
 //   virtual int getCurrentDocumentIndex() { return get_current_page(); }
 //   virtual int getDocumentIndex(const char* name) { return getTabIndex(name); }
@@ -47,9 +47,9 @@ public:
 //
 //   virtual void selectDocument(const TCHAR* name);
 //   virtual void selectDocument(int index);
-//
-//   virtual void onTabChange(int index);
-//
+
+   virtual void onTabChange(int index);
+
 //   bool copyClipboard(Clipboard& board);
 //   void eraseSelection();
 //   void pasteClipboard(Clipboard& board);

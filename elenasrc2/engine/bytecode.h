@@ -208,6 +208,7 @@ enum ByteCode
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
+   bcXSelectR        = 0xF3,
    bcXIndexRM        = 0xF4,
    bcXJumpRM         = 0xF5,
    bcSelectR         = 0xF6,
@@ -219,50 +220,7 @@ enum ByteCode
    bcIfN             = 0xFC,
    bcElseN           = 0xFD,   
    bcXCallRM         = 0xFE,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   //bcXClone         = 0x3E,
-
-   //bcWToN           = 0x49,
-
-   //bcWRead          = 0x52,
-   //bcNToW           = 0x54,
-   //bcLToW           = 0x55,
-   //bcRToW           = 0x56,
-   //bcWSeek          = 0x57,
-
-   //bcInsert         = 0x62,
-   //bcRSin           = 0x66,
-   //bcRCos           = 0x67,
-   //bcRArcTan        = 0x68,
-
-   //bcLCopyN         = 0x71,
-   //bcWToL           = 0x7D,
-   //bcLRndNew        = 0x7E,
-   //bcLRndNext       = 0x7F,
-
-   //bcWToR           = 0x89,
-
-
-   //bcMessage        = 0xA8,
-
-
-
-
-   //
-   bcReserved       = 0xFF,
+   bcReserved        = 0xFF,
 
    // labels
    blLabelMask      = 0xC000,  // tape label mask

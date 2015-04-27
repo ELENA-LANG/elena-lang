@@ -15,7 +15,7 @@
 {
     #method fieldCount
     [
-        #var(type:vlength)aLength.
+        #var(type:length)aLength.
         $classControl readLength:self &vlength:aLength.
         
         ^ IntNumber new &int:aLength.
@@ -32,7 +32,7 @@
 
     #method name
     [
-        #var(type:vlength)aLength := 255.
+        #var(type:length)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
         
         $classControl readName:self &bytearray:aBuffer &vlength:aLength.

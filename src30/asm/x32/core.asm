@@ -2742,6 +2742,16 @@ inline % 0F1h
   
 end
 
+// ; xselectr (ebx - r1, __arg1 - r2)
+
+inline % 0F3h
+
+  test   eax, eax
+  mov    eax, __arg1
+  cmovnz eax, ebx
+
+end
+
 // ; xindexrm
 inline % 0F4h
 
@@ -2752,6 +2762,7 @@ end
 // ; xjumprm
 inline % 0F5h
 
+  cmp [eax], eax
   jmp __arg1
 
 end
@@ -2770,6 +2781,7 @@ end
 // xcallrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh
 
+   cmp [eax], eax
    call code : __arg1
 
 end

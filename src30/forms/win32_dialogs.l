@@ -21,7 +21,7 @@
     
     #method addFilter &caption:aCaption &extension:aMask
     [
-        (theFilters == nil)
+        ($nil == theFilters)
             ? [ theFilters := (aCaption wide, aMask wide). ]
             ! [
                 theFilters := theFilters + (aCaption wide, aMask wide).
@@ -53,6 +53,6 @@
         
         theSelectedPath := aDialog select.
         
-        ^ (nil != theSelectedPath).
+        ^ ($nil != theSelectedPath).
     ]    
 }

@@ -3555,20 +3555,6 @@ procedure dptr_copy
 
 end
 
-procedure dptr_append
-
-  nload
-  ecopyd
-  bcopya
-  aloadsi 2
-  nload
-  add
-  nsave
-
-  quitn 2
-
-end
-
 procedure api_free_index
                       
   aloadsi 1

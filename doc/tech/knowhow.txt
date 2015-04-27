@@ -133,7 +133,7 @@ be copied there;
  <header>                     
  <program header>
  <text>                  code section
- <plt>
+ <plt>                                                         
 -- rodata segment --
  <rdata>                 rdata section
  <dynamic>                    
@@ -145,3 +145,51 @@ be copied there;
  <string table>              
  <stat>                  stat section
  <bss>                   data section
+
+9) Typecasting algorithm:
+   ----------------------
+
+- explicit : declared subject
+
+- structural : elStructureRole flag
+
+- content type  : elDebugMask bit field
+
+- readonly : elReadOnlyRole flag
+
+(type != source)
+|
++-> yes -> (target explicit?)
+|            |
+|            +-> yes -> (target structural?)
+|            |            |
+|            |            +-> yes ---> (source structural?)
+|            |            |              |
+|            |            |              +-> yes -> (source is target wrapper?)
+|            |            |              |            |
+|            |            |              |            +-> yes -> [create a local copy]              // vint as int
+|            |            |              |            |            
+|            |            |              |            +-> no --> (source is local && target is source wrapper?)              
+|            |            |              |                         |
+|            |            |              |                         +-> yes ->(target embeddable?)
+|            |            |              |                         |           |
+|            |            |              |                         |           +-> yes -> [ pass directly ]    // int as vint
+|            |            |              |                         |           |
+|            |            |              |                         +-----------+-> no --> [box the source if local] 
+|            |            |              |                                                |
+|            |            |              |                                                |
+|            |            |              +--> no -----------------------------------------+--> [send typecast message to source]
+|            |            |
+|            |            +-> no --> (source is nil)
+|            |                         |
+|            |                         +--> yes --> [pass directly]
+|            |                         |
+|            |                         +--> no ---> [box the source if local]
+|            |                                      |
+|            |                                      (source.class == target.class || source.class has target.class)
+|            |                                        |
+|            |                                        +--> yes --> [pass directly]
+|            |                                        |
+|            |                                        +--> no ----> [send typecast message to source]
+|            |                                      
++------------+--> no --> [ pass directly ]

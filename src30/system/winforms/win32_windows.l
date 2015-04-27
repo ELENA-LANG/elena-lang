@@ -33,16 +33,16 @@
         #var(type:vint)param.
         aCreateStruct readCreateParam &vint:param.
         
-        system'external'USER32 SetWindowLongW &hwnd:anHWND &int:GWL_USERDATA &int:param.
+        system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &int:param.
         
-        system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct.
+        system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct.
         
         aRetVal << 0.
     ]
     
     #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
-        #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:0 &int:0.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:0 &int:0.
          
         aRetVal << result.
     ]
@@ -56,14 +56,14 @@
                 ^ $self.
             ].                
                 
-        #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:wParam &int:lParam.lParam.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:wParam &int:lParam.lParam.
         
         aRetVal << result.
     ]
     
     #method wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
-        #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &int:0 &int:0.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:0 &int:0.
         
         aRetVal << result.
     ]
@@ -90,7 +90,7 @@
                 ].
             ].
         
-        #var(type:int)result := system'external'USER32 DefWindowProcW &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &hwnd:aControl &int:aLParam.
         
         aRetVal << result.
     ]
@@ -152,7 +152,7 @@
 //    ]
 }
 
-// --- SDIWindowCallback ---
+// --- PaintboxCallback ---
 
 #class PaintboxCallback :: WindowCallback
 {
@@ -179,6 +179,28 @@
     ]
 }
 
+// --- PanelCallback ---
+
+#class PanelCallback :: WindowCallback
+{
+    #constructor new &win_listener:aListener
+    [
+        theListener := aListener.
+    ]
+    
+    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    [
+        (aMessage == WM_DESTROY)
+            ? [
+                theListener ondestroy &hwnd:anHWND &vint:aRetVal.                            
+                
+                ^ $self.
+            ].
+        
+        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
+    ]
+}
+
 // --- WindowListener ---
 
 #class(limited) WindowListener
@@ -201,8 +223,12 @@
     #method ondestroy &hwnd:aControl &vint:aResult
     [
         #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:aControl &int:GWL_USERDATA &int:0.
-        (anIndex != 0)
-            ? [ RTPointer new &index:anIndex close. ].
+        (anIndex != 0)?
+            [
+                #var(type:rt_ptr)ptr := anIndex.
+                
+                ptr free.
+            ].
 
         aResult << 0.
     ]
@@ -211,26 +237,5 @@
 // --- SDIWindowClass ---
 
 #static SDIWindowClass = $windowClassControl createClass &name:"ELENA.SDIWINDOW.3.1" &hinstance:CurrentInstance &int:WS_ELENAWINDOW &int:COLOR_BACKGROUND.
-#static PaintboxClass = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0.
-
-//// --- BaseWindowHandle ---
-//
-//#class BaseWindowHandle :: ControlHandle
-//{
-//    #field(type:win_listener)theListener.
-//    
-//    #method set &win_listener:aListener
-//    [
-//        theListener := aListener.
-//    ]
-//    
-//    #method onclick &handle:aControl &vint:aRetVal
-//    [
-//        (nil == theListener)
-//            ! [ theListener onclick &handle:aControl &vint:aRetVal. ].
-//    ]
-//    
-//    #method destroy
-//    [
-//    ]
-//}
+#static PaintboxClass  = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0.
+#static PanelClass     = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND.

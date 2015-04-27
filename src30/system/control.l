@@ -2,31 +2,31 @@
 
 #class(limited) BaseBoolValue
 {
-    #method then : aTrueAction = nil.
+    #method then : aTrueAction = $nil.
 
-    #method then : aTrueAction &else:aFalseAction = nil.
+    #method then : aTrueAction &else:aFalseAction = $nil.
 
-    #method else : aTrueAction = nil.
+    #method else : aTrueAction = $nil.
 
-    #method(type:bool) or : anExpr = $self.
+    #method(type:bool) or : anExpr = $nil.
 
-    #method(type:bool) and : anExpr = $self.
+    #method(type:bool) and : anExpr = $nil.
 
-    #method(type:bool) xor : aBool = $self.
+    #method(type:bool) xor : aBool = $nil.
 
-    #method equal : anExpr = $self.
+    #method equal : anExpr = $nil.
 
-    #method(type:bool) equal &bool:aBool = $self.
+    #method(type:bool) equal &bool:aBool = $nil.
 
-    #method(type:bool) not = $self.
+    #method(type:bool) not = $nil.
 
-    #method literal = "unknown".
+    #method literal = $nil.
 
-    #method wide = "unknown" wide.  // !! temporal
+    #method wide = $nil.
 
     #method bool = $self.
 
-    #method clone = $self.
+    #method clone = $nil.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
     
@@ -39,7 +39,7 @@
 
     #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
 
-    #method else : aTrueAction = nil.
+    #method else : aTrueAction = $nil.
 
     #method(type:bool) or : anExpr = $self.
 
@@ -71,7 +71,7 @@
 
 #symbol false = BaseBoolValue
 {
-    #method then : anAction = nil.
+    #method then : anAction = $nil.
     
     #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
 
@@ -121,9 +121,9 @@
 {
     #method enumerator = $self.
     
-    #method get = nil.
+    #method get = $nil.
     
-    #method(type:bool) next = false.
+    #method(type:bool) next = $nil.
     
     #method reset []
 }
@@ -134,9 +134,9 @@
 {
     #method iterator = $self.
     
-    #method(type:bool) available = false.
+    #method(type:bool) available = $nil.
 
-    #method get = nil.
+    #method get = $nil.
     
     #method set : anObject []
     
@@ -144,7 +144,7 @@
     
     #method index
     [
-        #var(type:vint)anIndex := 0.
+        #var(type:int)anIndex := 0.
         $self readIndex &vint:anIndex.
                         
         ^ IntNumber new &int:anIndex.
@@ -154,14 +154,16 @@
     
     #method append &index:anOffset
     [
-        #var(type:int)anIndex := $self index.
+        #var(type:int)anIndex := 0.
+        $self readIndex &vint:anIndex.
         
         $self write &index:(anIndex + anOffset).
     ]
         
     #method reduce &index:anOffset
     [
-        #var(type:int)anIndex := $self index.
+        #var(type:int)anIndex := 0.
+        $self readIndex &vint:anIndex.
         
         $self write &index:(anIndex - anOffset).
     ]
@@ -223,7 +225,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -256,7 +258,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -289,7 +291,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -313,7 +315,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -322,7 +324,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.
     ]
 }
 
@@ -346,7 +348,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -355,7 +357,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.
     ]
 }
 
@@ -379,7 +381,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -388,7 +390,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -412,7 +414,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -421,7 +423,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -445,7 +447,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -454,7 +456,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -478,7 +480,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -487,7 +489,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -511,7 +513,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -520,7 +522,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -544,7 +546,7 @@
     
     #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
@@ -553,7 +555,7 @@
                 [ ^ anItem. ].
         ].        
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -589,7 +591,7 @@
             i := i - dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]          
     
     #method run &range &int:aStart &int:n &int:dx
@@ -603,7 +605,7 @@
             i := i + dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]
     
     #method retrieve &range &int:aStart &int:n &int:dx
@@ -618,7 +620,7 @@
             i := i + dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -651,7 +653,7 @@
             x := x - dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]          
     
     #method run &area &int:i &int:j &int:n &int:m &int:dx
@@ -673,7 +675,7 @@
             x := x + dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 
@@ -714,7 +716,7 @@
             x := x - dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]          
     
     #method run &space &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
@@ -744,7 +746,7 @@
             x := x + dx.
         ].
         
-        ^ nil.        
+        ^ $nil.        
     ]
 }
 

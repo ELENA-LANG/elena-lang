@@ -130,7 +130,6 @@ protected:
 
       // cached references
       ref_t superReference;
-      ref_t nilReference;
       ref_t intReference;
       ref_t longReference;
       ref_t realReference;

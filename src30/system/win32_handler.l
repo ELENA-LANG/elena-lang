@@ -12,64 +12,69 @@
         => system'internal'int_equal.
 
     #method handle = $self.
-
-    #method close
-    [
-        system'external'KERNEL32 CloseHandle
-            &handle:$self.
-    ]
 }
 
 // --- RTPointer ---
 
-#class(sealed,pointer) RTPointer
+#class(sealed,struct:embeddable) RTPointer
 {
+    #field(type:int)theIndex.
+    
     #constructor new : anObject
         => system'internal'api_alloc_index.
 
-    #constructor new &index:anIndex
-        => system'internal'int_copy.
-
-    #method read &vint:aRetVal
-        => system'internal'save_int.
-
+    #method rt_ptr = $self.            
+                        
     #method index
     [
-        #var(type:vint)anIndex.
-        $self read &vint:anIndex.
-        
-        ^ IntNumber new &int:anIndex.
+        ^ IntNumber new &int:theIndex.
     ]
-
+    
+    #method readIndex &vint:aRetVal
+    [
+        aRetVal << theIndex.
+    ]
+        
     #method get
         => system'internal'ptr_get.
 
-    #method close
+    #method free
         => system'internal'api_free_index.
 }
 
 // --- UnsafePointer ---
 
-#class(sealed,pointer) UnsafePointer
+#class(sealed,struct:embeddable) UnsafePointer
 {
+    #field(type:int)theIndex.
+
+    #constructor new : anObject
+    [
+        $self write:anObject.
+    ]
+    
+    #method dirty_ptr = $self.
+    
+    #method write : anObject
+        => system'internal'dptr_copy.
+                
+    #method append &int:aValue
+    [
+        theIndex := theIndex + aValue.
+    ]                            
+                            
+    #method write &handle:anObject
+        => system'internal'int_copy.
+    
     #method write &literal:aLiteral
         => system'internal'dptr_copy.
-        
+    
     #method write &wide:aLiteral
         => system'internal'dptr_copy.
-    
-    #method write &handle:aLiteral
-        => system'internal'int_copy.
     
     #method write &shortarray:anArray
         => system'internal'dptr_copy.
     
     #method write &bytearray:anArray
         => system'internal'dptr_copy.
-    
-    #method append &int:aValue
-        => system'internal'dptr_append.
-    
-    #method read &vint:aRetVal
-        => system'internal'save_int.    
 }

@@ -71,8 +71,8 @@
     
     #method(type:bool) equal &point:aPoint
     [
-        #var(type:vint)anX.
-        #var(type:vint)anY.
+        #var(type:int)anX.
+        #var(type:int)anY.
         
         aPoint readX &vint:anX.
         aPoint readY &vint:anY.
@@ -82,8 +82,8 @@
     
     #method(type:bool) less &point:aPoint
     [
-        #var(type:vint)anX.
-        #var(type:vint)anY.
+        #var(type:int)anX.
+        #var(type:int)anY.
         
         aPoint readX &vint:anX.
         aPoint readY &vint:anY.
@@ -99,8 +99,8 @@
     
     #method add &point:aPoint
     [
-        #var(type:vint)anX.
-        #var(type:vint)anY.
+        #var(type:int)anX.
+        #var(type:int)anY.
         
         aPoint readX &vint:anX.
         aPoint readY &vint:anY.
@@ -110,8 +110,8 @@
     
     #method subtract &point:aPoint
     [
-        #var(type:vint)anX.
-        #var(type:vint)anY.
+        #var(type:int)anX.
+        #var(type:int)anY.
         
         aPoint readX &vint:anX.
         aPoint readY &vint:anY.
@@ -191,8 +191,8 @@
     
     #method(type:bool) equal &dimension:aDimension
     [
-        #var(type:vint)aWidth.
-        #var(type:vint)aHeight.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
         
         aDimension read &vint:aWidth &vint:aHeight.
         
@@ -317,10 +317,10 @@
     
     #method(type:bool) equal &region:aRegion
     [
-        #var(type:vint)aWidth.
-        #var(type:vint)aHeight.
-        #var(type:vint)anX.
-        #var(type:vint)anY.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
+        #var(type:int)anX.
+        #var(type:int)anY.
         
         aRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
         

@@ -35,6 +35,13 @@ protected:
    Gtk::Widget* _current;
    TabPages     _tabs;
 
+   virtual void on_switch_page(Widget* page, guint page_num)
+   {
+      Gtk::Notebook::on_switch_page(page, page_num);
+
+      onTabChange(page_num);
+   }
+
 public:
    int getCount();
    int getCurrentIndex()
@@ -45,16 +52,16 @@ public:
    Gtk::Widget* _getTabControl(int index) const;
 //   const TCHAR* getTabName(int index);
    int getTabIndex(const char* name);
-//   void eraseTab(int index);
+   void eraseTabPage(int index);
 
    void addTab(const char* name, Gtk::Widget* control);
-//   void deleteTab(int index);
+   void deleteTab(int index);
    void selectTab(int index);
 
    virtual void setFocus();
 
-//   virtual void onTabChange(int index);
-//
+   virtual void onTabChange(int index);
+
 //   void renameTab(int index, const TCHAR* newName);
 //   void renameTabCaption(int index, const TCHAR* newName);
 

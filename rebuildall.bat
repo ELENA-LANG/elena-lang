@@ -20,4 +20,5 @@ bin\elc -cexamples\interpreter\interpreter.prj
 bin\elc -cexamples\calculator\calc.prj
 bin\elc -cexamples\agenda\agenda.prj
 bin\elc -cexamples\graphs\graphs.prj
+bin\elc -cexamples\c_a_g\c_area_gui.prj
 

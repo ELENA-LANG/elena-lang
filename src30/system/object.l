@@ -13,5 +13,7 @@
 
 #symbol nil =
 {
-    clone = $self.
+    #method equal : anObject = ($nil == anObject).
+    
+    #method(generic)get = $nil.
 }.

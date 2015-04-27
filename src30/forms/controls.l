@@ -39,15 +39,15 @@
     
     #method $set &parent:aParent
     [
-        (nil == aParent)
+        ($nil == aParent)
             ? [
-                (nil == theParent)
+                ($nil == theParent)
                     ? [ #throw InvalidOperationException new &message:"A control already unbound". ].
                 
-                theParent := nil.
+                theParent := $nil.
             ]
             ! [
-                (nil != theParent)
+                ($nil != theParent)
                     ? [ #throw InvalidOperationException new &message:"A control already bound". ].
                 
                 theParent := aParent.
@@ -63,8 +63,8 @@
     
     #method set &location:aPoint
     [
-        #var(type:vint)x.
-        #var(type:vint)y.
+        #var(type:int)x.
+        #var(type:int)y.
         aPoint read &vint:x &vint:y.
         
         theRegion writeLocation &int:x &int:y.
@@ -81,8 +81,8 @@
     
     #method set &dimension:aDimension
     [
-        #var(type:vint)aWidth.
-        #var(type:vint)aHeight.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
         
         aDimension read &vint:aWidth &vint:aHeight.
         

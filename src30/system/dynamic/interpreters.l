@@ -38,7 +38,7 @@
         
         // looking for the current subject
         #var(type:int)anIndex := 0.
-        #var(type:vlength)aLength.
+        #var(type:length)aLength.
         #var aNotFound := true.
         
         $classControl readLength:theStruct &vlength:aLength.

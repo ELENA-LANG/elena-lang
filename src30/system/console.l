@@ -49,12 +49,7 @@
         = theReader read &wide.
 
     #method readChar
-    [
-        #var aRetVal := Char new.
-        theReader read &vchar:aRetVal.
-      
-        ^ aRetVal char.
-    ]
+        = theReader char.
 
     #method readKey
         = theReader int.

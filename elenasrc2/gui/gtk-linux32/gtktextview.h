@@ -55,7 +55,7 @@ public:
 
 // --- TextView ---
 
-class TextView : public Gtk::ScrolledWindow
+class TextView : public Gtk::Table
 {
 protected:
 //public:
@@ -166,7 +166,7 @@ protected:
       ViewStyles  _styles;
       bool        _lineNumbersVisible;
       bool        _mouseCaptured;
-      //bool        _highlight;
+      bool        _highlight;
       bool        _tabUsing;
       size_t      _tabSize;
 
@@ -183,6 +183,9 @@ protected:
    };
 
    TextDrawingArea               _area;
+   Gtk::VScrollbar               _vscrollbar;
+   Gtk::HScrollbar               _hscrollbar;
+
    Glib::RefPtr<Gtk::Adjustment> _vadjustment;
    Glib::RefPtr<Gtk::Adjustment> _hadjustment;
 
@@ -197,6 +200,15 @@ protected:
    void onEditorChange();
 
 public:
+   int getVScrollerValue() const
+   {
+      return _vadjustment->get_value();
+   }
+   int getHScrollerValue() const
+   {
+      return _hadjustment->get_value();
+   }
+
    void updateHScroller(bool resized);
    void updateVScroller(bool resized);
 

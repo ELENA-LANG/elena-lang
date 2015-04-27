@@ -208,13 +208,7 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
       tape.write(bcPushN, 0);
 }
 
-void ByteCodeWriter :: declareVariable(CommandTape& tape, ref_t nilReference)
-{
-   // pushr nil
-   tape.write(bcPushR, nilReference | mskConstantRef);
-}
-
-void ByteCodeWriter :: declarePrimitiveVariable(CommandTape& tape, int value)
+void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
 {
    // pushn  value
    tape.write(bcPushN, value);
@@ -532,6 +526,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          // pushfi 1
          tape.write(bcPushFI, 1, bpFrame);
          break;
+      case okNil:
+         // pushn 0
+         tape.write(bcPushN, 0);
+         break;
       case okBlockLocal:
          // pushfi index
          tape.write(bcPushFI, object.param, bpBlock);
@@ -647,6 +645,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okThisParam:
          // aloadfi index
          tape.write(bcALoadFI, object.param, bpFrame);
+         break;
+      case okNil:
+         // acopyr 0
+         tape.write(bcACopyR);
          break;
       case okAccField:
          // aloadai
@@ -2170,6 +2172,9 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
+      case WRITE_MESSAGE_ID:
+         tape.write(bcLCopy);
+         break;
       case ADD_MESSAGE_ID:
          tape.write(bcLAdd);
          break;
@@ -2205,6 +2210,9 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
+      case WRITE_MESSAGE_ID:
+         tape.write(bcLCopy);
+         break;
       case ADD_MESSAGE_ID:
          tape.write(bcRAdd);
          break;
@@ -2328,12 +2336,17 @@ void ByteCodeWriter::doCharArrayOperation(CommandTape& tape, int operator_id)
    //}
 }
 
-void ByteCodeWriter :: selectConstant(CommandTape& tape, ref_t r1, ref_t r2)
+void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 {
    tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 }
 
-void ByteCodeWriter :: loadSymbolReference(CommandTape& tape, ref_t reference)
+void ByteCodeWriter::selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
+}
+
+void ByteCodeWriter::loadSymbolReference(CommandTape& tape, ref_t reference)
 {
    // acopyr reference
    tape.write(bcACopyR, reference | mskInternalRef);

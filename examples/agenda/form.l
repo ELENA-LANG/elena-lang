@@ -225,7 +225,7 @@
         // About
         BtmInfo set &onClick: args 
             [
-                LabelAbout set &caption:"Created by Alexandre Bencz.%nThanks Alex Rakov, for support.".
+                LabelAbout set &caption:"Created by Alexandre Bencz."#10"Thanks Alex Rakov, for support.".
             ].
     ]
 }

@@ -104,7 +104,7 @@
     [
         theBuffer clear write &literal:aLine.
         
-        #var(type:vint)aLength.
+        #var(type:int)aLength.
         theBuffer readLength &vint:aLength.
         
         $self write &chararray:(theBuffer chararray) &length:aLength.

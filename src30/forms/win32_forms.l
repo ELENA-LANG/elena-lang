@@ -25,7 +25,7 @@
     #method onclick &hwnd:aHandle &vint:aResult
     [
         #var aControl := theOwner retrieve &hwnd:aHandle.
-        (nil != aControl)
+        ($nil != aControl)
             ? [ aControl click. ].
         
         $super onclick &hwnd:aHandle &vint:aResult.
@@ -42,10 +42,10 @@
         theVisible
             ? [ Styles := Styles || WS_VISIBLE. ].
         
-        #var(type:vint)anX.
-        #var(type:vint)anY.
-        #var(type:vint)aWidth.
-        #var(type:vint)aHeight.
+        #var(type:int)anX.
+        #var(type:int)anY.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
         
         theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
         
@@ -68,10 +68,10 @@
         theVisible
             ? [ Styles := Styles || WS_VISIBLE. ].
         
-        #var(type:vint)anX.
-        #var(type:vint)anY.
-        #var(type:vint)aWidth.
-        #var(type:vint)aHeight.
+        #var(type:int)anX.
+        #var(type:int)anY.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
         
         theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
         
