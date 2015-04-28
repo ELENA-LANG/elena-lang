@@ -116,7 +116,7 @@
     [
         (aMessage == WM_CLOSE)
             ? [
-                anHWND close.
+                anHWND free.
                 
                 aRetVal << 0.
                 
@@ -128,6 +128,52 @@
                 // NOTE: SDIWindow is the main program window, so closing it means exiting the program
                 'program stop.
                 
+                theListener ondestroy &hwnd:anHWND &vint:aRetVal.
+                
+                ^ $self.
+            ].
+        
+        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
+    ]
+    
+    #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
+    [
+        (aControl == 0)
+            ? [ ^ $self. ]. // !! temporal
+
+        // !! note low word may contains the control ID, so only high word should be checked
+        (aCode == 0)
+            ? [ theListener onclick &hwnd:aControl &vint:aRetVal. ].
+    ]
+
+//    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+//    [
+//        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
+//    ]
+}
+
+// --- ChildWindowCallback ---
+
+#class ChildWindowCallback :: WindowCallback
+{
+    #constructor new &win_listener:aListener
+    [
+        theListener := aListener.
+    ]
+    
+    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    [
+        (aMessage == WM_CLOSE)
+            ? [
+                anHWND free.
+                
+                aRetVal << 0.
+                
+                ^ $self.
+            ].
+        
+        (aMessage == WM_DESTROY)
+            ? [
                 theListener ondestroy &hwnd:anHWND &vint:aRetVal.
                 
                 ^ $self.

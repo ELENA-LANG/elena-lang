@@ -1,46 +1,41 @@
-//// --- default namespaces ---
-//#define std'dictionary'*.
-//#define gui'dictionary'*.
-//#define gui'dictionary'events'*.
-//#define gui'common'*.
-//
-//// --- namespace shortcuts ---
-//#define forms'*    = gui'forms'*.
-//#define controls'* = gui'controls'*.
-//#define basic'*    = std'basic'*.
-//#define io'*       = sys'io'*.
-//
-//#class InputBox (forms'Dialog)
-//{
-//    #field infoLabel.
-//    #field BtmOK.
-//    
-//    #method oninit : Args
-//    [
-//        super oninit:Args.
-//
-//        infoLabel := controls'staticlabel::self.
-//        BtmOk     := controls'button::self.
-//        
-//        self
-//            set &caption:"About the program"
-//            set &x:320 &y:320 set &width:400 &height:230.
-//        
-//        infoLabel
-//            set &x:20 &y:20 set &width:320 &height:20
-//            set &caption:"Special thanks to Alex Rakov, for the support."
-//            open.
-//        
-//        BtmOK
-//            set &x:30 &y:175 set &width:50 & height:22
-//            set &caption:"Ok"
-//            open.
-//        
-//        BtmOk~eevents += 
-//            { onclick'eval = self set &forms'dialog_result:basic'false.  }.
-//    ]
-//}
-//
+// --- default namespaces ---
+#define system.
+#define forms.
+
+#class InfoForm :: ChildForm
+{
+    #field infoLabel.
+    #field BtmOk.
+
+    #constructor new &parent:aParent
+        <= (new &parent:aParent)
+    [
+        // Form ------------------------------------------------------------------------
+        $self set &x:320 &y:320.
+        $self set &width:400 &height:230.
+        $self set &caption:"About the program".
+        
+        BtmOk := Button new.
+        theControls append:BtmOk.
+
+        // Labels
+        infoLabel := Label new.
+        theControls append:infoLabel.
+
+        infoLabel set &x:20 &y:20.
+        infoLabel set &width:320 &height:20.
+        infoLabel set &caption:"Special thanks to Alex Rakov, for the support.".            
+        
+        BtmOk set &x:30 &y:175.
+        BtmOk set &width:50 & height:22.
+        BtmOk set &caption:"OK".            
+        
+        #var aForm := $self.
+        BtmOk set &onClick:args
+            [ aForm close. ].        
+    ]
+}
+
 //#class SaveBox (forms'Dialog)
 //{
 //    // Panels

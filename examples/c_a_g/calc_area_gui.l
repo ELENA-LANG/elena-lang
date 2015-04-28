@@ -335,6 +335,11 @@
                     
                 valor set &caption:("Res: " + aResult literal + " m^2").                    
             ]
+            
+            $onButtonClickInfo : aForm
+            [
+                calc_area_gui'InfoForm new &parent:aForm run.
+            ]
         }.
         
 //        theResult := basic'String.
@@ -544,8 +549,9 @@
         BtmCalc set &onClick:args
             [ theController $onButtonClick. ].
        
-//        BtmInfo~eevents +=
-//            { onclick'eval = self $onButtonClickInfo. }.
+        #var aForm := $self. // !! should be possible to pass self
+        BtmInfo set &onClick:args
+            [ theController $onButtonClickInfo:aForm. ].
 //            
 //        BtmSalv~eevents +=
 //            { onclick'eval = self $onButtonClickSave. }.
@@ -554,11 +560,6 @@
             [ 'program stop. ].
     ]
 
-////    #method $onButtonClickInfo
-////    [
-////        anot_wind'InputBox::self open &forms'modal.
-////    ]
-////
 ////    #method $onButtonClickSave
 ////    [
 ////        #var asForm := anot_wind'SaveBox::self.

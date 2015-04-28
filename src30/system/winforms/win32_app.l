@@ -41,7 +41,31 @@
             aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:theHandle &int:0 &int:0.
         ].
     ]
-    
+
+    #method run &hwnd:aHandle
+    [
+        #var(type:win_msg)aMsg.
+        #var(type:int)proceeded.
+        #var(type:int)aResult.
+
+        #loop (aHandle isVisible)?
+        [
+            aResult := system'external'USER32 PeekMessageW &win_msg:aMsg &int:0 &int:0 &int:0 &int:1.
+                (aResult != 0)
+                    ? [
+                        proceeded := system'external'USER32 IsDialogMessageW &handle:aHandle &win_msg:aMsg.
+                        (proceeded == 0) ?
+                            [
+                                system'external'USER32 TranslateMessage &win_msg:aMsg.
+                                system'external'USER32 DispatchMessageW &win_msg:aMsg.
+                            ].
+                    ]
+                    ! [
+                        system'external'USER32 WaitMessage.
+                    ].
+        ].
+    ]
+            
     #method stop
     [
         theHandle := WindowHandle min.

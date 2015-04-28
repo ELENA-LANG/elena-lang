@@ -9,6 +9,13 @@
         <= (new)
     [
     ]
+    
+    #method close
+    [
+        $super close.
+        
+        theHandle free.
+    ]
 }
 
 // --- SDI ---
@@ -115,6 +122,23 @@
     
     #method form = $self.
     
+    #method run
+    [
+        $self open.
+        theParent set &enabled:false.
+        
+        'program run &hwnd:theHandle.
+        
+        theParent set &enabled:true.
+    ]    
+
+    #method close 
+    [
+        $self set &visible:false.
+        
+        $super close.
+    ]
+            
     #method $createHandle
     [
         #var(type:int)Styles := WS_POPUPWINDOW || WS_DLGFRAME.
@@ -133,6 +157,6 @@
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:(theParent hwnd)
                         &hinstance:CurrentInstance 
-                        &object:(SDIWindowCallback new &win_listener:(ChildWindowListener new &form:$self)).
+                        &object:(ChildWindowCallback new &win_listener:(ChildWindowListener new &form:$self)).
     ]
 }

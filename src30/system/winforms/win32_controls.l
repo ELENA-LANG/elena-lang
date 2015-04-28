@@ -90,7 +90,7 @@
         system'external'USER32 ShowWindow &handle:theHandle &int:aValue.
     ]
     
-    #method isVisible
+    #method(type:bool) isVisible
     [
         #var(type:int)visible := system'external'USER32 IsWindowVisible &handle:theHandle.
         
@@ -164,8 +164,8 @@
         
         anHDC << dc.
     ]
-                  
-    #method close
+    
+    #method free
     [
         system'external'USER32 DestroyWindow &handle:theHandle.
     ]

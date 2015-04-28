@@ -27,11 +27,11 @@
 [LIB]
 [!] literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
 [+] wliteral, WideLiteralValue and WideString
-[+] linux: support basic console operations
+[+] linux: support basic i/o operations (console, files)
 [+] system'winforms module implementing basic WIN32 GUI functionality
 
 Samples:
-[+] agenda, graphs
+[+] agenda, graphs, c_a_g
 
 [IDE]
 [*] fixed "step over" implementations inside symbol
