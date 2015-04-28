@@ -157,7 +157,7 @@ bool Document::Reader :: readNext(_ELENA_::TextWriter& writer, size_t length)
       row = bm.getRow();
    }
    size_t styleLen = _doc->defineStyle(*this);
-   if ((int)styleLen < length)
+   if (styleLen < length)
       length = styleLen;
 
    _doc->_text->copyLineTo(bm, writer, length, true);
@@ -707,7 +707,7 @@ void Document :: tabbing(text_c space, size_t count, bool indent)
          }
          else {
             size_t length;
-            for (int i = 0 ; i < count ; i++) {
+            for (size_t i = 0 ; i < count ; i++) {
                text_t s = _text->getLine(start, length);
                if (length!=0 && (s[0]==' ' || s[0]=='\t')) {
                   bool tab = (s[0]=='\t');

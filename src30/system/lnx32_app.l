@@ -13,8 +13,8 @@
     new                                                                                                                                 
     [
         #var(type:bytearray,size:256)buf.
-        #var(type:vint)len.
-        #var(type:vint)argc.
+        #var(type:int)len.
+        #var(type:int)argc.
         $self $getArgC &vint:argc.
 
         #var args := Array new &length:argc.

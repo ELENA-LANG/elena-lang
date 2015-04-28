@@ -3710,6 +3710,16 @@ procedure r_pi
   
 end
 
+procedure r_sqrt
+
+  aloadsi 2  
+  bloadsi 3
+  callr api : coreapi'rsqrt
+
+  quitn 3
+
+end
+
 procedure ws_copysubarr
 
   aloadsi 2

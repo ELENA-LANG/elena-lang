@@ -29,6 +29,8 @@ public:
    virtual void onUpdate(size_t position) = 0;
    virtual void onInsert(size_t position, size_t length, text_t line) = 0;
    virtual void onErase(size_t position, size_t length, text_t line) = 0;
+
+   virtual ~_TextWatcher() {}
 };
 
 typedef _ELENA_::List<_TextWatcher*> TextWatchers;

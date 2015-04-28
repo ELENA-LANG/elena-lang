@@ -6,7 +6,7 @@
 #define system'text.
 //#define system'math.
 #define extensions.
-//#define extensions'math.
+#define extensions'math.
 
 #symbol XTester =
 {

@@ -188,6 +188,16 @@
         theListener := aListener.
     ]
     
+    #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
+    [
+        (aControl == 0)
+            ? [ ^ $self. ]. // !! temporal
+
+        // !! note low word may contains the control ID, so only high word should be checked
+        (aCode == 0)
+            ? [ theListener onclick &hwnd:aControl &vint:aRetVal. ].
+    ]
+    
     #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         (aMessage == WM_DESTROY)

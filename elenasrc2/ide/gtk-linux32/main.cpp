@@ -341,6 +341,8 @@ public:
    virtual bool copyToClipboard(Document* doc)
    {
       //return appWindow.copyToClipboard(doc);
+
+      return false; // !! temporal
    }
 
    virtual void pasteFromClipboard(Document* doc)
@@ -450,6 +452,8 @@ public:
    virtual bool compileProject(_ProjectManager* project, int postponedAction)
    {
       //return appWindow.compileProject(project, postponedAction);
+
+      return false; // !! temporal
    }
 
    virtual void resetDebugWindows()

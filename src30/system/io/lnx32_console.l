@@ -16,8 +16,8 @@
     #method write &literal : aLiteral
     [
         #var(type:int)n := 0.
-        #var(type:vint)l.
-        #var(type:vbyte)vc.
+        #var(type:int)l.
+        #var(type:byte)vc.
 
         aLiteral readLength &vint:l.
         #loop (n < l)?
@@ -57,7 +57,7 @@
         #var(type:int) i := 0.
         #loop (aRetVal > i) ?
         [
-            #var(type:vbyte)ch.
+            #var(type:byte)ch.
             $self read &vbyte:ch.
                
             aBuffer write &index:i &byte:ch.
@@ -77,7 +77,7 @@
     #method read &literal
     [
         #var(type:bytearray,size:127)aBuffer.
-        #var(type:vlength)aLength.
+        #var(type:length)aLength.
         #var anOutput := emptyLiteralValue.
         
         #var(type:bool) continue := true.
@@ -86,7 +86,7 @@
             aLength := 127.
             $self read &bytearray:aBuffer &vlength:aLength.
             
-            #var(type:vbyte)ch.
+            #var(type:byte)ch.
             aBuffer read &index:(aLength - 1) &vbyte:ch.
             (ch == 0Ah)
                 ? [
@@ -113,15 +113,15 @@
 */ 
     #method read &vchar:aRetVal
     [
-       #var(type:vbyte)ch.
+       #var(type:byte)ch.
        $self read &vbyte:ch.
 
        charConvertor convert &byte:ch &vchar:aRetVal.  
     ]
-           
+          
     #method char
     [
-        #var(type:vchar)aRetVal.
+        #var(type:char)aRetVal.
         $self read &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.

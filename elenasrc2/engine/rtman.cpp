@@ -119,7 +119,6 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
 
          // look through the records to find the entry
          DebugLineInfo info;
-         void* current = NULL;
          while (!lineReader.Eof()) {
             lineReader.read(&info, sizeof(DebugLineInfo));
             if (info.symbol == dsProcedure) {
@@ -153,7 +152,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
    return found;
 }
 
-void copy(ident_c* buffer, ident_t word, int& copied, int maxLength)
+void copy(ident_c* buffer, ident_t word, int& copied, size_t maxLength)
 {
    size_t length = getlength(word);
 

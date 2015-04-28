@@ -30,5 +30,8 @@ bin/elc2 -cexamples/bsort/bsort.project
 bin/elc2 -cexamples/replace/replace.project
 bin/elc2 -cexamples/matrix/matrix.project
 bin/elc2 -cexamples/trans/tanslit.project
+bin/elc2 -cexamples/textfile/textfile.project
+bin/elc2 -cexamples/goods/goods.project
+bin/elc2 -cexamples/textdb/textdb.project
 
 exit 0

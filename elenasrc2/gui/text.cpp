@@ -1315,7 +1315,6 @@ void TextHistory :: redo(Text* text, TextBookmark& caret)
 
    text->validateBookmark(caret);
 
-   bool eol = false;
    HistoryReader reader(_buffer, _offset);
 
    bool   eraseMode = false;

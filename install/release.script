@@ -21,6 +21,9 @@ mkdir -p ./new/examples/sum/
 mkdir -p ./new/examples/words/
 mkdir -p ./new/examples/matrix/
 mkdir -p ./new/examples/trans/
+mkdir -p ./new/examples/textfile/
+mkdir -p ./new/examples/textdb/
+mkdir -p ./new/examples/goods/
 mkdir -p ./new/src30/asm/x32/
 mkdir -p ./new/src30/system/
 mkdir -p ./new/src30/system/text/
@@ -90,6 +93,12 @@ cp ../examples/matrix/*.l new/examples/matrix/
 cp ../examples/matrix/*.project new/examples/matrix/
 cp ../examples/trans/*.l new/examples/trans/
 cp ../examples/trans/*.project new/examples/trans/
+cp ../examples/textfile/*.l new/examples/textfile/
+cp ../examples/textfile/*.project new/examples/textfile/
+cp ../examples/goods/*.l new/examples/goods/
+cp ../examples/goods/*.project new/examples/goods/
+cp ../examples/textdb/*.l new/examples/textdb/
+cp ../examples/textdb/*.project new/examples/textdb/
 
 echo coping src3 files
 

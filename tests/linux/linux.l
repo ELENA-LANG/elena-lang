@@ -2,11 +2,16 @@
 
 #symbol Program =
 [
-   console writeLine:"Hello Linux World!".
+   console write:"Starting".
+   //console writeLine:"..".     
 
-   #var args := commandLineArguments.
+   //console writeLine:"Hello Linux World!".
 
-   console writeLine:(args @ 0).
+   //#var args := 'program'arguments.
 
-   console readChar.
+   //console writeLine:(args@0).
+
+   //console writeLine:(args@1).
+
+   //console readChar.
 ].

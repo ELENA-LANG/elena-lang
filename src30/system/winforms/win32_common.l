@@ -10,8 +10,11 @@
 #symbol(const,type:int)WS_BORDER               = 00800000h.
 #symbol(const,type:int)WS_TABSTOP              = 00010000h.
 #symbol(const,type:int)WS_CLIPSIBLINGS         = 04000000h.
+#symbol(const,type:int)WS_DLGFRAME             = 00400000h.
+#symbol(const,type:int)WS_POPUPWINDOW          = 80880000h.
 
 // --- ex styles ---
+#symbol(const,type:int)WS_EX_DLGMODALFRAME     = 00000001h.
 #symbol(const,type:int)WS_EX_OVERLAPPEDWINDOW  = 00000300h.
 #symbol(const,type:int)EX_SDI_OVERLAPPEDWINDOW = 00040101h.
 #symbol(const,type:int)WS_EX_CLIENTEDGE        = 00000200h.
@@ -30,6 +33,9 @@
 #symbol(const,type:int)BS_GROUPBOX             = 7.
 #symbol(const,type:int)BS_AUTORADIOBUTTON      = 9.
 
+#symbol(const,type:int)BST_CHECKED             = 1.
+#symbol(const,type:int)BST_UNCHECKED           = 0.
+
 //// --- combobox styles ---
 //#symbol(const,type:int)CBS_DROPDOWNLIST        = 3.
 //#symbol(const,type:int)CBS_DROPDOWN            = 2.
@@ -45,6 +51,9 @@
 
 #symbol(const,type:int)SWP_NOSIZE       = 0001h.
 #symbol(const,type:int)SWP_NOMOVE       = 0002h.
+
+#symbol(const,type:int)BM_SETCHECK      = 00F1h.
+#symbol(const,type:int)BM_GETCHECK      = 00F0h.
 
 //// --- Notifications ---
 //#symbol(const,type:int)BN_CLICKED       = 0.

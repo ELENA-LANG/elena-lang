@@ -676,8 +676,8 @@ void IDEController :: doHighlightBrackets(Document* doc)
 
    int pos = _ELENA_::StringHelper::find(OPENING_BRACKET, current_ch, -1);
    if (pos != -1) {
-      Point frame = doc->getFrame();
-      Point size = doc->getSize();
+      //Point frame = doc->getFrame();
+      //Point size = doc->getSize();
 
       _model->state |= uiBracketBold;
 
@@ -858,7 +858,7 @@ bool IDEController :: doSaveAll(bool forced)
       if (!doSaveProject(false))
          return false;
    }
-   for (int index = 0 ; index < _model->mappings.Count() ; index++) {
+   for (size_t index = 0 ; index < _model->mappings.Count() ; index++) {
       if (_model->isDocumentModified(index) || _model->isDocumentUnnamed(index)) {
          if (forced || _model->isDocumentUnnamed(index)) {
             doSave(index, false);

@@ -69,10 +69,6 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
 
 ref_t Module :: mapReference(ident_t reference)
 {
-   bool f=false;
-   if (getlength(reference) < 3)
-      f = true;
-
    size_t nextId = _references.Count() + 1;
 
    // generate an exception if reference id is out of range

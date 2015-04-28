@@ -1675,7 +1675,7 @@ public:
                _count--;
 
                return current->item;
-            }               
+            }
 
             // offset is used instead of pointer due to possible buffer relocation
             previous = position;
@@ -2883,7 +2883,7 @@ public:
    }
    IntFixedMap()
    {
-      _defaultValue = NULL;
+      _defaultValue = (T)NULL;
       _buffer.writeDWord(0, 0);
    }
 };

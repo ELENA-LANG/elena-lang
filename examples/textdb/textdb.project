@@ -1,0 +1,14 @@
+﻿[project]
+executable=textdb
+arguments=db.txt
+namespace=textdb
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+textdb.l
+
+[forwards]
+'program=textdb'Program
+

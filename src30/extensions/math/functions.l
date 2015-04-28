@@ -45,7 +45,10 @@
         
     power : x : y
        = x real ln multiply:y real exp.
-       
+
+    sqrt : x       
+        = x real sqrt.
+                     
     pi
     [
         #var(type:real)r.

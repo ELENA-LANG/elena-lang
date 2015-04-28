@@ -1,5 +1,6 @@
 #define system.
 #define system'winforms.
+#define system'collections.
 
 // --- IControl ---
 
@@ -57,7 +58,19 @@
     #method is &opened = ($nil != theHandle).
     
     #method hwnd = theHandle.
-            
+
+    #method set &visible : aValue
+    [
+        $super set &visible:aValue.
+        
+        ($nil == theHandle)
+            ! [
+                theVisible
+                    ? [ theHandle setVisible &int:5. ]
+                    ! [ theHandle setVisible &int:0. ].
+            ].
+    ]
+                                                
     #method set &enabled : aValue
     [
         $super set &enabled:aValue.
@@ -78,6 +91,21 @@
             ! [
                 theHandle setCaption &wide:(aCaption wide).
             ].
+    ]
+    
+    #method append &caption : aValue
+    [    
+        $self set &caption:($self caption + aValue wide).
+    ]
+
+    #method caption
+    [
+        ($nil == theHandle)
+            ! [
+                theCaption := theHandle getCaption.
+            ].
+            
+        ^ theCaption.            
     ]
 
     #method set &location:aLocation
@@ -355,6 +383,13 @@
           
     #method literal = $self caption literal.
     
+    #method value = $self caption.
+    
+    #method append : aValue
+    [
+        $self set &caption:($self caption + aValue wide).
+    ]
+    
     #method write : aValue
     [
         $self set &caption:(aValue wide).
@@ -490,14 +525,44 @@
     #method set &dimension:aDimension [ theButton set &dimension:aDimension. ]
     
     #method set &location:aPoint [ theButton set &location:aPoint. ]
+    
+    #method => theButton.
 }
 
 #class(limited) RadioButton :: BaseButton
 {
+    #field theChecked.
+    
+    #constructor new
+        <= (new)
+    [
+        theChecked := false.
+    ]
+    
     #method control = IRadioButton new &radiobutton:$self.
     
     #method radiobutton = $self.
  
+    #method is &checked
+    [
+        ($nil == theHandle)
+            ! [ theChecked := theHandle isChecked. ].
+            
+        ^ theChecked.            
+    ]
+ 
+    #method set &checked:aValue
+    [
+        theChecked := aValue bool.
+        
+        ($nil == theHandle)!
+        [
+            theChecked
+                ? [ theHandle setChecked &int:BST_CHECKED. ]
+                ! [ theHandle setChecked &int:BST_UNCHECKED. ].
+        ].
+    ]
+
     #method $createHandle
     [
         #var(type:hwnd)aParent := theParent hwnd.
@@ -517,6 +582,9 @@
                         &wide:ButtonClass &wide:(theCaption wide) &int:Styles
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+                        
+        theChecked
+            ? [ $self set &checked:true. ].
     ]
 }
 
@@ -685,6 +753,9 @@
  
     #method refresh
     [
+        ($nil == theHandle)
+            ? [ ^ $self. ].
+        
         ($nil == thePaint)
             ! [ thePaint eval:$self &canvas:theCanvas. ].
 
@@ -796,6 +867,8 @@
     #method panel = $self.
 
     #method control = IPanel new &panel:$self.
+    
+    #method controls = theControls.
             
     #method $createHandle
     [
@@ -825,6 +898,13 @@
 {
     #field(type:radiogroup)theOwner.
     
+    #method onclick &hwnd:aHandle &vint:aResult
+    [
+        theOwner $onClick &hwnd:aHandle.
+        
+        aResult << 0.
+    ]
+    
     #constructor new &radiogroup:anOwner
     [
         theOwner := anOwner.
@@ -853,9 +933,59 @@
 
 #class(sealed) RadioButtonGroup :: BasePanel
 {
+    #field(type:int)theSelected.
+    #field(type:func1)theIndexChanged.
+    
+    #constructor new
+        <= (new)
+    [
+        theSelected := -1.
+    ]
+    
     #method radiogroup = $self.
 
     #method control = IRadioButtonGroup new &radiogroup:$self.
+
+    #method selected_index = theSelected.
+
+    #method $setChecked : aValue
+    [
+        #var(type:int)anIndex := -1. // !! to skip a frame
+        
+        #var aCurrent.
+        #var(type:enumerator)it := theControls enumerator.
+        #loop (it next)?
+        [ 
+            aCurrent := it get.
+        
+            (theSelected == anIndex)
+                ? [
+                    aCurrent set &checked:aValue.
+                    
+                    ^ $self.
+                ].
+                
+            anIndex := anIndex + 1.                
+        ].
+    ]
+
+    #method set &selected_index : anIndex
+    [
+        (-1 == theSelected)
+            ! [ $self $setChecked:false. ].
+        
+        theSelected := anIndex int.
+        
+        $self $setChecked:true.
+        
+        ($nil != theIndexChanged)?
+            [ theIndexChanged eval:$self. ].
+    ]
+    
+    #method set &onIndexChanged:aFunction
+    [
+        theIndexChanged := aFunction.
+    ]
 
     #method items =
     {
@@ -872,6 +1002,32 @@
         $super set &dimension:aSize.
         
         $self $resize.
+    ]
+
+    #method $onClick &hwnd:aHandle
+    [
+        #var(type:int)anIndex := -1. // !! to skip a frame
+        
+        #var aRetVal := $nil.
+        #var(type:control)aCurrent.
+        #var(type:enumerator)it := theControls enumerator.
+        #loop (it next)?
+        [ 
+            aCurrent := it get control.
+        
+            aRetVal := aCurrent retrieve &hwnd:aHandle.
+            ($nil != aRetVal) ?
+            [
+                theSelected := IntNumber new &int:anIndex.
+                
+                ($nil != theIndexChanged)?
+                    [ theIndexChanged eval:$self. ].
+                    
+                ^ $self.                    
+            ].
+                
+            anIndex := anIndex + 1.                
+        ].
     ]
 
     #method $resize
@@ -929,6 +1085,9 @@
                         &wide:PanelClass &wide:(theCaption wide) &int:Styles
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:aParent &hinstance:CurrentInstance &object:(PanelCallback new &win_listener:(RadioButtonGroupListener new &radiogroup:$self)).
+                        
+        ((theSelected != -1)and:($nil != theIndexChanged))?
+            [ theIndexChanged eval:$self. ].
     ]
 }
 
@@ -939,14 +1098,14 @@
     #field(type:dimension)theSize.
     #field theParent.
     #field theImages.
-    #field(type:vint)theIndex.
+    #field(type:int)theIndex.
  
     #constructor new
     [
-        theIndex << 0.
+        theIndex := 0.
+        theImages := List new.
         
-        theSize write &width:50.
-        theSize write &height:50.
+        theSize :=  Dimension new &width:50 &height:50.
     ]
  
     #method assign &paintbox:aPaintbox
@@ -959,12 +1118,19 @@
             
             //theSize read &vint:aWidth &vint:aHeight.
             
-            #var anImage := theImages getAt &index:theIndex.
+            #var anImage := theImages getAt &index:(theIndex int).
             
             aCanvas write &image:anImage &int:0 &int:0 &int:aWidth &int:aHeight.
         ].
     ]
- 
+
+    #method selected_index = theIndex.
+
+    #method set &selected_index : anIndex
+    [
+        theIndex := anIndex int.
+    ] 
+   
     #method control = IControl
     {
         #method object = self.
@@ -976,7 +1142,7 @@
         #method retrieve &hwnd:aHandle = $nil.
     
         #method set &dimension:aDimension [ self set &dimension:aDimension. ]
-   }.
+    }.
  
     #method $set &parent:aParent
     [
@@ -997,15 +1163,17 @@
     ]
     
     #method append &path:aPath
-    [
-        theImages append:(Image new &path:aPath).
+    [        
+        theImages append:(Image new &path:aPath &dimension:theSize).
     ]
     
     #method open
     [
+        #var(type:hwnd)aHandle := theParent hwnd.
+        
         #var(type:enumerator)it := theImages enumerator.
         #loop (it next)? [
-            it get open.
+            it get open &hwnd:aHandle.
         ].
     ]
     

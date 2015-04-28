@@ -158,6 +158,8 @@ DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step)
             case dsVirtualEnd:
                level--;
                break;
+            default:
+               break;
          }
          next = &next[1];
       }
@@ -188,6 +190,8 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
                }
                else level--;
 
+               break;
+            default:
                break;
          }
 
@@ -426,7 +430,7 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
             else level--;
          }
          else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal)
-         { 
+         {
             // replace field name reference with the name
             stringReader.seek(info.addresses.symbol.nameRef);
 
@@ -479,7 +483,7 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
       // define the next record position
       int size = reader.getDWord() - 4;
       int nextPosition = reader.Position() + size;
-      
+
       if (setEntryAddress) {
          // if entry address was not defined take the first one
          _entryPoint = reader.getDWord();
@@ -761,7 +765,7 @@ const wide_c* DebugController :: getValue(size_t address, wide_c* value, size_t 
 void DebugController :: readCallStack(_DebuggerCallStack* watch)
 {
    MemoryDump retPoints;
-   
+
    MemoryWriter writer(&retPoints);
    DebugReader reader(&_debugger);
 
@@ -1066,7 +1070,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
             // write stack allocated local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
             readLocalReal(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
-         }  
+         }
          else if (lineInfo[index].symbol == dsParamsLocal) {
             // write stack allocated local variable
             int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
@@ -1177,12 +1181,11 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
          }
          else if (type==elDebugArray) {
             int list[DEBUG_MAX_LIST_LENGTH];
-            int length = 0;
+            size_t length = 0;
 
             // get array size
             getValue(selfPtr - 8, (char*)&length, 4);
 
-            int s = sizeof(list);
             if (length > sizeof(list))
                length = sizeof(list);
 

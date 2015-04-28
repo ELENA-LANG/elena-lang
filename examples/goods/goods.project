@@ -1,0 +1,14 @@
+﻿[project]
+executable=goods
+arguments=list.txt
+namespace=goods
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+main.l
+
+[forwards]
+'program=goods'Program
+

@@ -108,7 +108,19 @@
         
         ^ (visible != 0).
     ]
-    
+
+    #method setChecked &int:aValue
+    [
+        system'external'USER32 SendMessageW &handle:theHandle &int:BM_SETCHECK &int:aValue &int:0.
+    ]
+
+    #method isChecked
+    [
+        #var(type:int)aResult := system'external'USER32 SendMessageW &handle:theHandle &int:BM_GETCHECK &int:0 &int:0.
+
+		^ (aResult == BST_CHECKED).
+    ]    
+            
     #method setCaption &wide:aValue
     [
         system'external'USER32 SendMessageW &handle:theHandle &int:WM_SETTEXT &int:0 &wide:aValue.

@@ -83,3 +83,56 @@
                         &object:(SDIWindowCallback new &win_listener:(SDIWindowListener new &sdiform:$self)).
     ]
 }
+
+// --- Child ---
+
+#class ChildWindowListener :: WindowListener
+{
+    #field(type:form)theOwner.
+    
+    #constructor new &form:anOwner
+    [
+        theOwner := anOwner.
+    ]
+    
+    #method onclick &hwnd:aHandle &vint:aResult
+    [
+        #var aControl := theOwner retrieve &hwnd:aHandle.
+        ($nil != aControl)
+            ? [ aControl click. ].
+        
+        $super onclick &hwnd:aHandle &vint:aResult.
+    ]
+}
+
+#class(limited) ChildForm :: BaseWinForm
+{
+    #constructor new &parent:aParent
+        <= (new)
+    [
+        theParent := aParent.
+    ]
+    
+    #method form = $self.
+    
+    #method $createHandle
+    [
+        #var(type:int)Styles := WS_POPUPWINDOW || WS_DLGFRAME.
+        theVisible
+            ? [ Styles := Styles || WS_VISIBLE. ].
+        
+        #var(type:int)anX.
+        #var(type:int)anY.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
+        
+        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        
+        theHandle := WindowHandle new &int:(WS_EX_DLGMODALFRAME || WS_EX_CONTROLPARENT)
+                        &wide:SDIWindowClass &wide:(theCaption wide) &int:Styles
+                        &int:anX &int:anY &int:aWidth &int:aHeight 
+                        &hwnd:(theParent hwnd)
+                        &hinstance:CurrentInstance 
+                        &object:(SDIWindowCallback new &win_listener:(ChildWindowListener new &form:$self)).
+    ]
+}

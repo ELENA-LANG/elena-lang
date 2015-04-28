@@ -1084,7 +1084,7 @@ void TextView::TextDrawingArea :: _releaseMouse()
 void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight)
 {
    _area._needToResize = (_area._lineNumbersVisible != lineNumberVisible);
-   bool tabChanged = (_area._tabSize != tabSize);
+   //bool tabChanged = (_area._tabSize != tabSize);
    //_cached &= !(_area._needToResize || _area._tabSize != tabSize || _highlight != highlight);
 
    _area._tabUsing = tabUsing;

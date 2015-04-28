@@ -62,6 +62,7 @@ week2:
                        * project compilation / clean / run
                        
               adev - linux lib30:
+                       * console.write[1] : flush stdout buffer after write command
                        * core : implement INIT_RND
                        * linux file operations
                        * linux date / time operations
@@ -239,8 +240,11 @@ week2:
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
                        * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char - optimize implementation
                        * default exception handlers should either print (or show error message for gui) a general error message (broken)
+                       * rename win32_handler to handler, it has no OS dependant code
                                                                                                                              
               arev - lib30 review
+                       * review rosetta samples, try to simplify / concise them
+
                        * fix bytearray read / write operation with byte, char, int, long, real
 
                        * review extensions package warnings, try to get rid of most of them
@@ -643,8 +647,11 @@ week1:
                          e.g. BaseControl : theRegion := Region new.
                        * operation with $self in normal class is resolved by binaray search. After the class is limited or sealed, such operations
                          could be implemented directly, is there any other way to achieve this without duplicating source code?
+                       * think over pattern similar to bool ? value1 : value2
                          
               xdev - general implementation
+                       * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
+
                        * handle access vialation exception : exception handler should be called
 
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly

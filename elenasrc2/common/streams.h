@@ -287,7 +287,7 @@ public:
 //      return true;
 //   }
 
-   virtual bool fillText(wide_c* s, size_t length, size_t count)
+   virtual bool fillText(const wide_c* s, size_t length, size_t count)
    {
       while (count > 0) {
          if (!write(s, length))
@@ -297,7 +297,7 @@ public:
       return true;
    }
 
-   virtual bool fillText(char* s, size_t length, size_t count)
+   virtual bool fillText(const char* s, size_t length, size_t count)
    {
       while (count > 0) {
          if (!write(s, length))

@@ -4054,3 +4054,12 @@ procedure coreapi'rpi
   ret
 
 end
+
+procedure coreapi'rsqrt
+
+  fld   qword ptr [eax]  
+  fsqrt
+  fstp  qword ptr [edi]    // store result 
+  ret
+
+end

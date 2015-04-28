@@ -247,6 +247,9 @@
     arctan &real:aReal &vreal:aRetVal
         => system'internal'r_arctan.
                 
+    sqrt &real:aReal &vreal:aRetVal
+        => system'internal'r_sqrt.
+        
     pi &vreal:aRetVal
         => system'internal'r_pi.
 }.
@@ -279,6 +282,16 @@
         #var(type:real)aRetVal.
         
         realOpController ln &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+    
+    #method(type:real) sqrt
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal.
+        
+        realOpController sqrt &real:n &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]

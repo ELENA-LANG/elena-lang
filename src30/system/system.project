@@ -18,6 +18,7 @@ dynamic.l
 extensions.l
 exceptions.l
 console.l
+win32_handler.l
 lnx32_app.l
 lnx32_strings.l
 collections/list.l

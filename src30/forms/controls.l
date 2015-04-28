@@ -59,6 +59,11 @@
         theCaption := aValue.
     ]
     
+    #method append &caption : aValue
+    [    
+        $self set &caption:($self caption + aValue).
+    ]
+    
     #method caption = theCaption.
     
     #method set &location:aPoint

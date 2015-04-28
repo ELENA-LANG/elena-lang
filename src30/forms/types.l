@@ -20,11 +20,13 @@
 #subject(class:forms'RadioButtonGroup)  radiogroup.
 #subject(class:forms'ImageList)         imagelist.
 #subject(class:forms'SDIForm)           sdiform.
+#subject(class:forms'ChildForm)         form.
 
 // --- properties ---
 #subject caption.
 #subject visible.
 #subject enabled.
+#subject checked.
 #subject parent.
 #subject tabstop.
 #subject font.
@@ -33,6 +35,7 @@
 #subject opened.
 #subject items.
 #subject image.
+#subject selected_index.
 #subject(class:forms'Pen)      pen.
 #subject(class:forms'Brush)    brush.
 
