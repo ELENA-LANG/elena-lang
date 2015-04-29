@@ -35,7 +35,6 @@ Currently:
                        * example with buttons, edit on panel
 
               sdev - gui examples:  
-                       * migrate c_a_g : save dialog
                        * migrate notepad
                        * migrate timer
                        
