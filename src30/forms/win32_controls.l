@@ -217,6 +217,102 @@
     ]
 }
 
+// --- BaseWinDockableContainer ---
+
+#class BaseWinDockableContainer :: BaseWinContainer
+{
+//    #field theLeft.
+//    #field theRight.
+//    #field theTop.
+//    #field theBottom.
+//    #field theClient.
+//
+//    #method __control = theParent __control.
+//
+//    #method __control'append : aControl
+//    [
+//        theParent append &__control:aControl. 
+//    ]
+//
+//    #method dock_left'set : anObject [ theLeft := anObject. self refresh. ]
+//    #method dock_right'set : anObject [ theRight := anObject. self refresh. ]
+//    #method dock_top'set : anObject [ theTop := anObject. self refresh. ]
+//    #method dock_bottom'set : anObject [ theBottom := anObject. self refresh. ]    
+//    #method dock_center'set : anObject [ theClient := anObject. self refresh. ]
+//
+//    #method set : Args
+//    [
+//        theLeft := Args dock_left | back:theLeft.
+//        theRight := Args dock_right | back:theRight.
+//        theTop := Args dock_top | back:theTop.
+//        theBottom := Args dock_bottom | back:theBottom.
+//        theClient := Args dock_center | back:theClient.
+//        
+//        self refresh.
+//    ]
+//    
+//    #method refresh
+//    [
+//        #var aSize := theParent size.
+//        self onresize &size:aSize &sender:self.
+//    ]
+//    
+//    #method new : aParent
+//    [
+//        theParent := aParent.
+//        
+//        theLeft := IdleControl.
+//        theRight := IdleControl.
+//        theTop := IdleControl.
+//        theBottom := IdleControl.
+//        theClient := IdleControl.
+//        
+//        theParent~eevents += $self.
+//    ]
+//
+//    #method onresize &gui'dictionary'size:aSize
+//    [
+//        #var aWidth := aSize width.
+//        
+//        #var aTotalWidth := Integer << aWidth.
+//        #var aTotalHeight := Integer << aSize height.
+//        #var anX := Integer.
+//        #var anY := Integer.
+//        
+//        // Bottom
+//        #var aCurrentHeight := theBottom gui'dictionary'size height.
+//        theBottom set &width:aWidth &height:aCurrentHeight.
+//        aTotalHeight -= aCurrentHeight.
+//        
+//        // Top
+//        aCurrentHeight := theTop gui'dictionary'size height.
+//        theTop set &width:aWidth &height:aCurrentHeight.
+//        aTotalHeight -= aCurrentHeight.
+//        anY << aCurrentHeight.
+//        
+//        // Left
+//        #var aCurrentWidth := theLeft gui'dictionary'size height.
+//        theLeft set &width:aCurrentWidth &height:aTotalHeight.
+//        aTotalWidth -= aCurrentWidth.
+//        anX << aCurrentWidth.
+//        
+//        // Right
+//        aCurrentWidth := theRight gui'dictionary'size height.
+//        theRight set &width:aCurrentWidth &height:aTotalHeight.
+//        aTotalWidth -= aCurrentWidth.
+//        
+//        // Client
+//        theClient set &width:aTotalWidth &height:aTotalHeight.
+//        theClient set &x:anX &y:anY.
+//        
+//        anX += aTotalWidth.
+//        anY += aTotalHeight.
+//        
+//        theRight set &x:anX &y:aCurrentHeight.
+//        theBottom set &x:0 &y:anY.
+//    ]
+}
+
 // --- Frame ---
 
 #class IFrame :: IControl
@@ -345,6 +441,39 @@
     ]
 }
 
+// --- BaseEdit ---
+
+#class BaseEdit :: BaseWinControl
+{
+    #method wide = $self caption wide.
+          
+    #method literal = $self caption literal.
+          
+    #method value = $self caption.
+    
+    #method append : aValue
+    [
+        $self set &caption:($self caption + aValue wide).
+    ]
+    
+    #method write : aValue
+    [
+        $self set &caption:(aValue wide).
+    ]          
+    
+    #method $updateStyles &vint:aRetVal
+    [
+        #var(type:int)Styles := 0.
+        
+        theVisible
+            ? [ Styles := Styles || WS_VISIBLE. ].
+        theTabStop
+            ? [ Styles := Styles || WS_TABSTOP. ].
+            
+        aRetVal << (aRetVal || Styles).
+    ]
+}
+
 // --- Edit ---
 
 #class IEdit :: IControl
@@ -367,7 +496,7 @@
     #method retrieve &hwnd:aHandle = theEdit retrieve &hwnd:aHandle.
 }
 
-#class(sealed) Edit :: BaseWinControl
+#class(sealed) Edit ::  BaseEdit
 {
     #constructor new
         <= (new)
@@ -379,31 +508,71 @@
     
     #method edit = $self.
  
-    #method wide = $self caption wide.
-          
-    #method literal = $self caption literal.
-    
-    #method value = $self caption.
-    
-    #method append : aValue
-    [
-        $self set &caption:($self caption + aValue wide).
-    ]
-    
-    #method write : aValue
-    [
-        $self set &caption:(aValue wide).
-    ]
-          
     #method $createHandle
     [
         #var(type:hwnd)aParent := theParent hwnd.
         
         #var(type:int)Styles := WS_CHILD || WS_BORDER.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
-        theTabStop
-            ? [ Styles := Styles || WS_TABSTOP. ].
+        $self $updateStyles &vint:Styles.
+        
+        #var(type:int)anX.
+        #var(type:int)anY.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
+        
+        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        
+        theHandle := WindowHandle new &int:WS_EX_CLIENTEDGE
+                        &wide:EditClass &wide:(theCaption wide) &int:Styles
+                        &int:anX &int:anY &int:aWidth &int:aHeight 
+                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+    ]
+}
+
+// --- Memo ---
+
+#class IMemo :: IControl
+{
+    #field(type:memo)theEdit.
+    
+    #constructor new &memo:anEdit
+    [
+        theEdit := anEdit.
+    ]
+    
+    #method object = theEdit.
+    
+    #method open [ theEdit open. ]
+          
+    #method set &dimension:aDimension [ theEdit set &dimension:aDimension. ]
+    
+    #method set &location:aPoint [ theEdit set &location:aPoint. ]
+    
+    #method retrieve &hwnd:aHandle = theEdit retrieve &hwnd:aHandle.
+}
+
+#class(sealed) Memo :: BaseEdit
+{
+    #constructor new
+        <= (new)
+    [
+        theTabStop := true.
+    ]
+    
+    #method control = IMemo new &memo:$self.
+    
+    #method memo = $self.
+ 
+    #method wide = $self caption wide.
+          
+    #method literal = $self caption literal.
+    
+    #method $createHandle
+    [
+        #var(type:hwnd)aParent := theParent hwnd.
+        
+        #var(type:int)Styles := WS_CHILD || WS_BORDER || ES_MULTILINE || ES_WANTRETURN || ES_AUTOHSCROLL || ES_AUTOVSCROLL || WS_VSCROLL || WS_HSCROLL.
+        $self $updateStyles &vint:Styles.
         
         #var(type:int)anX.
         #var(type:int)anY.

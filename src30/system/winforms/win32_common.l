@@ -12,6 +12,8 @@
 #symbol(const,type:int)WS_CLIPSIBLINGS         = 04000000h.
 #symbol(const,type:int)WS_DLGFRAME             = 00400000h.
 #symbol(const,type:int)WS_POPUPWINDOW          = 80880000h.
+#symbol(const,type:int)WS_VSCROLL              = 00200000h.
+#symbol(const,type:int)WS_HSCROLL              = 00100000h.
 
 // --- ex styles ---
 #symbol(const,type:int)WS_EX_DLGMODALFRAME     = 00000001h.
@@ -39,6 +41,11 @@
 //// --- combobox styles ---
 //#symbol(const,type:int)CBS_DROPDOWNLIST        = 3.
 //#symbol(const,type:int)CBS_DROPDOWN            = 2.
+
+#symbol(const,type:int)ES_MULTILINE         = 0004h.
+#symbol(const,type:int)ES_AUTOVSCROLL       = 0040h.
+#symbol(const,type:int)ES_AUTOHSCROLL       = 0080h.
+#symbol(const,type:int)ES_WANTRETURN        = 1000h.
 
 // --- messages ---
 #symbol(const,type:int)WM_DESTROY       = 02h.

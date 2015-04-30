@@ -13,6 +13,7 @@
 #subject(class:forms'StaticLabel)       static.
 #subject(class:forms'Label)             label.
 #subject(class:forms'Edit)              edit.
+#subject(class:forms'Memo)              memo.
 #subject(class:forms'Button)            button.
 #subject(class:forms'RadioButton)       radiobutton.
 #subject(class:forms'Paintbox)          paintbox.
