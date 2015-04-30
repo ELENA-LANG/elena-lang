@@ -1440,6 +1440,16 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
    }
 }
 
+ref_t Compiler::CodeScope :: getObjectType(ObjectInfo object)
+{
+   if (object.kind == okOuterField) {
+      InlineClassScope* ownerScope = (InlineClassScope*)getScope(Scope::slClass);
+
+      return ownerScope->outerFieldTypes.get(object.extraparam);
+   }
+   else return getType(object);
+}
+
 // --- Compiler::InlineClassScope ---
 
 Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
@@ -1490,6 +1500,11 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
          // handle outer fields in a special way: save only self
          if (outer.outerObject.kind==okField) {
             Outer owner = mapSelf();
+
+            // save the outer field type if provided
+            if (outer.outerObject.extraparam != 0) {
+               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
+            }
 
             // map as an outer field (reference to outer object and outer object field index)
             return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param);
@@ -3987,8 +4002,10 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
 {
+   ref_t target_type = scope.getObjectType(target);
+
    // if primitive data operation can be used
-   if (scope.moduleScope->defineTypeSize(target.extraparam) > 0) {
+   if (scope.moduleScope->defineTypeSize(target_type) > 0) {
       int assignMode = 0;
       if (target.kind == okLocal || target.kind == okFieldAddress) {
          // if it is an assignment operation (e.g. a := a + b <=> a += b)
@@ -4010,7 +4027,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          _writer.loadObject(*scope.tape, info);
 
          bool mismatch = false;
-         compileTypecast(scope, info, target.extraparam, mismatch, 0);
+         compileTypecast(scope, info, target_type, mismatch, 0);
          if (mismatch)
             scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 
@@ -4041,7 +4058,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
 
       bool mismatch = false;
-      compileTypecast(scope, info, target.extraparam, mismatch, 0);
+      compileTypecast(scope, info, target_type, mismatch, 0);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 

@@ -529,6 +529,8 @@ protected:
          return scope ? scope->info.extensionTypeRef : 0;
       }
 
+      ref_t getObjectType(ObjectInfo object);
+
       void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
       CodeScope(SourceScope* parent);
@@ -556,7 +558,8 @@ protected:
          }
       };
 
-      Map<ident_t, Outer> outers;
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
 
       Outer mapSelf();
 
