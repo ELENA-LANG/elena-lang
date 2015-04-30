@@ -22,17 +22,16 @@ Currently:
 ------                                              
                        
               adev - gui
-                       * new controls: menu
+                       * implement  memo
+                       * implement  docking manager
 
-                       * image list, it could be possible to assign the image list to the image box and change the image list index to change the
-                         picture, so no need to override on paint event
                        * implement forms package (native control wrappers)
                        * make possible to set / change / get the control color
                        * make possible to set / change / get the control font
 
                        * gui stand-alone, gui mt stand-alone, gui vm client
                        * support default button style
-                       * new controls: combo box, check box, status bar, timer, updown, menu, memo, image box, list box
+                       * new controls: combo box, check box, status bar, timer, updown, memo, image box, list box
                        * make sure all windows resources (hbitmap, hdc, ..) are properly released
                        * example with buttons, edit on panel
 
@@ -563,13 +562,12 @@ week1:
               idev - unicode
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
-              xdev - stack allocated types
-                       * review code, consider the cases using int, vint; can we pass int as vint, allocate the space for variable and when copy back
-
               xdev - generic development
+                       * special hint to prevent the variable from been stack allocated, it means there should be additional check to make sure
+                         the variable is stack allocated 
+
                        * #var(type:vint)n := Integer new.
                          n := 4.  // value should be copied rather than the reference
-                       * could we simplify the way how to declare "interfaces"
 
                        * if the array is declared without size - raise an error?
 
@@ -609,8 +607,6 @@ week1:
                        * should it be possible to typecast shortarray as byte array? (for stack allocated ones)
                        * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
                          implemented
-                       * implicit converting vint to int, short to int , int to short
-                       * external call : vint can be passed as int (see ThreadHandle, linux - consoleWriter)
                        * wide literal constant
                        * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
                          not, than the operation with self should be boxed?
@@ -630,10 +626,6 @@ week1:
                        * constructor may return constant objects as well (see min / max)
                        * strong types may have reserved range, so special table will be created - pairing class reference with, or alternatively
                          strong type may be used as message id + subject mask (what about Linux in this case - rdata should be located in 4FFFFFFF range)
-
-                       * it should be possible to return nil as typed object?? ; nil may have special handler which will turn any strong type
-                         request into sending min (or empty) message to the class wrapper ; as a result nil can be used as typed object
-                         (typecast warning may be muted in this case)
 
                        * critical bug with dynamic signature : signature class should validate strong types - signature code should have
                          reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
@@ -699,8 +691,6 @@ week1:
                        * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
                          symbols as an argument
                        * cache type checks
-                       * look at graphica sample. self cannot be used in the constructor, because it points to a class, rather then the object
-
                        * review current primitive stack allocation ; probably primtive variables declared in the sub code,
                          should be freed after the sub code is closed (currently the space is percist to fix the bug with
                          external call (see NOTEs))
@@ -750,6 +740,7 @@ week1:
                        * make sure textview is really deleted when the page is closed
 
               xdev - multithreading       
+                       * implement basic functionality
                        * implement lock / unlock
                        * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
                        * threadhandle - remove the object from the reference table on closing

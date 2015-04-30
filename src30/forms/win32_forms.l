@@ -37,11 +37,30 @@
         
         $super onclick &hwnd:aHandle &vint:aResult.
     ]
+    
+    #method onmenu &int:aCode &vint:aResult    
+    [
+        #var anItem := theOwner retrieve &menu_id:aCode.
+        ($nil != anItem)
+            ? [ anItem click. ].
+        
+        $super onmenu &int:aCode &vint:aResult.
+    ]    
 }
 
 #class(limited) SDIForm :: BaseWinForm
 {
+    #field theMenu.
+    
     #method sdiform = $self.
+    
+    #method set &menu:aMenu
+    [
+        theMenu := aMenu.
+    ]
+    
+    #method retrieve &menu_id:anID
+        => theMenu.
     
     #method $createHandle
     [

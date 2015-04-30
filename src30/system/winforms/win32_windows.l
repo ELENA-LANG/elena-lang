@@ -139,7 +139,7 @@
     #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
     [
         (aControl == 0)
-            ? [ ^ $self. ]. // !! temporal
+            ? [ theListener onmenu &int:aCode &vint:aRetVal. ^ $self. ].
 
         // !! note low word may contains the control ID, so only high word should be checked
         (aCode == 0)
@@ -267,6 +267,11 @@
     ]
     
     #method onclick &hwnd:aControl &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
+    #method onmenu &int:aCode &vint:aResult
     [
         aResult << 0.
     ]

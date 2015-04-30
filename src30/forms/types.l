@@ -35,6 +35,8 @@
 #subject opened.
 #subject items.
 #subject image.
+#subject menu.
+#subject menu_id.
 #subject selected_index.
 #subject(class:forms'Pen)      pen.
 #subject(class:forms'Brush)    brush.

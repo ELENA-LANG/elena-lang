@@ -81,3 +81,6 @@
 #symbol(const,type:int)IMAGE_BITMAP     = 0.
 
 #symbol(const,type:int)LR_LOADFROMFILE  = 0010h.
+
+#symbol(const,type:int)MF_STRING        = 00000000h.
+#symbol(const,type:int)MF_POPUP         = 00000010h.

@@ -284,14 +284,14 @@
 {
     #field(type:handle)theHandle.
     
-    #constructor newRoot
+    #constructor new
     [
         #var(type:handle)h := system'external'USER32 CreateMenu.
         
         theHandle := h.
     ]
 
-    #constructor new
+    #constructor newPopup
     [
         #var(type:handle)h := system'external'USER32 CreatePopupMenu.
         
@@ -300,11 +300,12 @@
 
     #method append &int:Flags &int:anID &wide:aCaption
     [
+        system'external'USER32 AppendMenuW &handle:theHandle &int:Flags &int:anID &wide:aCaption.
     ]
             
     #method append &int:Flags &handle:aParent &wide:aCaption
     [
-        system'external'USER32 AppendMenuW
+        system'external'USER32 AppendMenuW &handle:theHandle &int:(Flags || MF_POPUP) &handle:aParent &wide:aCaption.
     ]
             
     #method free

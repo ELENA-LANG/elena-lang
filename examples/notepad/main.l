@@ -51,7 +51,6 @@
 
 #class Window :: SDIForm
 {
-//    #field theMenu.
 //    #field theStatusBar.
 //    #field theTextField.
 //    
@@ -60,42 +59,34 @@
     #constructor new
         <= (new)
     [
-//        theMenu := controls'Menu::self.
-//        theStatusBar := controls'StatusBar::self.
-//        theTextField := controls'Memo::self.
-//        theLayoutManager := controls'LayoutManager::self.
-//
-//        theMenu 
-//            append &menu_item &caption:"File".
-//
-//        #var aFileMenu := theMenu@0.
-//        aFileMenu
-//            append &menu_item &caption:"Open"
-//            append &menu_item &caption:"Save".
-//
-//        (aFileMenu@0)~gui'eevents +=
-//        {
-//            onmenu_click'eval
-//            [
+        #var aMenu := Menu new.
+        aMenu items
+            append &caption:"File".
+            
+        ((aMenu items) @ 0) items
+            append &caption:"Open" &onClick:x 
+                [
 //                #var aDialog := OpenDialog::self.
 //                #if aDialog open &forms'modal
 //                [
 //                    TextFile::(aDialog path) read:theTextField.
 //                ].
-//            ]
-//        }.
-//
-//        (aFileMenu@1)~gui'eevents +=
-//        {
-//            onmenu_click'eval
-//            [
+                ]
+            append &caption:"Save" &onClick:x 
+                [
 //                #var aDialog := SaveDialog::self.
 //                #if aDialog open &forms'modal
 //                [
 //                    TextFile::(aDialog path) write:theTextField.
 //                ].
-//            ]
-//        }.
+                ].
+        
+        theControls append:aMenu.
+        
+//        theMenu := controls'Menu::self.
+//        theStatusBar := controls'StatusBar::self.
+//        theTextField := controls'Memo::self.
+//        theLayoutManager := controls'LayoutManager::self.
 //
         $self set &x:200 &y:200.
         $self set &width:700 &height:600.

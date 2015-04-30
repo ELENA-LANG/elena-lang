@@ -24,6 +24,9 @@
 [+] linux ELF linker
 [*] both external call modes supported: winapi / c
 
+[-] bug with outer field type fixed
+[-] bug with redirect to an outer field fixed
+
 [LIB]
 [!] literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
 [+] wliteral, WideLiteralValue and WideString
