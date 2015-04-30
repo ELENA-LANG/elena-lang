@@ -29,9 +29,14 @@
 [+] wliteral, WideLiteralValue and WideString
 [+] linux: support basic i/o operations (console, files)
 [+] system'winforms module implementing basic WIN32 GUI functionality
+[+] forms: SDIForm, SDIDialog, ChildForm, Edit, Label, Button, ImageBox, ImageList
+
+[+] forms: Menu
 
 Samples:
 [+] agenda, graphs, c_a_g
+
+[+] notepad
 
 [IDE]
 [*] fixed "step over" implementations inside symbol

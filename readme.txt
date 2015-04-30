@@ -4,7 +4,7 @@
 The project includes ELENA documentation, standard library source code, 
 samples, command-line compiler, IDE.
 
-Currently Win32-x86 (Windows 7/8) / Linux-I386 (early alpha) platforms are supported.
+Currently Win32-x86 (Windows 7/8) / Linux-I386 (alpha) platforms are supported.
 
 For more information see at http://elenalang.sourceforge.net/
 

@@ -7,24 +7,20 @@ Features
 ---
 - Pure polymorphic object oriented language
 - "Horizontal" multiple inheritance
-- Dynamic "class mutation" ("annex / cast" handler)
-- Multiple message dispatch
-- Argument signatures
+- Dynamic "class mutation"
+- Message dispatching
 - ELENA Virtual machine (in developing)
 - Command line 32-bit compiler
 - GUI IDE & Debugger
-- Unicode support (utf16)
+- Unicode support (utf-8)
 - Complete source code
-- Number of samples, including a card game Up'N'Down (in development)
-- Getting started tutorial
+- Number of samples
 - Simple Assembler compiler
-- Dynamic Self-Assembling Script engine
-- ELENA Virtual Machine Terminal
 
 Minimum requirements
 ---
- - x86
- - Windows XP
+ - Windows XP/7/8 x86
+ - Linux I386
 
 ELENA Language modules and programs
 ---
@@ -34,14 +30,6 @@ in the folder <app root>\src30.
 The source code of ELENA samples could be found
 in the folder <app root>\examples.
 
-ELENA Project Source code
----
-The project source code is compiled with CodeBlocks and Mingw32
-
-The project files could be found in <app root>\elenasrc2 folder.
-
-Visual studio express projects are available as well.
-
 License
 ---
 The compiler and executables distributed in this package fall under The Apache 
@@ -49,21 +37,25 @@ License V2.0e, for more information read the file LICENSE.TXT.
 
 ELENA Installation / Run
 ---
-
+Windows:
+--------
 To install just unzip all the files into a directory you want.
 
-You may need to add a path to BIN folder to system environment (e.g. &lt;app root&gt;\bin</code></pre>). 
+You may need to add a path to BIN folder to system environment (e.g. <app root>\bin). 
 
-Otherwise you may use [setup executable from sourceforge](http://sourceforge.net/projects/elenalang/files/ELENA%202.x/ELENA%201.9.18/).
+Otherwise you may use setup executable.
 
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
-(&lt;app root&gt;\bin\elide.exe) or ELENA Command Line Compiler 
-(&lt;app root&gt;\bin\elc.exe).
+(<app root>\bin\elide.exe) or ELENA Command Line Compiler 
+(<app root>\bin\elc.exe).
 
 In ELENA IDE you may select File-Open-Open Project option and open an 
 appropriate project file (*.prj). Then select Project-Compile option to 
 compile the project and Project-Debug to debug it.
 
-NOTE: for some strange reasons F-Secure considers some binary files generated 
-with ELENA as infected ones.
+Linux:
+------
+To install just unzip all the files into a directory you want and execute 
+install.script.
 
+To compile the program types : ./bin/elc2 -c<path to .project file>

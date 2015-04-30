@@ -441,10 +441,10 @@ rem copy %1\examples\upndown\upndown\*.l examples\upndown\upndown
 rem md examples\upndown\dictionary
 rem copy %1\examples\upndown\dictionary\*.l examples\upndown\dictionary
 
-rem md examples\notepad 
-rem md examples\notepad\bin
-rem copy %1\examples\notepad\*.l examples\notepad
-rem copy %1\examples\notepad\*.prj examples\notepad 
+md examples\notepad 
+md examples\notepad\bin
+copy %1\examples\notepad\*.l examples\notepad
+copy %1\examples\notepad\*.prj examples\notepad 
 
 md examples\trans
 copy %1\examples\trans\*.l examples\trans

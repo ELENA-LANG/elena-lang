@@ -164,7 +164,12 @@
         
         anHDC << dc.
     ]
-    
+
+    #method set &hmenu:aMenuHandle
+    [
+        system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
+    ]
+            
     #method free
     [
         system'external'USER32 DestroyWindow &handle:theHandle.

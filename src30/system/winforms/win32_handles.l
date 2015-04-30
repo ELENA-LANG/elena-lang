@@ -277,3 +277,38 @@
         system'external'GDI32 DeleteObject &handle:theHandle.
     ]
 }
+
+// --- HMENU ---
+
+#class(sealed,struct:embeddable) HMENU
+{
+    #field(type:handle)theHandle.
+    
+    #constructor newRoot
+    [
+        #var(type:handle)h := system'external'USER32 CreateMenu.
+        
+        theHandle := h.
+    ]
+
+    #constructor new
+    [
+        #var(type:handle)h := system'external'USER32 CreatePopupMenu.
+        
+        theHandle := h.
+    ]
+
+    #method append &int:Flags &int:anID &wide:aCaption
+    [
+    ]
+            
+    #method append &int:Flags &handle:aParent &wide:aCaption
+    [
+        system'external'USER32 AppendMenuW
+    ]
+            
+    #method free
+    [
+        system'external'USER32 DestroyMenu &handle:theHandle.
+    ]
+}

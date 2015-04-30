@@ -22,6 +22,8 @@ Currently:
 ------                                              
                        
               adev - gui
+                       * new controls: menu
+
                        * image list, it could be possible to assign the image list to the image box and change the image list index to change the
                          picture, so no need to override on paint event
                        * implement forms package (native control wrappers)

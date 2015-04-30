@@ -5,6 +5,7 @@
 #subject(class:system'winforms'HBITMAP)           hbitmap.
 #subject(class:system'winforms'HPEN)              hpen.
 #subject(class:system'winforms'HBRUSH)            hbrush.
+#subject(class:system'winforms'HMENU)             hmenu.
 
 #subject(class:system'winforms'MSG)               win_msg.
 #subject(class:system'winforms'CREATESTRUCT)      win_createstruct.

@@ -1,18 +1,20 @@
-[project]
+﻿[project]
 executable=bin\notepad.exe
 output=obj
-template=win32_gui2
+namespace=notepad
+template=gui
 debuginfo=-1
 warn:unresolved=-1
 
 [files]
 main.l
 
-[forwards]
-'mainwindow=main'window
-
 [subjects]
 winapi=win32'dictionary
 
 [linker]
 gcsize=16384
+
+[forwards]
+'mainWindow=notepad'Window
+
