@@ -4793,6 +4793,13 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    _writer.declareMethod(*scope.tape, methodScope->message, false, true);
    scope.level++;
 
+   // copy arguments
+   int param_count = getParamCount(methodScope->message);
+   while (param_count > 0) {
+      _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1 - param_count));
+      param_count--;
+   }
+
    _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
    _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
 
