@@ -40,6 +40,7 @@ Currently:
                        * migrate timer
                        
               adev - linux lib30:
+                       * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
                        * implement file i/o operations
                     
 <=================> 
@@ -48,18 +49,17 @@ Currently:
 --------
 week2:
               idev - linux:              
-                       * TextView: support caching
-                       * TextView: cursor blinking
-
-                       * save source
-                       * close source
                        * open project
                        * new project
+                       * editor
+                       * project compilation / clean / run
+                       * recent open files / projects
+                       * window list, switching
+                       * status bar
                        * add menu items
                        * add tool bar items
                        * add hot keys
-                       * editor
-                       * project compilation / clean / run
+                       * TextView: cursor blinking
                        
               adev - linux lib30:
                        * console.write[1] : flush stdout buffer after write command
