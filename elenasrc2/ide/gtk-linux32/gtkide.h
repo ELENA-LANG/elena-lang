@@ -44,8 +44,26 @@ protected:
    {
       _controller->doExit();
    }
-////   virtual void _onNotify(NMHDR* notification);
-////   void _onToolTip(NMTTDISPINFO* toolTip);
+   void on_menu_file_save()
+   {
+      _controller->doSave(false);
+   }
+   void on_menu_file_saveas()
+   {
+      _controller->doSave(true);
+   }
+   void on_menu_file_close()
+   {
+      _controller->doCloseFile();
+   }
+   void on_menu_file_closeall()
+   {
+      _controller->doCloseAll(false);
+   }
+   void on_menu_file_closeallbutactive()
+   {
+      _controller->doCloseAllButActive();
+   }
 
    void populateMenu();
    void populateToolbar();

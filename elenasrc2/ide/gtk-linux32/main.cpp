@@ -61,12 +61,37 @@ public:
 
    virtual bool saveFile(Model* model, _ELENA_::Path& newPath)
    {
+      Gtk::FileChooserDialog dialog(SAVEAS_FILE_CAPTION, Gtk::FILE_CHOOSER_ACTION_SAVE);
+      dialog.set_transient_for(appWindow);
+
+      if (!_ELENA_::emptystr(model->project.path))
+         dialog.set_current_folder((const char*)model->project.path);
+
+      dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+      dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+      filter_l->set_name("ELENA source file");
+      filter_l->add_pattern("*.l");
+      dialog.add_filter(filter_l);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+      filter_any->set_name("Any files");
+      filter_any->add_pattern("*");
+      dialog.add_filter(filter_any);
+
+      int result = dialog.run();
+      if (result == Gtk::RESPONSE_OK) {
+         std::string filename = dialog.get_filename();
+
+         newPath.copy(filename.c_str());
+
+         return true;
+      }
+      else return false;
 //      FileDialog dialog(&appWindow, FileDialog::SourceFilter, SAVEAS_FILE_CAPTION, model->project.path);
 //
 //      return dialog.saveFile(_T("l"), newPath);
-//
-
-      return false; // !!
    }
 
    virtual bool selectFiles(Model* model, _ELENA_::List<text_c*>& selected)
@@ -74,8 +99,8 @@ public:
       Gtk::FileChooserDialog dialog(OPEN_FILE_CAPTION, Gtk::FILE_CHOOSER_ACTION_OPEN);
       dialog.set_transient_for(appWindow);
 
-      //if (!_ELENA_::emptystr(_filePath))
-      //   gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(_dialog), _filePath);
+      if (!_ELENA_::emptystr(model->paths.lastPath))
+         dialog.set_current_folder ((const char*)model->paths.lastPath);
 
       dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
       dialog.add_button("_Open", Gtk::RESPONSE_OK);
