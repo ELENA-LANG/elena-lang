@@ -20,13 +20,20 @@
 
 // --- SDI ---
 
-#class SDIWindowListener :: WindowListener
+#class SDIWindowListener :: SDIWindowCallback
 {
     #field(type:sdiform)theOwner.
     
     #constructor new &sdiform:anOwner
     [
         theOwner := anOwner.
+    ]
+    
+    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    [
+        theOwner $resize &int:width &int:height.
+        
+        aResult << 0.
     ]
     
     #method onclick &hwnd:aHandle &vint:aResult
@@ -80,7 +87,7 @@
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:(WindowHandle min) 
                         &hinstance:CurrentInstance 
-                        &object:(SDIWindowCallback new &win_listener:(SDIWindowListener new &sdiform:$self)).
+                        &object:(SDIWindowListener new &sdiform:$self).
     ]
 }
 
@@ -106,19 +113,26 @@
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:(WindowHandle min) 
                         &hinstance:CurrentInstance 
-                        &object:(SDIWindowCallback new &win_listener:(SDIWindowListener new &sdiform:$self)).
+                        &object:(SDIWindowListener new &sdiform:$self).
     ]
 }
 
 // --- Child ---
 
-#class ChildWindowListener :: WindowListener
+#class ChildWindowListener :: ChildWindowCallback
 {
     #field(type:form)theOwner.
     
     #constructor new &form:anOwner
     [
         theOwner := anOwner.
+    ]
+    
+    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    [
+        theOwner $resize &int:width &int:height.
+        
+        aResult << 0.
     ]
     
     #method onclick &hwnd:aHandle &vint:aResult
@@ -176,6 +190,6 @@
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:(theParent hwnd)
                         &hinstance:CurrentInstance 
-                        &object:(ChildWindowCallback new &win_listener:(ChildWindowListener new &form:$self)).
+                        &object:(ChildWindowListener new &form:$self).
     ]
 }

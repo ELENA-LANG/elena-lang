@@ -66,49 +66,72 @@
     
     #method caption = theCaption.
     
-    #method set &location:aPoint
+    #method setLocation &int:x &int:y
     [
-        #var(type:int)x.
-        #var(type:int)y.
-        aPoint read &vint:x &vint:y.
-        
         theRegion writeLocation &int:x &int:y.
     ]
     
-    #method set &x:anX &y:anY
+    #method set &x:x
     [
-        $self set &location:(Point new &x:anX &y:anY).
+        #var(type:int)y.
+        theRegion readY &vint:y.
+        
+        $self setLocation &int:(x int) &int:y.
+    ]
+    
+    #method set &y:y
+    [
+        #var(type:int)x.
+        theRegion readX &vint:x.
+        
+        $self setLocation &int:x &int:(y int).
+    ]
+    
+    #method set &x:x &y:y
+    [
+        $self setLocation &int:(x int) &int:(y int).
     ]
     
     #method location = theRegion point.
 
     #method dimension = theRegion dimension.
     
-    #method set &dimension:aDimension
+    #method setDimension &int:aWidth &int:aHeight
     [
-        #var(type:int)aWidth.
-        #var(type:int)aHeight.
-        
-        aDimension read &vint:aWidth &vint:aHeight.
-        
         theRegion writeDimension &int:aWidth &int:aHeight.
     ]
     
     #method set &width:aWidth &height:aHeight
     [
-        $self set &dimension:(Dimension new &width:aWidth &height:aHeight).
+        $self setDimension &int:(aWidth int) &int:(aHeight int).
+    ]
+
+    #method set &width:aWidth
+    [
+        #var(type:int)aHeight.
+        theRegion readHeight &vint:aHeight.
+        
+        $self setDimension &int:(aWidth int) &int:aHeight.
     ]
     
-//    #method read &dimension:aDimension
-//    [
-//        #var(type:vint)aWidth.
-//        #var(type:vint)aHeight.
-//        
-//        theRegion readDimension &vint:aWidth &vint:aHeight.
-//        
-//        aDimension write &int:aWidth &int:aHeight.
-//    ]
-//    
+    #method set &height:aHeight
+    [
+        #var(type:int)aWidth.
+        theRegion readWidth &vint:aWidth.
+        
+        $self setDimension &int:aWidth &int:(aHeight int).
+    ]    
+            
+    #method readDimension &vint:aWidth &vint:aHeight
+    [
+        theRegion readDimension &vint:aWidth &vint:aHeight.        
+    ]
+    
+    #method readLocation &vint:x &vint:y
+    [
+        theRegion readLocation&vint:x &vint:y.        
+    ]
+    
 //    #method is &tabstop = theTabStop.
 //    
 //    #method set &tabstop:aValue

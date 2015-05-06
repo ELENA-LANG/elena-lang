@@ -603,7 +603,8 @@ week1:
                        * free should be method to free the resoures (must be a verb)
                        * typed list ; possible implementation (see forms package)
                        * method redirect to sealed / closed object - should be direct as well ; simplify forms package code using this feature
-                         (control adapters could be created directly in the code without need to explicitly declare them)
+                         (control adapters could be created directly in the code without need to explicitly declare them) ; otherwise if the call
+                         unknown box the variables if reuqired
                        * should it be possible to typecast shortarray as byte array? (for stack allocated ones)
                        * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
                          implemented

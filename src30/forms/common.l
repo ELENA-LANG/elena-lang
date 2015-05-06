@@ -265,6 +265,26 @@
         aHeight << theHeight.
     ]
         
+    #method readX &vint:anX
+    [
+        anX << theX.
+    ]
+        
+    #method readY &vint:anY
+    [
+        anY << theY.
+    ]
+        
+    #method readWidth &vint:aWidth
+    [
+        aWidth << theWidth.
+    ]
+        
+    #method readHeight &vint:aHeight
+    [
+        aHeight << theHeight.
+    ]
+        
     #method write &x:aValue
     [
         theX := aValue int.

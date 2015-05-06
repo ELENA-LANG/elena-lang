@@ -48,4 +48,6 @@
 
 // --- event handlers ---
 #subject(class:system'BaseFunction1) onClick.
+#subject(class:system'BaseFunction1) onIndexChanged.
+#subject(class:system'BaseFunction1) onResize.
 #subject onPaint.

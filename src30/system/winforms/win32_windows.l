@@ -24,10 +24,43 @@
 
 #class(limited) WindowCallback
 {
-    #field(type:win_listener)theListener.
-
     #method win_callback = $self.
+
+    #method onpaint &hwnd:aControl &vint:aRetVal
+    [
+        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:aControl &int:WM_PAINT &int:0 &int:0.
+        
+        aRetVal << result.
+    ]
     
+    #method onclick &hwnd:aControl &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
+    #method onmenu &int:aCode &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
+    #method onsize &hwnd:aControl &int:aWidth &int:aHeight &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
+    #method ondestroy &hwnd:aControl &vint:aResult
+    [
+        #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:aControl &int:GWL_USERDATA &int:0.
+        (anIndex != 0)?
+            [
+                #var(type:rt_ptr)ptr := anIndex.
+                
+                ptr free.
+            ].
+
+        aResult << 0.
+    ]
+        
     #method wm_create &hwnd:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct &vint:aRetVal
     [
         #var(type:vint)param.
@@ -42,6 +75,13 @@
     
     #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
+        (aMessage == WM_DESTROY)
+            ? [
+                $self ondestroy &hwnd:anHWND &vint:aRetVal.                            
+                
+                ^ $self.
+            ].                
+        
         #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:0 &int:0.
          
         aRetVal << result.
@@ -51,7 +91,11 @@
     [
         (aMessage == WM_SIZE)
             ? [
-                theListener onsize &hwnd:anHWND &int:wParam &int:lParam &vint:aRetVal.
+                #var(type:int)width := lParam && 0FFFFh.
+                #var(type:int)height.
+                lParam shift &index:16 &vint:height.
+        
+                $self onsize &hwnd:anHWND &int:width &int:height &vint:aRetVal.
                 
                 ^ $self.
             ].                
@@ -63,14 +107,17 @@
     
     #method wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
-        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:0 &int:0.
-        
-        aRetVal << result.
+        $self onpaint &hwnd:anHWND &vint:aRetVal.
     ]
-
+    
     #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
     [
-        aRetVal << -1.
+        (aControl == 0)
+            ? [ $self onmenu &int:aCode &vint:aRetVal. ^ $self. ].
+
+        // !! note low word may contains the control ID, so only high word should be checked
+        (aCode == 0)
+            ? [ $self onclick &hwnd:aControl &vint:aRetVal. ].
     ]
 
     #method eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal
@@ -107,11 +154,6 @@
 
 #class SDIWindowCallback :: WindowCallback
 {
-    #constructor new &win_listener:aListener
-    [
-        theListener := aListener.
-    ]
-    
     #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         (aMessage == WM_CLOSE)
@@ -128,22 +170,12 @@
                 // NOTE: SDIWindow is the main program window, so closing it means exiting the program
                 'program stop.
                 
-                theListener ondestroy &hwnd:anHWND &vint:aRetVal.
+                $self ondestroy &hwnd:anHWND &vint:aRetVal.
                 
                 ^ $self.
             ].
         
         $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
-    ]
-    
-    #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
-    [
-        (aControl == 0)
-            ? [ theListener onmenu &int:aCode &vint:aRetVal. ^ $self. ].
-
-        // !! note low word may contains the control ID, so only high word should be checked
-        (aCode == 0)
-            ? [ theListener onclick &hwnd:aControl &vint:aRetVal. ].
     ]
 
 //    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
@@ -156,11 +188,6 @@
 
 #class ChildWindowCallback :: WindowCallback
 {
-    #constructor new &win_listener:aListener
-    [
-        theListener := aListener.
-    ]
-    
     #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         (aMessage == WM_CLOSE)
@@ -174,22 +201,12 @@
         
         (aMessage == WM_DESTROY)
             ? [
-                theListener ondestroy &hwnd:anHWND &vint:aRetVal.
+                $self ondestroy &hwnd:anHWND &vint:aRetVal.
                 
                 ^ $self.
             ].
         
         $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
-    ]
-    
-    #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
-    [
-        (aControl == 0)
-            ? [ ^ $self. ]. // !! temporal
-
-        // !! note low word may contains the control ID, so only high word should be checked
-        (aCode == 0)
-            ? [ theListener onclick &hwnd:aControl &vint:aRetVal. ].
     ]
 
 //    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
@@ -198,105 +215,8 @@
 //    ]
 }
 
-// --- PaintboxCallback ---
-
-#class PaintboxCallback :: WindowCallback
-{
-    #constructor new &win_listener:aListener
-    [
-        theListener := aListener.
-    ]
-    
-    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
-    [
-        (aMessage == WM_DESTROY)
-            ? [
-                theListener ondestroy &hwnd:anHWND &vint:aRetVal.                            
-                
-                ^ $self.
-            ].
-        
-        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
-    ]
-    
-    #method wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
-    [
-        theListener onpaint &hwnd:anHWND &vint:aRetVal.
-    ]
-}
-
-// --- PanelCallback ---
-
-#class PanelCallback :: WindowCallback
-{
-    #constructor new &win_listener:aListener
-    [
-        theListener := aListener.
-    ]
-    
-    #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
-    [
-        (aControl == 0)
-            ? [ ^ $self. ]. // !! temporal
-
-        // !! note low word may contains the control ID, so only high word should be checked
-        (aCode == 0)
-            ? [ theListener onclick &hwnd:aControl &vint:aRetVal. ].
-    ]
-    
-    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
-    [
-        (aMessage == WM_DESTROY)
-            ? [
-                theListener ondestroy &hwnd:anHWND &vint:aRetVal.                            
-                
-                ^ $self.
-            ].
-        
-        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
-    ]
-}
-
-// --- WindowListener ---
-
-#class(limited) WindowListener
-{
-    #method onpaint &hwnd:aControl &vint:aResult
-    [
-        aResult << 0.
-    ]
-    
-    #method onclick &hwnd:aControl &vint:aResult
-    [
-        aResult << 0.
-    ]
-    
-    #method onmenu &int:aCode &vint:aResult
-    [
-        aResult << 0.
-    ]
-    
-    #method onsize &hwnd:aControl &int:wParam &int:lParam &vint:aResult
-    [
-        aResult << 0.
-    ]
-    
-    #method ondestroy &hwnd:aControl &vint:aResult
-    [
-        #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:aControl &int:GWL_USERDATA &int:0.
-        (anIndex != 0)?
-            [
-                #var(type:rt_ptr)ptr := anIndex.
-                
-                ptr free.
-            ].
-
-        aResult << 0.
-    ]
-}
-
 // --- SDIWindowClass ---
 
-#static SDIWindowClass = $windowClassControl createClass &name:"ELENA.SDIWINDOW.3.1" &hinstance:CurrentInstance &int:WS_ELENAWINDOW &int:COLOR_BACKGROUND.
-#static PaintboxClass  = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0.
-#static PanelClass     = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND.
+#static(type:wide) SDIWindowClass = $windowClassControl createClass &name:"ELENA.SDIWINDOW.3.1" &hinstance:CurrentInstance &int:WS_ELENAWINDOW &int:COLOR_BACKGROUND wide.
+#static(type:wide) PaintboxClass  = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0 wide.
+#static(type:wide) PanelClass     = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND wide.

@@ -13,4 +13,3 @@
 #subject(class:system'winforms'PAINTSTRUCT)       win_paintstruct.
 
 #subject(class:system'winforms'WindowCallback)    win_callback.
-#subject(class:system'winforms'WindowListener)    win_listener.

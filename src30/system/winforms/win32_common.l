@@ -53,6 +53,7 @@
 #symbol(const,type:int)WM_SETTEXT       = 0Ch.
 #symbol(const,type:int)WM_GETTEXT       = 0Dh.
 #symbol(const,type:int)WM_GETTEXTLENGTH = 0Eh.
+#symbol(const,type:int)WM_PAINT         = 0Fh.
 #symbol(const,type:int)WM_CLOSE         = 10h.
 #symbol(const,type:int)WM_SETCURSOR     = 20h.
 

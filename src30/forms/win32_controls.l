@@ -12,9 +12,13 @@
     
     #method retrieve &hwnd:aHandle = $nil.
     
-    #method set &dimension:aDimension []
+    #method readDimension &vint:aWidth &vint:aHeight []
     
-    #method set &location:aPoint []
+    #method readLocation &vint:x &vint:y []
+    
+    #method setDimension &int:aWidth &int:aHeight []
+    
+    #method setLocation &int:x &int:y []
     
     #method open []
     
@@ -108,30 +112,22 @@
         ^ theCaption.            
     ]
 
-    #method set &location:aLocation
+    #method setLocation &int:x &int:y
     [
-        $super set &location:aLocation.
+        theRegion writeLocation &int:x &int:y.
         
         ($nil == theHandle)
             ! [
-                #var(type:vint)x.
-                #var(type:vint)y.
-                aLocation read &vint:x &vint:y.
-        
                 theHandle setPosition &int:x &int:y &int:0 &int:0 &int_attributes:SWP_NOSIZE.
             ].
     ]
     
-    #method set &dimension:aSize
+    #method setDimension &int:aWidth &int:aHeight
     [
-        $super set &dimension:aSize.
+        theRegion writeDimension &int:aWidth &int:aHeight.
         
         ($nil == theHandle)
             ! [
-                #var(type:vint)aWidth.
-                #var(type:vint)aHeight.
-                aSize read &vint:aWidth &vint:aHeight.
-        
                 theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int_attributes:SWP_NOMOVE.
             ].
     ]
@@ -141,6 +137,11 @@
         ($nil != theHandle)
             ? [ theHandle refresh. ].
     ]
+    
+    #method $resize &int:aWidth &int:aHeight
+    [
+        theRegion writeDimension &int:aWidth &int:aHeight.
+    ]  
 }    
 
 // --- ControlCollection ---
@@ -173,11 +174,17 @@
 #class BaseWinContainer :: BaseWinControl
 {
     #field(type:controls) theControls.
+    #field(type:func1)    theResize.
     
     #constructor new
         <= (new)
     [
         theControls := ControlCollection new:$self.
+    ]
+
+    #method set &onResize:anAction
+    [
+        theResize := anAction.
     ]
 
     #method retrieve &hwnd:aHandle
@@ -215,102 +222,14 @@
         #loop (it next)?
             [ it get close. ].
     ]
-}
-
-// --- BaseWinDockableContainer ---
-
-#class BaseWinDockableContainer :: BaseWinContainer
-{
-//    #field theLeft.
-//    #field theRight.
-//    #field theTop.
-//    #field theBottom.
-//    #field theClient.
-//
-//    #method __control = theParent __control.
-//
-//    #method __control'append : aControl
-//    [
-//        theParent append &__control:aControl. 
-//    ]
-//
-//    #method dock_left'set : anObject [ theLeft := anObject. self refresh. ]
-//    #method dock_right'set : anObject [ theRight := anObject. self refresh. ]
-//    #method dock_top'set : anObject [ theTop := anObject. self refresh. ]
-//    #method dock_bottom'set : anObject [ theBottom := anObject. self refresh. ]    
-//    #method dock_center'set : anObject [ theClient := anObject. self refresh. ]
-//
-//    #method set : Args
-//    [
-//        theLeft := Args dock_left | back:theLeft.
-//        theRight := Args dock_right | back:theRight.
-//        theTop := Args dock_top | back:theTop.
-//        theBottom := Args dock_bottom | back:theBottom.
-//        theClient := Args dock_center | back:theClient.
-//        
-//        self refresh.
-//    ]
-//    
-//    #method refresh
-//    [
-//        #var aSize := theParent size.
-//        self onresize &size:aSize &sender:self.
-//    ]
-//    
-//    #method new : aParent
-//    [
-//        theParent := aParent.
-//        
-//        theLeft := IdleControl.
-//        theRight := IdleControl.
-//        theTop := IdleControl.
-//        theBottom := IdleControl.
-//        theClient := IdleControl.
-//        
-//        theParent~eevents += $self.
-//    ]
-//
-//    #method onresize &gui'dictionary'size:aSize
-//    [
-//        #var aWidth := aSize width.
-//        
-//        #var aTotalWidth := Integer << aWidth.
-//        #var aTotalHeight := Integer << aSize height.
-//        #var anX := Integer.
-//        #var anY := Integer.
-//        
-//        // Bottom
-//        #var aCurrentHeight := theBottom gui'dictionary'size height.
-//        theBottom set &width:aWidth &height:aCurrentHeight.
-//        aTotalHeight -= aCurrentHeight.
-//        
-//        // Top
-//        aCurrentHeight := theTop gui'dictionary'size height.
-//        theTop set &width:aWidth &height:aCurrentHeight.
-//        aTotalHeight -= aCurrentHeight.
-//        anY << aCurrentHeight.
-//        
-//        // Left
-//        #var aCurrentWidth := theLeft gui'dictionary'size height.
-//        theLeft set &width:aCurrentWidth &height:aTotalHeight.
-//        aTotalWidth -= aCurrentWidth.
-//        anX << aCurrentWidth.
-//        
-//        // Right
-//        aCurrentWidth := theRight gui'dictionary'size height.
-//        theRight set &width:aCurrentWidth &height:aTotalHeight.
-//        aTotalWidth -= aCurrentWidth.
-//        
-//        // Client
-//        theClient set &width:aTotalWidth &height:aTotalHeight.
-//        theClient set &x:anX &y:anY.
-//        
-//        anX += aTotalWidth.
-//        anY += aTotalHeight.
-//        
-//        theRight set &x:anX &y:aCurrentHeight.
-//        theBottom set &x:0 &y:anY.
-//    ]
+    
+    #method $resize &int:aWidth &int:aHeight
+    [
+        $super $resize &int:aWidth &int:aHeight.
+        
+        ($nil == theResize)
+            ! [ theResize eval:$self. ].
+    ]  
 }
 
 // --- Frame ---
@@ -330,9 +249,13 @@
           
     #method retrieve &hwnd:aHandle = theFrame retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ theFrame set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theFrame setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theFrame set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theFrame setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theFrame readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theFrame readLocation &vint:aWidth &vint:aHeight. ]
 }
 
 #class(sealed) Frame :: BaseWinControl
@@ -380,9 +303,13 @@
           
     #method retrieve &hwnd:aHandle = theLabel retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ theLabel set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theLabel setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theLabel set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theLabel setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theLabel readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theLabel readLocation &vint:aWidth &vint:aHeight. ]
 }
 
 #class(limited) Label :: BaseWinControl
@@ -489,9 +416,13 @@
     
     #method open [ theEdit open. ]
           
-    #method set &dimension:aDimension [ theEdit set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theEdit setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theEdit set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theEdit setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theEdit readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theEdit readLocation &vint:aWidth &vint:aHeight. ]
     
     #method retrieve &hwnd:aHandle = theEdit retrieve &hwnd:aHandle.
 }
@@ -544,9 +475,13 @@
     
     #method open [ theEdit open. ]
           
-    #method set &dimension:aDimension [ theEdit set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theEdit setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theEdit set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theEdit setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theEdit readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theEdit readLocation &vint:aWidth &vint:aHeight. ]
     
     #method retrieve &hwnd:aHandle = theEdit retrieve &hwnd:aHandle.
 }
@@ -641,9 +576,13 @@
 
     #method retrieve &hwnd:aHandle = theButton retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ theButton set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theButton setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theButton set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theButton setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theButton readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theButton readLocation &vint:aWidth &vint:aHeight. ]
 }
 
 #class(sealed) Button :: BaseButton
@@ -691,9 +630,13 @@
           
     #method retrieve &hwnd:aHandle = theButton retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ theButton set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theButton setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theButton set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theButton setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theButton readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theButton readLocation &vint:aWidth &vint:aHeight. ]
     
     #method => theButton.
 }
@@ -759,7 +702,7 @@
 
 // --- Paintbox ---
 
-#class PaintboxListener :: WindowListener
+#class PaintboxListener :: WindowCallback
 {
     #field(type:paintbox)theOwner.
     
@@ -775,15 +718,8 @@
         aResult << 0.
     ]
     
-    #method onsize &hwnd:aControl &int:wParam &int:lParam &vint:aResult
+    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
     [
-        #var(type:int)width.
-        #var(type:int)height.
-        width := lParam.
-        width := width && 0FFFFh.
-        
-        lParam shift &index:16 &vint:height.
-        
         theOwner $resize &hwnd:aControl &int:width &int:height.
         
         aResult << 0.
@@ -812,9 +748,14 @@
     
     #method retrieve &hwnd:aHandle = thePaintbox retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ thePaintbox set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ thePaintbox setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ thePaintbox set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ thePaintbox setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ thePaintbox readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ thePaintbox readLocation &vint:aWidth &vint:aHeight. ]
+    
 }
 
 #class(limited) Paintbox :: BaseWinControl
@@ -858,10 +799,15 @@
         struct end &hwnd:theHandle.
     ]
  
-    #method $resize &hwnd:aHandle &int:aWidth &int:aHeight
+    #method $resize &hwnd:aControl &int:aWidth &int:aHeight
     [
     ]
-  
+ 
+    #method $resize &int:aWidth &int:aHeight
+    [
+        $self $resize &hwnd:theHandle &int:aWidth &int:aHeight.
+    ]
+ 
     #method $createHandle
     [
         #var(type:hwnd)aParent := theParent hwnd.
@@ -880,7 +826,7 @@
         theHandle := WindowHandle new &int:WS_EX_TRANSPARENT
                         &wide:PaintboxClass &wide:(theCaption wide) &int:Styles
                         &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:(PaintboxCallback new &win_listener:(PaintboxListener new &paintbox:$self)).
+                        &hwnd:aParent &hinstance:CurrentInstance &object:(PaintboxListener new &paintbox:$self).
     ]
 }
 
@@ -888,10 +834,12 @@
 {
     #field(type:hbitmap)  theImage.
     #field(type:hdc)      theImageDC.
+    #field(type:bool)     theNeedToRefresh.
     
     #constructor new
         <= (new)
     [
+        theNeedToRefresh := false.
     ]
 
     #method $destroy
@@ -904,6 +852,9 @@
     
     #method $paint
     [
+        (theNeedToRefresh)
+            ? [ $self refresh. ].
+        
         #var(type:win_paintstruct)struct.
         
         struct begin &hwnd:theHandle.
@@ -929,6 +880,7 @@
             ! [ thePaint eval:$self &canvas:theCanvas. ].
 
         $super refresh.
+        theNeedToRefresh := false.
     ]
  
     #method $resize &hwnd:aHandle &int:aWidth &int:aHeight
@@ -948,7 +900,7 @@
 
         theCanvas open &hdc:theImageDC.
 
-        $self refresh.
+        theNeedToRefresh := true.
     ]
 }
 
@@ -967,11 +919,11 @@
         theControls append:theFrame.
     ]
     
-    #method set &dimension:aSize
+    #method setDimension &int:aWidth &int:aHeight
     [
-        $super set &dimension:aSize.
+        $super setDimension &int:aWidth &int:aHeight.
         
-        theFrame set &dimension:aSize.
+        theFrame setDimension &int:aWidth &int:aHeight.
     ]
     
     #method set &caption:aCaption
@@ -984,19 +936,26 @@
         #var(type:dimension)aSize.
         aSize write &int:aWidth &int:aHeight.
         
-        theFrame set &dimension:aSize.
+        theFrame setDimension &int:aWidth &int:aHeight.
     ]    
 }
 
 // --- Panel ---
 
-#class PanelListener :: WindowListener
+#class PanelListener :: WindowCallback
 {
     #field(type:panel)theOwner.
     
     #constructor new &panel:anOwner
     [
         theOwner := anOwner.
+    ]
+    
+    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    [
+        theOwner $resize &int:width &int:height.
+        
+        aResult << 0.
     ]
     
     #method onclick &hwnd:aHandle &vint:aResult
@@ -1026,9 +985,13 @@
           
     #method retrieve &hwnd:aHandle = thePanel retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ thePanel set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ thePanel setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ thePanel set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ thePanel setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ thePanel readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ thePanel readLocation &vint:aWidth &vint:aHeight. ]
 }
 
 #class(sealed) Panel :: BasePanel
@@ -1057,19 +1020,26 @@
         theHandle := WindowHandle new &int:WS_EX_CONTROLPARENT
                         &wide:PanelClass &wide:(theCaption wide) &int:Styles
                         &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:(PanelCallback new &win_listener:(PanelListener new &panel:$self)).
+                        &hwnd:aParent &hinstance:CurrentInstance &object:(PanelListener new &panel:$self).
     ]
 }
 
 // --- RadioButtonGroup ---
 
-#class RadioButtonGroupListener :: WindowListener
+#class RadioButtonGroupListener :: WindowCallback
 {
     #field(type:radiogroup)theOwner.
     
     #method onclick &hwnd:aHandle &vint:aResult
     [
         theOwner $onClick &hwnd:aHandle.
+        
+        aResult << 0.
+    ]
+    
+    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    [
+        theOwner $resize &int:width &int:height.
         
         aResult << 0.
     ]
@@ -1095,9 +1065,13 @@
           
     #method retrieve &hwnd:aHandle = theGroup retrieve &hwnd:aHandle.
     
-    #method set &dimension:aDimension [ theGroup set &dimension:aDimension. ]
+    #method setDimension &int:aWidth &int:aHeight [ theGroup setDimension &int:aWidth &int:aHeight. ]
     
-    #method set &location:aPoint [ theGroup set &location:aPoint. ]
+    #method setLocation &int:aWidth &int:aHeight [ theGroup setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theGroup readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theGroup readLocation &vint:aWidth &vint:aHeight. ]
 }
 
 #class(sealed) RadioButtonGroup :: BasePanel
@@ -1166,9 +1140,9 @@
         ]
     }.
 
-    #method set &dimension:aSize
+    #method setDimension &int:aWidth &int:aHeight
     [
-        $super set &dimension:aSize.
+        $super setDimension &int:aWidth &int:aHeight.
         
         $self $resize.
     ]
@@ -1210,10 +1184,6 @@
             
     #method $resize &int:aWidth &int:aHeight
     [
-        #var(type:point)aPoint.
-        #var(type:dimension)aSize.
-        aSize write &int:(aWidth - 6) &int:20.
-        
         #var(type:control)aCurrent.
         #var(type:enumerator)it := theControls enumerator.
         #var(type:int)i := 0.
@@ -1224,10 +1194,8 @@
         [ 
             aCurrent := it get control.
         
-            aPoint write &int:4 &int:(18 + i * 20).
-            
-            aCurrent set &location:aPoint.
-            aCurrent set &dimension:aSize.
+            aCurrent setLocation &int:4 &int:(18 + i * 20).
+            aCurrent setDimension &int:(aWidth - 6) &int:20.
         
             i :=  i + 1.
         ].
@@ -1253,7 +1221,7 @@
         theHandle := WindowHandle new &int:WS_EX_CONTROLPARENT
                         &wide:PanelClass &wide:(theCaption wide) &int:Styles
                         &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:(PanelCallback new &win_listener:(RadioButtonGroupListener new &radiogroup:$self)).
+                        &hwnd:aParent &hinstance:CurrentInstance &object:(RadioButtonGroupListener new &radiogroup:$self).
                         
         ((theSelected != -1)and:($nil != theIndexChanged))?
             [ theIndexChanged eval:$self. ].
@@ -1310,7 +1278,7 @@
           
         #method retrieve &hwnd:aHandle = $nil.
     
-        #method set &dimension:aDimension [ self set &dimension:aDimension. ]
+        #method setDimension &int:aWidth &int:aHeight [ self setDimension &int:aWidth &int:aHeight. ]
     }.
  
     #method $set &parent:aParent
@@ -1320,9 +1288,9 @@
           
     #method dimension = theSize.
     
-    #method set &dimension:aSize
+    #method setDimension &int:aWidth &int:aHeight
     [
-        theSize := aSize.
+        theSize write &int:aWidth &int:aHeight.
     ]
     
     #method set &width:aWidth &height:aHeight
@@ -1352,5 +1320,144 @@
         #loop (it next)? [
             it get free.
         ].
+    ]    
+}
+
+// --- DockingBox ---
+
+#class(sealed) DockingBox
+{
+    #field theParent.
+    #field(type:control)theLeft.
+    #field(type:control)theRight.
+    #field(type:control)theTop.
+    #field(type:control)theBottom.
+    #field(type:control)theClient.
+
+    #constructor new
+    [
+    ]
+ 
+    #method assign &client:aControl
+    [
+        theClient := aControl control.
+    ]
+
+    #method assign &left:aControl
+    [
+        theLeft := aControl control.
+    ]
+
+    #method assign &right:aControl
+    [
+        theRight := aControl control.
+    ]
+
+    #method assign &top:aControl
+    [
+        theTop := aControl control.
+    ]
+
+    #method assign &bottom:aControl
+    [
+        theBottom := aControl control.
+    ]
+   
+    #method control = IControl
+    {
+        #method object = self.
+ 
+        #method open [ self open. ]
+          
+        #method close [ self close. ]
+          
+        #method retrieve &hwnd:aHandle = $nil.
+    }.
+ 
+    #method $set &parent:aParent
+    [
+        theParent := aParent.
+        
+        theParent set &onResize: control 
+        [
+            self refresh.
+        ].
+    ]
+
+    #method open
+    [
+        $self refresh.
+    ]
+        
+    #method refresh
+    [
+        #var(type:int)tmp.
+        
+        #var(type:dimension)theSize := theParent dimension.
+
+        #var(type:int)height := 0.
+        #var(type:int)width := 0.
+        #var(type:int)x := 0.
+        #var(type:int)y := 0.
+        #var(type:int)aTotalWidth.
+        #var(type:int)aTotalHeight.
+        theSize read &vint:aTotalWidth &vint:aTotalHeight.
+
+        // Bottom
+        ($nil != theBottom)?
+        [
+            theBottom readDimension &vint:tmp &vint:height.
+            theBottom setDimension &int:aTotalWidth &int:height.
+            
+            aTotalHeight := aTotalHeight - height.
+        ].
+        
+        // Top
+        ($nil != theTop)?
+        [
+            
+            theTop readDimension &vint:tmp &vint:height.
+            theTop setDimension &int:aTotalWidth &int:height.
+            
+            aTotalHeight := aTotalHeight - height.
+            
+            y := height.
+        ].
+        
+        // Left
+        ($nil != theLeft)?
+        [
+            theLeft readDimension &vint:width &vint:tmp.
+            theLeft setDimension &int:width &int:aTotalHeight.
+            
+            aTotalWidth := aTotalWidth - width.
+            
+            x := width.
+        ].
+        
+        // Right
+        ($nil != theRight)?
+        [
+            theRight readDimension &vint:width &vint:tmp.
+            theRight setDimension &int:width &int:aTotalHeight.
+            
+            aTotalWidth := aTotalWidth - width.
+        ].
+
+        // Client
+        ($nil != theClient)?
+        [
+            theClient setDimension &int:aTotalWidth &int:aTotalHeight.
+            theClient setLocation &int:x &int:y.            
+        ].
+        
+        x := x + aTotalWidth.
+        y := y + aTotalHeight.
+
+        ($nil != theRight)        
+            ? [ theRight setLocation &int:x &int:height. ].
+            
+        ($nil != theBottom)
+            ? [ theBottom setLocation &int:0 &int:y. ].
     ]    
 }
