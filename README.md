@@ -1,6 +1,6 @@
 ELENA Language Project V. 2.0, (C)2005-2015  By Alex Rakov
 ====
-ELENA is a general-purpose, object-oriented language with late binding. It promotes more object-oriented program design, reusable and more standardized code. The package includes compiler, IDE, ELENA libraries and samples
+ELENA is a general-purpose, object-oriented language with late binding. The package includes compiler, IDE, ELENA libraries and samples.
 Currently Win32-x86 and Linux-I386 platforms are supported.
 
 Features
@@ -24,10 +24,10 @@ Minimum requirements
 ELENA Language modules and programs
 ---
 The complete source code of ELENA Standard library could be found
-in the folder <app root>\src30.
+in the folder &gt;app root&lt;\src30.
 
 The source code of ELENA samples could be found
-in the folder <app root>\examples.
+in the folder &gt;app root&lt;\examples.
 
 License
 ---
@@ -37,30 +37,30 @@ License V2.0e, for more information read the file LICENSE.TXT.
 ELENA Installation / Run
 ---
 Windows:
---------
+
 To install just unzip all the files into a directory you want.
 
-You may need to add a path to BIN folder to system environment (e.g. <app root>\bin). 
+You may need to add a path to BIN folder to system environment (e.g. &lt;app root&gt;\bin).
 
 Otherwise you may use setup executable.
 
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
-(<app root>\bin\elide.exe) or ELENA Command Line Compiler 
-(<app root>\bin\elc.exe).
+(&lt;app root&gt;\bin\elide.exe) or ELENA Command Line Compiler 
+(&lt;app root&gt;\bin\elc.exe).
 
 In ELENA IDE you may select File-Open-Open Project option and open an 
 appropriate project file (*.prj). Then select Project-Compile option to 
 compile the project and Project-Debug to debug it.
 
 Linux:
-------
+
 To install just unzip all the files into a directory you want and execute 
 install.script.
 
-To compile the program types : ./bin/elc2 -c<path to .project file>
+To compile the program types : ./bin/elc2 -c&lt;path to .project file&gt;
 
 Contribute!
-------
+---
 ELENA Project looks for programmers interested in learning the language and providing feedback.
 
 Some of the best ways to contribute are to try things out, file bugs, and join in design conversations. 
@@ -68,5 +68,5 @@ Some of the best ways to contribute are to try things out, file bugs, and join i
 You may try to implementing some of Rosetta code tasks : http://rosettacode.org/wiki/Category:Elena
 
 Questions?
-------
-Feel free to ask any question in one of our forums: http://www.elcdev.smffy.com/
+---
+Feel free to ask any question in one of our forums: http://www.elcdev.smffy.com/ .
