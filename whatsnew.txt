@@ -34,7 +34,7 @@
 [+] system'winforms module implementing basic WIN32 GUI functionality
 [+] forms: SDIForm, SDIDialog, ChildForm, Edit, Label, Button, ImageBox, ImageList
 
-[+] forms: Menu
+[+] forms: Menu, DockingBox
 
 Samples:
 [+] agenda, graphs, c_a_g
