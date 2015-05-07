@@ -1,6 +1,6 @@
 ELENA Language Project V. 2.0, (C)2005-2015  By Alex Rakov
 ====
-ELENA is a general-purpose, object-oriented language with late binding. The package includes compiler, IDE, ELENA libraries and samples
+ELENA is a general-purpose, object-oriented language with late binding. The package includes compiler, IDE, ELENA libraries and samples.
 Currently Win32-x86 and Linux-I386 platforms are supported.
 
 Features
@@ -69,4 +69,4 @@ You may try to implementing some of Rosetta code tasks : http://rosettacode.org/
 
 Questions?
 ---
-Feel free to ask any question in one of our forums: http://www.elcdev.smffy.com/
+Feel free to ask any question in one of our forums: http://www.elcdev.smffy.com/ .
