@@ -13,7 +13,6 @@ For more information see at http://elenalang.sourceforge.net/
 ****************************************************************************
 
 - Pure polymorphic object oriented language
-- "Horizontal" multiple inheritance
 - Dynamic "class mutation"
 - Message dispatching
 - ELENA Virtual machine (in developing)

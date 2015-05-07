@@ -1,18 +1,6 @@
 #define system.
 #define forms.
 
-//#define gui'dictionary'*.
-//#define gui'dictionary'events'*.
-//#define std'basic'*.
-//#define std'dictionary'*.
-////#define sys'dictionary'*.
-//#define sys'io'*.
-//#define gui'*      = gui'common'*.
-//#define gui'dialogs'*.
-//
-//#define controls'* = gui'controls'*.
-//#define forms'*    = gui'forms'*.
-//
 //#symbol TextFile : aPath =
 //{
 //    write : aText
@@ -52,10 +40,10 @@
 #class Window :: SDIForm
 {
 //    #field theStatusBar.
-//    #field theTextField.
-//    
-//    #field theLayoutManager.
-//
+    #field theTextField.
+
+    #field theBox.
+    
     #constructor new
         <= (new)
     [
@@ -83,19 +71,15 @@
         
         theControls append:aMenu.
         
-//        theMenu := controls'Menu::self.
 //        theStatusBar := controls'StatusBar::self.
-//        theTextField := controls'Memo::self.
-//        theLayoutManager := controls'LayoutManager::self.
-//
+        theTextField := Memo new.
+        theBox := DockingBox new.
+        theControls append:theTextField.
+        theControls append:theBox.
+
         $self set &x:200 &y:200.
         $self set &width:700 &height:600.
         $self set &caption:"Notepad".
-//
-//        theTextField
-//            set &x:0 &y:46 
-//            set &width:693 & height:500
-//            open.
 //
 //        theStatusBar
 //            set &x:0 &y:300 
@@ -110,13 +94,14 @@
 //                       
 //        theStatusBar open.
 //
+        theBox assign &client:theTextField.
 //        theLayoutManager set &controls'dock_center:theTextField &controls'dock_bottom:theStatusBar.
-//        
-////        theTextField~gui'eevents +=
-////        {
-////            onSelectionChange : Args
-////            [
-////            ]
-////        }.
+
+//        theTextField~gui'eevents +=
+//        {
+//            onSelectionChange : Args
+//            [
+//            ]
+//        }.
     ]
 }
