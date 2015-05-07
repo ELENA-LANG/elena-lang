@@ -1,12 +1,11 @@
 ELENA Language Project V. 2.0, (C)2005-2015  By Alex Rakov
 ====
-ELENA is a general-purpose, pure object-oriented language with late binding. It promotes more object-oriented program design, reusable and more standardized code. The package includes compiler, IDE, ELENA libraries and samples
-Currently only Win32-x86 (2000/XP/Vista/7/8) platform is supported.
+ELENA is a general-purpose, object-oriented language with late binding. It promotes more object-oriented program design, reusable and more standardized code. The package includes compiler, IDE, ELENA libraries and samples
+Currently Win32-x86 and Linux-I386 platforms are supported.
 
 Features
 ---
 - Pure polymorphic object oriented language
-- "Horizontal" multiple inheritance
 - Dynamic "class mutation"
 - Message dispatching
 - ELENA Virtual machine (in developing)
@@ -15,11 +14,11 @@ Features
 - Unicode support (utf-8)
 - Complete source code
 - Number of samples
-- Simple Assembler compiler
+- Script Engine
 
 Minimum requirements
 ---
- - Windows XP/7/8 x86
+ - Windows 7/8 x86
  - Linux I386
 
 ELENA Language modules and programs
@@ -59,3 +58,15 @@ To install just unzip all the files into a directory you want and execute
 install.script.
 
 To compile the program types : ./bin/elc2 -c<path to .project file>
+
+Contribute!
+------
+ELENA Project looks for programmers interested in learning the language and providing feedback.
+
+Some of the best ways to contribute are to try things out, file bugs, and join in design conversations. 
+
+You may try to implementing some of Rosetta code tasks : http://rosettacode.org/wiki/Category:Elena
+
+Questions?
+------
+Feel free to ask any question in one of our forums: http://www.elcdev.smffy.com/
