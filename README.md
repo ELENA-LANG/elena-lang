@@ -36,7 +36,8 @@ License V2.0e, for more information read the file LICENSE.TXT.
 
 ELENA Installation / Run
 ---
-Windows:
+
+######Windows:
 
 To install just unzip all the files into a directory you want.
 
@@ -52,7 +53,7 @@ In ELENA IDE you may select File-Open-Open Project option and open an
 appropriate project file (*.prj). Then select Project-Compile option to 
 compile the project and Project-Debug to debug it.
 
-Linux:
+######Linux:
 
 To install just unzip all the files into a directory you want and execute 
 install.script.
