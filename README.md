@@ -38,7 +38,6 @@ ELENA Installation / Run
 ---
 Windows:
 -------
-
 To install just unzip all the files into a directory you want.
 
 You may need to add a path to BIN folder to system environment (e.g. &lt;app root&gt;\bin).
