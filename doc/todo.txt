@@ -508,6 +508,7 @@ week 4:
                        * bug : two classes with the same name
 
               xmaint - web page
+                       * update github read me, to provide information how to contibute, getting started, how to build, hot to compile the project, 
                        * update the web page using bootstrap
 
               xdev - ide
