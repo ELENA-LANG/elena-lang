@@ -2707,6 +2707,8 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
    // use dynamic extension if exists
    ref_t roleRef = mapExtension(scope, messageRef, object);
    if (roleRef != 0) {
+      methodInfo = tpSealed;
+
       retVal = ObjectInfo(okConstantRole, roleRef, getType(object));
    }
    else if (object.kind == okConstantSymbol) {
@@ -3885,6 +3887,9 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                return ObjectInfo(okAccumulator, 0, target_type);
             }
             else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
+               return ObjectInfo(okAccumulator, 0, target_type);
+            }
+            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
                return ObjectInfo(okAccumulator, 0, target_type);
             }
 

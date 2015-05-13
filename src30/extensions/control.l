@@ -9,6 +9,7 @@
 #subject(class:system'BaseFunction1)forEachLine.
 #subject(class:system'BaseFunction1)seeking.
 #subject(class:system'IndexFunction1)forEvery.
+#subject(class:system'BaseFunction2)forEachPair.
 
 // --- control ---
 
@@ -32,6 +33,9 @@
 
     run:anEnumerable &forEach:aFunction
         = aFunction run &enumerator:(anEnumerable enumerator).
+
+    run:anEnumerable &with:aParam &forEachPair:aFunction
+        = aFunction run:aParam &enumerator:(anEnumerable enumerator).
 
     run:anEnumerable &seeking:aFunction
         = aFunction retrieve &enumerator:(anEnumerable enumerator).

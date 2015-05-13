@@ -4,6 +4,8 @@
 
 #symbol program =
 [   
+    DTOToStructTest eval.
+
     XTest eval.
 
     console writeLine:"Starting...".
@@ -41,4 +43,5 @@
     GroupTest eval.
     GenericMethodTest eval.
     ConstructorTest eval.
+    DTOToStructTest eval.
 ].

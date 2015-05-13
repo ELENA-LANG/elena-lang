@@ -23,10 +23,15 @@ define PREPARE           10027h
 define CORE_OS_TABLE     20009h
 
 define elSizeOffset      0008h
+define elVMTSizeOffset   000Ch
 
 // verbs
 define EXEC_MESSAGE_ID  085000000h
 define START_MESSAGE_ID 0B7000000h
+
+define VERB_MASK        0FF000000h
+define SUBJECT_MASK     000FFFFF0h
+define INV_SUBJECT_MASK 0FF00000Fh
 
 // ; --- API ---
 
@@ -4062,4 +4067,67 @@ procedure coreapi'rsqrt
   fstp  qword ptr [edi]    // store result 
   ret
 
+end
+
+// ; ecx - filter, esi - vmt starting index, edi - result array, eax - class ; output esi - array length
+procedure coreapi'filter_vmt
+
+   mov  ebx, [edi - elSizeOffset]
+   neg  ebx
+   push ebx
+   xor  ebx, ebx
+   push ecx   
+   
+   mov  edx, [eax - elVMTSizeOffset]
+
+   test ecx, VERB_MASK
+   jnz  labVerb
+   
+   // ; filter subject
+labSubjNext:
+   cmp  esi, edx
+   jge  labEnd
+
+   mov  ecx, [eax + esi * 8]
+   and  ecx, SUBJECT_MASK
+   add  esi, 1
+   cmp  ecx, [esp]
+   jnz  short labSubjNext
+   
+   mov  ecx, [eax + esi * 8 - 8]
+   mov  [edi + ebx], ecx
+   add  ebx, 4
+   cmp  ebx, [esp+4]
+   jge  labEnd 
+   nop
+   nop
+   jmp  labSubjNext
+
+   // ; filter verb
+labVerb:
+   cmp  esi, edx
+   jge  labEnd
+
+   mov  ecx, [eax + esi * 8]
+   and  ecx, INV_SUBJECT_MASK
+   add  esi, 1
+   cmp  ecx, [esp]
+   jnz  short labVerb
+   
+   mov  ecx, [eax + esi * 8 - 8]
+   mov  [edi + ebx], ecx
+   add  ebx, 4
+   cmp  ebx, [esp+4]
+   jge  labEnd 
+   nop
+   nop
+   jmp  labVerb
+
+labEnd:
+   pop  ecx
+   shr  ebx, 2
+   mov  esi, ebx
+   add  esp, 4
+   ret
+   
 end

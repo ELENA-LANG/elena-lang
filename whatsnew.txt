@@ -37,7 +37,7 @@
 [+] forms: SDIForm, SDIDialog, ChildForm, Edit, Label, Button, ImageBox, ImageList
 
 [+] forms: Menu, DockingBox
-[+] system'dynamic'classOp : read&message_mask&messages&vint[3]
+[+] system'dynamic'classOp : read&mssg_mask&index&mssgarray&vint[4]
 [+] system: MessageArray
 
 Samples:

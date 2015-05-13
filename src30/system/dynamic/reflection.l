@@ -1,5 +1,7 @@
 #define system.
 
+#subject(class:system'Message)mssg_mask.
+
 #symbol $classControl =
 {
     readName : anObject &bytearray:aBuffer &vlength:aLength
@@ -42,4 +44,7 @@
 
     #method respondsTo &message:aMessage
         => system'internal'class_indexOfMsg.
+        
+    #method read &mssg_mask:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
+        => system'internal'class_filterMsg.
 }

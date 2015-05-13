@@ -123,13 +123,13 @@
         ^ aLastItem.
     ]
 
-    #method top:aCounter
+    #method(type:enumerable) top:aCounter
         = system'routines'TopFilter new &length:(aCounter int) &enumerator:(self enumerator).
 
-    #method filter &each:aFilter
+    #method(type:enumerable) filter &each:aFilter
         = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).
 
-    #method select &each:aSelector
+    #method(type:enumerable) select &each:aSelector
         = system'routines'Selector new &each:aSelector &enumerator:(self enumerator).
 
     #method array

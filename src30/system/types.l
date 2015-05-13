@@ -34,6 +34,7 @@
 #subject(class:system'Byte)             vbyte.
 #subject(class:system'Short)            vshort.
 #subject(class:system'Char)             vchar.
+#subject(class:system'MessageVar)       vmssg.
 
 // === int synonyms ===
 #subject(class:system'IntNumber)        length.

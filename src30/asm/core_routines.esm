@@ -3427,10 +3427,15 @@ end
 procedure handle_message
 
   nload
-  else labEnd
+  eswap
   setverb EVAL_MESSAGE_ID
+  setsubj 0
+  else labEnd
+  nload
+  ecopyd
   aloadsi 1
   ajumpvi 0
+
 labEnd:
   open 1
   pushr class : system'MethodNotFoundException
@@ -4879,3 +4884,23 @@ procedure lnx_getarg
 
 end
 
+procedure class_filterMsg
+
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi 1
+  class
+  bloadsi 4
+  
+  // ; ecx - filter, esi - vmt starting index, edi - result array, eax - class ; output esi - array length
+  callr api : coreapi'filter_vmt  
+
+  bloadsi 5
+  nsave
+
+  quitn 5
+
+end
