@@ -21,8 +21,50 @@ v  - vm script
 Currently:
 ------                                              
                        
+              xdev - opcodes
+                       * new ecodes : mul / div
+
+              xdev - arrays:
+                       * redesign array implementation
+                       
+#class(stringof:2)BinaryArray
+{
+}
+                       
+#class(stringof:int)IntArray
+{
+}
+
+
+              adev - reflection:
+                       * system'dynamic'classOp - new method to read the matched messages
+
+                       * sample: convert dto object into struct
+
+                       * create a sample which will create, update and delete JSON typed object into the file, should work both as stand-alone and
+                         vm client
+
+                       * there should be a way to convert the object into liner structure ,it should be either predefined - a list of required
+                         properties
+
+                       * think over serilizing / deserialing the object
+
+                       * to serilize the object we could ask for all the object properties - 
+
+                       * every time the declared type is used - appropriate constant symbol should be created as well , or it should be created
+                         dynamically
+
+                       * reimplement goods using dynamic subjects for vm client
+
+                       * elenart : implement basic reflection functions
+
+                       * compile goods using dynamic subjects for stand-alone client
+
+              xdev - linux:
+                       * implement elenart
+
 <=================> 
-                                              
+                                                                                                                            
 1.9.19
 --------
 week2:
@@ -52,8 +94,6 @@ week2:
                        
               adev - lib30           
                        * cast should be implemented by every object (so it could be called directly)
-                       * review lib30, do not use vint, ... when declaring variables and fields
-                       * review samples
 
               adev - lib30
                        * test vm samples       
@@ -340,9 +380,6 @@ week2:
                        * notepad: show the current cursor position
                        * notepad: find / replace
                        * migrate timer
-
-              adev - dynamic programming
-                       * deserialize object
 
               adev - gui
                        * make possible to set / change / get the control color
@@ -664,7 +701,6 @@ week1:
                        * impelement array getat & setat operator
                        * it should be possible to implement primitive operation with shortarray, chararray and bytearray
                        * variable: no need to store nil if the variable statement has initializing part
-                       * elenart : implement basic reflection functions
                        * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
                          so boxing mechanism can be simplified
                        * constant array

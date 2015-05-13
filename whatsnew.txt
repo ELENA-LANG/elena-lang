@@ -17,6 +17,8 @@
 [*] gui platform is reintroduced
 [+] built-in $nil symbol
 
+[+] a class hint "stringof" supports type argument as well (e.g. stringof:int)
+
 [ELC]
 [*] two passes compiling: at first declare, at second - implement
 [+] -wX / -wX- options turning on / off warnings
@@ -35,6 +37,7 @@
 [+] forms: SDIForm, SDIDialog, ChildForm, Edit, Label, Button, ImageBox, ImageList
 
 [+] forms: Menu, DockingBox
+[+] system'dynamic'classOp : read&message_mask&messages&vint[3]
 
 Samples:
 [+] agenda, graphs, c_a_g

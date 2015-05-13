@@ -362,8 +362,12 @@ void ByteCodeWriter :: newFrame(CommandTape& tape)
    tape.write(bcPushA);
 }
 
-void ByteCodeWriter :: newDynamicStructure(CommandTape& tape)
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
 {
+   if (itemSize != 1) {
+      // muln itemSize
+      tape.write(bcMulN, itemSize);
+   }
    // bcreate
    tape.write(bcBCreate);
 }
@@ -793,7 +797,7 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.write(bcBSwap);
       tape.write(bcCopy);
    }
-   else if (size == -1) {
+   else if (size < 0) {
       tape.write(bcBLen);
       tape.write(bcBCopyA);
       tape.write(bcACopyR, vmtReference | mskVMTRef);

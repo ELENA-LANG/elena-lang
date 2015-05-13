@@ -1185,7 +1185,6 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
          if (sizeValue.symbol == tsInteger) {
             info.size = -StringHelper::strToInt(sizeValue.value);
-            // !! HOTFIX : allow only 1,2 or 4 as an item size
             if (info.size == -1) {
                info.header.flags |= elDebugBytes;
             }
@@ -1196,6 +1195,17 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
                info.header.flags |= elDebugIntegers;
             }
             else raiseError(wrnInvalidHint, terminal);
+         }
+         else if (sizeValue.symbol == tsIdentifier) {
+            DNode value = hints.select(nsHintValue);
+            size_t type = moduleScope->mapType(value.Terminal());
+            if (type == 0)
+               raiseError(errUnknownSubject, value.Terminal());
+
+            info.fieldTypes.add(-1, type);
+            info.size = -moduleScope->defineTypeSize(type);
+            if (info.size <= 0)
+               raiseError(wrnInvalidHint, value.Terminal());
          }
          else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -5138,13 +5148,16 @@ void Compiler :: compileDynamicDefaultConstructor(DNode node, MethodScope& scope
       _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantClass, classScope->reference));
       switch(classScope->info.size) {
          case -1:
-            _writer.newDynamicStructure(*codeScope.tape);
+            _writer.newDynamicStructure(*codeScope.tape, 1);
             break;
          case -2:
             _writer.newDynamicWStructure(*codeScope.tape);
             break;
          case -4:
             _writer.newDynamicNStructure(*codeScope.tape);
+            break;
+         default:
+            _writer.newDynamicStructure(*codeScope.tape, -classScope->info.size);
             break;
       }
    }

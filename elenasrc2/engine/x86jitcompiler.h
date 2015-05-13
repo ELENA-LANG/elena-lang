@@ -142,6 +142,7 @@ protected:
    friend void compileDAndN(int opcode, x86JITScope& scope);
    friend void compileDOrN(int opcode, x86JITScope& scope);
    friend void compileDAddN(int opcode, x86JITScope& scope);
+   friend void compileDMulN(int opcode, x86JITScope& scope);
    friend void compileEAddN(int opcode, x86JITScope& scope);
    friend void compileDCopyVerb(int opcode, x86JITScope& scope);
    friend void compileDCopyCount(int opcode, x86JITScope& scope);
@@ -262,6 +263,7 @@ void compileECopy(int opcode, x86JITScope& scope);
 void compileDAndN(int opcode, x86JITScope& scope);
 void compileDOrN(int opcode, x86JITScope& scope);
 void compileDAddN(int opcode, x86JITScope& scope);
+void compileDMulN(int opcode, x86JITScope& scope);
 void compileEAddN(int opcode, x86JITScope& scope);
 void compileDCopyVerb(int opcode, x86JITScope& scope);
 void compileDCopyCount(int opcode, x86JITScope& scope);

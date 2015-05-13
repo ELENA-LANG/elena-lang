@@ -195,7 +195,7 @@ public:
 
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
-   void newDynamicStructure(CommandTape& tape);
+   void newDynamicStructure(CommandTape& tape, int itemSize);
    void newDynamicWStructure(CommandTape& tape);
    void newDynamicNStructure(CommandTape& tape);
 

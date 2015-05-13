@@ -146,7 +146,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &compileNop, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -906,6 +906,17 @@ void _ELENA_::compileDAddN(int opcode, x86JITScope& scope)
    // add esi, n
    scope.code->writeWord(0xC681);
    scope.code->writeDWord(scope.argument);
+}
+
+void _ELENA_::compileDMulN(int opcode, x86JITScope& scope)
+{
+   // mov  ebx, scope.argument
+   scope.code->writeByte(0xBB);
+   scope.code->writeDWord(scope.argument);
+
+   // imul esi, ebx
+   scope.code->writeWord(0xAF0F);
+   scope.code->writeByte(0xF3);
 }
 
 void _ELENA_::compileDSub(int opcode, x86JITScope& scope)
