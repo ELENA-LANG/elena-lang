@@ -24,10 +24,10 @@ Minimum requirements
 ELENA Language modules and programs
 ---
 The complete source code of ELENA Standard library could be found
-in the folder &gt;app root&lt;\src30.
+in the folder &lt;app root&gt;\src30.
 
 The source code of ELENA samples could be found
-in the folder &gt;app root&lt;\examples.
+in the folder &lt;app root&gt;\examples.
 
 License
 ---
