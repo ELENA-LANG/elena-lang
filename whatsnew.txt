@@ -38,6 +38,7 @@
 
 [+] forms: Menu, DockingBox
 [+] system'dynamic'classOp : read&message_mask&messages&vint[3]
+[+] system: MessageArray
 
 Samples:
 [+] agenda, graphs, c_a_g

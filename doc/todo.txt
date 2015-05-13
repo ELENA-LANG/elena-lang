@@ -21,21 +21,6 @@ v  - vm script
 Currently:
 ------                                              
                        
-              xdev - opcodes
-                       * new ecodes : mul / div
-
-              xdev - arrays:
-                       * redesign array implementation
-                       
-#class(stringof:2)BinaryArray
-{
-}
-                       
-#class(stringof:int)IntArray
-{
-}
-
-
               adev - reflection:
                        * system'dynamic'classOp - new method to read the matched messages
 

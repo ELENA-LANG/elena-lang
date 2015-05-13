@@ -37,3 +37,9 @@
 
     #method => system'internal'qualify_message.
 }
+
+// --- MessageArray ---
+
+#class(sealed,stringof:mssg)MessageArray
+{
+}

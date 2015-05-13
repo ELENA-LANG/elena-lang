@@ -1080,7 +1080,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.size = 4;
          info.header.flags |= elDebugDWORD;
 
-         info.header.flags |= (elStructureRole | elMessage);
+         info.header.flags |= (elStructureRole | elMessage | elEmbeddable);
       }
       else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
@@ -1098,7 +1098,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.size = 4;
          info.header.flags |= elDebugDWORD;
 
-         info.header.flags |= (elStructureRole | elSignature);
+         info.header.flags |= (elStructureRole | elSignature | elEmbeddable);
       }
       else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
          info.header.flags |= elExtension;

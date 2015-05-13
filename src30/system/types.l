@@ -18,6 +18,7 @@
 #subject(class:system'IntArray)     intarray.
 #subject(class:system'CharArray)    chararray.
 #subject(class:system'Array)        array.
+#subject(class:system'MessageArray) mssgarray.
 
 // === basic dynamic types ===
 #subject(class:system'LiteralValue)     literal.
