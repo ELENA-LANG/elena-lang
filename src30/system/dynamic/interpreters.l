@@ -31,17 +31,19 @@
     [
         theStruct := aStruct.
     ]
-    
+
+    #method value = theStruct.
+            
     #method(generic)set : anObject
     [
         #var(type:subject) aSubject := $subject.
         
         // looking for the current subject
         #var(type:int)anIndex := 0.
-        #var(type:length)aLength.
+        #var(type:int)aLength.
         #var aNotFound := true.
         
-        $classControl readLength:theStruct &vlength:aLength.
+        $classControl readLength:theStruct &vint:aLength.
         #loop ((anIndex < aLength)and:aNotFound) ?
         [
             #var aCurrent := theStruct::classOp getField &index:anIndex.

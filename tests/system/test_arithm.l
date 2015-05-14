@@ -673,8 +673,12 @@
     
     aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.
 
-    control run:(aProperties top:aLength) &with:aDTO &forEachPair:(:aStruct:aSubject)
+    #var aCopy := DynamicStruct new.
+    control run:(aProperties top:aLength) &forEach:(:aSubject)
     [
-        #var prop_value := aStruct::aSubject eval.
+        #var prop_value := aDTO::aSubject eval.
+        #var prop := aSubject::messageOp subject.
+        
+        aCopy::prop set:prop_value.
     ].
 ].

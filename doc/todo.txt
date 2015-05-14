@@ -20,27 +20,7 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
-              xdev - review
-                       * sending a typecasting message to %get, leads to dead loop.
-                          a add &int:%get. ; possible solution, if the object is used as an temoral mutation, redirect to the target, otherwise
-                          as a stand alone object, similar implemetation for verb, signature, message
-
-                       * initializing stack allocated object:
-                           #var(type:mssgarray,size:10) properties.
-
-                           may be it should be something like
-
-                           #var(type:mssgarray) properties := MessageArray new &length:10. - how to define the structure size, call the constructor and
-                           so on ? probably we could specify the method hint to indicate the default constructor???
-                           
-
-
-
               adev - reflection:
-                       * system'dynamic'classOp - new method to read the matched messages
-                       
-                       * sample: convert dto object into struct
-
                        * create a sample which will create, update and delete JSON typed object into the file, should work both as stand-alone and
                          vm client
 
@@ -100,6 +80,9 @@ week2:
               adev - lib30
                        * test vm samples       
                        * test thread operation                                                                               
+
+              sdev - rosetta examples:  
+                       * review / simplify all samples
                        
               sdev - gui examples:  
                        * reintroduce all gui samples

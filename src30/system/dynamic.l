@@ -48,6 +48,9 @@
 
 #class(sealed,signature) Signature
 {
+    #constructor new &mssg:aMessage
+        => system'internal'subj_copymssg.
+        
     #constructor new &subject:aSubject
         => system'internal'int_copy.
 

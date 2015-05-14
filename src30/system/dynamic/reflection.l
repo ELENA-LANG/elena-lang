@@ -7,7 +7,7 @@
     readName : anObject &bytearray:aBuffer &vlength:aLength
         => system'internal'load_classname.
 
-    readLength : anObject &vlength:aLength        
+    readLength : anObject &vint:aLength        
         => system'internal'arrptr_getLen.        
 }.
 
@@ -17,8 +17,8 @@
 {
     #method fieldCount
     [
-        #var(type:length)aLength.
-        $classControl readLength:self &vlength:aLength.
+        #var(type:int)aLength.
+        $classControl readLength:self &vint:aLength.
         
         ^ IntNumber new &int:aLength.
     ]     

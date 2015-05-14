@@ -10,6 +10,8 @@ define NEW_MESSAGE_ID       084000000h
 define EVAL_MESSAGE_ID      085000000h
 define GET_MESSAGE_ID       086000000h
 
+define INV_PARAM_MASK       0FFFFFFF0h
+
 procedure object_equal
 
   aloadsi 1
@@ -4383,7 +4385,7 @@ end
 procedure arrptr_getLen
 
   ecopy 0
-  aloadsi 1
+  aloadsi 2
   flag
   andn elStructure
   elsen labSkip 0
@@ -4391,9 +4393,9 @@ procedure arrptr_getLen
   len
 labSkip:
   dcopye
-  bloadsi 2
+  bloadsi 3
   nsave
-  quitn 2
+  quitn 3
 
 end
 
@@ -4902,5 +4904,37 @@ procedure class_filterMsg
   nsave
 
   quitn 5
+
+end
+
+procedure subj_copymssg
+
+  bcopya
+  aloadsi 2
+  nload
+  andn INV_PARAM_MASK
+  ecopyd
+  setverb 0
+  dcopye
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure mssg_getsubj
+
+  newn   class : system'Signature 4
+  bcopya
+  aloadsi 1
+  nload
+  andn INV_PARAM_MASK
+  ecopyd
+  setverb 0
+  dcopye
+  nsave
+  acopyb
+
+  quitn 1
 
 end

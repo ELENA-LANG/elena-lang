@@ -9,6 +9,14 @@
         => system'internal'subject_equal.
 }
 
+// --- subjectOp ---
+
+#class(extension:mssg)messageOp
+{
+    #method subject
+        => system'internal'mssg_getsubj.
+}
+
 #class(extension)objectOp
 {
     #method equal &reference:anObject
