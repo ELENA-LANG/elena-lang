@@ -27,6 +27,8 @@ public:
    size_t readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, ident_c* buffer, size_t maxLength);
 
    size_t readClassName(StreamReader& debug, size_t vmtAddress, ident_c* buffer, size_t maxLength);
+
+   void* loadSymbol(StreamReader& debug, ident_t name);
 };
 
 } // _ELENA_

@@ -96,6 +96,34 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, iden
    return 0;
 }
 
+void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
+{
+   ident_t symbol;
+
+   // search through debug section until the ret point is inside two consecutive steps within the same object
+   while (!reader.Eof()/* && !found*/) {
+      // read reference
+      symbol = reader.getLiteral(DEFAULT_STR);
+
+      // define the next record position
+      size_t size = reader.getDWord() - 4;
+      int nextPosition = reader.Position() + size;
+
+      // check the class
+      if (symbol[0] == '#') {
+         int address = reader.getDWord();
+
+         if (StringHelper::compare(name, symbol + 1)) {
+            return (void*)address;
+         }
+      }
+
+      reader.seek(nextPosition);
+   }
+
+   return NULL;
+}
+
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
    ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {

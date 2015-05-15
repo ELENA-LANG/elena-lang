@@ -1,6 +1,7 @@
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
+define LOAD_SYMBOL          10011h
 define INIT_RND             10012h
 define INIT                 10013h
 define NEWFRAME             10014h
@@ -1065,6 +1066,31 @@ procedure % LOAD_CLASSNAME
 
 labEnd:
   lea  esp, [esp+0Ch]  
+  ret
+
+end
+
+// ; get symbol ref
+// ; in:  eax - PSTR
+// ; out: eax - address
+procedure % LOAD_SYMBOL
+
+  push eax
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadClassName (instance, object,out buffer, maxlength)
+  push eax
+  mov  edx, [esi + rt_loadSymbol] 
+  call edx
+  lea  esp, [esp+4]  
+
+labEnd:
+  lea  esp, [esp+4h]  
   ret
 
 end

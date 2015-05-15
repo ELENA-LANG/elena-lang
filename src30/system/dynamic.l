@@ -2,7 +2,7 @@
 
 #class(sealed,symbol) Symbol
 {
-    #constructor new &name:aName
+    #constructor new &literal:aName
         => system'internal'symbol_new.
         
     #method => system'internal'symbol_redirect.

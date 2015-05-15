@@ -92,3 +92,11 @@ int Instance :: loadClassName(size_t classAddress, ident_c* buffer, size_t lengt
 
    return manager.readClassName(reader, classAddress, buffer, length);
 }
+
+void* Instance :: loadSymbol(ident_t name)
+{
+   RTManager manager;
+   MemoryReader reader(&_debugSection, 8);
+
+   return manager.loadSymbol(reader, name);
+}

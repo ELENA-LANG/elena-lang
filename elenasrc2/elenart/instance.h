@@ -91,6 +91,8 @@ public:
 
    int loadClassName(size_t classAddress, ident_c* buffer, size_t length);
 
+   void* loadSymbol(ident_t name);
+
    void init(void* debugSection, ident_t package);
 
    Instance(path_t rootPath);

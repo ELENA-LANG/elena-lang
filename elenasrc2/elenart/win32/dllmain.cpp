@@ -58,8 +58,7 @@ EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* buffe
 
 EXTERN_DLL_EXPORT void* GetSymbolRef(void* instance, void* referenceName)
 {
-   // !! terminator code
-   return NULL;
+   return ((Instance*)instance)->loadSymbol((ident_t)referenceName);
 }
 
 EXTERN_DLL_EXPORT void* Interpreter(void* instance, void* tape)

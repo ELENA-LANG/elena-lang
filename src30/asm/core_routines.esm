@@ -3400,12 +3400,13 @@ end
 procedure symbol_new
 
   pusha
-  pusha
-  aloadsi 4   // ; read aName parameter
+  aloadsi 3   // ; read aName parameter
   pusha
   callr api : coreapi'load_symbol
   ifr labError 0
-  popa
+  popb 
+  axsavebi 0
+  acopyb
   quitn 2
 
 labError:
