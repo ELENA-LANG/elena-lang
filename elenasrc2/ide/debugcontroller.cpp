@@ -411,6 +411,8 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
             _classes.add(vmtPtr, (size_t)reader.Address());
          }
       }
+      // skip symbol entry address
+      else addressReader.getDWord();
 
       // start to read lineinfo until end symbol
       DebugLineInfo info;

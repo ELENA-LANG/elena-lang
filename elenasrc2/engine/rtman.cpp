@@ -64,6 +64,38 @@ size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, si
    return index + 1;
 }
 
+size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, ident_c* buffer, size_t maxLength)
+{
+   ident_t symbol;
+
+   // search through debug section until the ret point is inside two consecutive steps within the same object
+   while (!reader.Eof()/* && !found*/) {
+      // read reference
+      symbol = reader.getLiteral(DEFAULT_STR);
+
+      // define the next record position
+      size_t size = reader.getDWord() - 4;
+      int nextPosition = reader.Position() + size;
+
+      // check the class
+      if (symbol[0] != '#') {
+         int vmtAddress = reader.getDWord();
+         if (vmtAddress == classVAddress) {
+            size_t len = getlength(symbol);
+            if (len < maxLength) {
+               StringHelper::copy(buffer, symbol, len, len);
+
+               return len;
+            }
+         }
+      }
+
+      reader.seek(nextPosition);
+   }
+
+   return 0;
+}
+
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
    ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {

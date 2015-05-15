@@ -382,7 +382,7 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
    }
    else {
       if (_withDebugInfo)
-         createNativeSymbolDebugInfo(reference, sizePtr);
+         createNativeSymbolDebugInfo(reference, vaddress, sizePtr);
 
       _compiler->compileSymbol(refHelper, reader, writer);
    }
@@ -760,7 +760,7 @@ void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& 
    writer.writeDWord((size_t)param);
 }
 
-void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, size_t& sizePtr)
+void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
@@ -771,6 +771,14 @@ void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, size_t& sizePtr
 
    sizePtr = writer.Position();
    writer.writeDWord(0); // size place holder
+
+   // save symbol entry
+
+   // save VMT address
+   if (!_virtualMode || address == NULL) {
+      writer.writeDWord((size_t)address);
+   }
+   else writer.writeRef((ref_t)address, 0);
 }
 
 void JITLinker :: createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr)

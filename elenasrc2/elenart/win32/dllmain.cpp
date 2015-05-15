@@ -51,10 +51,9 @@ EXTERN_DLL_EXPORT int LoadAddressInfo(void* instance, size_t retPoint, ident_c* 
    return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* buffer, int length)
 {
-   // !! terminator code
-   return 0;
+   return ((Instance*)instance)->loadClassName((size_t)object, buffer, length);
 }
 
 EXTERN_DLL_EXPORT void* GetSymbolRef(void* instance, void* referenceName)
@@ -70,6 +69,18 @@ EXTERN_DLL_EXPORT void* Interpreter(void* instance, void* tape)
 }
 
 EXTERN_DLL_EXPORT void* GetRTLastError(void* instance, void* retVal)
+{
+   // !! terminator code
+   return NULL;
+}
+
+EXTERN_DLL_EXPORT int LoadSubjectName(void* instance, void* subject, ident_c* lineInfo, int length)
+{
+   // !! terminator code
+   return 0;
+}
+
+EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
 {
    // !! terminator code
    return NULL;

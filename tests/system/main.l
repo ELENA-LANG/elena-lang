@@ -4,8 +4,6 @@
 
 #symbol program =
 [   
-    DTOToStructTest eval.
-
     XTest eval.
 
     console writeLine:"Starting...".

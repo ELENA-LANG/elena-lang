@@ -21,8 +21,7 @@ v  - vm script
 Currently:
 ------                                              
               adev - reflection:
-                       * elenart : implement basic reflection functions: loadClassName,loadSubjectName,loadSymbolPtr,loadSubject,interprete,
-                         getLastError,loadAddrInfo                         
+                       * elenart : implement basic reflection functions: loadSymbolPtr,loadSubjectName,loadSubject
                        
                        * reimplement goods using dynamic subjects for vm client
 
