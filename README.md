@@ -60,6 +60,15 @@ install.script.
 
 To compile the program types : ./bin/elc2 -c&lt;path to .project file&gt;
 
+Get started!
+---
+* [ELENA Specification](http://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Language)
+* [Hello World Sample](http://elenalang.blogspot.de/2013/08/elena-20-hello-world-tutorial.html)
+* [Sum of Two Numbers Tutorial ](http://elenalang.blogspot.de/2013/09/elena-20-sum-two-numbers-tutorial.html)
+* [Add a variable to a class instance at run-time](http://elenalang.blogspot.de/2013/10/elena-20-tutorial-add-variable-to-class.html)
+* [Literal as an array of characters ](http://elenalang.blogspot.de/2015/04/tutorial-literal-as-array-of-characters.html)
+* [ELENA 2.x: messages, types, dispatching...](http://elenalang.blogspot.de/2015/02/elena-2x-messages-types-dispatching.html)
+
 Contribute!
 ---
 ELENA Project looks for programmers interested in learning the language and providing feedback.
