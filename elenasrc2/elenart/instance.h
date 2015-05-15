@@ -89,6 +89,8 @@ public:
 
    int loadAddressInfo(size_t retPoint, ident_c* lineInfo, size_t length);
 
+   int loadClassName(size_t classAddress, ident_c* buffer, size_t length);
+
    void init(void* debugSection, ident_t package);
 
    Instance(path_t rootPath);

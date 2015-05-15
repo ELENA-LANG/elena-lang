@@ -84,3 +84,11 @@ int Instance :: loadAddressInfo(size_t retPoint, ident_c* buffer, size_t maxLeng
 
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
+
+int Instance :: loadClassName(size_t classAddress, ident_c* buffer, size_t length)
+{
+   RTManager manager;
+   MemoryReader reader(&_debugSection, 8);
+
+   return manager.readClassName(reader, classAddress, buffer, length);
+}

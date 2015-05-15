@@ -43,6 +43,7 @@
 [+] system'Signature: constructor new&literal$[1], new&wide$[1]
 [+] system'dynamic: subjectROp
 [*] system'dynamic: classOp -> classROp
+[*] reflection routines work for stand-alone version as well
 
 Samples:
 [+] agenda, graphs, c_a_g
