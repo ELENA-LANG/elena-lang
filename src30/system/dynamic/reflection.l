@@ -11,9 +11,15 @@
         => system'internal'arrptr_getLen.        
 }.
 
+#symbol $subjectControl =
+{
+    readName:anObject &bytearray:aBuffer &vlength:aLength
+        => system'internal'load_subjname.
+}.
+
 // --- classOp ---
 
-#class(extension) classOp
+#class(extension) classROp
 {
     #method fieldCount
     [
@@ -47,4 +53,19 @@
         
     #method read &mssg_mask:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
         => system'internal'class_filterMsg.
+}
+
+// --- subjectOp ---
+
+#class(extension:subject) subjectROp
+{
+    #method name
+    [
+        #var(type:length)aLength := 255.
+        #var(type:bytearray,size:256)aBuffer.
+        
+        $subjectControl readName:self &bytearray:aBuffer &vlength:aLength.
+        
+        ^ LiteralValue $new &length:aLength &index:0 &bytearray:aBuffer.
+    ]
 }

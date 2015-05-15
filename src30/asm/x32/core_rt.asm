@@ -8,6 +8,8 @@ define rt_loadName      0008h
 define rt_interprete    000Ch
 define rt_lasterr       0010h
 define rt_loadaddrinfo  0014h
+define rt_loadSubject   0018h
+define rt_loadSubjName  001Ch
 
 rstructure core_rt'dll_name
 

@@ -57,23 +57,23 @@
 //    #method get = theArray@thePointer.
 //}
 
-#symbol InterpreterTest =
-[
-    scriptEngine load &path:"D:\Alex\ELENA\bin\scripts\basic.es".
-    
-    #var n := scriptEngine eval &script:"2 . add ( 3 )".
-    
-//    #var s := scriptEngine eval &literal:"{ x : 2 , y : 3 , writeLine : &x[ system'console.writeLine(x) ] }".
-//    #var x := s x.
-//    #var y := s y.
-//    s writeLine:"Hello".
+//#symbol InterpreterTest =
+//[
+//    scriptEngine load &path:"D:\Alex\ELENA\bin\scripts\basic.es".
 //    
-//    #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
-//
-//    #var aTape := BFTape new &length:100.
-//
-//    l eval:aTape.
-].
+//    #var n := scriptEngine eval &script:"2 . add ( 3 )".
+//    
+////    #var s := scriptEngine eval &literal:"{ x : 2 , y : 3 , writeLine : &x[ system'console.writeLine(x) ] }".
+////    #var x := s x.
+////    #var y := s y.
+////    s writeLine:"Hello".
+////    
+////    #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
+////
+////    #var aTape := BFTape new &length:100.
+////
+////    l eval:aTape.
+//].
 
 //// === Roles ===
 //
@@ -126,13 +126,24 @@
 //    g next.
 //].
 
+#symbol SubjectSerializerTest =
+[
+    #var subj := %length.
+    
+    #var subjName := %length :: subjectROp name.
+    
+    #var newSubj := Signature new &literal:subjName.
+].
+
 #symbol Program =
 [ 
+    SubjectSerializerTest eval.
+
 //    #var aClass := Symbol new &literal:"system'Integer".
 //    #var anInstance := aClass new.
 
-    InterpreterTest eval
-        | if &ScriptError: e [ console writeLine:(e message). ].
+//    InterpreterTest eval
+//        | if &ScriptError: e [ console writeLine:(e message). ].
 
 //    ClassTest eval.
 //    GetPropertyTester eval.

@@ -23,6 +23,8 @@ define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
+define LOAD_SUBJECT         10028h
+define LOAD_SUBJECTNAME     10029h
 
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
@@ -39,6 +41,8 @@ define rt_loadName      0008h
 define rt_interprete    000Ch
 define rt_lasterr       0010h
 define rt_loadaddrinfo  0014h
+define rt_loadSubject   0018h
+define rt_loadSubjName  001Ch
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -1038,8 +1042,8 @@ procedure % RESTORE_ET
 end 
 
 // ; get class name
-// ; in:  esi - max length, eax - PWSTR, edi - object
-// ; out: eax - PWSTR, esi - length
+// ; in:  esi - max length, eax - PSTR, edi - object
+// ; out: eax - PSTR, esi - length
 procedure % LOAD_CLASSNAME
 
   push esi
@@ -1169,8 +1173,8 @@ procedure % UNLOCK
 end
 
 // ; load address info
-// ; in:  esi - max length, eax - PWSTR, ecx - address
-// ; out: eax - PWSTR, esi - length
+// ; in:  esi - max length, eax - PSTR, ecx - address
+// ; out: eax - PSTR, esi - length
 procedure % LOAD_ADDRESSINFO
 
   push esi
@@ -1221,6 +1225,59 @@ labSave:
 
 labEnd:
   ret  
+
+end
+
+// ; get subject name
+// ; in:  esi - max length, eax - PSTR, ecx - message
+// ; out: eax - PSTR, esi - length
+procedure % LOAD_SUBJECTNAME
+
+  push esi
+  push eax
+  push ecx
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadClassName (instance, object,out buffer, maxlength)
+  push eax
+  mov  edx, [esi + rt_loadSubjName] 
+  call edx
+  lea  esp, [esp+4]  
+
+labEnd:
+  lea  esp, [esp+0Ch]  
+  ret
+
+end
+
+// ; get class name
+// ; in:  eax - PSTR subject name
+// ; out: ecx - subject id
+procedure % LOAD_SUBJECT
+
+  push eax
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  eax, [esi]
+  // ; if vm instance is zero, the operation is not possible
+  test eax, eax
+  jz   short labEnd
+
+  // ; call LoadSubject (instance, name)
+  push eax
+  mov  edx, [esi + rt_loadSubject] 
+  call edx
+  lea  esp, [esp+4]  
+  mov  ecx, eax
+
+labEnd:
+  lea  esp, [esp+04]  
+  ret
 
 end
 

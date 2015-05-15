@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
 
-#define ELENAVM_BUILD_NUMBER    0x0005             // ELENAVM build version
+#define ELENAVM_REVISION_NUMBER    0x0005             // ELENAVM revision version
 
 namespace _ELENA_
 {
@@ -199,7 +199,9 @@ protected:
 
    // vm interface
    VMAPI_NAME _loadClassName;
+   VMAPI_NAME _loadSubjectName;
    VMAPI      _loadSymbolPtr;
+   VMAPI      _loadSubject;
    VMAPI      _interprete;
    VMAPI      _getLastError;
    VMAPI_NAME _loadAddrInfo;
@@ -314,6 +316,11 @@ public:
       return retrieveReference(vmtAddress, mskVMTRef);
    }
 
+   virtual ident_t getSubject(ref_t subjectRef)
+   {
+      return retrieveReference((void*)subjectRef, 0);
+   }
+
    //virtual void* getClassVMTRef(const wchar16_t* referenceName)
    //{
    //   return loadSymbol(referenceName, mskVMTRef);
@@ -322,6 +329,11 @@ public:
    virtual void* getSymbolRef(ident_t referenceName)
    {
       return loadSymbol(referenceName, mskSymbolRef);
+   }
+
+   virtual ref_t getSubjectRef(ident_t subjectName)
+   {
+      return (ref_t)resolveReference(subjectName, 0);
    }
 
    virtual bool initSymbolReference(void* object, ident_t referenceName)
@@ -342,10 +354,14 @@ public:
 //   bool init();
 
    void* loadSymbol(ident_t reference, int mask);
+   //size_t loadMessage(ident_t reference);
 
    int interprete(void* tape, ident_t interpreter);
 
    bool loadAddressInfo(void* address, ident_c* buffer, size_t& maxLength);
+
+   //bool loadSubjectInfo(size_t subjectId, ident_c* buffer, size_t& maxLength);
+   //bool loadMessageInfo(size_t messageId, ident_c* buffer, size_t& maxLength);
 
    Instance(ELENAMachine* machine);
    virtual ~Instance();

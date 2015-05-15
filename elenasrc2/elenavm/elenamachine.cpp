@@ -32,7 +32,7 @@ using namespace _ELENA_;
 #define LIBRARY_PATH                "path"
 
 // --- Wrapper Functions ---
-//
+
 //void* __getClassVMTRef(Instance* instance, void* referenceName)
 //{
 //   return instance->getClassVMTRef((const wchar16_t*)referenceName);
@@ -43,6 +43,13 @@ void* __getSymbolRef(Instance* instance, void* referenceName)
    return instance->getSymbolRef((ident_t)referenceName);
 }
 
+void* __getSubjectRef(Instance* instance, void* subjectName)
+{
+   ref_t subj_id = instance->getSubjectRef((ident_t)subjectName);
+
+   return (void*)(MESSAGE_MASK | encodeMessage(subj_id, 0, 0));
+}
+
 static size_t __getClassName(Instance* instance, void* vmtAddress, ident_c* buffer, size_t maxLength)
 {
    ident_t className = instance->getClassName(vmtAddress);
@@ -50,6 +57,24 @@ static size_t __getClassName(Instance* instance, void* vmtAddress, ident_c* buff
    if (length > 0) {
       if (maxLength >= length) {
          StringHelper::copy(buffer, className, length, length);
+      }
+      else buffer[0] = 0;
+   }
+
+   return length;
+}
+
+static size_t __getSubjectName(Instance* instance, void* subjectRef, ident_c* buffer, size_t maxLength)
+{
+   size_t subj_id;
+   int verb_id, param_count;
+   decodeMessage((size_t)subjectRef, subj_id, verb_id, param_count);
+
+   ident_t subjectName = instance->getSubject((ref_t)subj_id);
+   size_t length = getlength(subjectName);
+   if (length > 0) {
+      if (maxLength >= length) {
+         StringHelper::copy(buffer, subjectName, length, length);
       }
       else buffer[0] = 0;
    }
@@ -246,6 +271,8 @@ Instance :: Instance(ELENAMachine* machine)
    _interprete    = __interprete;
    _getLastError  = __getLastError;
    _loadAddrInfo  = __loadAddressInfo;
+   _loadSubject = __getSubjectRef;
+   _loadSubjectName = __getSubjectName;
 }
 
 Instance :: ~Instance()
@@ -298,6 +325,10 @@ size_t Instance :: getLinkerConstant(int id)
          return (size_t)_getLastError;
       case lnVMAPI_LoadAddrInfo:
          return (size_t)_loadAddrInfo;
+      case lnVMAPI_LoadSubjectName:
+         return (size_t)_loadSubjectName;
+      case lnVMAPI_LoadSubject:
+         return (size_t)_loadSubject;
       default:
          return 0;
    }
@@ -341,11 +372,16 @@ ident_t Instance :: retrieveReference(_Module* module, ref_t reference, ref_t ma
 
 ident_t Instance :: retrieveReference(void* address, ref_t mask)
 {
-   switch(mask & mskImageMask) {
+   if (mask == 0) {
+      return retrieveKey(_subjects.start(), (ref_t)address, DEFAULT_STR);
+   }
+   else {
+      switch (mask & mskImageMask) {
       case mskRDataRef:
          return retrieveKey(_dataReferences.start(), (ref_t)address, DEFAULT_STR);
       default:
          return NULL;
+      }
    }
 }
 
@@ -481,7 +517,7 @@ bool Instance :: initLoader(InstanceConfig& config)
 
 bool Instance :: restart(bool debugMode)
 {
-   printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_BUILD_NUMBER);
+   printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    printInfo(L"Initializing...");
 
    clearReferences();

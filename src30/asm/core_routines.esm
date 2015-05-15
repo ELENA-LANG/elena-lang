@@ -4938,3 +4938,47 @@ procedure mssg_getsubj
   quitn 1
 
 end
+
+procedure subj_load
+
+  pusha
+  aloadsi 3
+  pusha
+  callr api : coreapi'load_subject
+  ifn labErr 0
+  popb
+  nsave
+  acopyb
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+  quitn 2
+
+end
+
+procedure load_subjname
+
+  aloadsi 4
+  pusha
+  aloadsi 4
+  pusha
+  aloadsi 4
+  nload
+  ecopyd
+  callr api : coreapi'load_subjname
+  ifr labErr 0
+  quitn 4
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+end
