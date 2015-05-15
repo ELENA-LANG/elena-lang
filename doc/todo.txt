@@ -21,26 +21,16 @@ v  - vm script
 Currently:
 ------                                              
               adev - reflection:
-                       * create a sample which will create, update and delete JSON typed object into the file, should work both as stand-alone and
-                         vm client
+                       * elenart : implement basic reflection functions: loadClassName,loadSubjectName,loadSymbolPtr,loadSubject,interprete,
+                         getLastError,loadAddrInfo                         
+                       
+                       * reimplement goods using dynamic subjects for vm client
 
-                       * there should be a way to convert the object into liner structure ,it should be either predefined - a list of required
-                         properties
+                       * compile goods using dynamic subjects for stand-alone client
 
                        * think over serilizing / deserialing the object
 
                        * to serilize the object we could ask for all the object properties - 
-
-                       * every time the declared type is used - appropriate constant symbol should be created as well , or it should be created
-                         dynamically
-
-                       * reimplement goods using dynamic subjects for vm client
-
-                       * elenart : implement basic reflection functions
-
-                       * compile goods using dynamic subjects for stand-alone client
-
-                       * subject / message to string and back
 
               xdev - linux:
                        * implement elenart
@@ -831,6 +821,11 @@ week2:
 
               adev - linux lib30:
                        * review console operation, optimize the code
+
+              sdev - console samples:
+                       * create a sample which will create, update and delete JSON typed object into the file, should work both as stand-alone and
+                         vm client
+
 
 2.0.0
 -----

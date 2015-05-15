@@ -18,6 +18,7 @@
 [+] built-in $nil symbol
 
 [+] a class hint "stringof" supports type argument as well (e.g. stringof:int)
+[+] coreapi : loading subject by name, returning the subject name
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement
@@ -39,6 +40,9 @@
 [+] forms: Menu, DockingBox
 [+] system'dynamic'classOp : read&mssg_mask&index&mssgarray&vint[4]
 [+] system: MessageArray
+[+] system'Signature: constructor new&literal$[1], new&wide$[1]
+[+] system'dynamic: subjectROp
+[*] system'dynamic: classOp -> classROp
 
 Samples:
 [+] agenda, graphs, c_a_g

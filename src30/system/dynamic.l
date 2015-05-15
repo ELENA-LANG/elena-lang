@@ -54,6 +54,12 @@
     #constructor new &subject:aSubject
         => system'internal'int_copy.
 
+    #constructor new &literal:aSubjectName
+        => system'internal'subj_load.
+
+    #constructor new &wide:aSubjectName
+        <= new &literal:(aSubjectName literal).
+
     #method => system'internal'qualify_message.
 }
 

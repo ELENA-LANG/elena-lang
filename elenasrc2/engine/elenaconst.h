@@ -313,6 +313,8 @@ namespace _ELENA_
    const int lnVMAPI_Interprete    = 0x00001005;   // reference to Interprete function;
    const int lnVMAPI_GetLastError  = 0x00001006;   // reference to GetLastError function;
    const int lnVMAPI_LoadAddrInfo  = 0x00001007;   // reference to LoadAddressInfo function;
+   const int lnVMAPI_LoadSubjectName = 0x00001008;   // reference to LoadSubjectName function;
+   const int lnVMAPI_LoadSubject   = 0x00001009;   // reference to LoadSubject function;
 
   // ELENA run-time exceptions
    #define ELENA_ERR_OUTOF_MEMORY  0x190

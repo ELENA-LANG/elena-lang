@@ -19,6 +19,8 @@ define UNLOCK            10022h
 define LOAD_ADDRESSINFO  10023h
 define LOAD_CALLSTACK    10024h
 define PREPARE           10027h
+define LOAD_SUBJECT      10028h
+define LOAD_SUBJECTNAME  10029h
 
 define CORE_OS_TABLE     20009h
 
@@ -4130,4 +4132,33 @@ labEnd:
    add  esp, 4
    ret
    
+end
+
+// ; load_classname(object), esi - subj index
+procedure coreapi'load_subject
+
+  mov  eax, [esp + 4]
+  
+  call code : % LOAD_SUBJECT
+
+  mov  esi, ecx
+  
+  ret 4
+
+end
+
+// ; load_subjname(out buffer, out length) , ecx - subject
+procedure coreapi'load_subjname
+
+  mov  eax, [esp + 8]
+  mov  esi, [eax]
+  mov  eax, [esp + 4]
+
+  call code : % LOAD_SUBJECTNAME
+
+  mov  edi, [esp + 8]
+  mov  [edi], eax
+  
+  ret 8
+
 end

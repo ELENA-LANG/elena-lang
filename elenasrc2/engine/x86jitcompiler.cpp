@@ -41,6 +41,8 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define NEW_HEAP             0x10025
 #define BREAK                0x10026
 #define PREPARE              0x10027
+#define LOAD_SUBJECT         0x10028
+#define LOAD_SUBJECTNAME     0x10029
 
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
@@ -60,13 +62,13 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 24;
+const int coreFunctionNumber = 26;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
    CALC_SIZE, SET_COUNT, GET_COUNT, LOCK, UNLOCK, LOAD_ADDRESSINFO,
-   LOAD_CALLSTACK, PREPARE
+   LOAD_CALLSTACK, PREPARE, LOAD_SUBJECT, LOAD_SUBJECTNAME
 };
 
 // preloaded gc commands
@@ -1397,6 +1399,8 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _Memory* data, _Mem
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Interprete));
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadAddrInfo));
+   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSubject));
+   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSubjectName));
    
    x86JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0 ; i < coreFunctionNumber ; i++) {
