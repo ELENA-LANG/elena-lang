@@ -21,6 +21,8 @@ v  - vm script
 Currently:
 ------                                              
               adev - reflection:
+                       * compiler option to save subject data
+
                        * elenart : implement basic reflection functions: loadSubjectName,loadSubject
                        
                        * reimplement goods using dynamic subjects for vm client

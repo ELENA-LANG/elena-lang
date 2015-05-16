@@ -2544,12 +2544,14 @@ public:
       _buffer.clear();
 
       int length = reader->getDWord();
-      _buffer.reserve(length);
+      if (length > 0) {
+         _buffer.reserve(length);
 
-      _count = reader->getDWord();
+         _count = reader->getDWord();
 
-      MemoryWriter writer(&_buffer);
-      writer.read(reader, length);
+         MemoryWriter writer(&_buffer);
+         writer.read(reader, length);
+      }
    }
 
    void clear()

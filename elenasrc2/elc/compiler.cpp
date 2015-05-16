@@ -2811,7 +2811,7 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
       _writer.endThenBlock(*scope.tape);
    }
    else if (test(mode, HINT_LOOP)) {
-      compileBranching(node, scope, object, operator_id, 0);
+      compileBranching(node, scope, object, operator_id, HINT_LOOP);
       _writer.jump(*scope.tape, true);
    }
    else {
@@ -4104,7 +4104,11 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
 
    DNode thenCode = thenNode.firstChild();
    if (thenCode.firstChild().nextNode() != nsNone) {
-      compileCode(thenCode, subScope, subCodeMode );
+      compileCode(thenCode, subScope, subCodeMode & ~HINT_LOOP);
+
+      if (test(subCodeMode, HINT_LOOP) && subScope.locals.Count() > 0) {
+         _writer.releaseObject(*scope.tape, subScope.locals.Count());
+      }
    }
    // if it is inline action
    else compileRetExpression(thenCode.firstChild(), scope, 0);
@@ -4137,7 +4141,7 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
       // get the current value
       _writer.loadObject(*scope.tape, cond);
 
-      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), 0);
+      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), HINT_LOOP);
 
       _writer.endLoop(*scope.tape);
    }
@@ -4332,7 +4336,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    bool stdCall = false;
    ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-   // legacy : if dll is not mapped, use its directly like winapi
+   // legacy : if dll is not mapped, use the name directly
    if (emptystr(dllName))
       dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
 
@@ -4359,7 +4363,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    // call the function
    _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
 
-   if (stdCall)
+   if (!stdCall)
       _writer.releaseObject(*scope.tape, externalScope.operands.Count());
 
    //// indicate that the result is 0 or -1
