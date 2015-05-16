@@ -38,6 +38,7 @@ enum ProjectSetting
    opDebugMode             = 0x000A,
    opTemplate              = 0x000C,
    opThreadMax             = 0x0013,
+   opDebugSubjectInfo      = 0x0014,
 
    // linker options
    opImageBase             = 0x0020,

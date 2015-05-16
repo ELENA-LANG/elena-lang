@@ -93,6 +93,23 @@ int Instance :: loadClassName(size_t classAddress, ident_c* buffer, size_t lengt
    return manager.readClassName(reader, classAddress, buffer, length);
 }
 
+int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
+{
+   RTManager manager;
+
+   // initialize image section ;
+   // it directly follows debug section
+   ImageSection subjectSection;
+
+   void* ptr = _debugSection.get(_debugSection.Length());
+   int size = *((int*)ptr);
+   int count = *((int*)ptr + 1);
+
+   //MemoryReader reader(&_debugSection, 8);
+
+   return /*manager.readSubjectName(reader, subjectRef, buffer, length)*/0;
+}
+
 void* Instance :: loadSymbol(ident_t name)
 {
    RTManager manager;

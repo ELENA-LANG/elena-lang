@@ -86,12 +86,21 @@ public:
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
    {
+      _ELENA_::Project* project = image.getProject();
+
       _ELENA_::Section* debug = image.getDebugSection();
 
       // fix up debug section if required
       if (debug->Length() > 8) {
          debug->writeDWord(0, debug->Length());
          debug->addReference(image.getDebugEntryPoint(), 4);
+
+         // save subject info if enabled
+         _ELENA_::MemoryWriter debugWriter(debug);
+         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
+            image.saveSubject(&debugWriter);
+         }
+         else debugWriter.writeDWord(0);
       }
       else debug->clear();
    }
@@ -113,6 +122,9 @@ _ELC_::Project :: Project()
 
    _tabSize = 4;
    _encoding = _ELENA_::feUTF8;
+
+   // !! temporally
+   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
 }
 
 void _ELC_::Project :: raiseError(const char* msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)

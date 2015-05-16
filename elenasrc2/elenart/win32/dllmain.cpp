@@ -75,8 +75,7 @@ EXTERN_DLL_EXPORT void* GetRTLastError(void* instance, void* retVal)
 
 EXTERN_DLL_EXPORT int LoadSubjectName(void* instance, void* subject, ident_c* lineInfo, int length)
 {
-   // !! terminator code
-   return 0;
+   return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
