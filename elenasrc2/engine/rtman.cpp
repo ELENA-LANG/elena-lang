@@ -264,3 +264,8 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Lib
    }
    else return 0;
 }
+
+size_t RTManager :: readSubjectName(StreamReader& debug, size_t subjectRef, ident_c* buffer, size_t maxLength)
+{
+   return 0; // !! temporal
+}

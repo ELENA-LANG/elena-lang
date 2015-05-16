@@ -12,6 +12,9 @@
 {
     test            
     [
+        #var m := %length.
+        
+        #var l := m::subjectROp name.
     ]
 }.
 

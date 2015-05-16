@@ -29,6 +29,8 @@
 
 [-] bug with outer field type fixed
 [-] bug with redirect to an outer field fixed
+[+] compiler option: ds - enabling subject serialization in stand-alone program
+[!] by default c call convention (cdecl) is used
 
 [LIB]
 [!] literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
