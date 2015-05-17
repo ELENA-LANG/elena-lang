@@ -93,6 +93,18 @@ int Instance :: loadClassName(size_t classAddress, ident_c* buffer, size_t lengt
    return manager.readClassName(reader, classAddress, buffer, length);
 }
 
+bool Instance :: initSubjectSection(ImageSection& subjectSection)
+{
+   void* ptr = _debugSection.get(_debugSection.Length());
+   int size = *((int*)ptr);
+   if (size > 0) {
+      subjectSection.init(ptr, size + 8);
+
+      return true;
+   }
+   else return false;
+}
+
 int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
 {
    RTManager manager;
@@ -100,14 +112,16 @@ int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
    // initialize image section ;
    // it directly follows debug section
    ImageSection subjectSection;
+   if (initSubjectSection(subjectSection)) {
+      MemoryReader reader(&subjectSection);
 
-   void* ptr = _debugSection.get(_debugSection.Length());
-   int size = *((int*)ptr);
-   int count = *((int*)ptr + 1);
+      ref_t subject;
+      int verb, count;
+      decodeMessage(subjectRef, subject, verb, count);
 
-   //MemoryReader reader(&_debugSection, 8);
-
-   return /*manager.readSubjectName(reader, subjectRef, buffer, length)*/0;
+      return manager.readSubjectName(reader, subject, buffer, length);
+   }
+   else return 0;
 }
 
 void* Instance :: loadSymbol(ident_t name)
@@ -116,4 +130,24 @@ void* Instance :: loadSymbol(ident_t name)
    MemoryReader reader(&_debugSection, 8);
 
    return manager.loadSymbol(reader, name);
+}
+
+void* Instance :: loadSubject(ident_t name)
+{
+   RTManager manager;
+
+   // initialize image section ;
+   // it directly follows debug section
+   ImageSection subjectSection;
+   if (initSubjectSection(subjectSection)) {
+      void* ptr = _debugSection.get(_debugSection.Length());
+      int size = *((int*)ptr);
+
+      subjectSection.init(ptr, size + 8);
+
+      MemoryReader reader(&subjectSection);
+
+      return manager.loadSubject(reader, name);
+   }
+   else return NULL;
 }

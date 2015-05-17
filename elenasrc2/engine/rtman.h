@@ -30,6 +30,7 @@ public:
    size_t readSubjectName(StreamReader& debug, size_t subjectRef, ident_c* buffer, size_t maxLength);
 
    void* loadSymbol(StreamReader& debug, ident_t name);
+   void* loadSubject(StreamReader& debug, ident_t name);
 };
 
 } // _ELENA_

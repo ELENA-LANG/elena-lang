@@ -84,6 +84,8 @@ private:
 
    bool loadConfig();
 
+   bool initSubjectSection(ImageSection& subjectSection);
+
 public:
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
@@ -93,6 +95,7 @@ public:
    int loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length);
 
    void* loadSymbol(ident_t name);
+   void* loadSubject(ident_t name);
 
    void init(void* debugSection, ident_t package);
 
