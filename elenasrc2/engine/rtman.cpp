@@ -265,7 +265,27 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Lib
    else return 0;
 }
 
-size_t RTManager :: readSubjectName(StreamReader& debug, size_t subjectRef, ident_c* buffer, size_t maxLength)
+size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, ident_c* buffer, size_t maxLength)
 {
-   return 0; // !! temporal
+   ReferenceMap subjects(0);
+   subjects.read(&reader);
+
+   ident_t name = retrieveKey(subjects.start(), subjectRef, DEFAULT_STR);
+   if (!emptystr(name)) {
+      size_t len = getlength(name);
+      if (len < maxLength) {
+         StringHelper::copy(buffer, name, len, len);
+
+         return len;
+      }
+   }
+   return 0;
+}
+
+void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
+{
+   ReferenceMap subjects(0);
+   subjects.read(&reader);
+
+   return (void*)(encodeMessage(subjects.get(name), 0, 0) | MESSAGE_MASK);
 }

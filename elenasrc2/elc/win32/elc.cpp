@@ -286,6 +286,8 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
 //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
    case _ELENA_::opDebugMode:
       return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
+   case _ELENA_::opDebugSubjectInfo:
+      return config.getSetting(PROJECT_CATEGORY, ELC_SUBJECTINFO);
    case _ELENA_::opThreadMax:
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
@@ -437,6 +439,9 @@ void _ELC_::Project :: setOption(const wchar_t* value)
          _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(valueName + 1));
          break;
       case ELC_PRM_DEBUGINFO:
+         if (_ELENA_::StringHelper::compare(valueName, ELC_SUBJECTINFO)) {
+            _settings.add(_ELENA_::opDebugSubjectInfo, -1);
+         }
          _settings.add(_ELENA_::opDebugMode, -1);
          break;
       case ELC_PRM_CONFIG:

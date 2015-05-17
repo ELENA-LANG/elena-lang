@@ -80,8 +80,7 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* instance, void* subject, ident_c* li
 
 EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
 {
-   // !! terminator code
-   return NULL;
+   return ((Instance*)instance)->loadSubject((ident_t)subjectName);
 }
 
 // --- dllmain ---
