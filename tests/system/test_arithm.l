@@ -12,9 +12,12 @@
 {
     test            
     [
-        #var m := %length.
-        
-        #var l := m::subjectROp name.
+        #var i := 5.
+            
+        #loop (i > 0) ?
+        [
+            i := i - 1.
+        ].        
     ]
 }.
 

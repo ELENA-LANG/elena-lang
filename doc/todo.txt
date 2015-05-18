@@ -20,12 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
+              idev - debugger
+                       * fix step over loop / if
+                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
+                       * show data variables (currently only int / short are displayed)
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
+                                              
               adev - reflection:
                        * compile goods using dynamic subjects
-
-                       * think over serilizing / deserialing the object
-
-                       * to serilize the object we could ask for all the object properties - 
 
               xdev - linux:
                        * implement elenart
@@ -772,16 +774,6 @@ week1:
                        * project view
                        * class view - make possible to browse the class methods
 
-              idev - debugger
-                       * fix step over loop / if
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * debug script
-                       * implement watch
-                       * show data variables (currently only int / short are displayed)
-                       * show output argument
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                       * show built-in variable $subject
-                                              
               idev - generic development                                          
                        * linux : debugger
                        * show the file encoding
@@ -805,7 +797,12 @@ week1:
               xdev - dynamic programming                                             
                        * implement trace mode
                        * it should be possible Tape to debug  (see 1.x implementation)
-
+                       
+              idev - debugger
+                       * debug script
+                       * implement watch
+                       * show built-in variable $subject
+                       
 week2:
               adev - mt
                        * design basic classes / routines to implement multi-threading applications (events, semaphors, locks, threads, ...)
@@ -820,6 +817,10 @@ week2:
               sdev - console samples:
                        * create a sample which will create, update and delete JSON typed object into the file, should work both as stand-alone and
                          vm client
+
+              adev - reflection:
+                       * think over serilizing / deserialing the object
+                       * to serilize the object we could ask for all the object properties - 
 
 
 2.0.0

@@ -234,8 +234,8 @@
                     ? [ theLast := $nil. theState := %empty. ].
             ]
             ! [
-                #var aPrevious := $self getAt &index:(anIndex - 1).
-                #var anItem := aPrevious Next.
+                #var aPrevious := $self getItemAt &index:(anIndex - 1).
+                #var anItem := aPrevious nextItem.
                 
                 aPrevious set &nextItem:(anItem nextItem).
                 
