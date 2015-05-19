@@ -20,12 +20,10 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
-              adev - lib30           
-                       * cast should be implemented by every object (so it could be called directly), default behaviour?
+              idev - linux:              
+                       * new project
+                       * save last open path
 
-              sdev - gui examples:  
-                       * agenda : implement file deleting
-                       
               xdev - linux:
                        * implement elenart
                        * fix #2 issue
@@ -34,108 +32,41 @@ Currently:
                        * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
                        * console.write[1] : flush stdout buffer after write command
 
-<=================> 
-                                                                                                                            
-1.9.19
---------
-week2:
-              idev - linux:              
-                       * new project
-                       * save last open path
-                       * editor
-                       * project compilation / clean / run
-                       * recent open files / projects
-                       * window list, switching
-                       * status bar
-                       * add menu items
-                       * add tool bar items
-                       * add hot keys
-                       * TextView: cursor blinking
-                       
-              adev - linux lib30:
-                       * core : implement INIT_RND
-                       * linux file operations
-                       * linux date / time operations
-                       * consoleReader should check if the char is multibyte
-                       * read key
-                       * port console samples                                                                               
-                       * port rosetta samples                                                                               
-                       
-              adev - lib30           
-                       * test vm samples       
-                       * test thread operation                                                                               
+              adev - lib30     
+                       * gui : default exception handler should open a message box
 
-              adev - lib30           
-                       * nameOfTables remove &index:(tblLength int).  - in this case it is unclear why the method does not work if ypu write:
-                             nameOfTables remove &index:tblLength.
-
-                       * result of operation - #32 + #65 ?? 
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
+                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+      
                        * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
-                       
-                       * if we need to store wide literal directly, we have to convert it into chararray and then convert into 
-                         byte array, can we do it directly?
-
                        * encoders : make code similar to c#, it should be possible to save literal / wide as
                          bytearray and visa versa (currently we have to convert literal / wide to chararray and then save
                          in appropriate encoding, could we simplify the routine?)
 
-                       * console : default exception handler should write a message
-                       * gui : default exception handler should open a message box
-
-                       * implement completly win1251, win1252 encoders
-                       
-                       * test UTF8Encoder, UTF16Encoder,  UTF8Encoding, UTF16Encoding
-
-                       * win1252encoder : converts to utf-16 and then to utf-32, can it be simplified?
-                       * win1251encoder
-
-                       * shortarray, intarray, chararray, literal and wide should return bytearray (save / get)?
-
                        * test rsave
                        * test real to int / short / byte conversion
-
-                       * extensions'text : StringBookmark and WideStringBookmark
-                       
+                       * extensions'text : StringBookmark and WideStringBookmark                                          
                        * intarray, shortarray, bytearray, chararray should getAt and setAt messages
-
                        * should cast, clone be part of system'Object - so it parts of any class, and direct call via VMT can be used for them
-                       
                        * fix StructTest
-
                        * Date : convert to utc and back
-                       
-                       * it should be possible to return all object messages matching a pattern , e.g. by a verb and subject namespace
-                       
-                       * think over object serialization, for example - save the object into file and load back
-
-                       * serialization to and from : xml, binary
-
                        * find out if the bool is called after each enumeration step - next call
-                       
-                       * migrate all the code from old version
                        * test dynamic_test
                        * test dynamic samples
                        * test literalOp.trim method
-
-                       * system'text : along with TextBuffer, it should be LiteralBuilder and WideBuilder - to be internally utf-8 and utf-16
-
                        * uncomment Real#class.new&int[1] and Real#class.new&long[1]
-
                        * uncomment all code
-
                        * FileStream - implements clone
-                       * LiteralBuffer, WideBuffer
                        * combinators should work both with list and array
                        * system'$consolehandler: if the returning handler is -1
                        * system'$consolewriter - the exception should be raised if the operation
                          is unsuccessful
                        * EReflector: raise an exception if NameOf returns zero
                        * timespan: constructor?
-                       * date: custom presenter / formatter / custom formatter
                        * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
                        * date - return utc time
-                       * implement analog of String.Format
-                       * calender: custom formatting
                        * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
                          and could be invoked by eval
                        * classOp : test if object is subclass of ??
@@ -144,20 +75,6 @@ week2:
                        * charConvertor - convert int / short / byte / literal
                        * BaseBoolValue should be private
                        * TimeSpan : Day, Hour, Minute, Second??
-                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
-                       * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
-                       * support sin, cos, arctan
-                       * ShortNumber, ByteNumber implements basic functionality
-                       * scriptControl.load&literal - raise an error if the result is broken
-                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
-                         another group object - Group (a, %Even[ even value ]), which will works correctly
-                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
-                         cases
-                       * special class IndexedPointer - which is used to refer to the object by index
-                       * operation with upper / lower case implementing
-                       * expanding lib30
-                       * Struct : check if the income message is "get"
-                       * win32 file i/o operations should raise an exception with an error code
                        * implement: square function
                        * implement: square root
                        * implement: sine
@@ -191,41 +108,39 @@ week2:
                        * implement: exp constant
                        * implement: infinity
                        * implement: not-a-number
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
-                       * support: primitive operation int + long, long + int
-                       * bytenumber : bitwise operation with long number - incorrect code
-                       * review extensions'math'Matrix
-                       
-                       * convertor toArray , which converts list to elist wrap or returns itself
-                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
-                       * add program default exception handler: dispatch an exception to
-                         the program 
-                       
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
-
-                       * implement multi-select method (control or value?)
-
-                       * make sure stack allocated objects are correctly boxed for the custom int roles
-                       * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
-                       * controlTape should verify the range
-                       * Iterator.get&index - current implementation is looks like a short circite, though due to optimization it is correctly implemented
-                       * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
-                       * Should stream protocol support reset, clone methods?
-                       * LiteralValue#class : new&length&shortarray  - should the array be verified?
-                       * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
-                       * Literal operation like insert, delete, substring: there should be generic variant as well (e.g. s insert:s &at:3)
-                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
-                       * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char - optimize implementation
-                       * default exception handlers should either print (or show error message for gui) a general error message (broken)
-                       * rename win32_handler to handler, it has no OS dependant code
+                       * ShortNumber, ByteNumber implements basic functionality
+                       * cast should be implemented by every object (so it could be called directly), default behaviour?
+                       * call stack : fix invalid information
                                                                                                                              
+<=================> 
+                                                                                                                            
+1.9.19
+--------
+week2:
+              idev - linux:              
+                       * editor
+                       * project compilation / clean / run
+                       * recent open files / projects
+                       * window list, switching
+                       * status bar
+                       * add menu items
+                       * add tool bar items
+                       * add hot keys
+                       * TextView: cursor blinking
+                       
+              adev - linux lib30:
+                       * core : implement INIT_RND
+                       * linux file operations
+                       * linux date / time operations
+                       * consoleReader should check if the char is multibyte
+                       * read key
+                       * port console samples                                                                               
+                       * port rosetta samples                                                                               
+                       
+              adev - lib30           
+                       * test vm samples       
+                       * test thread operation                                                                               
+
               arev - lib30 review
                        * fix bytearray read / write operation with byte, char, int, long, real
 
@@ -821,6 +736,61 @@ week2:
                        * think over serilizing / deserialing the object
                        * to serilize the object we could ask for all the object properties - 
 
+              adev - lib30     
+                       * shortarray, intarray, chararray, literal and wide should return bytearray (save / get)?
+                       * if we need to store wide literal directly, we have to convert it into chararray and then convert into 
+                         byte array, can we do it directly?
+                       * nameOfTables remove &index:(tblLength int).  - in this case it is unclear why the method does not work if ypu write:
+                             nameOfTables remove &index:tblLength.
+                       * result of operation - #32 + #65 ?? 
+                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
+                       * intOp mod - should work for integer numbers, and fails for real (or be equal to zero)?
+                       * support sin, cos, arctan
+                       * scriptControl.load&literal - raise an error if the result is broken
+                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
+                         another group object - Group (a, %Even[ even value ]), which will works correctly
+                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
+                         cases
+                       * special class IndexedPointer - which is used to refer to the object by index
+                       * operation with upper / lower case implementing
+                       * expanding lib30
+                       * Struct : check if the income message is "get"
+                       * win32 file i/o operations should raise an exception with an error code
+                       * implement: random number stream (0.0 to 1.0)
+                       * implement: quick random number
+                       * implement: bit at position (0|1)
+                       * implement: position of highest bit set
+                       * implement: test if all bits set in mask clear in receiver
+                       * support: primitive operation int + long, long + int
+                       * bytenumber : bitwise operation with long number - incorrect code
+                       * review extensions'math'Matrix
+                       * convertor toArray , which converts list to elist wrap or returns itself
+                         (to be used in extensions'patterns'Combinator and CombinatorWithRepetion)
+                       * add program default exception handler: dispatch an exception to
+                         the program 
+                       * implement multi-select method (control or value?)
+                       * make sure stack allocated objects are correctly boxed for the custom int roles
+                       * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
+                       * controlTape should verify the range
+                       * Iterator.get&index - current implementation is looks like a short circite, though due to optimization it is correctly implemented
+                       * system'internal'handle_message : check if the message is generic than qualify it, otherwise use default dispatch code
+                       * Should stream protocol support reset, clone methods?
+                       * LiteralValue#class : new&length&shortarray  - should the array be verified?
+                       * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
+                       * Literal operation like insert, delete, substring: there should be generic variant as well (e.g. s insert:s &at:3)
+                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
+                       * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char - optimize implementation
+                       * default exception handlers should either print (or show error message for gui) a general error message (broken)
+                       * rename win32_handler to handler, it has no OS dependant code
+                       * it should be possible to return all object messages matching a pattern , e.g. by a verb and subject namespace
+                       * think over object serialization, for example - save the object into file and load back
+                       * serialization to and from : xml, binary
+                       * system'text : along with TextBuffer, it should be LiteralBuilder and WideBuilder - to be internally utf-8 and utf-16
+                       * LiteralBuffer, WideBuffer
+                       * date: custom presenter / formatter / custom formatter
+                       * implement analog of String.Format
+                       * calender: custom formatting
+                       
 
 2.0.0
 -----

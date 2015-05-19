@@ -65,3 +65,7 @@
 // --- Win1251Encoder ---
 
 #static(type:encoder) WIN1251Encoder = WinEncoder new &int:1251.
+
+// --- AnsiEncoder ---
+
+#static(type:encoder) AnsiEncoder = WinEncoder new &int:0.

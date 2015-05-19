@@ -52,8 +52,8 @@ procedure coreapi'closeframe
 
 end
 
-// ; console_entry()
-procedure coreapi'console_entry
+// ; entry()
+procedure coreapi'entry
 
   call code : % PREPARE
   call code : % INIT
@@ -65,33 +65,7 @@ procedure coreapi'console_entry
 
   // 'program start
   xor  edi, edi
-  call code : "'program"
-
-  mov  ecx, EXEC_MESSAGE_ID
-  mov  esi, [eax - 4]
-  call [esi + 4]
-
-  // ; exit code
-  call code : % EXIT
-
-  ret
-
-end
-
-// ; gui_entry()
-procedure coreapi'gui_entry
-
-  call code : % PREPARE
-  call code : % INIT
-  call code : % NEWFRAME
-  mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-
-  call code : "$native'core_rt'init_rt_info"  
-
-  // 'program start
-  xor  edi, edi
-  call code : "'program"
+  call code : "'startUp"
 
   mov  ecx, START_MESSAGE_ID
   mov  esi, [eax - 4]

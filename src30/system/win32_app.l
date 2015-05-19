@@ -20,3 +20,17 @@
 
 #symbol commandLine 
     = $CommandLineFactory new.
+
+// --- startUp ---
+
+#symbol startUp =
+{
+    #method start
+    [
+        'program eval
+            | if &Error: e
+            [
+                console writeLine:(e literal).
+            ].
+    ]
+}.
