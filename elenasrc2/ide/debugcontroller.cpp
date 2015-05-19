@@ -144,22 +144,31 @@ DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &classNa
    return NULL;
 }
 
-DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step)
+DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step, bool stepOverMode)
 {
    if (step->symbol != dsEnd && step->symbol != dsEOP) {
       DebugLineInfo* next = &step[1];
-      int level = 0;
-      while (level > 0 || (next->symbol & dsDebugMask) != dsStep) {
-         switch (next->symbol) {
-            case dsVirtualBlock:
-               level++;
-               break;
-            case dsEOP:
-            case dsVirtualEnd:
-               level--;
-               break;
-            default:
-               break;
+      while ((next->symbol & dsDebugMask) != dsStep) {
+         // step over virtual block if required
+         if (next->symbol == dsVirtualBlock && stepOverMode) {
+            int level = 1;
+            while (level > 0) {
+               next = &next[1];
+               switch (next->symbol) {
+                  case dsVirtualBlock:
+                     level++;
+                     break;
+                  case dsVirtualEnd:
+                     level--;
+                     break;
+                  case dsEOP:
+                     level = 0;
+                     break;
+                  default:
+                     break;
+               }
+            }
+            return next;
          }
          next = &next[1];
       }
@@ -198,7 +207,7 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
          next = &next[1];
       }
 
-      return getNextStep(next);
+      return getNextStep(next, false);
    }
    return NULL;
 }
@@ -682,7 +691,7 @@ void DebugController :: stepInto()
       if (test(lineInfo->symbol, dsProcedureStep))
          _debugger.setCheckMode();
 
-      DebugLineInfo* nextStep = getNextStep(lineInfo);
+      DebugLineInfo* nextStep = getNextStep(lineInfo, false);
       // if the address is the same perform the virtual step
       if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
          if (nextStep->symbol != dsVirtualEnd) {
@@ -716,12 +725,11 @@ void DebugController :: stepOver()
    }
    else {
       DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
-
       // if debugger should notify on the step result
       if (test(lineInfo->symbol, dsProcedureStep))
          _debugger.setCheckMode();
 
-      DebugLineInfo* nextStep = getNextStep(lineInfo);
+      DebugLineInfo* nextStep = getNextStep(lineInfo, true);
       // if next step is available set the breakpoint
       if (nextStep) {
          // if the address is the same perform the virtual step
@@ -730,7 +738,7 @@ void DebugController :: stepOver()
             processStep();
             return;
          }
-         _debugger.setBreakpoint(nextStep->addresses.step.address, true);
+         else _debugger.setBreakpoint(nextStep->addresses.step.address, true);
       }
       // else set step mode
       else _debugger.setStepMode();

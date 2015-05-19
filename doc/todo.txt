@@ -20,12 +20,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
-              idev - debugger
-                       * fix step over loop / if
-                       * debug loop - should the debugger goes directly to the loop end or better to the loop start (as it was before)
-                       * show data variables (currently only int / short are displayed)
-                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-                                              
               adev - reflection:
                        * compile goods using dynamic subjects
 
@@ -76,6 +70,9 @@ week2:
                        * agenda : implement file deleting
                        
               adev - lib30           
+                       * nameOfTables remove &index:(tblLength int).  - in this case it is unclear why the method does not work if ypu write:
+                             nameOfTables remove &index:tblLength.
+
                        * result of operation - #32 + #65 ?? 
                        * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
                        
@@ -783,6 +780,13 @@ week1:
                        * chinese (or others two or more UTF8 ) characters should take two columns (similar like tab)
                        * wintextview : reimplement the cursor locating code if it is not a monofont
 
+              idev - debugger
+                       * if an expression raises an exception, debugger should switch into step mode
+                       * show data variables (currently only int / short are displayed)
+                       * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
+
+                       * get rid of dsProcedureStep, and check mode
+                                              
               idev - debugger - call stack
                        * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
                        

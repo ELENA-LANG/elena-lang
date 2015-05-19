@@ -182,13 +182,21 @@ void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t nameRef)
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
-   // prevent breakpoint duplication
-   if (*tape.end() != bdBreakcoord && *tape.end() != bcBreakpoint) {
-      tape.write(bcBreakpoint);
+   tape.write(bcBreakpoint);
 
-      tape.write(bdBreakpoint, stepType, row);
-      tape.write(bdBreakcoord, disp, length);
+   tape.write(bdBreakpoint, stepType, row);
+   tape.write(bdBreakcoord, disp, length);
+}
+
+void ByteCodeWriter :: removeLastBreakpoint(CommandTape& tape)
+{
+   ByteCodeIterator it = tape.end();
+
+   while (*it == bdBreakcoord || *it == bcBreakpoint || *it == bdBreakpoint) {
+      (*it).code = bcNone;
+      it--;
    }
+
 }
 
 void ByteCodeWriter :: declareStatement(CommandTape& tape)

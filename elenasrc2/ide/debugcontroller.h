@@ -170,7 +170,7 @@ protected:
    DebugLineInfo* seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
       ident_t &methodName, ident_t &path);
 
-   DebugLineInfo* getNextStep(DebugLineInfo* step);
+   DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
    DebugLineInfo* getEndStep(DebugLineInfo* step);
 
    size_t findNearestAddress(_Module* module, ident_t path, size_t row);
