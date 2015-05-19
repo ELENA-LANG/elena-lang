@@ -632,11 +632,19 @@ protected:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-   void recordStep(CodeScope& scope, TerminalInfo terminal, int stepType)
+   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
    {
       if (terminal != nsNone) {
          _writer.declareBreakpoint(*scope.tape, terminal.row, terminal.disp, terminal.length, stepType);
       }
+   }
+   void openDebugExpression(CodeScope& scope)
+   {
+      _writer.declareBlock(*scope.tape);
+   }
+   void endDebugExpression(CodeScope& scope)
+   {
+      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
    }
 
    ref_t mapNestedExpression(CodeScope& scope, int mode);

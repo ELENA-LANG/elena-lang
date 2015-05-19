@@ -12,12 +12,7 @@
 {
     test            
     [
-        #var i := 5.
-            
-        #loop (i > 0) ?
-        [
-            i := i - 1.
-        ].        
+        console write &literal:(2 literal).
     ]
 }.
 

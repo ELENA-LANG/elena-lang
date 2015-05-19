@@ -53,8 +53,9 @@ Samples:
 [+] notepad
 
 [IDE]
-[*] fixed "step over" implementations inside symbol
 [*] binaray arrays are displayed in the debug watch correctly
+
+[*] debugger behaviour reimplemented to improve UX
 
 ******************************************************************************
                     What's New in 1.9.18 (pre release)

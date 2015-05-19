@@ -190,6 +190,7 @@ public:
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ref_t nameRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
+   void removeLastBreakpoint(CommandTape& tape);
    void declareStatement(CommandTape& tape);
    void declareBlock(CommandTape& tape);
 
