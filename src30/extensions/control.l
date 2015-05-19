@@ -71,6 +71,9 @@
     run &path:aPath &encoder:anEncoder &forEachLine:anAction
         = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath &encoder:anEncoder).
 
+    ifExist &path:aPath
+        = aPath is &available.
+
     sort : anIndexable
         = anIndexable~indexable sort:ifOrdered.
 

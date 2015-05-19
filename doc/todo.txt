@@ -20,11 +20,19 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
+              adev - lib30           
+                       * cast should be implemented by every object (so it could be called directly), default behaviour?
+
+              sdev - gui examples:  
+                       * agenda : implement file deleting
+                       
               xdev - linux:
                        * implement elenart
                        * fix #2 issue
                        * fix #3 issue
                        * implement textdb sample
+                       * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
+                       * console.write[1] : flush stdout buffer after write command
 
 <=================> 
                                                                                                                             
@@ -32,8 +40,8 @@ Currently:
 --------
 week2:
               idev - linux:              
-                       * open project
                        * new project
+                       * save last open path
                        * editor
                        * project compilation / clean / run
                        * recent open files / projects
@@ -45,8 +53,6 @@ week2:
                        * TextView: cursor blinking
                        
               adev - linux lib30:
-                       * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
-                       * console.write[1] : flush stdout buffer after write command
                        * core : implement INIT_RND
                        * linux file operations
                        * linux date / time operations
@@ -56,19 +62,9 @@ week2:
                        * port rosetta samples                                                                               
                        
               adev - lib30           
-                       * cast should be implemented by every object (so it could be called directly)
-
-              adev - lib30
                        * test vm samples       
                        * test thread operation                                                                               
 
-              sdev - rosetta examples:  
-                       * review / simplify all samples
-                       
-              sdev - gui examples:  
-                       * reintroduce all gui samples
-                       * agenda : implement file deleting
-                       
               adev - lib30           
                        * nameOfTables remove &index:(tblLength int).  - in this case it is unclear why the method does not work if ypu write:
                              nameOfTables remove &index:tblLength.
@@ -231,8 +227,6 @@ week2:
                        * rename win32_handler to handler, it has no OS dependant code
                                                                                                                              
               arev - lib30 review
-                       * review rosetta samples, try to simplify / concise them
-
                        * fix bytearray read / write operation with byte, char, int, long, real
 
                        * review extensions package warnings, try to get rid of most of them
@@ -313,7 +307,6 @@ week2:
                        * optimize output code: system'Object 
                        * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
                        
-                       * start to use stack allocated variables to optimize the code : console operation, ...
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
                        * system'io'MemoryStream - do not create a new integer after each operation
                        * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
@@ -328,7 +321,8 @@ week2:
                        * Real#class.new&int[1] - optimize
                        * ByteArray.fill&index&length&byte
                        * optimize typed list
-
+                       * File - make possible to check if the file exists
+                       
                adev - console operations:  
                        * read / write operation: complex types
                        * write formatted numbers
@@ -342,7 +336,7 @@ week2:
                        * matrix: test matrix operations
                        * matrix: multiply - should use realnumber rather than real
                        * vmconsole
-
+                       
               srev - gui samples
                        * notepad: add status bar
                        * notepad: add open / save
@@ -438,6 +432,8 @@ week3:
                          for all neighbours)
                          
               sdev - rosetta samples              
+                       * review / simplify all samples
+                       
                        * Call a function
                        * Call an object method
                        * Canny edge detector
@@ -507,9 +503,6 @@ week3:
                        * migrate all script samples
 
 week 4:
-              xmaint - elc
-                       * bug : two classes with the same name
-
               xmaint - web page
                        * update github read me, to provide information how to contibute, getting started, how to build, hot to compile the project, 
                        * update the web page using bootstrap
@@ -648,6 +641,8 @@ week1:
                        * think over pattern similar to bool ? value1 : value2
                          
               xdev - general implementation
+                       * ObjectInfo should have separate field for type, because it is not possible to use extensions for outer fields
+
                        * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
 
                        * handle access vialation exception : exception handler should be called

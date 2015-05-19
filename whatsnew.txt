@@ -46,6 +46,8 @@
 [+] system'dynamic: subjectROp
 [*] system'dynamic: classOp -> classROp
 [*] reflection routines work for stand-alone version as well
+[+] extensions'text: encoderOp
+[+] system'io: pathOp
 
 Samples:
 [+] agenda, graphs, c_a_g

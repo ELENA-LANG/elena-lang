@@ -18,6 +18,7 @@ math\matrix.l
 text\words.l
 text\enumerating.l
 text\strings.l
+text\encoder.l
 routines\combinations.l
 dynamic\interpreter.l
 

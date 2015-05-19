@@ -188,3 +188,22 @@
         theStream close.
     ]
 }
+
+// --- fileOp ---
+
+#class(extension:path)pathOp
+{
+    #method(type:bool) is &available
+    [
+        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
+        
+        ^ (ret != 0FFFFFFFFh).
+    ]
+    
+    #method delete
+    [
+        #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
+        
+        //^(ret == 0) ?[false]![true].        
+    ]
+}

@@ -86,7 +86,7 @@
 
 #subject(class:system'BaseFunction1) each.
 #subject(class:system'IndexFunction1)every.
-//#subject(type:indexfunc)forEvery.
+//#subject(type:indexfunc) forEvery.
 
 // --- Enumerators / Indexers ---
 

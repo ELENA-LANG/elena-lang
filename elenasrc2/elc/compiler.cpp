@@ -3970,7 +3970,10 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
       }
    }
 
-   object.extraparam = target_type;
+   if (object.kind != okOuterField) {
+      object.extraparam = target_type;
+   }
+   
    return object;
 }
 
@@ -5882,7 +5885,9 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             // check for duplicate declaration
             if (scope.module->mapSection(reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
-   
+
+            scope.module->mapSection(reference | mskSymbolRef, false);
+
             // compile class
             ClassScope classScope(&scope, reference);
             compileClassDeclaration(member, classScope, hints);
@@ -5902,6 +5907,8 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             // check for duplicate declaration
             if (scope.module->mapSection(reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(reference | mskSymbolRef, false);
    
             SymbolScope symbolScope(&scope, reference);
             compileSymbolDeclaration(member, symbolScope, hints, (member == nsStatic));
@@ -5942,10 +5949,6 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
          case nsStatic:
          {
             ref_t reference = scope.mapTerminal(name);
-
-            // check for duplicate declaration
-            if (scope.module->mapSection(reference | mskSymbolRef, true))
-               scope.raiseError(errDuplicatedSymbol, name);
 
             SymbolScope symbolScope(&scope, reference);
             compileSymbolImplementation(member, symbolScope, hints, (member == nsStatic));

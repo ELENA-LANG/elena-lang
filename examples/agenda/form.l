@@ -205,16 +205,12 @@
                 ].
             ].
         
-//        // Del TXT
-//        BtmDelTxt event_handle'append:
-//        {
-//            clicking : Args
-//            [     
-//                'io'FileManager delete &io'path:theSavedPath.
-//                
-//                BtmDelTxt enabled'set:false.
-//            ]
-//        }.
+        // Del TXT
+        BtmDelTxt set &onClick: args 
+            [
+                //theSavedPath~path delete.
+                theSavedPath::pathOp delete.
+            ].
 
         // Exit
         BtmExit set &onClick: args 
