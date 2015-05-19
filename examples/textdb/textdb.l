@@ -11,10 +11,7 @@
 {
     Unserialized
     [
-        ^ self =>
-            "Name" ? [ %Name ]
-            "Age" ? [ %Age ]
-            "Phone" ? [ %Phone ].
+        ^ Signature new &literal:self.
     ]
 }.
 

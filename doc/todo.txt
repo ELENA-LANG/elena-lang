@@ -20,11 +20,11 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
-              adev - reflection:
-                       * compile goods using dynamic subjects
-
               xdev - linux:
                        * implement elenart
+                       * fix #2 issue
+                       * fix #3 issue
+                       * implement textdb sample
 
 <=================> 
                                                                                                                             

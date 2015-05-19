@@ -12,7 +12,6 @@
 {
     test            
     [
-        console write &literal:(2 literal).
     ]
 }.
 
