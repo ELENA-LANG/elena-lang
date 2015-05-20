@@ -128,13 +128,34 @@ public:
 
    virtual bool selectProject(Model* model, _ELENA_::Path& path)
    {
-//      FileDialog dialog(&appWindow, FileDialog::ProjectFilter, OPEN_PROJECT_CAPTION, model->paths.lastPath);
-//
-//      path.copy(dialog.openFile());
-//
-//      return !path.isEmpty();
-//
-      return false; // !!
+      Gtk::FileChooserDialog dialog(OPEN_PROJECT_CAPTION, Gtk::FILE_CHOOSER_ACTION_OPEN);
+      dialog.set_transient_for(appWindow);
+
+      if (!_ELENA_::emptystr(model->paths.lastPath))
+         dialog.set_current_folder ((const char*)model->paths.lastPath);
+
+      dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+      dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+      filter_l->set_name("ELENA project file");
+      filter_l->add_pattern("*.project");
+      dialog.add_filter(filter_l);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+      filter_any->set_name("Any files");
+      filter_any->add_pattern("*");
+      dialog.add_filter(filter_any);
+
+      int result = dialog.run();
+      if (result == Gtk::RESPONSE_OK) {
+         std::string filename = dialog.get_filename();
+
+         path.copy(filename.c_str());
+
+         return true;
+      }
+      else return false;
    }
 
    virtual void error(text_t message)
