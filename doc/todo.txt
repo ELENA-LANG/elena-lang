@@ -20,10 +20,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
-              idev - linux:              
-                       * new project
-                       * save last open path
-
               xdev - linux:
                        * implement elenart
                        * fix #2 issue
@@ -33,6 +29,12 @@ Currently:
                        * console.write[1] : flush stdout buffer after write command
 
               adev - lib30     
+                       * primitive operation : copy one structure to another one
+
+                       * win32 : implement console clear
+                       * linux32 : implement console clear
+
+                       * gui : message box
                        * gui : default exception handler should open a message box
 
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
@@ -118,6 +120,8 @@ Currently:
 --------
 week2:
               idev - linux:              
+                       * new project
+                       * save last open path
                        * editor
                        * project compilation / clean / run
                        * recent open files / projects

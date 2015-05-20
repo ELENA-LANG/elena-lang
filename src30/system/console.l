@@ -39,6 +39,9 @@
         self write:theNewLineConstant.
     ]
 
+    #method clear 
+        => theWriter.
+
     #method readLine
         = theReader read &literal.
 

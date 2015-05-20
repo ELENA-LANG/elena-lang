@@ -48,6 +48,7 @@
 [*] reflection routines work for stand-alone version as well
 [+] extensions'text: encoderOp
 [+] system'io: pathOp
+[*] system'console: clear
 
 Samples:
 [+] agenda, graphs, c_a_g
