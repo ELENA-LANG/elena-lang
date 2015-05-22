@@ -22,26 +22,25 @@ Currently:
 ------                                              
               xdev - linux:
                        * implement elenart
+                       * modify core_rt to work with linux
+
                        * fix #2 issue
                        * fix #3 issue
                        * linux32 : implement console clear
                        * implement textdb sample
                        * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
-                       * console.write[1] : flush stdout buffer after write command
-      
-              xdev - general implementation
 
-              adev - lib30     
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
-                         on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
+                       * console.write[1] : flush stdout buffer after write command ;
+                         stdout should be resolved dynamically
+                             void * shared_object = dlopen("./test.so", RTLD_LAZY);
+                             func_t func = (func_t) dlsym(shared_object, "func");
+
       
+              adev - lib30     
+                       * implement file search
+                       
                        * primitive operation : copy one structure to another one
                        
-                       * gui : message box
-                       * gui : default exception handler should open a message box
-
                        * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
                        * encoders : make code similar to c#, it should be possible to save literal / wide as
                          bytearray and visa versa (currently we have to convert literal / wide to chararray and then save
@@ -72,33 +71,17 @@ Currently:
                        * implement controlEx foreach:aList &send:%reset - we should provide some message classes which can contain the parameters
                          and could be invoked by eval
                        * classOp : test if object is subclass of ??
-                       * literalOp : uppercase / lowercase
-                       * charOp : isUppercase / isLowercase
-                       * charConvertor - convert int / short / byte / literal
                        * BaseBoolValue should be private
                        * TimeSpan : Day, Hour, Minute, Second??
-                       * implement: square function
-                       * implement: square root
-                       * implement: sine
-                       * implement: cosine
-                       * implement: tangent
-                       * implement: arcsine
-                       * implement: arccosine
-                       * implement: arctangent
                        * implement: reciprocal
-                       * implement: power function with integer
-                       * implement: exponential
-                       * implement: absolute value
                        * implement: round to specified decimal places
                        * implement: truncate to specified decimal places
                        * implement: truncate
-                       * implement: round up
                        * implement: factorial
                        * implement: integer divide rounded toward zero
                        * implement: integer remainder rounded toward zero
                        * implement: greatest common denominator
                        * implement: least common multiple
-                       * implement: natural logarithm
                        * implement: base 10 logarithm
                        * implement: logarithm with specified base
                        * implement: floor of the log
@@ -106,11 +89,12 @@ Currently:
                        * implement: convert radians to degrees
                        * implement: get maximum of two numbers
                        * implement: get minimum of two numbers
+
                        * implement: pi
                        * implement: exp constant
                        * implement: infinity
                        * implement: not-a-number
-                       * ShortNumber, ByteNumber implements basic functionality
+
                        * cast should be implemented by every object (so it could be called directly), default behaviour?
                        * call stack : fix invalid information
                                                                                                                              
@@ -452,6 +436,7 @@ week 4:
                        * update command line option help, a lot of not supported option, show new ones
 
               xmaint - test
+                       * test math functions
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
                        * test system'io'StreamWriter
@@ -798,8 +783,8 @@ week2:
                        * date: custom presenter / formatter / custom formatter
                        * implement analog of String.Format
                        * calender: custom formatting
-                       
-
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
+      
 2.0.0
 -----
 week1:

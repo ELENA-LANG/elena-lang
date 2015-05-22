@@ -92,3 +92,8 @@
 
 #symbol(const,type:int)MF_STRING        = 00000000h.
 #symbol(const,type:int)MF_POPUP         = 00000010h.
+
+// --- message box flags ---
+#symbol(const,type:int)MB_ICONWARNING     = 00000030h.
+#symbol(const,type:int)MB_ICONINFORMATION = 00000040h.
+#symbol(const,type:int)MB_ICONEXCLAMATION = 00000030h.

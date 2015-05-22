@@ -83,7 +83,7 @@
         'program start
             | if &Error: e
             [
-                //console writeLine:(e literal).
+                messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
             ].
     ]
 }.

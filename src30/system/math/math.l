@@ -296,6 +296,23 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
+    #method(type:real)power &real:y
+    [
+        #var(type:real)x := self real.
+        
+        ^ (x ln * y) exp.
+    ]
+
+    #method(type:real) sqr
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
     #method(type:real) rounded
     [
         #var(type:real)n := self real.        
@@ -346,6 +363,18 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
+    #method(type:real)tan
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aSinVal.
+        #var(type:real)aCosVal.
+        
+        realOpController sin &real:n &vreal:aSinVal.
+        realOpController cos &real:n &vreal:aCosVal.
+        
+        ^ aSinVal / aCosVal.
+    ]
+
     #method(type:real)arctan
     [
         #var(type:real)n := self real.        
@@ -354,6 +383,32 @@
         realOpController arctan &real:n &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
+    ]
+            
+    #method(type:real)arcsin
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)arg.
+        
+        n := 1.0r - n*n.
+        
+        realOpController sqrt &real:n &vreal:arg.
+        
+        ^ arg arctan.
+    ]
+            
+    #method(type:real)arccos
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)arg.
+        
+        n := 1.0r - n*n.
+        
+        realOpController sqrt &real:n &vreal:arg.
+        
+        arg := arg / n.
+        
+        ^ arg arctan.
     ]
             
     #method is &zero
