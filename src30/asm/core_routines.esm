@@ -1892,6 +1892,9 @@ procedure bs_read
  
   aloadsi 3
   nload
+  ecopyd
+  aloadsi 2
+  nload
   acopyb
 
   bloadsi 4

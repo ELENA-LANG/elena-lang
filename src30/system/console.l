@@ -27,11 +27,15 @@
     #method(generic) write : anObject
     [
         theWriter write &literal:(anObject literal).
+        
+        theWriter refresh.
     ]
 
     #method write &literal:aLiteral
     [
         theWriter write &literal:aLiteral.
+        
+        theWriter refresh.
     ]
 
     #method writeLine

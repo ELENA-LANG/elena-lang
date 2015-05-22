@@ -17,6 +17,9 @@
         
         #loop (anIndex < aLength)?
         [
+            (aPage > (aLength - anIndex))
+                ? [ aPage := aLength - anIndex. ].
+            
             anEncoder convert &index:anIndex &vlength:aPage &bytearray:aBuffer &chararray:aCharBuffer &vlength:aCharLen.
             anIndex := anIndex + aPage.
             

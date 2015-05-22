@@ -32,7 +32,15 @@
         // !!check the result of the operation
     ]
     
-    #method close
+    #method clear
+    [
+    ]
+
+    #method refresh
+    [
+    ]
+            
+    #method free
     [
     ]
 }

@@ -8,11 +8,93 @@
 //#define system'math.
 #define extensions.
 #define extensions'math.
+#define extensions'text.
+
+#class FileEnumerator
+{
+    #field(type:bytearray)theStruct.
+    #field theHandle.
+    #field theSearchPath.
+    #field theOpen.
+    
+    #constructor new &path:aPath
+    [
+        theStruct := ByteArray new &length:592.
+        
+        theSearchPath := aPath wide.
+        
+        theOpen := false.
+    ]
+    
+    #method next
+    [
+        ($nil == theHandle)
+            ? [
+                #var(type:handle)aHandle := system'external'KERNEL32 FindFirstFileW
+                    &wide:(theSearchPath wide)
+                    &bytearray:theStruct.
+                    
+                (aHandle == -1)
+                    ! [ theOpen := true. ].                    
+                
+                theHandle := Handle new &handle:aHandle.
+                    
+            ]
+            ! [
+                #var(type:int)aRetVal := system'external'KERNEL32 FindNextFileW
+                    &handle:(theHandle handle)
+                    &bytearray:theStruct.
+                    
+                (aRetVal != 0)
+                    ! [ theOpen := false. ].
+            ].
+            
+        ^ theOpen.            
+    ]    
+    
+    #method get
+    [
+        theOpen
+            ? [ 
+                #var(type:int)aFileLength := 0.
+                #var(type:bytearray,size:520)aNameBuffer.
+
+                theStruct read &index:44 &length:520 &bytearray:aNameBuffer.
+                
+                // define length
+                aFileLength := system'external'KERNEL32 lstrlenW &bytearray:aNameBuffer.
+                
+                ^ UTF16Encoder::encoderOp toWide &bytearray:aNameBuffer &length:(aFileLength * 2).
+            ]
+            ! [ ^ $nil. ].
+    ]
+    
+    #method free
+    [
+        system'external'KERNEL32 FindClose &handle:(theHandle handle).
+    ]
+}
+
 
 #symbol XTester =
 {
     test            
     [
+        #var en := FileEnumerator new &path:"c:\*.*".
+        #loop (en next)?
+        [
+            console writeLine:(en get).
+        ].
+        
+//        #var aReplace := false.
+//        #var src:= "d:\tmp\1.txt".
+//        #var dst:= "d:\tmp\2.txt".
+//        
+//        #var(type:int) rep := (aReplace)?[1]![0].
+//        #var(type:int) ret := system'external'KERNEL32 CopyFileW
+//                &wide:(src wide)
+//                &wide:(dst wide)
+//                &int:rep.           
     ]
 }.
 

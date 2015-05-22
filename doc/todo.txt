@@ -24,24 +24,24 @@ Currently:
                        * implement elenart
                        * fix #2 issue
                        * fix #3 issue
+                       * linux32 : implement console clear
                        * implement textdb sample
                        * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
                        * console.write[1] : flush stdout buffer after write command
+      
+              xdev - general implementation
 
               adev - lib30     
-                       * primitive operation : copy one structure to another one
-
-                       * win32 : implement console clear
-                       * linux32 : implement console clear
-
-                       * gui : message box
-                       * gui : default exception handler should open a message box
-
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  Conversion:
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html and implement the same for ELENA, then publish
                          on wiki Sourcefource / github ; make sure all Smalltalk code have equivalent in ELENA
       
+                       * primitive operation : copy one structure to another one
+                       
+                       * gui : message box
+                       * gui : default exception handler should open a message box
+
                        * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
                        * encoders : make code similar to c#, it should be possible to save literal / wide as
                          bytearray and visa versa (currently we have to convert literal / wide to chararray and then save
@@ -479,6 +479,10 @@ week1:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development
+                       * support fixed array : #field(type:shortarray,size:260)cFileName.
+
+                       * simplify syntax to create a property - get / set / read methods
+
                        * special hint to prevent the variable from been stack allocated, it means there should be additional check to make sure
                          the variable is stack allocated 
 

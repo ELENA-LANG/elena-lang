@@ -93,7 +93,11 @@
         
         system'external'KERNEL32 SetConsoleCursorPosition &int:0.
     ]
-    
+
+    #method refresh
+    [
+    ]
+            
     #method free
     [
         system'external'KERNEL32 CloseHandle
