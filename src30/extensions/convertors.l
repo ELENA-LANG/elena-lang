@@ -104,5 +104,5 @@
         = anEnumerable::enumerableOp array.
 
     #method save : anObject &to:aTarget
-        = aTarget write:(aTarget cast:%eval &to:{ ! : x = (Variant new:anObject)::$subject get. }).
+        = aTarget write:(aTarget cast:%eval &with:anObject &to:{ ! : x : y = (Variant new:x)::$subject get. }).
 }.

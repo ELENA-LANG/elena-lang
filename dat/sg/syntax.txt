@@ -479,7 +479,7 @@ DISPATCH ->
 OBJECT ->
 	identifier OBJECT_BODY
 	| reference OBJECT_BODY
-	| private
+	| private OBJECT_BODY
 	| integer
 	| hex
 	| long

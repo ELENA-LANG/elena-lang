@@ -370,7 +370,7 @@
     #method(type:array) split &char:aChar
     [
         #var(type:literal)aLiteral := self literal.        
-        #var aList := List new.
+        #var(type:list) aList := List new.
         #var(type:int)aStart := 0.
         #var(type:int)anIndex := 0.
         #var(type:int)aCharLen.
@@ -386,7 +386,7 @@
                 aStart := anIndex + aCharLen.
             ]
             ! [
-                aList += aLiteral Substring &index:aStart &length:(self length - aStart).
+                aList += aLiteral::literalOp Substring &index:aStart.
             ].
         ].
         

@@ -92,12 +92,12 @@
 {
     test            
     [
-        #var path := "D:\Projetos\Elena\testes\call_extern\bin\out.ini".
-         #var newPath1 := "D:\Projetos\Elena\testes\call_extern\bin\out_t.ini".
-        #var newPath2 := "D:\Projetos\Elena\testes\call_extern\bin\out_x.ini".
-         //path::pathOp delete.
-        path::Op copy &to:newPath1 &replace:false.
-        //newPath1::pathOp move &to:newPath2.
+//        #var path := "D:\Projetos\Elena\testes\call_extern\bin\out.ini".
+//         #var newPath1 := "D:\Projetos\Elena\testes\call_extern\bin\out_t.ini".
+//        #var newPath2 := "D:\Projetos\Elena\testes\call_extern\bin\out_x.ini".
+//         //path::pathOp delete.
+//        path::Op copy &to:newPath1 &replace:false.
+//        //newPath1::pathOp move &to:newPath2.
              
         
 //        #var en := FileEnumerator new &path:"c:\*.*".

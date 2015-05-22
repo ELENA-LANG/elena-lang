@@ -45,6 +45,9 @@
         
         $classControl readName:self &bytearray:aBuffer &vlength:aLength.
         
+        (aLength == 0)
+            ? [ #throw NotSupportedException new &message:"Reflection functionality is not supported". ].
+        
         ^ LiteralValue $new &length:aLength &index:0 &bytearray:aBuffer.
     ]
 

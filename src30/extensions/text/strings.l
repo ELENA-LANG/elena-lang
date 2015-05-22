@@ -117,6 +117,120 @@
     #method cast : aVerb &to:aDispatcher = aDispatcher::aVerb eval &literal:theLiteral.
 }
 
+// --- WideStringBookmark ---
+
+#class WideStringBookmark
+{
+    #field(type:wide) theLiteral.
+    #field(type:int)     theIndex.
+    #field(type:int)     theStart.
+    
+    #constructor new
+    [
+        theLiteral := emptyWideLiteralValue wide.
+        theIndex := 0.
+        theStart := 0.
+    ]
+
+    #constructor new : anObject
+        <= %new &wide:(anObject wide).
+
+    #constructor new &wide:aText
+        <= ( %new )
+    [
+        theLiteral := aText.
+    ]
+
+    #constructor new &wide:aText &index:anIndex
+        <= ( %new &wide:aText )
+    [
+        theIndex := anIndex.
+    ]
+ 
+    #method find : anObject
+        = anObject cast:%eval &to:
+        {
+            eval &int : anIndex = self find &index:anIndex.
+            
+            eval &wide : aLiteral = self find &wide:aLiteral.
+        }.
+
+    #method append : anObject
+        = anObject cast:%eval &to:
+        {
+            eval &int : anIndex = self append &index:anIndex.
+            
+            eval &wide : aLiteral = self append &wide:aLiteral.
+        }.
+
+    #method find &index:anIndex
+    [
+        theIndex := anIndex.
+    ]
+            
+    #method find &wide:aValue
+    [
+        theIndex := theLiteral indexOf &index:theIndex &wide:aValue int.
+        
+        ^ (-1 != theIndex).
+    ]
+    
+    #method mark
+    [
+        (-1 == theIndex)
+            ? [
+                $self clear.
+            ]
+            ! [
+                theIndex := 1 + theIndex.
+                theStart := theIndex.
+            ].
+        
+    ]
+    
+    #method append &wide:aValue 
+    [
+        theLiteral := (theLiteral + aValue) wide.
+    ]
+    
+    #method append &index:aValue 
+    [
+        theIndex := theIndex + aValue.
+    ]
+    
+    #method insert &wide:aValue
+    [
+        theLiteral := theLiteral insert &index:theIndex &wide:aValue wide.
+        
+        theIndex := theIndex + aValue length.
+    ]
+    
+    #method delete &length:aLength
+    [
+        theLiteral := theLiteral delete &index:theIndex &length:aLength wide.
+    ]
+
+    #method clear
+    [
+        theLiteral := emptyWideLiteralValue wide.
+        theIndex := 0.
+        theStart := 0.
+    ]
+
+    #method marked
+        = (-1 == theIndex)
+            ? [ theLiteral Substring &index:theStart ]
+            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
+    
+    #method wide = theLiteral.
+    
+    #method length = theLiteral length.
+    
+    #method index = theIndex.
+    
+    #method cast : aVerb &to:aDispatcher = aDispatcher::aVerb eval &wide:theLiteral.
+}
+
 //// --- StringReader ---
 //
 //#class StringReader : TextReader

@@ -5,6 +5,10 @@
     #constructor new []
 
     #method(type:bool) equal : anObject => system'internal'object_equal.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &object:$self.
         
     #method => system'internal'dispatch.
 }

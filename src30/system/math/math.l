@@ -1,5 +1,9 @@
 #define system.
 
+#subject degree.
+#subject radian.
+//#subject reciprocal,ln,exp,sin,cos
+
 // --- Operations ---
 
 // --- byteOp ---
@@ -252,6 +256,14 @@
         
     pi &vreal:aRetVal
         => system'internal'r_pi.
+        
+    #method(type:real) pi
+    [
+        #var(type:real)aRetVal.
+        $self pi &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]        
 }.
 
 #class(extension:real) realOp
@@ -411,6 +423,32 @@
         ^ arg arctan.
     ]
             
+    #method(type:real) radian
+    [
+        #var(type:real)aValue := self real.
+        
+        aValue := aValue * pi_value.
+        
+        ^ RealNumber new &real:(aValue / 180.0r).
+    ]
+            
+    #method(type:real) degree
+    [
+        #var(type:real)aValue := self real.
+        
+        aValue := aValue * 180.0r.
+        
+        ^ RealNumber new &real:(aValue / pi_value).
+    ]
+            
+    #method(type:real) reciprocal
+    [
+        #var(type:real)aValue := self real.
+        
+        ^ RealNumber new &real:(1.0r / aValue).
+    ]
+    
+            
     #method is &zero
         = self == 0.
         
@@ -423,3 +461,5 @@
     #method is &nonnegative
         = self <= 0.
 }
+
+#symbol(type:real)pi_value = realOpController pi.

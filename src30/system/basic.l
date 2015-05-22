@@ -1032,6 +1032,10 @@
     #method wide = wideConvertor convert &byte:theValue.
 
     #method clone = Byte new &byte:theValue.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &byte:(ByteNumber new &byte:theValue).
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &byte:(ByteNumber new &byte:theValue).
 
     #method => theValue.    
 }
@@ -1161,6 +1165,10 @@
     #method wide = wideConvertor convert &short:theValue.
 
     #method clone = Short new &short:theValue.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &short:(ShortNumber new &short:theValue).
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &short:(ShortNumber new &short:theValue).
 
     #method => theValue.    
 }
@@ -1318,6 +1326,10 @@
     #method wide = wideConvertor convert &int:theValue.
 
     #method clone = Integer new &int:theValue.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &int:(IntNumber new &int:theValue).
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &int:(IntNumber new &int:theValue).
 
     #method => theValue.    
 }
@@ -1507,6 +1519,10 @@
     #method wide = wideConvertor convert &long:theValue.
 
     #method clone = Long new &long:theValue.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:(LongNumber new &long:theValue).
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &long:(LongNumber new &long:theValue).
     
     #method => theValue.    
 }
@@ -1706,6 +1722,10 @@
 
     #method clone = Real new &real:theValue.
     
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:(RealNumber new &real:theValue).
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &real:(RealNumber new &real:theValue).
+    
     #method => theValue.
 }
 
@@ -1822,6 +1842,10 @@
         
         ^ IntNumber new &int:aLength.
     ]
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &char:(CharValue new &char:theValue).
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &char:(CharValue new &char:theValue).
 
     #method => theValue.    
 }
@@ -1875,6 +1899,10 @@
             ? [ theValue := aValue. ]
             ! [ theValue := theValue / aValue. ].
     ]
+    
+    #method cast : aVerb &to:aTarget => theValue.
+    
+    #method cast : aVerb &with:aParam &to:aTarget => theValue.
         
     #method => theValue.
 }

@@ -97,7 +97,20 @@
 
     #method read &index:anIndex &vreal:aLong
         => system'internal'bs_readqword.
+
+    #method getAt : anIndex
+    [
+        #var(type:byte)aRetVal.
+        $self read &index:(anIndex index) &vbyte:aRetVal.
         
+        ^ ByteNumber new &byte:aRetVal.
+    ]        
+
+    #method setAt : anIndex : aValue
+    [
+        $self write &index:(anIndex int) &byte:(aValue byte).
+    ]
+                        
     #method clone = ByteArray new &length:($self length) &bytearray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bytearray:$self.
@@ -142,6 +155,19 @@
 
     #method read &index:anIndex &vshort:aValue
         => system'internal'sa_readword.
+
+    #method getAt : anIndex
+    [
+        #var(type:short)aRetVal.
+        $self read &index:(anIndex index) &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]        
+
+    #method setAt : anIndex : aValue
+    [
+        $self write &index:(anIndex int) &short:(aValue short).
+    ]
 
     #method clone = ShortArray new &length:($self length) &shortarray:$self.
     
@@ -196,6 +222,19 @@
     #method read &index:anIndex &vint:anInt
         => system'internal'ns_readdword.
 
+    #method getAt : anIndex
+    [
+        #var(type:int)aRetVal.
+        $self read &index:(anIndex index) &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]        
+
+    #method setAt : anIndex : aValue
+    [
+        $self write &index:(anIndex int) &int:(aValue int).
+    ]
+
     #method clone = IntArray new &length:($self length) &intarray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &intarray:$self.
@@ -240,6 +279,19 @@
 
     #method move &index:anIndex &length:aLength &offset:anOffset
         => system'internal'ns_move.
+
+    #method getAt : anIndex
+    [
+        #var(type:char)aRetVal.
+        $self read &index:(anIndex index) &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+
+    #method setAt : anIndex : aValue
+    [
+        $self write &index:(anIndex int) &char:(aValue char).
+    ]
 
     #method clone = CharArray new &length:($self length) &index:0 &chararray:$self.
     
