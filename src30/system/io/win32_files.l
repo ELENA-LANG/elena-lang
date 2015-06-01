@@ -222,6 +222,22 @@
     ]
 }
 
+// --- BinaryFileReader ---
+
+#class(sealed)BinaryFileReader :: BinaryReader
+{
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForRead &path:aPath).
+}
+
+// --- BinaryFileWriter ---
+
+#class(sealed)BinaryFileWriter :: BinaryWriter
+{
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForReWrite &path:aPath).
+}
+
 // --- fileOp ---
 
 #class(extension:path)pathOp
