@@ -50,11 +50,12 @@
     
     #method write &bytearray:aDump &length:aLength
     [
+        #var(type:int)aWritten := 0.
         system'external'KERNEL32 WriteFile
             &handle    : theHandle
             &bytearray : aDump
             &int       : aLength
-            &int       : 0
+            &vint      : aWritten
             &int       : 0.
     ]
 
@@ -79,7 +80,7 @@
         anIndex << ret.
     ] 
     
-    #method writeIndex &int:anIndex
+    #method write &index:anIndex
     [
         #var(type:int) ret := system'external'KERNEL32 SetFilePointer
             &handle : theHandle
