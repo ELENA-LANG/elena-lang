@@ -18,6 +18,27 @@
         anArray setAt &index:anIndex2 &object:aTemp.
     ]
 
+    #method indexOf : anObject
+    [
+        #var(type:array)anArray := self array.
+        #var(type:int)aLength.
+        
+        anArray readLength &vint:aLength.
+        
+        #var(type:int)i := 0.
+        #loop (i < aLength)?
+        [
+            #var anArrayItem := anArray getAt &index:i.
+            
+            (anObject == anArrayItem)
+                ? [ ^ IntNumber new &int:i. ].
+            
+            i := i + 1.
+        ].
+        
+        ^ -1.
+    ]
+
     #method deepClone
     [
         #var(type:array)anArray := self array.

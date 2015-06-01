@@ -8,6 +8,9 @@
     #constructor new &handle:aHandle
         => system'internal'int_copy.
 
+    #constructor new &int:aHandle
+        => system'internal'int_copy.
+
     #constructor min
         => system'internal'int_init.
 
@@ -49,7 +52,7 @@
 
 #class(sealed,struct:embeddable) UnsafePointer
 {
-    #field(type:int)theIndex.
+    #field(type:int)thePointer.
 
     #constructor new : anObject
     [
@@ -63,7 +66,7 @@
                 
     #method append &int:aValue
     [
-        theIndex := theIndex + aValue.
+        thePointer := thePointer + aValue.
     ]                            
                             
     #method write &handle:anObject
@@ -80,6 +83,26 @@
     
     #method write &bytearray:anArray
         => system'internal'dptr_copy.
+
+    // unsafe code
+    #method literal
+    [
+        #var(type:int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
+        #var(type:literal)aLiteral := LiteralValue new &length:aLen.
+        system'external'kernel32 lstrcpyA &literal:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]        
+
+    // unsafe code
+    #method wide
+    [
+        #var(type:int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
+        #var(type:wide)aLiteral := WideLiteralValue new &length:aLen.
+        system'external'kernel32 lstrcpyW &wide:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]
 }
                 
 // --- COORD --

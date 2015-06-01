@@ -48,9 +48,10 @@
 [*] reflection routines work for stand-alone version as well
 [+] extensions'text: encoderOp
 [+] system'io: pathOp
+[+] new package: sqlite
 [*] system'io: Stream, BinaryReader, BinaryWriter, FileStream
 [*] system'console: clear
-
+                                                                                                
 Samples:
 [+] agenda, graphs, c_a_g
 

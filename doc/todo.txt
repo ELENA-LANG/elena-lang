@@ -36,9 +36,9 @@ Currently:
                              func_t func = (func_t) dlsym(shared_object, "func");
 
               adev - lib30     
-                       * stream - implement length
-                       * binaryreader / binarywriter : implement is &available
                        * sqlite
+                       * sqlite : support float
+                       * sqlite : support blob
                        * implement file search
                                                                                                                              
 <=================> 
@@ -315,6 +315,7 @@ week 4:
                        * test literalOp.trim method
                        * test vm samples       
                        * test thread operation                                                                               
+                       * sqlite : test operation with double
                        
                        * test bytearray read / write operation with byte, char, int, long, real
                        * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)

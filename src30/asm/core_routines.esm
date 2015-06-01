@@ -3575,6 +3575,14 @@ procedure api_free_index
   
 end
 
+procedure dptr_ret_double
+
+  bloadsi 2
+  callr api : coreapi'ret_double
+  quitn 2
+
+end
+
 procedure arr_realloc
 
   aloadsi 1
