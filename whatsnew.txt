@@ -48,6 +48,7 @@
 [*] reflection routines work for stand-alone version as well
 [+] extensions'text: encoderOp
 [+] system'io: pathOp
+[*] system'io: Stream, BinaryReader, BinaryWriter, FileStream
 [*] system'console: clear
 
 Samples:

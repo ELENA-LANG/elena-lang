@@ -15,6 +15,16 @@
 {
     #method stream = $self.
     
+    #method readLength &vint:aLength [ aLength << 0. ] // !! default implementation
+        
+    #method length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+    
     #method readIndex &vint:anIndex []
 
     #method index

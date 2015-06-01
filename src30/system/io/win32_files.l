@@ -14,6 +14,10 @@
 #symbol(const,type:int) $FILE_SHARE_READ    = 00000001h.
 #symbol(const,type:int) $FILE_SHARE_WRITE   = 00000002h.
 
+#symbol(const,type:int) $FILE_BEGIN = 0.
+#symbol(const,type:int) $FILE_CURRENT = 1.
+#symbol(const,type:int) $FILE_END = 2.
+
 // --- FileStream ---
 
 #class(struct) FileStream :: Stream
@@ -62,6 +66,35 @@
             &int         : aLength
             &vint        : aLength
             &int         : 0.
+    ]
+    
+    #method readIndex &vint:anIndex
+    [
+        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
+            &handle : theHandle
+            &int    : 0
+            &int    : 0
+            &int    : $FILE_CURRENT.
+            
+        anIndex << ret.
+    ] 
+    
+    #method writeIndex &int:anIndex
+    [
+        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
+            &handle : theHandle
+            &int    : anIndex
+            &int    : 0
+            &int    : $FILE_BEGIN.
+    ] 
+    
+    #method readLength &vint:aLength 
+    [ 
+        #var(type:int)n := system'external'KERNEL32 GetFileSize
+            &handle : theHandle
+            &int:0.
+    
+        aLength << n. 
     ]
     
     #method close
@@ -180,7 +213,7 @@
                 
                 (aRead > aBufferLength)
                     ? [ theStream reduce &index:(aRead - aBufferLength). ].
-            ].
+            ].            
     ]
     
     #method close

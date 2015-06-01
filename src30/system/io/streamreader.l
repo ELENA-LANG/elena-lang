@@ -6,15 +6,33 @@
 
 #class(limited) BinaryReader
 {
+    #field(type:stream)theStream.
+    #field(type:int)theLength.
+    
+    #constructor new &stream:aStream
+    [
+        theStream := aStream.
+        
+        theLength := aStream length.
+    ]
+    
     #method read &bytearray:anArray &vlength:anActualLength
     [
+        theStream read &bytearray:anArray &vlength:anActualLength.
     ]
 
-    #method stream [ #throw NotSupportedException new. ]
+    #method stream = theStream.
 
-    #method close [ ]
+    #method close => theStream.
 
-    #method(type:bool) available = false.
+    #method(type:bool) available
+    [
+        #var(type:int)aPosition.
+        
+        theStream readIndex &vint:aPosition.
+        
+        ^ aPosition < theLength.
+    ]
             
     #method read &bytearray:anArray &length:aLength
     [
