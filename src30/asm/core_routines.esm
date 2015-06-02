@@ -1992,6 +1992,7 @@ end
 procedure bs_writeword
 
   blen
+  ecopyd
   bcopya
   aloadsi 2
   nload

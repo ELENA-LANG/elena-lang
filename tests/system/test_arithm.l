@@ -15,29 +15,6 @@
 {
     test            
     [
-//        #var path := "D:\Projetos\Elena\testes\call_extern\bin\out.ini".
-//         #var newPath1 := "D:\Projetos\Elena\testes\call_extern\bin\out_t.ini".
-//        #var newPath2 := "D:\Projetos\Elena\testes\call_extern\bin\out_x.ini".
-//         //path::pathOp delete.
-//        path::Op copy &to:newPath1 &replace:false.
-//        //newPath1::pathOp move &to:newPath2.
-             
-        
-//        #var en := FileEnumerator new &path:"c:\*.*".
-//        #loop (en next)?
-//        [
-//            console writeLine:(en get).
-//        ].
-        
-//        #var aReplace := false.
-//        #var src:= "d:\tmp\1.txt".
-//        #var dst:= "d:\tmp\2.txt".
-//        
-//        #var(type:int) rep := (aReplace)?[1]![0].
-//        #var(type:int) ret := system'external'KERNEL32 CopyFileW
-//                &wide:(src wide)
-//                &wide:(dst wide)
-//                &int:rep.           
     ]
 }.
 
