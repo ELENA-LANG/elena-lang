@@ -63,7 +63,7 @@ class Linker32
          this->entryPoint = this->interpreter = this->dynamic = 0;
          this->ph_length = 0;
          this->headerSize = this->textSize = this->rdataSize = this->importSize = this->bssSize = this->debugSize = 0;
-         this->withDebugInfo = project->BoolSetting(opDebugMode);
+         this->withDebugInfo = project->BoolSetting(opDebugMode)/*false*/;
       }
    };
 

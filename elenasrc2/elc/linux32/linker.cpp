@@ -20,7 +20,7 @@
 #define FILE_ALIGNMENT     0x0010
 #define SECTION_ALIGNMENT  0x1000
 #define IMAGE_BASE         0x08048000
-#define HEADER_SIZE        0x0100
+#define HEADER_SIZE        0x0200
 
 //#define TEXT_SECTION       ".text"
 //#define RDATA_SECTION      ".rdata"
@@ -108,6 +108,10 @@ void Linker32 :: mapImage(ImageInfo& info)
       info.ph_length += 2; // if import table is not empty, append interpreter / dynamic
    }
 
+   if (info.withDebugInfo) {
+      info.ph_length++; // if import table is not empty, append interpreter / dynamic
+   }
+
    info.headerSize = align(HEADER_SIZE, FILE_ALIGNMENT);
    info.textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
    info.rdataSize = align(getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
@@ -136,7 +140,7 @@ void Linker32 :: mapImage(ImageInfo& info)
    if (info.withDebugInfo) {
       info.map.debug = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
       // due to loader requirement, adjust offset
-      info.map.debug += ((info.headerSize + info.textSize + info.rdataSize + info.importSize + info.bssSize) & (alignment - 1));
+      info.map.debug += ((info.headerSize + info.textSize + info.rdataSize + info.importSize) & (alignment - 1));
    }
 
 /*
@@ -455,7 +459,7 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
       ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize + info.importSize;
       ph_header.p_vaddr = info.map.base + info.map.debug;
       ph_header.p_paddr = info.map.base + info.map.debug;
-      ph_header.p_memsz = info.debugSize;
+      ph_header.p_memsz = ph_header.p_filesz = info.debugSize;
       ph_header.p_flags = PF_R;
       ph_header.p_align = alignment;
       file->write((char*)&ph_header, ELF_PH_SIZE);
@@ -494,6 +498,8 @@ bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t 
 
    writeELFHeader(info, &executable);
    writePHTable(info, &executable);
+
+    int p = executable.Position();
 
    if (info.headerSize >= executable.Position()) {
       executable.writeBytes(0, info.headerSize - executable.Position());
