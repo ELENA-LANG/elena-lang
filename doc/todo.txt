@@ -21,7 +21,9 @@ v  - vm script
 Currently:
 ------                                              
               xdev - linux:
+                       * port elenart to linux
                        * implement elenart
+
                        * modify core_rt to work with linux
 
                        * fix #2 issue
@@ -34,6 +36,8 @@ Currently:
                          stdout should be resolved dynamically
                              void * shared_object = dlopen("./test.so", RTLD_LAZY);
                              func_t func = (func_t) dlsym(shared_object, "func");
+
+                       * migrate rosetta samples
 
               adev - lib30     
                        * sqlite : support float
@@ -510,8 +514,6 @@ week1:
 
               xdev - linux
                        * implement debugger
-                       * store debug info in the exe file
-                       * port elenart to linux
                        * port multi-threading
                        * port elc to linux
                        * port ecv to linux
