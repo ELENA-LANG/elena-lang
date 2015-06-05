@@ -8,6 +8,7 @@
 // -------------------------------------------------------------------
 #include "elenart.h"
 #include "instance.h"
+#include "linux32/elfhelper.h"
 
 #define CONFIG_PATH        "/etc/elena"
 #define IMAGE_BASE         0x08048000
@@ -27,8 +28,10 @@ void* Init(void* debugSection, const char* package)
       section.init((void*)IMAGE_BASE, 0x1000);
 
       size_t ptr = 0;
-         ELFHelper::seekDebugSection(MemoryReader(&section), ptr);
-         debugSection = (void*)ptr;
+      MemoryReader reader(&section);
+
+      ELFHelper::seekDebugSegment(reader, ptr);
+      debugSection = (void*)ptr;
    }
 
    instance->init(debugSection, package);
@@ -38,24 +41,22 @@ void* Init(void* debugSection, const char* package)
 
 int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 {
-   return /*((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength)*/0;
+   return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
 int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length)
 {
-   return /*((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length)*/0;
+   return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-int LoadClassName(void* instance, void* object, char* lineInfo, int length)
+int LoadClassName(void* instance, void* object, char* buffer, int length)
 {
-   // !! terminator code
-   return 0;
+   return ((Instance*)instance)->loadClassName((size_t)object, buffer, length);
 }
 
 void* GetSymbolRef(void* instance, void* referenceName)
 {
-   // !! terminator code
-   return NULL;
+   return ((Instance*)instance)->loadSymbol((ident_t)referenceName);
 }
 
 void* Interpreter(void* instance, void* tape)
@@ -69,3 +70,14 @@ void* GetRTLastError(void* instance, void* retVal)
    // !! terminator code
    return NULL;
 }
+
+int LoadSubjectName(void* instance, void* subject, ident_c* lineInfo, int length)
+{
+   return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
+}
+
+void* LoadSubject(void* instance, void* subjectName)
+{
+   return ((Instance*)instance)->loadSubject((ident_t)subjectName);
+}
+
