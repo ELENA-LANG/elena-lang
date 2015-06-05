@@ -21,16 +21,13 @@ v  - vm script
 Currently:
 ------                                              
               xdev - linux:
-                       * port elenart to linux
-                       * implement elenart
-
-                       * modify core_rt to work with linux
-
                        * fix #2 issue
                        * fix #3 issue
                        * linux32 : implement console clear
                        * implement textdb sample
                        * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
+                       * test stack trace generating functionality
+                       * test load class by name
 
                        * console.write[1] : flush stdout buffer after write command ;
                          stdout should be resolved dynamically

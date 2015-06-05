@@ -9,7 +9,6 @@
 
 extern "C"
 {
-
    void* Init(void* debugSection, const char* package);
 
    int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
@@ -23,6 +22,10 @@ extern "C"
    void* Interpreter(void* instance, void* tape);
 
    void* GetRTLastError(void* instance, void* retVal);
+
+   int LoadSubjectName(void* instance, void* subject, char* lineInfo, int length);
+
+   void* LoadSubject(void* instance, void* subjectName);
 }
 
 #endif // ELENART_H_INCLUDED

@@ -39,8 +39,14 @@
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
+			<Add directory="../linux32" />
 			<Add directory=".." />
 		</Compiler>
+		<Unit filename="../../engine/linux32/elfhelper.cpp" />
+		<Unit filename="../../engine/linux32/elfhelper.h" />
+		<Unit filename="../instance.cpp" />
+		<Unit filename="../instance.h" />
+		<Unit filename="../linux32/elenart.h" />
 		<Unit filename="../linux32/main.cpp" />
 		<Extensions>
 			<code_completion />
