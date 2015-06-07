@@ -797,6 +797,7 @@ procedure real_copyint
   bcopya
   aloadsi 2
   nload
+  rcopy
   rsave
   acopyb
   quitn 2
@@ -837,7 +838,7 @@ procedure real_add
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   radd
   acopyb
@@ -851,7 +852,7 @@ procedure real_sub
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   rsub
   acopyb
@@ -865,7 +866,7 @@ procedure real_mul
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   rmul
   acopyb
@@ -879,7 +880,7 @@ procedure real_div
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   rdiv
   acopyb
@@ -1007,10 +1008,9 @@ procedure byte_copyreal
   aloadsi 4
   rint
 
-  pushn 0
-  aloadsi 0
-  bswap
+  acopyb
   rload
+  dcopyr
 
   lessn labErr 0  
   lessn labCopy 0FFh
@@ -1201,10 +1201,9 @@ procedure word_copyreal
   aloadsi 4
   rint
 
-  pushn 0
-  aloadsi 0
-  bswap
+  acopyb
   rload
+  dcopyr
   
   lessn labErr 0FFFF8000h
   lessn labCopy 08000h
@@ -1429,8 +1428,10 @@ end
 procedure int_copyreal
 
   aloadsi 2
-  bloadsi 3
+  bloadsi 3  
   rload
+  dcopyr
+  nsave
   aloadsi 1
   quitn 3
 
@@ -1494,6 +1495,7 @@ procedure real_saveint
   bloadsi 3
   aloadsi 2
   nload
+  rcopy
   rsave
   acopyb
   quitn 3

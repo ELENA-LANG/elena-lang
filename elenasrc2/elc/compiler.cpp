@@ -1887,8 +1887,14 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
 void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
 {
    if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress || variableInfo.kind == okLocalAddress) {
-      int size = (variableInfo.kind == okLocalAddress) ? 
-         scope.moduleScope->defineStructSize(variableInfo.extraparam) : scope.moduleScope->defineTypeSize(variableInfo.extraparam);
+      ref_t classReference = 0;
+      int size = 0;
+      if (variableInfo.kind == okLocalAddress) {
+         classReference = variableInfo.extraparam;
+
+         size = scope.moduleScope->defineStructSize(classReference);
+      }
+      else size = scope.moduleScope->defineTypeSize(variableInfo.extraparam, classReference);
 
       if (size <= 0)
          scope.raiseError(errInvalidOperation, node.Terminal());
@@ -1899,6 +1905,10 @@ void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectIn
          }
          else if ((size == 2 || size == 1) && variableInfo.kind == okLocal) {
             _writer.saveInt(*scope.tape, variableInfo);
+         }
+         // HOTFIX: assign a float-point numeric result 
+         else if ((size == 8) && classReference == scope.moduleScope->realReference) {
+            _writer.saveReal(*scope.tape, variableInfo);
          }
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }

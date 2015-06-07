@@ -274,6 +274,7 @@ public:
    void assignShort(CommandTape& tape, ObjectInfo target);
    void assignByte(CommandTape& tape, ObjectInfo target);
    void saveInt(CommandTape& tape, ObjectInfo target);
+   void saveReal(CommandTape& tape, ObjectInfo target);
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);

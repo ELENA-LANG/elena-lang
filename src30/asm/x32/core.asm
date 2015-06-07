@@ -1708,6 +1708,16 @@ inline % 48h
 
 end
 
+// ; dcopyr
+inline % 49h
+
+  push 0
+  mov  esi, esp
+  fistp dword ptr [esi]
+  pop esi
+
+end
+
 // ; nand
 inline % 4Ah
 
@@ -2264,20 +2274,16 @@ end
 // ; rcopy (src, tgt)
 inline % 80h
 
-  mov  ecx, [eax]
-  mov  ebx, [eax+4]
-  mov  [edi], ecx
-  mov  [edi+4], ebx
+  push esi
+  fild dword ptr [esp]
+  pop  esi
 
 end
 
 // ; rsave
 inline % 82h
 
-  push esi
-  fild dword ptr [esp]
   fstp qword ptr [edi]
-  pop  esi
 
 end
 
@@ -2493,15 +2499,13 @@ labEnd:
 
 end
 
-
-// ; rsave
-
+// ; rload
 inline %8Fh
 
   fld   qword ptr [eax]
-  fistp dword ptr [edi]
 
 end
+
 // ; restore
 
 inline % 92h

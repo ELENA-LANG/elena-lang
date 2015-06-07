@@ -79,6 +79,7 @@ enum ByteCode
    bcNDiv            = 0x46,
    bcNSave           = 0x47,
    bcNLoad           = 0x48,
+   bcDCopyR          = 0x49,
    bcNAnd            = 0x4A,
    bcNOr             = 0x4B,
    bcNXor            = 0x4C,

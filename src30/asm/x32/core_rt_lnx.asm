@@ -11,6 +11,8 @@ define rt_loadaddrinfo  0014h
 define rt_loadSubject   0018h
 define rt_loadSubjName  001Ch
 
+define RTLD_LAZY	0001h
+
 rstructure core_rt'dll_name
 
    db 047 // /
@@ -189,6 +191,7 @@ procedure core_rt'init_rt_info
 
   // load dll  
   push RTLD_LAZY	
+
   mov  eax, rdata : "$native'core_rt'dll_name"
   push eax
   call extern : "libc.so.6.dlopen"
@@ -203,7 +206,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'LoadAddressInfoFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -215,7 +218,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'LoadClassNameFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -227,7 +230,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'GetSymbolRefFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -239,7 +242,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'InterpreterFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -251,7 +254,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'LastErrFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -263,7 +266,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'LoadSubjectFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -275,7 +278,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'LoadSubjectNameFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -287,7 +290,7 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'InitFunc" 
   push esi
   push eax
-  call  : "libc.so.6.dlsym"
+  call extern : "libc.so.6.dlsym"
   
   test eax, eax
   jz   lbCannotLoadRT

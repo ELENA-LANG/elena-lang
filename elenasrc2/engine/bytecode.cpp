@@ -27,7 +27,7 @@ const char* _fnOpcodes[256] =
    "call", "acallvd", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
-   "nload", "unknown", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
+   "nload", "dcopyr", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "wread", "wwrite", "nread", "nwrite", "unknown", "unknown", "wcreate",

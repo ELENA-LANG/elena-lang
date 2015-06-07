@@ -50,6 +50,8 @@ ELENA byte codes (or ecodes)
  
  dcopye                     - index << ext
  
+ dcopyr                     - index << real index
+ 
  dcopysubj                  - index << ext.subj
  
  dcopyverb                  - index << ext.verb
@@ -104,7 +106,7 @@ ELENA byte codes (or ecodes)
  ncopy                      - int[base] << int[acc]
  
  nload                      - int[acc] >> index
- 
+  
  nloadi                     - int[acc+i*4] >> index
  
  nread                      - acc[index * 4] >> ext                               
@@ -115,7 +117,9 @@ ELENA byte codes (or ecodes)
  
  nwrite                     - base[index * 4] << ext
  
- rsave                      - real[base] << index
+ rcopy                      - real index << index
+ 
+ rsave                      - real[base] << real index
  
  set                        - acc => base[index] ;
                               
@@ -408,8 +412,8 @@ ELENA byte codes (or ecodes)
  rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
                                                                                                      
  rln                        - base << ln(real:acc)
- 
- rload                      - index << real[acc]
+
+ rload                      - real index << real[acc]
  
  rmul                       - real[base] *= real[acc]
 

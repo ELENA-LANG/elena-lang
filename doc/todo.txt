@@ -36,6 +36,9 @@ Currently:
 
                        * migrate rosetta samples
 
+              xdev - general implementation
+                       * resolve issue #15
+
               adev - lib30     
                        * sqlite : support float
                        * sqlite : support blob
@@ -316,6 +319,7 @@ week 4:
                        * test vm samples       
                        * test thread operation                                                                               
                        * sqlite : test operation with double
+                       * test int,byte,short,long <=> real
                        
                        * test bytearray read / write operation with byte, char, int, long, real
                        * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)

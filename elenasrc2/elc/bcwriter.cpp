@@ -1801,7 +1801,39 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, ObjectInfo target)
    }   
 }
 
-void ByteCodeWriter :: assignInt(CommandTape& tape, ObjectInfo target)
+void ByteCodeWriter::saveReal(CommandTape& tape, ObjectInfo target)
+{
+   if (target.kind == okLocalAddress) {
+      // bcopyf param
+      // rload
+      // nsave
+      tape.write(bcBCopyF, target.param);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target.kind == okLocal) {
+      // bloadfi param
+      // rload
+      // nsave
+      tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target.kind == okFieldAddress) {
+      // rload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param
+      // bwrite
+      tape.write(bcRLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, target.param);
+      tape.write(bcBWrite);
+   }
+}
+
+void ByteCodeWriter::assignInt(CommandTape& tape, ObjectInfo target)
 {
    if (target.kind == okFieldAddress) {
 
