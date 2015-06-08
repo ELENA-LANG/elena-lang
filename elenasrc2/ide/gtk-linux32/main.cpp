@@ -15,6 +15,7 @@
 ////#include "gtkideconst.h"
 #include "../appwindow.h"
 #include "../settings.h"
+#include "../gtk-linux32/gtkdialogs.h"
 
 using namespace _GUI_;
 
@@ -89,9 +90,6 @@ public:
          return true;
       }
       else return false;
-//      FileDialog dialog(&appWindow, FileDialog::SourceFilter, SAVEAS_FILE_CAPTION, model->project.path);
-//
-//      return dialog.saveFile(_T("l"), newPath);
    }
 
    virtual bool selectFiles(Model* model, _ELENA_::List<text_c*>& selected)
@@ -341,11 +339,9 @@ public:
 
    virtual bool configProject(_ProjectManager* project)
    {
-//      ProjectSettingsDialog dlg(&appWindow, project);
-//
-//      return dlg.showModal() != 0;
-//
-      return false; // !!
+      ProjectSettingsDialog dlg/*(&appWindow, project)*/;
+
+      return dlg.run() != 0;
    }
 
    virtual bool configEditor(Model* model)

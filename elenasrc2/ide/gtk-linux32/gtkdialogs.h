@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //		GTK: Static dialogs header
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef windialogsH
@@ -122,6 +122,48 @@ public:
 //   }
 //};
 //
+
+// --- ProjectSettingsDialog ---
+
+class ProjectSettingsDialog : public Gtk::Dialog
+{
+   //Gtk::Frame _project_frame;
+   //Gtk::Frame _compiler_frame;
+   //Gtk::Frame _linker_frame;
+   //Gtk::Frame _debugger_frame;
+
+   Gtk::Frame _projectFrame;
+   Gtk::Grid  _projectGrid;
+   Gtk::Label _typeLabel;
+   Gtk::ComboBoxText _typeCombobox;
+   Gtk::Label _namespaceLabel;
+   Gtk::Entry _namespaceText;
+
+   Gtk::Frame _compilerFrame;
+   Gtk::Grid  _compilerGrid;
+   Gtk::Label _warningLabel;
+   Gtk::CheckButton _warningCheckbox;
+   Gtk::Label _optionsLabel;
+   Gtk::Entry _optionsText;
+
+   Gtk::Frame _linkerFrame;
+   Gtk::Grid  _linkerrGrid;
+   Gtk::Label _targetLabel;
+   Gtk::Entry _targetText;
+   Gtk::Label _outputLabel;
+   Gtk::Entry _outputText;
+
+   Gtk::Frame _debuggerFrame;
+   Gtk::Grid  _debuggerGrid;
+   Gtk::Label _modeLabel;
+   Gtk::ComboBoxText _modeCombobox;
+   Gtk::Label _argumentsLabel;
+   Gtk::Entry _argumentsText;
+
+public:
+   ProjectSettingsDialog();
+};
+
 //// --- FindDialog ---
 //
 //typedef _ELENA_::List<TCHAR*> SearchHistory;

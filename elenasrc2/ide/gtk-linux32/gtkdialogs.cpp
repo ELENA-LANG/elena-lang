@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    GTK: Static dialog implementations
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2015, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtkdialogs.h"
@@ -492,3 +492,61 @@ int AboutDialog :: showModal()
    return -2;
 }
 */
+
+// --- ProjectSettingsDialog ---
+
+ProjectSettingsDialog :: ProjectSettingsDialog()
+   : _projectFrame("Project"), _compilerFrame("Compiler"),
+     _linkerFrame("Linker"), _debuggerFrame("Debugger"),
+     _typeLabel("Type"), _namespaceLabel("Namespace"),
+     _warningLabel("Warn about unresolved references"), _optionsLabel("Additional options"),
+     _targetLabel("Target file name"), _outputLabel("Output path"),
+     _modeLabel("Debug mode"), _argumentsLabel("Command arguments")
+{
+   Gtk::Box *box = get_vbox();
+
+   box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
+
+   _projectFrame.add(_projectGrid);
+   _projectGrid.set_row_homogeneous(true);
+   _projectGrid.set_column_homogeneous(true);
+   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
+   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
+   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
+   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
+
+   box->pack_start(_compilerFrame);
+
+   _compilerFrame.add(_compilerGrid);
+   _compilerGrid.set_row_homogeneous(true);
+   _compilerGrid.set_column_homogeneous(true);
+   _compilerGrid.attach(_warningCheckbox, 0, 0, 1, 1);
+   _compilerGrid.attach(_warningLabel, 1, 0, 1, 1);
+   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
+   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
+
+   box->pack_start(_linkerFrame);
+
+   _linkerFrame.add(_linkerrGrid);
+   _linkerrGrid.set_row_homogeneous(true);
+   _linkerrGrid.set_column_homogeneous(true);
+   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
+   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
+   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
+   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
+
+   box->pack_start(_debuggerFrame);
+
+   _debuggerFrame.add(_debuggerGrid);
+   _debuggerGrid.set_row_homogeneous(true);
+   _debuggerGrid.set_column_homogeneous(true);
+   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
+   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
+   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
+   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
+
+   add_button("Yes", Gtk::RESPONSE_YES);
+   add_button("No", Gtk::RESPONSE_NO);
+
+   show_all_children();
+}
