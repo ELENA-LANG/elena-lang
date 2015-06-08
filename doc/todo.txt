@@ -20,11 +20,27 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
+              idev - linux:              
+                       * new project
+
+              xdev - script engine
+                       * review script
+
               xdev - linux:
                        * fix #2 issue
                        * fix #3 issue
                        * linux32 : implement console clear
                        * implement textdb sample
+
+              xdev - script engine
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+
+<=================> 
+                                                                                                                            
+1.9.19
+--------
+week2:
+              xdev - linux:
                        * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
                        * test stack trace generating functionality
                        * test load class by name
@@ -44,11 +60,6 @@ Currently:
                        * sqlite : support blob
                        * implement file search
                                                                                                                              
-<=================> 
-                                                                                                                            
-1.9.19
---------
-week2:
               idev - linux:              
                        * new project
                        * save last open path
@@ -61,6 +72,7 @@ week2:
                        * add tool bar items
                        * add hot keys
                        * TextView: cursor blinking
+                       * IDE UI : facelifting, tuning
                        
               adev - linux lib30:
                        * core : implement INIT_RND

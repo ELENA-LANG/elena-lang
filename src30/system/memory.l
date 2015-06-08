@@ -101,7 +101,7 @@
     #method getAt : anIndex
     [
         #var(type:byte)aRetVal.
-        $self read &index:(anIndex index) &vbyte:aRetVal.
+        $self read &index:(anIndex int) &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
     ]        
@@ -159,7 +159,7 @@
     #method getAt : anIndex
     [
         #var(type:short)aRetVal.
-        $self read &index:(anIndex index) &vshort:aRetVal.
+        $self read &index:(anIndex int) &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
     ]        
@@ -225,7 +225,7 @@
     #method getAt : anIndex
     [
         #var(type:int)aRetVal.
-        $self read &index:(anIndex index) &vint:aRetVal.
+        $self read &index:(anIndex int) &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]        
@@ -283,7 +283,7 @@
     #method getAt : anIndex
     [
         #var(type:char)aRetVal.
-        $self read &index:(anIndex index) &vchar:aRetVal.
+        $self read &index:(anIndex int) &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
     ]        
