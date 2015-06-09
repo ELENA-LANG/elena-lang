@@ -52,6 +52,14 @@ protected:
    {
       _controller->doSave(true);
    }
+   void on_menu_project_saveas()
+   {
+      _controller->doSaveProject(true);
+   }
+   void on_menu_file_saveall()
+   {
+      _controller->doSave(true);
+   }
    void on_menu_file_close()
    {
       _controller->doCloseFile();
@@ -59,6 +67,10 @@ protected:
    void on_menu_file_closeall()
    {
       _controller->doCloseAll(false);
+   }
+   void on_menu_file_closeproject()
+   {
+      _controller->doCloseAll(true);
    }
    void on_menu_file_closeallbutactive()
    {

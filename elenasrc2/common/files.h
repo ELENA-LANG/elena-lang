@@ -110,6 +110,14 @@ public:
 
 #endif
 
+   static bool checkExtension(path_t path)
+   {
+      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+      int dotpos = StringHelper::findLast(path + index, '.', -1   );
+
+      return dotpos != -1;
+   }
+
    void combine(path_t path, size_t length)
    {
       if (length > 0) {
@@ -224,6 +232,14 @@ public:
 
       copy(path + index, dotpos - index);
       _string[dotpos - index] = 0;
+   }
+
+   void copyExtension(path_t path)
+   {
+      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+      int dotpos = StringHelper::findLast(path, '.', getlength(path));
+
+      copy(path + dotpos + 1);
    }
 
    FileName(path_t path)

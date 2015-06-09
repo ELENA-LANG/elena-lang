@@ -68,9 +68,12 @@ static Glib::ustring ui_info =
         "      <separator/>"
         "      <menuitem action='FileSave'/>"
         "      <menuitem action='FileSaveAs'/>"
+        "      <menuitem action='FileProjectAs'/>"
+        "      <menuitem action='FileSaveAll'/>"
         "      <separator/>"
         "      <menuitem action='FileClose'/>"
         "      <menuitem action='FileCloseAll'/>"
+        "      <menuitem action='ProjectClose'/>"
         "      <menuitem action='FileCloseAllButActive'/>"
         "      <separator/>"
         "      <menuitem action='FileQuit'/>"
@@ -96,9 +99,12 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_open_project));
    _refActionGroup->add( Gtk::Action::create("FileSave", "Save"), sigc::mem_fun(*this, &MainWindow::on_menu_file_save));
    _refActionGroup->add( Gtk::Action::create("FileSaveAs", "Save As..."), sigc::mem_fun(*this, &MainWindow::on_menu_file_saveas));
+   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_saveas));
+   _refActionGroup->add( Gtk::Action::create("FileSaveAll", "Save All"), sigc::mem_fun(*this, &MainWindow::on_menu_file_saveall));
    _refActionGroup->add( Gtk::Action::create("FileClose", "Close"), sigc::mem_fun(*this, &MainWindow::on_menu_file_close));
    _refActionGroup->add( Gtk::Action::create("FileCloseAll", "Close All"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeall));
-   _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeallbutactive));
+   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_close));
+   _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeproject));
    _refActionGroup->add( Gtk::Action::create("FileQuit", Gtk::Stock::QUIT), sigc::mem_fun(*this, &MainWindow::on_menu_file_quit));
 
    loadUI(ui_info, "/MenuBar");

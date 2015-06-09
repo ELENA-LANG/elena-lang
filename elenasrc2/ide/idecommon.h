@@ -140,6 +140,7 @@ struct ProjectScope
    bool                   changed;
    _ELENA_::IniConfigFile config;
    _ELENA_::FileName      name;
+   _ELENA_::FileName      extension;
    _ELENA_::Path          path;
 
    ProjectScope()
@@ -182,7 +183,7 @@ public:
    virtual _ELENA_::path_t getAppPath() = 0;
 
    virtual int getDebugMode() = 0;
-      
+
    virtual void retrievePath(_ELENA_::ident_t name, _ELENA_::Path & path, _ELENA_::path_t extension) = 0;
 
    virtual const char* getPackage() = 0;
@@ -247,7 +248,7 @@ public:
    Point  lastCaret;
    int    defaultEncoding;
    bool   autoDetecting;
-   size_t tabSize; 
+   size_t tabSize;
    bool   tabCharUsing;
    bool   lineNumberVisible;
    bool   highlightSyntax;
@@ -257,12 +258,12 @@ public:
    size_t font_size;
 
    //   static bool debugTape;
-   
+
    int getDocumentIndex(_ELENA_::path_t path)
    {
       return mappings.get(path);
    }
-   
+
    _ELENA_::path_t getDocumentPath(int index)
    {
       return _ELENA_::retrieveKey(mappings.start(), index, DEFAULT_TEXT);
@@ -304,7 +305,7 @@ public:
          it++;
       }
    }
-   
+
    bool isDocumentUnnamed(int index)
    {
       Document* doc = getDocument(index);
@@ -315,10 +316,10 @@ public:
    void removeDocument(int index)
    {
       documents.cut(documents.get(index));
-      
+
       _ELENA_::path_t path = _ELENA_::retrieveKey(mappings.start(), index, (_ELENA_::path_t)NULL);
       mappings.erase(path);
-      
+
       DocMapping::Iterator it = mappings.start();
       int i = 0;
       while (!it.Eof()) {
@@ -332,11 +333,11 @@ public:
    {
       return (currentDoc != NULL) && currentDoc->status.readOnly;
    }
-   
+
    bool isProjectUnnamed() const
    {
       return project.name.isEmpty();
-   }   
+   }
 
    bool isProjectChanged() const
    {
@@ -346,10 +347,10 @@ public:
    FrameState getFrameState()
    {
       int states = editEmpty;
-   
+
       if (currentDoc != NULL) {
          states = editHasDocument;
-   
+
          // check document statesqwe
          if (currentDoc->hasSelection())
             states |= editHasSelection;
@@ -383,7 +384,7 @@ public:
       tabSize = 4;
       tabCharUsing = false;
       lineNumberVisible = true;
-      highlightSyntax = true; 
+      highlightSyntax = true;
       highlightBrackets = true;
       defaultEncoding = _ELENA_::feUTF8;
       scheme = 0;

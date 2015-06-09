@@ -64,7 +64,7 @@ class IDEController : public _Controller
       bool open(_ELENA_::path_t path);
       void refresh();
       void reset();
-      void save();
+      void save(_ELENA_::path_t extension);
 
       void rename(_ELENA_::path_t path);
 
@@ -102,7 +102,7 @@ class IDEController : public _Controller
       HighlightInfo info;
       int           style;
       int           bandStyle;
-   
+
       MarkerInfo()
       {
          this->bandStyle = -1;
@@ -365,7 +365,7 @@ class IDEController : public _Controller
       _model->hexNumberMode = !_model->hexNumberMode;
       _view->refreshDebugWindows(&_debugController);
    }
-   
+
    virtual void doGotoSource()
    {
       _debugController.showCurrentModule();

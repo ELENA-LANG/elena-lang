@@ -495,7 +495,7 @@ int AboutDialog :: showModal()
 
 // --- ProjectSettingsDialog ---
 
-ProjectSettingsDialog :: ProjectSettingsDialog()
+ProjectSettingsDialog :: ProjectSettingsDialog(_ProjectManager* project)
    : _projectFrame("Project"), _compilerFrame("Compiler"),
      _linkerFrame("Linker"), _debuggerFrame("Debugger"),
      _typeLabel("Type"), _namespaceLabel("Namespace"),
@@ -503,6 +503,8 @@ ProjectSettingsDialog :: ProjectSettingsDialog()
      _targetLabel("Target file name"), _outputLabel("Output path"),
      _modeLabel("Debug mode"), _argumentsLabel("Command arguments")
 {
+   _project = project;
+
    Gtk::Box *box = get_vbox();
 
    box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
@@ -545,8 +547,92 @@ ProjectSettingsDialog :: ProjectSettingsDialog()
    _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
    _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
 
-   add_button("Yes", Gtk::RESPONSE_YES);
-   add_button("No", Gtk::RESPONSE_NO);
+   add_button("OK", Gtk::RESPONSE_OK);
+   add_button("Cancel", Gtk::RESPONSE_CANCEL);
+
+   populate();
 
    show_all_children();
+}
+
+void ProjectSettingsDialog :: setText(Gtk::Entry& control, const char* value)
+{
+   if (!_ELENA_::emptystr(value)) {
+      control.set_text(value);
+   }
+}
+
+void ProjectSettingsDialog :: loadTemplateList()
+{
+   _ELENA_::Path configPath("/etc/elena/elc.config");
+
+   _ELENA_::IniConfigFile config;
+   if (!config.load(configPath, _ELENA_::feUTF8))
+      return;
+
+   const char* curTemplate = _project->getTemplate();
+
+   int current = 0;
+   for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt("templates") ; !it.Eof() ; it++, current++) {
+      _typeCombobox.append(it.key());
+
+      if (_ELENA_::StringHelper::compare(curTemplate, it.key()))
+         _typeCombobox.set_active(current);
+   }
+}
+
+void ProjectSettingsDialog :: populate()
+{
+   setText(_namespaceText, _project->getPackage());
+   setText(_targetText, _project->getTarget());
+   setText(_outputText, _project->getOutputPath());
+   setText(_argumentsText, _project->getArguments());
+   setText(_optionsText, _project->getOptions());
+
+   _modeCombobox.append("Disabled");
+   _modeCombobox.append("Enabled");
+
+   int mode = _project->getDebugMode();
+   if (mode != 0) {
+      _modeCombobox.set_active(1);
+   }
+   else _modeCombobox.set_active(1);
+
+   _warningCheckbox.set_active(_project->getBoolSetting("warn:unresolved"));
+
+   loadTemplateList();
+}
+
+void ProjectSettingsDialog :: save()
+{
+   Glib::ustring path = _targetText.get_text();
+   if (!path.empty()) {
+      _project->setTarget(path.c_str());
+   }
+   else _project->setTarget(NULL);
+
+   path = _argumentsText.get_text();
+   _project->setArguments(path.c_str());
+
+   path = _outputText.get_text();
+   _project->setOutputPath(path.c_str());
+
+   path = _optionsText.get_text();
+   _project->setOptions(path.c_str());
+
+   Glib::ustring name = _namespaceText.get_text();
+   _project->setPackage(name.c_str());
+
+   if (_typeCombobox.get_active_id() != -1) {
+      name = _typeCombobox.get_active_text();
+      _project->setTemplate(name.c_str());
+   }
+
+   int index = _modeCombobox.get_active_row_number();
+   if (index == 1) {
+      _project->setDebugMode(-1);
+   }
+   else _project->setDebugMode(0);
+
+   _project->setBoolSetting("warn:unresolved", _warningCheckbox.get_active());
 }

@@ -160,8 +160,17 @@ class ProjectSettingsDialog : public Gtk::Dialog
    Gtk::Label _argumentsLabel;
    Gtk::Entry _argumentsText;
 
+   _ProjectManager* _project;
+
+   void setText(Gtk::Entry& control, const char* value);
+
+   void loadTemplateList();
+   void populate();
+
 public:
-   ProjectSettingsDialog();
+   ProjectSettingsDialog(_ProjectManager* project);
+
+   void save();
 };
 
 //// --- FindDialog ---

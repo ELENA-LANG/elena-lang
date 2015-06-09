@@ -52,12 +52,37 @@ public:
 
    virtual bool saveProject(Model* model, _ELENA_::Path& path)
    {
-//      FileDialog dialog(&appWindow, FileDialog::ProjectFilter, SAVEAS_PROJECT_CAPTION, model->project.path);
-//
-//      return dialog.saveFile(_T("prj"), path);
-//
-//
-      return false; // !!
+      Gtk::FileChooserDialog dialog(SAVEAS_PROJECT_CAPTION, Gtk::FILE_CHOOSER_ACTION_SAVE);
+      dialog.set_transient_for(appWindow);
+
+      if (!_ELENA_::emptystr(model->project.path))
+         dialog.set_current_folder((const char*)model->project.path);
+
+      dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+      dialog.add_button("_Save", Gtk::RESPONSE_OK);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+      filter_l->set_name("ELENA project file");
+      filter_l->add_pattern("*.project");
+      dialog.add_filter(filter_l);
+
+      Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+      filter_any->set_name("Any files");
+      filter_any->add_pattern("*");
+      dialog.add_filter(filter_any);
+
+      int result = dialog.run();
+      if (result == Gtk::RESPONSE_OK) {
+         std::string filename = dialog.get_filename();
+
+         path.copy(filename.c_str());
+
+         if(!_ELENA_::Path::checkExtension(path))
+            path.append(".project");
+
+         return true;
+      }
+      else return false;
    }
 
    virtual bool saveFile(Model* model, _ELENA_::Path& newPath)
@@ -339,9 +364,13 @@ public:
 
    virtual bool configProject(_ProjectManager* project)
    {
-      ProjectSettingsDialog dlg/*(&appWindow, project)*/;
+      ProjectSettingsDialog dlg(project);
+      if (dlg.run() == Gtk::RESPONSE_OK) {
+         dlg.save();
 
-      return dlg.run() != 0;
+         return true;
+      }
+      else return false;
    }
 
    virtual bool configEditor(Model* model)
