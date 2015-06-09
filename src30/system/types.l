@@ -1,5 +1,11 @@
 // ==== ver 3.2.0 ===
 
+// === weak system types ===
+#subject object.
+
+// === basic logical types ===
+#subject(class:system'BaseBoolValue) bool.
+
 // === basic stack allocated types ===
 
 #subject(class:system'ByteNumber)   byte.
@@ -7,6 +13,19 @@
 #subject(class:system'IntNumber)    int.
 #subject(class:system'LongNumber)   long.
 #subject(class:system'RealNumber)   real.
+
+#subject(class:system'IntNumber)    length.
+#subject(class:system'IntNumber)    index.
+
+#subject(class:system'Integer)      vint.
+#subject(class:system'Long)         vlong.
+#subject(class:system'Real)         vreal.
+#subject(class:system'Byte)         vbyte.
+#subject(class:system'Short)        vshort.
+
+
+
+
 
 #subject(class:system'Signature)    subject.
 #subject(class:system'Message)      mssg.
@@ -28,17 +47,10 @@
 #subject(class:system'OpenArgs)         args.
 #subject(class:system'CharValue)        char.
 
-#subject(class:system'Integer)          vint.
-#subject(class:system'Long)             vlong.
-#subject(class:system'Real)             vreal.
-#subject(class:system'Byte)             vbyte.
-#subject(class:system'Short)            vshort.
 #subject(class:system'Char)             vchar.
 #subject(class:system'MessageVar)       vmssg.
 
 // === int synonyms ===
-#subject(class:system'IntNumber)        length.
-#subject(class:system'IntNumber)        index.
 #subject(class:system'IntNumber)        offset.
 #subject(class:system'IntNumber)        int_attributes.
 
@@ -57,7 +69,6 @@
 #subject(class:system'Signature)    error_type.
 
 // === logical types ===
-#subject(class:system'BaseBoolValue) bool.
 
 #subject string.
 

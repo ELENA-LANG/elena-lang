@@ -29,7 +29,7 @@
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &point:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &point:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &point:$self.
     
     #method clone = Point new &x:theX &y:theY.
     
@@ -185,7 +185,7 @@
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dimension:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &dimension:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dimension:$self.
     
     #method clone = Dimension new &width:theWidth &height:theHeight.
     
@@ -237,7 +237,7 @@
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &region:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &region:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &region:$self.
     
     #method clone = Region new &int:theX &int:theY &int:theWidth &int:theHeight.
     

@@ -48,7 +48,7 @@
 
         control run:theCombinator &seeking: v
         [
-            ^ aCondition cast:%eval &with:v &to:dispatcher.
+            ^ aCondition cast:%eval &to:dispatcher &with:v.
         ].
     ]
     
@@ -56,7 +56,7 @@
     [
         #var aResult := theCombinator get.
         (nil != aResult)
-            ? [ aFunction cast:%eval &with:aResult &to:dispatcher. ]
+            ? [ aFunction cast:%eval &to:dispatcher &with:aResult. ]
             ! [ #throw InvalidArgumentException new. ].
     ]
 }

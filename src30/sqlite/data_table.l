@@ -19,14 +19,14 @@
     ]
 
     #method getAt : aSelector
-        = aSelector cast:%eval &with:$self &to:
+        = aSelector cast:%eval &to:
             {
                 eval : aTable &int : anInt = aTable getAt &index:anInt.
                 
                 eval : aTable &literal : aFieldName = aTable getAt &literal:aFieldName.
                 
                 eval : aTable &wide : aFieldName = aTable getAt &literal:(aFieldName literal).
-            }.
+            } &with:$self.
 
     #method getAt &index:anIndex
         = theRows getAt &index:anIndex.

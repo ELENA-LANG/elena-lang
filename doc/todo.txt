@@ -20,11 +20,11 @@ v  - vm script
 ------                                 
 Currently:
 ------                                              
-              idev - linux:              
-                       * new project
+              adev - code review
+                       *  n shift:x   - n shift &index:x
 
               xdev - script engine
-                       * review script
+                       * review script engine architecture : vm commands, grammar, ...
 
               xdev - linux:
                        * fix #2 issue
@@ -34,6 +34,11 @@ Currently:
 
               xdev - script engine
                        * reimplement script samples: interpreter, helloworld, vmconsole
+
+              adev - lib30     
+                       * sqlite : support float
+                       * sqlite : support blob
+                       * implement file search
 
 <=================> 
                                                                                                                             
@@ -54,15 +59,9 @@ week2:
 
               xdev - general implementation
                        * resolve issue #15
-
-              adev - lib30     
-                       * sqlite : support float
-                       * sqlite : support blob
-                       * implement file search
                                                                                                                              
               idev - linux:              
-                       * new project
-                       * save last open path
+                       * save last open path (should be saved in the current path??)
                        * editor
                        * project compilation / clean / run
                        * recent open files / projects
@@ -73,6 +72,7 @@ week2:
                        * add hot keys
                        * TextView: cursor blinking
                        * IDE UI : facelifting, tuning
+                       * test : new project, new file, include, exclude, save, ...
                        
               adev - linux lib30:
                        * core : implement INIT_RND
