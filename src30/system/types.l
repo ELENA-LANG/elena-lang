@@ -1,5 +1,14 @@
 // ==== ver 3.2.0 ===
 
+// === weak system types ===
+#subject object.
+
+// === strong system types ===
+#subject(class:system'BaseBoolValue) bool.
+
+
+
+
 // === basic stack allocated types ===
 
 #subject(class:system'ByteNumber)   byte.
@@ -57,7 +66,6 @@
 #subject(class:system'Signature)    error_type.
 
 // === logical types ===
-#subject(class:system'BaseBoolValue) bool.
 
 #subject string.
 

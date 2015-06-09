@@ -154,7 +154,7 @@
 
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timespan:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &timespan:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &timespan:$self.
 }
 
 // --- Date ---
@@ -370,7 +370,7 @@
         
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &datetime:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &datetime:$self.
     
     #method datetime = $self.
 

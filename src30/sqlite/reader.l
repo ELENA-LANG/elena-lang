@@ -32,14 +32,14 @@
     ]
     
     #method getAt : aSelector
-        = aSelector cast:%eval &with:$self &to:
+        = aSelector cast:%eval &to:
             {
                 eval : aReader &int : anInt = aReader getAt &index:anInt.
                 
                 eval : aReader &literal : aFieldName = aReader getAt &literal:aFieldName.
                 
                 eval : aReader &wide : aFieldName = aReader getAt &literal:(aFieldName literal).
-            }.
+            } &with:$self.
     
     #method getAt &index:anIndex
     [

@@ -2,44 +2,60 @@
 
 // --- BaseValue ---
 
+/// A base value
 #class BaseValue
 {
+    /// Compares the values
     #method equal : anObject = anObject cast:%equal &to:$self bool.
 
+    /// Compares the values
     #method(type:bool) less : anObject = anObject cast:%less &to:$self bool.
 
+    /// Compares the values
     #method(type:bool) greater : anObject = anObject less:$self bool.
 }
 
 // --- BaseNumber ---
 
+/// A base numeric value
 #class BaseNumber :: BaseValue
 {
+    /// Adds the value
     #method add : anObject = anObject cast:%add &to:$self.
 
+    /// Subtracts the value
     #method subtract : anObject = anObject cast:%subtract &to:$self.
 
+    /// Multiply by the value
     #method multiply : anObject = anObject cast:%multiply &to:$self.
 
+    /// Divides into the value
     #method divide : anObject = anObject cast:%divide &to:$self.
 }
 
 // --- IntBaseNumber ---
 
+/// A base integer value
 #class IntBaseNumber :: BaseNumber
 {
+    /// Execute bitwise AND operation
     #method and : anObject = anObject cast:%and &to:$self.
     
+    /// Execute bitwise OR operation
     #method or : anObject = anObject cast:%or &to:$self.
     
+    /// Execute bitwise XOR operation
     #method xor : anObject = anObject cast:%xor &to:$self.
     
+    /// Returns true if all the mask bits are set
     #method allMask : anOperand
         = $self and:anOperand == anOperand.
         
+    /// Returns true if any of the mask bits are set    
     #method anyMask : anOperand
         = 0 != $self and:anOperand.
         
+    /// Returns the negated value        
     #method negative = 0 subtract:$self.
 }
 

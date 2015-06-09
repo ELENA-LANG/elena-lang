@@ -88,7 +88,7 @@
                    } wide.
 
      #method(type:wide) toWide : anObject &base:aBase
-        = anObject cast:%eval &with:aBase &to:
+        = anObject cast:%eval &to:
                    { 
                       eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &index:(aBase int).
                       
@@ -98,11 +98,11 @@
                       
                       eval : aBase &long : anInt = wideConvertor convert &long:anInt &index:(aBase int).
                       
-                   } wide.
+                   } &with:aBase wide.
                                       
     #method(type:array) toArray : anEnumerable
         = anEnumerable::enumerableOp array.
 
     #method save : anObject &to:aTarget
-        = aTarget write:(aTarget cast:%eval &with:anObject &to:{ ! : x : y = (Variant new:x)::$subject get. }).
+        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:anObject).
 }.
