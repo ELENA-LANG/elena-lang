@@ -13,6 +13,7 @@
 #subject(class:system'IntNumber)    int.
 #subject(class:system'LongNumber)   long.
 #subject(class:system'RealNumber)   real.
+#subject(class:system'CharValue)    char.
 
 #subject(class:system'IntNumber)    length.
 #subject(class:system'IntNumber)    index.
@@ -22,6 +23,7 @@
 #subject(class:system'Real)         vreal.
 #subject(class:system'Byte)         vbyte.
 #subject(class:system'Short)        vshort.
+#subject(class:system'Char)         vchar.
 
 
 
@@ -45,9 +47,7 @@
 
 #subject(class:system'OpenArgs)         params.
 #subject(class:system'OpenArgs)         args.
-#subject(class:system'CharValue)        char.
 
-#subject(class:system'Char)             vchar.
 #subject(class:system'MessageVar)       vmssg.
 
 // === int synonyms ===

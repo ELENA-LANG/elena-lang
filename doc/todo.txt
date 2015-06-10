@@ -22,6 +22,7 @@ Currently:
 ------                                              
               adev - code review
                        *  n shift:x   - n shift &index:x
+                       * fix struct test
 
               xdev - script engine
                        * review script engine architecture : vm commands, grammar, ...
@@ -31,6 +32,10 @@ Currently:
                        * fix #3 issue
                        * linux32 : implement console clear
                        * implement textdb sample
+
+
+               xdev - general implementation
+                       * implement #21 issue
 
               xdev - script engine
                        * reimplement script samples: interpreter, helloworld, vmconsole

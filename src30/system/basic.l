@@ -2310,49 +2310,75 @@
 
 // --- CharValue ---
 
+/// An UTF-32 character symbol
 #class(sealed,integer:4) CharValue :: BaseValue
 {
+    /// Creates the object with a default value (0)
     #constructor new
         => system'internal'int_init.        
 
+    /// Creates the object with specified value
     #constructor new &char:anOperand
         => system'internal'int_copy.
 
+    /// Creates the object with specified value
+    #constructor new : anOperand
+        <= new &char:(anOperand cast:%convert &to:charConvertor char).
+
+    /// Creates the object with specified numeric value
+    #constructor new &int:anOperand
+        <= new &char:(charConvertor convert &int:anOperand).
+
+    /// Returns the minimal possible character value (0)
     #constructor min
         <= %new &char:#0.
 
+    /// Returns the maximal possible character value (010FFFFh)
     #constructor max
         <= %new &char:#010FFFFh.
 
+    /// Returns itself
     #method char = $self.
 
+    /// Returns the numeric value
     #method int = intConvertor convert &char:$self.
     
+    /// Compares values
     #method equal &char:anOperand 
         => system'internal'int_equal.
 
+    /// Compares values
     #method less &char:anOperand 
         => system'internal'int_less.
 
+    /// Compares values
     #method equal &int:anOperand 
         => system'internal'int_equal.
 
+    /// Compares values
     #method less &int:anOperand 
         => system'internal'int_less.
 
+    /// Clones the value
     #method clone = CharValue new &char:$self.
-    
+
+    /// Dispatches the verb to the target object with char subject
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &char:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &char:$self.
+    /// Dispatches the verb to the target object with char subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
 
+    /// Returns the literal value
     #method literal = literalConvertor convert &char:$self.
 
+    /// Returns the wide literal value
     #method wide = wideConvertor convert &char:$self.
     
+    /// Reads the number of bytes to represent the symbol
     #method readLength &vint:aLength
         => system'internal'char_getlen.
         
+    /// Retuns the number of bytes to represent the symbol        
     #method length
     [
         #var(type:int)aLength.
@@ -2364,56 +2390,80 @@
 
 // --- Char ---
 
+/// An UTF-32 character variable
+///
+/// Extends CharValue class
 #class(sealed,struct:embeddable) Char :: BaseVariable
 {
     #field(type:char)theValue.
     
+    /// Creates a variable with a default value (0)
     #constructor new
     [
         theValue := #0.
     ]
     
+    /// Creates a variable with a specified value
     #constructor new : aValue   
     [
         theValue := aValue char.
     ]
     
+    /// Creates a variable with a specified value
     #constructor new &char:aValue
     [
         theValue := aValue.
     ]
     
+    /// Creates a variable with a specified value
+    #constructor new &int:aValue
+    [
+        theValue := charConvertor convert &int:aValue.
+    ]
+    
+    /// Returns itself
     #method vchar = $self.
     
+    /// Returns the character value
     #method char = CharValue new &char:theValue.
     
+    /// Copies the character value
     #method write &char:anOperand
     [
         theValue := anOperand.
     ]
     
+    /// Reads the character value
     #method read &vchar:aRetVal
     [
         aRetVal << theValue.
     ]
     
+    /// Compares values
     #method(type:bool) equal &char:anOperand 
         = theValue == anOperand.
 
+    /// Compares values
     #method(type:bool) less &char:anOperand
         = theValue < anOperand.
-        
+
+    // Returns the value        
     #method value = CharValue new &char:theValue.
 
+    /// Returns the literal value
     #method literal = literalConvertor convert &char:theValue.
 
+    /// Returns the literal value
     #method wide = wideConvertor convert &char:theValue.
 
+    /// Clones the variable
     #method clone = Char new &char:theValue.
     
+    /// Reads the number of bytes to represent the symbol
     #method readLength &vint:aLength
         => system'internal'char_getlen.
         
+    /// Retuns the number of bytes to represent the symbol        
     #method length
     [
         #var(type:int)aLength.
@@ -2422,35 +2472,46 @@
         ^ IntNumber new &int:aLength.
     ]
     
+    /// Dispatches the verb to the target object with char subject
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &char:(CharValue new &char:theValue).
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &char:(CharValue new &char:theValue).
+    /// Dispatches the verb to the target object with char subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:(CharValue new &char:theValue).
 
+    /// Extends the character value
     #method => theValue.    
 }
 
 // === Basic Factory symbols ==
 
+/// A generic variable. 
+///
+/// Extends an assigned value
 #class Variable
 {
     #field theValue.
     
+    /// Creates the empty variable
     #constructor new
     [
     ]        
         
+    /// Creates the variable
     #constructor new : aValue
     [
         theValue := aValue.
     ]
   
+    /// Assigns the variable
     #method write : aValue
     [
         theValue := aValue.
     ]
         
+    /// Returns the value
     #method value = theValue.        
-        
+
+    /// Appends the value
     #method append : aValue
     [
         ($nil == theValue)
@@ -2458,31 +2519,31 @@
             ! [ theValue := theValue + aValue. ].
     ]
     
+    /// Subtracts the value
     #method reduce : aValue
     [
-        ($nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue - aValue. ].
+        theValue := theValue - aValue.
     ]
 
+    /// Multiplies by the value
     #method multiplyBy : aValue
     [
-        ($nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue * aValue. ].
+        theValue := theValue * aValue.
     ]
     
+    /// Divides into the value
     #method divideInto : aValue
     [
-        ($nil == theValue)
-            ? [ theValue := aValue. ]
-            ! [ theValue := theValue / aValue. ].
+        theValue := theValue / aValue.
     ]
     
+    /// Dispatches the verb to the target object
     #method cast : aVerb &to:aTarget => theValue.
     
-    #method cast : aVerb &with:aParam &to:aTarget => theValue.
-        
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theValue.
+
+    /// Expands the value
     #method => theValue.
 }
 
