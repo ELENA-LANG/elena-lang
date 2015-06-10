@@ -2386,6 +2386,18 @@
         
         ^ IntNumber new &int:aLength.
     ]
+    
+    /// Retuns the number of short integers to represent the symbol
+    #method wideLength
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        aLength := aLength + 1.
+        aLength := aLength / 2.
+        
+        ^ IntNumber new &int:aLength.
+    ]
 }
 
 // --- Char ---
@@ -2551,32 +2563,42 @@
 
 // --- convertor helpers ---
 
+/// A byte convertor
 #symbol byteConvertor =
 {
+    /// Converts a character into a byte value and saves the result into an output parameter
     #method convert &char:aValue &vbyte:aRetVal
         => system'internal'byte_copychar.
         
+    /// Converts a short integer into a byte value and saves the result into an output parameter
     #method convert &short:aValue &vbyte:aRetVal
         => system'internal'byte_copyword.
         
+    /// Converts an integer into a byte value and saves the result into an output parameter
     #method convert &int:aValue &vbyte:aRetVal
         => system'internal'byte_copyint.
         
+    /// Converts a long integer into a byte value and saves the result into an output parameter
     #method convert &long:aValue &vbyte:aRetVal
         => system'internal'byte_copylong.
         
+    /// Converts a real number into a byte value and saves the result into an output parameter
     #method convert &real:aValue &vbyte:aRetVal
         => system'internal'byte_copyreal.
         
+    /// Converts a literal value into a byte value and saves the result into an output parameter
     #method convert &literal:aValue &vbyte:aRetVal
         => system'internal'byte_copystr.
         
+    /// Converts a wide literal value into a byte value and saves the result into an output parameter
     #method convert &wide:aValue &vbyte:aRetVal
         => system'internal'byte_copywstr.
         
+    /// Returns the parameter        
     #method(type:byte) convert &byte:anInt
         = ByteNumber new &byte:(anInt).
         
+    /// Converts a character into a byte value
     #method(type:byte) convert &char:aValue
     [
         #var(type:byte)aRetVal.
@@ -2585,6 +2607,7 @@
         ^ ByteNumber new &byte:aRetVal.
     ]
         
+    /// Converts a short integer into a byte value
     #method(type:byte) convert &short:aValue
     [
         #var(type:byte)aRetVal.
@@ -2593,6 +2616,7 @@
         ^ ByteNumber new &byte:aRetVal.
     ]
         
+    /// Converts an integer into a byte value
     #method(type:byte) convert &int:aValue
     [
         #var(type:byte)aRetVal.
@@ -2601,6 +2625,7 @@
         ^ ByteNumber new &byte:aRetVal.
     ]
         
+    /// Converts a long integer into a byte value
     #method(type:byte) convert &long:aValue
     [
         #var(type:byte)aRetVal.
@@ -2609,6 +2634,7 @@
         ^ ByteNumber new &byte:aRetVal.
     ]
         
+    /// Converts a real number into a byte value
     #method(type:byte) convert &real:aValue
     [
         #var(type:byte)aRetVal.
@@ -2617,6 +2643,7 @@
         ^ ByteNumber new &byte:aRetVal.
     ]
                 
+    /// Converts a literal value into a byte value
     #method(type:byte) convert &literal:aLiteral
     [
         #var(type:byte)aValue.
@@ -2625,6 +2652,7 @@
         ^ ByteNumber new &byte:aValue.
     ]
                 
+    /// Converts a wide literal value into a byte value
     #method(type:byte) convert &wide:aLiteral
     [
         #var(type:byte)aValue. 
@@ -2634,32 +2662,42 @@
     ]
 }.
 
+/// A 16bit integer convertor
 #symbol shortConvertor =
 {
+    /// Converts a character into a short integer value and saves the result into an output parameter
     #method convert &char:aValue &vshort:aRetVal
         => system'internal'word_copychar.
         
+    /// Converts a byte value into a short integer value and saves the result into an output parameter
     #method convert &byte:aValue &vshort:aRetVal
         => system'internal'word_copybyte.
         
+    /// Converts an integer into a short integer value and saves the result into an output parameter
     #method convert &int:aValue &vshort:aRetVal
         => system'internal'word_copyint.
         
+    /// Converts a long integer into a short integer value and saves the result into an output parameter
     #method convert &long:aValue &vshort:aRetVal
         => system'internal'word_copylong.
         
+    /// Converts a real number into a short integer value and saves the result into an output parameter
     #method convert &real:aValue &vshort:aRetVal
         => system'internal'word_copyreal.
         
+    /// Converts a literal string into a short integer value and saves the result into an output parameter
     #method convert &literal:aValue &vshort:aRetVal
         => system'internal'word_copystr.
         
+    /// Converts a wide literal string into a short integer value and saves the result into an output parameter
     #method convert &wide:aValue &vshort:aRetVal
         => system'internal'word_copywstr.
         
+    /// Returns a short integer value        
     #method(type:short) convert &short:anInt
         = ShortNumber new &short:anInt.
         
+    /// Converts a byte value into a short integer value
     #method(type:short) convert &byte:aValue
     [
         #var(type:short)aRetVal.
@@ -2668,6 +2706,7 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
+    /// Converts an integer into a short integer value
     #method(type:short) convert &int:aValue
     [
         #var(type:short)aRetVal.
@@ -2676,6 +2715,7 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
+    /// Converts a long integer into a short integer value
     #method(type:short) convert &long:aValue
     [
         #var(type:short)aRetVal.
@@ -2684,6 +2724,7 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
+    /// Converts a real number into a short integer value
     #method(type:short) convert &real:aValue
     [
         #var(type:short)aRetVal.
@@ -2692,6 +2733,7 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
+    /// Converts a character into a short integer value
     #method(type:short) convert &char:aValue
     [
         #var(type:short)aRetVal.
@@ -2700,6 +2742,7 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
+    /// Converts a literal string into a short integer value
     #method(type:short) convert &literal:aValue
     [
         #var(type:short)aRetVal.
@@ -2708,6 +2751,7 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
+    /// Converts a wide literal string into a short integer value
     #method(type:short) convert &wide:aValue
     [
         #var(type:short)aRetVal.
@@ -2717,17 +2761,22 @@
     ]
 }.
 
+/// An Unicode character convertor
 #symbol charConvertor =
 {
+    /// Converts a byte value into a character and saves the result into an output parameter
     #method convert &byte:aValue &vchar:aRetVal
         => system'internal'char_savebyte.
         
+    /// Converts a short integer into a character and saves the result into an output parameter
     #method convert &short:aValue &vchar:aRetVal
         => system'internal'char_saveshort.
         
+    /// Converts an integer into a character and saves the result into an output parameter
     #method convert &int:aValue &vchar:aRetVal
         => system'internal'char_saveint.
         
+    /// Returns a parameter        
     #method(type:char)convert &char:aChar
         = CharValue new &char:aChar.
   
@@ -2742,7 +2791,14 @@
         
     #method(type:char) $convert &index:anIndex &shortarray:aLiteral &vchar:char
         => system'internal'char_copywstr.
-        
+
+    #method $save &char:aChar &index:anIndex &shortarray:aCharArray &vlength:aLength
+        => system'internal'sa_copychar.
+    
+    #method $save &char:aChar &index:anIndex &bytearray:aCharArray &vlength:aLength
+        => system'internal'ba_copychar.
+
+    /// Converts a literal string into a character                
     #method(type:char) convert &literal:aValue
     [
         #var(type:char)aRetVal.
@@ -2754,17 +2810,19 @@
         ^ CharValue new &char:aRetVal.
     ]        
         
+    /// Converts a wide literal string into a character                
     #method(type:char) convert &wide:aValue
     [
         #var(type:char)aRetVal.
         $self $convert &index:0 &wide:aValue &vchar:aRetVal.
         
-        (((aRetVal length + 1) / 2) != aValue length)
+        (aRetVal wideLength != aValue length)
             ? [ #throw system'InvalidArgumentException new. ].
         
         ^ CharValue new &char:aRetVal.
     ]        
         
+    /// Converts a byte value into a character
     #method(type:char) convert &byte:aValue
     [
         #var(type:char)aRetVal.
@@ -2773,6 +2831,7 @@
         ^ CharValue new &char:aRetVal.
     ]        
         
+    /// Converts a short integer into a character
     #method(type:char) convert &short:aValue
     [
         #var(type:char)aRetVal.
@@ -2781,6 +2840,7 @@
         ^ CharValue new &char:aRetVal.
     ]        
         
+    /// Converts an integer into a character
     #method(type:char) convert &int:aValue
     [
         #var(type:char)aRetVal.
@@ -2788,37 +2848,40 @@
         
         ^ CharValue new &char:aRetVal.
     ]
-    
-    #method save &char:aChar &index:anIndex &shortarray:aCharArray &vlength:aLength
-        => system'internal'sa_copychar.
-    
-    #method save &char:aChar &index:anIndex &bytearray:aCharArray &vlength:aLength
-        => system'internal'ba_copychar.
 }.
 
+/// An integer convertor
 #symbol intConvertor =
 {
+    /// Converts a literal string into an integer and saves the result into an output parameter
     convert &literal:aValue &vint:aRetVal
         => system'internal'int_copystr.
 
+    /// Converts a wide literal string into an integer and saves the result into an output parameter
     convert &wide:aValue &vint:aRetVal
         => system'internal'int_copywstr.
 
+    /// Converts a character value into an integer and saves the result into an output parameter
     convert &char:aValue &vint:aRetVal
         => system'internal'int_saveint.
 
+    /// Converts a short integer value into an integer and saves the result into an output parameter
     convert &short:aValue &vint:aRetVal
         => system'internal'int_saveint.
 
+    /// Converts a byte value into an integer and saves the result into an output parameter
     convert &byte:aValue &vint:aRetVal
         => system'internal'int_saveint.
 
+    /// Converts a long integer into an integer and saves the result into an output parameter
     convert &long:aValue &vint:aRetVal
         => system'internal'int_savelong.
         
+    /// Converts a real number into an integer and saves the result into an output parameter
     convert &real:aReal &vint:aRetVal
         => system'internal'int_copyreal.
         
+    /// Converts a literal string into an integer
     #method(type:int) convert &literal:aLiteral
     [
         #var(type:int)aRetVal.
@@ -2827,6 +2890,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
         
+    /// Converts a wide literal string into an integer
     #method(type:int) convert &wide:aLiteral
     [
         #var(type:int)aRetVal.
@@ -2835,6 +2899,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
         
+    /// Converts a character value into an integer
     #method(type:int) convert &char:aValue
     [
         #var(type:int)aRetVal.
@@ -2843,6 +2908,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
         
+    /// Converts a byte value into an integer
     #method(type:int) convert &byte:aValue
     [
         #var(type:int)aRetVal.
@@ -2851,6 +2917,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
         
+    /// Converts a short integer value into an integer
     #method(type:int) convert &short:aValue
     [
         #var(type:int)aRetVal.
@@ -2859,6 +2926,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
         
+    /// Converts a long integer value into an integer and saves the result into an output parameter
     #method(type:int) convert &long:aValue
     [
         #var(type:int)aRetVal.
@@ -2867,6 +2935,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
+    /// Converts a long integer into an integer
     #method(type:int) convert &real:aReal
     [
         #var(type:int)aRetVal.
@@ -2874,31 +2943,40 @@
         
         ^ IntNumber new &int:aRetVal.
     ]
-                                    
+
+    /// Returns a parameter                                    
     #method(type:int) convert &int:anInt
         = IntNumber new &int:anInt.
 }.
 
+/// A long integer convertor
 #symbol longConvertor =
 {
+    /// Converts a literal string into a long integer and saves the result into an output parameter
     convert &literal:aValue &vlong:aRetVal
         => system'internal'long_copystr.
 
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
     convert &wide:aValue &vlong:aRetVal
         => system'internal'long_copywstr.
 
+    /// Converts a real number into a long integer and saves the result into an output parameter
     convert &real:aValue &vlong:aRetVal
         => system'internal'long_copyreal.
 
+    /// Converts an integer value into a long integer
     convert &int:aValue
         = LongNumber new &int:aValue.
 
+    /// Converts a byte into a long integer
     convert &byte:aValue
         = LongNumber new &byte:aValue.
 
+    /// Converts a short integer value into a long integer
     convert &short:aValue
         = LongNumber new &short:aValue.
 
+    /// Converts a real number into a long integer
     convert &real:aValue
     [
         #var(type:long)aRetVal.
@@ -2907,6 +2985,7 @@
         ^ LongNumber new &long:aRetVal.
     ]
 
+    /// Converts a character into a long integer
     convert &char:aValue
     [
         #var(type:int)aRetVal.
@@ -2915,7 +2994,8 @@
         ^ aRetVal long.
     ]
 
-    convert &literal:aLiteral
+    /// Converts a literal string into a long integer
+    #method(type:long) convert &literal:aLiteral
     [
         #var(type:long)aRetVal.
         $self convert &literal:aLiteral &vlong:aRetVal.
@@ -2923,7 +3003,8 @@
         ^ LongNumber new &long:aRetVal.
     ]
 
-    convert &wide:aLiteral
+    /// Converts a wide literal string into a long integer
+    #method(type:long) convert &wide:aLiteral
     [
         #var(type:long)aRetVal.
         $self convert &wide:aLiteral &vlong:aRetVal.
@@ -2931,22 +3012,28 @@
         ^ LongNumber new &long:aRetVal.
     ]
     
+    /// Returns a parameter
     convert &long:aLong
         = LongNumber new &long:aLong.
 }.
 
+/// A real number convertor
 #symbol realConvertor =
 {
+    /// Converts an integer into a real number and saves the result into an output parameter
     convert &int:aValue &vreal:aRetVal
         => system'internal'real_saveint.
 
+    /// Converts a literal string into a real number and saves the result into an output parameter
     convert &literal:aValue &vreal:aRetVal
         => system'internal'real_copystr.
         
+    /// Converts a wide literal string into a real number and saves the result into an output parameter
     convert &wide:aValue &vreal:aRetVal
         => system'internal'real_copywstr.
         
-    convert &literal:aLiteral
+    /// Converts a literal string into a real number
+    #method(type:real)convert &literal:aLiteral
     [
         #var(type:real)aRetVal.
         $self convert &literal:aLiteral &vreal:aRetVal.
@@ -2954,7 +3041,8 @@
         ^ RealNumber new &real:aRetVal.
     ]
         
-    convert &wide:aLiteral
+    /// Converts a wide literal string into a real number
+    #method(type:real)convert &wide:aLiteral
     [
         #var(type:real)aRetVal.
         $self convert &wide:aLiteral &vreal:aRetVal.
@@ -2962,106 +3050,139 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
+    /// Returns a parameter
     convert &real:aReal
         = RealNumber new &real:aReal.
         
+    /// Converts an integer into a real number
     convert &int:anInt
         = RealNumber new &int:anInt.
         
+    /// Converts a long integer into a real number
     convert &long:aLong
         = RealNumber new &long:aLong.
         
+    /// Converts a byte into a real number
     convert &byte:aValue
         = RealNumber new &byte:aValue.
         
+    /// Converts a short integer into a real number
     convert &short:aValue
         = RealNumber new &short:aValue.
 }.
 
 // --- literalConvertor ---
 
+/// A literal convertor
 #symbol literalConvertor =
 {
+    /// Converts the parameter to the literal value
     #method(type:literal) convert &char:aValue
         => system'internal's_copychar.
     
+    /// Converts the parameter to the literal value
     #method(type:literal) convert &int:aNumber
         => system'internal's_copyint.
 
+    /// Converts the parameter to the literal value
     #method(type:literal) convert &short:aNumber
         => system'internal's_copyint.
 
+    /// Converts the parameter to the literal value
     #method(type:literal) convert &byte:aNumber
         => system'internal's_copyint.
 
+    /// Converts the parameter to the literal value
     #method(type:literal) convert &long:aNumber
         => system'internal's_copylong.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:literal) convert &int:aNumber &index:aRadix
         => system'internal's_copyint_radix.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:literal) convert &short:aNumber &index:aRadix
         => system'internal's_copyint_radix.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:literal) convert &byte:aNumber &index:aRadix
         => system'internal's_copyint_radix.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:literal) convert &long:aNumber &index:aRadix
         => system'internal's_copylong_radix.
 
+    /// Converts the parameter to the literal value
     #method(type:literal) convert &real:aNumber
         => system'internal's_copyreal.
 
+    /// Converts UTF-16 literal to UTF-8 one
     #method(type:literal) convert &wide:aLiteral
         => system'internal'str_copywstr.
-        
+
+    /// Returns the literal presentation of the parameter
     #method(type:literal) convert : anObject
         = anObject literal.
-        
+
+    /// Returns a parameter                
     #method(type:literal) convert &literal:aLiteral
         = aLiteral.
 }.
 
 // --- wideConvertor ---
 
+/// A wide literal convertor
 #symbol wideConvertor =
 {
+    /// Converts the parameter to the literal value
     #method(type:wide) convert &char:aValue
         => system'internal'ws_copychar.
     
+    /// Converts the parameter to the literal value
     #method(type:wide) convert &int:aNumber
         => system'internal'ws_copyint.
 
+    /// Converts the parameter to the literal value
     #method(type:wide) convert &short:aNumber
         => system'internal'ws_copyint.
 
+    /// Converts the parameter to the literal value
     #method(type:wide) convert &byte:aNumber
         => system'internal'ws_copyint.
 
+    /// Converts the parameter to the literal value
     #method(type:wide) convert &long:aNumber
         => system'internal'ws_copylong.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:wide) convert &int:aNumber &index:aRadix
         => system'internal'ws_copyint_radix.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:wide) convert &short:aNumber &index:aRadix
         => system'internal'ws_copyint_radix.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:wide) convert &byte:aNumber &index:aRadix
         => system'internal'ws_copyint_radix.
 
+    /// Converts the parameter to the literal value with the provided radix
     #method(type:wide) convert &long:aNumber &index:aRadix
         => system'internal'ws_copylong_radix.
 
+    /// Converts the parameter to the literal value
     #method(type:wide) convert &real:aNumber
         => system'internal'ws_copyreal.
 
+    /// Converts UTF-8 literal to UTF-16
     #method(type:wide) convert &literal:aLiteral
         => system'internal'wstr_copystr.
         
+    /// Returns the literal presentation of the parameter
     #method(type:wide) convert : anObject
         = anObject wide.
         
+    /// Returns a parameter
     #method(type:wide) convert &wide:aLiteral
         = aLiteral.
 }.

@@ -2,6 +2,7 @@
 
 #symbol characterController =
 {
+    // !! should be corrected
     isUpperCase &char:aValue
     [
         #var(type:int)aRetVal := system'external'USER32 IsCharUpperW &char:aValue.
@@ -21,7 +22,7 @@
         #var(type:int)aLength.
         #var(type:shortarray,size:3)aBuffer.
 
-        charConvertor save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
+        charConvertor $save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
         
         aBuffer write &index:aLength &short:0.
         
@@ -35,7 +36,7 @@
         #var(type:int)aLength.
         #var(type:shortarray,size:3)aBuffer.
 
-        charConvertor save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
+        charConvertor $save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
         
         aBuffer write &index:aLength &short:0.
         

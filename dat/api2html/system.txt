@@ -143,7 +143,7 @@ WideString
 #method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
 #method=enumerator,,enumerator;Returns the object enumerator
 #method=equal,&char:char,bool;Compares the values
-#method=equal,&literal:literal,bool;Compares the values
+#method=equal,&lite1ral:literal,bool;Compares the values
 #method=getAt,object,char;Returns the character with specified index
 #method=getAt,&index:int,char;Returns the character with specified index
 #method=indexOf,&index:int&char:char,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1

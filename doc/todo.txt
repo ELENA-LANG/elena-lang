@@ -19,10 +19,10 @@ v  - vm script
                                                                                
 ------                                 
 Currently:
-------                                              
+------                                                                                         
               adev - code review
-                       *  n shift:x   - n shift &index:x
                        * fix struct test
+                       * reimplement upper / lower case code 
 
               xdev - script engine
                        * review script engine architecture : vm commands, grammar, ...
