@@ -18,6 +18,12 @@
         => system'internal'int_equal.
 
     #method handle = $self.
+    
+    /// Dispatches the verb to the target object with handle subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &handle:$self.
+    
+    /// Dispatches the verb to the target object with bytearray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &handle:$self.
 }
 
 // --- RTPointer ---
@@ -64,7 +70,7 @@
     #method write : anObject
         => system'internal'dptr_copy.
                 
-    #method append &int:aValue
+    #method append &index:aValue
     [
         thePointer := thePointer + aValue.
     ]                            
@@ -103,6 +109,12 @@
         
         ^ aLiteral.
     ]
+    
+    /// Dispatches the verb to the target object with handle subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dirty_ptr:$self.
+    
+    /// Dispatches the verb to the target object with bytearray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dirty_ptr:$self.    
 }
                 
 // --- COORD --

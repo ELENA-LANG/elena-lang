@@ -408,7 +408,7 @@ WideString
 #constructor=new,&message:literal&error_type:subject,object;Creates the exception with the provided message and error type
 #method=if,&Error:function;Executes the generic exception handler
 #method=if,&error_type:function;If incoming subject equals to the exception type, executes the exception handler<br/>Otherwise goes to the next exception handler
-#method=literal,,literal;Returns the message and the call stack
+#method=literal,,literal;Returns the message and the call stack                                                                         1
 #method=messages,,literal;Returns the message
 #method=on,object;Executes the exception handler for the current exception if available<br/>Otherwise goes to the next exception handler
 #method=wide,,wide;Returns the message and the call stack

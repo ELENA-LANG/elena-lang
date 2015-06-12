@@ -20,9 +20,8 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              adev - code review
-                       * fix struct test
-                       * reimplement upper / lower case code 
+              xmaint - basic samples:
+                       * pass basic test
 
               xdev - script engine
                        * review script engine architecture : vm commands, grammar, ...
@@ -32,10 +31,20 @@ Currently:
                        * fix #3 issue
                        * linux32 : implement console clear
                        * implement textdb sample
+                       
+              adev - code review
+                       * use case for system'Message  ??
+                       * use case for system'Signature ??
+                       * use case for system'MessageVar ??	
 
+                       * fix struct test
+                       * test extension is &nil
+                       * review lib30 (starting from system'routines)
 
                xdev - general implementation
                        * implement #21 issue
+
+              <--build-->
 
               xdev - script engine
                        * reimplement script samples: interpreter, helloworld, vmconsole
@@ -44,6 +53,8 @@ Currently:
                        * sqlite : support float
                        * sqlite : support blob
                        * implement file search
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+
+                       * IntArray copy subarray to the array
 
 <=================> 
                                                                                                                             
@@ -355,12 +366,71 @@ week 4:
 1.9.20
 --------
 week1:
+               xdev - advanced concepts
+                       * it should not be hard coded ; some template mechanism ; we could actively use extensions
+                       
+                       * property
+
+                          #subject property.
+
+                          #class MyStructure
+                          {
+                              #field theValue.
+
+                              #method property = theValue.
+
+                              #method set &property : aValue [ theValue := aValue. ]
+                          }
+
+
+                          #class MyAltStructure
+                          {
+                             #field(prop:property)theValue.
+                          }
+                                                
+                          #class MyAltStructure2
+                          {
+                              #prop property.
+                          }
+
+
+
+
+
+                       * properties (stack allocated / typed / generic)
+                       * typedcasted containers
+                       * dispatching
+                       * loops
+                       * operators
+                       
+               xdev - general implementation
+                       * use compiler magic for all complicated code : typedcasted containers, stack allocated objects, dispatching
+
+                       * stack allocated operation : target should be known ? can we dispatch operation depending on the key ; as a result
+                         the key is known??  what about unknown target in that case - use non optimized get&hash_code method
+
+                       * two line per initializing - some extension to simplify the assigning
+                         #var(type:int)code := ????.
+
+
+                       * work with stack allocated objects ; it is not possible to use stack allocated objects with generic objects ;
+                         complicated system with int and vint ; to read a length, at least two line of the code should be written, ...
+                         two methods should be implemented for every such property
+
+
+                       #var(type:int)code.
+                       key readHashCode &vint:code.  // key should be known ; two line per the code2
+
+
+                       * typed containers - support templates
+
               idev - unicode
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               xdev - generic development
+                       * implement #24
                        * support fixed array : #field(type:shortarray,size:260)cFileName.
-
+                       
                        * simplify syntax to create a property - get / set / read methods
 
                        * special hint to prevent the variable from been stack allocated, it means there should be additional check to make sure

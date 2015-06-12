@@ -30,7 +30,7 @@
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval &bool:$self &with:aParam.
 }
 
 /// A true value symbol
@@ -163,6 +163,12 @@
     
     /// Resets the enumerator
     #method reset []
+    
+    /// Dispatches the verb to the target object with enumerator subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &enumerator:$self.
+    
+    /// Dispatches the verb to the target object with enumerator subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &enumerator:$self &with:aParam.
 }
 
 // --- Iterator ---
@@ -218,6 +224,27 @@
         
         $self write &index:(anIndex - anOffset).
     ]
+
+    /// Reads the length to the output parameter    
+    #method readLength &vint:anOutput
+    [
+        anOutput << 0. 
+    ]
+    
+    /// Returns the end of indexer position
+    #method length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+    
+    /// Dispatches the verb to the target object with iterator subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &iterator:$self.
+    
+    /// Dispatches the verb to the target object with iterator subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &iterator:$self &with:aParam.
 }
 
 // --- base functions ---
@@ -259,7 +286,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func:$self.
     
     /// Dispatches the verb to the target with func subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func:$self &with:aParam.
 }
 
 /// A base function
@@ -272,7 +299,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func1:$self.
     
     /// Dispatches the verb to the target with func1 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func1:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func1:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam []
@@ -312,7 +339,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func2:$self.
     
     /// Dispatches the verb to the target with func2 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func2:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func2:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 []
@@ -352,7 +379,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func3:$self.
     
     /// Dispatches the verb to the target object with func3 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func3:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func3:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 []
@@ -392,7 +419,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func4:$self.
     
     /// Dispatches the verb to the target object with func4 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func4:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func4:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
@@ -432,7 +459,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func5:$self.
     
     /// Dispatches the verb to the target object with func5 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func5:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func5:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
@@ -472,7 +499,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func6:$self.
     
     /// Dispatches the verb to the target object with func6 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func6:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func6:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
@@ -512,7 +539,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func7:$self.
     
     /// Dispatches the verb to the target object with func7 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func7:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func7:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
@@ -552,7 +579,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func8:$self.
     
     /// Dispatches the verb to the target object with func8 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func8:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func8:$self &with:aParam.
 
     /// Executes the function    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
@@ -592,7 +619,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func9:$self.
     
     /// Dispatches the verb to the target object with func9 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func9:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func9:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
@@ -632,7 +659,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func10:$self.
     
     /// Dispatches the verb to the target object with func10 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func10:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func10:$self &with:aParam.
 
     /// Executes the function    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
@@ -672,7 +699,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func11:$self.
     
     /// Dispatches the verb to the target object with func11 subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func11:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &func11:$self &with:aParam.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
@@ -723,7 +750,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nfunc:$self.
     
     /// Dispatches the verb to the target object with nfunc subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nfunc:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &nfunc:$self &with:aParam.
     
     /// Executes the function
     #method eval &index:n []
@@ -785,7 +812,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nnfunc:$self.
     
     /// Dispatches the verb to the target object with nnfunc subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nnfunc:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &nnfunc:$self &with:aParam.
     
     /// Executes the function
     #method eval &index:i &index:j []
@@ -847,7 +874,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &n3func:$self.
     
     /// Dispatches the verb to the target object with n3func subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &n3func:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &n3func:$self &with:aParam.
     
     /// Executes the function
     #method eval &index:i &index:j &index:k []

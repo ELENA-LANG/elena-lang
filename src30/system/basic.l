@@ -362,7 +362,18 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &byte:$self.
     
     /// Dispatches the verb to the target object with byte subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &byte:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &byte:$self &with:aParam.
+
+    // Reads the object hash code into the output parameter
+    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- ShortNumber ---
@@ -604,7 +615,18 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &short:$self.
     
     /// Dispatches the verb to the target object with short subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &short:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &short:$self &with:aParam.
+
+    // Reads the object hash code into the output parameter
+    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- IntNumber ---
@@ -858,7 +880,18 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &int:$self.
     
     /// Dispatches the verb to the target object with int subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &int:$self &with:aParam.
+
+    // Reads the object hash code into the output parameter
+    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- longnumber ---
@@ -1111,7 +1144,18 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:$self.
     
     /// Dispatches the verb to the target object with long subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &long:$self &with:aParam.
+
+    // Reads the object hash code into the output parameter
+    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- realNumber ---
@@ -1294,7 +1338,18 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:$self.
     
     /// Dispatches the verb to the target object with real subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &real:$self &with:aParam.
+
+    // Reads the object hash code into the output parameter
+    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- Byte ---
@@ -1430,7 +1485,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &byte:(ByteNumber new &byte:theValue).
     
     /// Dispatches the verb to the target object with byte subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &byte:(ByteNumber new &byte:theValue).
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &byte:(ByteNumber new &byte:theValue) &with:aParam.
 
     /// Expands a byte integer
     #method => theValue.    
@@ -1602,7 +1657,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &short:(ShortNumber new &short:theValue).
     
     /// Dispatches the verb to the target object with short subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &short:(ShortNumber new &short:theValue).
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &short:(ShortNumber new &short:theValue) &with:aParam.
 
     /// Expands a short integer
     #method => theValue.    
@@ -1805,7 +1860,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &int:(IntNumber new &int:theValue).
     
     /// Dispatches the verb to the target object with int subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:(IntNumber new &int:theValue).
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &int:(IntNumber new &int:theValue) &with:aParam.
 
     /// Expands a short integer
     #method => theValue.    
@@ -2049,7 +2104,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:(LongNumber new &long:theValue).
     
     /// Dispatches the verb to the target object with long subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:(LongNumber new &long:theValue).
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &long:(LongNumber new &long:theValue) &with:aParam.
 
     /// Expands a long integer value    
     #method => theValue.    
@@ -2302,7 +2357,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:(RealNumber new &real:theValue).
     
     /// Dispatches the verb to the target object with real subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:(RealNumber new &real:theValue).
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &real:(RealNumber new &real:theValue) &with:aParam.
     
     /// Expands a real value
     #method => theValue.
@@ -2366,7 +2421,7 @@
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &char:$self.
     
     /// Dispatches the verb to the target object with char subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &char:$self &with:aParam.
 
     /// Returns the literal value
     #method literal = literalConvertor convert &char:$self.
@@ -2397,6 +2452,17 @@
         aLength := aLength / 2.
         
         ^ IntNumber new &int:aLength.
+    ]
+
+    // Reads the object hash code into the output parameter
+    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
     ]
 }
 
@@ -2488,7 +2554,7 @@
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &char:(CharValue new &char:theValue).
     
     /// Dispatches the verb to the target object with char subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:(CharValue new &char:theValue).
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &char:(CharValue new &char:theValue) &with:aParam.
 
     /// Extends the character value
     #method => theValue.    
@@ -2557,6 +2623,38 @@
 
     /// Expands the value
     #method => theValue.
+}
+
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+#class(sealed) KeyValue
+{
+    #field theKey.
+    #field theObject.
+    
+    /// Creates a new objext
+    #constructor new &key:aKey &object:anObject
+    [
+        theKey := aKey.
+        theObject := anObject.
+    ]
+    
+    /// Returns the key
+    #method key = theKey.
+    
+    /// Returns the key
+    #method object = theObject.
+
+    #method set &object:anObject
+    [
+        theObject := anObject.
+    ]
+            
+    /// Redirects the incoming messages to the object
+    #method => theObject.
 }
 
 // === Basic Convertors ===

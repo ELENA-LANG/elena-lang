@@ -48,7 +48,7 @@
         [
             #var aCurrent := theStruct::classROp getField &index:anIndex.
             
-            (aCurrent::subjectOp equal &subject:aSubject)
+            (aCurrent equal &subject:aSubject)
                 ? [ aNotFound := false. ]
                 ! [ anIndex := anIndex + 2. ].
         ].

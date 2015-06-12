@@ -3455,13 +3455,19 @@ end
 
 procedure handle_verb
 
+  dcopye
+  andn 0FFFFFFF0h
+  ifn labDefault EVAL_MESSAGE_ID
+  
   setverb 0
   nload
   or
   ecopyd
   aloadsi 1
   ajumpvi 0
-labEnd:
+  
+labDefault:
+  bsredirect  
   open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
@@ -4995,5 +5001,13 @@ labErr:
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw
+
+end
+
+procedure int_hashcode
+
+  bloadsi 2
+  ncopy
+  quitn 2
 
 end

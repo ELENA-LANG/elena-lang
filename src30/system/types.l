@@ -1,7 +1,4 @@
-// ==== ver 3.2.0 ===
-
-// === weak system types ===
-#subject object.
+// ==== ver 3.3.0 ===
 
 // === basic logical types ===
 #subject(class:system'BaseBoolValue) bool.
@@ -16,7 +13,9 @@
 #subject(class:system'CharValue)    char.
 
 #subject(class:system'IntNumber)    length.
+#subject(class:system'IntNumber)    capacity.
 #subject(class:system'IntNumber)    index.
+#subject(class:system'IntNumber)    hash_code.
 
 #subject(class:system'Integer)      vint.
 #subject(class:system'Long)         vlong.
@@ -25,11 +24,19 @@
 #subject(class:system'Short)        vshort.
 #subject(class:system'Char)         vchar.
 
+#subject(class:system'Message)      mssg.
+#subject(class:system'Message)      verb.
+#subject(class:system'Signature)    subject.
+#subject(class:system'Symbol)       symbol_ref.
+
 // === basic dynamic types ===
 #subject(class:system'ByteArray)    bytearray.
 #subject(class:system'ShortArray)   shortarray.
 #subject(class:system'IntArray)     intarray.
 #subject(class:system'CharArray)    chararray.
+#subject(class:system'Array)        array.
+#subject(class:system'OpenArgs)     params.
+#subject(class:system'OpenArgs)     args.
 
 #subject(class:system'LiteralValue) literal.
 #subject(class:system'WideLiteralValue) wide.
@@ -51,20 +58,39 @@
 #subject(class:system'BaseFunction13)func13.
 #subject(class:system'BaseFunction14)func14.
 
+#subject(class:system'IndexFunction1)nfunc.
+#subject(class:system'IndexFunction2)nnfunc.
+#subject(class:system'IndexFunction3)n3func.
+
+// === subject synonyms ===
+#subject(class:system'Signature)    error_type.
+
+// === exception types ===
+#subject(class:system'BaseFunction1) Error.
+#subject(class:system'BaseFunction1) MethodNotFoundError.
+#subject(class:system'BaseFunction1) FormatError.
+#subject(class:system'BaseFunction1) OutOfRangeError.
+#subject(class:system'BaseFunction1) InvalidArgumentError.
+#subject(class:system'BaseFunction1) NotSupportedError.
+#subject(class:system'BaseFunction1) Abort.
+#subject(class:system'BaseFunction1) InvalidOperationError.
+
+// === system handles ===
+#subject(class:Handle) handle.
+#subject(class:system'RTPointer)rt_ptr.
+#subject(class:system'UnsafePointer)dirty_ptr.
+
+// --- common properties ---
+#subject key.
+#subject value.
+#subject object.
 
 
 
 
-#subject(class:system'Signature)    subject.
-#subject(class:system'Message)      mssg.
-#subject(class:system'Message)      verb.
-#subject(class:system'Symbol)       symbol_ref.
-#subject(class:system'Array)        array.
+
+
 #subject(class:system'MessageArray) mssgarray.
-
-#subject(class:system'OpenArgs)         params.
-#subject(class:system'OpenArgs)         args.
-
 #subject(class:system'MessageVar)       vmssg.
 
 // === int synonyms ===
@@ -82,18 +108,11 @@
 #subject width.
 #subject height.
 
-// === subject synonyms ===
-#subject(class:system'Signature)    error_type.
-
 // === logical types ===
 
 #subject string.
 
 // === nested functions ===
-
-#subject(class:system'IndexFunction1)nfunc.
-#subject(class:system'IndexFunction2)nnfunc.
-#subject(class:system'IndexFunction3)n3func.
 
 #subject(class:system'BaseFunction1) each.
 #subject(class:system'IndexFunction1)every.
@@ -104,24 +123,6 @@
 #subject(class:system'Enumerator)enumerator.
 #subject(class:system'Iterator)iterator.
 
-// --- basic properties ---
-#subject key.
 
-// === extension types ===
-#subject enumerable.
-#subject indexable.
-
-// === exception types ===
-#subject(class:system'BaseFunction1) Error.
-#subject(class:system'BaseFunction1) MethodNotFoundError.
-#subject(class:system'BaseFunction1) FormatError.
-#subject(class:system'BaseFunction1) OutOfRangeError.
-#subject(class:system'BaseFunction1) InvalidArgumentError.
-#subject(class:system'BaseFunction1) NotSupportedError.
-#subject(class:system'BaseFunction1) Abort.
-#subject(class:system'BaseFunction1) InvalidOperationError.
-
-// === system handles ===
-#subject(class:Handle) handle.
-#subject(class:system'RTPointer)rt_ptr.
-#subject(class:system'UnsafePointer)dirty_ptr.
+#subject enumerable. // !! should be removed
+#subject indexable. // !! should be removed
