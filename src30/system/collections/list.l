@@ -301,7 +301,7 @@
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &list:$self.
     
     /// Dispatches the verb to the target object with list subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &list:$self &with:aParam.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &list:$self.
 
     /// Returns itself
     #method list = $self.
@@ -452,7 +452,7 @@
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &array_list:$self.
     
     /// Dispatches the verb to the target object with array_list subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &array_list:$self &with:aParam.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array_list:$self.
     
     /// Returns the number of list items
     #method length = theLength int.
@@ -737,7 +737,7 @@
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &dictionary:$self.
     
     /// Dispatches the verb to the target object with dictionary subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &dictionary:$self &with:aParam.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dictionary:$self.
 
     #method clone 
     [

@@ -129,7 +129,7 @@
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &mssgarray:$self.
     
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval &mssgarray:$self &with:aParam.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &mssgarray:$self.
 }
 
 // --- MessageArrayIterator ---

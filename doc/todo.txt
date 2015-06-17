@@ -22,7 +22,6 @@ Currently:
 ------                                                                                         
               xmaint - basic samples:
                        * test MultiDispatchTest
-                       * fix listText (safeEqual does not work properly)
                        * fix DTOToStructTest
                        * test extension is &nil
                        * review call stack generation, fix the bugs, get rid of extra new line symbols
