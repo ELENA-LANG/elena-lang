@@ -3465,9 +3465,8 @@ end
 
 procedure handle_verb
 
-  dcopye
-  andn 0FFFFFFF0h
-  ifn labDefault EVAL_MESSAGE_ID
+  bloadsi 1
+  ifb labDefault
   
   setverb 0
   nload
