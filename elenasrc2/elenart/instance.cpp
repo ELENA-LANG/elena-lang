@@ -49,8 +49,8 @@ bool Instance :: loadConfig()
       return false;
    }
 
-   Path path;
-   Path::loadPath(path, config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
+   Path path(_rootPath);
+   Path::combinePath(path, config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
 
    if (!emptystr(path)) {
       _loader.setRootPath(path);

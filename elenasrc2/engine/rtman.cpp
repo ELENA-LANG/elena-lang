@@ -129,6 +129,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
 {
    int index = 0;
    bool found = false;
+   row = 0;
 
    // search through debug section until the ret point is inside two consecutive steps within the same object
    while (!reader.Eof() && !found) {
@@ -173,9 +174,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
          MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));
 
          // skip vmt address for a class
-         if (isClass) {
-            reader.getDWord();
-         }
+         reader.getDWord();
 
          // look through the records to find the entry
          DebugLineInfo info;
@@ -200,7 +199,8 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
                }
             }
 
-            row = info.row;
+            if (info.row > 0)
+               row = info.row;
          }
       }
       else {

@@ -21,8 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xmaint - basic samples:
-                       * review call stack generation, fix the bugs, get rid of extra new line symbols
-
                        * test MultiDispatchTest
                        * test extension is &nil
 
