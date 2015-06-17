@@ -21,7 +21,11 @@ v  - vm script
 Currently:
 ------                                                                                         
               xmaint - basic samples:
-                       * pass basic test
+                       * test MultiDispatchTest
+                       * fix listText (safeEqual does not work properly)
+                       * fix DTOToStructTest
+                       * test extension is &nil
+                       * review call stack generation, fix the bugs, get rid of extra new line symbols
 
               xdev - script engine
                        * review script engine architecture : vm commands, grammar, ...
@@ -37,8 +41,6 @@ Currently:
                        * use case for system'Signature ??
                        * use case for system'MessageVar ??	
 
-                       * fix struct test
-                       * test extension is &nil
                        * review lib30 (starting from system'routines)
 
                xdev - general implementation
@@ -129,6 +131,7 @@ week2:
                        * write formatted string (with parameters)
                        
               srev - console samples
+                       * sqlite sample
                        * simplify goods (Record.get&Literal implementation)
                        * rewrite pi sample to use stack allocated variables / parallel calculating
                        * matrix: use Pair in matrix sample
@@ -634,12 +637,12 @@ week1:
                        * build-in script into IDE
                        
               idev - usability
+                       * project view
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
                        * error: more accurate error messages
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
-                       * project view
                        * class view - make possible to browse the class methods
 
               idev - generic development                                          

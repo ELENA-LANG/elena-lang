@@ -166,13 +166,13 @@
 [
     #var aList := Dictionary new.
     
-    aList append &key:1 &object:"1a".
-    aList append &key:2 &object:"2".
+    aList @ 1 := "1a".
+    aList @ 2 := "2".
     
-    aList set &key:1 &object:"1".
+    aList @ 1 := "1".
     
-    #var anN1 := aList getAt &key:1.
-    #var anN2 := aList getAt &key:2.
+    #var anN1 := aList @ 1.
+    #var anN2 := aList @ 2.
 ].
 
 #symbol ListTest =
@@ -680,7 +680,7 @@
     control run:(aProperties top:aLength) &forEach:(:aSubject)
     [
         #var prop_value := aDTO::aSubject eval.
-        #var prop := aSubject::messageOp subject.
+        #var prop := aSubject subject.
         
         aCopy::prop set:prop_value.
     ].

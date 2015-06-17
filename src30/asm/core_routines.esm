@@ -1901,7 +1901,7 @@ procedure bs_read
 
   bloadsi 4
   callr api : coreapi'subcopy
-  quitn 2
+  quitn 4
   
 labErr:
   open 1
@@ -1981,7 +1981,7 @@ procedure bs_readbyte
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2032,7 +2032,7 @@ procedure bs_readword
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2083,7 +2083,7 @@ procedure bs_readdword
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2131,7 +2131,7 @@ procedure bs_readqword
   bloadsi 3
   ecopy 8
   callr api : coreapi'subcopy
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2403,7 +2403,7 @@ procedure ns_read
 
   bloadsi 4
   callr api : coreapi'nsubcopy
-  quitn 2
+  quitn 4
   
 labErr:
   open 1
@@ -2482,7 +2482,7 @@ procedure ns_readdword
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -3313,7 +3313,7 @@ procedure arr_create
   
   ifn labSkip 0
 
-  acopyr const : system'nil
+  acopyr 0
 labNext:
   dec
   xset

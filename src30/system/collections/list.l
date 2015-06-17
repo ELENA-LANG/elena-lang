@@ -590,12 +590,22 @@
     #field(type:array)      theHashTable.
     #field(type:int)        theHashMask.
 
+    #constructor new
+        <= new &capacity:32 &hash_length:32.
+
     #constructor new &capacity:aCapacity &hash_length:aHashLength
     [
-        //theHashSize := aHashLength.
+        #var(type:int)size := 32.
+        #loop (size < aHashLength)?
+        [
+            size := size shift &index:-1.
+        ].
+        
+        size := size - 1.
+        theHashMask := IntNumber new &int:size.
         
         theHashTable := Array new &length:aHashLength.
-        theList := IntArray new &capacity:aCapacity.
+        theList := ArrayList new &capacity:aCapacity.
     ]
     
     #method getAt : aKey
@@ -613,8 +623,14 @@
         #var(type:int)aHashCode := aCode && theHashMask.
         
         #var aHashItem := theHashTable getAt &index:aHashCode.
-        ($nil == aHashItem)
-            ? [ aHashItem := IntArray new &length:5 write &index:0 &int:0. ].
+        ($nil == aHashItem) ?
+        [
+            aHashItem := IntArray new &length:5.
+            
+            aHashItem write &index:0 &int:1.
+            
+            theHashTable setAt &index:aHashCode &object:aHashItem.
+        ].
         
         #var(type:intarray) aBacket := aHashItem intarray.        
         #var(type:int)aLength := 0.        
@@ -634,9 +650,10 @@
             i := i + 1.
         ].
         
-        #var(type:int)aNewIndex.
-        theList readLength &vint:aNewIndex.
-        theList append:(KeyValue new &key:aKey &object:$nil).
+        #var aNewItem := KeyValue new &key:aKey &object:$nil.
+        
+        theList readLength &vint:i.
+        theList append:aNewItem.
         
         // Extend a backet
         #var(type:int)aCapacity.
@@ -649,10 +666,12 @@
                 aBacket := aNewBacket.
             ].
             
-        aBacket write &index:aLength &int:aNewIndex.
+        aBacket write &index:aLength &int:i.
             
         aLength := aLength + 1.
         aBacket write &index:0 &int:aLength.
+        
+        ^ aNewItem.
     ]    
         
     #method(generic)getAt : aKey
