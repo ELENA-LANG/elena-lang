@@ -21,10 +21,10 @@ v  - vm script
 Currently:
 ------                                                                                         
               xmaint - basic samples:
-                       * test MultiDispatchTest
-                       * fix DTOToStructTest
-                       * test extension is &nil
                        * review call stack generation, fix the bugs, get rid of extra new line symbols
+
+                       * test MultiDispatchTest
+                       * test extension is &nil
 
               xdev - script engine
                        * review script engine architecture : vm commands, grammar, ...
