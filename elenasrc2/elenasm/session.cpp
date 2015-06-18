@@ -7,33 +7,33 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "session.h"
-#include "cfparser.h"
-//#include "inlineparser.h"
-#include "elenavm.h"
+//#include "cfparser.h"
+#include "inlineparser.h"
+//#include "elenavm.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-// --- ScriptLog ---
-
-void ScriptLog :: write(wchar16_t ch)
-{
-   MemoryWriter writer(&_log);
-
-   writer.writeWideChar(ch);
-}
-
-void ScriptLog :: write(const wchar16_t* token)
-{
-   MemoryWriter writer(&_log);
-
-   writer.writeWideLiteral(token, getlength(token));
-   writer.writeWideChar(' ');
-}
+//// --- ScriptLog ---
+//
+//void ScriptLog :: write(wchar16_t ch)
+//{
+//   MemoryWriter writer(&_log);
+//
+//   writer.writeWideChar(ch);
+//}
+//
+//void ScriptLog :: write(const wchar16_t* token)
+//{
+//   MemoryWriter writer(&_log);
+//
+//   writer.writeWideLiteral(token, getlength(token));
+//   writer.writeWideChar(' ');
+//}
 
 // --- ScriptReader ---
 
-const wchar16_t* Session::ScriptReader :: read()
+ident_t Session::ScriptReader :: read()
 {
    info = reader.read(token, LINE_LEN);
    if (info.state == dfaQuote) {
@@ -41,7 +41,7 @@ const wchar16_t* Session::ScriptReader :: read()
 
          //!!HOTFIX: what if the literal will be longer than 0x100?
          size_t length = getlength(quote);
-         StringHelper::copy(token, quote, length);
+         StringHelper::copy(token, quote, length, length);
          token[length] = 0;
    }  
 
@@ -59,10 +59,10 @@ void Session::CachedScriptReader :: cache()
    writer.writeDWord(info.column);
    writer.writeDWord(info.row);
    writer.writeChar(info.state);
-   writer.writeWideLiteral(token, getlength(token) + 1);
+   writer.writeLiteral(token, getlength(token) + 1);
 }
 
-const wchar16_t* Session::CachedScriptReader :: read()
+ident_t Session::CachedScriptReader :: read()
 {
    // read from the outer reader if the cache is empty
    if (_cacheMode && _position >= _buffer.Length()) {
@@ -77,8 +77,9 @@ const wchar16_t* Session::CachedScriptReader :: read()
       reader.readDWord(info.row);
       reader.readChar(info.state);
 
-      const wchar16_t* s = reader.getWideLiteral();
-      StringHelper::copy(token, s, getlength(s));
+      ident_t s = reader.getLiteral(DEFAULT_STR);
+      size_t length = getlength(s);
+      StringHelper::copy(token, s, length, length);
 
       _position = reader.Position();
 
@@ -90,69 +91,138 @@ const wchar16_t* Session::CachedScriptReader :: read()
 // --- Session ---
 
 Session :: Session()
-   : _parsers(NULL, freeobj)
 {
-   _currentParser = NULL;
+   _currentParser = new InlineScriptParser();
 }
 
 Session :: ~Session()
 {
+   freeobj(_currentParser);
 }
 
-////void* Session :: translateScript(const wchar16_t* name, TextReader* source)
-////{
-////   ScriptVMCompiler compiler;
-////
-////   _Parser* parser = _parsers.get(name);
-////   if (parser == NULL) {
-////      parser = new CFParser();
-////
-////      _parsers.add(name, parser, true);
-////   }
-////
-////   parser->parse(source, &compiler);
-////
-////   // the tape should be explicitly releases with FreeLVMTape function
-////   return compiler.generate();
-////}
+//////void* Session :: translateScript(const wchar16_t* name, TextReader* source)
+//////{
+//////   ScriptVMCompiler compiler;
+//////
+//////   _Parser* parser = _parsers.get(name);
+//////   if (parser == NULL) {
+//////      parser = new CFParser();
+//////
+//////      _parsers.add(name, parser, true);
+//////   }
+//////
+//////   parser->parse(source, &compiler);
+//////
+//////   // the tape should be explicitly releases with FreeLVMTape function
+//////   return compiler.generate();
+//////}
+
+void Session::parseDirectives(MemoryDump& tape, _ScriptReader& reader)
+{
+   TapeWriter writer(&tape);
+
+   do {
+      ident_t token = reader.read();
+
+      if (token[0]==';') {
+         break;
+      }
+      else if(StringHelper::compare(token, "#start")) {
+         writer.writeCommand(START_VM_MESSAGE_ID);
+      }
+      else if (StringHelper::compare(token, "#config")) {
+         token = reader.read();
+         if (reader.info.state == dfaIdentifier) {
+            writer.writeCommand(LOAD_VM_MESSAGE_ID, token);
+         }
+         else throw EParseError(reader.info.column, reader.info.row);
+      }
+      else if (StringHelper::compare(token, "#map")) {
+         token = reader.read();
+
+         IdentifierString forward;
+         if (reader.info.state == dfaFullIdentifier) {
+            forward.append(token);
+
+            token = reader.read();
+            if (!StringHelper::compare(token, "="))
+               throw EParseError(reader.info.column, reader.info.row);
+
+            token = reader.read();
+            if (reader.info.state == dfaFullIdentifier) {
+               forward.append('=');
+               forward.append(token);
+               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
+         else throw EParseError(reader.info.column, reader.info.row);
+      }
+      else if (StringHelper::compare(token, "#use")) {
+         token = reader.read();
+
+         if (reader.info.state == dfaQuote) {
+            writer.writeCommand(USE_VM_MESSAGE_ID, reader.token);
+         }
+         else {
+            IdentifierString package;
+            package.append(token);
+
+            token = reader.read();
+            if (!StringHelper::compare(token, "="))
+               throw EParseError(reader.info.column, reader.info.row);
+
+            token = reader.read();
+            if (reader.info.state == dfaQuote) {
+               package.append('=');
+               package.append(reader.token);
+               writer.writeCommand(USE_VM_MESSAGE_ID, package);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
+      }
+      else return;
+   }
+   while(true);
+}
 
 void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
 {
    int saved = reader.Position();
 
-   const wchar16_t* token = reader.read();
-   if (ConstantIdentifier::compare(token, "[[")) {
+   ident_t token = reader.read();
+   if (StringHelper::compare(token, "[[")) {
       saved = reader.Position();
       token = reader.read();
-      while (!ConstantIdentifier::compare(token, "]]")) {
-         if(ConstantIdentifier::compare(token, "#define")) {
-            if (_currentParser == NULL) {
-               _currentParser = new CFParser();
-
-               _parsers.insert(_currentParser);
-            }
-
-            _currentParser->parseGrammarRule(reader);
-         }
-         else if(ConstantIdentifier::compare(token, "#grammar")) {
-            token = reader.read();
-            if (ConstantIdentifier::compare(token, "new")) {
-               _currentParser = NULL;
-            }
-            else if (ConstantIdentifier::compare(token, "clear")) {
-               _parsers.clear();
-
-               _currentParser = NULL;
-            }
-         }
-         else if(ConstantIdentifier::compare(token, "#mode")) {
-            _currentParser->parseDirective(reader);
-         }
-         else {
+      while (!StringHelper::compare(token, "]]")) {
+//         if(ConstantIdentifier::compare(token, "#define")) {
+//            if (_currentParser == NULL) {
+//               _currentParser = new CFParser();
+//
+//               _parsers.insert(_currentParser);
+//            }
+//
+//            _currentParser->parseGrammarRule(reader);
+//         }
+//         else if(ConstantIdentifier::compare(token, "#grammar")) {
+//            token = reader.read();
+//            if (ConstantIdentifier::compare(token, "new")) {
+//               _currentParser = NULL;
+//            }
+//            else if (ConstantIdentifier::compare(token, "clear")) {
+//               _parsers.clear();
+//
+//               _currentParser = NULL;
+//            }
+//         }
+//         else if(ConstantIdentifier::compare(token, "#mode")) {
+//            _currentParser->parseDirective(reader);
+//         }
+//         else {
             reader.seek(saved);
 
-            _scriptParser.parseDirectives(tape, reader);
-         }
+            parseDirectives(tape, reader);
+//         }
          saved = reader.Position();
          token = reader.read();
       }
@@ -162,32 +232,11 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
    reader.clearCache();
 }
 
-void Session :: parseScript(_Parser* parser, MemoryDump& tape, _ScriptReader& reader)
+void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
 {
-   if (parser) {
-      ScriptLog log;
+   TapeWriter writer(&tape);
 
-      _currentParser->parse(reader, log);
-
-      int index = retrieveIndex(_parsers.start(), _currentParser);
-      if (index >= 0) {
-         Parsers::Iterator it = _parsers.get(index + 1);
-         if (!it.Eof()) {
-            parseScript(*it, tape, (const wchar16_t*)log.getBody());
-         }
-         else parseScript(NULL, tape, (const wchar16_t*)log.getBody());
-      }
-      else parseScript(NULL, tape, (const wchar16_t*)log.getBody());      
-   }
-   else _scriptParser.parseScript(tape, reader);
-}
-
-void Session :: parseScript(_Parser* parser, MemoryDump& tape, const wchar16_t* script)
-{
-   WideLiteralTextReader reader(script);
-   CachedScriptReader scriptReader(&reader);
-
-   parseScript(parser, tape, scriptReader);
+   _currentParser->parse(reader, writer);
 }
 
 int Session :: translate(TextReader* source, bool standalone)
@@ -198,21 +247,21 @@ int Session :: translate(TextReader* source, bool standalone)
    MemoryDump         tape;
 
    parseMetaScript(tape, scriptReader);
-   parseScript(_currentParser, tape, scriptReader);
+   parseScript(tape, scriptReader);
 
-   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
+   int retVal = /*standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0))*/0;
 
-   // copy vm error if retVal is zero
-   if (!retVal)
-      _lastError.copy(GetLVMStatus());
-
+//   // copy vm error if retVal is zero
+//   if (!retVal)
+//      _lastError.copy(GetLVMStatus());
+//
    return retVal;
 }
 
-int Session :: translate(const wchar16_t* script, bool standalone)
+int Session :: translate(ident_t script, bool standalone)
 {
    try {
-      WideLiteralTextReader reader(script);
+      IdentifierTextReader reader(script);
 
       return translate(&reader, standalone);
    }
@@ -241,35 +290,38 @@ int Session :: translate(const wchar16_t* script, bool standalone)
    }
 }
 
-int Session :: translate(const wchar16_t* path, int encoding, bool autoDetect, bool standalone)
+int Session :: translate(path_t path, int encoding, bool autoDetect, bool standalone)
 {
    try {
       TextFileReader reader(path, encoding, autoDetect);
 
       if (!reader.isOpened()) {
          _lastError.copy("Cannot open the script file:");
-         _lastError.append(path);
+
+         ident_c tmp[_MAX_PATH];
+         Path::savePath(path, tmp, _MAX_PATH);
+         _lastError.append(tmp);
 
          return NULL;
       }
 
       return translate(&reader, standalone);
    }
-//   catch(EUnrecognizedException) {
-//      _lastError.copy("Unrecognized expression");
-//
-//      return NULL;
-//   }
-//   catch(EInvalidExpression e) {
-//      _lastError.copy("Rule ");
-//      _lastError.append(e.nonterminal);
-//      _lastError.append(": invalid expression at ");
-//      _lastError.appendInt(e.row);
-//      _lastError.append(':');
-//      _lastError.appendInt(e.column);
-//
-//      return NULL;
-//   }
+////   catch(EUnrecognizedException) {
+////      _lastError.copy("Unrecognized expression");
+////
+////      return NULL;
+////   }
+////   catch(EInvalidExpression e) {
+////      _lastError.copy("Rule ");
+////      _lastError.append(e.nonterminal);
+////      _lastError.append(": invalid expression at ");
+////      _lastError.appendInt(e.row);
+////      _lastError.append(':');
+////      _lastError.appendInt(e.column);
+////
+////      return NULL;
+////   }
    catch(EParseError e) {
       _lastError.copy("Invalid syntax at ");
       _lastError.appendInt(e.row);

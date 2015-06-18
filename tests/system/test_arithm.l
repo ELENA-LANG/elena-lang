@@ -79,6 +79,7 @@
 {
     eval &x:anX &y:anY
     [
+        ^ anX + anY.
     ]
 }.
 

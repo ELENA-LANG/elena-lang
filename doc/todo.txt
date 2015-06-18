@@ -20,10 +20,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xmaint - basic samples:
-                       * test MultiDispatchTest
-                       * test extension is &nil
-
               xdev - script engine
                        * review script engine architecture : vm commands, grammar, ...
 
@@ -46,6 +42,9 @@ Currently:
               <--build-->
 
               xdev - script engine
+                       * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
+                         another one in future
+                       * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects
                        * reimplement script samples: interpreter, helloworld, vmconsole
 
               adev - lib30     
@@ -348,6 +347,7 @@ week 4:
                        * test thread operation                                                                               
                        * sqlite : test operation with double
                        * test int,byte,short,long <=> real
+                       * test extension is &nil
                        
                        * test bytearray read / write operation with byte, char, int, long, real
                        * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)

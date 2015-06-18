@@ -392,65 +392,47 @@ public:
    virtual ~LiteralWriter() {}
 };
 
-//// --- LiteralTextReader ---
-//
-//template<class CHAR> class LiteralTextReader : public TextReader
-//{
-//   const CHAR* _text;
-//   size_t      _offset;
-//   size_t      _length;
-//
-//public:
-//   virtual bool read(wchar16_t* s, size_t length)
-//   {
-//      if (_offset + length > _length) {
-//         length = _length - _offset;
-//      }
-//
-//      if (length > 0) {
-//         wcsncpy(s, _text + _offset, length);
-//         s[length] = 0;
-//         length = StringHelper::find(s, '\n', length - 1) + 1;
-//         s[length] = 0;
-//
-//         _offset += length;
-//
-//         return true;
-//      }
-//      else return false;
-//   }
-//   virtual bool read(char* s, size_t length)
-//   {
-//      if (_offset + length > _length) {
-//         length = _length - _offset;
-//      }
-//
-//      if (length > 0) {
-//         StringHelper::copy(s, _text + _offset, length);
-//         s[length] = 0;
-//
-//         _offset += length;
-//
-//         return true;
-//      }
-//      else return false;
-//   }
-//
-//   LiteralTextReader(const CHAR* text)
-//   {
-//      _text = text;
-//      _offset = 0;
-//      _length = getlength(text);
-//   }
-//   LiteralTextReader(const CHAR* text, int offset)
-//   {
-//      _text = text;
-//      _offset = offset;
-//      _length = getlength(text);
-//   }
-//};
-//
-//typedef LiteralTextReader<wchar16_t> WideLiteralTextReader;
+// --- LiteralTextReader ---
+
+template<class CHAR> class LiteralTextReader : public TextReader
+{
+   const CHAR* _text;
+   size_t      _offset;
+   size_t      _length;
+
+public:
+   virtual bool read(char* s, size_t length)
+   {
+      if (_offset + length > _length) {
+         length = _length - _offset;
+      }
+
+      if (length > 0) {
+         StringHelper::copy(s, _text + _offset, length, length);
+         s[length] = 0;
+
+         _offset += length;
+
+         return true;
+      }
+      else return false;
+   }
+
+   LiteralTextReader(const CHAR* text)
+   {
+      _text = text;
+      _offset = 0;
+      _length = getlength(text);
+   }
+   LiteralTextReader(const CHAR* text, int offset)
+   {
+      _text = text;
+      _offset = offset;
+      _length = getlength(text);
+   }
+};
+
+typedef LiteralTextReader<ident_c> IdentifierTextReader;
 
 //// --- LiteralReader ---
 //
