@@ -6,7 +6,7 @@
 {
     stdout
     [
-       #var(type:handle)aVariable.
+       #var(type:dirty_ptr)aVariable.
        #var(type:handle)aLibHandle := system'external'libdl dlopen 
                                           &literal:"libc.so.6"
                                           &int:1.
@@ -15,7 +15,10 @@
                         &handle:aLibHandle  
                         &literal:"stdout".
 
-       ^ Handle new &handle:aVariable.  
+       #var(type:int)aHandle.
+       aVariable read &vint:aHandle.
+
+       ^ Handle new &int:aHandle.  
     ]
 }.
 

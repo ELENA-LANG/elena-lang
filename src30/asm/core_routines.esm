@@ -3594,6 +3594,19 @@ procedure dptr_copy
 
 end
 
+procedure dptr_readint
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
 procedure api_free_index
                       
   aloadsi 1

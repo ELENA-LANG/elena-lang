@@ -35,6 +35,7 @@ Currently:
                        * use case for system'MessageVar ??	
 
                        * review lib30 (starting from system'routines)
+                       * move Handle/RTPointer/UnsafePointer to common code
 
                xdev - general implementation
                        * implement #21 issue
