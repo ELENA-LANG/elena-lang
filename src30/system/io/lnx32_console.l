@@ -63,7 +63,7 @@
 
     #method refresh
     [
-//        system'external'libc fflush &handle:theHandle.
+        system'external'libc fflush &handle:theHandle.
     ]
             
     #method free
