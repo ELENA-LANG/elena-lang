@@ -29,7 +29,10 @@ rstructure core_rt'dll_name
    db 101 // e
    db 110 // n
    db 097 // a
-   db 047 // /   
+   db 047 // /
+   db 108 // l
+   db 105 // i 
+   db 098 // b   
    db 101 // e
    db 108 // l
    db 101 // e
@@ -38,8 +41,8 @@ rstructure core_rt'dll_name
    db 114 // r
    db 116 // t
    db 046 // .
-   db 100 // s
-   db 108 // o
+   db 115 // s
+   db 111 // o
    db 0
    
 end
@@ -194,7 +197,8 @@ procedure core_rt'init_rt_info
 
   mov  eax, rdata : "$native'core_rt'dll_name"
   push eax
-  call extern : "libc.so.6.dlopen"
+  call extern : "libdl.so.2.dlopen"
+  add  esp, 8
 
   test eax, eax
   jz   lbCannotLoadDLL
@@ -206,7 +210,8 @@ procedure core_rt'init_rt_info
   mov  esi, rdata:"$native'core_rt'LoadAddressInfoFunc" 
   push esi
   push eax
-  call extern : "libc.so.6.dlsym"
+  call extern : "libdl.so.2.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -219,6 +224,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -231,6 +237,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -243,6 +250,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -255,6 +263,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -267,6 +276,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -279,6 +289,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT
@@ -291,6 +302,7 @@ procedure core_rt'init_rt_info
   push esi
   push eax
   call extern : "libc.so.6.dlsym"
+  add  esp, 8
   
   test eax, eax
   jz   lbCannotLoadRT

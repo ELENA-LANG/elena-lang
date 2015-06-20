@@ -2,16 +2,16 @@
 
 #symbol Program =
 [
-   console write:"Starting".
-   //console writeLine:"..".     
+       #var(type:int)aVariable.
+       #var(type:int)aLibHandle := system'external'libdl dlopen 
+                                          &literal:"libc.so.6"
+                                          &int:1.
 
-   //console writeLine:"Hello Linux World!".
+       console writeLine:aLibHandle.
 
-   //#var args := 'program'arguments.
+       aVariable := system'external'libdl dlsym
+                        &int:aLibHandle  
+                        &literal:"stdout".
 
-   //console writeLine:(args@0).
-
-   //console writeLine:(args@1).
-
-   //console readChar.
+       console writeLine:aVariable.
 ].

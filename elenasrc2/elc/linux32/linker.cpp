@@ -304,6 +304,9 @@ void Linker32 :: createImportData(ImageInfo& info)
    dynamicWriter.writeDWord(DT_RELENT);
    dynamicWriter.writeDWord(8);
 
+   dynamicWriter.writeDWord(0);
+   dynamicWriter.writeDWord(0);
+
    // write interpreter path
    dynamicWriter.align(FILE_ALIGNMENT, 0);
 

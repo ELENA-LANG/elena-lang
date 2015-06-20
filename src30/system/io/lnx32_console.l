@@ -1,11 +1,33 @@
 #define system.
 
+// --- $globalVariables ---
+
+#symbol $globalVariables =
+{
+    stdout
+    [
+       #var(type:handle)aVariable.
+       #var(type:handle)aLibHandle := system'external'libdl dlopen 
+                                          &literal:"libc.so.6"
+                                          &int:1.
+
+       aVariable := system'external'libdl dlsym
+                        &handle:aLibHandle  
+                        &literal:"stdout".
+
+       ^ Handle new &handle:aVariable.  
+    ]
+}.
+
 // --- ConsoleWriter ---
 
 #class $ConsoleWriter
 {
-    #constructor new
+    #field theHandle.
+
+    #constructor new &handle:aHandle
     [
+       theHandle := aHandle. 
     ]
 
     #method write &wide:aLiteral
@@ -38,6 +60,7 @@
 
     #method refresh
     [
+//        system'external'libc fflush &handle:theHandle.
     ]
             
     #method free
@@ -142,6 +165,6 @@
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new.
+#symbol stdConsoleWriter = $ConsoleWriter new &handle:($globalVariables stdout).
 
 #symbol stdConsoleReader = $ConsoleReader new.
