@@ -20,11 +20,7 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xdev - script engine
-                       * review script engine architecture : vm commands, grammar, ...
-
               xdev - linux:
-                       * fix #2 issue
                        * fix #3 issue
                        * linux32 : implement console clear
                        * implement textdb sample
@@ -62,13 +58,9 @@ Currently:
 week2:
               xdev - linux:
                        * goods sample: does not work when #0A is newline, works ok when newline is #0a0d 
+                       * reimplement consolewriter.write&literal - use printf instead of putchar
                        * test stack trace generating functionality
                        * test load class by name
-
-                       * console.write[1] : flush stdout buffer after write command ;
-                         stdout should be resolved dynamically
-                             void * shared_object = dlopen("./test.so", RTLD_LAZY);
-                             func_t func = (func_t) dlsym(shared_object, "func");
 
                        * migrate rosetta samples
 
@@ -121,6 +113,8 @@ week2:
                        * ByteArray.fill&index&length&byte
                        * optimize typed list
                        * File - make possible to check if the file exists
+                       * optimize TextBuffer.indexOf&index&literal&vint
+                       * optimize TextBuffer.indexOf&index&char&vint
                        
                adev - console operations:  
                        * read / write operation: complex types

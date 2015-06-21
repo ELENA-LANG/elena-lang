@@ -234,7 +234,7 @@
                     j := j + 1.
                 ].
                 
-                (j > aLiteralLength)
+                (j == aLiteralLength)
                     ? [ aRetVal << anIndex. ^ $self. ].
             ].
                 
