@@ -128,10 +128,15 @@
 #class(limited) TextReader
 {
     #field(type:textbuffer) theOutput.
+    #field(type:literal)    theNewLineConstant.
+    #field(type:int)        theNewLineLength.
 
     #constructor new
     [
         theOutput := TextBuffer new.
+        theNewLineConstant := 'newLine literal.
+                
+        theNewLineLength := theNewLineConstant length.
     ]
 
     #method read &chararray:anArray &vlength:anActualLength
@@ -153,7 +158,7 @@
         #var(type:int)aLength := -1.
         #loop (aLength == -1) ?
         [
-            theOutput indexOf &index:0 &char:10 &vint:aLength.
+            theOutput indexOf &index:0 &literal:theNewLineConstant &vint:aLength.
             
             (aLength == -1)
                 ? [
@@ -167,14 +172,14 @@
                 ].
         ].
         
-        (aLength <= 0) 
+        (aLength < 0) 
             ? [
                 aLine := theOutput literal.                
                 theOutput clear.
             ]
             ! [ 
-                aLine := theOutput Substring &index:0 &length:(aLength - 1).
-                theOutput delete &index:0 &length:(1 + aLength).
+                aLine := theOutput Substring &index:0 &length:aLength.
+                theOutput delete &index:0 &length:(aLength + theNewLineLength).
             ].            
 
         ^ aLine.
