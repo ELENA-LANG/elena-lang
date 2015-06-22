@@ -2670,13 +2670,9 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 {
-   // check generic extension
    ref_t type = -1;
-   if (scope.moduleScope->extensionHints.exist(messageRef, 0)) {
-      type = 0;
-   }
    // check typed extension
-   else if (getType(object) != 0 && scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
+   if (getType(object) != 0 && scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
       type = getType(object);
    }
    // if class reference available - select the possible type
@@ -2695,6 +2691,10 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
             it++;
          }
       }
+   }
+   // check generic extension
+   else if (scope.moduleScope->extensionHints.exist(messageRef, 0)) {
+      type = 0;
    }
 
    if (type != -1) {
@@ -3474,11 +3474,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
          continue;
       }
-      else if (member == nsTypecast) {
-         currentObject = compileTypecastExpression(member, scope, currentObject, mode);
-
-         continue;
-      }
       else if (member==nsMessageOperation) {
          currentObject = compileMessage(member, scope, currentObject, mode);
       }
@@ -3571,31 +3566,6 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
 
    while (node==nsMessageOperation) {
       object = compileExtensionMessage(node, roleNode, scope, object, role, mode);
-
-      node = node.nextNode();
-   }
-
-   return object;
-}
-
-ObjectInfo Compiler :: compileTypecastExpression(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-{
-   ModuleScope* moduleScope = scope.moduleScope;
-   ObjectInfo   role;
-
-   TerminalInfo typeTerminal = node.firstChild().Terminal();
-   ref_t typeRef = scope.moduleScope->mapType(typeTerminal);
-
-   _writer.loadObject(*scope.tape, object);
-
-   // override standard message compiling routine
-   node = node.nextNode();
-
-   while (node==nsMessageOperation) {
-      bool mismatch = false;
-      object = compileTypecast(scope, object, typeRef, mismatch, mode);
-
-      object = compileMessage(node, scope, object, mode);
 
       node = node.nextNode();
    }

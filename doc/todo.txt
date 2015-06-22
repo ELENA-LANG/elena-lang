@@ -20,14 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-               xdev - general implementation
-                       * implement #21 issue: get rid of ~ operator and change the precedence (look at arrayTest to make sure it works)
-
               adev - code review
                        * pass system test
                        * rafactoring samples
                        * rafactoring rosetta samples
                        
+               xdev - general implementation
+                       * look at arrayTest to make sure typed extension has priority over generic ones
+
               xdev - linux:
                        * implement textdb sample
                        * test stack trace generating functionality

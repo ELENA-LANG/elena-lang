@@ -716,7 +716,6 @@ protected:
    ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
-   ObjectInfo compileTypecastExpression(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
