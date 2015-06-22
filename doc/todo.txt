@@ -20,27 +20,29 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xdev - linux:
-                       * linux32 : implement console clear
-                       * implement textdb sample
-                       
               adev - code review
                        * use case for system'Message  ??
                        * use case for system'Signature ??
                        * use case for system'MessageVar ??	
 
                        * review lib30 (starting from system'routines)
-                       * move Handle/RTPointer/UnsafePointer to common code
-
+                       
                xdev - general implementation
                        * implement #21 issue
+
+              xdev - linux:
+                       * implement textdb sample
+                       * test stack trace generating functionality
+                       * test load class by name
+                       * linux32 : implement console clear
 
               <--build-->
 
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
                          another one in future
-                       * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects
+                       * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects,
+                         overwriding the object (just in place mutation)
                        * reimplement script samples: interpreter, helloworld, vmconsole
 
               adev - lib30     
@@ -57,8 +59,6 @@ Currently:
 week2:
               xdev - linux:
                        * reimplement consolewriter.write&literal - use printf instead of putchar
-                       * test stack trace generating functionality
-                       * test load class by name
 
                        * migrate rosetta samples
 
@@ -113,7 +113,7 @@ week2:
                        * File - make possible to check if the file exists
                        * optimize TextBuffer.indexOf&index&literal&vint
                        * optimize TextBuffer.indexOf&index&char&vint
-                       
+
                adev - console operations:  
                        * read / write operation: complex types
                        * write formatted numbers

@@ -51,6 +51,7 @@
 [+] new package: sqlite
 [*] system'io: Stream, BinaryReader, BinaryWriter, FileStream
 [*] system'console: clear
+[+] system'collections: ArrayList
                                                                                                 
 Samples:
 [+] agenda, graphs, c_a_g

@@ -323,6 +323,7 @@
 
 // --- ArrayList ---
 
+/// An array list object
 #class(sealed) ArrayList
 {
     #field(type:array) theArray.
@@ -484,6 +485,9 @@
     /// Returns a list copy
     #method clone
         = ArrayList $new &array:theArray &length:theLength.
+        
+    #method array
+        = Array new &length:theLength &index:0 &array:theArray.
 }
 
 // --- ArrayListEnumerator ---
@@ -584,15 +588,18 @@
 
 // --- Dictionary ---
 
+/// Dictionary class
 #class(sealed) Dictionary
 {
     #field(type:array_list) theList.
     #field(type:array)      theHashTable.
     #field(type:int)        theHashMask.
 
+    /// Creates a dictionary
     #constructor new
         <= new &capacity:32 &hash_length:32.
 
+    /// Creates a dictionary
     #constructor new &capacity:aCapacity &hash_length:aHashLength
     [
         #var(type:int)size := 32.
@@ -608,9 +615,11 @@
         theList := ArrayList new &capacity:aCapacity.
     ]
     
+    /// Gets a dictionary item with the specified key
     #method getAt : aKey
         = aKey cast:%getAt &to:$self.
         
+    /// Sets a dictionary item with the specified key
     #method setAt : aKey : anObject
     [
         #var(type:int)aHashCode := aKey hash_code.
@@ -729,8 +738,10 @@
         ^ $self $getItem &hash_code:aHashCode &key:aKey object.
     ]
 
+    /// Returns itself
     #method dictionary = $self.
 
+    /// Returns a dictionary enumerator
     #method enumerator => theList.
     
     /// Dispatches the verb to the target object with dictionary subject
@@ -739,6 +750,7 @@
     /// Dispatches the verb to the target object with dictionary subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dictionary:$self.
 
+    /// Clones a dictionary
     #method clone 
     [
         #var aList := Dictionary new.

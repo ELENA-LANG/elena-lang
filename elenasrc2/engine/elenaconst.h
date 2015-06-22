@@ -434,7 +434,7 @@ namespace _ELENA_
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
-// #define HINT_ROLE               "role"
+   #define HINT_ROLE               "role"
    #define HINT_TYPE               "type"              // type hint
    #define HINT_SIZE               "size"
    #define HINT_STRUCT             "struct"

@@ -62,6 +62,9 @@
 #subject(class:system'IndexFunction2)nnfunc.
 #subject(class:system'IndexFunction3)n3func.
 
+#subject(class:system'BaseFunction1) each.
+#subject(class:system'IndexFunction1)every.
+
 // === subject synonyms ===
 #subject(class:system'Signature)    error_type.
 
@@ -84,6 +87,11 @@
 #subject key.
 #subject value.
 #subject object.
+
+// --- Enumerators / Indexers ---
+
+#subject(class:system'Enumerator)enumerator.
+#subject(class:system'Iterator)iterator.
 
 
 
@@ -114,14 +122,7 @@
 
 // === nested functions ===
 
-#subject(class:system'BaseFunction1) each.
-#subject(class:system'IndexFunction1)every.
 //#subject(type:indexfunc) forEvery.
-
-// --- Enumerators / Indexers ---
-
-#subject(class:system'Enumerator)enumerator.
-#subject(class:system'Iterator)iterator.
 
 
 #subject enumerable. // !! should be removed
