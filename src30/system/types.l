@@ -16,6 +16,10 @@
 #subject(class:system'IntNumber)    capacity.
 #subject(class:system'IntNumber)    index.
 #subject(class:system'IntNumber)    hash_code.
+#subject(class:system'Message)      mssg.
+#subject(class:system'Message)      verb.
+#subject(class:system'Signature)    subject.
+#subject(class:system'Symbol)       symbol_ref.
 
 #subject(class:system'Integer)      vint.
 #subject(class:system'Long)         vlong.
@@ -23,11 +27,7 @@
 #subject(class:system'Byte)         vbyte.
 #subject(class:system'Short)        vshort.
 #subject(class:system'Char)         vchar.
-
-#subject(class:system'Message)      mssg.
-#subject(class:system'Message)      verb.
-#subject(class:system'Signature)    subject.
-#subject(class:system'Symbol)       symbol_ref.
+#subject(class:system'MessageVar)   vmssg.
 
 // === basic dynamic types ===
 #subject(class:system'ByteArray)    bytearray.
@@ -37,6 +37,8 @@
 #subject(class:system'Array)        array.
 #subject(class:system'OpenArgs)     params.
 #subject(class:system'OpenArgs)     args.
+
+#subject(class:system'MessageArray) mssgarray.
 
 #subject(class:system'LiteralValue) literal.
 #subject(class:system'WideLiteralValue) wide.
@@ -63,6 +65,7 @@
 #subject(class:system'IndexFunction3)n3func.
 
 #subject(class:system'BaseFunction1) each.
+#subject(class:system'BaseFunction2) eachPair.
 #subject(class:system'IndexFunction1)every.
 
 // === subject synonyms ===
@@ -83,20 +86,19 @@
 #subject(class:system'RTPointer)rt_ptr.
 #subject(class:system'UnsafePointer)dirty_ptr.
 
+// --- Enumerators / Indexers ---
+
+#subject(class:system'Enumerator)enumerator.
+#subject(class:system'Iterator)iterator.
+
 // --- common properties ---
 #subject key.
 #subject value.
 #subject object.
 #subject path.
 #subject name.
-
-// --- Enumerators / Indexers ---
-
-#subject(class:system'Enumerator)enumerator.
-#subject(class:system'Iterator)iterator.
-
-#subject(class:system'MessageArray) mssgarray.
-#subject(class:system'MessageVar)       vmssg.
+#subject enumerable.
+#subject indexable.
 
 // === int synonyms ===
 #subject(class:system'IntNumber)        offset.

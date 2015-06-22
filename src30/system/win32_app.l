@@ -22,9 +22,11 @@
     #method start
     [
         'program eval
-            | if &Error: e
-            [
-                console writeLine:(e literal).
-            ].
+            | on:
+            {
+                Abort = e [].
+                
+                ! = e [ console writeLine:(e literal). ].
+            }
     ]
 }.

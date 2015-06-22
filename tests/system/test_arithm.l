@@ -425,7 +425,7 @@
     #var ll := l length.
     #var c := l@2.
 
-    #var a := l asArray.
+    #var a := l toArray.
 //    #var a2 := l~indexable arreay.
 
     control run:"abc" &forEach: (:ch)[ console write:ch ].

@@ -730,6 +730,9 @@
     #method run &each:aFunction
       = aFunction run &enumerator:(self enumerator).
       
+    #method run:aParam &eachPair:aFunction
+      = aFunction run:aParam &enumerator:(self enumerator).
+      
     #method seek &each:aFunction
       = aFunction retrieve &enumerator:(self enumerator).
 
@@ -764,15 +767,6 @@
             
         ^ aLastItem.
     ]
-
-    #method asArray
-    [
-        #var(type:array_list)aList := ArrayList new.
-        
-        self::enumerableOp run &each:anItem [ aList append:anItem ].
-
-        ^ aList array.
-    ]        
 }
 
 // --- indexableOp ---

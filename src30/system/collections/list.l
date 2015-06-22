@@ -297,11 +297,11 @@
     /// Returns the list iterator
     #method iterator = ListIterator new &list:$self.
     
-    /// Dispatches the verb to the target object with list subject
-    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &list:$self.
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
     
-    /// Dispatches the verb to the target object with list subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &list:$self.
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
 
     /// Returns itself
     #method list = $self.
@@ -449,11 +449,11 @@
     /// Returns itself
     #method array_list = $self.
     
-    /// Dispatches the verb to the target object with array_list subject
-    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &array_list:$self.
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
     
-    /// Dispatches the verb to the target object with array_list subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array_list:$self.
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
     
     /// Returns the number of list items
     #method length = theLength int.
@@ -744,11 +744,11 @@
     /// Returns a dictionary enumerator
     #method enumerator => theList.
     
-    /// Dispatches the verb to the target object with dictionary subject
-    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &dictionary:$self.
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
     
-    /// Dispatches the verb to the target object with dictionary subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dictionary:$self.
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
 
     /// Clones a dictionary
     #method clone 

@@ -21,9 +21,10 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * pass system test
+                       * intsum: use AbortException to correctly stops the program without error
                        * rafactoring samples
                        * rafactoring rosetta samples
+                       * pass system test
                        
                xdev - general implementation
                        * look at arrayTest to make sure typed extension has priority over generic ones

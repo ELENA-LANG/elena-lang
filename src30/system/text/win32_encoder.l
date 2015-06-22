@@ -26,7 +26,7 @@
             ? [
                 #var(type:dirty_ptr)ptr.
                 ptr write &bytearray:aByteArray.
-                ptr append &int:anIndex.
+                ptr append &index:anIndex.
 
                 system'external'KERNEL32 MultiByteToWideChar &int:theCodePage &int:$MB_ERR_INVALID_CHARS &dirty_ptr:ptr &int:n &shortarray:temp_buf &vint:aConverted.
             ]

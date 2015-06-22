@@ -12,12 +12,12 @@
 #class(extension) EReader
 {
     #method loadFrom : aStream
-        =  convertor save:(aStream readLine) &to:self
+        = aStream readLine convertTo:self
             | if &FormatError: e
                 [
                     console writeLine:(e message) readChar.
                     
-                    #throw e.
+                    #throw AbortException new.
                 ].
 }
 
@@ -27,7 +27,7 @@
 
 #symbol Program =
 [
-    consoleEx
+    console
         writeLine:'prompt
         writeLine:"The sum is ":(enteredNumber + enteredNumber)
         readChar.
