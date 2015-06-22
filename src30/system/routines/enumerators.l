@@ -149,6 +149,13 @@
         
         ^ aLength == 0.
     ]
+    
+    #method Subarray &index:anIndex &length:aLength
+    [
+        #var(type:iterator) it := self iterator.
+        
+        ^ Array new &length:aLength set &every: (&index:i) [ it write &index:(anIndex + i) get ].
+    ]
 }
 
 // --- literalOp ---
@@ -440,6 +447,280 @@
 {
     #method indexOf : anObject
         = self wide indexOf:0:anObject.
+        
+    #method indexOf &wide:aLiteral
+        = self wide indexOf &index:0 &wide:aLiteral.
+
+    #method indexOf &char:aChar
+        = self wide indexOf &index:0 &char:aChar.
+        
+    #method(type:wide) Substring &index:anIndex
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)aLength.
+        aLiteral readLength &vint:aLength.
+        
+        aLength := aLength - anIndex.
+        
+        ^ aLiteral Substring &index:anIndex &length:aLength.
+    ]
+     
+    #method trimLeft &char:aChar
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:int)aCharLen.
+        
+        aLiteral readLength &vint:aLength.
+        aChar readLength &vint:aCharLen.
+        
+        #loop (anIndex < aLength) ?
+        [
+            aLiteral read &index:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ aLiteral delete &index:0 &length:anIndex. ].
+            
+            anIndex := anIndex + aCharLen.
+        ].
+        
+        ^ emptyWideLiteralValue.
+    ]
+    
+    #method trimLeft
+        = self::wideOp trimLeft &char:#32.
+       
+    #method trimRight &char:aChar
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:int)aCharLen.
+
+        aLiteral readLength &vint:aLength.
+        aChar readLength &vint:aCharLen.
+                
+        #var(type:int)anIndex := aLength - 1.
+        #loop (anIndex >= 0) ?
+        [
+            aLiteral read &index:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ aLiteral delete &index:anIndex &length:(aLength - anIndex). ].
+            
+            anIndex := anIndex - aCharLen.
+        ].
+        
+        ^ emptyWideLiteralValue.
+    ]
+    
+    #method trimRight
+        = self::wideOp trimRight &char:#32.
+       
+    #method trim &char:aChar
+        = self::wideOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method trim
+        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
+    
+    #method padLeft &char:aChar &length:aLength
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)aCurrentLength.
+        aLiteral readLength &vint:aCurrentLength.
+        
+        (aCurrentLength < aLength)
+            ? [ ^ WideLiteralValue new &length:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
+    ]
+    
+    #method padRight &char:aChar &length:aLength
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)aCurrentLength.
+        aLiteral readLength &vint:aCurrentLength.
+
+        (aCurrentLength < aLength)
+            ? [ ^ aLiteral add &wide:(WideLiteralValue new &length:(aLength - aCurrentLength) &char:aChar). ].
+    ]
+
+    #method startingWith &wide:s
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)n.
+        aLiteral indexOf &index:0 &wide:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+
+    #method endingWith &wide:s
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        #var(type:int)n.
+        
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+        
+        aLiteral indexOf &index:(l1 - l2) &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method replaceFirst &wide:aReplacee &wide:aReplacer
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int) aReplaceeLen.
+        #var(type:int)anIndex.
+        
+        aReplacee readLength &vint:aReplaceeLen.
+        
+        aLiteral indexOf &index:0 &wide:aReplacee &vint:anIndex.
+        
+        (anIndex != -1)
+            ? [ ^ aLiteral delete &index:anIndex &length:aReplaceeLen insert &index:anIndex &wide:aReplacee. ]
+            ! [ ^ aLiteral. ].
+    ]
+        
+    #method replace &wide:aReplacee &wide:aReplacer
+    [
+        #var(type:wide)aLiteral := self wide.
+        
+        #var aTarget := String new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anEnd.
+        aLiteral indexOf &index:aStart &wide:aReplacee &vint:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget 
+                append &wide::(aLiteral Substring &index:aStart &length:(anEnd - aStart))
+                append &wide:aReplacer.
+            
+            aStart := anEnd + aReplacee length.
+            
+            aLiteral indexOf &index:aStart &wide:aReplacee &vint:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget append:(aLiteral::wideOp Substring &index:aStart) wide ]
+            ! [ aLiteral ].
+    ]
+
+    #method upperCase
+    [
+        #var(type:wide)aLiteral := self wide.
+        
+        #var(type:wide)aRetVal := emptyWideLiteralValue.        
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:char)aConverted.
+        #var(type:int)aCurrentLen.
+
+        aLiteral readLength &vint:aLength.
+                
+        #loop (anIndex < aLength)?
+        [
+            aLiteral read &index:anIndex &vchar:aCurrent.
+            aCurrent readLength &vint:aCurrentLen.
+            
+            characterController toUpperCase &char:aCurrent &vchar:aConverted.
+            
+            aRetVal := aRetVal add &char:aConverted.
+            
+            anIndex := anIndex + aCurrentLen.
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    #method lowerCase
+    [
+        #var(type:wide)aLiteral := self wide.
+        
+        #var(type:wide)aRetVal := emptyWideLiteralValue.        
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        #var(type:char)aCurrent.
+        #var(type:char)aConverted.
+        #var(type:int)aCurrentLen.
+        
+        aLiteral readLength &vint:aLength.
+        
+        #loop (anIndex < aLength)?
+        [
+            aLiteral read &index:anIndex &vchar:aCurrent.
+            aCurrent readLength &vint:aCurrentLen.
+            
+            characterController toLowerCase &char:aCurrent &vchar:aConverted.
+            
+            aRetVal := aRetVal add &char:aConverted.
+            
+            anIndex := anIndex + aCurrentLen.
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    #method is &empty
+    [
+        #var(type:int)aLength.
+        #var(type:wide)aLiteral := self wide.        
+        aLiteral readLength &vint:aLength.
+        
+        ^ aLength == 0.
+    ]
+
+    #method(type:array) split &char:aChar
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:array_list) aList := ArrayList new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aCharLen.
+        aChar readLength &vint:aCharLen.
+        
+        #loop (anIndex >= 0)?        
+        [
+            aLiteral indexOf &index:aStart &char:aChar &vint:anIndex.
+            (-1 != anIndex) ?
+            [
+                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + aCharLen.
+            ]
+            ! [
+                aList += aLiteral Substring &index:aStart &length:(self length - aStart).
+            ].
+        ].
+        
+        ^ aList array.
+    ]
+    
+    #method split &wide:aValue
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:array_list) aList := ArrayList new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        
+        #loop (anIndex >= 0)?        
+        [
+            aLiteral indexOf &index:aStart &wide:aValue &vint:anIndex.
+            (-1 != anIndex) ?
+            [
+                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
+                aStart := anIndex + aValue length.
+            ]
+            ! [
+                aList += aLiteral Substring &index:aStart &length:(aLiteral length - aStart).
+            ].
+        ].
+        
+        ^ aList array.
+    ]
 }
 
 // --- enumerableOp ---
@@ -717,354 +998,8 @@
                 
                 eval &literal:aSplitter = aLiteral::stringOp split &literal:aSplitter.
             }.
-    ]    
-}
-
-// === actions ===
-
-#symbol ifOrdered
-    = (:aFormer:aLater) [ aFormer < aLater ].
-
-
-
-
-// --- obsolete ---
-
-// --- wideOp ---
-
-#class wideOp1
-{
-    #method indexOf &wide:aLiteral
-        = self wide indexOf &index:0 &wide:aLiteral.
-
-    #method indexOf &char:aChar
-        = self wide indexOf &index:0 &char:aChar.
-
-    #method(type:wide) Substring &index:anIndex
-    [
-        #var(type:wide)aLiteral := self wide.        
-        #var(type:int)aLength.
-        aLiteral readLength &vint:aLength.
-        
-        aLength := aLength - anIndex.
-        
-        ^ aLiteral Substring &index:anIndex &length:aLength.
-    ]
-     
-    #method trimLeft &char:aChar
-    [
-        #var(type:wide)aLiteral := self wide.
-        #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
-        #var(type:char)aCurrent.
-        #var(type:int)aCharLen.
-        
-        aLiteral readLength &vint:aLength.
-        aChar readLength &vint:aCharLen.
-        
-        #loop (anIndex < aLength) ?
-        [
-            aLiteral read &index:anIndex &vchar:aCurrent.
-            
-            (aChar equal &char:aChar)
-                ! [ ^ aLiteral delete &index:0 &length:anIndex. ].
-            
-            anIndex := anIndex + aCharLen.
-        ].
-        
-        ^ emptyWideLiteralValue.
     ]
     
-    #method trimLeft
-        = self::wideOp trimLeft &char:#32.
-       
-    #method trimRight &char:aChar
-    [
-        #var(type:wide)aLiteral := self wide.        
-        #var(type:int)aLength.
-        #var(type:char)aCurrent.
-        #var(type:int)aCharLen.
-
-        aLiteral readLength &vint:aLength.
-        aChar readLength &vint:aCharLen.
-                
-        #var(type:int)anIndex := aLength - 1.
-        #loop (anIndex >= 0) ?
-        [
-            aLiteral read &index:anIndex &vchar:aCurrent.
-            
-            (aChar equal &char:aChar)
-                ! [ ^ aLiteral delete &index:anIndex &length:(aLength - anIndex). ].
-            
-            anIndex := anIndex - aCharLen.
-        ].
-        
-        ^ emptyWideLiteralValue.
-    ]
-    
-    #method trimRight
-        = self::wideOp trimRight &char:#32.
-       
-    #method trim &char:aChar
-        = self::wideOp trimLeft &char:aChar trimRight &char:aChar.
-    
-    #method trim
-        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
-    
-    #method padLeft &char:aChar &length:aLength
-    [
-        #var(type:wide)aLiteral := self wide.
-        #var(type:int)aCurrentLength.
-        aLiteral readLength &vint:aCurrentLength.
-        
-        (aCurrentLength < aLength)
-            ? [ ^ WideLiteralValue new &length:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
-    ]
-    
-    #method padRight &char:aChar &length:aLength
-    [
-        #var(type:wide)aLiteral := self wide.        
-        #var(type:int)aCurrentLength.
-        aLiteral readLength &vint:aCurrentLength.
-
-        (aCurrentLength < aLength)
-            ? [ ^ aLiteral add &wide:(WideLiteralValue new &length:(aLength - aCurrentLength) &char:aChar). ].
-    ]
-
-    #method startingWith &wide:s
-    [
-        #var(type:wide)aLiteral := self wide.        
-        #var(type:int)n.
-        aLiteral indexOf &index:0 &wide:s &vint:n.
-        
-        ^ 0 == n.
-    ]
-
-    #method endingWith &wide:s
-    [
-        #var(type:wide)aLiteral := self wide.
-        #var(type:int)l1.
-        #var(type:int)l2.
-        #var(type:int)n.
-        
-        aLiteral readLength &vint:l1.
-        s readLength &vint:l2.
-        
-        aLiteral indexOf &index:(l1 - l2) &wide:s &vint:n.
-        
-        ^ n != -1.
-    ]
-
-    #method replaceFirst &wide:aReplacee &wide:aReplacer
-    [
-        #var(type:wide)aLiteral := self wide.
-        #var(type:int) aReplaceeLen.
-        #var(type:int)anIndex.
-        
-        aReplacee readLength &vint:aReplaceeLen.
-        
-        aLiteral indexOf &index:0 &wide:aReplacee &vint:anIndex.
-        
-        (anIndex != -1)
-            ? [ ^ aLiteral delete &index:anIndex &length:aReplaceeLen insert &index:anIndex &wide:aReplacee. ]
-            ! [ ^ aLiteral. ].
-    ]
-        
-    #method replace &wide:aReplacee &wide:aReplacer
-    [
-        #var(type:wide)aLiteral := self wide.
-        
-        #var aTarget := String new.
-        #var(type:int)aStart := 0.
-        #var(type:int)anEnd.
-        aLiteral indexOf &index:aStart &wide:aReplacee &vint:anEnd.
-        
-        #loop (anEnd != -1) ?
-        [
-            aTarget 
-                append &wide::(aLiteral Substring &index:aStart &length:(anEnd - aStart))
-                append &wide:aReplacer.
-            
-            aStart := anEnd + aReplacee length.
-            
-            aLiteral indexOf &index:aStart &wide:aReplacee &vint:anEnd.
-        ].
-    
-        ^ (aStart != 0)
-            ? [ aTarget append:(aLiteral::wideOp Substring &index:aStart) wide ]
-            ! [ aLiteral ].
-    ]
-
-    #method upperCase
-    [
-        #var(type:wide)aLiteral := self wide.
-        
-        #var(type:wide)aRetVal := emptyWideLiteralValue.        
-        #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
-        #var(type:char)aCurrent.
-        #var(type:char)aConverted.
-        #var(type:int)aCurrentLen.
-
-        aLiteral readLength &vint:aLength.
-                
-        #loop (anIndex < aLength)?
-        [
-            aLiteral read &index:anIndex &vchar:aCurrent.
-            aCurrent readLength &vint:aCurrentLen.
-            
-            characterController toUpperCase &char:aCurrent &vchar:aConverted.
-            
-            aRetVal := aRetVal add &char:aConverted.
-            
-            anIndex := anIndex + aCurrentLen.
-        ].
-            
-        ^ aRetVal.
-    ]
-
-    #method lowerCase
-    [
-        #var(type:wide)aLiteral := self wide.
-        
-        #var(type:wide)aRetVal := emptyWideLiteralValue.        
-        #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
-        #var(type:char)aCurrent.
-        #var(type:char)aConverted.
-        #var(type:int)aCurrentLen.
-        
-        aLiteral readLength &vint:aLength.
-        
-        #loop (anIndex < aLength)?
-        [
-            aLiteral read &index:anIndex &vchar:aCurrent.
-            aCurrent readLength &vint:aCurrentLen.
-            
-            characterController toLowerCase &char:aCurrent &vchar:aConverted.
-            
-            aRetVal := aRetVal add &char:aConverted.
-            
-            anIndex := anIndex + aCurrentLen.
-        ].
-            
-        ^ aRetVal.
-    ]
-
-    #method is &empty
-    [
-        #var(type:int)aLength.
-        #var(type:wide)aLiteral := self wide.        
-        aLiteral readLength &vint:aLength.
-        
-        ^ aLength == 0.
-    ]
-
-    #method(type:array) split &char:aChar
-    [
-        #var(type:wide)aLiteral := self wide.        
-        #var aList := List new.
-        #var(type:int)aStart := 0.
-        #var(type:int)anIndex := 0.
-        #var(type:int)aCharLen.
-        aChar readLength &vint:aCharLen.
-        
-        #loop (anIndex >= 0)?        
-        [
-            aLiteral indexOf &index:aStart &char:aChar &vint:anIndex.
-            (-1 != anIndex) ?
-            [
-                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
-                aStart := anIndex + aCharLen.
-            ]
-            ! [
-                aList += aLiteral Substring &index:aStart &length:(self length - aStart).
-            ].
-        ].
-        
-        ^ aList::enumerableOp array.
-    ]
-    
-    #method split &wide:aValue
-    [
-        #var(type:wide)aLiteral := self wide.
-        #var aList := List new.
-        #var(type:int)aStart := 0.
-        #var(type:int)anIndex := 0.
-        
-        #loop (anIndex >= 0)?        
-        [
-            aLiteral indexOf &index:aStart &wide:aValue &vint:anIndex.
-            (-1 != anIndex) ?
-            [
-                aList += aLiteral Substring &index:aStart &length:(anIndex - aStart).
-                aStart := anIndex + aValue length.
-            ]
-            ! [
-                aList += aLiteral Substring &index:aStart &length:(aLiteral length - aStart).
-            ].
-        ].
-        
-        ^ aList::enumerableOp array.
-    ]
-
-    #method split &by:aSplitter
-    [
-        #var(type:wide) aLiteral := self wide.
-        
-        ^ aSplitter cast:%eval &to:
-            {
-                eval &char:aChar = aLiteral::wideOp split &char:aChar.
-                
-                eval &wide:aSplitter = aLiteral::wideOp split &wide:aSplitter.
-            }.
-    ]
-}
-
-// --- indexable ---
-
-#class indexableOp2
-{
-    #method exchange:anIndex1:anIndex2
-    [
-        self::indexableOp exchange &index:(anIndex1 int) &index:(anIndex2 int).
-    ]
-    
-    #method exchange &index:anIndex1 &index:anIndex2
-    [
-        #var(type:iterator) it := self iterator.
-        
-        it write &index:anIndex1.
-        #var anObject1 := it get.
-                
-        it write &index:anIndex2.
-        #var anObject2 := it get.        
-        it set:anObject1.
-        
-        it write &index:anIndex1.
-        it set:anObject2.
-    ]
-
-    #method Subarray &index:anIndex &length:aLength
-    [
-        #var(type:iterator) it := self iterator.
-        
-        ^ Array new &length:aLength set &every: (&index:i) [ it write &index:(anIndex + i) get ].
-    ]
-
-    #method array
-    [
-        #var(type:array)aRetVal := Array new &length:(self length).
-        #var(type:iterator)it := self iterator.
-        
-        aRetVal set &every: (&index:i) [ it write &index:i get ].
-        
-        ^ aRetVal.
-    ]
-}
-
-#class stringOp2
-{
     #method write : aLiteral &length:aCounter
     [
         #var(type:int)aNumber := aCounter.
@@ -1081,52 +1016,40 @@
     
     #method write : aLine &paddingLeft:aWidth &with:aChar
     [
-        #var(type:int)aWidthInt := aWidth int.
-        #var(type:literal) aLiteral := aLine literal.
-        
-        #var(type:int)aLength := aLiteral length.
-        
-        (aLength < aWidthInt)
-            ? [ self::stringOp write:aChar &length:(aWidthInt - aLength). ].
-            
-        self write:aLiteral.
+        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
             
         ^ self.
     ]
 
     #method write : aLine &paddingRight:aWidth &with:aChar
     [
-        #var(type:literal) aLiteral := aLine literal.
-        #var(type:int)aWidthInt := aWidth int.
-        
-        self write:aLiteral.
-                    
-        #var(type:int)aLength := aLiteral length.
-        
-        (aLength < aWidthInt)
-            ? [ self::stringOp write:aChar &length:(aWidthInt - aLength). ].
+        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
             
         ^ self.
     ]
-
+    
     #method write : aLine &padding:aWidth &with:aChar
     [
-        #var(type:literal) aLiteral := aLine literal.
-        #var(type:int)aWidthInt := aWidth int.
+        #var(type:int)aLength := aWidth int.
+        #var(type:int)aLeftPadding := aLength / 2.
+        #var(type:int)aRightPadding := aLength - aLeftPadding.
         
-        #var(type:int)aLength := aLiteral length.        
-        
-        (aLength < aWidthInt)
-            ? [
-                #var(type:int)aLen := aWidthInt - aLength.
-                #var(type:int)aLeftLen := aLen / 2.
-                
-                self::stringOp write:aChar &length:aLeftLen.
-                self write:aLiteral.
-                self::stringOp write:aChar &length:(aLen - aLeftLen).
-            ]
-            ! [ self write:aLiteral. ].
+        #var aPaddedStr := aLine 
+            padLeft &char:(aChar char) &length:aLeftPadding
+            padRight &char:(aChar char) &length:aRightPadding.
+
+        self write:aPaddedStr.
             
         ^ self.
     ]
+    
 }
+
+// === actions ===
+
+#symbol ifOrdered
+    = (:aFormer:aLater) [ aFormer < aLater ].
