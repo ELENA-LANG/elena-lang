@@ -25,6 +25,32 @@
         
         ^ retVal cast:%convertor &to:byteConvertor.
     ]    
+    
+    #method(type:byte)power &byte:y
+    [
+        #var(type:byte)x := self byte.
+        
+        #var(type:byte)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ByteNumber new &byte:x.
+    ]
+    
+    #method(type:byte) sqr
+    [
+        #var(type:byte)n := self byte.        
+        #var(type:byte)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::byteOp power &byte:(aPower byte).
                 
     #method is &odd
         = self::byteOp mod:2 != 0.
@@ -64,6 +90,32 @@
         
         ^ retVal cast:%convertor &to:shortConvertor.
     ]
+    
+    #method(type:short)power &short:y
+    [
+        #var(type:short)x := self short.
+        
+        #var(type:short)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ShortNumber new &short:x.
+    ]
+    
+    #method(type:short) sqr
+    [
+        #var(type:short)n := self short.        
+        #var(type:short)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::shortOp power &short:(aPower short).
                 
     #method is &odd
         = self::shortOp mod:2 != 0.
@@ -125,6 +177,32 @@
         
         ^ IntNumber new &int:(x - z).
     ]
+    
+    #method(type:int)power &int:y
+    [
+        #var(type:int)x := self int.
+        
+        #var(type:int)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ IntNumber new &int:x.
+    ]
+    
+    #method(type:int) sqr
+    [
+        #var(type:int)n := self int.        
+        #var(type:int)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::intOp power &int:(aPower int).
                 
     #method is &odd
         = self::intOp mod:2 != 0.
@@ -186,6 +264,32 @@
         
         ^ LongNumber new &long:(x - z).
     ]
+    
+    #method(type:long)power &long:y
+    [
+        #var(type:long)x := self long.
+        
+        #var(type:long)i := 0l.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ LongNumber new &long:x.
+    ]
+    
+    #method(type:long) sqr
+    [
+        #var(type:long)n := self long.        
+        #var(type:long)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::longOp power &long:(aPower long).
                 
     #method is &odd
         = self::longOp mod:2l != 0.
@@ -314,6 +418,9 @@
         
         ^ (x ln * y) exp.
     ]
+
+    #method power : aPower
+        = self::realOp power &real:(aPower real).
 
     #method(type:real) sqr
     [
@@ -446,8 +553,7 @@
         #var(type:real)aValue := self real.
         
         ^ RealNumber new &real:(1.0r / aValue).
-    ]
-    
+    ]    
             
     #method is &zero
         = self == 0.
@@ -463,3 +569,139 @@
 }
 
 #symbol(type:real)pi_value = realOpController pi.
+
+// --- mathOp ---
+
+#symbol mathOpDispatcher =
+{
+    #method eval &byte:aValue = byteOp.
+    
+    #method eval &short:aValue = shortOp.
+    
+    #method eval &int:aValue = intOp.
+    
+    #method eval &long:aValue = longOp.
+    
+    #method eval &real:aValue = realOp.
+}.
+
+#class(extension)mathOp
+{
+    #method absolute
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher absolute.
+    ]
+    
+    #method mod : anOperand
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher mod:anOperand.
+    ]
+    
+    #method is &odd
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &odd.
+    ]
+        
+    #method is &even
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &even.
+    ]
+        
+    #method is &zero
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &zero.
+    ]
+        
+    #method is &positive
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &positive.
+    ]
+        
+    #method is &negative
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &negative.
+    ]
+        
+    #method is &nonnegative
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &nonnegative.
+    ]
+    
+    #method exp
+        = (self real)::realOp exp.
+    
+    #method(type:real) ln
+        = (self real)::realOp ln.
+    
+    #method sqrt
+        = (self real)::realOp sqrt.
+
+    #method power &real:aPower
+        = (self real)::realOp power &real:aPower.
+
+    #method power : aPower
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher power : aPower.
+    ]
+
+    #method sqr
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher sqr.
+    ]
+
+    #method rounded
+        = (self real)::realOp rounded.
+
+    #method integer
+        = (self real)::realOp integer.
+
+    #method frac
+        = (self real)::realOp frac.
+
+    #method sin
+        = (self real)::realOp sin.
+
+    #method cos
+        = (self real)::realOp cos.
+
+    #method tan
+        = (self real)::realOp tan.
+
+    #method arctan
+        = (self real)::realOp arctan.
+            
+    #method arcsin
+        = (self real)::realOp arcsin.
+            
+    #method arccos
+        = (self real)::realOp arccos.
+            
+    #method radian
+        = (self real)::realOp radian.
+            
+    #method degree
+        = (self real)::realOp degree.
+            
+    #method reciprocal
+        = (self real)::realOp reciprocal.
+}

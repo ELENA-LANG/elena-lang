@@ -113,3 +113,18 @@
 
     #method eval : aParam [ theResult append:aParam. ]
 }
+
+// --- patternOp ---
+
+#class(extension)patternOp
+{
+    #method summarize : aVariable
+    [
+        Summing new:aVariable run &enumerator:(self enumerator).
+        
+        ^ aVariable value.
+    ]
+    
+    #method summarize
+        = self::patternOp summarize:(Variable new).
+}

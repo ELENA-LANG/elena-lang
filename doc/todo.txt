@@ -25,7 +25,7 @@ Currently:
                        * use case for system'Signature ??
                        * use case for system'MessageVar ??	
 
-                       * review lib30 (starting from system'routines)
+                       * rafactoring lib30 (starting from system'calendar)
                        
                xdev - general implementation
                        * implement #21 issue
