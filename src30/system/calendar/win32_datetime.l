@@ -40,6 +40,46 @@
 
     #method millisecond = IntNumber new &short:theMillisecond.
 
+    #method readYear &vshort:aRetVal
+    [
+        aRetVal << theYear.
+    ]
+
+    #method readMonth &vshort:aRetVal
+    [
+        aRetVal << theMonth.
+    ]
+
+    #method readDayOfWeek &vshort:aRetVal
+    [
+        aRetVal << theDayOfWeek.
+    ]
+
+    #method readDay &vshort:aRetVal
+    [
+        aRetVal << theDay.
+    ]
+
+    #method readHour &vshort:aRetVal
+    [
+        aRetVal << theHour.
+    ]
+
+    #method readMinute &vshort:aRetVal
+    [
+        aRetVal << theMinute.
+    ]
+
+    #method readSecond &vshort:aRetVal
+    [
+        aRetVal << theSecond.
+    ]
+
+    #method readMillisecond &vshort:aRetVal
+    [
+        aRetVal << theMillisecond.
+    ]
+
     #method set &year:aValue 
     [ 
         theYear := aValue short.
@@ -85,7 +125,7 @@
         system'external'KERNEL32 FileTimeToSystemTime &long:aFileTime &systemtime:$self.
     ]
    
-    #method get &wide &int_date_attributes:Flags
+    #method toWide &int_date_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
 
@@ -102,7 +142,7 @@
         ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                
     ]
     
-    #method get &wide &int_time_attributes:Flags
+    #method toWide &int_time_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
 
@@ -124,7 +164,7 @@
 
 #symbol dateTimeControl =
 {
-    read &CurrentUTCTime &vlong:aRetVal
+    readCurrentUTCTime &vlong:aRetVal
     [
         system'external'KERNEL32 GetSystemTimeAsFileTime &vlong:aRetVal.
     ]
@@ -140,8 +180,8 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &wide &int_date_attributes:DATE_SHORTDATE.
-        #var aTime := aSystemTime get &wide &int_time_attributes:0.
+        #var aDate := aSystemTime toWide &int_date_attributes:DATE_SHORTDATE.
+        #var aTime := aSystemTime toWide &int_time_attributes:0.
 
         ^ aDate + " " + aTime.
     ]
@@ -152,7 +192,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aDate := aSystemTime get &wide &int_date_attributes:DATE_SHORTDATE.
+        #var aDate := aSystemTime toWide &int_date_attributes:DATE_SHORTDATE.
 
         ^ aDate.
     ]
@@ -163,7 +203,7 @@
 
         aSystemTime write &long:aDateValue.
 
-        #var aTime := aSystemTime get &wide &int_time_attributes:0.
+        #var aTime := aSystemTime toWide &int_time_attributes:0.
 
         ^ aTime.
     ]

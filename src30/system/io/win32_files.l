@@ -243,6 +243,12 @@
 
 #class(extension:path)pathOp
 {
+    #method openForRead = FileStream openForRead &path:self.
+    
+    #method openForReWrite = FileStream openForReWrite &path:self.
+    
+    #method openForAppend = FileStream openForAppend &path:self.
+    
     #method(type:bool) is &available
     [
         #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
@@ -254,6 +260,36 @@
     [
         #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
         
-        //^(ret == 0) ?[false]![true].        
+       ^ ret != 0.
     ]
+}
+
+// --- File ---
+
+#class File
+{
+    #field(type:wide) thePath.
+    
+    #constructor new &path:aPath
+    [
+        thePath := aPath wide.
+    ]
+    
+    #method openForRead = thePath::pathOp openForRead.
+    
+    #method openForReWrite = thePath::pathOp openForReWrite.
+    
+    #method openForAppend = thePath::pathOp openForAppend.
+    
+    #method is &available
+        = thePath::pathOp is &available.
+    
+    #method delete
+        = thePath::pathOp delete.
+    
+    #method path = thePath.
+    
+    #method literal = thePath literal.
+    
+    #method wide = thePath.
 }

@@ -208,6 +208,7 @@
     [
         #var(type:int)aLiteralLength.
         #var(type:int)anIndex := 0.
+        #var(type:int)aFirstCharLen.
         #var(type:char)aCurrent.
         #var(type:char)aFirstChar.
         #var(type:char)aNextChar.
@@ -215,6 +216,7 @@
         aLiteral readLength &vint:aLiteralLength.
         
         aLiteral read &index:0 &vchar:aFirstChar.
+        aFirstChar readLength &vint:aFirstCharLen.
         
         #loop (anIndex < theLength)?
         [
@@ -222,16 +224,18 @@
             
             (aCurrent == aFirstChar) ?
             [ 
-                #var(type:int)j := 1.
+                #var(type:int)j := aFirstCharLen.
+                #var(type:int)chLen.
                 #loop (j < aLiteralLength) ?
                 [
                     theBuffer read &index:(anIndex + j) &vchar:aCurrent.
                     aLiteral read &index:j &vchar:aNextChar.
                     
                     (aNextChar != aCurrent)
-                        ? [ j := aLiteralLength. ].
+                        ? [ j := aLiteralLength. chLen := 1. ]
+                        ! [ aNextChar readLength &vint:chLen. ].
                     
-                    j := j + 1.
+                    j := j + chLen.
                 ].
                 
                 (j == aLiteralLength)
@@ -248,6 +252,7 @@
     [
         #var(type:int)aLiteralLength.
         #var(type:int)anIndex := 0.
+        #var(type:int)aFirstCharLen.
         #var(type:char)aCurrent.
         #var(type:char)aFirstChar.
         #var(type:char)aNextChar.
@@ -255,6 +260,7 @@
         aLiteral readLength &vint:aLiteralLength.
         
         aLiteral read &index:0 &vchar:aFirstChar.
+        aFirstChar readWideLength &vint:aFirstCharLen.
         
         #loop (anIndex < theLength)?
         [
@@ -262,16 +268,18 @@
             
             (aCurrent == aFirstChar) ?
             [ 
-                #var(type:int)j := 1.
+                #var(type:int)j := aFirstCharLen.
+                #var(type:int)chLen.
                 #loop (j < aLiteralLength) ?
                 [
                     theBuffer read &index:(anIndex + j) &vchar:aCurrent.
                     aLiteral read &index:j &vchar:aNextChar.
                     
                     (aNextChar != aCurrent)
-                        ? [ j := aLiteralLength. ].
+                        ? [ j := aLiteralLength. chLen := 1. ]
+                        ! [ aNextChar readWideLength &vint:chLen. ].
                     
-                    j := j + 1.
+                    j := j + chLen.
                 ].
                 
                 (j > aLiteralLength)

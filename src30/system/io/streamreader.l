@@ -188,11 +188,14 @@
     #method(type:wide) read &wide
     [
         #var(type:wide) aLine := emptyWideLiteralValue.
+        #var(type:wide) nl := theNewLineConstant wide.
+        #var(type:int) nl_len.
+        nl readLength &vint:nl_len.
         
         #var(type:int)aLength := -1.
         #loop (aLength == -1) ?
         [
-            theOutput indexOf &index:0 &char:10 &vint:aLength.
+            theOutput indexOf &index:0 &wide:nl &vint:aLength.
             
             (aLength == -1)
                 ? [
@@ -206,14 +209,14 @@
                 ].
         ].
         
-        (aLength <= 0) 
+        (aLength < 0) 
             ? [
                 aLine := theOutput wide.                
                 theOutput clear.
             ]
             ! [ 
-                aLine := theOutput WideSubstring &index:0 &length:(aLength - 1).
-                theOutput delete &index:0 &length:(1 + aLength).
+                aLine := theOutput WideSubstring &index:0 &length:aLength.
+                theOutput delete &index:0 &length:(aLength + nl_len).
             ].            
 
         ^ aLine.

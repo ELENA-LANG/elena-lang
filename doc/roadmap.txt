@@ -34,6 +34,7 @@ Version 2.1.0
 
 Version 2.2.0
 -------------
+- MVC
 - start migrating all assembler code to c; either dll or import object code
 - gcx, final version
 - x86 native code: optimize with pentium pro commands

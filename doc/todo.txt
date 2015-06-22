@@ -21,11 +21,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * use case for system'Message  ??
-                       * use case for system'Signature ??
-                       * use case for system'MessageVar ??	
-
-                       * rafactoring lib30 (starting from system'calendar)
+                       * rafactoring lib30 (starting from system'winforms)
                        
                xdev - general implementation
                        * implement #21 issue

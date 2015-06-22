@@ -168,7 +168,7 @@
     #constructor now
     [
         #var(type:vlong)aValue.
-        dateTimeControl read &CurrentUTCTime &vlong:aValue.
+        dateTimeControl readCurrentUTCTime &vlong:aValue.
         
         dateTimeControl convertUTC2Local &long:aValue &vlong:aValue.
         
@@ -386,7 +386,7 @@
 #symbol utcNow =
 [
     #var(type:long)aValue.
-    dateTimeControl read &CurrentUTCTime &vlong:aValue.
+    dateTimeControl readCurrentUTCTime &vlong:aValue.
     
     ^ Date new &long:aValue.
 ] eval.

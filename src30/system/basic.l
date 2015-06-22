@@ -2433,6 +2433,18 @@
     #method readLength &vint:aLength
         => system'internal'char_getlen.
         
+    /// Reads the number of bytes to represent the symbol
+    #method readWideLength &vint:aRetVal
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        aLength := aLength + 1.
+        aLength := aLength / 2.
+
+        aRetVal << aLength.
+    ]
+        
     /// Retuns the number of bytes to represent the symbol        
     #method length
     [
@@ -2446,10 +2458,7 @@
     #method wideLength
     [
         #var(type:int)aLength.
-        $self readLength &vint:aLength.
-        
-        aLength := aLength + 1.
-        aLength := aLength / 2.
+        $self readWideLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
     ]

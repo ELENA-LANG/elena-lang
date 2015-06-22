@@ -87,6 +87,8 @@
 #subject key.
 #subject value.
 #subject object.
+#subject path.
+#subject name.
 
 // --- Enumerators / Indexers ---
 
@@ -109,8 +111,6 @@
 #subject(class:system'Integer)          vlength.
 
 // === literal synonyms ===
-#subject name.
-#subject path.
 #subject x.
 #subject y.
 #subject width.
