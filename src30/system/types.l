@@ -95,11 +95,6 @@
 #subject(class:system'Enumerator)enumerator.
 #subject(class:system'Iterator)iterator.
 
-
-
-
-
-
 #subject(class:system'MessageArray) mssgarray.
 #subject(class:system'MessageVar)       vmssg.
 
@@ -115,15 +110,3 @@
 #subject y.
 #subject width.
 #subject height.
-
-// === logical types ===
-
-#subject string.
-
-// === nested functions ===
-
-//#subject(type:indexfunc) forEvery.
-
-
-#subject enumerable. // !! should be removed
-#subject indexable. // !! should be removed

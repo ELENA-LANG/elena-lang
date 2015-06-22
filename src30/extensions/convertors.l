@@ -4,9 +4,9 @@
 
 ////#define(const)convertor = extensions'convertor.
 
-#class(extension:enumerable) enumerableEx
+#class(extension) enumerableEx
 {
-    #method literal
+    #method asLiteral
     [
         #var(type:textbuffer) theOutput := TextBuffer new.
         
@@ -21,7 +21,7 @@
         ^ theOutput literal.
     ]
     
-    #method wide
+    #method asWide
     [
         #var(type:textbuffer) theOutput := TextBuffer new.
         
@@ -57,9 +57,9 @@
     #method(type:literal) toLiteral:anObject
         = anObject cast:%eval &to:
                    { 
-                      eval &enumerable : aList = aList::enumerableEx literal. 
+                      eval &enumerable : aList = aList::enumerableEx asLiteral. 
                       
-                      eval &array : anArray = anArray::enumerableEx literal.
+                      eval &array : anArray = anArray::enumerableEx asLiteral.
                       
                       ! : anObject = anObject.
                    } literal.
@@ -80,9 +80,9 @@
     #method(type:wide) toWide:anObject
         = anObject cast:%eval &to:
                    { 
-                      eval &enumerable : aList = aList::enumerableEx wide. 
+                      eval &enumerable : aList = aList::enumerableEx asWide. 
                       
-                      eval &array : anArray = anArray::enumerableEx wide.
+                      eval &array : anArray = anArray::enumerableEx asWide.
                       
                       ! : anObject = anObject.
                    } wide.
@@ -101,7 +101,7 @@
                    } &with:aBase wide.
                                       
     #method(type:array) toArray : anEnumerable
-        = anEnumerable::enumerableOp array.
+        = anEnumerable::enumerableOp asArray.
 
     #method save : anObject &to:aTarget
         = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:anObject).

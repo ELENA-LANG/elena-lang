@@ -3,11 +3,11 @@
 #subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
 #class(struct:embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
 {
-    #field(type:coord)dwSize.    
-    #field(type:coord)dwCursorPosition.    
+    #field(type:win_coord)dwSize.    
+    #field(type:win_coord)dwCursorPosition.    
     #field(type:short)wAttributes.
-    #field(type:small_rect)srWindow.
-    #field(type:coord)dwMaximumWindowSize.
+    #field(type:win_small_rect)srWindow.
+    #field(type:win_coord)dwMaximumWindowSize.
 
     #method console_screen_buffer_info = $self.
 

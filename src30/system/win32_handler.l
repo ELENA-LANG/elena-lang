@@ -1,5 +1,6 @@
-#subject(class:system'COORD)coord.
-#subject(class:system'SMALL_RECT)small_rect.
+#subject(class:system'COORD)      win_coord.
+#subject(class:system'SMALL_RECT) win_small_rect.
+#subject(class:system'RECT)       win_rect.
 
 // --- COORD --
 
@@ -138,5 +139,63 @@
         $self readBottom &vshort:aBottom.
         
         ^ ShortNumber new &short:aBottom.
+    ]
+}    
+
+// --- RECT ---
+
+#class(sealed,struct:embeddable)RECT
+{
+    #field(type:int)       theLeft.
+    #field(type:int)       theTop.
+    #field(type:int)       theRight.
+    #field(type:int)       theBottom.
+    
+    #method(type:int)left = theLeft.
+    
+    #method(type:int)top = theTop.
+    
+    #method(type:int)right = theRight.
+    
+    #method(type:int)bottom = theBottom.
+    
+    #method setLeft &int:aValue
+    [
+        theLeft := aValue.
+    ]
+    
+    #method setTop &int:aValue
+    [
+        theTop := aValue.
+    ]
+    
+    #method setRight &int:aValue
+    [
+        theRight := aValue.
+    ]
+    
+    #method setBottom &int:aValue
+    [
+        theBottom := aValue.
+    ]
+    
+    #method readLeft &vint:aRetVal
+    [
+        aRetVal << theLeft.
+    ]
+    
+    #method readTop &vint:aRetVal
+    [
+        aRetVal << theTop.
+    ]
+    
+    #method readRight &vint:aRetVal
+    [
+        aRetVal << theRight.
+    ]
+    
+    #method readBottom &vint:aRetVal
+    [
+        aRetVal << theBottom.
     ]
 }

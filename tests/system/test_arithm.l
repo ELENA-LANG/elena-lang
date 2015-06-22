@@ -425,7 +425,7 @@
     #var ll := l length.
     #var c := l@2.
 
-    #var a := l~enumerable array.
+    #var a := l asArray.
 //    #var a2 := l~indexable arreay.
 
     control run:"abc" &forEach: (:ch)[ console write:ch ].
@@ -672,7 +672,7 @@
 #symbol DTOToStructTest =
 [
     #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-    #var(type:enumerable) aProperties := MessageArray new &length:10.
+    #var aProperties := MessageArray new &length:10.
     #var aLength := Integer new.
     
     aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.

@@ -48,19 +48,19 @@
 
     run &int:aStart &int:anEnd &forEvery:aFunction
         = (aStart < anEnd)
-            ? [ aFunction run &range &int:aStart &int:anEnd &int:1 ]
-            ! [ aFunction rewind &range &int:aStart &int:anEnd &int:1 ].
+            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
+            ! [ aFunction rewind &int:aStart &int:anEnd &int:1 ].
     
     run &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
         = (aStart < anEnd)
-            ? [ aFunction run &range &int:aStart &int:anEnd &int:aStep ]
-            ! [ aFunction rewind &range &int:aStart &int:anEnd &int:aStep ].
+            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
+            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
 
     seek &int:aStart &int:anEnd &every:aFunction
-        = aFunction retrieve &range &int:aStart &int:anEnd &int:1.
+        = aFunction retrieve &int:aStart &int:anEnd &int:1.
 
     seek &int:aStart &int:anEnd &int:aStep &every:aFunction
-        = aFunction retrieve &range &int:aStart &int:anEnd &int:aStep.
+        = aFunction retrieve &int:aStart &int:anEnd &int:aStep.
         
     run:aText &forEachWord:anAction
         = anAction run &enumerator:(extensions'text'WordEnumerator new &literal:(aText literal)).

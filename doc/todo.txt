@@ -20,12 +20,14 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              adev - code review
-                       * rafactoring lib30 (starting from system'winforms)
-                       
                xdev - general implementation
-                       * implement #21 issue
+                       * implement #21 issue: get rid of ~ operator and change the precedence (look at arrayTest to make sure it works)
 
+              adev - code review
+                       * pass system test
+                       * rafactoring samples
+                       * rafactoring rosetta samples
+                       
               xdev - linux:
                        * implement textdb sample
                        * test stack trace generating functionality
@@ -47,6 +49,7 @@ Currently:
                        * implement file search
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * IntArray copy subarray to the array
+                       * move hdc, hpen, point, canvas, ... and so on into system'drawing
 
 <=================> 
                                                                                                                             

@@ -29,7 +29,7 @@
 
 // -- ERandomizer --
 
-#class(extension:indexable) randomOp
+#class(extension) randomOp
 {
     #method randomize : aCount
     [

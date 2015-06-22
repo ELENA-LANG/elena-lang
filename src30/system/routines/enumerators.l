@@ -841,6 +841,8 @@
             aIndexer readIndex &vint:anIndex.
             
             aIndexer set:(anIndexFunc eval &index:anIndex).
+            
+            aIndexer append &index:1.
         ].
         
         ^ self.
