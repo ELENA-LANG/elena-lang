@@ -10,6 +10,7 @@
 [ELENA]
 [!] binary incompatible due to changes in the compiler code
 [!] a strong type cannot be used as a custom verb 
+[!] ~ operator is no longer supported
 [!] is 100% UTF-8 internally
 [*] operator redesign : \ - alternative message call, || - or operator
 [*] stripping CORE from OS dependant code and moving it into CORE_LNX and CORE_WIN
@@ -52,6 +53,7 @@
 [*] system'io: Stream, BinaryReader, BinaryWriter, FileStream
 [*] system'console: clear
 [+] system'collections: ArrayList
+[*] refactored to simplify the code
                                                                                                 
 Samples:
 [+] agenda, graphs, c_a_g
