@@ -37,6 +37,16 @@
     while:anExpr &do:anAction
         = anAction run &if:anExpr.
 
+    run &int:aStart &int:anEnd &forEvery:aFunction
+        = (aStart < anEnd)
+            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
+            ! [ aFunction rewind &int:aStart &int:anEnd &int:1 ].
+    
+    run &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
+        = (aStart < anEnd)
+            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
+            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
+
 //    run:anEnumerable &forEach:aFunction
 //        = aFunction run &enumerator:(anEnumerable enumerator).
 //
@@ -51,16 +61,6 @@
 //
 //    ifExist:aValue &in:aList
 //        = $nil != (control run:aList &seeking: x [ aValue equal:x ]).
-//
-//    run &int:aStart &int:anEnd &forEvery:aFunction
-//        = (aStart < anEnd)
-//            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
-//            ! [ aFunction rewind &int:aStart &int:anEnd &int:1 ].
-//    
-//    run &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
-//        = (aStart < anEnd)
-//            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
-//            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
 //
 //    seek &int:aStart &int:anEnd &every:aFunction
 //        = aFunction retrieve &int:aStart &int:anEnd &int:1.

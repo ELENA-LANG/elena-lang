@@ -181,14 +181,17 @@
     #method(type:int)power &int:y
     [
         #var(type:int)x := self int.
+        #var(type:int)r := 1.
         
         #var(type:int)i := 0.
         #loop (i < y)?
         [
-            x := x * x.
+            r := r * x.
+            
+            i := i + 1.
         ].
         
-        ^ IntNumber new &int:x.
+        ^ IntNumber new &int:r.
     ]
     
     #method(type:int) sqr
@@ -205,10 +208,10 @@
         = self::intOp power &int:(aPower int).
                 
     #method is &odd
-        = self::intOp mod:2 != 0.
+        = self int and &int:1 != 0.
         
     #method is &even
-        = self::intOp mod:2 == 0.
+        = self int and &int:1 == 0.
         
     #method is &zero
         = self int equal &int:0.
@@ -404,7 +407,7 @@
     
     #method(type:real) sqrt
     [
-        #var(type:real)n := self real.        
+        #var(type:real)n := self real.      
         #var(type:real)aRetVal.
         
         realOpController sqrt &real:n &vreal:aRetVal.
@@ -412,15 +415,42 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
-    #method(type:real)power &real:y
+    #method(type:real)power &int:y
     [
         #var(type:real)x := self real.
+
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0)
+            ? [ ^ 1.0r. ].
+                        
+        (x < 0.0r)
+            ? [
+                x := x * -1.0r.
+                
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+                
+                (y::intOp is &odd)
+                    ? [ x := x * -1.0r. ].
+            ]
+            ! [
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+            ].
         
-        ^ (x ln * y) exp.
+        ^ RealNumber new &real:x.
     ]
 
     #method power : aPower
-        = self::realOp power &real:(aPower real).
+        = self::realOp power &int:(aPower int).
 
     #method(type:real) sqr
     [
@@ -652,8 +682,12 @@
     #method sqrt
         = (self real)::realOp sqrt.
 
-    #method power &real:aPower
-        = (self real)::realOp power &real:aPower.
+    #method power &int:aPower
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher power &int:aPower.
+    ]
 
     #method power : aPower
     [
