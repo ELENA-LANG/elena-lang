@@ -1,36 +1,42 @@
-//// ==== ver 3.1.2 ===
-//
-//#define system.
+// ==== ver 3.1.2 ===
+
+#define system.
 //#define system'routines.
 //#define system'text.
 //
 //#subject(class:system'BaseFunction1)forEach.
-//#subject(class:system'BaseFunction1)forEachWord.
 //#subject(class:system'BaseFunction1)forEachLine.
 //#subject(class:system'BaseFunction1)seeking.
 //#subject(class:system'IndexFunction1)forEvery.
 //#subject(class:system'BaseFunction2)forEachPair.
-//
-//// --- control ---
-//
-//#symbol control =
+
+//#class(extension)controlOp
 //{
-//    try : anAction
+//    run &until:aCondition
 //    [
-//        anAction eval | if: e [].
-//    ]    
-//    
-//    do:anAction = anAction eval.
-//    
-//    do:anAction &until:anExpr
-//        = anAction run &until:anExpr.
-//
-//    while:anExpr
-//        = $self while:anExpr &do:[].
-//
-//    while:anExpr &do:anAction
-//        = anAction run &if:anExpr.
-//
+//    ]
+//}
+
+// --- control ---
+
+#symbol control =
+{
+    try : anAction
+    [
+        anAction eval | if: e [].
+    ]    
+    
+    do:anAction = anAction eval.
+    
+    do:anAction &until:anExpr
+        = anAction run &until:anExpr.
+
+    while:anExpr
+        = $self while:anExpr &do:[].
+
+    while:anExpr &do:anAction
+        = anAction run &if:anExpr.
+
 //    run:anEnumerable &forEach:aFunction
 //        = aFunction run &enumerator:(anEnumerable enumerator).
 //
@@ -83,8 +89,8 @@
 //
 //        ^ Params@(aLength - anIndex int).
 //    ]
-//}.
-//
+}.
+
 //// --- literalControl ---
 //
 //#symbol literalControl =

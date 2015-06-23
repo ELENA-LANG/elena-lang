@@ -576,12 +576,6 @@
     /// Sets the index by specified value
     #method write &index:anIndex
     [
-        #var(type:int)aLength.
-        theList readLength &vint:aLength.
-        
-        (aLength > anIndex)
-            ! [ #throw OutOfRangeException new. ].
-            
         theIndex << anIndex.
     ]
 }

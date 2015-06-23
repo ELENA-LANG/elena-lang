@@ -19,6 +19,7 @@ text\words.l
 text\enumerating.l
 text\strings.l
 text\encoder.l
+routines\enumerating.l
 routines\combinations.l
 dynamic\interpreter.l
 

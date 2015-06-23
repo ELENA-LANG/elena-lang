@@ -24,6 +24,24 @@
     ]
 }.
 
+#symbol wideExConvertor =
+{
+    convert &enumerable:aList
+    [
+        #var(type:textbuffer) theOutput := TextBuffer new.
+
+        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toWide) write:"," ].
+        
+        #var(type:int)aLength.
+        theOutput readLength &vint:aLength.
+
+        (0 < aLength)
+            ? [ theOutput set &length:(-1 + aLength). ].
+        
+        ^ theOutput wide.
+    ]
+}.
+
 #symbol arrayExConvertor =
 {
     convert &enumerable:aList
@@ -83,29 +101,58 @@
                 
                 ! : anObject = anObject literal.
             }.
+    
+    #method toWide
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = aLiteral wide.
+                
+                wide : aWide = aWide.
+                
+                array : anArray
+                    = wideExConvertor convert &enumerable:anArray.
+                
+                enumerable : aList
+                    = wideExConvertor convert &enumerable:aList.
+                    
+                int : aValue = aValue wide.
+                    
+                short : aValue = aValue wide.
+                    
+                byte : aValue = aValue wide.
+                    
+                long : aValue = aValue wide.
+                    
+                real : aValue = aValue wide.
+                    
+                datetime : aValue = aValue wide.
+                    
+                timestamp : aValue = aValue wide.
+                
+                ! : anObject = anObject wide.
+            }.
             
+    #method toByte
+        = self cast:%convert &to:byteConvertor.
+
+    #method toShort
+        = self cast:%convert &to:shortConvertor.
+
+    #method toInt
+        = self cast:%convert &to:intConvertor.
+
+    #method toLong
+        = self cast:%convert &to:longConvertor.
+    
+    #method toReal
+        = self cast:%convert &to:realConvertor.
+
     #method convertTo : aTarget
         = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
-//#symbol convertor =
-//{
-//}.
-
-//////#define(const)convertor = extensions'convertor.
-//
 //#class(extension) enumerableEx
 //{
-//    #method asLiteral
-//    [
-//    ]
-//    
-//    #method asWide
-//    [
-//        #var(type:textbuffer) theOutput := TextBuffer new.
-//        
-//        control run:self &forEach: anItem [ theOutput write:(convertor toWide:anItem) write:"," ].
-//        
 //        #var(type:int)aLength.
 //        theOutput readLength &vint:aLength.
 //
@@ -118,21 +165,6 @@
 //
 //#symbol convertor =
 //{
-//    #method(type:byte) toByte : anObject
-//        = anObject cast:%convert &to:byteConvertor byte.
-//
-//    #method(type:short) toShort : anObject
-//        = anObject cast:%convert &to:shortConvertor short.
-//
-//    #method(type:int) toInt : anObject
-//        = anObject cast:%convert &to:intConvertor int.
-//
-//    #method(type:long) toLong : anObject
-//        = anObject cast:%convert &to:longConvertor long.
-//    
-//    #method(type:real) toReal : anObject
-//        = anObject cast:%convert &to:realConvertor real.
-//
 //    #method(type:literal) toLiteral:anObject
 //        = anObject cast:%eval &to:
 //                   { 

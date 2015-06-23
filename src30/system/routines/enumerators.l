@@ -138,7 +138,7 @@
         ^ self.
     ]
     
-    #method sortAscending
+    #method ascendant
         = self::arrayOp sort:ifOrdered.
     
     #method is &empty
@@ -739,6 +739,9 @@
     #method find : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
+    #method ifExists : aValue
+        = $nil != self::enumerableOp find:aValue.
+
     #method top:aCounter
         = system'routines'TopFilter new &length:(aCounter int) &enumerator:(self enumerator).
 
@@ -871,7 +874,7 @@
         ^ self.
     ]
     
-    #method sortAscending
+    #method ascendant
         = self::indexableOp sort:ifOrdered.
 }
 

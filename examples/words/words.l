@@ -3,7 +3,7 @@
 #define system'collections.
 #define system'text.
 #define extensions.
-#define extensions'text.
+#define extensions'routines.
 
 // --- WordList ---
 
@@ -12,9 +12,9 @@
     #field theTotal.
     #field theList.
 
-    #constructor new : aList
+    #constructor new
     [
-        theList := aList.
+        theList := ArrayList new.
         theTotal := Integer new &int:0.
     ]
 
@@ -22,7 +22,7 @@
     [
         theTotal += 1.
 
-        (control ifExist:aWord &in:theList)
+        (theList ifExists:aWord)
             ! [ theList append:aWord. ].
     ]
 
@@ -43,15 +43,18 @@
     #var aLine := String new.
 
     // read until the empty string is not entered
-    control do:[ aText << consoleEx readLine:aLine << " ". ] &until:[ aLine length == 0 ].
+    [
+        aText << console readLine:aLine << " ".
+    ]
+    run &until:[ aLine length == 0 ].
 
-    #var aList := WordList new:(List new).
+    #var aList := WordList new.
 
-    control run:aText &forEachWord: anItem [ aList append:anItem ].
+    aText run &eachWord:anItem [ aList append:anItem ].
 
-    consoleEx writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
+    console writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
     (aList total_words > 0)
-        ? [ consoleEx writeLine:"the list of unique words:":(aList~indexable sort:ifOrdered). ].
+        ? [ console writeLine:"the list of unique words:":(aList ascendant). ].
 
     console readChar. // wait for any key
 ].
