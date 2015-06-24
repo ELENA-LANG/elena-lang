@@ -1,21 +1,33 @@
 // ==== ver 3.1.2 ===
 
 #define system.
-//#define system'routines.
+#define system'routines.
 //#define system'text.
-//
-//#subject(class:system'BaseFunction1)forEach.
+
+#subject(class:system'IndexFunction1)doEvery.
+#subject(class:system'BaseFunction1)doEach.
+
 //#subject(class:system'BaseFunction1)forEachLine.
 //#subject(class:system'BaseFunction1)seeking.
-//#subject(class:system'IndexFunction1)forEvery.
 //#subject(class:system'BaseFunction2)forEachPair.
 
-//#class(extension)controlOp
-//{
-//    run &until:aCondition
-//    [
-//    ]
-//}
+#class(extension:int)intLoopOp
+{
+    #method to &int:anEnd &doEvery:aFunction
+    [
+       #var(type:int)aStart := self int.
+
+       ^ (aStart < anEnd)
+            ? [ ^ aFunction run &int:aStart &int:anEnd &int:1. ]
+            ! [ ^ aFunction rewind &int:aStart &int:anEnd &int:1. ].
+    ]
+}
+
+#class(extension)loopOp
+{
+    #method to:aMaxValue &doEach:aFunction
+        = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
+}
 
 // --- control ---
 
@@ -37,12 +49,12 @@
     while:anExpr &do:anAction
         = anAction run &if:anExpr.
 
-    run &int:aStart &int:anEnd &forEvery:aFunction
+    run &int:aStart &int:anEnd &every:aFunction
         = (aStart < anEnd)
             ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
             ! [ aFunction rewind &int:aStart &int:anEnd &int:1 ].
     
-    run &int:aStart &int:anEnd &int:aStep &forEvery:aFunction
+    run &int:aStart &int:anEnd &int:aStep &every:aFunction
         = (aStart < anEnd)
             ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
             ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
@@ -57,7 +69,7 @@
 //        = aFunction retrieve &enumerator:(anEnumerable enumerator).
 //
 //    find:aValue &in:aList
-//        = control run:aList &seeking: x [ aValue safeEqual:x ].
+//        = control run:aList &seeking: x [ aValue safeEquale:x ].
 //
 //    ifExist:aValue &in:aList
 //        = $nil != (control run:aList &seeking: x [ aValue equal:x ]).

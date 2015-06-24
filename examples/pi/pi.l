@@ -11,7 +11,7 @@
 
     #var pi := Real new.
     
-    control run &int:0 &int:MAX &forEvery: (&index:i)
+    control run &int:0 &int:MAX &every: (&index:i)
     [
         pi += -1.0r power:i / (2*i+1) * 4.
     ].
