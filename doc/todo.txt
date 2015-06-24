@@ -16,13 +16,14 @@ v  - vm script
 - opt
 - port
 - doc
+
                                                                                
 ------                                 
 Currently:
 ------                                                                                         
               adev - code review
-                       * rafactoring samples
-                       * rafactoring rosetta samples
+                       * refactoring samples : bsort
+                       * refactoring rosetta samples
                        * pass system test
                        
                xdev - general implementation
