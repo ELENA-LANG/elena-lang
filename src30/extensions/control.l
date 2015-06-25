@@ -4,10 +4,9 @@
 #define system'routines.
 //#define system'text.
 
-#subject(class:system'IndexFunction1)doEvery.
-#subject(class:system'BaseFunction1)doEach.
+#subject(class:system'IndexFunction1) doEvery.
+#subject(class:system'BaseFunction1)  doEach.
 
-//#subject(class:system'BaseFunction1)forEachLine.
 //#subject(class:system'BaseFunction1)seeking.
 //#subject(class:system'BaseFunction2)forEachPair.
 
@@ -83,8 +82,6 @@
 //    run:aText &forEachWord:anAction
 //        = anAction run &enumerator:(extensions'text'WordEnumerator new &literal:(aText literal)).
 //        
-//    run &path:aPath &forEachLine:anAction
-//        = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath).
 //
 //    run &path:aPath &encoder:anEncoder &forEachLine:anAction
 //        = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath &encoder:anEncoder).

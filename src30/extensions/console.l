@@ -858,7 +858,3 @@
 //
 //#static consoleEx
 //    = Extension(console, 'outputOp, 'inputOp).
-//
-//// --- printingLn ---
-//
-//#symbol printingLn = aLine [ 'program'output writeLine:aLine ].

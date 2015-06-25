@@ -59,7 +59,7 @@
 #class(extension)convertorOp
 {
     #method toArray
-        = self cast:%eval to:
+        = self cast:%eval &to:
             {
                 literal : aLiteral = arrayExConvertor convert &enumerable:aLiteral.
                 
@@ -70,6 +70,9 @@
                     
                 enumerable : aList
                     = arrayExConvertor convert &enumerable:aList.
+                    
+                enumerator : anEnumerator
+                    = arrayExConvertor convert &enumerable:anEnumerator.
             }.
     
     #method toLiteral

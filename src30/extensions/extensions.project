@@ -14,7 +14,6 @@ lnx32_args.l
 math/functions.l
 math/matrix.l
 text/words.l
-text/enumerating.l
 text/strings.l
 routines/enumerating.l
 routines/combinations.l

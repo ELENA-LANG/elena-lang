@@ -241,7 +241,7 @@
 
 // --- fileOp ---
 
-#class(extension:path)pathOp
+#class(extension:file)fileOp
 {
     #method openForRead = FileStream openForRead &path:self.
     
@@ -262,34 +262,4 @@
         
        ^ ret != 0.
     ]
-}
-
-// --- File ---
-
-#class File
-{
-    #field(type:wide) thePath.
-    
-    #constructor new &path:aPath
-    [
-        thePath := aPath wide.
-    ]
-    
-    #method openForRead = thePath::pathOp openForRead.
-    
-    #method openForReWrite = thePath::pathOp openForReWrite.
-    
-    #method openForAppend = thePath::pathOp openForAppend.
-    
-    #method is &available
-        = thePath::pathOp is &available.
-    
-    #method delete
-        = thePath::pathOp delete.
-    
-    #method path = thePath.
-    
-    #method literal = thePath literal.
-    
-    #method wide = thePath.
 }
