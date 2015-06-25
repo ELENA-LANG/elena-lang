@@ -22,7 +22,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactoring samples : bsort
+                       * refactoring samples : binary
                        * refactoring rosetta samples
                        * pass system test
                        
@@ -341,6 +341,7 @@ week 4:
                        * sqlite : test operation with double
                        * test int,byte,short,long <=> real
                        * test extension is &nil
+                       * test Literal / Wide new&length&char (for 1,2,3 byte character)
                        
                        * test bytearray read / write operation with byte, char, int, long, real
                        * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)

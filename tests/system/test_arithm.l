@@ -180,7 +180,7 @@
 [
     #var aList := List new append:1 append:2 append:4.
 
-    #var anArray := convertor toArray:aList.
+    #var anArray := aList toArray.
 
     #var n1 := control find:2 &in:aList.
     #var n2 := control find:-1 &in:aList.
@@ -398,18 +398,18 @@
 
 #symbol ConvertorTest =
 [
-    #var n := convertor toInt:"23".
+    #var n := "23" toInt.
     #var sn := n literal.
     (sn == "23")
         ! [ console writeLine:"Int conversion does not work" ].
     
-    #var l := convertor toLong:"1234567890123456".
-    #var nn := convertor toInt:"-123".
-    #var ll := convertor toLong:"-1234567890123456".
+    #var l := "1234567890123456" toLong.
+    #var nn := "-123" toInt.
+    #var ll := "-1234567890123456" toLong.
 
-    #var r := convertor toReal:"23".
-    #var r2 := convertor toReal:"123.456789".
-    #var r3 := convertor toReal:"-123.456789".
+    #var r := "23" toReal.
+    #var r2 := "123.456789" toReal.
+    #var r3 := "-123.456789" toReal.
 ].
 
 // --- LiteralTest ---

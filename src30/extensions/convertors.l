@@ -134,6 +134,32 @@
                 
                 ! : anObject = anObject wide.
             }.
+
+     #method toLiteral &base:aBase
+        = self cast:%eval &to:
+                   { 
+                      eval : aBase &byte : anInt = literalConvertor convert &byte:anInt &index:(aBase int).
+                      
+                      eval : aBase &short : anInt = literalConvertor convert &short:anInt &index:(aBase int).
+                      
+                      eval : aBase &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
+                      
+                      eval : aBase &long : anInt = literalConvertor convert &long:anInt &index:(aBase int).
+                      
+                   }&with:aBase.
+
+     #method toWide &base:aBase
+        = self cast:%eval &to:
+                   { 
+                      eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &index:(aBase int).
+                      
+                      eval : aBase &short : anInt = wideConvertor convert &short:anInt &index:(aBase int).
+                      
+                      eval : aBase &int : anInt = wideConvertor convert &int:anInt &index:(aBase int).
+                      
+                      eval : aBase &long : anInt = wideConvertor convert &long:anInt &index:(aBase int).
+                      
+                   } &with:aBase.
             
     #method toByte
         = self cast:%convert &to:byteConvertor.
@@ -176,43 +202,6 @@
 //                      eval &array : anArray = anArray::enumerableEx asLiteral.
 //                      
 //                      ! : anObject = anObject.
-//                   } literal.
-//
-//     #method(type:literal) toLiteral : anObject &base:aBase
-//        = anObject cast:%eval &to:
-//                   { 
-//                      eval &byte : anInt = literalConvertor convert &byte:anInt &index:(aBase int).
-//                      
-//                      eval &short : anInt = literalConvertor convert &short:anInt &index:(aBase int).
-//                      
-//                      eval &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
-//                      
-//                      eval &long : anInt = literalConvertor convert &long:anInt &index:(aBase int).
-//                      
-//                   } literal.
-//
-//    #method(type:wide) toWide:anObject
-//        = anObject cast:%eval &to:
-//                   { 
-//                      eval &enumerable : aList = aList::enumerableEx asWide. 
-//                      
-//                      eval &array : anArray = anArray::enumerableEx asWide.
-//                      
-//                      ! : anObject = anObject.
-//                   } wide.
-//
-//     #method(type:wide) toWide : anObject &base:aBase
-//        = anObject cast:%eval &to:
-//                   { 
-//                      eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &index:(aBase int).
-//                      
-//                      eval : aBase &short : anInt = wideConvertor convert &short:anInt &index:(aBase int).
-//                      
-//                      eval : aBase &int : anInt = wideConvertor convert &int:anInt &index:(aBase int).
-//                      
-//                      eval : aBase &long : anInt = wideConvertor convert &long:anInt &index:(aBase int).
-//                      
-//                   } &with:aBase wide.
 //                                      
 //    #method(type:array) toArray : anEnumerable
 //        = anEnumerable::enumerableOp asArray.

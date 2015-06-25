@@ -252,6 +252,8 @@
         
         (aCurrentLength < aLength)
             ? [ ^ LiteralValue new &length:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
+            
+        ^ self.            
     ]
     
     #method padRight &char:aChar &length:aLength
@@ -262,6 +264,8 @@
 
         (aCurrentLength < aLength)
             ? [ ^ aLiteral add &literal:(LiteralValue new &length:(aLength - aCurrentLength) &char:aChar). ].
+            
+        ^ self.            
     ]
     
     #method startingWith &literal:s
@@ -533,6 +537,8 @@
         
         (aCurrentLength < aLength)
             ? [ ^ WideLiteralValue new &length:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
+            
+        ^ self.            
     ]
     
     #method padRight &char:aChar &length:aLength
@@ -543,6 +549,8 @@
 
         (aCurrentLength < aLength)
             ? [ ^ aLiteral add &wide:(WideLiteralValue new &length:(aLength - aCurrentLength) &char:aChar). ].
+            
+        ^ self.            
     ]
 
     #method startingWith &wide:s

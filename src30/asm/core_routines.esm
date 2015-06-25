@@ -2628,9 +2628,14 @@ procedure s_fill
   pushn 0
   pushn 0
   bcopys 0
+  pushn 0
+  pushn 0
   
   callr api : coreapi'chartostr
+  acopyb
   blen
+  popi 2
+  dec
 
   ifn lab1 1 
   ifn lab2 2
@@ -2663,19 +2668,16 @@ labNext4:
   jump labEnd  
   
 lab1:  
-  popd
-  popi 2
-  popa
-
+  aloadsi 6
+  nload
   pushd
-  aloadsi 3
   inc
+  aloadsi 4
   
   acallvi 1
   bcopya
 
-  blen
-  dec  
+  popd
   ecopyd
   dcopy 0
 
@@ -2683,17 +2685,17 @@ labNext1:
   eswapsi 0
   bwriteb
   eswapsi 0
-  addn 1
   next labNext1
+  popi 4
   jump labEnd  
     
 lab2:
+  popi 2
   popd
   popi 2
   popa
 
   pushd
-  aloadsi 3
   shiftn -1
   inc
   
@@ -2709,17 +2711,17 @@ labNext2:
   eswapsi 0
   bwritew
   eswapsi 0
-  addn 2
+  addn 1
   next labNext2
   jump labEnd  
 
 lab3:
+  popi 2
   popd
   popi 2
   popa
 
   pushd
-  aloadsi 3
   ecopyd
   add
   add
@@ -2738,12 +2740,11 @@ labNext3:
   eswapsi 0
   bwrite
   eswapsi 0
-  addn 3
+  addn 2
   next labNext3
   jump labEnd  
 
 labEnd:
-  pop
   blen
   dec
   ecopy 0
