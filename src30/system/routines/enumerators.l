@@ -897,6 +897,12 @@
 
 #class(extension) stringOp
 {
+    #method Substring : anIndex
+        = self Substring &index:(anIndex int) &length:(self length - anIndex int).
+            
+    #method Substring : anIndex : aLength
+        = self Substring &index:(anIndex int) &length:(aLength int).
+            
     #method trimLeft &char:aChar
     [
         #var dispatcher := self cast:%eval &to:stringOpDispatcher.

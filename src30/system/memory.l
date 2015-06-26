@@ -618,6 +618,10 @@
             }.
 
     /// Deletes the substring from the object and returns the new one
+    #method delete:anIndex:aLength
+        = $self delete &index:(anIndex int) &length:(aLength int).
+
+    /// Deletes the substring from the object and returns the new one
     #method(type:literal) delete &index:anIndex &length:aLength
         => system'internal's_delete.
 
@@ -995,6 +999,10 @@
                eval &char:aChar
                   = self insert &index:(anIndex int) &char:aChar.
             }.
+
+    /// Deletes the substring from the object and returns the new one
+    #method delete:anIndex:aLength
+        = $self delete &index:(anIndex int) &length:(aLength int).
             
     /// Deletes the substring from the object and returns the new one            
     #method(type:wide) delete &index:anIndex &length:aLength

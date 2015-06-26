@@ -13,6 +13,12 @@
 
     /// Compares the values
     #method(type:bool) greater : anObject = anObject less:$self bool.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &object:$self.
 }
 
 // --- BaseNumber ---

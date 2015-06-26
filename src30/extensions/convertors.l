@@ -191,21 +191,3 @@
 //        ^ theOutput wide.
 //    ]
 //}
-//
-//#symbol convertor =
-//{
-//    #method(type:literal) toLiteral:anObject
-//        = anObject cast:%eval &to:
-//                   { 
-//                      eval &enumerable : aList = aList::enumerableEx asLiteral. 
-//                      
-//                      eval &array : anArray = anArray::enumerableEx asLiteral.
-//                      
-//                      ! : anObject = anObject.
-//                                      
-//    #method(type:array) toArray : anEnumerable
-//        = anEnumerable::enumerableOp asArray.
-//
-//    #method save : anObject &to:aTarget
-//        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:anObject).
-//}.

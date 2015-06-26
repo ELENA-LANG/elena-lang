@@ -22,7 +22,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactoring samples : binary
+                       * refactoring samples : replace
                        * refactoring rosetta samples
                        * pass system test
                        
