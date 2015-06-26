@@ -22,9 +22,9 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactoring samples : replace
-                       * refactoring rosetta samples
+                       * refactoring samples : dtcalculator
                        * pass system test
+                       * refactoring rosetta samples
                        
                xdev - general implementation
                        * look at arrayTest to make sure typed extension has priority over generic ones

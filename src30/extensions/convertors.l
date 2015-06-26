@@ -180,14 +180,9 @@
         = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
-//#class(extension) enumerableEx
-//{
-//        #var(type:int)aLength.
-//        theOutput readLength &vint:aLength.
-//
-//        (0 < aLength)
-//            ? [ theOutput set &length:(-1 + aLength). ].
-//        
-//        ^ theOutput wide.
-//    ]
-//}
+#class(extension:datetime) dateFormatterOp 
+{
+    #method toShortTimeLiteral
+        = dateTimeControl toShortTime &long:(self long).
+}
+ 

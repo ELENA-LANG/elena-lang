@@ -381,7 +381,7 @@
 
 // --- now ---
 
-#symbol now = Date now.
+#symbol(type:datetime) now = Date now.
 
 #symbol utcNow =
 [

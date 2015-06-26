@@ -6,27 +6,22 @@
 
 #symbol control =
 {
-    prompt : anOutput
-    [
-        consoleEx writeLine:#10"Please select your option:"
-              writeLine:" 1 - current local date"
-              writeLine:" 2 - current UTC date"
-              writeLine:" 3 - current year"
-              writeLine:" 4 - current time"
-              writeLine:" 7 - exit"
-              write:">".
-              
-    ]
+    prompt
+        = "Please select your option:" + 'newLine +
+          " 1 - current local date" + 'newLine +
+          " 2 - current UTC date" + 'newLine +
+          " 3 - current year" + 'newLine +
+          " 4 - current time" + 'newLine +
+          " 7 - exit" + 'newLine +
+          ">".
     
-    read : anInput
+    proceed : aChoice
     [
-        #var aChoice := anInput readLine:(Integer new).
-        
-        ^ aChoice =>
+        ^ (aChoice toInt) =>
             1 ? [ now literal ]
             2 ? [ utcNow literal ]
             3 ? [ now year literal ]
-            4 ? [ dateTimeControl toShortTime &long:now ]
+            4 ? [ now toShortTimeLiteral ]
             7 ? [ 'program stop. ^ emptyLiteralValue. ]
             ! [ "Invalid choice" ].
     ]

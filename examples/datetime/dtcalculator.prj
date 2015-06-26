@@ -13,6 +13,4 @@ control.l
 [forwards]
 'program=extensions'programLoop
 'program'control=datetime'control
-'program'output=extensions'consoleEx
-'program'input=extensions'consoleEx
 
