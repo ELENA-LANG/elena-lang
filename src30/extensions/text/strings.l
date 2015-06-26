@@ -166,7 +166,12 @@
     [
         $self write:aText write:'newLine.
     ]
-    
+   
+    #method writeLine
+    [
+        $self write:'newLine.
+    ]    
+      
     #method literal => theValue.
     
     #method wide => theValue.

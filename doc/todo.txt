@@ -127,6 +127,7 @@ week2:
                        * textdb: dynamically unserialize subject
                        * matrix: test matrix operations
                        * matrix: multiply - should use realnumber rather than real
+                       * migrate calc, interpreter samples
                        * vmconsole
                        
               srev - gui samples
