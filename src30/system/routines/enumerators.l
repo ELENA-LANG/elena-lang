@@ -45,7 +45,7 @@
     #method indexOf : anObject
         = self::arrayOp indexOf &index:0 &object:anObject.
         
-    #method find : aValue
+    #method seek : aValue
     [
         #var(type:array)anArray := self array.
         #var(type:int)aLength.                
@@ -744,11 +744,11 @@
     #method seek &each:aFunction
       = aFunction retrieve &enumerator:(self enumerator).
 
-    #method find : aValue
+    #method seek : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
     #method ifExists : aValue
-        = $nil != self::enumerableOp find:aValue.
+        = $nil != self::enumerableOp seek:aValue.
 
     #method top:aCounter
         = system'routines'TopFilter new &length:(aCounter int) &enumerator:(self enumerator).

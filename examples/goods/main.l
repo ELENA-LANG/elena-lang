@@ -1,8 +1,9 @@
 #define system.
+#define system'io.
 #define system'routines.
 #define system'collections.
-#define system'text.
 #define extensions.
+#define extensions'routines.
 #define extensions'text.
 
 // --- Record ---
@@ -23,7 +24,7 @@
 
     #method literal
     [
-        ^ ("Name:" + theName + " Price:" + thePrice literal) literal.
+        ^ StringWriter new writeLiteral:"Name:":theName:" Price:":thePrice literal.
     ]
 }
 
@@ -50,9 +51,9 @@
         = (0 == theBM length)
             ? [ false ]
             ! [
-                theBM find &literal:";".
+                theBM find:";".
                 
-                convertor save:(theBM marked) &to:aVariable.
+                theBM Marked convertTo:aVariable.
                 
                 theBM mark.
                 
@@ -67,19 +68,17 @@
     ('program'arguments length == 1)?
         [  console << "Please provide the path to the file to view". #throw AbortException new. ].
 
-    #var aFileName := 'program'arguments@1.
-
     #var aList := List new.
     #var anAdapter := Adapter new.
 
-    control run &path:aFileName &forEachLine: aLine
+    File new &path:('program'arguments@1) run &eachLine: aLine
     [
         anAdapter write:aLine.
 
         #var aName := String new.
         #var aPrice := Real new.
                         
-        control while:[ anAdapter read:aName ] &do:
+        #loop (anAdapter read:aName)?
         [
             anAdapter read:aPrice.
         
@@ -87,7 +86,7 @@
         ].
     ].
 
-    control run:aList &forEach:printingLn.
+    aList run &each:printingLn.
 
     console readChar.
 ].

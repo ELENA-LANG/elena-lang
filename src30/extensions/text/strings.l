@@ -141,6 +141,37 @@
     #method index = theIndex int.
 }
 
+// --- StringWriter ---
+
+#class StringWriter
+{    
+    #field theValue.
+    
+    #constructor new
+    [
+        theValue := emptyLiteralValue.
+    ]
+    
+    #constructor new : aText
+    [
+        theValue := aText.
+    ]
+    
+    #method write : aText
+    [
+        theValue := theValue + aText.
+    ]
+    
+    #method writeLine : aText
+    [
+        $self write:aText write:'newLine.
+    ]
+    
+    #method literal => theValue.
+    
+    #method wide => theValue.
+}
+
 //// --- StringReader ---
 //
 //#class StringReader : TextReader

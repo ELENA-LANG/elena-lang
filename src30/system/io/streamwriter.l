@@ -126,9 +126,4 @@
         
         $self write &chararray:(theBuffer chararray) &length:aLength.
     ]
-    
-    #method(generic) write:anObject
-    [
-        $self write &literal:(anObject literal).
-    ]
 }

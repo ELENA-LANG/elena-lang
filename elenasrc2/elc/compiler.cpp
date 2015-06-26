@@ -2670,8 +2670,10 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 {
-   ref_t type = -1;
-   // check typed extension
+   // check typed extension if the type available
+   ref_t type = 0;
+   ref_t extRef = 0;
+
    if (getType(object) != 0 && scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
       type = getType(object);
    }
@@ -2692,17 +2694,23 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
          }
       }
    }
-   // check generic extension
-   else if (scope.moduleScope->extensionHints.exist(messageRef, 0)) {
-      type = 0;
-   }
 
-   if (type != -1) {
+   if (type != 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
 
-      return typeExtensions->get(messageRef);
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
    }
-   else return 0;
+
+   // check generic extension
+   if (extRef == 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   else return extRef;
 }
 
 ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t messageRef, int count, int& mode, size_t& spaceToRelease)
