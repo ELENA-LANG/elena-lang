@@ -2,115 +2,118 @@
 
 // --- default namespaces ---
 #define system.
+#define system'dynamic.
 #define extensions.
 #define extensions'math.
 
 // --- factory ---
-#symbol newMatrix = (&n:anN &name:aName)
-    [ 
-        Matrix new &n:anN &every_ij: (&index:i &index:j)
-        [  
-            consoleEx write:"Enter " write:aName write:"[" write:i write:"," write:j write:"]=" readLine:(Real new)
-        ]
-    ].
 
-#symbol IdentityMatrix = 
+#class Matrix
 {
-    new &n:aCount
-        = Matrix new &n:aCount &m:aCount &every_ij: (&index:i &index:j)
-        [ (i == j) ? [ 1 ] ! [ 0 ] ].
-}.
+    #field theMatrix.
+    
+    #constructor new &matrix:aMatrix
+    [
+        theMatrix := Extension(aMatrix, matrixOp).
+    ]
+    
+    #constructor new &n:anN &name:aName
+        <= new &matrix:(RealMatrix new &rows:anN &columns:anN set &every_ij: (&index:i &index:j)
+            [  
+                console write:"Enter ":aName:"[":i:",":j:"]=" readLine:(Real new)
+            ]).
+    
+    #constructor newIdentity &n:anN
+        <= new &matrix:(RealMatrix new &rows:anN &columns:anN set &every_ij: (&index:i &index:j)
+            [ (i == j) ? [ 1 ] ! [ 0 ] ]).
+    
+    #method => theMatrix.
+}
 
 // ---- Program ---
 
 #symbol control =
 {
-    prompt : anOutput
-    [
-        anOutput
-            writeLine:#10"Choose an option"
-            writeLine:"[1] - Sum Matrix"
-            writeLine:"[2] - Subtract Matrix"
-            writeLine:"[3] - Multiply Matrix"
-            writeLine:"[4] - Matrix Determinant"
-            writeLine:"[5] - Identity Matrix"
-            writeLine:"[6] - Exit"
-            write:"Your choice:".
-    ]
+    prompt = "Choose an option" + 'newLine +
+             "[1] - Sum Matrix" + 'newLine +
+             "[2] - Subtract Matrix" + 'newLine +
+             "[3] - Multiply Matrix" + 'newLine +
+             "[4] - Matrix Determinant" + 'newLine +
+             "[5] - Identity Matrix" + 'newLine +
+             "[6] - Exit" + 'newLine +
+             "Your choice:".
     
-    read : anInput
+    proceed : aChoice
     [
-        #var aChoice := anInput readLine:(Integer new).
-        
         ^ aChoice =>
-            1 ? 
+            "1" ? 
             [
-                consoleEx write:"Enter the order of matrix: ".
-                #var N := anInput readLine:(Integer new).
+                console write:"Enter the order of matrix: ".
+                #var N := console readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
+                #var aMatrixA := Matrix new &n:N &name:"A".
                 
-                consoleEx writeLine.
+                console writeLine.
                 
-                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
+                #var aMatrixB := Matrix new &n:N &name:"B".
                 
-                consoleEx writeLine writeLine:"Output:".
+                console writeLine writeLine:"Output:".
 
                 #var aSum := aMatrixA + aMatrixB.
 
                 ^ aSum literal.
             ]
-            2 ? [
-                consoleEx write:"Enter the order of matrix: ".
-                #var N := anInput readLine:(Integer new).
+            "2" ? [
+                console write:"Enter the order of matrix: ".
+                #var N := console readLine:(Integer new).
                 
-                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
+                #var aMatrixA := Matrix new &n:N &name:"A".
                 
-                consoleEx writeLine.
+                console writeLine.
                 
-                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
+                #var aMatrixB := Matrix new &n:N &name:"B".
                 
-                consoleEx writeLine writeLine:"Output:".
+                console writeLine writeLine:"Output:".
 
                 #var aDiff := aMatrixA - aMatrixB.
 
                 ^ aDiff literal.
             ]
-            3 ? [
-                consoleEx write:"Enter the order of matrix: ".
-                #var N := anInput readLine:(Integer new).
-                
-                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
-                
-                consoleEx writeLine.
-                
-                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
-                
-                consoleEx writeLine writeLine:"Output:".
+//            "3" ? [
+//                console write:"Enter the order of matrix: ".
+//                #var N := anInput readLine:(Integer new).
+//                
+//                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
+//                
+//                console writeLine.
+//                
+//                #var aMatrixB := newMatrix eval &n:(N int) &name:"B".
+//                
+//                consoleEx writeLine writeLine:"Output:".
+//
+//                #var aProduct := aMatrixA * aMatrixB.
+//
+//                ^ aProduct literal.
+//            ]
+//            "4" ? [
+//                console write:"Enter the order of matrix: ".
+//                #var N := anInput readLine:(Integer new).
+//
+//                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
+//                                
+//                console writeLine writeLine:"Output:".
+//
+//                ^ aMatrixA determinant.
+//            ]
+            "5" ? [
+                console write:"Enter the order of matrix: ".
+                #var N := console readLine:(Integer new).
 
-                #var aProduct := aMatrixA * aMatrixB.
-
-                ^ aProduct literal.
-            ]
-            4 ? [
-                consoleEx write:"Enter the order of matrix: ".
-                #var N := anInput readLine:(Integer new).
-
-                #var aMatrixA := newMatrix eval &n:(N int) &name:"A".
-                                
-                consoleEx writeLine writeLine:"Output:".
-
-                ^ aMatrixA determinant.
-            ]
-            5 ? [
-                consoleEx write:"Enter the order of matrix: ".
-                #var N := anInput readLine:(Integer new).
-
-                #var identity := IdentityMatrix new &n:(N int).
+                #var identity := Matrix newIdentity &n:N.
 
                 ^ identity literal.
             ]
-            6 ? [
+            "6" ? [
                 'program stop.
             ].
     ]

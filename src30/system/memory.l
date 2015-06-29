@@ -351,6 +351,294 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intarray:$self.    
 }
 
+// --- IntMatrix ---
+
+#class(sealed)IntMatrix
+{
+    #field(type:intarray)theArray.
+    #field(type:int)theRows.
+    #field(type:int)theColumns.
+    
+    #constructor new &length:Columns &length:Rows
+    [
+        theArray := IntArray new &length:(Columns * Rows).
+        
+        theRows := Rows.
+        theColumns := Columns.
+    ]
+        
+    #constructor new &columns:Columns &rows:Rows
+        <= new &length:(Columns int) &length:(Rows int).
+        
+    /// Reads the matrix lengths to the output parameter
+    #method readLengths &vint:Columns &vint:Rows
+    [
+        Columns << theColumns.
+        Rows << theRows.
+    ]
+
+    #method length = theRows.
+    
+    /// Returns itself
+    #method intmatrix = $self.
+
+    /// Writes an integer value at the specified position
+    #method write &index:i &index:j &int:aValue
+    [
+        theArray write &index:(i * theColumns + j) &int:aValue.
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method read &index:i &index:j &vint:anInt
+    [
+        theArray read &index:(i * theColumns + j) &vint:anInt.
+    ]
+
+    #method getAt : i : j
+    [
+        #var(type:int)aValue.            
+        $self read &index:(i int) &index:(j int) &vint:aValue.
+        
+        ^ IntNumber new &int:aValue.
+    ]
+
+    #method setAt : i : j : aValue
+    [
+        $self write &index:(i int) &index:(j int) &int:(aValue int).    
+    ]
+
+    /// Returns a row
+    #method getAt : i =
+    {
+        length = theColumns int.
+        
+        getAt : j
+            = self getAt:i:j.
+        
+        setAt : j : aValue
+        [
+            self setAt:i:j:aValue.
+        ]
+    }.
+
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &intmatrix:$self.
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intmatrix:$self.
+}
+
+// --- RealArray ---
+
+/// An array of real numbers
+#class(sealed,nonstructural) RealArray
+{
+    #field(type:bytearray)theBinaryArray.
+    
+    /// Creates the array with the specified length
+    #constructor new &length : aLength
+    [
+        theBinaryArray := ByteArray new &length:(aLength * 8).
+    ]
+
+    /// Creates the copy of a subarray
+    #constructor new  &length:aLength &index:anIndex &realarray:anArray
+    [
+        theBinaryArray := ByteArray new &length:(aLength * 8).
+        
+        theBinaryArray write &index:anIndex &length:aLength &bytearray:(anArray bytearray).
+    ]
+    
+    #method bytearray = theBinaryArray.
+    
+    /// Creates the array copy
+    #constructor new &realarray:anArray
+        <= new &length:(anArray length) &index:0 &realarray:anArray.
+    
+    /// Reads the array length to the output parameter
+    #method readLength &vint:aLength
+    [
+        #var(type:int)aBinLen.
+        theBinaryArray readLength &vint:aBinLen.
+        
+        aBinLen shift &index:3.
+        
+        aLength << aBinLen.
+    ]
+
+    /// Returns the array length
+    #method length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+    
+    /// Returns itself
+    #method realarray = $self.
+
+    /// Fills the sub array with a specified value
+    #method fill &index:anIndex &length:aLength &real:aValue
+    [
+        #var(type:int)aTotalLength.
+        $self readLength &vint:aTotalLength.
+        
+        #var(type:int)i := anIndex.
+        #var(type:int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &index:i &real:aValue.
+            
+            i := i + 1.
+        ].
+    ]
+
+    /// Copies a sub array to the provided one at the specified position
+    #method read &index:anIndex &length:aLength &realarray:anArray
+    [
+        theBinaryArray read &index:(anIndex * 8) &length:(aLength * 8) &bytearray:(anArray bytearray).
+    ]
+    
+    /// Copies the short array at the specified position
+    #method write &index:anIndex &length:aLength &realarray:anArray
+    [
+        theBinaryArray write &index:(anIndex * 8) &length:(aLength * 8) &bytearray:(anArray bytearray).
+    ]
+
+    /// Writes a real value at the specified position
+    #method write &index:anIndex &real:aValue
+    [
+        #var(type:int)aBinIndex := anIndex shift &index:(-3).
+        
+        theBinaryArray write &index:aBinIndex &real:aValue.
+    ]
+    
+    /// Reads a real value at the specified position and saves it into an output variable
+    #method read &index:anIndex &vreal:aReal
+    [
+        #var(type:int)aBinIndex := anIndex shift &index:(-3).
+        
+        theBinaryArray read &index:aBinIndex &vreal:aReal.
+    ]
+
+    /// Returns a real number at the specified position
+    #method getAt : anIndex
+    [
+        #var(type:real)aRetVal.
+        $self read &index:(anIndex int) &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]        
+
+    /// Sets a real number at the specified position
+    #method setAt : anIndex : aValue
+    [
+        $self write &index:(anIndex int) &real:(aValue real).
+    ]
+
+    /// Creates the object copy
+    #method clone = RealArray new &realarray:$self.
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &realarray:$self.
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realarray:$self.    
+}
+
+// --- IntMatrix ---
+
+#class(sealed)RealMatrix
+{
+    #field(type:bytearray)theArray.
+    #field(type:int)theRows.
+    #field(type:int)theColumns.
+    
+    #constructor new &length:Rows &length:Columns
+    [
+        theArray := ByteArray new &length:(Columns * Rows * 8).
+        
+        theRows := Rows.
+        theColumns := Columns.
+    ]
+        
+    #constructor new &rows:Rows &columns:Columns
+        <= new &length:(Columns int) &length:(Rows int).
+        
+    /// Reads the matrix lengths to the output parameter
+    #method readLengths &vint:Rows &vint:Columns
+    [
+        Columns << theColumns.
+        Rows << theRows.
+    ]
+
+    #method length = theRows.
+    
+    /// Returns itself
+    #method realmatrix = $self.
+
+    /// Writes an integer value at the specified position
+    #method write &index:i &index:j &real:aValue
+    [
+        #var(type:int)anIndex := i * theColumns + j.
+        
+        anIndex := anIndex shift &index:(-3).
+        
+        theArray write &index:anIndex &real:aValue.
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method read &index:i &index:j &vreal:aValue
+    [
+        #var(type:int)anIndex := i * theColumns + j.
+        
+        anIndex := anIndex shift &index:(-3).
+        
+        theArray read &index:anIndex &vreal:aValue.
+    ]
+
+    #method getAt : i : j
+    [
+        #var(type:real)aValue.            
+        $self read &index:(i int) &index:(j int) &vreal:aValue.
+        
+        ^ RealNumber new &real:aValue.
+    ]
+
+    #method setAt : i : j : aValue
+    [
+        $self write &index:(i int) &index:(j int) &real:(aValue real).    
+    ]
+
+    /// Returns a row
+    #method getAt : i =
+    {
+        length = theColumns int.
+        
+        getAt : j
+            = self getAt:i:j.
+        
+        setAt : j : aValue
+        [
+            self setAt:i:j:aValue.
+        ]
+    }.
+
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &realmatrix:$self.
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realmatrix:$self.
+}
+
 // --- CharArray ---
 
 /// An array of unicode characters (UTF-32)

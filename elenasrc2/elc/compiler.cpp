@@ -5084,7 +5084,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    }
    // if it is a dynamic object implicit constructor call is not possible
    else if (dispatchBody == nsNone)
-      scope.raiseError(errNotApplicable, node.Terminal());
+      scope.raiseError(errIllegalConstructor, node.Terminal());
 
    if (dispatchBody != nsNone) {
       compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope, classClassScope);
