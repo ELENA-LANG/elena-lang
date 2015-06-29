@@ -686,3 +686,11 @@
         aCopy::prop set:prop_value.
     ].
 ].
+
+#symbol ExtensionTest =
+[
+    #var e := Extension(2, outputOp).
+    
+    #var s := e toLiteral.
+    #var n := e int.
+].

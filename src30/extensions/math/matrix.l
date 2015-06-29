@@ -35,8 +35,14 @@
             #loop (j < m)?
             [
                 aMatrix write &index:i &index:j &real:(aFunction eval &index:i &index:j real).
+                
+                j := j + 1.
             ].
+            
+            i := i + 1.
         ].
+        
+        ^ self.
     ]
     
     #method add : anObject
@@ -72,7 +78,10 @@
                 b read &index:i &index:j &vreal:r2.
                 
                 r write &index:i &index:j &real:(r1 + r2).
+                
+                j := j + 1.
             ].
+            i := i + 1.
         ].
         
         ^ r.
@@ -111,7 +120,11 @@
                 b read &index:i &index:j &vreal:r2.
                 
                 r write &index:i &index:j &real:(r1 - r2).
+                
+                j := j + 1.
             ].
+            
+            i := i + 1.
         ].
         
         ^ r.
@@ -139,11 +152,15 @@
                 aMatrix read &index:i &index:j &vreal:r.
                 
                 anOutput writeLiteral:(RealNumber new &real:r):",".
+                
+                j := j + 1.
             ].
             anOutput readLength &vint:l.            
             anOutput set &length:(l - 1).
             
             anOutput write:'newLine.
+            
+            i := i + 1.
         ].
         
         ^ anOutput literal.

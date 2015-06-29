@@ -4,6 +4,8 @@
 
 #symbol program =
 [   
+    ExtensionTest eval.
+
     XTest eval.
 
     console writeLine:"Starting...".
@@ -42,4 +44,5 @@
     GenericMethodTest eval.
     ConstructorTest eval.
     DTOToStructTest eval.
+    ExtensionTest eval.
 ].

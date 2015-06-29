@@ -2097,10 +2097,12 @@ procedure bs_writeqword
 
   blen
   bcopya
+  ecopyd
   aloadsi 2
   nload
-  addn 9
+  addn 7
   notless labErr
+
   nload
   aloadsi 3
   ecopy 8
@@ -4323,6 +4325,7 @@ end
 
 procedure handle_extension
 
+  asavesi 1
   pushe
   bcopya
   dcopy 1

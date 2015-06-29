@@ -20,7 +20,7 @@
     #constructor new &n:anN &name:aName
         <= new &matrix:(RealMatrix new &rows:anN &columns:anN set &every_ij: (&index:i &index:j)
             [  
-                console write:"Enter ":aName:"[":i:",":j:"]=" readLine:(Real new)
+                console writeLiteral:"Enter ":aName:"[":i:",":j:"]=" readLine:(Real new)
             ]).
     
     #constructor newIdentity &n:anN
