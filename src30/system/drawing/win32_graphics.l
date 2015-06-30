@@ -1,5 +1,8 @@
 #define system.
-#define system'winforms.
+
+#subject(class:system'drawing'Pen)    pen.
+#subject(class:system'drawing'Brush)  brush.
+#subject(class:system'drawing'Canvas) canvas.
 
 // --- Pen ---
 
@@ -64,11 +67,8 @@
         theSize := aSize.
     ]
     
-    #method open &hwnd:aParent
+    #method open &hdc:aParentDC
     [
-        #var(type:hdc)aParentDC.
-        aParent read &hdc:aParentDC.
-
         #var(type:int)aWidth.
         #var(type:int)aHeight.
         theSize read &vint:aWidth &vint:aHeight.
@@ -108,14 +108,6 @@
         theHDC := aHandle.
     ]
     
-    #method open &win_paintstruct:aPaintStruct
-    [
-        #var(type:hdc)dc.
-        aPaintStruct read &hdc:dc.
-        
-        $self open &hdc:dc.
-    ]
-    
     #method set &pen:aPen
     [
         (0 == thePen)
@@ -123,7 +115,7 @@
             
         thePen := aPen hpen.            
         
-        theHDC setTextColor &int:(aPen color).
+        theHDC setTextColor &int:(aPen color int).
         
         theHDC select &hpen:thePen.        
     ]    
@@ -135,7 +127,7 @@
             
         theBrush := aBrush hbrush.
         
-        theHDC setBkColor &int:(aBrush color).
+        theHDC setBkColor &int:(aBrush color int).
         
         theHDC select &hbrush:theBrush.        
     ]    

@@ -50,6 +50,7 @@
 [+] extensions'text: encoderOp
 [+] system'io: File
 [+] new package: sqlite
+[+] new modules: system'drawing
 [*] system'io: Stream, BinaryReader, BinaryWriter, FileStream
 [*] system'console: clear
 [+] system'collections: ArrayList

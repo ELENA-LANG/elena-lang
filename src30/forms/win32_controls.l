@@ -1,6 +1,7 @@
 #define system.
-#define system'winforms.
 #define system'collections.
+#define system'drawing.
+#define system'winforms.
 
 // --- IControl ---
 
@@ -786,10 +787,12 @@
     #method $paint
     [
         #var(type:win_paintstruct)struct.
+        #var(type:hdc)dc.
         
         struct begin &hwnd:theHandle.
+        struct read &hdc:dc.
         
-        theCanvas open &win_paintstruct:struct.
+        theCanvas open &hdc:dc.
         
         ($nil == thePaint)
             ! [ thePaint eval:$self &canvas:theCanvas. ].
@@ -1249,11 +1252,9 @@
     [
         aPaintbox set &onPaint:(:sender &canvas:aCanvas)
         [
-            // !! temporal, stack optimized version should be used
-            #var(type:int)aWidth := theSize width.
-            #var(type:int)aHeight := theSize height.
-            
-            //theSize read &vint:aWidth &vint:aHeight.
+            #var(type:int)aWidth.
+            #var(type:int)aHeight.
+            theSize dimension read &vint:aWidth &vint:aHeight.
             
             #var anImage := theImages getAt &index:(theIndex int).
             
@@ -1306,11 +1307,11 @@
     
     #method open
     [
-        #var(type:hwnd)aHandle := theParent hwnd.
+        #var(type:hdc)aParentDC := theParent hwnd hdc.        
         
         #var(type:enumerator)it := theImages enumerator.
         #loop (it next)? [
-            it get open &hwnd:aHandle.
+            it get open &hdc:aParentDC.
         ].
     ]
     

@@ -1,6 +1,8 @@
 #define system.
+#define system'drawing.
 
 #subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
+
 #class(struct:embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
 {
     #field(type:win_coord)dwSize.    

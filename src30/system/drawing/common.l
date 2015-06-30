@@ -1,5 +1,12 @@
 #define system.
-    
+
+// --- common types ---
+#subject(class:system'drawing'Point)point.
+#subject(class:system'drawing'Dimension)dimension.
+#subject(class:system'drawing'Region)region.
+
+#subject image.
+
 // --- Point ---
 
 #class(sealed,struct:embeddable)Point :: BaseNumber

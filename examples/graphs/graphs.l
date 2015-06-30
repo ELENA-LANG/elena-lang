@@ -1,7 +1,7 @@
 #define system.
+#define system'math.
 #define forms.
 #define extensions.
-#define extensions'math.
 
 #symbol(const,type:int) ScaleX   = 15.
 #symbol(const,type:int) ScaleY   = 15.

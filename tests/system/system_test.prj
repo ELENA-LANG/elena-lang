@@ -1,10 +1,10 @@
 ﻿[project]
 vmpath=..\..\bin\
+subjectinfo=-1
 executable=system_test.exe
 namespace=system_test
 template=console
 debuginfo=-1
-subjectinfo=-1
 warn:unresolved=0
 
 [files]
