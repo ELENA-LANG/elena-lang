@@ -1489,7 +1489,6 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
    if (StringHelper::compare(identifier, THIS_VAR)) {
-      //return ObjectInfo(okSelf, 0);
       Outer owner = mapSelf();
 
       // map as an outer field (reference to outer object and outer object field index)

@@ -176,12 +176,9 @@
         
         // ------------------------------------ Handlers  ------------------------------------
         // Save
-        
-        // !! temporal
-        #var aWindow := $self.
         BtmSave set &onClick: args 
             [
-                #var aDialog := SaveFileDialog new:aWindow.
+                #var aDialog := SaveFileDialog new:$self.
                 aDialog addFilter &caption:"Text Files" &extension:"*.txt".
                 aDialog set &caption:"Select a file".
                 
@@ -208,7 +205,6 @@
         // Del TXT
         BtmDelTxt set &onClick: args 
             [
-                //theSavedPath~path delete.
                 theSavedPath delete.
             ].
 
