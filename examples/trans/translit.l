@@ -47,11 +47,12 @@
 [
     #var anOutput := TextBuffer new.
     
-    control run:aText &forEach: aChar
+    aText run &each: aChar
     [
-        #var aRule := control run:rusLatRules &seeking: x 
-                [ x from == aChar literal ].
-        (nil == aRule)
+        #var aRule := rusLatRules seek &each:
+            x [ x from == aChar literal ].
+                
+        ($nil == aRule)
             ? [ anOutput << aChar. ] 
             ! [ anOutput << aRule to. ].
     ].
