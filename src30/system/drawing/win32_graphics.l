@@ -21,6 +21,10 @@
             
     #method hpen = thePen.
     
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &pen:$self.
+    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &pen:$self.
+    
     #method(type:int) color = theColor.
 }
 
@@ -40,6 +44,10 @@
     #method brush = $self.
     
     #method hbrush = theBrush.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &brush:$self.
+    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &brush:$self.
     
     #method(type:int) color = theColor.
 }
@@ -108,6 +116,9 @@
         theHDC := aHandle.
     ]
     
+    #method set : anObject
+        = anObject cast:%set &to:$self.
+    
     #method set &pen:aPen
     [
         (0 == thePen)
@@ -137,6 +148,9 @@
         theHDC := 0.
     ]
  
+    #method setCaret:p
+        <= setCaret &point:(p point).
+        
     #method setCaret &int:x &int:y
     [
         theHDC moveTo &int:x &int:y.
@@ -166,6 +180,9 @@
         theHDC lineTo &int:(x int) &int:(y int).
     ]
  
+    #method lineCaretTo:p
+        <= lineCaretTo &point:(p point).
+        
     #method lineCaretTo &point:p
     [
         #var(type:int)x.
@@ -175,7 +192,7 @@
         theHDC lineTo &int:x &int:y.
     ]
  
-    #method write &caption:aText &x:x &y:y
+    #method writeText:aText &x:x &y:y        
     [
         theHDC drawText &wide:(aText wide) &int:(x int) &int:(y int).
     ]
@@ -183,6 +200,11 @@
     #method write &wide:aText &int:x &int:y
     [
         theHDC drawText &wide:aText &int:x &int:y.
+    ]
+ 
+    #method write &literal:aText &int:x &int:y
+    [
+        theHDC drawText &wide:(aText wide) &int:x &int:y.
     ]
  
     #method write &image:anImage &int:x &int:y &int:aWidth &int:aHeight

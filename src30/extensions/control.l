@@ -26,6 +26,9 @@
 {
     #method to:aMaxValue &doEach:aFunction
         = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
+        
+    #method to:aMaxValue &by:aStep &doEach:aFunction
+        = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
 }
 
 // --- control ---

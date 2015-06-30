@@ -706,8 +706,14 @@
     #method rounded
         = (self real)::realOp rounded.
 
+    #method roundedInt
+        = intConvertor convert &real:(self::realOp rounded).
+
     #method integer
         = (self real)::realOp integer.
+
+    #method integerInt
+        = intConvertor convert &real:((self real)::realOp integer).
 
     #method frac
         = (self real)::realOp frac.
