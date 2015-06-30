@@ -247,7 +247,13 @@
     
     #method openForReWrite = FileStream openForReWrite &path:self.
     
-    #method openForAppend = FileStream openForAppend &path:self.
+    #method openForAppend = FileStream openForAppend &path:self.    
+        
+    #method textreader = StreamReader new &path:self.
+    
+    #method textwriter = StreamWriter new &path:self.
+    
+    #method logger = StreamWriter new &path:self &bool:true.
     
     #method(type:bool) is &available
     [

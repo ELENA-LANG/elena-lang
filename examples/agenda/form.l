@@ -1,4 +1,5 @@
 #define system.
+#define extensions.
 #define forms.
 #define system'io.
 
@@ -30,13 +31,11 @@
     #field BtmDelTxt.
     #field BtmInfo.
 
-    #field theSavedPath.
+    #field(type:file) theSavedPath.
 
     #constructor new
         <= (new)
     [
-        theSavedPath := String new.
-        
         // Controls
         LabelName := Label new.
         LabelSurName := Label new.
@@ -188,16 +187,17 @@
                 
                 (aDialog run) ?
                 [
-                    theSavedPath << aDialog selected.
+                    theSavedPath := File new &path:(aDialog selected).
                     
-                    #var aWriter := StreamWriter new &path:theSavedPath &bool:true.
+                    #var aWriter := theSavedPath logger.
                     
-                    aWriter writeLine:"//-------------------------------------------------------------------------------". 
-                    aWriter write:"Name: " write:(Name literal) write:" " write:(SurName literal) write:" " writeLine:(OtName literal).
-                    aWriter write:"Email: " writeLine:(Email literal).
-                    aWriter write:"Age: " writeLine:(Age literal).
-                    aWriter write:"PhoneNumber: " writeLine:(PhoneNumber literal).
-                    aWriter writeLine:"//-------------------------------------------------------------------------------".
+                    aWriter 
+                        writeLine:"//-------------------------------------------------------------------------------"
+                        writeLine:"Name: ":Name:" ":SurName:" ":OtName
+                        writeLine:"Email: ":Email
+                        writeLine:"Age: ":Age
+                        writeLine:"PhoneNumber:":PhoneNumber
+                        writeLine:"//-------------------------------------------------------------------------------".
 
                     aWriter close.
 
@@ -209,7 +209,7 @@
         BtmDelTxt set &onClick: args 
             [
                 //theSavedPath~path delete.
-                theSavedPath::pathOp delete.
+                theSavedPath delete.
             ].
 
         // Exit

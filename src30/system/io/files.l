@@ -12,7 +12,13 @@
     ]
 
     #method file = $self.
-            
+
+    #method textreader = thePath::fileOp textreader.
+    
+    #method textwriter = thePath::fileOp textwriter.
+    
+    #method logger = thePath::fileOp logger.
+                        
     #method openForRead = thePath::fileOp openForRead.
     
     #method openForReWrite = thePath::fileOp openForReWrite.

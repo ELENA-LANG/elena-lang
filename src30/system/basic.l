@@ -13,12 +13,6 @@
 
     /// Compares the values
     #method(type:bool) greater : anObject = anObject less:$self bool.
-    
-    /// Dispatches the verb to the target object with generic subject
-    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
-    
-    /// Dispatches the verb to the target object with generic subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &object:$self.
 }
 
 // --- BaseNumber ---
@@ -2577,6 +2571,19 @@
 
 // === Basic Factory symbols ==
 
+#class BaseExtender
+{
+    #field theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theObject.
+    
+    #method => theObject.
+}
+
 /// A generic variable. 
 ///
 /// Extends an assigned value
@@ -2667,6 +2674,12 @@
     [
         theObject := anObject.
     ]
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theObject.
             
     /// Redirects the incoming messages to the object
     #method => theObject.

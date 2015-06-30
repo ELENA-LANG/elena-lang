@@ -29,7 +29,13 @@
     #method total_words = theTotal.
 
     #method unique_words = theList length.
+
+    #method cast : aVerb &to:aTarget
+        => theList.
     
+    #method cast : aVerb &to:aTarget &with:aParam
+        => theList.
+        
     #method => theList.
 }
 

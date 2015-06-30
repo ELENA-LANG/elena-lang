@@ -126,4 +126,7 @@
         
         $self write &chararray:(theBuffer chararray) &length:aLength.
     ]
+    
+    #method writeLine
+        <= write:'newLine.
 }
