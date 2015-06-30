@@ -2128,8 +2128,6 @@ procedure bs_readqword
   lessn   labErr 0
  
   acopyb
-  bread
-  dcopye
   bloadsi 3
   ecopy 8
   callr api : coreapi'subcopy

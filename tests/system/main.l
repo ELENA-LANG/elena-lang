@@ -4,8 +4,6 @@
 
 #symbol program =
 [   
-    ExtensionTest eval.
-
     XTest eval.
 
     console writeLine:"Starting...".

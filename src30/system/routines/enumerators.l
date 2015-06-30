@@ -3,6 +3,43 @@
 
 // --- arrayOp ---
 
+#class(extension:intarray)intArrayOp
+{
+    #method exchange &index:anIndex1 &index:anIndex2
+    [
+        #var(type:intarray)a := self intarray.
+
+        #var(type:int)n1.
+        #var(type:int)n2.
+
+        a read &index:anIndex1 &vint:n1.
+        a read &index:anIndex2 &vint:n2.
+        
+        a write &index:anIndex1 &int:n2.
+        a write &index:anIndex2 &int:n1.
+    ]
+    
+    #method set &every:anIndexFunc
+    [
+        #var(type:intarray)anArray := self intarray.
+        
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        anArray readLength &vint:aLength.
+        
+        #loop (anIndex < aLength) ?
+        [            
+            anArray write &index:anIndex &int:(anIndexFunc eval &index:anIndex int).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self.
+    ]
+}
+
+// --- arrayOp ---
+
 #class(extension:array)arrayOp
 {
     #method reallocate &length:aNewLength
