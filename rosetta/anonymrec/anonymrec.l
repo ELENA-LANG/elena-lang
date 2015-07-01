@@ -11,9 +11,9 @@
 
 #symbol program =
 [
-    control run &int:-1 &int:10 &forEvery: (&index:i)
+    -1 to:10 &doEach: (:i)
     [
-        console << "fib(" << i << ")=".
+        console writeLiteral:"fib(":i:")=".
         
         console writeLine:(fibo:i) | if &InvalidArgumentError: e
             [

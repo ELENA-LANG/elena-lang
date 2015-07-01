@@ -23,6 +23,8 @@ Currently:
 ------                                                                                         
               adev - code review
                        * refactoring rosetta samples
+                       * refactor amb
+                       * refactor anagram
                        
                xdev - general implementation
                        * look at arrayTest to make sure typed extension has priority over generic ones

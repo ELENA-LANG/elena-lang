@@ -83,6 +83,6 @@
     ambOperator 
         for &args:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
         seek: (:a:b:c:d) [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
-        do: (:a:b:c:d) [ consoleEx writeLine:a:" ":b:" ":c:" ":d. ]
-        | if &InvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
+        do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d. ]
+        | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
 ].
