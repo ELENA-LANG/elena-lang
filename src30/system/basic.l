@@ -2601,7 +2601,11 @@
     [
         theValue := aValue.
     ]
-  
+
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    #method(type:bool) equal : anObject
+        => theValue.
+      
     /// Assigns the variable
     #method write : aValue
     [

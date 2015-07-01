@@ -129,7 +129,7 @@
     #method next
     [
         theForward 
-            ? [ theVariable += theStep. ^ (theVariable < theEnd) bool. ].
+            ? [ theVariable += theStep. ^ (theVariable <= theEnd) bool. ].
         
         theVariable -= theStep. 
         

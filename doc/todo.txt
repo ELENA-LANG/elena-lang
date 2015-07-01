@@ -48,7 +48,7 @@ Currently:
                        * implement file search
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * IntArray copy subarray to the array
-                       * move hdc, hpen, point, canvas, ... and so on into system'drawing
+                       * logical operations with variant (v == 0, even if v is "0")
 
 <=================> 
                                                                                                                             
