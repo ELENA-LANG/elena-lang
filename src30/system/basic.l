@@ -2575,6 +2575,10 @@
 {
     #field theObject.
     
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    #method(type:bool) equal : anObject
+        => theObject.
+      
     /// Dispatches the verb to the target object
     #method cast : aVerb &to:aTarget => theObject.
     
