@@ -1663,6 +1663,9 @@ public:
                // if it is top item
                if (previous == -1) {
                   _buffer[0] = current->next;
+
+                  if (_count == 1)
+                     _tale = 0;
                }
                else {
                   Item* prevItem = (Item*)(beginning + previous);

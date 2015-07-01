@@ -5884,6 +5884,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
                ClassScope classClassScope(&scope, classScope.info.classClassRef);
                compileClassClassDeclaration(member, classClassScope, classScope);
             }
+
             break;
          }
          case nsSymbol:

@@ -30,6 +30,7 @@
 
 [-] bug with outer field type fixed
 [-] bug with redirect to an outer field fixed
+[-] issue #45
 [+] compiler option: ds - enabling subject serialization in stand-alone program
 [!] by default c call convention (cdecl) is used
 
