@@ -11,6 +11,8 @@
     [
     ]
     
+    #method controls = theControls.
+    
     #method close
     [
         $super close.

@@ -22,9 +22,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * constructor : self variable should refer to the newly created instance of the object
-
-                       * refactoring samples : agenda
+                       * refactoring samples : c_a_g
                        * pass system test
                        * refactoring rosetta samples
                        

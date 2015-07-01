@@ -1248,6 +1248,9 @@
         theSize :=  Dimension new &width:50 &height:50.
     ]
  
+    #method assign : aControl
+       <= assign &paintbox:(aControl paintbox).
+ 
     #method assign &paintbox:aPaintbox
     [
         aPaintbox set &onPaint:(:sender &canvas:aCanvas)
