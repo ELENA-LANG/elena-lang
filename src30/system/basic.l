@@ -1830,7 +1830,7 @@
     
     /// Returns the result of integer division
     #method(type:int) divide &int:anOperand
-        = IntNumber new &int:(theValue + anOperand).
+        = IntNumber new &int:(theValue / anOperand).
     
     /// Returns the result of bitwise AND operation
     #method(type:int) and &int:anOperand
@@ -2074,7 +2074,7 @@
 
     /// Returns the result of integer division
     #method(type:long) divide &long:anOperand
-        = LongNumber new &long:(theValue + anOperand).
+        = LongNumber new &long:(theValue / anOperand).
 
     /// Returns the result of bitwise AND operation        
     #method(type:long) and &long:anOperand
