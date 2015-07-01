@@ -177,17 +177,18 @@
 
 #symbol ListTest =
 [
-    #var aList := List new append:1 append:2 append:4.
+    #var aList := List new append:1 append:2 append:4 append:"abc".
 
     #var anArray := aList toArray.
 
-    #var n1 := control find:2 &in:aList.
-    #var n2 := control find:-1 &in:aList.
+    #var n1 := aList seek:2.
+    #var s := aList seek:"abc".
+    #var n2 := aList seek:-1.
 ].
 
 #symbol EnumTest =
 [
-    control run:"abc" &forEach: (:x)
+    "abc" run &each: (:x)
     [
         console write:x.
     ].
@@ -267,7 +268,7 @@
     #var a := 1.
     #var b := "abc".
     
-    ( a equal &reference:a and:[ a equal &reference:b not ])
+    ( a equal &reference:a and:[ b equal &reference:a not ])
         ? [ console writeLine:"Reference comparison works" ]
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
@@ -427,7 +428,7 @@
     #var a := l toArray.
 //    #var a2 := l~indexable arreay.
 
-    control run:"abc" &forEach: (:ch)[ console write:ch ].
+    "abc" run &each: (:ch)[ console write:ch ].
 
     console writeLine.
 
@@ -677,19 +678,11 @@
     aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.
 
     #var aCopy := DynamicStruct new.
-    control run:(aProperties top:aLength) &forEach:(:aSubject)
+    aProperties top:aLength run &each:(:aSubject)
     [
         #var prop_value := aDTO::aSubject eval.
         #var prop := aSubject subject.
         
         aCopy::prop set:prop_value.
     ].
-].
-
-#symbol ExtensionTest =
-[
-    #var e := Extension(2, outputOp).
-    
-    #var s := e toLiteral.
-    #var n := e int.
 ].

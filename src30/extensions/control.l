@@ -85,22 +85,18 @@
 //    run:aText &forEachWord:anAction
 //        = anAction run &enumerator:(extensions'text'WordEnumerator new &literal:(aText literal)).
 //        
-//
 //    run &path:aPath &encoder:anEncoder &forEachLine:anAction
 //        = anAction run &enumerator:(extensions'text'ReaderEnumerator new &path:aPath &encoder:anEncoder).
-//
-//    ifExist &path:aPath
-//        = aPath is &available.
-//
+
 //    sort : anIndexable
 //        = anIndexable~indexable sort:ifOrdered.
-//
-//    getAt :anIndex &args:Params
-//    [
-//        #var(type:int)aLength := Params length.
-//
-//        ^ Params@(aLength - anIndex int).
-//    ]
+
+    getAt :anIndex &args:Params
+    [
+        #var(type:int)aLength := Params length.
+
+        ^ Params@(aLength - anIndex int).
+    ]
 }.
 
 //// --- literalControl ---

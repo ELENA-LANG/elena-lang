@@ -42,5 +42,4 @@
     GenericMethodTest eval.
     ConstructorTest eval.
     DTOToStructTest eval.
-    ExtensionTest eval.
 ].

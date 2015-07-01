@@ -22,8 +22,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactoring samples : c_a_g
-                       * pass system test
                        * refactoring rosetta samples
                        
                xdev - general implementation
