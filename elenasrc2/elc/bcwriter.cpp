@@ -2314,16 +2314,16 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
    switch (operator_id) {
       case REFER_MESSAGE_ID:
          // aswapsi 0
-         // popa
          // nload
          // popa
          // nread
+         // dcopye
          // nsave
          tape.write(bcASwapSI, 0);
-         tape.write(bcPopA);
          tape.write(bcNLoad);
          tape.write(bcPopA);
          tape.write(bcNRead);
+         tape.write(bcDCopyE);
          tape.write(bcNSave);
          break;
       case SET_REFER_MESSAGE_ID:
