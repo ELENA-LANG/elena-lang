@@ -337,11 +337,11 @@
     #var aText := String new.
     #var aParser := Parser new.
 
-    control while:[ consoleEx readLine:aText length > 0] &do:
+    control while:[ console readLine:aText length > 0] &do:
     [
-        consoleEx writeLine:"=" :(aParser run:aText)
+        console writeLine:"=" :(aParser run:aText)
             | if &Error:e [
-                    consoleEx writeLine:"Invalid Expression".
+                    console writeLine:"Invalid Expression".
                 ].
     ].
 ].

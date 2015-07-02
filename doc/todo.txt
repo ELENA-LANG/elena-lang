@@ -22,9 +22,10 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactoring rosetta samples
+                       * refactoring rosetta samples : arithmmean
                        * refactor amb
                        * refactor anagram
+                       * refactor arithmeval
                        
                xdev - general implementation
                        * look at arrayTest to make sure typed extension has priority over generic ones
