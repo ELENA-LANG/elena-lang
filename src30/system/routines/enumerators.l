@@ -304,7 +304,10 @@
             
         ^ self.            
     ]
-    
+
+    #method startingWith:s
+        = self::literalOp startingWith &literal:(s literal).
+        
     #method startingWith &literal:s
     [
         #var(type:literal)aLiteral := self literal.        
@@ -313,7 +316,7 @@
         
         ^ 0 == n.
     ]
-
+        
     #method endingWith &literal:s
     [
         #var(type:literal)aLiteral := self literal.
@@ -327,6 +330,26 @@
         
         ^ n != -1.
     ]
+
+    #method endingWith:s
+        = self::literalOp endingWith &literal:(s literal).
+        
+    #method containing &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+
+        #var(type:vint)n.
+        aLiteral indexOf &index:0 &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method containing:s
+        = self::literalOp containing &literal:(s literal).
     
     #method replaceFirst &literal:aReplacee &literal:aReplacer
     [
@@ -598,6 +621,9 @@
         
         ^ 0 == n.
     ]
+    
+    #method startingWith:s
+        = self::wideOp startingWith &wide:(s wide).
 
     #method endingWith &wide:s
     [
@@ -613,6 +639,27 @@
         
         ^ n != -1.
     ]
+    
+    #method endingWith:s
+        = self::wideOp endingWith &wide:(s wide).
+
+    #method containing &wide:s
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        #var(type:int)n.
+        
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+        
+        aLiteral indexOf &index:0 &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method containing:s
+        = self::wideOp containing &wide:(s wide).
 
     #method replaceFirst &wide:aReplacee &wide:aReplacer
     [
@@ -996,18 +1043,25 @@
         ^ self::dispatcher padRight &char:aChar &length:aLength.
     ]
     
-    #method startingWith &literal:s
+    #method startingWith : s
     [
         #var dispatcher := self cast:%eval &to:stringOpDispatcher.
         
-        ^ self::dispatcher startingWith &literal:s.
+        ^ self::dispatcher startingWith:s.
     ]
     
-    #method endingWith &literal:s
+    #method endingWith : s
     [
         #var dispatcher := self cast:%eval &to:stringOpDispatcher.
         
-        ^ self::dispatcher endingWith &literal:s.
+        ^ self::dispatcher endingWith:s.
+    ]
+    
+    #method containing : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher containing:s.
     ]
     
     #method replaceFirst &literal:aReplacee &literal:aReplacer

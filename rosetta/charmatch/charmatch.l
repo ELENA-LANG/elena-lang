@@ -1,3 +1,4 @@
+#define system.
 #define system'routines.
 #define extensions.
 
@@ -5,18 +6,20 @@
 
 #symbol program =
 [
-    (literalControl starting:"hello" &with:"hel") ?
+    #var s :="hello".
+    
+    (s startingWith:"hel") ?
     [
-        consoleEx writeLine:"hello starts with hel".
+        console writeLine:s:" starts with hel".
     ].
     
-    (literalControl ending:"hello" &with:"llo") ?
+    (s endingWith:"llo") ?
     [
-        consoleEx writeLine:"hello ends with llo".
+        console writeLine:s:" ends with llo".
     ].
 
-    (literalControl contain:"el" &in:"hello") ?
+    (s containing:"hello") ?
     [
-        consoleEx writeLine:"hello contains el".
+        console writeLine:s:" contains el".
     ].
 ].
