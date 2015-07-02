@@ -5,27 +5,26 @@
 
 // Averages/Mode
 
-#symbol mode = (:anArray)
-[
-    #var aCountMap := Dictionary new &default:0.
-    control run:anArray &forEach: anItem
+#class(extension) op
+{
+    #method mode
     [
-        aCountMap set &key:anItem &object:(aCountMap getAt &key:anItem + 1).
-    ].
-
-    aCountMap~indexable sort:(:p:n)
-        [ p > n ].
-
-    #var aMax := aCountMap first.
-
-    ^ convertor toArray:(
-        control run:(
-                    aCountMap~enumerable 
-                        filter &each:kv [ aMax safeEqual:kv ] 
-                        select &each:kv [ kv key ]
-                    ) 
-                    &forEach:(Summing new:(List new))).
-].
+        #var aCountMap := Dictionary new &default:0.
+        self run &each: anItem
+        [
+            aCountMap@anItem := aCountMap@anItem + 1.
+        ].
+    
+        aCountMap sort:(:p:n) [ p > n ].
+    
+        #var aMax := aCountMap firstMember.
+    
+        ^ aCountMap
+            filter &each:kv [ aMax safeEqual:kv ]
+            select &each:kv [ kv key ]
+            toArray.
+    ]
+}
 
 #symbol program =
 [

@@ -588,13 +588,18 @@
     #field(type:array_list) theList.
     #field(type:array)      theHashTable.
     #field(type:int)        theHashMask.
+    
+    #field theDefault.
 
     /// Creates a dictionary
     #constructor new
-        <= new &capacity:32 &hash_length:32.
+        <= new &capacity:32 &hash_length:32 &default:$nil.
+
+    #constructor new &default:aDefault
+        <= new &capacity:32 &hash_length:32 &default:aDefault.
 
     /// Creates a dictionary
-    #constructor new &capacity:aCapacity &hash_length:aHashLength
+    #constructor new &capacity:aCapacity &hash_length:aHashLength  &default:aDefault
     [
         #var(type:int)size := 32.
         #loop (size < aHashLength)?
@@ -607,6 +612,8 @@
         
         theHashTable := Array new &length:aHashLength.
         theList := ArrayList new &capacity:aCapacity.
+        
+        theDefault := aDefault.
     ]
     
     /// Gets a dictionary item with the specified key
@@ -647,13 +654,13 @@
             
             #var anItem := theList getAt &index:anItemIndex.
             
-            (aKey == anItem key)
+            (aKey safeEqual:(anItem key))
                 ? [ ^ anItem. ].
             
             i := i + 1.
         ].
         
-        #var aNewItem := KeyValue new &key:aKey &object:$nil.
+        #var aNewItem := KeyValue new &key:aKey &object:theDefault.
         
         theList readLength &vint:i.
         theList append:aNewItem.
@@ -737,6 +744,9 @@
 
     /// Returns a dictionary enumerator
     #method enumerator => theList.
+    
+    /// Returns a dictionary iterator
+    #method iterator => theList.
     
     /// Dispatches the verb to the target object with enumerable subject
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
