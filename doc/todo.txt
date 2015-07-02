@@ -30,7 +30,6 @@ Currently:
                        * refactor bullscows
                        * refactor caesar
                        * refactor calendar
-                       * refactor charmatch
                        * refactor combinations
                        * refactor median
                        * refactor smavg

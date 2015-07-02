@@ -349,8 +349,10 @@
     /// Creates the list
     #constructor $new &array:anArray &length:aLength
     [
-        anArray readLength &vint:theCapacity.
+        theCapacity := Integer new.
         theLength := Integer new &int:aLength.
+        
+        anArray readLength &vint:theCapacity.
         
         theArray := anArray clone.
     ]

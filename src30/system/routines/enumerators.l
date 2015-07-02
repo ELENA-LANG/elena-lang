@@ -176,7 +176,7 @@
     ]
     
     #method ascendant
-        = self::arrayOp sort:ifOrdered.
+        = (self clone)::arrayOp sort:ifOrdered.
     
     #method is &empty
     [
@@ -967,7 +967,7 @@
     ]
     
     #method ascendant
-        = self::indexableOp sort:ifOrdered.
+        = (self clone)::indexableOp sort:ifOrdered.
 }
 
 // --- stringOp ---
