@@ -31,7 +31,6 @@ Currently:
                        * refactor caesar
                        * refactor calendar
                        * refactor combinations
-                       * refactor median
                        * refactor smavg
                        
                xdev - general implementation

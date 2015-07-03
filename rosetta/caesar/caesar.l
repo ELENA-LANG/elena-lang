@@ -1,7 +1,7 @@
 #define system.
 #define system'routines.
-#define extensions.
 #define system'math.
+#define extensions.
 
 // --- Constants ---
 
@@ -14,34 +14,34 @@
 
 #class Encrypting :: Enumerator
 {
-    #field(type:int) theKey.
-    #field(type:enumerator) theEnumerator.
+    #field theKey.
+    #field theEnumerator.
     
     #constructor new &key:aKey &text:aText
     [
-        theKey := aKey int.
-        theEnumerator := aText literal enumerator.
+        theKey := aKey.
+        theEnumerator := aText enumerator.
     ]
     
-    #method next = theEnumerator next.
+    #method next => theEnumerator.
     
-    #method reset [ theEnumerator reset. ]
+    #method reset => theEnumerator.
     
     #method get
     [
-        #var(type:char) aChar := theEnumerator get char.
+        #var aChar := theEnumerator get.
         
-        #var(type:int) anIndex := Letters indexOf &index:0 &char:aChar.
+        #var anIndex := Letters indexOf:0:aChar.
         
         (-1 < anIndex)
             ? [
-                ^ Letters @ ((theKey+anIndex) int mod:26).
+                ^ Letters @ ((theKey+anIndex) mod:26).
             ]
             ! [
-                anIndex := BigLetters indexOf &index:0 &char:aChar.
+                anIndex := BigLetters indexOf:0:aChar.
                 (-1 < anIndex)
                     ? [
-                        ^ BigLetters @ ((theKey+anIndex) int mod:26).
+                        ^ BigLetters @ ((theKey+anIndex) mod:26).
                     ]
                     ! [
                         ^ aChar.
@@ -52,27 +52,28 @@
 
 // --- Functions ---
 
-#symbol encrypt = (:aText:aKey)
-    [ Summing new:(String new) run &enumerator:(Encrypting new &key:aKey &text:aText). ].
+#class(extension)encryptOp
+{
+    #method encrypt : aKey
+        = Encrypting new &key:aKey &text:self summarize:(String new). 
 
-#symbol decrypt = (:aText:aKey)
-    [ Summing new:(String new) run &enumerator:(Encrypting new &key:(26 - aKey) &text:aText). ].
+    #method decrypt :aKey
+        = Encrypting new &key:(26 - aKey) &text:self summarize:(String new). 
+}
 
 // --- Program ---
 
 #symbol program =
 [
-    #var anS := TestText.
-    
-    consoleEx writeLine:"Original text :" :anS.
+    console writeLine:"Original text :" :TestText.
         
-    anS := encrypt:anS:Key.
+    #var anEncryptedText := TestText encrypt:Key.
 
-    consoleEx writeLine:"Encrypted text:" :anS.
+    console writeLine:"Encrypted text:" :anEncryptedText.
 
-    anS := decrypt:anS:Key.
+    #var aDecryptedText := anEncryptedText decrypt:Key.
 
-    consoleEx writeLine:"Decrypted text:" :anS.
+    console writeLine:"Decrypted text:" :aDecryptedText.
 
-    consoleEx readChar.
+    console readChar.
 ].
