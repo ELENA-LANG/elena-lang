@@ -397,6 +397,8 @@
                 
                 i := i + 1.
             ].
+            
+            theArray := aNewArray.
         ].
     ]
     
@@ -676,6 +678,7 @@
                 aNewBacket write &index:0 &length:aCapacity &intarray:aBacket.
 
                 aBacket := aNewBacket.
+                theHashTable setAt &index:aHashCode &object:aNewBacket.
             ].
             
         aBacket write &index:aLength &int:i.

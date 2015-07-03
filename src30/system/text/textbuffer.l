@@ -218,7 +218,8 @@
         aLiteral read &index:0 &vchar:aFirstChar.
         aFirstChar readLength &vint:aFirstCharLen.
         
-        #loop (anIndex < theLength)?
+        #var(type:int)aMaxIndex := theLength - aLiteralLength.
+        #loop (anIndex < aMaxIndex)?
         [
             theBuffer read &index:anIndex &vchar:aCurrent.
             
