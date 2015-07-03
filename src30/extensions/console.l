@@ -1,7 +1,7 @@
 #define system.
 #define system'routines.
 //#define system'dynamic.
-//#define system'text.
+#define system'text.
 
 // --- outputOp ---
 
@@ -164,6 +164,156 @@
         ].
     ]
     
+    #method write : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+
+    #method write : anObject1 : anObject2 &paddingRight:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+    
+    #method write : anObject1 : anObject2 : anObject3 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+
+    #method write : anObject1 : anObject2 : anObject3 &paddingRight:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+    
+    #method write : anObject1 : anObject2 : anObject3 : anObject4 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+
+    #method write : anObject1 : anObject2 : anObject3 : anObject4 &paddingRight:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+    
+    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+
+    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 &paddingRight:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+    
+    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+
+    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6 &paddingRight:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+            
     #method writeLine:anObject1
     [
         self

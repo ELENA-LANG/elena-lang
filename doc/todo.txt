@@ -26,9 +26,7 @@ Currently:
                        * refactor anagram
                        * refactor arithmeval
                        * refactor bestshuffle
-                       * refactor brackets
                        * refactor bullscows
-                       * refactor caesar
                        * refactor calendar
                        * refactor combinations
                        * refactor smavg

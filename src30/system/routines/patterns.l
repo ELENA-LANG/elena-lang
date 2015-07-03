@@ -124,7 +124,7 @@
             ! [ theVariable += theStep. ].
     ]    
     
-    #method get = theVariable.
+    #method get = theVariable value.
     
     #method next
     [
