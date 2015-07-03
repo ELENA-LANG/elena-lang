@@ -22,19 +22,15 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactor amb
                        * refactor anagram
-                       * refactor arithmeval
+                       * refactor amb
                        * refactor bullscows
-                       * refactor calendar
                        * refactor combinations
+                       * refactor calendar
                        
-               xdev - general implementation
-                       * look at arrayTest to make sure typed extension has priority over generic ones
-
               xdev - linux:
-                       * implement textdb sample
                        * test stack trace generating functionality
+                       * implement textdb sample
                        * test load class by name
                        * linux32 : implement console clear
 

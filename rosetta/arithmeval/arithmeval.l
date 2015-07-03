@@ -1,4 +1,5 @@
 #define system.
+#define system'routines.
 #define extensions.
 
 // --- Token ---
@@ -16,12 +17,12 @@
     
     #method level = theLevel.
     
-    #method append &char:aChar
+    #method append : aChar
     [
         theValue += aChar.
     ]
     
-    #method number = convertor toReal:(theValue value).
+    #method number = theValue value toReal.
 }
 
 // --- Node ---
@@ -122,7 +123,7 @@
             self new &bracket goto &start.
         ]
         ! [
-            self new &token append &char:ch goto &token.
+            self new &token append:ch goto &token.
         ].    
 ].
 
@@ -146,7 +147,7 @@
             self new &fraction goto &operator.
         ]
         ! [
-            self append &char:ch.
+            self append:ch.
         ].
 ].
 
@@ -160,7 +161,7 @@
             self new &token append &literal:"0" new &difference goto &operator.
         ]
         ! [
-            self new &token append &char:ch goto &token.
+            self new &token append:ch goto &token.
         ].
 ].
 
@@ -232,16 +233,16 @@
         theLevel := theLevel - 10.
     ]            
                                     
-    #method append &char:ch
+    #method append:ch
     [
         ((ch >= 48) and:(ch < 58))
-            ? [ theToken append &char:ch. ]
+            ? [ theToken append:ch. ]
             ! [ #throw InvalidArgumentException new &message:"Invalid expression". ].
     ]
             
     #method append &literal:aLiteral
     [
-        control run:aLiteral &forEach: ch [ self append &char:ch. ].
+        aLiteral run &each: ch [ self append:ch. ].
     ]
                                                          
     #method goto &start
@@ -304,7 +305,7 @@
 
     #method append &last:aLastNode &new:aNewNode
     [
-        (nil == aLastNode)
+        ($nil == aLastNode)
             ? [ ^ aNewNode. ].
         
         (aNewNode level <= aLastNode level)
@@ -312,10 +313,10 @@
             
         #var aParent := aLastNode.
         #var aCurrent := aLastNode right.
-        #loop ((aCurrent != nil) and:[ aNewNode level > aCurrent level ]) ?
+        #loop (($nil != aCurrent) and:[ aNewNode level > aCurrent level ]) ?
             [ aParent := aCurrent. aCurrent := aCurrent right. ].
         
-        (nil == aCurrent)
+        ($nil == aCurrent)
             ? [ aParent set &right:aNewNode. ]
             ! [ aNewNode set &left:aCurrent. aParent set &right:aNewNode. ].
             
@@ -326,7 +327,7 @@
     [
         #var aScope := Scope new &parser:$self.
 
-        control run:aText &forEach: ch [ aScope eval:ch. ].
+        aText run &each: ch [ aScope eval:ch. ].
 
         ^ aScope number.
     ]
@@ -337,7 +338,7 @@
     #var aText := String new.
     #var aParser := Parser new.
 
-    control while:[ console readLine:aText length > 0] &do:
+    [ (aText << console readLine) length > 0] doWhile:
     [
         console writeLine:"=" :(aParser run:aText)
             | if &Error:e [

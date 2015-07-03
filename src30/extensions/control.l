@@ -23,7 +23,7 @@
     ]
 }
 
-#class(extension)loopOp
+#class(extension)forLoopOp
 {
     #method to:aMaxValue &doEach:aFunction
         = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
@@ -36,6 +36,17 @@
         
     #method to:aMaxValue &by:aStep &seekEach:aFunction
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
+}
+
+#class(extension)loopOp
+{
+    #method doWhile:anAction
+    [
+        #loop (self bool)?
+        [
+            anAction eval.
+        ].
+    ]
 }
 
 // --- control ---
