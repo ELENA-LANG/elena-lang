@@ -2,57 +2,49 @@
 #define system'routines.
 #define extensions.
 
-// --- shuffle ---
-
-#symbol shuffle = (:aLiteral)
-[
-    #var aLength := aLiteral length.
-    #var aShuffled := convertor toArray:aLiteral.
-
-    control seek &int:0 &int:(aLength-1) &every: (&index:i)
+#class(extension)op
+{
+    #method shuffled
     [
-        #var aChar := aLiteral@i.
-        (aChar == (aShuffled@i)) ?
+        #var anOriginal := self toArray.
+        #var aShuffled := self toArray.
+    
+        0 to:(anOriginal length - 1) &doEach: (:i)
         [
-            control run &int:0 &int:(aLength-1) &forEvery: (&index:j)
+            0 to:(anOriginal length - 1) &doEach: (:j)
             [
-                #var anAltChar := aShuffled@j.
-                ((anAltChar != aChar)and:[ anAltChar != (aLiteral@i) ]and:[aChar != (aLiteral@j)]) ?
-                    [
-                        aShuffled~indexable exchange:i:j.
-                        
-                        ^ true.
-                    ].
+                ((i != j)and:[anOriginal@i != (aShuffled@j)]and:[anOriginal@j != (aShuffled@i)]) ?
+                [
+                    aShuffled exchange:i:j.
+                ].
             ].
         ].
+    
+        ^ aShuffled summarize:(String new) literal.
+    ]
+    
+    #method score : anOriginalText
+    [
+        #var aShuffled := self toArray.
+        #var anOriginal := anOriginalText toArray.
+        #var aScore := Integer new.
+
+        0 to:(anOriginal length - 1) &doEach: (:i)
+            [ ((anOriginal @ i) == (aShuffled @ i)) ? [ aScore += 1. ]. ].
         
-        ^ false.
-    ].
-
-    ^ control run:aShuffled &forEach:(Summing new:(String new)) literal.
-].
-
-// --- ShuffleScore ---
-
-#symbol scoreShuffle = (:anOriginal:aShuffled)
-[
-    #var aScore := Integer new.
-    
-    control run &int:0 &int:(anOriginal length - 1) &forEvery: (&index:i)
-        [ ((anOriginal @ i) == (aShuffled @ i)) ? [ aScore += 1. ]. ].
-    
-    ^ aScore value.
-].
+        ^ aScore value.
+    ]
+}
 
 // --- Program ---
 
 #symbol program =
 [
-    control run:("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") &forEach: aWord
+    ("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") run &each: aWord
     [
-        #var aShuffled := shuffle:aWord.
+        #var aShuffled := aWord shuffled.
 
-        consoleEx writeLine:"The best shuffle of ":aWord:" is ":aShuffled:"(":(scoreShuffle:aWord:aShuffled):")".
+        console writeLine:"The best shuffle of ":aWord:" is ":aShuffled:"(":(aShuffled score:aWord):")".
     ].
 
     console readChar.

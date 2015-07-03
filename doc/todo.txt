@@ -25,11 +25,9 @@ Currently:
                        * refactor amb
                        * refactor anagram
                        * refactor arithmeval
-                       * refactor bestshuffle
                        * refactor bullscows
                        * refactor calendar
                        * refactor combinations
-                       * refactor smavg
                        
                xdev - general implementation
                        * look at arrayTest to make sure typed extension has priority over generic ones
@@ -308,10 +306,6 @@ week 4:
               xdev - ide
                        * ide : test with utf8, win1252, ...
                        * elc : test with utf8, win1252, ...
-
-              smaint - rosetta samples
-                       * fix bestshuffle
-                       * bestshuffle : fix the code - abracadabra, baarrcadaab, (0)  in ELENA - 4
 
               xmaint - package
                        * create installation package
