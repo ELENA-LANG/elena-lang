@@ -10,17 +10,17 @@
     #constructor new
     [
         // generate secret number
-        #var aRandomNumbers := (1,2,3,4,5,6,7,8,9)::randomOp randomize:9.
+        #var aRandomNumbers := (1,2,3,4,5,6,7,8,9) randomize:9.
  
-        theNumbers := aRandomNumbers~indexable Subarray &index:0 &length:4.
+        theNumbers := aRandomNumbers Subarray &index:0 &length:4.
         theAttempt := Integer new:1.
     ]
 
     #method ask
     [
-        #var aRow := consoleEx write:"Your Guess #":theAttempt:" ?" readLine.
+        #var aRow := console writeLiteral:"Your Guess #":theAttempt:" ?" readLine.
         
-        ^ convertor toArray:aRow.
+        ^ aRow toArray.
     ]
 
     #method proceed : aGuess
@@ -31,17 +31,17 @@
         (aGuess length != 4)
             ? [ aBulls << -1. ]
             ! [
-                control run &int:0 &int:3 &forEvery: (&index:i)
+                0 to:3 &doEach: (:i)
                 [
                     #var ch := aGuess@i.
-                    #var aNumber := convertor toInt:(ch literal).
+                    #var aNumber := ch literal toInt.
                     
                     // check range
                     ((aNumber > 0)and:(aNumber < 10))
                         ! [ #throw InvalidArgumentException new. ].
                     
                     // check duplicates
-                    #var duplicate := control run:aGuess &seeking: x [ (x == ch)and:[ x equal &reference:ch not ] ].
+                    #var duplicate := aGuess seek &each: x [ (x == ch)and:[ x equal &reference:ch not ] ].
                     (nil != duplicate) ?
                     [
                         #throw InvalidArgumentException new.
@@ -50,7 +50,7 @@
                     (aNumber == (theNumbers@i))
                         ? [ aBulls += 1. ]
                         ! [
-                            (control ifExist:aNumber &in:theNumbers)
+                            (theNumbers ifExists:aNumber)
                                 ? [ aCows += 1. ].
                         ].
                 ]
@@ -61,12 +61,12 @@
             ].
 
         ^ aBulls =>
-            -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
-             4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
+            -1 ? [ console writeLine:"Not a valid guess.". ^ true. ]
+             4 ? [ console writeLine:"Congratulations! You have won!". ^ false. ]
              ! [
                  theAttempt += 1.
                  
-                 consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
+                 console writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
                  
                  ^ true.
              ].
@@ -77,5 +77,5 @@
 [
     #var aGameMaster := GameMaster new.
 
-    control while:[ aGameMaster proceed:(aGameMaster ask) ].
+    [ aGameMaster proceed:(aGameMaster ask) ] doWhile.
 ].

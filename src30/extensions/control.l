@@ -47,6 +47,13 @@
             anAction eval.
         ].
     ]
+    
+    #method doWhile
+    [
+        #loop (self bool)?
+        [
+        ].
+    ]
 }
 
 // --- control ---

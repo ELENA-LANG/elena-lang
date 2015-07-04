@@ -22,9 +22,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactor anagram
                        * refactor amb
-                       * refactor bullscows
                        * refactor combinations
                        * refactor calendar
                        

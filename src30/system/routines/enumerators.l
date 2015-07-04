@@ -968,6 +968,13 @@
     
     #method ascendant
         = (self clone)::indexableOp sort:ifOrdered.
+        
+    #method Subarray &index:anIndex &length:aLength
+    [
+        #var(type:iterator) it := self iterator.
+        
+        ^ Array new &length:aLength set &every: (&index:i) [ it write &index:(anIndex + i) get ].
+    ]
 }
 
 // --- stringOp ---
