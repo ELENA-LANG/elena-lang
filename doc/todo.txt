@@ -21,9 +21,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              adev - code review
-                       * refactor calendar
-                       
               xdev - linux:
                        * test stack trace generating functionality
                        * implement textdb sample

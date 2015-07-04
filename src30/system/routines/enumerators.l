@@ -1145,15 +1145,19 @@
     
     #method write : aLine &padding:aWidth &with:aChar
     [
-        #var(type:int)aLength := aWidth int.
-        #var(type:int)aLeftPadding := aLength / 2.
-        #var(type:int)aRightPadding := aLength - aLeftPadding.
+        #var(type:int)aWidthInt := aWidth int.
+        #var(type:int)aLength := aLine length.        
         
-        #var aPaddedStr := aLine 
-            padLeft &char:(aChar char) &length:aLeftPadding
-            padRight &char:(aChar char) &length:aRightPadding.
-
-        self write:aPaddedStr.
+        (aLength < aWidthInt)
+            ? [
+                #var(type:int)aLen := aWidthInt - aLength.
+                #var(type:int)aLeftLen := aLen / 2.
+                
+                self::stringOp write:aChar &length:aLeftLen.
+                self write:aLine.
+                self::stringOp write:aChar &length:(aLen - aLeftLen).
+            ]
+            ! [ self write:aLine. ].
             
         ^ self.
     ]

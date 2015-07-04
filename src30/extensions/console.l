@@ -164,6 +164,19 @@
         ].
     ]
     
+    #method write : anObject1 : anObject2 &padding:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &padding:aWidth &with:aChar.
+            
+        ^ self.
+    ]
+    
     #method write : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
     [
         #var(type:textbuffer)aBuffer := TextBuffer new.
