@@ -22,8 +22,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               adev - code review
-                       * refactor amb
-                       * refactor combinations
                        * refactor calendar
                        
               xdev - linux:

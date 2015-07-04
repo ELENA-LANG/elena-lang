@@ -1,11 +1,12 @@
 #define system.
+#define system'routines.
 #define extensions.
 #define extensions'routines.
 
 // --- Joinable --
 
 #symbol joinable = (:aFormer:aLater)
-    [ (aFormer getAt &index:(aFormer length - 1)) == (aLater getAt &index:0) ].
+    [ (aFormer@(aFormer length - 1)) == (aLater@0) ].
 
 #symbol dispatcher =
 {
@@ -46,7 +47,7 @@
     [
         theCombinator reset.
 
-        control run:theCombinator &seeking: v
+        theCombinator seek &each: v
         [
             ^ aCondition cast:%eval &to:dispatcher &with:v.
         ].
@@ -74,8 +75,8 @@
 #symbol program1 =
 [
     ambOperator for &args:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
-        [ consoleEx writeLine: a : " * " : b : " = 8" ]
-        | if &InvalidArgumentError: e [ consoleEx writeLine:"AMB is angry". ].
+        [ console writeLine: a : " * " : b : " = 8" ]
+        | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
 ].
 
 #symbol program2 =

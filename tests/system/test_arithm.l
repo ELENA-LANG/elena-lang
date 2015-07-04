@@ -181,9 +181,9 @@
 
     #var anArray := aList toArray.
 
-    #var n1 := aList seek:2.
-    #var s := aList seek:"abc".
-    #var n2 := aList seek:-1.
+    #var n1 := aList safeSeek:2.
+    #var s := aList safeSeek:"abc".
+    #var n2 := aList safeSeek:-1.
 ].
 
 #symbol EnumTest =

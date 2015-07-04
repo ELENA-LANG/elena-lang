@@ -82,7 +82,7 @@
     #method indexOf : anObject
         = self::arrayOp indexOf &index:0 &object:anObject.
         
-    #method seek : aValue
+    #method safeSeek : aValue
     [
         #var(type:array)anArray := self array.
         #var(type:int)aLength.                
@@ -828,7 +828,7 @@
     #method seek &each:aFunction
       = aFunction retrieve &enumerator:(self enumerator).
 
-    #method seek : aValue
+    #method safeSeek : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
     #method ifExists : aValue
