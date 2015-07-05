@@ -750,9 +750,21 @@
     /// Returns a dictionary enumerator
     #method enumerator => theList.
     
-    /// Returns a dictionary iterator
-    #method iterator => theList.
-    
+    #method array_list
+    [
+        #var(type:array_list) Values := ArrayList new.
+
+        #var(type:enumerator) it := theList enumerator.
+        #loop (it next)?
+        [
+            #var anItem := it get.
+            
+            Values += KeyValue new &key:(anItem key) &object:(anItem object).
+        ].
+        
+        ^ Values.
+    ]
+            
     /// Dispatches the verb to the target object with enumerable subject
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
     

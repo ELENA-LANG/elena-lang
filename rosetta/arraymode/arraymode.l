@@ -15,7 +15,7 @@
             aCountMap@anItem := aCountMap@anItem + 1.
         ].
     
-        aCountMap sort:(:p:n) [ p > n ].
+        aCountMap := aCountMap array_list sort:(:p:n) [ p > n ].
     
         #var aMax := aCountMap firstMember.
     

@@ -40,10 +40,9 @@
         anItem += aWord.
     ].
 
-    aDictionary
-        sort: (:aFormer:aLater) [ aFormer length > aLater length ].
-
-    aDictionary top:20 run &each: aPair [ console writeLine:aPair ].
+    aDictionary array_list
+        sort: (:aFormer:aLater) [ aFormer length > aLater length ]
+        top:20 run &each: aPair [ console writeLine:aPair ].
     
     #var anEnd := now.
    
