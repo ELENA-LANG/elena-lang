@@ -36,14 +36,35 @@
 			<Add option="-march=pentium2" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-fvisibility=hidden" />
+			<Add option="-fvisibility-inlines-hidden" />
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
 			<Add directory="../linux32" />
 			<Add directory=".." />
 		</Compiler>
+		<Linker>
+			<Add option="-fvisibility=hidden" />
+		</Linker>
+		<Unit filename="../../common/altstrings.cpp" />
+		<Unit filename="../../common/altstrings.h" />
+		<Unit filename="../../common/config.cpp" />
+		<Unit filename="../../common/config.h" />
+		<Unit filename="../../common/dump.cpp" />
+		<Unit filename="../../common/dump.h" />
+		<Unit filename="../../common/files.cpp" />
+		<Unit filename="../../common/files.h" />
+		<Unit filename="../../engine/libman.cpp" />
+		<Unit filename="../../engine/libman.h" />
 		<Unit filename="../../engine/linux32/elfhelper.cpp" />
 		<Unit filename="../../engine/linux32/elfhelper.h" />
+		<Unit filename="../../engine/module.cpp" />
+		<Unit filename="../../engine/module.h" />
+		<Unit filename="../../engine/rtman.cpp" />
+		<Unit filename="../../engine/rtman.h" />
+		<Unit filename="../../engine/section.cpp" />
+		<Unit filename="../../engine/section.h" />
 		<Unit filename="../instance.cpp" />
 		<Unit filename="../instance.h" />
 		<Unit filename="../linux32/elenart.h" />

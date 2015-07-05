@@ -19,6 +19,8 @@ static Instance* instance = NULL;
 
 void* Init(void* debugSection, const char* package)
 {
+   printf("starting\n");
+
    if (instance == NULL) {
       instance = new Instance(CONFIG_PATH);
    }

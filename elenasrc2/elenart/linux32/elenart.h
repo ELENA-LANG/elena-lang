@@ -7,25 +7,33 @@
 #ifndef ELENART_H_INCLUDED
 #define ELENART_H_INCLUDED
 
+#if _LINUX32
+ #define DLL_PUBLIC __attribute__ ((visibility ("default")))
+ #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+#else
+ #define DLL_PUBLIC
+ #define DLL_LOCAL
+#endif
+
 extern "C"
 {
-   void* Init(void* debugSection, const char* package);
+   DLL_PUBLIC void* Init(void* debugSection, const char* package);
 
-   int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+   //int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length);
+   //int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length);
 
-   int LoadClassName(void* instance, void* object, char* lineInfo, int length);
+   //int LoadClassName(void* instance, void* object, char* lineInfo, int length);
 
-   void* GetSymbolRef(void* instance, void* referenceName);
+   //void* GetSymbolRef(void* instance, void* referenceName);
 
-   void* Interpreter(void* instance, void* tape);
+   //void* Interpreter(void* instance, void* tape);
 
-   void* GetRTLastError(void* instance, void* retVal);
+   //void* GetRTLastError(void* instance, void* retVal);
 
-   int LoadSubjectName(void* instance, void* subject, char* lineInfo, int length);
+   //int LoadSubjectName(void* instance, void* subject, char* lineInfo, int length);
 
-   void* LoadSubject(void* instance, void* subjectName);
+ //  void* LoadSubject(void* instance, void* subjectName);
 }
 
 #endif // ELENART_H_INCLUDED

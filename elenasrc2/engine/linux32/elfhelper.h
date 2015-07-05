@@ -15,8 +15,6 @@ namespace _ELENA_
 class ELFHelper
 {
 public:
-   //static size_t findEntryPoint(path_t path);
-
    static bool seekDebugSegment(StreamReader& reader, size_t& rvaAddress);
 };
 
