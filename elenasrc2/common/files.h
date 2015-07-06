@@ -108,6 +108,13 @@ public:
       changeExtension(ext);
    }
 
+   static void combinePath(Path& dest, path_t sour)
+   {
+      Path subPath(sour);
+
+      dest.combine(subPath);
+   }
+
 #endif
 
    static bool checkExtension(path_t path)

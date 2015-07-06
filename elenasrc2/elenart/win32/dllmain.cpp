@@ -6,6 +6,8 @@
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
+#define CONFIG_PATH "elc.cfg"
+
 using namespace _ELENA_;
 
 static Instance* instance = NULL;
@@ -34,7 +36,9 @@ EXTERN_DLL_EXPORT void* Init(void* debugSection, ident_t package)
          debugSection = (void*)ptr;
       }
 
-      instance->init(debugSection, package);
+      Path configPath;
+      Path::loadPath(configPath, CONFIG_PATH);
+      instance->init(debugSection, package, configPath);
 
       return instance;
    }

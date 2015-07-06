@@ -22,7 +22,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - linux:
-                       * test stack trace generating functionality
+                       * implement DateTime / Timespan classes (at least dummies)
                        * implement textdb sample
                        * test load class by name
                        * linux32 : implement console clear

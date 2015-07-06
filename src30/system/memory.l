@@ -1596,32 +1596,11 @@
     
     /// Creates a copy of the provided array
     #constructor new &array:anArray
-        <= (%new &length:(anArray length))
-    [
-        #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
-        anArray readLength &vint:aLength.
-        
-        #loop (anIndex < aLength) ?
-        [
-            $self setAt &index:anIndex &object:(anArray getAt &index:anIndex).
-            
-            anIndex := anIndex + 1.
-        ].
-    ]
+        <= %new &length:(anArray length) &index:0 &array:anArray.
     
     /// Creates a copy of the provided sub array
     #constructor new &length:aLength &index:anIndex &array:anArray
-        <= (%new &length:aLength)
-    [
-        #var(type:int)i := 0.
-        #loop (i < aLength) ?
-        [
-            $self setAt &index:i &object:(anArray getAt &index:(anIndex + i)).
-            
-            i := i + 1.
-        ].
-    ]
+        => system'internal'arr_copysubarr.
         
     /// Returns the specified array member
     #method getAt : anIndex

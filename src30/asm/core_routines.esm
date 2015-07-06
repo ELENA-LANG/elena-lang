@@ -2377,6 +2377,28 @@ procedure ns_copysubarr
   
 end
 
+procedure arr_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 4
+  callr api : coreapi'nsubcopy
+  
+  acopyb
+  quitn 4
+  
+end
+
 procedure ns_getlen
 
   aloadsi 1
