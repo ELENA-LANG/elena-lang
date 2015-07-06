@@ -5068,3 +5068,11 @@ procedure int_hashcode
   quitn 2
 
 end
+
+procedure long_save
+
+  bloadsi 2
+  lcopy
+  quitn 2
+
+end

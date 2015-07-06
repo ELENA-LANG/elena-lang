@@ -21,6 +21,9 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
+              adev - lib30     
+                       * test date functionality
+
               xdev - linux:
                        * implement DateTime / Timespan classes (at least dummies)
                        * implement textdb sample
@@ -35,6 +38,11 @@ Currently:
                        * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects,
                          overwriding the object (just in place mutation)
                        * reimplement script samples: interpreter, helloworld, vmconsole
+                       
+              xdev - general implementation
+                       * fix critical issue #47
+                       * fix critical issues
+                       * fix bugs
 
               adev - lib30     
                        * sqlite : support float
@@ -81,6 +89,7 @@ week2:
                        * port rosetta samples                                                                               
                        
               adev - lib30 optimization
+                       * review system'calendar implementation
                        * reivew system'winforms'SDIApplication.start, optimize the main loop
                        * review $ConsoleWriter.write&literal[1]
                        * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
@@ -407,6 +416,9 @@ week1:
                        * typed containers - support templates
 
                        * optimize hash table filling (use special function for literal hash code)
+                       
+                       * system'calendar: review SystemTime / Date / TimeSpan constructors, optimize their implementations 
+                         (reduce number of created dynamic objects), simplify the code
 
               idev - unicode
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)

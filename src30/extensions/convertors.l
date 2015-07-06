@@ -183,6 +183,6 @@
 #class(extension:datetime) dateFormatterOp 
 {
     #method toShortTimeLiteral
-        = dateTimeControl toShortTime &long:(self long).
+        = self __time_st toShortTime literal.
 }
  

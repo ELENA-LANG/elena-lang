@@ -1,95 +1,16 @@
 #define system.
-
-#subject(class:system'calendar'SystemTime)    __time.
-#subject(class:system'calendar'SystemTimeVar) __vtime.
-#subject(class:system'calendar'TimeStruct)    __time_st.
-
-#subject(class:system'IntNumber) int_time_attributes.
-#subject(class:system'IntNumber) int_date_attributes.
-
+/*
 #symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
 #symbol(const,type:int) DATE_LONGDATE   = 00000002h.
 
 // --- SystemTime ---
 
-#symbol $factory =
-{
-    #method(type:__time) utcNow
-    [
-        #var(type:__time)aTime.
-        
-        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-        
-        ^ SystemTime new &__time:aTime.
-    ]
-    
-    #method(type:__time) now
-    [
-        #var(type:__time)aTime.
-        #var(type:__time)aLocalTime.
-        
-        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-        
-        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__vtime:aLocalTime.
-        
-        ^ SystemTime new &__time:aLocalTime.
-    ]
-}.
+#subject(class:system'calendar'Win32SystemTime)systemtime.
 
-#class(sealed,integer:8) SystemTime :: BaseValue
-{
-    #constructor new &__time:aValue
-        => system'internal'long_copy.
+#subject(class:system'IntNumber) int_time_attributes.
+#subject(class:system'IntNumber) int_date_attributes.
 
-    #constructor $new &long:aValue
-        => system'internal'long_copy.
-
-    #constructor now
-        <= new &__time:($factory now).
-
-    #constructor utcNow
-        <= new &__time:($factory utcNow).
-                        
-    #method(type:bool) equal &__time:anOperand
-        => system'internal'long_equal.
-        
-    #method(type:bool) less &__time:anOperand
-        => system'internal'long_less.
-    
-    #method read &vlong:aRetVal
-        => system'internal'long_save.
-        
-    #method(type:__time) subtract &__time:anOperand
-        => system'internal'long_sub.
-        
-    #method(type:__time) add &__time:anOperand
-        => system'internal'long_add.
-    
-    #method __time = $self.
-}
-
-#class(sealed,struct:embeddable) SystemTimeVar
-{
-    #field(type:__time)theValue.
-    
-    #method __time = SystemTime new &__time:theValue.
-    
-    #method __vtime = $self.
-    
-    #method write &__time:aValue
-    [
-        theValue := aValue.
-    ]
-    
-    #method read &__vtime:aVariable
-    [
-        aVariable << theValue.
-    ]
-}
-
-// --- TimeStruct ---
-
-#class(struct:embeddable,sealed) TimeStruct
+#class(struct:embeddable,sealed) Win32SystemTime
 {
     #field(type:short)theYear.
     #field(type:short)theMonth.
@@ -102,8 +23,6 @@
     
     #constructor new
         => system'internal'dlong_empty.
-    
-    #method __time_st = $self.
     
     #method year = IntNumber new &short:theYear.
 
@@ -196,16 +115,16 @@
         theMillisecond := aValue short.
     ]
 
-    #method read &__vtime:aRetVal
+    #method read &vlong:aRetVal
     [
-        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__vtime:aRetVal.
+        system'external'KERNEL32 SystemTimeToFileTime &systemtime:$self &vlong:aRetVal.
     ]    
     
-    #method write &__time:aFileTime
+    #method write &long:aFileTime
     [
-        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
+        system'external'KERNEL32 FileTimeToSystemTime &long:aFileTime &systemtime:$self.
     ]
-      
+   
     #method toWide &int_date_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
@@ -213,7 +132,7 @@
         #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
             &int:Flags
-            &__time_st:$self
+            &systemtime:$self
             &int:0
             &shortarray:aBuffer
             &int:255
@@ -230,7 +149,7 @@
         #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
             &int:Flags
-            &__time_st:$self
+            &systemtime:$self
             &int:0
             &shortarray:aBuffer
             &int:255
@@ -239,10 +158,54 @@
 
         ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                
     ]
-
-    #method toShortDate
-        <= %toWide &int_date_attributes:DATE_SHORTDATE.
-
-    #method toShortTime
-        <= %toWide &int_time_attributes:0.
 }
+*/
+
+// --- dateTimeControl ---
+
+#symbol dateTimeControl =
+{
+    readCurrentUTCTime &vlong:aRetVal
+    [
+        //system'external'KERNEL32 GetSystemTimeAsFileTime &vlong:aRetVal.
+    ]
+
+    convertUTC2Local &long:aSrcVal &vlong:aRetVal
+    [
+        //system'external'KERNEL32 FileTimeToLocalFileTime &long:aSrcVal &vlong:aRetVal.
+    ]
+    
+    toShortDateTime &long:aDateValue
+    [
+        /*#var(type:systemtime)aSystemTime.
+
+        aSystemTime write &long:aDateValue.
+
+        #var aDate := aSystemTime toWide &int_date_attributes:DATE_SHORTDATE.
+        #var aTime := aSystemTime toWide &int_time_attributes:0.
+
+        ^ aDate + " " + aTime.*/
+    ]
+    
+    toShortDate &long:aDateValue
+    [
+        /*#var(type:systemtime)aSystemTime.
+
+        aSystemTime write &long:aDateValue.
+
+        #var aDate := aSystemTime toWide &int_date_attributes:DATE_SHORTDATE.
+
+        ^ aDate.*/
+    ]
+    
+    toShortTime &long:aDateValue
+    [
+        /*#var(type:systemtime)aSystemTime.
+
+        aSystemTime write &long:aDateValue.
+
+        #var aTime := aSystemTime toWide &int_time_attributes:0.
+
+        ^ aTime.*/
+    ]
+}.

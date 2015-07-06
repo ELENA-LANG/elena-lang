@@ -25,6 +25,9 @@ collections/list.l
 routines/enumerators.l
 routines/patterns.l
 math/math.l
+calendar/types.l
+calendar/lnx32_datetime.l
+calendar/dates.l
 text/encoder.l
 text/textbuffer.l
 text/lnx32_common.l
@@ -34,4 +37,6 @@ io/streamreader.l
 io/streamwriter.l
 io/lnx32_console.l
 io/lnx32_files.l
+io/files.l
 dynamic/groups.l
+dynamic/reflection.l
