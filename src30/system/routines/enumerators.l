@@ -832,7 +832,7 @@
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
     #method ifExists : aValue
-        = $nil != self::enumerableOp seek:aValue.
+        = $nil != self::enumerableOp safeSeek:aValue.
 
     #method top:aCounter
         = system'routines'TopFilter new &length:(aCounter int) &enumerator:(self enumerator).
