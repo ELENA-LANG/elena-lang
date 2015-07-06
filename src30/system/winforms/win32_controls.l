@@ -1,45 +1,11 @@
 #define system.
+#define system'drawing.
 
 // --- classes ---
 #symbol(const,type:wide) StaticClass = "Static" wide. // !! temporal
 #symbol(const,type:wide) EditClass   = "Edit" wide. // !! temporal
 #symbol(const,type:wide) ButtonClass = "Button" wide. // !! temporal
 //#symbol ComboboxClass = "Combobox" wide. // !! temporal
-
-// --- PAINTSTRUCT ---
-
-#class(sealed,struct:embeddable)PAINTSTRUCT
-{
-    #field(type:hdc)      theHDC.
-    #field(type:int)      theErase.
-    #field(type:win_rect) theRect. 
-    #field(type:int)      theRestore.
-    #field(type:int)      theIncUpdate.
-    
-    #field(type:int)      dummy0.
-    #field(type:int)      dummy1.
-    #field(type:int)      dummy2.
-    #field(type:int)      dummy3.
-    #field(type:int)      dummy4.
-    #field(type:int)      dummy5.
-    #field(type:int)      dummy6.
-    #field(type:int)      dummy7.
-
-    #method read &hdc:aHandle
-        => system'internal'int_save.
-            
-    #method hdc = HDC new &hdc:theHDC.            
-            
-    #method begin &hwnd:aHandle
-    [
-        system'external'USER32 BeginPaint &handle:aHandle &win_paintstruct:$self.
-    ]
-    
-    #method end &hwnd:aHandle
-    [
-        system'external'USER32 EndPaint &handle:aHandle &win_paintstruct:$self.
-    ]
-}
 
 // --- WindowHandle ---
 
@@ -165,6 +131,14 @@
         anHDC << dc.
     ]
 
+    #method hdc
+    [
+        #var(type:hdc)aDC.
+        $self read &hdc:aDC.
+
+        ^ HDC new &hdc:aDC.
+    ]
+
     #method set &hmenu:aMenuHandle
     [
         system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
@@ -173,5 +147,40 @@
     #method free
     [
         system'external'USER32 DestroyWindow &handle:theHandle.
+    ]
+}
+
+// --- PAINTSTRUCT ---
+
+#class(sealed,struct:embeddable)PAINTSTRUCT
+{
+    #field(type:hdc)      theHDC.
+    #field(type:int)      theErase.
+    #field(type:win_rect) theRect. 
+    #field(type:int)      theRestore.
+    #field(type:int)      theIncUpdate.
+    
+    #field(type:int)      dummy0.
+    #field(type:int)      dummy1.
+    #field(type:int)      dummy2.
+    #field(type:int)      dummy3.
+    #field(type:int)      dummy4.
+    #field(type:int)      dummy5.
+    #field(type:int)      dummy6.
+    #field(type:int)      dummy7.
+
+    #method read &hdc:aHandle
+        => system'internal'int_save.
+            
+    #method hdc = HDC new &hdc:theHDC.            
+            
+    #method begin &hwnd:aHandle
+    [
+        system'external'USER32 BeginPaint &handle:aHandle &win_paintstruct:$self.
+    ]
+    
+    #method end &hwnd:aHandle
+    [
+        system'external'USER32 EndPaint &handle:aHandle &win_paintstruct:$self.
     ]
 }

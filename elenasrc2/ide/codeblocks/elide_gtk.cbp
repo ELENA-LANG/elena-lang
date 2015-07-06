@@ -179,9 +179,7 @@
 		<Unit filename="../gtk-linux32/debugger.h">
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="../gtk-linux32/gtkdialogs.cpp">
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="../gtk-linux32/gtkdialogs.cpp" />
 		<Unit filename="../gtk-linux32/gtkdialogs.h">
 			<Option target="Release" />
 		</Unit>

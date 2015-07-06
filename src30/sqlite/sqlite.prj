@@ -1,0 +1,12 @@
+﻿[project]
+options=-w4
+namespace=sqlite
+template=lib
+warn:unresolved=0
+output=..\..\lib30
+
+[files]
+common.l
+reader.l
+data_table.l
+

@@ -1,5 +1,9 @@
 #define system.
 
+#subject degree.
+#subject radian.
+//#subject reciprocal,ln,exp,sin,cos
+
 // --- Operations ---
 
 // --- byteOp ---
@@ -21,6 +25,32 @@
         
         ^ retVal cast:%convertor &to:byteConvertor.
     ]    
+    
+    #method(type:byte)power &byte:y
+    [
+        #var(type:byte)x := self byte.
+        
+        #var(type:byte)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ByteNumber new &byte:x.
+    ]
+    
+    #method(type:byte) sqr
+    [
+        #var(type:byte)n := self byte.        
+        #var(type:byte)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::byteOp power &byte:(aPower byte).
                 
     #method is &odd
         = self::byteOp mod:2 != 0.
@@ -60,6 +90,32 @@
         
         ^ retVal cast:%convertor &to:shortConvertor.
     ]
+    
+    #method(type:short)power &short:y
+    [
+        #var(type:short)x := self short.
+        
+        #var(type:short)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ShortNumber new &short:x.
+    ]
+    
+    #method(type:short) sqr
+    [
+        #var(type:short)n := self short.        
+        #var(type:short)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::shortOp power &short:(aPower short).
                 
     #method is &odd
         = self::shortOp mod:2 != 0.
@@ -121,12 +177,41 @@
         
         ^ IntNumber new &int:(x - z).
     ]
+    
+    #method(type:int)power &int:y
+    [
+        #var(type:int)x := self int.
+        #var(type:int)r := 1.
+        
+        #var(type:int)i := 0.
+        #loop (i < y)?
+        [
+            r := r * x.
+            
+            i := i + 1.
+        ].
+        
+        ^ IntNumber new &int:r.
+    ]
+    
+    #method(type:int) sqr
+    [
+        #var(type:int)n := self int.        
+        #var(type:int)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::intOp power &int:(aPower int).
                 
     #method is &odd
-        = self::intOp mod:2 != 0.
+        = self int and &int:1 != 0.
         
     #method is &even
-        = self::intOp mod:2 == 0.
+        = self int and &int:1 == 0.
         
     #method is &zero
         = self int equal &int:0.
@@ -182,6 +267,32 @@
         
         ^ LongNumber new &long:(x - z).
     ]
+    
+    #method(type:long)power &long:y
+    [
+        #var(type:long)x := self long.
+        
+        #var(type:long)i := 0l.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ LongNumber new &long:x.
+    ]
+    
+    #method(type:long) sqr
+    [
+        #var(type:long)n := self long.        
+        #var(type:long)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::longOp power &long:(aPower long).
                 
     #method is &odd
         = self::longOp mod:2l != 0.
@@ -252,6 +363,14 @@
         
     pi &vreal:aRetVal
         => system'internal'r_pi.
+        
+    #method(type:real) pi
+    [
+        #var(type:real)aRetVal.
+        $self pi &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]        
 }.
 
 #class(extension:real) realOp
@@ -288,10 +407,57 @@
     
     #method(type:real) sqrt
     [
-        #var(type:real)n := self real.        
+        #var(type:real)n := self real.      
         #var(type:real)aRetVal.
         
         realOpController sqrt &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(type:real)power &int:y
+    [
+        #var(type:real)x := self real.
+
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0)
+            ? [ ^ 1.0r. ].
+                        
+        (x < 0.0r)
+            ? [
+                x := x * -1.0r.
+                
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+                
+                (y::intOp is &odd)
+                    ? [ x := x * -1.0r. ].
+            ]
+            ! [
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+            ].
+        
+        ^ RealNumber new &real:x.
+    ]
+
+    #method power : aPower
+        = self::realOp power &int:(aPower int).
+
+    #method(type:real) sqr
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aRetVal.
+        
+        aRetVal := n * n.
         
         ^ RealNumber new &real:aRetVal.
     ]
@@ -346,6 +512,18 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
+    #method(type:real)tan
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)aSinVal.
+        #var(type:real)aCosVal.
+        
+        realOpController sin &real:n &vreal:aSinVal.
+        realOpController cos &real:n &vreal:aCosVal.
+        
+        ^ aSinVal / aCosVal.
+    ]
+
     #method(type:real)arctan
     [
         #var(type:real)n := self real.        
@@ -355,6 +533,57 @@
         
         ^ RealNumber new &real:aRetVal.
     ]
+            
+    #method(type:real)arcsin
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)arg.
+        
+        n := 1.0r - n*n.
+        
+        realOpController sqrt &real:n &vreal:arg.
+        
+        ^ arg arctan.
+    ]
+            
+    #method(type:real)arccos
+    [
+        #var(type:real)n := self real.        
+        #var(type:real)arg.
+        
+        n := 1.0r - n*n.
+        
+        realOpController sqrt &real:n &vreal:arg.
+        
+        arg := arg / n.
+        
+        ^ arg arctan.
+    ]
+            
+    #method(type:real) radian
+    [
+        #var(type:real)aValue := self real.
+        
+        aValue := aValue * pi_value.
+        
+        ^ RealNumber new &real:(aValue / 180.0r).
+    ]
+            
+    #method(type:real) degree
+    [
+        #var(type:real)aValue := self real.
+        
+        aValue := aValue * 180.0r.
+        
+        ^ RealNumber new &real:(aValue / pi_value).
+    ]
+            
+    #method(type:real) reciprocal
+    [
+        #var(type:real)aValue := self real.
+        
+        ^ RealNumber new &real:(1.0r / aValue).
+    ]    
             
     #method is &zero
         = self == 0.
@@ -367,4 +596,152 @@
         
     #method is &nonnegative
         = self <= 0.
+}
+
+#symbol(type:real)pi_value = realOpController pi.
+
+// --- mathOp ---
+
+#symbol mathOpDispatcher =
+{
+    #method eval &byte:aValue = byteOp.
+    
+    #method eval &short:aValue = shortOp.
+    
+    #method eval &int:aValue = intOp.
+    
+    #method eval &long:aValue = longOp.
+    
+    #method eval &real:aValue = realOp.
+}.
+
+#class(extension)mathOp
+{
+    #method absolute
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher absolute.
+    ]
+    
+    #method mod : anOperand
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher mod:anOperand.
+    ]
+    
+    #method is &odd
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &odd.
+    ]
+        
+    #method is &even
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &even.
+    ]
+        
+    #method is &zero
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &zero.
+    ]
+        
+    #method is &positive
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &positive.
+    ]
+        
+    #method is &negative
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &negative.
+    ]
+        
+    #method is &nonnegative
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher is &nonnegative.
+    ]
+    
+    #method exp
+        = (self real)::realOp exp.
+    
+    #method(type:real) ln
+        = (self real)::realOp ln.
+    
+    #method sqrt
+        = (self real)::realOp sqrt.
+
+    #method power &int:aPower
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher power &int:aPower.
+    ]
+
+    #method power : aPower
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher power : aPower.
+    ]
+
+    #method sqr
+    [
+        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        
+        ^ self::dispatcher sqr.
+    ]
+
+    #method rounded
+        = (self real)::realOp rounded.
+
+    #method roundedInt
+        = intConvertor convert &real:(self::realOp rounded).
+
+    #method integer
+        = (self real)::realOp integer.
+
+    #method integerInt
+        = intConvertor convert &real:((self real)::realOp integer).
+
+    #method frac
+        = (self real)::realOp frac.
+
+    #method sin
+        = (self real)::realOp sin.
+
+    #method cos
+        = (self real)::realOp cos.
+
+    #method tan
+        = (self real)::realOp tan.
+
+    #method arctan
+        = (self real)::realOp arctan.
+            
+    #method arcsin
+        = (self real)::realOp arcsin.
+            
+    #method arccos
+        = (self real)::realOp arccos.
+            
+    #method radian
+        = (self real)::realOp radian.
+            
+    #method degree
+        = (self real)::realOp degree.
+            
+    #method reciprocal
+        = (self real)::realOp reciprocal.
 }

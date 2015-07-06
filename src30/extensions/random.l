@@ -1,6 +1,5 @@
 #define system.
 #define system'routines.
-//#define system'dynamic.
 
 // --- RandomGenerator ---
 
@@ -29,7 +28,7 @@
 
 // -- ERandomizer --
 
-#class(extension:indexable) randomOp
+#class(extension) randomOp
 {
     #method randomize : aCount
     [

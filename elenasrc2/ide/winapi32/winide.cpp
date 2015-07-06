@@ -719,7 +719,8 @@ void MainWindow :: _onMenuCommand(int optionID)
          _controller->doStepOver();
          break;
       case IDM_DEBUG_NEXTSTATEMENT:
-         _controller->doNextStatement();
+         //_controller->doNextStatement();
+         _controller->doStepOver();
          break;
       case IDM_DEBUG_STEPINTO:
          _controller->doStepInto();

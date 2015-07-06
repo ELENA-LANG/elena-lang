@@ -80,6 +80,11 @@ public:
 
    Project* getProject() const { return _project; }
 
+   void saveSubject(MemoryWriter* writer)
+   {
+      _subjects.write(writer);
+   }
+
    ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper);
 };
 

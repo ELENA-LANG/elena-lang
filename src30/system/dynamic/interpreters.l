@@ -46,9 +46,9 @@
         $classControl readLength:theStruct &vint:aLength.
         #loop ((anIndex < aLength)and:aNotFound) ?
         [
-            #var aCurrent := theStruct getField &index:anIndex.
+            #var aCurrent := theStruct::classROp getField &index:anIndex.
             
-            (aCurrent::subjectOp equal &subject:aSubject)
+            (aCurrent equal &subject:aSubject)
                 ? [ aNotFound := false. ]
                 ! [ anIndex := anIndex + 2. ].
         ].
@@ -58,11 +58,11 @@
         [                                    
             theStruct := theStruct::arrayOp reallocate &length:(aLength + 2).
 
-            theStruct setField &index:anIndex &object:aSubject.
+            theStruct::classROp setField &index:anIndex &object:aSubject.
         ].
 
         // set the content for the appropriate field
-        theStruct setField &index:(anIndex + 1) &object:anObject.
+        theStruct::classROp setField &index:(anIndex + 1) &object:anObject.
     ]
     
     #method => theStruct.

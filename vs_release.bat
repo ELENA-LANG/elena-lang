@@ -480,6 +480,10 @@ md src30\forms
 xcopy %1\src30\forms\*.l src30\forms /s
 xcopy %1\src30\forms\*.prj src30\forms /s
 
+md src30\sqlite
+xcopy %1\src30\sqlite\*.l src30\sqlite /s
+xcopy %1\src30\sqlite\*.prj src30\sqlite /s
+
 copy %1\rebuild.bat 
 copy %1\rebuildall.bat 
 copy %1\*.txt

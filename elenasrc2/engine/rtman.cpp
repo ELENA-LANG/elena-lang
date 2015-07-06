@@ -64,11 +64,72 @@ size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, si
    return index + 1;
 }
 
+size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, ident_c* buffer, size_t maxLength)
+{
+   ident_t symbol;
+
+   // search through debug section until the ret point is inside two consecutive steps within the same object
+   while (!reader.Eof()/* && !found*/) {
+      // read reference
+      symbol = reader.getLiteral(DEFAULT_STR);
+
+      // define the next record position
+      size_t size = reader.getDWord() - 4;
+      int nextPosition = reader.Position() + size;
+
+      // check the class
+      if (symbol[0] != '#') {
+         int vmtAddress = reader.getDWord();
+         if (vmtAddress == classVAddress) {
+            size_t len = getlength(symbol);
+            if (len < maxLength) {
+               StringHelper::copy(buffer, symbol, len, len);
+
+               return len;
+            }
+         }
+      }
+
+      reader.seek(nextPosition);
+   }
+
+   return 0;
+}
+
+void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
+{
+   ident_t symbol;
+
+   // search through debug section until the ret point is inside two consecutive steps within the same object
+   while (!reader.Eof()/* && !found*/) {
+      // read reference
+      symbol = reader.getLiteral(DEFAULT_STR);
+
+      // define the next record position
+      size_t size = reader.getDWord() - 4;
+      int nextPosition = reader.Position() + size;
+
+      // check the class
+      if (symbol[0] == '#') {
+         int address = reader.getDWord();
+
+         if (StringHelper::compare(name, symbol + 1)) {
+            return (void*)address;
+         }
+      }
+
+      reader.seek(nextPosition);
+   }
+
+   return NULL;
+}
+
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
    ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {
    int index = 0;
    bool found = false;
+   row = 0;
 
    // search through debug section until the ret point is inside two consecutive steps within the same object
    while (!reader.Eof() && !found) {
@@ -113,9 +174,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
          MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));
 
          // skip vmt address for a class
-         if (isClass) {
-            reader.getDWord();
-         }
+         reader.getDWord();
 
          // look through the records to find the entry
          DebugLineInfo info;
@@ -140,7 +199,8 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
                }
             }
 
-            row = info.row;
+            if (info.row > 0)
+               row = info.row;
          }
       }
       else {
@@ -203,4 +263,29 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Lib
       return copied;
    }
    else return 0;
+}
+
+size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, ident_c* buffer, size_t maxLength)
+{
+   ReferenceMap subjects(0);
+   subjects.read(&reader);
+
+   ident_t name = retrieveKey(subjects.start(), subjectRef, DEFAULT_STR);
+   if (!emptystr(name)) {
+      size_t len = getlength(name);
+      if (len < maxLength) {
+         StringHelper::copy(buffer, name, len, len);
+
+         return len;
+      }
+   }
+   return 0;
+}
+
+void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
+{
+   ReferenceMap subjects(0);
+   subjects.read(&reader);
+
+   return (void*)(encodeMessage(subjects.get(name), 0, 0) | MESSAGE_MASK);
 }

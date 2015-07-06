@@ -15,17 +15,12 @@
 #include <limits.h>
 #include <sys/stat.h>
 
-//#include <time.h>
-//
 #define MAGIC_NUMBER "\x07F""ELF"
-
-//#define MAJOR_OS           0x05
-//#define MINOR_OS           0x00
 
 #define FILE_ALIGNMENT     0x0010
 #define SECTION_ALIGNMENT  0x1000
 #define IMAGE_BASE         0x08048000
-#define HEADER_SIZE        0x0100
+#define HEADER_SIZE        0x0200
 
 //#define TEXT_SECTION       ".text"
 //#define RDATA_SECTION      ".rdata"
@@ -72,8 +67,8 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
 
          return ((ImageBaseMap*)map)->import + address + disp;
       }
-//      case mskDebugRef:
-//         return ((ImageBaseMap*)map)->debug + base + disp;
+      case mskDebugRef:
+         return ((ImageBaseMap*)map)->debug + base + disp;
       default:
          return disp;
    }
@@ -113,12 +108,17 @@ void Linker32 :: mapImage(ImageInfo& info)
       info.ph_length += 2; // if import table is not empty, append interpreter / dynamic
    }
 
+   if (info.withDebugInfo) {
+      info.ph_length++; // if import table is not empty, append interpreter / dynamic
+   }
+
    info.headerSize = align(HEADER_SIZE, FILE_ALIGNMENT);
    info.textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
    info.rdataSize = align(getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
    info.importSize = align(getSize(info.image->getImportSection()), FILE_ALIGNMENT);
    info.bssSize = align(getSize(info.image->getStatSection()), FILE_ALIGNMENT);
    info.bssSize += align(getSize(info.image->getBSSSection()), FILE_ALIGNMENT);
+   info.debugSize = align(getSize(info.image->getDebugSection()), FILE_ALIGNMENT);
 
    // text segment
    info.map.code = info.headerSize;               // code section should always be first
@@ -137,9 +137,14 @@ void Linker32 :: mapImage(ImageInfo& info)
    info.map.stat = align(info.map.import + getSize(info.image->getImportSection()), FILE_ALIGNMENT);
    info.map.bss = align(info.map.stat + getSize(info.image->getStatSection()), FILE_ALIGNMENT);
 
+   if (info.withDebugInfo) {
+      info.map.debug = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
+      // due to loader requirement, adjust offset
+      info.map.debug += ((info.headerSize + info.textSize + info.rdataSize + info.importSize) & (alignment - 1));
+   }
+
 /*
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
-   info.map.debug = align(info.map.import + getSize(info.image->getImportSection()), alignment);
    info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
 */
 }
@@ -299,6 +304,9 @@ void Linker32 :: createImportData(ImageInfo& info)
    dynamicWriter.writeDWord(DT_RELENT);
    dynamicWriter.writeDWord(8);
 
+   dynamicWriter.writeDWord(0);
+   dynamicWriter.writeDWord(0);
+
    // write interpreter path
    dynamicWriter.align(FILE_ALIGNMENT, 0);
 
@@ -333,12 +341,12 @@ void Linker32 :: fixImage(ImageInfo& info)
 //  // fix up tls section
 //   tls->fixupReferences(&info.map, reallocate);
 
-//  // fix up debug info if enabled
-//   if (info.withDebugInfo) {
-//      Section* debug = info.image->getDebugSection();
-//
-//      debug->fixupReferences(&info.map, reallocate);
-//   }
+  // fix up debug info if enabled
+   if (info.withDebugInfo) {
+      Section* debug = info.image->getDebugSection();
+
+      debug->fixupReferences(&info.map, reallocate);
+   }
 }
 
 void Linker32 :: writeSection(FileWriter* file, Section* section, int alignment)
@@ -447,6 +455,18 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
       ph_header.p_align = 8;
       file->write((char*)&ph_header, ELF_PH_SIZE);
    }
+
+   // Debug Segment
+   if (info.withDebugInfo) {
+      ph_header.p_type = PT_LOAD;
+      ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize + info.importSize;
+      ph_header.p_vaddr = info.map.base + info.map.debug;
+      ph_header.p_paddr = info.map.base + info.map.debug;
+      ph_header.p_memsz = ph_header.p_filesz = info.debugSize;
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = alignment;
+      file->write((char*)&ph_header, ELF_PH_SIZE);
+   }
 }
 
 
@@ -460,6 +480,11 @@ void Linker32 :: writeSegments(ImageInfo& info, FileWriter* file)
 
    // import section
    writeSection(file, info.image->getImportSection(), FILE_ALIGNMENT);
+
+   // debug section
+   if (info.withDebugInfo) {
+      writeSection(file, info.image->getDebugSection(), FILE_ALIGNMENT);
+   }
 }
 
 bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/)
@@ -476,6 +501,8 @@ bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t 
 
    writeELFHeader(info, &executable);
    writePHTable(info, &executable);
+
+    int p = executable.Position();
 
    if (info.headerSize >= executable.Position()) {
       executable.writeBytes(0, info.headerSize - executable.Position());

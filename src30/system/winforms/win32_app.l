@@ -75,3 +75,15 @@
 }
 
 #static program = SDIApplication new.
+
+#symbol startUp =
+{
+    #method start
+    [
+        'program start
+            | if &Error: e
+            [
+                messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
+            ].
+    ]
+}.

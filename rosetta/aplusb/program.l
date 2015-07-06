@@ -22,7 +22,5 @@ Given 2 integer numbers, A and B. One needs to find their sum.
     #var A := Integer new.
     #var B := Integer new.
     
-    consoleEx readLine:A:B.
-
-    consoleEx writeLine:(A + B).
+    console readLine:A:B writeLine:(A + B).
 ].

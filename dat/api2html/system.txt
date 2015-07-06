@@ -143,7 +143,7 @@ WideString
 #method=delete,&index:int&length:int,literal;Deletes the substring from the object and returns the new one
 #method=enumerator,,enumerator;Returns the object enumerator
 #method=equal,&char:char,bool;Compares the values
-#method=equal,&literal:literal,bool;Compares the values
+#method=equal,&lite1ral:literal,bool;Compares the values
 #method=getAt,object,char;Returns the character with specified index
 #method=getAt,&index:int,char;Returns the character with specified index
 #method=indexOf,&index:int&char:char,int;Returns the index of the first occurence of the specified symbol.<br/>If the substring is not found. returns -1
@@ -408,7 +408,7 @@ WideString
 #constructor=new,&message:literal&error_type:subject,object;Creates the exception with the provided message and error type
 #method=if,&Error:function;Executes the generic exception handler
 #method=if,&error_type:function;If incoming subject equals to the exception type, executes the exception handler<br/>Otherwise goes to the next exception handler
-#method=literal,,literal;Returns the message and the call stack
+#method=literal,,literal;Returns the message and the call stack                                                                         1
 #method=messages,,literal;Returns the message
 #method=on,object;Executes the exception handler for the current exception if available<br/>Otherwise goes to the next exception handler
 #method=wide,,wide;Returns the message and the call stack

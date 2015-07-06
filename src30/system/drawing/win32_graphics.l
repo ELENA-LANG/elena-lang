@@ -1,5 +1,8 @@
 #define system.
-#define system'winforms.
+
+#subject(class:system'drawing'Pen)    pen.
+#subject(class:system'drawing'Brush)  brush.
+#subject(class:system'drawing'Canvas) canvas.
 
 // --- Pen ---
 
@@ -17,6 +20,10 @@
     #method pen = $self.
             
     #method hpen = thePen.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &pen:$self.
+    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &pen:$self.
     
     #method(type:int) color = theColor.
 }
@@ -37,6 +44,10 @@
     #method brush = $self.
     
     #method hbrush = theBrush.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &brush:$self.
+    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &brush:$self.
     
     #method(type:int) color = theColor.
 }
@@ -64,11 +75,8 @@
         theSize := aSize.
     ]
     
-    #method open &hwnd:aParent
+    #method open &hdc:aParentDC
     [
-        #var(type:hdc)aParentDC.
-        aParent read &hdc:aParentDC.
-
         #var(type:int)aWidth.
         #var(type:int)aHeight.
         theSize read &vint:aWidth &vint:aHeight.
@@ -108,13 +116,8 @@
         theHDC := aHandle.
     ]
     
-    #method open &win_paintstruct:aPaintStruct
-    [
-        #var(type:hdc)dc.
-        aPaintStruct read &hdc:dc.
-        
-        $self open &hdc:dc.
-    ]
+    #method set : anObject
+        = anObject cast:%set &to:$self.
     
     #method set &pen:aPen
     [
@@ -123,7 +126,7 @@
             
         thePen := aPen hpen.            
         
-        theHDC setTextColor &int:(aPen color).
+        theHDC setTextColor &int:(aPen color int).
         
         theHDC select &hpen:thePen.        
     ]    
@@ -135,7 +138,7 @@
             
         theBrush := aBrush hbrush.
         
-        theHDC setBkColor &int:(aBrush color).
+        theHDC setBkColor &int:(aBrush color int).
         
         theHDC select &hbrush:theBrush.        
     ]    
@@ -145,6 +148,9 @@
         theHDC := 0.
     ]
  
+    #method setCaret:p
+        <= setCaret &point:(p point).
+        
     #method setCaret &int:x &int:y
     [
         theHDC moveTo &int:x &int:y.
@@ -174,6 +180,9 @@
         theHDC lineTo &int:(x int) &int:(y int).
     ]
  
+    #method lineCaretTo:p
+        <= lineCaretTo &point:(p point).
+        
     #method lineCaretTo &point:p
     [
         #var(type:int)x.
@@ -183,7 +192,7 @@
         theHDC lineTo &int:x &int:y.
     ]
  
-    #method write &caption:aText &x:x &y:y
+    #method writeText:aText &x:x &y:y        
     [
         theHDC drawText &wide:(aText wide) &int:(x int) &int:(y int).
     ]
@@ -191,6 +200,11 @@
     #method write &wide:aText &int:x &int:y
     [
         theHDC drawText &wide:aText &int:x &int:y.
+    ]
+ 
+    #method write &literal:aText &int:x &int:y
+    [
+        theHDC drawText &wide:(aText wide) &int:x &int:y.
     ]
  
     #method write &image:anImage &int:x &int:y &int:aWidth &int:aHeight

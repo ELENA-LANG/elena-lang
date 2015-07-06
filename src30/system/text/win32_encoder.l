@@ -2,21 +2,6 @@
 
 #symbol(const,type:int) $MB_ERR_INVALID_CHARS     = 00000008h.
 
-//
-//// --- AnsiEncoder ---
-//
-//#symbol(type:encoder) ansiEncoder = system'text'Encoder
-//{
-//    convert &bytearray:aByteArray &length:aLength &chararray:anOutput &out'length:anOutputLength
-//        => system'internal'ws_copybuf.
-//        
-//    convert  &chararray:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
-//        => system'internal'ws_copy2buf.
-//        
-//    convert  &literal:anOutput &length:anOutputLength &bytearray:aByteArray &out'length:aLength
-//        => system'internal'ws_copy2buf.
-//}.
-
 // --- WinEncoder ---
 
 #class(struct) WinEncoder :: Encoder
@@ -41,7 +26,7 @@
             ? [
                 #var(type:dirty_ptr)ptr.
                 ptr write &bytearray:aByteArray.
-                ptr append &int:anIndex.
+                ptr append &index:anIndex.
 
                 system'external'KERNEL32 MultiByteToWideChar &int:theCodePage &int:$MB_ERR_INVALID_CHARS &dirty_ptr:ptr &int:n &shortarray:temp_buf &vint:aConverted.
             ]
@@ -65,3 +50,7 @@
 // --- Win1251Encoder ---
 
 #static(type:encoder) WIN1251Encoder = WinEncoder new &int:1251.
+
+// --- AnsiEncoder ---
+
+#static(type:encoder) AnsiEncoder = WinEncoder new &int:0.

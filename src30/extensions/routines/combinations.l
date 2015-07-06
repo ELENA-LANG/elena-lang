@@ -30,7 +30,7 @@
     
     eval &indexers:Indexers &length:aLength
     [
-        ($nil == (control run:Indexers &seeking: anIndexer 
+        ($nil == (Indexers seek &each: anIndexer 
                 [
                     (anIndexer append &index:1 available)
                         ! [ anIndexer write &index:0. ^ false. ].
@@ -52,7 +52,7 @@
 {
     eval &indexers:Indexers &length:aLength
     [
-        control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
+        Indexers  run &each: anIndexer [ anIndexer write &index:0. ].
         
         ^ sequentialNext.
     ]
@@ -66,7 +66,7 @@
     
     eval &indexers:Indexers &length:aLength
     [
-        ($nil != control run:Indexers &seeking: anIndexer [ anIndexer append &index:1 available not ])
+        ($nil != Indexers seek &each: anIndexer [ anIndexer append &index:1 available not ])
             ? [ ^ combinationEnd. ].
             
         ^ $self.            
@@ -82,7 +82,7 @@
 {
     eval &indexers:Indexers &length:aLength
     [
-        control run:Indexers &forEach: anIndexer [ anIndexer write &index:0. ].
+        Indexers run &each: anIndexer [ anIndexer write &index:0. ].
         
         ^ parallelNext.
     ]
@@ -102,8 +102,9 @@
     eval &indexers:Indexers &length:aLength
     [
         #var(type:array)anArray := Indexers array.
-        #var(type:length)k := anArray length.
-        #var(type:length)i := k - 1.
+        #var(type:int)k.
+        anArray readLength &vint:k.
+        #var(type:int)i := k - 1.
         
         #var aCurrentIndexer := anArray getAt &index:i.
         
@@ -118,8 +119,9 @@
         
         anArray getAt &index:(i - 1) append &index:1.
         
-        control run &int:i &int:(k - 1) 
-            &forEvery: (&index:j) [ anArray getAt &index:j write &index:(anArray getAt &index:(j - 1) index + 1). ].
+        //i to &int:(k - 1)
+        IntNumber new &int:i to &int:(k - 1)
+            &doEvery: (&index:j) [ anArray getAt &index:j write &index:(anArray getAt &index:(j - 1) index + 1). ].
             
         ^ $self.            
     ]
@@ -132,7 +134,7 @@
         #var(type:array)anArray := Indexers array.
         #var(type:length)aLength := anArray length.
         
-        control run &int:0 &int:(aLength - 1) &forEvery: (&index:i) [ anArray getAt &index:i write &index:i. ].
+        0::intLoopOp to &int:(aLength - 1) &doEvery: (&index:i) [ anArray getAt &index:i write &index:i. ].
         
         ^ combinationNext.
     ]
@@ -216,7 +218,7 @@
 {
     #field(type:int) theTotalLength.
     
-    #constructor new &k:aSubLength &of:aSet
+    #constructor new : aSubLength &of:aSet
         <= (%new : (Array new &length:(aSubLength int) set &every: (&index:n) [ ^ aSet. ]))
     [
         theTotalLength := aSet length.

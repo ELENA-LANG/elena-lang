@@ -6,6 +6,8 @@ sudo mkdir -p /usr/share/elena
 sudo cp ./bin/*.config /etc/elena/
 sudo cp ./bin/templates/*.config /etc/elena/templates/
 
+sudo cp ./bin/libelenart.so /usr/lib/elena/
+
 bin/elog dat/og/rules.txt
 sudo cp dat/og/rules.dat /usr/share/elena/
 

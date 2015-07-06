@@ -1,62 +1,86 @@
 #define system.
 #define system'routines.
-//#define system'io.
-//#define system'text.
 
 // --- StringBookmark ---
 
-#class StringBookmark
+#class StringBookmark :: BaseValue
 {
-    #field(type:literal) theLiteral.
-    #field(type:int)     theIndex.
-    #field(type:int)     theStart.
+    #field theValue.
+    #field theIndex.
+    #field theStart.
     
     #constructor new
     [
-        theLiteral := emptyLiteralValue literal.
+        theValue := emptyLiteralValue.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #constructor new : anObject
-        <= %new &literal:(anObject literal).
-
-    #constructor new &literal:aText
-        <= ( %new )
+    #constructor new : aText
     [
-        theLiteral := aText.
+        theValue := aText.
+        theIndex := 0.
+        theStart := 0.
     ]
 
-    #constructor new &literal:aText &index:anIndex
-        <= ( %new &literal:aText )
-    [
-        theIndex := anIndex.
-    ]
- 
+    #method equal &int:aValue
+        => theIndex.
+
+    #method equal &literal:aValue
+        => theValue.
+
+    #method equal &wide:aValue
+        => theValue.
+
     #method find : anObject
         = anObject cast:%eval &to:
         {
-            eval &int : anIndex = self find &index:anIndex.
+            eval:aBookmark &int : anIndex = aBookmark find &index:anIndex.
             
-            eval &literal : aLiteral = self find &literal:aLiteral.
-        }.
+            eval:aBookmark &literal : aLiteral = aBookmark find &value:aLiteral.
+            
+            eval:aBookmark &wide : aLiteral = aBookmark find &value:aLiteral.
+        } &with:self.
 
     #method append : anObject
         = anObject cast:%eval &to:
         {
-            eval &int : anIndex = self append &index:anIndex.
+            eval:aBookmark &int : anIndex = aBookmark append &index:anIndex.
             
-            eval &literal : aLiteral = self append &literal:aLiteral.
-        }.
+            eval:aBookmark &literal : aLiteral = aBookmark append &value:aLiteral.
+            
+            eval:aBookmark &wide : aLiteral = aBookmark append &value:aLiteral.
+            
+        } &with:self.
+
+    #method insert : anObject
+        = anObject cast:%eval &to:
+        {
+            eval:aBookmark &literal : aLiteral = aBookmark insert &value:aLiteral.
+            
+            eval:aBookmark &wide : aLiteral = aBookmark insert &value:aLiteral.
+            
+        } &with:self.
+
+    #method delete : anObject
+        = anObject cast:%eval &to:
+        {
+            eval:aBookmark &int : aValue = aBookmark delete &length:aValue.
+            
+            eval:aBookmark &literal : aLiteral = aBookmark delete &length:(aLiteral length).
+            
+            eval:aBookmark &wide : aLiteral = aBookmark delete &length:(aLiteral length).
+            
+        } &with:self.
 
     #method find &index:anIndex
     [
         theIndex := anIndex.
     ]
-            
-    #method find &literal:aValue
+
+    #method find &value:aValue
     [
-        theIndex := theLiteral indexOf &index:theIndex &literal:aValue int.
+        theIndex := theValue indexOf:theIndex:aValue.
         
         ^ (-1 != theIndex).
     ]
@@ -74,9 +98,9 @@
         
     ]
     
-    #method append &literal:aValue 
+    #method append &value:aValue 
     [
-        theLiteral := (theLiteral + aValue) literal.
+        theValue := theValue + aValue.
     ]
     
     #method append &index:aValue 
@@ -84,37 +108,73 @@
         theIndex := theIndex + aValue.
     ]
     
-    #method insert &literal:aValue
+    #method insert &value:aValue
     [
-        theLiteral := theLiteral insert &index:theIndex &literal:aValue literal.
+        theValue := theValue insert:theIndex:aValue.
         
         theIndex := theIndex + aValue length.
     ]
     
     #method delete &length:aLength
     [
-        theLiteral := theLiteral delete &index:theIndex &length:aLength literal.
+        theValue := theValue delete:theIndex:aLength.
     ]
 
     #method clear
     [
-        theLiteral := emptyLiteralValue literal.
+        theValue := emptyLiteralValue.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #method marked
+    #method Marked
         = (-1 == theIndex)
-            ? [ theLiteral Substring &index:theStart ]
-            ! [ theLiteral Substring &index:theStart &length:(theIndex - theStart) ].
+            ? [ theValue Substring:theStart ]
+            ! [ theValue Substring:theStart:(theIndex - theStart) ].
     
-    #method literal = theLiteral.
+    #method literal => theValue.
     
-    #method length = theLiteral length.
+    #method wide => theValue.
     
-    #method index = theIndex.
+    #method length => theValue.
     
-    #method cast : aVerb &to:aDispatcher = aDispatcher::aVerb eval &literal:theLiteral.
+    #method index = theIndex int.
+}
+
+// --- StringWriter ---
+
+#class StringWriter
+{    
+    #field theValue.
+    
+    #constructor new
+    [
+        theValue := emptyLiteralValue.
+    ]
+    
+    #constructor new : aText
+    [
+        theValue := aText.
+    ]
+    
+    #method write : aText
+    [
+        theValue := theValue + aText.
+    ]
+    
+    #method writeLine : aText
+    [
+        $self write:aText write:'newLine.
+    ]
+   
+    #method writeLine
+    [
+        $self write:'newLine.
+    ]    
+      
+    #method literal => theValue.
+    
+    #method wide => theValue.
 }
 
 //// --- StringReader ---

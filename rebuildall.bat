@@ -15,6 +15,7 @@ bin\asm2binx src30\asm\x32\core_win.asm bin\x32
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
+bin\elc -csrc30\sqlite\sqlite.prj
 bin\elc -cexamples\helloworld\u_helloworld.prj
 bin\elc -cexamples\helloworld\helloworld.prj
 bin\elc -cexamples\sum\intsum.prj

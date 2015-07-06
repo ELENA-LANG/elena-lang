@@ -82,14 +82,22 @@ private:
    ImageSection   _debugSection;
    LibraryManager _loader;
 
-   bool loadConfig();
+   bool loadConfig(path_t configPath);
+
+   bool initSubjectSection(ImageSection& subjectSection);
 
 public:
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
    int loadAddressInfo(size_t retPoint, ident_c* lineInfo, size_t length);
 
-   void init(void* debugSection, ident_t package);
+   int loadClassName(size_t classAddress, ident_c* buffer, size_t length);
+   int loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length);
+
+   void* loadSymbol(ident_t name);
+   void* loadSubject(ident_t name);
+
+   void init(void* debugSection, ident_t package, path_t configPath);
 
    Instance(path_t rootPath);
 
@@ -101,3 +109,4 @@ public:
 } // _ELENA_
 
 #endif // elenamachineH
+

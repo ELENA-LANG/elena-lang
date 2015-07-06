@@ -29,7 +29,7 @@
                     aCount := thePeriod.
                 ].
         
-                #var aSum := Summing new:(Real new &int:0) run &enumerator:theList.
+                #var aSum := theList summarize:(Real new &int:0).
                 
                 ^ aSum / aCount.
             ].
@@ -43,15 +43,15 @@
     #var SMA3 := SMA new:3.
     #var SMA5 := SMA new:5.
 
-    control run &int:1 &int:5 &forEvery: (&index:i)
+    1 to:5 &doEach: (:i)
     [
-        consoleEx writeLine:"sma3 + " :i :" = ": (SMA3 += i).
-        consoleEx writeLine:"sma5 + " :i :" = ": (SMA5 += i).
+        console write:"sma3 + " :i :" = ": (SMA3 += i) &paddingRight:30 &with:#32.
+        console writeLine:"sma5 + " :i :" = ": (SMA5 += i).
     ].
 
-    control run &int:5 &int:1 &forEvery: (&index:i)
+    5 to:1 &doEach: (:i)
     [
-        consoleEx writeLine:"sma3 + " :i :" = ": (SMA3 += i).
-        consoleEx writeLine:"sma5 + " :i :" = ": (SMA5 += i).
+        console write:"sma3 + " :i :" = ": (SMA3 += i) &paddingRight:30 &with:#32.
+        console writeLine:"sma5 + " :i :" = ": (SMA5 += i).
     ].
 ].

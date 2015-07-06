@@ -1,16 +1,18 @@
 #define system.
+#define system'collections.
 #define system'routines.
+#define system'calendar.
 #define system'text.
 
-////#define(const)convertor = extensions'convertor.
+// --- convertors ---
 
-#class(extension:enumerable) enumerableEx
+#symbol literalExConvertor =
 {
-    #method literal
+    convert &enumerable:aList
     [
         #var(type:textbuffer) theOutput := TextBuffer new.
-        
-        control run:self &forEach: anItem [ theOutput write:(convertor toLiteral:anItem) write:"," ].
+
+        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toLiteral) write:"," ].
         
         #var(type:int)aLength.
         theOutput readLength &vint:aLength.
@@ -20,12 +22,15 @@
         
         ^ theOutput literal.
     ]
-    
-    #method wide
+}.
+
+#symbol wideExConvertor =
+{
+    convert &enumerable:aList
     [
         #var(type:textbuffer) theOutput := TextBuffer new.
-        
-        control run:self &forEach: anItem [ theOutput write:(convertor toWide:anItem) write:"," ].
+
+        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toWide) write:"," ].
         
         #var(type:int)aLength.
         theOutput readLength &vint:aLength.
@@ -35,60 +40,116 @@
         
         ^ theOutput wide.
     ]
-}
+}.
 
-#symbol convertor =
+#symbol arrayExConvertor =
 {
-    #method(type:byte) toByte : anObject
-        = anObject cast:%convert &to:byteConvertor byte.
+    convert &enumerable:aList
+    [
+        #var(type:array_list)aRetVal := ArrayList new.
+        
+        aList run &each:anItem [ aRetVal append:anItem ].
 
-    #method(type:short) toShort : anObject
-        = anObject cast:%convert &to:shortConvertor short.
+        ^ aRetVal array.
+    ]
+}.
 
-    #method(type:int) toInt : anObject
-        = anObject cast:%convert &to:intConvertor int.
+// --- convertorOp ---
 
-    #method(type:long) toLong : anObject
-        = anObject cast:%convert &to:longConvertor long.
+#class(extension)convertorOp
+{
+    #method toArray
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = arrayExConvertor convert &enumerable:aLiteral.
+                
+                wide : aWide = arrayExConvertor convert &enumerable:aWide.
+                
+                array : anArray
+                    = anArray.
+                    
+                enumerable : aList
+                    = arrayExConvertor convert &enumerable:aList.
+                    
+                enumerator : anEnumerator
+                    = arrayExConvertor convert &enumerable:anEnumerator.
+            }.
     
-    #method(type:real) toReal : anObject
-        = anObject cast:%convert &to:realConvertor real.
+    #method toLiteral
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = aLiteral.
+                
+                wide : aWide = aWide literal.
+                
+                array : anArray
+                    = literalExConvertor convert &enumerable:anArray.
+                
+                enumerable : aList
+                    = literalExConvertor convert &enumerable:aList.
+                    
+                int : aValue = aValue literal.
+                    
+                short : aValue = aValue literal.
+                    
+                byte : aValue = aValue literal.
+                    
+                long : aValue = aValue literal.
+                    
+                real : aValue = aValue literal.
+                    
+                datetime : aValue = aValue literal.
+                    
+                timestamp : aValue = aValue literal.
+                
+                ! : anObject = anObject literal.
+            }.
+    
+    #method toWide
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = aLiteral wide.
+                
+                wide : aWide = aWide.
+                
+                array : anArray
+                    = wideExConvertor convert &enumerable:anArray.
+                
+                enumerable : aList
+                    = wideExConvertor convert &enumerable:aList.
+                    
+                int : aValue = aValue wide.
+                    
+                short : aValue = aValue wide.
+                    
+                byte : aValue = aValue wide.
+                    
+                long : aValue = aValue wide.
+                    
+                real : aValue = aValue wide.
+                    
+                datetime : aValue = aValue wide.
+                    
+                timestamp : aValue = aValue wide.
+                
+                ! : anObject = anObject wide.
+            }.
 
-    #method(type:literal) toLiteral:anObject
-        = anObject cast:%eval &to:
+     #method toLiteral &base:aBase
+        = self cast:%eval &to:
                    { 
-                      eval &enumerable : aList = aList::enumerableEx literal. 
+                      eval : aBase &byte : anInt = literalConvertor convert &byte:anInt &index:(aBase int).
                       
-                      eval &array : anArray = anArray::enumerableEx literal.
+                      eval : aBase &short : anInt = literalConvertor convert &short:anInt &index:(aBase int).
                       
-                      ! : anObject = anObject.
-                   } literal.
+                      eval : aBase &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
+                      
+                      eval : aBase &long : anInt = literalConvertor convert &long:anInt &index:(aBase int).
+                      
+                   }&with:aBase.
 
-     #method(type:literal) toLiteral : anObject &base:aBase
-        = anObject cast:%eval &to:
-                   { 
-                      eval &byte : anInt = literalConvertor convert &byte:anInt &index:(aBase int).
-                      
-                      eval &short : anInt = literalConvertor convert &short:anInt &index:(aBase int).
-                      
-                      eval &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
-                      
-                      eval &long : anInt = literalConvertor convert &long:anInt &index:(aBase int).
-                      
-                   } literal.
-
-    #method(type:wide) toWide:anObject
-        = anObject cast:%eval &to:
-                   { 
-                      eval &enumerable : aList = aList::enumerableEx wide. 
-                      
-                      eval &array : anArray = anArray::enumerableEx wide.
-                      
-                      ! : anObject = anObject.
-                   } wide.
-
-     #method(type:wide) toWide : anObject &base:aBase
-        = anObject cast:%eval &with:aBase &to:
+     #method toWide &base:aBase
+        = self cast:%eval &to:
                    { 
                       eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &index:(aBase int).
                       
@@ -98,11 +159,30 @@
                       
                       eval : aBase &long : anInt = wideConvertor convert &long:anInt &index:(aBase int).
                       
-                   } wide.
-                                      
-    #method(type:array) toArray : anEnumerable
-        = anEnumerable::enumerableOp array.
+                   } &with:aBase.
+            
+    #method toByte
+        = self cast:%convert &to:byteConvertor.
 
-    #method save : anObject &to:aTarget
-        = aTarget write:(aTarget cast:%eval &to:{ ! : x = (Variant new:anObject)::$subject get. }).
-}.
+    #method toShort
+        = self cast:%convert &to:shortConvertor.
+
+    #method toInt
+        = self cast:%convert &to:intConvertor.
+
+    #method toLong
+        = self cast:%convert &to:longConvertor.
+    
+    #method toReal
+        = self cast:%convert &to:realConvertor.
+
+    #method convertTo : aTarget
+        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
+}
+
+#class(extension:datetime) dateFormatterOp 
+{
+    #method toShortTimeLiteral
+        = self __time_st toShortTime literal.
+}
+ 

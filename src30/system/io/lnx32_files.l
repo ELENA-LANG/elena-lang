@@ -169,3 +169,51 @@
         theStream close.
     ]
 }
+
+// --- BinaryFileReader ---
+
+#class(sealed)BinaryFileReader :: BinaryReader
+{
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForRead &path:aPath).
+}
+
+// --- BinaryFileWriter ---
+
+#class(sealed)BinaryFileWriter :: BinaryWriter
+{
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForReWrite &path:aPath).
+}
+
+// --- fileOp ---
+
+#class(extension:file)fileOp
+{
+    #method openForRead = FileStream openForRead &path:self.
+    
+    #method openForReWrite = FileStream openForReWrite &path:self.
+    
+    #method openForAppend = FileStream openForAppend &path:self.    
+        
+    #method textreader = StreamReader new &path:self.
+    
+    #method textwriter = StreamWriter new &path:self.
+    
+    #method logger = StreamWriter new &path:self &bool:true.
+/*    
+    #method(type:bool) is &available
+    [
+        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
+        
+        ^ (ret != 0FFFFFFFFh).
+    ]
+    
+    #method delete
+    [
+        #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
+        
+       ^ ret != 0.
+    ]
+*/
+}

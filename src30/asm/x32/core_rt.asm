@@ -133,6 +133,44 @@ rstructure core_rt'InitFunc
 
 end
 
+rstructure core_rt'LoadSubjectFunc
+
+   db 076 // L
+   db 111 // o
+   db 097 // a
+   db 100 // d
+   db 083 // S
+   db 117 // u
+   db 098 // b
+   db 106 // j
+   db 101 // e
+   db 099 // c
+   db 116 // t
+   db 0
+
+end
+
+rstructure core_rt'LoadSubjectNameFunc
+
+   db 076 // L
+   db 111 // o
+   db 097 // a
+   db 100 // d
+   db 083 // S
+   db 117 // u
+   db 098 // b
+   db 106 // j
+   db 101 // e
+   db 099 // c
+   db 116 // t
+   db 078 // N
+   db 097 // a
+   db 109 // m
+   db 101 // e
+   db 0
+
+end
+
 procedure core_rt'init_rt_info
 
   // load dll  
@@ -205,6 +243,30 @@ procedure core_rt'init_rt_info
 
   mov  esi, data : %CORE_RT_TABLE
   mov  [esi + rt_lasterr], eax
+
+  mov  eax, [esp]
+  mov  esi, rdata:"$native'core_rt'LoadSubjectFunc" 
+  push esi
+  push eax
+  call extern 'dlls'KERNEL32.GetProcAddress
+  
+  test eax, eax
+  jz   lbCannotLoadRT
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  [esi + rt_loadSubject], eax
+
+  mov  eax, [esp]
+  mov  esi, rdata:"$native'core_rt'LoadSubjectNameFunc" 
+  push esi
+  push eax
+  call extern 'dlls'KERNEL32.GetProcAddress
+  
+  test eax, eax
+  jz   lbCannotLoadRT
+
+  mov  esi, data : %CORE_RT_TABLE
+  mov  [esi + rt_loadSubjName], eax
 
   mov  eax, [esp]
   mov  esi, rdata:"$native'core_rt'InitFunc" 

@@ -69,7 +69,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)elenavm.lib</AdditionalDependencies>
       <OutputFile>..\..\..\bin\elenasm.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\elenavm\vs\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -134,6 +134,7 @@
     <ClInclude Include="..\..\engine\textsource.h" />
     <ClInclude Include="..\cfparser.h" />
     <ClInclude Include="..\inlineparser.h" />
+    <ClInclude Include="..\scriptengine.h" />
     <ClInclude Include="..\session.h" />
     <ClInclude Include="..\scriptparser.h" />
     <ClInclude Include="..\..\common\streams.h" />

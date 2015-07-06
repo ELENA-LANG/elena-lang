@@ -6,59 +6,56 @@
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-_ELENA_::Map<int, _ELENA_::Session*> Sessions(NULL, _ELENA_::freeobj);
+_ELENA_::Session* session = NULL;
 
-void newSession(int processId)
+void newSession()
 {
-   Sessions.add(processId, new _ELENA_::Session());
+   session = new _ELENA_::Session();
 }
 
-void freeSession(int processId)
+void freeSession()
 {
-//   Sessions.erase(processId);
+   _ELENA_::freeobj(session);
+   session = NULL;
 }
 
 // === dll entries ===
 
-EXTERN_DLL_EXPORT int InterpretScript(const wchar16_t* script)
+EXTERN_DLL_EXPORT int InterpretScript(_ELENA_::ident_t script)
 {
-   _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
-   
    return session->translate(script, true);
 }
 
-EXTERN_DLL_EXPORT int InterpretFile(const wchar16_t* path, int encoding, bool autoDetect)
+EXTERN_DLL_EXPORT int InterpretFile(_ELENA_::ident_t  pathStr, int encoding, bool autoDetect)
 {
-   _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
-   
+   _ELENA_::Path path;
+   _ELENA_::Path::loadPath(path, pathStr);
+
    return session->translate(path, encoding, autoDetect, true);
 }
 
-EXTERN_DLL_EXPORT int EvaluateScript(const wchar16_t* script)
+EXTERN_DLL_EXPORT int EvaluateScript(_ELENA_::ident_t script)
 {
-   _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
-   
    return session->translate(script, false);
 }
 
-EXTERN_DLL_EXPORT int EvaluateFile(const wchar16_t* path, int encoding, bool autoDetect)
+EXTERN_DLL_EXPORT int EvaluateFile(_ELENA_::ident_t  pathStr, int encoding, bool autoDetect)
 {
-   _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
-   
+   _ELENA_::Path path;
+   _ELENA_::Path::loadPath(path, pathStr);
+
    return session->translate(path, encoding, autoDetect, false);
 }
 
-EXTERN_DLL_EXPORT int GetStatus(wchar16_t* buffer, int maxLength)
+EXTERN_DLL_EXPORT int GetStatus(_ELENA_::ident_c* buffer, int maxLength)
 {
-   _ELENA_::Session* session = Sessions.get(::GetCurrentProcessId());
-
    if (session) {
-      const wchar16_t* error = session->getLastError();
-      int length = _ELENA_::getlength(error);
+      _ELENA_::ident_t error = session->getLastError();
+      size_t length = _ELENA_::getlength(error);
       if (length > maxLength)
          length = maxLength;
 
-      _ELENA_::StringHelper::copy(buffer, error, length);
+      _ELENA_::StringHelper::copy(buffer, error, length, length);
 
       return length;
    }
@@ -76,13 +73,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    switch (ul_reason_for_call)
    {
    case DLL_PROCESS_ATTACH:
-      newSession(::GetCurrentProcessId());
+      newSession();
       return TRUE;
    case DLL_THREAD_ATTACH:
    case DLL_THREAD_DETACH:
       return TRUE;
    case DLL_PROCESS_DETACH:
-      freeSession(::GetCurrentProcessId());
+      freeSession();
       break;
    }
    return TRUE;

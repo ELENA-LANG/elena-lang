@@ -200,6 +200,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadBoolOption(config, opWarnOnUnresolved);
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
+   loadBoolOption(config, opDebugSubjectInfo);
    loadOption(config, opTemplate);
 
    // load compiler settings
@@ -337,11 +338,11 @@ _Module* Project :: resolveCore(ref_t reference, bool silentMode)
 
 ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
 {
-   ident_t dll = _settings.get(opExternals, alias, DEFAULT_STR);
+   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
    if (!emptystr(dll)) {
       stdCall = true;
 
       return dll;
    }
-   else return _settings.get(opWinAPI, alias, DEFAULT_STR);
+   else return _settings.get(opExternals, alias, DEFAULT_STR);
 }

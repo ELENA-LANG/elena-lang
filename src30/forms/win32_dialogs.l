@@ -56,3 +56,23 @@
         ^ ($nil != theSelectedPath).
     ]    
 }
+
+// --- MessageBox ---
+
+#symbol messageDialog =
+{
+    open &caption:aCaption &information:aText
+    [
+        messageBox open &caption:aCaption &value:aText &int:MB_ICONINFORMATION.
+    ]
+    
+    open &caption:aCaption &exclamation:aText
+    [
+        messageBox open &caption:aCaption &value:aText &int:MB_ICONEXCLAMATION.
+    ]    
+    
+    open &caption:aCaption &warning:aText
+    [
+        messageBox open &caption:aCaption &value:aText &int:MB_ICONWARNING.
+    ]    
+}.

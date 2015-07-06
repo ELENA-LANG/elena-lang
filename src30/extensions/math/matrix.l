@@ -1,12 +1,10 @@
 #define system.
+#define system'math.
 #define system'routines.
 #define system'dynamic.
 #define system'text.
 #define extensions.
 
-#subject(class:Matrix) matrix.
-#subject(class:system'IntNumber) n.
-#subject(class:system'IntNumber) m.
 #subject(class:system'IndexFunction2) every_ij.
 
 // --- MatrixException ---
@@ -19,190 +17,367 @@
         <= %new &message:aMessage &error_type: %MatrixError.
 }
 
-// --- Matrix ---
-
-#class Matrix
+#class(extension:realmatrix)matrixOp
 {
-    #field(type:array) the2DArray.
-    #field(type:int)theN.
-    #field(type:int)theM.
-    
-    #constructor new &n:n &m:m &every_ij:aFunction
+    #method clone
     [
-        theN := n.
-        theM := m.
+        #var(type:realmatrix)aMatrix := self realmatrix.
         
-        the2DArray := Array new &length:n set &every: (&index: i)
-            [ Array new &length:m set &every: (&index: j) [ aFunction eval &index:i &index:j ] ].
+        #var(type:int)i := 0.
+        #var(type:int)j := 0.
+        #var(type:int)n.
+        #var(type:int)m.
+        
+        aMatrix readLengths &vint:n &vint:m.
+        
+        #var(type:realmatrix)r := RealMatrix new &length:n &length:m.
+        #loop (i < n)?
+        [
+            j := 0.
+            #loop (j < m)?
+            [
+                #var(type:real)v.
+        
+                aMatrix read &index:i &index:j &vreal:v.
+                r write &index:i &index:j &real:v.
+                
+                j := j + 1.
+            ].
+            
+            i := i + 1.
+        ].
+        
+        ^ r.
     ]
-
-    #constructor new &n:n &every_ij:aFunction
-        <= %new &n:n &m:n &every_ij:aFunction.
-        
-    #constructor new &matrix:aMatrix
+    
+    #method set &every_ij:aFunction
     [
-        theN := aMatrix n.
-        theM := aMatrix m.
+        #var(type:realmatrix)aMatrix := self realmatrix.
         
-        the2DArray := Array new &length:theN set &every: (&index: i)
-            [ Array new &length:(theN int) set &every: (&index: j) [ aMatrix getAt &index:i &index:j clone ] ].
+        #var(type:int)i := 0.
+        #var(type:int)j := 0.
+        #var(type:int)n.
+        #var(type:int)m.
+        
+        aMatrix readLengths &vint:n &vint:m.
+        
+        #loop (i < n)?
+        [
+            j := 0.
+            #loop (j < m)?
+            [
+                aMatrix write &index:i &index:j &real:(aFunction eval &index:i &index:j real).
+                
+                j := j + 1.
+            ].
+            
+            i := i + 1.
+        ].
+        
+        ^ self.
     ]
-    
-    #method n = theN.
-    
-    #method m = theM.
-        
-    #method matrix = $self.
-    
-    #method enumerator => the2DArray.
-    
-    #method getAt &index:i &index:j
-        = the2DArray getAt &index:i array getAt &index:j.
-    
-    #method setAt &index:i &index:j &value:aValue
-        = the2DArray getAt &index:i array setAt &index:j &object:aValue.
     
     #method add : anObject
-        = $self add &matrix:(anObject matrix).
+        = self::matrixOp add &realmatrix:(anObject realmatrix).
     
-    #method add &matrix:aMatrix
-        = Matrix new &n:theN &m:theM &every_ij:(&index:i &index:j) [ $self getAt &index:i &index:j + aMatrix getAt &index:i &index:j ].
-        
-    #method subtract : anObject
-        = $self subtract &matrix:(anObject matrix).
-    
-    #method subtract &matrix:aMatrix
-        = Matrix new &n:theN &m:theM &every_ij:(&index:i &index:j) [ $self getAt &index:i &index:j - aMatrix getAt &index:i &index:j ].
-
-    #method multiply : anObject
-        = $self multiply &matrix:(anObject matrix).
-    
-    #method multiply &matrix:aMatrix
+    #method add &realmatrix:b
     [
-        (theM != aMatrix n)
-            ? [ #throw MatrixException new:"Invalid argument". ].
+        #var(type:realmatrix)a := self realmatrix.
+        #var(type:int)i.
+        #var(type:int)j.
+        #var(type:int)n.
+        #var(type:int)m.
         
-        ^ Matrix new &n:theN &m:(aMatrix m) &every_ij:(&index:i &index:j) 
+        a readLengths &vint:n &vint:m.
+        b readLengths &vint:i &vint:j.
+        
+        (n == i)
+            ! [ #throw MatrixException new:"Two matrices must have an equal number of rows and columns to be added". ].
+        
+        (m == j)
+            ! [ #throw MatrixException new:"Two matrices must have an equal number of rows and columns to be added". ].
+            
+        i := 0.                        
+        #var(type:realmatrix)r := RealMatrix new &length:n &length:m.
+        #loop (i < n)?
+        [
+            j := 0.                        
+            #loop (j < m)?
             [
-                #var aResult := Variable new.
-                #var(type:int)k := 0.
-                #loop (k < theM) ?
+                #var(type:real)r1.
+                #var(type:real)r2.
+                a read &index:i &index:j &vreal:r1.
+                b read &index:i &index:j &vreal:r2.
+                
+                r write &index:i &index:j &real:(r1 + r2).
+                
+                j := j + 1.
+            ].
+            i := i + 1.
+        ].
+        
+        ^ r.
+    ]
+    
+    #method subtract : anObject
+        = self::matrixOp subtract &realmatrix:(anObject realmatrix).
+    
+    #method subtract &realmatrix:b
+    [
+        #var(type:realmatrix)a := self realmatrix.
+        #var(type:int)i.
+        #var(type:int)j.
+        #var(type:int)n.
+        #var(type:int)m.
+        
+        a readLengths &vint:n &vint:m.
+        b readLengths &vint:i &vint:j.
+        
+        (n == i)
+            ! [ #throw MatrixException new:"Two matrices must have an equal number of rows and columns to be added". ].
+        
+        (m == j)
+            ! [ #throw MatrixException new:"Two matrices must have an equal number of rows and columns to be added". ].
+            
+        i := 0.                        
+        #var(type:realmatrix)r := RealMatrix new &length:n &length:m.
+        #loop (i < n)?
+        [
+            j := 0.                        
+            #loop (j < m)?
+            [
+                #var(type:real)r1.
+                #var(type:real)r2.
+                a read &index:i &index:j &vreal:r1.
+                b read &index:i &index:j &vreal:r2.
+                
+                r write &index:i &index:j &real:(r1 - r2).
+                
+                j := j + 1.
+            ].
+            
+            i := i + 1.
+        ].
+        
+        ^ r.
+    ]
+    
+    #method multiply : anObject
+        = self::matrixOp multiply &realmatrix:(anObject realmatrix).
+    
+    #method multiply &realmatrix:b
+    [
+        #var(type:realmatrix)a := self realmatrix.
+        #var(type:int)i.
+        #var(type:int)j.
+        #var(type:int)k.
+        #var(type:int)n.
+        #var(type:int)p.
+        #var(type:int)m.
+        
+        a readLengths &vint:n &vint:j.
+        b readLengths &vint:m &vint:p.
+        
+        (j == m)
+            ! [ #throw MatrixException new:"Invalid argument". ].
+
+        i := 0.                        
+        #var(type:realmatrix)r := RealMatrix new &length:n &length:p.
+        #loop (i < n)?
+        [
+            j := 0.                        
+            #loop (j < p)?
+            [
+                k := 0.
+                #var(type:real)v := 0.0r.
+                #loop (k < m)?
                 [
-                    aResult append:(self getAt &index:i &index:k * aMatrix getAt &index:k &index:j).
+                    #var(type:real)r1.
+                    #var(type:real)r2.
+                    a read &index:i &index:k &vreal:r1.
+                    b read &index:k &index:j &vreal:r2.
+                    
+                    r1 := r1 * r2.
+                    v := v + r1.
                     
                     k := k + 1.
                 ].
                 
-                ^ aResult value.
+                r write &index:i &index:j &real:v.
+                
+                j := j + 1.
             ].
+            
+            i := i + 1.
+        ].
+        
+        ^ r.
     ]
-    
-    #method clone
-        = Matrix new &matrix:$self.
     
     #method decomposed
     [
-        (theM != theN)
+        // create matrix copy
+        #var(type:realmatrix) a := (self::matrixOp clone) realmatrix.
+
+        #var(type:int)i := 0.
+        #var(type:int)j := 0.
+        #var(type:int)k := 0.
+        #var(type:int)n.
+        #var(type:int)m.
+        #var(type:real)v.
+        #var(type:real)t.
+        
+        a readLengths &vint:n &vint:m.
+        
+        (n != m)
             ? [ #throw MatrixException new:"Invalid operation". ].
         
         // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
         #var even := Boolean new:true.          
 
-        // create matrix copy
-        #var a := $self clone.
-
         // permutation matrix
-        #var pm := Array new &length:theN set &every: (&index:i) [ IntNumber new &int:i ].
-         
+        #var(type:intarray) pm := IntArray new &length:n.
+        pm set &every: (&index:i) [ IntNumber new &int:i ].
+
         // each column, j is counter for coulmns
-        #var max_row := Integer new:0.
-        #var max := Variable new:0.
-        control run &int:0 &int:(theN - 2) &forEvery: (&index:j)
+        #var(type:int)  max_col := 0.
+        #var(type:real) max := 0.0r.
+        
+        #loop (j < n)?
         [
             // find largest value in col j
-            max << mathControl abs:(a getAt &index:j &index:j).
-            max_row << j.
+            a read &index:j &index:j &vreal:max.
+            realOpController abs &real:max &vreal:max.
             
-            control run &int:(j + 1) &int:(theN-1) &forEvery: (&index:i)
+            max_col := j.
+            i := j + 1.
+            #loop (i < n)?
             [
-                #var val := mathControl abs:(a getAt &index:i &index:j).
-                (val > max)
-                    ? [
-                        max << val.
-                        max_row << i.
-                    ].
-            ].
-            
-            // if largest value not on pivot, swap rows
-            (max_row != j) ?
-            [
-                control run &int:0 &int:(theN-1) &forEvery: (&index:k)
-                [ 
-                    #var tmp := a getAt &index:j &index:k.
-                    
-                    a setAt &index:(j int) &index:k &value:(a getAt &index:(max_row int) &index:k).
-                    a setAt &index:(max_row int) &index:k &value:tmp.
+                a read &index:i &index:j &vreal:v.
+                realOpController abs &real:v &vreal:v.
+                (v > max)?
+                [
+                    max := v.
+                    max_col := i.
                 ].
+                
+                i := i + 1.
+            ].
+  
+            // if largest value not on pivot, swap rows
+            (max_col != j) ?
+            [
+                k := 0.
+                #loop (k < n)?
+                [
+                    a read &index:j &index:k &vreal:t.
+                    a read &index:max_col &index:k &vreal:v.
+
+                    a write &index:j &index:k &real:v.
+                    a write &index:max_col &index:k &real:t.
                     
+                    k := k + 1.
+                ].
+
                  // switch two rows in permutation matrix
-                 pm~indexable exchange:j:max_row.
-                 
+                 pm::intArrayOp exchange &index:j &index:max_col.
+
                  even invert.
             ].
                         
             (0.0r == max)
                 ? [ #throw MatrixException new:"The matrix is singular!". ].
 
-            #var val := a getAt &index:j &index:j.
-            control run &int:(j + 1) &int:(theN-1) &forEvery: (&index:i)
+            a read &index:j &index:j &vreal:t.
+            
+            i := j + 1.
+            #loop (i < n)?
             [
-                a setAt &index:i &index:j &value:(a getAt &index:i &index:(j int) / val).
+                a read &index:i &index:j &vreal:v.
+                v := v / t.
                 
-                control run &int:(j+1) &int:(theN - 1) &forEvery: (&index:k)
+                a write &index:i &index:j &real:v.
+
+                k := j + 1.
+                #loop (k < n)?
                 [
-                    a setAt &index:i &index:k &value:(a getAt &index:(i int) &index:k - a getAt &index:(i int) &index:(j int) * a getAt &index:(j int) &index:k).
+                    #var(type:real)c.
+                    a read &index:i &index:j &vreal:v.
+                    a read &index:j &index:k &vreal:c.
+                    v := v * c.
+
+                    a read &index:i &index:k &vreal:c.
+                    v := c - v.
+                    
+                    a write &index:i &index:k &real:v.
+                    
+                    k := k + 1.
                 ].
+                
+                i := i + 1.
             ].
+            
+            j := j + 1.
         ].
-        
+
         ^ Extension({ Even = even value. }, a).
     ]
 
     #method determinant
     [
-        #var lum := $self decomposed.
-        #var deter := Real new &int:1.
+        #var lum := self::matrixOp decomposed.
+        #var(type:real) deter := 1.0r.
+        #var(type:real) v.
 
         (lum Even)
-            ! [ deter *= -1. ].
+            ! [ deter := deter * (-1.0r). ].
         
-        control run &int:0 &int:(theN - 1) &forEvery: (&index:i)
-            [ deter << deter * (lum getAt &index:i &index:i). ].
+        #var(type:realmatrix)a := lum realmatrix.        
+        #var(type:int) n.
+        #var(type:int) m.
+        a readLengths &vint:n &vint:m.
+        
+        #var(type:int)i := 0.
+        #loop (i < n)?
+        [
+            a read &index:i &index:i &vreal:v.
             
-       ^ deter value.
+            deter := deter * v.
+            
+            i := i + 1.
+        ].
+            
+       ^ RealNumber new &real:deter.
     ]
-
-    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &matrix:$self.
-    
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &matrix:$self.
             
     #method literal
     [
         #var(type:textbuffer) anOutput := TextBuffer new.
+        #var(type:realmatrix)aMatrix := self realmatrix.
         
         #var(type:int)i := 0.
         #var(type:int)j := 0.
-        #loop (i < theN) ?
+        #var(type:int)n.
+        #var(type:int)m.
+        #var(type:int)l.
+        
+        aMatrix readLengths &vint:n &vint:m.
+        
+        #loop (i < n)?
         [
             j := 0.
-            #loop (j < theM) ?
+            #loop (j < m)?
             [
-                anOutput write &literal:(convertor toLiteral:($self getAt &index:i &index:j)) write:",".
+                #var(type:real)r.
+                aMatrix read &index:i &index:j &vreal:r.
+                
+                anOutput writeLiteral:(RealNumber new &real:r):",".
                 
                 j := j + 1.
             ].
+            anOutput readLength &vint:l.            
+            anOutput set &length:(l - 1).
             
-            anOutput set &length:(-1 + anOutput length).
             anOutput write:'newLine.
             
             i := i + 1.
@@ -211,3 +386,4 @@
         ^ anOutput literal.
     ]
 }
+

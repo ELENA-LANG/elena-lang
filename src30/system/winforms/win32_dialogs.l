@@ -7,6 +7,29 @@
 
 #symbol(const,type:int)DS_CENTER         = 0800h.
 
+// --- messageBox ---
+
+#symbol messageBox =
+{
+    open &handle:aParent &caption:aCaption &value:aMessage &int:aFlags
+    [
+        system'external'USER32 MessageBoxW
+            &handle:aParent
+            &wide:(aMessage wide)
+            &wide:(aCaption wide)
+            &int:aFlags.
+    ]
+    
+    open &caption:aCaption &value:aMessage &int:aFlags
+    [
+        system'external'USER32 MessageBoxW
+            &int:0
+            &wide:(aMessage wide)
+            &wide:(aCaption wide)
+            &int:aFlags.
+    ]
+}.
+
 // --- BaseFileDialog ---
 
 #class BaseFileDialog

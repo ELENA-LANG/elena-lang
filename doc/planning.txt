@@ -1,63 +1,16 @@
-filter messages:
-
--->(mssg_mask.verb == 0)?
-    |
-    +--> yes -> filter subject
-    |
-    +--> no -> filter verbs + param_count
+File operations
 
 
 
-#var aDTO := { X = 4. Y = 2. Z = 0. }.
-
-#var(type:mssgarrays,size:10) properties.
-#var(type:int)l := 10.
-aDTO read &mssg_mask:%get &index:0 &mssgarray:properties &vint:l.
-                          
-properties run : aDTO &foreach: aSubject
-[
-   #var prop_value := aDTO~aSubject get.
-].
-
-aDTO read &mssg_mask:%x &index:0 &mssgarray:properties &vint:l.
+1) fileControl
 
 
-============================
+fileControl exists &path:aPath
+                                               
 
-actors
-======
+2) fileOp
 
-serialize / deserialize
-
-#subject FirstName.
-#subject LastName.
-#subject MiddleName.
+extends path
 
 
-#class MyDTO
-{
-   #field theFirstName.
-   #field theLastName.
-   #field theMiddleName.
-
-   #method set &FirstName:aValue [ theFirstName := aValue. ]
-
-   #method FirstName = theFirstName.
-
-   #method set &LastName : aValue [ theLastName := aValue. ]
-
-   #method LastName = theLastName.
-
-   #method set &MiddleName:aValue [ theMiddleName := aValue. ]
-
-   #method MiddleName = theMiddleName.
-}
-
-#var aDTO := MyDTO new set &FirstName:aFirstName set &LastName:aLastName set &MiddleName:aMiddleName.
-
-
-// ---
-
-#var aStruct := Struct(%FirstName, aFirstName, %LastName, aLastName, %MiddleName, aMiddleName).
-
-// Could we provide a way to automaticlly get a struct from DTO?
+aPath~path is &available

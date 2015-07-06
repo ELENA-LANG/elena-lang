@@ -17,9 +17,13 @@
     
     #method eval
     [
-        control while:[ theActive ] &do:
-        [ 
-            'program'output write:(theControl prompt:'program'output read:'program'input). 
+        #var aPrompt := theControl prompt.
+        
+        #loop theActive?
+        [
+            console write:aPrompt.
+            
+            console writeLine:(theControl proceed:(console readLine)).
         ].
     ]
 }

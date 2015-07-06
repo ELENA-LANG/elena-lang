@@ -1,15 +1,13 @@
 #define system.
-#define extensions.
-//#define extensions'text.
+#define system'io.
+#define extensions'routines.
 
 #symbol program =
 [
     ('program'arguments length == 1)?
         [  console writeLine:"Please provide the path to the file to view". #throw AbortException new. ].
 
-    #var aFileName := 'program'arguments@1.
-
-    control run &path:(aFileName literal) &forEachLine:printingLn.
+    File new &path:('program'arguments@1) run &eachLine:printingLn.
 
     console readChar. // wait for any key
 ].

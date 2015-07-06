@@ -1,4 +1,38 @@
 #define system.
+#define system'drawing.
+
+#subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
+
+#class(struct:embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
+{
+    #field(type:win_coord)dwSize.    
+    #field(type:win_coord)dwCursorPosition.    
+    #field(type:short)wAttributes.
+    #field(type:win_small_rect)srWindow.
+    #field(type:win_coord)dwMaximumWindowSize.
+
+    #method console_screen_buffer_info = $self.
+
+    #method readSizeX &vshort:aRetVal
+    [
+        dwSize readX &vshort:aRetVal.
+    ]
+
+    #method readSizeY &vshort:aRetVal
+    [
+        dwSize readY &vshort:aRetVal.
+    ]
+
+    #method readSize &coord:aCoord
+    [
+        aCoord write &coord:dwSize.
+    ]
+
+    #method readCursorPosition &coord:aCoord
+    [
+        aCoord write &coord:dwCursorPosition.
+    ]
+}
 
 // --- $ConsoleHandleFactory --
 
@@ -43,6 +77,29 @@
         // !!check the result of the operation
     ]
     
+    #method clear
+    [
+        #var(type:console_screen_buffer_info)aBuffer.
+        #var(type:int)aLength.
+        #var(type:short)aSizeX.
+        #var(type:short)aSizeY.
+        #var(type:int)aRetVal.
+        
+        system'external'KERNEL32 GetConsoleScreenBufferInfo &handle:theHandle &console_screen_buffer_info:aBuffer.
+        
+        aBuffer readSizeX &vshort:aSizeX.
+        aBuffer readSizeY &vshort:aSizeY.
+        aLength := aSizeX * aSizeY.
+        
+        system'external'KERNEL32 FillConsoleOutputCharacterW &handle:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
+        
+        system'external'KERNEL32 SetConsoleCursorPosition &int:0.
+    ]
+
+    #method refresh
+    [
+    ]
+            
     #method free
     [
         system'external'KERNEL32 CloseHandle

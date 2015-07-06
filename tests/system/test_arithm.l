@@ -4,14 +4,17 @@
 #define system'dynamic.
 #define system'calendar.
 #define system'text.
-//#define system'math.
+#define system'io.
+#define system'math.
 #define extensions.
 #define extensions'math.
+#define extensions'text.
 
 #symbol XTester =
 {
-    test        
+    test            
     [
+        #var a := (1,2,3) clone.
     ]
 }.
 
@@ -76,6 +79,7 @@
 {
     eval &x:anX &y:anY
     [
+        ^ anX + anY.
     ]
 }.
 
@@ -163,28 +167,29 @@
 [
     #var aList := Dictionary new.
     
-    aList append &key:1 &object:"1a".
-    aList append &key:2 &object:"2".
+    aList @ 1 := "1a".
+    aList @ 2 := "2".
     
-    aList set &key:1 &object:"1".
+    aList @ 1 := "1".
     
-    #var anN1 := aList getAt &key:1.
-    #var anN2 := aList getAt &key:2.
+    #var anN1 := aList @ 1.
+    #var anN2 := aList @ 2.
 ].
 
 #symbol ListTest =
 [
-    #var aList := List new append:1 append:2 append:4.
+    #var aList := List new append:1 append:2 append:4 append:"abc".
 
-    #var anArray := convertor toArray:aList.
+    #var anArray := aList toArray.
 
-    #var n1 := control find:2 &in:aList.
-    #var n2 := control find:-1 &in:aList.
+    #var n1 := aList safeSeek:2.
+    #var s := aList safeSeek:"abc".
+    #var n2 := aList safeSeek:-1.
 ].
 
 #symbol EnumTest =
 [
-    control run:"abc" &forEach: (:x)
+    "abc" run &each: (:x)
     [
         console write:x.
     ].
@@ -264,7 +269,7 @@
     #var a := 1.
     #var b := "abc".
     
-    ( a equal &reference:a and:[ a equal &reference:b not ])
+    ( a equal &reference:a and:[ b equal &reference:a not ])
         ? [ console writeLine:"Reference comparison works" ]
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
@@ -394,18 +399,18 @@
 
 #symbol ConvertorTest =
 [
-    #var n := convertor toInt:"23".
+    #var n := "23" toInt.
     #var sn := n literal.
     (sn == "23")
         ! [ console writeLine:"Int conversion does not work" ].
     
-    #var l := convertor toLong:"1234567890123456".
-    #var nn := convertor toInt:"-123".
-    #var ll := convertor toLong:"-1234567890123456".
+    #var l := "1234567890123456" toLong.
+    #var nn := "-123" toInt.
+    #var ll := "-1234567890123456" toLong.
 
-    #var r := convertor toReal:"23".
-    #var r2 := convertor toReal:"123.456789".
-    #var r3 := convertor toReal:"-123.456789".
+    #var r := "23" toReal.
+    #var r2 := "123.456789" toReal.
+    #var r3 := "-123.456789" toReal.
 ].
 
 // --- LiteralTest ---
@@ -421,10 +426,10 @@
     #var ll := l length.
     #var c := l@2.
 
-    #var a := l~enumerable array.
+    #var a := l toArray.
 //    #var a2 := l~indexable arreay.
 
-    control run:"abc" &forEach: (:ch)[ console write:ch ].
+    "abc" run &each: (:ch)[ console write:ch ].
 
     console writeLine.
 
@@ -668,16 +673,16 @@
 #symbol DTOToStructTest =
 [
     #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-    #var(type:enumerable) aProperties := MessageArray new &length:10.
+    #var aProperties := MessageArray new &length:10.
     #var aLength := Integer new.
     
     aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.
 
     #var aCopy := DynamicStruct new.
-    control run:(aProperties top:aLength) &forEach:(:aSubject)
+    aProperties top:aLength run &each:(:aSubject)
     [
         #var prop_value := aDTO::aSubject eval.
-        #var prop := aSubject::messageOp subject.
+        #var prop := aSubject subject.
         
         aCopy::prop set:prop_value.
     ].

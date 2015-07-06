@@ -6,16 +6,18 @@
 #define system.
 #define system'routines.
 #define system'calendar.
+#define system'io.
 #define system'collections.
 #define extensions.
-#define extensions'text.
+#define extensions'routines.
 
 // --- Normalized ---
 
-#symbol Normalized = (:aLiteral)
-[
-     ^ control run:(aLiteral~indexable array sort:ifOrdered) &forEach:(Summing new:(String new)) literal.
-].
+#class(extension) op
+{
+     #method normalized
+         = self toArray ascendant summarize:(String new) literal.
+}
 
 // --- Program ---
 
@@ -25,27 +27,26 @@
 
     #var aDictionary := Dictionary new.
 
-    control run &path:"unixdict.txt" &forEachLine: aWord
+    File new &path:"unixdict.txt" run &eachLine: aWord
     [    
-        #var aKey := Normalized:aWord.
-        #var anItem := aDictionary getAt &key:aKey.
-        (nil == anItem) ?
+        #var aKey := aWord normalized.
+        #var anItem := aDictionary@aKey.
+        ($nil == anItem) ?
         [
-            anItem := List new.
-            aDictionary set &key:aKey &object:anItem.
+            anItem := ArrayList new.
+            aDictionary@aKey := anItem.
         ].
     
         anItem += aWord.
     ].
 
-    aDictionary~indexable 
-        sort: (:aFormer:aLater) [ aFormer length > aLater length ].
-
-    control run:(aDictionary~enumerable top:20) &forEach: aPair [ consoleEx writeLine:aPair ].
+    aDictionary array_list
+        sort: (:aFormer:aLater) [ aFormer length > aLater length ]
+        top:20 run &each: aPair [ console writeLine:aPair ].
     
     #var anEnd := now.
    
     #var aDiff := anEnd - aStart.
 
-    consoleEx writeLine:"Time elapsed in msec:":(aDiff milliseconds).
+    console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
 ].

@@ -25,11 +25,11 @@
 
 #symbol program =
 [
-    control run &int:0 &int:3 &forEvery: (&index:i)
+    0 to:3 &doEach: (:i)
     [
-        control run &int:0 &int:5 &forEvery: (&index:j)
+        0 to:5 &doEach: (:j)
         [
-            consoleEx writeLine:"A(":i:",":j:")=":(ackermann:i:j).
+            console writeLine:"A(":i:",":j:")=":(ackermann:i:j).
         ].
     ].
 

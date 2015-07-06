@@ -86,6 +86,57 @@
     ]    
 }
 
+// --- RangeEnumerator ---
+
+#class RangeEnumerator :: Enumerator
+{
+    #field theVariable.
+    #field theStart.
+    #field theEnd.
+    #field theStep.
+    
+    #field(type:bool)theForward.
+    
+    #constructor new &for:aVariable &from:aStart &to:anEnd &by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd) bool.
+        
+        $self reset.
+    ]
+
+    #constructor new &from:aStart &to:anEnd &by:aStep
+        <= new &for:(Variable new) &from:aStart &to:anEnd &by:aStep.
+
+    #constructor new &from:aStart &to:anEnd
+        <= new &for:(Variable new) &from:aStart &to:anEnd &by:1.
+        
+    #method reset 
+    [
+        theVariable << theStart.
+
+        theForward 
+            ? [ theVariable -= theStep. ]
+            ! [ theVariable += theStep. ].
+    ]    
+    
+    #method get = theVariable value.
+    
+    #method next
+    [
+        theForward 
+            ? [ theVariable += theStep. ^ (theVariable <= theEnd) bool. ].
+        
+        theVariable -= theStep. 
+        
+        ^ (theVariable >= theEnd) bool.
+    ]
+}
+
 // === patterns ===
 
 // --- BasePattern ---
@@ -112,4 +163,19 @@
     ]
 
     #method eval : aParam [ theResult append:aParam. ]
+}
+
+// --- patternOp ---
+
+#class(extension)patternOp
+{
+    #method summarize : aVariable
+    [
+        Summing new:aVariable run &enumerator:(self enumerator).
+        
+        ^ aVariable value.
+    ]
+    
+    #method summarize
+        = self::patternOp summarize:(Variable new).
 }

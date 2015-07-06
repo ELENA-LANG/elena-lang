@@ -1489,7 +1489,6 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
    if (StringHelper::compare(identifier, THIS_VAR)) {
-      //return ObjectInfo(okSelf, 0);
       Outer owner = mapSelf();
 
       // map as an outer field (reference to outer object and outer object field index)
@@ -1814,6 +1813,8 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
          operator_id = LESS_MESSAGE_ID;
       }
 
+      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
+      openDebugExpression(scope);
       ObjectInfo optionValue = compileObject(option.firstChild(), scope, 0);
       _writer.loadObject(*scope.tape, optionValue);
 
@@ -1832,12 +1833,14 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       bool mismatch = false;
       compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, 0);
 
+      endDebugExpression(scope);
+
       _writer.jumpIfEqual(*scope.tape, scope.moduleScope->falseReference);
 
       CodeScope subScope(&scope);
       DNode thenCode = option.firstChild().nextNode();
 
-      _writer.declareBlock(*scope.tape);
+      //_writer.declareBlock(*scope.tape);
 
       if (thenCode.firstChild().nextNode() != nsNone) {
          compileCode(thenCode, subScope, 0);
@@ -1853,7 +1856,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       CodeScope subScope(&scope);
       DNode thenCode = option.firstChild();
 
-      _writer.declareBlock(*scope.tape);
+      //_writer.declareBlock(*scope.tape);
 
       if (thenCode.firstChild().nextNode() != nsNone) {
          compileCode(thenCode, subScope);
@@ -1883,8 +1886,14 @@ void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo obje
 void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
 {
    if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress || variableInfo.kind == okLocalAddress) {
-      int size = (variableInfo.kind == okLocalAddress) ? 
-         scope.moduleScope->defineStructSize(variableInfo.extraparam) : scope.moduleScope->defineTypeSize(variableInfo.extraparam);
+      ref_t classReference = 0;
+      int size = 0;
+      if (variableInfo.kind == okLocalAddress) {
+         classReference = variableInfo.extraparam;
+
+         size = scope.moduleScope->defineStructSize(classReference);
+      }
+      else size = scope.moduleScope->defineTypeSize(variableInfo.extraparam, classReference);
 
       if (size <= 0)
          scope.raiseError(errInvalidOperation, node.Terminal());
@@ -1895,6 +1904,10 @@ void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectIn
          }
          else if ((size == 2 || size == 1) && variableInfo.kind == okLocal) {
             _writer.saveInt(*scope.tape, variableInfo);
+         }
+         // HOTFIX: assign a float-point numeric result 
+         else if ((size == 8) && classReference == scope.moduleScope->realReference) {
+            _writer.saveReal(*scope.tape, variableInfo);
          }
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }
@@ -2071,8 +2084,8 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    }
 
    //// skip the first breakpoint if it is not a symbol
-   //if (object.kind == okSymbol || !test(mode, HINT_ROOTEXPR))
-   recordStep(scope, terminal, dsStep);
+   //if (object.kind == okSymbol || !test(mode, HINT_ROOTEXPR))7
+   //recordStep(scope, terminal, dsStep);
 
    return object;
 }
@@ -2656,13 +2669,11 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 {
-   // check generic extension
-   ref_t type = -1;
-   if (scope.moduleScope->extensionHints.exist(messageRef, 0)) {
-      type = 0;
-   }
-   // check typed extension
-   else if (getType(object) != 0 && scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
+   // check typed extension if the type available
+   ref_t type = 0;
+   ref_t extRef = 0;
+
+   if (getType(object) != 0 && scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
       type = getType(object);
    }
    // if class reference available - select the possible type
@@ -2683,12 +2694,22 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
       }
    }
 
-   if (type != -1) {
+   if (type != 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
 
-      return typeExtensions->get(messageRef);
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
    }
-   else return 0;
+
+   // check generic extension
+   if (extRef == 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   else return extRef;
 }
 
 ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t messageRef, int count, int& mode, size_t& spaceToRelease)
@@ -2811,7 +2832,7 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
       _writer.endThenBlock(*scope.tape);
    }
    else if (test(mode, HINT_LOOP)) {
-      compileBranching(node, scope, object, operator_id, 0);
+      compileBranching(node, scope, object, operator_id, HINT_LOOP);
       _writer.jump(*scope.tape, true);
    }
    else {
@@ -3101,6 +3122,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       return compileBranchingOperator(node, scope, object, mode, operator_id);
    }
 
+   recordDebugStep(scope, operator_name, dsStep);
+   openDebugExpression(scope);
+
    // HOTFIX : recognize SET_REFER_MESSAGE_ID
    if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
       operator_id = SET_REFER_MESSAGE_ID;
@@ -3151,7 +3175,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
    }
 
-   recordStep(scope, node.Terminal(), dsProcedureStep);
+   //recordStep(scope, node.Terminal(), dsProcedureStep);
 
    if (IsExprOperator(operator_id) && compileInlineArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
       // if inline arithmetic operation is implemented
@@ -3221,6 +3245,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    if (dblOperator)
       node = node.nextNode();
 
+   endDebugExpression(scope);
+
    return retVal;
 }
 
@@ -3239,7 +3265,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
 //   bool directMode = test(_optFlag, optDirectConstant);
 
-   recordStep(scope, node.Terminal(), dsProcedureStep);
+   //recordStep(scope, node.Terminal(), dsProcedureStep);
 
    if (catchMode) {
       _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
@@ -3374,15 +3400,19 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    size_t spaceToRelease = 0;
    ref_t messageRef = compileMessageParameters(node, scope, object, mode, spaceToRelease);
 
+   recordDebugStep(scope, node.Terminal(), dsStep);
+   openDebugExpression(scope);
+
+   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, mode);
+
+   endDebugExpression(scope);
+
    if (spaceToRelease > 0) {
       // if open argument list is used
-      ObjectInfo retVal = compileMessage(node, scope, object, messageRef, mode);
-
       releaseOpenArguments(scope, spaceToRelease);
-
-      return retVal;
    }
-   else return compileMessage(node, scope, object, messageRef, mode);
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
@@ -3416,6 +3446,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    DNode member = node.nextNode();
 
    if (object.kind == okExternal) {
+      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
       currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
       if (test(mode, HINT_TRY)) {
          // skip error handling for the external operation
@@ -3443,13 +3474,10 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    }
 
    while (member != nsNone) {
+      //_writer.declareBlock(*scope.tape);
+
       if (member == nsExtension) {
          currentObject = compileExtension(member, scope, currentObject, mode);
-
-         continue;
-      }
-      else if (member == nsTypecast) {
-         currentObject = compileTypecastExpression(member, scope, currentObject, mode);
 
          continue;
       }
@@ -3487,6 +3515,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
       }
+
+      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
       member = member.nextNode();
    }
 
@@ -3542,31 +3573,6 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
 
    while (node==nsMessageOperation) {
       object = compileExtensionMessage(node, roleNode, scope, object, role, mode);
-
-      node = node.nextNode();
-   }
-
-   return object;
-}
-
-ObjectInfo Compiler :: compileTypecastExpression(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-{
-   ModuleScope* moduleScope = scope.moduleScope;
-   ObjectInfo   role;
-
-   TerminalInfo typeTerminal = node.firstChild().Terminal();
-   ref_t typeRef = scope.moduleScope->mapType(typeTerminal);
-
-   _writer.loadObject(*scope.tape, object);
-
-   // override standard message compiling routine
-   node = node.nextNode();
-
-   while (node==nsMessageOperation) {
-      bool mismatch = false;
-      object = compileTypecast(scope, object, typeRef, mismatch, mode);
-
-      object = compileMessage(node, scope, object, mode);
 
       node = node.nextNode();
    }
@@ -3951,7 +3957,10 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
       }
    }
 
-   object.extraparam = target_type;
+   if (object.kind != okOuterField) {
+      object.extraparam = target_type;
+   }
+   
    return object;
 }
 
@@ -3989,7 +3998,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
    scope.freeSpace();
 
-   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
    return ObjectInfo(okAccumulator, 0, subj);
 }
@@ -4090,21 +4099,25 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
    if (verb == IF_MESSAGE_ID || verb == IFNOT_MESSAGE_ID) {
       ref_t valueRef = (verb == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference;
 
-      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-
       bool mismatch = false;
       compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, 0);
+
+      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
       _writer.jumpIfNotEqual(*scope.tape, valueRef);
    }
 
-   _writer.declareBlock(*scope.tape);
+   //_writer.declareBlock(*scope.tape);
 
    CodeScope subScope(&scope);
 
    DNode thenCode = thenNode.firstChild();
    if (thenCode.firstChild().nextNode() != nsNone) {
-      compileCode(thenCode, subScope, subCodeMode );
+      compileCode(thenCode, subScope, subCodeMode & ~HINT_LOOP);
+
+      if (test(subCodeMode, HINT_LOOP) && subScope.locals.Count() > 0) {
+         _writer.releaseObject(*scope.tape, subScope.locals.Count());
+      }
    }
    // if it is inline action
    else compileRetExpression(thenCode.firstChild(), scope, 0);
@@ -4116,7 +4129,7 @@ void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
 {
    ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
 
-   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
    _writer.pushObject(*scope.tape, object);
    _writer.throwCurrent(*scope.tape);
@@ -4132,13 +4145,18 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
    if (expr.nextNode() == nsL7Operation) {
       DNode loopNode = expr.nextNode();
 
+      openDebugExpression(scope);
       ObjectInfo cond = compileObject(expr, scope, mode);
+
+      //remove last virtual breakpoint
+      //_writer.removeLastBreakpoint(*scope.tape);
 
       // get the current value
       _writer.loadObject(*scope.tape, cond);
 
-      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), 0);
+      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), HINT_LOOP);
 
+      endDebugExpression(scope);
       _writer.endLoop(*scope.tape);
    }
    // if it is repeat loop
@@ -4152,7 +4170,7 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
 
       _writer.endLoop(*scope.tape, scope.moduleScope->trueReference);
    }
-   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 }
 
 ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
@@ -4169,33 +4187,43 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
    while (statement != nsNone) {
       DNode hints = skipHints(statement);
 
-      _writer.declareStatement(*scope.tape);
+      //_writer.declareStatement(*scope.tape);
 
       switch(statement) {
          case nsExpression:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            openDebugExpression(scope);
             compileExpression(statement, scope, 0);
+            endDebugExpression(scope);
             break;
          case nsThrow:
             compileThrow(statement, scope, 0);
             break;
          case nsLoop:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileLoop(statement, scope, HINT_LOOP);
             break;
          case nsRetStatement:
          {
             needVirtualEnd = false;
+            recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
+            openDebugExpression(scope);
             retVal = compileRetExpression(statement.firstChild(), scope, 0);
+            endDebugExpression(scope);
             scope.freeSpace();
 
             _writer.gotoEnd(*scope.tape, baFirstLabel);
             break;
          }
          case nsVariable:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            openDebugExpression(scope);
             compileVariable(statement, scope, hints);
+            endDebugExpression(scope);
             break;
          case nsCodeEnd:
             needVirtualEnd = false;
-            recordStep(scope, statement.Terminal(), dsEOP);
+            recordDebugStep(scope, statement.Terminal(), dsEOP);
             break;
       }
       scope.freeSpace();
@@ -4332,7 +4360,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    bool stdCall = false;
    ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-   // legacy : if dll is not mapped, use its directly like winapi
+   // legacy : if dll is not mapped, use the name directly
    if (emptystr(dllName))
       dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
 
@@ -4359,7 +4387,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    // call the function
    _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
 
-   if (stdCall)
+   if (!stdCall)
       _writer.releaseObject(*scope.tape, externalScope.operands.Count());
 
    //// indicate that the result is 0 or -1
@@ -4923,7 +4951,7 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
    compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/), 0);
    scope.freeSpace();
 
-   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
    _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
@@ -5055,7 +5083,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    }
    // if it is a dynamic object implicit constructor call is not possible
    else if (dispatchBody == nsNone)
-      scope.raiseError(errNotApplicable, node.Terminal());
+      scope.raiseError(errIllegalConstructor, node.Terminal());
 
    if (dispatchBody != nsNone) {
       compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope, classClassScope);
@@ -5661,7 +5689,11 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    CodeScope codeScope(&scope);
    if (retVal.kind == okUnknown) {
       // compile symbol body
+
+      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
+      openDebugExpression(codeScope);
       retVal = compileExpression(expression, codeScope, 0);
+      endDebugExpression(codeScope);
    }
    _writer.loadObject(*codeScope.tape, retVal);
 
@@ -5742,10 +5774,10 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    }
 
    TerminalInfo eop = node.lastNode().Terminal();
-   if (eop != nsNone) {
-      recordStep(codeScope, eop, dsVirtualEnd);
-   }
-   else _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
+//   if (eop != nsNone) {
+//      recordStep(codeScope, eop, dsVirtualEnd);
+//   }
+//   else _writer.declareBreakpoint(scope.tape, 0, 0, 0, dsVirtualEnd);
 
    _writer.endSymbol(scope.tape);
 
@@ -5840,7 +5872,9 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             // check for duplicate declaration
             if (scope.module->mapSection(reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
-   
+
+            scope.module->mapSection(reference | mskSymbolRef, false);
+
             // compile class
             ClassScope classScope(&scope, reference);
             compileClassDeclaration(member, classScope, hints);
@@ -5850,6 +5884,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
                ClassScope classClassScope(&scope, classScope.info.classClassRef);
                compileClassClassDeclaration(member, classClassScope, classScope);
             }
+
             break;
          }
          case nsSymbol:
@@ -5860,6 +5895,8 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             // check for duplicate declaration
             if (scope.module->mapSection(reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(reference | mskSymbolRef, false);
    
             SymbolScope symbolScope(&scope, reference);
             compileSymbolDeclaration(member, symbolScope, hints, (member == nsStatic));
@@ -5900,10 +5937,6 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
          case nsStatic:
          {
             ref_t reference = scope.mapTerminal(name);
-
-            // check for duplicate declaration
-            if (scope.module->mapSection(reference | mskSymbolRef, true))
-               scope.raiseError(errDuplicatedSymbol, name);
 
             SymbolScope symbolScope(&scope, reference);
             compileSymbolImplementation(member, symbolScope, hints, (member == nsStatic));

@@ -8,41 +8,44 @@
 
 // --- RandomBrackets ---
 
-#symbol randomBrackets = (:aLength)
-[   
-    ^ (0 == aLength)
-        ? [ emptyLiteralValue ]
-        ! [
-            #var aBrackets := 
-                Array new &length:(aLength int) set &every: (&index:i) [ #91 ] 
-                + 
-                Array new &length:(aLength int) set &every: (&index:i)[ #93 ].
+#symbol randomBrackets =
+{
+    new : aLength
+        = (0 == aLength)
+            ? [ emptyLiteralValue ]
+            ! [
+                #var aBrackets := 
+                    Array new &length:(aLength int) set &every: (&index:i) [ #91 ] 
+                    + 
+                    Array new &length:(aLength int) set &every: (&index:i)[ #93 ].
+        
+                aBrackets randomize:(aLength * 2).
+
+                ^ aBrackets summarize:(String new) literal.
+            ].
+}.
+
+#class(extension)op
+{
+    #method isBalanced
+    [
+        #var aCounter := Integer new:0.
     
-            aBrackets::randomOp randomize:(aLength * 2).
+        self seek &each:aChar [ (aCounter += (aChar => #91 ? [ 1 ] #93 ? [ -1 ])) < 0 ].
     
-            ^ control run:aBrackets &forEach:(Summing new:(String new)) literal.
-        ].
-].
-
-#symbol isBalanced = (:aLiteral)
-[
-    #var aCounter := Integer new:0.
-
-    control run:aLiteral &seeking: aChar [ aCounter append:(aChar => #91 ? [ 1 ] #93 ? [ -1 ]) < 0 ].
-
-    ^ (0 == aCounter).
-].
+        ^ (0 == aCounter).
+    ]
+}
 
 // --- Program ---
 
 #symbol program =                                             
 [
-    control run &int:0 &int:9 &forEvery: (&index:aLength)
+    0 to:9 &doEach: (:aLength)
     [
-        #var anStr := randomBrackets:aLength.
-        #var balanced := isBalanced:anStr.
+        #var anStr := randomBrackets new:aLength.
 
-        consoleEx writeLine:"""":anStr:"""":(balanced => true ? [ " is balanced" ] false ? [ " is not balanced" ]).
+        console writeLine:"""":anStr:"""":((anStr isBalanced) => true ? [ " is balanced" ] false ? [ " is not balanced" ]).
     ].
 
     console readChar.

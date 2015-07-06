@@ -797,6 +797,7 @@ procedure real_copyint
   bcopya
   aloadsi 2
   nload
+  rcopy
   rsave
   acopyb
   quitn 2
@@ -837,7 +838,7 @@ procedure real_add
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   radd
   acopyb
@@ -851,7 +852,7 @@ procedure real_sub
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   rsub
   acopyb
@@ -865,7 +866,7 @@ procedure real_mul
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   rmul
   acopyb
@@ -879,7 +880,7 @@ procedure real_div
   newn   class : system'RealNumber 8
   bcopya
   popa
-  rcopy
+  lcopy
   aloadsi 2
   rdiv
   acopyb
@@ -1007,10 +1008,9 @@ procedure byte_copyreal
   aloadsi 4
   rint
 
-  pushn 0
-  aloadsi 0
-  bswap
+  acopyb
   rload
+  dcopyr
 
   lessn labErr 0  
   lessn labCopy 0FFh
@@ -1201,10 +1201,9 @@ procedure word_copyreal
   aloadsi 4
   rint
 
-  pushn 0
-  aloadsi 0
-  bswap
+  acopyb
   rload
+  dcopyr
   
   lessn labErr 0FFFF8000h
   lessn labCopy 08000h
@@ -1429,8 +1428,10 @@ end
 procedure int_copyreal
 
   aloadsi 2
-  bloadsi 3
+  bloadsi 3  
   rload
+  dcopyr
+  nsave
   aloadsi 1
   quitn 3
 
@@ -1494,6 +1495,7 @@ procedure real_saveint
   bloadsi 3
   aloadsi 2
   nload
+  rcopy
   rsave
   acopyb
   quitn 3
@@ -1892,11 +1894,14 @@ procedure bs_read
  
   aloadsi 3
   nload
+  ecopyd
+  aloadsi 2
+  nload
   acopyb
 
   bloadsi 4
   callr api : coreapi'subcopy
-  quitn 2
+  quitn 4
   
 labErr:
   open 1
@@ -1976,7 +1981,7 @@ procedure bs_readbyte
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -1989,6 +1994,7 @@ end
 procedure bs_writeword
 
   blen
+  ecopyd
   bcopya
   aloadsi 2
   nload
@@ -2026,7 +2032,7 @@ procedure bs_readword
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2077,7 +2083,7 @@ procedure bs_readdword
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2091,10 +2097,12 @@ procedure bs_writeqword
 
   blen
   bcopya
+  ecopyd
   aloadsi 2
   nload
-  addn 9
+  addn 7
   notless labErr
+
   nload
   aloadsi 3
   ecopy 8
@@ -2120,12 +2128,10 @@ procedure bs_readqword
   lessn   labErr 0
  
   acopyb
-  bread
-  dcopye
   bloadsi 3
   ecopy 8
   callr api : coreapi'subcopy
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2371,6 +2377,28 @@ procedure ns_copysubarr
   
 end
 
+procedure arr_copysubarr
+
+  bcopya
+  aloadsi 2
+  nload
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 4
+  callr api : coreapi'nsubcopy
+  
+  acopyb
+  quitn 4
+  
+end
+
 procedure ns_getlen
 
   aloadsi 1
@@ -2397,7 +2425,7 @@ procedure ns_read
 
   bloadsi 4
   callr api : coreapi'nsubcopy
-  quitn 2
+  quitn 4
   
 labErr:
   open 1
@@ -2476,7 +2504,7 @@ procedure ns_readdword
   bloadsi 3
   nsave
 
-  quitn 2
+  quitn 3
   
 labErr:
   open 1
@@ -2622,9 +2650,14 @@ procedure s_fill
   pushn 0
   pushn 0
   bcopys 0
+  pushn 0
+  pushn 0
   
   callr api : coreapi'chartostr
+  acopyb
   blen
+  popi 2
+  dec
 
   ifn lab1 1 
   ifn lab2 2
@@ -2657,19 +2690,16 @@ labNext4:
   jump labEnd  
   
 lab1:  
-  popd
-  popi 2
-  popa
-
+  aloadsi 6
+  nload
   pushd
-  aloadsi 3
   inc
+  aloadsi 4
   
   acallvi 1
   bcopya
 
-  blen
-  dec  
+  popd
   ecopyd
   dcopy 0
 
@@ -2677,17 +2707,17 @@ labNext1:
   eswapsi 0
   bwriteb
   eswapsi 0
-  addn 1
   next labNext1
+  popi 4
   jump labEnd  
     
 lab2:
+  popi 2
   popd
   popi 2
   popa
 
   pushd
-  aloadsi 3
   shiftn -1
   inc
   
@@ -2703,17 +2733,17 @@ labNext2:
   eswapsi 0
   bwritew
   eswapsi 0
-  addn 2
+  addn 1
   next labNext2
   jump labEnd  
 
 lab3:
+  popi 2
   popd
   popi 2
   popa
 
   pushd
-  aloadsi 3
   ecopyd
   add
   add
@@ -2732,12 +2762,11 @@ labNext3:
   eswapsi 0
   bwrite
   eswapsi 0
-  addn 3
+  addn 2
   next labNext3
   jump labEnd  
 
 labEnd:
-  pop
   blen
   dec
   ecopy 0
@@ -3307,7 +3336,7 @@ procedure arr_create
   
   ifn labSkip 0
 
-  acopyr const : system'nil
+  acopyr 0
 labNext:
   dec
   xset
@@ -3400,12 +3429,13 @@ end
 procedure symbol_new
 
   pusha
-  pusha
-  aloadsi 4   // ; read aName parameter
+  aloadsi 3   // ; read aName parameter
   pusha
   callr api : coreapi'load_symbol
   ifr labError 0
-  popa
+  popb 
+  axsavebi 0
+  acopyb
   quitn 2
 
 labError:
@@ -3428,6 +3458,9 @@ end
 
 procedure handle_message
 
+  bloadsi 1
+  ifb labDefault
+
   nload
   eswap
   setverb EVAL_MESSAGE_ID
@@ -3443,18 +3476,30 @@ labEnd:
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw
+
+labDefault:
+  bsredirect  
+  open 1
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[0]
+  throw
   
 end
 
 procedure handle_verb
 
+  bloadsi 1
+  ifb labDefault
+  
   setverb 0
   nload
   or
   ecopyd
   aloadsi 1
   ajumpvi 0
-labEnd:
+  
+labDefault:
+  bsredirect  
   open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
@@ -3464,12 +3509,22 @@ end
 
 procedure qualify_message
 
+  bloadsi 1
+  ifb labDefault
+
   setsubj 0
   nload
   or
   aloadsi 1
   ecopyd
   ajumpvi 0
+  
+labDefault:
+  bsredirect  
+  open 1
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[0]
+  throw
   
 end
 
@@ -3562,6 +3617,19 @@ procedure dptr_copy
 
 end
 
+procedure dptr_readint
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
 procedure api_free_index
                       
   aloadsi 1
@@ -3569,6 +3637,14 @@ procedure api_free_index
   callr api : coreapi'free_index
   quitn 2
   
+end
+
+procedure dptr_ret_double
+
+  bloadsi 2
+  callr api : coreapi'ret_double
+  quitn 2
+
 end
 
 procedure arr_realloc
@@ -4269,6 +4345,7 @@ end
 
 procedure handle_extension
 
+  asavesi 1
   pushe
   bcopya
   dcopy 1
@@ -4924,9 +5001,10 @@ end
 
 procedure mssg_getsubj
 
+  pusha
   newn   class : system'Signature 4
   bcopya
-  aloadsi 1
+  popa
   nload
   andn INV_PARAM_MASK
   ecopyd
@@ -4980,5 +5058,21 @@ labErr:
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw
+
+end
+
+procedure int_hashcode
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure long_save
+
+  bloadsi 2
+  lcopy
+  quitn 2
 
 end

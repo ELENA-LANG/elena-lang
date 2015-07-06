@@ -18,8 +18,8 @@
 #symbol program =
 [
     #var aNumbers := numbers:N.    
-    control run:(Combinator new &k:M &of:aNumbers) &forEach: aRow
+    Combinator new:M &of:aNumbers run &each: aRow
     [
-        consoleEx writeLine:aRow.
+        console writeLine:aRow.
     ].
 ].

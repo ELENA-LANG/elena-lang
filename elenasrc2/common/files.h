@@ -108,7 +108,22 @@ public:
       changeExtension(ext);
    }
 
+   static void combinePath(Path& dest, path_t sour)
+   {
+      Path subPath(sour);
+
+      dest.combine(subPath);
+   }
+
 #endif
+
+   static bool checkExtension(path_t path)
+   {
+      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+      int dotpos = StringHelper::findLast(path + index, '.', -1   );
+
+      return dotpos != -1;
+   }
 
    void combine(path_t path, size_t length)
    {
@@ -224,6 +239,14 @@ public:
 
       copy(path + index, dotpos - index);
       _string[dotpos - index] = 0;
+   }
+
+   void copyExtension(path_t path)
+   {
+      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+      int dotpos = StringHelper::findLast(path, '.', getlength(path));
+
+      copy(path + dotpos + 1);
    }
 
    FileName(path_t path)

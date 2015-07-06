@@ -6,6 +6,8 @@
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
+#define CONFIG_PATH "elc.cfg"
+
 using namespace _ELENA_;
 
 static Instance* instance = NULL;
@@ -34,7 +36,9 @@ EXTERN_DLL_EXPORT void* Init(void* debugSection, ident_t package)
          debugSection = (void*)ptr;
       }
 
-      instance->init(debugSection, package);
+      Path configPath;
+      Path::loadPath(configPath, CONFIG_PATH);
+      instance->init(debugSection, package, configPath);
 
       return instance;
    }
@@ -51,16 +55,14 @@ EXTERN_DLL_EXPORT int LoadAddressInfo(void* instance, size_t retPoint, ident_c* 
    return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* buffer, int length)
 {
-   // !! terminator code
-   return 0;
+   return ((Instance*)instance)->loadClassName((size_t)object, buffer, length);
 }
 
 EXTERN_DLL_EXPORT void* GetSymbolRef(void* instance, void* referenceName)
 {
-   // !! terminator code
-   return NULL;
+   return ((Instance*)instance)->loadSymbol((ident_t)referenceName);
 }
 
 EXTERN_DLL_EXPORT void* Interpreter(void* instance, void* tape)
@@ -73,6 +75,16 @@ EXTERN_DLL_EXPORT void* GetRTLastError(void* instance, void* retVal)
 {
    // !! terminator code
    return NULL;
+}
+
+EXTERN_DLL_EXPORT int LoadSubjectName(void* instance, void* subject, ident_c* lineInfo, int length)
+{
+   return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
+}
+
+EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
+{
+   return ((Instance*)instance)->loadSubject((ident_t)subjectName);
 }
 
 // --- dllmain ---

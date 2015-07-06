@@ -108,7 +108,7 @@ class JITLinker
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
-   void createNativeSymbolDebugInfo(ident_t reference, size_t& sizePtr);
+   void createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr);
    void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 

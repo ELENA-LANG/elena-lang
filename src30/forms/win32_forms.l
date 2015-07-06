@@ -1,4 +1,5 @@
 #define system.
+#define system'drawing.
 #define system'winforms.
 
 // --- BaseForm ---
@@ -9,6 +10,8 @@
         <= (new)
     [
     ]
+    
+    #method controls = theControls.
     
     #method close
     [

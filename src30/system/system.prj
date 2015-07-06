@@ -16,6 +16,7 @@ dynamic.l
 extensions.l
 exceptions.l
 console.l
+win32_pointers.l
 win32_handler.l
 win32_app.l
 win32_strings.l
@@ -30,12 +31,16 @@ text\win32_common.l
 text\encoder.l
 text\win32_encoder.l
 text\textbuffer.l
+drawing\common.l
+drawing\win32_handles.l
+drawing\win32_graphics.l
 io\common.l
 io\ioexceptions.l
 io\streamreader.l
 io\streamwriter.l
 io\win32_console.l
 io\win32_files.l
+io\files.l
 dynamic\groups.l
 dynamic\reflection.l
 dynamic\interpreters.l

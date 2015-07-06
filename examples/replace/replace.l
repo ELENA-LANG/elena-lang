@@ -6,18 +6,18 @@
 
 #symbol Program =
 [
-    #var aText := consoleEx write:"Enter the text:" readLine:(String new:"1223").
-    #var aSearchText := consoleEx write:"Enter the phrase to be found:" readLine.  
-    #var aReplaceText := consoleEx write:"Enter the phrase to replace with:" readLine.
+    #var aText := console write:"Enter the text:" readLine:(String new).
+    #var aSearchText := console write:"Enter the phrase to be found:" readLine.  
+    #var aReplaceText := console write:"Enter the phrase to replace with:" readLine.
 
     #var aBM := StringBookmark new:aText.
 
-    control while:[ aBM find:aSearchText ] &do:
+    #loop (aBM find:aSearchText)?
     [
-        aBM delete &length:aSearchText insert &literal:aReplaceText.
+        aBM delete:aSearchText insert:aReplaceText.
     ].
 
-    consoleEx 
+    console
         writeLine:"The resulting text:":aBM
         readChar. // wait for any key
 ].

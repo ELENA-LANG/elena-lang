@@ -1,27 +1,79 @@
 // --- Symbol ---
 
+/// A dynamic symbol
 #class(sealed,symbol) Symbol
 {
-    #constructor new &name:aName
+    /// Loads a symbol
+    #constructor new &literal:aName
         => system'internal'symbol_new.
         
+    /// Redirects incoming messages to the symbol
     #method => system'internal'symbol_redirect.
+}
+
+// --- Verb ---
+
+/// A dynamic verb extender
+#class(sealed,signature) Verb
+{
+    /// Loads a dynamic verb
+    #constructor new &verb:aVerb
+        => system'internal'int_copy.
+
+    /// Dispatches incoming messages and redirects to the target
+    #method => system'internal'handle_verb.
 }
 
 // --- Message ---
 
+/// A dynamic message extender
 #class(sealed,message) Message
 {
+    /// Loads a message
     #constructor new &mssg:aMessage
         => system'internal'int_copy.
+        
+    #method subject
+        => system'internal'mssg_getsubj.
 
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     #method => system'internal'handle_message.
+}
+
+// --- Signature ---
+
+/// A dynamic signature extender
+#class(sealed,signature) Signature
+{
+    /// Creates a dynamic signature
+    #constructor new &mssg:aMessage
+        => system'internal'subj_copymssg.
+        
+    /// Creates a dynamic signature
+    #constructor new &subject:aSubject
+        => system'internal'int_copy.
+
+    /// Creates a dynamic signature
+    #constructor new &literal:aSubjectName
+        => system'internal'subj_load.
+
+    /// Creates a dynamic signature
+    #constructor new &wide:aSubjectName
+        <= new &literal:(aSubjectName literal).
+
+    /// Compares the values
+    #method equal &subject : aSubject
+        => system'internal'subject_equal.
+        
+    /// Qualifies incoming messages and redirects to the target
+    #method => system'internal'qualify_message.
 }
 
 // --- MessageVar ---
 
 #class(sealed,struct:embeddable) MessageVar
 {
+    /// Creates a dynamic signature
     #field(type:mssg)theMessage.
     
     #constructor new &mssg:aMessage
@@ -32,35 +84,6 @@
     #method mssg = Message new &mssg:theMessage.
     
     #method => theMessage.
-}
-
-// --- Verb ---
-
-#class(sealed,signature) Verb
-{
-    #constructor new &verb:aVerb
-        => system'internal'int_copy.
-
-    #method => system'internal'handle_verb.
-}
-
-// --- Signature ---
-
-#class(sealed,signature) Signature
-{
-    #constructor new &mssg:aMessage
-        => system'internal'subj_copymssg.
-        
-    #constructor new &subject:aSubject
-        => system'internal'int_copy.
-
-    #constructor new &literal:aSubjectName
-        => system'internal'subj_load.
-
-    #constructor new &wide:aSubjectName
-        <= new &literal:(aSubjectName literal).
-
-    #method => system'internal'qualify_message.
 }
 
 // --- MessageArray ---
@@ -106,7 +129,7 @@
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &mssgarray:$self.
     
-    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &mssgarray:$self.    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &mssgarray:$self.
 }
 
 // --- MessageArrayIterator ---

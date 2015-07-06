@@ -1,7 +1,10 @@
 #define system.
-#define system'routines.
 #define system'io.
 #define system'text.
+#define extensions'text.
+
+#subject(class:system'BaseFunction1) eachWord.
+#subject(class:system'BaseFunction1) eachLine.
 
 // --- ReaderEnumerator ---
 
@@ -53,3 +56,23 @@
     
     #method get = theLine.
 }
+
+// --- fileExOp ---
+
+#class(extension:file)fileExOp
+{
+    #method run &eachLine:anAction
+        = anAction run &enumerator:(ReaderEnumerator new &path:self).
+}
+
+// --- stringExOp ---
+
+#class(extension)stringExOp
+{
+    #method run &eachWord:aFunction
+        = aFunction run &enumerator:(WordEnumerator new &literal:(self literal)).
+}
+
+// --- printingLn ---
+
+#symbol printingLn = aLine [ 'program'output writeLine:aLine ].

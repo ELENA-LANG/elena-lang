@@ -1,23 +1,24 @@
 #define system.
+#define system'math.
+#define system'routines.
 #define extensions.
 
 // --- Program --- 
 
 #symbol Program = 
 [ 
+    #var n := 2 mod:4.
+
     // reading    
-    #var aNumber := consoleEx write:"Enter the number you want to convert: " readLine:(Integer new).
+    #var aNumber := console write:"Enter the number you want to convert: " readLine:(Integer new).
     
     // converting
-    #var aBinary := String new:(convertor toLiteral:aNumber &base:2).
-
-    control while:[ aBinary length and:3 != 0 ] &do:
-    [
-        aBinary insert &index:0 &literal:"0".
-    ].
+    #var aBinaryStr := aNumber toLiteral &base:2.
 
     // printing
-    consoleEx writeLine:"A binary presentation of the number : ":aBinary writeLine:"Press any key to continue".
+    console
+        writeLine:"A binary presentation of the number : ":(aBinaryStr padLeft &char:#48 &length:((aBinaryStr length / 4 + 1) * 4))
+        writeLine:"Press any key to continue".
 
     // waiting for any key
     console readChar.

@@ -790,7 +790,7 @@ bool IDEController :: doSaveProject(bool saveAsMode)
       }
 	   else return false;
    }
-   _project.save();
+   _project.save(_model->project.extension);
 
    onChange();
 
@@ -799,7 +799,7 @@ bool IDEController :: doSaveProject(bool saveAsMode)
 
 bool IDEController :: doSave(bool saveAsMode)
 {
-   if (_model->isDocumentReadOnly())
+   if (_model->isDocumentReadOnly() || !_model->currentDoc)
       return false;
 
    if (_model->project.name.isEmpty() && _model->currentDoc->status.included) {
@@ -2021,11 +2021,11 @@ void IDEController::ProjectManager::reset()
    _model->project.changed = false;
 }
 
-void IDEController::ProjectManager::save()
+void IDEController::ProjectManager::save(_ELENA_::path_t extension)
 {
    _ELENA_::Path cfgPath(_model->project.path);
    cfgPath.combine(_model->project.name);
-   cfgPath.appendExtension(_T("prj"));
+   cfgPath.appendExtension(extension);
 
    _model->project.config.save(cfgPath, _ELENA_::feUTF8);
 
@@ -2036,6 +2036,7 @@ void IDEController::ProjectManager::rename(_ELENA_::path_t path)
 {
    _model->project.name.copyName(path);
    _model->project.path.copySubPath(path);
+   _model->project.extension.copyExtension(path);
 
    Paths::resolveRelativePath(_model->project.path, _model->paths.defaultPath);
 

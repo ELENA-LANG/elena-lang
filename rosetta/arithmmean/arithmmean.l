@@ -1,34 +1,30 @@
 #define system.
-#define system'routines.
 #define extensions.
 
-// --- Sum ---
+// --- Average ---
 
-#class MeanAction :: BasePattern
+#class(extension)op
 {
-    #field theValue.
-    #field theCount.
-    
-    #constructor new
+    #method average
     [
-        theValue := Real new.
-        theCount := Integer new.
-    ]
-
-    #method evaluate : aValue
-    [
-        theCount += 1.
+        #var aSum := Real new.
+        #var aCount := Integer new:0.
         
-        theValue += aValue.
+        #var anEnumerator := self enumerator.
         
-        theResult := theValue / theCount.
+        #loop (anEnumerator next)?
+        [
+            aSum += anEnumerator get.
+            aCount += 1.
+        ].
+        
+        ^ aSum / aCount.
     ]
 }
-
 // --- Program ---
 
 #symbol program =
 [
     #var anArray := (1, 2, 3, 4, 5, 6, 7, 8).
-    consoleEx writeLine:"Arithmetic mean of {":anArray:"} is ":(control run:anArray &forEach:(MeanAction new)).
+    console writeLine:"Arithmetic mean of {":anArray:"} is ":(anArray average).
 ]. 

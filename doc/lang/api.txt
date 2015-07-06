@@ -1,8 +1,12 @@
-//************************************************************************
-//* Console:                                                             *
-//************************************************************************
-Console write: "Hello World".                                 // output string in console
-Console writeLine: "Hello World".                             // output string in console followed by the line terminator
+/* C style comments are used */
+// Period (.) is the statement seperator
+
+/*************************************************************************
+ * Console:                                                              *
+ *************************************************************************/
+console clear.                                               // clear the console
+console write: "Hello World".                                // output string in console
+console writeLine: "Hello World".                            // output string in console followed by the line terminator
 
 //************************************************************************
 //* Assignment:                                                          *

@@ -182,13 +182,21 @@ void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t nameRef)
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
-   // prevent breakpoint duplication
-   if (*tape.end() != bdBreakcoord && *tape.end() != bcBreakpoint) {
-      tape.write(bcBreakpoint);
+   tape.write(bcBreakpoint);
 
-      tape.write(bdBreakpoint, stepType, row);
-      tape.write(bdBreakcoord, disp, length);
+   tape.write(bdBreakpoint, stepType, row);
+   tape.write(bdBreakcoord, disp, length);
+}
+
+void ByteCodeWriter :: removeLastBreakpoint(CommandTape& tape)
+{
+   ByteCodeIterator it = tape.end();
+
+   while (*it == bdBreakcoord || *it == bcBreakpoint || *it == bdBreakpoint) {
+      (*it).code = bcNone;
+      it--;
    }
+
 }
 
 void ByteCodeWriter :: declareStatement(CommandTape& tape)
@@ -675,6 +683,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          tape.write(bcALoadFI, 1, bpFrame);
          tape.write(bcALoadAI, object.param);
          tape.write(bcALoadAI, object.extraparam);
+      
          break;
       case okLocalAddress:
          // acopyf n
@@ -1792,7 +1801,39 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, ObjectInfo target)
    }   
 }
 
-void ByteCodeWriter :: assignInt(CommandTape& tape, ObjectInfo target)
+void ByteCodeWriter::saveReal(CommandTape& tape, ObjectInfo target)
+{
+   if (target.kind == okLocalAddress) {
+      // bcopyf param
+      // rload
+      // nsave
+      tape.write(bcBCopyF, target.param);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target.kind == okLocal) {
+      // bloadfi param
+      // rload
+      // nsave
+      tape.write(bcBLoadFI, target.param, bpFrame);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target.kind == okFieldAddress) {
+      // rload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param
+      // bwrite
+      tape.write(bcRLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, target.param);
+      tape.write(bcBWrite);
+   }
+}
+
+void ByteCodeWriter::assignInt(CommandTape& tape, ObjectInfo target)
 {
    if (target.kind == okFieldAddress) {
 
@@ -2273,16 +2314,16 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
    switch (operator_id) {
       case REFER_MESSAGE_ID:
          // aswapsi 0
-         // popa
          // nload
          // popa
          // nread
+         // dcopye
          // nsave
          tape.write(bcASwapSI, 0);
-         tape.write(bcPopA);
          tape.write(bcNLoad);
          tape.write(bcPopA);
          tape.write(bcNRead);
+         tape.write(bcDCopyE);
          tape.write(bcNSave);
          break;
       case SET_REFER_MESSAGE_ID:

@@ -145,6 +145,7 @@ be copied there;
  <string table>              
  <stat>                  stat section
  <bss>                   data section
+-- debuf segment ---
 
 9) Typecasting algorithm:
    ----------------------
@@ -193,3 +194,4 @@ be copied there;
 |            |                                        +--> no ----> [send typecast message to source]
 |            |                                      
 +------------+--> no --> [ pass directly ]
+

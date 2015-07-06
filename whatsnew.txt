@@ -10,6 +10,7 @@
 [ELENA]
 [!] binary incompatible due to changes in the compiler code
 [!] a strong type cannot be used as a custom verb 
+[!] ~ operator is no longer supported
 [!] is 100% UTF-8 internally
 [*] operator redesign : \ - alternative message call, || - or operator
 [*] stripping CORE from OS dependant code and moving it into CORE_LNX and CORE_WIN
@@ -29,29 +30,42 @@
 
 [-] bug with outer field type fixed
 [-] bug with redirect to an outer field fixed
+[-] issue #45
+[+] compiler option: ds - enabling subject serialization in stand-alone program
+[!] by default c call convention (cdecl) is used
 
 [LIB]
 [!] literal type, LiteralValue, String are UTF-8, CharValue is Unicode (UTF-32)
-[+] wliteral, WideLiteralValue and WideString
+[+] WideLiteralValue and WideString
 [+] linux: support basic i/o operations (console, files)
 [+] system'winforms module implementing basic WIN32 GUI functionality
 [+] forms: SDIForm, SDIDialog, ChildForm, Edit, Label, Button, ImageBox, ImageList
 
 [+] forms: Menu, DockingBox
 [+] system'dynamic'classOp : read&mssg_mask&index&mssgarray&vint[4]
-[+] system: MessageArray
+[+] system: MessageArray, IntMatrix, ReadArray, RealMatrix
 [+] system'Signature: constructor new&literal$[1], new&wide$[1]
 [+] system'dynamic: subjectROp
 [*] system'dynamic: classOp -> classROp
-
+[*] reflection routines work for stand-alone version as well
+[+] extensions'text: encoderOp
+[+] system'io: File
+[+] new package: sqlite
+[+] new modules: system'drawing
+[*] system'io: Stream, BinaryReader, BinaryWriter, FileStream
+[*] system'console: clear
+[+] system'collections: ArrayList
+[*] refactored to simplify the code
+                                                                                                
 Samples:
 [+] agenda, graphs, c_a_g
 
 [+] notepad
 
 [IDE]
-[*] fixed "step over" implementations inside symbol
 [*] binaray arrays are displayed in the debug watch correctly
+
+[*] debugger behaviour reimplemented to improve UX
 
 ******************************************************************************
                     What's New in 1.9.18 (pre release)

@@ -5,12 +5,20 @@
 
 #class(limited) BinaryWriter
 {
-    #method stream [ #throw NotSupportedException new. ]
+    #field(type:stream)theStream.
+    
+    #constructor new &stream:aStream
+    [
+        theStream := aStream.
+    ]
+    
+    #method stream = theStream.
 
-    #method close [ ]
+    #method close => theStream.
     
     #method write &bytearray:anArray &length:aLength
     [
+        theStream write &bytearray:anArray &length:aLength.
     ]
 
     #method write &byte:anInt
@@ -119,8 +127,6 @@
         $self write &chararray:(theBuffer chararray) &length:aLength.
     ]
     
-    #method(generic) write:anObject
-    [
-        $self write &literal:(anObject literal).
-    ]
+    #method writeLine
+        <= write:'newLine.
 }
