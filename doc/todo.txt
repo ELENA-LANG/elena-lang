@@ -45,6 +45,7 @@ Currently:
                        * logical operations with variant (v == 0, even if v is "0")
 
               xdev - linux:
+                       * fix samples
                        * implement DateTime / Timespan classes
                        * implement textdb sample
                        * test load class by name
