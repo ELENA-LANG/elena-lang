@@ -21,16 +21,13 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              adev - lib30     
-                       * test date functionality
-
-              xdev - linux:
-                       * implement DateTime / Timespan classes (at least dummies)
-                       * implement textdb sample
-                       * test load class by name
-                       * linux32 : implement console clear
-
-              <--build-->
+              xdev - general development
+                       * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
+                         boxing / unboxing
+                       * review / reimplemnt variable, reference
+                       * fix critical issue #47
+                       * fix critical issues
+                       * fix bugs
 
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
@@ -39,11 +36,6 @@ Currently:
                          overwriding the object (just in place mutation)
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        
-              xdev - general implementation
-                       * fix critical issue #47
-                       * fix critical issues
-                       * fix bugs
-
               adev - lib30     
                        * sqlite : support float
                        * sqlite : support blob
@@ -51,6 +43,12 @@ Currently:
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
+
+              xdev - linux:
+                       * implement DateTime / Timespan classes
+                       * implement textdb sample
+                       * test load class by name
+                       * linux32 : implement console clear
 
 <=================> 
                                                                                                                             
