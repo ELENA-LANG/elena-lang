@@ -27,8 +27,10 @@ bool ELFHelper :: seekDebugSegment(StreamReader& reader, size_t& address)
    int count = header.e_phnum;
    Elf32_Phdr ph_header;
    bool skipRData = true;
+
    while (count > 0) {
       reader.read(&ph_header, header.e_phentsize);
+
       if (ph_header.p_type == PT_LOAD && ph_header.p_flags == PF_R) {
          if (!skipRData) {
             address = ph_header.p_vaddr;

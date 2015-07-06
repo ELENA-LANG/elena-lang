@@ -39,10 +39,10 @@ Instance :: Instance(path_t rootPath)
 {
 }
 
-bool Instance :: loadConfig()
+bool Instance :: loadConfig(path_t configFile)
 {
    Path configPath(_rootPath);
-   Path::combinePath(configPath, "elc.cfg");
+   Path::combinePath(configPath, configFile);
 
    IniConfigFile config;
    if (!config.load(configPath, feUTF8)) {
@@ -59,11 +59,11 @@ bool Instance :: loadConfig()
    return true;
 }
 
-void Instance :: init(void* debugSection, ident_t package)
+void Instance :: init(void* debugSection, ident_t package, path_t configPath)
 {
    _debugSection.init(debugSection);
 
-   loadConfig();
+   loadConfig(configPath);
    _loader.setPackage(package);
 }
 

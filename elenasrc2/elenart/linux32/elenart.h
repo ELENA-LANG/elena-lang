@@ -19,21 +19,21 @@ extern "C"
 {
    DLL_PUBLIC void* Init(void* debugSection, const char* package);
 
-   //int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+   DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   //int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length);
+   DLL_PUBLIC int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length);
 
-   //int LoadClassName(void* instance, void* object, char* lineInfo, int length);
+   DLL_PUBLIC int LoadClassName(void* instance, void* object, char* lineInfo, int length);
 
-   //void* GetSymbolRef(void* instance, void* referenceName);
+   DLL_PUBLIC void* GetSymbolRef(void* instance, void* referenceName);
 
-   //void* Interpreter(void* instance, void* tape);
+   DLL_PUBLIC void* Interpreter(void* instance, void* tape);
 
-   //void* GetRTLastError(void* instance, void* retVal);
+   DLL_PUBLIC void* GetRTLastError(void* instance, void* retVal);
 
-   //int LoadSubjectName(void* instance, void* subject, char* lineInfo, int length);
+   DLL_PUBLIC int LoadSubjectName(void* instance, void* subject, char* lineInfo, int length);
 
- //  void* LoadSubject(void* instance, void* subjectName);
+   DLL_PUBLIC void* LoadSubject(void* instance, void* subjectName);
 }
 
 #endif // ELENART_H_INCLUDED

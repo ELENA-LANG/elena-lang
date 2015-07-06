@@ -82,7 +82,7 @@ private:
    ImageSection   _debugSection;
    LibraryManager _loader;
 
-   bool loadConfig();
+   bool loadConfig(path_t configPath);
 
    bool initSubjectSection(ImageSection& subjectSection);
 
@@ -97,7 +97,7 @@ public:
    void* loadSymbol(ident_t name);
    void* loadSubject(ident_t name);
 
-   void init(void* debugSection, ident_t package);
+   void init(void* debugSection, ident_t package, path_t configPath);
 
    Instance(path_t rootPath);
 

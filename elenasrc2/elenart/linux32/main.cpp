@@ -10,7 +10,8 @@
 #include "instance.h"
 #include "linux32/elfhelper.h"
 
-#define CONFIG_PATH        "/etc/elena"
+#define ROOT_PATH          "/usr/lib/elena"
+#define CONFIG_PATH        "/etc/elena/elc.config"
 #define IMAGE_BASE         0x08048000
 
 using namespace _ELENA_;
@@ -19,8 +20,6 @@ static Instance* instance = NULL;
 
 void* Init(void* debugSection, const char* package)
 {
-   printf("starting\n");
-
    if (instance == NULL) {
       instance = new Instance(CONFIG_PATH);
    }
@@ -36,7 +35,7 @@ void* Init(void* debugSection, const char* package)
       debugSection = (void*)ptr;
    }
 
-   instance->init(debugSection, package);
+   instance->init(debugSection, package, CONFIG_PATH);
 
    return instance;
 }
