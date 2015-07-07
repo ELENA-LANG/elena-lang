@@ -22,6 +22,23 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
+                       * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
+                         if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
+                         the class implements the typecasting operation as idle one ( = $self) - skip as well.
+                       * get rid of synonyms, any declared subject is a type
+                       * primitive structs : integerof, floatof (can be stack allocated, read only)
+                       * literals
+                       * primitive wrappers : strinfof, struct, variableof, arrayof (can be stack allocated, changable)
+
+                       * example of variable, array ; should be easy to declare (only inherits the base class)
+                       * example of by ref parameters
+
+                       * try to minimize the list of type forwards
+
+                       * boxing / unboxing
+                       * using directly only for stack safe methods
+                       
+
                        * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
                          boxing / unboxing
                        * review / reimplemnt variable, reference
@@ -50,16 +67,14 @@ Currently:
                        * implement textdb sample
                        * test load class by name
                        * linux32 : implement console clear
-
-<=================> 
-                                                                                                                            
-1.9.19
---------
-week2:
-              xdev - linux:
                        * reimplement consolewriter.write&literal - use printf instead of putchar
-
                        * migrate rosetta samples
+                       * core : implement INIT_RND
+                       * linux date / time operations
+                       * consoleReader should check if the char is multibyte
+                       * read key
+                       * port console samples                                                                               
+                       * port rosetta samples                                                                               
 
               xdev - general implementation
                        * resolve issue #15
@@ -77,16 +92,12 @@ week2:
                        * TextView: cursor blinking
                        * IDE UI : facelifting, tuning
                        * test : new project, new file, include, exclude, save, ...
-                       
-              adev - linux lib30:
-                       * core : implement INIT_RND
-                       * linux file operations
-                       * linux date / time operations
-                       * consoleReader should check if the char is multibyte
-                       * read key
-                       * port console samples                                                                               
-                       * port rosetta samples                                                                               
-                       
+
+<=================> 
+                                                                                                                            
+1.9.19
+--------
+week2:
               adev - lib30 optimization
                        * review system'calendar implementation
                        * reivew system'winforms'SDIApplication.start, optimize the main loop

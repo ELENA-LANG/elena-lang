@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0008
+   #define ENGINE_MINOR_VERSION     0x0009
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -320,9 +320,8 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.08"       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "ELENAVMC.8.08"    // the ELENAVM client
-   #define MODULE_SIGNATURE         "EN!8.08"          // the language version
+   #define ELENA_SIGNITURE          "ELENA.8.9"       // the module version
+   #define ELENA_SIGNITURE_MASK     "ELENA.8."        // the module compatibility mask
    #define DEBUG_MODULE_SIGNATURE   "ED!1.4"
 
   // --- ELENA core module names ---
