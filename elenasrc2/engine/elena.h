@@ -427,6 +427,26 @@ struct ClassHeader
    ref_t  parentRef;
 };
 
+// --- MethodInfo ---
+
+struct MethodInfo
+{
+   ref_t typeRef;
+   int   hint;
+
+   MethodInfo()
+   {
+      typeRef = 0;
+      hint = 0;
+   }
+
+   MethodInfo(ref_t type, int hint)
+   {
+      this->typeRef = type;
+      this->hint = hint;
+   }
+};
+
 // --- ClassInfo ---
 
 struct ClassInfo
@@ -434,7 +454,7 @@ struct ClassInfo
    typedef MemoryMap<ref_t, bool, false> MethodMap;
    typedef MemoryMap<ident_t, int, true> FieldMap;
    typedef MemoryMap<int, ref_t>         FieldTypeMap;
-   typedef MemoryMap<ref_t, ref_t>       MethodTypeMap;
+   typedef MemoryMap<ref_t, MethodInfo>  MethodInfoMap;
 
    ClassHeader   header;
    size_t        size;           // Object size
@@ -443,7 +463,7 @@ struct ClassInfo
    MethodMap     methods;
    FieldMap      fields;
    FieldTypeMap  fieldTypes;
-   MethodTypeMap methodTypes;
+   MethodInfoMap methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
@@ -455,7 +475,7 @@ struct ClassInfo
          methods.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
-         methodTypes.write(writer);
+         methodHints.write(writer);
       }
    }
 
@@ -469,12 +489,12 @@ struct ClassInfo
          methods.read(reader);
          fields.read(reader);
          fieldTypes.read(reader);
-         methodTypes.read(reader);
+         methodHints.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0)
+      : fields(-1), methods(0), methodHints(MethodInfo())
    {
       header.flags = 0;
       classClassRef = extensionTypeRef = 0;

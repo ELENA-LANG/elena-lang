@@ -25,6 +25,14 @@ Currently:
                        * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
                          if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
                          the class implements the typecasting operation as idle one ( = $self) - skip as well.
+                         
+                       * refactoring : declareParameterDebugInfo - use debug hint flags
+                       * refactoring : compileInlineArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : compileInlineVarArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : compileInlineReferOperator - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : defineForward - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : do we need to use paramsReference ditectly??
+                       * refactoring : do we need to use trueReference / falseReference ditectly??
 
                        * primitive structs : integerof, floatof (can be stack allocated, read only)
                        * literals

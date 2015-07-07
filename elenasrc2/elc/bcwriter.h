@@ -18,7 +18,7 @@ enum ObjectKind
 {
    okUnknown = 0,
 
-   okSymbol,                       // param - reference, extraparam - type reference
+   okSymbol,                       // param - reference
    okConstantSymbol,               // param - reference, extraparam - class reference
    okConstantClass,                // param - reference, extraparam - class reference
    okLiteralConstant,              // param - reference 

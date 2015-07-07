@@ -16,10 +16,6 @@
 namespace _ELENA_
 {
 
-//// Compiler optimization flags
-////const int optDirectConstant = 0x00000001;
-////const int optJumps          = 0x00000002;
-
 // --- Compiler class ---
 class Compiler
 {
@@ -67,12 +63,15 @@ protected:
       irObsolete
    };
 
-   enum MethodType
+   enum MethodHint
    {
-      tpUnknown = 0,
-      tpSealed  = 1,
-      tpClosed  = 2,
-      tpNormal  = 3
+      tpMask      = 0x0F,
+
+      tpUnknown   = 0x00,
+      tpSealed    = 0x01,
+      tpClosed    = 0x02,
+      tpNormal    = 0x03,
+      tpStackSafe = 0x10
    };
 
    struct Unresolved
@@ -118,15 +117,15 @@ protected:
       ForwardMap    forwards;       // forward declarations
 
       // symbol hints
-      Map<ref_t, ObjectKind> symbolHints;
+      Map<ref_t, ref_t> constantHints;
 
       // extensions
-      SubjectMap             extensionHints; 
-      ExtensionMap           extensions;
+      SubjectMap        extensionHints; 
+      ExtensionMap      extensions;
 
       // type hints
-      ForwardMap             types;
-      SubjectMap             typeHints;
+      ForwardMap        types;
+      SubjectMap        typeHints;
 
       // cached references
       ref_t superReference;
@@ -139,8 +138,6 @@ protected:
       ref_t falseReference;
       ref_t paramsReference;
       ref_t signatureReference;
-
-      ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -161,28 +158,12 @@ protected:
          ObjectInfo info = mapReferenceInfo(referenceName, false);
 
          if (constant) {
-            ObjectInfo constantInfo = defineObjectInfo(info.param, true);
-            // try to correctly define typed constant
-            if (constantInfo.kind == okSymbol && constantInfo.extraparam != 0) {
-               ref_t typeClass = resolveStrongType(constantInfo.extraparam);
-               if (typeClass == intReference) {
-                  defineIntConstant(info.param);
-               }
-               else if (typeClass == longReference) {
-                  defineLongConstant(info.param);
-               }
-               else if (typeClass == realReference) {
-                  defineRealConstant(info.param);
-               }
-               else if (typeClass == literalReference) {
-                  defineLiteralConstant(info.param);
-               }
-               else if (typeClass == charReference) {
-                  defineCharConstant(info.param);
-               }
-               defineConstantSymbol(info.param);
+            ObjectInfo info = defineObjectInfo(info.param, true);
+            // try to resolve as a strong symbol
+            if (info.kind == okConstantSymbol) {
+               defineConstantSymbol(info.param, info.extraparam);
             }
-            else defineConstantSymbol(info.param);
+            else defineConstantSymbol(info.param, 0);
          }
 
          return forwards.add(forward, info.param, true);
@@ -190,34 +171,9 @@ protected:
 
       void compileForwardHints(DNode hints, bool& constant);
 
-      void defineConstantSymbol(ref_t reference)
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
       {
-         symbolHints.add(reference, okConstantSymbol, true);
-      }
-
-      void defineIntConstant(ref_t reference)
-      {
-         symbolHints.add(reference, okIntConstant, true);
-      }
-
-      void defineLongConstant(ref_t reference)
-      {
-         symbolHints.add(reference, okLongConstant, true);
-      }
-
-      void defineRealConstant(ref_t reference)
-      {
-         symbolHints.add(reference, okRealConstant, true);
-      }
-
-      void defineLiteralConstant(ref_t reference)
-      {
-         symbolHints.add(reference, okLiteralConstant, true);
-      }
-
-      void defineCharConstant(ref_t reference)
-      {
-         symbolHints.add(reference, okCharConstant, true);
+         constantHints.add(reference, classReference);
       }
 
       void raiseError(const char* message, TerminalInfo terminal);
@@ -245,8 +201,6 @@ protected:
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
-      ref_t resolveStrongType(ref_t type_ref);
-
       int defineStructSize(ref_t classReference);
       int defineTypeSize(ref_t type_ref, ref_t& class_ref);
       int defineTypeSize(ref_t type_ref)
@@ -256,14 +210,14 @@ protected:
          return defineTypeSize(type_ref, dummy1);
       }
 
-      MethodType checkTypeMethod(ref_t type_ref, ref_t message, bool& found);
-      MethodType checkTypeMethod(ref_t type_ref, ref_t message)
-      {
-         bool dummy;
-         return checkTypeMethod(type_ref, message, dummy);
-      }
-      MethodType checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
-      MethodType checkMethod(ref_t reference, ref_t message)
+//      MethodType checkTypeMethod(ref_t type_ref, ref_t message, bool& found);
+//      MethodType checkTypeMethod(ref_t type_ref, ref_t message)
+//      {
+//         bool dummy;
+//         return checkTypeMethod(type_ref, message, dummy);
+//      }
+      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
+      int checkMethod(ref_t reference, ref_t message)
       {
          bool dummy;
          ref_t dummyRef;
@@ -274,7 +228,7 @@ protected:
       void loadExtensions(TerminalInfo terminal, _Module* module);
 
       void saveType(ref_t type_ref, ref_t classReference, bool internalType);
-      bool saveExtension(ref_t message, ref_t type, ref_t role);
+//      bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 //      void validateForwards();
@@ -457,27 +411,27 @@ protected:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-      int newLocal()
-      {
-         level++;
-
-         return level;
-      }
-
-      void mapLocal(ident_t local, int level, ref_t type)
-      {
-         locals.add(local, Parameter(level, type));
-      }
-
-      int newSpace(size_t size)
-      {
-         int retVal = reserved;
-
-         reserved += size;
-
-         // the offset should include frame header offset
-         return -2 - retVal;
-      }
+//      int newLocal()
+//      {
+//         level++;
+//
+//         return level;
+//      }
+//
+//      void mapLocal(ident_t local, int level, ref_t type)
+//      {
+//         locals.add(local, Parameter(level, type));
+//      }
+//
+//      int newSpace(size_t size)
+//      {
+//         int retVal = reserved;
+//
+//         reserved += size;
+//
+//         // the offset should include frame header offset
+//         return -2 - retVal;
+//      }
 
       void freeSpace()
       {
@@ -501,19 +455,19 @@ protected:
          return scope ? scope->message : 0;
       }
 
-      ref_t getClassRefId(bool ownerClass = true)
-      {
-         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-
-         return scope ? scope->reference : 0;
-      }
-
-      ref_t getClassParentRefId(bool ownerClass = true)
-      {
-         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-
-         return scope ? scope->info.header.parentRef : 0;
-      }
+//      ref_t getClassRefId(bool ownerClass = true)
+//      {
+//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+//
+//         return scope ? scope->reference : 0;
+//      }
+//
+//      ref_t getClassParentRefId(bool ownerClass = true)
+//      {
+//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+//
+//         return scope ? scope->info.header.parentRef : 0;
+//      }
 
       ref_t getClassFlags(bool ownerClass = true)
       {
@@ -522,16 +476,16 @@ protected:
          return scope ? scope->info.header.flags : 0;
       }
 
-      ref_t getExtensionType()
-      {
-         ClassScope* scope = (ClassScope*)getScope(slClass);
-
-         return scope ? scope->info.extensionTypeRef : 0;
-      }
-
-      ref_t getObjectType(ObjectInfo object);
-
-      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
+//      ref_t getExtensionType()
+//      {
+//         ClassScope* scope = (ClassScope*)getScope(slClass);
+//
+//         return scope ? scope->info.extensionTypeRef : 0;
+//      }
+//
+//      ref_t getObjectType(ObjectInfo object);
+//
+//      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
@@ -576,44 +530,44 @@ protected:
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
 
-   struct ExternalScope
-   {
-      struct ParamInfo
-      {
-         bool       out;
-         ref_t      subject;
-         ObjectInfo info;
-         int        size;
-
-         ParamInfo()
-         {
-            subject = 0;
-            size = 0;
-            out = false;
-         }
-      };
-
-      struct OutputInfo
-      {
-         int        subject;
-         int        offset;
-         ObjectInfo target;
-
-         OutputInfo()
-         {
-            offset = subject = 0;
-         }
-      };
-
-      int               frameSize;
-      Stack<ParamInfo>  operands;
-
-      ExternalScope()
-         : operands(ParamInfo())
-      {
-         frameSize = 0;
-      }
-   };
+//   struct ExternalScope
+//   {
+//      struct ParamInfo
+//      {
+//         bool       out;
+//         ref_t      subject;
+//         ObjectInfo info;
+//         int        size;
+//
+//         ParamInfo()
+//         {
+//            subject = 0;
+//            size = 0;
+//            out = false;
+//         }
+//      };
+//
+//      struct OutputInfo
+//      {
+//         int        subject;
+//         int        offset;
+//         ObjectInfo target;
+//
+//         OutputInfo()
+//         {
+//            offset = subject = 0;
+//         }
+//      };
+//
+//      int               frameSize;
+//      Stack<ParamInfo>  operands;
+//
+//      ExternalScope()
+//         : operands(ParamInfo())
+//      {
+//         frameSize = 0;
+//      }
+//   };
 
    ByteCodeWriter _writer;
    Parser         _parser;
@@ -647,8 +601,8 @@ protected:
       _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
    }
 
-   ref_t mapNestedExpression(CodeScope& scope, int mode);
-   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+//   ref_t mapNestedExpression(CodeScope& scope, int mode);
+//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
 
@@ -656,90 +610,90 @@ protected:
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 
-   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, int mode);
+//   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, int mode);
 
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 
-   ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
-
-   void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
-
-   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
-   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
-   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
-
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
-   {
-      int dummy = 0;
-      return mapMessage(node, scope, paramCount, dummy);
-   }
-
-   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
-   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
-   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
-   void compileVariable(DNode node, CodeScope& scope, DNode hints);
-
-   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
-   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
-   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-
-   void compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count);
-
-   void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
-   void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
-   void compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree);
-
-   ObjectInfo compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t message, int paramCount, int& mode, size_t& spaceToRelease);
-   ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease);
-
-   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
+//   ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
+//
+//   void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
+//
+//   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
+//   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
+//   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
+//
+//   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
+//   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
+//   {
+//      int dummy = 0;
+//      return mapMessage(node, scope, paramCount, dummy);
+//   }
+//
+//   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
+//   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
+//   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
+//   void compileVariable(DNode node, CodeScope& scope, DNode hints);
+//
+//   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
+//   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
+//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
+//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+//
+//   void compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count);
+//
+//   void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
+//   void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
+//   void compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree);
+//
+//   ObjectInfo compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t message, int paramCount, int& mode, size_t& spaceToRelease);
+//   ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease);
+//
+//   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
-
-   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
-   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
-
-   bool compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
-   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
-   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool& invertMode);
-   bool compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result);
-
-   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
-   ObjectInfo compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
-   ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-
-   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
-   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target);
-
-   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
-
-   void compileLoop(DNode node, CodeScope& scope, int mode);
-   void compileThrow(DNode node, CodeScope& scope, int mode);
-
-   void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
-   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
-
-   void reserveSpace(CodeScope& scope, int size);
-   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand, bool presavedAccumulator = false);
-
-   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
-   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info, int mode);
+//   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
+//
+//   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
+//   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
+//
+//   bool compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
+//   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
+//   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool& invertMode);
+//   bool compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result);
+//
+//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+//   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
+//
+//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
+//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
+//   ObjectInfo compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
+//   ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+//
+//   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
+//   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+//   ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
+//   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
+//   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target);
+//
+//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
+//
+//   void compileLoop(DNode node, CodeScope& scope, int mode);
+//   void compileThrow(DNode node, CodeScope& scope, int mode);
+//
+//   void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
+//   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
+//
+//   void reserveSpace(CodeScope& scope, int size);
+//   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand, bool presavedAccumulator = false);
+//
+//   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
+//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
+//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info, int mode);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(DNode node, CodeScope& scope, ClassScope& classClassScope);
-   void compileResendExpression(DNode node, CodeScope& scope);
-   void compileDispatchExpression(DNode node, CodeScope& scope);
+//   void compileResendExpression(DNode node, CodeScope& scope);
+//   void compileDispatchExpression(DNode node, CodeScope& scope);
 
    ObjectInfo compileCode(DNode node, CodeScope& scope, int mode = 0);
 
@@ -752,9 +706,9 @@ protected:
    void compileSingletonClass(DNode member, ClassScope& scope);
 
    void declareSingletonAction(DNode node, ClassScope& scope, ActionScope& methodScope);
-
-   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
-   void compileImportMethod(DNode node, CodeScope& scope, ref_t message, ident_t function, int mode);
+//
+//   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
+//   void compileImportMethod(DNode node, CodeScope& scope, ref_t message, ident_t function, int mode);
 
    void compileActionMethod(DNode member, MethodScope& scope, int mode);
    void compileLazyExpressionMethod(DNode member, MethodScope& scope);
@@ -767,7 +721,7 @@ protected:
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
-   void compileNestedVMT(DNode node, InlineClassScope& scope);
+//   void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);
 
