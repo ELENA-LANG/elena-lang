@@ -49,6 +49,7 @@ Currently:
 
                        * boxing / unboxing
                        * using directly only for stack safe methods
+
                        
 
                        * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
@@ -57,6 +58,12 @@ Currently:
                        * fix critical issue #47
                        * fix critical issues
                        * fix bugs
+                       * can we get rid of bool type forwaring?
+
+              adev - lib30     
+                       * length, index and so on are no longer a strong typed, they should use strong typed operations
+                       * make sure direct methods are called in appropriate cases
+                       * make sure idle typecasting message is not invoked
 
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use

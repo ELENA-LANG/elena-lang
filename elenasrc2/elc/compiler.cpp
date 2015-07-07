@@ -17,30 +17,30 @@ using namespace _ELENA_;
 // --- Hint constants ---
 #define HINT_MASK             0xFFFF0000
 
+#define HINT_LOOP             0x20000000
+#define HINT_TRY              0x10000000
+#define HINT_ALT              0x12000000
+#define HINT_CATCH            0x08000000
+#define HINT_KNOWN_CALL       0x04000000
+#define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
+#define HINT_HEAP_MODE        0x00400000
+#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
+#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
+#define HINT_SELFEXTENDING    0x00040000
+#define HINT_ACTION           0x00020000
+#define HINT_EXTERNAL_CALL    0x00010000
+#define HINT_CHECK_MODE       0x00008000     // to indicate that the call is test one and no code should be generated
 
 //
 //////#define HINT_ROOTEXPR         0x40000000
-////#define HINT_LOOP             0x20000000
-////#define HINT_TRY              0x10000000
-////#define HINT_CATCH            0x08000000
-////#define HINT_KNOWN_CALL       0x04000000
-////#define HINT_ALT              0x12000000
-////#define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
-////#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
-////#define HINT_HEAP_MODE        0x00400000
-////#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
-////#define HINT_SELFEXTENDING    0x00040000
-////#define HINT_ACTION           0x00020000
-////#define HINT_EXTERNAL_CALL    0x00010000
-////#define HINT_CHECK_MODE       0x00008000     // to indicate that the call is test one and no code should be generated
 
 // --- Auxiliary routines ---
 
-//inline bool isCollection(DNode node)
-//{
-//   return (node == nsExpression && node.nextNode()==nsExpression);
-//}
+inline bool isCollection(DNode node)
+{
+   return (node == nsExpression && node.nextNode()==nsExpression);
+}
 
 inline bool isReturnExpression(DNode expr)
 {
@@ -109,18 +109,18 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
    else return 0;
 }
 
-//inline void findUninqueName(_Module* module, ReferenceNs& name)
-//{
-//   size_t pos = getlength(name);
-//   int   index = 0;
-//   ref_t ref = 0;
-//   do {
-//      name[pos] = 0;
-//      name.appendHex(index++);
-//
-//      ref = module->mapReference(name, true);
-//   } while (ref != 0);
-//}
+inline void findUninqueName(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name, true);
+   } while (ref != 0);
+}
 
 // skip the hints and return the first hint node or none
 inline DNode skipHints(DNode& node)
@@ -196,21 +196,21 @@ inline DNode goToLastSymbol(DNode node, Symbol symbol)
 //{
 //   return object.kind == okParams;
 //}
-//
-//inline bool isAssignOperation(DNode target, DNode operation)
-//{
-//   DNode lnode = operation.firstChild().firstChild();
-//
-//   TerminalInfo tTerminal = target.Terminal();
-//   TerminalInfo lTerminal = lnode.Terminal();
-//
-//   if (lTerminal.symbol == tsIdentifier && lTerminal.symbol == tsIdentifier && StringHelper::compare(lTerminal.value, tTerminal.value)) {
-//      if (operation.nextNode() == nsNone)
-//         return true;
-//   }
-//
-//   return false;
-//}
+
+inline bool isAssignOperation(DNode target, DNode operation)
+{
+   DNode lnode = operation.firstChild().firstChild();
+
+   TerminalInfo tTerminal = target.Terminal();
+   TerminalInfo lTerminal = lnode.Terminal();
+
+   if (lTerminal.symbol == tsIdentifier && lTerminal.symbol == tsIdentifier && StringHelper::compare(lTerminal.value, tTerminal.value)) {
+      if (operation.nextNode() == nsNone)
+         return true;
+   }
+
+   return false;
+}
 
 inline bool isImportRedirect(DNode node)
 {
@@ -224,91 +224,91 @@ inline bool isImportRedirect(DNode node)
    return false;
 }
 
-//inline bool isLocal(ObjectInfo info)
-//{
-//   switch (info.kind) {
-//   case okLocal:
-//   case okLocalAddress:
-//      return true;
-//   default:
-//      return false;
-//   }
-//}
-//
-//inline bool IsExprOperator(int operator_id)
-//{
-//   switch(operator_id) {
-//      case ADD_MESSAGE_ID:
-//      case SUB_MESSAGE_ID:
-//      case MUL_MESSAGE_ID:
-//      case DIV_MESSAGE_ID:
-//      case AND_MESSAGE_ID:
-//      case OR_MESSAGE_ID:
-//      case XOR_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//inline bool IsVarOperator(int operator_id)
-//{
-//   switch (operator_id) {
-//   case WRITE_MESSAGE_ID:
-//   case APPEND_MESSAGE_ID:
-//   case REDUCE_MESSAGE_ID:
-//   case INCREASE_MESSAGE_ID:
-//   case SEPARATE_MESSAGE_ID:
-//      return true;
-//   default:
-//      return false;
-//   }
-//}
-//
-//inline bool IsCompOperator(int operator_id)
-//{
-//   switch(operator_id) {
-//      case EQUAL_MESSAGE_ID:
-//      case NOTEQUAL_MESSAGE_ID:
-//      case LESS_MESSAGE_ID:
-//      case NOTLESS_MESSAGE_ID:
-//      case GREATER_MESSAGE_ID:
-//      case NOTGREATER_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//inline bool IsReferOperator(int operator_id)
-//{
-//   return operator_id == REFER_MESSAGE_ID || operator_id == SET_REFER_MESSAGE_ID;
-//}
-//
-//inline bool IsDoubleOperator(int operator_id)
-//{
-//   return operator_id == SET_REFER_MESSAGE_ID;
-//}
-//
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   if (operator_id == NOTEQUAL_MESSAGE_ID) {
-//      operator_id = EQUAL_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTLESS_MESSAGE_ID) {
-//      operator_id = LESS_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTGREATER_MESSAGE_ID) {
-//      operator_id = GREATER_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else return false;
-//}
+inline bool isLocal(ObjectInfo info)
+{
+   switch (info.kind) {
+   case okLocal:
+   case okLocalAddress:
+      return true;
+   default:
+      return false;
+   }
+}
+
+inline bool IsExprOperator(int operator_id)
+{
+   switch(operator_id) {
+      case ADD_MESSAGE_ID:
+      case SUB_MESSAGE_ID:
+      case MUL_MESSAGE_ID:
+      case DIV_MESSAGE_ID:
+      case AND_MESSAGE_ID:
+      case OR_MESSAGE_ID:
+      case XOR_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool IsVarOperator(int operator_id)
+{
+   switch (operator_id) {
+   case WRITE_MESSAGE_ID:
+   case APPEND_MESSAGE_ID:
+   case REDUCE_MESSAGE_ID:
+   case INCREASE_MESSAGE_ID:
+   case SEPARATE_MESSAGE_ID:
+      return true;
+   default:
+      return false;
+   }
+}
+
+inline bool IsCompOperator(int operator_id)
+{
+   switch(operator_id) {
+      case EQUAL_MESSAGE_ID:
+      case NOTEQUAL_MESSAGE_ID:
+      case LESS_MESSAGE_ID:
+      case NOTLESS_MESSAGE_ID:
+      case GREATER_MESSAGE_ID:
+      case NOTGREATER_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool IsReferOperator(int operator_id)
+{
+   return operator_id == REFER_MESSAGE_ID || operator_id == SET_REFER_MESSAGE_ID;
+}
+
+inline bool IsDoubleOperator(int operator_id)
+{
+   return operator_id == SET_REFER_MESSAGE_ID;
+}
+
+inline bool IsInvertedOperator(int& operator_id)
+{
+   if (operator_id == NOTEQUAL_MESSAGE_ID) {
+      operator_id = EQUAL_MESSAGE_ID;
+
+      return true;
+   }
+   else if (operator_id == NOTLESS_MESSAGE_ID) {
+      operator_id = LESS_MESSAGE_ID;
+
+      return true;
+   }
+   else if (operator_id == NOTGREATER_MESSAGE_ID) {
+      operator_id = GREATER_MESSAGE_ID;
+
+      return true;
+   }
+   else return false;
+}
 
 // --- Compiler::ModuleScope ---
 
@@ -337,6 +337,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
+
+   boolType = module->mapSubject(project->resolveForward(BOOL_FORWARD), false);
 
    defaultNs.add(module->Name());
    
@@ -734,22 +736,6 @@ int Compiler::ModuleScope :: getClassFlags(ref_t reference)
    return classInfo.header.flags;
 }
 
-//int Compiler::ModuleScope :: checkMethod(ref_t type_ref, ref_t message, bool& found)
-//{
-//   found = false;
-//
-//   ref_t classReference = typeHints.get(type_ref);
-//
-//   if (classReference != 0) {
-//      ref_t dummy;
-//      MethodType type = checkMethod(classReference, message, found, dummy);
-//      if (type == tpClosed || type == tpSealed)
-//         return type;
-//   }
-//
-//   return tpUnknown;
-//}
-
 int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
 {
    ClassInfo info;
@@ -888,32 +874,32 @@ void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference, boo
    typeHints.add(type_ref, classReference, true);
 }
 
-//bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
-//{
-//   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
-//
-//   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//   metaWriter.writeDWord(type);
-//   metaWriter.writeDWord(message);
-//   metaWriter.writeDWord(role);
-//
-//   if (!extensionHints.exist(message, type)) {
-//      extensionHints.add(message, type);
-//
-//      SubjectMap* typeExtensions = extensions.get(type);
-//      if (!typeExtensions) {
-//         typeExtensions = new SubjectMap();
-//
-//         extensions.add(type, typeExtensions);
-//      }
-//
-//      typeExtensions->add(message, role);
-//
-//      return true;
-//   }
-//   else return false;
-//}
+bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
+{
+   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(type);
+   metaWriter.writeDWord(message);
+   metaWriter.writeDWord(role);
+
+   if (!extensionHints.exist(message, type)) {
+      extensionHints.add(message, type);
+
+      SubjectMap* typeExtensions = extensions.get(type);
+      if (!typeExtensions) {
+         typeExtensions = new SubjectMap();
+
+         extensions.add(type, typeExtensions);
+      }
+
+      typeExtensions->add(message, role);
+
+      return true;
+   }
+   else return false;
+}
 
 // --- Compiler::SourceScope ---
 
@@ -1375,42 +1361,42 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
    else return Scope::mapObject(identifier);
 }
 
-//void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference)
-//{
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      if (StringHelper::compare(terminal, HINT_TYPE)) {
-//         TerminalInfo typeValue = hints.firstChild().Terminal();
-//
-//         type = moduleScope->mapType(typeValue);
-//         if (!type)
-//            raiseError(errUnknownSubject, typeValue);
-//
-//         size = moduleScope->defineTypeSize(type, classReference);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_SIZE)) {
-//         int itemSize = moduleScope->defineTypeSize(type);
-//
-//         TerminalInfo sizeValue = hints.firstChild().Terminal();
-//         if (itemSize < 0 && sizeValue.symbol == tsInteger) {
-//            itemSize = -itemSize;
-//
-//            size = StringHelper::strToInt(sizeValue.value) * itemSize;
-//         }
-//         else if (itemSize < 0 && sizeValue.symbol == tsHexInteger) {
-//            itemSize = -itemSize;
-//
-//            size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
-//         }
-//         else raiseWarning(1, wrnUnknownHint, terminal);
-//      }
-//      else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//      hints = hints.nextNode();
-//   }
-//}
-//
+void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference)
+{
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_TYPE)) {
+         TerminalInfo typeValue = hints.firstChild().Terminal();
+
+         type = moduleScope->mapType(typeValue);
+         if (!type)
+            raiseError(errUnknownSubject, typeValue);
+
+         size = moduleScope->defineTypeSize(type, classReference);
+      }
+      else if (StringHelper::compare(terminal, HINT_SIZE)) {
+         int itemSize = moduleScope->defineTypeSize(type);
+
+         TerminalInfo sizeValue = hints.firstChild().Terminal();
+         if (itemSize < 0 && sizeValue.symbol == tsInteger) {
+            itemSize = -itemSize;
+
+            size = StringHelper::strToInt(sizeValue.value) * itemSize;
+         }
+         else if (itemSize < 0 && sizeValue.symbol == tsHexInteger) {
+            itemSize = -itemSize;
+
+            size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+      }
+      else raiseWarning(1, wrnUnknownHint, terminal);
+
+      hints = hints.nextNode();
+   }
+}
+
 //ref_t Compiler::CodeScope :: getObjectType(ObjectInfo object)
 //{
 //   if (object.kind == okOuterField) {
@@ -1559,17 +1545,17 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // otherwise auto generate the name
-//   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(moduleScope->module, name);
-//
-//   return moduleScope->module->mapReference(name);
-//}
+ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // otherwise auto generate the name
+   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
+
+   findUninqueName(moduleScope->module, name);
+
+   return moduleScope->module->mapReference(name);
+}
 
 void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
 {
@@ -1754,204 +1740,204 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    else return irSuccessfull;
 }
 
-//void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
-//{
-//   _writer.declareSwitchBlock(*scope.tape);
-//
-//   if (switchValue.kind == okAccumulator) {
-//      _writer.pushObject(*scope.tape, switchValue);
-//
-//      switchValue.kind = okBlockLocal;
-//      switchValue.param = 1;
-//   }
-//
-//   DNode option = node.firstChild();
-//   while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
-//      _writer.declareSwitchOption(*scope.tape);
-//
-//      int operator_id = EQUAL_MESSAGE_ID;
-//      if (option == nsBiggerSwitchOption) {
-//         operator_id = GREATER_MESSAGE_ID;
-//      }
-//      else if (option == nsLessSwitchOption) {
-//         operator_id = LESS_MESSAGE_ID;
-//      }
-//
-//      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
-//      openDebugExpression(scope);
-//      ObjectInfo optionValue = compileObject(option.firstChild(), scope, 0);
-//      _writer.loadObject(*scope.tape, optionValue);
-//
-//      bool boxed = false;
-//      boxObject(scope, optionValue, boxed);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, option.firstChild().Terminal());
-//
-//      _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//      _writer.pushObject(*scope.tape, switchValue);
-//
-//      _writer.setMessage(*scope.tape, encodeMessage(0, operator_id, 1));
-//      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//      _writer.callMethod(*scope.tape, 0, 1);
-//
-//      bool mismatch = false;
-//      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, 0);
-//
-//      endDebugExpression(scope);
-//
-//      _writer.jumpIfEqual(*scope.tape, scope.moduleScope->falseReference);
-//
-//      CodeScope subScope(&scope);
-//      DNode thenCode = option.firstChild().nextNode();
-//
-//      //_writer.declareBlock(*scope.tape);
-//
-//      if (thenCode.firstChild().nextNode() != nsNone) {
-//         compileCode(thenCode, subScope, 0);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(thenCode.firstChild(), scope, 0);
-//
-//      _writer.endSwitchOption(*scope.tape);
-//
-//      option = option.nextNode();
-//   }
-//   if (option == nsLastSwitchOption) {
-//      CodeScope subScope(&scope);
-//      DNode thenCode = option.firstChild();
-//
-//      //_writer.declareBlock(*scope.tape);
-//
-//      if (thenCode.firstChild().nextNode() != nsNone) {
-//         compileCode(thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(thenCode.firstChild(), scope, 0);
-//   }
-//
-//   _writer.endSwitchBlock(*scope.tape);
-//}
-//
-//void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo object)
-//{
-//   if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
-//      _writer.saveObject(*scope.tape, object);
-//   }
-//   else if ((object.kind == okOuter)) {
-//      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
-//      _writer.saveObject(*scope.tape, object);
-//   }
-//   else if (object.kind == okUnknown) {
-//      scope.raiseError(errUnknownObject, node.Terminal());
-//   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//}
-//
-//void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
-//{
-//   if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress || variableInfo.kind == okLocalAddress) {
-//      ref_t classReference = 0;
-//      int size = 0;
-//      if (variableInfo.kind == okLocalAddress) {
-//         classReference = variableInfo.extraparam;
-//
-//         size = scope.moduleScope->defineStructSize(classReference);
-//      }
-//      else size = scope.moduleScope->defineTypeSize(variableInfo.extraparam, classReference);
-//
-//      if (size <= 0)
-//         scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//      if (object.kind == okIndexAccumulator) {
-//         if (size == 4) {
-//            _writer.saveInt(*scope.tape, variableInfo);
-//         }
-//         else if ((size == 2 || size == 1) && variableInfo.kind == okLocal) {
-//            _writer.saveInt(*scope.tape, variableInfo);
-//         }
-//         // HOTFIX: assign a float-point numeric result 
-//         else if ((size == 8) && classReference == scope.moduleScope->realReference) {
-//            _writer.saveReal(*scope.tape, variableInfo);
-//         }
-//         else scope.raiseError(errInvalidOperation, node.Terminal());
-//      }
-//      else {
-//         if (size == 4) {
-//            _writer.assignInt(*scope.tape, variableInfo);
-//         }
-//         else if (size == 2) {
-//            _writer.assignShort(*scope.tape, variableInfo);
-//         }
-//         else if (size == 1) {
-//            _writer.assignByte(*scope.tape, variableInfo);
-//         }
-//         else if (size == 8) {
-//            _writer.assignLong(*scope.tape, variableInfo);
-//         }
-//         else scope.raiseError(errInvalidOperation, node.Terminal());
-//      }
-//   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//}
-//
-//void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
-//{
-//   if (!scope.locals.exist(node.Terminal())) {
-//      ref_t type = 0;
-//      ref_t classReference = 0;
-//      int size = 0;
-//      scope.compileLocalHints(hints, type, size, classReference);
-//
-//      int level = scope.newLocal();
-//
-//      if (size > 0) {
-//         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
-//
-//         ObjectInfo primitive(okLocal, 0, type);
-//
-//         if(!allocateStructure(scope, size, primitive))
-//            scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//         // make the reservation permanent
-//         scope.saved = scope.reserved;
-//
-//         _writer.pushObject(*scope.tape, primitive);
-//
-//         if (flags == elDebugDWORD) {
-//            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), level);
-//         }
-//         else if (flags == elDebugQWORD) {
-//            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
-//         }
-//         else if (flags == elDebugReal64) {
-//            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
-//         }
-//         else if (flags == elDebugBytes) {
-//            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
-//         }
-//         else if (flags == elDebugShorts) {
-//            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
-//         }
-//         else if (flags == elDebugIntegers) {
-//            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), level);
-//         }
-//         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
-//      }
-//      else {
-//         _writer.declareVariable(*scope.tape, 0);
-//         _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
-//      }
-//
-//      DNode assigning = node.firstChild();
-//      if (assigning != nsNone) {
-//         compileAssigningExpression(node, assigning, scope, ObjectInfo(okLocal, level, type));
-//
-//         scope.mapLocal(node.Terminal(), level, type);
-//      }
-//      else scope.mapLocal(node.Terminal(), level, type);
-//   }
-//   else scope.raiseError(errDuplicatedLocal, node.Terminal());
-//}
+void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
+{
+   _writer.declareSwitchBlock(*scope.tape);
+
+   if (switchValue.kind == okAccumulator) {
+      _writer.pushObject(*scope.tape, switchValue);
+
+      switchValue.kind = okBlockLocal;
+      switchValue.param = 1;
+   }
+
+   DNode option = node.firstChild();
+   while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
+      _writer.declareSwitchOption(*scope.tape);
+
+      int operator_id = EQUAL_MESSAGE_ID;
+      if (option == nsBiggerSwitchOption) {
+         operator_id = GREATER_MESSAGE_ID;
+      }
+      else if (option == nsLessSwitchOption) {
+         operator_id = LESS_MESSAGE_ID;
+      }
+
+      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
+      openDebugExpression(scope);
+      ObjectInfo optionValue = compileObject(option.firstChild(), scope, 0);
+      _writer.loadObject(*scope.tape, optionValue);
+
+      bool boxed = false;
+      boxObject(scope, optionValue, boxed);
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, option.firstChild().Terminal());
+
+      _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+      _writer.pushObject(*scope.tape, switchValue);
+
+      _writer.setMessage(*scope.tape, encodeMessage(0, operator_id, 1));
+      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+      _writer.callMethod(*scope.tape, 0, 1);
+
+      bool mismatch = false;
+      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, 0);
+
+      endDebugExpression(scope);
+
+      _writer.jumpIfEqual(*scope.tape, scope.moduleScope->falseReference);
+
+      CodeScope subScope(&scope);
+      DNode thenCode = option.firstChild().nextNode();
+
+      //_writer.declareBlock(*scope.tape);
+
+      if (thenCode.firstChild().nextNode() != nsNone) {
+         compileCode(thenCode, subScope, 0);
+      }
+      // if it is inline action
+      else compileRetExpression(thenCode.firstChild(), scope, 0);
+
+      _writer.endSwitchOption(*scope.tape);
+
+      option = option.nextNode();
+   }
+   if (option == nsLastSwitchOption) {
+      CodeScope subScope(&scope);
+      DNode thenCode = option.firstChild();
+
+      //_writer.declareBlock(*scope.tape);
+
+      if (thenCode.firstChild().nextNode() != nsNone) {
+         compileCode(thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(thenCode.firstChild(), scope, 0);
+   }
+
+   _writer.endSwitchBlock(*scope.tape);
+}
+
+void Compiler :: compileAssignment(DNode node, CodeScope& scope, ObjectInfo object)
+{
+   if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
+      _writer.saveObject(*scope.tape, object);
+   }
+   else if ((object.kind == okOuter)) {
+      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
+      _writer.saveObject(*scope.tape, object);
+   }
+   else if (object.kind == okUnknown) {
+      scope.raiseError(errUnknownObject, node.Terminal());
+   }
+   else scope.raiseError(errInvalidOperation, node.Terminal());
+}
+
+void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object)
+{
+   if (variableInfo.kind == okLocal || variableInfo.kind == okFieldAddress || variableInfo.kind == okLocalAddress) {
+      ref_t classReference = 0;
+      int size = 0;
+      if (variableInfo.kind == okLocalAddress) {
+         classReference = variableInfo.extraparam;
+
+         size = scope.moduleScope->defineStructSize(classReference);
+      }
+      else size = scope.moduleScope->defineTypeSize(variableInfo.extraparam, classReference);
+
+      if (size <= 0)
+         scope.raiseError(errInvalidOperation, node.Terminal());
+
+      if (object.kind == okIndexAccumulator) {
+         if (size == 4) {
+            _writer.saveInt(*scope.tape, variableInfo);
+         }
+         else if ((size == 2 || size == 1) && variableInfo.kind == okLocal) {
+            _writer.saveInt(*scope.tape, variableInfo);
+         }
+         // HOTFIX: assign a float-point numeric result 
+         else if ((size == 8) && classReference == scope.moduleScope->realReference) {
+            _writer.saveReal(*scope.tape, variableInfo);
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
+      }
+      else {
+         if (size == 4) {
+            _writer.assignInt(*scope.tape, variableInfo);
+         }
+         else if (size == 2) {
+            _writer.assignShort(*scope.tape, variableInfo);
+         }
+         else if (size == 1) {
+            _writer.assignByte(*scope.tape, variableInfo);
+         }
+         else if (size == 8) {
+            _writer.assignLong(*scope.tape, variableInfo);
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
+      }
+   }
+   else scope.raiseError(errInvalidOperation, node.Terminal());
+}
+
+void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
+{
+   if (!scope.locals.exist(node.Terminal())) {
+      ref_t type = 0;
+      ref_t classReference = 0;
+      int size = 0;
+      scope.compileLocalHints(hints, type, size, classReference);
+
+      int level = scope.newLocal();
+
+      if (size > 0) {
+         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
+
+         ObjectInfo primitive(okLocal, 0, 0, type);
+
+         if(!allocateStructure(scope, size, primitive))
+            scope.raiseError(errInvalidOperation, node.Terminal());
+
+         // make the reservation permanent
+         scope.saved = scope.reserved;
+
+         _writer.pushObject(*scope.tape, primitive);
+
+         if (flags == elDebugDWORD) {
+            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugQWORD) {
+            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugReal64) {
+            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugBytes) {
+            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugShorts) {
+            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else if (flags == elDebugIntegers) {
+            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), level);
+         }
+         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+      }
+      else {
+         _writer.declareVariable(*scope.tape, 0);
+         _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+      }
+
+      DNode assigning = node.firstChild();
+      if (assigning != nsNone) {
+         compileAssigningExpression(node, assigning, scope, ObjectInfo(okLocal, level, 0, type));
+
+         scope.mapLocal(node.Terminal(), level, type);
+      }
+      else scope.mapLocal(node.Terminal(), level, type);
+   }
+   else scope.raiseError(errDuplicatedLocal, node.Terminal());
+}
 
 ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 {
@@ -2054,1515 +2040,1514 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    return object;
 }
 
-//ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
-//{
-//   ObjectInfo result;
-//
-//   DNode member = objectNode.firstChild();
-//   switch (member)
-//   {
-//      //case nsRetStatement:
-//      case nsNestedClass:
-//         if (objectNode.Terminal() != nsNone) {
-//            result = compileNestedExpression(objectNode, scope, mode);
-//            break;
-//         }
-//      case nsSubCode:
-//      case nsSubjectArg:
-//      case nsMethodParameter:
-//         result = compileNestedExpression(member, scope, mode);
-//         break;
-//      case nsInlineExpression:
-//         result = compileNestedExpression(objectNode, scope, mode | HINT_ACTION);
-//         break;
-//      case nsExpression:
-//         if (isCollection(member)) {
-//            TerminalInfo parentInfo = objectNode.Terminal();
-//            // if the parent class is defined
-//            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
-//               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
-//               if (vmtReference == 0)
-//                  scope.raiseError(errUnknownObject, parentInfo);
-//
-//               result = compileCollection(member, scope, mode, vmtReference);
-//            }
-//            else result = compileCollection(member, scope, mode);
-//         }
-//         else result = compileExpression(member, scope, mode);
-//         break;
-//      case nsMessageReference:
-//         result = compileMessageReference(member, scope, mode);
-//         break;
-//      default:
-//         result = compileTerminal(objectNode, scope, mode);
-//   }
-//
-//   return result;
-//}
-//
-//ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int mode)
-//{
-//   DNode arg = node.firstChild();
-//
-//   IdentifierString message;
-//
-//   // reserve place for param counter
-//   message.append('0');
-//   message.append('#');
-//
-//   ObjectInfo retVal;
-//   if (arg == nsNone) {
-//      ref_t verb_id = _verbs.get(node.Terminal().value);
-//      if (verb_id != 0) {
-//         retVal.kind = okVerbConstant;
-//
-//         message.append(verb_id + 0x20);
-//      }
-//      else {
-//         retVal.kind = okSignatureConstant;
-//
-//         message.append(0x20);
-//         message.append('&');
-//
-//         scope.moduleScope->mapSubject(node.Terminal(), message);
-//      }
-//   }
-//   else {
-//      int count = 0;
-//      if (!findSymbol(arg, nsSizeValue)) {
-//         retVal.kind = okSignatureConstant;
-//
-//         message.append(0x20);
-//         message.append('&');
-//         scope.moduleScope->mapSubject(arg.Terminal(), message);
-//      }
-//      else {
-//         retVal.kind = okMessageConstant;
-//
-//         ref_t verb_id = _verbs.get(arg.Terminal());
-//         if (verb_id == 0) {
-//            message.append(EVAL_MESSAGE_ID + 0x20);
-//            message.append('&');
-//            scope.moduleScope->mapSubject(arg.Terminal(), message);
-//         }
-//         else message.append(verb_id + 0x20);
-//      }
-//
-//      arg = arg.nextNode();
-//
-//      // if method has argument list
-//      while (arg == nsSubjectArg) {
-//         TerminalInfo subject = arg.Terminal();
-//
-//         message.append('&');
-//         ref_t subjRef = scope.moduleScope->mapSubject(subject, message);
-//         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//            count = OPEN_ARG_COUNT;
-//         }
-//
-//         arg = arg.nextNode();
-//      }
-//
-//      if (arg == nsSizeValue) {
-//         TerminalInfo size = arg.Terminal();
-//         if (size == tsInteger) {
-//            count += StringHelper::strToInt(size.value);
-//            if (count > 0x0F)
-//               scope.raiseError(errNotApplicable, size);
-//         }
-//         else scope.raiseError(errInvalidOperation, size);
-//
-//         // define the number of parameters
-//         message[0] = message[0] + count;
-//      }
-//   }
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   _writer.pushObject(*scope.tape, object);
-//   object.kind = okCurrent;
-//
-//   return object;
-//}
-//
-//bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode)
-//{
-//   //if (test(mode, HINT_DIRECT_CALL) && resolveStrongType(type_ref)) {
-//   //   return false;
-//   //}
-//   if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam || object.kind == okFieldAddress) && object.extraparam != 0) {
-//      ref_t wrapper = 0;
-//      int size = scope.moduleScope->defineTypeSize(object.extraparam, wrapper);
-//      if (size != 0) {
-//         if (test(mode, HINT_KNOWN_CALL) && argType != 0) {
-//            // if target is known and supports primitive type, boxing could be skipped
-//            if (wrapper == scope.moduleScope->resolveStrongType(argType)) {
-//               return false;
-//            }
-//            // if the object can be implicitly typecasted to the target, boxing could be skipped
-//            else if (size == scope.moduleScope->defineTypeSize(argType)) {
-//               bool mismatch = false;
-//               compileTypecast(scope, object, argType, mismatch, HINT_CHECK_MODE);
-//
-//               if (!mismatch)
-//                  return false;
-//            }
-//         }
-//
-//         return true;
-//      }
-//      else return false;
-//   }
-//   else if (object.kind == okLocalAddress) {
-//      if (test(mode, HINT_KNOWN_CALL) && argType != 0 && scope.moduleScope->resolveStrongType(argType) == object.extraparam) {
-//         return false;
-//      }
-//      else return true;
-//   }
-//   else if (object.kind == okIndexAccumulator || object.kind == okFieldAddress) {
-//      return true;
-//   }
-//   else if (object.kind == okParams) {
-//      if (test(mode, HINT_KNOWN_CALL) && argType != 0 && scope.moduleScope->resolveStrongType(argType) == scope.moduleScope->paramsReference) {
-//         return false;
-//      }
-//      else return true;
-//   }
-//   else return false;
-//}
-//
-//ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed)
-//{
-//   // NOTE: boxing should be applied only for the typed local parameter
-//   if (object.kind == okParams) {
-//      boxed = true;
-//
-//      _writer.boxArgList(*scope.tape, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)) | mskVMTRef);
-//   }
-//   else if (object.kind == okSubject) {
-//      boxed = true;
-//
-//      _writer.loadObject(*scope.tape, ObjectInfo(okLocalAddress, object.param));
-//      _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(SIGNATURE_FORWARD)) | mskVMTRef);
-//
-//      return ObjectInfo(okAccumulator, scope.moduleScope->signatureReference);
-//   }
-//   else if (object.kind == okIndexAccumulator) {
-//      boxed = true;
-//
-//      allocateStructure(scope, 0, object);
-//      _writer.saveInt(*scope.tape, object);
-//      ref_t wrapperRef = scope.moduleScope->intReference;
-//      _writer.boxObject(*scope.tape, 4, wrapperRef | mskVMTRef, true);
-//   }
-//   else if (object.kind == okLocalAddress) {
-//      int size = scope.moduleScope->defineStructSize(object.extraparam);
-//      if (size != 0) {
-//         boxed = true;
-//
-//         _writer.boxObject(*scope.tape, size, object.extraparam | mskVMTRef, true);
-//      }
-//   }
-//   else if (object.kind == okFieldAddress ||
-//      ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam != 0))
-//   {
-//      ref_t classReference = 0;
-//      int size = scope.moduleScope->defineTypeSize(object.extraparam, classReference);
-//      if (size != 0) {
-//         boxed = true;
-//
-//         _writer.boxObject(*scope.tape, size, classReference | mskVMTRef);
-//      }
-//   }
-//
-//   return object;
-//}
-//
-//ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisParam, int mode)
-//{
-//   bool presavedAcc = thisParam.kind == okAccumulator;
-//
-//   int offset = field.param;
-//   ref_t classReference = 0;
-//   ref_t type = field.extraparam;
-//   int size = scope.moduleScope->defineTypeSize(field.extraparam, classReference);
-//
-//   if (test(mode, HINT_HEAP_MODE) || size > 8) {
-//      if (presavedAcc)
-//         _writer.pushObject(*scope.tape, thisParam);
-//
-//      // otherwise create a dynamic object and copy the content
-//      _writer.newStructure(*scope.tape, size, classReference);
-//      _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      if (presavedAcc) {
-//         _writer.popObject(*scope.tape, thisParam);
-//      }
-//      else _writer.loadObject(*scope.tape, thisParam);
-//
-//      field = ObjectInfo(okAccumulator);
-//   }
-//   else {
-//      allocateStructure(scope, 0, field, presavedAcc);
-//
-//      _writer.loadBase(*scope.tape, field);
-//      _writer.loadObject(*scope.tape, thisParam);
-//   }
-//
-//   if (size == 2) {
-//      _writer.copyShort(*scope.tape, offset);
-//   }
-//   else if (size == 4) {
-//      _writer.copyInt(*scope.tape, offset);
-//   }
-//   else if (size == 8) {
-//      _writer.copyStructure(*scope.tape, offset, size);
-//      _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-//   }
-//   else if (size > 0) {
-//      _writer.copyStructure(*scope.tape, field.param, size);
-//      _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-//   }
-//
-//   return ObjectInfo(okAccumulator, field.extraparam, type);
-//}
-//
-//void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count)
-//{
-//   if (arg == nsMessageParameter) {
-//      count++;
-//
-//      ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~(HINT_DIRECT_ORDER | HINT_KNOWN_CALL));
-//
-//      _writer.loadObject(*scope.tape, param);
-//
-//      if (checkIfBoxingRequired(scope, param, type_ref, mode)) {
-//         bool boxed = false;
-//         boxObject(scope, param, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().Terminal());
-//      }
-//
-//      if (type_ref != 0) {
-//         // if type is mismatch - typecast
-//         bool mismatch = false;
-//         compileTypecast(scope, param, type_ref, mismatch, mode);
-//         if (mismatch)
-//            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
-//      }
-//
-//      if (test(mode, HINT_DIRECT_ORDER)) {
-//         _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//      }
-//      else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
-//
-//      arg = arg.nextNode();
-//   }
-//}
-//
-//ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& mode)
-//{
-//   bool             simpleParameters = true;
-//
-//   TerminalInfo     verb = node.Terminal();
-//   IdentifierString signature;
-//   bool             first = true;
-//
-//   ref_t            verb_id = _verbs.get(verb.value);
-//   int              paramCount = 0;
-//   DNode            arg = node.firstChild();
-//
-//   if (verb_id == 0) {
-//      size_t id = scope.moduleScope->mapSubject(verb, signature);
-//
-//      // if followed by argument list - it is EVAL verb
-//      if (arg != nsNone) {
-//         // HOT FIX : strong types cannot be used as a custom verb with a parameter
-//         if (scope.moduleScope->typeHints.exist(id))
-//            scope.raiseError(errStrongTypeNotAllowed, verb);
-//
-//         verb_id = EVAL_MESSAGE_ID;
-//
-//         first = false;
-//      }
-//      // otherwise it is GET message
-//      else verb_id = GET_MESSAGE_ID;
-//   }
-//
-//   // if message has generic argument list
-//   while (arg == nsMessageParameter) {
-//      count++;
-//      paramCount++;
-//
-//      if (arg.firstChild().firstChild() != nsNone)
-//         simpleParameters = false;
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   // if message has named argument list
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      // if it is an open argument list
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
-//
-//      arg = arg.nextNode();
-//
-//      // skip an argument
-//      if (arg == nsMessageParameter) {
-//         // if it is an open argument list
-//         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//            // if a generic argument is used with an open argument list
-//            simpleParameters = false;
-//
-//            // check if argument list should be unboxed
-//            DNode param = arg.firstChild();
-//
-//            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-//               mode |= HINT_OARG_UNBOXING;
-//            }
-//            else {
-//               // terminator
-//               count += 1;
-//
-//               while (arg != nsNone) {
-//                  count++;
-//
-//                  arg = arg.nextNode();
-//               }
-//            }
-//            paramCount += OPEN_ARG_COUNT;
-//            if (paramCount > 0x0F)
-//               scope.raiseError(errNotApplicable, subject);
-//         }
-//         else {
-//            count++;
-//            paramCount++;
-//
-//            if (paramCount >= OPEN_ARG_COUNT)
-//               scope.raiseError(errTooManyParameters, verb);
-//
-//            if (arg.firstChild().firstChild() != nsNone)
-//               simpleParameters = false;
-//
-//            arg = arg.nextNode();
-//         }
-//      }
-//   }
-//
-//   // if signature is presented
-//   ref_t sign_id = 0;
-//   if (!emptystr(signature)) {
-//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//   }
-//
-//   if (simpleParameters)
-//      mode |= HINT_DIRECT_ORDER;
-//
-//   // create a message id
-//   return encodeMessage(sign_id, verb_id, paramCount);
-//}
-//
-//void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int mode)
-//{
-//   if (arg == nsMessageParameter) {
-//      compileDirectMessageParameters(arg.nextNode(), scope, mode);
-//
-//      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
-//
-//      // box the object if required
-//      if (checkIfBoxingRequired(scope, param, 0, 0)) {
-//         _writer.loadObject(*scope.tape, param);
-//
-//         bool boxed = false;
-//         boxObject(scope, param, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
-//
-//         _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//      }
-//      else _writer.pushObject(*scope.tape, param);
-//   }
-//   else if (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      arg = arg.nextNode();
-//
-//      // skip an argument without a parameter value
-//      while (arg == nsSubjectArg) {
-//         subject = arg.Terminal();
-//
-//         arg = arg.nextNode();
-//      }
-//
-//      int paramMode = mode & (HINT_KNOWN_CALL | HINT_DIRECT_ORDER);
-//
-//      ref_t type_ref = scope.moduleScope->mapType(subject);
-//
-//      compileDirectMessageParameters(arg.nextNode(), scope, mode);
-//
-//      size_t dummy = 0;
-//      compileMessageParameter(arg, subject, scope, type_ref, paramMode, dummy);
-//   }
-//}
-//
-//void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, int mode, size_t& stackToFree)
-//{
-//   size_t count = 0;
-//
-//   // if message has generic argument list
-//   while (arg == nsMessageParameter) {
-//      count++;
-//
-//      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
-//      _writer.loadObject(*scope.tape, param);
-//
-//      // box the object if required
-//      bool boxed = false;
-//      boxObject(scope, param, boxed);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().Terminal());
-//
-//      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   // if message has named argument list
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      arg = arg.nextNode();
-//
-//      // skip an argument without a parameter value
-//      while (arg == nsSubjectArg) {
-//         subject = arg.Terminal();
-//
-//         arg = arg.nextNode();
-//      }
-//
-//      int paramMode = mode & HINT_KNOWN_CALL;
-//      ref_t type_ref = scope.moduleScope->mapType(subject);
-//
-//      if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(type_ref, scope.moduleScope->paramsReference)) {
-//         if (!scope.moduleScope->typeHints.exist(type_ref, scope.moduleScope->paramsReference))
-//            scope.raiseError(errNotApplicable, subject);
-//
-//         stackToFree = 1;
-//         while (arg != nsNone) {
-//            count++;
-//            stackToFree++;
-//
-//            ObjectInfo retVal = compileExpression(arg, scope, 0);
-//            _writer.loadObject(*scope.tape, retVal);
-//
-//            // box object if required
-//            bool boxed = false;
-//            boxObject(scope, retVal, boxed);
-//            if (boxed)
-//               scope.raiseWarning(4, wrnBoxingCheck, arg.FirstTerminal());
-//
-//            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
-//
-//            arg = arg.nextNode();
-//         }
-//      }
-//      else compileMessageParameter(arg, subject, scope, type_ref, paramMode, count);
-//   }
-//}
-//
-//void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree)
-//{
-//   // unbox the argument list
-//   DNode args = goToLastSymbol(node, nsMessageParameter);
-//   ObjectInfo list = compileObject(args.firstChild(), scope, mode);
-//   _writer.loadObject(*scope.tape, list);
-//
-//   // unbox the argument list and return the object saved before the list
-//   _writer.unboxArgList(*scope.tape);
-//
-//   // reserve the place for target and generic message parameters if available and save the target
-//   _writer.declareArgumentList(*scope.tape, count + 1);
-//   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
-//
-//   count = 0;
-//   // if message has generic argument list
-//   DNode arg = node;
-//   while (arg == nsMessageParameter && arg != args) {
-//      count++;
-//
-//      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
-//      _writer.loadObject(*scope.tape, param);
-//
-//      // box the object if required
-//      bool boxed = false;
-//      boxObject(scope, param, boxed);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
-//
-//      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   // indicate that the stack to be freed cannot be defined at compile-time
-//   stackToFree = (size_t)-1;
-//}
-//
-//ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease)
-//{
-//   size_t count = 0;
-//   ref_t messageRef = mapMessage(node, scope, count, mode);
-//
-//   object = compileMessageParameters(node, scope, object, messageRef, count, mode, spaceToRelease);
-//
-//   return messageRef;
-//}
-//
-//ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
-//{
-//   // check typed extension if the type available
-//   ref_t type = 0;
-//   ref_t extRef = 0;
-//
-//   if (getType(object) != 0 && scope.moduleScope->extensionHints.exist(messageRef, getType(object))) {
-//      type = getType(object);
-//   }
-//   // if class reference available - select the possible type
-//   else if((object.kind == okAccumulator || object.kind == okConstantSymbol) && object.param != 0) {
-//      if (scope.moduleScope->extensionHints.exist(messageRef)) {
-//         SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
-//         while (!it.Eof()) {
-//            if (it.key() == messageRef) {
-//               if (scope.moduleScope->typeHints.exist(*it, object.param)) {
-//                  type = *it;
-//
-//                  break;
-//               }
-//            }
-//
-//            it++;
-//         }
-//      }
-//   }
-//
-//   if (type != 0) {
-//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
-//
-//      if (typeExtensions)
-//         extRef = typeExtensions->get(messageRef);
-//   }
-//
-//   // check generic extension
-//   if (extRef == 0) {
-//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
-//
-//      if (typeExtensions)
-//         extRef = typeExtensions->get(messageRef);
-//   }
-//
-//   else return extRef;
-//}
-//
-//ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t messageRef, int count, int& mode, size_t& spaceToRelease)
-//{
-//   ObjectInfo retVal = object;
-//
-//   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
-//   if (object.kind == okAccumulator) {
-//      mode &= ~HINT_DIRECT_ORDER;
-//   }
-//   else if (count == 1 && !test(mode, HINT_OARG_UNBOXING)) {
-//      mode |= HINT_DIRECT_ORDER;
-//   }
-//
-//   MethodType methodInfo = tpUnknown;
-//   // use dynamic extension if exists
-//   ref_t roleRef = mapExtension(scope, messageRef, object);
-//   if (roleRef != 0) {
-//      methodInfo = tpSealed;
-//
-//      retVal = ObjectInfo(okConstantRole, roleRef, getType(object));
-//   }
-//   else if (object.kind == okConstantSymbol) {
-//      methodInfo = scope.moduleScope->checkMethod(object.param, messageRef);
-//   }
-//   else if (object.kind == okConstantClass) {
-//      methodInfo = scope.moduleScope->checkMethod(object.extraparam, messageRef);
-//   }
-//   else if (object.kind == okAccumulator && object.param != 0) {
-//      methodInfo = scope.moduleScope->checkMethod(object.param, messageRef);
-//   }
-//   else if (object.kind == okThisParam) {
-//      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//      if (classScope->info.methods.exist(messageRef)) {
-//         if (test(classScope->info.header.flags, elSealed)) {
-//            methodInfo = tpSealed;
-//         }
-//         else if(test(classScope->info.header.flags, elClosed)) {
-//            methodInfo = tpClosed;
-//         }
-//         else methodInfo = tpNormal;
-//      }
-//   }
-//   else if (object.kind == okSuper) {
-//      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//      if (scope.moduleScope->checkMethod(classScope->info.header.parentRef, messageRef) != tpUnknown) {
-//         methodInfo = tpClosed;
-//      }
-//   }
-//   else methodInfo = scope.moduleScope->checkTypeMethod(getType(object), messageRef);
-//
-//   if (methodInfo != tpUnknown)
-//      mode |= HINT_KNOWN_CALL;
-//
-//   // if only simple arguments are used we could directly save parameters
-//   if (test(mode, HINT_DIRECT_ORDER)) {
-//      compileDirectMessageParameters(node.firstChild(), scope, mode);
-//
-//      _writer.loadObject(*scope.tape, object);
-//
-//      if (checkIfBoxingRequired(scope, object, getType(object), mode)) {
-//         // if the object is stack allocated - box it
-//         bool boxed = false;
-//         boxObject(scope, object, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//      }
-//
-//      _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//   }
-//   // if open argument list should be unboxed
-//   else if (test(mode, HINT_OARG_UNBOXING)) {
-//      // save the target
-//      _writer.loadObject(*scope.tape, object);
-//
-//      // box object if required
-//      bool boxed = false;
-//      object = boxObject(scope, object, boxed);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//
-//      _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~(HINT_OARG_UNBOXING), count, spaceToRelease);
-//   }
-//   // otherwise the space should be allocated first,
-//   // to garantee the correct order of parameter evaluation
-//   else {
-//      _writer.declareArgumentList(*scope.tape, count + 1);
-//      _writer.loadObject(*scope.tape, object);
-//
-//      if (checkIfBoxingRequired(scope, object, getType(object), mode)) {
-//         //scope.raiseWarning(wrnBoxingCheck, node.Terminal());
-//
-//         // if the object is stack allocated - box it
-//         bool boxed = false;
-//         boxObject(scope, object, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//      }
-//
-//      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
-//
-//      compilePresavedMessageParameters(node.firstChild(), scope, mode, spaceToRelease);
-//   }
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
-//{
-//   _writer.loadObject(*scope.tape, object);
-//
-//   DNode elsePart = node.select(nsElseOperation);
-//   if (elsePart != nsNone) {
-//      _writer.declareThenElseBlock(*scope.tape);
-//      compileBranching(node, scope, object, operator_id, 0);
-//      _writer.declareElseBlock(*scope.tape);
-//      compileBranching(elsePart, scope, object, 0, 0); // for optimization, the condition is checked only once
-//      _writer.endThenBlock(*scope.tape);
-//   }
-//   else if (test(mode, HINT_LOOP)) {
-//      compileBranching(node, scope, object, operator_id, HINT_LOOP);
-//      _writer.jump(*scope.tape, true);
-//   }
-//   else {
-//      _writer.declareThenBlock(*scope.tape);
-//      compileBranching(node, scope, object, operator_id, 0);
-//      _writer.endThenBlock(*scope.tape);
-//   }
-//
-//   return ObjectInfo(okAccumulator, 0);
-//}
-//
-//int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand)
-//{
-//   if (operand.kind == okIntConstant) {
-//      return elDebugDWORD;
-//   }
-//   else if (operand.kind == okLongConstant) {
-//      return elDebugQWORD;
-//   }
-//   else if (operand.kind == okRealConstant) {
-//      return elDebugReal64;
-//   }
-//   else if (operand.kind == okAccumulator && operand.param != 0) {
-//      return moduleScope.getClassFlags(operand.param) & elDebugMask;
-//   }
-//   else if (operand.kind == okUnknown) {
-//      return 0;
-//   }
-//   else if (operand.kind == okConstantSymbol) {
-//      return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
-//   }
-//   else return moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam)) & elDebugMask;
-//}
-//
-//int Compiler :: mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand)
-//{
-//   int flags = 0;
-//
-//   if (operand.kind == okAccumulator && operand.param != 0) {
-//      flags = moduleScope.getClassFlags(operand.param);
-//   }
-//   else flags = moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam));
-//
-//   // read only classes cannot be used for variable operations
-//   if (test(flags, elReadOnlyRole))
-//      flags = 0;
-//
-//   return flags & elDebugMask;
-//}
-//
-//bool Compiler::compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   int lflag = mapInlineOperandType(*moduleScope, loperand);
-//   int rflag = mapInlineOperandType(*moduleScope, roperand);
-//
-//   if (lflag == 0 || lflag != rflag) {
-//      return false;
-//   }
-//
-//   bool assignMode = test(mode, HINT_ASSIGN_MODE);
-//
-//   // check
-//   if (lflag == elDebugDWORD) {
-//      result.param = moduleScope->intReference;
-//   }
-//   else if (lflag == elDebugQWORD) {
-//      result.param = moduleScope->longReference;
-//   }
-//   else if (operator_id == AND_MESSAGE_ID || operator_id == OR_MESSAGE_ID || operator_id == XOR_MESSAGE_ID) {
-//      return false;
-//   }
-//   else if (lflag == elDebugReal64) {
-//      result.param = moduleScope->realReference;
-//   }
-//   else return false;
-//
-//   //result.extraparam =
-//
-//   if (assignMode) {
-//      _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      result.kind = okIdle;
-//   }
-//   else {
-//      allocateStructure(scope, 0, result);
-//      _writer.loadBase(*scope.tape, result);
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      if (lflag == elDebugDWORD) {
-//         _writer.assignInt(*scope.tape, ObjectInfo(okBase));
-//      }
-//      else _writer.assignLong(*scope.tape, ObjectInfo(okBase));
-//
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//   }
-//
-//   if (lflag == elDebugDWORD) {
-//      _writer.doIntOperation(*scope.tape, operator_id);
-//   }
-//   else if (lflag == elDebugQWORD) {
-//      _writer.doLongOperation(*scope.tape, operator_id);
-//   }
-//   else if (lflag == elDebugReal64) {
-//      _writer.doRealOperation(*scope.tape, operator_id);
-//   }
-//
-//   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-//
-//   return true;
-//}
-//
-//bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   int lflag = mapInlineTargetOperandType(*moduleScope, loperand);
-//   int rflag = mapInlineOperandType(*moduleScope, roperand);
-//
-//   if (lflag == 0 || lflag != rflag) {
-//      return false;
-//   }
-//
-//   // check
-//   if (lflag == elDebugDWORD) {
-//      result.param = moduleScope->intReference;
-//   }
-//   else if (lflag == elDebugQWORD) {
-//      result.param = moduleScope->longReference;
-//   }
-//   else if (lflag == elDebugReal64) {
-//      result.param = moduleScope->realReference;
-//   }
-//   else return false;
-//
-//   _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//   result.kind = okIdle;
-//
-//   if (lflag == elDebugDWORD) {
-//      _writer.doIntOperation(*scope.tape, operator_id);
-//   }
-//   else if (lflag == elDebugQWORD) {
-//      _writer.doLongOperation(*scope.tape, operator_id);
-//   }
-//   else if (lflag == elDebugReal64) {
-//      _writer.doRealOperation(*scope.tape, operator_id);
-//   }
-//
-//   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-//
-//   return true;
-//}
-//
-//bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool& invertMode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   int lflag = mapInlineOperandType(*moduleScope, loperand);
-//   int rflag = mapInlineOperandType(*moduleScope, roperand);
-//
-//   if (lflag == 0 || lflag != rflag) {
-//      return false;
-//   }
-//
-//   if (operator_id == GREATER_MESSAGE_ID) {
-//      _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      operator_id = LESS_MESSAGE_ID;
-//   }
-//   else {
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//      _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//   }
-//
-//   if (lflag == elDebugDWORD) {
-//      _writer.doIntOperation(*scope.tape, operator_id);
-//   }
-//   else if (lflag == elDebugQWORD) {
-//      _writer.doLongOperation(*scope.tape, operator_id);
-//   }
-//   else if (lflag == elDebugReal64) {
-//      _writer.doRealOperation(*scope.tape, operator_id);
-//   }
-//   //else if (lflag == elDebugChars) {
-//   //   _writer.doLiteralOperation(*scope.tape, operator_id);
-//   //}
-//   else return false;
-//
-//   if (invertMode) {
-//       _writer.selectByIndex(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
-//
-//       invertMode = false;
-//   }
-//   else _writer.selectByIndex(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
-//
-//   result.extraparam = moduleScope->boolType;
-//
-//   return true;
-//}
-//
-//bool Compiler::compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   int lflag = mapInlineOperandType(*moduleScope, loperand);
-//   int rflag = mapInlineOperandType(*moduleScope, roperand);
-//   int rflag2 = mapInlineOperandType(*moduleScope, roperand2);
-//
-//   if (operator_id == SET_REFER_MESSAGE_ID) {
-//      if (lflag == elDebugIntegers && rflag == elDebugDWORD && rflag2 == elDebugDWORD) {
-//         _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         _writer.doIntArrayOperation(*scope.tape, operator_id);
-//      }
-//      //else if (lflag == elDebugChars && rflag == elDebugDWORD && rflag2 == elDebugDWORD) {
-//      //   _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//      //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      //   _writer.doCharArrayOperation(*scope.tape, operator_id);
-//      //}
-//      else return false;
-//   }
-//   else {
-//      if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
-//         result.param = moduleScope->intReference;
-//
-//         allocateStructure(scope, 0, result);
-//         _writer.loadBase(*scope.tape, result);
-//         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         _writer.doIntArrayOperation(*scope.tape, operator_id);
-//      }
-//      else if (loperand.kind == okParams && rflag == elDebugDWORD) {
-//         _writer.popObject(*scope.tape, ObjectInfo(okBase));
-//         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         _writer.doArrayOperation(*scope.tape, operator_id);
-//      }
-//      //else if (lflag == elDebugChars && rflag == elDebugDWORD) {
-//      //   result.param = moduleScope->charReference;
-//
-//      //   allocateStructure(scope, 0, result);
-//      //   _writer.loadBase(*scope.tape, result);
-//      //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//      //   _writer.doCharArrayOperation(*scope.tape, operator_id);
-//      //}
-//      else return false;
-//   }
-//
-//   ////if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
-//   ////   if (operator_id == SET_REFER_MESSAGE_ID && rflag2 == elDebugDWORD) {
-//   ////   }
-//   ////   else return false;
-//
-//   ////   if (rflag2 == 0 || rflag2 == elDebugDWORD) {
-//
-//   ////   }
-//   ////}
-//
-//   ////if (loperand.kind != okParams || rflag != elDebugDWORD)
-//   ////   return false;
-//
-//   ////_writer.popObject(*scope.tape, ObjectInfo(okBase));
-//   ////_writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//   ////_writer.doArrayOperation(*scope.tape, operator_id);
-//
-//   return true;
-//}
-//
-//ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   ObjectInfo retVal(okAccumulator);
-//
-//   TerminalInfo operator_name = node.Terminal();
-//   int operator_id = _operators.get(operator_name);
-//
-//   // if it is branching operators
-//   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-//      return compileBranchingOperator(node, scope, object, mode, operator_id);
-//   }
-//
-//   recordDebugStep(scope, operator_name, dsStep);
-//   openDebugExpression(scope);
-//
-//   // HOTFIX : recognize SET_REFER_MESSAGE_ID
-//   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
-//      operator_id = SET_REFER_MESSAGE_ID;
-//
-//   bool dblOperator = IsDoubleOperator(operator_id);
-//   bool notOperator = IsInvertedOperator(operator_id);
-//
-//   ObjectInfo operand;
-//   ObjectInfo operand2;
-//
-//   // if it is comparing with nil
-//   if (object.kind == okNil) {
-//      // if operation with $nil
-//      operand = compileExpression(node, scope, 0);
-//
-//      _writer.loadObject(*scope.tape, operand);
-//
-//      if (notOperator) {
-//         _writer.selectByAcc(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
-//      }
-//      else _writer.selectByAcc(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
-//      
-//      return ObjectInfo(okAccumulator, 0, scope.moduleScope->boolType);
-//   }
-//
-//   // if the operation parameters can be compiled directly
-//   if (!dblOperator && object.kind != okAccumulator) {
-//      operand = compileExpression(node, scope, 0);
-//
-//      _writer.pushObject(*scope.tape, operand);
-//      _writer.pushObject(*scope.tape, object);
-//   }
-//   else {
-//      _writer.declareArgumentList(*scope.tape, dblOperator ? 3 : 2);
-//
-//      _writer.loadObject(*scope.tape, object);
-//      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//
-//      if (dblOperator) {
-//         operand2 = compileExpression(node.nextNode().firstChild(), scope, 0);
-//         _writer.loadObject(*scope.tape, operand2);
-//
-//         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
-//      }
-//
-//      operand = compileExpression(node, scope, 0);
-//      _writer.loadObject(*scope.tape, operand);
-//      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
-//   }
-//
-//   //recordStep(scope, node.Terminal(), dsProcedureStep);
-//
-//   if (IsExprOperator(operator_id) && compileInlineArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
-//      // if inline arithmetic operation is implemented
-//      // do nothing
-//   }
-//   else if (IsVarOperator(operator_id) && compileInlineVarArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
-//      // if inline referring operation is implemented
-//      // do nothing
-//   }
-//   else if (IsCompOperator(operator_id) && compileInlineComparisionOperator(scope, operator_id, object, operand, retVal, notOperator)) {
-//      // if inline comparision operation is implemented
-//      // do nothing
-//   }
-//   else if (IsReferOperator(operator_id) && compileInlineReferOperator(scope, operator_id, object, operand, operand2, retVal)) {
-//      // if inline referring operation is implemented
-//      // do nothing
-//   }
-//   else {
-//      // box operands if necessary
-//      if (checkIfBoxingRequired(scope, object, 0, 0)) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//
-//         bool boxed = false;
-//         object = boxObject(scope, object, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, node.Terminal());
-//
-//         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//      }
-//      if (checkIfBoxingRequired(scope, operand, 0, 0)) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
-//
-//         bool boxed = false;
-//         operand = boxObject(scope, operand, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, node.firstChild().Terminal());
-//
-//         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
-//      }
-//      if (operand2.kind != okUnknown && checkIfBoxingRequired(scope, operand2, 0, 0)) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
-//
-//         bool boxed = false;
-//         operand2 = boxObject(scope, operand2, boxed);
-//         if (boxed)
-//            scope.raiseWarning(4, wrnBoxingCheck, node.nextNode().firstChild().FirstTerminal());
-//
-//         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
-//      }
-//
-//      int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
-//
-//      compileMessage(node, scope, object, message_id, 0);
-//   }
-//
-//   if (notOperator) {
-//      ModuleScope* moduleScope = scope.moduleScope;
-//
-//      bool mismatch = false;
-//      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, 0);
-//
-//      _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
-//
-//      retVal.extraparam = scope.moduleScope->boolType;
-//   }
-//
-//   if (dblOperator)
-//      node = node.nextNode();
-//
-//   endDebugExpression(scope);
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode)
-//{
-//   ObjectInfo retVal(okAccumulator);
-//
-//   if (messageRef == 0)
-//      scope.raiseError(errUnknownMessage, node.Terminal());
-//
-//   int signRef = getSignature(messageRef);
-//   int paramCount = getParamCount(messageRef);
-//   bool catchMode = test(mode, HINT_CATCH);
-//
-//   _writer.setMessage(*scope.tape, messageRef);
-//
-////   bool directMode = test(_optFlag, optDirectConstant);
-//
-//   //recordStep(scope, node.Terminal(), dsProcedureStep);
-//
-//   if (catchMode) {
-//      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//      _writer.callMethod(*scope.tape, 0, paramCount);
-//   }
-//   else if (object.kind == okRole) {
-//      _writer.callRoleMessage(*scope.tape, paramCount);
-//   }
-//   else {
-//      ref_t classReference = 0;
-//      bool directCall = false;
-//      bool itselfCall = false;
-//      // if static message is sent to a class class
-//      if (object.kind == okConstantClass) {
-//         retVal.param = object.param;
-//
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//         classReference = object.extraparam;
-//         directCall = true;
-//      }
-//      // if external role is provided
-//      else if (object.kind == okConstantRole) {
-//         classReference = object.param;
-//         directCall = true;
-//
-//         if (test(mode, HINT_SELFEXTENDING) || classReference == scope.getClassRefId())
-//            itselfCall = true;
-//      }
-//      else if (object.kind == okConstantSymbol) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//
-//         if (object.extraparam != 0) {
-//            classReference = object.extraparam;
-//         }
-//         else classReference = object.param;
-//
-//         directCall = true;
-//      }
-//      else if (object.kind == okAccumulator && object.param != 0) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//
-//         classReference = object.param;
-//         directCall = true;
-//      }
-//      // if message sent to the class parent
-//      else if (object.kind == okSuper) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-//
-//         classReference = object.param;
-//         directCall = true;
-//      }
-//      // if message sent to the $self
-//      else if (object.kind == okThisParam) {
-//         itselfCall = true;
-//
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//         classReference = scope.getClassRefId(false);
-//      }
-//      else if (object.kind == okOuterField) {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//      }
-//      else {
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-//
-//         classReference = object.extraparam != 0 ? scope.moduleScope->resolveStrongType(object.extraparam) : 0;
-//      }
-//
-//      if (classReference != 0) {
-//         // check if the message is supported
-//         bool classFound = false;
-//         MethodType method = tpNormal;
-//         if (itselfCall) {
-//            if (test(scope.getClassFlags(), elClosed)) {
-//               ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//               if (classScope->info.methods.exist(messageRef)) {
-//                  method = test(classScope->info.header.flags, elSealed) ? tpSealed : tpClosed;
-//
-//                  retVal.extraparam = classScope->info.methodTypes.get(messageRef);
-//               }
-//            }
-//            classFound = true;
-//         }
-//         else method = scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.extraparam);
-//
-//         if ((directCall && method != tpUnknown) || method == tpSealed) {
-//            _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
-//         }
-//         else if (method == tpClosed) {
-//            _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
-//         }
-//         else {
-//            retVal.extraparam = 0;
-//
-//            bool boxed = false;
-//            boxObject(scope, object, boxed);
-//            if (boxed)
-//               scope.raiseWarning(4, wrnBoxingCheck, node.Terminal());
-//
-//            // if the class found and the message is not supported - warn the programmer and raise an exception
-//            if (classFound && method == tpUnknown) {
-//               scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
-//            }
-//            _writer.callMethod(*scope.tape, 0, paramCount);
-//         }
-//      }
-//      else _writer.callMethod(*scope.tape, 0, paramCount);
-//   }
-//
-//   // the result of get&type message should be typed
-//   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
-//      if (scope.moduleScope->typeHints.exist(signRef)) {
-//         return ObjectInfo(okAccumulator, 0, signRef);
-//      }
-//   }
-//   return retVal;
-//}
-//
-//void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
-//{
-//   // it should be removed from the stack
-//   if (spaceToRelease == (size_t)-1) {
-//      _writer.releaseArgList(*scope.tape);
-//      _writer.releaseObject(*scope.tape);
-//   }
-//   else _writer.releaseObject(*scope.tape, spaceToRelease);
-//}
-//
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   size_t spaceToRelease = 0;
-//   ref_t messageRef = compileMessageParameters(node, scope, object, mode, spaceToRelease);
-//
-//   recordDebugStep(scope, node.Terminal(), dsStep);
-//   openDebugExpression(scope);
-//
-//   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, mode);
-//
-//   endDebugExpression(scope);
-//
-//   if (spaceToRelease > 0) {
-//      // if open argument list is used
-//      releaseOpenArguments(scope, spaceToRelease);
-//   }
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   size_t count = countSymbol(node, nsMessageParameter);
-//
-//   _writer.declareArgumentList(*scope.tape, count + 1);
-//   _writer.loadObject(*scope.tape, object);
-//
-//   bool boxed;
-//   boxObject(scope, object, boxed);
-//   if (boxed)
-//      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//
-//   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
-//
-//   size_t stackToFree = 0;
-//   compilePresavedMessageParameters(node, scope, mode, stackToFree);
-//
-//   // skip all except the last message parameter
-//   while (node.nextNode() == nsMessageParameter)
-//      node = node.nextNode();
-//
-//   return compileMessage(node, scope, object, encodeMessage(0, EVAL_MESSAGE_ID, count), mode);
-//}
-//
-//ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   ObjectInfo currentObject = object;
-//
-//   DNode member = node.nextNode();
-//
-//   if (object.kind == okExternal) {
-//      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
-//      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
-//      if (test(mode, HINT_TRY)) {
-//         // skip error handling for the external operation
-//         mode &= ~HINT_TRY;
-//
-//         member = member.nextNode();
-//      }
-//      member = member.nextNode();
-//   }
-//   else if (object.kind == okInternal) {
-//      currentObject = compileInternalCall(member, scope, object, mode);
-//
-//      member = member.nextNode();
-//   }
-//
-//   bool catchMode = false;
-//   bool altMode = false;
-//   if (test(mode, HINT_TRY)) {
-//      if (test(mode, HINT_ALT))
-//         _writer.pushObject(*scope.tape, currentObject);
-//
-//      _writer.declareTry(*scope.tape);
-//
-//      mode &= ~HINT_ALT;
-//   }
-//
-//   while (member != nsNone) {
-//      //_writer.declareBlock(*scope.tape);
-//
-//      if (member == nsExtension) {
-//         currentObject = compileExtension(member, scope, currentObject, mode);
-//
-//         continue;
-//      }
-//      else if (member==nsMessageOperation) {
-//         currentObject = compileMessage(member, scope, currentObject, mode);
-//      }
-//      else if (member==nsMessageParameter) {
-//         currentObject = compileEvalMessage(member, scope, currentObject, mode);
-//      }
-//      else if (member == nsSwitching) {
-//         compileSwitch(member, scope, currentObject);
-//
-//         currentObject = ObjectInfo(okAccumulator);
-//      }
-//      else if (member == nsAssigning) {
-//         currentObject = compileAssigningExpression(node, member, scope, currentObject);
-//      }
-//      else if (member == nsAltMessageOperation) {
-//         if (!altMode) {
-//            _writer.declareAlt(*scope.tape);
-//            altMode = true;
-//         }
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
-//         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode);
-//      }
-//      else if (member == nsCatchMessageOperation) {
-//         if (!catchMode) {
-//            _writer.declareCatch(*scope.tape);
-//            catchMode = true;
-//         }
-//         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode | HINT_CATCH);
-//      }
-//      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
-//         || member == nsL7Operation || member == nsL0Operation)
-//      {
-//         currentObject = compileOperator(member, scope, currentObject, mode);
-//      }
-//
-//      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//      member = member.nextNode();
-//   }
-//
-//   if (catchMode) {
-//      _writer.endCatch(*scope.tape);
-//   }
-//   else if (altMode) {
-//      _writer.endAlt(*scope.tape);
-//   }
-//
-//   return currentObject;
-//}
-//
-//ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   ObjectInfo   role;
-//
-//   DNode roleNode = node.firstChild();
-//   // check if the extension can be used as a static role (it is constant)
-//   if (roleNode.firstChild() == nsNone) {
-//      int flags = 0;
-//
-//      role = scope.mapObject(roleNode.Terminal());
-//      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-//         // if the symbol is used inside itself
-//         if (role.param == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//
-//            mode |= HINT_SELFEXTENDING;
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(role.param));
-//
-//            flags = roleClass.header.flags;
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
-//      else role = ObjectInfo(okRole);
-//   }
-//   else role = ObjectInfo(okRole);
-//
-//   // override standard message compiling routine
-//   node = node.nextNode();
-//
-//   if (role.kind == okConstantRole)
-//      mode |= HINT_KNOWN_CALL;
-//
-//   while (node==nsMessageOperation) {
-//      object = compileExtensionMessage(node, roleNode, scope, object, role, mode);
-//
-//      node = node.nextNode();
-//   }
-//
-//   return object;
-//}
-//
-//ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode)
-//{
-//   size_t spaceToRelease = 0;
-//
-//   int paramMode = mode & ~HINT_SELFEXTENDING;
-//   ref_t messageRef = compileMessageParameters(node, scope, object, paramMode, spaceToRelease);
-//   mode |= paramMode;
-//
-//   ObjectInfo retVal(okAccumulator);
-//   // if it is a not a constant, compile a role
-//   if (role.kind != okConstantSymbol)
-//      _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
-//
-//   // send message to the role
-//   retVal = compileMessage(node, scope, role, messageRef, mode);
-//
-//   if (spaceToRelease > 0)
-//      _writer.releaseObject(*scope.tape, spaceToRelease);
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
+{
+   ObjectInfo result;
+
+   DNode member = objectNode.firstChild();
+   switch (member)
+   {
+      //case nsRetStatement:
+      case nsNestedClass:
+         if (objectNode.Terminal() != nsNone) {
+            result = compileNestedExpression(objectNode, scope, mode);
+            break;
+         }
+      case nsSubCode:
+      case nsSubjectArg:
+      case nsMethodParameter:
+         result = compileNestedExpression(member, scope, mode);
+         break;
+      case nsInlineExpression:
+         result = compileNestedExpression(objectNode, scope, mode | HINT_ACTION);
+         break;
+      case nsExpression:
+         if (isCollection(member)) {
+            TerminalInfo parentInfo = objectNode.Terminal();
+            // if the parent class is defined
+            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
+               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
+               if (vmtReference == 0)
+                  scope.raiseError(errUnknownObject, parentInfo);
+
+               result = compileCollection(member, scope, 0, vmtReference);
+            }
+            else result = compileCollection(member, scope, 0);
+         }
+         else result = compileExpression(member, scope, 0);
+         break;
+      case nsMessageReference:
+         result = compileMessageReference(member, scope, mode);
+         break;
+      default:
+         result = compileTerminal(objectNode, scope, mode);
+   }
+
+   return result;
+}
+
+ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int mode)
+{
+   DNode arg = node.firstChild();
+
+   IdentifierString message;
+
+   // reserve place for param counter
+   message.append('0');
+   message.append('#');
+
+   ObjectInfo retVal;
+   if (arg == nsNone) {
+      ref_t verb_id = _verbs.get(node.Terminal().value);
+      if (verb_id != 0) {
+         retVal.kind = okVerbConstant;
+
+         message.append(verb_id + 0x20);
+      }
+      else {
+         retVal.kind = okSignatureConstant;
+
+         message.append(0x20);
+         message.append('&');
+
+         scope.moduleScope->mapSubject(node.Terminal(), message);
+      }
+   }
+   else {
+      int count = 0;
+      if (!findSymbol(arg, nsSizeValue)) {
+         retVal.kind = okSignatureConstant;
+
+         message.append(0x20);
+         message.append('&');
+         scope.moduleScope->mapSubject(arg.Terminal(), message);
+      }
+      else {
+         retVal.kind = okMessageConstant;
+
+         ref_t verb_id = _verbs.get(arg.Terminal());
+         if (verb_id == 0) {
+            message.append(EVAL_MESSAGE_ID + 0x20);
+            message.append('&');
+            scope.moduleScope->mapSubject(arg.Terminal(), message);
+         }
+         else message.append(verb_id + 0x20);
+      }
+
+      arg = arg.nextNode();
+
+      // if method has argument list
+      while (arg == nsSubjectArg) {
+         TerminalInfo subject = arg.Terminal();
+
+         message.append('&');
+         ref_t subjRef = scope.moduleScope->mapSubject(subject, message);
+         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            count = OPEN_ARG_COUNT;
+         }
+
+         arg = arg.nextNode();
+      }
+
+      if (arg == nsSizeValue) {
+         TerminalInfo size = arg.Terminal();
+         if (size == tsInteger) {
+            count += StringHelper::strToInt(size.value);
+            if (count > 0x0F)
+               scope.raiseError(errNotApplicable, size);
+         }
+         else scope.raiseError(errInvalidOperation, size);
+
+         // define the number of parameters
+         message[0] = message[0] + count;
+      }
+   }
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
+{
+   _writer.pushObject(*scope.tape, object);
+   object.kind = okCurrent;
+
+   return object;
+}
+
+bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode)
+{
+   //if (test(mode, HINT_DIRECT_CALL) && resolveStrongType(type_ref)) {
+   //   return false;
+   //}
+   if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam || object.kind == okFieldAddress) && object.extraparam != 0) {
+      ref_t wrapper = 0;
+      int size = scope.moduleScope->defineTypeSize(object.type, wrapper);
+      if (size != 0) {
+         if (test(mode, HINT_KNOWN_CALL) && argType != 0) {
+            // if target is known and supports primitive type, boxing could be skipped
+            if (wrapper == scope.moduleScope->typeHints.get(argType)) {
+               return false;
+            }
+            // if the object can be implicitly typecasted to the target, boxing could be skipped
+            else if (size == scope.moduleScope->defineTypeSize(argType)) {
+               bool mismatch = false;
+               compileTypecast(scope, object, argType, mismatch, HINT_CHECK_MODE);
+
+               if (!mismatch)
+                  return false;
+            }
+         }
+
+         return true;
+      }
+      else return false;
+   }
+   else if (object.kind == okLocalAddress) {
+      if (test(mode, HINT_KNOWN_CALL) && argType != 0 && scope.moduleScope->typeHints.get(argType) == object.extraparam) {
+         return false;
+      }
+      else return true;
+   }
+   else if (object.kind == okIndexAccumulator || object.kind == okFieldAddress) {
+      return true;
+   }
+   else if (object.kind == okParams) {
+      if (test(mode, HINT_KNOWN_CALL) && argType != 0 && scope.moduleScope->typeHints.get(argType) == scope.moduleScope->paramsReference) {
+         return false;
+      }
+      else return true;
+   }
+   else return false;
+}
+
+ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed)
+{
+   // NOTE: boxing should be applied only for the typed local parameter
+   if (object.kind == okParams) {
+      boxed = true;
+
+      _writer.boxArgList(*scope.tape, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)) | mskVMTRef);
+   }
+   else if (object.kind == okSubject) {
+      boxed = true;
+
+      _writer.loadObject(*scope.tape, ObjectInfo(okLocalAddress, object.param));
+      _writer.boxObject(*scope.tape, 4, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(SIGNATURE_FORWARD)) | mskVMTRef);
+
+      return ObjectInfo(okAccumulator, scope.moduleScope->signatureReference);
+   }
+   else if (object.kind == okIndexAccumulator) {
+      boxed = true;
+
+      allocateStructure(scope, 0, object);
+      _writer.saveInt(*scope.tape, object);
+      ref_t wrapperRef = scope.moduleScope->intReference;
+      _writer.boxObject(*scope.tape, 4, wrapperRef | mskVMTRef, true);
+   }
+   else if (object.kind == okLocalAddress) {
+      int size = scope.moduleScope->defineStructSize(object.extraparam);
+      if (size != 0) {
+         boxed = true;
+
+         _writer.boxObject(*scope.tape, size, object.extraparam | mskVMTRef, true);
+      }
+   }
+   else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.type != 0)
+   {
+      ref_t classReference = 0;
+      int size = scope.moduleScope->defineTypeSize(object.type, classReference);
+      if (size != 0) {
+         boxed = true;
+
+         _writer.boxObject(*scope.tape, size, classReference | mskVMTRef);
+      }
+   }
+
+   return object;
+}
+
+ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisParam, int mode)
+{
+   bool presavedAcc = thisParam.kind == okAccumulator;
+
+   int offset = field.param;
+   ref_t classReference = 0;
+   ref_t type = field.extraparam;
+   int size = scope.moduleScope->defineTypeSize(field.extraparam, classReference);
+
+   if (test(mode, HINT_HEAP_MODE) || size > 8) {
+      if (presavedAcc)
+         _writer.pushObject(*scope.tape, thisParam);
+
+      // otherwise create a dynamic object and copy the content
+      _writer.newStructure(*scope.tape, size, classReference);
+      _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
+
+      if (presavedAcc) {
+         _writer.popObject(*scope.tape, thisParam);
+      }
+      else _writer.loadObject(*scope.tape, thisParam);
+
+      field = ObjectInfo(okAccumulator);
+   }
+   else {
+      allocateStructure(scope, 0, field, presavedAcc);
+
+      _writer.loadBase(*scope.tape, field);
+      _writer.loadObject(*scope.tape, thisParam);
+   }
+
+   if (size == 2) {
+      _writer.copyShort(*scope.tape, offset);
+   }
+   else if (size == 4) {
+      _writer.copyInt(*scope.tape, offset);
+   }
+   else if (size == 8) {
+      _writer.copyStructure(*scope.tape, offset, size);
+      _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+   }
+   else if (size > 0) {
+      _writer.copyStructure(*scope.tape, field.param, size);
+      _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+   }
+
+   return ObjectInfo(okAccumulator, field.extraparam, 0, type);
+}
+
+void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count)
+{
+   if (arg == nsMessageParameter) {
+      count++;
+
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode & ~(HINT_DIRECT_ORDER | HINT_KNOWN_CALL));
+
+      _writer.loadObject(*scope.tape, param);
+
+      if (checkIfBoxingRequired(scope, param, type_ref, mode)) {
+         bool boxed = false;
+         boxObject(scope, param, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().Terminal());
+      }
+
+      if (type_ref != 0) {
+         // if type is mismatch - typecast
+         bool mismatch = false;
+         compileTypecast(scope, param, type_ref, mismatch, mode);
+         if (mismatch)
+            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
+      }
+
+      if (test(mode, HINT_DIRECT_ORDER)) {
+         _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+      }
+      else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+
+      arg = arg.nextNode();
+   }
+}
+
+ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& mode)
+{
+   bool             simpleParameters = true;
+
+   TerminalInfo     verb = node.Terminal();
+   IdentifierString signature;
+   bool             first = true;
+
+   ref_t            verb_id = _verbs.get(verb.value);
+   int              paramCount = 0;
+   DNode            arg = node.firstChild();
+
+   if (verb_id == 0) {
+      size_t id = scope.moduleScope->mapSubject(verb, signature);
+
+      // if followed by argument list - it is EVAL verb
+      if (arg != nsNone) {
+         // HOT FIX : strong types cannot be used as a custom verb with a parameter
+         if (scope.moduleScope->typeHints.exist(id))
+            scope.raiseError(errStrongTypeNotAllowed, verb);
+
+         verb_id = EVAL_MESSAGE_ID;
+
+         first = false;
+      }
+      // otherwise it is GET message
+      else verb_id = GET_MESSAGE_ID;
+   }
+
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      count++;
+      paramCount++;
+
+      if (arg.firstChild().firstChild() != nsNone)
+         simpleParameters = false;
+
+      arg = arg.nextNode();
+   }
+
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      // if it is an open argument list
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      // skip an argument
+      if (arg == nsMessageParameter) {
+         // if it is an open argument list
+         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            // if a generic argument is used with an open argument list
+            simpleParameters = false;
+
+            // check if argument list should be unboxed
+            DNode param = arg.firstChild();
+
+            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+               mode |= HINT_OARG_UNBOXING;
+            }
+            else {
+               // terminator
+               count += 1;
+
+               while (arg != nsNone) {
+                  count++;
+
+                  arg = arg.nextNode();
+               }
+            }
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0x0F)
+               scope.raiseError(errNotApplicable, subject);
+         }
+         else {
+            count++;
+            paramCount++;
+
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, verb);
+
+            if (arg.firstChild().firstChild() != nsNone)
+               simpleParameters = false;
+
+            arg = arg.nextNode();
+         }
+      }
+   }
+
+   // if signature is presented
+   ref_t sign_id = 0;
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
+
+   if (simpleParameters)
+      mode |= HINT_DIRECT_ORDER;
+
+   // create a message id
+   return encodeMessage(sign_id, verb_id, paramCount);
+}
+
+void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int mode)
+{
+   if (arg == nsMessageParameter) {
+      compileDirectMessageParameters(arg.nextNode(), scope, mode);
+
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+
+      // box the object if required
+      if (checkIfBoxingRequired(scope, param, 0, 0)) {
+         _writer.loadObject(*scope.tape, param);
+
+         bool boxed = false;
+         boxObject(scope, param, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
+
+         _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+      }
+      else _writer.pushObject(*scope.tape, param);
+   }
+   else if (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      arg = arg.nextNode();
+
+      // skip an argument without a parameter value
+      while (arg == nsSubjectArg) {
+         subject = arg.Terminal();
+
+         arg = arg.nextNode();
+      }
+
+      int paramMode = mode & (HINT_KNOWN_CALL | HINT_DIRECT_ORDER);
+
+      ref_t type_ref = scope.moduleScope->mapType(subject);
+
+      compileDirectMessageParameters(arg.nextNode(), scope, mode);
+
+      size_t dummy = 0;
+      compileMessageParameter(arg, subject, scope, type_ref, paramMode, dummy);
+   }
+}
+
+void Compiler :: compilePresavedMessageParameters(DNode arg, CodeScope& scope, int mode, size_t& stackToFree)
+{
+   size_t count = 0;
+
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      count++;
+
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+      _writer.loadObject(*scope.tape, param);
+
+      // box the object if required
+      bool boxed = false;
+      boxObject(scope, param, boxed);
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().Terminal());
+
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+
+      arg = arg.nextNode();
+   }
+
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      arg = arg.nextNode();
+
+      // skip an argument without a parameter value
+      while (arg == nsSubjectArg) {
+         subject = arg.Terminal();
+
+         arg = arg.nextNode();
+      }
+
+      int paramMode = mode & HINT_KNOWN_CALL;
+      ref_t type_ref = scope.moduleScope->mapType(subject);
+
+      if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(type_ref, scope.moduleScope->paramsReference)) {
+         if (!scope.moduleScope->typeHints.exist(type_ref, scope.moduleScope->paramsReference))
+            scope.raiseError(errNotApplicable, subject);
+
+         stackToFree = 1;
+         while (arg != nsNone) {
+            count++;
+            stackToFree++;
+
+            ObjectInfo retVal = compileExpression(arg, scope, 0);
+            _writer.loadObject(*scope.tape, retVal);
+
+            // box object if required
+            bool boxed = false;
+            boxObject(scope, retVal, boxed);
+            if (boxed)
+               scope.raiseWarning(4, wrnBoxingCheck, arg.FirstTerminal());
+
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+
+            arg = arg.nextNode();
+         }
+      }
+      else compileMessageParameter(arg, subject, scope, type_ref, paramMode, count);
+   }
+}
+
+void Compiler :: compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree)
+{
+   // unbox the argument list
+   DNode args = goToLastSymbol(node, nsMessageParameter);
+   ObjectInfo list = compileObject(args.firstChild(), scope, mode);
+   _writer.loadObject(*scope.tape, list);
+
+   // unbox the argument list and return the object saved before the list
+   _writer.unboxArgList(*scope.tape);
+
+   // reserve the place for target and generic message parameters if available and save the target
+   _writer.declareArgumentList(*scope.tape, count + 1);
+   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
+
+   count = 0;
+   // if message has generic argument list
+   DNode arg = node;
+   while (arg == nsMessageParameter && arg != args) {
+      count++;
+
+      ObjectInfo param = compileObject(arg.firstChild(), scope, mode);
+      _writer.loadObject(*scope.tape, param);
+
+      // box the object if required
+      bool boxed = false;
+      boxObject(scope, param, boxed);
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
+
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, count));
+
+      arg = arg.nextNode();
+   }
+
+   // indicate that the stack to be freed cannot be defined at compile-time
+   stackToFree = (size_t)-1;
+}
+
+ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease)
+{
+   size_t count = 0;
+   ref_t messageRef = mapMessage(node, scope, count, mode);
+
+   object = compileMessageParameters(node, scope, object, messageRef, count, mode, spaceToRelease);
+
+   return messageRef;
+}
+
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
+{
+   // check typed extension if the type available
+   ref_t type = 0;
+   ref_t extRef = 0;
+
+   if (object.type != 0 && scope.moduleScope->extensionHints.exist(messageRef, object.type)) {
+      type = object.type;
+   }
+   // if class reference available - select the possible type
+   else if((object.kind == okAccumulator || object.kind == okConstantSymbol) && object.param != 0) {
+      if (scope.moduleScope->extensionHints.exist(messageRef)) {
+         SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
+         while (!it.Eof()) {
+            if (it.key() == messageRef) {
+               if (scope.moduleScope->typeHints.exist(*it, object.param)) {
+                  type = *it;
+
+                  break;
+               }
+            }
+
+            it++;
+         }
+      }
+   }
+
+   if (type != 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   // check generic extension
+   if (extRef == 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   else return extRef;
+}
+
+ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t messageRef, int count, int& mode, size_t& spaceToRelease)
+{
+   ObjectInfo retVal = object;
+
+   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
+   if (object.kind == okAccumulator) {
+      mode &= ~HINT_DIRECT_ORDER;
+   }
+   else if (count == 1 && !test(mode, HINT_OARG_UNBOXING)) {
+      mode |= HINT_DIRECT_ORDER;
+   }
+
+   int methodHint = tpUnknown;
+   // use dynamic extension if exists
+   ref_t roleRef = mapExtension(scope, messageRef, object);
+   if (roleRef != 0) {
+      methodHint = tpSealed;
+
+      retVal = ObjectInfo(okConstantRole, roleRef, object.type);
+   }
+   else if (object.kind == okConstantSymbol) {
+      methodHint = scope.moduleScope->checkMethod(object.param, messageRef);
+   }
+   else if (object.kind == okConstantClass) {
+      methodHint = scope.moduleScope->checkMethod(object.extraparam, messageRef);
+   }
+   else if (object.kind == okAccumulator && object.param != 0) {
+      methodHint = scope.moduleScope->checkMethod(object.param, messageRef);
+   }
+   else if (object.kind == okThisParam) {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      if (classScope->info.methods.exist(messageRef)) {
+         if (test(classScope->info.header.flags, elSealed)) {
+            methodHint = tpSealed;
+         }
+         else if(test(classScope->info.header.flags, elClosed)) {
+            methodHint = tpClosed;
+         }
+         else methodHint = tpNormal;
+      }
+   }
+   else if (object.kind == okSuper) {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      if (scope.moduleScope->checkMethod(classScope->info.header.parentRef, messageRef) != tpUnknown) {
+         methodHint = tpClosed;
+      }
+   }
+   else methodHint = scope.moduleScope->checkMethod(scope.moduleScope->typeHints.get(object.type), messageRef);
+
+   if (methodHint != tpUnknown)
+      mode |= HINT_KNOWN_CALL;
+
+   // if only simple arguments are used we could directly save parameters
+   if (test(mode, HINT_DIRECT_ORDER)) {
+      compileDirectMessageParameters(node.firstChild(), scope, mode);
+
+      _writer.loadObject(*scope.tape, object);
+
+      if (checkIfBoxingRequired(scope, object, object.type, mode)) {
+         // if the object is stack allocated - box it
+         bool boxed = false;
+         boxObject(scope, object, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+      }
+
+      _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+   }
+   // if open argument list should be unboxed
+   else if (test(mode, HINT_OARG_UNBOXING)) {
+      // save the target
+      _writer.loadObject(*scope.tape, object);
+
+      // box object if required
+      bool boxed = false;
+      object = boxObject(scope, object, boxed);
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+
+      _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      compileUnboxedMessageParameters(node.firstChild(), scope, mode & ~(HINT_OARG_UNBOXING), count, spaceToRelease);
+   }
+   // otherwise the space should be allocated first,
+   // to garantee the correct order of parameter evaluation
+   else {
+      _writer.declareArgumentList(*scope.tape, count + 1);
+      _writer.loadObject(*scope.tape, object);
+
+      if (checkIfBoxingRequired(scope, object, object.type, mode)) {
+         //scope.raiseWarning(wrnBoxingCheck, node.Terminal());
+
+         // if the object is stack allocated - box it
+         bool boxed = false;
+         boxObject(scope, object, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+      }
+
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
+
+      compilePresavedMessageParameters(node.firstChild(), scope, mode, spaceToRelease);
+   }
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
+{
+   _writer.loadObject(*scope.tape, object);
+
+   DNode elsePart = node.select(nsElseOperation);
+   if (elsePart != nsNone) {
+      _writer.declareThenElseBlock(*scope.tape);
+      compileBranching(node, scope, object, operator_id, 0);
+      _writer.declareElseBlock(*scope.tape);
+      compileBranching(elsePart, scope, object, 0, 0); // for optimization, the condition is checked only once
+      _writer.endThenBlock(*scope.tape);
+   }
+   else if (test(mode, HINT_LOOP)) {
+      compileBranching(node, scope, object, operator_id, HINT_LOOP);
+      _writer.jump(*scope.tape, true);
+   }
+   else {
+      _writer.declareThenBlock(*scope.tape);
+      compileBranching(node, scope, object, operator_id, 0);
+      _writer.endThenBlock(*scope.tape);
+   }
+
+   return ObjectInfo(okAccumulator, 0);
+}
+
+int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand)
+{
+   if (operand.kind == okIntConstant) {
+      return elDebugDWORD;
+   }
+   else if (operand.kind == okLongConstant) {
+      return elDebugQWORD;
+   }
+   else if (operand.kind == okRealConstant) {
+      return elDebugReal64;
+   }
+   else if (operand.kind == okAccumulator && operand.param != 0) {
+      return moduleScope.getClassFlags(operand.param) & elDebugMask;
+   }
+   else if (operand.kind == okUnknown) {
+      return 0;
+   }
+   else if (operand.kind == okConstantSymbol) {
+      return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
+   }
+   else return moduleScope.getClassFlags(moduleScope.typeHints.get(operand.extraparam)) & elDebugMask;
+}
+
+int Compiler :: mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand)
+{
+   int flags = 0;
+
+   if (operand.kind == okAccumulator && operand.param != 0) {
+      flags = moduleScope.getClassFlags(operand.param);
+   }
+   else flags = moduleScope.getClassFlags(moduleScope.typeHints.get(operand.extraparam));
+
+   // read only classes cannot be used for variable operations
+   if (test(flags, elReadOnlyRole))
+      flags = 0;
+
+   return flags & elDebugMask;
+}
+
+bool Compiler::compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   int lflag = mapInlineOperandType(*moduleScope, loperand);
+   int rflag = mapInlineOperandType(*moduleScope, roperand);
+
+   if (lflag == 0 || lflag != rflag) {
+      return false;
+   }
+
+   bool assignMode = test(mode, HINT_ASSIGN_MODE);
+
+   // check
+   if (lflag == elDebugDWORD) {
+      result.param = moduleScope->intReference;
+   }
+   else if (lflag == elDebugQWORD) {
+      result.param = moduleScope->longReference;
+   }
+   else if (operator_id == AND_MESSAGE_ID || operator_id == OR_MESSAGE_ID || operator_id == XOR_MESSAGE_ID) {
+      return false;
+   }
+   else if (lflag == elDebugReal64) {
+      result.param = moduleScope->realReference;
+   }
+   else return false;
+
+   //result.extraparam =
+
+   if (assignMode) {
+      _writer.popObject(*scope.tape, ObjectInfo(okBase));
+      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      result.kind = okIdle;
+   }
+   else {
+      allocateStructure(scope, 0, result);
+      _writer.loadBase(*scope.tape, result);
+      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      if (lflag == elDebugDWORD) {
+         _writer.assignInt(*scope.tape, ObjectInfo(okBase));
+      }
+      else _writer.assignLong(*scope.tape, ObjectInfo(okBase));
+
+      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+   }
+
+   if (lflag == elDebugDWORD) {
+      _writer.doIntOperation(*scope.tape, operator_id);
+   }
+   else if (lflag == elDebugQWORD) {
+      _writer.doLongOperation(*scope.tape, operator_id);
+   }
+   else if (lflag == elDebugReal64) {
+      _writer.doRealOperation(*scope.tape, operator_id);
+   }
+
+   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+
+   return true;
+}
+
+bool Compiler::compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   int lflag = mapInlineTargetOperandType(*moduleScope, loperand);
+   int rflag = mapInlineOperandType(*moduleScope, roperand);
+
+   if (lflag == 0 || lflag != rflag) {
+      return false;
+   }
+
+   // check
+   if (lflag == elDebugDWORD) {
+      result.param = moduleScope->intReference;
+   }
+   else if (lflag == elDebugQWORD) {
+      result.param = moduleScope->longReference;
+   }
+   else if (lflag == elDebugReal64) {
+      result.param = moduleScope->realReference;
+   }
+   else return false;
+
+   _writer.popObject(*scope.tape, ObjectInfo(okBase));
+   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+   result.kind = okIdle;
+
+   if (lflag == elDebugDWORD) {
+      _writer.doIntOperation(*scope.tape, operator_id);
+   }
+   else if (lflag == elDebugQWORD) {
+      _writer.doLongOperation(*scope.tape, operator_id);
+   }
+   else if (lflag == elDebugReal64) {
+      _writer.doRealOperation(*scope.tape, operator_id);
+   }
+
+   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+
+   return true;
+}
+
+bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool& invertMode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   int lflag = mapInlineOperandType(*moduleScope, loperand);
+   int rflag = mapInlineOperandType(*moduleScope, roperand);
+
+   if (lflag == 0 || lflag != rflag) {
+      return false;
+   }
+
+   if (operator_id == GREATER_MESSAGE_ID) {
+      _writer.popObject(*scope.tape, ObjectInfo(okBase));
+      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      operator_id = LESS_MESSAGE_ID;
+   }
+   else {
+      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+      _writer.popObject(*scope.tape, ObjectInfo(okBase));
+   }
+
+   if (lflag == elDebugDWORD) {
+      _writer.doIntOperation(*scope.tape, operator_id);
+   }
+   else if (lflag == elDebugQWORD) {
+      _writer.doLongOperation(*scope.tape, operator_id);
+   }
+   else if (lflag == elDebugReal64) {
+      _writer.doRealOperation(*scope.tape, operator_id);
+   }
+   //else if (lflag == elDebugChars) {
+   //   _writer.doLiteralOperation(*scope.tape, operator_id);
+   //}
+   else return false;
+
+   if (invertMode) {
+       _writer.selectByIndex(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
+
+       invertMode = false;
+   }
+   else _writer.selectByIndex(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
+
+   result.extraparam = moduleScope->boolType;
+
+   return true;
+}
+
+bool Compiler::compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   int lflag = mapInlineOperandType(*moduleScope, loperand);
+   int rflag = mapInlineOperandType(*moduleScope, roperand);
+   int rflag2 = mapInlineOperandType(*moduleScope, roperand2);
+
+   if (operator_id == SET_REFER_MESSAGE_ID) {
+      if (lflag == elDebugIntegers && rflag == elDebugDWORD && rflag2 == elDebugDWORD) {
+         _writer.popObject(*scope.tape, ObjectInfo(okBase));
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.doIntArrayOperation(*scope.tape, operator_id);
+      }
+      //else if (lflag == elDebugChars && rflag == elDebugDWORD && rflag2 == elDebugDWORD) {
+      //   _writer.popObject(*scope.tape, ObjectInfo(okBase));
+      //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      //   _writer.doCharArrayOperation(*scope.tape, operator_id);
+      //}
+      else return false;
+   }
+   else {
+      if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+         result.param = moduleScope->intReference;
+
+         allocateStructure(scope, 0, result);
+         _writer.loadBase(*scope.tape, result);
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.doIntArrayOperation(*scope.tape, operator_id);
+      }
+      else if (loperand.kind == okParams && rflag == elDebugDWORD) {
+         _writer.popObject(*scope.tape, ObjectInfo(okBase));
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.doArrayOperation(*scope.tape, operator_id);
+      }
+      //else if (lflag == elDebugChars && rflag == elDebugDWORD) {
+      //   result.param = moduleScope->charReference;
+
+      //   allocateStructure(scope, 0, result);
+      //   _writer.loadBase(*scope.tape, result);
+      //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+      //   _writer.doCharArrayOperation(*scope.tape, operator_id);
+      //}
+      else return false;
+   }
+
+   ////if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+   ////   if (operator_id == SET_REFER_MESSAGE_ID && rflag2 == elDebugDWORD) {
+   ////   }
+   ////   else return false;
+
+   ////   if (rflag2 == 0 || rflag2 == elDebugDWORD) {
+
+   ////   }
+   ////}
+
+   ////if (loperand.kind != okParams || rflag != elDebugDWORD)
+   ////   return false;
+
+   ////_writer.popObject(*scope.tape, ObjectInfo(okBase));
+   ////_writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+   ////_writer.doArrayOperation(*scope.tape, operator_id);
+
+   return true;
+}
+
+ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   ObjectInfo retVal(okAccumulator);
+
+   TerminalInfo operator_name = node.Terminal();
+   int operator_id = _operators.get(operator_name);
+
+   // if it is branching operators
+   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
+      return compileBranchingOperator(node, scope, object, mode, operator_id);
+   }
+
+   recordDebugStep(scope, operator_name, dsStep);
+   openDebugExpression(scope);
+
+   // HOTFIX : recognize SET_REFER_MESSAGE_ID
+   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
+      operator_id = SET_REFER_MESSAGE_ID;
+
+   bool dblOperator = IsDoubleOperator(operator_id);
+   bool notOperator = IsInvertedOperator(operator_id);
+
+   ObjectInfo operand;
+   ObjectInfo operand2;
+
+   // if it is comparing with nil
+   if (object.kind == okNil) {
+      // if operation with $nil
+      operand = compileExpression(node, scope, 0);
+
+      _writer.loadObject(*scope.tape, operand);
+
+      if (notOperator) {
+         _writer.selectByAcc(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
+      }
+      else _writer.selectByAcc(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
+      
+      return ObjectInfo(okAccumulator, 0, scope.moduleScope->boolType);
+   }
+
+   // if the operation parameters can be compiled directly
+   if (!dblOperator && object.kind != okAccumulator) {
+      operand = compileExpression(node, scope, 0);
+
+      _writer.pushObject(*scope.tape, operand);
+      _writer.pushObject(*scope.tape, object);
+   }
+   else {
+      _writer.declareArgumentList(*scope.tape, dblOperator ? 3 : 2);
+
+      _writer.loadObject(*scope.tape, object);
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+      if (dblOperator) {
+         operand2 = compileExpression(node.nextNode().firstChild(), scope, 0);
+         _writer.loadObject(*scope.tape, operand2);
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
+      }
+
+      operand = compileExpression(node, scope, 0);
+      _writer.loadObject(*scope.tape, operand);
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
+   }
+
+   //recordStep(scope, node.Terminal(), dsProcedureStep);
+
+   if (IsExprOperator(operator_id) && compileInlineArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
+      // if inline arithmetic operation is implemented
+      // do nothing
+   }
+   else if (IsVarOperator(operator_id) && compileInlineVarArithmeticOperator(scope, operator_id, object, operand, retVal, mode)) {
+      // if inline referring operation is implemented
+      // do nothing
+   }
+   else if (IsCompOperator(operator_id) && compileInlineComparisionOperator(scope, operator_id, object, operand, retVal, notOperator)) {
+      // if inline comparision operation is implemented
+      // do nothing
+   }
+   else if (IsReferOperator(operator_id) && compileInlineReferOperator(scope, operator_id, object, operand, operand2, retVal)) {
+      // if inline referring operation is implemented
+      // do nothing
+   }
+   else {
+      // box operands if necessary
+      if (checkIfBoxingRequired(scope, object, 0, 0)) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         bool boxed = false;
+         object = boxObject(scope, object, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, node.Terminal());
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
+      }
+      if (checkIfBoxingRequired(scope, operand, 0, 0)) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 1));
+
+         bool boxed = false;
+         operand = boxObject(scope, operand, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, node.firstChild().Terminal());
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
+      }
+      if (operand2.kind != okUnknown && checkIfBoxingRequired(scope, operand2, 0, 0)) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
+
+         bool boxed = false;
+         operand2 = boxObject(scope, operand2, boxed);
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, node.nextNode().firstChild().FirstTerminal());
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
+      }
+
+      int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
+
+      compileMessage(node, scope, object, message_id, 0);
+   }
+
+   if (notOperator) {
+      ModuleScope* moduleScope = scope.moduleScope;
+
+      bool mismatch = false;
+      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, 0);
+
+      _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
+
+      retVal.extraparam = scope.moduleScope->boolType;
+   }
+
+   if (dblOperator)
+      node = node.nextNode();
+
+   endDebugExpression(scope);
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode)
+{
+   ObjectInfo retVal(okAccumulator);
+
+   if (messageRef == 0)
+      scope.raiseError(errUnknownMessage, node.Terminal());
+
+   int signRef = getSignature(messageRef);
+   int paramCount = getParamCount(messageRef);
+   bool catchMode = test(mode, HINT_CATCH);
+
+   _writer.setMessage(*scope.tape, messageRef);
+
+//   bool directMode = test(_optFlag, optDirectConstant);
+
+   //recordStep(scope, node.Terminal(), dsProcedureStep);
+
+   if (catchMode) {
+      _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+      _writer.callMethod(*scope.tape, 0, paramCount);
+   }
+   else if (object.kind == okRole) {
+      _writer.callRoleMessage(*scope.tape, paramCount);
+   }
+   else {
+      ref_t classReference = 0;
+      bool directCall = false;
+      bool itselfCall = false;
+      // if static message is sent to a class class
+      if (object.kind == okConstantClass) {
+         retVal.param = object.param;
+
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         classReference = object.extraparam;
+         directCall = true;
+      }
+      // if external role is provided
+      else if (object.kind == okConstantRole) {
+         classReference = object.param;
+         directCall = true;
+
+         if (test(mode, HINT_SELFEXTENDING) || classReference == scope.getClassRefId())
+            itselfCall = true;
+      }
+      else if (object.kind == okConstantSymbol) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         if (object.extraparam != 0) {
+            classReference = object.extraparam;
+         }
+         else classReference = object.param;
+
+         directCall = true;
+      }
+      else if (object.kind == okAccumulator && object.param != 0) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         classReference = object.param;
+         directCall = true;
+      }
+      // if message sent to the class parent
+      else if (object.kind == okSuper) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+
+         classReference = object.param;
+         directCall = true;
+      }
+      // if message sent to the $self
+      else if (object.kind == okThisParam) {
+         itselfCall = true;
+
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         classReference = scope.getClassRefId(false);
+      }
+      else if (object.kind == okOuterField) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+      }
+      else {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+         classReference = object.extraparam != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
+      }
+
+      if (classReference != 0) {
+         // check if the message is supported
+         bool classFound = false;
+         int methodHint = tpNormal;
+         if (itselfCall) {
+            if (test(scope.getClassFlags(), elClosed)) {
+               ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+               if (classScope->info.methods.exist(messageRef)) {
+                  methodHint = test(classScope->info.header.flags, elSealed) ? tpSealed : tpClosed;
+
+                  retVal.type = classScope->info.methodHints.get(messageRef).typeRef;
+               }
+            }
+            classFound = true;
+         }
+         else methodHint = scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) & tpMask;
+
+         if ((directCall && methodHint != tpUnknown) || methodHint == tpSealed) {
+            _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
+         }
+         else if (methodHint == tpClosed) {
+            _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
+         }
+         else {
+            retVal.extraparam = 0;
+
+            bool boxed = false;
+            boxObject(scope, object, boxed);
+            if (boxed)
+               scope.raiseWarning(4, wrnBoxingCheck, node.Terminal());
+
+            // if the class found and the message is not supported - warn the programmer and raise an exception
+            if (classFound && methodHint == tpUnknown) {
+               scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
+            }
+            _writer.callMethod(*scope.tape, 0, paramCount);
+         }
+      }
+      else _writer.callMethod(*scope.tape, 0, paramCount);
+   }
+
+   // the result of get&type message should be typed
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+      if (scope.moduleScope->typeHints.exist(signRef)) {
+         return ObjectInfo(okAccumulator, 0, signRef);
+      }
+   }
+   return retVal;
+}
+
+void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
+{
+   // it should be removed from the stack
+   if (spaceToRelease == (size_t)-1) {
+      _writer.releaseArgList(*scope.tape);
+      _writer.releaseObject(*scope.tape);
+   }
+   else _writer.releaseObject(*scope.tape, spaceToRelease);
+}
+
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   size_t spaceToRelease = 0;
+   ref_t messageRef = compileMessageParameters(node, scope, object, mode, spaceToRelease);
+
+   recordDebugStep(scope, node.Terminal(), dsStep);
+   openDebugExpression(scope);
+
+   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, mode);
+
+   endDebugExpression(scope);
+
+   if (spaceToRelease > 0) {
+      // if open argument list is used
+      releaseOpenArguments(scope, spaceToRelease);
+   }
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   size_t count = countSymbol(node, nsMessageParameter);
+
+   _writer.declareArgumentList(*scope.tape, count + 1);
+   _writer.loadObject(*scope.tape, object);
+
+   bool boxed;
+   boxObject(scope, object, boxed);
+   if (boxed)
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+
+   _writer.saveObject(*scope.tape, ObjectInfo(okCurrent));
+
+   size_t stackToFree = 0;
+   compilePresavedMessageParameters(node, scope, mode, stackToFree);
+
+   // skip all except the last message parameter
+   while (node.nextNode() == nsMessageParameter)
+      node = node.nextNode();
+
+   return compileMessage(node, scope, object, encodeMessage(0, EVAL_MESSAGE_ID, count), mode);
+}
+
+ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   ObjectInfo currentObject = object;
+
+   DNode member = node.nextNode();
+
+   if (object.kind == okExternal) {
+      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
+      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
+      if (test(mode, HINT_TRY)) {
+         // skip error handling for the external operation
+         mode &= ~HINT_TRY;
+
+         member = member.nextNode();
+      }
+      member = member.nextNode();
+   }
+   else if (object.kind == okInternal) {
+      currentObject = compileInternalCall(member, scope, object, mode);
+
+      member = member.nextNode();
+   }
+
+   bool catchMode = false;
+   bool altMode = false;
+   if (test(mode, HINT_TRY)) {
+      if (test(mode, HINT_ALT))
+         _writer.pushObject(*scope.tape, currentObject);
+
+      _writer.declareTry(*scope.tape);
+
+      mode &= ~HINT_ALT;
+   }
+
+   while (member != nsNone) {
+      //_writer.declareBlock(*scope.tape);
+
+      if (member == nsExtension) {
+         currentObject = compileExtension(member, scope, currentObject, mode);
+
+         continue;
+      }
+      else if (member==nsMessageOperation) {
+         currentObject = compileMessage(member, scope, currentObject, mode);
+      }
+      else if (member==nsMessageParameter) {
+         currentObject = compileEvalMessage(member, scope, currentObject, mode);
+      }
+      else if (member == nsSwitching) {
+         compileSwitch(member, scope, currentObject);
+
+         currentObject = ObjectInfo(okAccumulator);
+      }
+      else if (member == nsAssigning) {
+         currentObject = compileAssigningExpression(node, member, scope, currentObject);
+      }
+      else if (member == nsAltMessageOperation) {
+         if (!altMode) {
+            _writer.declareAlt(*scope.tape);
+            altMode = true;
+         }
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
+         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode);
+      }
+      else if (member == nsCatchMessageOperation) {
+         if (!catchMode) {
+            _writer.declareCatch(*scope.tape);
+            catchMode = true;
+         }
+         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode | HINT_CATCH);
+      }
+      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
+         || member == nsL7Operation || member == nsL0Operation)
+      {
+         currentObject = compileOperator(member, scope, currentObject, mode);
+      }
+
+      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+      member = member.nextNode();
+   }
+
+   if (catchMode) {
+      _writer.endCatch(*scope.tape);
+   }
+   else if (altMode) {
+      _writer.endAlt(*scope.tape);
+   }
+
+   return currentObject;
+}
+
+ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+   ObjectInfo   role;
+
+   DNode roleNode = node.firstChild();
+   // check if the extension can be used as a static role (it is constant)
+   if (roleNode.firstChild() == nsNone) {
+      int flags = 0;
+
+      role = scope.mapObject(roleNode.Terminal());
+      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         // if the symbol is used inside itself
+         if (role.param == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+
+            mode |= HINT_SELFEXTENDING;
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(role.param));
+
+            flags = roleClass.header.flags;
+         }
+      }
+      // if the symbol VMT can be used as an external role
+      if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
+      else role = ObjectInfo(okRole);
+   }
+   else role = ObjectInfo(okRole);
+
+   // override standard message compiling routine
+   node = node.nextNode();
+
+   if (role.kind == okConstantRole)
+      mode |= HINT_KNOWN_CALL;
+
+   while (node==nsMessageOperation) {
+      object = compileExtensionMessage(node, roleNode, scope, object, role, mode);
+
+      node = node.nextNode();
+   }
+
+   return object;
+}
+
+ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode)
+{
+   size_t spaceToRelease = 0;
+
+   int paramMode = mode & ~HINT_SELFEXTENDING;
+   ref_t messageRef = compileMessageParameters(node, scope, object, paramMode, spaceToRelease);
+   mode |= paramMode;
+
+   ObjectInfo retVal(okAccumulator);
+   // if it is a not a constant, compile a role
+   if (role.kind != okConstantSymbol)
+      _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
+
+   // send message to the role
+   retVal = compileMessage(node, scope, role, messageRef, mode);
+
+   if (spaceToRelease > 0)
+      _writer.releaseObject(*scope.tape, spaceToRelease);
+
+   return retVal;
+}
 
 bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared)
 {
@@ -3634,214 +3619,217 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, boo
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
-//{
-//   _writer.declareClass(scope.tape, scope.reference);
-//
-//   DNode member = node.firstChild();
-//
-//   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
-//
-//   // nested class is sealed if it has no parent
-//   if (!test(scope.info.header.flags, elClosed))
-//      scope.info.header.flags |= elSealed;
-//
-//   compileVMT(member, scope);
-//
-//   _writer.endClass(scope.tape);
-//
-//   // stateless inline class
-//   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
-//      scope.info.header.flags |= elStateless;
-//   }
-//   else scope.info.header.flags &= ~elStateless;
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   scope.save();
-//   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
-//
-//ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
-//{
-//   if (test(scope.info.header.flags, elStateless)) {
-//      // if it is a stateless class
-//      return ObjectInfo(okConstantSymbol, scope.reference);
-//   }
-//   else {
-//      bool dummy = false;
-//      int presaved = 0;
-//
-//      // unbox all typed variables
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
-//         if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
-//            _writer.loadObject(*ownerScope.tape, info);
-//            boxObject(ownerScope, info, dummy);
-//            _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
-//            presaved++;
-//         }
-//
-//         outer_it++;
-//      }
-//
-//      // dynamic binary symbol
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         _writer.newStructure(*ownerScope.tape, scope.info.size, scope.reference);
-//
-//         if (scope.outers.Count() > 0)
-//            scope.raiseError(errInvalidInlineClass, node.Terminal());
-//      }
-//      // dynamic normal symbol
-//      else _writer.newObject(*ownerScope.tape, scope.info.fields.Count(), scope.reference);
-//
-//      _writer.loadBase(*ownerScope.tape, ObjectInfo(okAccumulator));
-//
-//      outer_it = scope.outers.start();
-//      int toFree = 0;
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
-//         //NOTE: info should be either fields or locals
-//         if (info.kind == okOuterField) {
-//            _writer.loadObject(*ownerScope.tape, info);
-//            _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
-//         }
-//         else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress) {
-//            if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
-//               _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
-//               toFree++;
-//            }
-//            else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-//         }
-//         else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-//
-//         outer_it++;
-//      }
-//
-//      _writer.releaseObject(*ownerScope.tape, toFree);
-//      _writer.loadObject(*ownerScope.tape, ObjectInfo(okBase));
-//
-//      return ObjectInfo(okAccumulator, scope.reference);
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
-//{
-////   recordStep(ownerScope, node.Terminal(), dsStep);
-//
-//   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope, mode));
-//
-//   // if it is an action code block
-//   if (node == nsSubCode) {
-//      compileAction(node, scope, DNode());
-//   }
-//   // if it is an action code block
-//   else if (node == nsMethodParameter || node == nsSubjectArg) {
-//      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
-//   }
-//   // if it is a shortcut action code block
-//   else if (node == nsObject && test(mode, HINT_ACTION)) {
-//      compileAction(node.firstChild(), scope, node);
-//   }
-//   // if it is inherited nested class
-//   else if (node.Terminal() != nsNone) {
-//	   // inherit parent
-//      compileParentDeclaration(node, scope);
-//
-//      compileNestedVMT(node.firstChild(), scope);
-//   }
-//   // if it is normal nested class
-//   else {
-//      compileParentDeclaration(DNode(), scope);
-//
-//      compileNestedVMT(node, scope);
-//   }
-//   return compileNestedExpression(node, ownerScope, scope, mode & ~HINT_KNOWN_CALL);
-//}
-//
-//ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
-//{
-//   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
-//}
-//
-//ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
-//{
-//   int counter = 0;
-//
-//   // all collection memebers should be created before the collection itself
-//   while (node != nsNone) {
-//      saveObject(scope, compileExpression(node, scope, mode), mode);
-//
-//      node = node.nextNode();
-//      counter++;
-//   }
-//
-//   // create the collection
-//   _writer.newObject(*scope.tape, counter, vmtReference);
-//
-//   _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
-//
-//   // assign the members
-//   while (counter > 0) {
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//      _writer.saveBase(*scope.tape, ObjectInfo(okAccumulator), counter - 1);
-//
-//      counter--;
-//   }
-//
-//   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-//
-//   return ObjectInfo(okAccumulator);
-//}
-//
-//ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   ref_t source_type = 0;
-//   ref_t sourceClassReference = 0;
-//   if (object.kind == okConstantClass || object.kind == okLocalAddress) {
-//      sourceClassReference = object.extraparam;
-//   }
-//   else if (object.kind == okConstantSymbol) {
-//      sourceClassReference = object.extraparam;
-//   }
-//   else if (object.kind == okThisParam && (object.extraparam == 0)) {
-//      sourceClassReference = scope.getClassRefId(false);
-//   }
-//   else source_type = getType(object);
-//
-//   if (source_type == 0 && object.param != 0 && (object.kind == okAccumulator || object.kind == okConstantSymbol)) {
-//      sourceClassReference = object.param;
-//   }
-//
-//   if (sourceClassReference == 0 && source_type != 0) {
-//      sourceClassReference = scope.moduleScope->resolveStrongType(source_type);
-//   }
-//
-//   if (target_type != source_type) {
+void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
+{
+   _writer.declareClass(scope.tape, scope.reference);
+
+   DNode member = node.firstChild();
+
+   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
+
+   // nested class is sealed if it has no parent
+   if (!test(scope.info.header.flags, elClosed))
+      scope.info.header.flags |= elSealed;
+
+   compileVMT(member, scope);
+
+   _writer.endClass(scope.tape);
+
+   // stateless inline class
+   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
+      scope.info.header.flags |= elStateless;
+   }
+   else scope.info.header.flags &= ~elStateless;
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   scope.save();
+   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
+ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+{
+   if (test(scope.info.header.flags, elStateless)) {
+      // if it is a stateless class
+      return ObjectInfo(okConstantSymbol, scope.reference);
+   }
+   else {
+      bool dummy = false;
+      int presaved = 0;
+
+      // unbox all typed variables
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
+            _writer.loadObject(*ownerScope.tape, info);
+            boxObject(ownerScope, info, dummy);
+            _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
+            presaved++;
+         }
+
+         outer_it++;
+      }
+
+      // dynamic binary symbol
+      if (test(scope.info.header.flags, elStructureRole)) {
+         _writer.newStructure(*ownerScope.tape, scope.info.size, scope.reference);
+
+         if (scope.outers.Count() > 0)
+            scope.raiseError(errInvalidInlineClass, node.Terminal());
+      }
+      // dynamic normal symbol
+      else _writer.newObject(*ownerScope.tape, scope.info.fields.Count(), scope.reference);
+
+      _writer.loadBase(*ownerScope.tape, ObjectInfo(okAccumulator));
+
+      outer_it = scope.outers.start();
+      int toFree = 0;
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         //NOTE: info should be either fields or locals
+         if (info.kind == okOuterField) {
+            _writer.loadObject(*ownerScope.tape, info);
+            _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
+         }
+         else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress) {
+            if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
+               _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
+               toFree++;
+            }
+            else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+         }
+         else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+
+         outer_it++;
+      }
+
+      _writer.releaseObject(*ownerScope.tape, toFree);
+      _writer.loadObject(*ownerScope.tape, ObjectInfo(okBase));
+
+      return ObjectInfo(okAccumulator, scope.reference);
+   }
+}
+
+ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
+{
+//   recordStep(ownerScope, node.Terminal(), dsStep);
+
+   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope, mode));
+
+   // if it is an action code block
+   if (node == nsSubCode) {
+      compileAction(node, scope, DNode());
+   }
+   // if it is an action code block
+   else if (node == nsMethodParameter || node == nsSubjectArg) {
+      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
+   }
+   // if it is a shortcut action code block
+   else if (node == nsObject && test(mode, HINT_ACTION)) {
+      compileAction(node.firstChild(), scope, node);
+   }
+   // if it is inherited nested class
+   else if (node.Terminal() != nsNone) {
+	   // inherit parent
+      compileParentDeclaration(node, scope);
+
+      compileNestedVMT(node.firstChild(), scope);
+   }
+   // if it is normal nested class
+   else {
+      compileParentDeclaration(DNode(), scope);
+
+      compileNestedVMT(node, scope);
+   }
+   return compileNestedExpression(node, ownerScope, scope, mode & ~HINT_KNOWN_CALL);
+}
+
+ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
+{
+   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
+}
+
+ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
+{
+   int counter = 0;
+
+   // all collection memebers should be created before the collection itself
+   while (node != nsNone) {
+      saveObject(scope, compileExpression(node, scope, mode), mode);
+
+      node = node.nextNode();
+      counter++;
+   }
+
+   // create the collection
+   _writer.newObject(*scope.tape, counter, vmtReference);
+
+   _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
+
+   // assign the members
+   while (counter > 0) {
+      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+      _writer.saveBase(*scope.tape, ObjectInfo(okAccumulator), counter - 1);
+
+      counter--;
+   }
+
+   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+
+   return ObjectInfo(okAccumulator);
+}
+
+ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   if (target_type == 0)
+      return object;
+
+   ref_t source_type = object.type;
+   ref_t sourceClassReference = 0;
+   if (object.kind == okConstantClass || object.kind == okLocalAddress) {
+      sourceClassReference = object.extraparam;
+   }
+   else if (object.kind == okConstantSymbol) {
+      sourceClassReference = object.extraparam;
+   }
+   else if (object.kind == okThisParam && (source_type == 0)) {
+      sourceClassReference = scope.getClassRefId(false);
+   }
+
+   if (source_type == 0 && object.param != 0 && (object.kind == okAccumulator || object.kind == okConstantSymbol)) {
+      sourceClassReference = object.param;
+   }
+
+   if (sourceClassReference == 0 && source_type != 0) {
+      sourceClassReference = scope.moduleScope->typeHints.get(source_type);
+   }
+
+   if (target_type != source_type) {
+      object.type = target_type;
+
 //      // typecast literal constant - !! review the direct class usage
 //      if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
 //         return ObjectInfo(okAccumulator, 0, target_type);
 //      }
-//
-//   // if target is an explicit type
-//      if (moduleScope->typeHints.get(target_type) != 0) {
-//         ref_t targetClassReference = scope.moduleScope->resolveStrongType(target_type);
-//
-//         ClassInfo targetInfo;
-//         moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
-//
-//         ClassInfo sourceInfo;
-//         if (sourceClassReference != 0)
-//            moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(sourceClassReference), false);
-//
-//         // if the target is structure
-//         if (test(targetInfo.header.flags, elStructureRole)) {
+
+      if (moduleScope->typeHints.exist(target_type)) {
+         ref_t targetClassReference = moduleScope->typeHints.get(target_type);
+         ClassInfo targetInfo;
+         moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
+
+         ClassInfo sourceInfo;
+         if (sourceClassReference != 0)
+            moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(sourceClassReference), false);
+
+         // if the target is structure
+         if (test(targetInfo.header.flags, elStructureRole)) {
 //            // typecast numeric constant
 //            // !! should class references t be used directly??
 //            if (object.kind == okIntConstant) {
@@ -3864,280 +3852,269 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, boo
 //            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
 //               return ObjectInfo(okAccumulator, 0, target_type);
 //            }
-//
-//            // if the source is structure
-//            if (test(sourceInfo.header.flags, elStructureRole)) {
-//               // if source is target wrapper
-//               if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
-//                  ObjectInfo primitive(okLocal, 0, target_type);
-//
-//                  // do nothing for check mode
-//                  if (!test(mode, HINT_CHECK_MODE)) {
-//                     allocateStructure(scope, 0, primitive);
-//
-//                     compileContentAssignment(DNode(), scope, primitive, object);
-//                  }
-//                  object = primitive;
-//
-//                  return object;
-//               }
-//               // if target is a source wrapper
-//               if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
-//                  if (test(targetInfo.header.flags, elEmbeddable)) {
-//                     // pass directly
-//                     if (!object.extraparam)
-//                        object.extraparam = target_type;
-//
-//                     return object;
-//                  }
-//               }
-//            }
-//         }
-//
-//         // pass $nil directly
-//         if (object.kind == okNil)
-//            return object;
-//
-//         // if source class inherites / is target class
-//         while (sourceClassReference != 0) {
-//            if (moduleScope->typeHints.exist(target_type, sourceClassReference))
-//               return object;
-//
-//            sourceClassReference = sourceInfo.header.parentRef;
-//
-//            if (moduleScope->loadClassInfo(sourceInfo, moduleScope->module->resolveReference(sourceClassReference), true) == 0)
-//               break;
-//         }
-//
-//         // if type mismatch
-//         // call typecast method
-//         mismatch = true;
-//
-//         // do nothing for check mode
-//         if (!test(mode, HINT_CHECK_MODE)) {
-//            _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
-//            _writer.typecast(*scope.tape);
-//         }
-//
-//         return ObjectInfo(okAccumulator, 0, target_type);
-//      }
-//   }
-//
-//   if (object.kind != okOuterField) {
-//      object.extraparam = target_type;
-//   }
-//   
-//   return object;
-//}
-//
-//ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//   ObjectInfo info = compileExpression(node, scope, mode);
-//
-//   _writer.loadObject(*scope.tape, info);
-//
-//   // box object if required
-//   bool boxed = false;
-//   boxObject(scope, info, boxed);
-//   if (boxed)
-//      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//
-//   // type cast object if required
-//   int verb, paramCount;
-//   ref_t subj;
-//   decodeMessage(scope.getMessageID(), subj, verb, paramCount);
-//   if (verb == GET_MESSAGE_ID && paramCount == 0) {
-//   }
-//   else if (classScope->info.methodTypes.exist(scope.getMessageID())) {
-//      subj = classScope->info.methodTypes.get(scope.getMessageID());
-//   }
-//   else subj = 0;
-//
-//   if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
-//      bool mismatch = false;
-//      compileTypecast(scope, info, subj, mismatch, 0);
-//      if (mismatch)
-//         scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
-//   }
-//
-//   scope.freeSpace();
-//
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//   return ObjectInfo(okAccumulator, 0, subj);
-//}
-//
-//ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
-//{
-//   DNode member = node.firstChild();
-//
-//   ObjectInfo objectInfo;
-//   if (member==nsObject) {
-//      objectInfo = compileObject(member, scope, mode & ~HINT_KNOWN_CALL);
-//   }
-//   if (member != nsNone) {
-//      if (findSymbol(member, nsCatchMessageOperation)) {
-//         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
-//      }
-//      else if (findSymbol(member, nsAltMessageOperation)) {
-//         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
-//      }
-//      else objectInfo = compileOperations(member, scope, objectInfo, mode);
-//   }
-//
-//   return objectInfo;
-//}
-//
-//ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
-//{
-//   ref_t target_type = scope.getObjectType(target);
-//
-//   // if primitive data operation can be used
-//   if (scope.moduleScope->defineTypeSize(target_type) > 0) {
-//      int assignMode = 0;
-//      if (target.kind == okLocal || target.kind == okFieldAddress) {
-//         // if it is an assignment operation (e.g. a := a + b <=> a += b)
-//         if (isAssignOperation(node, assigning)) {
-//            assignMode |= HINT_ASSIGN_MODE;
-//         }
-//      }
-//
-//      ObjectInfo info = compileExpression(assigning.firstChild(), scope, assignMode);
-//
-//      if (info.kind == okIndexAccumulator) {
-//         // if it is a primitive operation
-//         compileContentAssignment(node, scope, target, info);
-//      }
-//      else if (info.kind == okIdle) {
-//         // if assigning was already done - do nothing
-//      }
-//      else {
-//         _writer.loadObject(*scope.tape, info);
-//
-//         bool mismatch = false;
-//         compileTypecast(scope, info, target_type, mismatch, 0);
-//         if (mismatch)
-//            scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-//
-//         // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
-//         if (target.kind == okField) {
-//            if (checkIfBoxingRequired(scope, info, 0, assignMode)) {
-//               bool boxed = false;
-//               info = boxObject(scope, info, boxed);
-//               if (boxed)
-//                  scope.raiseWarning(4, wrnBoxingCheck, assigning.FirstTerminal());
-//            }               
-//
-//            compileAssignment(node, scope, target);
-//         }
-//         // otherwise assign data content
-//         else compileContentAssignment(node, scope, target, info);
-//      }
-//
-//   }
-//   else {
-//      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
-//
-//      _writer.loadObject(*scope.tape, info);
-//
-//      bool boxed = false;
-//      info = boxObject(scope, info, boxed);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
-//
-//      bool mismatch = false;
-//      compileTypecast(scope, info, target_type, mismatch, 0);
-//      if (mismatch)
-//         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-//
-//      compileAssignment(node, scope, target);
-//   }
-//
-//   return ObjectInfo(okAccumulator);
-//}
-//
-//ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodeMode)
-//{
-//   // execute the block if the condition
-//   // is true / false
-//   if (verb == IF_MESSAGE_ID || verb == IFNOT_MESSAGE_ID) {
-//      ref_t valueRef = (verb == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference;
-//
-//      bool mismatch = false;
-//      compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, 0);
-//
-//      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//      _writer.jumpIfNotEqual(*scope.tape, valueRef);
-//   }
-//
-//   //_writer.declareBlock(*scope.tape);
-//
-//   CodeScope subScope(&scope);
-//
-//   DNode thenCode = thenNode.firstChild();
-//   if (thenCode.firstChild().nextNode() != nsNone) {
-//      compileCode(thenCode, subScope, subCodeMode & ~HINT_LOOP);
-//
-//      if (test(subCodeMode, HINT_LOOP) && subScope.locals.Count() > 0) {
-//         _writer.releaseObject(*scope.tape, subScope.locals.Count());
-//      }
-//   }
-//   // if it is inline action
-//   else compileRetExpression(thenCode.firstChild(), scope, 0);
-//
-//   return ObjectInfo(okAccumulator);
-//}
-//
-//void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
-//{
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
-//
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//   _writer.pushObject(*scope.tape, object);
-//   _writer.throwCurrent(*scope.tape);
-//}
-//
-//void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
-//{
-//   _writer.declareLoop(*scope.tape/*, true*/);
-//
-//   DNode expr = node.firstChild().firstChild();
-//
-//   // if it is while-do loop
-//   if (expr.nextNode() == nsL7Operation) {
-//      DNode loopNode = expr.nextNode();
-//
-//      openDebugExpression(scope);
-//      ObjectInfo cond = compileObject(expr, scope, mode);
-//
-//      //remove last virtual breakpoint
-//      //_writer.removeLastBreakpoint(*scope.tape);
-//
-//      // get the current value
-//      _writer.loadObject(*scope.tape, cond);
-//
-//      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), HINT_LOOP);
-//
-//      endDebugExpression(scope);
-//      _writer.endLoop(*scope.tape);
-//   }
-//   // if it is repeat loop
-//   else {
-//      ObjectInfo retVal = compileExpression(expr, scope, mode);
-//
-//      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//      bool mismatch = false;
-//      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, 0);
-//
-//      _writer.endLoop(*scope.tape, scope.moduleScope->trueReference);
-//   }
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//}
+
+            // if the source is structure
+            if (test(sourceInfo.header.flags, elStructureRole)) {
+               // if source is target wrapper
+               if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
+                  ObjectInfo primitive(okLocal, 0, target_type);
+
+                  // do nothing for check mode
+                  if (!test(mode, HINT_CHECK_MODE)) {
+                     allocateStructure(scope, 0, primitive);
+
+                     compileContentAssignment(DNode(), scope, primitive, object);
+                  }
+                  object = primitive;
+
+                  return object;
+               }
+               // if target is a source wrapper
+               if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
+                  if (test(targetInfo.header.flags, elEmbeddable)) {
+
+                     return object;
+                  }
+               }
+            }
+         }
+
+         // pass $nil directly
+         if (object.kind == okNil)
+            return object;
+
+         // check if typecasting message may be skipped
+         if (sourceClassReference != 0) {
+            MethodInfo typecastMethod = sourceInfo.methodHints.get(encodeMessage(target_type, GET_MESSAGE_ID, 0));
+            if (test(typecastMethod.hint, tpItself))
+               return object;
+         }
+
+         // if type mismatch
+         // call typecast method
+         mismatch = true;
+
+         // do nothing for check mode
+         if (!test(mode, HINT_CHECK_MODE)) {
+            _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
+            _writer.typecast(*scope.tape);
+         }
+
+         return ObjectInfo(okAccumulator, 0, 0, target_type);
+      }
+   }
+   
+   return object;
+}
+
+ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   ObjectInfo info = compileExpression(node, scope, mode);
+
+   _writer.loadObject(*scope.tape, info);
+
+   // box object if required
+   bool boxed = false;
+   boxObject(scope, info, boxed);
+   if (boxed)
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+
+   // type cast object if required
+   int verb, paramCount;
+   ref_t subj;
+   decodeMessage(scope.getMessageID(), subj, verb, paramCount);
+   if (verb == GET_MESSAGE_ID && paramCount == 0) {
+   }
+   else if (classScope->info.methodHints.exist(scope.getMessageID())) {
+      subj = classScope->info.methodHints.get(scope.getMessageID()).typeRef;
+   }
+   else subj = 0;
+
+   if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
+      bool mismatch = false;
+      compileTypecast(scope, info, subj, mismatch, 0);
+      if (mismatch)
+         scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
+   }
+
+   scope.freeSpace();
+
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+   return ObjectInfo(okAccumulator, 0, subj);
+}
+
+ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
+{
+   DNode member = node.firstChild();
+
+   ObjectInfo objectInfo;
+   if (member==nsObject) {
+      objectInfo = compileObject(member, scope, mode);
+   }
+   if (member != nsNone) {
+      if (findSymbol(member, nsCatchMessageOperation)) {
+         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
+      }
+      else if (findSymbol(member, nsAltMessageOperation)) {
+         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
+      }
+      else objectInfo = compileOperations(member, scope, objectInfo, mode);
+   }
+
+   return objectInfo;
+}
+
+ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
+{
+   ref_t target_type = target.type;
+
+   // if primitive data operation can be used
+   if (scope.moduleScope->defineTypeSize(target_type) > 0) {
+      int assignMode = 0;
+      if (target.kind == okLocal || target.kind == okFieldAddress) {
+         // if it is an assignment operation (e.g. a := a + b <=> a += b)
+         if (isAssignOperation(node, assigning)) {
+            assignMode |= HINT_ASSIGN_MODE;
+         }
+      }
+
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, assignMode);
+
+      if (info.kind == okIndexAccumulator) {
+         // if it is a primitive operation
+         compileContentAssignment(node, scope, target, info);
+      }
+      else if (info.kind == okIdle) {
+         // if assigning was already done - do nothing
+      }
+      else {
+         _writer.loadObject(*scope.tape, info);
+
+         bool mismatch = false;
+         compileTypecast(scope, info, target_type, mismatch, 0);
+         if (mismatch)
+            scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
+
+         // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
+         if (target.kind == okField) {
+            if (checkIfBoxingRequired(scope, info, 0, assignMode)) {
+               bool boxed = false;
+               info = boxObject(scope, info, boxed);
+               if (boxed)
+                  scope.raiseWarning(4, wrnBoxingCheck, assigning.FirstTerminal());
+            }               
+
+            compileAssignment(node, scope, target);
+         }
+         // otherwise assign data content
+         else compileContentAssignment(node, scope, target, info);
+      }
+
+   }
+   else {
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
+
+      _writer.loadObject(*scope.tape, info);
+
+      bool boxed = false;
+      info = boxObject(scope, info, boxed);
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
+
+      bool mismatch = false;
+      compileTypecast(scope, info, target_type, mismatch, 0);
+      if (mismatch)
+         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
+
+      compileAssignment(node, scope, target);
+   }
+
+   return ObjectInfo(okAccumulator);
+}
+
+ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodeMode)
+{
+   // execute the block if the condition
+   // is true / false
+   if (verb == IF_MESSAGE_ID || verb == IFNOT_MESSAGE_ID) {
+      ref_t valueRef = (verb == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference;
+
+      bool mismatch = false;
+      compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, 0);
+
+      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+      _writer.jumpIfNotEqual(*scope.tape, valueRef);
+   }
+
+   //_writer.declareBlock(*scope.tape);
+
+   CodeScope subScope(&scope);
+
+   DNode thenCode = thenNode.firstChild();
+   if (thenCode.firstChild().nextNode() != nsNone) {
+      compileCode(thenCode, subScope, subCodeMode & ~HINT_LOOP);
+
+      if (test(subCodeMode, HINT_LOOP) && subScope.locals.Count() > 0) {
+         _writer.releaseObject(*scope.tape, subScope.locals.Count());
+      }
+   }
+   // if it is inline action
+   else compileRetExpression(thenCode.firstChild(), scope, 0);
+
+   return ObjectInfo(okAccumulator);
+}
+
+void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
+{
+   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
+
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+   _writer.pushObject(*scope.tape, object);
+   _writer.throwCurrent(*scope.tape);
+}
+
+void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
+{
+   _writer.declareLoop(*scope.tape/*, true*/);
+
+   DNode expr = node.firstChild().firstChild();
+
+   // if it is while-do loop
+   if (expr.nextNode() == nsL7Operation) {
+      DNode loopNode = expr.nextNode();
+
+      openDebugExpression(scope);
+      ObjectInfo cond = compileObject(expr, scope, 0);
+
+      //remove last virtual breakpoint
+      //_writer.removeLastBreakpoint(*scope.tape);
+
+      // get the current value
+      _writer.loadObject(*scope.tape, cond);
+
+      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), HINT_LOOP);
+
+      endDebugExpression(scope);
+      _writer.endLoop(*scope.tape);
+   }
+   // if it is repeat loop
+   else {
+      ObjectInfo retVal = compileExpression(expr, scope, 0);
+
+      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+      bool mismatch = false;
+      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, 0);
+
+      _writer.endLoop(*scope.tape, scope.moduleScope->trueReference);
+   }
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+}
 
 ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
 {
@@ -4203,327 +4180,327 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
    return retVal;
 }
 
-//void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalScope& externalScope)
+void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalScope& externalScope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+
+      ExternalScope::ParamInfo param;
+      param.subject = moduleScope->mapType(terminal);
+
+      ref_t classReference = moduleScope->typeHints.get(param.subject);
+      int flags = 0;
+      // HOTFIX: problem with using a strong type inside its wrapper
+      if (scope.getClassRefId() == classReference) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+         if (classScope->info.size == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         flags = classScope->info.header.flags;
+      }
+      else {
+         ClassInfo classInfo;
+         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         if (classInfo.size == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         flags = classInfo.header.flags;
+      }
+      // if it is an integer number pass it directly
+      if ((flags & elDebugMask) == elDebugDWORD) {
+         param.size = 4;
+         if (!test(flags, elReadOnlyRole))
+            param.out = true;
+      }
+      else if ((flags & elDebugMask) == elDebugPTR) {
+         param.size = 4;
+      }
+      else if ((flags & elDebugMask) == elDebugReference) {
+         param.size = -2;
+      }
+      else param.size = -1;
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         param.info = compileObject(arg.firstChild(), scope, HINT_EXTERNAL_CALL);
+         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
+            param.info.extraparam = param.subject;
+         }
+
+         if (param.size == -2 && param.info.kind == okInternal) {
+         }
+         else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
+            // if direct pass is possible
+         }
+         else {
+            bool mismatch = false;
+            _writer.loadObject(*scope.tape, param.info);
+            param.info = compileTypecast(scope, param.info, param.subject, mismatch, 0);
+            if (mismatch)
+               scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
+
+            saveObject(scope, param.info, 0);
+            param.info.kind = okBlockLocal;
+            param.info.param = ++externalScope.frameSize;
+         }
+
+         arg = arg.nextNode();
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+
+      externalScope.operands.push(param);
+   }
+}
+
+void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externalScope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+//   ref_t actionType = moduleScope->getActionType();
+
+   // save function parameters
+   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
+   while (!out_it.Eof()) {
+      // if it is output parameter
+      if ((*out_it).out) {
+         _writer.pushObject(*scope.tape, (*out_it).info);
+      }
+      else {
+         if ((*out_it).size == 4) {
+            if ((*out_it).info.kind == okIntConstant) {
+               int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
+
+               externalScope.frameSize++;
+               _writer.declareVariable(*scope.tape, value);
+            }
+            else {
+               _writer.loadObject(*scope.tape, (*out_it).info);
+               _writer.pushObject(*scope.tape, ObjectInfo(okAccField, 0));
+            }
+         }
+         // if it is an internal reference
+         else if ((*out_it).size == -2) {
+            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
+            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+         }
+         else _writer.pushObject(*scope.tape, (*out_it).info);
+      }
+
+      out_it++;
+   }
+}
+
+ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
+{
+   ObjectInfo retVal(okIndexAccumulator);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   bool stdCall = false;
+   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name(DLL_NAMESPACE);
+   name.combine(dllName);
+   name.append(".");
+   name.append(node.Terminal());
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+   // compile argument list
+   ExternalScope externalScope;
+
+   _writer.declareExternalBlock(*scope.tape);
+
+   compileExternalArguments(node.firstChild(), scope, externalScope);
+
+   // exclude stack if necessary
+   _writer.excludeFrame(*scope.tape);
+
+   // save function parameters
+   saveExternalParameters(scope, externalScope);
+
+   // call the function
+   _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
+
+   if (!stdCall)
+      _writer.releaseObject(*scope.tape, externalScope.operands.Count());
+
+   //// indicate that the result is 0 or -1
+   //if (test(mode, HINT_LOOP))
+   //   retVal.extraparam = scope.moduleScope->intSubject;
+
+   // error handling should follow the function call immediately
+   if (test(mode, HINT_TRY))
+      compilePrimitiveCatch(node.nextNode(), scope);
+
+  _writer.endExternalBlock(*scope.tape);
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // only eval message is allowed
+   TerminalInfo     verb = node.Terminal();
+   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
+      scope.raiseError(errInvalidOperation, verb);
+
+   DNode arg = node.firstChild();
+   int count = countSymbol(arg, nsMessageParameter);
+   _writer.declareArgumentList(*scope.tape, count);
+
+   int index = 0;
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+      ref_t type = moduleScope->mapType(terminal);
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
+         _writer.loadObject(*scope.tape, info);
+
+         bool mismatch = false;
+         compileTypecast(scope, info, type, mismatch, 0);
+         if (mismatch)
+            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
+
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, index));
+         index++;
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+
+      arg = arg.nextNode();
+   }
+
+   _writer.loadObject(*scope.tape, routine);
+   _writer.freeVirtualStack(*scope.tape, count);
+
+   return ObjectInfo(okAccumulator);
+}
+
+void Compiler :: reserveSpace(CodeScope& scope, int size)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // if it is not enough place to allocate
+   if (methodScope->reserved < scope.reserved) {
+      ByteCodeIterator allocStatement = scope.tape->find(bcOpen);
+      // reserve place for stack allocated object
+      (*allocStatement).argument += size;
+
+      // if stack was not allocated before
+      // update method enter code
+      if (methodScope->reserved == 0) {
+         // to include new frame header
+         (*allocStatement).argument += 2;
+
+         _writer.insertStackAlloc(allocStatement, *scope.tape, size);
+      }
+      // otherwise update the size
+      else _writer.updateStackAlloc(allocStatement, *scope.tape, size);
+
+      methodScope->reserved += size;
+   }
+}
+
+bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand, bool presavedAccumulator)
+{
+   bool bytearray = false;
+   int size = 0;
+   ref_t classReference = 0;
+   if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
+      classReference = exprOperand.param;
+      size = scope.moduleScope->defineStructSize(classReference);
+   }
+   else size = scope.moduleScope->defineTypeSize(exprOperand.extraparam, classReference);
+
+   if (size == 0)
+      return false;
+
+   if (size < 0) {
+      bytearray = true;
+
+      // plus space for size
+      size = ((dynamicSize + 3) >> 2) + 2;
+   }
+   else if (exprOperand.kind == okIndexAccumulator) {
+      size = 1;
+   }
+   else size = (size + 3) >> 2;
+
+   if (size > 0) {
+      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+      exprOperand.kind = okLocalAddress;
+      exprOperand.param = scope.newSpace(size);
+      exprOperand.extraparam = classReference;
+
+      // allocate
+      reserveSpace(scope, size);
+
+      // reserve place for byte array header if required
+      if (bytearray) {
+         if (presavedAccumulator)
+            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.loadObject(*scope.tape, exprOperand);
+         _writer.saveIntConstant(*scope.tape, -dynamicSize);
+
+         if (presavedAccumulator)
+            _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         exprOperand.param -= 2;
+      }
+
+      return true;
+   }
+   else return false;
+}
+
+//inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
 //{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//
-//      ExternalScope::ParamInfo param;
-//      param.subject = moduleScope->mapType(terminal);
-//
-//      ref_t classReference = moduleScope->resolveStrongType(param.subject);
-//      int flags = 0;
-//      // HOTFIX: problem with using a strong type inside its wrapper
-//      if (scope.getClassRefId() == classReference) {
-//         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//         if (classScope->info.size == 0)
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         flags = classScope->info.header.flags;
-//      }
-//      else {
-//         ClassInfo classInfo;
-//         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         if (classInfo.size == 0)
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         flags = classInfo.header.flags;
-//      }
-//      // if it is an integer number pass it directly
-//      if ((flags & elDebugMask) == elDebugDWORD) {
-//         param.size = 4;
-//         if (!test(flags, elReadOnlyRole))
-//            param.out = true;
-//      }
-//      else if ((flags & elDebugMask) == elDebugPTR) {
-//         param.size = 4;
-//      }
-//      else if ((flags & elDebugMask) == elDebugReference) {
-//         param.size = -2;
-//      }
-//      else param.size = -1;
-//
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
-//         param.info = compileObject(arg.firstChild(), scope, HINT_EXTERNAL_CALL);
-//         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
-//            param.info.extraparam = param.subject;
-//         }
-//
-//         if (param.size == -2 && param.info.kind == okInternal) {
-//         }
-//         else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
-//            // if direct pass is possible
-//         }
-//         else {
-//            bool mismatch = false;
-//            _writer.loadObject(*scope.tape, param.info);
-//            param.info = compileTypecast(scope, param.info, param.subject, mismatch, 0);
-//            if (mismatch)
-//               scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
-//
-//            saveObject(scope, param.info, 0);
-//            param.info.kind = okBlockLocal;
-//            param.info.param = ++externalScope.frameSize;
-//         }
-//
-//         arg = arg.nextNode();
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//
-//      externalScope.operands.push(param);
+//   signature.append(module->resolveSubject(type));
+//}
+
+//inline bool IsVarOperation(int operator_id)
+//{
+//   switch (operator_id) {
+//      case WRITE_MESSAGE_ID:
+//      case APPEND_MESSAGE_ID:
+//      case REDUCE_MESSAGE_ID:
+//      case SEPARATE_MESSAGE_ID:
+//      case INCREASE_MESSAGE_ID:
+//         return true;
+//      default:
+//         return false;
 //   }
 //}
-//
-//void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externalScope)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-////   ref_t actionType = moduleScope->getActionType();
-//
-//   // save function parameters
-//   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
-//   while (!out_it.Eof()) {
-//      // if it is output parameter
-//      if ((*out_it).out) {
-//         _writer.pushObject(*scope.tape, (*out_it).info);
-//      }
-//      else {
-//         if ((*out_it).size == 4) {
-//            if ((*out_it).info.kind == okIntConstant) {
-//               int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
-//
-//               externalScope.frameSize++;
-//               _writer.declareVariable(*scope.tape, value);
-//            }
-//            else {
-//               _writer.loadObject(*scope.tape, (*out_it).info);
-//               _writer.pushObject(*scope.tape, ObjectInfo(okAccField, 0));
-//            }
-//         }
-//         // if it is an internal reference
-//         else if ((*out_it).size == -2) {
-//            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
-//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//         }
-//         else _writer.pushObject(*scope.tape, (*out_it).info);
-//      }
-//
-//      out_it++;
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
-//{
-//   ObjectInfo retVal(okIndexAccumulator);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   bool stdCall = false;
-//   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name(DLL_NAMESPACE);
-//   name.combine(dllName);
-//   name.append(".");
-//   name.append(node.Terminal());
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
-//   // compile argument list
-//   ExternalScope externalScope;
-//
-//   _writer.declareExternalBlock(*scope.tape);
-//
-//   compileExternalArguments(node.firstChild(), scope, externalScope);
-//
-//   // exclude stack if necessary
-//   _writer.excludeFrame(*scope.tape);
-//
-//   // save function parameters
-//   saveExternalParameters(scope, externalScope);
-//
-//   // call the function
-//   _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
-//
-//   if (!stdCall)
-//      _writer.releaseObject(*scope.tape, externalScope.operands.Count());
-//
-//   //// indicate that the result is 0 or -1
-//   //if (test(mode, HINT_LOOP))
-//   //   retVal.extraparam = scope.moduleScope->intSubject;
-//
-//   // error handling should follow the function call immediately
-//   if (test(mode, HINT_TRY))
-//      compilePrimitiveCatch(node.nextNode(), scope);
-//
-//  _writer.endExternalBlock(*scope.tape);
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // only eval message is allowed
-//   TerminalInfo     verb = node.Terminal();
-//   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
-//      scope.raiseError(errInvalidOperation, verb);
-//
-//   DNode arg = node.firstChild();
-//   int count = countSymbol(arg, nsMessageParameter);
-//   _writer.declareArgumentList(*scope.tape, count);
-//
-//   int index = 0;
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//      ref_t type = moduleScope->mapType(terminal);
-//
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
-//         ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
-//         _writer.loadObject(*scope.tape, info);
-//
-//         bool mismatch = false;
-//         compileTypecast(scope, info, type, mismatch, 0);
-//         if (mismatch)
-//            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
-//
-//         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, index));
-//         index++;
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   _writer.loadObject(*scope.tape, routine);
-//   _writer.freeVirtualStack(*scope.tape, count);
-//
-//   return ObjectInfo(okAccumulator);
-//}
-//
-//void Compiler :: reserveSpace(CodeScope& scope, int size)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // if it is not enough place to allocate
-//   if (methodScope->reserved < scope.reserved) {
-//      ByteCodeIterator allocStatement = scope.tape->find(bcOpen);
-//      // reserve place for stack allocated object
-//      (*allocStatement).argument += size;
-//
-//      // if stack was not allocated before
-//      // update method enter code
-//      if (methodScope->reserved == 0) {
-//         // to include new frame header
-//         (*allocStatement).argument += 2;
-//
-//         _writer.insertStackAlloc(allocStatement, *scope.tape, size);
-//      }
-//      // otherwise update the size
-//      else _writer.updateStackAlloc(allocStatement, *scope.tape, size);
-//
-//      methodScope->reserved += size;
-//   }
-//}
-//
-//bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand, bool presavedAccumulator)
-//{
-//   bool bytearray = false;
-//   int size = 0;
-//   ref_t classReference = 0;
-//   if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
-//      classReference = exprOperand.param;
-//      size = scope.moduleScope->defineStructSize(classReference);
-//   }
-//   else size = scope.moduleScope->defineTypeSize(exprOperand.extraparam, classReference);
-//
-//   if (size == 0)
-//      return false;
-//
-//   if (size < 0) {
-//      bytearray = true;
-//
-//      // plus space for size
-//      size = ((dynamicSize + 3) >> 2) + 2;
-//   }
-//   else if (exprOperand.kind == okIndexAccumulator) {
-//      size = 1;
-//   }
-//   else size = (size + 3) >> 2;
-//
-//   if (size > 0) {
-//      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//      exprOperand.kind = okLocalAddress;
-//      exprOperand.param = scope.newSpace(size);
-//      exprOperand.extraparam = classReference;
-//
-//      // allocate
-//      reserveSpace(scope, size);
-//
-//      // reserve place for byte array header if required
-//      if (bytearray) {
-//         if (presavedAccumulator)
-//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         _writer.loadObject(*scope.tape, exprOperand);
-//         _writer.saveIntConstant(*scope.tape, -dynamicSize);
-//
-//         if (presavedAccumulator)
-//            _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         exprOperand.param -= 2;
-//      }
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-////inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
-////{
-////   signature.append(module->resolveSubject(type));
-////}
-//
-////inline bool IsVarOperation(int operator_id)
-////{
-////   switch (operator_id) {
-////      case WRITE_MESSAGE_ID:
-////      case APPEND_MESSAGE_ID:
-////      case REDUCE_MESSAGE_ID:
-////      case SEPARATE_MESSAGE_ID:
-////      case INCREASE_MESSAGE_ID:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
-//
-//ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
-//{
-//   _writer.declarePrimitiveCatch(*scope.tape);
-//
-//   size_t size = 0;
-//   ref_t message = mapMessage(node, scope, size);
-//   if (message == encodeMessage(0, RAISE_MESSAGE_ID, 1)) {
-//      compileThrow(node.firstChild().firstChild().firstChild(), scope, 0);
-//   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//   _writer.endPrimitiveCatch(*scope.tape);
-//
-//   return ObjectInfo(okIndexAccumulator);
-//}
+
+ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
+{
+   _writer.declarePrimitiveCatch(*scope.tape);
+
+   size_t size = 0;
+   ref_t message = mapMessage(node, scope, size);
+   if (message == encodeMessage(0, RAISE_MESSAGE_ID, 1)) {
+      compileThrow(node.firstChild().firstChild().firstChild(), scope, 0);
+   }
+   else scope.raiseError(errInvalidOperation, node.Terminal());
+
+   _writer.endPrimitiveCatch(*scope.tape);
+
+   return ObjectInfo(okIndexAccumulator);
+}
 
 ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
 {
@@ -4774,59 +4751,59 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
    _writer.endMethod(*codeScope.tape, scope.parameters.Count() + 1, scope.reserved);
 }
 
-//void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // try to implement light-weight resend operation
-//   if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
-//      ObjectInfo target = compileTerminal(node, scope, 0);
-//      if (target.kind == okConstantSymbol || target.kind == okField) {
-//         _writer.declareMethod(*scope.tape, methodScope->message, false, false);
-//
-//         if (target.kind == okField) {
-//            _writer.loadObject(*scope.tape, ObjectInfo(okAccField, target.param));
-//         }
-//         else _writer.loadObject(*scope.tape, target);
-//
-//         _writer.resend(*scope.tape);
-//
-//         _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
-//
-//         return;
-//      }
-//   }
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
-//   scope.level++;
-//
-//   // copy arguments
-//   int param_count = getParamCount(methodScope->message);
-//   while (param_count > 0) {
-//      _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1 - param_count));
-//      param_count--;
-//   }
-//
-//   _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
-//   _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
-//
-//   ObjectInfo target = compileObject(node, scope, 0);
-//
-//   bool boxed = false;
-//   boxObject(scope, target, boxed);
-//   if (boxed)
-//      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());      
-//
-//   _writer.loadObject(*scope.tape, target);
-//
-//   _writer.popObject(*scope.tape, ObjectInfo(okExtraRegister));
-//
-//   _writer.callRoleMessage(*scope.tape, getParamCount(methodScope->message));
-//
-//   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-//}
+void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // try to implement light-weight resend operation
+   if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
+      ObjectInfo target = compileTerminal(node, scope, 0);
+      if (target.kind == okConstantSymbol || target.kind == okField) {
+         _writer.declareMethod(*scope.tape, methodScope->message, false, false);
+
+         if (target.kind == okField) {
+            _writer.loadObject(*scope.tape, ObjectInfo(okAccField, target.param));
+         }
+         else _writer.loadObject(*scope.tape, target);
+
+         _writer.resend(*scope.tape);
+
+         _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
+
+         return;
+      }
+   }
+
+   // new stack frame
+   // stack already contains previous $self value
+   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
+   scope.level++;
+
+   // copy arguments
+   int param_count = getParamCount(methodScope->message);
+   while (param_count > 0) {
+      _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1 - param_count));
+      param_count--;
+   }
+
+   _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
+   _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
+
+   ObjectInfo target = compileObject(node, scope, 0);
+
+   bool boxed = false;
+   boxObject(scope, target, boxed);
+   if (boxed)
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());      
+
+   _writer.loadObject(*scope.tape, target);
+
+   _writer.popObject(*scope.tape, ObjectInfo(okExtraRegister));
+
+   _writer.callRoleMessage(*scope.tape, getParamCount(methodScope->message));
+
+   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+}
 
 void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 {
@@ -4889,9 +4866,9 @@ void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& sco
          importCode(node, *scope.moduleScope, scope.tape, node.Terminal());
       }
       // if it is a wrapper dispatching
-      else if (info.kind == okLocal && info.param == 1 && info.extraparam != 0 && test(scope.getClassFlags(), elStructureWrapper)) {
+      else if (info.kind == okLocal && info.param == 1 && info.type != 0 && test(scope.getClassFlags(), elStructureWrapper)) {
          // load a data class class
-         ref_t classReference = scope.moduleScope->resolveStrongType(info.extraparam);
+         ref_t classReference = scope.moduleScope->typeHints.get(info.type);
 
          ClassInfo info;
          // check if the object can be treated like a constant object
@@ -4905,123 +4882,123 @@ void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& sco
    else scope.raiseError(errInvalidOperation, node.Terminal());
 }
 
-//void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // new stack frame
+   // stack already contains current $self reference
+   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
+   scope.level++;
+
+   compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/), 0);
+   scope.freeSpace();
+
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+}
+
+void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function)
+{
+   MethodScope methodScope(&scope);
+   methodScope.message = message;
+
+   // check if the method is inhreited and update vmt size accordingly
+   if(methodScope.include() && test(methodScope.getClassFlag(), elClosed))
+      scope.raiseError(errClosedParent, node.Terminal());
+
+   CodeScope codeScope(&methodScope);
+
+   compileImportMethod(node, codeScope, message, function, 0);
+}
+
+void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t message, ident_t function, int mode)
+{
+   _writer.declareIdleMethod(*codeScope.tape, message);
+   importCode(node, *codeScope.moduleScope, codeScope.tape, function);
+   _writer.endIdleMethod(*codeScope.tape);
+}
+
+void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
+{
+   int paramCount = getParamCount(scope.message);
+
+   CodeScope codeScope(&scope);
+
+   // save extensions if any
+   if (test(codeScope.getClassFlags(false), elExtension)) {
+      codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
+   }
+
+   DNode resendBody = node.select(nsResendExpression);
+   DNode dispatchBody = node.select(nsDispatchExpression);
+
+   // check if it is a resend
+   if (resendBody != nsNone) {
+      compileResendExpression(resendBody.firstChild(), codeScope);
+   }
+   // check if it is a dispatch
+   else if (dispatchBody != nsNone) {
+      if (isImportRedirect(dispatchBody.firstChild())) {
+         compileImportMethod(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal(), mode);
+      }
+      else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
+   }
+   else {
+      // new stack frame
+      // stack already contains current $self reference
+      // the original message should be restored if it is a generic method
+      _writer.declareMethod(*codeScope.tape, scope.message, test(mode, HINT_GENERIC_METH));
+      codeScope.level++;
+      // declare the current subject for a generic method
+      if (test(mode, HINT_GENERIC_METH)) {
+         _writer.copySubject(*codeScope.tape);
+         _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
+         codeScope.level++;
+         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
+      }
+
+      declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
+
+      DNode body = node.select(nsSubCode);
+      // if method body is a returning expression
+      if (body==nsNone) {
+         compileCode(node, codeScope);
+      }
+      // if method body is a set of statements
+      else {
+         ObjectInfo retVal = compileCode(body, codeScope);
+
+         if(retVal.kind == okUnknown) {
+            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
+
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+            bool mismatch = false;
+            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodHints.get(scope.message).typeRef, mismatch, 0);
+            if (mismatch)
+               scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
+         }
+      }
+
+      int stackToFree = paramCount + scope.rootToFree;
+
+   //   if (scope.testMode(MethodScope::modLock)) {
+   //      _writer.endSyncMethod(*codeScope.tape, -1);
+   //   }
+      _writer.endMethod(*codeScope.tape, stackToFree, scope.reserved);
+   }
+
+//   // critical section entry if sync hint declared
+//   if (scope.testMode(MethodScope::modLock)) {
+//      ownerScope->info.header.flags |= elWithLocker;
 //
-//   // new stack frame
-//   // stack already contains current $self reference
-//   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
-//   scope.level++;
-//
-//   compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/), 0);
-//   scope.freeSpace();
-//
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-//}
-//
-//void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function)
-//{
-//   MethodScope methodScope(&scope);
-//   methodScope.message = message;
-//
-//   // check if the method is inhreited and update vmt size accordingly
-//   if(methodScope.include() && test(methodScope.getClassFlag(), elClosed))
-//      scope.raiseError(errClosedParent, node.Terminal());
-//
-//   CodeScope codeScope(&methodScope);
-//
-//   compileImportMethod(node, codeScope, message, function, 0);
-//}
-//
-//void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t message, ident_t function, int mode)
-//{
-//   _writer.declareIdleMethod(*codeScope.tape, message);
-//   importCode(node, *codeScope.moduleScope, codeScope.tape, function);
-//   _writer.endIdleMethod(*codeScope.tape);
-//}
-//
-//void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
-//{
-//   int paramCount = getParamCount(scope.message);
-//
-//   CodeScope codeScope(&scope);
-//
-//   // save extensions if any
-//   if (test(codeScope.getClassFlags(false), elExtension)) {
-//      codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
+//      _writer.tryLock(*codeScope.tape, 1);
 //   }
-//
-//   DNode resendBody = node.select(nsResendExpression);
-//   DNode dispatchBody = node.select(nsDispatchExpression);
-//
-//   // check if it is a resend
-//   if (resendBody != nsNone) {
-//      compileResendExpression(resendBody.firstChild(), codeScope);
-//   }
-//   // check if it is a dispatch
-//   else if (dispatchBody != nsNone) {
-//      if (isImportRedirect(dispatchBody.firstChild())) {
-//         compileImportMethod(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal(), mode);
-//      }
-//      else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
-//   }
-//   else {
-//      // new stack frame
-//      // stack already contains current $self reference
-//      // the original message should be restored if it is a generic method
-//      _writer.declareMethod(*codeScope.tape, scope.message, test(mode, HINT_GENERIC_METH));
-//      codeScope.level++;
-//      // declare the current subject for a generic method
-//      if (test(mode, HINT_GENERIC_METH)) {
-//         _writer.copySubject(*codeScope.tape);
-//         _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
-//         codeScope.level++;
-//         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
-//      }
-//
-//      declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
-//
-//      DNode body = node.select(nsSubCode);
-//      // if method body is a returning expression
-//      if (body==nsNone) {
-//         compileCode(node, codeScope);
-//      }
-//      // if method body is a set of statements
-//      else {
-//         ObjectInfo retVal = compileCode(body, codeScope);
-//
-//         if(retVal.kind == okUnknown) {
-//            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
-//
-//            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//            bool mismatch = false;
-//            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodTypes.get(scope.message), mismatch, 0);
-//            if (mismatch)
-//               scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
-//         }
-//      }
-//
-//      int stackToFree = paramCount + scope.rootToFree;
-//
-//   //   if (scope.testMode(MethodScope::modLock)) {
-//   //      _writer.endSyncMethod(*codeScope.tape, -1);
-//   //   }
-//      _writer.endMethod(*codeScope.tape, stackToFree, scope.reserved);
-//   }
-//
-////   // critical section entry if sync hint declared
-////   if (scope.testMode(MethodScope::modLock)) {
-////      ownerScope->info.header.flags |= elWithLocker;
-////
-////      _writer.tryLock(*codeScope.tape, 1);
-////   }
-////   // safe point (no need in extra one because lock already has one safe point)
-////   else if (scope.testMode(MethodScope::modSafePoint))
-////      _writer.declareSafePoint(*codeScope.tape);
-//}
+//   // safe point (no need in extra one because lock already has one safe point)
+//   else if (scope.testMode(MethodScope::modSafePoint))
+//      _writer.declareSafePoint(*codeScope.tape);
+}
 
 void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, int mode)
 {
