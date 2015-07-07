@@ -22,8 +22,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * get rid of synonyms, any declared subject is a type
-
                        * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
                          if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
                          the class implements the typecasting operation as idle one ( = $self) - skip as well.

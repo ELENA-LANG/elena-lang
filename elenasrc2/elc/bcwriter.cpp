@@ -488,8 +488,6 @@ inline ref_t defineConstantMask(ObjectKind type)
          return mskSignature;
       case okVerbConstant:
          return mskVerb;
-//      case okSymbolReference:
-//         return mskSymbolLoaderRef;
       default:
          return mskConstantRef;
    }
@@ -511,7 +509,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, ObjectInfo object)
          break;
       case okConstantSymbol:
       case okConstantClass:
-      case okConstant:
       case okLiteralConstant:
       case okCharConstant:
       case okIntConstant:
@@ -631,7 +628,6 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          break;
       case okConstantSymbol:
       case okConstantClass:
-      case okConstant:
       case okLiteralConstant:
       case okCharConstant:
       case okIntConstant:
@@ -1067,7 +1063,6 @@ void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatch
          break;
       case okConstantSymbol:
       case okConstantClass:
-      case okConstant:
       case okLiteralConstant:
       case okCharConstant:
       case okIntConstant:

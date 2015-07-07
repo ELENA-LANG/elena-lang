@@ -538,19 +538,19 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
       return ObjectInfo(okConstantSymbol, reference);
    }
    else if (symbolHints.exist(reference, okIntConstant)) {
-      return ObjectInfo(okConstant, reference, intReference);
+      return ObjectInfo(okConstantSymbol, reference, intReference);
    }
    else if (symbolHints.exist(reference, okLongConstant)) {
-      return ObjectInfo(okConstant, reference, longReference);
+      return ObjectInfo(okConstantSymbol, reference, longReference);
    }
    else if (symbolHints.exist(reference, okRealConstant)) {
-      return ObjectInfo(okConstant, reference, realReference);
+      return ObjectInfo(okConstantSymbol, reference, realReference);
    }
    else if (symbolHints.exist(reference, okLiteralConstant)) {
-      return ObjectInfo(okConstant, reference, literalReference);
+      return ObjectInfo(okConstantSymbol, reference, literalReference);
    }
    else if (symbolHints.exist(reference, okCharConstant)) {
-      return ObjectInfo(okConstant, reference, charReference);
+      return ObjectInfo(okConstantSymbol, reference, charReference);
    }
    else if (checkState) {
       ClassInfo info;
@@ -2861,7 +2861,7 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else if (operand.kind == okUnknown) {
       return 0;
    }
-   else if (operand.kind == okConstant) {
+   else if (operand.kind == okConstantSymbol) {
       return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
    }
    else return moduleScope.getClassFlags(moduleScope.resolveStrongType(operand.extraparam)) & elDebugMask;
@@ -3297,13 +3297,11 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       else if (object.kind == okConstantSymbol) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
 
-         classReference = object.param;
-         directCall = true;
-      }
-      else if (object.kind == okConstant && object.extraparam != 0) {
-         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+         if (object.extraparam != 0) {
+            classReference = object.extraparam;
+         }
+         else classReference = object.param;
 
-         classReference = object.extraparam;
          directCall = true;
       }
       else if (object.kind == okAccumulator && object.param != 0) {
@@ -3842,7 +3840,10 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
    ModuleScope* moduleScope = scope.moduleScope;
    ref_t source_type = 0;
    ref_t sourceClassReference = 0;
-   if (object.kind == okConstant || object.kind == okConstantClass || object.kind == okLocalAddress) {
+   if (object.kind == okConstantClass || object.kind == okLocalAddress) {
+      sourceClassReference = object.extraparam;
+   }
+   else if (object.kind == okConstantSymbol) {
       sourceClassReference = object.extraparam;
    }
    else if (object.kind == okThisParam && (object.extraparam == 0)) {
@@ -4815,7 +4816,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    // try to implement light-weight resend operation
    if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
       ObjectInfo target = compileTerminal(node, scope, 0);
-      if (target.kind == okConstant || target.kind == okField) {
+      if (target.kind == okConstantSymbol || target.kind == okField) {
          _writer.declareMethod(*scope.tape, methodScope->message, false, false);
 
          if (target.kind == okField) {

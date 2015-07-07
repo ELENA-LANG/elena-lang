@@ -18,47 +18,44 @@ enum ObjectKind
 {
    okUnknown = 0,
 
-   okExternal,
-   okInternal,
-
-   okConstant,                     // param - reference, extraparam - class reference
+   okSymbol,                       // param - reference, extraparam - type reference
+   okConstantSymbol,               // param - reference, extraparam - class reference
+   okConstantClass,                // param - reference, extraparam - class reference
    okLiteralConstant,              // param - reference 
    okCharConstant,                 // param - reference
    okIntConstant,                  // param - reference 
    okLongConstant,                 // param - reference 
    okRealConstant,                 // param - reference 
-   okConstantSymbol,               // param - reference 
-   okConstantClass,                // param - reference, extraparam - class reference
+   okMessageConstant,              // param - reference 
+   okSignatureConstant,            // param - reference 
+   okVerbConstant,                 // param - reference 
 
-   okVerbConstant,
-   okSignatureConstant,
-   okMessageConstant,
+   okIndexAccumulator,
+   okExtraRegister,
+   okAccumulator,
+   okBase,
+   okAccField,                     // param - field offset
 
-   okSymbol,                       // param - reference, extraparam - type reference
-//   okSymbolReference,              // param - reference
-   okRole,
-   okConstantRole,                 // param - role reference
-   okField,                         // param - field offset
-   okFieldAddress,                  // param - field offset, extraparam - type reference
-   okOuter,                         // param - field offset, extraparam - type reference
-   okOuterField,                    // param - field offset, extraparam - outer field offset
-   okLocal,                         // param - local / out parameter offset, extraparam - type reference
-   okParam,                         // param - parameter offset, extraparam - type reference
-   okThisParam,                     // param - parameter offset, extraparam - type reference
+   okField,                        // param - field offset
+   okFieldAddress,                 // param - field offset
+   okOuter,                        // param - field offset
+   okOuterField,                   // param - field offset, extraparam - outer field offset
+   okLocal,                        // param - local / out parameter offset
+   okParam,                        // param - parameter offset
+   okSubject,
+   okThisParam,                    // param - parameter offset
    okNil,
    okSuper,
    okLocalAddress,                  // param - local offset, extraparam - class reference
    okParams,                        // param - local offset
-   okBlockLocal,                    // param - local offset, extraparam - type reference    
+   okBlockLocal,                    // param - local offset
    okCurrent,                       // param - stack offset
-   okAccumulator,                   // param - type class reference, extraparam - type reference
-   okAccField,                      // param - field offset
-//   okBlockLocalAddress,
-////   okBlockOuterField,   
-   okIndexAccumulator,
-   okExtraRegister,
-   okBase,
-   okSubject,
+
+   okRole,
+   okConstantRole,                 // param - role reference
+
+   okExternal,
+   okInternal,
 
    okIdle
 };
@@ -68,36 +65,49 @@ struct ObjectInfo
    ObjectKind kind;
    ref_t      param;
    ref_t      extraparam;
+   ref_t      type;
 
    ObjectInfo()
    {
       this->kind = okUnknown;
       this->param = 0;
       this->extraparam = 0;
+      this->type = 0;
    }
    ObjectInfo(ObjectKind kind)
    {
       this->kind = kind;
       this->param = 0;
       this->extraparam = 0;
+      this->type = 0;
    }
    ObjectInfo(ObjectKind kind, ObjectInfo copy)
    {
       this->kind = kind;
       this->param = copy.param;
       this->extraparam = copy.extraparam;
+      this->type = copy.type;
    }
    ObjectInfo(ObjectKind kind, ref_t param)
    {
       this->kind = kind;
       this->param = param;
       this->extraparam = 0;
+      this->type = 0;
    }
    ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
    {
       this->kind = kind;
       this->param = param;
       this->extraparam = extraparam;
+      this->type = 0;
+   }
+   ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
+   {
+      this->kind = kind;
+      this->param = param;
+      this->extraparam = extraparam;
+      this->type = type;
    }
 };
 
