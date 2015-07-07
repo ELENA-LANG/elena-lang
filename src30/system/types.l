@@ -1,9 +1,9 @@
-// ==== ver 3.3.0 ===
+// ==== ver 3.4.0 ===
 
 // === basic logical types ===
 #subject(class:system'BaseBoolValue) bool.
-
-// === basic stack allocated types ===
+ 
+// === basic primitive types ===
 
 #subject(class:system'ByteNumber)   byte.
 #subject(class:system'ShortNumber)  short.
@@ -11,11 +11,6 @@
 #subject(class:system'LongNumber)   long.
 #subject(class:system'RealNumber)   real.
 #subject(class:system'CharValue)    char.
-
-#subject(class:system'IntNumber)    length.
-#subject(class:system'IntNumber)    capacity.
-#subject(class:system'IntNumber)    index.
-#subject(class:system'IntNumber)    hash_code.
 #subject(class:system'Message)      mssg.
 #subject(class:system'Message)      verb.
 #subject(class:system'Signature)    subject.
@@ -40,7 +35,6 @@
 #subject(class:system'Array)        array.
 #subject(class:system'OpenArgs)     params.
 #subject(class:system'OpenArgs)     args.
-
 #subject(class:system'MessageArray) mssgarray.
 
 #subject(class:system'LiteralValue) literal.
@@ -67,51 +61,11 @@
 #subject(class:system'IndexFunction2)nnfunc.
 #subject(class:system'IndexFunction3)n3func.
 
-#subject(class:system'BaseFunction1) each.
-#subject(class:system'BaseFunction2) eachPair.
-#subject(class:system'IndexFunction1)every.
-
-// === subject synonyms ===
-#subject(class:system'Signature)    error_type.
-
-// === exception types ===
-#subject(class:system'BaseFunction1) Error.
-#subject(class:system'BaseFunction1) MethodNotFoundError.
-#subject(class:system'BaseFunction1) FormatError.
-#subject(class:system'BaseFunction1) OutOfRangeError.
-#subject(class:system'BaseFunction1) InvalidArgumentError.
-#subject(class:system'BaseFunction1) NotSupportedError.
-#subject(class:system'BaseFunction1) Abort.
-#subject(class:system'BaseFunction1) InvalidOperationError.
-
 // === system handles ===
 #subject(class:Handle) handle.
 #subject(class:system'RTPointer)rt_ptr.
 #subject(class:system'UnsafePointer)dirty_ptr.
 
 // --- Enumerators / Indexers ---
-
 #subject(class:system'Enumerator)enumerator.
 #subject(class:system'Iterator)iterator.
-
-// --- common properties ---
-#subject key.
-#subject value.
-#subject object.
-#subject path.
-#subject name.
-#subject enumerable.
-#subject indexable.
-
-// === int synonyms ===
-#subject(class:system'IntNumber)        offset.
-#subject(class:system'IntNumber)        int_attributes.
-
-// === vint synonyms ===
-#subject(class:system'Integer)          vlength.
-
-// === literal synonyms ===
-#subject x.
-#subject y.
-#subject width.
-#subject height.

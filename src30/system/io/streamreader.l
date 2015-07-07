@@ -36,7 +36,7 @@
             
     #method read &bytearray:anArray &length:aLength
     [
-        #var(type:length)aRead := aLength.
+        #var(type:int)aRead := aLength int.
         
         $self read &bytearray:anArray &vlength:aRead.
          
@@ -47,7 +47,7 @@
     #method read &vbyte:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:length)aRead := 1.
+        #var(type:int)aRead := 1.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -60,7 +60,7 @@
     #method read &vshort:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:length)aRead := 2.
+        #var(type:int)aRead := 2.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -73,7 +73,7 @@
     #method read &vchar:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:length)aRead := 4.
+        #var(type:int)aRead := 4.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -86,7 +86,7 @@
     #method read &vint:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
-        #var(type:length)aRead := 4.
+        #var(type:int)aRead := 4.
         
         $self read &bytearray:aBuffer &length:aRead.
         
@@ -99,7 +99,7 @@
     #method read &vlong:aLong
     [
         #var(type:bytearray,size:8)aBuffer.
-        #var(type:length)aRead := 8.
+        #var(type:int)aRead := 8.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -112,7 +112,7 @@
     #method read &vreal:aReal
     [
         #var(type:bytearray,size:8)aBuffer.
-        #var(type:length)aRead := 8.
+        #var(type:int)aRead := 8.
         
         $self read &bytearray:aBuffer &vlength:aRead.
         
@@ -139,7 +139,7 @@
         theNewLineLength := theNewLineConstant length.
     ]
 
-    #method read &chararray:anArray &vlength:anActualLength
+    #method read &chararray:anArray &vint:anActualLength
     [
     ]
 
@@ -163,7 +163,7 @@
             (aLength == -1)
                 ? [
                     #var(type:chararray,size:64)aBuffer.
-                    #var(type:length)aBufferLength := 64.
+                    #var(type:int)aBufferLength := 64.
                     
                     $self read &chararray:aBuffer &vlength:aBufferLength.
                     (aBufferLength == 0)
@@ -200,9 +200,9 @@
             (aLength == -1)
                 ? [
                     #var(type:chararray,size:64)aBuffer.
-                    #var(type:vlength)aBufferLength := 64.
+                    #var(type:int)aBufferLength := 64.
                     
-                    $self read &chararray:aBuffer &vlength:aBufferLength.
+                    $self read &chararray:aBuffer &vint:aBufferLength.
                     (aBufferLength == 0)
                         ? [ aLength := -2. ]  // !! to indicate the eof
                         ! [ theOutput write &chararray:aBuffer &length:aBufferLength. ].

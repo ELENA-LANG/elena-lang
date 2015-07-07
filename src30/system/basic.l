@@ -168,9 +168,6 @@
     /// Returns the value as an integer
     #method index = IntNumber new &byte:$self.
 
-    /// Returns the value as an integer
-    #method length = IntNumber new &byte:$self.
-
     /// Returns the value as a long integer
     #method long = LongNumber new &byte:$self.
 
@@ -423,9 +420,6 @@
     /// Returns the integer value
     #method index = IntNumber new &short:$self.
     
-    /// Returns the integer value
-    #method length = IntNumber new &short:$self.
-    
     /// Compares the value
     #method(type:bool) equal &int:anOperand 
         => system'internal'int_equal.
@@ -667,9 +661,6 @@
     
     /// Returns itself
     #method index = $self.
-    
-    /// Returns itself
-    #method length = $self.
 
     /// Returns the value as a short integer    
     #method short = shortConvertor convert &int:$self.
@@ -936,9 +927,6 @@
     
     /// Returns an integer value
     #method index = intConvertor convert &long:$self.
-    
-    /// Returns an integer value
-    #method length = intConvertor convert &long:$self.
 
     /// Returns the value as a short integer    
     #method short = shortConvertor convert &long:$self.

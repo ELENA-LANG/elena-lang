@@ -22,13 +22,19 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
+                       * get rid of synonyms, any declared subject is a type
+
                        * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
                          if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
                          the class implements the typecasting operation as idle one ( = $self) - skip as well.
-                       * get rid of synonyms, any declared subject is a type
+
                        * primitive structs : integerof, floatof (can be stack allocated, read only)
                        * literals
                        * primitive wrappers : strinfof, struct, variableof, arrayof (can be stack allocated, changable)
+
+                       * try to get rid of most external code
+
+                       * default dynamic constructor
 
                        * example of variable, array ; should be easy to declare (only inherits the base class)
                        * example of by ref parameters
@@ -54,6 +60,9 @@ Currently:
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     
+                       * each, every and so on is no longer strong typed, so there should be strong typed altenative for them
+                       * review system'collections, try to use more strong typed code
+                       * used strong typed event handlers
                        * sqlite : support float
                        * sqlite : support blob
                        * implement file search

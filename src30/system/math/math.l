@@ -1,9 +1,5 @@
 #define system.
 
-#subject degree.
-#subject radian.
-//#subject reciprocal,ln,exp,sin,cos
-
 // --- Operations ---
 
 // --- byteOp ---

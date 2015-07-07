@@ -3,10 +3,6 @@
 #define system.
 #define system'routines.
 
-#subject(class:system'IndexFunction1) doEvery.
-#subject(class:system'BaseFunction1)  doEach.
-#subject(class:system'BaseFunction1)  seekEach.
-
 #class(extension:int)intLoopOp
 {
     #method to &int:anEnd &doEvery:aFunction

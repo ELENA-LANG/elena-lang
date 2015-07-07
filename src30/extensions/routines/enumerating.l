@@ -3,9 +3,6 @@
 #define system'text.
 #define extensions'text.
 
-#subject(class:system'BaseFunction1) eachWord.
-#subject(class:system'BaseFunction1) eachLine.
-
 // --- ReaderEnumerator ---
 
 #class ReaderEnumerator :: Enumerator

@@ -10,16 +10,10 @@
 //#symbol(const,type:int)SQLITE_BLOB = 4.
 #symbol(const,type:int)SQLITE_NULL = 5.
 
-#subject sql.
-#subject sql_field_names.
-
-#subject sqlite_row.
 #subject(class:DBConnection)sqlite_cnn.
 #subject(class:DBCommand)sqlite_cmd.
 #subject(class:DBReader)sqlite_reader.
 #subject(class:DBTable)sqlite_table.
-
-#subject(class:system'BaseFunction1) DBError.
 
 // --- DBException ---
 

@@ -1,7 +1,5 @@
 #define system.
 
-#subject(class:system'BaseFunction1) WinFormsError.
-
 // --- IOException ---
 
 #class WinFormsException :: Exception

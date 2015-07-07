@@ -147,8 +147,8 @@
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
-        #var(type:length)aBlockLength.
-        #var(type:length)aBufferLength.
+        #var(type:int)aBlockLength.
+        #var(type:int)aBufferLength.
         #var(type:int)anOffset := 0.
         
         #loop (aTotal > 0) ?
@@ -200,7 +200,7 @@
 
     #method encoder = theEncoder.
 
-    #method read &chararray:anOutput &vlength:aLength
+    #method read &chararray:anOutput &vint:aLength
     [
         #var(type:int)aBufferLength := 64.
         #var(type:bytearray,size:64)aBuffer.

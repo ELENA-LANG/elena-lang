@@ -189,7 +189,7 @@
     #method read &wide
     [
         #var(type:shortarray,size:127)aBuffer.
-        #var(type:length)aLength.
+        #var(type:int)aLength.
         #var anOutput := emptyWideLiteralValue.
         
         #var(type:bool) continue := true.

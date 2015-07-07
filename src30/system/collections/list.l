@@ -1,14 +1,10 @@
 #define system.
 
 #subject(class:system'collections'ListItem)   list_item.
-#subject(class:system'collections'ListItem)   next_list_item.
-#subject(class:system'collections'ListItem)   top_list_item.
 
 #subject(class:system'collections'List)list.
 #subject(class:system'collections'ArrayList)  array_list.
 #subject(class:system'collections'Dictionary) dictionary.
-
-#subject(class:system'IntNumber)              hash_length.
 
 // --- ListItem ---
 

@@ -762,7 +762,7 @@
 #class(limited) Paintbox :: BaseWinControl
 {
     #field(type:canvas) theCanvas.
-    #field(type:onPaint)thePaint.
+    #field thePaint.
     
     #constructor new
         <= (new)

@@ -4,9 +4,6 @@
 #subject(class:system'calendar'SystemTimeVar) __vtime.
 #subject(class:system'calendar'TimeStruct)    __time_st.
 
-#subject(class:system'IntNumber) int_time_attributes.
-#subject(class:system'IntNumber) int_date_attributes.
-
 #symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
 #symbol(const,type:int) DATE_LONGDATE   = 00000002h.
 

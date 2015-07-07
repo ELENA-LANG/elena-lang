@@ -132,7 +132,7 @@
     eval &indexers:Indexers &length:n
     [
         #var(type:array)anArray := Indexers array.
-        #var(type:length)aLength := anArray length.
+        #var(type:int)aLength := anArray length.
         
         0::intLoopOp to &int:(aLength - 1) &doEvery: (&index:i) [ anArray getAt &index:i write &index:i. ].
         

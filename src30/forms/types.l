@@ -17,28 +17,4 @@
 #subject(class:forms'SDIForm)           sdiform.
 #subject(class:forms'ChildForm)         form.
 
-// --- properties ---
-#subject caption.
-#subject visible.
-#subject enabled.
-#subject checked.
-#subject parent.
-#subject tabstop.
-#subject font.
-#subject back_color.
-#subject fore_color.
-#subject opened.
-#subject items.
-#subject menu.
-#subject menu_id.
-#subject selected_index.
-
-#subject(class:system'drawing'Point)location.
-
 #subject(class:forms'ControlCollection)controls.
-
-// --- event handlers ---
-#subject(class:system'BaseFunction1) onClick.
-#subject(class:system'BaseFunction1) onIndexChanged.
-#subject(class:system'BaseFunction1) onResize.
-#subject onPaint.

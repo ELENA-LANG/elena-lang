@@ -1,7 +1,5 @@
 #define system.
 
-#subject(class:system'Message)mssg_mask.
-
 #symbol $classControl =
 {
     readName : anObject &bytearray:aBuffer &vlength:aLength
@@ -40,7 +38,7 @@
 
     #method name
     [
-        #var(type:length)aLength := 255.
+        #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
         
         $classControl readName:self &bytearray:aBuffer &vlength:aLength.
@@ -64,7 +62,7 @@
 {
     #method name
     [
-        #var(type:length)aLength := 255.
+        #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
         
         $subjectControl readName:self &bytearray:aBuffer &vlength:aLength.

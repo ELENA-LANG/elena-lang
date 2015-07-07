@@ -5,12 +5,6 @@
 #define system'text.
 #define extensions.
 
-#subject(class:system'IndexFunction2) every_ij.
-
-// --- MatrixException ---
-
-#subject(class:system'BaseFunction1) MatrixError.
-
 #class MatrixException :: Exception
 {
     #constructor new : aMessage
