@@ -173,9 +173,9 @@ LoadResult Module :: load(StreamReader& reader)
 
    // load signature...
    char signature[12];
-   reader.read(signature, strlen(ELENA_SIGNITURE));
-   if (strncmp(signature, ELENA_SIGNITURE_MASK, strlen(ELENA_SIGNITURE_MASK)) != 0) {
-      return (strncmp(signature, ELENA_SIGNITURE_MASK, 6) == 0) ? lrWrongVersion : lrWrongStructure;
+   reader.read(signature, strlen(MODULE_SIGNATURE));
+   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
+      return (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
    }
 
    // load name...
@@ -202,7 +202,7 @@ bool Module :: save(StreamWriter& writer)
       return false;
 
    // save signature...
-   writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+   writer.write(MODULE_SIGNATURE, strlen(MODULE_SIGNATURE));
 
    // save name...
    writer.writeLiteral(_name, getlength(_name) + 1);
@@ -234,9 +234,9 @@ ROModule :: ROModule(StreamReader& reader, LoadResult& result)
 
    // load signature...
    char signature[12];
-   reader.read(signature, strlen(ELENA_SIGNITURE));
-   if (strncmp(signature, ELENA_SIGNITURE_MASK, strlen(ELENA_SIGNITURE_MASK)) != 0) {
-      result = (strncmp(signature, ELENA_SIGNITURE_MASK, 6) == 0) ? lrWrongVersion : lrWrongStructure;
+   reader.read(signature, strlen(MODULE_SIGNATURE));
+   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
+      result = (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
       return;
    }
 

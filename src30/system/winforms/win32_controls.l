@@ -2,9 +2,9 @@
 #define system'drawing.
 
 // --- classes ---
-#symbol(const,type:wide) StaticClass = "Static" wide. // !! temporal
-#symbol(const,type:wide) EditClass   = "Edit" wide. // !! temporal
-#symbol(const,type:wide) ButtonClass = "Button" wide. // !! temporal
+#symbol(type:wide) StaticClass = "Static" wide. // !! temporal
+#symbol(type:wide) EditClass   = "Edit" wide. // !! temporal
+#symbol(type:wide) ButtonClass = "Button" wide. // !! temporal
 //#symbol ComboboxClass = "Combobox" wide. // !! temporal
 
 // --- WindowHandle ---

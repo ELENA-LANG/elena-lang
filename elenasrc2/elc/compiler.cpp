@@ -548,7 +548,7 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
          SymbolExpressionInfo symbolInfo;
          // check if the object can be treated like a constant object
          r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
-         if (r) {
+         if (r && symbolInfo.constant) {
             return ObjectInfo(okConstantSymbol, reference,  typeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
          }
       }
@@ -1843,7 +1843,7 @@ void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectIn
 
          size = scope.moduleScope->defineStructSize(classReference);
       }
-      else size = scope.moduleScope->defineTypeSize(variableInfo.extraparam, classReference);
+      else size = scope.moduleScope->defineTypeSize(variableInfo.type, classReference);
 
       if (size <= 0)
          scope.raiseError(errInvalidOperation, node.Terminal());
@@ -2274,8 +2274,8 @@ ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, Obj
 
    int offset = field.param;
    ref_t classReference = 0;
-   ref_t type = field.extraparam;
-   int size = scope.moduleScope->defineTypeSize(field.extraparam, classReference);
+   ref_t type = field.type;
+   int size = scope.moduleScope->defineTypeSize(field.type, classReference);
 
    if (test(mode, HINT_HEAP_MODE) || size > 8) {
       if (presavedAcc)
@@ -3857,7 +3857,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
             if (test(sourceInfo.header.flags, elStructureRole)) {
                // if source is target wrapper
                if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
-                  ObjectInfo primitive(okLocal, 0, target_type);
+                  ObjectInfo primitive(okLocal, 0, 0, target_type);
 
                   // do nothing for check mode
                   if (!test(mode, HINT_CHECK_MODE)) {
@@ -4422,7 +4422,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
       classReference = exprOperand.param;
       size = scope.moduleScope->defineStructSize(classReference);
    }
-   else size = scope.moduleScope->defineTypeSize(exprOperand.extraparam, classReference);
+   else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
 
    if (size == 0)
       return false;
@@ -4683,7 +4683,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
                _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
 
                boxStructureField(codeScope, 
-                  ObjectInfo(okFieldAddress, offset, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), HINT_HEAP_MODE);
+                  ObjectInfo(okFieldAddress, offset, 0, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), HINT_HEAP_MODE);
 
                _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
 
@@ -5555,9 +5555,10 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
       }
    }
 
-   if (scope.typeRef != 0) {
+   if (scope.typeRef != 0 || scope.constant) {
       SymbolExpressionInfo info;
       info.expressionTypeRef = scope.typeRef;
+      info.constant = scope.constant;
    
       // save class meta data
       MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
@@ -5639,9 +5640,17 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       endDebugExpression(codeScope);
    }
    _writer.loadObject(*codeScope.tape, retVal);
-
+   
    // create constant if required
    if (scope.constant) {
+      // static symbol cannot be constant
+      if (isStatic)
+         scope.raiseError(errInvalidOperation, expression.FirstTerminal());
+
+      // expression cannot be constant
+      if (retVal.kind == okAccumulator)
+         scope.raiseError(errInvalidOperation, expression.FirstTerminal());
+
       if (retVal.kind == okIntConstant) {
          _Module* module = scope.moduleScope->module;
          MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
@@ -5702,6 +5711,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
       }
+      else scope.raiseError(errInvalidOperation, expression.FirstTerminal());
    }
 
    if (scope.typeRef != 0) {

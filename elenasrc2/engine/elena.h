@@ -506,20 +506,24 @@ struct ClassInfo
 struct SymbolExpressionInfo
 {
    size_t expressionTypeRef;
+   bool   constant;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->writeDWord(expressionTypeRef);
+      writer->writeDWord(constant ? -1: 0);
    }
 
    void load(StreamReader* reader, bool headerOnly = false)
    {
       expressionTypeRef = reader->getDWord();
+      constant = (reader->getDWord() != 0);
    }
 
    SymbolExpressionInfo()
    {
       expressionTypeRef = 0;
+      constant = false;
    }
 };
 

@@ -125,7 +125,10 @@ Image :: Image(bool standAlone)
    // put signature
    MemoryWriter writer(&_data);
 
-   writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+   if (standAlone) {
+      writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+   }
+   else writer.write(ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE));
 
    writer.align(4, 0);
 

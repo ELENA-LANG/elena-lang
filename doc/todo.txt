@@ -26,6 +26,9 @@ Currently:
                          if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
                          the class implements the typecasting operation as idle one ( = $self) - skip as well.
                          
+                       * test all samples
+                       * test all rosetta samples
+                         
                        * refactoring : declareParameterDebugInfo - use debug hint flags
                        * refactoring : compileInlineArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
                        * refactoring : compileInlineVarArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly

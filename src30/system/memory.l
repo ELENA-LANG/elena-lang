@@ -1120,7 +1120,7 @@
 // --- emptyWideLiteralValue ---
 
 /// An empty wide literal value
-#symbol(const,type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
+#symbol(type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
 
 // --- WideLiteralValue ---
 

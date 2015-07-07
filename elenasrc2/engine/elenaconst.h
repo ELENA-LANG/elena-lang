@@ -320,8 +320,10 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8.9"       // the module version
-   #define ELENA_SIGNITURE_MASK     "ELENA.8."        // the module compatibility mask
+   #define ELENA_SIGNITURE          "ELENA.8."       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "VM.ELENA.8."    // the ELENAVM client
+
+   #define MODULE_SIGNATURE         "ELENA.8.09"     // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.4"
 
   // --- ELENA core module names ---
