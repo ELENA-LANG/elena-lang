@@ -20,6 +20,8 @@
     #constructor new &verb:aVerb
         => system'internal'int_copy.
 
+    #method verb = $self.
+
     /// Dispatches incoming messages and redirects to the target
     #method => system'internal'handle_verb.
 }
@@ -32,7 +34,10 @@
     /// Loads a message
     #constructor new &mssg:aMessage
         => system'internal'int_copy.
-        
+
+    #method mssg
+        = $self.
+                        
     #method subject
         => system'internal'mssg_getsubj.
 
@@ -60,6 +65,8 @@
     /// Creates a dynamic signature
     #constructor new &wide:aSubjectName
         <= new &literal:(aSubjectName literal).
+
+    #method subject = $self.
 
     /// Compares the values
     #method equal &subject : aSubject

@@ -25,46 +25,11 @@ Currently:
                        * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
                          if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
                          the class implements the typecasting operation as idle one ( = $self) - skip as well.
-                         
-                       * test all samples
-                       * test all rosetta samples
-                         
-                       * refactoring : declareParameterDebugInfo - use debug hint flags
-                       * refactoring : compileInlineArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : compileInlineVarArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : compileInlineReferOperator - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : defineForward - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : do we need to use paramsReference ditectly??
-                       * refactoring : do we need to use trueReference / falseReference ditectly??
-
-                       * primitive structs : integerof, floatof (can be stack allocated, read only)
-                       * literals
-                       * primitive wrappers : strinfof, struct, variableof, arrayof (can be stack allocated, changable)
-
-                       * try to get rid of most external code
-
-                       * default dynamic constructor
-
-                       * example of variable, array ; should be easy to declare (only inherits the base class)
-                       * example of by ref parameters
-
-                       * try to minimize the list of type forwards
-
-                       * boxing / unboxing
+                       * test basic test
                        * using directly only for stack safe methods
-
-                       
-
-                       * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
-                         boxing / unboxing
-                       * review / reimplemnt variable, reference
-                       * fix critical issue #47
-                       * fix critical issues
-                       * fix bugs
-                       * can we get rid of bool type forwaring?
-
-              adev - lib30     
-                       * length, index and so on are no longer a strong typed, they should use strong typed operations
+                       * boxing / unboxing
+                       * test examples
+                       * test rosetta examples
                        * make sure direct methods are called in appropriate cases
                        * make sure idle typecasting message is not invoked
 
@@ -76,6 +41,7 @@ Currently:
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     
+                       * length, index and so on are no longer a strong typed, they should use strong typed operations
                        * each, every and so on is no longer strong typed, so there should be strong typed altenative for them
                        * review system'collections, try to use more strong typed code
                        * used strong typed event handlers
@@ -117,6 +83,36 @@ Currently:
                        * TextView: cursor blinking
                        * IDE UI : facelifting, tuning
                        * test : new project, new file, include, exclude, save, ...
+                         
+              xdev - general development
+                       * refactoring : declareParameterDebugInfo - use debug hint flags
+                       * refactoring : compileInlineArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : compileInlineVarArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : compileInlineReferOperator - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : defineForward - it is not clear if intReference, longReference, .. should be used directly
+                       * refactoring : do we need to use paramsReference ditectly??
+                       * refactoring : do we need to use trueReference / falseReference ditectly??
+
+                       * primitive structs : integerof, floatof (can be stack allocated, read only)
+                       * literals
+                       * primitive wrappers : strinfof, struct, variableof, arrayof (can be stack allocated, changable)
+
+                       * try to get rid of most external code
+
+                       * default dynamic constructor
+
+                       * example of variable, array ; should be easy to declare (only inherits the base class)
+                       * example of by ref parameters
+
+                       * try to minimize the list of type forwards
+
+                       * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
+                         boxing / unboxing
+                       * review / reimplemnt variable, reference
+                       * fix critical issue #47
+                       * fix critical issues
+                       * fix bugs
+                       * can we get rid of bool type forwaring?
 
 <=================> 
                                                                                                                             

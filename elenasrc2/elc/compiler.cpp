@@ -2813,7 +2813,7 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else if (operand.kind == okConstantSymbol) {
       return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
    }
-   else return moduleScope.getClassFlags(moduleScope.typeHints.get(operand.extraparam)) & elDebugMask;
+   else return moduleScope.getClassFlags(moduleScope.typeHints.get(operand.type)) & elDebugMask;
 }
 
 int Compiler :: mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand)
@@ -2823,7 +2823,7 @@ int Compiler :: mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo 
    if (operand.kind == okAccumulator && operand.param != 0) {
       flags = moduleScope.getClassFlags(operand.param);
    }
-   else flags = moduleScope.getClassFlags(moduleScope.typeHints.get(operand.extraparam));
+   else flags = moduleScope.getClassFlags(moduleScope.typeHints.get(operand.type));
 
    // read only classes cannot be used for variable operations
    if (test(flags, elReadOnlyRole))
