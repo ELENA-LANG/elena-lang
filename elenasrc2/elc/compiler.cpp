@@ -3883,11 +3883,15 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
          if (object.kind == okNil)
             return object;
 
-         // check if typecasting message may be skipped
-         if (sourceClassReference != 0) {
-            MethodInfo typecastMethod = sourceInfo.methodHints.get(encodeMessage(target_type, GET_MESSAGE_ID, 0));
-            if (test(typecastMethod.hint, tpItself))
+         // if source class inherites / is target class
+         while (sourceClassReference != 0) {
+            if (moduleScope->typeHints.exist(target_type, sourceClassReference))
                return object;
+
+            sourceClassReference = sourceInfo.header.parentRef;
+
+            if (moduleScope->loadClassInfo(sourceInfo, moduleScope->module->resolveReference(sourceClassReference), true) == 0)
+               break;
          }
 
          // if type mismatch
@@ -3943,7 +3947,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
    //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
-   return ObjectInfo(okAccumulator, 0, subj);
+   return ObjectInfo(okAccumulator, 0, 0, subj);
 }
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)

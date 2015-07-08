@@ -72,7 +72,6 @@ protected:
       tpClosed    = 0x02,
       tpNormal    = 0x03,
       tpStackSafe = 0x10,
-      tpItself    = 0x20,
    };
 
    struct Unresolved
