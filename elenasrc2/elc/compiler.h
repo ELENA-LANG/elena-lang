@@ -23,32 +23,38 @@ protected:
    struct Parameter
    {
       int        offset;
-      ref_t      sign_ref;
-      bool       output;
+      bool       stackAllocated;
+      union {
+         ref_t   sign_ref;   // if not stack allocated - contains type reference
+         ref_t   class_ref;  // if stack allocated - contains class reference
+      };
 
       Parameter()
       {
          offset = -1;
          sign_ref = 0;
-         output = false;
+         stackAllocated = false;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->sign_ref = 0;
-         this->output = false;
+         stackAllocated = false;
       }
       Parameter(int offset, ref_t sign_ref)
       {
          this->offset = offset;
          this->sign_ref = sign_ref;
-         this->output = false;
+         stackAllocated = false;
       }
-      Parameter(int offset, ref_t sign_ref, bool output)
+      Parameter(int offset, ref_t ref, bool stackAllocated)
       {
          this->offset = offset;
-         this->sign_ref = sign_ref;
-         this->output = output;
+         this->stackAllocated = stackAllocated;
+         if (stackAllocated) {
+            this->class_ref = ref;
+         }
+         else this->sign_ref = ref;
       }
    };
 
@@ -160,12 +166,12 @@ protected:
          ObjectInfo info = mapReferenceInfo(referenceName, false);
 
          if (constant) {
-            ObjectInfo info = defineObjectInfo(info.param, true);
+            ObjectInfo constInfo = defineObjectInfo(info.param, true);
             // try to resolve as a strong symbol
-            if (info.kind == okConstantSymbol) {
-               defineConstantSymbol(info.param, info.extraparam);
+            if (constInfo.kind == okConstantSymbol) {
+               defineConstantSymbol(constInfo.param, constInfo.extraparam);
             }
-            else defineConstantSymbol(info.param, 0);
+            else defineConstantSymbol(constInfo.param, 0);
          }
 
          return forwards.add(forward, info.param, true);
@@ -417,6 +423,11 @@ protected:
       void mapLocal(ident_t local, int level, ref_t type)
       {
          locals.add(local, Parameter(level, type));
+      }
+
+      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
+      {
+         locals.add(local, Parameter(level, ref, stackAllocated));
       }
 
       int newSpace(size_t size)

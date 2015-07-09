@@ -1356,6 +1356,9 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
       if (StringHelper::compare(identifier, SUBJECT_VAR)) {
          return ObjectInfo(okSubject, local.offset);
       }
+      else if (local.stackAllocated) {
+         return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
+      }
       else return ObjectInfo(okLocal, local.offset, 0, local.sign_ref);
    }
    else return Scope::mapObject(identifier);
@@ -1568,13 +1571,13 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
          _writer.declareLocalParamsInfo(*tape, it.key(), -1 - (*it).offset);
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->intReference)) {
-         _writer.declareLocalIntInfo(*tape, it.key(), -1 - (*it).offset);
+         _writer.declareLocalIntInfo(*tape, it.key(), -1 - (*it).offset, true);
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->longReference)) {
-         _writer.declareLocalLongInfo(*tape, it.key(), -1 - (*it).offset);
+         _writer.declareLocalLongInfo(*tape, it.key(), -1 - (*it).offset, true);
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
-         _writer.declareLocalRealInfo(*tape, it.key(), -1 - (*it).offset);
+         _writer.declareLocalRealInfo(*tape, it.key(), -1 - (*it).offset, true);
       }
       else _writer.declareLocalInfo(*tape, it.key(), -1 - (*it).offset);
 
@@ -1888,53 +1891,53 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       int size = 0;
       scope.compileLocalHints(hints, type, size, classReference);
 
-      int level = scope.newLocal();
-
+      ObjectInfo variable(okLocal, 0, 0, type);
       if (size > 0) {
          int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
 
-         ObjectInfo primitive(okLocal, 0, 0, type);
-
-         if(!allocateStructure(scope, size, primitive))
+         if (!allocateStructure(scope, size, variable))
             scope.raiseError(errInvalidOperation, node.Terminal());
 
          // make the reservation permanent
          scope.saved = scope.reserved;
 
-         _writer.pushObject(*scope.tape, primitive);
-
          if (flags == elDebugDWORD) {
-            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), level);
+            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), variable.param, false);
          }
          else if (flags == elDebugQWORD) {
-            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), level);
+            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), variable.param, false);
          }
          else if (flags == elDebugReal64) {
-            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), level);
+            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), variable.param, false);
          }
          else if (flags == elDebugBytes) {
-            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), level);
+            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
          }
          else if (flags == elDebugShorts) {
-            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), level);
+            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
          }
          else if (flags == elDebugIntegers) {
-            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), level);
+            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
          }
-         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), variable.param);
       }
       else {
+         int level = scope.newLocal();
+
          _writer.declareVariable(*scope.tape, 0);
          _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
+
+         variable.param = level;
       }
 
       DNode assigning = node.firstChild();
-      if (assigning != nsNone) {
-         compileAssigningExpression(node, assigning, scope, ObjectInfo(okLocal, level, 0, type));
+      if (assigning != nsNone)
+         compileAssigningExpression(node, assigning, scope, variable);
 
-         scope.mapLocal(node.Terminal(), level, type);
+      if (variable.kind == okLocal) {
+         scope.mapLocal(node.Terminal(), variable.param, type);
       }
-      else scope.mapLocal(node.Terminal(), level, type);
+      else scope.mapLocal(node.Terminal(), variable.param, variable.extraparam, true);
    }
    else scope.raiseError(errDuplicatedLocal, node.Terminal());
 }
@@ -2254,7 +2257,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
          _writer.boxObject(*scope.tape, size, object.extraparam | mskVMTRef, true);
       }
    }
-   else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.type != 0)
+   else if ((object.kind == okParam || object.kind == okThisParam) && object.type != 0 && object.extraparam == -1)
    {
       ref_t classReference = 0;
       int size = scope.moduleScope->defineTypeSize(object.type, classReference);
@@ -2658,7 +2661,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
          extRef = typeExtensions->get(messageRef);
    }
 
-   else return extRef;
+   return extRef;
 }
 
 ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t messageRef, int count, int& mode, size_t& spaceToRelease)
@@ -3973,17 +3976,10 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
 {
-   ref_t target_type = target.type;
-
-   // if primitive data operation can be used
-   if (scope.moduleScope->defineTypeSize(target_type) > 0) {
-      int assignMode = 0;
-      if (target.kind == okLocal || target.kind == okFieldAddress) {
-         // if it is an assignment operation (e.g. a := a + b <=> a += b)
-         if (isAssignOperation(node, assigning)) {
-            assignMode |= HINT_ASSIGN_MODE;
-         }
-      }
+   // if primitive data operation can be used   
+   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
+      // if it is an assignment operation (e.g. a := a + b <=> a += b)
+      int assignMode = isAssignOperation(node, assigning) ? HINT_ASSIGN_MODE : 0;
 
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, assignMode);
 
@@ -3997,26 +3993,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       else {
          _writer.loadObject(*scope.tape, info);
 
-         bool mismatch = false;
-         compileTypecast(scope, info, target_type, mismatch, 0);
-         if (mismatch)
-            scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-
-         // HOTFIX: if it is a "quasi" typed field (a typed field implemented as a normal one) - assign as an object
-         if (target.kind == okField) {
-            if (checkIfBoxingRequired(scope, info, 0, assignMode)) {
-               bool boxed = false;
-               info = boxObject(scope, info, boxed);
-               if (boxed)
-                  scope.raiseWarning(4, wrnBoxingCheck, assigning.FirstTerminal());
-            }               
-
-            compileAssignment(node, scope, target);
-         }
-         // otherwise assign data content
-         else compileContentAssignment(node, scope, target, info);
+         compileContentAssignment(node, scope, target, info);
       }
-
    }
    else {
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
@@ -4029,7 +4007,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
 
       bool mismatch = false;
-      compileTypecast(scope, info, target_type, mismatch, 0);
+      compileTypecast(scope, info, target.type, mismatch, 0);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 
@@ -4062,8 +4040,8 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
    if (thenCode.firstChild().nextNode() != nsNone) {
       compileCode(thenCode, subScope, subCodeMode & ~HINT_LOOP);
 
-      if (test(subCodeMode, HINT_LOOP) && subScope.locals.Count() > 0) {
-         _writer.releaseObject(*scope.tape, subScope.locals.Count());
+      if (test(subCodeMode, HINT_LOOP) && subScope.level > scope.level) {
+         _writer.releaseObject(*scope.tape, subScope.level - scope.level);
       }
    }
    // if it is inline action

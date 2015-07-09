@@ -206,7 +206,15 @@ namespace _ELENA_
       dsParamsLocal             = 0x0405,
       dsByteArrayLocal          = 0x0505,
       dsShortArrayLocal         = 0x0605,
-      dsIntArrayLocal            = 0x0705,
+      dsIntArrayLocal           = 0x0705,
+
+      // primitive variables
+      dsIntLocalPtr             = 0x0805,
+      dsLongLocalPtr            = 0x0905,
+      dsRealLocalPtr            = 0x0A05,
+      dsByteArrayLocalPtr       = 0x0B05,
+      dsShortArrayLocalPtr      = 0x0C05,
+      dsIntArrayLocalPtr        = 0x0D05,
 
       dsDebugMask               = 0x00F0,
       dsTypeMask                = 0x0F00,

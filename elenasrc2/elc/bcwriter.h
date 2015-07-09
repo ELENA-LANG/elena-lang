@@ -40,7 +40,7 @@ enum ObjectKind
    okFieldAddress,                 // param - field offset
    okOuter,                        // param - field offset
    okOuterField,                   // param - field offset, extraparam - outer field offset
-   okLocal,                        // param - local / out parameter offset
+   okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable
    okParam,                        // param - parameter offset
    okSubject,
    okThisParam,                    // param - parameter offset
@@ -190,12 +190,12 @@ public:
    void declarePrimitiveCatch(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level);
-   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level);
-   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level);
-   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level);
-   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level);
-   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ref_t nameRef);

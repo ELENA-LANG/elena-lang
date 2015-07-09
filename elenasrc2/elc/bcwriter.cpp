@@ -135,34 +135,34 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
    tape.write(bdLocal, (ref_t)localName, level);
 }
 
-void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level)
+void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdIntLocal, (ref_t)localName, level);
+   tape.write(bdIntLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
-void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level)
+void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdLongLocal, (ref_t)localName, level);
+   tape.write(bdLongLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
-void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level)
+void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdRealLocal, (ref_t)localName, level);
+   tape.write(bdRealLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
-void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level)
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdByteArrayLocal, (ref_t)localName, level);
+   tape.write(bdByteArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
-void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level)
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdShortArrayLocal, (ref_t)localName, level);
+   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
-void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level)
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdIntArrayLocal, (ref_t)localName, level);
+   tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
 void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
@@ -1662,25 +1662,55 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, frameLevel);
             break;
          case bdIntLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntLocalPtr, 0);
             break;
          case bdLongLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsLongLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsLongLocalPtr, 0);
             break;
          case bdRealLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsRealLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsRealLocalPtr, 0);
             break;
          case bdByteArrayLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsByteArrayLocal, frameLevel);
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsByteArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsByteArrayLocalPtr, 0);
             break;
          case bdShortArrayLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsShortArrayLocal, frameLevel);
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsShortArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsShortArrayLocalPtr, 0);
             break;
          case bdIntArrayLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntArrayLocal, frameLevel);
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntArrayLocalPtr, 0);
             break;
          case bdParamsLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsParamsLocal, 0);
             break;
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (*it).additional);

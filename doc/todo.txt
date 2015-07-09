@@ -22,11 +22,19 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
+                       * stack allocated locals should be used directly, without need to assign them to the local variable
+                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
+                         so boxing mechanism can be simplified
+
+                       * if the method is stack allocated, than both thisparam and param are marked as boxable (e.g. extra param == -1)
+                       * so boxing check should me made only for $self and parameters if the method is marked as stack safe
+                       * do not box stack allocated methods only for stack safe methods
+                       * review code for boxing, probably we could get rid of checkboxable method in most cases
+
                        * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
                          if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
                          the class implements the typecasting operation as idle one ( = $self) - skip as well.
                        * test basic test
-                       * using directly only for stack safe methods
                        * boxing / unboxing
                        * test examples
                        * test rosetta examples
@@ -566,8 +574,6 @@ week1:
                        * impelement array getat & setat operator
                        * it should be possible to implement primitive operation with shortarray, chararray and bytearray
                        * variable: no need to store nil if the variable statement has initializing part
-                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
-                         so boxing mechanism can be simplified
                        * constant array
                        * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
                          so the actualy read size should be reduced to match the valid group

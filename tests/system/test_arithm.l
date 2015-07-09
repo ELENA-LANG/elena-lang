@@ -12,9 +12,23 @@
 
 #symbol XTester =
 {
+    reserve &length:n
+    [
+        #var(type:int)p := n.
+    ]
+    
+    test &int:n
+    [
+        ^ n.
+    ]
+    
     test            
     [
-        #var a := (1,2,3) clone.
+        #var(type:int)n := 3.
+        
+        $self reserve &length:n.
+        
+        $self test &int:n.
     ]
 }.
 
