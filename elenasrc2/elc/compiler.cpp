@@ -2647,11 +2647,12 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
 
       retVal = ObjectInfo(okConstantRole, roleRef, object.type);
    }
-   else if (object.kind == okConstantSymbol) {
-      methodHint = scope.moduleScope->checkMethod(object.param, messageRef);
+   else if (object.kind == okConstantSymbol || object.kind == okLocalAddress) {
+      methodHint = scope.moduleScope->checkMethod(object.extraparam, messageRef);
    }
    else if (object.kind == okConstantClass) {
-      methodHint = scope.moduleScope->checkMethod(object.extraparam, messageRef);
+      // class is always sealed
+      methodHint = (scope.moduleScope->checkMethod(object.extraparam, messageRef) & ~tpMask) | tpSealed;
    }
    else if (object.kind == okAccumulator && object.param != 0) {
       methodHint = scope.moduleScope->checkMethod(object.param, messageRef);
@@ -2766,7 +2767,7 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else if (operand.kind == okUnknown) {
       return 0;
    }
-   else if (operand.kind == okConstantSymbol) {
+   else if (operand.kind == okConstantSymbol || operand.kind == okLocalAddress) {
       return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
    }
    else return moduleScope.getClassFlags(moduleScope.typeHints.get(operand.type)) & elDebugMask;
@@ -2938,7 +2939,7 @@ bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator
    }
    else _writer.selectByIndex(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
 
-   result.extraparam = moduleScope->boolType;
+   result.type = moduleScope->boolType;
 
    return true;
 }
@@ -3790,22 +3791,19 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
 
          // if the target is structure
          if (test(targetInfo.header.flags, elStructureRole)) {
-//            // typecast numeric constant
-//            // !! should class references t be used directly??
-//            if (object.kind == okIntConstant) {
-//               if ((targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
-//                  return ObjectInfo(okAccumulator, 0, target_type);
-//               }
-//            }
-//            else if (object.kind == okLongConstant && moduleScope->typeHints.exist(target_type, moduleScope->longReference)) {
-//               return ObjectInfo(okAccumulator, 0, target_type);
-//            }
-//            else if (object.kind == okRealConstant && moduleScope->typeHints.exist(target_type, moduleScope->realReference)) {
-//               return ObjectInfo(okAccumulator, 0, target_type);
-//            }
-//            else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
-//               return ObjectInfo(okAccumulator, 0, target_type);
-//            }
+            // typecast numeric constant
+            if (object.kind == okIntConstant && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+               return object;
+            }
+            else if (object.kind == okLongConstant && (targetInfo.header.flags & elDebugMask) == elDebugQWORD) {
+               return object;
+            }
+            else if (object.kind == okRealConstant && (targetInfo.header.flags & elDebugMask) == elDebugReal64) {
+               return object;
+            }
+            else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
+               return object;
+            }
 //            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
 //               return ObjectInfo(okAccumulator, 0, target_type);
 //            }

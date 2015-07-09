@@ -929,7 +929,7 @@
     #method real = RealNumber new &long:$self.
 
     /// Compares the integer value
-    #method(type:bool) equal &long:anOperand
+    #method(type:bool,stacksafe) equal &long:anOperand
         => system'internal'long_equal.
 
     /// Compares the integer value
@@ -1528,7 +1528,7 @@
     ]
 
     /// Copies the integer value    
-    #method(stacksafe) write &byte:anOperand
+    #method write &byte:anOperand
     [
         theValue := anOperand short.
     ]
@@ -1540,7 +1540,7 @@
     ]
 
     /// Appends the integer value
-    #method(stacksafe) append &byte:anOperand
+    #method append &byte:anOperand
     [
         theValue := theValue + anOperand short.
     ]
@@ -1552,7 +1552,7 @@
     ]
         
     /// Subtracts the integer value        
-    #method(stacksafe) reduce &byte:anOperand
+    #method reduce &byte:anOperand
     [
         theValue := theValue - anOperand short.
     ]
@@ -1564,7 +1564,7 @@
     ]        
         
     /// Multiplies by the integer value
-    #method(stacksafe) multiplyBy &byte:anOperand
+    #method multiplyBy &byte:anOperand
     [
         theValue := theValue * anOperand short.
     ]        
@@ -1576,7 +1576,7 @@
     ]
         
     /// Divides into the integer value        
-    #method(stacksafe) divideInto &byte:anOperand
+    #method divideInto &byte:anOperand
     [
         theValue := theValue / anOperand short.
     ]
@@ -2406,7 +2406,7 @@
     #method wide = wideConvertor convert &char:$self.
     
     /// Reads the number of bytes to represent the symbol
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'char_getlen.
         
     /// Reads the number of bytes to represent the symbol
@@ -2914,7 +2914,11 @@
         #var(type:char)aRetVal.
         $self $convert &index:0 &literal:aValue &vchar:aRetVal.
         
-        (aRetVal length != aValue length)
+        #var(type:int)l1.
+        #var(type:int)l2 := aValue length int.
+        aRetVal readLength &vint:l1.
+        
+        (l1 != l2)
             ? [ #throw system'InvalidArgumentException new. ].
         
         ^ CharValue new &char:aRetVal.
@@ -2925,8 +2929,12 @@
     [
         #var(type:char)aRetVal.
         $self $convert &index:0 &wide:aValue &vchar:aRetVal.
-        
-        (aRetVal wideLength != aValue length)
+
+        #var(type:int)l1.
+        #var(type:int)l2 := aValue length int.
+        aRetVal readWideLength &vint:l1.
+                
+        (l1 != l2)
             ? [ #throw system'InvalidArgumentException new. ].
         
         ^ CharValue new &char:aRetVal.
@@ -3101,7 +3109,7 @@
         #var(type:int)aRetVal.
         intConvertor convert &char:aValue &vint:aRetVal.
         
-        ^ aRetVal long.
+        ^ LongNumber new &int:aRetVal.
     ]
 
     /// Converts a literal string into a long integer
@@ -3296,8 +3304,3 @@
     #method(type:wide,stacksafe) convert &wide:aLiteral
         = aLiteral.
 }.
-
-// === Typecaster ==
-
-#symbol typeCaster
-    = { ! : anObject = $subject. }.
