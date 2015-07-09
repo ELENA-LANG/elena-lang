@@ -22,9 +22,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * new hint stack safe
-                       * if the method is stack safe, than both thisparam and param are marked as boxable (e.g. extra param == -1)
-
                        * stack allocated locals should be used directly, without need to assign them to the local variable
                        * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
                          so boxing mechanism can be simplified

@@ -189,7 +189,10 @@
     #method set : anObject []
     
     /// Reads the current index into an output parameter
-    #method readIndex &vint:anIndex []
+    #method(stacksafe) readIndex &vint:anIndex []
+    
+    /// Sets the index by specified value
+    #method(stacksafe) writeIndex &int:anIndex [] 
     
     /// Returns the index value
     #method index
@@ -201,11 +204,8 @@
     ]                
     
     /// Sets the index by specified value
-    #method write &index:anIndex [] 
-    
-    /// Sets the index by specified value
     #method set &index:anIndex 
-        <= write &index:anIndex.
+        <= writeIndex &int:(anIndex int).
     
     /// Increaments the index by specified value
     #method append &index:anOffset
@@ -213,7 +213,9 @@
         #var(type:int)anIndex := 0.
         $self readIndex &vint:anIndex.
         
-        $self write &index:(anIndex + anOffset).
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex &int:anIndex.
     ]
 
     /// Decreaments the index by specified value
@@ -222,11 +224,13 @@
         #var(type:int)anIndex := 0.
         $self readIndex &vint:anIndex.
         
-        $self write &index:(anIndex - anOffset).
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex &int:anIndex.
     ]
 
     /// Reads the length to the output parameter    
-    #method readLength &vint:anOutput
+    #method(stacksafe) readLength &vint:anOutput
     [
         anOutput << 0. 
     ]
@@ -753,7 +757,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nfunc:$self.
     
     /// Executes the function
-    #method eval &index:n []
+    #method(stacksafe) eval &int:n []
 
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
     #method rewind &int:aStart &int:n &int:dx
@@ -762,7 +766,7 @@
         
         #loop (i >= n) ?
         [
-            $self eval &index:i.
+            $self eval &int:i.
             
             i := i - dx.
         ].
@@ -777,7 +781,7 @@
         
         #loop (i <= n) ?
         [
-            $self eval &index:i.
+            $self eval &int:i.
             
             i := i + dx.
         ].
@@ -792,7 +796,7 @@
         
         #loop(i <= n) ?
         [
-            ($self eval &index:i)
+            ($self eval &int:i)
                 ? [ ^ IntNumber new &int:i. ].
             
             i := i + dx.
@@ -815,7 +819,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nnfunc:$self.
     
     /// Executes the function
-    #method eval &index:i &index:j []
+    #method(stacksafe) eval &int:i &int:j []
 
     /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
     #method rewind &int:i &int:j &int:n &int:m &int:dx
@@ -829,7 +833,7 @@
             
             #loop (y >= m) ?
             [
-                $self eval &index:x &index:y.
+                $self eval &int:x &int:y.
                 
                 y := y - dx.
             ].
@@ -852,7 +856,7 @@
             
             #loop (y <= m) ?
             [
-                $self eval &index:x &index:y.
+                $self eval &int:x &int:y.
                 
                 y := y + dx.
             ].
@@ -877,7 +881,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &n3func:$self.
     
     /// Executes the function
-    #method eval &index:i &index:j &index:k []
+    #method(stacksafe) eval &int:i &int:j &int:k []
 
     /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
     #method rewind &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
@@ -896,7 +900,7 @@
                 
                 #loop (z >= p) ?
                 [
-                    $self eval &index:x &index:y &index:z.
+                    $self eval &int:x &int:y &int:z.
                     
                     z := z - dx.
                 ].                
@@ -927,7 +931,7 @@
                 
                 #loop (z <= p) ?
                 [
-                    $self eval &index:x &index:y &index:z.
+                    $self eval &int:x &int:y &int:z.
                     
                     z := z + dx.
                 ].                

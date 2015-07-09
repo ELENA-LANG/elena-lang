@@ -1853,16 +1853,16 @@ end
 procedure bs_copysubarr
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   acopyb
   acallvi 1
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
 
@@ -2171,16 +2171,16 @@ end
 procedure sa_copysubarr
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   acopyb
   acallvi 1
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
   callr api : coreapi'wsubcopy
@@ -2358,16 +2358,16 @@ end
 procedure ns_copysubarr
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   acopyb
   acallvi 1
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
   callr api : coreapi'nsubcopy
@@ -3849,7 +3849,7 @@ end
 
 procedure s_copysubarr
 
-  aloadsi 2
+  aloadsi 3
   nload
   ifn labEmpty 0
     
@@ -3862,10 +3862,10 @@ procedure s_copysubarr
   bcreate
   bcopya
 
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
 
@@ -4256,17 +4256,17 @@ end
 
 procedure s_copybuf
 
-  aloadsi 2
+  aloadsi 3
   nload  
   inc
   acopyr class : system'LiteralValue
   bcreate
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
   

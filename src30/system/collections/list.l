@@ -117,7 +117,7 @@
     ]
     
     /// Sets the index by specified value
-    #method write &index:anIndex
+    #method writeIndex &int:anIndex
     [
         #var(type:int)i := theIndex.
         
@@ -574,7 +574,7 @@
     ]
     
     /// Sets the index by specified value
-    #method write &index:anIndex
+    #method writeIndex &int:anIndex
     [
         theIndex << anIndex.
     ]

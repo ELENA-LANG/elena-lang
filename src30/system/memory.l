@@ -6,7 +6,7 @@
 #class(stringof:1) BaseByteArray
 {
     /// Creates the byte array with the specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int:aLength
         => system'internal'bs_create.
 }
 
@@ -16,26 +16,30 @@
 #class(sealed) ByteArray :: BaseByteArray
 {
     /// Creates the byte array with the specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int:aLength
         => system'internal'bs_create.
+
+    /// Creates the byte array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
     
     /// Creates the copy of a byte subarray
-    #constructor new &length:aLength &index:anIndex &bytearray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
         => system'internal'bs_copysubarr.
     
     /// Creates the byte array copy
-    #constructor new &bytearray:anArray
-        <= new &length:(anArray length) &index:0 &bytearray:anArray.
+    #constructor(stacksafe) new &bytearray:anArray
+        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
     
     /// Returns itself
     #method bytearray = $self.
 
     /// Reads the array length to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'bs_getlen.
         
     /// Returns the byte array length        
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -44,7 +48,7 @@
     ]
 
     /// Fills the sub array with a specified value
-    #method fill &index:anIndex &length:aLength &byte:aValue
+    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
     [
         #var(type:int)aTotalLength.
         $self readLength &vint:aTotalLength.
@@ -60,73 +64,73 @@
             
         #loop (i < m)?
         [
-            $self write &index:i &byte:aValue.
+            $self write &int:i &byte:aValue.
             
             i := i + 1.
         ].
     ]
 
     /// Copies a sub array to the provided one at the specified position
-    #method read &index:anIndex &length:aLength &bytearray:aDump
+    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
         => system'internal'bs_read.
 
     /// Copies the byte array at the specified position
-    #method write &index:anIndex &length:aLength &bytearray:aDump
+    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
         => system'internal'bs_write.
 
     /// Writes the byte value at specified position
-    #method write &index:anIndex &byte:anInt
+    #method(stacksafe) write &int:anIndex &byte:anInt
         => system'internal'bs_writebyte.
 
     /// Reads a byte value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vbyte:anInt
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
         => system'internal'bs_readbyte.
 
     /// Writes a short integer value at the specified position
-    #method write &index:anIndex &short:anInt
+    #method(stacksafe) write &int:anIndex &short:anInt
         => system'internal'bs_writeword.
 
     /// Reads a short integer value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vshort:aChar
+    #method(stacksafe) read &int:anIndex &vshort:aChar
         => system'internal'bs_readword.
 
     /// Writes a character value at the specified position
-    #method write &index:anIndex &char:anInt
+    #method(stacksafe) write &int:anIndex &char:anInt
         => system'internal'bs_writedword.
 
     /// Reads a character value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vchar:aChar
+    #method(stacksafe) read &int:anIndex &vchar:aChar
         => system'internal'bs_readdword.
 
     /// Writes an integer value at the specified position
-    #method write &index:anIndex &int:anInt
+    #method(stacksafe) write &int:anIndex &int:anInt
         => system'internal'bs_writedword.
 
     /// Reads an integer value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vint:anInt
+    #method(stacksafe) read &int:anIndex &vint:anInt
         => system'internal'bs_readdword.
 
     /// Writes a long integer value at the specified position
-    #method write &index:anIndex &long:aLong
+    #method(stacksafe) write &int:anIndex &long:aLong
         => system'internal'bs_writeqword.
 
     /// Reads a long integer value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vlong:aLong
+    #method(stacksafe) read &int:anIndex &vlong:aLong
         => system'internal'bs_readqword.
 
     /// Writes a real value at the specified position
-    #method write &index:anIndex &real:aLong
+    #method(stacksafe) write &int:anIndex &real:aLong
         => system'internal'bs_writeqword.
 
     /// Reads a real value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vreal:aLong
+    #method(stacksafe) read &int:anIndex &vreal:aLong
         => system'internal'bs_readqword.
 
     /// Returns a byte at the specified position
     #method getAt : anIndex
     [
         #var(type:byte)aRetVal.
-        $self read &index:(anIndex int) &vbyte:aRetVal.
+        $self read &int:(anIndex int) &vbyte:aRetVal.
         
         ^ ByteNumber new &byte:aRetVal.
     ]        
@@ -134,7 +138,7 @@
     /// Sets a byte at the specified position
     #method setAt : anIndex : aValue
     [
-        $self write &index:(anIndex int) &byte:(aValue byte).
+        $self write &int:(anIndex int) &byte:(aValue byte).
     ]
                         
     /// Creates the object copy
@@ -153,26 +157,30 @@
 #class(sealed,stringof:2) ShortArray
 {
     /// Creates the short array with the specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int:aLength
         => system'internal'sa_create.
     
+    /// Creates the short array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
     /// Creates the copy of a short subarray
-    #constructor new &length:aLength &index:anIndex &shortarray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &shortarray:anArray
         => system'internal'sa_copysubarr.
 
     /// Creates the short array copy
     #constructor new &shortarray:anArray
-        <= new &length:(anArray length) &index:0 &shortarray:anArray.
+        <= new &int:0 &int:(anArray length int) &shortarray:anArray.
     
     /// Returns itself
     #method shortarray = $self.
 
     /// Reads the array length to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'sa_getlen.
 
     /// Returns the array length        
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -181,7 +189,7 @@
     ]
 
     /// Fills the sub array with a specified value
-    #method fill &index:anIndex &length:aLength &short:aValue
+    #method(stacksafe) fill &int:anIndex &int:aLength &short:aValue
     [
         #var(type:int)aTotalLength.
         $self readLength &vint:aTotalLength.
@@ -197,33 +205,33 @@
             
         #loop (i < m)?
         [
-            $self write &index:i &short:aValue.
+            $self write &int:i &short:aValue.
             
             i := i + 1.
         ].
     ]
     
     /// Copies a sub array to the provided one at the specified position
-    #method read &index:anIndex &length:aLength &shortarray:anArray
+    #method(stacksafe) read &int:anIndex &int:aLength &shortarray:anArray
         => system'internal'sa_read.
 
     /// Copies the short array at the specified position        
-    #method write &index:anIndex &length:aLength &shortarray:anArray
+    #method(stacksafe) write &int:anIndex &int:aLength &shortarray:anArray
         => system'internal'sa_write.
 
     /// Writes a short integer value at the specified position
-    #method write &index:anIndex &short:aValue
+    #method(stacksafe) write &int:anIndex &short:aValue
         => system'internal'sa_writeword.
 
     /// Reads a short integer value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vshort:aValue
+    #method(stacksafe) read &int:anIndex &vshort:aValue
         => system'internal'sa_readword.
 
     /// Returns a short integer at the specified position
     #method getAt : anIndex
     [
         #var(type:short)aRetVal.
-        $self read &index:(anIndex int) &vshort:aRetVal.
+        $self read &int:(anIndex int) &vshort:aRetVal.
         
         ^ ShortNumber new &short:aRetVal.
     ]        
@@ -250,7 +258,7 @@
 #class(stringof:4) BaseIntArray
 {
     /// Creates the integer array with the specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int : aLength
         => system'internal'ns_create.
 }
 
@@ -260,23 +268,27 @@
 #class(sealed) IntArray :: BaseIntArray
 {
     /// Creates the array with the specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int : aLength
         => system'internal'ns_create.
 
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
     /// Creates the copy of a subarray
-    #constructor new  &length:aLength &index:anIndex &intarray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &intarray:anArray
         => system'internal'ns_copysubarr.
         
     /// Creates the short array copy
     #constructor new &intarray:anArray
-        <= new &length:(anArray length) &index:0 &intarray:anArray.
+        <= new &int:0 &int:(anArray length int) &intarray:anArray.
     
     /// Reads the array length to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'ns_getlen.
 
     /// Returns the array length
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -288,7 +300,7 @@
     #method intarray = $self.
 
     /// Fills the sub array with a specified value
-    #method fill &index:anIndex &length:aLength &int:aValue
+    #method(stacksafe) fill &int:anIndex &int:aLength &int:aValue
     [
         #var(type:int)aTotalLength.
         $self readLength &vint:aTotalLength.
@@ -304,33 +316,33 @@
             
         #loop (i < m)?
         [
-            $self write &index:i &int:aValue.
+            $self write &int:i &int:aValue.
             
             i := i + 1.
         ].
     ]
 
     /// Copies a sub array to the provided one at the specified position
-    #method read &index:anIndex &length:aLength &intarray:anArray
+    #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
         => system'internal'ns_read.
 
     /// Copies the short array at the specified position
-    #method write &index:anIndex &length:aLength &intarray:anArray
+    #method(stacksafe) write &int:anIndex &int:aLength &intarray:anArray
         => system'internal'ns_write.
 
     /// Writes an integer value at the specified position
-    #method write &index:anIndex &int:aValue
+    #method(stacksafe) write &int:anIndex &int:aValue
         => system'internal'ns_writedword.
 
     /// Reads an integer value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vint:anInt
+    #method(stacksafe) read &int:anIndex &vint:anInt
         => system'internal'ns_readdword.
 
     /// Returns an integer at the specified position
     #method getAt : anIndex
     [
         #var(type:int)aRetVal.
-        $self read &index:(anIndex int) &vint:aRetVal.
+        $self read &int:(anIndex int) &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]        
@@ -338,7 +350,7 @@
     /// Sets an integer at the specified position
     #method setAt : anIndex : aValue
     [
-        $self write &index:(anIndex int) &int:(aValue int).
+        $self write &int:(anIndex int) &int:(aValue int).
     ]
 
     /// Creates the object copy
@@ -359,19 +371,19 @@
     #field(type:int)theRows.
     #field(type:int)theColumns.
     
-    #constructor new &length:Columns &length:Rows
+    #constructor new &int:Columns &int:Rows
     [
-        theArray := IntArray new &length:(Columns * Rows).
-        
         theRows := Rows.
         theColumns := Columns.
+        
+        theArray := IntArray new &int:(Columns * Rows).        
     ]
         
-    #constructor new &columns:Columns &rows:Rows
-        <= new &length:(Columns int) &length:(Rows int).
+    #constructor new : Columns : Rows
+        <= new &int:(Columns int) &int:(Rows int).
         
     /// Reads the matrix lengths to the output parameter
-    #method readLengths &vint:Columns &vint:Rows
+    #method(stacksafe) readLengths &vint:Columns &vint:Rows
     [
         Columns << theColumns.
         Rows << theRows.
@@ -383,28 +395,28 @@
     #method intmatrix = $self.
 
     /// Writes an integer value at the specified position
-    #method write &index:i &index:j &int:aValue
+    #method(stacksafe) write &int:i &int:j &int:aValue
     [
-        theArray write &index:(i * theColumns + j) &int:aValue.
+        theArray write &int:(i * theColumns + j) &int:aValue.
     ]
 
     /// Reads an integer value at the specified position and saves it into an output variable
-    #method read &index:i &index:j &vint:anInt
+    #method(stacksafe) read &int:i &int:j &vint:anInt
     [
-        theArray read &index:(i * theColumns + j) &vint:anInt.
+        theArray read &int:(i * theColumns + j) &vint:anInt.
     ]
 
     #method getAt : i : j
     [
         #var(type:int)aValue.            
-        $self read &index:(i int) &index:(j int) &vint:aValue.
+        $self read &int:(i int) &int:(j int) &vint:aValue.
         
         ^ IntNumber new &int:aValue.
     ]
 
     #method setAt : i : j : aValue
     [
-        $self write &index:(i int) &index:(j int) &int:(aValue int).    
+        $self write &int:(i int) &int:(j int) &int:(aValue int).    
     ]
 
     /// Returns a row
@@ -436,27 +448,31 @@
     #field(type:bytearray)theBinaryArray.
     
     /// Creates the array with the specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int:aLength
     [
-        theBinaryArray := ByteArray new &length:(aLength * 8).
+        theBinaryArray := ByteArray new &int:(aLength * 8).
     ]
 
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
     /// Creates the copy of a subarray
-    #constructor new  &length:aLength &index:anIndex &realarray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &realarray:anArray
     [
-        theBinaryArray := ByteArray new &length:(aLength * 8).
+        theBinaryArray := ByteArray new &int:(aLength * 8).
         
-        theBinaryArray write &index:anIndex &length:aLength &bytearray:(anArray bytearray).
+        theBinaryArray write &int:anIndex &int:aLength &bytearray:(anArray bytearray).
     ]
     
     #method bytearray = theBinaryArray.
     
     /// Creates the array copy
     #constructor new &realarray:anArray
-        <= new &length:(anArray length) &index:0 &realarray:anArray.
+        <= new &int:0 &int:(anArray length int) &realarray:anArray.
     
     /// Reads the array length to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
     [
         #var(type:int)aBinLen.
         theBinaryArray readLength &vint:aBinLen.
@@ -467,7 +483,7 @@
     ]
 
     /// Returns the array length
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -479,7 +495,7 @@
     #method realarray = $self.
 
     /// Fills the sub array with a specified value
-    #method fill &index:anIndex &length:aLength &real:aValue
+    #method(stacksafe) fill &int:anIndex &int:aLength &real:aValue
     [
         #var(type:int)aTotalLength.
         $self readLength &vint:aTotalLength.
@@ -495,45 +511,45 @@
             
         #loop (i < m)?
         [
-            $self write &index:i &real:aValue.
+            $self write &int:i &real:aValue.
             
             i := i + 1.
         ].
     ]
 
     /// Copies a sub array to the provided one at the specified position
-    #method read &index:anIndex &length:aLength &realarray:anArray
+    #method(stacksafe) read &int:anIndex &int:aLength &realarray:anArray
     [
-        theBinaryArray read &index:(anIndex * 8) &length:(aLength * 8) &bytearray:(anArray bytearray).
+        theBinaryArray read &int:(anIndex * 8) &int:(aLength * 8) &bytearray:(anArray bytearray).
     ]
     
     /// Copies the short array at the specified position
-    #method write &index:anIndex &length:aLength &realarray:anArray
+    #method(stacksafe) write &int:anIndex &int:aLength &realarray:anArray
     [
-        theBinaryArray write &index:(anIndex * 8) &length:(aLength * 8) &bytearray:(anArray bytearray).
+        theBinaryArray write &int:(anIndex * 8) &int:(aLength * 8) &bytearray:(anArray bytearray).
     ]
 
     /// Writes a real value at the specified position
-    #method write &index:anIndex &real:aValue
+    #method(stacksafe) write &int:anIndex &real:aValue
     [
         #var(type:int)aBinIndex := anIndex shift &index:(-3).
         
-        theBinaryArray write &index:aBinIndex &real:aValue.
+        theBinaryArray write &int:aBinIndex &real:aValue.
     ]
     
     /// Reads a real value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vreal:aReal
+    #method(stacksafe) read &int:anIndex &vreal:aReal
     [
         #var(type:int)aBinIndex := anIndex shift &index:(-3).
         
-        theBinaryArray read &index:aBinIndex &vreal:aReal.
+        theBinaryArray read &int:aBinIndex &vreal:aReal.
     ]
 
     /// Returns a real number at the specified position
     #method getAt : anIndex
     [
         #var(type:real)aRetVal.
-        $self read &index:(anIndex int) &vreal:aRetVal.
+        $self read &int:(anIndex int) &vreal:aRetVal.
         
         ^ RealNumber new &real:aRetVal.
     ]        
@@ -541,7 +557,7 @@
     /// Sets a real number at the specified position
     #method setAt : anIndex : aValue
     [
-        $self write &index:(anIndex int) &real:(aValue real).
+        $self write &int:(anIndex int) &real:(aValue real).
     ]
 
     /// Creates the object copy
@@ -562,19 +578,19 @@
     #field(type:int)theRows.
     #field(type:int)theColumns.
     
-    #constructor new &length:Rows &length:Columns
+    #constructor new &int:Rows &int:Columns
     [
-        theArray := ByteArray new &length:(Columns * Rows * 8).
+        theArray := ByteArray new &int:(Columns * Rows * 8).
         
         theRows := Rows.
         theColumns := Columns.
     ]
         
-    #constructor new &rows:Rows &columns:Columns
-        <= new &length:(Columns int) &length:(Rows int).
+    #constructor new : Rows : Columns
+        <= new &int:(Columns int) &int:(Rows int).
         
     /// Reads the matrix lengths to the output parameter
-    #method readLengths &vint:Rows &vint:Columns
+    #method(stacksafe) readLengths &vint:Rows &vint:Columns
     [
         Columns << theColumns.
         Rows << theRows.
@@ -586,36 +602,36 @@
     #method realmatrix = $self.
 
     /// Writes an integer value at the specified position
-    #method write &index:i &index:j &real:aValue
+    #method(stacksafe) write &int:i &int:j &real:aValue
     [
         #var(type:int)anIndex := i * theColumns + j.
         
         anIndex := anIndex shift &index:(-3).
         
-        theArray write &index:anIndex &real:aValue.
+        theArray write &int:anIndex &real:aValue.
     ]
 
     /// Reads an integer value at the specified position and saves it into an output variable
-    #method read &index:i &index:j &vreal:aValue
+    #method(stacksafe) read &int:i &int:j &vreal:aValue
     [
         #var(type:int)anIndex := i * theColumns + j.
         
         anIndex := anIndex shift &index:(-3).
         
-        theArray read &index:anIndex &vreal:aValue.
+        theArray read &int:anIndex &vreal:aValue.
     ]
 
     #method getAt : i : j
     [
         #var(type:real)aValue.            
-        $self read &index:(i int) &index:(j int) &vreal:aValue.
+        $self read &int:(i int) &int:(j int) &vreal:aValue.
         
         ^ RealNumber new &real:aValue.
     ]
 
     #method setAt : i : j : aValue
     [
-        $self write &index:(i int) &index:(j int) &real:(aValue real).    
+        $self write &int:(i int) &int:(j int) &real:(aValue real).    
     ]
 
     /// Returns a row
@@ -645,23 +661,27 @@
 #class(sealed) CharArray :: BaseIntArray
 {
     /// Creates the new array with a specified length
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int : aLength
         => system'internal'ns_create.
 
+    /// Creates the new array with a specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
     /// Creates the copy of a subarray
-    #constructor new  &length:aLength &index:anIndex &chararray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
         => system'internal'ns_copysubarr.
         
     /// Creates the short array copy
     #constructor new &chararray:anArray
-        <= new &length:(anArray length) &index:0 &chararray:anArray.
+        <= new &int:0 &int:(anArray length int) &chararray:anArray.
     
     /// Reads the array length to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'ns_getlen.
 
     /// Returns the array length        
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -670,7 +690,7 @@
     ]
 
     /// Fills the sub array with a specified value
-    #method fill &index:anIndex &length:aLength &char:aValue
+    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
     [
         #var(type:int)aTotalLength.
         $self readLength &vint:aTotalLength.
@@ -686,7 +706,7 @@
             
         #loop (i < m)?
         [
-            $self write &index:i &char:aValue.
+            $self write &int:i &char:aValue.
             
             i := i + 1.
         ].
@@ -696,29 +716,29 @@
     #method chararray = $self.
 
     /// Copies a sub array to the provided one at the specified position
-    #method read &index:anIndex &length:aLength &chararray:anArray
+    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
         => system'internal'ns_read.
 
     /// Copies the array at the specified position
-    #method write &index:anIndex &length:aLength &chararray:anArray
+    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
         => system'internal'ns_write.
 
     /// Writes a character value at the specified position
-    #method write &index:anIndex &char:aValue
+    #method(stacksafe) write &int:anIndex &char:aValue
         => system'internal'ns_writedword.
 
     /// Reads a character value at the specified position and saves it into an output variable
-    #method read &index:anIndex &vchar:anInt
+    #method(stacksafe) read &int:anIndex &vchar:anInt
         => system'internal'ns_readdword.
 
-    #method move &index:anIndex &length:aLength &offset:anOffset
+    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
         => system'internal'ns_move.
 
     /// Returns a character at the specified position
     #method getAt : anIndex
     [
         #var(type:char)aRetVal.
-        $self read &index:(anIndex int) &vchar:aRetVal.
+        $self read &int:(anIndex int) &vchar:aRetVal.
         
         ^ CharValue new &char:aRetVal.
     ]        
@@ -726,7 +746,7 @@
     /// Sets a character at the specified position
     #method setAt : anIndex : aValue
     [
-        $self write &index:(anIndex int) &char:(aValue char).
+        $self write &int:(anIndex int) &char:(aValue char).
     ]
 
     /// Creates the object copy
@@ -756,26 +776,26 @@
         => system'internal's_empty.
         
     /// Creates the literal string with specified length        
-    #constructor new &length:aSize 
+    #constructor(stacksafe) new &int:aSize 
         => system'internal's_create.
 
     /// Creates the literal string with specified length and copies the parameter value
-    #constructor new &length:aSize &literal:aLiteral
+    #constructor(stacksafe) new &int:aSize &literal:aLiteral
         => system'internal's_copy.
 
     /// Creates the literal string with specified length fills with spciefied character value        
-    #constructor new &length:aSize &char:aChar
+    #constructor(stacksafe) new &int:aSize &char:aChar
         => system'internal's_fill.
 
     /// Creates the literal string copy              
     #constructor new &literal:aLiteral
-        <= %new &length:(aLiteral length) &literal:aLiteral.
+        <= %new &int:(aLiteral length int) &literal:aLiteral.
         
     /// Creates the copy of a subarray        
-    #constructor new &length:aSize &index:anIndex &chararray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
         => system'internal's_copysubarr.
 
-    #constructor $new &length:aSize &index:anIndex &bytearray:anArray
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
         => system'internal's_copybuf.
 
     /// Returns itself
@@ -814,21 +834,21 @@
 
     /// Returns the character at the specified index
     #method getAt : aParam
-        <= %getAt &index:(aParam int).
+        <= %getAt &int:(aParam int).
 
     // Reads the character at the specified index and saves into an output parameter
-    #method read &index:anIndex &vchar:aChar
+    #method(stacksafe) read &int:anIndex &vchar:aChar
         => system'internal's_getat.
 
     // Reads the byte at the specified index and saves into an output parameter
-    #method read &index:anIndex &vbyte:anInt
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
         => system'internal'bs_readbyte.
         
     /// Returns the character at the specified index
-    #method(type:char) getAt &index:anIndex
+    #method(type:char) getAt &int:anIndex
     [
         #var(type:char)aChar.
-        $self read &index:anIndex &vchar:aChar.
+        $self read &int:anIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
     ]
@@ -836,13 +856,13 @@
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &literal:aLiteral &vint:aRetVal
+    #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
         => system'internal's_indexof.
 
     /// Saves the index of the first occurence of the specified symbol into an output parameter.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &char:aChar &vint:aRetVal
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
         => system'internal's_indexof_char.        
 
     /// Returns the index of the first occurence of the specified object.
@@ -852,22 +872,22 @@
         = aSearchObject cast:%eval &to:
             {
                eval &literal:aLiteral
-                  = self indexOf &index:(anIndex int) &literal:aLiteral.
+                  = self indexOf &int:(anIndex int) &literal:aLiteral.
     
                eval &wide:aLiteral
-                  = self indexOf &index:(anIndex int) &literal:(aLiteral literal).
+                  = self indexOf &int:(anIndex int) &literal:(aLiteral literal).
     
                eval &char:aChar
-                  = self indexOf &index:(anIndex int) &char:aChar.
+                  = self indexOf &int:(anIndex int) &char:aChar.
             }.
 
     /// Returns the index of the first occurence of the specified symbol.
     /// 
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &char:aChar
+    #method indexOf &char:aChar &starting:anIndex
     [
         #var(type:int)aRetVal.
-        $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
+        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -875,57 +895,57 @@
     /// Returns the index of the first occurence of the specified substring.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &literal:aLiteral
+    #method indexOf &literal:aLiteral &starting:anIndex
     [
         #var(type:int)aRetVal.
-        $self indexOf &index:anIndex &literal:aLiteral &vint:aRetVal.
+        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
 
     /// Inserts the substring into and returns the new one
-    #method(type:literal) insert &index:anIndex &literal:aLiteral
+    #method(type:literal,stacksafe) insert &int:anIndex &literal:aLiteral
         => system'internal's_insert.
 
     /// Inserts a character into and returns the new one
-    #method(type:literal) insert &index:anIndex &char:aChar
-        = $self insert &index:anIndex &literal:(aChar literal).
+    #method(type:literal,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &literal:(aChar literal).
 
     /// Inserts an object into and returns the new one
     #method insert : anIndex : anObject
         = anObject cast:%eval &to:
             {
                eval &literal:aLiteral
-                  = self insert &index:(anIndex int) &literal:aLiteral.
+                  = self insert &int:(anIndex int) &literal:aLiteral.
     
                eval &wide:aLiteral
-                  = self insert &index:(anIndex int) &literal:(aLiteral literal).
+                  = self insert &int:(anIndex int) &literal:(aLiteral literal).
     
                eval &char:aChar
-                  = self insert &index:(anIndex int) &char:aChar.
+                  = self insert &int:(anIndex int) &char:aChar.
             }.
 
     /// Deletes the substring from the object and returns the new one
     #method delete:anIndex:aLength
-        = $self delete &index:(anIndex int) &length:(aLength int).
+        = $self delete &int:(anIndex int) &int:(aLength int).
 
     /// Deletes the substring from the object and returns the new one
-    #method(type:literal) delete &index:anIndex &length:aLength
+    #method(type:literal,stacksafe) delete &int:anIndex &int:aLength
         => system'internal's_delete.
 
     /// Returns the substring
-    #method(type:literal) Substring &index:anIndex &length:aLength
+    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
         => system'internal's_subs.
 
     /// Reads the literal length into an output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal's_getlen.
 
     /// Saves the literal into a UTF-32 character array
-    #method save &index:anIndex &chararray:anArray &vlength:aRetVal
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
         => system'internal's_save.
 
-    #method $save &index:anIndex &bytearray:anArray &length:aRetVal
+    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
         => system'internal's_saveraw.
 
     /// Returns the string length
@@ -953,7 +973,7 @@
     #method clone = LiteralValue new &literal:$self.
 
     // Reads the object hash code into the output parameter
-    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
     #method hash_code
     [
@@ -1812,7 +1832,7 @@
     ]
     
     /// Sets the index by specified value
-    #method write &index:anIndex 
+    #method writeIndex &int:anIndex 
     [
         theIndex write &int:anIndex.
     ]
@@ -1926,7 +1946,7 @@
     ]
     
     /// Sets the index by specified value
-    #method write &index:anIndex 
+    #method writeIndex &int:anIndex 
     [
         theIndex write &int:anIndex.
     ]
@@ -1981,7 +2001,7 @@
     ]
     
     /// Sets the index by specified value
-    #method write &index:anIndex 
+    #method writeIndex &int:anIndex 
     [
         theIndex write &int:anIndex.
     ]

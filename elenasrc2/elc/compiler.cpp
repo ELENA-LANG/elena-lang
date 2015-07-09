@@ -3240,7 +3240,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       else {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
 
-         classReference = object.extraparam != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
+         classReference = object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
       }
 
       if (classReference != 0) {
@@ -3775,12 +3775,12 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
    if (target_type != source_type) {
       object.type = target_type;
 
-//      // typecast literal constant - !! review the direct class usage
-//      if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
-//         return ObjectInfo(okAccumulator, 0, target_type);
-//      }
-
       if (moduleScope->typeHints.exist(target_type)) {
+         // typecast literal constant
+         if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
+            return object;
+         }
+
          ref_t targetClassReference = moduleScope->typeHints.get(target_type);
          ClassInfo targetInfo;
          moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
@@ -3804,7 +3804,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
             else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
                return object;
             }
-//            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
+            //else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
 //               return ObjectInfo(okAccumulator, 0, target_type);
 //            }
 //            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {

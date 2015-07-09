@@ -3292,7 +3292,7 @@
     #method(type:wide,stacksafe) convert &real:aNumber
         => system'internal'ws_copyreal.
 
-    /// Converts UTF-8 literal to UTF-16
+    /// Converts UTF-8 literal to UTF-16e
     #method(type:wide,stacksafe) convert &literal:aLiteral
         => system'internal'wstr_copystr.
         

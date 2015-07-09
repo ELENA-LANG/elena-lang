@@ -168,7 +168,7 @@
         anIndex << theIndex.
     ]
     
-    #method write &index:anIndex 
+    #method writeIndex &int:anIndex 
     [
         theIndex write &int:anIndex.
     ]
