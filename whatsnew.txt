@@ -17,9 +17,10 @@
 [-] out prefix is no longer supported, variable should be used instead
 [*] gui platform is reintroduced
 [+] built-in $nil symbol
-
 [+] a class hint "stringof" supports type argument as well (e.g. stringof:int)
 [+] coreapi : loading subject by name, returning the subject name
+
+[+] new method hint : stacksafe
 
 [ELC]
 [*] two passes compiling: at first declare, at second - implement
@@ -27,7 +28,6 @@
 [*] optimization : a simple resend operation
 [+] linux ELF linker
 [*] both external call modes supported: winapi / c
-
 [-] bug with outer field type fixed
 [-] bug with redirect to an outer field fixed
 [-] issue #45
@@ -40,7 +40,6 @@
 [+] linux: support basic i/o operations (console, files)
 [+] system'winforms module implementing basic WIN32 GUI functionality
 [+] forms: SDIForm, SDIDialog, ChildForm, Edit, Label, Button, ImageBox, ImageList
-
 [+] forms: Menu, DockingBox
 [+] system'dynamic'classOp : read&mssg_mask&index&mssgarray&vint[4]
 [+] system: MessageArray, IntMatrix, ReadArray, RealMatrix
@@ -59,12 +58,10 @@
                                                                                                 
 Samples:
 [+] agenda, graphs, c_a_g
-
 [+] notepad
 
 [IDE]
 [*] binaray arrays are displayed in the debug watch correctly
-
 [*] debugger behaviour reimplemented to improve UX
 
 ******************************************************************************
