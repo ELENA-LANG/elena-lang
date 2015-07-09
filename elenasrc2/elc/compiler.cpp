@@ -1206,6 +1206,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
    this->withOpenArg = false;
+   this->stackSafe = false;
 }
 
 bool Compiler::MethodScope :: include()
@@ -1229,10 +1230,11 @@ bool Compiler::MethodScope :: include()
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 {
    if (StringHelper::compare(identifier, THIS_VAR)) {
-      return ObjectInfo(okThisParam, 1);
+      return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
    }
    else if (StringHelper::compare(identifier, SELF_VAR)) {
       ObjectInfo retVal = parent->mapObject(identifier);
+      retVal.extraparam = stackSafe ? -1 : 0;
 
       return retVal;
    }
@@ -1244,7 +1246,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
          if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
             return ObjectInfo(okParams, -1 - local, 0, param.sign_ref);
          }
-         else return ObjectInfo(okParam, -1 - local, 0, param.sign_ref);
+         else return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.sign_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -1278,6 +1280,9 @@ int Compiler::MethodScope :: compileHints(DNode hints)
          type = moduleScope->mapType(typeTerminal);
          if (type == 0)
             raiseError(wrnInvalidHint, terminal);
+      }
+      else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
+         hint |= tpStackSafe;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -5109,12 +5114,14 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
                   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
+               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
                compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
             }
             // if it is a normal method
             else {
                declareArgumentList(member, methodScope);
+               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
                compileMethod(member, methodScope, methodScope.compileHints(hints));
             }
@@ -5291,6 +5298,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
 
          declareArgumentList(member, methodScope);
+         methodScope.stackSafe = test(classClassScope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
          compileConstructor(member, methodScope, classClassScope, methodScope.compileHints(hints));
       }

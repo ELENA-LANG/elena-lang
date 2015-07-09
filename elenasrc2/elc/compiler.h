@@ -364,6 +364,7 @@ protected:
       int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool      withOpenArg;
+      bool      stackSafe;
 
       int compileHints(DNode hints);
 

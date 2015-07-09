@@ -9,20 +9,6 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-
-#class(sealed,integer:1) ByteNumber :: IntBaseNumber
-{
-    // Reads the object hash code into the output parameter
-    #method readHashCode &vint:aCode []
-    
-    #method hash_code
-    [
-        #var(type:int)aCode.
-        $self readHashCode &vint:aCode.
-        
-        ^ IntNumber new &int:aCode.
-    ]
-}    
     
 #symbol XTester =
 {

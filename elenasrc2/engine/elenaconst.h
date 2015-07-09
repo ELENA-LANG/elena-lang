@@ -467,6 +467,7 @@ namespace _ELENA_
    #define HINT_GENERIC            "generic"
    #define HINT_EMBEDDABLE         "embeddable"
    #define HINT_NONSTRUCTURE       "nonstructural"
+   #define HINT_STACKSAFE          "stacksafe"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
