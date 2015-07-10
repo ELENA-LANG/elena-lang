@@ -16,10 +16,10 @@
             &length:64
             &vint:aLength.
             
-        theStack := IntArray new &length:aLength &index:0 &intarray:aStack.            
+        theStack := IntArray new &int:0 &int:aLength &intarray:aStack.            
     ]
     
-    #method $read &index:anIndex &bytearray:aBuffer &vlength:aLength
+    #method(stacksafe) $read &int:anIndex &bytearray:aBuffer &vint:aLength
         => system'internal'callstack_readaddressinfo.
     
     /// Generates the call stack literal representation
@@ -36,9 +36,9 @@
         #loop (anIndex < aLength) ?
         [
             aBufferLength := 512.
-            $self $read &index:anIndex &bytearray:aBuffer &vlength:aBufferLength.
+            $self $read &int:anIndex &bytearray:aBuffer &vint:aBufferLength.
             (aBufferLength > 0)
-                ? [ aCallStackText := aCallStackText add &literal:(LiteralValue $new &length:aBufferLength &index:0 &bytearray:aBuffer) add &literal:('newLine literal). ].
+                ? [ aCallStackText := aCallStackText add &literal:(LiteralValue $new &int:0 &int:aBufferLength &bytearray:aBuffer) add &literal:('newLine literal). ].
             
             anIndex := anIndex + 1.
         ].
@@ -57,9 +57,9 @@
     #field theCallStack.
 
     /// Creates the exception with the provided message and error type
-    #constructor new &message:aMessage &error_type:anError
+    #constructor new &literal:aMessage &subject:anError
     [
-        theMessage := aMessage literal.
+        theMessage := aMessage.
         theError := anError.
         theCallStack := CallStack new.
     ]    
@@ -102,7 +102,7 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"A number is not in the correct format" &error_type: %FormatError.
+        <= %new &literal:"A number is not in the correct format" &subject: %FormatError.
 }
 
 // --- OutOfRangeException ---
@@ -111,11 +111,11 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"An index is out of range" &error_type: %OutOfRangeError.
+        <= %new &literal:"An index is out of range" &subject: %OutOfRangeError.
         
     /// Creates the exception
-    #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %OutOfRangeError.
+    #constructor new:aMessage
+        <= %new &literal:(aMessage literal) &subject: %OutOfRangeError.
 }
 
 // --- InvalidArgumentException ---
@@ -124,11 +124,11 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"Invalid argument" &error_type: %InvalidArgumentError.
+        <= %new &literal:"Invalid argument" &subject: %InvalidArgumentError.
         
     /// Creates the exception
-    #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %InvalidArgumentError.
+    #constructor new:aMessage
+        <= %new &literal:(aMessage literal) &subject:%InvalidArgumentError.
 }
 
 // --- InvalidOperationException ---
@@ -137,11 +137,11 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"Invalid operation" &error_type: %InvalidOperationError.
+        <= %new &literal:"Invalid operation" &subject: %InvalidOperationError.
         
     /// Creates the exception
-    #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %InvalidOperationError.
+    #constructor new:aMessage
+        <= %new &literal:(aMessage literal) &subject: %InvalidOperationError.
 }
 // --- MethodNotFound ---
 
@@ -149,7 +149,7 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"Method not found" &error_type: %MethodNotFoundError.
+        <= %new &literal:"Method not found" &subject: %MethodNotFoundError.
 }
 
 // --- MethodNotSupported ---
@@ -158,11 +158,11 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"Operation is not supported" &error_type: %NotSupportedError.
+        <= %new &literal:"Operation is not supported" &subject: %NotSupportedError.
         
     /// Creates the exception
-    #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %NotSupportedError.
+    #constructor new :aMessage
+        <= %new &literal:(aMessage literal) &subject: %NotSupportedError.
 }
 
 // --- AbortException ---
@@ -171,5 +171,5 @@
 {
     /// Creates the exception
     #constructor new
-        <= %new &message:"The process terminated" &error_type: %Abort.
+        <= %new &literal:"The process terminated" &subject: %Abort.
 }

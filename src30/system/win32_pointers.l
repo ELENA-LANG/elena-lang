@@ -2,16 +2,16 @@
 
 #class(sealed,integer:4) Handle
 {
-    #constructor new &handle:aHandle
+    #constructor(stacksafe) new &handle:aHandle
         => system'internal'int_copy.
 
-    #constructor new &int:aHandle
+    #constructor(stacksafe) new &int:aHandle
         => system'internal'int_copy.
 
     #constructor min
         => system'internal'int_init.
 
-    #method(type:bool) equal &handle:anOperand 
+    #method(type:bool,stacksafe) equal &handle:anOperand 
         => system'internal'int_equal.
 
     #method handle = $self.
@@ -39,7 +39,7 @@
         ^ IntNumber new &int:theIndex.
     ]
     
-    #method readIndex &vint:aRetVal
+    #method(stacksafe) readIndex &vint:aRetVal
     [
         aRetVal << theIndex.
     ]
@@ -64,34 +64,34 @@
     
     #method dirty_ptr = $self.
     
-    #method write : anObject
+    #method(stacksafe) write : anObject
         => system'internal'dptr_copy.
                 
-    #method append &index:aValue
+    #method(stacksafe) append &int:aValue
     [
         thePointer := thePointer + aValue.
     ]                            
                             
-    #method write &handle:anObject
+    #method(stacksafe) write &handle:anObject
         => system'internal'int_copy.
     
-    #method write &literal:aLiteral
+    #method(stacksafe) write &literal:aLiteral
         => system'internal'dptr_copy.
     
-    #method write &wide:aLiteral
+    #method(stacksafe) write &wide:aLiteral
         => system'internal'dptr_copy.
     
-    #method write &shortarray:anArray
+    #method(stacksafe) write &shortarray:anArray
         => system'internal'dptr_copy.
     
-    #method write &bytearray:anArray
+    #method(stacksafe) write &bytearray:anArray
         => system'internal'dptr_copy.
 
-    #method read &vint:aPointer
+    #method(stacksafe) read &vint:aPointer
         => system'internal'dptr_readint.
 
     // unsafe code
-    #method int
+    #method(stacksafe) int
     [
         #var(type:int)aValue.
         $self read &vint:aValue.
@@ -100,20 +100,20 @@
     ]
 
     // unsafe code
-    #method literal
+    #method(stacksafe) literal
     [
         #var(type:int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
-        #var(type:literal)aLiteral := LiteralValue new &length:aLen.
+        #var(type:literal)aLiteral := LiteralValue new &int:aLen.
         system'external'kernel32 lstrcpyA &literal:aLiteral &int:thePointer.
         
         ^ aLiteral.
     ]        
 
     // unsafe code
-    #method wide
+    #method(stacksafe) wide
     [
         #var(type:int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
-        #var(type:wide)aLiteral := WideLiteralValue new &length:aLen.
+        #var(type:wide)aLiteral := WideLiteralValue new &int:aLen.
         system'external'kernel32 lstrcpyW &wide:aLiteral &int:thePointer.
         
         ^ aLiteral.

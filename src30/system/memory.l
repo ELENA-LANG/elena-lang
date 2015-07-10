@@ -1552,7 +1552,7 @@
     #method char
     [
         #var(type:char)retVal.
-        charConvertor $convert &index:0 &literal:theValue &vchar:retVal.
+        charConvertor $convert &int:0 &literal:theValue &vchar:retVal.
         
         ^ CharValue new &char:retVal.
     ]

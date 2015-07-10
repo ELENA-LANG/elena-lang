@@ -22,13 +22,13 @@
         #var(type:int)aLength.
         #var(type:shortarray,size:3)aBuffer.
 
-        charConvertor $save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
+        charConvertor $save &char:aChar &int:0 &shortarray:aBuffer &vint:aLength.
         
-        aBuffer write &index:aLength &short:0.
+        aBuffer write &int:aLength &short:0.
         
         system'external'USER32 CharUpperW &shortarray:aBuffer.
         
-        charConvertor $convert &index:0 &shortarray:aBuffer &vchar:aRetVal.
+        charConvertor $convert &int:0 &shortarray:aBuffer &vchar:aRetVal.
     ]
     
     toLowerCase &char:aChar &vchar:aRetVal
@@ -36,12 +36,12 @@
         #var(type:int)aLength.
         #var(type:shortarray,size:3)aBuffer.
 
-        charConvertor $save &char:aChar &index:0 &shortarray:aBuffer &vlength:aLength.
+        charConvertor $save &char:aChar &int:0 &shortarray:aBuffer &vint:aLength.
         
-        aBuffer write &index:aLength &short:0.
+        aBuffer write &int:aLength &short:0.
         
         system'external'USER32 CharLowerW &shortarray:aBuffer.
         
-        charConvertor $convert &index:0 &shortarray:aBuffer &vchar:aRetVal.
+        charConvertor $convert &int:0 &shortarray:aBuffer &vchar:aRetVal.
     ]
 }.

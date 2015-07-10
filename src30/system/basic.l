@@ -2890,29 +2890,29 @@
     #method(type:char,stacksafe)convert &char:aChar
         = CharValue new &char:aChar.
   
-    #method(type:char,stacksafe) $convert &index:anIndex &literal:aLiteral &vchar:char
+    #method(type:char,stacksafe) $convert &int:anIndex &literal:aLiteral &vchar:char
         => system'internal'char_copystr.
   
-    #method(type:char,stacksafe) $convert &index:anIndex &bytearray:aLiteral &vchar:char
+    #method(type:char,stacksafe) $convert &int:anIndex &bytearray:aLiteral &vchar:char
         => system'internal'char_copystr.
   
-    #method(type:char,stacksafe) $convert &index:anIndex &wide:aLiteral &vchar:char
+    #method(type:char,stacksafe) $convert &int:anIndex &wide:aLiteral &vchar:char
         => system'internal'char_copywstr.
         
-    #method(type:char,stacksafe) $convert &index:anIndex &shortarray:aLiteral &vchar:char
+    #method(type:char,stacksafe) $convert &int:anIndex &shortarray:aLiteral &vchar:char
         => system'internal'char_copywstr.
 
-    #method(stacksafe) $save &char:aChar &index:anIndex &shortarray:aCharArray &vlength:aLength
+    #method(stacksafe) $save &char:aChar &int:anIndex &shortarray:aCharArray &vint:aLength
         => system'internal'sa_copychar.
     
-    #method(stacksafe) $save &char:aChar &index:anIndex &bytearray:aCharArray &vlength:aLength
+    #method(stacksafe) $save &char:aChar &int:anIndex &bytearray:aCharArray &vint:aLength
         => system'internal'ba_copychar.
 
     /// Converts a literal string into a character                
     #method(type:char,stacksafe) convert &literal:aValue
     [
         #var(type:char)aRetVal.
-        $self $convert &index:0 &literal:aValue &vchar:aRetVal.
+        $self $convert &int:0 &literal:aValue &vchar:aRetVal.
         
         #var(type:int)l1.
         #var(type:int)l2 := aValue length int.
@@ -2928,7 +2928,7 @@
     #method(type:char,stacksafe) convert &wide:aValue
     [
         #var(type:char)aRetVal.
-        $self $convert &index:0 &wide:aValue &vchar:aRetVal.
+        $self $convert &int:0 &wide:aValue &vchar:aRetVal.
 
         #var(type:int)l1.
         #var(type:int)l2 := aValue length int.

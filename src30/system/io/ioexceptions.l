@@ -5,8 +5,8 @@
 #class IOException :: Exception
 {
     #constructor new
-        <= %new &message:"I/O error" &error_type: %IOError.
+        <= %new &literal:"I/O error" &subject: %IOError.
         
-    #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %IOError.
+    #constructor new:aMessage
+        <= %new &literal:aMessage &subject: %IOError.
 }

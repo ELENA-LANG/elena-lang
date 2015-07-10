@@ -9,7 +9,7 @@
 // --- ListItem ---
 
 /// A list item
-#class ListItem
+#class(sealed) ListItem
 {
     #field                 theContent.
     #field(type:list_item) theNext.
@@ -30,10 +30,10 @@
     ]    
 
     /// Returns the next item
-    #method next_list_item = theNext.
+    #method(type:list_item) nextItem = theNext.
 
     /// Sets the next item
-    #method set &next_list_item:aNext
+    #method setNextItem &list_item:aNext
     [
         theNext := aNext.
     ]
@@ -70,8 +70,8 @@
     #method next
     [
         ($nil == theCurrent)
-            ? [ theCurrent := theList top_list_item. ]
-            ! [ theCurrent := theCurrent next_list_item. ].
+            ? [ theCurrent := theList topItem. ]
+            ! [ theCurrent := theCurrent nextItem. ].
             
         ^ $nil != theCurrent.
     ]
@@ -90,7 +90,7 @@
     #constructor new &list:aList
     [
         theList := aList.
-        theCurrent := aList top_list_item.
+        theCurrent := aList topItem.
         theIndex := Integer new.
     ]
 
@@ -123,7 +123,7 @@
         
         (anIndex < i) ?
         [
-            theCurrent := theList top_list_item.
+            theCurrent := theList topItem.
             i := 0.
         ].
         
@@ -132,7 +132,7 @@
             ($nil == theCurrent)
                 ? [ #throw OutOfRangeException new. ].
             
-            theCurrent := theCurrent next_list_item.            
+            theCurrent := theCurrent nextItem.            
             i := i + 1.
         ].
         
@@ -158,7 +158,7 @@
     ]
 
     /// Returns the top item
-    #method top_list_item = theTop.
+    #method(type:list_item) topItem = theTop.
 
     /// Returns the top object
     #method first = theTop get.
@@ -183,7 +183,7 @@
         
         #var(type:list_item) aNewItem := ListItem new:anObject.
         
-        theLast set &next_list_item:aNewItem.        
+        theLast setNextItem &list_item:aNewItem.        
         theLast := aNewItem.
     ]
 
@@ -192,23 +192,23 @@
         theCount += 1.        
         
         #var(type:list_item) aNewItem := ListItem new:anObject.
-        aNewItem set &next_list_item:theTop.        
+        aNewItem setNextItem &list_item:theTop.        
         theTop := aNewItem.
     ]
     
     /// Returns the object at the specified position
     #method getAt : anIndex
-        = $self getAt &index:(anIndex int).
+        = $self getAt &int:(anIndex int).
 
     /// Returns the list item at the specified position
-    #method(type:list_item) getItemAt &index:anIndex
+    #method(type:list_item,stacksafe) getItemAt &int:anIndex
     [
         #var(type:int)aCurrentIndex := anIndex.
         #var(type:list_item) anItem := theTop.
         
         #loop (aCurrentIndex > 0) ?
         [
-            anItem := anItem next_list_item.
+            anItem := anItem nextItem.
             ($nil == anItem)
                 ? [ #throw OutOfRangeException new. ].
             
@@ -219,8 +219,8 @@
     ]
 
     /// Returns the object at the specified position
-    #method getAt &index:anIndex
-        = $self getItemAt &index:anIndex get.
+    #method(stacksafe) getAt &int:anIndex
+        = $self getItemAt &int:anIndex get.
 
     /// Appends a new object to the end of the list
     #method append : anObject => theState.
@@ -228,38 +228,41 @@
     /// Inserts a new object to the beginning of the list
     #method insert : anObject => theState.
 
+    #method insert : anObject &at:anIndex
+        <= insert &int:(anIndex int) &object:anObject.
+
     /// Inserts a new object to the specified position
-    #method insert &index:anIndex &object:anObject
+    #method insert &int:anIndex &object:anObject
     [
         (anIndex == 0)
             ? [ $self insert:anObject. ]
             ! [
                 #var(type:list_item) aNew := ListItem new:anObject.        
-                #var(type:list_item) aPrevious := $self getItemAt &index:(anIndex - 1).
-                #var(type:list_item) aNext := aPrevious next_list_item.
+                #var(type:list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
+                #var(type:list_item) aNext := aPrevious nextItem.
                 
-                aPrevious set &next_list_item:aNew.
-                aNew set &next_list_item:aNext.
+                aPrevious setNextItem &list_item:aNew.
+                aNew setNextItem &list_item:aNext.
             ].
     ]
 
     /// Removes an object at the specified position
-    #method remove &index:anIndex
+    #method remove &int:anIndex
     [
         ($nil == theTop)
             ? [ #throw OutOfRangeException new. ].
         
         (0 == anIndex)
             ? [
-                theTop := theTop next_list_item.
+                theTop := theTop nextItem.
                 ($nil == theTop)
                     ? [ theLast := $nil. theState := %empty. ].
             ]
             ! [
-                #var(type:list_item) aPrevious := $self getItemAt &index:(anIndex - 1).
-                #var(type:list_item) aNext := aPrevious next_list_item.
+                #var(type:list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
+                #var(type:list_item) aNext := aPrevious nextItem.
                 
-                aPrevious set &next_list_item:(aNext next_list_item).
+                aPrevious setNextItem &list_item:(aNext nextItem).
                 
                 (aNext equal &reference:theLast)
                     ? [ theLast := aPrevious ].
@@ -268,11 +271,14 @@
         theCount -= 1.
     ]
         
+    #method remove &at:anIndex
+        <= remove &int:(anIndex int).
+        
     /// Returns the number of list items
     #method length = theCount int.
     
     /// Reads the number of list item to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
     [
         aLength << theCount.
     ]
@@ -312,7 +318,7 @@
         [
             aList append:(anItem get).
             
-            anItem := anItem next_list_item.
+            anItem := anItem nextItem.
         ].
     ]
 }
@@ -331,19 +337,22 @@
     [
         theCapacity := Integer new &int:32.
         theLength := Integer new.
-        theArray := Array new &length:32.
+        theArray := Array new &int:32.
     ]
     
     /// Creates the list
-    #constructor new &capacity:aCapacity
+    #constructor new : aCapacity
+        <= new &int:(aCapacity int).
+    
+    #constructor new &int:aCapacity
     [
         theCapacity := Integer new &int:aCapacity.
         theLength := Integer new.
-        theArray := Array new &length:aCapacity.
+        theArray := Array new &int:aCapacity.
     ]
     
     /// Creates the list
-    #constructor $new &array:anArray &length:aLength
+    #constructor $new &array:anArray &int:aLength
     [
         theCapacity := Integer new.
         theLength := Integer new &int:aLength.
@@ -355,28 +364,28 @@
     
     /// Returns the object at the specified position
     #method getAt : anIndex
-        = $self getAt &index:(anIndex int).
+        = $self getAt &int:(anIndex int).
 
     /// Returns the object at the specified position
-    #method getAt &index:anIndex
+    #method(stacksafe) getAt &int:anIndex
     [
         (theLength > anIndex)
             ! [ #throw OutOfRangeException new. ].
 
-        ^ theArray getAt &index:anIndex.
+        ^ theArray getAt &int:anIndex.
     ]
     
     /// Returns the object at the specified position
     #method setAt : anIndex : anObject
-        = $self setAt &index:(anIndex int) &object:anObject.
+        = $self setAt &int:(anIndex int) &object:anObject.
 
     /// Returns the object at the specified position
-    #method setAt &index:anIndex &object:anObject
+    #method(stacksafe) setAt &int:anIndex &object:anObject
     [
         (theLength > anIndex)
             ! [ #throw OutOfRangeException new. ].
         
-        theArray setAt &index:anIndex &object:anObject.
+        theArray setAt &int:anIndex &object:anObject.
     ]
     
     #method $expand
@@ -385,11 +394,11 @@
         [
             theCapacity += 32.
             
-            #var(type:array)aNewArray := Array new &length:theCapacity.
+            #var(type:array)aNewArray := Array new &int:theCapacity.
             #var(type:int) i := 0.
             #loop (i < theLength)?
             [
-                aNewArray setAt &index:i &object:(theArray getAt &index:i).
+                aNewArray setAt &int:i &object:(theArray getAt &int:i).
                 
                 i := i + 1.
             ].
@@ -403,13 +412,13 @@
     [
         $self $expand.
         
-        theArray setAt &index:theLength &object:anObject.
+        theArray setAt &int:theLength &object:anObject.
         
         theLength += 1.
     ]
     
     /// Inserts a new object to the specified position
-    #method insert &index:anIndex &object:anObject
+    #method insert &int:anIndex &object:anObject
     [
         (anIndex >= theLength)
             ? [ #throw OutOfRangeException new. ].
@@ -419,18 +428,21 @@
         #var(type:int) i := theLength.
         #loop (i > anIndex)?
         [
-            theArray setAt &index:i &object:(theArray getAt &index:(i - 1)).
+            theArray setAt &int:i &object:(theArray getAt &int:(i - 1)).
             
             i := i - 1.
         ].
         
-        theArray setAt &index:anIndex &object:anObject.
+        theArray setAt &int:anIndex &object:anObject.
     ]    
     
     /// Inserts a new object to the beginning of the list
     #method insert : anObject
         <= insert &index:0 &object:anObject.
 
+    #method insert : anObject &at:anIndex
+        <= insert &int:(anIndex int) &object:anObject.
+        
     /// Removes an object at the specified position
     #method remove &index:anIndex
     [
@@ -442,9 +454,12 @@
         #var(type:int)i := anIndex.
         #loop (i < theLength)?
         [
-            theArray setAt &index:i &object:(theArray getAt &index:(i + 1)).
+            theArray setAt &int:i &object:(theArray getAt &int:(i + 1)).
         ].
     ]
+        
+    #method remove &at:anIndex
+        <= remove &int:(anIndex int).
 
     /// Returns itself
     #method array_list = $self.
@@ -459,7 +474,7 @@
     #method length = theLength int.
     
     /// Reads the number of list item to the output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
     [
         aLength << theLength.
     ]
@@ -471,10 +486,10 @@
     ]
     
     /// Returns the top object
-    #method first = theArray getAt &index:0.
+    #method first = theArray getAt &int:0.
 
     /// Returns the last object
-    #method last = theArray getAt &index:(theLength - 1).
+    #method last = theArray getAt &int:(theLength - 1).
     
     /// Returns the list enumerator
     #method enumerator = ArrayListEnumerator new &array_list:$self.
@@ -483,11 +498,11 @@
     #method iterator = ArrayListIterator new &array_list:$self.
     
     /// Returns a list copy
-    #method clone
-        = ArrayList $new &array:theArray &length:theLength.
+    #method(type:array_list) clone
+        = ArrayList $new &array:theArray &int:theLength.
         
     #method array
-        = Array new &length:theLength &index:0 &array:theArray.
+        = Array new &int:0 &int:theLength &array:theArray.
 }
 
 // --- ArrayListEnumerator ---
@@ -510,7 +525,7 @@
         <= new &array_list:(anObject array_list).
 
     /// Returns the current object
-    #method get = theList getAt &index:theIndex.
+    #method get = theList getAt &int:theIndex.
     
     /// Resets the enumerator
     #method reset
@@ -559,12 +574,12 @@
     ]
 
     /// Returns the current member
-    #method get = theList getAt &index:theIndex.
+    #method get = theList getAt &int:theIndex.
     
     /// Sets the current member
     #method set : anObject 
     [
-        theList setAt &index:theIndex &object:anObject.
+        theList setAt &int:theIndex &object:anObject.
     ]
     
     /// Reads the current index into an output parameter
@@ -593,13 +608,16 @@
 
     /// Creates a dictionary
     #constructor new
-        <= new &capacity:32 &hash_length:32 &default:$nil.
+        <= new &int:32 &int:32 &object:$nil.
 
     #constructor new &default:aDefault
-        <= new &capacity:32 &hash_length:32 &default:aDefault.
+        <= new &int:32 &int:32 &object:aDefault.
+
+    #constructor new:aCapacity &default:aDefault
+        <= new &int:(aCapacity int) &int:32 &object:aDefault.
 
     /// Creates a dictionary
-    #constructor new &capacity:aCapacity &hash_length:aHashLength  &default:aDefault
+    #constructor new &int:aCapacity &int:aHashLength &object:aDefault
     [
         #var(type:int)size := 32.
         #loop (size < aHashLength)?
@@ -610,8 +628,8 @@
         size := size - 1.
         theHashMask := IntNumber new &int:size.
         
-        theHashTable := Array new &length:aHashLength.
-        theList := ArrayList new &capacity:aCapacity.
+        theHashTable := Array new &int:aHashLength.
+        theList := ArrayList new &int:aCapacity.
         
         theDefault := aDefault.
     ]
@@ -625,34 +643,34 @@
     [
         #var(type:int)aHashCode := aKey hash_code.
         
-        $self $getItem &hash_code:aHashCode &key:aKey set &object:anObject.
+        $self $getItem &int:aHashCode &key:aKey set &object:anObject.
     ]
         
-    #method $getItem &hash_code:aCode &key:aKey
+    #method(stacksafe) $getItem &int:aCode &key:aKey
     [
         #var(type:int)aHashCode := aCode && theHashMask.
         
-        #var aHashItem := theHashTable getAt &index:aHashCode.
+        #var aHashItem := theHashTable getAt &int:aHashCode.
         ($nil == aHashItem) ?
         [
-            aHashItem := IntArray new &length:5.
+            aHashItem := IntArray new &int:5.
             
-            aHashItem write &index:0 &int:1.
+            aHashItem write &int:0 &int:1.
             
-            theHashTable setAt &index:aHashCode &object:aHashItem.
+            theHashTable setAt &int:aHashCode &object:aHashItem.
         ].
         
         #var(type:intarray) aBacket := aHashItem intarray.        
         #var(type:int)aLength := 0.        
-        aBacket read &index:0 &vint:aLength.
+        aBacket read &int:0 &vint:aLength.
         
         #var(type:int)i := 1.
         #loop (i < aLength)?
         [
             #var(type:int)anItemIndex.
-            aBacket read &index:i &vint:anItemIndex.
+            aBacket read &int:i &vint:anItemIndex.
             
-            #var anItem := theList getAt &index:anItemIndex.
+            #var anItem := theList getAt &int:anItemIndex.
             
             (aKey safeEqual:(anItem key))
                 ? [ ^ anItem. ].
@@ -670,17 +688,17 @@
         aBacket readLength &vint:aCapacity.
         (aCapacity == aLength)
             ? [
-                #var(type:intarray)aNewBacket := IntArray new &length:(aCapacity + 5).
-                aNewBacket write &index:0 &length:aCapacity &intarray:aBacket.
+                #var(type:intarray)aNewBacket := IntArray new &int:(aCapacity + 5).
+                aNewBacket write &int:0 &int:aCapacity &intarray:aBacket.
 
                 aBacket := aNewBacket.
-                theHashTable setAt &index:aHashCode &object:aNewBacket.
+                theHashTable setAt &int:aHashCode &object:aNewBacket.
             ].
             
-        aBacket write &index:aLength &int:i.
+        aBacket write &int:aLength &int:i.
             
         aLength := aLength + 1.
-        aBacket write &index:0 &int:aLength.
+        aBacket write &int:0 &int:aLength.
         
         ^ aNewItem.
     ]    
@@ -689,7 +707,7 @@
     [
         #var(type:int)aHashCode := aKey hash_code.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
             
     #method getAt &int:aKey
@@ -697,7 +715,7 @@
         #var(type:int)aHashCode.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
     #method getAt &long:aKey
@@ -705,7 +723,7 @@
         #var(type:int)aHashCode.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
     #method getAt &real:aKey
@@ -713,7 +731,7 @@
         #var(type:int)aHashCode.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
     #method getAt &char:aKey
@@ -721,7 +739,7 @@
         #var(type:int)aHashCode.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
     #method getAt &literal:aKey
@@ -729,7 +747,7 @@
         #var(type:int)aHashCode.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
     #method getAt &wide:aKey
@@ -737,7 +755,7 @@
         #var(type:int)aHashCode.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &hash_code:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
 
     /// Returns itself

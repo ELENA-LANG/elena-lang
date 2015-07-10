@@ -5,8 +5,8 @@
 #class WinFormsException :: Exception
 {
     #constructor new
-        <= %new &message:"WinForms error" &error_type: %WinFormsError.
+        <= %new &literal:"WinForms error" &subject: %WinFormsError.
         
-    #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %IOError.
+    #constructor new:aMessage
+        <= %new &literal:aMessage &subject: %IOError.
 }

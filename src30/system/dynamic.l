@@ -17,7 +17,7 @@
 #class(sealed,signature) Verb
 {
     /// Loads a dynamic verb
-    #constructor new &verb:aVerb
+    #constructor(stacksafe) new &verb:aVerb
         => system'internal'int_copy.
 
     #method verb = $self.
@@ -32,7 +32,7 @@
 #class(sealed,message) Message
 {
     /// Loads a message
-    #constructor new &mssg:aMessage
+    #constructor(stacksafe) new &mssg:aMessage
         => system'internal'int_copy.
 
     #method mssg
@@ -51,11 +51,11 @@
 #class(sealed,signature) Signature
 {
     /// Creates a dynamic signature
-    #constructor new &mssg:aMessage
+    #constructor(stacksafe) new &mssg:aMessage
         => system'internal'subj_copymssg.
         
     /// Creates a dynamic signature
-    #constructor new &subject:aSubject
+    #constructor(stacksafe) new &subject:aSubject
         => system'internal'int_copy.
 
     /// Creates a dynamic signature
@@ -97,13 +97,16 @@
 
 #class(sealed,stringof:mssg)MessageArray
 {
-    #constructor new &length : aLength
+    #constructor(stacksafe) new &int : aLength
         => system'internal'ns_create.
         
-    #method readLength &vint:aLength
+    #constructor new : aLength
+        <= new &int:(aLength int).
+        
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'ns_getlen.
         
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -113,22 +116,22 @@
     
     #method mssgarray = $self.
 
-    #method write &index:anIndex &mssg:aValue
+    #method(stacksafe) write &int:anIndex &mssg:aValue
         => system'internal'ns_writedword.
 
-    #method read &index:anIndex &vmssg:anInt
+    #method(stacksafe) read &int:anIndex &vmssg:anInt
         => system'internal'ns_readdword.
     
-    #method getAt &index:anIndex
+    #method getAt &int:anIndex
     [
         #var(type:mssg)aMessage.
-        $self read &index:anIndex &vmssg:aMessage.
+        $self read &int:anIndex &vmssg:aMessage.
         
         ^ Message new &mssg:aMessage.
     ]
     
     #method getAt : anIndex
-        <= getAt &index:(anIndex int).
+        <= getAt &int:(anIndex int).
     
     #method enumerator = MessageArrayEnumerator new &mssgarray:$self.
 
@@ -161,7 +164,7 @@
     ]
 
     #method get
-        = theArray getAt &index:theIndex.
+        = theArray getAt &int:theIndex.
     
     #method readIndex  &vint:anIndex
     [
@@ -203,5 +206,5 @@
     ]
     
     #method get
-        = theArray getAt &index:theIndex.
+        = theArray getAt &int:theIndex.
 }

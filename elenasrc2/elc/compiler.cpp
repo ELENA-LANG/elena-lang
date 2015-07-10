@@ -3820,9 +3820,9 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
             else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
                return object;
             }
-            //else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
-//               return ObjectInfo(okAccumulator, 0, target_type);
-//            }
+            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
+               return ObjectInfo(okAccumulator, 0, target_type);
+            }
 //            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
 //               return ObjectInfo(okAccumulator, 0, target_type);
 //            }
