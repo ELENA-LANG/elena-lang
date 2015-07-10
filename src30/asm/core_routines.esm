@@ -2380,16 +2380,16 @@ end
 procedure arr_copysubarr
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   acopyb
   acallvi 1
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
   callr api : coreapi'nsubcopy

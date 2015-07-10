@@ -547,8 +547,15 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
          SymbolExpressionInfo symbolInfo;
          // check if the object can be treated like a constant object
          r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
-         if (r && symbolInfo.constant) {
-            return ObjectInfo(okConstantSymbol, reference,  typeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+         if (r) {
+            // if it is a constant
+            if (symbolInfo.constant) {
+               return ObjectInfo(okConstantSymbol, reference, typeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+            }
+            // if it is a typed symbol
+            else if (symbolInfo.expressionTypeRef != 0) {
+               return ObjectInfo(okSymbol, reference, 0, symbolInfo.expressionTypeRef);
+            }
          }
       }
    }

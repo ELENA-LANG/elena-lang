@@ -1612,7 +1612,7 @@
 #class(dynamic) BaseArray
 {
     /// Creates the array with the specified length
-    #constructor new &length:aLength
+    #constructor(stacksafe) new &int:aLength
         => system'internal'arr_create.
 }
 
@@ -1626,33 +1626,33 @@
         => system'internal'arr_empty.
     
     /// Creates the array with the specified length
-    #constructor new &length:aLength
+    #constructor(stacksafe) new &int:aLength
         => system'internal'arr_create.
     
     /// Creates a copy of the provided array
     #constructor new &array:anArray
-        <= %new &length:(anArray length) &index:0 &array:anArray.
+        <= %new &int:0 &int:(anArray length int) &array:anArray.
     
     /// Creates a copy of the provided sub array
-    #constructor new &length:aLength &index:anIndex &array:anArray
+    #constructor new &int:anIndex &int:aLength &array:anArray
         => system'internal'arr_copysubarr.
         
     /// Returns the specified array member
     #method getAt : anIndex
-        = $self getAt &index:(anIndex int).
+        = $self getAt &int:(anIndex int).
 
     /// Returns the specified array member
-    #method getAt &index:anIndex
+    #method(stacksafe) getAt &int:anIndex
         => system'internal'arr_getat.
 
     /// Sets the specified array member
     #method setAt:anIndex:anObject
     [
-        $self setAt &index:(anIndex int) &object:anObject.
+        $self setAt &int:(anIndex int) &object:anObject.
     ]
     
     /// Sets the specified array member
-    #method setAt &index:anIndex &object:anObject
+    #method(stacksafe) setAt &int:anIndex &object:anObject
         => system'internal'arr_setat.
 
     /// Concatinates the arrays    
@@ -1668,12 +1668,12 @@
         $self readLength &vint:aLength1.        
         anArray readLength &vint:aLength2.
         
-        #var(type:array)aRetVal := Array new &length:(aLength1 + aLength2).
+        #var(type:array)aRetVal := Array new &int:(aLength1 + aLength2).
 
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength1) ?
         [
-            aRetVal setAt &index:anIndex &object:($self getAt &index:anIndex).
+            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
             
             anIndex := anIndex + 1.
         ].
@@ -1681,7 +1681,7 @@
         anIndex := 0.
         #loop (anIndex < aLength2) ?
         [
-            aRetVal setAt &index:(aLength1 + anIndex) &object:(anArray getAt &index:anIndex).
+            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
             
             anIndex := anIndex + 1.
         ].
@@ -1693,11 +1693,11 @@
     #method array = $self.
 
     /// Reads the array length into an output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'arr_getlen.
 
     /// Returns the array length
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -1726,10 +1726,10 @@
 
 #class(sealed,dynamic)OpenArgs
 {
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'args_getlen.
         
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -1780,7 +1780,7 @@
         
         (theIndex < aLength)
             ? [
-                theChar := theLiteral getAt &index:theIndex.                
+                theChar := theLiteral getAt &int:theIndex.                
                 
                 theChar readLength &vint:theDiff.
                 
@@ -1829,7 +1829,7 @@
     #method get
     [
         #var(type:char)aChar.
-        theLiteral read &index:theIndex &vchar:aChar.
+        theLiteral read &int:theIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
     ]
@@ -1898,7 +1898,7 @@
         
         (theIndex < aLength)
             ? [
-                theChar := theLiteral getAt &index:theIndex.
+                theChar := theLiteral getAt &int:theIndex.
                 
                 theChar readLength &vint:theDiff.
                 theDiff += 1.
@@ -1947,7 +1947,7 @@
 
     /// Returns the current character
     #method get
-        = theLiteral getAt &index:theIndex.
+        = theLiteral getAt &int:theIndex.
     
     #method set : anObject 
     [
@@ -2001,12 +2001,12 @@
 
     /// Returns the current member
     #method get
-        = theArray getAt &index:theIndex.
+        = theArray getAt &int:theIndex.
     
     /// Sets the current member
     #method set : anObject
     [
-        theArray setAt &index:theIndex &object:anObject.
+        theArray setAt &int:theIndex &object:anObject.
     ]
     
     /// Reads the current index and saves it into an output parameter
@@ -2064,5 +2064,5 @@
     
     /// Returns the current object
     #method get
-        = theArray getAt &index:theIndex.
+        = theArray getAt &int:theIndex.
 }
