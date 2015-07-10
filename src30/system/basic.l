@@ -2400,10 +2400,10 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
 
     /// Returns the literal value
-    #method literal = literalConvertor convert &char:$self.
+    #method(stacksafe) literal = literalConvertor convert &char:$self.
 
     /// Returns the wide literal value
-    #method wide = wideConvertor convert &char:$self.
+    #method(stacksafe) wide = wideConvertor convert &char:$self.
     
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readLength &vint:aLength
@@ -2422,7 +2422,7 @@
     ]
         
     /// Retuns the number of bytes to represent the symbol        
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.

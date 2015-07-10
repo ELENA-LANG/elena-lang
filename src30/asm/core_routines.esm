@@ -3805,7 +3805,7 @@ end
 
 procedure ws_copysubarr
 
-  aloadsi 2
+  aloadsi 3
   nload
   ifn labEmpty 0
     
@@ -3818,10 +3818,10 @@ procedure ws_copysubarr
   wcreate
   bcopya
   
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
 
@@ -4279,17 +4279,17 @@ end
 
 procedure ws_copybuf
 
-  aloadsi 2
+  aloadsi 3
   nload  
   inc
   acopyr class : system'WideLiteralValue
   wcreate
 
   bcopya
-  aloadsi 2
+  aloadsi 3
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
   aloadsi 4
   

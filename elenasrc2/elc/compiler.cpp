@@ -2592,12 +2592,14 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
       type = object.type;
    }
    // if class reference available - select the possible type
-   else if((object.kind == okAccumulator || object.kind == okConstantSymbol) && object.param != 0) {
+   else if ((object.kind == okAccumulator && object.param != 0) || (object.kind == okConstantSymbol && object.extraparam != 0)) {
       if (scope.moduleScope->extensionHints.exist(messageRef)) {
+         ref_t classRef = object.kind == okAccumulator ? object.param : object.extraparam;
+
          SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
          while (!it.Eof()) {
             if (it.key() == messageRef) {
-               if (scope.moduleScope->typeHints.exist(*it, object.param)) {
+               if (scope.moduleScope->typeHints.exist(*it, classRef)) {
                   type = *it;
 
                   break;
@@ -3451,8 +3453,10 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
 
       role = scope.mapObject(roleNode.Terminal());
       if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
          // if the symbol is used inside itself
-         if (role.param == scope.getClassRefId()) {
+         if (classRef == scope.getClassRefId()) {
             flags = scope.getClassFlags();
 
             mode |= HINT_SELFEXTENDING;
@@ -3460,7 +3464,7 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
          // otherwise
          else {
             ClassInfo roleClass;
-            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(role.param));
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
 
             flags = roleClass.header.flags;
          }
@@ -3614,7 +3618,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 {
    if (test(scope.info.header.flags, elStateless)) {
       // if it is a stateless class
-      return ObjectInfo(okConstantSymbol, scope.reference);
+      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
    }
    else {
       bool dummy = false;
@@ -3764,8 +3768,13 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
       sourceClassReference = scope.getClassRefId(false);
    }
 
-   if (source_type == 0 && object.param != 0 && (object.kind == okAccumulator || object.kind == okConstantSymbol)) {
-      sourceClassReference = object.param;
+   if (source_type == 0) {
+      if (object.param != 0 && object.kind == okAccumulator) {
+         sourceClassReference = object.param;
+      }
+      else if (object.extraparam != 0 && object.kind == okConstantSymbol) {
+         sourceClassReference = object.extraparam;
+      }
    }
 
    if (sourceClassReference == 0 && source_type != 0) {
@@ -4796,9 +4805,9 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
 
       DNode dummy;
       if (withFrame) {
-         compileExtensionMessage(node, dummy, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantSymbol, classRef), HINT_STACKSAFE_CALL);
+         compileExtensionMessage(node, dummy, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantSymbol, classRef, classRef), HINT_STACKSAFE_CALL);
       }
-      else compileExtensionMessage(node, dummy, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantSymbol, classRef), HINT_STACKSAFE_CALL);
+      else compileExtensionMessage(node, dummy, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantSymbol, classRef, classRef), HINT_STACKSAFE_CALL);
    }
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }
@@ -5552,7 +5561,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          compileAction(classNode, classScope, DNode(), true);
 
-         retVal = ObjectInfo(okConstantSymbol, scope.reference);
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
       else if (classNode == nsInlineExpression) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -5562,7 +5571,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          compileAction(classNode, classScope, expression.firstChild(), true);
 
-         retVal = ObjectInfo(okConstantSymbol, scope.reference);
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
       else if (classNode == nsSubjectArg || classNode == nsMethodParameter) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -5572,7 +5581,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          compileAction(goToSymbol(classNode, nsInlineExpression), classScope, classNode, true);
 
-         retVal = ObjectInfo(okConstantSymbol, scope.reference);
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
    }
 

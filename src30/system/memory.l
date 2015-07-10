@@ -868,7 +868,7 @@
     /// Returns the index of the first occurence of the specified object.
     /// 
     /// If the object is not found. returns -1
-    #method indexOf :anIndex :aSearchObject
+    #method indexOf : aSearchObject &at:anIndex
         = aSearchObject cast:%eval &to:
             {
                eval &literal:aLiteral
@@ -884,7 +884,7 @@
     /// Returns the index of the first occurence of the specified symbol.
     /// 
     /// If the substring is not found. returns -1
-    #method indexOf &char:aChar &starting:anIndex
+    #method indexOf &char:aChar &at:anIndex
     [
         #var(type:int)aRetVal.
         $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
@@ -895,7 +895,7 @@
     /// Returns the index of the first occurence of the specified substring.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &literal:aLiteral &starting:anIndex
+    #method indexOf &literal:aLiteral &at:anIndex
     [
         #var(type:int)aRetVal.
         $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
@@ -912,7 +912,7 @@
         = $self insert &int:anIndex &literal:(aChar literal).
 
     /// Inserts an object into and returns the new one
-    #method insert : anIndex : anObject
+    #method insert : anObject &at:anIndex
         = anObject cast:%eval &to:
             {
                eval &literal:aLiteral
@@ -926,12 +926,16 @@
             }.
 
     /// Deletes the substring from the object and returns the new one
-    #method delete:anIndex:aLength
+    #method delete:aLength &at:anIndex
         = $self delete &int:(anIndex int) &int:(aLength int).
 
     /// Deletes the substring from the object and returns the new one
     #method(type:literal,stacksafe) delete &int:anIndex &int:aLength
         => system'internal's_delete.
+
+    /// Returns the substring
+    #method Substring : aLength &at:anIndex
+        = $self Substring &int:(anIndex int) &int:(aLength int).
 
     /// Returns the substring
     #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
@@ -1072,45 +1076,49 @@
     ]
 
     /// Inserts a sub string
-    #method insert &index:anIndex &literal:aLiteral
+    #method insert &int:anIndex &literal:aLiteral
     [
         (anIndex == 0)
             ? [ theValue := aLiteral add &literal:theValue. ]
-            ! [ theValue := theValue insert &index:anIndex &literal:aLiteral. ].
+            ! [ theValue := theValue insert &int:anIndex &literal:aLiteral. ].
     ]
     
     /// Inserts a character
-    #method insert &index:anIndex &char:aChar
+    #method insert &int:anIndex &char:aChar
     [
         (anIndex == 0)
             ? [ theValue := aChar literal add &literal:theValue. ]
-            ! [ theValue := theValue insert &index:anIndex &literal:(aChar literal). ].
+            ! [ theValue := theValue insert &int:anIndex &literal:(aChar literal). ].
     ]
     
     /// Inserts a wide literal
-    #method insert &index:anIndex &wide:aLiteral
+    #method insert &int:anIndex &wide:aLiteral
     [
-        theValue := theValue insert &index:anIndex &literal:(aLiteral literal).
+        theValue := theValue insert &int:anIndex &literal:(aLiteral literal).
     ]
 
     /// Inserts an object at the specified position
-    #method insert : anIndex : anObject
+    #method insert : anObject &at:anIndex
     [
         anObject cast:%eval &to:
         {
-            eval &char:aChar [ self insert &index:(anIndex int) &char:aChar. ]
+            eval &char:aChar [ self insert &int:(anIndex int) &char:aChar. ]
             
-            eval &literal:aLiteral [ self insert &index:(anIndex int) &literal:aLiteral. ]
+            eval &literal:aLiteral [ self insert &int:(anIndex int) &literal:aLiteral. ]
             
-            eval &wide:aLiteral [ self insert &index:(anIndex int) &wide:aLiteral. ]
+            eval &wide:aLiteral [ self insert &int:(anIndex int) &wide:aLiteral. ]
         }.
     ]            
                                     
     /// Deletes a sub string
-    #method delete &index:anIndex &length:aLength
+    #method delete &int:anIndex &int:aLength
     [
-        theValue := theValue delete &index:anIndex &length:aLength.
+        theValue := theValue delete &int:anIndex &int:aLength.
     ]
+
+    /// Deletes a sub string
+    #method delete : aLength &at:anIndex
+        <= delete &int:(anIndex int) &int:(aLength int).
 
     /// Clears the variable value
     #method clear
@@ -1154,26 +1162,26 @@
         => system'internal'ws_empty.
         
     /// Creates the literal string with specified length
-    #constructor new &length:aSize 
+    #constructor(stacksafe) new &int:aSize 
         => system'internal'ws_create.
 
     /// Creates the literal string with specified length and copies the parameter value
-    #constructor new &length:aSize &wide:aLiteral
+    #constructor(stacksafe) new &int:aSize &wide:aLiteral
         => system'internal'ws_copy.
     
     /// Creates the literal string with specified length fills with spciefied character value
-    #constructor new &length:aSize &char:aChar
+    #constructor(stacksafe) new &int:aSize &char:aChar
         => system'internal'ws_fill.
 
     /// Creates the literal string copy
     #constructor new &wide:aLiteral
-        <= %new &length:(aLiteral length) &wide:aLiteral.
+        <= %new &int:(aLiteral length int) &wide:aLiteral.
         
     /// Creates the copy of a subarray
-    #constructor new &length:aSize &index:anIndex &chararray:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
         => system'internal'ws_copysubarr.
 
-    #constructor $new &length:aSize &index:anIndex &shortarray:anArray
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
         => system'internal'ws_copybuf.
 
     /// Returns itself
@@ -1199,7 +1207,7 @@
         <= %less &wide:(aChar wide).
 
     /// Concatinates the values
-    #method(type:wide) add &wide : aLiteral
+    #method(type:wide,stacksafe) add &wide : aLiteral
         => system'internal'ws_add.
 
     /// Concatinates the values
@@ -1216,21 +1224,21 @@
 
     /// Returns the character at specified index
     #method getAt : aParam
-        <= %getAt &index:(aParam int).
+        <= %getAt &int:(aParam int).
 
     // Reads the character at the specified index and saves into an output parameter
-    #method read &index:anIndex &vchar:aChar
+    #method(stacksafe) read &int:anIndex &vchar:aChar
         => system'internal'ws_getat.
 
     // Reads the short integer at the specified index and saves into an output parameter
-    #method read &index:anIndex &vshort:aValue
+    #method(stacksafe) read &int:anIndex &vshort:aValue
         => system'internal'sa_readword.
         
     /// Returns the character at specified index
-    #method(type:char) getAt &index:anIndex
+    #method(type:char,stacksafe) getAt &int:anIndex
     [
         #var(type:char)aChar.
-        $self read &index:anIndex &vchar:aChar.
+        $self read &int:anIndex &vchar:aChar.
         
         ^ CharValue new &char:aChar.
     ]
@@ -1238,22 +1246,22 @@
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &wide:aLiteral &vint:aRetVal
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
         => system'internal'ws_indexof.
 
     /// Saves the index of the first occurence of the specified character into an output parameter.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &char:aChar &vint:aRetVal
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
         => system'internal'ws_indexof_char.
 
     /// Returns the index of the first occurence of the specified character.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &char:aChar
+    #method(stacksafe) indexOf &int:anIndex &char:aChar
     [
         #var(type:int)aRetVal.
-        $self indexOf &index:anIndex &char:aChar &vint:aRetVal.
+        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -1261,10 +1269,10 @@
     /// Returns the index of the first occurence of the specified substring.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf &index:anIndex &wide:aLiteral
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
     [
         #var(type:int)aRetVal.
-        $self indexOf &index:anIndex &wide:aLiteral &vint:aRetVal.
+        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -1272,60 +1280,63 @@
     /// Returns the index of the first occurence of the specified object.
     ///
     /// If the substring is not found. returns -1
-    #method indexOf : anIndex : anObject
+    #method indexOf : anObject &at:anIndex
         = anObject cast:%eval &to:
             {
-                eval &literal:aLiteral = self indexOf &index:(anIndex int) &wide:(aLiteral wide).
+                eval &literal:aLiteral = self indexOf &int:(anIndex int) &wide:(aLiteral wide).
                 
-                eval &wide:aLiteral = self indexOf &index:(anIndex int) &wide:aLiteral.
+                eval &wide:aLiteral = self indexOf &int:(anIndex int) &wide:aLiteral.
                 
-                eval &char:aChar = self indexOf &index:(anIndex int) &char:aChar.
+                eval &char:aChar = self indexOf &int:(anIndex int) &char:aChar.
             }.
 
     /// Inserts the substring into and returns the new one
-    #method(type:wide) insert &index:anIndex &wide:aLiteral
+    #method(type:wide,stacksafe) insert &int:anIndex &wide:aLiteral
         => system'internal'ws_insert.
 
     /// Inserts the substring into and returns the new one
-    #method(type:wide) insert &index:anIndex &literal:aLiteral
-        = $self insert &index:anIndex &wide:(aLiteral wide).
+    #method(type:wide,stacksafe) insert &int:anIndex &literal:aLiteral
+        = $self insert &int:anIndex &wide:(aLiteral wide).
 
     /// Inserts a character into and returns the new one
-    #method(type:wide) insert &index:anIndex &char:aChar
-        = $self insert &index:anIndex &wide:(aChar wide).
+    #method(type:wide,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &wide:(aChar wide).
 
     /// Inserts an object into and returns the new one
-    #method insert : anIndex : anObject
+    #method insert : anObject &at:anIndex
         = anObject cast:%eval &to:
             {
                eval &wide:aLiteral
-                  = self insert &index:(anIndex int) &wide:aLiteral.
+                  = self insert &int:(anIndex int) &wide:aLiteral.
     
                eval &literal:aLiteral
-                  = self insert &index:(anIndex int) &wide:(aLiteral wide).
+                  = self insert &int:(anIndex int) &wide:(aLiteral wide).
     
                eval &char:aChar
-                  = self insert &index:(anIndex int) &char:aChar.
+                  = self insert &int:(anIndex int) &char:aChar.
             }.
 
     /// Deletes the substring from the object and returns the new one
-    #method delete:anIndex:aLength
-        = $self delete &index:(anIndex int) &length:(aLength int).
+    #method delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &length:(aLength int).
             
     /// Deletes the substring from the object and returns the new one            
-    #method(type:wide) delete &index:anIndex &length:aLength
+    #method(type:wide,stacksafe) delete &int:anIndex &int:aLength
         => system'internal'ws_delete.
 
     /// Returns the substring
-    #method(type:wide) Substring &index:anIndex &length:aLength
+    #method(type:wide,stacksafe) Substring &int:anIndex &int:aLength
         => system'internal'ws_subs.
 
+    #method(type:wide) Substring : aLength &at:anIndex
+        <= Substring &int:(anIndex int) &int:(aLength int).
+
     /// Reads the literal length into an output parameter
-    #method readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'internal'ws_getlen.
 
     /// Returns the string length
-    #method length
+    #method(stacksafe) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -1334,10 +1345,10 @@
     ]
 
     /// Saves the literal into a UTF-32 character array
-    #method save &index:anIndex &chararray:anArray &vlength:aLength
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
         => system'internal'ws_save.
 
-    #method $save &index:anIndex &shortarray:anArray &length:aRetVal
+    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
         => system'internal'ws_saveraw.
 
     /// Returns the object enumerator
@@ -1356,7 +1367,7 @@
     #method clone = WideLiteralValue new &wide:$self.
 
     // Reads the object hash code into the output parameter
-    #method readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
     #method hash_code
     [
@@ -1455,45 +1466,49 @@
     ]
     
     /// Inserts a sub string
-    #method insert &index:anIndex &wide:aLiteral
+    #method insert &int:anIndex &wide:aLiteral
     [
         (anIndex == 0)
             ? [ theValue := aLiteral add &wide:theValue. ]
-            ! [ theValue := theValue insert &index:anIndex &wide:aLiteral. ].
+            ! [ theValue := theValue insert &int:anIndex &wide:aLiteral. ].
     ]
 
     /// Inserts a character    
-    #method insert &index:anIndex &char:aChar
+    #method insert &int:anIndex &char:aChar
     [
         (anIndex == 0)
             ? [ theValue := aChar wide add &wide:theValue. ]
-            ! [ theValue := theValue insert &index:anIndex &wide:(aChar wide). ].
+            ! [ theValue := theValue insert &int:anIndex &wide:(aChar wide). ].
     ]
     
     /// Inserts a sub string
-    #method insert &index:anIndex &literal:aLiteral
+    #method insert &int:anIndex &literal:aLiteral
     [
-        theValue := theValue insert &index:anIndex &wide:(aLiteral wide).
+        theValue := theValue insert &int:anIndex &wide:(aLiteral wide).
     ]
 
     /// Inserts an object at the specified position
-    #method insert : anIndex : anObject
+    #method insert : anObject &at:anIndex
     [
         anObject cast:%eval &to:
         {
-            eval &char:aChar [ self insert &index:(anIndex int) &char:aChar. ]
+            eval &char:aChar [ self insert &int:(anIndex int) &char:aChar. ]
             
-            eval &literal:aLiteral [ self insert &index:(anIndex int) &literal:aLiteral. ]
+            eval &literal:aLiteral [ self insert &int:(anIndex int) &literal:aLiteral. ]
             
-            eval &wide:aLiteral [ self insert &index:(anIndex int) &wide:aLiteral. ]
+            eval &wide:aLiteral [ self insert &int:(anIndex int) &wide:aLiteral. ]
         }.
     ]            
         
-    /// Deletes a sub string                
-    #method delete &index:anIndex &length:aLength
+    /// Deletes a sub string
+    #method delete &int:anIndex &int:aLength
     [
-        theValue := theValue delete &index:anIndex &length:aLength.
+        theValue := theValue delete &int:anIndex &int:aLength.
     ]
+        
+    /// Deletes a sub string                
+    #method delete : aLength &at:anIndex
+        <= delete &int:(anIndex int) &int:(aLength int).
                         
     /// Clears the variable value
     #method clear
