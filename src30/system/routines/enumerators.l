@@ -246,13 +246,13 @@
         
         #loop (anIndex < aLength) ?
         [
-            aLiteral read &index:anIndex &vchar:aCurrent.
+            aLiteral read &int:anIndex &vchar:aCurrent.
             
             (aCurrent == aChar)
                 ! [ 
                     (anIndex == 0)
                         ? [ ^ aLiteral. ]
-                        ! [^ aLiteral delete &index:0 &length:anIndex. ].
+                        ! [^ aLiteral delete &int:0 &int:anIndex. ].
                 ].
             
             anIndex := anIndex + aCharLen.
@@ -276,10 +276,10 @@
         
         #loop (anIndex >= 0) ?
         [
-            aLiteral read &index:anIndex &vchar:aCurrent.
+            aLiteral read &int:anIndex &vchar:aCurrent.
             
             (aCurrent equal &char:aChar)
-                ! [ ^ aLiteral delete &index:anIndex &length:(aLength - anIndex). ].
+                ! [ ^ aLiteral delete &int:anIndex &int:(aLength - anIndex). ].
             
             anIndex := anIndex - aCharLen.
         ].
@@ -303,7 +303,7 @@
         aLiteral readLength &vint:aCurrentLength.
         
         (aCurrentLength < aLength)
-            ? [ ^ LiteralValue new &length:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
+            ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
             
         ^ self.            
     ]
@@ -315,7 +315,7 @@
         aLiteral readLength &vint:aCurrentLength.
 
         (aCurrentLength < aLength)
-            ? [ ^ aLiteral add &literal:(LiteralValue new &length:(aLength - aCurrentLength) &char:aChar). ].
+            ? [ ^ aLiteral add &literal:(LiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
             
         ^ self.            
     ]
@@ -327,7 +327,7 @@
     [
         #var(type:literal)aLiteral := self literal.        
         #var(type:vint)n.
-        aLiteral indexOf &index:0 &literal:s &vint:n.
+        aLiteral indexOf &int:0 &literal:s &vint:n.
         
         ^ 0 == n.
     ]
@@ -341,7 +341,7 @@
         s readLength &vint:l2.
 
         #var(type:vint)n.
-        aLiteral indexOf &index:(l1 - l2) &literal:s &vint:n.
+        aLiteral indexOf &int:(l1 - l2) &literal:s &vint:n.
         
         ^ n != -1.
     ]
@@ -358,7 +358,7 @@
         s readLength &vint:l2.
 
         #var(type:vint)n.
-        aLiteral indexOf &index:0 &literal:s &vint:n.
+        aLiteral indexOf &int:0 &literal:s &vint:n.
         
         ^ n != -1.
     ]
@@ -373,10 +373,10 @@
         #var(type:vint)anIndex.
         
         aReplacee readLength &vint:aReplaceeLen.
-        aLiteral indexOf &index:0 &literal:aReplacee &vint:anIndex.
+        aLiteral indexOf &int:0 &literal:aReplacee &vint:anIndex.
         
         (anIndex != -1)
-            ? [ ^ aLiteral delete &index:anIndex &length:aReplaceeLen insert &index:anIndex &literal:aReplacee. ]
+            ? [ ^ aLiteral delete &int:anIndex &length:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
             ! [ ^ aLiteral. ].
     ]    
     
@@ -387,21 +387,21 @@
         #var(type:int)aStart := 0.
         #var(type:int)anEnd.
         
-        aLiteral indexOf &index:aStart &literal:aReplacee &vint:anEnd.
+        aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
         
         #loop (anEnd != -1) ?
         [
             aTarget 
-                append &literal::(aLiteral Substring &index:aStart &length:(anEnd - aStart))
+                append &literal::(aLiteral Substring &int:aStart &int:(anEnd - aStart))
                 append &literal:aReplacer.
             
             aStart := anEnd + aReplacee length.
             
-            aLiteral indexOf &index:aStart &literal:aReplacee &vint:anEnd.
+            aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
         ].
     
         ^ (aStart != 0)
-            ? [ aTarget append:(aLiteral::literalOp Substring &index:aStart) literal ]
+            ? [ aTarget append:(aLiteral::literalOp Substring &int:aStart) literal ]
             ! [ self literal ].
     ]
     

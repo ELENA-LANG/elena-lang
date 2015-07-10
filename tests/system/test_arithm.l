@@ -9,7 +9,7 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-                        
+                                                                        
 #symbol XTester =
 {
     test            
@@ -225,13 +225,13 @@
 #class MyException :: Exception
 {
     #constructor new : aMessage
-        <= %new &message:aMessage &error_type:%MyError.
+        <= %new &literal:(aMessage literal) &subject:%MyError.
 }
 
 #class MyException2 :: Exception
 {
     #constructor new : aMessage
-        <= %new &message:aMessage &error_type:%MyError2.
+        <= %new &literal:(aMessage literal) &subject:%MyError2.
 }
 
 #symbol ExecTester =

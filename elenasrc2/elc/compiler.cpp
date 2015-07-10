@@ -1046,6 +1046,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       }
       else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
          info.header.flags |= elExtension;
+         info.header.flags |= elSealed;      // extension should be sealed
          DNode value = hints.select(nsHintValue);
          if (value != nsNone) {
             info.extensionTypeRef = moduleScope->mapType(value.Terminal());
