@@ -18,8 +18,11 @@
         a write &int:anIndex1 &int:n2.
         a write &int:anIndex2 &int:n1.
     ]
-    
+
     #method set &every:anIndexFunc
+        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
+        
+    #method set &nfunc:anIndexFunc
     [
         #var(type:intarray)anArray := self intarray.
         
@@ -42,23 +45,23 @@
 
 #class(extension:array)arrayOp
 {
-    #method reallocate &length:aNewLength
+    #method reallocate &int:aNewLength
         => system'internal'arr_realloc.
 
     #method exchange : anIndex1 : anIndex2
-        = self::arrayOp exchange &index:(anIndex1 int) &index:(anIndex2 int).
+        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
         
-    #method exchange &index:anIndex1 &index:anIndex2
+    #method exchange &int:anIndex1 &int:anIndex2
     [
         #var(type:array) anArray := self array.
 
-        #var aTemp := anArray getAt &index:anIndex1.
+        #var aTemp := anArray getAt &int:anIndex1.
         
-        anArray setAt &index:anIndex1 &object:(anArray getAt &index:anIndex2).
-        anArray setAt &index:anIndex2 &object:aTemp.
+        anArray setAt &int:anIndex1 &object:(anArray getAt &int:anIndex2).
+        anArray setAt &int:anIndex2 &object:aTemp.
     ]
     
-    #method indexOf &index:anIndex &object:anObject
+    #method indexOf &int:anIndex &object:anObject
     [
         #var(type:array)anArray := self array.
         #var(type:int)aLength.
@@ -68,7 +71,7 @@
         #var(type:int)i := anIndex.
         #loop (i < aLength)?
         [
-            #var anArrayItem := anArray getAt &index:i.
+            #var anArrayItem := anArray getAt &int:i.
             
             (anObject == anArrayItem)
                 ? [ ^ IntNumber new &int:i. ].
@@ -80,7 +83,7 @@
     ]
     
     #method indexOf : anObject
-        = self::arrayOp indexOf &index:0 &object:anObject.
+        = self::arrayOp indexOf &int:0 &object:anObject.
         
     #method safeSeek : aValue
     [
@@ -91,7 +94,7 @@
         #var(type:int)i := 0.
         #loop (i < aLength)?
         [
-            #var anArrayItem := anArray getAt &index:i.
+            #var anArrayItem := anArray getAt &int:i.
             
             (aValue safeEqual:anArrayItem)
                 ? [ ^ anArrayItem. ].
@@ -108,12 +111,12 @@
         #var(type:int)aLength.
         anArray readLength &vint:aLength.
         
-        #var(type:array)aCopy := Array new &length:aLength.
+        #var(type:array)aCopy := Array new &int:aLength.
                 
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength) ?
         [
-            aCopy setAt &index:anIndex &object:(anArray getAt &index:anIndex clone).
+            aCopy setAt &int:anIndex &object:(anArray getAt &int:anIndex clone).
             
             anIndex := anIndex + 1.
         ].
@@ -122,6 +125,9 @@
     ]
     
     #method set &every:anIndexFunc
+        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
+    
+    #method set &nfunc:anIndexFunc
     [
         #var(type:array)anArray := self array.
         
@@ -131,7 +137,7 @@
         
         #loop (anIndex < aLength) ?
         [            
-            anArray setAt &index:anIndex &object:(anIndexFunc eval &index:anIndex).
+            anArray setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
             
             anIndex := anIndex + 1.
         ].
@@ -140,6 +146,9 @@
     ]
     
     #method sort : aCompareFunc
+        = self::arrayOp sort &func2:(aCompareFunc func2).
+    
+    #method sort &func2:aCompareFunc
     [
         #var(type:array)anArray := self array.
         
@@ -152,16 +161,16 @@
         
         #loop (i < aLength) ?
         [
-            aCurrent := anArray getAt &index:i.
+            aCurrent := anArray getAt &int:i.
             
             j := i + 1.
             #loop (j < aLength) ?
             [
-                aNext := anArray getAt &index:j.
+                aNext := anArray getAt &int:j.
                 (aCompareFunc eval:aCurrent:aNext)
                     ! [                        
-                        anArray setAt &index:i &object:aNext.
-                        anArray setAt &index:j &object:aCurrent.
+                        anArray setAt &int:i &object:aNext.
+                        anArray setAt &int:j &object:aCurrent.
                         
                         aCurrent := aNext.
                     ].
@@ -187,11 +196,14 @@
         ^ aLength == 0.
     ]
     
-    #method Subarray &index:anIndex &length:aLength
+    #method Subarray : aLength &at:anIndex
+        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+    
+    #method Subarray &int:anIndex &int:aLength
     [
         #var(type:iterator) it := self iterator.
         
-        ^ Array new &length:aLength set &every: (&index:i) [ it write &index:(anIndex + i) get ].
+        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
     ]
 }
 
@@ -200,15 +212,18 @@
 #class(extension:literal)literalOp
 {
     #method indexOf : anObject
-        = self literal indexOf:0:anObject.
+        = self literal indexOf:anObject &at:0.
 
     #method indexOf &literal:aLiteral
-        = self literal indexOf &index:0 &literal:aLiteral.
+        = self literal indexOf &literal:aLiteral &at:0.
 
     #method indexOf &char:aChar
-        = self literal indexOf &index:0 &char:aChar.
+        = self literal indexOf &char:aChar &at:0.
         
-    #method(type:literal) Substring &index:anIndex
+    #method(type:literal) Substring &at:anIndex
+        = self::literalOp Substring &int:(anIndex int).
+        
+    #method(type:literal) Substring &int:anIndex
     [
         #var(type:literal)aLiteral := self literal.        
         #var(type:int)aLength.
@@ -216,7 +231,7 @@
         
         aLength := aLength - anIndex.
         
-        ^ aLiteral Substring &index:anIndex &length:aLength.
+        ^ aLiteral Substring &int:anIndex &int:aLength.
     ]        
     
     #method trimLeft &char:aChar
