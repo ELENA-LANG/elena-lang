@@ -39,10 +39,10 @@
     #method chararray = theBuffer.
 
     #method literal
-        = LiteralValue new &length:theLength &index:0 &chararray:theBuffer.
+        = LiteralValue new &int:0 &int:theLength &chararray:theBuffer.
 
     #method wide
-        = WideLiteralValue new &length:theLength &index:0 &chararray:theBuffer.
+        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
 
     #method write : aLine
     [

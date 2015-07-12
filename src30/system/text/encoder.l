@@ -9,9 +9,9 @@
 {
     #method encoder = $self.
     
-    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength []
+    #method(stacksafe) convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength []
 
-    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength []    
+    #method(stacksafe) convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength []    
 }
 
 // --- UTF8Encoder ---
@@ -39,10 +39,10 @@
 
 #symbol UTF16Encoder = Encoder
 {
-    #method convert &index:anIndex &vlength:aLength &bytearray:aByteArray &chararray:anOutput &vlength:anOutputLength
+    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'internal'ws_encode.
     
-    #method convert &index:anIndex &vlength:aLength &chararray:aByteArray &bytearray:anOutput &vlength:anOutputLength
+    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
         => system'internal'ws_decode.
 }.
 
@@ -55,6 +55,6 @@
     charCount &wide:aLiteral &vint:aRetVal
         => system'internal'ws_charcount.
         
-    $convert &index:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vlength:anOutputLength
+    #method(stacksafe)$convert &int:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'internal'ws_encode.
 }.

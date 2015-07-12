@@ -13,7 +13,7 @@
         theCodePage := aCodePage.
     ]
 
-    #method convert &index:anIndex &vlength:aLength &bytearray:aByteArray &chararray:anOutput &vlength:anOutputLength 
+    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength 
     [
         (aLength > 127)
             ? [ #throw InvalidArgumentException new. ].
@@ -35,10 +35,10 @@
             ].
         
         aConverted := aConverted * 2.
-        UTF16Encoding $convert &index:0 &int:aConverted &shortarray:temp_buf &chararray:anOutput &vlength:anOutputLength.
+        UTF16Encoding $convert &int:0 &int:aConverted &shortarray:temp_buf &chararray:anOutput &vint:anOutputLength.
     ]
 
-    #method convert &index:anIndex &vlength:aLength &chararray:aByteArray &bytearray:anOutput &vlength:anOutputLength 
+    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength 
     [
     ]    
 }
