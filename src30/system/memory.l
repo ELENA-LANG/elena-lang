@@ -825,7 +825,7 @@
         => system'internal's_add.
 
     /// Concatinates the values
-    #method(type:literal) add &char:aChar
+    #method(type:literal,stacksafe) add &char:aChar
         = $self add &literal:(aChar literal).
 
     /// Concatinates the values
@@ -1211,7 +1211,7 @@
         => system'internal'ws_add.
 
     /// Concatinates the values
-    #method(type:wide) add &char:aChar
+    #method(type:wide,stacksafe) add &char:aChar
         = $self add &wide:(aChar wide).
 
     /// Concatinates the values

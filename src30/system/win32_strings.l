@@ -17,7 +17,7 @@
         ^ (aRetVal != 0).
     ]
     
-    toUpperCase &char:aChar &vchar:aRetVal
+    #method(stacksafe) toUpperCase &char:aChar &vchar:aRetVal
     [
         #var(type:int)aLength.
         #var(type:shortarray,size:3)aBuffer.
@@ -31,7 +31,7 @@
         charConvertor $convert &int:0 &shortarray:aBuffer &vchar:aRetVal.
     ]
     
-    toLowerCase &char:aChar &vchar:aRetVal
+    #method(stacksafe) toLowerCase &char:aChar &vchar:aRetVal
     [
         #var(type:int)aLength.
         #var(type:shortarray,size:3)aBuffer.
