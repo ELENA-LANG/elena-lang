@@ -9,19 +9,19 @@
 {
     #method encoder = $self.
     
-    #method convert &index:anIndex &vlength:aLength &bytearray:aByteArray &chararray:anOutput &vlength:anOutputLength []
+    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength []
 
-    #method convert &index:anIndex &vlength:aLength &chararray:aByteArray &bytearray:anOutput &vlength:anOutputLength []    
+    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength []    
 }
 
 // --- UTF8Encoder ---
 
 #symbol UTF8Encoder = Encoder
 {
-    #method convert &index:anIndex &vlength:aLength &bytearray:aByteArray &chararray:anOutput &vlength:anOutputLength
+    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'internal's_encode.
     
-    #method convert &index:anIndex &vlength:aLength &chararray:aByteArray &bytearray:anOutput &vlength:anOutputLength
+    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
         => system'internal's_decode.
 }.
 

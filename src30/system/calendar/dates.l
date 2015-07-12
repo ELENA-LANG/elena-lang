@@ -12,7 +12,7 @@
 
     #constructor min <= %new &__time:(SystemTime $new &long:0l).
 
-    #constructor new &__time:aValue
+    #constructor(stacksafe) new &__time:aValue
     [
         theValue := aValue.
     ]
@@ -40,7 +40,7 @@
         theValue := SystemTime $new &long:aValue.
     ]
     
-    #method read &__vtime : aRetVal
+    #method(stacksafe) read &__vtime : aRetVal
     [
         aRetVal << theValue.
     ]
@@ -180,7 +180,7 @@
     #constructor utcNow
         <= %new &__time:(SystemTime utcNow).
             
-    #constructor new &__time:aValue
+    #constructor(stacksafe) new &__time:aValue
     [
         theValue := aValue.
     ]
@@ -188,13 +188,13 @@
     #constructor new &year:aYear &month:aMonth &day:aDay &hour:anHour &minute:aMinute &second:aSecond
     [
         #var(type:__time_st)aSystemTime.
-        aSystemTime set &year:(aYear int).
-        aSystemTime set &month:(aMonth int).
-        aSystemTime set &day:(aDay int).
-        aSystemTime set &hour:(anHour int).
-        aSystemTime set &minute:(aMinute int).
-        aSystemTime set &second:(aSecond int).
-        aSystemTime set &millisecond:0.
+        aSystemTime writeYear &int:(aYear int).
+        aSystemTime writeMonth &int:(aMonth int).
+        aSystemTime writeDay &int:(aDay int).
+        aSystemTime writeHour &int:(anHour int).
+        aSystemTime writeMinute &int:(aMinute int).
+        aSystemTime writeSecond &int:(aSecond int).
+        aSystemTime writeMillisecond &int:0.
         
         #var(type:__time)aValue.
         aSystemTime read &__vtime:aValue.        
@@ -206,9 +206,9 @@
   
     #method __time = SystemTime new &__time:theValue.
   
-    #method __time_st = TimeStruct new write &__time:theValue.
+    #method __time_st = TimeStruct new &__time:theValue.
 
-    #method read &__vtime : aRetVal
+    #method(stacksafe) read &__vtime : aRetVal
     [
         aRetVal << theValue.
     ]
@@ -319,14 +319,13 @@
 
     #method add &years:aYears
     [
+        #var(type:int)years.
         #var(type:__time_st)aSystemTime.
         aSystemTime write &__time:theValue.
         
-        #var m := aSystemTime month.
-        
-        aSystemTime set &year:(aSystemTime year + aYears).
-        
-        #var m2 := aSystemTime month.
+        aSystemTime readYear &vint:years.
+        years := years + aYears int.
+        aSystemTime writeYear &int:years.
         
         #var(type:__time)aRetVal.
         aSystemTime read &__vtime:aRetVal.
@@ -336,17 +335,24 @@
 
     #method add &months:Months
     [
-        #var(type:int) aMonths:= Months::intOp mod:12.
-        #var(type:int) Years := Months / 12.
-        
-        ($self month + aMonths > 12)
-            ? [ Years := Years + 1. aMonths := 12 - ($self month + aMonths). ].
-
         #var(type:__time_st)aSystemTime.
         aSystemTime write &__time:theValue.
         
-        aSystemTime set &year:(aSystemTime year add &int:Years).
-        aSystemTime set &month:(aSystemTime month add &int:aMonths).
+        #var(type:int) months := Months int.
+        
+        #var(type:int)years := months / 12.
+        months := Months::intOp mod:12.
+
+        #var(type:int) n.
+        aSystemTime readMonth &vint:n.
+        months := months + n.
+        (months > 12)
+            ? [ months := months - 12. years := years + 1. ].
+                
+        aSystemTime writeMonth &int:months.
+        
+        aSystemTime readYear &vint:n.
+        aSystemTime writeYear &int:(n + years).
         
         #var(type:__time)aRetVal.
         aSystemTime read &__vtime:aRetVal.

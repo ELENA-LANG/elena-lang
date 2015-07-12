@@ -35,10 +35,10 @@
 
 #class(sealed,integer:8) SystemTime :: BaseValue
 {
-    #constructor new &__time:aValue
+    #constructor(stacksafe) new &__time:aValue
         => system'internal'long_copy.
 
-    #constructor $new &long:aValue
+    #constructor(stacksafe) $new &long:aValue
         => system'internal'long_copy.
 
     #constructor now
@@ -53,13 +53,13 @@
     #method(type:bool) less &__time:anOperand
         => system'internal'long_less.
     
-    #method read &vlong:aRetVal
+    #method(stacksafe) read &vlong:aRetVal
         => system'internal'long_save.
         
-    #method(type:__time) subtract &__time:anOperand
+    #method(type:__time,stacksafe) subtract &__time:anOperand
         => system'internal'long_sub.
         
-    #method(type:__time) add &__time:anOperand
+    #method(type:__time,stacksafe) add &__time:anOperand
         => system'internal'long_add.
     
     #method __time = $self.
@@ -99,117 +99,164 @@
     
     #constructor new
         => system'internal'dlong_empty.
-    
+
+    #constructor new &__time:aTime
+    [
+        $self write &__time:aTime.
+    ]
+        
     #method __time_st = $self.
     
-    #method year = IntNumber new &short:theYear.
+    #method(stacksafe) year = IntNumber new &short:theYear.
 
-    #method month = IntNumber new &short:theMonth.
+    #method(stacksafe) month = IntNumber new &short:theMonth.
 
-    #method dayOfWeek = IntNumber new &short:theDayOfWeek.
+    #method(stacksafe) dayOfWeek = IntNumber new &short:theDayOfWeek.
 
-    #method day = IntNumber new &short:theDay.
+    #method(stacksafe) day = IntNumber new &short:theDay.
 
-    #method hour = IntNumber new &short:theHour.
+    #method(stacksafe) hour = IntNumber new &short:theHour.
 
-    #method minute = IntNumber new &short:theMinute.
+    #method(stacksafe) minute = IntNumber new &short:theMinute.
 
-    #method second = IntNumber new &short:theSecond.
+    #method(stacksafe) second = IntNumber new &short:theSecond.
 
-    #method millisecond = IntNumber new &short:theMillisecond.
+    #method(stacksafe) millisecond = IntNumber new &short:theMillisecond.
 
-    #method readYear &vshort:aRetVal
-    [
-        aRetVal << theYear.
-    ]
-
-    #method readMonth &vshort:aRetVal
-    [
-        aRetVal << theMonth.
-    ]
-
-    #method readDayOfWeek &vshort:aRetVal
-    [
-        aRetVal << theDayOfWeek.
-    ]
-
-    #method readDay &vshort:aRetVal
-    [
-        aRetVal << theDay.
-    ]
-
-    #method readHour &vshort:aRetVal
-    [
-        aRetVal << theHour.
-    ]
-
-    #method readMinute &vshort:aRetVal
-    [
-        aRetVal << theMinute.
-    ]
-
-    #method readSecond &vshort:aRetVal
-    [
-        aRetVal << theSecond.
-    ]
-
-    #method readMillisecond &vshort:aRetVal
-    [
-        aRetVal << theMillisecond.
-    ]
-
-    #method set &year:aValue 
-    [ 
-        theYear := aValue short.
-    ]
+    #method set &year:aValue
+        <= writeYear &int:(aValue int).
 
     #method set &month:aValue 
-    [ 
-        theMonth := aValue short.
+        <= writeMonth &int:(aValue int).
+
+    #method(stacksafe) set &day:aValue 
+        <= writeDay &int:(aValue int).
+
+    #method(stacksafe) set &hour:aValue 
+        <= writeHour &int:(aValue int).
+
+    #method(stacksafe) set &minute:aValue 
+        <= writeMinute &int:(aValue int).
+
+    #method(stacksafe) set &second:aValue 
+        <= writeSecond &int:(aValue int).
+
+    #method(stacksafe) set &millisecond:aValue 
+        <= writeMillisecond &int:(aValue int).
+
+    #method(stacksafe) readYear &vint:aRetVal
+    [
+        aRetVal write &short:theYear.
     ]
 
-    #method set &day:aValue 
-    [ 
-        theDay := aValue short.
+    #method(stacksafe) readMonth &vint:aRetVal
+    [
+        aRetVal write &short:theMonth.
     ]
 
-    #method set &hour:aValue 
-    [ 
-        theHour := aValue short.
+    #method(stacksafe) readDayOfWeek &vint:aRetVal
+    [
+        aRetVal write &short:theDayOfWeek.
     ]
 
-    #method set &minute:aValue 
-    [ 
-        theMinute := aValue short.
+    #method(stacksafe) readDay &vint:aRetVal
+    [
+        aRetVal write &short:theDay.
     ]
 
-    #method set &second:aValue 
-    [ 
-        theSecond := aValue short.
+    #method(stacksafe) readHour &vint:aRetVal
+    [
+        aRetVal write &short:theHour.
     ]
 
-    #method set &millisecond:aValue 
-    [ 
-        theMillisecond := aValue short.
+    #method(stacksafe) readMinute &vint:aRetVal
+    [
+        aRetVal write &short:theMinute.
     ]
 
-    #method read &__vtime:aRetVal
+    #method(stacksafe) readSecond &vint:aRetVal
+    [
+        aRetVal write &short:theSecond.
+    ]
+
+    #method(stacksafe) readMillisecond &vint:aRetVal
+    [
+        aRetVal write &short:theMillisecond.
+    ]
+
+    #method(stacksafe) writeYear &int:aValue
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theYear := n.
+    ]
+
+    #method(stacksafe) writeMonth &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theMonth := n.
+    ]
+
+    #method(stacksafe) writeDay &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theDay := n.
+    ]
+
+    #method(stacksafe) writeHour &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theHour := n.
+    ]
+
+    #method(stacksafe) writeMinute &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theMinute := n.
+    ]
+
+    #method(stacksafe) writeSecond &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theSecond := n.
+    ]
+
+    #method(stacksafe) writeMillisecond &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theMillisecond := n.
+    ]
+
+    #method(stacksafe) read &__vtime:aRetVal
     [
         system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__vtime:aRetVal.
     ]    
     
-    #method write &__time:aFileTime
+    #method(stacksafe) write &__time:aFileTime
     [
         system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
     ]
       
-    #method toWide &int_date_attributes:Flags
+    #method(stacksafe) toWide &date_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
             &int:0
-            &int:Flags
+            &int:(Flags int)
             &__time_st:$self
             &int:0
             &shortarray:aBuffer
@@ -217,16 +264,16 @@
             &int:0
             | raise:(FormatException new:"Invalid date").
 
-        ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                
+        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
     ]
     
-    #method toWide &int_time_attributes:Flags
+    #method(stacksafe) toWide &time_attributes:Flags
     [
         #var(type:shortarray,size:127)aBuffer.
 
         #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
             &int:0
-            &int:Flags
+            &int:(Flags int)
             &__time_st:$self
             &int:0
             &shortarray:aBuffer
@@ -234,12 +281,12 @@
             &int:0
             | raise:(FormatException new:"Invalid time").
 
-        ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                
+        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
     ]
 
-    #method toShortDate
-        <= %toWide &int_date_attributes:DATE_SHORTDATE.
+    #method(stacksafe) toShortDate
+        <= %toWide &date_attributes:DATE_SHORTDATE.
 
-    #method toShortTime
-        <= %toWide &int_time_attributes:0.
+    #method(stacksafe) toShortTime
+        <= %toWide &time_attributes:0.
 }

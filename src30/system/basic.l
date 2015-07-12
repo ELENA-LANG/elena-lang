@@ -654,7 +654,7 @@
     #method int = $self.
 
     /// Returns the value as a short integer    
-    #method short = shortConvertor convert &int:$self.
+    #method(stacksafe) short = shortConvertor convert &int:$self.
 
     /// Returns the byte value    
     #method byte = byteConvertor convert &int:$self.
@@ -664,6 +664,11 @@
 
     /// Returns the real number
     #method real = RealNumber new &int:$self.
+
+    #method(stacksafe)readShort &vshort:aValue
+    [
+        shortConvertor convert &int:$self &vshort:aValue.
+    ]
 
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &int:anOperand 
@@ -1701,10 +1706,8 @@
     ]
 
     /// Copies the integer value
-    #method write &short:anOperand
-    [
-        theValue := anOperand int.
-    ]
+    #method(stacksafe) write &short:anOperand
+        => system'internal'int_copyshort.
 
     /// Copies the integer value
     #method write &byte:anOperand
