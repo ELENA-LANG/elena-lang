@@ -869,7 +869,7 @@
         = $nil != self::enumerableOp safeSeek:aValue.
 
     #method top:aCounter
-        = system'routines'TopFilter new &length:(aCounter int) &enumerator:(self enumerator).
+        = system'routines'TopFilter new:aCounter &enumerator:(self enumerator).
 
     #method filter &each:aFilter
         = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).

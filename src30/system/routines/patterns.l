@@ -9,9 +9,9 @@
     #field(type:vint)theCounter.
     #field(type:enumerator)theEnumerator.
     
-    #constructor new &length:aCounter &enumerator:anEnumerator
+    #constructor new : aCounter &enumerator:anEnumerator
     [
-        theCounter := Integer new &int:aCounter.
+        theCounter := Integer new &int:(aCounter int).
         theEnumerator := anEnumerator.
     ]
     
@@ -40,7 +40,7 @@
     
     #constructor new &each:aFilter &enumerator:anEnumerator
     [
-        theFilter := aFilter.
+        theFilter := aFilter func1.
         theEnumerator := anEnumerator.
     ]
     
@@ -72,7 +72,7 @@
     
     #constructor new &each:aSelector &enumerator:anEnumerator
     [
-        theSelector := aSelector.
+        theSelector := aSelector func1.
         theEnumerator := anEnumerator.
     ]
     

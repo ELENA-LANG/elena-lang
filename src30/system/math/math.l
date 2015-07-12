@@ -330,34 +330,34 @@
 
 #symbol realOpController =
 {
-    exp &real:aReal &vreal:aRetVal
+    #method(stacksafe) exp &real:aReal &vreal:aRetVal
         => system'internal'r_exp.
         
-    abs &real:aReal &vreal:aRetVal
+    #method(stacksafe) abs &real:aReal &vreal:aRetVal
         => system'internal'r_abs.
         
-    ln &real:aReal &vreal:aRetVal
+    #method(stacksafe) ln &real:aReal &vreal:aRetVal
         => system'internal'r_ln.
         
-    round &real:aReal &vreal:aRetVal
+    #method(stacksafe) round &real:aReal &vreal:aRetVal
         => system'internal'r_round.
         
-    truncate &real:aReal &vreal:aRetVal
+    #method(stacksafe) truncate &real:aReal &vreal:aRetVal
         => system'internal'r_truncate.
         
-    sin &real:aReal &vreal:aRetVal
+    #method(stacksafe) sin &real:aReal &vreal:aRetVal
         => system'internal'r_sin.
         
-    cos &real:aReal &vreal:aRetVal
+    #method(stacksafe) cos &real:aReal &vreal:aRetVal
         => system'internal'r_cos.
         
-    arctan &real:aReal &vreal:aRetVal
+    #method(stacksafe) arctan &real:aReal &vreal:aRetVal
         => system'internal'r_arctan.
                 
-    sqrt &real:aReal &vreal:aRetVal
+    #method(stacksafe) sqrt &real:aReal &vreal:aRetVal
         => system'internal'r_sqrt.
         
-    pi &vreal:aRetVal
+    #method(stacksafe) pi &vreal:aRetVal
         => system'internal'r_pi.
         
     #method(type:real) pi
@@ -517,7 +517,7 @@
         realOpController sin &real:n &vreal:aSinVal.
         realOpController cos &real:n &vreal:aCosVal.
         
-        ^ aSinVal / aCosVal.
+        ^ RealNumber new &real:(aSinVal / aCosVal).
     ]
 
     #method(type:real)arctan
@@ -534,26 +534,31 @@
     [
         #var(type:real)n := self real.        
         #var(type:real)arg.
+        #var(type:real)aRetVal.
         
         n := 1.0r - n*n.
         
         realOpController sqrt &real:n &vreal:arg.
+        realOpController arctan &real:arg &vreal:aRetVal.
         
-        ^ arg arctan.
+        ^ RealNumber new &real:aRetVal.
     ]
             
     #method(type:real)arccos
     [
         #var(type:real)n := self real.        
         #var(type:real)arg.
+        #var(type:real)aRetVal.
         
         n := 1.0r - n*n.
         
         realOpController sqrt &real:n &vreal:arg.
         
         arg := arg / n.
-        
-        ^ arg arctan.
+
+        realOpController arctan &real:arg &vreal:aRetVal.
+                
+        ^ RealNumber new &real:aRetVal.
     ]
             
     #method(type:real) radian
