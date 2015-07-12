@@ -31,7 +31,7 @@
 {
     encoder = UTF8Encoder.
     
-    charCount &literal:aLiteral &vint:aRetVal
+    #method(stacksafe)charCount &literal:aLiteral &vint:aRetVal
         => system'internal's_charcount.
 }.
 
@@ -52,7 +52,7 @@
 {
     encoder = UTF16Encoder.
     
-    charCount &wide:aLiteral &vint:aRetVal
+    #method(stacksafe)charCount &wide:aLiteral &vint:aRetVal
         => system'internal'ws_charcount.
         
     #method(stacksafe)$convert &int:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vint:anOutputLength
