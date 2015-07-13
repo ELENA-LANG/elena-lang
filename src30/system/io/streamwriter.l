@@ -16,63 +16,63 @@
 
     #method close => theStream.
     
-    #method write &bytearray:anArray &length:aLength
+    #method(stacksafe) write &bytearray:anArray &int:aLength
     [
-        theStream write &bytearray:anArray &length:aLength.
+        theStream write &bytearray:anArray &int:aLength.
     ]
 
     #method write &byte:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
         
-        aBuffer write &index:0 &byte:anInt.
+        aBuffer write &int:0 &byte:anInt.
                 
-        $self write &bytearray:aBuffer &length:1.
+        $self write &bytearray:aBuffer &int:1.
     ]
 
     #method write &short:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
         
-        aBuffer write &index:0 &short:anInt.
+        aBuffer write &int:0 &short:anInt.
                 
-        $self write &bytearray:aBuffer &length:2.
+        $self write &bytearray:aBuffer &int:2.
     ]
 
     #method write &char:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
         
-        aBuffer write &index:0 &char:anInt.
+        aBuffer write &int:0 &char:anInt.
                 
-        $self write &bytearray:aBuffer &length:2.
+        $self write &bytearray:aBuffer &int:2.
     ]
 
     #method write &int:anInt
     [
         #var(type:bytearray,size:4)aBuffer.
         
-        aBuffer write &index:0 &int:anInt.
+        aBuffer write &int:0 &int:anInt.
                 
-        $self write &bytearray:aBuffer &length:4.
+        $self write &bytearray:aBuffer &int:4.
     ]
 
     #method write &long:aLong
     [
         #var(type:bytearray,size:8)aBuffer.
         
-        aBuffer write &index:0 &long:aLong.
+        aBuffer write &int:0 &long:aLong.
                 
-        $self write &bytearray:aBuffer &length:8.
+        $self write &bytearray:aBuffer &int:8.
     ]
 
     #method write &real:aLong
     [
         #var(type:bytearray,size:8)aBuffer.
         
-        aBuffer write &index:0 &real:aLong.
+        aBuffer write &int:0 &real:aLong.
                 
-        $self write &bytearray:aBuffer &length:8.
+        $self write &bytearray:aBuffer &int:8.
     ]
 }
 
@@ -94,7 +94,7 @@
 
     #method close [ ]    
     
-    #method write &chararray:anArray &length:aLength
+    #method(stacksafe) write &chararray:anArray &int:aLength
     [
     ]
     
@@ -115,16 +115,17 @@
         #var(type:int)aLength.
         theBuffer readLength &vint:aLength.
         
-        $self write &chararray:(theBuffer chararray) &length:aLength.
+        $self write &chararray:(theBuffer chararray) &int:aLength.
     ]
     
     #method write &wide:aLine
     [
         theBuffer clear write &wide:aLine.
         
-        #var(type:int)aLength := theBuffer length.
+        #var(type:int)aLength.
+        theBuffer readLength &vint:aLength.
         
-        $self write &chararray:(theBuffer chararray) &length:aLength.
+        $self write &chararray:(theBuffer chararray) &int:aLength.
     ]
     
     #method writeLine

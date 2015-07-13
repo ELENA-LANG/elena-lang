@@ -8,5 +8,5 @@
         <= %new &literal:"I/O error" &subject: %IOError.
         
     #constructor new:aMessage
-        <= %new &literal:aMessage &subject: %IOError.
+        <= %new &literal:(aMessage literal) &subject: %IOError.
 }

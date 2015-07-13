@@ -45,7 +45,7 @@
 
 #class(extension:array)arrayOp
 {
-    #method reallocate &int:aNewLength
+    #method(stacksafe) reallocate &int:aNewLength
         => system'internal'arr_realloc.
 
     #method exchange : anIndex1 : anIndex2

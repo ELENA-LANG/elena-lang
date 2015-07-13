@@ -23,7 +23,7 @@
         theLength << 0.
     ]
 
-    #method readLength &vint:aRetVal
+    #method(stacksafe) readLength &vint:aRetVal
     [
         aRetVal << theLength.
     ]
@@ -124,11 +124,11 @@
         $self write &literal:(anObject literal).
     ]
 
-    #method write &chararray:anArray &int:aLength
+    #method(stacksafe) write &chararray:anArray &int:aLength
     [
         (0 == aLength) !
         [
-            $self reserve &length:aLength.
+            $self reserve &int:aLength.
             
             theBuffer write &int:theLength &int:aLength &chararray:anArray.
             
@@ -317,7 +317,7 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
-    #method(type:literal) Substring &int:anIndex &int:aLength
+    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
     [
         (aLength == 0)
             ? [ ^ emptyLiteralValue. ].
@@ -325,7 +325,7 @@
         ^ LiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
     ]
 
-    #method(type:wide) WideSubstring &int:anIndex &int:aLength
+    #method(type:wide,stacksafe) WideSubstring &int:anIndex &int:aLength
     [
         (aLength == 0)
             ? [ ^ emptyWideLiteralValue. ].
@@ -333,7 +333,7 @@
         ^ WideLiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
     ]
 
-    #method delete &int:anIndex &int:aLength
+    #method(stacksafe) delete &int:anIndex &int:aLength
     [
         #var(type:int)n := 0 - aLength.
         #var(type:int)l := theLength.

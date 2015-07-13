@@ -2651,7 +2651,11 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
 
    // use dynamic extension if exists
    int methodHint = 0;
-   ref_t roleRef = mapExtension(scope, messageRef, object);
+   ref_t roleRef = 0;
+   if (object.kind != okRole && object.kind != okConstantRole) {
+      roleRef = mapExtension(scope, messageRef, object);
+   }
+   
    if (roleRef != 0) {
       methodHint = scope.moduleScope->checkMethod(roleRef, messageRef);
 
@@ -2664,7 +2668,7 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
       // class is always sealed
       methodHint = (scope.moduleScope->checkMethod(object.extraparam, messageRef) & ~tpMask) | tpSealed;
    }
-   else if (object.kind == okAccumulator && object.param != 0) {
+   else if ((object.kind == okAccumulator || object.kind == okConstantRole) && object.param != 0) {
       methodHint = scope.moduleScope->checkMethod(object.param, messageRef);
    }
    else if (object.kind == okThisParam) {
@@ -3505,7 +3509,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
    size_t spaceToRelease = 0;
 
    int paramMode = mode & ~HINT_SELFEXTENDING;
-   ref_t messageRef = compileMessageParameters(node, scope, object, paramMode, spaceToRelease);
+   ref_t messageRef = compileMessageParameters(node, scope, role, paramMode, spaceToRelease);
    mode |= paramMode;
 
    ObjectInfo retVal(okAccumulator);

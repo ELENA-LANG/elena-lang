@@ -63,7 +63,7 @@
     #field(type:int)       theClassPtr.
     #field(type:int)       theExStyle.
     
-    #method readCreateParam &vint:aRetVal
+    #method(stacksafe) readCreateParam &vint:aRetVal
         => system'internal'int_save.
 }
 

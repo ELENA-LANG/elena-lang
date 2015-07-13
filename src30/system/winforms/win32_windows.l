@@ -4,7 +4,7 @@
 
 #symbol $windowClassControl =
 {
-    $fillWndClass &bytearray:anArray &wide:aName &int:aStyle &hinstance:anInstance &int:aBackground
+    #method(stacksafe) $fillWndClass &bytearray:anArray &wide:aName &int:aStyle &hinstance:anInstance &int:aBackground
         => system'internal'win_fillWndClass.
     
     createClass &name:aName &hinstance:anInstance &int:aStyle &int:aBackground
@@ -26,29 +26,29 @@
 {
     #method win_callback = $self.
 
-    #method onpaint &hwnd:aControl &vint:aRetVal
+    #method(stacksafe) onpaint &hwnd:aControl &vint:aRetVal
     [
         #var(type:int)result := system'external'USER32 DefWindowProcW &handle:aControl &int:WM_PAINT &int:0 &int:0.
         
         aRetVal << result.
     ]
     
-    #method onclick &hwnd:aControl &vint:aResult
+    #method(stacksafe) onclick &hwnd:aControl &vint:aResult
     [
         aResult << 0.
     ]
     
-    #method onmenu &int:aCode &vint:aResult
+    #method(stacksafe) onmenu &int:aCode &vint:aResult
     [
         aResult << 0.
     ]
     
-    #method onsize &hwnd:aControl &int:aWidth &int:aHeight &vint:aResult
+    #method(stacksafe) onsize &hwnd:aControl &int:aWidth &int:aHeight &vint:aResult
     [
         aResult << 0.
     ]
     
-    #method ondestroy &hwnd:aControl &vint:aResult
+    #method(stacksafe) ondestroy &hwnd:aControl &vint:aResult
     [
         #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:aControl &int:GWL_USERDATA &int:0.
         (anIndex != 0)?
@@ -61,7 +61,7 @@
         aResult << 0.
     ]
         
-    #method wm_create &hwnd:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct &vint:aRetVal
+    #method(stacksafe) wm_create &hwnd:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct &vint:aRetVal
     [
         #var(type:vint)param.
         aCreateStruct readCreateParam &vint:param.
@@ -73,7 +73,7 @@
         aRetVal << 0.
     ]
     
-    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    #method(stacksafe) eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         (aMessage == WM_DESTROY)
             ? [
@@ -87,7 +87,7 @@
         aRetVal << result.
     ]
     
-    #method eval &hwnd:anHWND &int:aMessage &int:wParam &int:lParam &vint:aRetVal
+    #method(stacksafe) eval &hwnd:anHWND &int:aMessage &int:wParam &int:lParam &vint:aRetVal
     [
         (aMessage == WM_SIZE)
             ? [
@@ -105,12 +105,12 @@
         aRetVal << result.
     ]
     
-    #method wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
+    #method(stacksafe) wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         $self onpaint &hwnd:anHWND &vint:aRetVal.
     ]
     
-    #method wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
+    #method(stacksafe) wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
     [
         (aControl == 0)
             ? [ $self onmenu &int:aCode &vint:aRetVal. ^ $self. ].
@@ -120,7 +120,7 @@
             ? [ $self onclick &hwnd:aControl &vint:aRetVal. ].
     ]
 
-    #method eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal
+    #method(stacksafe) eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal
     [
         (aMessage == WM_SETCURSOR)
             ? [

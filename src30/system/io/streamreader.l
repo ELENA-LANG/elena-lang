@@ -13,12 +13,12 @@
     [
         theStream := aStream.
         
-        theLength := aStream length.
+        theLength := aStream length int.
     ]
     
-    #method read &bytearray:anArray &vlength:anActualLength
+    #method(stacksafe) read &bytearray:anArray &vint:anActualLength
     [
-        theStream read &bytearray:anArray &vlength:anActualLength.
+        theStream read &bytearray:anArray &vint:anActualLength.
     ]
 
     #method stream = theStream.
@@ -34,11 +34,11 @@
         ^ aPosition < theLength.
     ]
             
-    #method read &bytearray:anArray &length:aLength
+    #method(stacksafe) read &bytearray:anArray &int:aLength
     [
-        #var(type:int)aRead := aLength int.
+        #var(type:int)aRead := aLength.
         
-        $self read &bytearray:anArray &vlength:aRead.
+        $self read &bytearray:anArray &vint:aRead.
          
         (aLength > aRead)
             ? [ #throw IOException new. ].
@@ -49,12 +49,12 @@
         #var(type:bytearray,size:4)aBuffer.
         #var(type:int)aRead := 1.
         
-        $self read &bytearray:aBuffer &vlength:aRead.
+        $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 1)
             ? [ #throw IOException new. ].
             
-        aBuffer read &index:0 &vbyte:anInt.
+        aBuffer read &int:0 &vbyte:anInt.
     ]
 
     #method read &vshort:anInt
@@ -62,12 +62,12 @@
         #var(type:bytearray,size:4)aBuffer.
         #var(type:int)aRead := 2.
         
-        $self read &bytearray:aBuffer &vlength:aRead.
+        $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 1)
             ? [ #throw IOException new. ].
             
-        aBuffer read &index:0 &vshort:anInt.
+        aBuffer read &int:0 &vshort:anInt.
     ]
 
     #method read &vchar:anInt
@@ -75,12 +75,12 @@
         #var(type:bytearray,size:4)aBuffer.
         #var(type:int)aRead := 4.
         
-        $self read &bytearray:aBuffer &vlength:aRead.
+        $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 1)
             ? [ #throw IOException new. ].
             
-        aBuffer read &index:0 &vchar:anInt.
+        aBuffer read &int:0 &vchar:anInt.
     ]
 
     #method read &vint:anInt
@@ -88,12 +88,12 @@
         #var(type:bytearray,size:4)aBuffer.
         #var(type:int)aRead := 4.
         
-        $self read &bytearray:aBuffer &length:aRead.
+        $self read &bytearray:aBuffer &int:aRead.
         
         (aRead < 4)
             ? [ #throw IOException new. ].
             
-        aBuffer read &index:0 &vint:anInt.
+        aBuffer read &int:0 &vint:anInt.
     ]
 
     #method read &vlong:aLong
@@ -101,12 +101,12 @@
         #var(type:bytearray,size:8)aBuffer.
         #var(type:int)aRead := 8.
         
-        $self read &bytearray:aBuffer &vlength:aRead.
+        $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 8)
             ? [ #throw IOException new. ].
             
-        aBuffer read &index:0 &vlong:aLong.
+        aBuffer read &int:0 &vlong:aLong.
     ]
 
     #method read &vreal:aReal
@@ -114,12 +114,12 @@
         #var(type:bytearray,size:8)aBuffer.
         #var(type:int)aRead := 8.
         
-        $self read &bytearray:aBuffer &vlength:aRead.
+        $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 8)
             ? [ #throw IOException new. ].
             
-        aBuffer read &index:0 &vreal:aReal.
+        aBuffer read &int:0 &vreal:aReal.
     ]
 }
 
@@ -136,10 +136,10 @@
         theOutput := TextBuffer new.
         theNewLineConstant := 'newLine literal.
                 
-        theNewLineLength := theNewLineConstant length.
+        theNewLineLength := theNewLineConstant length int.
     ]
 
-    #method read &chararray:anArray &vint:anActualLength
+    #method(stacksafe) read &chararray:anArray &vint:anActualLength
     [
     ]
 
@@ -158,17 +158,17 @@
         #var(type:int)aLength := -1.
         #loop (aLength == -1) ?
         [
-            theOutput indexOf &index:0 &literal:theNewLineConstant &vint:aLength.
+            theOutput indexOf &int:0 &literal:theNewLineConstant &vint:aLength.
             
             (aLength == -1)
                 ? [
                     #var(type:chararray,size:64)aBuffer.
                     #var(type:int)aBufferLength := 64.
                     
-                    $self read &chararray:aBuffer &vlength:aBufferLength.
+                    $self read &chararray:aBuffer &vint:aBufferLength.
                     (aBufferLength == 0)
                         ? [ aLength := -2. ]  // !! to indicate the eof
-                        ! [ theOutput write &chararray:aBuffer &length:aBufferLength. ].
+                        ! [ theOutput write &chararray:aBuffer &int:aBufferLength. ].
                 ].
         ].
         
@@ -178,8 +178,8 @@
                 theOutput clear.
             ]
             ! [ 
-                aLine := theOutput Substring &index:0 &length:aLength.
-                theOutput delete &index:0 &length:(aLength + theNewLineLength).
+                aLine := theOutput Substring &int:0 &int:aLength.
+                theOutput delete &int:0 &int:(aLength + theNewLineLength).
             ].            
 
         ^ aLine.
@@ -195,7 +195,7 @@
         #var(type:int)aLength := -1.
         #loop (aLength == -1) ?
         [
-            theOutput indexOf &index:0 &wide:nl &vint:aLength.
+            theOutput indexOf &int:0 &wide:nl &vint:aLength.
             
             (aLength == -1)
                 ? [
@@ -205,7 +205,7 @@
                     $self read &chararray:aBuffer &vint:aBufferLength.
                     (aBufferLength == 0)
                         ? [ aLength := -2. ]  // !! to indicate the eof
-                        ! [ theOutput write &chararray:aBuffer &length:aBufferLength. ].
+                        ! [ theOutput write &chararray:aBuffer &int:aBufferLength. ].
                 ].
         ].
         
@@ -215,8 +215,8 @@
                 theOutput clear.
             ]
             ! [ 
-                aLine := theOutput WideSubstring &index:0 &length:aLength.
-                theOutput delete &index:0 &length:(aLength + nl_len).
+                aLine := theOutput WideSubstring &int:0 &int:aLength.
+                theOutput delete &int:0 &int:(aLength + nl_len).
             ].            
 
         ^ aLine.

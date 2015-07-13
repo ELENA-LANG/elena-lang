@@ -13,22 +13,22 @@
 
     #method console_screen_buffer_info = $self.
 
-    #method readSizeX &vshort:aRetVal
+    #method(stacksafe) readSizeX &vshort:aRetVal
     [
         dwSize readX &vshort:aRetVal.
     ]
 
-    #method readSizeY &vshort:aRetVal
+    #method(stacksafe) readSizeY &vshort:aRetVal
     [
         dwSize readY &vshort:aRetVal.
     ]
 
-    #method readSize &coord:aCoord
+    #method(stacksafe) readSize &coord:aCoord
     [
         aCoord write &coord:dwSize.
     ]
 
-    #method readCursorPosition &coord:aCoord
+    #method(stacksafe) readCursorPosition &coord:aCoord
     [
         aCoord write &coord:dwCursorPosition.
     ]
@@ -38,9 +38,9 @@
 
 #symbol $ConsoleHandleFactory =
 {
-    #method(type:handle) new &int_attributes:anAttributes
+    #method(type:handle) new &attributes:anAttributes
     [ 
-        #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:anAttributes.
+        #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
         
         ^ Handle new &handle:aHandle.
     ]
@@ -118,7 +118,7 @@
         theHandle := aHandle.
     ]
 
-    #method read &vchar:aChar
+    #method(stacksafe) read &vchar:aChar
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
@@ -134,17 +134,17 @@
                 &int           : 1
                 &vint          : aNumberRead.
 
-            aDump read &index:0 &vshort:anEventType.
+            aDump read &int:0 &vshort:anEventType.
             (anEventType == 1)
                 ? [  
-                    aDump read &index:4 &vint:aKeyDown.
+                    aDump read &int:4 &vint:aKeyDown.
                     
                     found := aKeyDown == 1.
                 ]
                 ! [ found := false. ].
         ].
 
-        aDump read &index:14 &vchar:aChar.
+        aDump read &int:14 &vchar:aChar.
     ]
 
     #method read &vint:aKey
@@ -163,20 +163,20 @@
                 &int           : 1
                 &vint          : aNumberRead.
 
-            aDump read &index:0 &vshort:anEventType.
+            aDump read &int:0 &vshort:anEventType.
             (anEventType == 1)
                 ? [  
-                    aDump read &index:4 &vint:aKeyDown.
+                    aDump read &int:4 &vint:aKeyDown.
                     
                     found := aKeyDown == 1.
                 ]
                 ! [ found := false. ].
         ].
                     
-        aDump read &index:8 &vint:aKey.
+        aDump read &int:8 &vint:aKey.
     ]
 
-    #method read &shortarray:aBuffer &vlength:aRetVal
+    #method(stacksafe) read &shortarray:aBuffer &vint:aRetVal
     [
         system'external'KERNEL32 ReadConsoleW
             &handle     : theHandle
@@ -196,10 +196,10 @@
         #loop continue ?
         [
             aLength := 127.
-            $self read &shortarray:aBuffer &vlength:aLength.
+            $self read &shortarray:aBuffer &vint:aLength.
             
             #var(type:short)aShort.
-            aBuffer read &index:(aLength - 1) &vshort:aShort.
+            aBuffer read &int:(aLength - 1) &vshort:aShort.
             (aShort == 0Ah)
                 ? [
                     aLength := aLength - 2.
@@ -207,7 +207,7 @@
                     continue := false.
                 ].
             
-            #var aTemp := WideLiteralValue $new &length:aLength &index:0 &shortarray:aBuffer.
+            #var aTemp := WideLiteralValue $new &int:0 &int:aLength &shortarray:aBuffer.
             
             anOutput := anOutput + aTemp.
         ].
@@ -242,6 +242,6 @@
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandleFactory new &int_attributes:0FFFFFFF5h).
+#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF5h).
 
-#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &int_attributes:0FFFFFFF6h).
+#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h).

@@ -16,10 +16,10 @@
     #constructor min
         => system'internal'int_init.
         
-    #constructor new &hwnd:aHandle
+    #constructor(stacksafe) new &hwnd:aHandle
         => system'internal'int_copy.
         
-    #constructor new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
+    #constructor(stacksafe) new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
     [
         #var(type:int)aParamIndex := 0.
         ($nil != aParam) ?
@@ -99,7 +99,7 @@
         (aLength == 0)
             ? [ ^ emptyWideLiteralValue. ]
             ! [
-                #var(type:wide)aCaption := WideLiteralValue new &length:aLength.
+                #var(type:wide)aCaption := WideLiteralValue new &int:aLength.
                 aLength := aLength + 1.
                 
                 system'external'USER32 SendMessageW &handle:theHandle &int:WM_GETTEXT &int:aLength &wide:aCaption.
@@ -114,7 +114,7 @@
         system'external'USER32 UpdateWindow &handle:theHandle.
     ]
     
-    #method setPosition &int:x &int:y &int:cx &int:cy &int_attributes:flags
+    #method setPosition &int:x &int:y &int:cx &int:cy &int:flags
     [
         system'external'USER32 SetWindowPos &handle:theHandle &int:0 &int:x &int:y &int:cx &int:cy &int:flags.
     ]
@@ -124,7 +124,7 @@
         system'external'USER32 GetClientRect &handle:theHandle &win_rect:aStruct.
     ]
   
-    #method read &hdc:anHDC
+    #method(stacksafe) read &hdc:anHDC
     [
         #var(type:handle)dc := system'external'USER32 GetDC &handle:theHandle.
         
@@ -139,12 +139,12 @@
         ^ HDC new &hdc:aDC.
     ]
 
-    #method set &hmenu:aMenuHandle
+    #method(stacksafe) set &hmenu:aMenuHandle
     [
         system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
     ]
             
-    #method free
+    #method(stacksafe) free
     [
         system'external'USER32 DestroyWindow &handle:theHandle.
     ]

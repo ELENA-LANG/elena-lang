@@ -25,18 +25,18 @@
     #field(type:handle) theHandle.
     
     #constructor openForRead &path:aPath
-        <= %new &path:aPath &int_attributes:$FILE_GENERIC_READ &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_EXISTING &int_attributes:0.
+        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
     
     #constructor openForReWrite &path:aPath
-        <= %new &path:aPath &int_attributes:$FILE_GENERIC_WRITE &int_attributes:$FILE_SHARE_READ &int_attributes:$CREATE_ALWAYS &int_attributes:0.
+        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
     
     #constructor openForAppend &path:aPath
-        <= %new &path:aPath &int_attributes:$FILE_APPEND_DATA &int_attributes:$FILE_SHARE_READ &int_attributes:$OPEN_ALWAYS &int_attributes:0.
+        <= %new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
     
-    #constructor new &path:aPath &int_attributes:dwDesiredAccess &int_attributes:dwShareMode &int_attributes:dwCreationDisposition &int_attributes:dwFlagsAndAttributes
+    #constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
     [
         theHandle := system'external'KERNEL32 CreateFileW
-                      &wide:(aPath wide)
+                      &wide:aPath
                       &int:dwDesiredAccess
                       &int:dwShareMode
                       &int:0
@@ -45,10 +45,10 @@
                       &int:0.
                       
         (-1 == theHandle)
-            ? [ #throw IOException new &message:"Cannot open the file". ].
+            ? [ #throw IOException new:"Cannot open the file". ].
     ]
     
-    #method write &bytearray:aDump &length:aLength
+    #method write &bytearray:aDump &int:aLength
     [
         #var(type:int)aWritten := 0.
         system'external'KERNEL32 WriteFile
@@ -59,7 +59,7 @@
             &int       : 0.
     ]
 
-    #method read &bytearray:aDump &vlength:aLength
+    #method read &bytearray:aDump &vint:aLength
     [
         system'external'KERNEL32 ReadFile
             &handle      : theHandle
@@ -80,7 +80,7 @@
         anIndex << ret.
     ] 
     
-    #method write &index:anIndex
+    #method writeIndex &int:anIndex
     [
         #var(type:int) ret := system'external'KERNEL32 SetFilePointer
             &handle : theHandle
@@ -143,7 +143,7 @@
         
     #method encoder = theEncoder.        
         
-    #method write &chararray:anInput &length:aLength
+    #method write &chararray:anInput &int:aLength
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
@@ -157,9 +157,9 @@
                 ? [ aBlockLength := aTotal. ]
                 ! [ aBlockLength := 64. ].
                 
-            theEncoder convert &index:anOffset &vlength:aBlockLength &chararray:anInput &bytearray:aBuffer &vlength:aBufferLength.
+            theEncoder convert &int:anOffset &vint:aBlockLength &chararray:anInput &bytearray:aBuffer &vint:aBufferLength.
             
-            theStream write &bytearray:aBuffer &length:aBufferLength.
+            theStream write &bytearray:aBuffer &int:aBufferLength.
             
             aTotal := aTotal - aBlockLength.
             anOffset := anOffset + aBlockLength.
@@ -204,16 +204,16 @@
     [
         #var(type:int)aBufferLength := 64.
         #var(type:bytearray,size:64)aBuffer.
-        theStream read &bytearray:aBuffer &vlength:aBufferLength.
+        theStream read &bytearray:aBuffer &vint:aBufferLength.
         (aBufferLength == 0)
             ? [ theOpen := false. aLength << 0. ]
             ! [
                 #var(type:int)aRead := aBufferLength.
-                        
-                theEncoder convert &index:0 &vlength:aBufferLength &bytearray:aBuffer &chararray:anOutput &vlength:aLength.
+
+                theEncoder convert &int:0 &vint:aBufferLength &bytearray:aBuffer &chararray:anOutput &vint:aLength.
                 
                 (aRead > aBufferLength)
-                    ? [ theStream reduce &index:(aRead - aBufferLength). ].
+                    ? [ theStream reduceIndex &int:(aRead - aBufferLength). ].
             ].            
     ]
     

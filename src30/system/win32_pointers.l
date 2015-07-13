@@ -44,10 +44,10 @@
         aRetVal << theIndex.
     ]
         
-    #method get
+    #method(stacksafe) get
         => system'internal'ptr_get.
 
-    #method free
+    #method(stacksafe) free
         => system'internal'api_free_index.
 }
 

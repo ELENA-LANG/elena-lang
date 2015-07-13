@@ -8,5 +8,5 @@
         <= %new &literal:"WinForms error" &subject: %WinFormsError.
         
     #constructor new:aMessage
-        <= %new &literal:aMessage &subject: %IOError.
+        <= %new &literal:(aMessage literal) &subject: %IOError.
 }

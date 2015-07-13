@@ -24,7 +24,7 @@
     
     #constructor new
     [
-        theStruct := Struct new &length:0.
+        theStruct := Struct new &int:0.
     ]
     
     #constructor new : aStruct
@@ -46,9 +46,9 @@
         $classControl readLength:theStruct &vint:aLength.
         #loop ((anIndex < aLength)and:aNotFound) ?
         [
-            #var aCurrent := theStruct::classROp getField &index:anIndex.
+            #var aCurrent := theStruct::classROp getField &int:anIndex.
             
-            (aCurrent equal &subject:aSubject)
+            (aSubject::subjectROp $equalSubject:aCurrent)
                 ? [ aNotFound := false. ]
                 ! [ anIndex := anIndex + 2. ].
         ].
@@ -56,13 +56,13 @@
         // if not found extend the structure
         (anIndex == aLength) ?
         [                                    
-            theStruct := theStruct::arrayOp reallocate &length:(aLength + 2).
+            theStruct := theStruct::arrayOp reallocate &int:(aLength + 2).
 
-            theStruct::classROp setField &index:anIndex &object:aSubject.
+            theStruct::classROp setField &int:anIndex &object:aSubject.
         ].
 
         // set the content for the appropriate field
-        theStruct::classROp setField &index:(anIndex + 1) &object:anObject.
+        theStruct::classROp setField &int:(anIndex + 1) &object:anObject.
     ]
     
     #method => theStruct.

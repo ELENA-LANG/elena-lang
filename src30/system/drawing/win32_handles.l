@@ -47,12 +47,12 @@
         theY := tmp.
     ]
     
-    #method readX &vshort:aRetVal
+    #method(stacksafe) readX &vshort:aRetVal
     [
         aRetVal << theX.
     ]
     
-    #method readY &vshort:aRetVal
+    #method(stacksafe) readY &vshort:aRetVal
     [
         aRetVal << theY.
     ]
@@ -85,22 +85,22 @@
     
     #method win_small_rect = $self.
     
-    #method readLeft &vshort:aRetVal
+    #method(stacksafe) readLeft &vshort:aRetVal
     [
         aRetVal << theLeft.
     ]
     
-    #method readTop &vshort:aRetVal
+    #method(stacksafe) readTop &vshort:aRetVal
     [
         aRetVal << theTop.
     ]
     
-    #method readRight &vshort:aRetVal
+    #method(stacksafe) readRight &vshort:aRetVal
     [
         aRetVal << theRight.
     ]
     
-    #method readBottom &vshort:aRetVal
+    #method(stacksafe) readBottom &vshort:aRetVal
     [
         aRetVal << theBottom.
     ]
@@ -222,57 +222,57 @@
 {
     #field(type:handle)theHandle.
 
-    #constructor new &hdc:aHandle
+    #constructor(stacksafe) new &hdc:aHandle
         => system'internal'int_copy.
         
-    #constructor newCompatible &hdc:aCompatible
+    #constructor(stacksafe) newCompatible &hdc:aCompatible
     [
         #var(type:handle)aNewDC := system'external'GDI32 CreateCompatibleDC &handle:aCompatible.
 
         theHandle := aNewDC.
     ]
     
-    #method setTextColor &int:aColor
+    #method(stacksafe) setTextColor &int:aColor
     [
         system'external'GDI32 SetTextColor &handle:theHandle &int:aColor.
     ]        
 
-    #method setBkColor &int:aColor
+    #method(stacksafe) setBkColor &int:aColor
     [
         system'external'GDI32 SetBkColor &handle:theHandle &int:aColor.
     ]        
                         
-    #method select &hbitmap:aHandle
+    #method(stacksafe) select &hbitmap:aHandle
     [
         system'external'GDI32 SelectObject &handle:theHandle &handle:aHandle.
     ]        
     
-    #method select &hpen:aHandle
+    #method(stacksafe) select &hpen:aHandle
     [
         system'external'GDI32 SelectObject &handle:theHandle &hpen:aHandle.
     ]        
     
-    #method select &hbrush:aHandle
+    #method(stacksafe) select &hbrush:aHandle
     [
         system'external'GDI32 SelectObject &handle:theHandle &handle:aHandle.
     ]        
     
-    #method copy &int:destX &int:destY &int:width &int:height &hdc:dc &int:sourX &int:sourY &int:Flags
+    #method(stacksafe) copy &int:destX &int:destY &int:width &int:height &hdc:dc &int:sourX &int:sourY &int:Flags
     [
         system'external'GDI32 BitBlt &handle:theHandle &int:destX &int:destY &int:width &int:height &handle:dc &int:sourX &int:sourY &int:Flags.
     ]        
 
-    #method moveTo &int:anX &int:anY
+    #method(stacksafe) moveTo &int:anX &int:anY
     [
         system'external'GDI32 MoveToEx &handle:theHandle &int:anX &int:anY &int:0.
     ]
 
-    #method lineTo &int:anX &int:anY
+    #method(stacksafe) lineTo &int:anX &int:anY
     [
         system'external'GDI32 LineTo &handle:theHandle &int:anX &int:anY.
     ]
 
-    #method drawText &wide:aText &int:anX &int:anY
+    #method(stacksafe) drawText &wide:aText &int:anX &int:anY
     [
         #var(type:vint)aLength.
         aText readLength &vint:aLength.
@@ -280,7 +280,7 @@
         system'external'GDI32 TextOutW &handle:theHandle &int:anX &int:anY &wide:aText &int:aLength.
     ]
         
-    #method free
+    #method(stacksafe) free
     [
         system'external'GDI32 DeleteDC &hdc:$self.
     ]
@@ -302,7 +302,7 @@
         theHandle := h.
     ]
 
-    #constructor load &wide:aPath &int:aWidth &int:aHeight
+    #constructor(stacksafe) load &wide:aPath &int:aWidth &int:aHeight
     [
         #var(type:handle)h := system'external'USER32 LoadImageW
             &int:0
@@ -339,7 +339,7 @@
         $self $save &hpen:h.
     ]
     
-    #method $save &hpen:aHandle
+    #method(stacksafe) $save &hpen:aHandle
         => system'internal'int_copy.
         
     #method hpen = $self.

@@ -16,7 +16,7 @@
 {
     #method stream = $self.
     
-    #method readLength &vint:aLength [ aLength << 0. ] // !! default implementation
+    #method(stacksafe) readLength &vint:aLength [ aLength << 0. ] // !! default implementation
         
     #method length
     [
@@ -26,7 +26,7 @@
         ^ IntNumber new &int:aLength.
     ]
     
-    #method readIndex &vint:anIndex []
+    #method(stacksafe) readIndex &vint:anIndex []
 
     #method index
     [
@@ -37,33 +37,39 @@
         ^ IntNumber new &int:anIndex.
     ]
 
-    #method write &index:anIndex []
+    #method write &index:anIndex
+    [
+        $self writeIndex &int:(anIndex int).
+    ]
 
     #method append &index:anIndex 
     [
-        #var(type:vint)aNewIndex.
+        #var(type:int)aNewIndex.
         $self readIndex &vint:aNewIndex.
         
-        aNewIndex += anIndex.
+        aNewIndex := aNewIndex + anIndex int.
         
-        $self write &index:aNewIndex.
+        $self writeIndex &int:aNewIndex.
     ]
 
     #method reduce &index:anIndex 
+        <= reduceIndex &int:(anIndex int).
+        
+    #method(stacksafe) reduceIndex &int:anIndex 
     [
-        #var(type:vint)aNewIndex.
+        #var(type:int)aNewIndex.
         $self readIndex &vint:aNewIndex.
         
-        aNewIndex -= anIndex.
+        aNewIndex := aNewIndex - anIndex.
         
-        $self write &index:aNewIndex.
+        $self writeIndex &int:aNewIndex.
     ]
 
-    #method writeIndex &int:anIndex []
+    #method(stacksafe) writeIndex &int:anIndex []
         
-    #method read &bytearray:aDump &vlength:aLength []
+    #method(stacksafe) read &bytearray:aDump &vint:aLength []
     
-    #method write &bytearray:aDump &length:aLength []
+    #method(stacksafe) write &bytearray:aDump &int:aLength []
     
     #method close []
 }

@@ -2,16 +2,16 @@
 
 #symbol $classControl =
 {
-    readName : anObject &bytearray:aBuffer &vlength:aLength
+    #method(stacksafe) readName : anObject &bytearray:aBuffer &vint:aLength
         => system'internal'load_classname.
 
-    readLength : anObject &vint:aLength        
+    #method(stacksafe) readLength : anObject &vint:aLength        
         => system'internal'arrptr_getLen.        
 }.
 
 #symbol $subjectControl =
 {
-    readName:anObject &bytearray:aBuffer &vlength:aLength
+    #method(stacksafe) readName:anObject &bytearray:aBuffer &vint:aLength
         => system'internal'load_subjname.
 }.
 
@@ -27,10 +27,10 @@
         ^ IntNumber new &int:aLength.
     ]     
                    
-    #method setField &index:anIndex &object:anObject
+    #method(stacksafe) setField &int:anIndex &object:anObject
         => system'internal'arrptr_set.
         
-    #method getField &index:anIndex
+    #method(stacksafe) getField &int:anIndex
         => system'internal'arrptr_get.
                                 
     #method class
@@ -41,12 +41,12 @@
         #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
         
-        $classControl readName:self &bytearray:aBuffer &vlength:aLength.
+        $classControl readName:self &bytearray:aBuffer &vint:aLength.
         
         (aLength == 0)
-            ? [ #throw NotSupportedException new &message:"Reflection functionality is not supported". ].
+            ? [ #throw NotSupportedException new:"Reflection functionality is not supported". ].
         
-        ^ LiteralValue $new &length:aLength &index:0 &bytearray:aBuffer.
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
     ]
 
     #method respondsTo &message:aMessage
@@ -60,13 +60,16 @@
 
 #class(extension:subject) subjectROp
 {
+    #method(stacksafe) $equalSubject : anObject
+        => system'internal'subject_equal.
+    
     #method name
     [
         #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
         
-        $subjectControl readName:self &bytearray:aBuffer &vlength:aLength.
+        $subjectControl readName:self &bytearray:aBuffer &vint:aLength.
         
-        ^ LiteralValue $new &length:aLength &index:0 &bytearray:aBuffer.
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
     ]
 }

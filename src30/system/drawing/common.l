@@ -26,7 +26,7 @@
         theY := anY int.
     ]
     
-    #constructor new &int:anX &int:anY
+    #constructor(stacksafe) new &int:anX &int:anY
     [
         theX := anX.
         theY := anY.
@@ -60,17 +60,17 @@
         theY := aValue int.
     ]
     
-    #method readX &vint:aValue
+    #method(stacksafe) readX &vint:aValue
     [
         aValue << theX.
     ]
     
-    #method readY &vint:aValue
+    #method(stacksafe) readY &vint:aValue
     [
         aValue << theY.
     ]
     
-    #method read &vint:anX &vint:anY
+    #method(stacksafe) read &vint:anX &vint:anY
     [
         anX << theX.
         anY << theY.
@@ -174,17 +174,17 @@
         theHeight := aHeight.
     ]
     
-    #method readWidth &vint:aValue
+    #method(stacksafe) readWidth &vint:aValue
     [
         aValue << theWidth.
     ]
     
-    #method readHeight &vint:aValue
+    #method(stacksafe) readHeight &vint:aValue
     [
         aValue << theHeight.
     ]
     
-    #method read &vint:aWidth &vint:aHeight
+    #method(stacksafe) read &vint:aWidth &vint:aHeight
     [
         aWidth << theWidth.
         aHeight << theHeight.
@@ -264,7 +264,7 @@
         theHeight := aHeight.
     ]
     
-    #method read &vint:anX &vint:anY &vint:aWidth &vint:aHeight
+    #method(stacksafe) read &vint:anX &vint:anY &vint:aWidth &vint:aHeight
     [
         anX << theX.
         anY << theY.
@@ -272,22 +272,22 @@
         aHeight << theHeight.
     ]
         
-    #method readX &vint:anX
+    #method(stacksafe) readX &vint:anX
     [
         anX << theX.
     ]
         
-    #method readY &vint:anY
+    #method(stacksafe) readY &vint:anY
     [
         anY << theY.
     ]
         
-    #method readWidth &vint:aWidth
+    #method(stacksafe) readWidth &vint:aWidth
     [
         aWidth << theWidth.
     ]
         
-    #method readHeight &vint:aHeight
+    #method(stacksafe) readHeight &vint:aHeight
     [
         aHeight << theHeight.
     ]
