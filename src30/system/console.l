@@ -20,7 +20,7 @@
     [
         theWriter write &literal:(anObject literal).
         
-        $self write:theNewLineConstant.
+        theWriter write &literal:theNewLineConstant.
     ]
 
     /// Writes the specified literal value to the standard output stream.

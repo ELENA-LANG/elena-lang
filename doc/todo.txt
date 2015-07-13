@@ -153,6 +153,7 @@ week2:
                        * File - make possible to check if the file exists
                        * optimize TextBuffer.indexOf&index&literal&vint
                        * optimize TextBuffer.indexOf&index&char&vint
+                       * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
 
                adev - console operations:  
                        * read / write operation: complex types

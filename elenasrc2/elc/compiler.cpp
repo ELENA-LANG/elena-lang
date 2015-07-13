@@ -4199,17 +4199,26 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
             // if direct pass is possible
          }
+         else if (param.size == 4 && param.info.kind == okFieldAddress && param.subject == param.info.type) {
+            // if direct pass is possible
+         }
          else {
             bool mismatch = false;
             bool boxed = false;
+
             _writer.loadObject(*scope.tape, param.info);
+            if (param.info.kind == okFieldAddress) {
+               param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1));
+            }
+
             param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed, 0);
             if (mismatch)
                scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
             if (boxed)
                scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
 
-            saveObject(scope, param.info, 0);
+            saveObject(scope, ObjectInfo(okAccumulator), 0);
+
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
          }
@@ -4242,6 +4251,11 @@ void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externa
 
                externalScope.frameSize++;
                _writer.declareVariable(*scope.tape, value);
+            }
+            else if ((*out_it).info.kind == okFieldAddress && (*out_it).subject == (*out_it).info.type) {
+               _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+               _writer.loadInt(*scope.tape, (*out_it).info);
+               _writer.pushObject(*scope.tape, ObjectInfo(okIndexAccumulator));
             }
             else {
                _writer.loadObject(*scope.tape, (*out_it).info);

@@ -1858,6 +1858,33 @@ void ByteCodeWriter::saveReal(CommandTape& tape, ObjectInfo target)
    }
 }
 
+
+void ByteCodeWriter :: loadInt(CommandTape& tape, ObjectInfo target)
+{
+   if (target.kind == okLocalAddress) {
+      // nload
+      tape.write(bcNLoad);
+   }
+   else if (target.kind == okLocal) {
+      // nload
+      tape.write(bcNLoad);
+   }
+   else if (target.kind == okFieldAddress) {
+      if (target.param == 0) {
+         // nload
+         tape.write(bcNLoad);
+      }
+      else {
+         // dcopy target.param
+         // bread
+         // dcopye
+         tape.write(bcDCopy, target.param);
+         tape.write(bcBRead);
+         tape.write(bcDCopyE);
+      }
+   }
+}
+
 void ByteCodeWriter::assignInt(CommandTape& tape, ObjectInfo target)
 {
    if (target.kind == okFieldAddress) {

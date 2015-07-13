@@ -9,7 +9,7 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-            
+
 #symbol XTester =
 {
     test            
