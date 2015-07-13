@@ -2585,7 +2585,14 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectI
    size_t count = 0;
    ref_t messageRef = mapMessage(node, scope, count, mode);
 
-   object = compileMessageParameters(node, scope, object, messageRef, count, mode, spaceToRelease);
+   ref_t extensionRef = mapExtension(scope, messageRef, object);
+   int methodHint = extensionRef != 0 ? scope.moduleScope->checkMethod(extensionRef, messageRef) : defineMethodHint(scope, object, messageRef);
+
+   compileMessageParameters(node, scope, object, methodHint, count, mode, spaceToRelease);
+
+   if (extensionRef != 0) {
+      object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+   }
 
    return messageRef;
 }
@@ -2637,31 +2644,12 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    return extRef;
 }
 
-ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t messageRef, int count, int& mode, size_t& spaceToRelease)
+int Compiler :: defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef)
 {
-   ObjectInfo retVal = object;
-
-   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
-   if (object.kind == okAccumulator) {
-      mode &= ~HINT_DIRECT_ORDER;
-   }
-   else if (count == 1 && !test(mode, HINT_OARG_UNBOXING)) {
-      mode |= HINT_DIRECT_ORDER;
-   }
-
    // use dynamic extension if exists
    int methodHint = 0;
-   ref_t roleRef = 0;
-   if (object.kind != okRole && object.kind != okConstantRole) {
-      roleRef = mapExtension(scope, messageRef, object);
-   }
-   
-   if (roleRef != 0) {
-      methodHint = scope.moduleScope->checkMethod(roleRef, messageRef);
 
-      retVal = ObjectInfo(okConstantRole, roleRef, object.type);
-   }
-   else if (object.kind == okConstantSymbol || object.kind == okLocalAddress) {
+   if (object.kind == okConstantSymbol || object.kind == okLocalAddress) {
       methodHint = scope.moduleScope->checkMethod(object.extraparam, messageRef);
    }
    else if (object.kind == okConstantClass) {
@@ -2681,6 +2669,19 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
       methodHint = (scope.moduleScope->checkMethod(classScope->info.header.parentRef, messageRef) & ~tpMask) | tpSealed;
    }
    else methodHint = scope.moduleScope->checkMethod(scope.moduleScope->typeHints.get(object.type), messageRef);
+
+   return methodHint;
+}
+
+void Compiler :: compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int methodHint, int count, int& mode, size_t& spaceToRelease)
+{
+   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
+   if (object.kind == okAccumulator) {
+      mode &= ~HINT_DIRECT_ORDER;
+   }
+   else if (count == 1 && !test(mode, HINT_OARG_UNBOXING)) {
+      mode |= HINT_DIRECT_ORDER;
+   }
 
    if (methodHint == (tpClosed | tpStackSafe) || methodHint == (tpSealed | tpStackSafe))
       mode |= HINT_STACKSAFE_CALL;
@@ -2736,8 +2737,6 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
 
       compilePresavedMessageParameters(node.firstChild(), scope, mode, spaceToRelease);
    }
-
-   return retVal;
 }
 
 ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
@@ -3510,7 +3509,12 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
    size_t spaceToRelease = 0;
 
    int paramMode = mode & ~HINT_SELFEXTENDING;
-   ref_t messageRef = compileMessageParameters(node, scope, role, paramMode, spaceToRelease);
+
+   size_t count = 0;
+   ref_t messageRef = mapMessage(node, scope, count, mode);
+
+   compileMessageParameters(node, scope, object, defineMethodHint(scope, role, messageRef), count, paramMode, spaceToRelease);
+
    mode |= paramMode;
 
    ObjectInfo retVal(okAccumulator);

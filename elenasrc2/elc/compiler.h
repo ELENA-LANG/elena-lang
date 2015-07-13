@@ -654,7 +654,8 @@ protected:
    void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
    void compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree);
 
-   ObjectInfo compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, ref_t message, int paramCount, int& mode, size_t& spaceToRelease);
+   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
+   void compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int methodHint, int paramCount, int& mode, size_t& spaceToRelease);
    ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease);
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
