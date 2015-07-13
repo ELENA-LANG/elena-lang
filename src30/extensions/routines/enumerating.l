@@ -34,7 +34,7 @@
     
     #method reset 
     [
-        theReader := StreamReader new &stream:(theReader stream clone) &encoder:(theReader encoder).
+        #throw NotSupportedException new.
     ]
     
     #method next

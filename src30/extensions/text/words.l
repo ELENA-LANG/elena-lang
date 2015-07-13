@@ -33,7 +33,7 @@
         
         #loop (aCurrent < aLength) ?
         [
-            theLiteral read &index:aCurrent &vchar:aChar.
+            theLiteral read &int:aCurrent &vchar:aChar.
             (aChar == 32)
                 ? [
                     aSpaceMode ! [ theIndex write &int:aCurrent. ^ true. ].                    

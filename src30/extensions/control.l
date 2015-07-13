@@ -8,7 +8,7 @@
     #method to &int:anEnd &doEvery:aFunction
         = self::intLoopOp to &int:anEnd &nfunc:(aFunction nfunc).
     
-    #method to &int:anEnd &nfunc:aFunction
+    #method(stacksafe) to &int:anEnd &nfunc:aFunction
     [
        #var(type:int)aStart := self int.
 

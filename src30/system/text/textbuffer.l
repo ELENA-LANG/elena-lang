@@ -113,7 +113,7 @@
         ].
     ]
 
-    #method write &char:aChar
+    #method(stacksafe) write &char:aChar
     [
         $self reserve &length:1.
         

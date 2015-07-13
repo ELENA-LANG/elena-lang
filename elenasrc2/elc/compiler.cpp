@@ -1460,7 +1460,7 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
          if (outer.outerObject.kind == okSuper) {
             return ObjectInfo(okSuper, outer.reference);
          }
-         else return ObjectInfo(okOuter, outer.reference);
+         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
       }
       else {
          outer.outerObject = parent->mapObject(identifier);
@@ -5474,6 +5474,8 @@ void Compiler::compileSingletonClass(DNode node, ClassScope& scope)
 
 void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
 {
+   bool singleton = false;
+
    scope.compileHints(hints);
 
    DNode expression = node.firstChild();
@@ -5492,6 +5494,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
                scope.raiseError(errInvalidSymbolExpr, expression.Terminal());
 
             declareSingletonClass(classNode.firstChild(), classScope, test(classScope.info.header.flags, elClosed));
+            singleton = true;
          }
          // if it is normal nested class
          else {
@@ -5500,6 +5503,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
             compileParentDeclaration(DNode(), classScope);
 
             declareSingletonClass(classNode.firstChild(), classScope, false);
+            singleton = true;
          }
       }
       else if (objNode == nsSubCode) {
@@ -5509,6 +5513,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareActionScope(objNode, classScope, DNode(), methodScope, false);
 
          declareSingletonAction(objNode, classScope, methodScope);
+         singleton = true;
       }
       else if (objNode == nsInlineExpression) {
          ClassScope classScope(scope.moduleScope, scope.reference);
@@ -5517,6 +5522,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareActionScope(objNode, classScope, expression.firstChild(), methodScope, false);
 
          declareSingletonAction(objNode, classScope, methodScope);
+         singleton = true;
       }
       else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
          ClassScope classScope(scope.moduleScope, scope.reference);
@@ -5525,10 +5531,11 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareActionScope(objNode, classScope, objNode, methodScope, false);
 
          declareSingletonAction(objNode, classScope, methodScope);
+         singleton = true;
       }
    }
 
-   if (scope.typeRef != 0 || scope.constant) {
+   if (!singleton && (scope.typeRef != 0 || scope.constant)) {
       SymbolExpressionInfo info;
       info.expressionTypeRef = scope.typeRef;
       info.constant = scope.constant;
@@ -5562,7 +5569,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          if (test(classScope.info.header.flags, elStateless)) {
             // if it is a stateless singleton
-            retVal = ObjectInfo(okConstantSymbol, scope.reference);
+            retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
          }
       }
       else if (classNode == nsSubCode) {
