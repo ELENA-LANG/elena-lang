@@ -114,12 +114,12 @@
         system'external'USER32 UpdateWindow &handle:theHandle.
     ]
     
-    #method setPosition &int:x &int:y &int:cx &int:cy &int:flags
+    #method(stacksafe) setPosition &int:x &int:y &int:cx &int:cy &int:flags
     [
         system'external'USER32 SetWindowPos &handle:theHandle &int:0 &int:x &int:y &int:cx &int:cy &int:flags.
     ]
 
-    #method getClientRect &win_rect:aStruct
+    #method(stacksafe) getClientRect &win_rect:aStruct
     [
         system'external'USER32 GetClientRect &handle:theHandle &win_rect:aStruct.
     ]
@@ -169,17 +169,17 @@
     #field(type:int)      dummy6.
     #field(type:int)      dummy7.
 
-    #method read &hdc:aHandle
+    #method(stacksafe) read &hdc:aHandle
         => system'internal'int_save.
             
     #method hdc = HDC new &hdc:theHDC.            
             
-    #method begin &hwnd:aHandle
+    #method(stacksafe) begin &hwnd:aHandle
     [
         system'external'USER32 BeginPaint &handle:aHandle &win_paintstruct:$self.
     ]
     
-    #method end &hwnd:aHandle
+    #method(stacksafe) end &hwnd:aHandle
     [
         system'external'USER32 EndPaint &handle:aHandle &win_paintstruct:$self.
     ]

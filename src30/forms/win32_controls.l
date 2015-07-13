@@ -11,15 +11,15 @@
     
     #method object = $nil.
     
-    #method retrieve &hwnd:aHandle = $nil.
+    #method(stacksafe) retrieve &hwnd:aHandle = $nil.
     
-    #method readDimension &vint:aWidth &vint:aHeight []
+    #method(stacksafe) readDimension &vint:aWidth &vint:aHeight []
     
-    #method readLocation &vint:x &vint:y []
+    #method(stacksafe) readLocation &vint:x &vint:y []
     
-    #method setDimension &int:aWidth &int:aHeight []
+    #method(stacksafe) setDimension &int:aWidth &int:aHeight []
     
-    #method setLocation &int:x &int:y []
+    #method(stacksafe) setLocation &int:x &int:y []
     
     #method open []
     
@@ -32,7 +32,7 @@
 {
     #field(type:hwnd)theHandle.
 
-    #method retrieve &hwnd:aHandle
+    #method(stacksafe) retrieve &hwnd:aHandle
     [
         (theHandle == aHandle)
             ? [ ^ $self. ].
@@ -53,7 +53,7 @@
     #method open
     [
         ($nil != theHandle)
-            ? [ #throw InvalidOperationException new &message:"The form is already open". ].
+            ? [ #throw InvalidOperationException new:"The form is already open". ].
             
         $self $createHandle.
         
@@ -119,17 +119,17 @@
         
         ($nil == theHandle)
             ! [
-                theHandle setPosition &int:x &int:y &int:0 &int:0 &int_attributes:SWP_NOSIZE.
+                theHandle setPosition &int:x &int:y &int:0 &int:0 &int:SWP_NOSIZE.
             ].
     ]
     
-    #method setDimension &int:aWidth &int:aHeight
+    #method(stacksafe) setDimension &int:aWidth &int:aHeight
     [
         theRegion writeDimension &int:aWidth &int:aHeight.
         
         ($nil == theHandle)
             ! [
-                theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int_attributes:SWP_NOMOVE.
+                theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int:SWP_NOMOVE.
             ].
     ]
     
@@ -139,7 +139,7 @@
             ? [ theHandle refresh. ].
     ]
     
-    #method $resize &int:aWidth &int:aHeight
+    #method(stacksafe) $resize &int:aWidth &int:aHeight
     [
         theRegion writeDimension &int:aWidth &int:aHeight.
     ]  
@@ -185,7 +185,7 @@
 
     #method set &onResize:anAction
     [
-        theResize := anAction.
+        theResize := anAction func1.
     ]
 
     #method retrieve &hwnd:aHandle
@@ -224,7 +224,7 @@
             [ it get close. ].
     ]
     
-    #method $resize &int:aWidth &int:aHeight
+    #method(stacksafe) $resize &int:aWidth &int:aHeight
     [
         $super $resize &int:aWidth &int:aHeight.
         
@@ -349,7 +349,7 @@
     [
         #var(type:hwnd)aParent := theParent hwnd.
         (aParent == 0)
-            ? [ #throw InvalidOperationException new &message:"The parent window is closed". ].
+            ? [ #throw InvalidOperationException new:"The parent window is closed". ].
         
         #var(type:int)Styles := WS_CHILD || SS_SIMPLE.
         theVisible
@@ -389,7 +389,7 @@
         $self set &caption:(aValue wide).
     ]          
     
-    #method $updateStyles &vint:aRetVal
+    #method(stacksafe) $updateStyles &vint:aRetVal
     [
         #var(type:int)Styles := 0.
         
@@ -538,10 +538,10 @@
     
     #method set &onClick:aFunction
     [
-        theClick := aFunction.
+        theClick := aFunction func1.
     ]
     
-    #method $updateStyles &vint:aRetVal
+    #method(stacksafe) $updateStyles &vint:aRetVal
     [
         #var(type:int)Styles := 0.
         
@@ -596,8 +596,8 @@
     [
         #var(type:hwnd)aParent := theParent hwnd.
         
-        #var(type:vint)Styles := 0.
-        Styles << (WS_CHILD || BS_PUSHBUTTON).
+        #var(type:int)Styles := 0.
+        Styles := (WS_CHILD || BS_PUSHBUTTON).
         $self $updateStyles &vint:Styles.
                 
         #var(type:int)anX.
@@ -680,8 +680,8 @@
     [
         #var(type:hwnd)aParent := theParent hwnd.
         
-        #var(type:vint)Styles := 0.
-        Styles << (WS_CHILD || BS_AUTORADIOBUTTON).
+        #var(type:int)Styles := 0.
+        Styles := (WS_CHILD || BS_AUTORADIOBUTTON).
         $self $updateStyles &vint:Styles.
                 
         #var(type:int)anX.
@@ -802,7 +802,7 @@
         struct end &hwnd:theHandle.
     ]
  
-    #method $resize &hwnd:aControl &int:aWidth &int:aHeight
+    #method(stacksafe) $resize &hwnd:aControl &int:aWidth &int:aHeight
     [
     ]
  
@@ -1130,7 +1130,7 @@
     
     #method set &onIndexChanged:aFunction
     [
-        theIndexChanged := aFunction.
+        theIndexChanged := aFunction func1.
     ]
 
     #method items =
@@ -1150,7 +1150,7 @@
         $self $resize.
     ]
 
-    #method $onClick &hwnd:aHandle
+    #method(stacksafe) $onClick &hwnd:aHandle
     [
         #var(type:int)anIndex := -1. // !! to skip a frame
         
@@ -1261,7 +1261,7 @@
             
             #var anImage := theImages getAt &index:(theIndex int).
             
-            aCanvas write &image:anImage &int:0 &int:0 &int:aWidth &int:aHeight.
+            aCanvas write &image:(anImage image) &int:0 &int:0 &int:aWidth &int:aHeight.
         ].
     ]
 
@@ -1282,7 +1282,7 @@
           
         #method retrieve &hwnd:aHandle = $nil.
     
-        #method setDimension &int:aWidth &int:aHeight [ self setDimension &int:aWidth &int:aHeight. ]
+        #method setDimension &int:aWidth &int:aHeight [ $self setDimension &int:aWidth &int:aHeight. ]
     }.
  
     #method $set &parent:aParent
@@ -1292,7 +1292,7 @@
           
     #method dimension = theSize.
     
-    #method setDimension &int:aWidth &int:aHeight
+    #method(stacksafe) setDimension &int:aWidth &int:aHeight
     [
         theSize write &int:aWidth &int:aHeight.
     ]
@@ -1314,7 +1314,7 @@
         
         #var(type:enumerator)it := theImages enumerator.
         #loop (it next)? [
-            it get open &hdc:aParentDC.
+            it get image open &hdc:aParentDC.
         ].
     ]
     

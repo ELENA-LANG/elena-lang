@@ -76,7 +76,10 @@
     [
         theParent := aParent.
         theCaption := aCaption wide.
-        theClick := anAction.
+        
+        ($nil == anAction)
+            ! [ theClick := anAction func1. ].
+        
         theID := theParent newID int.
     ]
     

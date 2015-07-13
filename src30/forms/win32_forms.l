@@ -50,7 +50,7 @@
     
     #method onmenu &int:aCode &vint:aResult    
     [
-        #var anItem := theOwner retrieve &menu_id:aCode.
+        #var anItem := theOwner retrieveMenu &int:aCode.
         ($nil != anItem)
             ? [ anItem click. ].
         
@@ -69,7 +69,7 @@
         theMenu := aMenu.
     ]
     
-    #method retrieve &menu_id:anID
+    #method(stacksafe) retrieveMenu &int:anID
         => theMenu.
     
     #method $createHandle

@@ -5,8 +5,6 @@
 #subject(class:system'drawing'Dimension)dimension.
 #subject(class:system'drawing'Region)region.
 
-#subject image.
-
 // --- Point ---
 
 #class(sealed,struct:embeddable)Point :: BaseNumber
@@ -44,7 +42,7 @@
     
     #method y = IntNumber new &int:theX.
     
-    #method write &int:anX &int:anY
+    #method(stacksafe) write &int:anX &int:anY
     [
         theX := anX.
         theY := anY.
@@ -168,7 +166,7 @@
         theHeight := aValue int.
     ]
     
-    #method write &int:aWidth &int:aHeight
+    #method(stacksafe) write &int:aWidth &int:aHeight
     [
         theWidth := aWidth.
         theHeight := aHeight.
@@ -312,25 +310,25 @@
         theHeight := aValue int.
     ]
     
-    #method writeLocation &int:anX &int:anY
+    #method(stacksafe) writeLocation &int:anX &int:anY
     [
         theX := anX.
         theY := anY.
     ]
     
-    #method writeDimension &int:aWidth &int:aHeight
+    #method(stacksafe) writeDimension &int:aWidth &int:aHeight
     [
         theWidth := aWidth.
         theHeight := aHeight.
     ]
     
-    #method readLocation &vint:anX &vint:anY
+    #method(stacksafe) readLocation &vint:anX &vint:anY
     [
         anX << theX.
         anY << theY.
     ]
     
-    #method readDimension &vint:aWidth &vint:aHeight
+    #method(stacksafe) readDimension &vint:aWidth &vint:aHeight
     [
         aWidth << theWidth.
         aHeight << theHeight.

@@ -43,13 +43,13 @@
         ($nil == aParent)
             ? [
                 ($nil == theParent)
-                    ? [ #throw InvalidOperationException new &message:"A control already unbound". ].
+                    ? [ #throw InvalidOperationException new:"A control already unbound". ].
                 
                 theParent := $nil.
             ]
             ! [
                 ($nil != theParent)
-                    ? [ #throw InvalidOperationException new &message:"A control already bound". ].
+                    ? [ #throw InvalidOperationException new:"A control already bound". ].
                 
                 theParent := aParent.
             ].
@@ -67,26 +67,16 @@
     
     #method caption = theCaption.
     
-    #method setLocation &int:x &int:y
+    #method(stacksafe) setLocation &int:x &int:y
     [
         theRegion writeLocation &int:x &int:y.
     ]
     
-    #method set &x:x
-    [
-        #var(type:int)y.
-        theRegion readY &vint:y.
-        
-        $self setLocation &int:(x int) &int:y.
-    ]
+    #method set &x:aValue
+        <= set &x:aValue &y:(theRegion y).
     
-    #method set &y:y
-    [
-        #var(type:int)x.
-        theRegion readX &vint:x.
-        
-        $self setLocation &int:x &int:(y int).
-    ]
+    #method set &y:aValue
+        <= set &x:(theRegion x) &y:aValue.
     
     #method set &x:x &y:y
     [
@@ -108,27 +98,17 @@
     ]
 
     #method set &width:aWidth
-    [
-        #var(type:int)aHeight.
-        theRegion readHeight &vint:aHeight.
-        
-        $self setDimension &int:(aWidth int) &int:aHeight.
-    ]
+        <= set &width:aWidth &height:(theRegion height).
     
     #method set &height:aHeight
-    [
-        #var(type:int)aWidth.
-        theRegion readWidth &vint:aWidth.
-        
-        $self setDimension &int:aWidth &int:(aHeight int).
-    ]    
+        <= set &width:(theRegion width) &height:aHeight.
             
-    #method readDimension &vint:aWidth &vint:aHeight
+    #method(stacksafe) readDimension &vint:aWidth &vint:aHeight
     [
         theRegion readDimension &vint:aWidth &vint:aHeight.        
     ]
     
-    #method readLocation &vint:x &vint:y
+    #method(stacksafe) readLocation &vint:x &vint:y
     [
         theRegion readLocation&vint:x &vint:y.        
     ]

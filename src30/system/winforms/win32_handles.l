@@ -87,17 +87,17 @@
         theHandle := h.
     ]
 
-    #method append &int:Flags &int:anID &wide:aCaption
+    #method(stacksafe) append &int:Flags &int:anID &wide:aCaption
     [
         system'external'USER32 AppendMenuW &handle:theHandle &int:Flags &int:anID &wide:aCaption.
     ]
             
-    #method append &int:Flags &handle:aParent &wide:aCaption
+    #method(stacksafe) append &int:Flags &handle:aParent &wide:aCaption
     [
         system'external'USER32 AppendMenuW &handle:theHandle &int:(Flags || MF_POPUP) &handle:aParent &wide:aCaption.
     ]
             
-    #method free
+    #method(stacksafe) free
     [
         system'external'USER32 DestroyMenu &handle:theHandle.
     ]

@@ -2677,7 +2677,8 @@ ObjectInfo Compiler :: compileMessageParameters(DNode node, CodeScope& scope, Ob
    else if (object.kind == okSuper) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-      methodHint = scope.moduleScope->checkMethod(classScope->info.header.parentRef, messageRef);
+      // super class is always sealed
+      methodHint = (scope.moduleScope->checkMethod(classScope->info.header.parentRef, messageRef) & ~tpMask) | tpSealed;
    }
    else methodHint = scope.moduleScope->checkMethod(scope.moduleScope->typeHints.get(object.type), messageRef);
 

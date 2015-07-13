@@ -292,10 +292,10 @@
 {
     #field(type:handle)theHandle.
 
-    #constructor new &hbitmap:aHandle
+    #constructor(stacksafe) new &hbitmap:aHandle
         => system'internal'int_copy.
 
-    #constructor new &hdc:aDC &int:aWidth &int:aHeight
+    #constructor(stacksafe) new &hdc:aDC &int:aWidth &int:aHeight
     [
         #var(type:handle)h := system'external'GDI32 CreateCompatibleBitmap &handle:aDC &int:aWidth &int:aHeight.
         

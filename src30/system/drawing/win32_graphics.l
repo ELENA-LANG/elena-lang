@@ -3,6 +3,7 @@
 #subject(class:system'drawing'Pen)    pen.
 #subject(class:system'drawing'Brush)  brush.
 #subject(class:system'drawing'Canvas) canvas.
+#subject(class:system'drawing'Image)  image.
 
 // --- Pen ---
 
@@ -62,7 +63,7 @@
 
 // --- Image ---
 
-#class Image
+#class(sealed) Image
 {
     #field(type:wide)thePath.
     #field(type:hdc)theDC.
@@ -75,7 +76,9 @@
         theSize := aSize.
     ]
     
-    #method open &hdc:aParentDC
+    #method image = $self.
+    
+    #method(stacksafe) open &hdc:aParentDC
     [
         #var(type:int)aWidth.
         #var(type:int)aHeight.
@@ -111,7 +114,7 @@
         thePen := 0.
     ]
     
-    #method open &hdc:aHandle
+    #method(stacksafe) open &hdc:aHandle
     [
         theHDC := aHandle.
     ]
@@ -197,17 +200,17 @@
         theHDC drawText &wide:(aText wide) &int:(x int) &int:(y int).
     ]
  
-    #method write &wide:aText &int:x &int:y
+    #method(stacksafe) write &wide:aText &int:x &int:y
     [
         theHDC drawText &wide:aText &int:x &int:y.
     ]
  
-    #method write &literal:aText &int:x &int:y
+    #method(stacksafe) write &literal:aText &int:x &int:y
     [
         theHDC drawText &wide:(aText wide) &int:x &int:y.
     ]
  
-    #method write &image:anImage &int:x &int:y &int:aWidth &int:aHeight
+    #method(stacksafe) write &image:anImage &int:x &int:y &int:aWidth &int:aHeight
     [
         #var(type:hdc)aDC := anImage hdc.
         
