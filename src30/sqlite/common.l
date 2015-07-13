@@ -20,7 +20,7 @@
 #class DBException :: Exception
 {
     #constructor new &message:aMessage
-        <= %new &message:aMessage &error_type: %DBError.
+        <= %new &literal:(aMessage literal) &subject: %DBError.
 }
 
 // --- Connection ---
@@ -81,7 +81,7 @@
 
         #var aTable := DBTable new &sql_field_names:(aCommand sql_field_names).
         
-        control run:aCommand &with:aTable &forEachPair:(:aTable:aRow)
+        aTable run &eachPair:(:aTable:aRow)
             [ aTable append &sqlite_row:aRow. ].
 
         aCommand free.
@@ -146,7 +146,7 @@
     
     #method enumerator = sqlite'DBReader new &sqlite_cmd:$self enumerator.
     
-    #method readFieldCount &vint:aCount
+    #method(stacksafe) readFieldCount &vint:aCount
     [
         #var(type:int) ret := system'external'sqlite3 sqlite3_column_count &handle:theCommandHandle.
         
@@ -158,13 +158,13 @@
         #var(type:int)field_count.
         $self readFieldCount &vint:field_count.
         
-        #var(type:array) names := Array new &length:field_count.
+        #var(type:array) names := Array new &int:field_count.
         #var(type:int) i := 0.
         #loop (i < field_count)?
         [
             #var(type:dirty_ptr)aColumnNamePtr := system'external'sqlite3 sqlite3_column_origin_name &handle:theCommandHandle &int:i.
             
-            names setAt &index:i &object:(aColumnNamePtr literal).
+            names setAt &int:i &object:(aColumnNamePtr literal).
             
             i := i + 1.
         ].

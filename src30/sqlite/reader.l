@@ -16,7 +16,7 @@
     
     #method sqlite_reader = $self.
     
-    #method readNext &vint:aResult
+    #method(stacksafe) readNext &vint:aResult
     [
         #var(type:int) aRetVal := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
         
@@ -41,7 +41,7 @@
                 eval : aReader &wide : aFieldName = aReader getAt &literal:(aFieldName literal).
             } &with:$self.
     
-    #method getAt &index:anIndex
+    #method(stacksafe) getAt &int:anIndex
     [
         #var(type:int) columnType := system'external'sqlite3 sqlite3_column_type &handle:theCommandHandle &int:anIndex.
         
@@ -87,11 +87,11 @@
         #var(type:int)aCount.
         theCommand readFieldCount &vint:aCount.
         
-        #var(type:array) aRow := Array new &length:aCount.
+        #var(type:array) aRow := Array new &int:aCount.
         #var(type:int)i := 0.
         #loop (i < aCount)?
         [
-            aRow setAt &index:i &object:($self getAt &index:i).
+            aRow setAt &int:i &object:($self getAt &int:i).
             
             i := i + 1.
         ].
