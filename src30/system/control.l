@@ -760,7 +760,7 @@
     #method(stacksafe) eval &int:n []
 
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-    #method rewind &int:aStart &int:n &int:dx
+    #method(stacksafe) rewind &int:aStart &int:n &int:dx
     [
         #var(type:int)i := aStart.
         
@@ -775,7 +775,7 @@
     ]          
     
     /// Executes the function for every value in the specified range (starting value, ending value, step)
-    #method run &int:aStart &int:n &int:dx
+    #method(stacksafe) run &int:aStart &int:n &int:dx
     [
         #var(type:int)i := aStart.
         
@@ -790,7 +790,7 @@
     ]
 
     /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
-    #method retrieve &int:aStart &int:n &int:dx
+    #method(stacksafe) retrieve &int:aStart &int:n &int:dx
     [
         #var(type:int)i := aStart.
         

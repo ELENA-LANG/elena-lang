@@ -8,7 +8,7 @@
 #class MatrixException :: Exception
 {
     #constructor new : aMessage
-        <= %new &message:aMessage &error_type: %MatrixError.
+        <= %new &literal:(aMessage literal) &subject:%MatrixError.
 }
 
 #class(extension:realmatrix)matrixOp
@@ -24,7 +24,7 @@
         
         aMatrix readLengths &vint:n &vint:m.
         
-        #var(type:realmatrix)r := RealMatrix new &length:n &length:m.
+        #var(type:realmatrix)r := RealMatrix new &int:n &int:m.
         #loop (i < n)?
         [
             j := 0.
@@ -32,8 +32,8 @@
             [
                 #var(type:real)v.
         
-                aMatrix read &index:i &index:j &vreal:v.
-                r write &index:i &index:j &real:v.
+                aMatrix read &int:i &int:j &vreal:v.
+                r write &int:i &int:j &real:v.
                 
                 j := j + 1.
             ].
@@ -45,6 +45,9 @@
     ]
     
     #method set &every_ij:aFunction
+        = self::matrixOp set &nnfunc:(aFunction nnfunc).
+    
+    #method set &nnfunc:aFunction
     [
         #var(type:realmatrix)aMatrix := self realmatrix.
         
@@ -60,7 +63,7 @@
             j := 0.
             #loop (j < m)?
             [
-                aMatrix write &index:i &index:j &real:(aFunction eval &index:i &index:j real).
+                aMatrix write &int:i &int:j &real:(aFunction eval &int:i &int:j real).
                 
                 j := j + 1.
             ].
@@ -92,7 +95,7 @@
             ! [ #throw MatrixException new:"Two matrices must have an equal number of rows and columns to be added". ].
             
         i := 0.                        
-        #var(type:realmatrix)r := RealMatrix new &length:n &length:m.
+        #var(type:realmatrix)r := RealMatrix new &int:n &int:m.
         #loop (i < n)?
         [
             j := 0.                        
@@ -100,10 +103,10 @@
             [
                 #var(type:real)r1.
                 #var(type:real)r2.
-                a read &index:i &index:j &vreal:r1.
-                b read &index:i &index:j &vreal:r2.
+                a read &int:i &int:j &vreal:r1.
+                b read &int:i &int:j &vreal:r2.
                 
-                r write &index:i &index:j &real:(r1 + r2).
+                r write &int:i &int:j &real:(r1 + r2).
                 
                 j := j + 1.
             ].
@@ -134,7 +137,7 @@
             ! [ #throw MatrixException new:"Two matrices must have an equal number of rows and columns to be added". ].
             
         i := 0.                        
-        #var(type:realmatrix)r := RealMatrix new &length:n &length:m.
+        #var(type:realmatrix)r := RealMatrix new &int:n &int:m.
         #loop (i < n)?
         [
             j := 0.                        
@@ -142,10 +145,10 @@
             [
                 #var(type:real)r1.
                 #var(type:real)r2.
-                a read &index:i &index:j &vreal:r1.
-                b read &index:i &index:j &vreal:r2.
+                a read &int:i &int:j &vreal:r1.
+                b read &int:i &int:j &vreal:r2.
                 
-                r write &index:i &index:j &real:(r1 - r2).
+                r write &int:i &int:j &real:(r1 - r2).
                 
                 j := j + 1.
             ].
@@ -176,7 +179,7 @@
             ! [ #throw MatrixException new:"Invalid argument". ].
 
         i := 0.                        
-        #var(type:realmatrix)r := RealMatrix new &length:n &length:p.
+        #var(type:realmatrix)r := RealMatrix new &int:n &int:p.
         #loop (i < n)?
         [
             j := 0.                        
@@ -188,8 +191,8 @@
                 [
                     #var(type:real)r1.
                     #var(type:real)r2.
-                    a read &index:i &index:k &vreal:r1.
-                    b read &index:k &index:j &vreal:r2.
+                    a read &int:i &int:k &vreal:r1.
+                    b read &int:k &int:j &vreal:r2.
                     
                     r1 := r1 * r2.
                     v := v + r1.
@@ -197,7 +200,7 @@
                     k := k + 1.
                 ].
                 
-                r write &index:i &index:j &real:v.
+                r write &int:i &int:j &real:v.
                 
                 j := j + 1.
             ].
@@ -230,8 +233,8 @@
         #var even := Boolean new:true.          
 
         // permutation matrix
-        #var(type:intarray) pm := IntArray new &length:n.
-        pm set &every: (&index:i) [ IntNumber new &int:i ].
+        #var(type:intarray) pm := IntArray new &int:n.
+        pm set &nfunc: (&int:i) [ IntNumber new &int:i ].
 
         // each column, j is counter for coulmns
         #var(type:int)  max_col := 0.
@@ -240,14 +243,14 @@
         #loop (j < n)?
         [
             // find largest value in col j
-            a read &index:j &index:j &vreal:max.
+            a read &int:j &int:j &vreal:max.
             realOpController abs &real:max &vreal:max.
             
             max_col := j.
             i := j + 1.
             #loop (i < n)?
             [
-                a read &index:i &index:j &vreal:v.
+                a read &int:i &int:j &vreal:v.
                 realOpController abs &real:v &vreal:v.
                 (v > max)?
                 [
@@ -264,17 +267,17 @@
                 k := 0.
                 #loop (k < n)?
                 [
-                    a read &index:j &index:k &vreal:t.
-                    a read &index:max_col &index:k &vreal:v.
+                    a read &int:j &int:k &vreal:t.
+                    a read &int:max_col &int:k &vreal:v.
 
-                    a write &index:j &index:k &real:v.
-                    a write &index:max_col &index:k &real:t.
+                    a write &int:j &int:k &real:v.
+                    a write &int:max_col &int:k &real:t.
                     
                     k := k + 1.
                 ].
 
                  // switch two rows in permutation matrix
-                 pm::intArrayOp exchange &index:j &index:max_col.
+                 pm::intArrayOp exchange &int:j &int:max_col.
 
                  even invert.
             ].
@@ -282,28 +285,28 @@
             (0.0r == max)
                 ? [ #throw MatrixException new:"The matrix is singular!". ].
 
-            a read &index:j &index:j &vreal:t.
+            a read &int:j &int:j &vreal:t.
             
             i := j + 1.
             #loop (i < n)?
             [
-                a read &index:i &index:j &vreal:v.
+                a read &int:i &int:j &vreal:v.
                 v := v / t.
                 
-                a write &index:i &index:j &real:v.
+                a write &int:i &int:j &real:v.
 
                 k := j + 1.
                 #loop (k < n)?
                 [
                     #var(type:real)c.
-                    a read &index:i &index:j &vreal:v.
-                    a read &index:j &index:k &vreal:c.
+                    a read &int:i &int:j &vreal:v.
+                    a read &int:j &int:k &vreal:c.
                     v := v * c.
 
-                    a read &index:i &index:k &vreal:c.
+                    a read &int:i &int:k &vreal:c.
                     v := c - v.
                     
-                    a write &index:i &index:k &real:v.
+                    a write &int:i &int:k &real:v.
                     
                     k := k + 1.
                 ].
@@ -334,7 +337,7 @@
         #var(type:int)i := 0.
         #loop (i < n)?
         [
-            a read &index:i &index:i &vreal:v.
+            a read &int:i &int:i &vreal:v.
             
             deter := deter * v.
             
@@ -363,14 +366,14 @@
             #loop (j < m)?
             [
                 #var(type:real)r.
-                aMatrix read &index:i &index:j &vreal:r.
+                aMatrix read &int:i &int:j &vreal:r.
                 
                 anOutput writeLiteral:(RealNumber new &real:r):",".
                 
                 j := j + 1.
             ].
             anOutput readLength &vint:l.            
-            anOutput set &length:(l - 1).
+            anOutput setLength &int:(l - 1).
             
             anOutput write:'newLine.
             

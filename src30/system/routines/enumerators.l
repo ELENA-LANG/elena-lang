@@ -5,7 +5,7 @@
 
 #class(extension:intarray)intArrayOp
 {
-    #method exchange &int:anIndex1 &int:anIndex2
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
     [
         #var(type:intarray)a := self intarray.
 
@@ -903,22 +903,22 @@
 #class(extension)indexableOp
 {
     #method exchange : anIndex1 : anIndex2
-        = self::indexableOp exchange &index:(anIndex1 int) &index:(anIndex2 int).
+        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
         
-    #method exchange &index:anIndex1 &index:anIndex2
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
     [
         #var(type:iterator)anIndexer := self iterator.
         
-        anIndexer set &index:anIndex1.
+        anIndexer writeIndex &int:anIndex1.
         
         #var anObject1 := anIndexer get.
         
-        anIndexer set &index:anIndex2.
+        anIndexer writeIndex &int:anIndex2.
         #var anObject2 := anIndexer get.
         
         anIndexer set:anObject1.
         
-        anIndexer set &index:anIndex1.
+        anIndexer writeIndex &int:anIndex1.
         anIndexer set:anObject2.
     ]
     
@@ -1128,11 +1128,11 @@
         ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
     ]
     
-    #method split &char:aChar
+    #method(type:array) split &char:aChar
     [
         #var dispatcher := self cast:%eval &to:stringOpDispatcher.
         
-        ^ self::dispatcher split &char:aChar.
+        ^ self::dispatcher split &char:aChar array.
     ]
     
     #method split &literal:aValue

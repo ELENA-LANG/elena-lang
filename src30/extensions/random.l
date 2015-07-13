@@ -10,7 +10,7 @@
     #constructor new
         => system'internal'rnd_init.
 
-    #method eval &int:aMaxValue &vint:aRetVal
+    #method(stacksafe) eval &int:aMaxValue &vint:aRetVal
         => system'internal'rnd_next.
 
     #method eval : aMaxValue
@@ -41,7 +41,7 @@
         [
             #var j := randomGenerator eval:max.
             
-            self::indexableOp exchange &index:i &index:(j int).
+            self::indexableOp exchange &int:i &int:(j int).
             
             i := i + 1.
         ].

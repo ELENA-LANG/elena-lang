@@ -578,12 +578,12 @@
     #field(type:int)theRows.
     #field(type:int)theColumns.
     
-    #constructor new &int:Rows &int:Columns
+    #constructor(stacksafe) new &int:Rows &int:Columns
     [
         theArray := ByteArray new &int:(Columns * Rows * 8).
         
-        theRows := Rows.
-        theColumns := Columns.
+        theRows := IntNumber new &int:Rows.
+        theColumns := IntNumber new &int:Columns.
     ]
         
     #constructor new : Rows : Columns

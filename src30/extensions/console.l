@@ -900,7 +900,7 @@
     [
         #var aLine := self read &literal.
         
-        #var aParams := aLine split &char:#32.
+        #var(type:array) aParams := aLine split &char:#32.
         
         #var(type:vint)aLength.        
         Arguments readLength &vint:aLength.
@@ -908,7 +908,7 @@
         #var(type:int)anIndex := 0.
         #loop (anIndex < aLength) ?
         [
-            (aParams getAt &index:anIndex)::convertorOp convertTo:(Arguments @ anIndex).
+            (aParams getAt &int:anIndex)::convertorOp convertTo:(Arguments @ anIndex).
             
             anIndex := anIndex + 1.
         ].

@@ -18,7 +18,7 @@
         theOutput readLength &vint:aLength.
 
         (0 < aLength)
-            ? [ theOutput set &length:(-1 + aLength). ].
+            ? [ theOutput setLength &int:(-1 + aLength). ].
         
         ^ theOutput literal.
     ]
@@ -36,7 +36,7 @@
         theOutput readLength &vint:aLength.
 
         (0 < aLength)
-            ? [ theOutput set &length:(-1 + aLength). ].
+            ? [ theOutput setLength &int:(-1 + aLength). ].
         
         ^ theOutput wide.
     ]
