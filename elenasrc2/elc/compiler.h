@@ -491,6 +491,13 @@ protected:
          return scope ? scope->info.extensionTypeRef : 0;
       }
 
+      bool isStackSafe()
+      {
+         MethodScope* ownerScope = (MethodScope*)getScope(Scope::slMethod);
+
+         return ownerScope->stackSafe;
+      }
+
 //      ref_t getObjectType(ObjectInfo object);
 
       void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
@@ -623,7 +630,7 @@ protected:
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 
-   ObjectInfo saveObject(CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo saveObject(CodeScope& scope, ObjectInfo& object, int offset);
 
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 

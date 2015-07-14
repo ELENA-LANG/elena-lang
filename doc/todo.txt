@@ -22,17 +22,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * stack allocated locals should be used directly, without need to assign them to the local variable
-                       * stack allocated objects : no need to save the reference to it as a normal reference, use okLocalAddress for such case,
-                         so boxing mechanism can be simplified
-
-                       * so boxing check should me made only for $self and parameters if the method is marked as stack safe
-                       * do not box stack allocated methods only for stack safe methods
-                       * review code for boxing, probably we could get rid of checkboxable method in most cases
-
-                       * typecasting : if the subject is declared implicitly, compiler should send typecasting message to the subject parameter,
-                         if the parameter type is known and equal to the target one, skip the typecasting ; if the parameter class is known, and
-                         the class implements the typecasting operation as idle one ( = $self) - skip as well.
                        * test basic test
                        * test examples
                        * test rosetta examples
@@ -112,7 +101,7 @@ Currently:
 
                        * try to minimize the list of type forwards
 
-                       * boxing / unboxing
+                       * boxing / unboxing (localaddress / fieldaddress)
 
                        * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
                          boxing / unboxing

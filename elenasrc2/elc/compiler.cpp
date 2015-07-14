@@ -2164,12 +2164,23 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int
    return retVal;
 }
 
-ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo object, int mode)
+ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo& object, int offset)
 {
-   _writer.pushObject(*scope.tape, object);
-   object.kind = okCurrent;
+   if (object.kind == okFieldAddress) {
+      if (object.param == 0) {
+         object.kind = okParam;
+         object.param = 1;
+      }
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), 0);
+   }
 
-   return object;
+   if (offset != 0) {
+      _writer.loadObject(*scope.tape, object);
+      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, offset));
+   }
+   else _writer.pushObject(*scope.tape, object);
+
+   return ObjectInfo(okCurrent, offset, 0, object.type);
 }
 
 bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode)
@@ -2199,6 +2210,13 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
 
 ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed)
 {
+   if (object.kind == okFieldAddress) {
+      if (object.param != 0) {
+         object = ObjectInfo(okParam, 1, scope.isStackSafe() ? -1 : 0, object.type);
+      }
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1));
+   }
+
    // NOTE: boxing should be applied only for the typed local parameter
    if (object.kind == okParams) {
       boxed = true;
@@ -3074,25 +3092,21 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    if (!dblOperator && object.kind != okAccumulator) {
       operand = compileExpression(node, scope, 0);
 
-      _writer.pushObject(*scope.tape, operand);
-      _writer.pushObject(*scope.tape, object);
+      saveObject(scope, operand, 0);
+      saveObject(scope, object, 0);
    }
    else {
       _writer.declareArgumentList(*scope.tape, dblOperator ? 3 : 2);
 
-      _writer.loadObject(*scope.tape, object);
-      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 0));
+      saveObject(scope, object, 0);
 
       if (dblOperator) {
          operand2 = compileExpression(node.nextNode().firstChild(), scope, 0);
-         _writer.loadObject(*scope.tape, operand2);
-
-         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
+         saveObject(scope, operand2, 2);
       }
 
       operand = compileExpression(node, scope, 0);
-      _writer.loadObject(*scope.tape, operand);
-      _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 1));
+      saveObject(scope, operand2, 1);
    }
 
    //recordStep(scope, node.Terminal(), dsProcedureStep);
@@ -3742,7 +3756,13 @@ ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode,
 
    // all collection memebers should be created before the collection itself
    while (node != nsNone) {
-      saveObject(scope, compileExpression(node, scope, mode), mode);
+      bool boxed = false;
+      ObjectInfo current = compileExpression(node, scope, mode);
+      current = boxObject(scope, current, boxed);
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+
+      _writer.pushObject(*scope.tape, current);
 
       node = node.nextNode();
       counter++;
@@ -3959,7 +3979,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
    // if primitive data operation can be used   
    if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
       // if it is an assignment operation (e.g. a := a + b <=> a += b)
-      int assignMode = isAssignOperation(node, assigning) ? HINT_ASSIGN_MODE : 0;
+      // excluding structure fields (except the first one)
+      int assignMode = ((target.kind != okFieldAddress || target.param == 0) && isAssignOperation(node, assigning)) ? HINT_ASSIGN_MODE : 0;
 
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, assignMode);
 
@@ -4221,7 +4242,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
             if (boxed)
                scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
 
-            saveObject(scope, ObjectInfo(okAccumulator), 0);
+            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 
             param.info.kind = okBlockLocal;
             param.info.param = ++externalScope.frameSize;
