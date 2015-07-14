@@ -14,6 +14,10 @@
 {
     test            
     [
+        #var r := Integer new.
+        #var n := "2".
+        
+        n convertTo:r.
     ]
 }.
 

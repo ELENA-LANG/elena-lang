@@ -3271,6 +3271,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          directCall = true;
       }
       else if (object.kind == okLocalAddress) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
          classReference = object.extraparam;
          directCall = true;
       }
@@ -3285,6 +3287,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       else if (object.kind == okSubject) {
          classReference = scope.moduleScope->signatureReference;
          dispatchCall = true;
+
+         _writer.loadObject(*scope.tape, object);
       }
       // if message sent to the $self
       else if (object.kind == okThisParam) {
