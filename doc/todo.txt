@@ -36,8 +36,7 @@ Currently:
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     
-                       * length, index and so on are no longer a strong typed, they should use strong typed operations
-                       * each, every and so on is no longer strong typed, so there should be strong typed altenative for them
+                       * Exception.if$generic - use primitive operation for comparision
                        * review system'collections, try to use more strong typed code
                        * used strong typed event handlers
                        * sqlite : support float

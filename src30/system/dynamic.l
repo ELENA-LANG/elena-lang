@@ -69,7 +69,7 @@
     #method subject = $self.
 
     /// Compares the values
-    #method equal &subject : aSubject
+    #method(stacksafe) equal &subject : aSubject
         => system'internal'subject_equal.
         
     /// Qualifies incoming messages and redirects to the target

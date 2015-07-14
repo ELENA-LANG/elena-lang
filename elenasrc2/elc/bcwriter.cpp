@@ -651,6 +651,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
       case okLocal:
       case okParam:
       case okThisParam:
+      case okSubject:
          // aloadfi index
          tape.write(bcALoadFI, object.param, bpFrame);
          break;

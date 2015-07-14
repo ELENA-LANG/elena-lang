@@ -2211,6 +2211,9 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
    else if (object.kind == okLocalAddress) {
       return !test(mode, HINT_STACKSAFE_CALL);
    }
+   else if (object.kind == okSubject) {
+      return true;
+   }
    else if (object.kind == okIndexAccumulator || object.kind == okFieldAddress) {
       return true;
    }
@@ -2684,6 +2687,9 @@ int Compiler :: defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t mess
 
    if (object.kind == okConstantSymbol || object.kind == okLocalAddress) {
       methodHint = scope.moduleScope->checkMethod(object.extraparam, messageRef);
+   }
+   else if (object.kind == okSubject) {
+      methodHint = scope.moduleScope->checkMethod(scope.moduleScope->signatureReference, messageRef);
    }
    else if (object.kind == okConstantClass) {
       // class is always sealed
@@ -3263,11 +3269,20 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          classReference = object.param;
          directCall = true;
       }
+      else if (object.kind == okLocalAddress) {
+         classReference = object.extraparam;
+         directCall = true;
+      }
       // if message sent to the class parent
       else if (object.kind == okSuper) {
          _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
 
          classReference = object.param;
+         directCall = true;
+      }
+      // if message sent to the subject variable
+      else if (object.kind == okSubject) {
+         classReference = scope.moduleScope->signatureReference;
          directCall = true;
       }
       // if message sent to the $self
