@@ -2701,6 +2701,9 @@ int Compiler :: defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t mess
    else if (object.kind == okThisParam) {
       methodHint = scope.moduleScope->checkMethod(scope.getClassRefId(), messageRef);
    }
+   else if (object.kind == okSubjectDispatcher) {
+      // subject dispatcher cannot be stack safe
+   }
    else if (object.kind == okSuper) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
@@ -3286,6 +3289,13 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       // if message sent to the subject variable
       else if (object.kind == okSubject) {
          classReference = scope.moduleScope->signatureReference;
+         directCall = true;
+
+         _writer.loadObject(*scope.tape, object);
+      }
+      // if message sent to the dispatcher
+      else if (object.kind == okSubjectDispatcher) {
+         classReference = scope.moduleScope->signatureReference;
          dispatchCall = true;
 
          _writer.loadObject(*scope.tape, object);
@@ -3323,14 +3333,14 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          }
          else methodHint = scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) & tpMask;
 
-         if ((directCall && methodHint != tpUnknown) || methodHint == tpSealed) {
+         if (dispatchCall) {
+            _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
+         }
+         else if ((directCall && methodHint != tpUnknown) || methodHint == tpSealed) {
             _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
          }
          else if (methodHint == tpClosed) {
             _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
-         }
-         else if (dispatchCall) {
-            _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
          }
          else {
             retVal.extraparam = 0;
@@ -3534,8 +3544,8 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
          }
       }
       if (role.kind == okSubject) {
-         // if subject variable is used
-         // it should be used directly
+         // if subject variable is used         
+         role = ObjectInfo(okSubjectDispatcher, role.param);
       }
       // if the symbol VMT can be used as an external role
       else if (test(flags, elStateless)) {
@@ -3575,7 +3585,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
 
    ObjectInfo retVal(okAccumulator);
    // if it is a not a constant or subject variable, compile a role
-   if (role.kind != okConstantSymbol && role.kind != okSubject)
+   if (role.kind != okConstantSymbol && role.kind != okSubject && role.kind != okSubjectDispatcher)
       _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
 
    // send message to the role

@@ -683,6 +683,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
          break;
       case okLocalAddress:
       case okSubject:
+      case okSubjectDispatcher:
          // acopyf n
          tape.write(bcACopyF, object.param);
          break;

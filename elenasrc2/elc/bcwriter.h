@@ -42,7 +42,8 @@ enum ObjectKind
    okOuterField,                   // param - field offset, extraparam - outer field offset
    okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable
    okParam,                        // param - parameter offset
-   okSubject,
+   okSubject,                      // param - parameter offset
+   okSubjectDispatcher,
    okThisParam,                    // param - parameter offset
    okNil,
    okSuper,

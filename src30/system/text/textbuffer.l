@@ -115,7 +115,7 @@
 
     #method(stacksafe) write &char:aChar
     [
-        $self reserve &length:1.
+        $self reserve &int:1.
         
         theBuffer write &int:theLength &char:aChar.
         
@@ -141,7 +141,7 @@
 
     #method insert &int:anIndex &int:aLength &chararray:anArray
     [
-        $self reserve &length:aLength.
+        $self reserve &int:aLength.
         
         theBuffer move &int:anIndex &int:theLength &int:aLength.
         

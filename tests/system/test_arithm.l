@@ -12,12 +12,14 @@
                                     
 #symbol XTester =
 {
+    #method safeEqual : anObject
+        = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self.
+        
     test            
     [
-        #var r := Integer new.
-        #var n := "2".
+        #var s:="abx".
         
-        n convertTo:r.
+        #var b2 := s safeEqual:s.
     ]
 }.
 
