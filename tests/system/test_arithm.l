@@ -685,4 +685,8 @@
         
         aCopy::prop set:prop_value.
     ].
+    
+    #var x := aCopy X.
+    #var y := aCopy Y.
+    #var z := aCopy Z.
 ].

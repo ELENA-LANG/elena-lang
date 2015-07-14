@@ -22,12 +22,8 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * test basic test : GroupTest
-                       * test basic test : DTOToStructTest
                        * test examples
                        * test rosetta examples
-                       * make sure direct methods are called in appropriate cases
-                       * make sure idle typecasting message is not invoked
 
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
@@ -38,6 +34,7 @@ Currently:
                        
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
+                       * get rid of all warnings in system package
                        * review system'collections, try to use more strong typed code
                        * used strong typed event handlers
                        * sqlite : support float
@@ -80,6 +77,8 @@ Currently:
                        * test : new project, new file, include, exclude, save, ...
                          
               xdev - general development
+                       * make sure direct methods are called in appropriate cases
+                       * make sure idle typecasting message is not invoked
                        * refactoring : declareParameterDebugInfo - use debug hint flags
                        * refactoring : compileInlineArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
                        * refactoring : compileInlineVarArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly

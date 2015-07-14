@@ -36,8 +36,6 @@
             
     #method(generic)set : anObject
     [
-        #var(type:subject) aSubject := $subject.
-        
         // looking for the current subject
         #var(type:int)anIndex := 0.
         #var(type:int)aLength.
@@ -48,7 +46,7 @@
         [
             #var aCurrent := theStruct::classROp getField &int:anIndex.
             
-            (aSubject::subjectROp $equalSubject:aCurrent)
+            ($subject::subjectROp $equalSubject:aCurrent)
                 ? [ aNotFound := false. ]
                 ! [ anIndex := anIndex + 2. ].
         ].
@@ -58,7 +56,7 @@
         [                                    
             theStruct := theStruct::arrayOp reallocate &int:(aLength + 2).
 
-            theStruct::classROp setField &int:anIndex &object:aSubject.
+            theStruct::classROp setField &int:anIndex &object:$subject.
         ].
 
         // set the content for the appropriate field
