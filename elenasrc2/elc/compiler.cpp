@@ -3237,6 +3237,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       ref_t classReference = 0;
       bool directCall = false;
       bool itselfCall = false;
+      bool dispatchCall = false;
       // if static message is sent to a class class
       if (object.kind == okConstantClass) {
          retVal.param = object.param;
@@ -3283,7 +3284,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       // if message sent to the subject variable
       else if (object.kind == okSubject) {
          classReference = scope.moduleScope->signatureReference;
-         directCall = true;
+         dispatchCall = true;
       }
       // if message sent to the $self
       else if (object.kind == okThisParam) {
@@ -3323,6 +3324,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          }
          else if (methodHint == tpClosed) {
             _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
+         }
+         else if (dispatchCall) {
+            _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
          }
          else {
             retVal.extraparam = 0;
@@ -3525,8 +3529,12 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
             flags = roleClass.header.flags;
          }
       }
+      if (role.kind == okSubject) {
+         // if subject variable is used
+         // it should be used directly
+      }
       // if the symbol VMT can be used as an external role
-      if (test(flags, elStateless)) {
+      else if (test(flags, elStateless)) {
          role = ObjectInfo(okConstantRole, role.param);
       }
       else role = ObjectInfo(okRole);
@@ -3562,8 +3570,8 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode& node, DNode& roleNode, Cod
    mode |= paramMode;
 
    ObjectInfo retVal(okAccumulator);
-   // if it is a not a constant, compile a role
-   if (role.kind != okConstantSymbol)
+   // if it is a not a constant or subject variable, compile a role
+   if (role.kind != okConstantSymbol && role.kind != okSubject)
       _writer.loadObject(*scope.tape, compileObject(roleNode, scope, mode));
 
    // send message to the role

@@ -672,7 +672,7 @@
 #symbol DTOToStructTest =
 [
     #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-    #var aProperties := MessageArray new &length:10.
+    #var aProperties := MessageArray new &int:10.
     #var aLength := Integer new.
     
     aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.

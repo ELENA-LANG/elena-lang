@@ -71,13 +71,14 @@ protected:
 
    enum MethodHint
    {
-      tpMask      = 0x0F,
+      tpMask       = 0x0F,
 
-      tpUnknown   = 0x00,
-      tpSealed    = 0x01,
-      tpClosed    = 0x02,
-      tpNormal    = 0x03,
-      tpStackSafe = 0x10,
+      tpUnknown    = 0x00,
+      tpSealed     = 0x01,
+      tpClosed     = 0x02,
+      tpNormal     = 0x03,
+      tpDispatcher = 0x04,
+      tpStackSafe  = 0x10,
    };
 
    struct Unresolved
