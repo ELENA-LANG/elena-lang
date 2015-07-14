@@ -3127,7 +3127,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       }
 
       operand = compileExpression(node, scope, 0);
-      saveObject(scope, operand2, 1);
+      saveObject(scope, operand, 1);
    }
 
    //recordStep(scope, node.Terminal(), dsProcedureStep);

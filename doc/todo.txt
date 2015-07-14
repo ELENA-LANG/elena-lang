@@ -22,7 +22,8 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * test basic test : exception test
+                       * test basic test : GroupTest
+                       * test basic test : DTOToStructTest
                        * test examples
                        * test rosetta examples
                        * make sure direct methods are called in appropriate cases
