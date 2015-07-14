@@ -871,15 +871,15 @@
     #method indexOf : aSearchObject &at:anIndex
         = aSearchObject cast:%eval &to:
             {
-               eval &literal:aLiteral
-                  = self indexOf &int:(anIndex int) &literal:aLiteral.
+               eval:anIndex &literal:aLiteral
+                  = self indexOf &literal:aLiteral &at:anIndex.
     
-               eval &wide:aLiteral
-                  = self indexOf &int:(anIndex int) &literal:(aLiteral literal).
+               eval:anIndex &wide:aLiteral
+                  = self indexOf &literal:(aLiteral literal) &at:anIndex.
     
-               eval &char:aChar
-                  = self indexOf &int:(anIndex int) &char:aChar.
-            }.
+               eval:anIndex &char:aChar
+                  = self indexOf &char:aChar &at:anIndex.
+            } &with:anIndex.
 
     /// Returns the index of the first occurence of the specified symbol.
     /// 
@@ -1624,6 +1624,10 @@
     /// Creates an empty array
     #constructor min
         => system'internal'arr_empty.
+    
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
     
     /// Creates the array with the specified length
     #constructor(stacksafe) new &int:aLength

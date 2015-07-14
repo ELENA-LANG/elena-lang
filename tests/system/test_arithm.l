@@ -9,7 +9,7 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-
+    
 #symbol XTester =
 {
     test            
@@ -432,16 +432,16 @@
 
     console writeLine.
 
-    #var n := "abcd" indexOf &index:0 &literal:"bc".
-    #var n2 := "abcd" indexOf &index:0 &literal:"bac".
+    #var n := "abcd" indexOf:"bc" &at:0.
+    #var n2 := "abcd" indexOf:"bac" &at:0.
 
-    #var s := "acd" insert &index:1 &literal:"b".
+    #var s := "acd" insert:"b" &at:1.
     #var ls := s length.
 
-    #var s2 := "abbcd" delete &index:1 &length:1.
+    #var s2 := "abbcd" delete:1 &at:1.
     #var ls2 := s2 length.
     
-    #var s3 := "abcd" Substring &index:1 &length:2.
+    #var s3 := "abcd" Substring:2 &at:1.
     #var ls3 := s3 length.
    
     "abc" getAt:2.
@@ -460,12 +460,12 @@
     #var a1 := Array(1,2,3).
     #var n := a1 @ 1.
 
-    #var(type:array) a4 := Array new &length:3.
+    #var(type:array) a4 := Array new:3.
     a4 setAt:0:2.
     a4 setAt:1:1.
     a4 setAt:2:3.
     
-    #var a2 := Array new &length:5 set &every: (&index:x) [ Integer new &int:x ].    
+    #var a2 := Array new:5 set &every: (&index:x) [ Integer new:x ].    
     #var n2 := a2 @ 1.
     a2 setAt:1:-1.
     #var n3 := a2 @ 1.

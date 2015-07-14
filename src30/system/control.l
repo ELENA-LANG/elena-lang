@@ -757,7 +757,13 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nfunc:$self.
     
     /// Executes the function
-    #method(stacksafe) eval &int:n []
+    ///
+    /// Default implementation calls eval&index for compatibility with old code
+    #method(stacksafe) eval &int:n 
+        = $self eval &index:(IntNumber new &int:n).
+
+    /// Obsolete
+    #method(stacksafe) eval &index:n []
 
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
     #method(stacksafe) rewind &int:aStart &int:n &int:dx

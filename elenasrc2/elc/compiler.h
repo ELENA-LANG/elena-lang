@@ -631,6 +631,7 @@ protected:
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 
    ObjectInfo saveObject(CodeScope& scope, ObjectInfo& object, int offset);
+   ObjectInfo loadObject(CodeScope& scope, ObjectInfo& object);
 
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 

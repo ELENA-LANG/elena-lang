@@ -2164,7 +2164,22 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int
    return retVal;
 }
 
-ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo& object, int offset)
+ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object)
+{
+   if (object.kind == okFieldAddress) {
+      if (object.param == 0) {
+         object.kind = okParam;
+         object.param = 1;
+      }
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), 0);
+   }
+
+   _writer.loadObject(*scope.tape, object);
+
+   return ObjectInfo(okAccumulator, 0, 0, object.type);
+}
+
+ObjectInfo Compiler::saveObject(CodeScope& scope, ObjectInfo& object, int offset)
 {
    if (object.kind == okFieldAddress) {
       if (object.param == 0) {
@@ -2317,7 +2332,7 @@ void Compiler :: compileMessageParameter(DNode& arg, TerminalInfo& subject, Code
 
       ObjectInfo param = compileObject(arg.firstChild(), scope, 0);
 
-      _writer.loadObject(*scope.tape, param);
+      loadObject(scope, param);
 
       // if type is mismatch - typecast
       bool mismatch = false;
