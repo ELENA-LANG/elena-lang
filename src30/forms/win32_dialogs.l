@@ -49,7 +49,7 @@
 {
     #method run
     [
-        #var aDialog := system'winforms'SaveFileDialog new &hwnd:(theParent hwnd) &filters:theFilters &filter_index:0 &length:255 &wide:(theTitle wide).
+        #var aDialog := system'winforms'SaveFileDialog new &hwnd:(theParent hwnd) &filters:theFilters &int:0 &int:255 &wide:(theTitle wide).
         
         theSelectedPath := aDialog select.
         

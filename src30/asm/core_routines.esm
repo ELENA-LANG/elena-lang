@@ -4074,7 +4074,7 @@ procedure s_encode
   nsave
   aloadsi 1
   
-  quitn 7
+  quitn 6
 
 labErr:
   open 1
@@ -4112,7 +4112,7 @@ procedure ws_encode
   nsave
   aloadsi 1
   
-  quitn 7
+  quitn 6
 
 labErr:
   open 1
@@ -4150,7 +4150,7 @@ procedure s_decode
   nsave
   aloadsi 1
   
-  quitn 7
+  quitn 6
 
 labErr:
   open 1
@@ -4188,7 +4188,7 @@ procedure ws_decode
   nsave
   aloadsi 1
   
-  quitn 7
+  quitn 6
 
 labErr:
   open 1
