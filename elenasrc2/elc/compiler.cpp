@@ -3637,6 +3637,9 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
          scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
    }
 
+   // HOT FIX : mark action as stack safe if the hint was declared in the parent class
+   methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+
    return lazyExpression;
 }
 

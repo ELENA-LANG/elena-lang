@@ -22,7 +22,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * test examples : pi
+                       * test examples : bsort
                        * test rosetta examples
 
               xdev - script engine
@@ -142,6 +142,7 @@ week2:
                        * optimize TextBuffer.indexOf&index&literal&vint
                        * optimize TextBuffer.indexOf&index&char&vint
                        * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
+                       * get rid of all warnings in lib30
 
                adev - console operations:  
                        * read / write operation: complex types
