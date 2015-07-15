@@ -2179,7 +2179,7 @@ ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object)
    return ObjectInfo(okAccumulator, 0, 0, object.type);
 }
 
-ObjectInfo Compiler::saveObject(CodeScope& scope, ObjectInfo& object, int offset)
+ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo& object, int offset)
 {
    if (object.kind == okFieldAddress) {
       if (object.param == 0) {
@@ -2189,13 +2189,15 @@ ObjectInfo Compiler::saveObject(CodeScope& scope, ObjectInfo& object, int offset
       else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), 0);
    }
 
-   if (offset != 0) {
+   if (offset >= 0) {
       _writer.loadObject(*scope.tape, object);
       _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, offset));
-   }
-   else _writer.pushObject(*scope.tape, object);
 
-   return ObjectInfo(okCurrent, offset, 0, object.type);
+      return ObjectInfo(okCurrent, offset, 0, object.type);
+   }
+
+   _writer.pushObject(*scope.tape, object);
+   return ObjectInfo(okCurrent, 0, 0, object.type);
 }
 
 bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode)
@@ -3116,8 +3118,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    if (!dblOperator && object.kind != okAccumulator) {
       operand = compileExpression(node, scope, 0);
 
-      saveObject(scope, operand, 0);
-      saveObject(scope, object, 0);
+      saveObject(scope, operand, -1); // indicates operand should be pushed rather than saved
+      saveObject(scope, object, -1);
    }
    else {
       _writer.declareArgumentList(*scope.tape, dblOperator ? 3 : 2);
