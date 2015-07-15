@@ -130,7 +130,7 @@
     #method Marked
         = (-1 == theIndex)
             ? [ theValue Substring:theStart ]
-            ! [ theValue Substring:theStart:(theIndex - theStart) ].
+            ! [ theValue Substring:(theIndex - theStart) &at:theStart ].
     
     #method literal => theValue.
     

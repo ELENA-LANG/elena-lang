@@ -1032,10 +1032,10 @@
 #class(extension) stringOp
 {
     #method Substring : anIndex
-        = self Substring &index:(anIndex int) &length:(self length - anIndex int).
+        = self Substring:(self length - anIndex) &at:(anIndex int).
             
     #method Substring : anIndex : aLength
-        = self Substring &index:(anIndex int) &length:(aLength int).
+        = self Substring:aLength &at:anIndex.
             
     #method trimLeft &char:aChar
     [

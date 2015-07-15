@@ -825,7 +825,13 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nnfunc:$self.
     
     /// Executes the function
-    #method(stacksafe) eval &int:i &int:j []
+    ///
+    /// Default implementation calls eval&index&index for compatibility with old code
+    #method(stacksafe) eval &int:i &int:j
+        = $self eval &index:(IntNumber new &int:i) &index:(IntNumber new &int:j).
+
+    /// Obsolete
+    #method eval &index:i &index:j []
 
     /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
     #method rewind &int:i &int:j &int:n &int:m &int:dx
