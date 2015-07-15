@@ -1259,7 +1259,7 @@
             #var(type:int)aHeight.
             theSize dimension read &vint:aWidth &vint:aHeight.
             
-            #var anImage := theImages getAt &index:(theIndex int).
+            #var anImage := theImages getAt &int:(theIndex int).
             
             aCanvas write &image:(anImage image) &int:0 &int:0 &int:aWidth &int:aHeight.
         ].

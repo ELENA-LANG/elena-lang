@@ -22,7 +22,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * test examples : agenda
                        * test rosetta examples
 
               xdev - script engine

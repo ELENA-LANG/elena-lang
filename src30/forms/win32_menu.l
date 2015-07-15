@@ -11,9 +11,9 @@
     
     #method items =
     {
-        getAt : anIndex = $self getAt &index:(anIndex int).
+        getAt : anIndex = $self getAt &int:(anIndex int).
         
-        getAt &index:anIndex => theItems.        
+        getAt &int:anIndex => theItems.        
         
         append &caption:aCaption &onClick:anAction
         [
