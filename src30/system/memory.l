@@ -1630,6 +1630,12 @@
         <= new &int:(aLength int).
     
     /// Creates the array with the specified length
+    ///
+    /// Obsolete
+    #constructor new &length:aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
     #constructor(stacksafe) new &int:aLength
         => system'internal'arr_create.
     

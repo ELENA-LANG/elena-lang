@@ -1083,14 +1083,14 @@
     [
         #var dispatcher := self cast:%eval &to:stringOpDispatcher.
         
-        ^ self::dispatcher padLeft &char:aChar &length:aLength.
+        ^ self::dispatcher padLeft &char:aChar &int:(aLength int).
     ]
     
     #method padRight &char:aChar &length:aLength
     [
         #var dispatcher := self cast:%eval &to:stringOpDispatcher.
         
-        ^ self::dispatcher padRight &char:aChar &length:aLength.
+        ^ self::dispatcher padRight &char:aChar &int:(aLength int).
     ]
     
     #method startingWith : s

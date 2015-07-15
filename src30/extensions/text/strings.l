@@ -80,7 +80,7 @@
 
     #method find &value:aValue
     [
-        theIndex := theValue indexOf:theIndex:aValue.
+        theIndex := theValue indexOf:aValue &at:theIndex.
         
         ^ (-1 != theIndex).
     ]
@@ -110,14 +110,14 @@
     
     #method insert &value:aValue
     [
-        theValue := theValue insert:theIndex:aValue.
+        theValue := theValue insert:aValue &at:theIndex.
         
         theIndex := theIndex + aValue length.
     ]
     
     #method delete &length:aLength
     [
-        theValue := theValue delete:theIndex:aLength.
+        theValue := theValue delete:aLength &at:theIndex.
     ]
 
     #method clear
