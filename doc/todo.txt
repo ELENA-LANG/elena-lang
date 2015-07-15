@@ -23,8 +23,6 @@ Currently:
 ------                                                                                         
               xdev - general development
                        * test rosetta examples : anagram
-                       * test rosetta examples : cowsbulls
-                       * test rosetta examples : calendar
 
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use

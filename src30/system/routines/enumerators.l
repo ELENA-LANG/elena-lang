@@ -199,6 +199,10 @@
     #method Subarray : aLength &at:anIndex
         = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
     
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
+        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+    
     #method Subarray &int:anIndex &int:aLength
     [
         #var(type:iterator) it := self iterator.
@@ -1010,6 +1014,10 @@
         = (self clone)::indexableOp sort:ifOrdered.
 
     #method Subarray : aLength &at:anIndex
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
         = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
                 
     #method Subarray &int:anIndex &int:aLength

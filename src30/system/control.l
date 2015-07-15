@@ -192,7 +192,10 @@
     #method(stacksafe) readIndex &vint:anIndex []
     
     /// Sets the index by specified value
-    #method(stacksafe) writeIndex &int:anIndex [] 
+    ///
+    /// Default implementation for compatibility calls obsolete write&index method
+    #method(stacksafe) writeIndex &int:anIndex 
+        [ $self write &index:(IntNumber new &int:anIndex). ] 
     
     /// Returns the index value
     #method index
@@ -206,6 +209,9 @@
     /// Sets the index by specified value
     #method set &index:anIndex 
         <= writeIndex &int:(anIndex int).
+    
+    /// obsolete
+    #method write &index:anIndex []
     
     /// Increaments the index by specified value
     #method append &index:anOffset
