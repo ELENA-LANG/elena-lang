@@ -273,6 +273,10 @@
         
     #method remove &at:anIndex
         <= remove &int:(anIndex int).
+
+    /// obsolete        
+    #method remove &index:anIndex
+        <= remove &int:(anIndex int).
         
     /// Returns the number of list items
     #method length = theCount int.

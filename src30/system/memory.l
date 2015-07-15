@@ -881,6 +881,10 @@
                   = self indexOf &char:aChar &at:anIndex.
             } &with:anIndex.
 
+    /// obsolete            
+    #method indexOf:anIndex:aSearchObject
+        <= indexOf:aSearchObject &at:anIndex.
+
     /// Returns the index of the first occurence of the specified symbol.
     /// 
     /// If the substring is not found. returns -1

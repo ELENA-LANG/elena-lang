@@ -22,14 +22,9 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development
-                       * test rosetta examples : amb
                        * test rosetta examples : anagram
-                       * test rosetta examples : aplusb
-                       * test rosetta examples : cesar
                        * test rosetta examples : cowsbulls
                        * test rosetta examples : calendar
-                       * test rosetta examples : combination
-                       * test rosetta examples : smavg
 
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use

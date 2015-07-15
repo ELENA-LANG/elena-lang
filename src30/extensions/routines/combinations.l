@@ -33,7 +33,7 @@
         ($nil == (Indexers seek &each: anIndexer 
                 [
                     (anIndexer append &index:1 available)
-                        ! [ anIndexer write &index:0. ^ false. ].
+                        ! [ anIndexer writeIndex &int:0. ^ false. ].
                         
                     ^ true.
                 ]))
@@ -52,7 +52,7 @@
 {
     eval : Indexers &int:aLength
     [
-        Indexers  run &each: anIndexer [ anIndexer write &index:0. ].
+        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
         
         ^ sequentialNext.
     ]
@@ -82,7 +82,7 @@
 {
     eval : Indexers &int:aLength
     [
-        Indexers run &each: anIndexer [ anIndexer write &index:0. ].
+        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
         
         ^ parallelNext.
     ]
@@ -121,7 +121,7 @@
         
         //i to &int:(k - 1)
         IntNumber new &int:i to &int:(k - 1)
-            &nfunc: (&int:j) [ anArray getAt &int:j write &int:(IntNumber new &int:(anArray getAt &int:(j - 1) index int + 1)). ].
+            &nfunc: (&int:j) [ anArray getAt &int:j writeIndex &int:(IntNumber new &int:(anArray getAt &int:(j - 1) index int + 1)). ].
             
         ^ $self.            
     ]
@@ -134,7 +134,7 @@
         #var(type:array)anArray := Indexers array.
         #var(type:int)aLength := anArray length.
         
-        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i write &index:i. ].
+        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i writeIndex &int:i. ].
         
         ^ combinationNext.
     ]

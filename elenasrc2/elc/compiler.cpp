@@ -1479,7 +1479,7 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
          // map if the object is outer one
          else if (outer.outerObject.kind==okParam || outer.outerObject.kind==okLocal || outer.outerObject.kind==okField
             || outer.outerObject.kind==okOuter || outer.outerObject.kind==okSuper || outer.outerObject.kind == okThisParam
-            || outer.outerObject.kind==okOuterField)
+            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
          {
             outer.reference = info.fields.Count();
 
@@ -3464,8 +3464,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
       if (member == nsExtension) {
          currentObject = compileExtension(member, scope, currentObject, mode);
-
-         continue;
       }
       else if (member==nsMessageOperation) {
          currentObject = compileMessage(member, scope, currentObject, mode);
@@ -3563,11 +3561,7 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    //if (role.kind == okConstantRole)
    //   mode |= HINT_KNOWN_CALL;
 
-   while (node==nsMessageOperation) {
-      object = compileExtensionMessage(node, roleNode, scope, object, role, mode);
-
-      node = node.nextNode();
-   }
+   object = compileExtensionMessage(node, roleNode, scope, object, role, mode);
 
    return object;
 }
@@ -3749,7 +3743,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
             _writer.loadObject(*ownerScope.tape, info);
             _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
          }
-         else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress) {
+         else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
             if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
                _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
                toFree++;
