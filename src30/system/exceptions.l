@@ -129,6 +129,12 @@
     /// Creates the exception
     #constructor new:aMessage
         <= %new &literal:(aMessage literal) &subject:%InvalidArgumentError.
+                
+    /// Creates the exception
+    ///
+    /// Obsolete
+    #constructor new &message:aMessage
+        <= %new &literal:(aMessage literal) &subject:%InvalidArgumentError.        
 }
 
 // --- InvalidOperationException ---
