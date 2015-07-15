@@ -21,9 +21,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xdev - general development
-                       * test rosetta examples : anagram
-
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
                          another one in future
@@ -42,7 +39,8 @@ Currently:
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
-
+                       * fix anagram rosetta examples
+                       
               xdev - linux:
                        * fix samples
                        * implement DateTime / Timespan classes

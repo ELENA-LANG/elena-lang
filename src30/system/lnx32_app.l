@@ -17,14 +17,14 @@
         #var(type:int)argc.
         $self $getArgC &vint:argc.
 
-        #var args := Array new &length:argc.
+        #var args := Array new &int:argc.
         #var(type:int)i := 0.
         #loop (i < argc)?
         [
             len := 256.
             $self $getArg &int:(i + 1) &bytearray:buf &vint:len.
 
-            args setAt &index:i &object:(LiteralValue $new &length:len &index:0 &bytearray:buf).
+            args setAt &int:i &object:(LiteralValue $new &int:0 &int:len &bytearray:buf).
 
             i := i + 1.
         ].
