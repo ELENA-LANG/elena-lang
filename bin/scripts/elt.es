@@ -3,4 +3,4 @@
    #start;
 ]]
 
-system'console writeLine:"Hello".
+( system'console "Hello world" ) ^ writeLine.

@@ -1,8 +1,15 @@
 ﻿
                                 ELENA Language 
 
-                                Version 1.9.19
+                                Version 1.9.20
  
+******************************************************************************
+                    What's New in 1.9.20 (pre release)
+******************************************************************************
+
+[ElenaScript]
+[*] refactored / syntax modified
+
 ******************************************************************************
                     What's New in 1.9.19 (pre release)
 ******************************************************************************
@@ -19,7 +26,6 @@
 [+] built-in $nil symbol
 [+] a class hint "stringof" supports type argument as well (e.g. stringof:int)
 [+] coreapi : loading subject by name, returning the subject name
-
 [+] new method hint : stacksafe
 
 [ELC]

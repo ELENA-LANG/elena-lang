@@ -72,6 +72,17 @@ Currently:
                        * TextView: cursor blinking
                        * IDE UI : facelifting, tuning
                        * test : new project, new file, include, exclude, save, ...
+                       
+              srev - console samples
+                       * sqlite sample
+                       * simplify goods (Record.get&Literal implementation)
+                       * rewrite pi sample to use stack allocated variables / parallel calculating
+                       * matrix: use Pair in matrix sample
+                       * textdb: dynamically unserialize subject
+                       * matrix: test matrix operations
+                       * matrix: multiply - should use realnumber rather than real
+                       * migrate calc, interpreter samples
+                       * vmconsole
                          
               xdev - general development
                        * make sure direct methods are called in appropriate cases
@@ -175,17 +186,6 @@ Currently:
                        * read / write operation: complex types
                        * write formatted numbers
                        * write formatted string (with parameters)
-                       
-              srev - console samples
-                       * sqlite sample
-                       * simplify goods (Record.get&Literal implementation)
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-                       * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
-                       * migrate calc, interpreter samples
-                       * vmconsole
                        
               srev - gui samples
                        * notepad: add status bar
