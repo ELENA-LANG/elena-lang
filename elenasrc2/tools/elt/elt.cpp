@@ -13,12 +13,12 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   16
+#define ELT_BUILD_NUMBER   1
  
 // global variables
 int   _encoding = feAnsi;
 
-const wchar16_t* trim(const wchar16_t* s)
+const char* trim(const char* s)
 {
    while(s[0]==0x20)s++;
 
@@ -33,38 +33,42 @@ void printHelp()
    printf("<script>             - execute script\n");
 }
 
-void executeScript(const wchar16_t* script)
+void executeScript(const char* script)
 {
    int retVal = InterpretScript(script);
    if (retVal == 0) {
-      wchar16_t error[0x200];
+      char error[0x200];
       int length = GetStatus(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
-         wprintf(_T("\nFailed:%s"), error);
+         _ELENA_::WideString message(error);
+
+         wprintf(L"\nFailed:%s", (const wchar_t*)message);
       }
       return;
    }
 }
 
-void loadScript(const wchar16_t* path)
+void loadScript(const char* path)
 {
    path = trim(path);
 
    int retVal = InterpretFile(path, _encoding, false);
    if (retVal == 0) {
-      wchar16_t error[0x200];
+      char error[0x200];
       int length = GetStatus(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
-         wprintf(_T("\nFailed:%s"), error);
+         _ELENA_::WideString message(error);
+
+         wprintf(L"\nFailed:%s", (const wchar_t*)message);
       }
       return;
    }
 
 }
 
-bool executeCommand(const wchar16_t* line, bool& running)
+bool executeCommand(const char* line, bool& running)
 {
    if (emptystr(line))
       return false;
@@ -84,7 +88,7 @@ bool executeCommand(const wchar16_t* line, bool& running)
    return true;
 }
 
-bool executeCommand(const wchar16_t* line)
+bool executeCommand(const char* line)
 {
    bool dummy;
    return executeCommand(line, dummy);
@@ -92,17 +96,16 @@ bool executeCommand(const wchar16_t* line)
 
 void runSession()
 {
-   char                        buffer[MAX_LINE];
-   String<wchar_t, MAX_SCRIPT> line;
-   bool running = true;
+   wchar_t          buffer[MAX_LINE];
+   IdentifierString line;
+   bool             running = true;
 
    do {
       try {
          printf("\n>");
 
-         // !! fgets is used instead of fgetws, because there is strange bug in fgetws implementation
-         fgets(buffer, MAX_LINE, stdin);
-         line.copy(buffer, strlen(buffer));
+         fgetws(buffer, MAX_LINE, stdin);
+         IdentifierString line(buffer, getlength(buffer));
 
          while (!emptystr(line) && line[getlength(line) - 1]=='\r' || line[getlength(line) - 1]=='\n')
             line[getlength(line) - 1] = 0;
@@ -129,7 +132,7 @@ int main(int argc, char* argv[])
 {
    printf("ELENA command line VM terminal %d.%d.%d (C)2011-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
-   loadScript(ConstantIdentifier("scripts\\elt.es"));
+   loadScript("scripts\\elt.es");
 
    // load script passed via command line arguments
    if (argc > 1) {
@@ -139,14 +142,7 @@ int main(int argc, char* argv[])
             if (argv[i][1] == 'q')
                return 0;
 
-            String<wchar_t, 260> param;
-            param.copy(argv[i]);
-            // if the parameter is followed by argument
-            if (i + 1 < argc && argv[i+1][0] != '-') {
-               param.append(argv[i + 1]);
-            }
-
-            executeCommand(param + 1);
+            executeCommand(argv[i]);
          }
       }
    }

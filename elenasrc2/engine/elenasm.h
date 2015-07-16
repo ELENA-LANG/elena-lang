@@ -9,17 +9,17 @@
 #define elenasmH 1
 
 // should be used from stand-alone application
-extern "C" __declspec(dllimport) int InterpretScript(const wchar_t* script);
+extern "C" __declspec(dllimport) int InterpretScript(const char* script);
 
 // should be used from stand-alone application
-extern "C" __declspec(dllimport) int InterpretFile(const wchar_t* path, int encoding, bool autoDetect);
+extern "C" __declspec(dllimport) int InterpretFile(const char* path, int encoding, bool autoDetect);
 
 // should be used from ELENA program
-extern "C" __declspec(dllimport) int EvaluateScript(const wchar_t* script);
+extern "C" __declspec(dllimport) int EvaluateScript(const char* script);
 
 // should be used from ELENA program
-extern "C" __declspec(dllimport) int EvaluateFile(const wchar_t* path, int encoding, bool autoDetect);
+extern "C" __declspec(dllimport) int EvaluateFile(const char* path, int encoding, bool autoDetect);
 
-extern "C" __declspec(dllimport) int GetStatus(wchar_t* error, int maxLength);
+extern "C" __declspec(dllimport) int GetStatus(char* error, int maxLength);
 
 #endif // elenasmH

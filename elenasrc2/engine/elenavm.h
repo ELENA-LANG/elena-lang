@@ -14,6 +14,6 @@ extern "C" __declspec(dllimport) int Interpret(void* tape);
 // Should be used from ELENA program
 extern "C" __declspec(dllimport) int Evaluate(void* tape);
 
-extern "C" __declspec(dllimport) wchar_t* GetLVMStatus();
+extern "C" __declspec(dllimport) const char* GetLVMStatus();
 
 #endif // elenavmH

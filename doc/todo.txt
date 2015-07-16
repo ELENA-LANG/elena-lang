@@ -24,9 +24,11 @@ Currently:
               xdev - script engine
                        * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
                          another one in future
+                       * reimplement script engine : basic operations
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+
                        * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects,
                          overwriding the object (just in place mutation)
-                       * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
@@ -109,9 +111,8 @@ Currently:
 
 <=================> 
                                                                                                                             
-1.9.19
---------
-week2:
+2.0.0
+-----                                                                
               adev - lib30 optimization
                        * review system'calendar implementation
                        * reivew system'winforms'SDIApplication.start, optimize the main loop
@@ -175,7 +176,6 @@ week2:
                        * example with buttons, edit on panel
                        
 
-week3:
               xdev - script engine
                        * review script
                        * uncomment extension code
@@ -322,7 +322,6 @@ week3:
               sdev - samples
                        * migrate all script samples
 
-week 4:
               xmaint - web page
                        * update github read me, to provide information how to contibute, getting started, how to build, hot to compile the project, 
                        * update the web page using bootstrap
@@ -381,9 +380,6 @@ week 4:
                        * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
                          to any object
 
-1.9.20
---------
-week1:
                xdev - advanced concepts
                        * it should not be hard coded ; some template mechanism ; we could actively use extensions
                        
@@ -411,10 +407,6 @@ week1:
                               #prop property.
                           }
 
-
-
-
-
                        * properties (stack allocated / typed / generic)
                        * typedcasted containers
                        * dispatching
@@ -428,8 +420,7 @@ week1:
                          the key is known??  what about unknown target in that case - use non optimized get&hash_code method
 
                        * two line per initializing - some extension to simplify the assigning
-                         #var(type:int)code := ????.
-
+                         #var(type:int)code := ????.                         
 
                        * work with stack allocated objects ; it is not possible to use stack allocated objects with generic objects ;
                          complicated system with int and vint ; to read a length, at least two line of the code should be written, ...
@@ -475,16 +466,12 @@ week1:
                        * boxing, if the stack allocated object was boxed after the end of the operation it should be unboxed (if the type is read only - no
                          need in unbox part)
   
-                       * direct call method for stack allocated object - only safe one, or should be boxed
-
                        * boxing not read only stack allocated objects - the dynamic object should copy its content to the original one
                          
                        * declaring variable without assigning a value should be allowed only for stack allocated types , in all other cases we may have
                          nil object referred by strong typed variable
                        * check the operation with nil (as a wrapper around $nil) 
                        
-                       * primitive arithmetic operations "+","-","*","/" - the result should be IntNumber
-
                        * structural types : you may specify the type of sructural class: integer, real, pointer, stringof (integer), subject, message
                          implement primitive operations : + - * / += -= *= /= << == != < > >= <= @ @:= for all possible situations
 
@@ -584,10 +571,6 @@ week1:
                        * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
                          symbols as an argument
                        * cache type checks
-                       * review current primitive stack allocation ; probably primtive variables declared in the sub code,
-                         should be freed after the sub code is closed (currently the space is percist to fix the bug with
-                         external call (see NOTEs))
-
                        * implicit variables (allocated for arithmetic or typecasting operations) should not be permanent
                        * if the nested class owner is sealed / limited - direct operation should be used
                        * no need to provide exclude command for every external call, special hint to ignore it?
@@ -698,7 +681,6 @@ week1:
                        * implement watch
                        * show built-in variable $subject
                        
-week2:
               adev - mt
                        * design basic classes / routines to implement multi-threading applications (events, semaphors, locks, threads, ...)
 
@@ -810,9 +792,6 @@ week2:
                        * goods : Record.get&literal : 
                                   #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
       
-2.0.0
------
-week1:
               xdev - elenavm
                        * should open / close frame override stack_bottom pointer? looks like it is not necessary
                        * elenavm: use reverse instead of set of swaps
@@ -895,7 +874,6 @@ week1:
               idev - debugger
                        * implement watch
                          
-week2:
               adev - lib30
                        * $ConsoleReader read &type'widestr &type'length:aLength
                           - currently additional method is used to pass the type of the parameter to external type,
@@ -913,9 +891,6 @@ week2:
                        * pi sample: iteration algorithm, review existing FOR pattern
                        * review extensions'math'Matrix, simplify / optimize the code
 
-week3:
-
-week4:
             xmaint - code base
                        * remove src27
 
@@ -923,21 +898,13 @@ week4:
                        * Review code: create a dictionary                       
 
 
-2.0.1
+2.1.0
 -----                                                                
-week1:
               xdev - x64
                       * think over general architecture
                       * asm2bin64 - compile x64 bit opcodes
                       * create x64 elena vm
 
-
-2.0.2
------                                                                
-                      
-2.0.3
------                                                                
-week1:
               idev - usability
                        * ide: the files in subfolder should include path in its name?
               xdev - GCX
@@ -945,17 +912,9 @@ week1:
                          rather than global variable like in single thread version
                        * compile as multi-threading stand-alone
                        * compile as multi-threading vm client
-
-week2:
-
-
-2.1.0
------                                                                
-week1:
               idev - usability
                        * it should be possible to change the order of source files in the project
                        * elide: new window - vmconsole to interact with the code directly                       
-
 
 <================>
 stack:
@@ -977,17 +936,6 @@ stack:
                        * safe points: in method entry (??), is it enough to have
                          them in external call and loop?
                        * sync: make sure the object is not a constant
-              xdev - linux elc
-                       * review SG
-                       * migration: parser
-                       * test if wchar16_t compare and greater works
-                       * generate syntax file 
-                       * test parsing
-                       * migration: compiler
-                       * compile lib26
-                       * migration: linker
-                       * compile u_helloworld sample
-                       * implement utf16 upper, lower 
               idev - linux ide2
                       * gtktextview: fix scroller implementation
                       * gtktextview: mouse support
@@ -1159,9 +1107,6 @@ stack:
        - shl / shr commands considered to be not optimal
        - if inline object depends only on its class it should be created only once
          and saved as a hidden object field
-       - support linker map option
-       - super variable could lead to unexpected behaviour if we use dynamic mutation
-         (after super self variable becomes $self one)
        - support strong references (both protected messages and classes), linker
          should check if they are valid
        - Remoting
