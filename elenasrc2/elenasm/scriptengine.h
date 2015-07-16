@@ -43,7 +43,7 @@ public:
 
       writer.writeDWord(command);
       if (!emptystr(param)) {
-         writer.writeDWord((getlength(param) + 1) << 1);
+         writer.writeDWord(getlength(param) + 1);
          writer.writeLiteral(param, getlength(param) + 1);
       }
       else writer.writeDWord(0);

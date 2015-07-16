@@ -27,8 +27,6 @@ Currently:
                        * reimplement script engine : basic operations
                        * reimplement script samples: interpreter, helloworld, vmconsole
 
-                       * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects,
-                         overwriding the object (just in place mutation)
                        
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
@@ -108,6 +106,37 @@ Currently:
                        * fix critical issues
                        * fix bugs
                        * can we get rid of bool type forwaring?
+                       
+              xdev - script engine
+                       * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects,
+                         overwriding the object (just in place mutation)
+                       * global variables
+                       * build structure
+
+                       * build class
+                       * local variables
+                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
+                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
+                       * script engine - ~ to indicate relative to elena bin folder
+
+                       * migrate
+
+                       * if the script contains only grammar, virtual machine should not be called
+
+                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
+                           - text generating
+                           - construct objects - implement expression, with variables
+                           - using roles
+                           - branching
+                           - branching in code
+                           - assigning values to dynamic objects
+                           - global variables
+                           - script engine support in ELENA code : text generating                           
+
+                       * use script to build objects
+                       * use script to parse
+                       * use script generate code
+                       * current implementation is done in two passes, simplify to one
 
 <=================> 
                                                                                                                             
@@ -174,39 +203,6 @@ Currently:
                        * new controls: combo box, check box, status bar, timer, updown, memo, image box, list box
                        * make sure all windows resources (hbitmap, hdc, ..) are properly released
                        * example with buttons, edit on panel
-                       
-
-              xdev - script engine
-                       * review script
-                       * uncomment extension code
-                       * reimplement basic samples
-                       * global variables
-                       * build structure
-
-                       * build class
-                       * local variables
-                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
-                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
-                       * script engine - ~ to indicate relative to elena bin folder
-
-                       * migrate
-
-                       * if the script contains only grammar, virtual machine should not be called
-
-                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
-                           - text generating
-                           - construct objects - implement expression, with variables
-                           - using roles
-                           - branching
-                           - branching in code
-                           - assigning values to dynamic objects
-                           - global variables
-                           - script engine support in ELENA code : text generating                           
-
-                       * use script to build objects
-                       * use script to parse
-                       * use script generate code
-                       * current implementation is done in two passes, simplify to one
                        
               sdev - eldoc
                        * implement
