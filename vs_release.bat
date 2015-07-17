@@ -32,8 +32,8 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Script Engine compiling....
 ECHO ----------------------------
-rem "%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
-rem IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Simplified Assembler compiling....
 ECHO -----------------------------------
@@ -47,8 +47,8 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine Terminal compiling....
 ECHO --------------------------------------
-rem "%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
-rem IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Optimization Rule Generator compiling....
 ECHO ------------------------------------------
@@ -89,19 +89,18 @@ copy %1\bin\asm2binx.exe bin
 copy %1\bin\elc.exe bin
 copy %1\bin\elide.exe bin
 copy %1\bin\sg.exe bin
-rem copy %1\bin\elt.exe bin
+copy %1\bin\elt.exe bin
 copy %1\bin\ecv.exe bin
 copy %1\bin\og.exe bin
 
 copy %1\bin\elenavm.dll bin
 copy %1\bin\elenart.dll bin
-rem copy %1\bin\elenasm.dll bin
+copy %1\bin\elenasm.dll bin
 copy %1\bin\winstub.ex_ bin
 copy %1\bin\syntax.dat bin
 copy %1\bin\rules.dat bin
 copy %1\bin\elc.cfg bin
 copy %1\bin\elenavm.cfg bin
-copy %1\bin\elt.cfg bin
 
 echo copying bin\templates files
 
@@ -115,8 +114,8 @@ copy %1\bin\x32\*.bin bin\x32\
 
 echo copying bin\scripts files
 
-rem md bin\scripts
-rem copy %1\bin\scripts\*.es bin\scripts\
+md bin\scripts
+copy %1\bin\scripts\*.es bin\scripts\
 
 echo copying dat files
 
@@ -232,31 +231,21 @@ md elenasrc2\ide\winapi32\icons
 copy %1\elenasrc2\ide\winapi32\icons\*.bmp elenasrc2\ide\winapi32\icons 
 copy %1\elenasrc2\ide\winapi32\icons\*.ico elenasrc2\ide\winapi32\icons 
 
-rem md elenasrc2\elenasm 
-rem copy %1\elenasrc2\elenasm\*.cpp elenasrc2\elenasm
-rem copy %1\elenasrc2\elenasm\*.h elenasrc2\elenasm
+md elenasrc2\elenasm 
+copy %1\elenasrc2\elenasm\*.cpp elenasrc2\elenasm
+copy %1\elenasrc2\elenasm\*.h elenasrc2\elenasm
 
-rem md elenasrc2\elenasm\win32
-rem copy %1\elenasrc2\elenasm\win32\*.cpp elenasrc2\elenasm\win32
-rem copy %1\elenasrc2\elenasm\win32\*.h elenasrc2\elenasm\win32
+md elenasrc2\elenasm\win32
+copy %1\elenasrc2\elenasm\win32\*.cpp elenasrc2\elenasm\win32
+copy %1\elenasrc2\elenasm\win32\*.h elenasrc2\elenasm\win32
 
-rem md elenasrc2\elenasm\vs
-rem copy %1\elenasrc2\elenasm\vs\*.vcxproj elenasrc2\elenasm\vs
+md elenasrc2\elenasm\vs
+copy %1\elenasrc2\elenasm\vs\*.vcxproj elenasrc2\elenasm\vs
 
-rem md elenasrc2\elenasm\codeblocks 
-rem copy %1\elenasrc2\elenasm\codeblocks\*.cbp elenasrc2\elenasm\codeblocks
+md elenasrc2\elenasm\codeblocks 
+copy %1\elenasrc2\elenasm\codeblocks\*.cbp elenasrc2\elenasm\codeblocks
 
 md elenasrc2\tools 
-
-rem md elenasrc2\tools\api2html
-rem copy %1\elenasrc2\tools\api2html\*.cpp elenasrc2\tools\api2html
-rem copy %1\elenasrc2\tools\api2html\*.h elenasrc2\tools\api2html
-
-rem md elenasrc2\tools\api2html\codeblocks 
-rem copy %1\elenasrc2\tools\api2html\codeblocks\*.cbp elenasrc2\tools\api2html\codeblocks
-
-rem md elenasrc2\tools\api2html\vs
-rem copy %1\elenasrc2\tools\api2html\vs\*.vcxproj elenasrc2\tools\api2html\vs
 
 md elenasrc2\tools\asm2bin
 copy %1\elenasrc2\tools\asm2bin\*.cpp elenasrc2\tools\asm2bin
@@ -280,15 +269,15 @@ copy %1\elenasrc2\tools\sg\codeblocks\*.cbp elenasrc2\tools\sg\codeblocks
 md elenasrc2\tools\sg\vs
 copy %1\elenasrc2\tools\sg\vs\*.vcxproj elenasrc2\tools\sg\vs
 
-rem md elenasrc2\tools\elt
-rem copy %1\elenasrc2\tools\elt\*.cpp elenasrc2\tools\elt
-rem copy %1\elenasrc2\tools\elt\*.h elenasrc2\tools\elt
+md elenasrc2\tools\elt
+copy %1\elenasrc2\tools\elt\*.cpp elenasrc2\tools\elt
+copy %1\elenasrc2\tools\elt\*.h elenasrc2\tools\elt
 
-rem md elenasrc2\tools\elt\vs
-rem copy %1\elenasrc2\tools\elt\vs\*.vcxproj elenasrc2\tools\elt\vs
+md elenasrc2\tools\elt\vs
+copy %1\elenasrc2\tools\elt\vs\*.vcxproj elenasrc2\tools\elt\vs
 
-rem md elenasrc2\tools\elt\codeblocks 
-rem copy %1\elenasrc2\tools\elt\codeblocks\*.cbp elenasrc2\tools\elt\codeblocks
+md elenasrc2\tools\elt\codeblocks 
+copy %1\elenasrc2\tools\elt\codeblocks\*.cbp elenasrc2\tools\elt\codeblocks
 
 md elenasrc2\tools\ecv
 copy %1\elenasrc2\tools\ecv\*.cpp elenasrc2\tools\ecv

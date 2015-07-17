@@ -236,7 +236,6 @@ Currently:
                        * method - clear stack after the last operation?
                        * extends the object with dynamic code
                        * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
-                       * inject vm console into IDE
 
               sdev - prime project
                        * simple calculator
