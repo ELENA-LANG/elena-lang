@@ -7,7 +7,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "session.h"
-//#include "cfparser.h"
+#include "cfparser.h"
 #include "inlineparser.h"
 #include "elenavm.h"
 
@@ -195,34 +195,25 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
       saved = reader.Position();
       token = reader.read();
       while (!StringHelper::compare(token, "]]")) {
-//         if(ConstantIdentifier::compare(token, "#define")) {
-//            if (_currentParser == NULL) {
-//               _currentParser = new CFParser();
-//
-//               _parsers.insert(_currentParser);
-//            }
-//
-//            _currentParser->parseGrammarRule(reader);
-//         }
-//         else if(ConstantIdentifier::compare(token, "#grammar")) {
-//            token = reader.read();
-//            if (ConstantIdentifier::compare(token, "new")) {
-//               _currentParser = NULL;
-//            }
-//            else if (ConstantIdentifier::compare(token, "clear")) {
-//               _parsers.clear();
-//
-//               _currentParser = NULL;
-//            }
-//         }
+         if(StringHelper::compare(token, "#define")) {
+            _currentParser->parseGrammarRule(reader);
+         }
+         else if (StringHelper::compare(token, "#grammar")) {
+            token = reader.read();
+
+            if (!StringHelper::compare(token, "cf")) {
+               _currentParser = new CFParser(_currentParser);
+            }
+            else throw EParseError(reader.info.column, reader.info.row);
+         }
 //         else if(ConstantIdentifier::compare(token, "#mode")) {
 //            _currentParser->parseDirective(reader);
 //         }
-//         else {
+         else {
             reader.seek(saved);
 
             parseDirectives(tape, reader);
-//         }
+         }
          saved = reader.Position();
          token = reader.read();
       }

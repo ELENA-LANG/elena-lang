@@ -1,22 +1,21 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA VM Script Engine
-////
-////                                             (C)2011-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//#ifndef cfparserH
-//#define cfparserH 1
-//
-////////#include "elena.h"
-//#include "session.h"
-//
-//namespace _ELENA_
-//{
-//
-//// --- CFPrarser ---
-//
-//class CFParser : public _Parser
-//{
+//                                             (C)2011-2015, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef cfparserH
+#define cfparserH 1
+
+#include "scriptengine.h"
+
+namespace _ELENA_
+{
+
+// --- CFPrarser ---
+
+class CFParser : public _Parser
+{
 //public:
 //   // --- TokenInfo ---
 //
@@ -191,8 +190,9 @@
 //
 //   typedef MemoryMap<size_t, Rule>             RuleMap;
 //   typedef MemoryMap<const wchar16_t*, size_t> NameMap;
-//
-//protected:
+
+protected:
+   _Parser* _baseParser;
 //   bool       _symbolMode;
 //   NameMap    _names;
 //   RuleMap    _rules;
@@ -218,24 +218,27 @@
 //   void defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule& rule);
 //
 //   void saveScript(TokenInfo& token, _ScriptReader& reader, Rule& rule);
-//
-//public:
+
+public:
 //   bool applyRule(Rule& rule, TokenInfo& token, _ScriptReader& reader);
 //   bool applyRule(size_t ruleId, TokenInfo& token, _ScriptReader& reader);
 //
-//   virtual void parse(_ScriptReader& reader, ScriptLog& log);
-//   virtual void parseGrammarRule(_ScriptReader& reader);
 //   virtual void parseDirective(_ScriptReader& reader);
-//
-//   CFParser()
+
+   virtual bool parseGrammarRule(_ScriptReader& reader);
+   virtual void parse(_ScriptReader& reader, TapeWriter& writer);
+
+   CFParser(_Parser* baseParser)
 //      : _rules(Rule())
-//   {
+   {
+      _baseParser = baseParser;
+
 //      // all body pointers should be greater than zero
 //      _symbolMode = false;
 //      _body.writeDWord(0, 0);
-//   }
-//};
-//
-//} // _ELENA_
-//
-//#endif // cfparserH
+   }
+};
+
+} // _ELENA_
+
+#endif // cfparserH

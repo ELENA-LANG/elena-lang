@@ -1,16 +1,16 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
-////
-////                                              (C)2011-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "cfparser.h"
-//
-//using namespace _ELENA_;
+//                                              (C)2011-2015, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "cfparser.h"
+
+using namespace _ELENA_;
 //using namespace _ELENA_TOOL_;
-//
+
 //#define REFERENCE_KEYWORD     "$reference"
 //#define IDENTIFIER_KEYWORD    "$identifier"
 //#define LITERAL_KEYWORD       "$literal"
@@ -26,9 +26,9 @@
 //        "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
 //        "*********dd**d******************************************************************************************************************"
 //};
-//
-//// --- CFParser ---
-//
+
+// --- CFParser ---
+
 //inline bool apply(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   token.read(reader);
@@ -533,9 +533,9 @@
 //
 //   defineApplyRule(rule, type);
 //}
-//
-//void CFParser :: parseGrammarRule(_ScriptReader& reader)
-//{
+
+bool CFParser :: parseGrammarRule(_ScriptReader& reader)
+{
 //   ScriptLog log;
 //   TokenInfo token(this, &log);
 //
@@ -556,8 +556,10 @@
 //   defineGrammarRule(token, reader, rule);
 //
 //   _rules.add(ruleId, rule);
-//}
-//
+
+   return true;
+}
+
 //void CFParser :: parseDirective(_ScriptReader& reader)
 //{
 //   const wchar16_t* token = reader.read();
@@ -570,9 +572,9 @@
 //      token = reader.read();
 //   }
 //}
-//
-//void CFParser :: parse(_ScriptReader& reader, ScriptLog& log)
-//{
+
+void CFParser :: parse(_ScriptReader& reader, TapeWriter& writer)
+{
 //   if (_symbolMode)
 //      reader.switchDFA(dfaSymbolic);
 //
@@ -591,4 +593,4 @@
 //      if (token.state != dfaEOF)
 //         throw EParseError(token.column, token.row);
 //   }
-//}
+}

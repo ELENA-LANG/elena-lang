@@ -1,19 +1,19 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA VM Script Engine
-////
-////                                             (C)2011-2012, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//#ifndef scriptparserH
-//#define scriptparserH 1
-//
+//                                             (C)2011-2015, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef scriptparserH
+#define scriptparserH 1
+
 //#include "common.h"
 //#include "parser.h"
 //#include "parsertable.h"
-//
-//namespace _ELENA_
-//{
-//
+
+namespace _ELENA_
+{
+
 //// --- LALRParser ---
 //
 //class LALRParser : public _Parser
@@ -104,6 +104,6 @@
 //   }
 //};
 
-//} // _ELENA_
-//
-//#endif // scriptparserH
+} // _ELENA_
+
+#endif // scriptparserH

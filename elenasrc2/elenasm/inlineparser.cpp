@@ -507,11 +507,11 @@ void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
 //   //Map<const wchar16_t*, int> locals;
    Stack<int> levels;
-//   Stack<int> args;
+   Stack<int> args;
    int        level = 0;
-   int        counter = 0;
+   int        mode = 0;
 
-//   MemoryDump arguments;
+   MemoryDump arguments;
 
    reader.read();
    do {
@@ -521,31 +521,53 @@ void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
       if (state == dfaEOF) {
          break;
       }
+      else if (token[0] == '^') {
+         mode = SEND_TAPE_MESSAGE_ID;
+
+         reader.read();
+      }
       else if (token[0] == '(') {
          levels.push(level);
-         counter = 0;
+         levels.push(mode);
+         mode = 0;
 
          reader.read();
       }
       else if (token[0] == ')') {
-         counter = level - levels.pop();
+         mode = levels.pop();
+         int counter = level - levels.pop();
+         if (mode == SEND_TAPE_MESSAGE_ID) {
+            if (counter > 0)
+               writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter + 1);
+
+            int pos = args.pop();
+
+            IdentifierString message;
+            MemoryReader argReader(&arguments, pos);
+            argReader.readString(message);
+
+            message[0] = message[0] + counter;
+            level -= counter;
+
+            writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
+            arguments.trim(pos);
+
+            reader.read();
+         }
 
          reader.read();
+         mode = 0;
       }
-      else if(StringHelper::compare(token, "^")) {
-         if (counter > 1) 
-            writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter);
+      else if(StringHelper::compare(token, "%")) {
+         if (levels.peek() == SEND_TAPE_MESSAGE_ID) {
+            IdentifierString message;
+            readMessage(reader, message);
 
-         IdentifierString message;
-         readMessage(reader, message);
-         
-         message[0] = message[0] + counter - 1;
-         level -= (counter - 1);
-         counter = 0;
+            MemoryWriter argWriter(&arguments);
 
-         writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
-
-         reader.read();
+            args.push(argWriter.Position());
+            argWriter.writeLiteral(message);
+         }
       }
       //else if (token[0] == ';') {
       //   reader.read();

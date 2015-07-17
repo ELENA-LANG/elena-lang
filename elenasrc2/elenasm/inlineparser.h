@@ -18,6 +18,17 @@ class InlineScriptParser : public _Parser
 {
    MessageMap _verbs;
 
+   class ArgumentReader : public _ScriptReader
+   {
+      MemoryReader* _reader;
+
+   public:
+      ArgumentReader(MemoryReader* reader)
+      {
+
+      }
+   };
+
 //   enum Mode
 //   {
 //      mdRoot   = 0,
