@@ -36,41 +36,6 @@ namespace _ELENA_
 ////      this->row = row;
 ////   }
 ////};
-//
-//// --- ScriptLog ---
-//
-//class ScriptLog
-//{
-//   MemoryDump _log;
-//
-//public:
-//   void write(wchar16_t ch);
-//   void write(const wchar16_t* token);
-//
-//   size_t Position()
-//   {
-//      return _log.Length();
-//   }
-//
-//   void trim(size_t position)
-//   {
-//      _log.trim(position);
-//   }
-//
-//   void* getBody() 
-//   { 
-//      write((wchar16_t)0);
-//
-//      return _log.get(0); 
-//   } 
-//
-//   size_t Length() const { return _log.Length(); }
-//
-//   void clear()
-//   {
-//      _log.trim(0);
-//   }
-//};
 
 typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
 typedef String<ident_c, 0x100> TempString;

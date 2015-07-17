@@ -14,23 +14,6 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-//// --- ScriptLog ---
-//
-//void ScriptLog :: write(wchar16_t ch)
-//{
-//   MemoryWriter writer(&_log);
-//
-//   writer.writeWideChar(ch);
-//}
-//
-//void ScriptLog :: write(const wchar16_t* token)
-//{
-//   MemoryWriter writer(&_log);
-//
-//   writer.writeWideLiteral(token, getlength(token));
-//   writer.writeWideChar(' ');
-//}
-
 // --- ScriptReader ---
 
 ident_t Session::ScriptReader :: read()

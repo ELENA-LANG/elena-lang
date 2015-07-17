@@ -115,6 +115,53 @@ public:
    virtual void seek(size_t position) = 0;
 };
 
+
+// --- ScriptLog ---
+
+class ScriptLog
+{
+   MemoryDump _log;
+
+public:
+   void write(ident_c ch)
+   {
+      MemoryWriter writer(&_log);
+
+      writer.writeChar(ch);
+   }
+   void write(ident_t token)
+   {
+      MemoryWriter writer(&_log);
+      
+      writer.writeLiteral(token, getlength(token));
+      writer.writeChar(' ');
+   }
+
+   size_t Position()
+   {
+      return _log.Length();
+   }
+
+   void trim(size_t position)
+   {
+      _log.trim(position);
+   }
+
+   void* getBody() 
+   { 
+      write((ident_c)0);
+
+      return _log.get(0); 
+   } 
+
+   size_t Length() const { return _log.Length(); }
+
+   void clear()
+   {
+      _log.trim(0);
+   }
+};
+
 // --- Parser ---
 
 class _Parser
