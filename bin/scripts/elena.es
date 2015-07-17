@@ -3,4 +3,4 @@
    #start;
 ]]
 
-system'console ^ ( %writeLine "Hello" )
+system'console ^ ( %writeLine 2 ^ ( %add 3 ) )

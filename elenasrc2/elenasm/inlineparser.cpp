@@ -555,7 +555,6 @@ void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
             reader.read();
          }
 
-         reader.read();
          mode = 0;
       }
       else if(StringHelper::compare(token, "%")) {
