@@ -547,6 +547,11 @@ void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
             argReader.readString(message);
 
             message[0] = message[0] + counter;
+            // HOTFIX : replace EVAL with GET if no parameters are provided
+            if (counter == 0 && message[2] == (EVAL_MESSAGE_ID + 0x20)) {
+               message[2] = GET_MESSAGE_ID + 0x20;
+            }
+
             level -= counter;
 
             writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);

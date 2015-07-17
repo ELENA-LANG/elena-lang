@@ -22,9 +22,6 @@ v  - vm script
 Currently:                                                                                                                        
 ------                                                                                         
               xdev - script engine
-                       * script engine : parse - system'console.writeLine("Hello".add(" ").add("World"))
-                       * script engine : parse - system'console.writeLine(system'calendar'Date.now())
-
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     

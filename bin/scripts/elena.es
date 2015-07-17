@@ -1,11 +1,13 @@
 [[
    #grammar cf
    #define start ::= expression;
-   #define expression ::= object operation;
-   #define operation ::= <= ^ ( => "." message parameters <= ) =>;
-   #define operation ::= $eps;
+   #define expression ::= object operations;
+   #define operations ::= call operations;
+   #define operations ::= $eps;
+   #define call ::= <= ^ ( => "." message parameters <= ) =>;
    #define message ::= <= % => $identifier;
    #define parameters ::= "(" expression next_parameter;
+   #define parameters ::= $eps;
    #define next_parameter ::= "," expression next_parameter;
    #define next_parameter ::= ")";
    #define object ::= $reference;
@@ -15,3 +17,5 @@
    #config vm_console 
    #start;
 ]]
+
+"abc".length
