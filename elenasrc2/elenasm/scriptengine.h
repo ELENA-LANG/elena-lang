@@ -12,6 +12,10 @@
 
 namespace _ELENA_
 {
+
+typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
+typedef String<ident_c, 0x100> TempString;
+
 // --- EParseError ---
    
 struct EParseError
@@ -114,6 +118,116 @@ public:
 
    virtual void seek(size_t position) = 0;
 };
+
+class ScriptReader : public _ScriptReader
+{
+protected:
+   SourceReader reader;
+
+public:
+   virtual ident_t read()
+   {
+      info = reader.read(token, LINE_LEN);
+      if (info.state == _ELENA_TOOL_::dfaQuote) {
+         QuoteTemplate<TempString> quote(info.line);
+
+         //!!HOTFIX: what if the literal will be longer than 0x100?
+         size_t length = getlength(quote);
+         StringHelper::copy(token, quote, length, length);
+         token[length] = 0;
+      }
+
+      return token;
+   }
+
+   virtual void switchDFA(const char** dfa)
+   {
+      reader.switchDFA(dfa);
+   }
+
+   ScriptReader(TextReader* script)
+      : reader(4, script)
+   {
+   }
+};
+
+class CachedScriptReader : public ScriptReader
+{
+protected:
+   bool       _cacheMode;
+   MemoryDump _buffer;
+   size_t     _position;
+
+   void cache()
+   {
+      ScriptReader::read();
+
+      MemoryWriter writer(&_buffer);
+
+      writer.writeDWord(info.column);
+      writer.writeDWord(info.row);
+      writer.writeChar(info.state);
+      writer.writeLiteral(token, getlength(token) + 1);
+   }
+
+public:
+   virtual size_t Position()
+   {
+      _cacheMode = true;
+
+      return _position;
+   }
+
+   virtual void seek(size_t position)
+   {
+      _position = position;
+   }
+
+   //      void reread(TokenInfo& token);
+
+   void clearCache()
+   {
+      _cacheMode = false;
+      if (_position >= _buffer.Length()) {
+         _buffer.trim(0);
+         _position = 0;
+      }
+   }
+
+   virtual ident_t read()
+   {
+      // read from the outer reader if the cache is empty
+      if (_cacheMode && _position >= _buffer.Length()) {
+         cache();
+      }
+
+      // read from the cache
+      if (_position < _buffer.Length()) {
+         MemoryReader reader(&_buffer, _position);
+
+         reader.readDWord(info.column);
+         reader.readDWord(info.row);
+         reader.readChar(info.state);
+
+         ident_t s = reader.getLiteral(DEFAULT_STR);
+         size_t length = getlength(s);
+         StringHelper::copy(token, s, length, length);
+
+         _position = reader.Position();
+
+         return token;
+      }
+      else return ScriptReader::read();
+   }
+
+   CachedScriptReader(TextReader* script)
+      : ScriptReader(script)
+   {
+      _cacheMode = false;
+      _position = 0;
+   }
+};
+
 
 
 // --- ScriptLog ---

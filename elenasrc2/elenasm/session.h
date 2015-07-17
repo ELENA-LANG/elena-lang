@@ -12,100 +12,36 @@
 namespace _ELENA_
 {
 
-////const int cnNameLength = 0x20;
-////
-////typedef String<wchar16_t, cnNameLength> RuleIdentifier;
-////
-////// --- EUnrecognizedException ---
-////
-////struct EUnrecognizedException
-////{
-////};
-////
-////// --- EInvalidExpression ---
-////
-////struct EInvalidExpression
-////{
-////   RuleIdentifier nonterminal;
-////   int            column, row;
-////
-////   EInvalidExpression(const wchar16_t* nonterminal, int column, int row)
-////   {
-////      this->nonterminal.copy(nonterminal);
-////      this->column = column;
-////      this->row = row;
-////   }
-////};
+//const int cnNameLength = 0x20;
+//
+//typedef String<wchar16_t, cnNameLength> RuleIdentifier;
+//
+//// --- EUnrecognizedException ---
+//
+//struct EUnrecognizedException
+//{
+//};
+//
+//// --- EInvalidExpression ---
+//
+//struct EInvalidExpression
+//{
+//   RuleIdentifier nonterminal;
+//   int            column, row;
+//
+//   EInvalidExpression(const wchar16_t* nonterminal, int column, int row)
+//   {
+//      this->nonterminal.copy(nonterminal);
+//      this->column = column;
+//      this->row = row;
+//   }
+//};
 
-typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
-typedef String<ident_c, 0x100> TempString;
 
 // --- Session ---
 
 class Session
 {
-   class ScriptReader : public _ScriptReader
-   {
-   protected:
-      SourceReader reader;
-
-   public:
-      virtual ident_t read();
-
-      virtual void switchDFA(const char** dfa)
-      {
-         reader.switchDFA(dfa);
-      }
-
-      ScriptReader(TextReader* script)
-         : reader(4, script)
-      {
-      }
-   };
-
-   class CachedScriptReader : public ScriptReader
-   {
-   protected:
-      bool       _cacheMode;
-      MemoryDump _buffer;
-      size_t     _position;
-
-      void cache();
-
-   public:
-      virtual size_t Position() 
-      { 
-         _cacheMode = true;
-
-         return _position; 
-      }
-
-      virtual void seek(size_t position)
-      {
-         _position = position;
-      }
-   
-//      void reread(TokenInfo& token);
-
-      void clearCache()
-      {
-         _cacheMode = false;
-         if (_position >= _buffer.Length()) {
-            _buffer.trim(0);
-            _position = 0;
-         }
-      }
-   
-      virtual ident_t read();
-
-      CachedScriptReader(TextReader* script)
-         : ScriptReader(script)
-      {
-         _cacheMode = false;
-         _position = 0;
-      }
-   };
-
    _Parser*         _currentParser;
 
    String<ident_c, 512> _lastError;

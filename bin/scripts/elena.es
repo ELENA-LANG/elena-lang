@@ -1,5 +1,5 @@
 [[
-   #gramma cf
+   #grammar cf
    #define start ::= expression;
    #define expression ::= object operation;
    #define operation ::= <= ^ ( => "." message parameters <= ) =>;
@@ -15,3 +15,5 @@
    #config vm_console 
    #start;
 ]]
+
+system'console.writeLine("Hello")

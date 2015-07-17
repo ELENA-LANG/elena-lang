@@ -14,63 +14,6 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-// --- ScriptReader ---
-
-ident_t Session::ScriptReader :: read()
-{
-   info = reader.read(token, LINE_LEN);
-   if (info.state == dfaQuote) {
-      QuoteTemplate<TempString> quote(info.line);
-
-         //!!HOTFIX: what if the literal will be longer than 0x100?
-         size_t length = getlength(quote);
-         StringHelper::copy(token, quote, length, length);
-         token[length] = 0;
-   }  
-
-   return token;
-}
-
-// --- CachedScriptReader ---
-
-void Session::CachedScriptReader :: cache()
-{
-   ScriptReader::read();
-
-   MemoryWriter writer(&_buffer);
-
-   writer.writeDWord(info.column);
-   writer.writeDWord(info.row);
-   writer.writeChar(info.state);
-   writer.writeLiteral(token, getlength(token) + 1);
-}
-
-ident_t Session::CachedScriptReader :: read()
-{
-   // read from the outer reader if the cache is empty
-   if (_cacheMode && _position >= _buffer.Length()) {
-      cache();
-   }
-
-   // read from the cache
-   if (_position < _buffer.Length()) {
-      MemoryReader reader(&_buffer, _position);
-
-      reader.readDWord(info.column);
-      reader.readDWord(info.row);
-      reader.readChar(info.state);
-
-      ident_t s = reader.getLiteral(DEFAULT_STR);
-      size_t length = getlength(s);
-      StringHelper::copy(token, s, length, length);
-
-      _position = reader.Position();
-
-      return token;
-   }
-   else return ScriptReader::read();
-}
-
 // --- Session ---
 
 Session :: Session()
@@ -83,22 +26,22 @@ Session :: ~Session()
    freeobj(_currentParser);
 }
 
-//////void* Session :: translateScript(const wchar16_t* name, TextReader* source)
-//////{
-//////   ScriptVMCompiler compiler;
-//////
-//////   _Parser* parser = _parsers.get(name);
-//////   if (parser == NULL) {
-//////      parser = new CFParser();
-//////
-//////      _parsers.add(name, parser, true);
-//////   }
-//////
-//////   parser->parse(source, &compiler);
-//////
-//////   // the tape should be explicitly releases with FreeLVMTape function
-//////   return compiler.generate();
-//////}
+//void* Session :: translateScript(const wchar16_t* name, TextReader* source)
+//{
+//   ScriptVMCompiler compiler;
+//
+//   _Parser* parser = _parsers.get(name);
+//   if (parser == NULL) {
+//      parser = new CFParser();
+//
+//      _parsers.add(name, parser, true);
+//   }
+//
+//   parser->parse(source, &compiler);
+//
+//   // the tape should be explicitly releases with FreeLVMTape function
+//   return compiler.generate();
+//}
 
 void Session::parseDirectives(MemoryDump& tape, _ScriptReader& reader)
 {
@@ -184,7 +127,7 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
          else if (StringHelper::compare(token, "#grammar")) {
             token = reader.read();
 
-            if (!StringHelper::compare(token, "cf")) {
+            if (StringHelper::compare(token, "cf")) {
                _currentParser = new CFParser(_currentParser);
             }
             else throw EParseError(reader.info.column, reader.info.row);

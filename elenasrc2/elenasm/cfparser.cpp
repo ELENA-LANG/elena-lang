@@ -577,20 +577,26 @@ void CFParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
 //   if (_symbolMode)
 //      reader.switchDFA(dfaSymbolic);
-//
-//   TokenInfo token(this, &log);
-//
-//   token.read(reader);
-//
-//   size_t readerRollback = reader.Position();
-//   //size_t outputRollback = compiler->Position();
-//   size_t startId = mapRuleId(ConstantIdentifier("start"));
-//
-//   if (token.state != dfaEOF) {
-//      if (!applyRule(startId, token, reader))
-//         throw EParseError(token.column, token.row);
-//
-//      if (token.state != dfaEOF)
-//         throw EParseError(token.column, token.row);
-//   }
+
+   ScriptLog log;
+   TokenInfo token(this, &log);
+
+   token.read(reader);
+
+   size_t readerRollback = reader.Position();
+   //size_t outputRollback = compiler->Position();
+   size_t startId = mapRuleId("start");
+
+   if (token.state != dfaEOF) {
+      if (!applyRule(startId, token, reader))
+         throw EParseError(token.column, token.row);
+
+      if (token.state != dfaEOF)
+         throw EParseError(token.column, token.row);
+   }
+
+   IdentifierTextReader logReader((ident_t)log.getBody());
+   CachedScriptReader scriptReader(&logReader);
+
+   _baseParser->parse(scriptReader, writer);
 }
