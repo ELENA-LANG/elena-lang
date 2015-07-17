@@ -19,14 +19,13 @@ v  - vm script
 
                                                                                
 ------                                 
-Currently:
+Currently:                                                                                                                        
 ------                                                                                         
               xdev - script engine
-                       * reimplement script engine : support several level of scripts, elena script is default one, but it might be possible to use
-                         another one in future
-                       * reimplement script engine : basic operations
-                       * reimplement script samples: interpreter, helloworld, vmconsole
+                       * script engine : parse - system'console.writeLine("Hello".add(" ").add("World"))
+                       * script engine : parse - system'console.writeLine(system'calendar'Date.now())
 
+                       * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
