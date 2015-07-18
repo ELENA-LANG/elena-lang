@@ -22,6 +22,9 @@ v  - vm script
 Currently:                                                                                                                        
 ------                                                                                         
               xdev - script engine
+                       * calculator : console
+                       * calculator : gui
+                       * calculator : script
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        
               adev - lib30     

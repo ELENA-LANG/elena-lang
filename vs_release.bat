@@ -340,9 +340,9 @@ md examples\c_a_g\inf
 md examples\c_a_g\obj
 md examples\c_a_g\bin
 
-rem md examples\calculator 
-rem copy %1\examples\calculator\*.l examples\calculator 
-rem copy %1\examples\calculator\*.prj examples\calculator 
+md examples\calculator 
+copy %1\examples\calculator\*.l examples\calculator 
+copy %1\examples\calculator\*.prj examples\calculator 
 rem copy %1\examples\calculator\calc.vl2 examples\calculator 
 rem copy %1\examples\calculator\calc.vl examples\calculator 
 

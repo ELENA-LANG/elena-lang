@@ -342,6 +342,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    defaultNs.add(module->Name());
    
    loadTypes(module);
+   loadExtensions(TerminalInfo(), module);
 }
 
 ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)

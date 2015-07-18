@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 package=calc
 executable=calc.exe
 vmpath=..\..\bin
@@ -14,6 +14,5 @@ control.l
 
 [forwards]
 'program=extensions'programLoop
-'program'control=calc'controller
-'program'input=extensions'consoleEx
+'program'control=calc'control
 

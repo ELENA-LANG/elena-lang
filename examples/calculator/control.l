@@ -1,30 +1,17 @@
-// --- namespaces ---
 #define system.
 
-// --- Controller --
-#class Controller 
+// --- controller ---
+
+#symbol control =
 {
-    #field theParser.
+    prompt = ">".
     
-    #method read : anInput
+    proceed : aLine
     [
-        'program'output << "%n>".
-        
-        #var aLine := anInput readLine.
-        
-        ^ ("-q" == aLine)
+        ("-q" == aLine)
             ? [ 'program stop. ^emptyLiteralValue. ]
             ! [
-                theParser eval::aLine
+                ^ aLine evaluated.
             ].
-    ]
-
-    #constructor new
-    [
-        'program'output write:"ELENA Calculator. Evaluate the expression. To quit type -q".
-        
-        theParser := Parser new.
-    ]
-}
-
-#symbol controller = Controller new.
+    ]    
+}.
