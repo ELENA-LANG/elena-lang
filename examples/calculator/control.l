@@ -1,17 +1,30 @@
 #define system.
 
-// --- controller ---
+//// --- controller ---
+//
+//#symbol control =
+//{
+//    prompt = ">".
+//    
+//    proceed : aLine
+//    [
+//        ("-q" == aLine)
+//            ? [ 'program stop. ^emptyLiteralValue. ]
+//            ! [
+//                ^ aLine evaluated.
+//            ].
+//    ]    
+//}.
 
-#symbol control =
-{
-    prompt = ">".
+// --- testCase ---
+
+#symbol testCase =
+[
+    #var aCase1 := "2".
     
-    proceed : aLine
-    [
-        ("-q" == aLine)
-            ? [ 'program stop. ^emptyLiteralValue. ]
-            ! [
-                ^ aLine evaluated.
-            ].
-    ]    
-}.
+    #var aCaseResult1 := aCase1 evaluated.
+    
+    #var aCase2 := "2+3".
+    
+    #var aCaseResult2 := aCase2 evaluated.
+].

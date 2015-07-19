@@ -2773,6 +2773,9 @@
         
         ^ ByteNumber new &byte:aValue.
     ]
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
 }.
 
 /// A 16bit integer convertor
@@ -2872,6 +2875,9 @@
         
         ^ ShortNumber new &short:aRetVal.
     ]
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
 }.
 
 /// An Unicode character convertor
@@ -2969,6 +2975,9 @@
         
         ^ CharValue new &char:aRetVal.
     ]
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
 }.
 
 /// An integer convertor
@@ -3068,6 +3077,9 @@
     /// Returns a parameter                                    
     #method(type:int,stacksafe) convert &int:anInt
         = IntNumber new &int:anInt.
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
 }.
 
 /// A long integer convertor
@@ -3136,6 +3148,9 @@
     /// Returns a parameter
     #method(type:long,stacksafe) convert &long:aLong
         = LongNumber new &long:aLong.
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
 }.
 
 /// A real number convertor
@@ -3190,6 +3205,9 @@
     /// Converts a short integer into a real number
     #method(type:real,stacksafe)convert &short:aValue
         = RealNumber new &short:aValue.
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
 }.
 
 // --- literalConvertor ---
