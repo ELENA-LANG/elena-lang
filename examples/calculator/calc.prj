@@ -9,7 +9,6 @@ warn:unresolved=-1
 
 [files]
 parser.l
-math.l
 control.l
 
 [forwards]

@@ -1,6 +1,0 @@
-
-state0 : digit = state1 ; tree += new_leaf : "calc'math'number".
-
-state1 : digit = state1 ; tree.last_leaf += char.
-
-state1 : plus  = state0 ; tree += new_node : "calc'math'sum"

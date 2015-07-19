@@ -115,10 +115,8 @@
     #field theCurrentState.
     #field theDerivationTree.
     
-    #constructor new
+    #method $loadBuiltinStatemachine
     [
-        theDerivationTree := DerivationTree new.
-
         #var aNumberStratagy := 
             {
                 order = 0.
@@ -146,17 +144,15 @@
             %(append)(1),
             aState1)).
         
-//        { plus : aChar : aTree [ aTree append:(TreeNode new:aSumStratagy). ^ aState1. ] 
-//          digit : aChar : aTree [ aTree append:(TreeLeaf new:aNumberStratagy append:aChar). ^ aState0. ]}.
+//        { plus : aChar : aTree [ aTree append:(TreeNode new:aSumStratagy). ^ aState0. ] 
+//          digit : aChar : aTree [ aTree last_node append:aChar. ^ aState1. ]}.
         #var aXCode1 := Struct(
             %digit, Tape(
                 2, extensions'control, %(getAt&args)(1),
-                aNumberStratagy, TreeLeaf, 
-                %(new)(1), 
-                %(append)(1),
                 1, extensions'control, %(getAt&args)(1),
+                %(get&last_node)(0),
                 %(append)(1),
-                aState0),
+                aState1),
             
             %plus, Tape(
                 aSumStratagy, TreeNode,
@@ -170,6 +166,13 @@
         aState1 write:aXCode1.
 
         theCurrentState := aState0.
+    ]
+    
+    #constructor new
+    [
+        theDerivationTree := DerivationTree new.
+
+        $self $loadBuiltinStatemachine.
     ]
 
     #method func1 = (:aChar)

@@ -344,7 +344,7 @@ md examples\calculator
 copy %1\examples\calculator\*.l examples\calculator 
 copy %1\examples\calculator\*.prj examples\calculator 
 rem copy %1\examples\calculator\calc.vl2 examples\calculator 
-rem copy %1\examples\calculator\calc.vl examples\calculator 
+copy %1\examples\calculator\*.es examples\calculator 
 
 md examples\datetime 
 copy %1\examples\datetime\*.l examples\datetime 
