@@ -1712,7 +1712,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
             else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsIntArrayLocalPtr, 0);
             break;
          case bdParamsLocal:
-            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsParamsLocal, 0);
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (*it).additional);
