@@ -4145,3 +4145,31 @@ procedure coreapi'load_symbol
   ret 4
   
 end
+
+procedure coreapi'rewindstack
+ 
+  mov  edx, ecx 
+  lea  ebx, [esp + 4]
+  and  edx, 0Fh 
+  push ecx
+  lea  edx, [ebx + edx * 4]
+  push ecx
+
+labSwap:
+  mov  ecx, [edx]
+  mov  [esp], ecx
+  mov  ecx, [ebx]
+  mov  [edx], ecx
+  mov  ecx, [esp]
+  mov  [ebx], ecx
+
+  lea  ebx, [ebx+4]
+  lea  edx, [edx-4]
+  cmp  edx, ebx 
+  ja   short labSwap
+  add  esp, 4
+  pop  ecx
+  
+  ret
+
+end

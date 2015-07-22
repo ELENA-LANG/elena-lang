@@ -80,11 +80,4 @@
         = (aStart < anEnd)
             ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
             ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
-
-    getAt :anIndex &args:Params
-    [
-        #var(type:int)aLength := Params length.
-
-        ^ Params@(aLength - anIndex int).
-    ]
 }.

@@ -4554,7 +4554,7 @@ procedure handle_tape
   dcopyverb
   eswap
   
-  elsem labErr EVAL_MESSAGE_ID
+  elsem labDefault EVAL_MESSAGE_ID
 
   ecopyd
   dcopycount
@@ -4599,6 +4599,9 @@ labNext:
 labMessage:
   nload
   ecopyd
+
+  callr api : coreapi'rewindstack
+
   aloadsi 0  
   acallvi 0
   pusha
@@ -4615,7 +4618,10 @@ labEnd:
 
   equit
 
-labErr:
+labDefault:
+  ecopyd
+  bsredirect  
+  open 1
   pushr class : system'MethodNotFoundException
   pushr const : %new[0]
   throw

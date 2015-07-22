@@ -9,6 +9,18 @@
     #method => system'internal'handle_tape.
 }
 
+// --- tapeControl ---
+
+#symbol tapeControl =
+{
+    getAt :anIndex &args:Params
+    [
+        #var(type:int)aLength := Params length.
+
+        ^ Params@(aLength - anIndex int).
+    ]
+}.
+
 // --- Struct ---
 
 #class(group) Struct :: BaseArray
