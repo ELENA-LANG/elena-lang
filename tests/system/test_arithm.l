@@ -592,7 +592,7 @@
 
 #symbol StructTest =
 [
-    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 1, extensions'control, %(getAt&args)(1), system'console, %(writeLine)(1) )).    
+    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( system'console, system'dynamic'tapeControl, 1, %(getAt&args)(1), %(writeLine)(1) )).    
 
     #var x := a x.
 

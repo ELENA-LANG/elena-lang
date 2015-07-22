@@ -4151,6 +4151,24 @@ procedure coreapi'rewindstack
   mov  edx, ecx 
   lea  ebx, [esp + 4]
   and  edx, 0Fh 
+  cmp  edx, 1
+  jz   short labCase1
+  cmp  edx, 2
+  jz   short labCase2
+  cmp  edx, 0
+  jz   short labEnd
+  cmp  edx, 12
+  jz   short labEnd
+  cmp  edx, 13
+  jz   short labCase1
+  cmp  edx, 14
+  jz   short labCase2
+  nop
+  nop
+  jb   short labSkip
+  sub  edx, 12
+
+labSkip:
   push ecx
   lea  edx, [ebx + edx * 4]
   push ecx
@@ -4169,7 +4187,27 @@ labSwap:
   ja   short labSwap
   add  esp, 4
   pop  ecx
+  ret
+
+labCase1:
+  push ecx
+  mov  edx, [ebx]
+  mov  ecx, [ebx+4]
+  mov  [ebx+4], edx
+  mov  [ebx], ecx
+  pop  ecx
+  ret  
   
+labCase2:
+  push ecx
+  mov  edx, [ebx]
+  mov  ecx, [ebx+8]
+  mov  [ebx+8], edx
+  mov  [ebx], ecx
+  pop  ecx
+  ret  
+  
+labEnd:
   ret
 
 end
