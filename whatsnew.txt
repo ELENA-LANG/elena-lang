@@ -9,6 +9,7 @@
 
 [ElenaScript]
 [*] refactored / syntax modified
+[+] local variables are supported
 
 Samples:
 [+] calc

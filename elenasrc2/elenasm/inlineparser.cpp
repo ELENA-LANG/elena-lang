@@ -503,12 +503,35 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, _ScriptReader& reader
    reader.read();
 }
 
-bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer, int& level)
+bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
 {
    ident_t token = reader.token;
 
    if (StringHelper::compare(token, "#send")) {
-      parseSend(reader, writer, level);
+      parseSend(reader, writer, level, locals);
+   }
+   else if (StringHelper::compare(token, "#set")) {
+      reader.read();
+
+      if (reader.info.state == dfaIdentifier) {
+         locals.add(reader.token, level);
+      }
+      reader.read();
+   }
+   else if (StringHelper::compare(token, "^")) {
+      reader.read();
+
+      int var_level = 0;
+      if (reader.info.state == dfaIdentifier) {
+         var_level = locals.get(reader.token);
+      }
+      else if (reader.info.state == dfaInteger) {
+         var_level = StringHelper::strToInt(reader.token);
+      }
+      writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
+      level++;
+
+      reader.read();
    }
    else {
       writeObject(writer, reader);
@@ -518,7 +541,7 @@ bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer,
    return true;
 }
 
-void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, int& level)
+void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
 {
    IdentifierString message;
 
@@ -537,7 +560,7 @@ void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, 
       else if (StringHelper::compare(token, "%")) {
          readMessage(reader, message);
       }
-      else parseToken(reader, writer, level);
+      else parseToken(reader, writer, level, locals);
    }
 
    int counter = level - start_level;
@@ -559,8 +582,8 @@ void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, 
 
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
-   //Map<ident_t, int> locals;
-   int  level = 0;
+   Map<ident_t, int> locals(-1);
+   int  level = 1;
 
    reader.read();
    do {
@@ -569,7 +592,7 @@ void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
       if (state == dfaEOF) {
          break;
       }
-      else parseToken(reader, writer, level);
+      else parseToken(reader, writer, level, locals);
    } 
    while (true);
 

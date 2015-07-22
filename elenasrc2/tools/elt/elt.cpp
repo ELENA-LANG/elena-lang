@@ -71,19 +71,19 @@ void loadScript(const char* path)
 
 bool executeCommand(const char* line, bool& running)
 {
-   if (emptystr(line))
+   if (getlength(line)<2)
       return false;
 
    // check commands
-   if(line[0] == 'q') {
+   if(line[1] == 'q') {
       running = false;
    }
-   else if(line[0] == 'h') {
+   else if(line[1] == 'h') {
       printHelp();
    }
-   else if(line[0] == 'l') {
+   else if(line[1] == 'l') {
       _loaded = true;
-      loadScript(line + 1);
+      loadScript(line + 2);
    }
    else return false;
 
@@ -116,7 +116,7 @@ void runSession()
             line[getlength(line) - 1] = 0;
 
          if (line[0]=='-') {
-            if(!executeCommand(line + 1, running))
+            if(!executeCommand(line, running))
                printf("Invalid command, use -h to get the list of the commands\n");
          }
          else if (!emptystr(line) && line[getlength(line) - 1]!=','){
