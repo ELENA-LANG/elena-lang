@@ -4,7 +4,7 @@
    #define expression ::= object operations;
    #define operations ::= call operations;
    #define operations ::= $eps;
-   #define call ::= <= ^ ( => "." message parameters <= ) =>;
+   #define call ::= <= #send ( => "." message parameters <= ) =>;
    #define message ::= <= % => $identifier;
    #define parameters ::= "(" expression next_parameter;
    #define parameters ::= $eps;
@@ -18,4 +18,4 @@
    #start;
 ]]
 
-"abc".length
+system'console.writeLine("abc".length)

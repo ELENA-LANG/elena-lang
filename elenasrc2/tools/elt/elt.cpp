@@ -13,10 +13,11 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   1
+#define ELT_BUILD_NUMBER   2
  
 // global variables
 int   _encoding = feAnsi;
+bool _loaded = false;
 
 const char* trim(const char* s)
 {
@@ -81,6 +82,7 @@ bool executeCommand(const char* line, bool& running)
       printHelp();
    }
    else if(line[0] == 'l') {
+      _loaded = true;
       loadScript(line + 1);
    }
    else return false;
@@ -132,8 +134,7 @@ int main(int argc, char* argv[])
 {
    printf("ELENA command line VM terminal %d.%d.%d (C)2011-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
-   loadScript("scripts\\elena.es");
-
+   
    // load script passed via command line arguments
    if (argc > 1) {
       for (int i = 1 ; i < argc ; i++) {
@@ -147,5 +148,8 @@ int main(int argc, char* argv[])
       }
    }
 
+   if (!_loaded)
+      loadScript("scripts\\elena.es");
+      
    runSession();
 }

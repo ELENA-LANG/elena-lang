@@ -503,83 +503,73 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, _ScriptReader& reader
    reader.read();
 }
 
+bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer, int& level)
+{
+   ident_t token = reader.token;
+
+   if (StringHelper::compare(token, "#send")) {
+      parseSend(reader, writer, level);
+   }
+   else {
+      writeObject(writer, reader);
+      level++;
+   }
+
+   return true;
+}
+
+void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, int& level)
+{
+   IdentifierString message;
+
+   int start_level = level;
+   reader.read();
+   while (true) {
+      ident_t token = reader.token;
+
+      if (token[0] == ')')
+         break;
+      else if (token[0] == '(') {
+         start_level = level;
+
+         reader.read();
+      }
+      else if (StringHelper::compare(token, "%")) {
+         readMessage(reader, message);
+      }
+      else parseToken(reader, writer, level);
+   }
+
+   int counter = level - start_level;
+   if (counter > 0)
+      writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter + 1);
+
+   message[0] = message[0] + counter;
+   // HOTFIX : replace EVAL with GET if no parameters are provided
+   if (counter == 0 && message[2] == (EVAL_MESSAGE_ID + 0x20)) {
+      message[2] = GET_MESSAGE_ID + 0x20;
+   }
+
+   level -= counter;
+
+   writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
+
+   reader.read();
+}
+
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
-//   //Map<const wchar16_t*, int> locals;
-   Stack<int> levels;
-   Stack<int> args;
-   int        level = 0;
-   int        mode = 0;
-
-   MemoryDump arguments;
+   //Map<ident_t, int> locals;
+   int  level = 0;
 
    reader.read();
    do {
-      ident_t token = reader.token;
       char state = reader.info.state;
 
       if (state == dfaEOF) {
          break;
       }
-      else if (token[0] == '^') {
-         mode = SEND_TAPE_MESSAGE_ID;
-
-         reader.read();
-      }
-      else if (token[0] == '(') {
-         levels.push(level);
-         levels.push(mode);
-         mode = 0;
-
-         reader.read();
-      }
-      else if (token[0] == ')') {
-         mode = levels.pop();
-         int counter = level - levels.pop();
-         if (mode == SEND_TAPE_MESSAGE_ID) {
-            if (counter > 0)
-               writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter + 1);
-
-            int pos = args.pop();
-
-            IdentifierString message;
-            MemoryReader argReader(&arguments, pos);
-            argReader.readString(message);
-
-            message[0] = message[0] + counter;
-            // HOTFIX : replace EVAL with GET if no parameters are provided
-            if (counter == 0 && message[2] == (EVAL_MESSAGE_ID + 0x20)) {
-               message[2] = GET_MESSAGE_ID + 0x20;
-            }
-
-            level -= counter;
-
-            writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
-            arguments.trim(pos);
-
-            reader.read();
-         }
-
-         mode = 0;
-      }
-      else if(StringHelper::compare(token, "%")) {
-         if (levels.peek() == SEND_TAPE_MESSAGE_ID) {
-            IdentifierString message;
-            readMessage(reader, message);
-
-            MemoryWriter argWriter(&arguments);
-
-            args.push(argWriter.Position());
-            argWriter.writeLiteral(message);
-         }
-      }
-      //else if (token[0] == ';') {
-      //   reader.read();
-      //}
-      else {
-         writeObject(writer, reader);
-         level++;
-      }
+      else parseToken(reader, writer, level);
    } 
    while (true);
 
