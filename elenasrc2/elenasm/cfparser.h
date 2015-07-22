@@ -148,7 +148,7 @@ public:
       rtIdentifier,
 //      rtAny,
       rtEps,
-//      rtEof
+      rtEof
    };
 
    // --- Rule ---

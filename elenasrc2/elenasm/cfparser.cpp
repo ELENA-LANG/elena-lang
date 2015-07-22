@@ -16,7 +16,7 @@ using namespace _ELENA_TOOL_;
 #define LITERAL_KEYWORD       "$literal"
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
-//#define EOF_KEYWORD           "$eof"
+#define EOF_KEYWORD           "$eof"
 //#define ANY_KEYWORD           "$any"
 
 //const char* dfaSymbolic[4] =
@@ -230,21 +230,21 @@ bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& toke
    return true;
 }
 
-//bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   return token.state == dfaEOF;
-//}
-//
-//bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaEOF)
-//      return false;
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token);
-//
-//   return true;
-//}
+bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   return token.state == dfaEOF;
+}
+
+bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.state != dfaEOF)
+      return false;
+
+   if (rule.prefixPtr)
+      rule.applyPrefixDSARule(token);
+
+   return true;
+}
 
 bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
@@ -361,9 +361,9 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtEps:
          rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
          break;
-      //case rtEof:
-      //   rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
-      //   break;
+      case rtEof:
+         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
+         break;
    }
 }
 
@@ -376,6 +376,8 @@ void CFParser :: writeDSARule(TokenInfo& token, size_t ptr)
 
 bool CFParser :: applyRule(size_t ruleId, TokenInfo& token, _ScriptReader& reader)
 {
+   ident_t name = retrieveKey(_names.start(), ruleId, DEFAULT_STR);
+
    size_t readerRollback = reader.Position();
    size_t coderRollback = token.LogPosition();
 
@@ -466,7 +468,7 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
 
    RuleType type = rtNormal;
 
-   while (token.value[0] != ';') {
+   while (token.value[0] != ';' || token.state == dfaQuote) {
 
       if (token.state == dfaQuote) {
          if (rule.terminal) {
@@ -495,9 +497,9 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             else if (StringHelper::compare(token.value, EPS_KEYWORD)) {
                type = rtEps;
             }
-      //      else if (ConstantIdentifier::compare(token.value, EOF_KEYWORD)) {
-      //         type = rtEof;
-      //      }
+            else if (StringHelper::compare(token.value, EOF_KEYWORD)) {
+               type = rtEof;
+            }
             else if (StringHelper::compare(token.value, REFERENCE_KEYWORD)) {
                type = rtReference;
             }
@@ -521,7 +523,10 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             rule.terminal = mapRuleId(token.value);
          }
          else {
-            rule.nonterminal = defineGrammarRule(token, reader, rule.nonterminal);
+            if (type == rtChomski) {
+               rule.terminal = defineGrammarRule(token, reader, rule.terminal);
+            }
+            else rule.nonterminal = defineGrammarRule(token, reader, rule.nonterminal);
             break;
          }
       }
