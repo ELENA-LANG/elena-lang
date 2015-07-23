@@ -67,11 +67,11 @@ class InlineScriptParser : public _Parser
 ////   int parseStatement(/*TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
 
    //bool parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
-
+   
    //void parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
 
-   void writeObject(TapeWriter& writer, char state, ident_t value);
-   void writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments);
+   void writeObject(TapeWriter& writer, char state, ident_t value, Map<ident_t, int>& locals);
+   void writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals);
 
    void parseTape(_ScriptReader& reader, TapeWriter& writer, ident_t terminator);
 

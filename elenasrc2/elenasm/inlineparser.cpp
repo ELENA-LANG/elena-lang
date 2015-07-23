@@ -464,7 +464,7 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
 ////   return counter;
 ////}
 
-void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token)
+void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token, Map<ident_t, int>& locals)
 {
    switch (state) {
       case dfaInteger:
@@ -490,16 +490,18 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
 
          writer.writeCommand(SEND_TAPE_MESSAGE_ID, token);
          break;
-//         case dfaIdentifier:
-//         {
-//            int index = locals.get(reader.token);
-//            if (index != 0) {
-//               counter = writeVariable(writer, index, level, mode);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
-//
-//            break;
-//         }
+      case '<':
+      {
+         int var_level = 0;         
+         if (token[0] >= '0' && token[0] <= '9') {
+            var_level = StringHelper::strToInt(token);
+         }
+         else var_level = locals.get(token);
+
+         writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
+
+         break;
+      }
 //         default:
 //            throw EParseError(reader.info.column, reader.info.row);
    }
@@ -523,14 +525,6 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
 //   else if (StringHelper::compare(token, "^") && reader.info.state != dfaQuote) {
 //      reader.read();
 //
-//      int var_level = 0;
-//      if (reader.info.state == dfaIdentifier) {
-//         var_level = locals.get(reader.token);
-//      }
-//      else if (reader.info.state == dfaInteger) {
-//         var_level = StringHelper::strToInt(reader.token);
-//      }
-//      writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
 //      level++;
 //
 //      reader.read();
@@ -597,7 +591,7 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
 //   reader.read();
 //}
 
-void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments)
+void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals)
 {
    MemoryReader reader(&dump);
    while (arguments.Count() > 0) {
@@ -605,8 +599,12 @@ void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack
 
       reader.seek(position);
       char state = reader.getByte();
-
-      writeObject(writer, state, reader.getLiteral(DEFAULT_STR));
+      
+      // if new variable
+      if (state == ':') {
+         locals.add(reader.getLiteral(DEFAULT_STR), level);
+      }
+      else writeObject(writer, state, reader.getLiteral(DEFAULT_STR), locals);
    }
 }
 
@@ -620,6 +618,8 @@ inline void saveToCache(MemoryDump& cache, char state, ident_t value)
 
 void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, ident_t terminator)
 {
+   Map<ident_t, int> locals(-1);
+
    Stack<int> arguments;
    Stack<Scope> scopes(Scope(0, 0));
    MemoryDump cache;
@@ -676,7 +676,7 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
       else if (StringHelper::compare(reader.token, "]")) {
          scopes.pop();
 
-         writeDump(writer, cache, arguments);
+         writeDump(writer, cache, arguments, level, locals);
          arguments.clear();
          cache.trim(0);
 
@@ -708,6 +708,18 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
 
          reader.read();
       }
+      else if (StringHelper::compare(reader.token, ":")) {
+         reader.read();
+         saveToCache(cache, ':', reader.token);
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, "<")) {
+         reader.read();
+         saveToCache(cache, '<', reader.token);
+
+         reader.read();
+      }
       else if (StringHelper::compare(reader.token, "^")) {
          IdentifierString message;
          readMessage(reader, message);
@@ -720,20 +732,6 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
 
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
-   //Map<ident_t, int> locals(-1);
-   //int  level = 1;
-
-   //reader.read();
-   //do {
-   //   char state = reader.info.state;
-
-   //   if (state == dfaEOF) {
-   //      break;
-   //   }
-   //   else parseToken(reader, writer, level, locals);
-   //} 
-   //while (true);
-
    reader.read();
    parseTape(reader, writer, DEFAULT_STR);
 
