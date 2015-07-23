@@ -483,6 +483,11 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
          writer.writeCallCommand(token);
          break;
       case '^':
+         // HOTFIX : replace EVAL to GET if no parameters are provided
+         if (token[0] == '0' && token[2] == EVAL_MESSAGE_ID + 0x20) {
+            ((ident_c*)token)[2] = GET_MESSAGE_ID + 0x20;
+         }
+
          writer.writeCommand(SEND_TAPE_MESSAGE_ID, token);
          break;
 //         case dfaIdentifier:
@@ -663,6 +668,20 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
       else if (StringHelper::compare(reader.token, terminator)) {
          break;
       }
+      else if (StringHelper::compare(reader.token, "[")) {
+         scopes.push(Scope(level, arguments.Count() + 1));
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, "]")) {
+         scopes.pop();
+
+         writeDump(writer, cache, arguments);
+         arguments.clear();
+         cache.trim(0);
+
+         reader.read();
+      }
       else if (StringHelper::compare(reader.token, "(")) {
          scopes.push(Scope(level, arguments.Count() + 1));
 
@@ -671,24 +690,13 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
       else if (StringHelper::compare(reader.token, ")")) {
          Scope scope = scopes.pop();
 
-         // if it was the last bracket - save the argument cache
-         if (scopes.Count() == 0) {
-            writeDump(writer, cache, arguments);
-            arguments.clear();
-            cache.trim(0);
-         }
-         else {
-            int pos = *arguments.get(arguments.Count() - scopes.peek().arg_level);
+         int pos = *arguments.get(arguments.Count() - scopes.peek().arg_level);
 
-            MemoryReader cacheReader(&cache, pos);
-            char op = cacheReader.getByte();
-            if (op == '^') {
-               // update message counter
-               cache.writeByte(pos + 1, '0' + (level - scope.level));
-               if (level - scope.level == 0) {
-                  cache.writeByte(pos + 3, GET_MESSAGE_ID + 0x20);
-               }
-            }
+         MemoryReader cacheReader(&cache, pos);
+         char op = cacheReader.getByte();
+         if (op == '^') {
+            // update message counter
+            cache.writeByte(pos + 1, '0' + (level - scope.level));
          }
 
          level = scope.level;

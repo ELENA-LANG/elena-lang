@@ -22,61 +22,47 @@ v  - vm script
 Currently:                                                                                                                        
 ------                                                                                         
 
-a.msg(b.msg2(c)).msg3(d)
-                                 
+a.msg(b)
 
-(a+ ^msg (b+ ^msg2(c+)) ^msg3(d+))
-                           
-  
-a
+[ a ^msg(b) ]
 
-^msg
-a
-
-^msg
-a
-1
-^msg2 = 2
 b
-c  = 3
-
-
-
-^msg3   
-^msg    
 a
-^msg2   
-b
-c
+msg
+
+
+a.msg(b.msg2(c,d))
+
+[ a ^msg(b ^msg2 (c d))
+
 d
-
-d c b %msg2 a %msg %msg3
-
-
-
-(a+ ^msg(b+))
-
-^msg 1
-a 0
-b 2
-
-^msg
-a
+c
 b
+msg2
+a
+msg
 
 
-[0,1]
+a.msg(b).msg2(c)
 
 
-push b push a
+[ a ^msg(b) ^msg2(c) ]
+
+c
+b
+a
+msg
+msg2
 
 
+[:v a ^msg(b)]
 
---
-level
-levels (level, argument_level)
-arguments
---
+b
+a
+^msg
+:v
+
+
 
 
 

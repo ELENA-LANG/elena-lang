@@ -2,7 +2,7 @@
    #grammar cf
    #define start ::= statement eol start;
    #define start ::= $eof;
-   #define statement ::=  <= ( => expression <= ) =>;   
+   #define statement ::=  <= [ => expression <= ] =>;   
    #define expression ::= object operations;
    #define operations ::= call operations;
    #define operations ::= $eps;
@@ -22,7 +22,7 @@
    #start;
 ]]
 
-system'console.writeLine("Hello World");
+system'console.writeLine("Hello World".length);
 
 
 
