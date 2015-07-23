@@ -18,14 +18,20 @@ class InlineScriptParser : public _Parser
 {
    MessageMap _verbs;
 
-   class ArgumentReader : public _ScriptReader
+   struct Scope
    {
-      MemoryReader* _reader;
+      int level;
+      int arg_level;
 
-   public:
-      ArgumentReader(MemoryReader* reader)
+      Scope()
       {
-
+         level = 0;
+         arg_level = 0;
+      }
+      Scope(int level, int arg_level)
+      {
+         this->level = level;
+         this->arg_level = arg_level;
       }
    };
 
@@ -60,11 +66,14 @@ class InlineScriptParser : public _Parser
 //   int parseExpression(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
 ////   int parseStatement(/*TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, int level, Mode mode*/);
 
-   bool parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
+   //bool parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
 
-   void parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
+   //void parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
 
-   void writeObject(TapeWriter& writer, _ScriptReader& reader);
+   void writeObject(TapeWriter& writer, char state, ident_t value);
+   void writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments);
+
+   void parseTape(_ScriptReader& reader, TapeWriter& writer, ident_t terminator);
 
 public:
    virtual bool parseGrammarRule(_ScriptReader& reader)

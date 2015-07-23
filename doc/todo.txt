@@ -21,12 +21,83 @@ v  - vm script
 ------                                 
 Currently:                                                                                                                        
 ------                                                                                         
+
+a.msg(b.msg2(c)).msg3(d)
+                                 
+
+(a+ ^msg (b+ ^msg2(c+)) ^msg3(d+))
+                           
+  
+a
+
+^msg
+a
+
+^msg
+a
+1
+^msg2 = 2
+b
+c  = 3
+
+
+
+^msg3   
+^msg    
+a
+^msg2   
+b
+c
+d
+
+d c b %msg2 a %msg %msg3
+
+
+
+(a+ ^msg(b+))
+
+^msg 1
+a 0
+b 2
+
+^msg
+a
+b
+
+
+[0,1]
+
+
+push b push a
+
+
+
+--
+level
+levels (level, argument_level)
+arguments
+--
+
+
+
               xdev - script engine
-                       * objects / methods, variables
+                       * refactor inline parser : use argument list
+                       * parse system'console.writeLine("abc".length)
+                       * parse system'console.writeLine(2 . add(3) . add(4))
+
+                       * assign existing variable
+                       * arguments in reverse order, get rid of reverse command
+
+                       * structure
+                       * methods
+                       * methods variable
+                       * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
                        * calculator : gui
                        * calculator : script
                        * reimplement script samples: interpreter, helloworld, vmconsole
+
+                       * get rid of reverse command
                        
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
@@ -44,13 +115,13 @@ Currently:
               xdev - linux:
                        * fix samples
                        * implement DateTime / Timespan classes
+                       * linux date / time operations
                        * implement textdb sample
                        * test load class by name
                        * linux32 : implement console clear
                        * reimplement consolewriter.write&literal - use printf instead of putchar
                        * migrate rosetta samples
                        * core : implement INIT_RND
-                       * linux date / time operations
                        * consoleReader should check if the char is multibyte
                        * read key
                        * port console samples                                                                               
@@ -58,6 +129,8 @@ Currently:
 
               xdev - general implementation
                        * resolve issue #15
+
+<= build =>
                                                                                                                              
               idev - linux:              
                        * save last open path (should be saved in the current path??)
@@ -125,10 +198,7 @@ Currently:
                        * build structure
 
                        * build class
-                       * local variables
                        * should be able to parse 2.add(3) - currently dot is considered as part of real number
-                       * migrate elenasm to the new platform ; two syntax scheme - the base one defined in elt.es
-                       * script engine - ~ to indicate relative to elena bin folder
 
                        * migrate
 

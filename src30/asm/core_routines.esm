@@ -4599,9 +4599,6 @@ labNext:
 labMessage:
   nload
   ecopyd
-
-  callr api : coreapi'rewindstack
-
   aloadsi 0  
   acallvi 0
   pusha

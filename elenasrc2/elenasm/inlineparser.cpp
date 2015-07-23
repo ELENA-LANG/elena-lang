@@ -259,10 +259,6 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
    }
 }
 
-////int InlineScriptParser :: parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter)
-////{
-////}
-////
 ////int InlineScriptParser :: parseReverseList(TapeWriter& writer, _ScriptReader& reader/*, Map<const wchar16_t*, int>& locals, int level, Mode mode*/)
 ////{
 ////   int paramCount = 0;
@@ -468,23 +464,26 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
 ////   return counter;
 ////}
 
-void InlineScriptParser :: writeObject(TapeWriter& writer, _ScriptReader& reader)
+void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token)
 {
-   switch (reader.info.state) {
+   switch (state) {
       case dfaInteger:
-         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, reader.token);
+         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
          break;
       case dfaReal:
-         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, reader.token);
+         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
          break;
       case dfaLong:
-         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, reader.token);
+         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
          break;
       case dfaQuote:
-         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.token);
+         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
          break;
       case dfaFullIdentifier:
-         writer.writeCallCommand(reader.token);
+         writer.writeCallCommand(token);
+         break;
+      case '^':
+         writer.writeCommand(SEND_TAPE_MESSAGE_ID, token);
          break;
 //         case dfaIdentifier:
 //         {
@@ -499,102 +498,236 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, _ScriptReader& reader
 //         default:
 //            throw EParseError(reader.info.column, reader.info.row);
    }
-
-   reader.read();
 }
 
-bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
+//bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
+//{
+//   ident_t token = reader.token;
+//
+//   if (StringHelper::compare(token, "#send")) {
+//      parseSend(reader, writer, level, locals);
+//   }
+//   else if (StringHelper::compare(token, "#set")) {
+//      reader.read();
+//
+//      if (reader.info.state == dfaIdentifier) {
+//         locals.add(reader.token, level);
+//      }
+//      reader.read();
+//   }
+//   else if (StringHelper::compare(token, "^") && reader.info.state != dfaQuote) {
+//      reader.read();
+//
+//      int var_level = 0;
+//      if (reader.info.state == dfaIdentifier) {
+//         var_level = locals.get(reader.token);
+//      }
+//      else if (reader.info.state == dfaInteger) {
+//         var_level = StringHelper::strToInt(reader.token);
+//      }
+//      writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
+//      level++;
+//
+//      reader.read();
+//   }
+//   else if (StringHelper::compare(token, ">") && reader.info.state != dfaQuote) {
+//      reader.read();
+//
+//      int var_level = 0;
+//      if (reader.info.state == dfaIdentifier) {
+//         var_level = locals.get(reader.token);
+//      }
+//      else if (reader.info.state == dfaInteger) {
+//         var_level = StringHelper::strToInt(reader.token);
+//      }
+//      writer.writeCommand(ASSIGN_VAR_MESSAGE_ID, var_level);
+//      level--;
+//
+//      reader.read();
+//   }
+//   else {
+//      writeObject(writer, reader);
+//      level++;
+//   }
+//
+//   return true;
+//}
+
+//void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
+//{
+//   IdentifierString message;
+//
+//   int start_level = level;
+//   reader.read();
+//   while (true) {
+//      ident_t token = reader.token;
+//
+//      if (token[0] == ')')
+//         break;
+//      else if (token[0] == '(') {
+//         start_level = level;
+//
+//         reader.read();
+//      }
+//      else if (StringHelper::compare(token, "%")) {
+//         readMessage(reader, message);
+//      }
+//      else parseToken(reader, writer, level, locals);
+//   }
+//
+//   int counter = level - start_level;
+//   if (counter > 0)
+//      writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter + 1);
+//
+//   message[0] = message[0] + counter;
+//   // HOTFIX : replace EVAL with GET if no parameters are provided
+//   if (counter == 0 && message[2] == (EVAL_MESSAGE_ID + 0x20)) {
+//      message[2] = GET_MESSAGE_ID + 0x20;
+//   }
+//
+//   level -= counter;
+//
+//   writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
+//
+//   reader.read();
+//}
+
+void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments)
 {
-   ident_t token = reader.token;
+   MemoryReader reader(&dump);
+   while (arguments.Count() > 0) {
+      int position = arguments.pop();
 
-   if (StringHelper::compare(token, "#send")) {
-      parseSend(reader, writer, level, locals);
+      reader.seek(position);
+      char state = reader.getByte();
+
+      writeObject(writer, state, reader.getLiteral(DEFAULT_STR));
    }
-   else if (StringHelper::compare(token, "#set")) {
-      reader.read();
-
-      if (reader.info.state == dfaIdentifier) {
-         locals.add(reader.token, level);
-      }
-      reader.read();
-   }
-   else if (StringHelper::compare(token, "^")) {
-      reader.read();
-
-      int var_level = 0;
-      if (reader.info.state == dfaIdentifier) {
-         var_level = locals.get(reader.token);
-      }
-      else if (reader.info.state == dfaInteger) {
-         var_level = StringHelper::strToInt(reader.token);
-      }
-      writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
-      level++;
-
-      reader.read();
-   }
-   else {
-      writeObject(writer, reader);
-      level++;
-   }
-
-   return true;
 }
 
-void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
+inline void saveToCache(MemoryDump& cache, char state, ident_t value)
 {
-   IdentifierString message;
+   MemoryWriter argWriter(&cache);
 
-   int start_level = level;
-   reader.read();
+   argWriter.writeChar(state);
+   argWriter.writeLiteral(value);
+}
+
+void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, ident_t terminator)
+{
+   Stack<int> arguments;
+   Stack<Scope> scopes(Scope(0, 0));
+   MemoryDump cache;
+   
+   int level = 0;
    while (true) {
-      ident_t token = reader.token;
+      char state = reader.info.state;
+      if (state == dfaQuote) {
+         arguments.push(cache.Length());
 
-      if (token[0] == ')')
-         break;
-      else if (token[0] == '(') {
-         start_level = level;
+         saveToCache(cache, dfaQuote, reader.token);
 
          reader.read();
       }
-      else if (StringHelper::compare(token, "%")) {
-         readMessage(reader, message);
+      else if (state == dfaEOF && emptystr(terminator)) {
+         break;
       }
-      else parseToken(reader, writer, level, locals);
+      else if (state == dfaFullIdentifier) {
+         arguments.push(cache.Length());
+
+         saveToCache(cache, dfaFullIdentifier, reader.token);
+
+         reader.read();
+      }
+      else if (state == dfaInteger) {
+         arguments.push(cache.Length());
+
+         saveToCache(cache, dfaInteger, reader.token);
+
+         reader.read();
+      }
+      else if (state == dfaLong) {
+         arguments.push(cache.Length());
+
+         saveToCache(cache, dfaLong, reader.token);
+
+         reader.read();
+      }
+      else if (state == dfaReal) {
+         arguments.push(cache.Length());
+
+         saveToCache(cache, dfaReal, reader.token);
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, terminator)) {
+         break;
+      }
+      else if (StringHelper::compare(reader.token, "(")) {
+         scopes.push(Scope(level, arguments.Count() + 1));
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, ")")) {
+         Scope scope = scopes.pop();
+
+         // if it was the last bracket - save the argument cache
+         if (scopes.Count() == 0) {
+            writeDump(writer, cache, arguments);
+            arguments.clear();
+            cache.trim(0);
+         }
+         else {
+            int pos = *arguments.get(arguments.Count() - scopes.peek().arg_level);
+
+            MemoryReader cacheReader(&cache, pos);
+            char op = cacheReader.getByte();
+            if (op == '^') {
+               // update message counter
+               cache.writeByte(pos + 1, '0' + (level - scope.level));
+               if (level - scope.level == 0) {
+                  cache.writeByte(pos + 3, GET_MESSAGE_ID + 0x20);
+               }
+            }
+         }
+
+         level = scope.level;
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, "+")) {
+         level++;
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, "^")) {
+         IdentifierString message;
+         readMessage(reader, message);
+
+         arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
+         saveToCache(cache, '^', message);
+      }
    }
-
-   int counter = level - start_level;
-   if (counter > 0)
-      writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter + 1);
-
-   message[0] = message[0] + counter;
-   // HOTFIX : replace EVAL with GET if no parameters are provided
-   if (counter == 0 && message[2] == (EVAL_MESSAGE_ID + 0x20)) {
-      message[2] = GET_MESSAGE_ID + 0x20;
-   }
-
-   level -= counter;
-
-   writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
-
-   reader.read();
 }
 
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
-   Map<ident_t, int> locals(-1);
-   int  level = 1;
+   //Map<ident_t, int> locals(-1);
+   //int  level = 1;
+
+   //reader.read();
+   //do {
+   //   char state = reader.info.state;
+
+   //   if (state == dfaEOF) {
+   //      break;
+   //   }
+   //   else parseToken(reader, writer, level, locals);
+   //} 
+   //while (true);
 
    reader.read();
-   do {
-      char state = reader.info.state;
-
-      if (state == dfaEOF) {
-         break;
-      }
-      else parseToken(reader, writer, level, locals);
-   } 
-   while (true);
+   parseTape(reader, writer, DEFAULT_STR);
 
    writer.writeEndCommand();
 }

@@ -1001,6 +1001,16 @@ public:
       return _list.end();
    }
 
+   Iterator get(int index)
+   {
+      Iterator it = start();
+      while (!it.Eof() && index > 0) {
+         index--;
+         it++;
+      }
+      return it;
+   }
+
    size_t Count() const { return _list.Count(); }
 
    T peek()
@@ -1029,14 +1039,12 @@ public:
       _list.cut(it);
    }
 
-   Iterator get(int index)
+   void insert(Iterator it, T item)
    {
-      Iterator it = start();
-      while (!it.Eof() && index > 0) {
-         index--;
-         it++;
+      if (it.Eof()) {
+         _list.addToTale(item);
       }
-      return it;
+      else _list.insertAfter(it, item);
    }
 
    void clear()

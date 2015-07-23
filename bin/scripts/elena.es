@@ -1,6 +1,7 @@
 [[
    #grammar cf
    #define start ::= variable eol start;
+   #define start ::= set_variable eol start;
    #define start ::= expression eol start;
    #define start ::= $eof;
    #define expression ::= object operations;
@@ -20,9 +21,12 @@
    #define variable ::= <= #set => "var" identifier assigning;
    #define identifier ::= $identifier;
    #define assigning ::= "=" expression;
+   #define set_variable ::= $identifier assigning <= < >;
    
    #config vm_console 
    #start;
 ]]
 
-system'console.writeLine("abc".length);
+var a = 4;
+
+system'console.writeLine(a);
