@@ -185,9 +185,9 @@ bool normalIdentifierApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& tok
 
    if (rule.prefixPtr) {
       rule.applyPrefixDSARule(token);
-   }
 
-   token.writeLog();
+      token.writeLog();
+   }   
 
    if (!apply(rule, token, reader))
       return false;
