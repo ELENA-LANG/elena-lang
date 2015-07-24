@@ -1,19 +1,19 @@
-numberstrategy =
+var numberstrategy =
 {
    order : 0,
 
    evalToken : function(ch) { return system'realConvertor.convert(ch); }
 };
 
-sumstrategy =
+var sumstrategy =
 {
    order : 2,
 
    evalNode : function(a,b) { return a.add(b); }
 };
 
-state0 = system'Variable new.
-state1 = system'Variable new.
+var state0 = system'Variable new.
+var state1 = system'Variable new.
 
 state0.write(
 {

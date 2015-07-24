@@ -502,94 +502,22 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
 
          break;
       }
-//         default:
+      case '>':
+      {
+         int var_level = 0;
+         if (token[0] >= '0' && token[0] <= '9') {
+            var_level = StringHelper::strToInt(token);
+         }
+         else var_level = locals.get(token);
+
+         writer.writeCommand(ASSIGN_VAR_MESSAGE_ID, var_level);
+
+         break;
+      }
+      //         default:
 //            throw EParseError(reader.info.column, reader.info.row);
    }
 }
-
-//bool InlineScriptParser :: parseToken(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
-//{
-//   ident_t token = reader.token;
-//
-//   if (StringHelper::compare(token, "#send")) {
-//      parseSend(reader, writer, level, locals);
-//   }
-//   else if (StringHelper::compare(token, "#set")) {
-//      reader.read();
-//
-//      if (reader.info.state == dfaIdentifier) {
-//         locals.add(reader.token, level);
-//      }
-//      reader.read();
-//   }
-//   else if (StringHelper::compare(token, "^") && reader.info.state != dfaQuote) {
-//      reader.read();
-//
-//      level++;
-//
-//      reader.read();
-//   }
-//   else if (StringHelper::compare(token, ">") && reader.info.state != dfaQuote) {
-//      reader.read();
-//
-//      int var_level = 0;
-//      if (reader.info.state == dfaIdentifier) {
-//         var_level = locals.get(reader.token);
-//      }
-//      else if (reader.info.state == dfaInteger) {
-//         var_level = StringHelper::strToInt(reader.token);
-//      }
-//      writer.writeCommand(ASSIGN_VAR_MESSAGE_ID, var_level);
-//      level--;
-//
-//      reader.read();
-//   }
-//   else {
-//      writeObject(writer, reader);
-//      level++;
-//   }
-//
-//   return true;
-//}
-
-//void InlineScriptParser :: parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals)
-//{
-//   IdentifierString message;
-//
-//   int start_level = level;
-//   reader.read();
-//   while (true) {
-//      ident_t token = reader.token;
-//
-//      if (token[0] == ')')
-//         break;
-//      else if (token[0] == '(') {
-//         start_level = level;
-//
-//         reader.read();
-//      }
-//      else if (StringHelper::compare(token, "%")) {
-//         readMessage(reader, message);
-//      }
-//      else parseToken(reader, writer, level, locals);
-//   }
-//
-//   int counter = level - start_level;
-//   if (counter > 0)
-//      writer.writeCommand(REVERSE_TAPE_MESSAGE_ID, counter + 1);
-//
-//   message[0] = message[0] + counter;
-//   // HOTFIX : replace EVAL with GET if no parameters are provided
-//   if (counter == 0 && message[2] == (EVAL_MESSAGE_ID + 0x20)) {
-//      message[2] = GET_MESSAGE_ID + 0x20;
-//   }
-//
-//   level -= counter;
-//
-//   writer.writeCommand(SEND_TAPE_MESSAGE_ID, message);
-//
-//   reader.read();
-//}
 
 void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals)
 {
@@ -708,15 +636,37 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
 
          reader.read();
       }
+      else if (StringHelper::compare(reader.token, "-")) {
+         level--;
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, ".")) {
+         writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
+
+         reader.read();
+      }
       else if (StringHelper::compare(reader.token, ":")) {
+         arguments.push(cache.Length());
+
          reader.read();
          saveToCache(cache, ':', reader.token);
 
          reader.read();
       }
       else if (StringHelper::compare(reader.token, "<")) {
+         arguments.push(cache.Length());
+
          reader.read();
          saveToCache(cache, '<', reader.token);
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, ">")) {
+         arguments.push(cache.Length());
+
+         reader.read();
+         saveToCache(cache, '>', reader.token);
 
          reader.read();
       }
