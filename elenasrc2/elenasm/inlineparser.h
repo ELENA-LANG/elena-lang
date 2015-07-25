@@ -71,7 +71,7 @@ class InlineScriptParser : public _Parser
    //void parseSend(_ScriptReader& reader, TapeWriter& writer, int& level, Map<ident_t, int>& locals);
 
    void writeObject(TapeWriter& writer, char state, ident_t value, Map<ident_t, int>& locals);
-   void writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals);
+   void writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals, int arg_level);
 
    void parseTape(_ScriptReader& reader, TapeWriter& writer, ident_t terminator);
 

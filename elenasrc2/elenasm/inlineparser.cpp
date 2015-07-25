@@ -519,10 +519,10 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
    }
 }
 
-void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals)
+void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals, int arg_level)
 {
    MemoryReader reader(&dump);
-   while (arguments.Count() > 0) {
+   while (arguments.Count() > arg_level) {
       int position = arguments.pop();
 
       reader.seek(position);
@@ -548,7 +548,7 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
 {
    Map<ident_t, int> locals(-1);
 
-   Stack<int> arguments;
+   Stack<int> arguments(0);
    Stack<Scope> scopes(Scope(0, 0));
    MemoryDump cache;
    
@@ -604,9 +604,8 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
       else if (StringHelper::compare(reader.token, "]")) {
          scopes.pop();
 
-         writeDump(writer, cache, arguments, level, locals);
-         arguments.clear();
-         cache.trim(0);
+         writeDump(writer, cache, arguments, level, locals, scopes.peek().arg_level);
+         cache.trim(arguments.peek());
 
          reader.read();
       }

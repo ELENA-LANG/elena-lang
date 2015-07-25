@@ -22,60 +22,15 @@ v  - vm script
 Currently:                                                                                                                        
 ------                                                                                         
 
-a.msg(b)
-
-[ a ^msg(b) ]
-
-b
-a
-msg
-
-
-a.msg(b.msg2(c,d))
-
-[ a ^msg(b ^msg2 (c d))
-
-d
-c
-b
-msg2
-a
-msg
-
-
-a.msg(b).msg2(c)
-
-
-[ a ^msg(b) ^msg2(c) ]
-
-c
-b
-a
-msg
-msg2
-
-
-[:v a ^msg(b)]
-
-b
-a
-^msg
-:v
-
-
-
-
-
               xdev - script engine
-                       * refactor inline parser : use argument list
-                       * parse system'console.writeLine("abc".length)
-                       * parse system'console.writeLine(2 . add(3) . add(4))
-
-                       * assign existing variable
-                       * arguments in reverse order, get rid of reverse command
-
                        * structure
                        * methods
+
+              xdev - linux:
+                       * fix samples
+                       * port rosetta samples : several simple samples
+
+              xdev - script engine
                        * methods variable
                        * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
@@ -97,12 +52,16 @@ a
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
                        * fix anagram rosetta examples
+
+              xdev - general implementation
+                       * resolve issue #15
+
+<= build =>
                        
               xdev - linux:
-                       * fix samples
+                       * implement textdb sample
                        * implement DateTime / Timespan classes
                        * linux date / time operations
-                       * implement textdb sample
                        * test load class by name
                        * linux32 : implement console clear
                        * reimplement consolewriter.write&literal - use printf instead of putchar
@@ -112,11 +71,6 @@ a
                        * read key
                        * port console samples                                                                               
                        * port rosetta samples                                                                               
-
-              xdev - general implementation
-                       * resolve issue #15
-
-<= build =>
                                                                                                                              
               idev - linux:              
                        * save last open path (should be saved in the current path??)
