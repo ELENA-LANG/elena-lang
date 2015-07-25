@@ -4,7 +4,7 @@
    #define start ::= set_variable eol start;
    #define start ::= statement eol start;
    #define start ::= $eof;
-   #define statement ::=  <= [ => expression <= ] .- =>;   
+   #define statement ::=  <= [ => expression <= ] . =>;   
    #define expression ::= object operations;
    #define operations ::= call operations;
    #define operations ::= $eps;
@@ -19,8 +19,8 @@
    #define object ::= $numeric <= + =>;
    #define object ::= <= < => $identifier <= + =>;
    #define identifier ::= $identifier;
-   #define variable ::= <= [ : => "var" identifier assigning <= ] =>;
-   #define set_variable ::= <= [ > => identifier assigning <= ] - =>;
+   #define variable ::= <= [ : => "var" identifier assigning <= ]; =>;
+   #define set_variable ::= <= [ > => identifier assigning <= ]- =>;
    #define assigning ::= "=" expression;
 
    #define eol ::= ";";
@@ -28,11 +28,3 @@
    #config vm_console 
    #start;
 ]]
-
-var a = 2;
-a = 3;
-
-system'console.writeLine(a);
-
-
-

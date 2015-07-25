@@ -519,15 +519,20 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
    }
 }
 
-void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack<int>& arguments, int level, Map<ident_t, int>& locals, int arg_level)
+inline void save(MemoryDump& cache, char state, ident_t value)
 {
-   MemoryReader reader(&dump);
-   while (arguments.Count() > arg_level) {
-      int position = arguments.pop();
+   MemoryWriter argWriter(&cache);
 
-      reader.seek(position);
+   argWriter.writeChar(state);
+   argWriter.writeLiteral(value);
+}
+
+void InlineScriptParser::writeLine(MemoryDump& line, TapeWriter& writer, Map<ident_t, int>& locals, int level)
+{
+   MemoryReader reader(&line);
+   while (!reader.Eof()) {
       char state = reader.getByte();
-      
+
       // if new variable
       if (state == ':') {
          locals.add(reader.getLiteral(DEFAULT_STR), level);
@@ -536,67 +541,86 @@ void InlineScriptParser :: writeDump(TapeWriter& writer, MemoryDump& dump, Stack
    }
 }
 
-inline void saveToCache(MemoryDump& cache, char state, ident_t value)
+void InlineScriptParser :: copyDump(MemoryDump& dump, MemoryDump& line, Stack<int>& arguments)
 {
-   MemoryWriter argWriter(&cache);
+   MemoryReader reader(&dump);
+   while (arguments.Count() > 0) {
+      int position = arguments.pop();
 
-   argWriter.writeChar(state);
-   argWriter.writeLiteral(value);
+      reader.seek(position);
+      char state = reader.getByte();
+
+      save(line, state, reader.getLiteral(DEFAULT_STR));
+   }
 }
 
-void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, ident_t terminator)
+void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line, int& level)
 {
-   Map<ident_t, int> locals(-1);
-
-   Stack<int> arguments(0);
    Stack<Scope> scopes(Scope(0, 0));
+   Stack<int> arguments(0);
    MemoryDump cache;
-   
-   int level = 0;
+
+   bool reverseMode = false;
    while (true) {
       char state = reader.info.state;
+      if (state == dfaEOF) {
+         break;
+      }
       if (state == dfaQuote) {
-         arguments.push(cache.Length());
+         if (reverseMode) {
+            arguments.push(cache.Length());
 
-         saveToCache(cache, dfaQuote, reader.token);
+            save(cache, dfaQuote, reader.token);
+         }
+         else  save(line, dfaQuote, reader.token);
 
          reader.read();
       }
-      else if (state == dfaEOF && emptystr(terminator)) {
-         break;
-      }
       else if (state == dfaFullIdentifier) {
-         arguments.push(cache.Length());
+         if (reverseMode) {
+            arguments.push(cache.Length());
 
-         saveToCache(cache, dfaFullIdentifier, reader.token);
+            save(cache, dfaFullIdentifier, reader.token);
+         }
+         else save(line, dfaFullIdentifier, reader.token);
 
          reader.read();
       }
       else if (state == dfaInteger) {
-         arguments.push(cache.Length());
+         if (reverseMode) {
+            arguments.push(cache.Length());
 
-         saveToCache(cache, dfaInteger, reader.token);
+            save(cache, dfaInteger, reader.token);
+         }
+         else save(line, dfaInteger, reader.token);
 
          reader.read();
       }
       else if (state == dfaLong) {
-         arguments.push(cache.Length());
+         if (reverseMode) {
+            arguments.push(cache.Length());
 
-         saveToCache(cache, dfaLong, reader.token);
+            save(cache, dfaLong, reader.token);
+         }
+         else save(line, dfaLong, reader.token);
 
          reader.read();
       }
       else if (state == dfaReal) {
-         arguments.push(cache.Length());
+         if (reverseMode) {
+            arguments.push(cache.Length());
 
-         saveToCache(cache, dfaReal, reader.token);
+            save(cache, dfaReal, reader.token);
+         }
+         else save(line, dfaReal, reader.token);
 
          reader.read();
       }
-      else if (StringHelper::compare(reader.token, terminator)) {
+      else if (StringHelper::compare(reader.token, "}")) {
          break;
       }
       else if (StringHelper::compare(reader.token, "[")) {
+         reverseMode = true;
          scopes.push(Scope(level, arguments.Count() + 1));
 
          reader.read();
@@ -604,10 +628,11 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
       else if (StringHelper::compare(reader.token, "]")) {
          scopes.pop();
 
-         writeDump(writer, cache, arguments, level, locals, scopes.peek().arg_level);
-         cache.trim(arguments.peek());
+         copyDump(cache, line, arguments);
+         cache.trim(0);
 
          reader.read();
+         reverseMode = false;
       }
       else if (StringHelper::compare(reader.token, "(")) {
          scopes.push(Scope(level, arguments.Count() + 1));
@@ -640,16 +665,14 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
 
          reader.read();
       }
-      else if (StringHelper::compare(reader.token, ".")) {
-         writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
-
-         reader.read();
+      else if (StringHelper::compare(reader.token, ".") || StringHelper::compare(reader.token, ";")) {
+         return;
       }
       else if (StringHelper::compare(reader.token, ":")) {
          arguments.push(cache.Length());
 
          reader.read();
-         saveToCache(cache, ':', reader.token);
+         save(cache, ':', reader.token);
 
          reader.read();
       }
@@ -657,7 +680,7 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
          arguments.push(cache.Length());
 
          reader.read();
-         saveToCache(cache, '<', reader.token);
+         save(cache, '<', reader.token);
 
          reader.read();
       }
@@ -665,7 +688,7 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
          arguments.push(cache.Length());
 
          reader.read();
-         saveToCache(cache, '>', reader.token);
+         save(cache, '>', reader.token);
 
          reader.read();
       }
@@ -674,15 +697,32 @@ void InlineScriptParser :: parseTape(_ScriptReader& reader, TapeWriter& writer, 
          readMessage(reader, message);
 
          arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
-         saveToCache(cache, '^', message);
+         save(cache, '^', message);
       }
    }
 }
 
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
-   reader.read();
-   parseTape(reader, writer, DEFAULT_STR);
+   MemoryDump line;
+   Map<ident_t, int> locals(-1);
+   int level = 0;
+
+   while (true) {
+      reader.read();
+      if (reader.info.state == dfaEOF) {
+         break;
+      }
+      else parseStatement(reader, line, level);
+
+      writeLine(line, writer, locals, level);
+      if (reader.token[0] == '.' && reader.info.state != dfaQuote) {
+         writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
+         level--;
+      }
+
+      line.clear();
+   }   
 
    writer.writeEndCommand();
 }

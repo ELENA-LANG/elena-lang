@@ -16,15 +16,19 @@ v  - vm script
 - opt
 - port
 - doc
-
                                                                                
 ------                                 
 Currently:                                                                                                                        
 ------                                                                                         
 
               xdev - script engine
-                       * structure
-                       * methods
+                       * structure : system'dynamic'Struct{ %x* 3* %y* 4* }+
+                       
+                                     system'dynamic'Struct { %x+ 3+ %y+ 4+ }+
+
+                       * methods : %x*  @system'dynamic'Type { [ system'conole+ %writeLine ("Hello"+) ] }*
+                       * methods with arguments
+                       * methods with locals
 
               xdev - linux:
                        * fix samples
