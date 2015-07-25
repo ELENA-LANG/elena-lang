@@ -228,23 +228,31 @@ int InlineScriptParser :: mapVerb(ident_t literal)
 ////   return counter;
 ////}
 
-void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& message)
+void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& message, bool subjectOnly)
 {   
    message[0] = '0';
    message[1] = 0;
 
    ident_t token = reader.read();
 
-   int verbId = mapVerb(token);
-   if (verbId != 0) {
+   if (subjectOnly) {
       message.append('#');
-      message.append(0x20 + verbId);
-   }
-   else {
-      message.append('#');
-      message.append(EVAL_MESSAGE_ID + 0x20);
+      message.append(0x20);
       message.append('&');
       message.append(token);
+   }
+   else {
+      int verbId = mapVerb(token);
+      if (verbId != 0) {
+         message.append('#');
+         message.append(0x20 + verbId);
+      }
+      else {
+         message.append('#');
+         message.append(EVAL_MESSAGE_ID + 0x20);
+         message.append('&');
+         message.append(token);
+      }
    }
 
    token = reader.read();
@@ -490,6 +498,9 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
 
          writer.writeCommand(SEND_TAPE_MESSAGE_ID, token);
          break;
+      case '%':
+         writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, token);
+         break;
       case '<':
       {
          int var_level = 0;         
@@ -527,6 +538,15 @@ inline void save(MemoryDump& cache, char state, ident_t value)
    argWriter.writeLiteral(value);
 }
 
+inline void save(MemoryDump& cache, char state, int length, ident_t value)
+{
+   MemoryWriter argWriter(&cache);
+
+   argWriter.writeChar(state);
+   argWriter.writeDWord(length);
+   argWriter.writeLiteral(value);
+}
+
 void InlineScriptParser::writeLine(MemoryDump& line, TapeWriter& writer, Map<ident_t, int>& locals, int level)
 {
    MemoryReader reader(&line);
@@ -536,6 +556,12 @@ void InlineScriptParser::writeLine(MemoryDump& line, TapeWriter& writer, Map<ide
       // if new variable
       if (state == ':') {
          locals.add(reader.getLiteral(DEFAULT_STR), level);
+      }
+      // if an array
+      else if (state == '*') {
+         int length = reader.getDWord();
+         writer.writeCommand(ARG_TAPE_MESSAGE_ID, reader.getLiteral(DEFAULT_STR));
+         writer.writeCommand(NEW_TAPE_MESSAGE_ID, length);
       }
       else writeObject(writer, state, reader.getLiteral(DEFAULT_STR), locals);
    }
@@ -550,7 +576,30 @@ void InlineScriptParser :: copyDump(MemoryDump& dump, MemoryDump& line, Stack<in
       reader.seek(position);
       char state = reader.getByte();
 
-      save(line, state, reader.getLiteral(DEFAULT_STR));
+      if (state == '*') {
+         int length = reader.getDWord();
+
+         save(line, state, length, reader.getLiteral(DEFAULT_STR));
+      }
+      else if (state == '{') {
+         int level = 1;
+         while (level > 0) {
+            state = reader.getByte();
+            if (state == '{') {
+               level++;
+            }
+            else if (state == '}') {
+               level--;
+            }
+            else if (state == '*') {
+               int length = reader.getDWord();
+
+               save(line, state, length, reader.getLiteral(DEFAULT_STR));
+            }
+            else save(line, state, reader.getLiteral(DEFAULT_STR));
+         }
+      }
+      else save(line, state, reader.getLiteral(DEFAULT_STR));
    }
 }
 
@@ -634,6 +683,30 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          reader.read();
          reverseMode = false;
       }
+      else if (StringHelper::compare(reader.token, "{")) {
+         scopes.push(Scope(level, arguments.Count()));
+
+         arguments.push(cache.Length());
+
+         reader.read();
+
+         cache.writeByte(cache.Length(), '{');
+         parseStatement(reader, cache, level);
+         cache.writeByte(cache.Length(), '}');
+
+         Scope scope = scopes.pop();
+         int pos = *arguments.get(arguments.Count() - scope.arg_level);
+
+         MemoryReader cacheReader(&cache, pos);
+         char op = cacheReader.getByte();
+         if (op == '*') {
+            // update length counter
+            cache.writeDWord(pos + 1, level - scope.level);
+         }
+
+         level = scope.level;
+         reader.read();
+      }
       else if (StringHelper::compare(reader.token, "(")) {
          scopes.push(Scope(level, arguments.Count() + 1));
 
@@ -698,6 +771,24 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
 
          arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
          save(cache, '^', message);
+      }
+      else if (StringHelper::compare(reader.token, "%")) {
+         IdentifierString message;
+         readMessage(reader, message, true);
+
+         if (reverseMode) {
+            arguments.push(cache.Length());
+            save(cache, '%', message);
+         }
+         else save(line, '%', message);
+      }
+      else if (StringHelper::compare(reader.token, "*")) {
+         arguments.push(cache.Length());
+
+         reader.read();
+         save(cache, '*', 0, reader.token);
+
+         reader.read();
       }
    }
 }

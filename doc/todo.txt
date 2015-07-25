@@ -22,19 +22,18 @@ Currently:
 ------                                                                                         
 
               xdev - script engine
-                       * structure : system'dynamic'Struct{ %x* 3* %y* 4* }+
-                       
-                                     system'dynamic'Struct { %x+ 3+ %y+ 4+ }+
-
-                       * methods : %x*  @system'dynamic'Type { [ system'conole+ %writeLine ("Hello"+) ] }*
-                       * methods with arguments
-                       * methods with locals
+                       * methods : { %x+ [ *system'dynamic'Type { [ system'conole+ %writeLine ("Hello"+) ] }+ ] }
 
               xdev - linux:
                        * fix samples
                        * port rosetta samples : several simple samples
 
+              xdev - general implementation
+                       * resolve issue #15
+
               xdev - script engine
+                       * methods with arguments
+                       * methods with locals
                        * methods variable
                        * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
@@ -56,9 +55,6 @@ Currently:
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
                        * fix anagram rosetta examples
-
-              xdev - general implementation
-                       * resolve issue #15
 
 <= build =>
                        
@@ -162,6 +158,22 @@ Currently:
                        * use script to parse
                        * use script generate code
                        * current implementation is done in two passes, simplify to one
+
+              xdev - multithreading       
+                       * implement basic functionality
+                       * implement lock / unlock
+                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
+                       * threadhandle - remove the object from the reference table on closing
+                       * reference table should be created on the program start for multy thread version
+                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
+                         storage ; maybe better to store there data duplication? 
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * threadhandle - provide safe region like it was in 1.7
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+                       * compile pi with mt
+                       * compile anagram with mt
 
 <=================> 
                                                                                                                             
@@ -625,22 +637,6 @@ Currently:
 
               idev - linux:
                        * make sure textview is really deleted when the page is closed
-
-              xdev - multithreading       
-                       * implement basic functionality
-                       * implement lock / unlock
-                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
-                       * threadhandle - remove the object from the reference table on closing
-                       * reference table should be created on the program start for multy thread version
-                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
-                         storage ; maybe better to store there data duplication? 
-                       * static object should be thread safe
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * threadhandle - provide safe region like it was in 1.7
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-                       * compile pi with mt
-                       * compile anagram with mt
                        
               idev - script engine
                        * build-in script into IDE

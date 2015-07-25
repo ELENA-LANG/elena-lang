@@ -56,7 +56,7 @@ class InlineScriptParser : public _Parser
 ////   ////int parseList(TapeWriter& writer, _ScriptReader& reader, Map<const wchar16_t*, int>& locals, char terminator, int level, int& counter, Mode mode);
 ////   ////void parseAction(TapeWriter& writer, _ScriptReader& reader);
 
-   void readMessage(_ScriptReader& reader, IdentifierString& message);
+   void readMessage(_ScriptReader& reader, IdentifierString& message, bool subjectOnly = false);
 
 //   int parseMessage(TapeWriter& writer, _ScriptReader& reader, int counter);
 //   int parseReverseList(TapeWriter& writer, _ScriptReader& reader);
