@@ -26,7 +26,7 @@
 
 #class $ConsoleWriter
 {
-    #field theHandle.
+    #field(type:handle) theHandle.
 
     #constructor new &handle:aHandle
     [
@@ -47,7 +47,7 @@
         aLiteral readLength &vint:l.
         #loop (n < l)?
         [
-            aLiteral read &index:n &vbyte:vc.
+            aLiteral read &int:n &vbyte:vc.
 
             system'external'libc putchar &byte:vc.
 
@@ -79,14 +79,14 @@
     [
     ]
 
-    #method read &vbyte:aRetVal
+    #method(stacksafe) read &vbyte:aRetVal
     [    
-        #var(type:byte) ch := system'external'libc getchar.
+        #var(type:int) ch := system'external'libc getchar.
 
-        aRetVal << ch.
+        byteConvertor convert &int:ch &vbyte:aRetVal.
     ]
 
-    #method read &bytearray:aBuffer &vlength:aRetVal
+    #method(stacksafe) read &bytearray:aBuffer &vint:aRetVal
     [
         #var(type:int) i := 0.
         #loop (aRetVal > i) ?
@@ -94,7 +94,7 @@
             #var(type:byte)ch.
             $self read &vbyte:ch.
                
-            aBuffer write &index:i &byte:ch.
+            aBuffer write &int:i &byte:ch.
 
             i := i + 1.
 
@@ -111,17 +111,17 @@
     #method read &literal
     [
         #var(type:bytearray,size:127)aBuffer.
-        #var(type:length)aLength.
+        #var(type:int)aLength.
         #var anOutput := emptyLiteralValue.
         
         #var(type:bool) continue := true.
         #loop continue ?
         [
             aLength := 127.
-            $self read &bytearray:aBuffer &vlength:aLength.
+            $self read &bytearray:aBuffer &vint:aLength.
             
             #var(type:byte)ch.
-            aBuffer read &index:(aLength - 1) &vbyte:ch.
+            aBuffer read &int:(aLength - 1) &vbyte:ch.
             (ch == 0Ah)
                 ? [
                     aLength := aLength - 1.
@@ -129,7 +129,7 @@
                     continue := false.
                 ].
             
-            #var aTemp := LiteralValue $new &length:aLength &index:0 &bytearray:aBuffer.
+            #var aTemp := LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
             
             anOutput := anOutput + aTemp.
         ].

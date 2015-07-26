@@ -23,10 +23,10 @@
                       &literal:(Attributes literal).
                       
         (0 == theHandle)
-            ? [ #throw IOException new &message:"Cannot open the file". ].
+            ? [ #throw IOException new:"Cannot open the file". ].
     ]
   
-    #method write &bytearray:aDump &length:aLength
+    #method write &bytearray:aDump &int:aLength
     [
         system'external'libc fwrite
             &bytearray : aDump        
@@ -35,7 +35,7 @@
             &handle    : theHandle.
     ]
 
-    #method read &bytearray:aDump &vlength:aLength
+    #method read &bytearray:aDump &vint:aLength
     [
         #var(type:int)n := system'external'libc fread
             &bytearray : aDump        
@@ -90,12 +90,12 @@
         
     #method encoder = theEncoder.        
         
-    #method write &chararray:anInput &length:aLength
+    #method write &chararray:anInput &int:aLength
     [
         #var(type:int)aTotal := aLength.
         #var(type:bytearray,size:64)aBuffer.
-        #var(type:length)aBlockLength.
-        #var(type:length)aBufferLength.
+        #var(type:int)aBlockLength.
+        #var(type:int)aBufferLength.
         #var(type:int)anOffset := 0.
         
         #loop (aTotal > 0) ?
@@ -104,9 +104,9 @@
                 ? [ aBlockLength := aTotal. ]
                 ! [ aBlockLength := 64. ].
                 
-            theEncoder convert &index:anOffset &vlength:aBlockLength &chararray:anInput &bytearray:aBuffer &vlength:aBufferLength.
+            theEncoder convert &int:anOffset &vint:aBlockLength &chararray:anInput &bytearray:aBuffer &vint:aBufferLength.
             
-            theStream write &bytearray:aBuffer &length:aBufferLength.
+            theStream write &bytearray:aBuffer &int:aBufferLength.
             
             aTotal := aTotal - aBlockLength.
             anOffset := anOffset + aBlockLength.
@@ -147,20 +147,20 @@
 
     #method encoder = theEncoder.
 
-    #method read &chararray:anOutput &vlength:aLength
+    #method read &chararray:anOutput &vint:aLength
     [
         #var(type:int)aBufferLength := 64.
         #var(type:bytearray,size:64)aBuffer.
-        theStream read &bytearray:aBuffer &vlength:aBufferLength.
+        theStream read &bytearray:aBuffer &vint:aBufferLength.
         (aBufferLength == 0)
             ? [ theOpen := false. aLength << 0. ]
             ! [
                 #var(type:int)aRead := aBufferLength.
                         
-                theEncoder convert &index:0 &vlength:aBufferLength &bytearray:aBuffer &chararray:anOutput &vlength:aLength.
+                theEncoder convert &int:0 &vint:aBufferLength &bytearray:aBuffer &chararray:anOutput &vint:aLength.
                 
                 (aRead > aBufferLength)
-                    ? [ theStream reduce &index:(aRead - aBufferLength). ].
+                    ? [ theStream reduceIndex &int:(aRead - aBufferLength). ].
             ].
     ]
     

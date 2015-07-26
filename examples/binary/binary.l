@@ -7,8 +7,6 @@
 
 #symbol Program = 
 [ 
-    #var n := 2 mod:4.
-
     // reading    
     #var aNumber := console write:"Enter the number you want to convert: " readLine:(Integer new).
     
