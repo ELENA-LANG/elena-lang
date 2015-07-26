@@ -4,10 +4,10 @@
 
 #symbol $CommandLineFactory =
 {
-    $getArgC &vint:aLength
+    #method(stacksafe) $getArgC &vint:aLength
        => system'internal'lnx_getargc.
 
-    $getArg &int:anIndex &bytearray:aBuffer &vint:aLength
+    #method(stacksafe) $getArg &int:anIndex &bytearray:aBuffer &vint:aLength
        => system'internal'lnx_getarg.
 
     new                                                                                                                                 
@@ -46,9 +46,11 @@
     #method start
     [
         'program eval
-            | if &Error: e
-            [
-                console writeLine:(e literal).
-            ].
+            | on:
+            {
+                Abort = e [].
+                
+                ! = e [ console writeLine:(e literal). ].
+            }.
     ]
 }.
