@@ -17,14 +17,14 @@ var state1 = system'Variable new.
 
 state0.write(
 {
-   digit : function(ch,tree) { tree.append(calc'TreeLeaf.new(numberstrategy).append(ch)); return state1; }
+   digit : function(ch,tree) { tree.append(calc'TreeLeaf.new(numberstrategy).append(ch)); state1 }
 });
 
 state1.write(
 {
-   digit : function(ch,tree) { tree.last_node.append(ch)); return state1; },
+   digit : function(ch,tree) { tree.last_node.append(ch)); state1 },
   
-   plus : function(ch,tree) { tree.append(calc'TreeNode.new(sumstrategy) ; return state0; )
+   plus : function(ch,tree) { tree.append(calc'TreeNode.new(sumstrategy) ; state0 )
 });
 
-return state0;
+state0

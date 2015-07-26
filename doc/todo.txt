@@ -21,20 +21,16 @@ v  - vm script
 C1urrently:                                                                                                                        
 ------                                                                                         
  
-              xdev - script engine
-                       * methods : { %x+ [ *system'dynamic'Type { [ system'conole+ %writeLine ("Hello"+) ] }+ ] }
-
               xdev - linux:
                        * fix samples
                        * port rosetta samples : several simple samples
 
               xdev - general implementation
                        * resolve issue #15
-1
+
               xdev - script engine
+                       * methods
                        * methods with arguments
-                       * methods with locals
-                       * methods variable
                        * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
                        * calculator : gui
@@ -134,15 +130,14 @@ C1urrently:
                        * can we get rid of bool type forwaring?
                        
               xdev - script engine
-                       * reimplement script engine : elena script, variables should be persistent ; support if, foreach, while constructions, json objects,
+                       * methods variable
+                       * support if, foreach, while constructions, json objects,
                          overwriding the object (just in place mutation)
                        * global variables
                        * build structure
 
                        * build class
                        * should be able to parse 2.add(3) - currently dot is considered as part of real number
-
-                       * migrate
 
                        * if the script contains only grammar, virtual machine should not be called
 
