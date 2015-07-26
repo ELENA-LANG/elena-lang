@@ -51,9 +51,3 @@
    #config vm_console 
    #start;
 ]]
-
-var a = { x : 2  };
-var f = function() { system'console.writeLine("Hello") };
-
-system'console.writeLine(a.x);
-f.eval;

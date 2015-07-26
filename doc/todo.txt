@@ -21,16 +21,7 @@ v  - vm script
 Currently:                                                                                                                        
 ------                                                                                         
  
-              xdev - linux:
-                       * fix file samples3
-                       * port rosetta samples : several simple samples
-
-              xdev - general implementation
-                       * resolve issue #15
-
-              xdev - script engine
-                       * test structure sample
-                       * methods
+               xdev - script engine
                        * methods with arguments
                        * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
@@ -56,8 +47,8 @@ Currently:
                        * fix anagram rosetta examples
                        
               xdev - linux:
-                       * exception stack info : source code information is absent
-                       * implement textdb sample
+                       * exception stack info : source code information is absent - #68
+                       * fix textdb sample - #67
                        * implement DateTime / Timespan classes
                        * linux date / time operations
                        * test load class by name

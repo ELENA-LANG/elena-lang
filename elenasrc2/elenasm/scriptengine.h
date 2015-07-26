@@ -156,6 +156,7 @@ class CachedScriptReader : public ScriptReader
 protected:
    bool       _cacheMode;
    MemoryDump _buffer;
+   size_t     _tokenPosition;
    size_t     _position;
 
    void cache()
@@ -175,12 +176,21 @@ public:
    {
       _cacheMode = true;
 
-      return _position;
+      return _tokenPosition;
    }
 
    virtual void seek(size_t position)
    {
-      _position = position;
+      _tokenPosition = position;
+
+      // Restore token
+      MemoryReader reader(&_buffer, position);
+
+      ident_t s = reader.getLiteral(DEFAULT_STR);
+      size_t length = getlength(s);
+      StringHelper::copy(token, s, length, length);
+
+      _position = reader.Position();
    }
 
    //      void reread(TokenInfo& token);
@@ -208,6 +218,8 @@ public:
          reader.readDWord(info.column);
          reader.readDWord(info.row);
          reader.readChar(info.state);
+
+         _tokenPosition = reader.Position();
 
          ident_t s = reader.getLiteral(DEFAULT_STR);
          size_t length = getlength(s);

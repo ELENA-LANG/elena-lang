@@ -806,6 +806,8 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
             save(cache, '%', message);
          }
          else save(line, '%', message);
+
+         counter++;
       }
       else if (StringHelper::compare(reader.token, "*")) {
          arguments.push(cache.Length());
