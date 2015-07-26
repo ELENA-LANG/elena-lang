@@ -37,6 +37,10 @@ mkdir -p ./new/src30/extensions/math/
 mkdir -p ./new/src30/extensions/routines/
 mkdir -p ./new/src30/extensions/text/
 
+mkdir -p ./new/rosetta/accumulator/
+mkdir -p ./new/rosetta/ackermann/
+mkdir -p ./new/rosetta/addfield/
+
 cp ../bin/elc2 new/bin/
 cp ../bin/asm2binx new/bin/
 cp ../bin/elog new/bin/
@@ -99,6 +103,14 @@ cp ../examples/goods/*.l new/examples/goods/
 cp ../examples/goods/*.project new/examples/goods/
 cp ../examples/textdb/*.l new/examples/textdb/
 cp ../examples/textdb/*.project new/examples/textdb/
+
+echo copying rosetta examples files
+cp ../rosetta/accumulator/*.l new/rosetta/accumulator/
+cp ../rosetta/accumulator/*.project new/rosetta/accumulator/
+cp ../rosetta/ackermann/*.l new/rosetta/ackermann/
+cp ../rosetta/ackermann/*.project new/rosetta/ackermann/
+cp ../rosetta/addfield/*.l new/rosetta/addfield/
+cp ../rosetta/addfield/*.project new/rosetta/addfield/
 
 echo coping src3 files
 

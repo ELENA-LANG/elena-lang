@@ -34,4 +34,8 @@ bin/elc2 -cexamples/textfile/textfile.project
 bin/elc2 -cexamples/goods/goods.project
 bin/elc2 -cexamples/textdb/textdb.project
 
+bin/elc2 -crosetta/accumulator/accumulator.project
+bin/elc2 -crosetta/ackermann/ackerman.project
+bin/elc2 -crosetta/addfield/addfield.project
+
 exit 0
