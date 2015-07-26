@@ -15,6 +15,7 @@
    #define next_parameter ::= "," expression next_parameter;
    #define next_parameter ::= ")";
    #define object ::= <= * system'dynamic'Struct { => "{" struct <= } + =>;
+   #define object ::= <= * system'dynamic'Tape { => "function" arguments tape <= }+ =>;
    #define object ::= $reference <= + =>;
    #define object ::= $literal <= + =>;
    #define object ::= $numeric <= + =>;
@@ -29,6 +30,21 @@
    #define member_value ::= <= [ => ":" expression <= ] =>;
    #define next_member ::= "," member next_member;
    #define next_member ::= "}";
+
+   #define arguments ::= "(" next_argument;
+   #define next_argument :: ")";
+   #define tape ::= "{" tape_statement next_tape_statement;
+   #define tape_statement ::= <= [ => tape_expression <= ] => ;
+   #define tape_expression ::= object tape_operations;
+   #define tape_operations ::= tape_call tape_operations;
+   #define tape_operations ::= $eps;
+
+   #define tape_call ::= <= & => "." message tape_parameters;
+   #define tape_parameters ::= <= ( => "(" tape_expression next_tape_parameter <= ) =>;
+   #define tape_parameters ::= $eps;
+   #define next_tape_parameter ::= "," tape_expression next_tape_parameter;
+   #define next_tape_parameter ::= ")";   
+   #define next_tape_statement ::= "}";
    
    #define eol ::= ";";
    
@@ -37,5 +53,7 @@
 ]]
 
 var a = { x : 2  };
+var f = function() { system'console.writeLine("Hello") };
 
 system'console.writeLine(a.x);
+f.eval;
