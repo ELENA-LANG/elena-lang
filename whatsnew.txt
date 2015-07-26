@@ -4,12 +4,14 @@
                                 Version 1.9.20
  
 ******************************************************************************
-                    What's New in 1.9.20 (pre release)
+                             What's New in 1.9.20
 ******************************************************************************
 
 [ElenaScript]
 [*] refactored / syntax modified
 [+] local variables are supported
+[+] structures are supported
+[+] functions are supported
 
 Samples:
 [+] calc

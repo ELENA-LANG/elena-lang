@@ -1,0 +1,13 @@
+﻿[project]
+executable=ackermann
+namespace=ackerman
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+program.l
+
+[forwards]
+'program=ackerman'program
+

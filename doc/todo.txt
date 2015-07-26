@@ -18,46 +18,45 @@ v  - vm script
 - doc
                                                                                
 ------                                 
-C1urrently:                                                                                                                        
+Currently:                                                                                                                        
 ------                                                                                         
  
               xdev - linux:
-                       * fix samples
+                       * fix file samples3
                        * port rosetta samples : several simple samples
 
               xdev - general implementation
                        * resolve issue #15
 
               xdev - script engine
+                       * test structure sample
                        * methods
                        * methods with arguments
                        * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
-                       * calculator : gui
-                       * calculator : script
-                       * reimplement script samples: interpreter, helloworld, vmconsole
-
-                       * get rid of reverse command
                        
               adev - lib30     
-                       * Exception.if$generic - use primitive operation for comparision
-                       * get rid of all warnings in system package
-                       * review system'collections, try to use more strong typed code
-                       * used strong typed event handlers
                        * sqlite : support float
                        * sqlite : support blob
-                       * implement file search
-                       * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
-                       * fix anagram rosetta examples
 
               srev - console samples
                        * sqlite sample
 
 <= build =>
                        
+              adev - lib30     
+                       * Exception.if$generic - use primitive operation for comparision
+                       * get rid of all warnings in system package
+                       * review system'collections, try to use more strong typed code
+                       * used strong typed event handlers
+                       * implement file search
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+
+                       * fix anagram rosetta examples
+                       
               xdev - linux:
+                       * exception stack info : source code information is absent
                        * implement textdb sample
                        * implement DateTime / Timespan classes
                        * linux date / time operations
@@ -70,6 +69,11 @@ C1urrently:
                        * read key
                        * port console samples                                                                               
                        * port rosetta samples                                                                               
+
+              xdev - script engine
+                       * calculator : gui
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+                       * get rid of reverse command
                                                                                                                              
               idev - linux:              
                        * save last open path (should be saved in the current path??)
@@ -155,6 +159,10 @@ C1urrently:
                        * use script to parse
                        * use script generate code
                        * current implementation is done in two passes, simplify to one
+                       
+              fdev - eldoc
+                       * design
+                       * implement
 
               xdev - multithreading       
                        * implement basic functionality
@@ -226,9 +234,6 @@ C1urrently:
                        * new controls: combo box, check box, status bar, timer, updown, memo, image box, list box
                        * make sure all windows resources (hbitmap, hdc, ..) are properly released
                        * example with buttons, edit on panel
-                       
-              sdev - eldoc
-                       * implement
                        
               sdev - c# samples
                        * try to implement c# reflection samples

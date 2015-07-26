@@ -32,7 +32,7 @@
    #define next_member ::= "}";
 
    #define arguments ::= "(" next_argument;
-   #define next_argument :: ")";
+   #define next_argument ::= ")";
    #define tape ::= "{" tape_statement next_tape_statement;
    #define tape_statement ::= <= [ => tape_expression <= ] => ;
    #define tape_expression ::= object tape_operations;
