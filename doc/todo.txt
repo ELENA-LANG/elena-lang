@@ -18,9 +18,9 @@ v  - vm script
 - doc
                                                                                
 ------                                 
-Currently:                                                                                                                        
+C1urrently:                                                                                                                        
 ------                                                                                         
-
+ 
               xdev - script engine
                        * methods : { %x+ [ *system'dynamic'Type { [ system'conole+ %writeLine ("Hello"+) ] }+ ] }
 
@@ -30,7 +30,7 @@ Currently:
 
               xdev - general implementation
                        * resolve issue #15
-
+1
               xdev - script engine
                        * methods with arguments
                        * methods with locals
@@ -55,6 +55,9 @@ Currently:
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
                        * fix anagram rosetta examples
+
+              srev - console samples
+                       * sqlite sample
 
 <= build =>
                        
@@ -87,7 +90,6 @@ Currently:
                        * test : new project, new file, include, exclude, save, ...
                        
               srev - console samples
-                       * sqlite sample
                        * simplify goods (Record.get&Literal implementation)
                        * rewrite pi sample to use stack allocated variables / parallel calculating
                        * matrix: use Pair in matrix sample

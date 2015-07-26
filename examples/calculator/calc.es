@@ -2,14 +2,14 @@ var numberstrategy =
 {
    order : 0,
 
-   evalToken : function(ch) { return system'realConvertor.convert(ch); }
+   evalToken : function(ch) { system'realConvertor.convert(ch) }
 };
 
 var sumstrategy =
 {
    order : 2,
 
-   evalNode : function(a,b) { return a.add(b); }
+   evalNode : function(a,b) { a.add(b) }
 };
 
 var state0 = system'Variable new.

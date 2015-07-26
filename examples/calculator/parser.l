@@ -136,11 +136,11 @@
 
         //{ digit : aChar : aTree [ aTree append:(TreeLeaf new:aNumberStratagy append:aChar). ^ aState1. ] }.
         #var aXCode0 := Struct(%digit, Tape(
-            tapeControl, 1, %(getAt&args)(1),
-            TreeLeaf, aNumberStratagy, 
+            2, tapeControl, %(getAt&args)(1),
+            aNumberStratagy, TreeLeaf, 
             %(new)(1), 
-            tapeControl, 2, %(getAt&args)(1),
             %(append)(1),
+            1, tapeControl, %(getAt&args)(1),
             %(append)(1),
             aState1)).
         
@@ -148,16 +148,16 @@
 //          digit : aChar : aTree [ aTree last_node append:aChar. ^ aState1. ]}.
         #var aXCode1 := Struct(
             %digit, Tape(
-                tapeControl, 1, %(getAt&args)(1),
-                %(get&last_node)(0),                
-                tapeControl, 2, %(getAt&args)(1),
+                2, tapeControl, %(getAt&args)(1),
+                1, tapeControl, %(getAt&args)(1),
+                %(get&last_node)(0),
                 %(append)(1),
                 aState1),
             
             %plus, Tape(
-                tapeControl, 1, %(getAt&args)(1),
-                TreeNode, aSumStratagy,
+                aSumStratagy, TreeNode,
                 %(new)(1),
+                1, tapeControl, %(getAt&args)(1),
                 %(append)(1),
                 aState0)
             ).

@@ -249,7 +249,7 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
       }
       else {
          message.append('#');
-         message.append(EVAL_MESSAGE_ID + 0x20);
+         message.append(0x20);
          message.append('&');
          message.append(token);
       }
@@ -491,12 +491,16 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
          writer.writeCallCommand(token);
          break;
       case '^':
-         // HOTFIX : replace EVAL to GET if no parameters are provided
-         if (token[0] == '0' && token[2] == EVAL_MESSAGE_ID + 0x20) {
-            ((ident_c*)token)[2] = GET_MESSAGE_ID + 0x20;
+      case '&':
+         // HOTFIX : set EVAL or GET depending on the parameter counter
+         if (token[2] == 0x20) {
+            if (token[0] == '0') {
+               ((ident_c*)token)[2] = GET_MESSAGE_ID + 0x20;
+            }
+            else ((ident_c*)token)[2] = EVAL_MESSAGE_ID + 0x20;
          }
 
-         writer.writeCommand(SEND_TAPE_MESSAGE_ID, token);
+         writer.writeCommand(state == '^' ? SEND_TAPE_MESSAGE_ID : PUSHM_TAPE_MESSAGE_ID, token);
          break;
       case '%':
          writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, token);
@@ -603,8 +607,10 @@ void InlineScriptParser :: copyDump(MemoryDump& dump, MemoryDump& line, Stack<in
    }
 }
 
-void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line, int& level)
+int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line, int& level)
 {
+   int counter = 0;
+
    Stack<Scope> scopes(Scope(0, 0));
    Stack<int> arguments(0);
    MemoryDump cache;
@@ -623,6 +629,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          }
          else  save(line, dfaQuote, reader.token);
 
+         counter++;
          reader.read();
       }
       else if (state == dfaFullIdentifier) {
@@ -633,6 +640,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          }
          else save(line, dfaFullIdentifier, reader.token);
 
+         counter++;
          reader.read();
       }
       else if (state == dfaInteger) {
@@ -643,6 +651,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          }
          else save(line, dfaInteger, reader.token);
 
+         counter++;
          reader.read();
       }
       else if (state == dfaLong) {
@@ -653,6 +662,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          }
          else save(line, dfaLong, reader.token);
 
+         counter++;
          reader.read();
       }
       else if (state == dfaReal) {
@@ -663,6 +673,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          }
          else save(line, dfaReal, reader.token);
 
+         counter++;
          reader.read();
       }
       else if (StringHelper::compare(reader.token, "}")) {
@@ -691,7 +702,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          reader.read();
 
          cache.writeByte(cache.Length(), '{');
-         parseStatement(reader, cache, level);
+         int statemt_length = parseStatement(reader, cache, level);
          cache.writeByte(cache.Length(), '}');
 
          Scope scope = scopes.pop();
@@ -701,11 +712,12 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          char op = cacheReader.getByte();
          if (op == '*') {
             // update length counter
-            cache.writeDWord(pos + 1, level - scope.level);
+            cache.writeDWord(pos + 1, statemt_length);
          }
 
          level = scope.level;
          reader.read();
+         counter++;
       }
       else if (StringHelper::compare(reader.token, "(")) {
          scopes.push(Scope(level, arguments.Count() + 1));
@@ -719,9 +731,15 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
 
          MemoryReader cacheReader(&cache, pos);
          char op = cacheReader.getByte();
-         if (op == '^') {
+         if (op == '^' || op == '&') {
             // update message counter
             cache.writeByte(pos + 1, '0' + (level - scope.level));
+
+            // HOTFIX : adjust the length
+            if (op == '^'){
+               counter -= (level - scope.level);
+            }
+            else counter++;
          }
 
          level = scope.level;
@@ -739,7 +757,7 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          reader.read();
       }
       else if (StringHelper::compare(reader.token, ".") || StringHelper::compare(reader.token, ";")) {
-         return;
+         return counter;
       }
       else if (StringHelper::compare(reader.token, ":")) {
          arguments.push(cache.Length());
@@ -772,6 +790,13 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
          save(cache, '^', message);
       }
+      else if (StringHelper::compare(reader.token, "&")) {
+         IdentifierString message;
+         readMessage(reader, message);
+
+         arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
+         save(cache, '&', message);
+      }
       else if (StringHelper::compare(reader.token, "%")) {
          IdentifierString message;
          readMessage(reader, message, true);
@@ -791,6 +816,8 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& lin
          reader.read();
       }
    }
+
+   return counter;
 }
 
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
