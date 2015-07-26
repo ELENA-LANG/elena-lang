@@ -24,7 +24,7 @@
 
 // --- ConsoleWriter ---
 
-#class $ConsoleWriter
+#class(sealed) $ConsoleWriter
 {
     #field(type:handle) theHandle.
 
@@ -73,7 +73,7 @@
 
 // --- ConsoleReader ---
 
-#class $ConsoleReader
+#class(sealed) $ConsoleReader
 {
     #constructor new
     [
@@ -83,7 +83,7 @@
     [    
         #var(type:int) ch := system'external'libc getchar.
 
-        byteConvertor convert &int:ch &vbyte:aRetVal.
+        byteConvertor convert &int:ch &vbyte:aRetVal. 
     ]
 
     #method(stacksafe) read &bytearray:aBuffer &vint:aRetVal
@@ -93,7 +93,7 @@
         [
             #var(type:byte)ch.
             $self read &vbyte:ch.
-               
+
             aBuffer write &int:i &byte:ch.
 
             i := i + 1.
@@ -119,9 +119,10 @@
         [
             aLength := 127.
             $self read &bytearray:aBuffer &vint:aLength.
-            
+
             #var(type:byte)ch.
             aBuffer read &int:(aLength - 1) &vbyte:ch.
+
             (ch == 0Ah)
                 ? [
                     aLength := aLength - 1.
