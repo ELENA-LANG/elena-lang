@@ -18,22 +18,30 @@ v  - vm script
 - doc
                                                                                
 ------                                 
-Currently:                                                                                                                        
+Currently:
 ------                                                                                         
- 
                xdev - script engine
-                       * methods with arguments
+                       * test inline script
+
+              adev - lib30     
+                       * sqlite : support float
+                       * sqlite : support blob
+
+              srev - console samples
+                       * sqlite sample
+                       
+               xdev - script engine
+                       * cf : support scope, mapping, variable rules ; extends tokeninfo with mapping field, should be copied to the clone; 
+                         scope will creating a new mapping which is passed with token to child rules (should support initialization - #scope +self); 
+                         mapping which will add current identifier, if the rule fails - the mapping should be removed; 
+                         variable will replace its value with mapping value
+                       * cf : support two script mode : elenascript (actions + variables), dfa (building objects)
                        * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
                        
               adev - lib30     
-                       * sqlite : support float
-                       * sqlite : support blob
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
-
-              srev - console samples
-                       * sqlite sample
 
 <= build =>
                        
@@ -125,13 +133,12 @@ Currently:
                        * can we get rid of bool type forwaring?
                        
               xdev - script engine
-                       * methods variable
-                       * support if, foreach, while constructions, json objects,
-                         overwriding the object (just in place mutation)
-                       * global variables
-                       * build structure
+                       * cfparser : design support variables
+                       * cfparser : implement support variables
+                       * cfparser : methods variable
+                       * support if, foreach, while constructions,
+                       * overwriding the object (just in place mutation)
 
-                       * build class
                        * should be able to parse 2.add(3) - currently dot is considered as part of real number
 
                        * if the script contains only grammar, virtual machine should not be called

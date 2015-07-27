@@ -472,7 +472,7 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
 ////   return counter;
 ////}
 
-void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token, Map<ident_t, int>& locals)
+void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token)
 {
    switch (state) {
       case dfaInteger:
@@ -507,11 +507,7 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
          break;
       case '<':
       {
-         int var_level = 0;         
-         if (token[0] >= '0' && token[0] <= '9') {
-            var_level = StringHelper::strToInt(token);
-         }
-         else var_level = locals.get(token);
+         int var_level = StringHelper::strToInt(token);
 
          writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
 
@@ -519,11 +515,7 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
       }
       case '>':
       {
-         int var_level = 0;
-         if (token[0] >= '0' && token[0] <= '9') {
-            var_level = StringHelper::strToInt(token);
-         }
-         else var_level = locals.get(token);
+         int var_level = StringHelper::strToInt(token);
 
          writer.writeCommand(ASSIGN_VAR_MESSAGE_ID, var_level);
 
@@ -551,23 +543,18 @@ inline void save(MemoryDump& cache, char state, int length, ident_t value)
    argWriter.writeLiteral(value);
 }
 
-void InlineScriptParser::writeLine(MemoryDump& line, TapeWriter& writer, Map<ident_t, int>& locals, int level)
+void InlineScriptParser::writeLine(MemoryDump& line, TapeWriter& writer)
 {
    MemoryReader reader(&line);
    while (!reader.Eof()) {
       char state = reader.getByte();
 
-      // if new variable
-      if (state == ':') {
-         locals.add(reader.getLiteral(DEFAULT_STR), level);
-      }
-      // if an array
-      else if (state == '*') {
+      if (state == '*') {
          int length = reader.getDWord();
          writer.writeCommand(ARG_TAPE_MESSAGE_ID, reader.getLiteral(DEFAULT_STR));
          writer.writeCommand(NEW_TAPE_MESSAGE_ID, length);
       }
-      else writeObject(writer, state, reader.getLiteral(DEFAULT_STR), locals);
+      else writeObject(writer, state, reader.getLiteral(DEFAULT_STR));
    }
 }
 
@@ -607,7 +594,7 @@ void InlineScriptParser :: copyDump(MemoryDump& dump, MemoryDump& line, Stack<in
    }
 }
 
-int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line, int& level)
+int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line)
 {
    int counter = 0;
 
@@ -676,12 +663,11 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          counter++;
          reader.read();
       }
-      else if (StringHelper::compare(reader.token, "}")) {
-         break;
-      }
+      // if it is a new expression
       else if (StringHelper::compare(reader.token, "[")) {
+         // set reverse mode on, add new scope
          reverseMode = true;
-         scopes.push(Scope(level, arguments.Count() + 1));
+         scopes.push(Scope(counter, arguments.Count() + 1));
 
          reader.read();
       }
@@ -694,33 +680,8 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          reader.read();
          reverseMode = false;
       }
-      else if (StringHelper::compare(reader.token, "{")) {
-         scopes.push(Scope(level, arguments.Count()));
-
-         arguments.push(cache.Length());
-
-         reader.read();
-
-         cache.writeByte(cache.Length(), '{');
-         int statemt_length = parseStatement(reader, cache, level);
-         cache.writeByte(cache.Length(), '}');
-
-         Scope scope = scopes.pop();
-         int pos = *arguments.get(arguments.Count() - scope.arg_level);
-
-         MemoryReader cacheReader(&cache, pos);
-         char op = cacheReader.getByte();
-         if (op == '*') {
-            // update length counter
-            cache.writeDWord(pos + 1, statemt_length);
-         }
-
-         level = scope.level;
-         reader.read();
-         counter++;
-      }
       else if (StringHelper::compare(reader.token, "(")) {
-         scopes.push(Scope(level, arguments.Count() + 1));
+         scopes.push(Scope(counter, arguments.Count() + 1));
 
          reader.read();
       }
@@ -733,53 +694,12 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          char op = cacheReader.getByte();
          if (op == '^' || op == '&') {
             // update message counter
-            cache.writeByte(pos + 1, '0' + (level - scope.level));
+            char prm_count = cacheReader.getByte();
 
-            // HOTFIX : adjust the length
-            if (op == '^'){
-               counter -= (level - scope.level);
-            }
-            else counter++;
+            cache.writeByte(pos + 1, prm_count + (counter - scope.level));
          }
 
-         level = scope.level;
-
-         reader.read();
-      }
-      else if (StringHelper::compare(reader.token, "+")) {
-         level++;
-
-         reader.read();
-      }
-      else if (StringHelper::compare(reader.token, "-")) {
-         level--;
-
-         reader.read();
-      }
-      else if (StringHelper::compare(reader.token, ".") || StringHelper::compare(reader.token, ";")) {
-         return counter;
-      }
-      else if (StringHelper::compare(reader.token, ":")) {
-         arguments.push(cache.Length());
-
-         reader.read();
-         save(cache, ':', reader.token);
-
-         reader.read();
-      }
-      else if (StringHelper::compare(reader.token, "<")) {
-         arguments.push(cache.Length());
-
-         reader.read();
-         save(cache, '<', reader.token);
-
-         reader.read();
-      }
-      else if (StringHelper::compare(reader.token, ">")) {
-         arguments.push(cache.Length());
-
-         reader.read();
-         save(cache, '>', reader.token);
+         counter = scope.level;
 
          reader.read();
       }
@@ -796,6 +716,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
 
          arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
          save(cache, '&', message);
+         counter++;
       }
       else if (StringHelper::compare(reader.token, "%")) {
          IdentifierString message;
@@ -816,6 +737,54 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          save(cache, '*', 0, reader.token);
 
          reader.read();
+         counter++;
+      }
+      else if (StringHelper::compare(reader.token, "<")) {
+         arguments.push(cache.Length());
+
+         reader.read();
+         save(cache, '<', reader.token);
+
+         reader.read();
+         counter++;
+      }
+      else if (StringHelper::compare(reader.token, ">")) {
+         arguments.push(cache.Length());
+
+         reader.read();
+         save(cache, '>', reader.token);
+
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, ".") || StringHelper::compare(reader.token, ",")) {
+         break;
+      }
+      else if (StringHelper::compare(reader.token, "{")) {
+         scopes.push(Scope(counter, arguments.Count()));
+
+         arguments.push(cache.Length());
+
+         reader.read();
+
+         cache.writeByte(cache.Length(), '{');
+         int statement_length = parseStatement(reader, cache);
+         cache.writeByte(cache.Length(), '}');
+
+         Scope scope = scopes.pop();
+         int pos = *arguments.get(arguments.Count() - scope.arg_level);
+
+         MemoryReader cacheReader(&cache, pos);
+         char op = cacheReader.getByte();
+         if (op == '*') {
+            // update length counter
+            cache.writeDWord(pos + 1, statement_length);
+         }
+
+         counter = scope.level;
+         reader.read();
+      }
+      else if (StringHelper::compare(reader.token, "}")) {
+         break;
       }
    }
 
@@ -825,20 +794,17 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
    MemoryDump line;
-   Map<ident_t, int> locals(-1);
-   int level = 0;
 
    while (true) {
       reader.read();
       if (reader.info.state == dfaEOF) {
          break;
       }
-      else parseStatement(reader, line, level);
+      else parseStatement(reader, line);
 
-      writeLine(line, writer, locals, level);
-      if (reader.token[0] == '.' && reader.info.state != dfaQuote) {
+      writeLine(line, writer);
+      if (reader.token[0] == ';' && reader.info.state != dfaQuote) {
          writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
-         level--;
       }
 
       line.clear();

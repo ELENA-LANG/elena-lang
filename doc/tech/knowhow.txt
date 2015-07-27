@@ -195,3 +195,10 @@ be copied there;
 |            |                                      
 +------------+--> no --> [ pass directly ]
 
+10) Script engine commands
+
+[ ]  - reverse the parameters order
+; - free the stack
+, - continue
+! - put breakpoint
+^ - send a message , if breakpoint available is inserted after it

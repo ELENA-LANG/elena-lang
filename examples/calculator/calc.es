@@ -1,30 +1,35 @@
-var numberstrategy =
 {
-   order : 0,
+   state0 :
+   {
+      digit : function(machine, ch, tree) 
+              { 
+                 tree.append(calc'TreeLeaf.new(
+                                            {
+                                               order : 0,
 
-   evalToken : function(ch) { system'realConvertor.convert(ch) }
-};
+                                               evalToken : function(ch) { system'realConvertor.convert(ch) }
+                                            })
+                                          .append(ch)); 
+                 machine.state1
+              }
+   },
 
-var sumstrategy =
-{
-   order : 2,
-
-   evalNode : function(a,b) { a.add(b) }
-};
-
-var state0 = system'Variable new.
-var state1 = system'Variable new.
-
-state0.write(
-{
-   digit : function(ch,tree) { tree.append(calc'TreeLeaf.new(numberstrategy).append(ch)); state1 }
-});
-
-state1.write(
-{
-   digit : function(ch,tree) { tree.last_node.append(ch)); state1 },
+   state1 : 
+   {
+      digit : function(machine,ch,tree) { tree.last_node.append(ch)); machine.state1 },
   
-   plus : function(ch,tree) { tree.append(calc'TreeNode.new(sumstrategy) ; state0 )
-});
+      plus : function(machine,ch,tree) 
+             { 
+                tree.append(calc'TreeNode.new(
+                                            {
+                                               order : 2,
 
-state0
+                                               evalNode : function(a,b) { a.add(b) }
+                                            })) ; 
+
+                machine.state0
+             }
+   },
+
+   start : function(machine) { machine.state0 }
+}

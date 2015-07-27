@@ -51,3 +51,6 @@
    #config vm_console 
    #start;
 ]]
+
+var f = function(s) { system'console.writeLine(s) };
+f.eval("Hello Again");
