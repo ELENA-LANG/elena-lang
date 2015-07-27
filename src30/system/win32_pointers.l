@@ -72,6 +72,9 @@
         thePointer := thePointer + aValue.
     ]                            
                             
+    #method(stacksafe) write &int:anObject
+        => system'internal'int_copy.
+                
     #method(stacksafe) write &handle:anObject
         => system'internal'int_copy.
     
@@ -89,6 +92,9 @@
 
     #method(stacksafe) read &vint:aPointer
         => system'internal'dptr_readint.
+
+    #method(stacksafe) read &bytearray:arr &int:len
+        => system'internal'dptr_readbytearray.
 
     // unsafe code
     #method(stacksafe) int

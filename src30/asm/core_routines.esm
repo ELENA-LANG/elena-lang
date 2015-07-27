@@ -3630,6 +3630,20 @@ procedure dptr_readint
 
 end
 
+procedure dptr_readbytearray
+
+  bloadsi 2
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 1
+
+  callr api : coreapi'subcopy  
+  
+  quitn 3
+
+end
+
 procedure api_free_index
                       
   aloadsi 1

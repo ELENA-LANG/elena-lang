@@ -59,12 +59,27 @@
             ^ aColumnTextPtr literal.
         ].
         
-//        (columnType == SQLITE_FLOAT)?
-//        [
-//            #var(type:real) val := system'external'sqlite3 sqlite3_column_double &handle:theCommandHandle &int:anIndex.
-//            
-//            row@counter := val.
-//        ].
+        (columnType == SQLITE_FLOAT)?
+        [
+            #var(type:real) val := system'external'sqlite3 sqlite3_column_double &handle:theCommandHandle &int:anIndex.
+            
+            ^ RealNumber new &real:val.
+        ].
+
+        (columnType == SQLITE_BLOB)?
+        [
+            #var(type:int)blob := system'external'sqlite3  sqlite3_column_blob &handle:theCommandHandle &int:anIndex.
+            #var(type:int)len := system'external'sqlite3 sqlite3_column_bytes &handle:theCommandHandle &int:anIndex.
+            
+            #var(type:bytearray)arr := ByteArray new &int:len.
+
+            #var(type:dirty_ptr)ptr.
+            ptr write &int:blob.
+
+            ptr read &bytearray:arr &int:len.
+
+            ^ arr.            
+        ].
 
         (columnType == SQLITE_NULL)?
         [

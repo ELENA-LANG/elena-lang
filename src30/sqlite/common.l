@@ -7,7 +7,7 @@
 #symbol(const,type:int)SQLITE_INTEGER = 1.
 #symbol(const,type:int)SQLITE_FLOAT = 2.
 #symbol(const,type:int)SQLITE_TEXT = 3.
-//#symbol(const,type:int)SQLITE_BLOB = 4.
+#symbol(const,type:int)SQLITE_BLOB = 4.
 #symbol(const,type:int)SQLITE_NULL = 5.
 
 #subject(class:DBConnection)sqlite_cnn.

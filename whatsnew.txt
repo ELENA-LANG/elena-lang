@@ -10,6 +10,9 @@
 [ELC]
 [-] issue #15
 
+[LIB]
+[+] sqlite: supports float and blob fields
+
 [ElenaScript]
 [*] refactored / syntax modified
 [+] local variables are supported
