@@ -23,10 +23,6 @@ Currently:
                xdev - script engine
                        * test inline script
 
-              adev - lib30     
-                       * sqlite : support float
-                       * sqlite : support blob
-
               srev - console samples
                        * sqlite sample
                        
