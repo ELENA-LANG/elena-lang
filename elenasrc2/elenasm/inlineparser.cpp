@@ -261,7 +261,14 @@ void InlineScriptParser :: readMessage(_ScriptReader& reader, IdentifierString& 
       message.append(token);
 
       token = reader.read();
+
       message.append(token);
+
+      // HOT FIX : recognize open argument list
+      if (StringHelper::compare(token, "args")) {
+         message[0] += 12;
+         message.append('$');
+      }         
 
       token = reader.read();
    }
@@ -602,6 +609,9 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
    Stack<int> arguments(0);
    MemoryDump cache;
 
+   // HOTFIX 
+   scopes.push(Scope(0, 0));
+
    bool reverseMode = false;
    while (true) {
       char state = reader.info.state;
@@ -617,6 +627,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          else  save(line, dfaQuote, reader.token);
 
          counter++;
+         (*scopes.start()).level++;
          reader.read();
       }
       else if (state == dfaFullIdentifier) {
@@ -628,6 +639,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          else save(line, dfaFullIdentifier, reader.token);
 
          counter++;
+         (*scopes.start()).level++;
          reader.read();
       }
       else if (state == dfaInteger) {
@@ -639,6 +651,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          else save(line, dfaInteger, reader.token);
 
          counter++;
+         (*scopes.start()).level++;
          reader.read();
       }
       else if (state == dfaLong) {
@@ -650,6 +663,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          else save(line, dfaLong, reader.token);
 
          counter++;
+         (*scopes.start()).level++;
          reader.read();
       }
       else if (state == dfaReal) {
@@ -661,18 +675,19 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          else save(line, dfaReal, reader.token);
 
          counter++;
+         (*scopes.start()).level++;
          reader.read();
       }
       // if it is a new expression
       else if (StringHelper::compare(reader.token, "[")) {
          // set reverse mode on, add new scope
          reverseMode = true;
-         scopes.push(Scope(counter, arguments.Count() + 1));
+         scopes.push(Scope(0, arguments.Count() + 1));
 
          reader.read();
       }
       else if (StringHelper::compare(reader.token, "]")) {
-         scopes.pop();
+          scopes.pop();
 
          copyDump(cache, line, arguments);
          cache.trim(0);
@@ -681,7 +696,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          reverseMode = false;
       }
       else if (StringHelper::compare(reader.token, "(")) {
-         scopes.push(Scope(counter, arguments.Count() + 1));
+         scopes.push(Scope(0, arguments.Count() + 1));
 
          reader.read();
       }
@@ -696,10 +711,11 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
             // update message counter
             char prm_count = cacheReader.getByte();
 
-            cache.writeByte(pos + 1, prm_count + (counter - scope.level));
-         }
+            cache.writeByte(pos + 1, prm_count + scope.level);
 
-         counter = scope.level;
+            if (op == '^')
+               counter -= scope.level;
+         }
 
          reader.read();
       }
@@ -746,6 +762,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
          save(cache, '<', reader.token);
 
          reader.read();
+         (*scopes.start()).level++;
          counter++;
       }
       else if (StringHelper::compare(reader.token, ">")) {
@@ -756,11 +773,11 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
 
          reader.read();
       }
-      else if (StringHelper::compare(reader.token, ".") || StringHelper::compare(reader.token, ",")) {
+      else if (StringHelper::compare(reader.token, ";") || StringHelper::compare(reader.token, ",")) {
          break;
       }
       else if (StringHelper::compare(reader.token, "{")) {
-         scopes.push(Scope(counter, arguments.Count()));
+         scopes.push(Scope(0, arguments.Count()));
 
          arguments.push(cache.Length());
 
@@ -780,7 +797,6 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
             cache.writeDWord(pos + 1, statement_length);
          }
 
-         counter = scope.level;
          reader.read();
       }
       else if (StringHelper::compare(reader.token, "}")) {

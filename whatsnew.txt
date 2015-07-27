@@ -19,7 +19,7 @@
 [+] structures are supported
 [+] functions are supported
 
-Samples:
+[Samples]
 [+] calc
 [*] rosetta samples ackermann, addfield, accumulator are migrated to Linux
 
