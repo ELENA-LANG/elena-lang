@@ -20,9 +20,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              srev - console samples
-                       * sqlite sample
-                       
                xdev - script engine
                        * cf : support scope, mapping, variable rules ; extends tokeninfo with mapping field, should be copied to the clone; 
                          scope will creating a new mapping which is passed with token to child rules (should support initialization - #scope +self); 

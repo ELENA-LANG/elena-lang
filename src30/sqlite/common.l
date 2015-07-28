@@ -1,4 +1,6 @@
 #define system.
+#define system'routines.
+#define system'collections.
 #define extensions.
 
 #symbol(const,type:int)SQLITE_OK = 0.
@@ -14,6 +16,7 @@
 #subject(class:DBCommand)sqlite_cmd.
 #subject(class:DBReader)sqlite_reader.
 #subject(class:DBTable)sqlite_table.
+#subject(class:DBRow)sqlite_row.
 
 // --- DBException ---
 
@@ -80,15 +83,47 @@
         #var(type:sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:aSqlText.
 
         #var aTable := DBTable new &sql_field_names:(aCommand sql_field_names).
+        #var aReader := DBReader new &sqlite_cmd:aCommand.
         
-        aTable run &eachPair:(:aTable:aRow)
-            [ aTable append &sqlite_row:aRow. ].
+        aReader run:aTable &eachPair:(:aTable:aRow)
+            [ aTable $appendRow:aRow. ].
 
         aCommand free.
 
         ^ aTable.
     ]
         
+    #method numberOfTable
+    [
+        theOpen ! [ #throw DBException new &message:"SQLite database is not open.". ].
+
+        #var(type:sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
+
+        #var aNumberOfTable := aCommand evalScalar.
+        
+        aCommand free.
+
+        ^ aNumberOfTable.
+    ]
+
+    #method tables
+    [
+        theOpen ! [ #throw DBException new &message:"SQLite database is not open.". ].
+
+        #var(type:sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:"SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
+
+        #var(type:array_list)nameOfTables := ArrayList new.
+        
+        #loop (aCommand evalNext)?
+        [
+            nameOfTables += aCommand getAt &int:0.
+        ].
+        
+        aCommand free.
+        
+        ^ nameOfTables.
+    ]
+
     #method close
     [
         theOpen
@@ -142,9 +177,73 @@
         (aRetPrc != SQLITE_DONE)? [ #throw DBException new &message:"Could not execute SQL statement.". ].
     ]
     
+    #method evalNext
+    [
+        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
+
+        ^ (aRetPrc == SQLITE_ROW).
+    ]
+    
+    #method(stacksafe) evalScalar
+    [
+        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
+
+        (aRetPrc != SQLITE_ROW)? [ ^ $nil. ].
+
+        ^ $self getAt &int:0.                
+    ]
+    
     #method sqlite_reader = sqlite'DBReader new &sqlite_cmd:$self sqlite_reader.
     
     #method enumerator = sqlite'DBReader new &sqlite_cmd:$self enumerator.
+    
+    #method(stacksafe) getAt &int:anIndex
+    [
+        #var(type:int) columnType := system'external'sqlite3 sqlite3_column_type &handle:theCommandHandle &int:anIndex.
+        
+        (columnType == SQLITE_INTEGER)?
+        [
+            #var(type:int) val := system'external'sqlite3 sqlite3_column_int &handle:theCommandHandle &int:anIndex.
+            
+            ^ IntNumber new &int:val.
+        ].
+        
+        (columnType == SQLITE_TEXT)?
+        [
+            #var(type:dirty_ptr)aColumnTextPtr := system'external'sqlite3 sqlite3_column_text &handle:theCommandHandle &int:anIndex.
+
+            ^ aColumnTextPtr literal.
+        ].
+        
+        (columnType == SQLITE_FLOAT)?
+        [
+            #var(type:real) val := system'external'sqlite3 sqlite3_column_double &handle:theCommandHandle &int:anIndex.
+            
+            ^ RealNumber new &real:val.
+        ].
+
+        (columnType == SQLITE_BLOB)?
+        [
+            #var(type:int)blob := system'external'sqlite3  sqlite3_column_blob &handle:theCommandHandle &int:anIndex.
+            #var(type:int)len := system'external'sqlite3 sqlite3_column_bytes &handle:theCommandHandle &int:anIndex.
+            
+            #var(type:bytearray)arr := ByteArray new &int:len.
+
+            #var(type:dirty_ptr)ptr.
+            ptr write &int:blob.
+
+            ptr read &bytearray:arr &int:len.
+
+            ^ arr.            
+        ].
+
+        (columnType == SQLITE_NULL)?
+        [
+            ^ $nil.
+        ].
+
+        #throw DBException new &message:"Unsupported type".
+    ]
     
     #method(stacksafe) readFieldCount &vint:aCount
     [
@@ -179,59 +278,3 @@
         (aRetVal != SQLITE_OK) ? [ #throw DBException new &message:"Could not finalize SQL statement.". ].
     ]
 }
-
-//#class SQLite
-//{   
-//    #field(type:bool) isDbOpen.
-//    #field dataTable.
-//    
-//    #method step : handle
-//    [
-//        #var(type:int) ret := system'external'sqlite3 sqlite3_step &int:handle.
-//        ^ret.
-//    ]
-//    
-//    #method executeQuery : query
-//    [
-//    ]
-//    
-//    #method getNameOfAllTable
-//    [
-//        (isDbOpen != true)? [ #throw "SQLite database is not open.". ].
-//        
-//        #var query := "SELECT name FROM sqlite_master WHERE type='table';".
-//        #var(type:int) smtHandle := $self prepare:query.
-//        
-//        #var nameOfTables := List new.
-//        
-//        #var tempVar := false. 
-//        #var(type:literal) aColumnText := "".
-//        #loop (($self step:smtHandle) == SQLITE_ROW) ?
-//        [
-//            (tempVar)? [ nameOfTables append:aColumnText. ]. // use this technic just to not get the last table...
-//            
-//            #var(type:int)aColumnTextPtr := system'external'sqlite3 sqlite3_column_text  &int:smtHandle &int:0.
-//            aColumnText :=  getStringFromPointer:aColumnTextPtr.    
-//            tempVar := true.
-//        ].
-//        $self finalize:smtHandle.
-//        
-//        // this not work :(
-//        //#var tblLength := (nameOfTables length) - 1.
-//        //nameOfTables remove &index:tblLength.
-//        
-//        ^nameOfTables.
-//    ]
-//    
-//    #method getNumberOfTable
-//    [
-//        (isDbOpen != true)? [ #throw "SQLite database is not open.". ].
-//        
-//        #var query := "SELECT COUNT(*) FROM sqlite_master WHERE type='table';".
-//        #var(type:int) smtHandle := $self prepare:query.
-//        ($self step:smtHandle != SQLITE_ROW)? [^0.].
-//        #var(type:int) val := system'external'sqlite3 sqlite3_column_int &int:smtHandle &int:0.
-//        $self finalize:smtHandle.
-//        ^(convertor toInt:(val-1)). // remove the SQLITe default table...
-//    ]
-//}

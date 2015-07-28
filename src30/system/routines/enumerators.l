@@ -61,8 +61,10 @@
         anArray setAt &int:anIndex2 &object:aTemp.
     ]
     
-    #method indexOf &int:anIndex &object:anObject
+    #method(stacksafe) indexOf &int:anIndex &object:anObject &vint:aRetVal
     [
+        aRetVal << -1.
+        
         #var(type:array)anArray := self array.
         #var(type:int)aLength.
         
@@ -74,12 +76,19 @@
             #var anArrayItem := anArray getAt &int:i.
             
             (anObject == anArrayItem)
-                ? [ ^ IntNumber new &int:i. ].
+                ? [ aRetVal << i. ].
             
             i := i + 1.
         ].
+    ]        
         
-        ^ -1.
+    #method(stacksafe) indexOf &int:anIndex &object:anObject
+    [
+        #var(type:int)aRetVal.
+        
+        self::arrayOp indexOf &int:anIndex &object:anObject &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
     ]
     
     #method indexOf : anObject
@@ -859,6 +868,9 @@
 {
     #method run &each:aFunction
       = aFunction run &enumerator:(self enumerator).
+      
+    #method run &eachPair:aFunction
+      = aFunction run:self &enumerator:(self enumerator).
       
     #method run:aParam &eachPair:aFunction
       = aFunction run:aParam &enumerator:(self enumerator).

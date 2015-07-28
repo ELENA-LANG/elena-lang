@@ -447,6 +447,10 @@ rem md examples\timer
 rem copy %1\examples\timer\*.l examples\timer
 rem copy %1\examples\timer\*.prj examples\timer
 
+md examples\sqlite
+copy %1\examples\sqlite\*.l examples\sqlite
+copy %1\examples\sqlite\*.prj examples\sqlite
+
 echo copying src3 files
 
 md src30

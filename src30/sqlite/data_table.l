@@ -2,6 +2,47 @@
 #define system'routines.
 #define system'collections.
 
+// --- DBRow ---
+
+#class(sealed) DBRow
+{
+    #field(type:array)        theRow.
+    #field(type:sqlite_table) theTable.
+    
+    #constructor $new &array:aRow &sqlite_table:aTable
+    [
+        theRow := aRow.
+        theTable := aTable.
+    ]
+    
+    #method getAt : aSelector
+        = aSelector cast:%eval &to:
+            {
+                eval : aRow &int : anInt = aRow getAt &int:anInt.
+                
+                eval : aRow &literal : aFieldName = aRow getAt &literal:aFieldName.
+                
+                eval : aRow &wide : aFieldName = aRow getAt &literal:(aFieldName literal).
+            } &with:$self.
+
+    #method(stacksafe) getAt &int:anIndex
+        = theRow getAt &int:anIndex.
+
+    #method(stacksafe) getAt &literal:aFieldName
+    [
+        #var(type:int)anIndex := -1.
+
+        theTable $indexOfField:aFieldName &vint:anIndex.
+                        
+        (-1 == anIndex)
+            ? [ #throw DBException new &message:"Field is unknown". ].
+            
+        ^ theRow getAt &int:anIndex.
+    ]
+}
+
+// --- DBTable ---
+
 #class(sealed) DBTable
 {
     #field(type:array)theFieldNames.
@@ -13,35 +54,21 @@
         theRows := ArrayList new.
     ]
 
-    #method append &sqlite_row:aRow
+    #method $appendRow:aRow
     [
-        theRows append:aRow.
+        theRows append:(DBRow $new &array:(aRow array) &sqlite_table:$self).
     ]
 
-    #method getAt : aSelector
-        = aSelector cast:%eval &to:
-            {
-                eval : aTable &int : anInt = aTable getAt &int:anInt.
-                
-                eval : aTable &literal : aFieldName = aTable getAt &literal:aFieldName.
-                
-                eval : aTable &wide : aFieldName = aTable getAt &literal:(aFieldName literal).
-            } &with:$self.
-
-    #method(stacksafe) getAt &int:anIndex
-        = theRows getAt &int:anIndex.
-
-    #method getAt &literal:aFieldName
+    #method(stacksafe) $indexOfField:aFieldName &vint:anIndex
     [
-        #var(type:int) anIndex := theFieldNames indexOf:aFieldName int.
-        
-        (-1 == anIndex)
-            ? [ #throw DBException new &message:"Field name is unknown". ].
-            
-        ^ $self getAt &int:anIndex.
+        theFieldNames indexOf &int:0 &object:aFieldName &vint:anIndex.
     ]
 
     #method sqlite_table = $self.
 
-    #method => theRows.
+    #method rows = theRows.
+    
+    #method fields = theFieldNames.
+    
+    #method fieldCount = theFieldNames length.
 }

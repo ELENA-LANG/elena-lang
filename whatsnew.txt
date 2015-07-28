@@ -21,6 +21,7 @@
 
 [Samples]
 [+] calc
+[+] sqlite_test - a first ELENA database example
 [*] rosetta samples ackermann, addfield, accumulator are migrated to Linux
 
 ******************************************************************************

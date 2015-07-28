@@ -28,7 +28,7 @@
         #var(type:int)aResult.
         $self readNext &vint:aResult.
         
-        ^ aResult != SQLITE_ROW.
+        ^ aResult == SQLITE_ROW.
     ]
     
     #method getAt : aSelector
@@ -42,52 +42,7 @@
             } &with:$self.
     
     #method(stacksafe) getAt &int:anIndex
-    [
-        #var(type:int) columnType := system'external'sqlite3 sqlite3_column_type &handle:theCommandHandle &int:anIndex.
-        
-        (columnType == SQLITE_INTEGER)?
-        [
-            #var(type:int) val := system'external'sqlite3 sqlite3_column_int &handle:theCommandHandle &int:anIndex.
-            
-            ^ IntNumber new &int:val.
-        ].
-        
-        (columnType == SQLITE_TEXT)?
-        [
-            #var(type:dirty_ptr)aColumnTextPtr := system'external'sqlite3 sqlite3_column_text &handle:theCommandHandle &int:anIndex.
-
-            ^ aColumnTextPtr literal.
-        ].
-        
-        (columnType == SQLITE_FLOAT)?
-        [
-            #var(type:real) val := system'external'sqlite3 sqlite3_column_double &handle:theCommandHandle &int:anIndex.
-            
-            ^ RealNumber new &real:val.
-        ].
-
-        (columnType == SQLITE_BLOB)?
-        [
-            #var(type:int)blob := system'external'sqlite3  sqlite3_column_blob &handle:theCommandHandle &int:anIndex.
-            #var(type:int)len := system'external'sqlite3 sqlite3_column_bytes &handle:theCommandHandle &int:anIndex.
-            
-            #var(type:bytearray)arr := ByteArray new &int:len.
-
-            #var(type:dirty_ptr)ptr.
-            ptr write &int:blob.
-
-            ptr read &bytearray:arr &int:len.
-
-            ^ arr.            
-        ].
-
-        (columnType == SQLITE_NULL)?
-        [
-            ^ $nil.
-        ].
-
-        #throw DBException new &message:"Unsupported type".
-    ]
+        = theCommand getAt &int:anIndex.
     
     #method getAt &literal:aFieldName
     [
@@ -97,7 +52,7 @@
         ^ $self getAt &index:(theFieldNames indexOf:aFieldName int).
     ]
     
-    #method sqlite_row
+    #method row
     [
         #var(type:int)aCount.
         theCommand readFieldCount &vint:aCount.
@@ -116,7 +71,7 @@
     
     #method enumerator = Enumerator
     {
-        #method get = self sqlite_row.
+        #method get = self row.
     
         #method(type:bool) next => self.
     }.

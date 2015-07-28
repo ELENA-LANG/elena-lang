@@ -37,3 +37,4 @@ bin\elc -cexamples\agenda\agenda.prj
 bin\elc -cexamples\graphs\graphs.prj
 bin\elc -cexamples\c_a_g\c_area_gui.prj
 bin\elc -cexamples\notepad\notepad.prj
+bin\elc -cexamples\sqlite\sqlite_test.prj

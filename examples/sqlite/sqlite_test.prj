@@ -1,0 +1,14 @@
+﻿[project]
+executable=bin\sqlite_test.exe
+namespace=sqlite_test
+template=console
+debuginfo=-1
+warn:unresolved=0
+output=obj
+
+[files]
+main.l
+
+[forwards]
+'program=sqlite_test'program
+
