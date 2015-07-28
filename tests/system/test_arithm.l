@@ -14,7 +14,7 @@
 {
     test            
     [
-    ]
+    ]    
 }.
 
 #symbol XTest =

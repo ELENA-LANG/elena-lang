@@ -1603,6 +1603,39 @@
         theValue := aValue literal.
     ]    
 
+    #method cast : aVerb &to:aTarget
+    [
+        #var aValue := aTarget cast:%eval &to:
+        {
+            eval : aVariant &int:aValue
+                = aVariant int.
+                
+            eval : aVariant &byte:aValue
+                = aVariant byte.
+                
+            eval : aVariant &short:aValue
+                = aVariant short.
+                
+            eval : aVariant &long:aValue
+                = aVariant long.
+                
+            eval : aVariant &real:aValue
+                = aVariant real.
+                
+            eval : aVariant &literal:aValue
+                = aVariant literal.
+                
+            eval : aVariant &wide:aValue
+                = aVariant wide.
+        }
+        &with:$self.
+        
+        ^ aValue cast:aVerb &to:aTarget.
+    ]
+
+    #method equal : anObject
+        = anObject equal:$self bool.
+
     /// Returns a literal value
     #method literal = theValue.
     

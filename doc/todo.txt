@@ -20,10 +20,6 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              adev - lib30     
-                       * IntArray copy subarray to the array
-                       * logical operations with variant (v == 0, even if v is "0")
-
                xdev - script engine
                        * cf : support two script mode : elenascript (actions + variables), dfa (building objects)
                        * script engine - ~ to indicate relative to elena bin folder
