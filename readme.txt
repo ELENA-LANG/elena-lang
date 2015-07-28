@@ -15,15 +15,15 @@ For more information see at http://elenalang.sourceforge.net/
 - Pure polymorphic object oriented language
 - Dynamic "class mutation"
 - Message dispatching
-- ELENA Virtual machine (in developing)
+- ELENA Virtual machine
 - Command line 32-bit compiler
 - GUI IDE & Debugger
 - Unicode support (utf-8)
 - Complete source code
-- Number of samples, including a card game Up'N'Down (in development)
+- Number of samples
 - Getting started tutorial
 - Simple Assembler compiler
-- Dynamic Self-Assembling Script engine
+- Script Engine / Interpreter
 - ELENA Virtual Machine Terminal
 
 ****************************************************************************

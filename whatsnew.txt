@@ -14,6 +14,7 @@
 [+] sqlite: supports float and blob fields
 
 [ElenaScript]
+[!] script engine is again operational
 [*] refactored / syntax modified
 [+] local variables are supported
 [+] structures are supported

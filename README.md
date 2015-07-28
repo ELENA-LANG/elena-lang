@@ -8,13 +8,14 @@ Features
 - Pure polymorphic object oriented language
 - Dynamic "class mutation"
 - Message dispatching
-- ELENA Virtual machine (in developing)
+- Virtual machine
 - Command line 32-bit compiler
 - GUI IDE & Debugger
 - Unicode support (utf-8)
 - Complete source code
 - Number of samples
-- Script Engine
+- Script Engine / Interpreter
+- Virtual Machine Terminal
 
 Minimum requirements
 ---

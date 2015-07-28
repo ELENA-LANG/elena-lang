@@ -109,26 +109,30 @@ bool nonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _
 
 bool scopeNonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
+   CFParser::Mapping* old = token.mapping;
+
    CFParser::Mapping mapping;
 
    token.mapping = &mapping;
 
    bool ret = applyNonterminal(rule, token, reader);
 
-   token.mapping = NULL;
+   token.mapping = old;
 
    return ret;
 }
 
 bool scopeNonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 {
+   CFParser::Mapping* old = token.mapping;
+
    CFParser::Mapping mapping;
 
    token.mapping = &mapping;
 
    bool ret = applyNonterminalDSA(rule, token, reader);
 
-   token.mapping = NULL;
+   token.mapping = old;
 
    if (ret) {
       if (rule.postfixPtr)
