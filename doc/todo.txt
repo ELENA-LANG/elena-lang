@@ -20,19 +20,13 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-               xdev - script engine
-                       * cf : support scope, mapping, variable rules ; extends tokeninfo with mapping field, should be copied to the clone; 
-                         scope will creating a new mapping which is passed with token to child rules (should support initialization - #scope +self); 
-                         mapping which will add current identifier, if the rule fails - the mapping should be removed; 
-                         variable will replace its value with mapping value
-                       * cf : support two script mode : elenascript (actions + variables), dfa (building objects)
-                       * script engine - ~ to indicate relative to elena bin folder
-
               adev - lib30     
                        * IntArray copy subarray to the array
                        * logical operations with variant (v == 0, even if v is "0")
 
                xdev - script engine
+                       * cf : support two script mode : elenascript (actions + variables), dfa (building objects)
+                       * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
                        
 <= build =>
@@ -169,6 +163,47 @@ Currently:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        * compile anagram with mt
+
+              fdev - upndown
+                       * port to lib30
+                       * switch to mt platform
+
+              xdev - general implementation
+                       * ObjectInfo should have separate field for type, because it is not possible to use extensions for outer fields
+
+                       * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
+
+                       * handle access vialation exception : exception handler should be called
+
+                       * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
+
+                       * bug with stack allocated variable in symbol : #static C        = 2.0r / 3.0r.
+                       * review graph sample, get rid of warnings
+
+                       * constant symbols should be used directly
+                       * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
+
+              xdev - byte code optimization                               
+                       * review / optimize SDIApplication.start
+                       * call to $super should be direct
+                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+
+                       * optimize ByteCodeWriter::copyStructure                       
+
+                       * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
+                       * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
+                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
+                       
+                       * optimize output code: system'BaseFunction2
+                       
+              idev - usability
+                       * project view
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
+                       * recognize out of memory exception
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
+                       * class view - make possible to browse the class methods
 
 <=================> 
                                                                                                                             
@@ -537,20 +572,6 @@ Currently:
                        * primitive operation : copy one structure to another one
                          
               xdev - general implementation
-                       * ObjectInfo should have separate field for type, because it is not possible to use extensions for outer fields
-
-                       * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
-
-                       * handle access vialation exception : exception handler should be called
-
-                       * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
-
-                       * bug with stack allocated variable in symbol : #static C        = 2.0r / 3.0r.
-                       * review graph sample, get rid of warnings
-
-                       * constant symbols should be used directly
-                       * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
-
                        * review all system warnings
                        * WS_CHILD || SS_SIMPLE || WS_VISIBLE should supported (see system'winforms)
                        * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
@@ -598,17 +619,6 @@ Currently:
                        * cast should be called directly, make sure it is always after dispatch
                        
               xdev - byte code optimization                               
-                       * review / optimize SDIApplication.start
-                       * call to $super should be direct
-                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
-
-                       * optimize ByteCodeWriter::copyStructure                       
-
-                       * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
-                       * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
-                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
-                       
-                       * optimize output code: system'BaseFunction2
                        * review system for possible byte code optimization                       
                        * review extensions for possible byte code optimization                       
                        * review samples for possible byte code optimization                       
@@ -632,15 +642,6 @@ Currently:
                        
               idev - script engine
                        * build-in script into IDE
-                       
-              idev - usability
-                       * project view
-                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
-                       * recognize out of memory exception
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-                       * test compilation with a very long identifier names                       
-                       * class view - make possible to browse the class methods
 
               idev - generic development                                          
                        * linux : debugger
@@ -1066,8 +1067,6 @@ stack:
       (should we save the float registers before operations?)
     - 'value' classes should support: min, max, succ, pred (int32value, real64value, ansichar)
     - is it possible to automize the process of data transfer over sockets?
-    - database application which manage TODOs and KNOWNBUGs, possible to create
-      what's new automatically, statistics
     - automatic code writing / reading from stream
     - optimize implement integer / longinteger modulus implementation in assembelr
     - basic'intnumber / longnumber / real should support method "in" to validate range

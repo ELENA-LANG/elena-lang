@@ -17,6 +17,9 @@ using namespace _ELENA_TOOL_;
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
+#define SCOPE_KEYWORD         "$scope"
+#define VAR_KEYWORD           "$var"
+#define MAPPING_KEYWORD       "$newvar"
 //#define ANY_KEYWORD           "$any"
 
 //const char* dfaSymbolic[4] =
@@ -102,6 +105,40 @@ bool nonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _
       return true;
    }
    else return false;
+}
+
+bool scopeNonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   CFParser::Mapping mapping;
+
+   token.mapping = &mapping;
+
+   bool ret = applyNonterminal(rule, token, reader);
+
+   token.mapping = NULL;
+
+   return ret;
+}
+
+bool scopeNonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   CFParser::Mapping mapping;
+
+   token.mapping = &mapping;
+
+   bool ret = applyNonterminalDSA(rule, token, reader);
+
+   token.mapping = NULL;
+
+   if (ret) {
+      if (rule.postfixPtr)
+         rule.applyPostfixDSARule(token);
+
+      return true;
+   }
+   else return false;
+
+   return ret;
 }
 
 bool normalLiteralApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
@@ -191,6 +228,81 @@ bool normalIdentifierApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& tok
 
    if (!apply(rule, token, reader))
       return false;
+
+   if (rule.postfixPtr) {
+      rule.applyPostfixDSARule(token);
+   }
+
+   return true;
+}
+
+bool variableApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.mapping == NULL || token.state != dfaIdentifier || !token.mapping->exist(token.value))
+      return false;
+
+   ident_c s[12];
+   StringHelper::intToStr(token.mapping->get(token.value), s, 10);
+   token.writeLog(s);
+
+   return apply(rule, token, reader);
+}
+
+bool variableApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.mapping == NULL || token.state != dfaIdentifier || !token.mapping->exist(token.value))
+      return false;
+
+   if (rule.prefixPtr) {
+      rule.applyPrefixDSARule(token);
+
+      ident_c s[12];
+      StringHelper::intToStr(token.mapping->get(token.value), s, 10);
+      token.writeLog(s);
+   }
+
+   if (!apply(rule, token, reader))
+      return false;
+
+   if (rule.postfixPtr) {
+      rule.applyPostfixDSARule(token);
+   }
+
+   return true;
+}
+
+
+bool mappingApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.mapping == NULL || token.state != dfaIdentifier)
+      return false;
+
+   token.mapping->add(token.value, token.mapping->Count() + 1);
+
+   if (!apply(rule, token, reader)) {
+      token.mapping->erase(token.value);
+
+      return false;
+   }
+   else return true;
+}
+
+bool mappingApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   if (token.mapping == NULL || token.state != dfaIdentifier)
+      return false;
+
+   if (rule.prefixPtr) {
+      rule.applyPrefixDSARule(token);
+   }
+
+   token.mapping->add(token.value, token.mapping->Count() + 1);
+
+   if (!apply(rule, token, reader)) {
+      token.mapping->erase(token.value);
+
+      return false;
+   }      
 
    if (rule.postfixPtr) {
       rule.applyPostfixDSARule(token);
@@ -355,6 +467,15 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtIdentifier:
          rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
          break;
+      case rtScope:
+         rule.apply = dsaRule ? scopeNonterminalApplyRuleDSA : scopeNonterminalApplyRule;
+         break;
+      case rtVariable:
+         rule.apply = dsaRule ? variableApplyRuleDSA : variableApplyRule;
+         break;
+      case rtNewVariable:
+         rule.apply = dsaRule ? mappingApplyRuleDSA : mappingApplyRule;
+         break;
       //case rtAny:
       //   rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
       //   break;
@@ -503,7 +624,16 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             else if (StringHelper::compare(token.value, REFERENCE_KEYWORD)) {
                type = rtReference;
             }
-      //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
+            else if (StringHelper::compare(token.value, SCOPE_KEYWORD)) {
+               type = rtScope;
+            }
+            else if (StringHelper::compare(token.value,  VAR_KEYWORD)) {
+               type = rtVariable;
+            }
+            else if (StringHelper::compare(token.value, MAPPING_KEYWORD)) {
+               type = rtNewVariable;
+            }
+            //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
       //         type = rtAny;
       //      }
             else if (StringHelper::compare(token.value, IDENTIFIER_KEYWORD)) {

@@ -62,10 +62,8 @@ Version 2.x.x
 = dynamic programming: beta
 - maintenance: review known bugs
 - elenavm script: make possible to dynamically declare static variable
-- discontinue api2html
 - samples: multi-threading
 - guiopencalc: gui description script (elenascript)
-- gcx: add posibility to view gc statistics
 - elenavm: make sure several applications can work simultaneously
 - guivmconsole
 = vm: full support (console & gui)
@@ -75,7 +73,7 @@ Version 2.x.x
 = elenavm optimization
 = native code optimization
 = dynamic programming: full support
-- investigate memoryhashtable, the key values should be ordered alphabetically
+- investigate memoryhashtable, find better hash functions
 - engine: could we get rid of messages mapping table (though it should not increse 
   the link time)? maybe some numeric value which should be synchronized between modules?
   the literal string in that case will be defined by subject symbol name (what about
@@ -119,7 +117,7 @@ Version 2.x.x
 - elenavm: redesign debug support: step over the whole statement?
 - mapReferenceKey optimization: could we use last or one before the last?
   (try to compare the compilation time (e.g. for upndown))
-- start to use build tool to create releases
+- linux: start to use build tool to create releases
 - state machine samples
 - ide: implement "find declaration" function
 - usability: warn if vm client is debugged not under vm debug mode
@@ -189,7 +187,6 @@ Version 2.x.x
 - f:simple basic interpreter
 - is there any way to reduce the number of vmts, dynamic ones
 - Linux full support (elc + elide + elenavm / gui + console)
-- ELENA library: state of art standard libraries, database support
 - state of art IDE
 - two major projects implemented with ELENA: upndown (graphics, ai) and
   jafm (ide, open architecture)

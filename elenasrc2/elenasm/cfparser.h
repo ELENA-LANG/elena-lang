@@ -17,12 +17,15 @@ namespace _ELENA_
 class CFParser : public _Parser
 {
 public:
+   typedef Map<ident_t, int> Mapping;
+
    // --- TokenInfo ---
 
    struct TokenInfo
    {
       CFParser*        parser;
       ScriptLog*       buffer;
+      Mapping*         mapping;
 
       char    state;
       ident_t value;
@@ -84,6 +87,11 @@ public:
          else buffer->write(value);
       }
 
+      void writeLog(ident_t s)
+      {
+         buffer->write(s);
+      }
+
       ident_t getLog()
       {
          if (buffer->Length() > 0) {            
@@ -135,6 +143,7 @@ public:
          column = token.column;
          value = token.value;
          state = token.state;
+         mapping = token.mapping;
       }
    };
    
@@ -146,6 +155,9 @@ public:
       rtNumeric,
       rtReference,
       rtIdentifier,
+      rtScope,
+      rtVariable,
+      rtNewVariable,
 //      rtAny,
       rtEps,
       rtEof
@@ -217,8 +229,6 @@ protected:
 public:
    bool applyRule(Rule& rule, TokenInfo& token, _ScriptReader& reader);
    bool applyRule(size_t ruleId, TokenInfo& token, _ScriptReader& reader);
-
-//   virtual void parseDirective(_ScriptReader& reader);
 
    virtual bool parseGrammarRule(_ScriptReader& reader);
    virtual void parse(_ScriptReader& reader, TapeWriter& writer);
