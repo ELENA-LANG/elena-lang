@@ -57,3 +57,21 @@
    #config vm_console 
    #start;
 ]]
+
+system'console.writeLine("Hello".add(" World")).writeLine("!");
+
+var a = 2 . add(3);
+var b = 3;
+
+system'console.writeLine(a);
+
+a = 3;
+system'console.writeLine(a.add(b));
+
+var s = { x : 2 , y : 3 . add (2) };
+
+system'console.writeLine(s.y);
+
+var f = function(s) { system'console.writeLine(s) };
+
+f.eval("Hello");

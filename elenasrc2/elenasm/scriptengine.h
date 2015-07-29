@@ -182,15 +182,17 @@ public:
    virtual void seek(size_t position)
    {
       _tokenPosition = position;
+      if (_tokenPosition != -1) {
+         // Restore token
+         MemoryReader reader(&_buffer, position);
 
-      // Restore token
-      MemoryReader reader(&_buffer, position);
+         ident_t s = reader.getLiteral(DEFAULT_STR);
+         size_t length = getlength(s);
+         StringHelper::copy(token, s, length, length);
 
-      ident_t s = reader.getLiteral(DEFAULT_STR);
-      size_t length = getlength(s);
-      StringHelper::copy(token, s, length, length);
-
-      _position = reader.Position();
+         _position = reader.Position();
+      }
+      else _position = 0;
    }
 
    //      void reread(TokenInfo& token);
@@ -198,11 +200,6 @@ public:
    void clearCache()
    {
       _cacheMode = false;
-      if (_position >= _buffer.Length()) {
-         _buffer.trim(0);
-         _position = 0;
-         _tokenPosition = 0;
-      }
    }
 
    virtual ident_t read()
@@ -233,6 +230,7 @@ public:
       else {
          // token itself should be always cached
          _buffer.clear();
+         _tokenPosition = 0;
 
          ident_t s = ScriptReader::read();
 
@@ -251,7 +249,7 @@ public:
       _cacheMode = false;
       _position = 0;
 
-      _tokenPosition = 0;
+      _tokenPosition = -1;
    }
 };
 

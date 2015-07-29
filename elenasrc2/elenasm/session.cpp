@@ -117,6 +117,7 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
    int saved = reader.Position();
 
    ident_t token = reader.read();
+
    if (StringHelper::compare(token, "[[")) {
       saved = reader.Position();
       token = reader.read();
@@ -143,10 +144,9 @@ void Session :: parseMetaScript(MemoryDump& tape, CachedScriptReader& reader)
          saved = reader.Position();
          token = reader.read();
       }
+      reader.clearCache();
    }
-   else reader.seek(saved);
-
-   reader.clearCache();
+   else reader.seek(saved);   
 }
 
 void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
