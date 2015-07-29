@@ -1,17 +1,12 @@
 [[
    #grammar cf
 
-   #define start      ::= $scope statements;
-   #define statements ::= statement statements;
-   #define statements ::= $eof;
-   #define statement  ::= <= [ => "var" new_var assigning eol <= ] , =>;
-   #define statement  ::= <= [ > => var assigning eol <= ] , =>;
-   #define statement  ::= <= [ => expr eol <= ] ; =>;
+   #define start      ::= <= [ => struct <= ] , =>;
+   #define struct     ::= <= *system'dynamic'Struct { => "{" fields <= } =>;
    #define expr       ::= obj ops;
    #define obj        ::= $reference;
    #define obj        ::= $literal;
    #define obj        ::= $numeric;
-   #define obj        ::= <= < => $var;
    #define obj        ::= <= *system'dynamic'Struct { => "{" fields <= } =>;
    #define obj        ::= <= *system'dynamic'Tape { => "function" func <= } =>;
    #define ops        ::= "." call ops;
@@ -23,9 +18,6 @@
    #define next_arg   ::= "," expr next_arg;
    #define next_arg   ::= ")";
    #define eol        ::= ";";
-   #define new_var    ::= $newvar;
-   #define var        ::= $var;
-   #define assigning  ::= "=" expr;
    #define fields     ::= field field_exp next_field;
    #define field      ::= <= % => $identifier;
    #define field_exp  ::= <= [ => ":" expr <= ] =>;
