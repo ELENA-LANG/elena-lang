@@ -201,6 +201,7 @@ public:
       if (_position >= _buffer.Length()) {
          _buffer.trim(0);
          _position = 0;
+         _tokenPosition = 0;
       }
    }
 
@@ -229,7 +230,19 @@ public:
 
          return token;
       }
-      else return ScriptReader::read();
+      else {
+         // token itself should be always cached
+         _buffer.clear();
+
+         ident_t s = ScriptReader::read();
+
+         MemoryWriter writer(&_buffer);
+
+         writer.writeLiteral(s, getlength(s) + 1);
+         _position = writer.Position();
+
+         return s;
+      }
    }
 
    CachedScriptReader(TextReader* script)
@@ -237,6 +250,8 @@ public:
    {
       _cacheMode = false;
       _position = 0;
+
+      _tokenPosition = 0;
    }
 };
 

@@ -26,6 +26,9 @@ Currently:
                        * calculator : console
                        
 <= build =>
+
+              xdev - general implementation
+                       * gui vm client
                        
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
@@ -250,7 +253,7 @@ Currently:
                        * make possible to set / change / get the control color
                        * make possible to set / change / get the control font
 
-                       * gui stand-alone, gui mt stand-alone, gui vm client
+                       * gui stand-alone, gui mt stand-alone
                        * support default button style
                        * new controls: combo box, check box, status bar, timer, updown, memo, image box, list box
                        * make sure all windows resources (hbitmap, hdc, ..) are properly released
