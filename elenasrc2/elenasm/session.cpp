@@ -16,7 +16,8 @@ using namespace _ELENA_TOOL_;
 
 // --- Session ---
 
-Session :: Session()
+Session::Session(path_t rootPath)
+   : _rootPath(rootPath)
 {
    _currentParser = new InlineScriptParser();
 }
@@ -25,23 +26,6 @@ Session :: ~Session()
 {
    freeobj(_currentParser);
 }
-
-//void* Session :: translateScript(const wchar16_t* name, TextReader* source)
-//{
-//   ScriptVMCompiler compiler;
-//
-//   _Parser* parser = _parsers.get(name);
-//   if (parser == NULL) {
-//      parser = new CFParser();
-//
-//      _parsers.add(name, parser, true);
-//   }
-//
-//   parser->parse(source, &compiler);
-//
-//   // the tape should be explicitly releases with FreeLVMTape function
-//   return compiler.generate();
-//}
 
 void Session::parseDirectives(MemoryDump& tape, _ScriptReader& reader)
 {
@@ -210,7 +194,13 @@ int Session :: translate(ident_t script, bool standalone)
 int Session :: translate(path_t path, int encoding, bool autoDetect, bool standalone)
 {
    try {
-      TextFileReader reader(path, encoding, autoDetect);
+      Path scriptPath(_rootPath);
+      if (path[0] == '~') {
+         scriptPath.combine(path + 2);
+      }
+      else scriptPath.combine(path);
+
+      TextFileReader reader(scriptPath, encoding, autoDetect);
 
       if (!reader.isOpened()) {
          _lastError.copy("Cannot open the script file:");

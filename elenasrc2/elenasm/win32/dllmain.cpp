@@ -8,9 +8,17 @@
 
 _ELENA_::Session* session = NULL;
 
-void newSession()
+void newSession(HMODULE hModule)
 {
-   session = new _ELENA_::Session();
+   _ELENA_::Path rootPath;
+
+   TCHAR path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   rootPath.copySubPath(path);
+
+   session = new _ELENA_::Session(rootPath);
 }
 
 void freeSession()
@@ -65,6 +73,7 @@ EXTERN_DLL_EXPORT int GetStatus(_ELENA_::ident_c* buffer, int maxLength)
 // --- dllmain ---
 
 extern "C"
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -73,7 +82,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    switch (ul_reason_for_call)
    {
    case DLL_PROCESS_ATTACH:
-      newSession();
+      newSession(hModule);
       return TRUE;
    case DLL_THREAD_ATTACH:
    case DLL_THREAD_DETACH:

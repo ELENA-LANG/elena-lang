@@ -33,6 +33,9 @@
     
     #method(stacksafe)charCount &literal:aLiteral &vint:aRetVal
         => system'internal's_charcount.
+        
+    #method(stacksafe) toLiteral &int:anIndex &int:aLength &bytearray:anArray
+        = LiteralValue $new &int:anIndex &int:aLength &bytearray:anArray.
 }.
 
 // --- UTF16Encoder ---

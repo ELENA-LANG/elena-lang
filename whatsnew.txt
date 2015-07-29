@@ -12,6 +12,8 @@
 
 [LIB]
 [+] sqlite: supports float and blob fields
+[+] extensions'dynamic : scriptEngine
+[*] system'text'UT8Encoding : toLiteral&int&int&bytearray
 
 [ElenaScript]
 [!] script engine is again operational
@@ -19,6 +21,7 @@
 [+] local variables are supported
 [+] structures are supported
 [+] functions are supported
+[*] EvaluateFile / InterpretFile: "~" indicates relative to elena bin folder
 
 [Samples]
 [+] calc

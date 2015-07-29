@@ -45,7 +45,4 @@
    #define xargs      ::= $eps;
    #define next_xarg  ::= "," xexpr next_xarg;
    #define next_xarg  ::= ")";
-   
-   #config vm_console 
-   #start;
 ]]

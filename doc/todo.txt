@@ -21,8 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
                xdev - script engine
-                       * cf : support two script mode : elenascript (actions + variables), dfa (building objects)
-                       * script engine - ~ to indicate relative to elena bin folder
                        * calculator : console
                        
 <= build =>

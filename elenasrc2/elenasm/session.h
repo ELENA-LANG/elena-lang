@@ -12,37 +12,12 @@
 namespace _ELENA_
 {
 
-//const int cnNameLength = 0x20;
-//
-//typedef String<wchar16_t, cnNameLength> RuleIdentifier;
-//
-//// --- EUnrecognizedException ---
-//
-//struct EUnrecognizedException
-//{
-//};
-//
-//// --- EInvalidExpression ---
-//
-//struct EInvalidExpression
-//{
-//   RuleIdentifier nonterminal;
-//   int            column, row;
-//
-//   EInvalidExpression(const wchar16_t* nonterminal, int column, int row)
-//   {
-//      this->nonterminal.copy(nonterminal);
-//      this->column = column;
-//      this->row = row;
-//   }
-//};
-
-
 // --- Session ---
 
 class Session
 {
    _Parser*         _currentParser;
+   Path             _rootPath;
 
    String<ident_c, 512> _lastError;
 
@@ -63,7 +38,7 @@ public:
    int translate(ident_t script, bool standalone);
    int translate(path_t path, int encoding, bool autoDetect, bool standalone);
 
-   Session();
+   Session(path_t rootPath);
    virtual ~Session();
 };
 
