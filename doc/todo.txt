@@ -20,14 +20,7 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-               xdev - script engine
-                       * calculator : console (simple operations + - * /)
-                       
-<= build =>
 
-              xdev - general implementation
-                       * gui vm client
-                       
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
                        * get rid of all warnings in system package
@@ -52,12 +45,9 @@ Currently:
                        * port console samples                                                                               
                        * port rosetta samples                                                                               
 
-              xdev - script engine
-                       * calculator : sub expression
-                       * calculator : gui
-                       * reimplement script samples: interpreter, helloworld, vmconsole
-                       * get rid of reverse command
-                                                                                                                             
+               xdev - script engine
+                       * calculator : console (simple operations + - * /) - move state machine logic to external script file
+                       
               idev - linux:              
                        * save last open path (should be saved in the current path??)
                        * editor
@@ -116,6 +106,31 @@ Currently:
                        * fix bugs
                        * can we get rid of bool type forwaring?
                        
+              xdev - general implementation
+                       * gui vm client
+                       
+              xdev - script engine
+                       * calculator : sub expression
+                       * calculator : gui
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+                       * get rid of reverse command
+                                                                                                                             
+              xdev - multithreading       
+                       * implement basic functionality
+                       * implement lock / unlock
+                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
+                       * threadhandle - remove the object from the reference table on closing
+                       * reference table should be created on the program start for multy thread version
+                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
+                         storage ; maybe better to store there data duplication? 
+                       * static object should be thread safe
+                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
+                       * reimplement thread safe variable, safe points, safe regions
+                       * threadhandle - provide safe region like it was in 1.7
+                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
+                       * compile pi with mt
+                       * compile anagram with mt
+
               xdev - script engine
                        * cfparser : there should be two mappings so we could support both local and function variables
                        * cfparser : implement support variables
@@ -146,26 +161,6 @@ Currently:
                        * design
                        * implement
 
-              xdev - multithreading       
-                       * implement basic functionality
-                       * implement lock / unlock
-                       * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
-                       * threadhandle - remove the object from the reference table on closing
-                       * reference table should be created on the program start for multy thread version
-                       * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
-                         storage ; maybe better to store there data duplication? 
-                       * static object should be thread safe
-                       * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * threadhandle - provide safe region like it was in 1.7
-                       * elenavm : support multithreading, either use explicit or implicit TLS allocation
-                       * compile pi with mt
-                       * compile anagram with mt
-
-              fdev - upndown
-                       * port to lib30
-                       * switch to mt platform
-
               xdev - general implementation
                        * ObjectInfo should have separate field for type, because it is not possible to use extensions for outer fields
 
@@ -193,6 +188,10 @@ Currently:
                        * make sure intvar can be passed as int without major overhead (no explicit typecasting)
                        
                        * optimize output code: system'BaseFunction2
+
+              fdev - upndown
+                       * port to lib30
+                       * switch to mt platform
                        
               idev - usability
                        * project view

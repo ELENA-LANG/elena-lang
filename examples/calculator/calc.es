@@ -16,7 +16,7 @@
 
    state1 : 
    {
-      digit : function(machine,ch,tree) { tree.last_node.append(ch)); machine.state1 },
+      digit : function(machine,ch,tree) { tree.last_node.append(ch); machine.state1 },
   
       plus : function(machine,ch,tree) 
              { 

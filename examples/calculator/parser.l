@@ -1,6 +1,7 @@
 #define system.
 #define system'routines.
 #define system'dynamic.
+#define extensions'dynamic.
 
 #class(extension) lexicalOp
 {
@@ -118,6 +119,8 @@
     
     #method $loadBuiltinStatemachine
     [
+        //scriptEngine load &path:"~\scripts\eson.es".
+        
         #var aNumberStratagy := 
             {
                 order = 0.

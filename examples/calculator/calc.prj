@@ -1,7 +1,7 @@
 ﻿[project]
 package=calc
-executable=calc.exe
 vmpath=..\..\bin
+executable=calc.exe
 namespace=calc
 template=console
 debuginfo=-1

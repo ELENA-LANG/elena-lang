@@ -29,6 +29,7 @@
    #define next_xprm  ::= "," new_var next_xprm;
    #define next_xprm  ::= ")";
    #define tape       ::= "{" xstatement xstatements;
+   #define xstatements::= ";" xstatement xstatements;
    #define xstatements::= "}" ;
    #define xstatement ::= <= [ => xexpr <= ] =>;
    #define xexpr      ::= xobj xops;
@@ -45,4 +46,5 @@
    #define xargs      ::= $eps;
    #define next_xarg  ::= "," xexpr next_xarg;
    #define next_xarg  ::= ")";
+   #define new_var    ::= $newvar;
 ]]
