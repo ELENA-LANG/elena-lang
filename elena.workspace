@@ -7,5 +7,7 @@
 		<Project filename="elenasrc2/elenart/codeblocks/elenart_lnx32.cbp" />
 		<Project filename="../test/test/test.cbp" />
 		<Project filename="../test/ctest/ctest.cbp" />
+		<Project filename="elenasrc2/tools/sg/codeblocks/sg_lnx32.cbp" />
+		<Project filename="elenasrc2/tools/og/codeblocks/og_lnx32.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
