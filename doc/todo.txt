@@ -21,7 +21,7 @@ v  - vm script
 Currently:
 ------                                                                                         
                xdev - script engine
-                       * calculator : console
+                       * calculator : console (simple operations + - * /)
                        
 <= build =>
 
@@ -53,6 +53,7 @@ Currently:
                        * port rosetta samples                                                                               
 
               xdev - script engine
+                       * calculator : sub expression
                        * calculator : gui
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        * get rid of reverse command

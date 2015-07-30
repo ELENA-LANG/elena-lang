@@ -112,6 +112,7 @@
 
 #class StateMachine
 {
+    #field theStatemachine.
     #field theCurrentState.
     #field theDerivationTree.
     
@@ -130,42 +131,56 @@
                 
                 evalNode : aLeftToken : aRightToken = aLeftToken + aRightToken.
             }.    
-
-        #var aState0 := Variable new.
-        #var aState1 := Variable new.
-
+            
         //{ digit : aChar : aTree [ aTree append:(TreeLeaf new:aNumberStratagy append:aChar). ^ aState1. ] }.
-        #var aXCode0 := Struct(%digit, Tape(
-            2, tapeControl, %(getAt&args)(1),
-            aNumberStratagy, TreeLeaf, 
-            %(new)(1), 
-            %(append)(1),
-            1, tapeControl, %(getAt&args)(1),
-            %(append)(1),
-            aState1)).
-        
+
 //        { plus : aChar : aTree [ aTree append:(TreeNode new:aSumStratagy). ^ aState0. ] 
 //          digit : aChar : aTree [ aTree last_node append:aChar. ^ aState1. ]}.
-        #var aXCode1 := Struct(
-            %digit, Tape(
-                2, tapeControl, %(getAt&args)(1),
-                1, tapeControl, %(getAt&args)(1),
-                %(get&last_node)(0),
-                %(append)(1),
-                aState1),
+        theStatemachine := Struct
+        (
+            %state0,
+            Struct 
+            (
+                %digit,
+                Tape(
+                    2, tapeControl, %(getAt&args)(1),
+                    aNumberStratagy, TreeLeaf, 
+                    %(new)(1), 
+                    %(append)(1),
+                    1, tapeControl, %(getAt&args)(1),
+                    %(append)(1),
+                    3, tapeControl, %(getAt&args)(1),
+                    %(get&state1)(0))
+            ),
+            %state1,
+            Struct
+            (
+                %digit,
+                Tape(
+                    2, tapeControl, %(getAt&args)(1),
+                    1, tapeControl, %(getAt&args)(1),
+                    %(get&last_node)(0),
+                    %(append)(1),
+                    3, tapeControl, %(getAt&args)(1),
+                    %(get&state1)(0)),
+                    
+                %plus,
+                Tape(
+                    aSumStratagy, TreeNode,
+                    %(new)(1),
+                    1, tapeControl, %(getAt&args)(1),
+                    %(append)(1),
+                    3, tapeControl, %(getAt&args)(1),
+                    %(get&state0)(0))
+            ),
             
-            %plus, Tape(
-                aSumStratagy, TreeNode,
-                %(new)(1),
-                1, tapeControl, %(getAt&args)(1),
-                %(append)(1),
-                aState0)
-            ).
+            %start_state,
+            Tape(
+                    1, tapeControl, %(getAt&args)(1),
+                    %(get&state0)(0))            
+        ).
 
-        aState0 write:aXCode0.
-        aState1 write:aXCode1.
-
-        theCurrentState := aState0.
+        theCurrentState := theStatemachine start_state:theStatemachine.
     ]
     
     #constructor new
@@ -179,7 +194,7 @@
     [
         #var aType := aChar lexicalType.
 
-        theCurrentState := theCurrentState::aType eval:aChar:theDerivationTree.
+        theCurrentState := theCurrentState::aType eval:theStatemachine:aChar:theDerivationTree.
     ].
 
     #method value => theDerivationTree.
