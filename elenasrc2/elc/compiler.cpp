@@ -2876,6 +2876,11 @@ bool Compiler::compileInlineArithmeticOperator(CodeScope& scope, int operator_id
    }
    else return false;
 
+   // HOTFIX : primitive operations can be implemented only in the method
+   // because the symbol implementations do not open a new stack frame
+   if (scope.getScope(Scope::slMethod) == NULL)
+      return false;
+
    //result.extraparam =
 
    if (assignMode) {

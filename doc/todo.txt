@@ -21,6 +21,7 @@ v  - vm script
 Currently:
 ------                                                                                         
 
+<==>
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
                        * get rid of all warnings in system package
@@ -101,7 +102,6 @@ Currently:
                        * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
                          boxing / unboxing
                        * review / reimplemnt variable, reference
-                       * fix critical issue #47
                        * fix critical issues
                        * fix bugs
                        * can we get rid of bool type forwaring?
@@ -162,15 +162,12 @@ Currently:
                        * implement
 
               xdev - general implementation
-                       * ObjectInfo should have separate field for type, because it is not possible to use extensions for outer fields
-
                        * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
 
                        * handle access vialation exception : exception handler should be called
 
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
 
-                       * bug with stack allocated variable in symbol : #static C        = 2.0r / 3.0r.
                        * review graph sample, get rid of warnings
 
                        * constant symbols should be used directly
