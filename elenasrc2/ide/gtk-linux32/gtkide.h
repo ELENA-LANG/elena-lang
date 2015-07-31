@@ -23,6 +23,8 @@ class MainWindow : public SDIWindow
    EditFrame*    _mainFrame;
 
 protected:
+   Clipboard      _clipboard;
+
    // event signals
    void on_menu_file_new_source()
    {
@@ -77,10 +79,77 @@ protected:
       _controller->doCloseAllButActive();
    }
 
+   void on_menu_edit_undo()
+   {
+      _controller->doUndo();
+   }
+   void on_menu_edit_redo()
+   {
+      _controller->doRedo();
+   }
+   void on_menu_edit_cut()
+   {
+      if (_controller->doEditCopy())
+         _controller->doEditDelete();
+   }
+   void on_menu_edit_copy()
+   {
+      _controller->doEditCopy();
+   }
+   void on_menu_edit_paste()
+   {
+      _controller->doEditPaste();
+   }
+   void on_menu_edit_delete()
+   {
+      _controller->doEditDelete();
+   }
+   void on_menu_edit_select_all()
+   {
+      _controller->doSelectAll();
+   }
+   void on_menu_edit_indent()
+   {
+      _controller->doIndent();
+   }
+   void on_menu_edit_outdent()
+   {
+      _controller->doOutdent();
+   }
+   void on_menu_edit_trim()
+   {
+      _controller->doTrim();
+   }
+   void on_menu_edit_erase_line()
+   {
+      _controller->doEraseLine();
+   }
+   void on_menu_edit_upper()
+   {
+      _controller->doUpperCase();
+   }
+   void on_menu_edit_lower()
+   {
+      _controller->doLowerCase();
+   }
+   void on_menu_edit_comment()
+   {
+      _controller->doComment();
+   }
+   void on_menu_edit_uncomment()
+   {
+      _controller->doUnComment();
+   }
+
    void populateMenu();
    void populateToolbar();
 
 public:
+   bool copyToClipboard(Document* document);
+   void pasteFrameClipboard(Document* document);
+
+   void refreshDocument();
+
    int newDocument(const char* name, Document* doc);
    void closeDocument(int index);
    int getCurrentDocumentIndex();

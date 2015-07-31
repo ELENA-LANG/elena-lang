@@ -61,7 +61,7 @@ public:
 //   virtual void reloadSettings();
 //
 //   void init(Model* model);
-//   virtual void refreshDocument();
+   void refreshDocument();
 
    EditFrame(Model* model/*SDIWindow* owner*/);
 };

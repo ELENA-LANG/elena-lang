@@ -78,6 +78,28 @@ static Glib::ustring ui_info =
         "      <separator/>"
         "      <menuitem action='FileQuit'/>"
         "    </menu>"
+        "    <menu action='EditMenu'>"
+        "      <menuitem action='EditUndo'/>"
+        "      <menuitem action='EditRedo'/>"
+        "      <separator/>"
+        "      <menuitem action='EditCut'/>"
+        "      <menuitem action='EditCopy'/>"
+        "      <menuitem action='EditPaste'/>"
+        "      <menuitem action='EditDelete'/>"
+        "      <separator/>"
+        "      <menuitem action='EditSelectAll'/>"
+        "      <separator/>"
+        "      <menuitem action='EditInsertTab'/>"
+        "      <menuitem action='EditRemoveTab'/>"
+        "      <menuitem action='EditTrim'/>"
+        "      <menuitem action='EditEraseLine'/>"
+        "      <separator/>"
+        "      <menuitem action='EditUpper'/>"
+        "      <menuitem action='EditLower'/>"
+        "      <separator/>"
+        "      <menuitem action='EditComment'/>"
+        "      <menuitem action='EditUncomment'/>"
+        "    </menu>"
         "  </menubar>"
 //        "  <toolbar  name='ToolBar'>"
 //        "    <toolitem action='FileNewStandard'/>"
@@ -91,6 +113,8 @@ void MainWindow :: populateMenu()
 {
    //File menu:
    _refActionGroup->add( Gtk::Action::create("FileMenu", "_File") );
+   _refActionGroup->add( Gtk::Action::create("EditMenu", "_Edit") );
+
    _refActionGroup->add( Gtk::Action::create("FileNew", "New") );
    _refActionGroup->add( Gtk::Action::create("FileNewSource", "Source"), sigc::mem_fun(*this, &MainWindow::on_menu_file_new_source));
    _refActionGroup->add( Gtk::Action::create("FileNewProject", "Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_new_project));
@@ -106,6 +130,22 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_close));
    _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeproject));
    _refActionGroup->add( Gtk::Action::create("FileQuit", Gtk::Stock::QUIT), sigc::mem_fun(*this, &MainWindow::on_menu_file_quit));
+
+   _refActionGroup->add( Gtk::Action::create("EditUndo", "Undo"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_undo));
+   _refActionGroup->add( Gtk::Action::create("EditRedo", "Redo"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_redo));
+   _refActionGroup->add( Gtk::Action::create("EditCut", "Cut"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_cut));
+   _refActionGroup->add( Gtk::Action::create("EditCopy", "Copy"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_copy));
+   _refActionGroup->add( Gtk::Action::create("EditPaste", "Paste"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_paste));
+   _refActionGroup->add( Gtk::Action::create("EditDelete", "Delete"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_delete));
+   _refActionGroup->add( Gtk::Action::create("EditSelectAll", "Select All"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_select_all));
+   _refActionGroup->add( Gtk::Action::create("EditInsertTab", "Insert Tab (Indent)"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_indent));
+   _refActionGroup->add( Gtk::Action::create("EditRemoveTab", "Remove Tab (Outdent)"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_outdent));
+   _refActionGroup->add( Gtk::Action::create("EditTrim", "Trim whitespace"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_trim));
+   _refActionGroup->add( Gtk::Action::create("EditEraseLine", "Erase line"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_erase_line));
+   _refActionGroup->add( Gtk::Action::create("EditUpper", "To upper case"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_upper));
+   _refActionGroup->add( Gtk::Action::create("EditLower", "To lower case"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_lower));
+   _refActionGroup->add( Gtk::Action::create("EditComment", "Block comment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_comment));
+   _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_uncomment));
 
    loadUI(ui_info, "/MenuBar");
 }
@@ -137,6 +177,35 @@ int MainWindow :: getCurrentDocumentIndex()
 void MainWindow :: closeDocument(int index)
 {
    _mainFrame->eraseDocumentTab(index);
+}
+
+void MainWindow :: refreshDocument()
+{
+   _mainFrame->refreshDocument();
+}
+
+bool MainWindow :: copyToClipboard(Document* document)
+{
+   int length = document->getSelectionLength();
+   char* text = _ELENA_::StringHelper::allocate(length, DEFAULT_STR);
+
+   document->copySelection(text);
+
+   _clipboard.settext(text);
+
+   _ELENA_::freestr(text);
+
+   return true;
+}
+
+void MainWindow :: pasteFrameClipboard(Document* document)
+{
+   char* text = _clipboard.gettext();
+   if  (!_ELENA_::emptystr(text)) {
+      document->insertLine(text, _ELENA_::getlength(text));
+
+      _clipboard.freetext(text);
+   }
 }
 
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)

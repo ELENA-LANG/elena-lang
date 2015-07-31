@@ -186,21 +186,13 @@ void EditFrame :: onTabChange(int index)
 ////      ((TextView*)_current)->refreshView();
 ////   }
 //}
-//
-//void EditFrame :: refreshDocument()
-//{
-////   if (_current)
-////      ((TextView*)_current)->refreshView();
-//}
-//
-//void EditFrame :: indent()
-//{
-////   // !! partially migrated
-////   if (_currentDoc/* && !_readOnly*/) {
-////      ((TextView*)_current)->indent();
-////   }
-//}
-//
+
+void EditFrame :: refreshDocument()
+{
+   if (_current)
+      ((TextView*)_current)->refreshView();
+}
+
 //void EditFrame :: outdent()
 //{
 ////   // !! partially migrated

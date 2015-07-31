@@ -44,10 +44,10 @@ public:
 
    virtual void refresh(bool onlyFrame)
    {
-//      if (onlyFrame) {
-//         appWindow.refreshDocument();
-//      }
-//      else appWindow.refresh();
+      if (onlyFrame) {
+         appWindow.refreshDocument();
+      }
+      else appWindow.queue_draw();
    }
 
    virtual bool saveProject(Model* model, _ELENA_::Path& path)
@@ -411,14 +411,12 @@ public:
 
    virtual bool copyToClipboard(Document* doc)
    {
-      //return appWindow.copyToClipboard(doc);
-
-      return false; // !! temporal
+      return appWindow.copyToClipboard(doc);
    }
 
    virtual void pasteFromClipboard(Document* doc)
    {
-      //appWindow.pasteFrameClipboard(doc);
+      appWindow.pasteFrameClipboard(doc);
    }
 
    virtual bool find(Model* model, SearchOption* option, SearchHistory* searchHistory)
