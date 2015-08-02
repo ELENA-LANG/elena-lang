@@ -2541,11 +2541,11 @@ ref_t Compiler :: _mapMessage(DNode node, CodeScope& scope, MessageScope& callSt
             if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
                // add argument list to be unboxed
                callStack.oargUnboxing = true;
-               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg.firstChild(), true));
             }
             else {
                while (arg != nsNone) {
-                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg.firstChild()));
 
                   arg = arg.nextNode();
                }
@@ -3544,7 +3544,10 @@ void Compiler :: _compileMessageParameters(MessageScope& callStack, CodeScope& s
       MessageScope::ParamInfo param = callStack.parameters.get(callStack.directOrder ? (count - i - 1) : i);
 
       if (param.info.kind == okUnknown) {
-         param.info = compileObject(param.node, scope, 0);
+         if (param.node == nsNone) {
+            param.info = ObjectInfo(okNil);
+         }
+         else param.info = compileObject(param.node, scope, 0);
       }
       _writer.loadObject(*scope.tape, param.info);
 
@@ -3571,7 +3574,7 @@ void Compiler :: _compileMessageParameters(MessageScope& callStack, CodeScope& s
 
          // save into the stack
          if (callStack.directOrder) {
-            _writer.pushObject(*scope.tape, param.info);
+            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
          }
          else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i + 1));
       }
@@ -3609,6 +3612,8 @@ ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, MessageScop
       _writer.loadObject(*scope.tape, target);
    }
    else _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+   _writer.setMessage(*scope.tape, messageRef);
 
    // send message
    int callType = methodHint & tpMask;
@@ -3770,7 +3775,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          currentObject = compileExtension(member, scope, currentObject, mode);
       }
       else if (member==nsMessageOperation) {
-         currentObject = compileMessage(member, scope, currentObject, mode);
+         currentObject = _compileMessage(member, scope, currentObject, mode);
       }
       else if (member==nsMessageParameter) {
          currentObject = compileEvalMessage(member, scope, currentObject, mode);

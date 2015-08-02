@@ -7,7 +7,7 @@ a  - api
 l  - language                                                                                   
 s  - samples
 f  - flagship project (up to 2)                                                                                                   
-t  - tools                                                 
+t  - tools                                                                                 
 v  - vm script                                                                                            
                                                                                                                  
 - dev                                                                                                      
@@ -20,7 +20,9 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xdev - general development
+              xdev - general development              
+                       * find out why so many duplicat breakpoints
+                       * tweaks the code
 
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
                        * literals
