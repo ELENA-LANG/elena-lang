@@ -3220,7 +3220,48 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    return retVal;
 }
 
-ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode)
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
+{
+   // if static message is sent to a class class
+   if (object.kind == okConstantClass) {
+      return object.extraparam;
+   }
+   // if external role is provided
+   else if (object.kind == okConstantRole) {
+      return object.param;
+   }
+   else if (object.kind == okConstantSymbol) {
+      if (object.extraparam != 0) {
+         return object.extraparam;
+      }
+      else return object.param;
+   }
+   else if (object.kind == okAccumulator && object.param != 0) {
+      return object.param;
+   }
+   else if (object.kind == okLocalAddress) {
+      return object.extraparam;
+   }
+   // if message sent to the class parent
+   else if (object.kind == okSuper) {
+      return object.param;
+   }
+   // if message sent to the subject variable
+   else if (object.kind == okSubject) {
+      return scope.moduleScope->signatureReference;
+   }
+   // if message sent to the dispatcher
+   else if (object.kind == okSubjectDispatcher) {
+      return scope.moduleScope->signatureReference;
+   }
+   // if message sent to the $self
+   else if (object.kind == okThisParam) {
+      return scope.getClassRefId(false);
+   }
+   else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
+}
+
+ObjectInfo Compiler::compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode)
 {
    ObjectInfo retVal(okAccumulator);
 
@@ -3366,6 +3407,109 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          }
       }
       else _writer.callMethod(*scope.tape, 0, paramCount);
+   }
+
+   // the result of get&type message should be typed
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+      if (scope.moduleScope->typeHints.exist(signRef)) {
+         return ObjectInfo(okAccumulator, 0, 0, signRef);
+      }
+   }
+   return retVal;
+}
+
+void Compiler :: _compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe)
+{
+   size_t count = callStack.parameters.Count();
+
+   bool directOrder = false;
+   // check if direct order can be used
+
+   if (!directOrder) 
+      _writer.declareArgumentList(*scope.tape, count);
+
+   for (int i = 0; i < count; i++) {
+      MessageScope::ParamInfo param = callStack.parameters.get(directOrder ? (count - i - 1) : i);
+
+      if (param.info.kind == okUnknown) {
+         param.info = compileObject(param.node, scope, 0);
+      }
+      _writer.loadObject(*scope.tape, param.info);
+
+      // check if boxing required
+
+      // if type is mismatch - typecast
+      bool mismatch = false;
+      bool boxed = false;
+      param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, 0);
+
+      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
+         boxObject(scope, param.info, boxed);
+
+      if (mismatch)
+         scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
+
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, param.node.firstChild().Terminal());
+
+      // save into the stack
+      if (directOrder) {
+         _writer.pushObject(*scope.tape, param.info);
+      }
+      else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i + 1));
+   }
+}
+
+ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo target, int messageRef)
+{
+   ObjectInfo retVal(okAccumulator);
+
+   int signRef = getSignature(messageRef);
+   int paramCount = getParamCount(messageRef);
+
+   ref_t classReference = resolveObjectReference(scope, target);
+   bool classFound = false;
+   bool dispatchCall = false;
+   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
+
+   // save parameters
+   _compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
+
+   // load target
+   if (target.kind == okRole || target.kind == okConstantRole) {
+      _writer.loadObject(*scope.tape, target);
+   }
+   else if (target.kind == okSuper) {
+      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+   }
+   else if (target.kind == okSubject) {
+      _writer.loadObject(*scope.tape, target);
+   }
+   else if (target.kind == okSubjectDispatcher) {
+      dispatchCall = true;
+
+      _writer.loadObject(*scope.tape, target);
+   }
+   else _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+
+   // send message
+   int callType = methodHint & tpMask;
+   if (dispatchCall) {
+      _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
+   }
+   else if (callType == tpClosed) {
+      _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
+   }
+   else if (callType == tpSealed) {
+      _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
+   }
+   else {
+      // if the class found and the message is not supported - warn the programmer and raise an exception
+      if (classReference != 0 && callType == tpUnknown) {
+         scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
+      }
+
+      _writer.callMethod(*scope.tape, 0, paramCount);
    }
 
    // the result of get&type message should be typed

@@ -585,6 +585,28 @@ protected:
       }
    };
 
+   struct MessageScope
+   {
+      struct ParamInfo
+      {
+         ref_t      subj_ref;
+         DNode      node;
+         ObjectInfo info;
+
+         ParamInfo()
+         {
+            subj_ref = 0;
+         }
+      };
+
+      CachedMemoryMap<int, ParamInfo, 4> parameters;
+
+      MessageScope()
+         : parameters(ParamInfo())
+      {
+      }
+   };
+
    ByteCodeWriter _writer;
    Parser         _parser;
 
@@ -686,6 +708,10 @@ protected:
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
    ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+   ObjectInfo _compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef);
+   void _compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);

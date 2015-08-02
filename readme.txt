@@ -4,7 +4,7 @@
 The project includes ELENA documentation, standard library source code, 
 samples, command-line compiler, IDE.
 
-Currently Win32-x86 (Windows 7/8) / Linux-I386 (alpha) platforms are supported.
+Currently Win32-x86 (Windows 7/8/10) / Linux-I386 (alpha) platforms are supported.
 
 For more information see at http://elenalang.sourceforge.net/
 
@@ -30,7 +30,7 @@ For more information see at http://elenalang.sourceforge.net/
 * OS requirements
 ****************************************************************************
 
- - Windows XP/7/8 x86
+ - Windows XP/7/8/10 x86
  - Linux I386
 
 ****************************************************************************
@@ -72,7 +72,7 @@ To compile the program types : ./bin/elc2 -c<path to .project file>
 ****************************************************************************
 
 Visit the project web site for the latest info on the project: 
-http://elenalang.sourceforge.net/
+http://elenalang.netu.cf/
 
 The documentation is available as HTML pages, and text. 
 These are all available on http://github.com/ELENA-LANG/elena-lang/wiki
@@ -86,6 +86,9 @@ There you also can find Getting Started tutorial
 
 Suggestions, Help ...
 ---------------------
+http://github.com/ELENA-LANG/elena-lang/issues
+    - tickets / issues
+
 http://elenalang.blogspot.com/
     - blog devoted to the language
     

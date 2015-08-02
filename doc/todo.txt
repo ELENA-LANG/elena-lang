@@ -20,8 +20,15 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
+              xdev - general development
 
-<==>
+                       * boxing / unboxing (localaddress / fieldaddress), issue #22
+                       * literals
+                       * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
+                       * by ref parameters
+
+<==>                         
+
               adev - lib30     
                        * Exception.if$generic - use primitive operation for comparision
                        * get rid of all warnings in system package
@@ -50,20 +57,27 @@ Currently:
                        * calculator : console (simple operations + - * /) - move state machine logic to external script file
                        
               idev - linux:              
-                       * save last open path (should be saved in the current path??)
-                       * editor
+                       * menu option - project
                        * project compilation / clean / run
+                       * save last open path (should be saved in the current path??)
+                       * fix outdent / uncomment / trim / eraseLine - some general bug in removing
                        * recent open files / projects
                        * window list, switching
                        * status bar
-                       * add menu items
+                       * menu option - view
+                       * menu option - search
+                       * menu option - tools
+                       * menu option - windows
+                       * menu option - help
                        * add tool bar items
                        * add hot keys
+                       * enabling / disabling menu options,...
                        * TextView: cursor blinking
                        * IDE UI : facelifting, tuning
                        * test : new project, new file, include, exclude, save, ...
                        
               srev - console samples
+                       * implement rosetta code samples
                        * simplify goods (Record.get&Literal implementation)
                        * rewrite pi sample to use stack allocated variables / parallel calculating
                        * matrix: use Pair in matrix sample
@@ -72,39 +86,6 @@ Currently:
                        * matrix: multiply - should use realnumber rather than real
                        * migrate calc, interpreter samples
                        * vmconsole
-                         
-              xdev - general development
-                       * make sure direct methods are called in appropriate cases
-                       * make sure idle typecasting message is not invoked
-                       * refactoring : declareParameterDebugInfo - use debug hint flags
-                       * refactoring : compileInlineArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : compileInlineVarArithmeticOperator - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : compileInlineReferOperator - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : defineForward - it is not clear if intReference, longReference, .. should be used directly
-                       * refactoring : do we need to use paramsReference ditectly??
-                       * refactoring : do we need to use trueReference / falseReference ditectly??
-
-                       * primitive structs : integerof, floatof (can be stack allocated, read only)
-                       * literals
-                       * primitive wrappers : strinfof, struct, variableof, arrayof (can be stack allocated, changable)
-
-                       * try to get rid of most external code
-
-                       * default dynamic constructor
-
-                       * example of variable, array ; should be easy to declare (only inherits the base class)
-                       * example of by ref parameters
-
-                       * try to minimize the list of type forwards
-
-                       * boxing / unboxing (localaddress / fieldaddress)
-
-                       * review the language, drop complex things, get rid of synonyms, simplify variable, introduce by ref parameters, implement
-                         boxing / unboxing
-                       * review / reimplemnt variable, reference
-                       * fix critical issues
-                       * fix bugs
-                       * can we get rid of bool type forwaring?
                        
               xdev - general implementation
                        * gui vm client
@@ -172,7 +153,10 @@ Currently:
 
                        * constant symbols should be used directly
                        * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
-
+                       * refactoring : declareParameterDebugInfo - use debug hint flags
+                       * refactoring : do we need to use paramsReference ditectly??
+                       * refactoring : do we need to use trueReference / falseReference ditectly??
+                       
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start
                        * call to $super should be direct
@@ -198,6 +182,20 @@ Currently:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
                        * class view - make possible to browse the class methods
+    
+              xdev - general development
+                       * try to get rid of most external code
+                       
+                       * default dynamic constructor
+
+                       * example of variable, array ; should be easy to declare (only inherits the base class)
+                       * example of by ref parameters
+
+                       * try to minimize the list of type forwards
+
+                       * fix critical issues
+                       * fix bugs
+                       * can we get rid of bool type forwaring?
 
 <=================> 
                                                                                                                             

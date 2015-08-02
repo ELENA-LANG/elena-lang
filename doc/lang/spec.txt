@@ -2,7 +2,8 @@
 1. Introduction
 
 ELENA is a general-purpose, object-oriented, polymorphic language with late binding. 
-It promotes more object-oriented program design, reusable and more standardized code. 
+It features message dispatching / manipulation, dynamic object mutation, a script 
+engine / interpreter and group object support.
 
 1.1 Namespaces
 
