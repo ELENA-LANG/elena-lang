@@ -22,17 +22,16 @@ using namespace _ELENA_;
 #define HINT_ALT              0x12000000
 #define HINT_CATCH            0x08000000
 #define HINT_STACKSAFE_CALL   0x04000000
-#define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
 #define HINT_HEAP_MODE        0x00400000
-#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 #define HINT_SELFEXTENDING    0x00040000
 #define HINT_ACTION           0x00020000
 #define HINT_EXTERNAL_CALL    0x00010000
 
-//
-//////#define HINT_ROOTEXPR         0x40000000
+// !! should be removed
+#define HINT_DIRECT_ORDER     0x01000000     // indictates that the parameter should be stored directly in reverse order
+#define HINT_OARG_UNBOXING    0x00200000     // used to indicate unboxing open argument list
 
 // --- Auxiliary routines ---
 
@@ -2473,6 +2472,120 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& count, int& m
    return encodeMessage(sign_id, verb_id, paramCount);
 }
 
+ref_t Compiler :: _mapMessage(DNode node, CodeScope& scope, MessageScope& callStack)
+{
+   callStack.directOrder = true;
+
+   TerminalInfo     verb = node.Terminal();
+   IdentifierString signature;
+   bool             first = true;
+
+   ref_t            verb_id = _verbs.get(verb.value);
+   int              paramCount = 0;
+   DNode            arg = node.firstChild();
+
+   if (verb_id == 0) {
+      size_t id = scope.moduleScope->mapSubject(verb, signature);
+
+      // if followed by argument list - it is EVAL verb
+      if (arg != nsNone) {
+         // HOT FIX : strong types cannot be used as a custom verb with a parameter
+         if (scope.moduleScope->typeHints.exist(id))
+            scope.raiseError(errStrongTypeNotAllowed, verb);
+
+         verb_id = EVAL_MESSAGE_ID;
+
+         first = false;
+      }
+      // otherwise it is GET message
+      else verb_id = GET_MESSAGE_ID;
+   }
+
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg.firstChild()));
+
+      paramCount++;
+
+      if (arg.firstChild().firstChild() != nsNone)
+         callStack.directOrder = false;
+
+      arg = arg.nextNode();
+   }
+
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      // if it is an open argument list
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      // skip an argument
+      if (arg == nsMessageParameter) {
+         // if it is an open argument list
+         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            // if a generic argument is used with an open argument list
+            callStack.directOrder = false;
+
+            // check if argument list should be unboxed
+            DNode param = arg.firstChild();
+
+            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+               // add argument list to be unboxed
+               callStack.oargUnboxing = true;
+               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+            }
+            else {
+               while (arg != nsNone) {
+                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+
+                  arg = arg.nextNode();
+               }
+
+               // terminator
+               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+            }
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0x0F)
+               scope.raiseError(errNotApplicable, subject);
+
+            // open argument list should be last one
+            if(arg.nextNode() != nsNone)
+               scope.raiseError(errNotApplicable, subject);
+         }
+         else {
+            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg.firstChild()));
+            paramCount++;
+
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, verb);
+
+            if (arg.firstChild().firstChild() != nsNone)
+               callStack.directOrder = false;
+
+            arg = arg.nextNode();
+         }
+      }
+   }
+
+   // if signature is presented
+   ref_t sign_id = 0;
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
+
+   // create a message id
+   return encodeMessage(sign_id, verb_id, paramCount);
+}
+
 void Compiler :: compileDirectMessageParameters(DNode arg, CodeScope& scope, int mode)
 {
    if (arg == nsMessageParameter) {
@@ -3422,41 +3535,46 @@ void Compiler :: _compileMessageParameters(MessageScope& callStack, CodeScope& s
 {
    size_t count = callStack.parameters.Count();
 
-   bool directOrder = false;
-   // check if direct order can be used
-
-   if (!directOrder) 
+   // if direct order is not possible the space should be allocated first,
+   // to garantee the correct order of parameter evaluation
+   if (!callStack.directOrder)
       _writer.declareArgumentList(*scope.tape, count);
 
    for (int i = 0; i < count; i++) {
-      MessageScope::ParamInfo param = callStack.parameters.get(directOrder ? (count - i - 1) : i);
+      MessageScope::ParamInfo param = callStack.parameters.get(callStack.directOrder ? (count - i - 1) : i);
 
       if (param.info.kind == okUnknown) {
          param.info = compileObject(param.node, scope, 0);
       }
       _writer.loadObject(*scope.tape, param.info);
 
-      // check if boxing required
-
-      // if type is mismatch - typecast
-      bool mismatch = false;
-      bool boxed = false;
-      param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, 0);
-
-      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
-         boxObject(scope, param.info, boxed);
-
-      if (mismatch)
-         scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
-
-      if (boxed)
-         scope.raiseWarning(4, wrnBoxingCheck, param.node.firstChild().Terminal());
-
-      // save into the stack
-      if (directOrder) {
-         _writer.pushObject(*scope.tape, param.info);
+      // if open argument list should be unboxed
+      if (callStack.oargUnboxing && param.unboxing && scope.moduleScope->typeHints.exist(param.subj_ref, scope.moduleScope->paramsReference)) {
+         // unbox the argument list and return the object saved before the list
+         _writer.unboxArgList(*scope.tape);
       }
-      else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i + 1));
+      else {
+         // if type is mismatch - typecast
+         bool mismatch = false;
+         bool boxed = false;
+         param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, 0);
+
+         // check if boxing required
+         if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
+            boxObject(scope, param.info, boxed);
+
+         if (mismatch)
+            scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
+
+         if (boxed)
+            scope.raiseWarning(4, wrnBoxingCheck, param.node.firstChild().Terminal());
+
+         // save into the stack
+         if (callStack.directOrder) {
+            _writer.pushObject(*scope.tape, param.info);
+         }
+         else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i + 1));
+      }
    }
 }
 
@@ -3544,6 +3662,42 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    endDebugExpression(scope);
 
    if (spaceToRelease > 0) {
+      // if open argument list is used
+      releaseOpenArguments(scope, spaceToRelease);
+   }
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   MessageScope callStack;
+
+   // put the target
+   callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
+
+   ref_t messageRef = _mapMessage(node, scope, callStack);
+
+   ref_t extensionRef = mapExtension(scope, messageRef, object);
+
+   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
+   if (object.kind == okAccumulator) {
+      callStack.directOrder = false;
+   }
+
+   if (extensionRef != 0) {
+      object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+   }
+
+   recordDebugStep(scope, node.Terminal(), dsStep);
+   openDebugExpression(scope);
+
+   ObjectInfo retVal = _compileMessage(node, scope, callStack, object, messageRef);
+
+   endDebugExpression(scope);
+
+   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
+   if (spaceToRelease != 0) {
       // if open argument list is used
       releaseOpenArguments(scope, spaceToRelease);
    }

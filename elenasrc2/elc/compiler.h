@@ -592,18 +592,42 @@ protected:
          ref_t      subj_ref;
          DNode      node;
          ObjectInfo info;
+         bool       unboxing;
 
          ParamInfo()
          {
             subj_ref = 0;
+            unboxing = false;
+         }
+         ParamInfo(ref_t subj_ref, DNode node)
+         {
+            this->subj_ref = 0;
+            this->node = node;
+            this->unboxing = false;
+         }
+         ParamInfo(ref_t subj_ref, ObjectInfo info)
+         {
+            this->subj_ref = 0;
+            this->info = info;
+            this->unboxing = false;
+         }
+         ParamInfo(ref_t subj_ref, DNode node, bool unboxing)
+         {
+            this->subj_ref = 0;
+            this->node = node;
+            this->unboxing = unboxing;
          }
       };
 
+      bool                               oargUnboxing;
+      bool                               directOrder;
       CachedMemoryMap<int, ParamInfo, 4> parameters;
 
       MessageScope()
          : parameters(ParamInfo())
       {
+         directOrder = false;
+         oargUnboxing = false;
       }
    };
 
@@ -668,6 +692,7 @@ protected:
       int dummy = 0;
       return mapMessage(node, scope, paramCount, dummy);
    }
+   ref_t _mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);
 
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
@@ -710,6 +735,8 @@ protected:
    ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+
+   ObjectInfo _compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo _compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef);
    void _compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
