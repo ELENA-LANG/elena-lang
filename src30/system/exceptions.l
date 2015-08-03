@@ -75,7 +75,7 @@
     /// Otherwise goes to the next exception handler
     #method(generic) if : aHandler
     [
-        ($subject equal &subject:theError) ? [ aHandler eval:$self. ] ! [ #throw $self. ]
+        ($subject == theError) ? [ aHandler eval:$self. ] ! [ #throw $self. ]
     ]
     
     /// Executes the exception handler for the current exception if available.

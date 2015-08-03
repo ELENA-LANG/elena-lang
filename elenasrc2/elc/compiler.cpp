@@ -1039,7 +1039,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             raiseError(wrnInvalidHint, terminal);
 
          info.size = 4;
-         info.header.flags |= elDebugDWORD;
+         info.header.flags |= elDebugSubject;
 
          info.header.flags |= (elStructureRole | elSignature | elEmbeddable);
       }
@@ -2212,7 +2212,7 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
       return !test(mode, HINT_STACKSAFE_CALL);
    }
    else if (object.kind == okSubject) {
-      return true;
+      return !test(mode, HINT_STACKSAFE_CALL);
    }
    else if (object.kind == okIndexAccumulator || object.kind == okFieldAddress) {
       return true;
@@ -2565,6 +2565,9 @@ int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operan
    else if (operand.kind == okRealConstant) {
       return elDebugReal64;
    }
+   else if (operand.kind == okSubject) {
+      return elDebugSubject;
+   }
    else if (operand.kind == okAccumulator && operand.param != 0) {
       return moduleScope.getClassFlags(operand.param) & elDebugMask;
    }
@@ -2729,7 +2732,7 @@ bool Compiler :: compileInlineComparisionOperator(CodeScope& scope, int operator
       _writer.popObject(*scope.tape, ObjectInfo(okBase));
    }
 
-   if (lflag == elDebugDWORD) {
+   if (lflag == elDebugDWORD || lflag == elDebugSubject) {
       _writer.doIntOperation(*scope.tape, operator_id);
    }
    else if (lflag == elDebugQWORD) {
@@ -2976,6 +2979,8 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
       }
       _writer.loadObject(*scope.tape, param.info);
 
+      loadObject(scope, param.info);
+
       // if open argument list should be unboxed
       if (callStack.oargUnboxing && param.unboxing && scope.moduleScope->typeHints.exist(param.subj_ref, scope.moduleScope->paramsReference)) {
          // unbox the argument list and return the object saved before the list
@@ -3126,7 +3131,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    MessageScope callStack;
 
    // put the target
-   callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
+   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // HOTFIX : passing node for raiseWarning / raiseError
 
    ref_t messageRef = mapMessage(node, scope, callStack);
 
@@ -3307,10 +3312,13 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
    MessageScope callStack;
 
    // put the target
-   if (role.kind != okConstantRole) {
+   bool genericRole = false;
+   if (role.kind != okConstantRole && role.kind != okConstantSymbol && role.kind != okConstantClass) {
       // if generic role is used, put into the call stack before the target object
       callStack.parameters.add(0, MessageScope::ParamInfo(0, role));
       callStack.parameters.add(1, MessageScope::ParamInfo(0, object));
+
+      genericRole = true;
    }
    else callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
 
@@ -3325,7 +3333,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
    }
 
    // tell compileMessage that generic role is in the call stack
-   if (role.kind != okConstantRole)
+   if (genericRole)
       role = ObjectInfo(okRole);
 
    ObjectInfo retVal = compileMessage(node, scope, callStack, role, messageRef, 0);
@@ -4656,9 +4664,9 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
 
       DNode dummy;
       if (withFrame) {
-         compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantSymbol, classRef, classRef));
+         compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef));
       }
-      else compileExtensionMessage(node, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantSymbol, classRef, classRef));
+      else compileExtensionMessage(node, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantClass, 0, classRef));
    }
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }

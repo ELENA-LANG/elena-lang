@@ -122,7 +122,7 @@
     #method(stacksafe) read &int:anIndex &vmssg:anInt
         => system'internal'ns_readdword.
     
-    #method getAt &int:anIndex
+    #method(stacksafe) getAt &int:anIndex
     [
         #var(type:mssg)aMessage.
         $self read &int:anIndex &vmssg:aMessage.

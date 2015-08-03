@@ -356,7 +356,7 @@
     ]
     
     /// Creates the list
-    #constructor $new &array:anArray &int:aLength
+    #constructor(stacksafe) $new &array:anArray &int:aLength
     [
         theCapacity := Integer new.
         theLength := Integer new &int:aLength.
@@ -442,13 +442,13 @@
     
     /// Inserts a new object to the beginning of the list
     #method insert : anObject
-        <= insert &index:0 &object:anObject.
+        <= insert &int:0 &object:anObject.
 
     #method insert : anObject &at:anIndex
         <= insert &int:(anIndex int) &object:anObject.
         
     /// Removes an object at the specified position
-    #method remove &index:anIndex
+    #method(stacksafe) remove &int:anIndex
     [
         (anIndex >= theLength)
             ? [ #throw OutOfRangeException new. ].
@@ -462,6 +462,9 @@
         ].
     ]
         
+    #method remove &index:anIndex
+        <= remove &int:(anIndex int).
+
     #method remove &at:anIndex
         <= remove &int:(anIndex int).
 
@@ -498,7 +501,7 @@
     /// Returns the list enumerator
     #method enumerator = ArrayListEnumerator new &array_list:$self.
     
-    /// Returns the list iterator
+    /// Returns the list iterator9
     #method iterator = ArrayListIterator new &array_list:$self.
     
     /// Returns a list copy

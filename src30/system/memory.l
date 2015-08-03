@@ -239,7 +239,7 @@
     /// Sets a short integer at the specified position
     #method setAt : anIndex : aValue
     [
-        $self write &index:(anIndex int) &short:(aValue short).
+        $self write &int:(anIndex int) &short:(aValue short).
     ]
 
     /// Creates the object copy
@@ -845,7 +845,7 @@
         => system'internal'bs_readbyte.
         
     /// Returns the character at the specified index
-    #method(type:char) getAt &int:anIndex
+    #method(type:char,stacksafe) getAt &int:anIndex
     [
         #var(type:char)aChar.
         $self read &int:anIndex &vchar:aChar.
@@ -1322,7 +1322,7 @@
 
     /// Deletes the substring from the object and returns the new one
     #method delete:aLength &at:anIndex
-        = $self delete &int:(anIndex int) &length:(aLength int).
+        = $self delete &int:(anIndex int) &int:(aLength int).
             
     /// Deletes the substring from the object and returns the new one            
     #method(type:wide,stacksafe) delete &int:anIndex &int:aLength
@@ -1681,7 +1681,7 @@
         <= %new &int:0 &int:(anArray length int) &array:anArray.
     
     /// Creates a copy of the provided sub array
-    #constructor new &int:anIndex &int:aLength &array:anArray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
         => system'internal'arr_copysubarr.
         
     /// Returns the specified array member

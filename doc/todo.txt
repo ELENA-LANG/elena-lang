@@ -21,7 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development              
-                       * make sure inline operation with stack allocated objects are possible
                        * tweaks the code
 
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
@@ -32,7 +31,6 @@ Currently:
 <==>                         
 
               adev - lib30     
-                       * Exception.if$generic - use primitive operation for comparision
                        * get rid of all warnings in system package
                        * review system'collections, try to use more strong typed code
                        * used strong typed event handlers
