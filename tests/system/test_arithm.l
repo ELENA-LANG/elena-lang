@@ -10,11 +10,22 @@
 #define extensions'math.
 #define extensions'text.
 
+#class(sealed) ByteArray
+{
+    /// Creates the byte array copy
+    #constructor(stacksafe) new &bytearray:anArray
+        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
+        
+    /// Creates the copy of a byte subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
+        []
+}        
+        
 #symbol XTester =
 {
     eval : n : m
         = n + m.
-    
+
     test            
     [
         XTester:1:2.

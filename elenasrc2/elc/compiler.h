@@ -611,6 +611,13 @@ protected:
             this->info = info;
             this->unboxing = false;
          }
+         ParamInfo(ref_t subj_ref, DNode node, ObjectInfo info)
+         {
+            this->subj_ref = subj_ref;
+            this->info = info;
+            this->node = node;
+            this->unboxing = false;
+         }
          ParamInfo(ref_t subj_ref, DNode node, bool unboxing)
          {
             this->subj_ref = subj_ref;
@@ -685,7 +692,7 @@ protected:
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
-   void boxCallstack(CodeScope& scope, MessageScope& callStack);
+   void boxCallstack(CodeScope& scope, MessageScope& callStack, bool stackSafe);
 
    ref_t mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)

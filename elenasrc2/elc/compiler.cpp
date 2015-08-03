@@ -2218,10 +2218,7 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
       return true;
    }
    else if (object.kind == okParams) {
-      if (test(mode, HINT_STACKSAFE_CALL) && argType != 0 && scope.moduleScope->typeHints.get(argType) == scope.moduleScope->paramsReference) {
-         return false;
-      }
-      else return true;
+      return !test(mode, HINT_STACKSAFE_CALL);
    }
    else return false;
 }
@@ -2369,7 +2366,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, MessageScope& callSta
 
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg.firstChild()));
+      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
 
       paramCount++;
 
@@ -2382,8 +2379,6 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, MessageScope& callSta
    // if message has named argument list
    while (arg == nsSubjectArg) {
       TerminalInfo subject = arg.Terminal();
-
-      // if it is an open argument list
 
       if (!first) {
          signature.append('&');
@@ -2407,11 +2402,11 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, MessageScope& callSta
             if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
                // add argument list to be unboxed
                callStack.oargUnboxing = true;
-               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg.firstChild(), true));
+               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
             }
             else {
                while (arg != nsNone) {
-                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg.firstChild()));
+                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
 
                   arg = arg.nextNode();
                }
@@ -2428,7 +2423,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, MessageScope& callSta
                scope.raiseError(errNotApplicable, subject);
          }
          else {
-            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg.firstChild()));
+            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
             paramCount++;
 
             if (paramCount >= OPEN_ARG_COUNT)
@@ -2838,8 +2833,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    }
 
    MessageScope callStack;
-   callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
-   callStack.parameters.add(1, MessageScope::ParamInfo(0, node.firstChild()));
+   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // !! HOTFIX : dummy node is required for raiseError / raiseWarning
+   callStack.parameters.add(1, MessageScope::ParamInfo(0, node));
    if (dblOperator) {
       callStack.parameters.add(2, MessageScope::ParamInfo(0, node.nextNode().firstChild()));
    }
@@ -2889,7 +2884,7 @@ ObjectInfo Compiler :: compileInlineOperation(CodeScope& scope, MessageScope& ca
    else if (IsReferOperator(verb_id)) {
       ObjectInfo loperand = callStack.parameters.get(0).info;
       ObjectInfo roperand = callStack.parameters.get(1).info;
-      ObjectInfo roperand2 = callStack.parameters.get(1).info;
+      ObjectInfo roperand2 = callStack.parameters.get(2).info;
 
       if(!compileInlineReferOperator(scope, verb_id, loperand, roperand, roperand2, retVal))
          retVal.kind = okUnknown;
@@ -2939,14 +2934,14 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
 }
 
-void Compiler :: boxCallstack(CodeScope& scope, MessageScope& callStack)
+void Compiler :: boxCallstack(CodeScope& scope, MessageScope& callStack, bool stackSafe)
 {
    size_t count = callStack.parameters.Count();
 
    for (size_t i = 0; i < count; i++) {
       MessageScope::ParamInfo param = callStack.parameters.get(i);
 
-      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, 0)) {
+      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stackSafe ? HINT_STACKSAFE_CALL : 0)) {
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, i));
 
          bool boxed = false;
@@ -2977,7 +2972,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          if (param.node == nsNone) {
             param.info = ObjectInfo(okNil);
          }
-         else param.info = compileObject(param.node, scope, 0);
+         else param.info = compileExpression(param.node, scope, 0);
       }
       _writer.loadObject(*scope.tape, param.info);
 
@@ -3007,6 +3002,9 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
             _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
          }
          else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i));
+
+         // save changes to call stack
+         *(callStack.parameters.getIt(callStack.directOrder ? (count - i - 1) : i)) = param;
       }
    }
 }
@@ -3041,7 +3039,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
       // if inline operation is not possible
       // bad lack - have to check if boxing required
       if (info.kind == okUnknown) {
-         boxCallstack(scope, callStack);
+         boxCallstack(scope, callStack, test(methodHint, tpStackSafe));
       }
       else return info;
    }
@@ -3083,7 +3081,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    }
    else {
       // if the class found and the message is not supported - warn the programmer and raise an exception
-      if (classReference != 0 && callType == tpUnknown) {
+      if (classFound && callType == tpUnknown) {
          scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
       }
 
