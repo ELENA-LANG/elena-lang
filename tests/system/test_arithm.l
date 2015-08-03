@@ -12,8 +12,12 @@
 
 #symbol XTester =
 {
+    eval : n : m
+        = n + m.
+    
     test            
     [
+        XTester:1:2.
     ]    
 }.
 

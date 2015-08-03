@@ -21,6 +21,7 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development              
+                       * make sure inline operation with stack allocated objects are possible
                        * tweaks the code
 
                        * boxing / unboxing (localaddress / fieldaddress), issue #22

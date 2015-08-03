@@ -685,14 +685,17 @@ protected:
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
+   void boxCallstack(CodeScope& scope, MessageScope& callStack);
 
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount, int& mode);
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
+   ref_t mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
    {
-      int dummy = 0;
-      return mapMessage(node, scope, paramCount, dummy);
+      MessageScope callStack;
+      ref_t messageRef = mapMessage(node, scope, callStack);
+      count = callStack.parameters.Count();
+
+      return messageRef;
    }
-   ref_t _mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);
 
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
@@ -704,15 +707,7 @@ protected:
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
-   void compileMessageParameter(DNode& arg, TerminalInfo& subject, CodeScope& scope, ref_t type_ref, int mode, size_t& count);
-
-   void compileDirectMessageParameters(DNode node, CodeScope& scope, int mode);
-   void compilePresavedMessageParameters(DNode node, CodeScope& scope, int mode, size_t& stackToFree);
-   void compileUnboxedMessageParameters(DNode node, CodeScope& scope, int mode, int count, size_t& stackToFree);
-
    int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
-   void compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo object, int methodHint, int paramCount, int& mode, size_t& spaceToRelease);
-   ref_t compileMessageParameters(DNode node, CodeScope& scope, ObjectInfo& object, int& mode, size_t& spaceToRelease);
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
@@ -722,23 +717,21 @@ protected:
    int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 
    bool compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
-   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
-   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool& invertMode);
+   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result);
+   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool invertMode);
    bool compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result);
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
-   ObjectInfo compileExtensionMessage(DNode& node, DNode& roleNode, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
-   ObjectInfo compileEvalMessage(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileInlineOperation(CodeScope& scope, MessageScope& callStack, int messageRef, int mode);
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-   ObjectInfo _compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo _compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef);
-   void _compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
+   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role);
+   void compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
