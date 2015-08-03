@@ -508,13 +508,13 @@ struct SymbolExpressionInfo
    size_t expressionTypeRef;
    bool   constant;
 
-   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+   void save(StreamWriter* writer)
    {
       writer->writeDWord(expressionTypeRef);
       writer->writeDWord(constant ? -1: 0);
    }
 
-   void load(StreamReader* reader, bool headerOnly = false)
+   void load(StreamReader* reader)
    {
       expressionTypeRef = reader->getDWord();
       constant = (reader->getDWord() != 0);
@@ -637,7 +637,7 @@ inline bool isWeakReference(ident_t referenceName)
    return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
 }
 
-inline ref_t encodeMessage(ref_t signatureRef, int verbId, int paramCount)
+inline ref_t encodeMessage(ref_t signatureRef, ref_t verbId, int paramCount)
 {
    return (verbId << 24) + (signatureRef << 4) + paramCount;
 }
@@ -655,7 +655,7 @@ inline ref_t overwriteSubject(ref_t message, ref_t subject)
    return message;
 }
 
-inline void decodeMessage(ref_t message, ref_t& signatureRef, int& verbId, int& paramCount)
+inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
 {
    verbId = (message & VERB_MASK) >> 24;
    signatureRef = (message & SIGN_MASK) >> 4;
@@ -664,8 +664,8 @@ inline void decodeMessage(ref_t message, ref_t& signatureRef, int& verbId, int& 
 
 inline int getParamCount(ref_t message)
 {
-   int   verb, paramCount;
-   ref_t signature;
+   int   paramCount;
+   ref_t verb, signature;
    decodeMessage(message, signature, verb, paramCount);
 
    if (paramCount >= OPEN_ARG_COUNT)
@@ -676,8 +676,8 @@ inline int getParamCount(ref_t message)
 
 inline ref_t getVerb(ref_t message)
 {
-   int   verb, paramCount;
-   ref_t signature;
+   int   paramCount;
+   ref_t verb, signature;
    decodeMessage(message, signature, verb, paramCount);
 
    return verb;
@@ -685,8 +685,8 @@ inline ref_t getVerb(ref_t message)
 
 inline ref_t getSignature(ref_t message)
 {
-   int   verb, paramCount;
-   ref_t signature;
+   int   paramCount;
+   ref_t verb, signature;
    decodeMessage(message, signature, verb, paramCount);
 
    return signature;

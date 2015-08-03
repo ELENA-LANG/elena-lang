@@ -261,7 +261,7 @@ public:
    void freeVirtualStack(CommandTape& tape, int count);
 
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
-   void updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
+   void updateStackAlloc(ByteCodeIterator it, int size);
 
 //   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
@@ -300,7 +300,6 @@ public:
    //void doLiteralOperation(CommandTape& tape, int operator_id);
    void doArrayOperation(CommandTape& tape, int operator_id);
    void doIntArrayOperation(CommandTape& tape, int operator_id);
-   void doCharArrayOperation(CommandTape& tape, int operator_id);
 
    void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };

@@ -549,7 +549,7 @@ int main()
          _ELENA_::Linker linker;
          ImageHelper helper(&linker);
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
-         linker.run(project, image, -1);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
       }
@@ -571,7 +571,7 @@ int main()
             &project, project.createJITCompiler());
 
          _ELENA_::Linker linker;
-         linker.run(project, image, -1);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
       }
@@ -581,7 +581,7 @@ int main()
          _ELENA_::Linker linker;
          ImageHelper helper(&linker);
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
-         linker.run(project, image, -1);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
       }

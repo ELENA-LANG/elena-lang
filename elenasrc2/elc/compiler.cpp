@@ -65,7 +65,7 @@ inline bool isSingleStatement(DNode expr)
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
-   int verbId = 0;
+   ref_t verbId = 0;
    ref_t signRef = 0;
    int paramCount = 0;
 
@@ -310,7 +310,7 @@ inline bool IsInvertedOperator(int& operator_id)
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
-   : constantHints(-1), extensions(NULL, freeobj)
+   : constantHints((ref_t)-1), extensions(NULL, freeobj)
 {
    this->project = project;
    this->sourcePath = sourcePath;
@@ -513,7 +513,7 @@ bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
    if (module == NULL || moduleRef == 0)
       return false;
 
-   return module->mapReference(referenceName, true);
+   return module->mapReference(referenceName, true) != 0;
 }
 
 ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool checkState)
@@ -978,7 +978,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
       return ObjectInfo(okSuper, info.header.parentRef);
    }
    else if (StringHelper::compare(identifier, SELF_VAR)) {
-      return ObjectInfo(okParam, -1);
+      return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       int reference = info.fields.get(identifier);
@@ -1489,7 +1489,7 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
          }
          // if inline symbol declared in symbol it treats self variable in a special way
          else if (StringHelper::compare(identifier, SELF_VAR)) {
-            return ObjectInfo(okParam, -1);
+            return ObjectInfo(okParam, (size_t)-1);
          }
          else if (outer.outerObject.kind == okUnknown) {
             // check if there is inherited fields
@@ -1555,7 +1555,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-ref_t Compiler :: mapNestedExpression(CodeScope& scope, int mode)
+ref_t Compiler :: mapNestedExpression(CodeScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1791,7 +1791,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       _writer.callMethod(*scope.tape, 0, 1);
 
       bool mismatch = false;
-      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, boxed, 0);
+      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, boxed);
 
       endDebugExpression(scope);
 
@@ -1803,7 +1803,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       //_writer.declareBlock(*scope.tape);
 
       if (thenCode.firstChild().nextNode() != nsNone) {
-         compileCode(thenCode, subScope, 0);
+         compileCode(thenCode, subScope);
       }
       // if it is inline action
       else compileRetExpression(thenCode.firstChild(), scope, 0);
@@ -2013,7 +2013,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       object = scope.mapObject(terminal);
    }
 
-   bool dummy = false;
    switch (object.kind) {
       case okUnknown:
          scope.raiseError(errUnknownObject, terminal);
@@ -2072,7 +2071,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          else result = compileExpression(member, scope, 0);
          break;
       case nsMessageReference:
-         result = compileMessageReference(member, scope, mode);
+         result = compileMessageReference(member, scope);
          break;
       default:
          result = compileTerminal(objectNode, scope, mode);
@@ -2081,7 +2080,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    return result;
 }
 
-ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 {
    DNode arg = node.firstChild();
 
@@ -2097,7 +2096,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int
       if (verb_id != 0) {
          retVal.kind = okVerbConstant;
 
-         message.append(verb_id + 0x20);
+         message.append((char)verb_id + 0x20);
       }
       else {
          retVal.kind = okSignatureConstant;
@@ -2126,7 +2125,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int
             message.append('&');
             scope.moduleScope->mapSubject(arg.Terminal(), message);
          }
-         else message.append(verb_id + 0x20);
+         else message.append((char)verb_id + 0x20);
       }
 
       arg = arg.nextNode();
@@ -2154,7 +2153,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope, int
          else scope.raiseError(errInvalidOperation, size);
 
          // define the number of parameters
-         message[0] = message[0] + count;
+         message[0] = message[0] + (char)count;
       }
    }
 
@@ -2840,7 +2839,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
    MessageScope callStack;
    callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
-   callStack.parameters.add(1, MessageScope::ParamInfo(0, node));
+   callStack.parameters.add(1, MessageScope::ParamInfo(0, node.firstChild()));
    if (dblOperator) {
       callStack.parameters.add(2, MessageScope::ParamInfo(0, node.nextNode().firstChild()));
    }
@@ -2944,7 +2943,7 @@ void Compiler :: boxCallstack(CodeScope& scope, MessageScope& callStack)
 {
    size_t count = callStack.parameters.Count();
 
-   for (int i = 0; i < count; i++) {
+   for (size_t i = 0; i < count; i++) {
       MessageScope::ParamInfo param = callStack.parameters.get(i);
 
       if (checkIfBoxingRequired(scope, param.info, param.subj_ref, 0)) {
@@ -2971,7 +2970,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
    if (!callStack.directOrder)
       _writer.declareArgumentList(*scope.tape, count);
 
-   for (int i = 0; i < count; i++) {
+   for (size_t i = 0; i < count; i++) {
       MessageScope::ParamInfo param = callStack.parameters.get(callStack.directOrder ? (count - i - 1) : i);
 
       if (param.info.kind == okUnknown) {
@@ -2991,7 +2990,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          // if type is mismatch - typecast
          bool mismatch = false;
          bool boxed = false;
-         param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, 0);
+         param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed);
 
          // check if boxing required
          if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
@@ -3104,7 +3103,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed, 0);
+      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed);
 
       _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
 
@@ -3124,7 +3123,7 @@ void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
    else _writer.releaseObject(*scope.tape, spaceToRelease);
 }
 
-ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
 {
    MessageScope callStack;
 
@@ -3173,7 +3172,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       member = member.nextNode();
    }
    else if (object.kind == okInternal) {
-      currentObject = compileInternalCall(member, scope, object, mode);
+      currentObject = compileInternalCall(member, scope, object);
 
       member = member.nextNode();
    }
@@ -3196,10 +3195,10 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          currentObject = compileExtension(member, scope, currentObject, mode);
       }
       else if (member==nsMessageOperation) {
-         currentObject = compileMessage(member, scope, currentObject, mode);
+         currentObject = compileMessage(member, scope, currentObject);
       }
       else if (member==nsMessageParameter) {
-         currentObject = compileMessage(member, scope, currentObject, mode);
+         currentObject = compileMessage(member, scope, currentObject);
       }
       else if (member == nsSwitching) {
          compileSwitch(member, scope, currentObject);
@@ -3215,14 +3214,14 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             altMode = true;
          }
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
-         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode);
+         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator));
       }
       else if (member == nsCatchMessageOperation) {
          if (!catchMode) {
             _writer.declareCatch(*scope.tape);
             catchMode = true;
          }
-         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator), mode);
+         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator));
       }
       else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
          || member == nsL7Operation || member == nsL0Operation)
@@ -3399,7 +3398,7 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, boo
 
    // if it is single expression
    if (!lazyExpression) {
-      compileActionMethod(node, methodScope, /*stackSafeFunc ? HINT_STACKSAFE_METH : */0);
+      compileActionMethod(node, methodScope);
    }
    else compileLazyExpressionMethod(node.firstChild(), methodScope);
 
@@ -3519,7 +3518,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 {
 //   recordStep(ownerScope, node.Terminal(), dsStep);
 
-   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope, mode));
+   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
 
    // if it is an action code block
    if (node == nsSubCode) {
@@ -3590,7 +3589,7 @@ ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode,
    return ObjectInfo(okAccumulator);
 }
 
-ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, bool& boxed, int mode)
+ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, bool& boxed)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -3723,8 +3722,8 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    _writer.loadObject(*scope.tape, info);
 
    // type cast returning value if required
-   int verb, paramCount;
-   ref_t subj;
+   int paramCount;
+   ref_t verb, subj;
    decodeMessage(scope.getMessageID(), subj, verb, paramCount);
    if (verb == GET_MESSAGE_ID && paramCount == 0) {
    }
@@ -3736,7 +3735,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, info, subj, mismatch, boxed, 0);
+      compileTypecast(scope, info, subj, mismatch, boxed);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
       if (boxed)
@@ -3812,7 +3811,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
 
       bool mismatch = false;
-      compileTypecast(scope, info, target.type, mismatch, boxed, 0);
+      compileTypecast(scope, info, target.type, mismatch, boxed);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 
@@ -3831,7 +3830,7 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
 
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, boxed, 0);
+      compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, boxed);
 
       _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
@@ -3844,7 +3843,7 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
 
    DNode thenCode = thenNode.firstChild();
    if (thenCode.firstChild().nextNode() != nsNone) {
-      compileCode(thenCode, subScope, subCodeMode & ~HINT_LOOP);
+      compileCode(thenCode, subScope);
 
       if (test(subCodeMode, HINT_LOOP) && subScope.level > scope.level) {
          _writer.releaseObject(*scope.tape, subScope.level - scope.level);
@@ -3866,7 +3865,7 @@ void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
    _writer.throwCurrent(*scope.tape);
 }
 
-void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
+void Compiler :: compileLoop(DNode node, CodeScope& scope)
 {
    _writer.declareLoop(*scope.tape/*, true*/);
 
@@ -3898,7 +3897,7 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
 
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed, 0);
+      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed);
       if (boxed)
          scope.raiseWarning(4, wrnBoxingCheck, expr.FirstTerminal());
 
@@ -3907,7 +3906,7 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope, int mode)
    //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 }
 
-ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 {
    ObjectInfo retVal;
 
@@ -3935,7 +3934,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope, int mode)
             break;
          case nsLoop:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            compileLoop(statement, scope, HINT_LOOP);
+            compileLoop(statement, scope);
             break;
          case nsRetStatement:
          {
@@ -4040,7 +4039,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
                param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1));
             }
 
-            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed, 0);
+            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed);
             if (mismatch)
                scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
             if (boxed)
@@ -4154,7 +4153,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    return retVal;
 }
 
-ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine, int mode)
+ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -4179,7 +4178,7 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
 
          bool mismatch = false;
          bool boxed = false;
-         compileTypecast(scope, info, type, mismatch, boxed, 0);
+         compileTypecast(scope, info, type, mismatch, boxed);
          if (mismatch)
             scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
          if (boxed)
@@ -4218,7 +4217,7 @@ void Compiler :: reserveSpace(CodeScope& scope, int size)
          _writer.insertStackAlloc(allocStatement, *scope.tape, size);
       }
       // otherwise update the size
-      else _writer.updateStackAlloc(allocStatement, *scope.tape, size);
+      else _writer.updateStackAlloc(allocStatement, size);
 
       methodScope->reserved += size;
    }
@@ -4250,8 +4249,6 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
    else size = (size + 3) >> 2;
 
    if (size > 0) {
-      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-
       exprOperand.kind = okLocalAddress;
       exprOperand.param = scope.newSpace(size);
       exprOperand.extraparam = classReference;
@@ -4515,7 +4512,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
    _writer.endIdleMethod(*codeScope.tape);
 }
 
-void Compiler :: compileActionMethod(DNode node, MethodScope& scope, int mode)
+void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
 {
    // check if the method is inhreited and update vmt size accordingly
    if(scope.include() && test(scope.getClassFlag(), elClosed))
@@ -4597,7 +4594,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
       param_count--;
    }
 
-   _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1));
+   _writer.pushObject(*scope.tape, ObjectInfo(okParam, (size_t)-1));
    _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
 
    ObjectInfo target = compileObject(node, scope, 0);
@@ -4668,7 +4665,7 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }
 
-void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& scope, ClassScope& classClassScope)
+void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& scope)
 {
    if (node.firstChild() == nsNone) {
       ObjectInfo info = scope.mapObject(node.Terminal());
@@ -4702,7 +4699,7 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
    _writer.declareMethod(*scope.tape, methodScope->message, false, true);
    scope.level++;
 
-   compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/), 0);
+   compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/));
    scope.freeSpace();
 
    //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
@@ -4721,10 +4718,10 @@ void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t messag
 
    CodeScope codeScope(&methodScope);
 
-   compileImportMethod(node, codeScope, message, function, 0);
+   compileImportCode(node, codeScope, message, function);
 }
 
-void Compiler :: compileImportMethod(DNode node, CodeScope& codeScope, ref_t message, ident_t function, int mode)
+void Compiler :: compileImportCode(DNode node, CodeScope& codeScope, ref_t message, ident_t function)
 {
    _writer.declareIdleMethod(*codeScope.tape, message);
    importCode(node, *codeScope.moduleScope, codeScope.tape, function);
@@ -4752,7 +4749,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    // check if it is a dispatch
    else if (dispatchBody != nsNone) {
       if (isImportRedirect(dispatchBody.firstChild())) {
-         compileImportMethod(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal(), mode);
+         compileImportCode(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal());
       }
       else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
    }
@@ -4787,7 +4784,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
             ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
             bool mismatch = false;
             bool boxed = false;
-            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed, 0);
+            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed);
             if (mismatch)
                scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
             if (boxed)
@@ -4814,10 +4811,8 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 //      _writer.declareSafePoint(*codeScope.tape);
 }
 
-void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, int mode)
+void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope)
 {
-   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-
    CodeScope codeScope(&scope);
 
    // HOTFIX: constructor is declared in class class but should be executed if the class instance
@@ -4843,7 +4838,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       scope.raiseError(errIllegalConstructor, node.Terminal());
 
    if (dispatchBody != nsNone) {
-      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope, classClassScope);
+      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
       _writer.endIdleMethod(*codeScope.tape);
       // NOTE : import code already contains quit command, so do not call "endMethod"
       return;
@@ -4869,7 +4864,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
 }
 
-void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints)
+void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
@@ -4912,7 +4907,7 @@ void Compiler :: compileDefaultConstructor(DNode node, MethodScope& scope, Class
    _writer.endIdleMethod(*codeScope.tape);
 }
 
-void Compiler :: compileDynamicDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints)
+void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
@@ -4947,7 +4942,7 @@ void Compiler :: compileDynamicDefaultConstructor(DNode node, MethodScope& scope
             _writer.newDynamicNStructure(*codeScope.tape);
             break;
          default:
-            _writer.newDynamicStructure(*codeScope.tape, -classScope->info.size);
+            _writer.newDynamicStructure(*codeScope.tape, -((int)classScope->info.size));
             break;
       }
    }
@@ -5163,7 +5158,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          declareArgumentList(member, methodScope);
          methodScope.stackSafe = test(classClassScope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
-         compileConstructor(member, methodScope, classClassScope, methodScope.compileHints(hints));
+         compileConstructor(member, methodScope, classClassScope);
       }
       member = member.nextNode();
    }
@@ -5173,9 +5168,9 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
 
    if (test(classScope.info.header.flags, elDynamicRole)) {
-      compileDynamicDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
+      compileDynamicDefaultConstructor(methodScope, classClassScope);
    }
-   else compileDefaultConstructor(DNode(), methodScope, classClassScope, DNode());
+   else compileDefaultConstructor(methodScope, classClassScope);
 
    _writer.endClass(classClassScope.tape);
 
@@ -5289,7 +5284,7 @@ void Compiler :: declareSingletonClass(DNode node, ClassScope& scope, bool close
    scope.save();
 }
 
-void Compiler :: declareSingletonAction(DNode node, ClassScope& scope, ActionScope& methodScope)
+void Compiler :: declareSingletonAction(ClassScope& scope, ActionScope& methodScope)
 {
    // singleton is always stateless
    scope.info.header.flags |= elStateless;
@@ -5316,7 +5311,7 @@ void Compiler::compileSingletonClass(DNode node, ClassScope& scope)
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
+void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints)
 {
    bool singleton = false;
 
@@ -5356,7 +5351,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
          declareActionScope(objNode, classScope, DNode(), methodScope, false);
 
-         declareSingletonAction(objNode, classScope, methodScope);
+         declareSingletonAction(classScope, methodScope);
          singleton = true;
       }
       else if (objNode == nsInlineExpression) {
@@ -5365,7 +5360,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
          declareActionScope(objNode, classScope, expression.firstChild(), methodScope, false);
 
-         declareSingletonAction(objNode, classScope, methodScope);
+         declareSingletonAction(classScope, methodScope);
          singleton = true;
       }
       else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
@@ -5374,7 +5369,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
          declareActionScope(objNode, classScope, objNode, methodScope, false);
 
-         declareSingletonAction(objNode, classScope, methodScope);
+         declareSingletonAction(classScope, methodScope);
          singleton = true;
       }
    }
@@ -5483,7 +5478,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          dataWriter.writeDWord(value);
 
-         dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, -4);
+         dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, (ref_t) - 4);
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->intReference);
       }
@@ -5495,7 +5490,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          dataWriter.write(&value, 8);
 
-         dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, -4);
+         dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
       }
@@ -5507,7 +5502,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          dataWriter.write(&value, 8);
 
-         dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, -4);
+         dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
       }
@@ -5519,7 +5514,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          dataWriter.writeLiteral(value, getlength(value) + 1);
 
-         dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, -4);
+         dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
       }
@@ -5531,7 +5526,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          dataWriter.writeLiteral(value, getlength(value));
 
-         dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, -4);
+         dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
       }
@@ -5541,7 +5536,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    if (scope.typeRef != 0) {
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(codeScope, retVal, scope.typeRef, mismatch, boxed, 0);
+      compileTypecast(codeScope, retVal, scope.typeRef, mismatch, boxed);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
       if (boxed)
@@ -5678,7 +5673,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             scope.module->mapSection(reference | mskSymbolRef, false);
    
             SymbolScope symbolScope(&scope, reference);
-            compileSymbolDeclaration(member, symbolScope, hints, (member == nsStatic));
+            compileSymbolDeclaration(member, symbolScope, hints);
             break;
          }
       }

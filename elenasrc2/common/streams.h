@@ -37,7 +37,7 @@ public:
 
    virtual bool writeBytes(size_t position, char value, size_t length) = 0;
 
-   virtual bool addReference(ref_t reference, size_t position)
+   virtual bool addReference(ref_t, size_t)
    {
       return false;
    }
@@ -561,7 +561,7 @@ public:
 //      return read(s, length << 4, wasread);
 //   }
 
-   virtual const char* getLiteral(const char* def)
+   virtual const char* getLiteral(const char*)
    {
       const char* s = (const char*)_memory->get(_position);
 
@@ -570,7 +570,7 @@ public:
       return s;
    }
 
-   virtual const wide_c* getLiteral(const wide_c* def)
+   virtual const wide_c* getLiteral(const wide_c*)
    {
       const wide_c* s = (const wide_c*)_memory->get(_position);
 

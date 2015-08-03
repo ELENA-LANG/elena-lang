@@ -125,7 +125,7 @@ size_t JITCompiler32 :: findLength(void* refVMT)
    return count;
 }
 
-int JITCompiler32 :: findMethodAddress(void* refVMT, int message, size_t count)
+int JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
 {
    VMTEntry* entries = (VMTEntry*)refVMT;
 
@@ -140,7 +140,7 @@ int JITCompiler32 :: findMethodAddress(void* refVMT, int message, size_t count)
    return (i < count) ? entries[i].address : entries[0].address;
 }
 
-int JITCompiler32 :: findMethodIndex(void* refVMT, int message, size_t count)
+int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
 {
    VMTEntry* entries = (VMTEntry*)refVMT;
 
@@ -248,7 +248,7 @@ void JITCompiler32 :: addVMTEntry(_ReferenceHelper& helper, ref_t message, size_
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode)
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();   
 

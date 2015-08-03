@@ -601,19 +601,19 @@ protected:
          }
          ParamInfo(ref_t subj_ref, DNode node)
          {
-            this->subj_ref = 0;
+            this->subj_ref = subj_ref;
             this->node = node;
             this->unboxing = false;
          }
          ParamInfo(ref_t subj_ref, ObjectInfo info)
          {
-            this->subj_ref = 0;
+            this->subj_ref = subj_ref;
             this->info = info;
             this->unboxing = false;
          }
          ParamInfo(ref_t subj_ref, DNode node, bool unboxing)
          {
-            this->subj_ref = 0;
+            this->subj_ref = subj_ref;
             this->node = node;
             this->unboxing = unboxing;
          }
@@ -621,7 +621,7 @@ protected:
 
       bool                               oargUnboxing;
       bool                               directOrder;
-      CachedMemoryMap<int, ParamInfo, 4> parameters;
+      CachedMemoryMap<size_t, ParamInfo, 4> parameters;
 
       MessageScope()
          : parameters(ParamInfo())
@@ -663,7 +663,7 @@ protected:
       _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
    }
 
-   ref_t mapNestedExpression(CodeScope& scope, int mode);
+   ref_t mapNestedExpression(CodeScope& scope);
    ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
@@ -672,7 +672,7 @@ protected:
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 
-   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, bool& boxed, int mode);
+   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, bool& boxed);
 
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
@@ -709,7 +709,7 @@ protected:
 
    int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 
-   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
@@ -728,7 +728,7 @@ protected:
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role);
    void compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
@@ -741,7 +741,7 @@ protected:
 
    ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
 
-   void compileLoop(DNode node, CodeScope& scope, int mode);
+   void compileLoop(DNode node, CodeScope& scope);
    void compileThrow(DNode node, CodeScope& scope, int mode);
 
    void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
@@ -752,14 +752,14 @@ protected:
 
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info, int mode);
+   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-   void compileConstructorDispatchExpression(DNode node, CodeScope& scope, ClassScope& classClassScope);
+   void compileConstructorDispatchExpression(DNode node, CodeScope& scope);
    void compileResendExpression(DNode node, CodeScope& scope);
    void compileDispatchExpression(DNode node, CodeScope& scope);
 
-   ObjectInfo compileCode(DNode node, CodeScope& scope, int mode = 0);
+   ObjectInfo compileCode(DNode node, CodeScope& scope);
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
@@ -769,18 +769,18 @@ protected:
    void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
    void compileSingletonClass(DNode member, ClassScope& scope);
 
-   void declareSingletonAction(DNode node, ClassScope& scope, ActionScope& methodScope);
+   void declareSingletonAction(ClassScope& scope, ActionScope& methodScope);
 
    void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
-   void compileImportMethod(DNode node, CodeScope& scope, ref_t message, ident_t function, int mode);
+   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function);
 
-   void compileActionMethod(DNode member, MethodScope& scope, int mode);
+   void compileActionMethod(DNode member, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, MethodScope& scope, int mode);
-   void compileDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
-   void compileDynamicDefaultConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, DNode hints);
-   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, int mode);
+   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
+   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
+   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope);
 
    void compileSymbolCode(ClassScope& scope);
 
@@ -794,7 +794,7 @@ protected:
    void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
+   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
    void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
    void compileForward(DNode node, ModuleScope& scope, DNode hints);

@@ -108,7 +108,7 @@ public:
 
    virtual void* getReferences() { return NULL; }
 
-   virtual void trim(size_t position)
+   virtual void trim(size_t)
    {
    }
 

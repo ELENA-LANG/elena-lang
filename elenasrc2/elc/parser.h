@@ -20,7 +20,7 @@ const ident_c _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i
 
 // --- SyntaxError ---
 
-class SyntaxError : _Exception
+class SyntaxError : public _Exception
 {
 public:
    const char* error; 

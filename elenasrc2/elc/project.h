@@ -82,8 +82,8 @@ struct ModuleInfo
 
    ModuleInfo(_Module* codeModule, _Module* debugModule)
    {
-      this->codeModule =
-      this->debugModule = NULL;
+      this->codeModule = codeModule;
+      this->debugModule = debugModule;
    }
 };
 

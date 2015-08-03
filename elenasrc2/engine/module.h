@@ -96,26 +96,22 @@ public:
          return true;
       }
 
-      virtual bool write(size_t position, const void* s, size_t length)
-      {
-         // should never be called
-         throw InternalError("Read-only Module");
-
-         return false;
-      }
-
-      virtual void insert(size_t position, const void* s, size_t length)
+      virtual bool write(size_t, const void*, size_t)
       {
          // should never be called
          throw InternalError("Read-only Module");
       }
 
-      virtual bool writeBytes(size_t position, char value, size_t length)
+      virtual void insert(size_t, const void*, size_t)
       {
          // should never be called
          throw InternalError("Read-only Module");
+      }
 
-         return false;
+      virtual bool writeBytes(size_t, char, size_t)
+      {
+         // should never be called
+         throw InternalError("Read-only Module");
       }
 
       virtual void* getReferences()
@@ -125,7 +121,7 @@ public:
          return (void*)(_buffer + position + 4);
       }
 
-      virtual void trim(size_t size)
+      virtual void trim(size_t)
       {
          // should never be called
          throw InternalError("Read-only Module");
@@ -163,14 +159,14 @@ public:
    virtual ref_t mapSubject(ident_t reference, bool existing);
    virtual ref_t mapConstant(ident_t reference);
 
-   virtual void mapPredefinedReference(ident_t name, ref_t reference)
+   virtual void mapPredefinedReference(ident_t, ref_t)
    {
       throw InternalError("Read-only Module");
    }
 
    virtual _Memory* mapSection(ref_t reference, bool existing);
 
-   virtual bool save(StreamWriter& writer)
+   virtual bool save(StreamWriter&)
    {
       return false; // Read-Only module should not save anything
    }

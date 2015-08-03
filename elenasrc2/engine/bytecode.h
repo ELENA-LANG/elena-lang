@@ -565,7 +565,7 @@ struct ByteCodePattern
 {
    ByteCode        code;
    PatternArgument argumentType;
-   size_t          argument;
+   int             argument;
 
    bool operator ==(ByteCode code) const
    {

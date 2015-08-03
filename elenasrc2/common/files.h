@@ -243,7 +243,6 @@ public:
 
    void copyExtension(path_t path)
    {
-      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
       int dotpos = StringHelper::findLast(path, '.', getlength(path));
 
       copy(path + dotpos + 1);

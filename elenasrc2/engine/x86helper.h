@@ -198,16 +198,16 @@ public:
 
       int opcode = prefix + ((char)sour.type << 3) + (char)dest.type;
 
-      code->writeByte(opcode);
+      code->writeByte((unsigned char)opcode);
       if ((char)dest.type==otSIB && dest.type != otESP && dest.type != otAH) {
 	      int sib = (char)(dest.type >> 24);
 	      if (sib==0) {
 		      sib = 0x24;
 	      }
-	      code->writeByte(sib);
+	      code->writeByte((unsigned char)sib);
       }
       if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8)) {
-	      code->writeByte(dest.offset);
+	      code->writeByte((unsigned char)dest.offset);
       }
       // !! should only otM32 be checked?
       else if (test(dest.type, otM32disp32) || dest.factorReg) {
@@ -240,10 +240,10 @@ public:
          else code->writeDWord(sour.offset);
       }
       else if (sour.type==otDB) {
-         code->writeByte(sour.offset);
+         code->writeByte((unsigned char)sour.offset);
       }
       else if (sour.type==otDW) {
-         code->writeWord(sour.offset);
+         code->writeWord((unsigned short)sour.offset);
       }
    }
 

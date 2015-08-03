@@ -14,7 +14,7 @@ namespace _ELENA_
 
 // --- LineTooLong exception class ---
 
-class LineTooLong : _Exception
+class LineTooLong : public _Exception
 {
 public:
    size_t row;
@@ -27,7 +27,7 @@ public:
 
 // --- InvalidChar exception class ---
 
-class InvalidChar : _Exception
+class InvalidChar : public _Exception
 {
 public:
    int column, row;

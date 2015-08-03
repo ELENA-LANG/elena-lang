@@ -145,9 +145,9 @@ public:
 
    bool getDebugMode() const { return _withDebugInfo; }
 
-   int getStaticCount() const 
+   size_t getStaticCount() const 
    { 
-      return _loader->getTargetSection(mskStatRef)->Length() >> 2;
+      return _loader->getTargetSection((size_t)mskStatRef)->Length() >> 2;
    }
 
    void* calculateVAddress(MemoryWriter* writer, int mask);

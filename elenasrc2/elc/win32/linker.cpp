@@ -73,7 +73,7 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
    }
 }
 
-ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
+ref_t reallocateImport(ref_t, ref_t key, ref_t disp, void* map)
 {
    if ((key & mskImageMask)==mskImportRef) {
       return ((ImageBaseMap*)map)->import + disp + ((ImageBaseMap*)map)->importMapping.get(key);
@@ -533,9 +533,9 @@ void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)
 
    // create IMAGE_TLS_DIRECTORY
    int tlsLength = tlsWriter.Position();
-   rdataWriter.writeRef(mskTLSRef, 0);              // StartAddressOfRawData
-   rdataWriter.writeRef(mskTLSRef, tlsLength);      // EndAddressOfRawData
-   rdataWriter.writeRef(mskDataRef, tls_variable);  // AddressOfIndex
+   rdataWriter.writeRef((ref_t)mskTLSRef, 0);              // StartAddressOfRawData
+   rdataWriter.writeRef((ref_t)mskTLSRef, tlsLength);      // EndAddressOfRawData
+   rdataWriter.writeRef((ref_t)mskDataRef, tls_variable);  // AddressOfIndex
    rdataWriter.writeDWord(0);                       // AddressOfCallBacks
    rdataWriter.writeDWord(0);                       // SizeOfZeroFill
    rdataWriter.writeDWord(0);                       // Characteristics

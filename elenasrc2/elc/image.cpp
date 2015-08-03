@@ -227,13 +227,13 @@ ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, r
 
 // --- VirtualMachineClientImage ---
 
-inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command)
+inline void writeTapeRecord(MemoryWriter& tape, size_t command)
 {
    tape.writeDWord(command);
    tape.writeDWord(0);
 }
 
-inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ident_t value)
+inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value)
 {
    tape.writeDWord(command);
 
@@ -244,7 +244,7 @@ inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ide
    else tape.writeDWord(0);
 }
 
-inline void writeTapeRecord(size_t base, MemoryWriter& tape, size_t command, ident_t value1, ident_t value2)
+inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value1, ident_t value2)
 {
    tape.writeDWord(command);
    // write total length including equal sign
@@ -272,7 +272,7 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    _bss.writeDWord(4, 0);
 
    size_t vmHook = data.Position();
-   data.writeRef(mskNativeDataRef, 0); // hook address
+   data.writeRef((ref_t)mskNativeDataRef, 0); // hook address
 
 //   int type = project->IntSetting(opPlatform, ptWin32Console);
 
@@ -298,34 +298,34 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
 
 ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* project)
 {
-   int tapeRef = data.Position();
+   size_t tapeRef = data.Position();
 
    // write tape
 
    // USE_VM_MESSAGE_ID path, package
-   writeTapeRecord(tapeRef, data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
+   writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
 
    // LOAD_VM_MESSAGE_ID name
-   writeTapeRecord(tapeRef, data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
+   writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
 
    // { MAP_VM_MESSAGE_ID fwrd, ref }*
    ForwardIterator it = project->getForwardIt();
    while (!it.Eof()) {
-      writeTapeRecord(tapeRef, data, MAP_VM_MESSAGE_ID, it.key(), *it);
+      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), *it);
 
       it++;
    }
 
    // START_VM_MESSAGE_ID debugMode ??
-   writeTapeRecord(tapeRef, data, START_VM_MESSAGE_ID);
+   writeTapeRecord(data, START_VM_MESSAGE_ID);
 
    // CALL_TAPE_MESSAGE_ID 'program
-   writeTapeRecord(tapeRef, data, CALL_TAPE_MESSAGE_ID, STARTUP_CLASS);
+   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, STARTUP_CLASS);
 
    // SEND_MESSAGE
    IdentifierString verb("0#");
    verb.append(0x20 + EVAL_MESSAGE_ID);
-   writeTapeRecord(tapeRef, data, SEND_TAPE_MESSAGE_ID, verb);
+   writeTapeRecord(data, SEND_TAPE_MESSAGE_ID, verb);
 
    data.writeDWord(0);
 

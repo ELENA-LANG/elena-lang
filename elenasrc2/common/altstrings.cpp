@@ -601,7 +601,7 @@ char* StringHelper :: intToStr(int n, char* s, int radix)
             break;
          default:
             if (rem < 10) {
-               s[pos++] = (rem + 0x30);
+               s[pos++] = (char)(rem + 0x30);
             }
       }
    }
@@ -649,7 +649,7 @@ char* StringHelper::ulongToStr(unsigned long n, char* s, int radix)
          break;
       default:
          if (rem < 10) {
-            s[pos++] = (rem + 0x30);
+            s[pos++] = (char)(rem + 0x30);
          }
       }
    } while (n != 0);

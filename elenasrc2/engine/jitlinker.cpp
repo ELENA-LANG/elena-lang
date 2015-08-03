@@ -130,7 +130,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 {
-   int verbId = 0;
+   ref_t verbId = 0;
    ref_t signRef = 0;
    int paramCount = 0;
    decodeMessage(message, signRef, verbId, paramCount);
@@ -245,11 +245,7 @@ int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
 
       entries = image->get((ref_t)vaddress & ~mskAnyRef);
    }
-   else {
-      _Memory* image = _loader->getTargetSection(mskCodeRef);
-
-      entries = vaddress;
-   }
+   else entries = vaddress;
 
    return _compiler->findMethodAddress(entries, messageID, _compiler->findLength(entries));
 }
@@ -262,11 +258,7 @@ int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
 
       entries = image->get((ref_t)vaddress & ~mskAnyRef);
    }
-   else {
-      _Memory* image = _loader->getTargetSection(mskCodeRef);
-
-      entries = vaddress;
-   }
+   else entries = vaddress;
 
    return _compiler->findMethodIndex(entries, messageID, _compiler->findLength(entries));
 }
@@ -318,13 +310,13 @@ void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo
       currentRef = it.key() & ~mskAnyRef;
 
       if (currentMask == mskPreloadDataRef) {
-         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), mskNativeDataRef, _virtualMode);
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeDataRef, _virtualMode);
       }
       else if (currentMask == mskPreloadCodeRef) {
-         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), mskNativeCodeRef, _virtualMode);
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeCodeRef, _virtualMode);
       }
       else if (currentMask == mskPreloadRelCodeRef) {
-         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), mskNativeRelCodeRef, _virtualMode);
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
       }
       else if (currentMask == 0) {
          (*image)[*it + position] = resolveMessage(sectionInfo.module, currentRef);
@@ -372,7 +364,7 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
    MemoryReader reader(sectionInfo.section);
 
    // create native debug info header if debug info enabled
-   size_t sizePtr = -1;
+   size_t sizePtr = (size_t)-1;
    if (mask == mskClassRef) {
 //      // vmt vaddress is 0 for method handler / constructor
 //      if (_withDebugInfo)
@@ -437,7 +429,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
       size_t count = _compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position));
 
       // create native debug info header if debug info enabled
-      size_t sizePtr = -1;
+      size_t sizePtr = (size_t)-1;
       if (_withDebugInfo)
          createNativeClassDebugInfo(reference, vaddress, sizePtr);
 
@@ -469,7 +461,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
       void* classClassVAddress = getVMTAddress(sectionInfo.module, classClassRef, references);
 
       // fix VMT
-      _compiler->fixVMT(vaddress, vmtWriter, classClassVAddress, count, _virtualMode);
+      _compiler->fixVMT(vmtWriter, classClassVAddress, count, _virtualMode);
    }
 
    return vaddress;
@@ -691,7 +683,6 @@ void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
 
    _loader->mapReference(reference, vaddress, mskMessage);
 
-   size_t position = writer.Position();
    _compiler->compileInt32(&writer, parseMessage(reference));
 
    // get constant VMT reference
@@ -900,10 +891,10 @@ void JITLinker :: prepareCompiler()
    ReferenceHelper helper(this, NULL, &references);
 
    // preload core data
-   _Memory* data = _loader->getTargetSection(mskDataRef);
-   _Memory* rdata = _loader->getTargetSection(mskRDataRef);
-   _Memory* sdata = _loader->getTargetSection(mskStatRef);
-   _Memory* code = _loader->getTargetSection(mskCodeRef);
+   _Memory* data = _loader->getTargetSection((ref_t)mskDataRef);
+   _Memory* rdata = _loader->getTargetSection((ref_t)mskRDataRef);
+   _Memory* sdata = _loader->getTargetSection((ref_t)mskStatRef);
+   _Memory* code = _loader->getTargetSection((ref_t)mskCodeRef);
 
    _compiler->prepareCore(helper, data, rdata, sdata, code);
 

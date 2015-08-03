@@ -1658,7 +1658,7 @@ public:
    T exclude(Key key)
    {
       size_t beginning = (size_t)_buffer.get(0);
-      size_t previous = -1;
+      size_t previous = (size_t)-1;
 
       if (_buffer.Length() > 0) {
          // get top item position
@@ -1722,7 +1722,7 @@ public:
       return false;
    }
 
-   size_t storeKey(size_t position, size_t key)
+   size_t storeKey(size_t, size_t key)
    {
       return key;
    }
@@ -2473,7 +2473,7 @@ public:
       else return false;
    }
 
-   ref_t storeKey(size_t position, ref_t key)
+   ref_t storeKey(size_t, ref_t key)
    {
       return key;
    }

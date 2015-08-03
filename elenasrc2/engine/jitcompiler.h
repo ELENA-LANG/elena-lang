@@ -70,20 +70,20 @@ public:
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
-   virtual int findMethodAddress(void* refVMT, int messageID, size_t vmtLength) = 0;
-   virtual int findMethodIndex(void* refVMT, int messageID, size_t vmtLength) = 0;
+   virtual int findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
+   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
    virtual size_t findFlags(void* refVMT) = 0;
    virtual size_t findLength(void* refVMT) = 0;
 
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
 
-   virtual void fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode) = 0;
+   virtual void fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode) = 0;
 
    virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
    virtual void* getPreloadedReference(ref_t reference) = 0;
 
-   virtual void setStaticRootCounter(_JITLoader* loader, int counter, bool virtualMode) = 0;
+   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
 };
 
 // --- JITCompiler32 class ---
@@ -105,13 +105,13 @@ public:
 
    virtual size_t findFlags(void* refVMT);
    virtual size_t findLength(void* refVMT);
-   virtual int findMethodAddress(void* refVMT, int messageID, size_t vmtLength);
-   virtual int findMethodIndex(void* refVMT, int messageID, size_t vmtLength);
+   virtual int findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
+   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void fixVMT(void* vaddress, MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode);
+   virtual void fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode);
 };
 
 } // _ELENA_

@@ -28,7 +28,7 @@ bool x86LabelHelper :: isShortJump(unsigned char opcode)
 void x86LabelHelper :: writeJxxForward(int label, x86Helper::x86JumpType prefix)
 {
 	code->writeByte(0x0F);
-	code->writeByte(0x80 + prefix);
+   code->writeByte((unsigned char)(0x80 + prefix));
 
    jumps.add(label, x86JumpInfo(code->Position()));
    code->writeDWord(0);
@@ -36,7 +36,7 @@ void x86LabelHelper :: writeJxxForward(int label, x86Helper::x86JumpType prefix)
 
 void x86LabelHelper :: writeShortJxxForward(int label, x86Helper::x86JumpType prefix)
 {
-   code->writeByte(0x70 + prefix);
+   code->writeByte((unsigned char)(0x70 + prefix));
 
    jumps.add(label, x86JumpInfo(code->Position()));
    code->writeByte(0);
@@ -57,7 +57,7 @@ void x86LabelHelper :: writeNearJxxBack(x86Helper::x86JumpType prefix, int label
    int offset = labels.get(label) - code->Position();
 
 	code->writeByte(0x0F);
-	code->writeByte(0x80 + prefix);
+   code->writeByte((unsigned char)(0x80 + prefix));
 
    // to exclude the command itself
    offset -= 6;
@@ -71,14 +71,14 @@ void x86LabelHelper :: writeShortJxxBack(x86Helper::x86JumpType prefix, int labe
 {
    int offset = labels.get(label) - code->Position();
 
-   code->writeByte(0x70 + prefix);
+   code->writeByte((unsigned char)(0x70 + prefix));
 
    // to exclude the command itself
    offset -= 2;
 
    jumps.add(label, x86JumpInfo(code->Position(), offset));
 
-   code->writeByte(offset);
+   code->writeByte((unsigned char)offset);
 }
 
 void x86LabelHelper :: writeJmpForward(int label)
@@ -152,7 +152,7 @@ void x86LabelHelper :: writeShortJmpBack(int label)
 
    jumps.add(label, x86JumpInfo(code->Position(), offset));
 
-   code->writeByte(offset);
+   code->writeByte((unsigned char)offset);
 }
 
 void x86LabelHelper :: writeLoopForward(int label)
@@ -174,7 +174,7 @@ void x86LabelHelper :: writeLoopBack(int label)
 
    jumps.add(label, x86JumpInfo(code->Position(), offset));
 
-   code->writeByte(offset);
+   code->writeByte((unsigned char)offset);
 }
 
 void x86LabelHelper :: writeCallForward(int label)
@@ -214,7 +214,7 @@ int x86LabelHelper :: fixShortLabel(size_t labelPos)
    if (abs(offset) > 0x80) {
       convertShortToNear(labelPos, offset);
    }
-   else *(char*)(&(*code->Memory())[labelPos]) = offset;
+   else *(char*)(&(*code->Memory())[labelPos]) = (char)offset;
 
    return offset;
 }
@@ -266,7 +266,7 @@ void x86LabelHelper :: fixJumps(int position, int size)
          offset -= size;
 
          if (abs(offset) < 0x80) {
-            *(char*)(&(*memory)[labelPos]) = offset;
+            *(char*)(&(*memory)[labelPos]) = (char)offset;
          }
          else {
             // if we are unlucky we must change jump from short to near
@@ -282,7 +282,7 @@ void x86LabelHelper :: fixJumps(int position, int size)
          offset += size;
 
          if (offset < 0x82) {
-            *(char*)(&(*memory)[labelPos]) = offset;
+            *(char*)(&(*memory)[labelPos]) = (char)offset;
          }
          else {
             int opcode = (*memory)[labelPos - 1];

@@ -48,8 +48,8 @@ ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, Mess
 
       ref_t sourceRef = debugStringWriter.Position();
 
-      ref_t subjectRef;
-      int verb, paramCount;
+      ref_t subjectRef, verb;
+      int paramCount;
       decodeMessage(message, subjectRef, verb, paramCount);
 
       IdentifierString name(retrieveKey(verbs.start(), verb, DEFAULT_STR));
@@ -1141,7 +1141,7 @@ void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, 
    tape.insert(it, ByteCommand(bcReserve, size));
 }
 
-void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
+void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, int size)
 {
    while (*it != bcReserve)  {
       it++;
@@ -2399,41 +2399,6 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
    }
 }
 
-void ByteCodeWriter::doCharArrayOperation(CommandTape& tape, int operator_id)
-{
-   //switch (operator_id) {
-   //   case REFER_MESSAGE_ID:
-   //      // aswapsi 0
-   //      // popa
-   //      // nload
-   //      // popa
-   //      // wread
-   //      // nsave
-   //      tape.write(bcASwapSI, 0);
-   //      tape.write(bcPopA);
-   //      tape.write(bcNLoad);
-   //      tape.write(bcPopA);
-   //      tape.write(bcWRead);
-   //      tape.write(bcNSave);
-   //      break;
-   //   case SET_REFER_MESSAGE_ID:
-   //      // nload
-   //      // ecopyd
-   //      // popa
-   //      // nload
-   //      // eswap
-   //      // wwrite
-   //      tape.write(bcNLoad);
-   //      tape.write(bcECopyD);
-   //      tape.write(bcPopA);
-   //      tape.write(bcNLoad);
-   //      tape.write(bcESwap);
-   //      tape.write(bcWWrite);
-   //      break;
-   //   default:
-   //      break;
-   //}
-}
 
 void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 {
