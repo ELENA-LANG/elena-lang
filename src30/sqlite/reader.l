@@ -49,7 +49,7 @@
         ($nil == theFieldNames)
             ? [ theFieldNames := theCommand sql_field_names. ].
             
-        ^ $self getAt &index:(theFieldNames indexOf:aFieldName int).
+        ^ $self getAt &int:(theFieldNames indexOf:aFieldName int).
     ]
     
     #method row
