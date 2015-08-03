@@ -3202,6 +3202,10 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       }
       else if (member==nsMessageParameter) {
          currentObject = compileMessage(member, scope, currentObject);
+
+         // skip all except the last message parameter
+         while (member.nextNode() == nsMessageParameter)
+            member = member.nextNode();
       }
       else if (member == nsSwitching) {
          compileSwitch(member, scope, currentObject);
@@ -3340,7 +3344,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
 
    int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
    // if generic role is used, take into account that role was in the call stack as well
-   if (role.kind != okConstantRole)
+   if (genericRole)
       spaceToRelease--;
 
    if (spaceToRelease != 0) {

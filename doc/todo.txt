@@ -27,6 +27,9 @@ Currently:
                        * tweaks the code
 
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
+
+                       * fix call info for system libraries
+
                        * literals
                        * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
                        * by ref parameters
@@ -58,6 +61,10 @@ Currently:
 
                xdev - script engine
                        * calculator : console (simple operations + - * /) - move state machine logic to external script file
+
+               adev - web support
+                       * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
+                       * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
                        
               idev - linux:              
                        * menu option - project

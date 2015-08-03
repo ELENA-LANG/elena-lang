@@ -10,14 +10,17 @@
 #define extensions'math.
 #define extensions'text.
 
+#class OutOfRangeException :: Exception
+{
+    /// Creates the exception
+    #constructor new
+        <= %new &literal:"An index is out of range" &subject: %OutOfRangeError.
+}        
+
 #symbol XTester =
 {
-    eval : n : m
-        = n + m.
-
     test            
     [
-        XTester:1:2.
     ]    
 }.
 
