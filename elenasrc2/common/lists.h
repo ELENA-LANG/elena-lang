@@ -1965,10 +1965,10 @@ public:
             if (_cache[i].key == key)
                return _cache[i].item;
          }
-      }
-      else _map.get(key);
 
-      return _map.DefaultValue();
+         return _map.DefaultValue();
+      }
+      else return _map.get(key);
    }
 
    bool exist(Key key)

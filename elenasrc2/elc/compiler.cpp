@@ -3570,13 +3570,13 @@ void Compiler :: _compileMessageParameters(MessageScope& callStack, CodeScope& s
             scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
 
          if (boxed)
-            scope.raiseWarning(4, wrnBoxingCheck, param.node.firstChild().Terminal());
+            scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
 
          // save into the stack
          if (callStack.directOrder) {
             _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
          }
-         else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i + 1));
+         else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i));
       }
    }
 }
@@ -3592,6 +3592,14 @@ ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, MessageScop
    bool classFound = false;
    bool dispatchCall = false;
    int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
+   int callType = methodHint & tpMask;
+
+   if (target.kind == okConstantClass) {
+      retVal.param = target.param;
+
+      // constructors are always sealed
+      callType = tpSealed;
+   }
 
    // save parameters
    _compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
@@ -3615,8 +3623,10 @@ ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, MessageScop
 
    _writer.setMessage(*scope.tape, messageRef);
 
+   recordDebugStep(scope, node.Terminal(), dsStep);
+   openDebugExpression(scope);
+
    // send message
-   int callType = methodHint & tpMask;
    if (dispatchCall) {
       _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
    }
@@ -3634,6 +3644,8 @@ ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, MessageScop
 
       _writer.callMethod(*scope.tape, 0, paramCount);
    }
+
+   endDebugExpression(scope);
 
    // the result of get&type message should be typed
    if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
@@ -3694,12 +3706,7 @@ ObjectInfo Compiler :: _compileMessage(DNode node, CodeScope& scope, ObjectInfo 
       object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
    }
 
-   recordDebugStep(scope, node.Terminal(), dsStep);
-   openDebugExpression(scope);
-
    ObjectInfo retVal = _compileMessage(node, scope, callStack, object, messageRef);
-
-   endDebugExpression(scope);
 
    int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
    if (spaceToRelease != 0) {
