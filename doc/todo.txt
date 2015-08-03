@@ -20,6 +20,9 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
+              idev - debugger:
+                       * fix #7
+
               xdev - general development              
                        * tweaks the code
 

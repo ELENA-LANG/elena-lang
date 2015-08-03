@@ -298,6 +298,7 @@ void MainWindow::ContextBrowser :: getCaption(void* node, _ELENA_::ident_c* capt
    ((TreeView*)_treeView)->getCaption((TreeViewItem)node, s, 0x100);
 
    _ELENA_::StringHelper::copy(caption, s, _ELENA_::getlength(s), length);
+   caption[length] = 0;
 }
 
 void MainWindow::ContextBrowser :: setCaption(void* node, _ELENA_::ident_t caption)
