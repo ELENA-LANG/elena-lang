@@ -24,6 +24,7 @@ using namespace _ELENA_;
 #define HINT_CATCH            0x08000000
 #define HINT_STACKSAFE_CALL   0x04000000
 #define HINT_INVERTED         0x02000000
+#define HINT_EXTENSION_MODE   0x01000000
 #define HINT_HEAP_MODE        0x00400000
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
@@ -2977,8 +2978,6 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          }
          else param.info = compileExpression(param.node, scope, 0);
       }
-      _writer.loadObject(*scope.tape, param.info);
-
       loadObject(scope, param.info);
 
       // if open argument list should be unboxed
@@ -3065,6 +3064,14 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    else if (target.kind == okSubjectDispatcher) {
       dispatchCall = true;
 
+      _writer.loadObject(*scope.tape, target);
+   }
+   else if (classReference == scope.moduleScope->signatureReference) {
+      dispatchCall = true;
+
+      _writer.loadObject(*scope.tape, target);
+   }
+   else if (test(mode, HINT_EXTENSION_MODE)) {
       _writer.loadObject(*scope.tape, target);
    }
    else _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
@@ -3306,18 +3313,18 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    // override standard message compiling routine
    node = node.nextNode();
 
-   object = compileExtensionMessage(node, scope, object, role);
+   object = compileExtensionMessage(node, scope, object, role, HINT_EXTENSION_MODE);
 
    return object;
 }
 
-ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role)
+ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode)
 {
    MessageScope callStack;
 
    // put the target
    bool genericRole = false;
-   if (role.kind != okConstantRole && role.kind != okConstantSymbol && role.kind != okConstantClass) {
+   if (role.kind == okAccumulator && role.kind == okSymbol && role.kind == okBase) {
       // if generic role is used, put into the call stack before the target object
       callStack.parameters.add(0, MessageScope::ParamInfo(0, role));
       callStack.parameters.add(1, MessageScope::ParamInfo(0, object));
@@ -3340,7 +3347,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
    if (genericRole)
       role = ObjectInfo(okRole);
 
-   ObjectInfo retVal = compileMessage(node, scope, callStack, role, messageRef, 0);
+   ObjectInfo retVal = compileMessage(node, scope, callStack, role, messageRef, mode);
 
    int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
    // if generic role is used, take into account that role was in the call stack as well
@@ -4668,9 +4675,9 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
 
       DNode dummy;
       if (withFrame) {
-         compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef));
+         compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef), 0);
       }
-      else compileExtensionMessage(node, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantClass, 0, classRef));
+      else compileExtensionMessage(node, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantClass, 0, classRef), 0);
    }
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }

@@ -24,15 +24,15 @@ Currently:
                        * fix #7
 
               xdev - general development              
-                       * tweaks the code
-
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
 
+                       * fix system test : open args
                        * fix call info for system libraries
 
                        * literals
                        * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
                        * by ref parameters
+                       * full test
 
 <==>                         
 

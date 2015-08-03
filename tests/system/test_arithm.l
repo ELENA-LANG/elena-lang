@@ -10,15 +10,10 @@
 #define extensions'math.
 #define extensions'text.
 
-#class OutOfRangeException :: Exception
-{
-    /// Creates the exception
-    #constructor new
-        <= %new &literal:"An index is out of range" &subject: %OutOfRangeError.
-}        
-
 #symbol XTester =
 {
+    cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:"abc".
+    
     test            
     [
     ]    
