@@ -20,8 +20,9 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              adev - lib30     
-                       * Stack, Queue
+              xdev - general implementation
+                       * refactoring : create a single procedure to typecast acc, should be used every time
+                         typecasting required
 
               xdev - general development              
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
@@ -32,23 +33,17 @@ Currently:
                        * literals
                        * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
                        * by ref parameters
+                       * test unboxing local variables : both as target and as a parameter
+                       * test unboxing structure fields : both as target and as a parameter
                        * full test
 
               xdev - byte code optimization                               
                        * review system_test code
 
-              adev - lib30 optimization
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
-                       * TextBuffer : redesign delete operation, it should not create new literal classes
-                       * system'LiteralIterator - operation available and next should not creates a new object , try
-                         to use stack allocated object for the length operations
-
 <==>                         
 
               adev - lib30     
-                       * implement new functionality : BitArray, SortedList, SortedArrayList
+                       * implement new functionality : MemoryStream, BitArray, SortedList, SortedArrayList
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * implement: exp constant
                        * implement: infinity
@@ -193,6 +188,7 @@ Currently:
                        * refactoring : declareParameterDebugInfo - use debug hint flags
                        * refactoring : do we need to use paramsReference ditectly??
                        * refactoring : do we need to use trueReference / falseReference ditectly??
+                       * unboxing : for small objects (~4) use appropriate byte commands
                        
               xdev - byte code optimization                               
                        * review / optimize SDIApplication.start

@@ -37,7 +37,7 @@
             ? [ theList setAt &int:theTop &object:anObject. ]
             ! [ theList append:anObject. ].
             
-        theTop append &int:1.
+        theTop += 1.
     ]
     
     #method peek
@@ -48,7 +48,7 @@
         (0 == theTop)
             ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
             
-        theTop reduce &int:1.
+        theTop -= 1.
         theList setAt &int:theTop &object:$nil.
     ]
 }
@@ -81,7 +81,7 @@
             ? [ theList setAt &int:theTale &object:anObject. ]
             ! [ theList append:anObject. ].
             
-        theTale append &int:1.
+        theTale += 1.
     ]
     
     #method peek
@@ -93,13 +93,13 @@
             ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
             
         theList setAt &int:theTop &object:$nil.
-        theTop append &int:1.
+        theTop += 1.
         
         // reuse the space if the queue is empty
         (theTale == theTop)
             ? [
-                theTop write &int:0.
-                theTale write &int:0.
+                theTop << 0.
+                theTale << 0.
             ].
     ]
     

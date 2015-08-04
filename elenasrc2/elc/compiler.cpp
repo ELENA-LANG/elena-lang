@@ -706,26 +706,29 @@ ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& in
    return moduleRef;
 }
 
-int Compiler::ModuleScope :: defineStructSize(ref_t classReference)
+int Compiler::ModuleScope::defineStructSize(ref_t classReference, bool& variable)
 {
    ClassInfo classInfo;
    if(loadClassInfo(classInfo, module->resolveReference(classReference), true) == 0)
       return 0;
 
-   if (test(classInfo.header.flags, elStructureRole) && test(classInfo.header.flags, elEmbeddable))
+   if (test(classInfo.header.flags, elStructureRole) && test(classInfo.header.flags, elEmbeddable)) {
+      variable = !test(classInfo.header.flags, elReadOnlyRole);
+
       return classInfo.size;
+   }      
 
    return 0;
 }
 
-int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReference)
+int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReference, bool& variable)
 {
    if (type_ref == 0)
       return 0;
 
    classReference = typeHints.get(type_ref);
    if (classReference != 0) {
-      return defineStructSize(classReference);
+      return defineStructSize(classReference, variable);
    }
    else return 0;
 }
@@ -1780,7 +1783,8 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       _writer.loadObject(*scope.tape, optionValue);
 
       bool boxed = false;
-      boxObject(scope, optionValue, boxed);
+      bool dummy = false;
+      boxObject(scope, optionValue, boxed, dummy);
       if (boxed)
          scope.raiseWarning(4, wrnBoxingCheck, option.firstChild().Terminal());
 
@@ -1792,7 +1796,7 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       _writer.callMethod(*scope.tape, 0, 1);
 
       bool mismatch = false;
-      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, boxed);
+      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, boxed, dummy);
 
       endDebugExpression(scope);
 
@@ -2166,11 +2170,13 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object)
 {
    if (object.kind == okFieldAddress) {
+      bool dummy = false;
+
       if (object.param == 0) {
          object.kind = okParam;
          object.param = 1;
       }
-      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), 0);
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), dummy, 0);
    }
 
    _writer.loadObject(*scope.tape, object);
@@ -2181,11 +2187,12 @@ ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object)
 ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo& object, int offset)
 {
    if (object.kind == okFieldAddress) {
+      bool dummy = false;
       if (object.param == 0) {
          object.kind = okParam;
          object.param = 1;
       }
-      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), 0);
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), dummy, 0);
    }
 
    if (offset >= 0) {
@@ -2224,13 +2231,15 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_
    else return false;
 }
 
-ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed)
+ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing)
 {
+   unboxing = false;
+
    if (object.kind == okFieldAddress) {
       if (object.param != 0) {
          object = ObjectInfo(okParam, 1, scope.isStackSafe() ? -1 : 0, object.type);
       }
-      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1));
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), unboxing);
    }
 
    // NOTE: boxing should be applied only for the typed local parameter
@@ -2256,7 +2265,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
       _writer.boxObject(*scope.tape, 4, wrapperRef | mskVMTRef, true);
    }
    else if (object.kind == okLocalAddress) {
-      int size = scope.moduleScope->defineStructSize(object.extraparam);
+      int size = scope.moduleScope->defineStructSize(object.extraparam, unboxing);
       if (size != 0) {
          boxed = true;
 
@@ -2266,7 +2275,7 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
    else if ((object.kind == okParam || object.kind == okThisParam) && object.type != 0 && object.extraparam == -1)
    {
       ref_t classReference = 0;
-      int size = scope.moduleScope->defineTypeSize(object.type, classReference);
+      int size = scope.moduleScope->defineTypeSize(object.type, classReference, unboxing);
       if (size != 0) {
          boxed = true;
 
@@ -2277,14 +2286,14 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
    return object;
 }
 
-ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisParam, int mode)
+ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisParam, bool& unboxing, int mode)
 {
    bool presavedAcc = thisParam.kind == okAccumulator;
 
    int offset = field.param;
    ref_t classReference = 0;
    ref_t type = field.type;
-   int size = scope.moduleScope->defineTypeSize(field.type, classReference);
+   int size = scope.moduleScope->defineTypeSize(field.type, classReference, unboxing);
 
    if (test(mode, HINT_HEAP_MODE) || size > 8) {
       if (presavedAcc)
@@ -2949,7 +2958,7 @@ void Compiler :: boxCallstack(CodeScope& scope, MessageScope& callStack, bool st
          _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, i));
 
          bool boxed = false;
-         boxObject(scope, param.info, boxed);
+         boxObject(scope, param.info, boxed, param.unboxing);
 
          if (boxed) {
             scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
@@ -2960,9 +2969,30 @@ void Compiler :: boxCallstack(CodeScope& scope, MessageScope& callStack, bool st
    }
 }
 
+void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
+{
+   size_t count = callStack.parameters.Count();
+
+   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+   for (size_t i = 0; i < count; i++) {
+      MessageScope::ParamInfo param = callStack.parameters.get(i);
+
+      if (param.unboxing) {
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+         _writer.loadBase(*scope.tape, param.info);
+
+         //!! for small objects (~4) use appropriate byte commands
+         _writer.copy(*scope.tape);
+      }
+   }
+   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+}
+
 void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe)
 {
    size_t count = callStack.parameters.Count();
+
+   ByteCodeIterator bm = scope.tape->end();
 
    // if direct order is not possible the space should be allocated first,
    // to garantee the correct order of parameter evaluation
@@ -2989,17 +3019,30 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          // if type is mismatch - typecast
          bool mismatch = false;
          bool boxed = false;
-         param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed);
+         param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, param.unboxing);
 
          // check if boxing required
          if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
-            boxObject(scope, param.info, boxed);
+            boxObject(scope, param.info, boxed, param.unboxing);
 
          if (mismatch)
             scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
 
-         if (boxed)
+         if (boxed) {
             scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
+
+            // save boxed object if required
+            if (param.unboxing) {
+               // resever the space for temporal varialbe
+               bm = _writer.insertCommand(bm, *scope.tape, bcPushN, 0);
+               param.level = callStack.level;
+
+               // assign the boxed object to the temporal variable
+               _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, (callStack.directOrder ? i : count) + param.level ));
+
+               callStack.level++;
+            }
+         }            
 
          // save into the stack
          if (callStack.directOrder) {
@@ -3100,6 +3143,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
       _writer.callMethod(*scope.tape, 0, paramCount);
    }
 
+   if (callStack.level > 0)
+      unboxCallstack(scope, callStack);
+
    endDebugExpression(scope);
 
    // the result of get&type message should be typed
@@ -3113,7 +3159,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed);
+      bool dummy = false;
+      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed, dummy);
 
       _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
 
@@ -3473,6 +3520,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
    }
    else {
       bool dummy = false;
+      bool dummy2 = false;
       int presaved = 0;
 
       // unbox all typed variables
@@ -3482,7 +3530,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
          if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
             _writer.loadObject(*ownerScope.tape, info);
-            boxObject(ownerScope, info, dummy);
+            boxObject(ownerScope, info, dummy, dummy2);
             _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
             presaved++;
          }
@@ -3577,8 +3625,9 @@ ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode,
    // all collection memebers should be created before the collection itself
    while (node != nsNone) {
       bool boxed = false;
+      bool dummy = false;
       ObjectInfo current = compileExpression(node, scope, mode);
-      current = boxObject(scope, current, boxed);
+      current = boxObject(scope, current, boxed, dummy);
       if (boxed)
          scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 
@@ -3606,7 +3655,7 @@ ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode,
    return ObjectInfo(okAccumulator);
 }
 
-ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, bool& boxed)
+ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, bool& boxed, bool& unboxing)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -3718,7 +3767,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
          mismatch = true;
 
          // the parameter should be boxed before
-         boxObject(scope, object, boxed);
+         boxObject(scope, object, boxed, unboxing);
 
          _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
          _writer.typecast(*scope.tape);
@@ -3752,7 +3801,8 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, info, subj, mismatch, boxed);
+      bool dummy = false;
+      compileTypecast(scope, info, subj, mismatch, boxed, dummy);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
       if (boxed)
@@ -3761,7 +3811,8 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    else {
       // box object if required
       bool boxed = false;
-      info = boxObject(scope, info, boxed);
+      bool dummy = false;
+      info = boxObject(scope, info, boxed, dummy);
       if (boxed)
          scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
    }
@@ -3823,12 +3874,13 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       _writer.loadObject(*scope.tape, info);
 
       bool boxed = false;
-      info = boxObject(scope, info, boxed);
+      bool dummy = false;
+      info = boxObject(scope, info, boxed, dummy);
       if (boxed)
          scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
 
       bool mismatch = false;
-      compileTypecast(scope, info, target.type, mismatch, boxed);
+      compileTypecast(scope, info, target.type, mismatch, boxed, dummy);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 
@@ -3847,7 +3899,8 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, Object
 
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, boxed);
+      bool dummy = false;
+      compileTypecast(scope, target, scope.moduleScope->boolType, mismatch, boxed, dummy);
 
       _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
@@ -3914,7 +3967,8 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
 
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed);
+      bool dummy = false;
+      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed, dummy);
       if (boxed)
          scope.raiseWarning(4, wrnBoxingCheck, expr.FirstTerminal());
 
@@ -4050,13 +4104,14 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalS
          else {
             bool mismatch = false;
             bool boxed = false;
+            bool variable = false;
 
             _writer.loadObject(*scope.tape, param.info);
             if (param.info.kind == okFieldAddress) {
-               param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1));
+               param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1), variable);
             }
 
-            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed);
+            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed, variable);
             if (mismatch)
                scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
             if (boxed)
@@ -4195,7 +4250,8 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
 
          bool mismatch = false;
          bool boxed = false;
-         compileTypecast(scope, info, type, mismatch, boxed);
+         bool dummy = false;
+         compileTypecast(scope, info, type, mismatch, boxed, dummy);
          if (mismatch)
             scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
          if (boxed)
@@ -4504,11 +4560,12 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
             // if the target is a data field
             if (test(classScope->info.header.flags, elStructureRole) && classScope->info.fields.exist(target)) {
                int offset = classScope->info.fields.get(target);
+               bool dummy = false;
 
                _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
 
                boxStructureField(codeScope, 
-                  ObjectInfo(okFieldAddress, offset, 0, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), HINT_HEAP_MODE);
+                  ObjectInfo(okFieldAddress, offset, 0, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), dummy, HINT_HEAP_MODE);
 
                _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
 
@@ -4617,7 +4674,8 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    ObjectInfo target = compileObject(node, scope, 0);
 
    bool boxed = false;
-   boxObject(scope, target, boxed);
+   bool dummy = false;
+   boxObject(scope, target, boxed, dummy);
    if (boxed)
       scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());      
 
@@ -4801,7 +4859,8 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
             ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
             bool mismatch = false;
             bool boxed = false;
-            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed);
+            bool dummy = false;
+            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed, dummy);
             if (mismatch)
                scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
             if (boxed)
@@ -5553,7 +5612,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    if (scope.typeRef != 0) {
       bool mismatch = false;
       bool boxed = false;
-      compileTypecast(codeScope, retVal, scope.typeRef, mismatch, boxed);
+      bool dummy = false;
+      compileTypecast(codeScope, retVal, scope.typeRef, mismatch, boxed, dummy);
       if (mismatch)
          scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
       if (boxed)

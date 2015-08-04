@@ -263,6 +263,8 @@ public:
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, int size);
 
+   ByteCodeIterator insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument);
+
 //   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);
@@ -280,6 +282,7 @@ public:
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
 
+   void copy(CommandTape& tape);
    void assignInt(CommandTape& tape, ObjectInfo target);
    void assignLong(CommandTape& tape, ObjectInfo target);
    void assignShort(CommandTape& tape, ObjectInfo target);

@@ -210,13 +210,27 @@ protected:
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
-      int defineStructSize(ref_t classReference);
-      int defineTypeSize(ref_t type_ref, ref_t& class_ref);
+      int defineStructSize(ref_t classReference, bool& variable);
+      int defineStructSize(ref_t classReference)
+      {
+         bool dummy = false;
+
+         return defineStructSize(classReference, dummy);
+      }
+
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
       int defineTypeSize(ref_t type_ref)
       {
          ref_t dummy1;
+         bool dummy2;
 
-         return defineTypeSize(type_ref, dummy1);
+         return defineTypeSize(type_ref, dummy1, dummy2);
+      }
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref)
+      {
+         bool dummy2;
+
+         return defineTypeSize(type_ref, class_ref, dummy2);
       }
 
       int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
@@ -593,23 +607,27 @@ protected:
          DNode      node;
          ObjectInfo info;
          bool       unboxing;
+         int        level;    // if unboxing mode is on, defines the temporal variable offset
 
          ParamInfo()
          {
             subj_ref = 0;
             unboxing = false;
+            level = 0;
          }
          ParamInfo(ref_t subj_ref, DNode node)
          {
             this->subj_ref = subj_ref;
             this->node = node;
             this->unboxing = false;
+            this->level = 0;
          }
          ParamInfo(ref_t subj_ref, ObjectInfo info)
          {
             this->subj_ref = subj_ref;
             this->info = info;
             this->unboxing = false;
+            this->level = 0;
          }
          ParamInfo(ref_t subj_ref, DNode node, ObjectInfo info)
          {
@@ -617,17 +635,21 @@ protected:
             this->info = info;
             this->node = node;
             this->unboxing = false;
+            this->level = 0;
          }
          ParamInfo(ref_t subj_ref, DNode node, bool unboxing)
          {
             this->subj_ref = subj_ref;
             this->node = node;
             this->unboxing = unboxing;
+            this->level = 0;
          }
       };
 
-      bool                               oargUnboxing;
-      bool                               directOrder;
+      bool oargUnboxing;
+      bool directOrder;
+      int  level; // defines the temporal variable number
+
       CachedMemoryMap<size_t, ParamInfo, 4> parameters;
 
       MessageScope()
@@ -635,6 +657,7 @@ protected:
       {
          directOrder = false;
          oargUnboxing = false;
+         level = 0;
       }
    };
 
@@ -679,7 +702,7 @@ protected:
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 
-   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, bool& boxed);
+   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, bool& boxed, bool& unboxing);
 
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
@@ -690,9 +713,10 @@ protected:
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
-   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed);
-   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, int mode = 0);
+   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
+   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, bool& unboxing, int mode = 0);
    void boxCallstack(CodeScope& scope, MessageScope& callStack, bool stackSafe);
+   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
    ref_t mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)

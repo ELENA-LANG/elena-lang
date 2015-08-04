@@ -984,7 +984,13 @@ void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)
    tape.write(bcCopyM, message);
 }
 
-void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
+void ByteCodeWriter :: copy(CommandTape& tape)
+{
+   // copy
+   tape.write(bcCopy);
+}
+
+void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
 {
    // setsubj subj
    tape.write(bcSetSubj, subject);
@@ -1129,6 +1135,15 @@ void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
 {
    // jump labEnd
    tape.write(bcJump, label);
+}
+
+ByteCodeIterator ByteCodeWriter :: insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument)
+{
+   tape.insert(it, ByteCommand(command, argument));
+
+   it--;
+
+   return it;
 }
 
 void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
