@@ -14,23 +14,8 @@
 {
     test            
     [        
-        #var(type:int)n := 1.
-        
-        #var o := XTester2 new.
-        
-        o init &vint:n.
     ]    
 }.
-
-#class XTester2
-{
-    #constructor new []
-    
-    #method init &vint:aRetVal
-    [
-        aRetVal << 2.
-    ]
-}
 
 #symbol XTest =
 [
@@ -704,4 +689,38 @@
     #var x := aCopy X.
     #var y := aCopy Y.
     #var z := aCopy Z.
+].
+
+#class BoxerHelper
+{
+    #constructor new []
+    
+    #method init &vint:aRetVal
+    [
+        aRetVal << 2.
+    ]
+}
+#symbol UnboxTest =
+[        
+    #var(type:int)n := 1.
+    
+    #var o := BoxerHelper new.
+    
+    o init &vint:n.
+            
+    (2 == n)
+        ? [ console writeLine:"Unboxing parameter works". ].
+
+    #var(type:bytearray,size:4)a.
+
+    a@0 := 070h.
+    a@1 := 080h.
+    a@2 := 0C0h.
+    a@3 := 0FFh.
+
+    #var(type:int)r.
+    a read &int:0 &vint:r.
+    
+    (0FFC08070h == r)
+        ? [ console writeLine:"Unboxing object works". ].
 ].

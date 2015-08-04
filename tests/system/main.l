@@ -42,4 +42,5 @@
     GenericMethodTest eval.
     ConstructorTest eval.
     DTOToStructTest eval.
+    UnboxTest eval.
 ].

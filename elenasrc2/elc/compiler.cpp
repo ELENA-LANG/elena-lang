@@ -2167,16 +2167,14 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
    return retVal;
 }
 
-ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object)
+ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object, bool& unboxing)
 {
    if (object.kind == okFieldAddress) {
-      bool dummy = false;
-
       if (object.param == 0) {
          object.kind = okParam;
          object.param = 1;
       }
-      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), dummy, 0);
+      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), unboxing, 0);
    }
 
    _writer.loadObject(*scope.tape, object);
@@ -2955,28 +2953,6 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
 }
 
-void Compiler :: boxCallstack(CodeScope& scope, MessageScope& callStack, bool stackSafe)
-{
-   size_t count = callStack.parameters.Count();
-
-   for (size_t i = 0; i < count; i++) {
-      MessageScope::ParamInfo param = callStack.parameters.get(i);
-
-      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stackSafe ? HINT_STACKSAFE_CALL : 0)) {
-         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, i));
-
-         bool boxed = false;
-         boxObject(scope, param.info, boxed, param.unboxing);
-
-         if (boxed) {
-            scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
-
-            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i));
-         }            
-      }
-   }
-}
-
 void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
 {
    size_t count = callStack.parameters.Count();
@@ -2986,15 +2962,36 @@ void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
       MessageScope::ParamInfo param = callStack.parameters.get(i);
 
       if (param.unboxing) {
-         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
-         _writer.loadBase(*scope.tape, param.info);
+         if (param.level >= 0) {
+            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
+            _writer.loadBase(*scope.tape, param.info);
 
-         //!! for small objects (~4) use appropriate byte commands
-         _writer.copy(*scope.tape);
+            //!! for small objects (~4) use appropriate byte commands
+            _writer.copy(*scope.tape);
+         }
+
+         // if the object should be copied to the field
+         if (param.structOffset >= 0) {
+            int size = scope.moduleScope->defineTypeSize(param.info.type);
+            if (size == 4) {
+               _writer.assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+            }
+            else if (size == 2) {
+               _writer.assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+            }
+            else if (size == 1) {
+               _writer.assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+            }
+            else if (size == 8) {
+               _writer.assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+            }
+         }
       }
    }
    _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-   _writer.releaseObject(*scope.tape, callStack.level);
+
+   if (callStack.level > 0)
+      _writer.releaseObject(*scope.tape, callStack.level);
 }
 
 void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe)
@@ -3017,7 +3014,12 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          }
          else param.info = compileExpression(param.node, scope, 0);
       }
-      loadObject(scope, param.info);
+      if (param.info.kind == okFieldAddress) {
+         // presave the structure offset before boxing / copying locally it
+         param.structOffset = param.info.param;
+      }
+          
+      loadObject(scope, param.info, param.unboxing);
 
       // if open argument list should be unboxed
       if (callStack.oargUnboxing && param.unboxing && scope.moduleScope->typeHints.exist(param.subj_ref, scope.moduleScope->paramsReference)) {
@@ -3050,6 +3052,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
                _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, (callStack.directOrder ? i : count) + param.level ));
 
                callStack.level++;
+               callStack.paramUnboxing = true;
             }
          }            
 
@@ -3087,18 +3090,23 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    }
 
    // save parameters
-   compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe) || test(mode, HINT_INLINE));
-
-   // try to implement the operation directly
    if (test(mode, HINT_INLINE)) {
+      // if it is an operator
+      // try to implement the operation directly
+      ByteCodeIterator bm = scope.tape->end();
+
+      compileMessageParameters(callStack, scope, true);
       ObjectInfo info = compileInlineOperation(scope, callStack, messageRef, mode);
-      // if inline operation is not possible
-      // bad lack - have to check if boxing required
-      if (info.kind == okUnknown) {
-         boxCallstack(scope, callStack, test(methodHint, tpStackSafe));
+      if (info.kind == okUnknown && !test(methodHint, tpStackSafe)) {
+         // if inline operation is not possible
+         // bad lack - have to recompile once again
+         _writer.trimTape(bm, *scope.tape);              // !! ineffective, probably should be done only if okFieldAddress and okLocalAddress were used
+
+         compileMessageParameters(callStack, scope, false);
       }
       else return info;
    }
+   else compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
 
    // load target
    if (target.kind == okConstantRole) {
@@ -3152,7 +3160,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
       _writer.callMethod(*scope.tape, 0, paramCount);
    }
 
-   if (callStack.level > 0)
+   if (callStack.paramUnboxing)
       unboxCallstack(scope, callStack);
 
    endDebugExpression(scope);

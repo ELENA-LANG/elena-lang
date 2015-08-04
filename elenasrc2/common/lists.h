@@ -855,7 +855,8 @@ public:
 
          if (tmp->previous) {
             tmp->previous->next = tmp->next;
-            tmp->next->previous = tmp->previous;
+            if (tmp->next)
+               tmp->next->previous = tmp->previous;
          }
          else _top = tmp->next;
       }

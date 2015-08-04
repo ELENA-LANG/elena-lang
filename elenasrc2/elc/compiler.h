@@ -607,27 +607,31 @@ protected:
          DNode      node;
          ObjectInfo info;
          bool       unboxing;
-         int        level;    // if unboxing mode is on, defines the temporal variable offset
+         int        level;          // if unboxing mode is on, defines the temporal variable offset
+         int        structOffset;   // contains the field offset if structe field was boxed
 
          ParamInfo()
          {
             subj_ref = 0;
             unboxing = false;
             level = 0;
+            structOffset = 0;
          }
          ParamInfo(ref_t subj_ref, DNode node)
          {
             this->subj_ref = subj_ref;
             this->node = node;
             this->unboxing = false;
-            this->level = 0;
+            this->level = -1;
+            this->structOffset = -1;
          }
          ParamInfo(ref_t subj_ref, ObjectInfo info)
          {
             this->subj_ref = subj_ref;
             this->info = info;
             this->unboxing = false;
-            this->level = 0;
+            this->level = -1;
+            this->structOffset = -1;
          }
          ParamInfo(ref_t subj_ref, DNode node, ObjectInfo info)
          {
@@ -635,20 +639,23 @@ protected:
             this->info = info;
             this->node = node;
             this->unboxing = false;
-            this->level = 0;
+            this->level = -1;
+            this->structOffset = -1;
          }
          ParamInfo(ref_t subj_ref, DNode node, bool unboxing)
          {
             this->subj_ref = subj_ref;
             this->node = node;
             this->unboxing = unboxing;
-            this->level = 0;
+            this->level = -1;
+            this->structOffset = -1;
          }
       };
 
       bool oargUnboxing;
       bool directOrder;
       int  level; // defines the temporal variable number
+      bool paramUnboxing;
 
       CachedMemoryMap<size_t, ParamInfo, 4> parameters;
 
@@ -658,6 +665,7 @@ protected:
          directOrder = false;
          oargUnboxing = false;
          level = 0;
+         paramUnboxing = false;
       }
    };
 
@@ -708,14 +716,13 @@ protected:
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 
    ObjectInfo saveObject(CodeScope& scope, ObjectInfo& object, int offset);
-   ObjectInfo loadObject(CodeScope& scope, ObjectInfo& object);
+   ObjectInfo loadObject(CodeScope& scope, ObjectInfo& object, bool& unboxing);
 
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, bool& unboxing, int mode = 0);
-   void boxCallstack(CodeScope& scope, MessageScope& callStack, bool stackSafe);
    void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
    ref_t mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);

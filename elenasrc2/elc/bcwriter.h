@@ -265,6 +265,8 @@ public:
 
    ByteCodeIterator insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument);
 
+   void trimTape(ByteCodeIterator it, CommandTape& tape);
+
 //   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);

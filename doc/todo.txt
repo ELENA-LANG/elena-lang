@@ -21,11 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
               xdev - general development              
-                       * test unboxing local variables : both as target and as a parameter
-                       * test unboxing structure fields : both as target and as a parameter
-                       
-                       * boxing / unboxing (localaddress / fieldaddress), issue #22
-
                        * by ref parameters
 
                        * fix system test : open args
@@ -174,6 +169,8 @@ Currently:
                        * implement
 
               xdev - general implementation
+                       * review compileMessage note : !! ineffective, probably should be done only if okFieldAddress and okLocalAddress were used
+
                        * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
 
                        * handle access vialation exception : exception handler should be called
@@ -207,6 +204,7 @@ Currently:
                        * switch to mt platform
                        
               idev - usability
+                       * set into "#var(type:int)r." is invalid
                        * project view
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception

@@ -9,6 +9,7 @@
 
 [ELC]
 [-] issue #47 fixed
+[-] issue #22 fixed
 
 [LIB]
 [+]system'collections: Stack, Queue

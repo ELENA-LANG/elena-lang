@@ -1146,6 +1146,18 @@ ByteCodeIterator ByteCodeWriter :: insertCommand(ByteCodeIterator it, CommandTap
    return it;
 }
 
+void ByteCodeWriter :: trimTape(ByteCodeIterator it, CommandTape& tape)
+{
+   while (true) {
+      ByteCodeIterator next = it;
+      next++;
+      if (!next.Eof()) {
+         tape.tape.cut(next);
+      }
+      else break;
+   }
+}
+
 void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
 {
    // exclude code should follow open command
