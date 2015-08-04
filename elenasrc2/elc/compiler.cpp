@@ -2953,6 +2953,21 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
 }
 
+bool Compiler :: checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack)
+{
+   size_t count = callStack.parameters.Count();
+
+   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+   for (size_t i = 0; i < count; i++) {
+      MessageScope::ParamInfo param = callStack.parameters.get(i);
+
+      if (param.info.kind == okLocalAddress || param.info.kind == okFieldAddress || param.info.kind == okSubject)
+         return true;
+   }
+
+   return false;
+}
+
 void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
 {
    size_t count = callStack.parameters.Count();
@@ -3097,7 +3112,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
       compileMessageParameters(callStack, scope, true);
       ObjectInfo info = compileInlineOperation(scope, callStack, messageRef, mode);
-      if (info.kind == okUnknown && !test(methodHint, tpStackSafe)) {
+      if (info.kind == okUnknown && checkIfBoxingRequired(scope, callStack)) {
          // if inline operation is not possible
          // bad lack - have to recompile once again
          _writer.trimTape(bm, *scope.tape);              // !! ineffective, probably should be done only if okFieldAddress and okLocalAddress were used

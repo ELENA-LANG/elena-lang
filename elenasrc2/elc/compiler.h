@@ -721,6 +721,7 @@ protected:
    void releaseOpenArguments(CodeScope& scope, size_t spaceToRelease);
 
    bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode);
+   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
    ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
    ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, bool& unboxing, int mode = 0);
    void unboxCallstack(CodeScope& scope, MessageScope& callStack);
