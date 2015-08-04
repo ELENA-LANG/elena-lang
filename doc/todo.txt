@@ -20,8 +20,8 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              idev - debugger:
-                       * fix #7
+              adev - lib30     
+                       * Stack, Queue
 
               xdev - general development              
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
@@ -34,14 +34,41 @@ Currently:
                        * by ref parameters
                        * full test
 
+              xdev - byte code optimization                               
+                       * review system_test code
+
+              adev - lib30 optimization
+                       * system'io'MemoryStream - do not create a new integer after each operation
+                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
+                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
+                       * TextBuffer : redesign delete operation, it should not create new literal classes
+                       * system'LiteralIterator - operation available and next should not creates a new object , try
+                         to use stack allocated object for the length operations
+
 <==>                         
 
               adev - lib30     
-                       * get rid of all warnings in system package
+                       * implement new functionality : BitArray, SortedList, SortedArrayList
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+
+                       * implement: exp constant
+                       * implement: infinity
+                       * implement: not-a-number
+                       * implement: base 10 logarithm
+                       * implement: logarithm with specified base
+                       * implement: floor of the log
+                       * implement: round to specified decimal places
+                       * implement: truncate to specified decimal places
+                       * implement: factorial
+                       * implement: integer divide rounded toward zero
+                       * implement: integer remainder rounded toward zero
+                       * implement: greatest common denominator
+                       * implement: least common multiple
+                       * implement: get maximum of two numbers
+                       * implement: get minimum of two numbers
+                       * get rid of all warnings in extension / sqlite / winforms packages
                        * review system'collections, try to use more strong typed code
                        * used strong typed event handlers
                        * implement file search
-                       * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * fix anagram rosetta examples
                        
               xdev - linux:
@@ -221,20 +248,14 @@ Currently:
                        * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
                        
                        * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-                       * system'io'MemoryStream - do not create a new integer after each operation
-                       * optimize ArrayIterator / MemoryStream, it should not generate every time a new object
-                       * LiteralIndexer : do not create new integer for ever "next" and "available" call
-                       * TextBuffer : redesign delete operation, it should not create new literal classes
+
                        * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
                          modify the code, from reading bool values from stack to constant array
-                       * system'LiteralIterator - operation available and next should not creates a new object , try
-                         to use stack allocated object for the length operations
                        * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
                        * review ws_insert function (in assembler), try to simplify it
                        * Real#class.new&int[1] - optimize
                        * ByteArray.fill&index&length&byte
                        * optimize typed list
-                       * File - make possible to check if the file exists
                        * optimize TextBuffer.indexOf&index&literal&vint
                        * optimize TextBuffer.indexOf&index&char&vint
                        * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
@@ -716,12 +737,6 @@ Currently:
                        * special class IndexedPointer - which is used to refer to the object by index
                        * operation with upper / lower case implementing
                        * Struct : check if the income message is "get"
-                       * win32 file i/o operations should raise an exception with an error code
-                       * implement: random number stream (0.0 to 1.0)
-                       * implement: quick random number
-                       * implement: bit at position (0|1)
-                       * implement: position of highest bit set
-                       * implement: test if all bits set in mask clear in receiver
                        * support: primitive operation int + long, long + int
                        * bytenumber : bitwise operation with long number - incorrect code
                        * review extensions'math'Matrix
@@ -751,27 +766,11 @@ Currently:
                        * implement analog of String.Format
                        * calender: custom formatting
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
-                       * call stack : fix invalid information
                        * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
                        * encoders : make code similar to c#, it should be possible to save literal / wide as
                          bytearray and visa versa (currently we have to convert literal / wide to chararray and then save
                          in appropriate encoding, could we simplify the routine?)
                        * expanding lib30
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
                        * system'$consolehandler: if the returning handler is -1
                        * system'$consolewriter - the exception should be raised if the operation
                          is unsuccessful
