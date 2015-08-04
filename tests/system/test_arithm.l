@@ -12,12 +12,25 @@
 
 #symbol XTester =
 {
-    cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:"abc".
-    
     test            
-    [
+    [        
+        #var(type:int)n := 1.
+        
+        #var o := XTester2 new.
+        
+        o init &vint:n.
     ]    
 }.
+
+#class XTester2
+{
+    #constructor new []
+    
+    #method init &vint:aRetVal
+    [
+        aRetVal << 2.
+    ]
+}
 
 #symbol XTest =
 [

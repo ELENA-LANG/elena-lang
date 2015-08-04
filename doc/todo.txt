@@ -20,21 +20,20 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xdev - general implementation
-                       * refactoring : create a single procedure to typecast acc, should be used every time
-                         typecasting required
-
               xdev - general development              
+                       * test unboxing local variables : both as target and as a parameter
+                       * test unboxing structure fields : both as target and as a parameter
+                       
                        * boxing / unboxing (localaddress / fieldaddress), issue #22
+
+                       * by ref parameters
 
                        * fix system test : open args
                        * fix call info for system libraries
 
                        * literals
                        * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
-                       * by ref parameters
-                       * test unboxing local variables : both as target and as a parameter
-                       * test unboxing structure fields : both as target and as a parameter
+
                        * full test
 
               xdev - byte code optimization                               
@@ -229,6 +228,10 @@ Currently:
                        * fix critical issues
                        * fix bugs
                        * can we get rid of bool type forwaring?
+
+              xdev - general implementation
+                       * refactoring : create a single procedure to typecast acc, should be used every time
+                         typecasting required
 
 <=================> 
                                                                                                                             

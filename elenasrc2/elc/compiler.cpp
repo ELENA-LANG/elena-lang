@@ -2265,11 +2265,19 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
       _writer.boxObject(*scope.tape, 4, wrapperRef | mskVMTRef, true);
    }
    else if (object.kind == okLocalAddress) {
-      int size = scope.moduleScope->defineStructSize(object.extraparam, unboxing);
+      // use the provided type if the variable was already typecasted
+      // to deal with the special case when the local is used for the wrapper
+      ref_t type = object.type;
+      if (!type) {
+         type = scope.moduleScope->typeHints.get(object.extraparam);
+      }
+
+      ref_t classRef = 0;
+      int size = scope.moduleScope->defineTypeSize(type, classRef, unboxing);
       if (size != 0) {
          boxed = true;
 
-         _writer.boxObject(*scope.tape, size, object.extraparam | mskVMTRef, true);
+         _writer.boxObject(*scope.tape, size, classRef | mskVMTRef, true);
       }
    }
    else if ((object.kind == okParam || object.kind == okThisParam) && object.type != 0 && object.extraparam == -1)
@@ -2978,7 +2986,7 @@ void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
       MessageScope::ParamInfo param = callStack.parameters.get(i);
 
       if (param.unboxing) {
-         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
          _writer.loadBase(*scope.tape, param.info);
 
          //!! for small objects (~4) use appropriate byte commands
@@ -2986,6 +2994,7 @@ void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
       }
    }
    _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+   _writer.releaseObject(*scope.tape, callStack.level);
 }
 
 void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe)
