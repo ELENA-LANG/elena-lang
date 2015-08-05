@@ -368,7 +368,7 @@
 
     #method hbrush = $self.
         
-    #method free
+    #method(stacksafe) free
     [
         system'external'GDI32 DeleteObject &handle:theHandle.
     ]

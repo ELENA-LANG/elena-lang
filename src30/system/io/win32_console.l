@@ -30,7 +30,9 @@
 
     #method(stacksafe) readCursorPosition &coord:aCoord
     [
-        aCoord write &coord:dwCursorPosition.
+        #var(type:win_coord)aCopy := dwCursorPosition.
+        
+        aCoord write &coord:aCopy.
     ]
 }
 

@@ -136,14 +136,18 @@
     
     #method set &brush:aBrush
     [
-        (0 == theBrush)
-            ! [ theBrush free. ].
+        #var(type:hbrush) aBrushCopy := theBrush.
+        
+        (0 == aBrushCopy)
+            ! [ aBrushCopy free. ].
             
-        theBrush := aBrush hbrush.
+        aBrushCopy := aBrush hbrush.
         
         theHDC setBkColor &int:(aBrush color int).
         
-        theHDC select &hbrush:theBrush.        
+        theHDC select &hbrush:aBrushCopy.        
+        
+        theBrush := aBrushCopy.
     ]    
     
     #method close
@@ -221,9 +225,10 @@
     [
         (0 == thePen)
             ! [ thePen free. ].
-            
-        (0 == theBrush)
-            ! [ theBrush free. ].
+           
+        #var(type:hbrush) aBrushCopy := theBrush.
+        (0 == aBrushCopy)
+            ! [ aBrushCopy free. ].
             
         theBrush := 0.
         thePen := 0.
