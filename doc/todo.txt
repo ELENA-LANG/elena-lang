@@ -20,20 +20,17 @@ v  - vm script
 ------                                 
 Currently:
 ------                                                                                         
-              xdev - general development              
-                       * by ref parameters
+
+              xdev - general development                                                                                            
+                       * get rid of all warnings
+                       * full test
 
                        * fix system test : open args
                        * fix call info for system libraries
 
-                       * literals
-                       * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
-
-                       * full test
-
               xdev - byte code optimization                               
                        * review system_test code
-
+                                                  
 <==>                         
 
               adev - lib30     
@@ -169,8 +166,6 @@ Currently:
                        * implement
 
               xdev - general implementation
-                       * review compileMessage note : !! ineffective, probably should be done only if okFieldAddress and okLocalAddress were used
-
                        * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
 
                        * handle access vialation exception : exception handler should be called
@@ -214,7 +209,8 @@ Currently:
                        * class view - make possible to browse the class methods
     
               xdev - general development
-                       * try to get rid of most external code
+                       * literals
+                       * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
                        
                        * default dynamic constructor
 
@@ -223,9 +219,10 @@ Currently:
 
                        * try to minimize the list of type forwards
 
-                       * fix critical issues
                        * fix bugs
                        * can we get rid of bool type forwaring?
+
+                       * try to get rid of most external code
 
               xdev - general implementation
                        * refactoring : create a single procedure to typecast acc, should be used every time

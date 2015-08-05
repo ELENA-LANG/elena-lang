@@ -406,6 +406,15 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
    tape.write(bcNew, reference | mskVMTRef, fieldCount);
 }
 
+void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, ObjectInfo field)
+{
+   loadBase(tape, field);
+   newObject(tape, 1, reference);
+   tape.write(bcBSwap);
+   tape.write(bcAXSaveBI, 0);
+   tape.write(bcACopyB);
+}
+
 void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
 {
    // create

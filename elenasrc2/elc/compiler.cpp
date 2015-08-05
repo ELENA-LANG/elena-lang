@@ -1064,7 +1064,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.header.flags |= elClosed;
       }
       else if (StringHelper::compare(terminal, HINT_STRUCT)) {
-         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
             raiseError(wrnInvalidHint, terminal);
 
          info.header.flags |= elStructureRole;
@@ -1127,7 +1127,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
       else if (StringHelper::compare(terminal, HINT_BINARY)) {
-         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
             raiseError(wrnInvalidHint, terminal);
 
          TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
@@ -1160,7 +1160,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
       }
       else if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
-         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
             raiseError(wrnInvalidHint, terminal);
 
          info.header.flags |= elDynamicRole;
@@ -1174,6 +1174,12 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       }
       else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
          info.header.flags |= elDebugWideLiteral;
+      }
+      else if (StringHelper::compare(terminal, HINT_VARIABLE)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.header.flags |= elWrapper;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -2957,7 +2963,6 @@ bool Compiler :: checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack
 {
    size_t count = callStack.parameters.Count();
 
-   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
    for (size_t i = 0; i < count; i++) {
       MessageScope::ParamInfo param = callStack.parameters.get(i);
 
@@ -2979,10 +2984,19 @@ void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
       if (param.unboxing) {
          if (param.level >= 0) {
             _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
-            _writer.loadBase(*scope.tape, param.info);
 
-            //!! for small objects (~4) use appropriate byte commands
-            _writer.copy(*scope.tape);
+            int size = scope.moduleScope->defineTypeSize(param.info.type);
+            // if it is a stack allocated object
+            if (size > 0) {
+               _writer.loadBase(*scope.tape, param.info);
+
+               //!! for small objects (~4) use appropriate byte commands
+               _writer.copy(*scope.tape);
+            }
+            else {
+               _writer.loadObject(*scope.tape, ObjectInfo(okAccField));
+               _writer.saveObject(*scope.tape, param.info);
+            }
          }
 
          // if the object should be copied to the field
@@ -3045,7 +3059,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          // if type is mismatch - typecast
          bool mismatch = false;
          bool boxed = false;
-         param.info = compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, param.unboxing);
+         compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, param.unboxing);
 
          // check if boxing required
          if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
@@ -3054,22 +3068,23 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          if (mismatch)
             scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
 
-         if (boxed) {
+         if (boxed)
             scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
 
-            // save boxed object if required
-            if (param.unboxing) {
-               // resever the space for temporal varialbe
-               bm = _writer.insertCommand(bm, *scope.tape, bcPushN, 0);
-               param.level = callStack.level;
+         // save boxed object if required
+         if (param.unboxing) {
+            // resever the space for temporal varialbe
+            bm = _writer.insertCommand(bm, *scope.tape, bcPushN, 0);
+            param.level = callStack.level;
 
-               // assign the boxed object to the temporal variable
-               _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, (callStack.directOrder ? i : count) + param.level ));
+            // assign the boxed object to the temporal variable
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, (callStack.directOrder ? i : count) + param.level ));
 
-               callStack.level++;
-               callStack.paramUnboxing = true;
-            }
-         }            
+            callStack.level++;
+            callStack.paramUnboxing = true;
+
+            scope.raiseWarning(4, wrnUnboxinging, param.node.FirstTerminal());
+         }
 
          // save into the stack
          if (callStack.directOrder) {
@@ -3112,14 +3127,18 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
       compileMessageParameters(callStack, scope, true);
       ObjectInfo info = compileInlineOperation(scope, callStack, messageRef, mode);
+      // if inline operation is not possible
+      // generic message should be sent
+      if (info.kind != okUnknown)
+         return info;
+
+      // if stack allocated operands were used
+      // bad lack - have to recompile once again
       if (info.kind == okUnknown && checkIfBoxingRequired(scope, callStack)) {
-         // if inline operation is not possible
-         // bad lack - have to recompile once again
-         _writer.trimTape(bm, *scope.tape);              // !! ineffective, probably should be done only if okFieldAddress and okLocalAddress were used
+         _writer.trimTape(bm, *scope.tape);
 
          compileMessageParameters(callStack, scope, false);
       }
-      else return info;
    }
    else compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
 
@@ -3687,7 +3706,7 @@ ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode,
    return ObjectInfo(okAccumulator);
 }
 
-ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_t target_type, bool& mismatch, bool& boxed, bool& unboxing)
+ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref_t target_type, bool& mismatch, bool& boxed, bool& unboxing)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -3696,6 +3715,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
 
    ref_t source_type = object.type;
    ref_t sourceClassReference = 0;
+   // define the object class
    if (object.kind == okConstantClass || object.kind == okLocalAddress) {
       sourceClassReference = object.extraparam;
    }
@@ -3719,6 +3739,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
       sourceClassReference = scope.moduleScope->typeHints.get(source_type);
    }
 
+   // if types misnatch - should be typecasted
    if (target_type != source_type) {
       object.type = target_type;
 
@@ -3752,15 +3773,17 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                return object;
             }
             else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
-               return ObjectInfo(okAccumulator, 0, target_type);
+               return ObjectInfo(okAccumulator, 0, 0, target_type);
             }
 //            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
 //               return ObjectInfo(okAccumulator, 0, target_type);
 //            }
 
+            // NOTE : compiler magic!
             // if the source is structure
             if (test(sourceInfo.header.flags, elStructureRole)) {
-               // if source is target wrapper
+               // if source is target wrapper (i.e. source is a target container)
+               // virtually copy the value into the stack allocated local
                if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
                   ObjectInfo primitive(okLocal, 0, 0, target_type);
                   allocateStructure(scope, 0, primitive);
@@ -3769,7 +3792,8 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
 
                   return primitive;
                }
-               // if target is a source wrapper
+               // if target is source wrapper (i.e. target is a source container)
+               // pass it directly
                if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
                   if (test(targetInfo.header.flags, elEmbeddable)) {
 
@@ -3794,12 +3818,23 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo object, ref_
                break;
          }
 
+         // NOTE : compiler magic!
+         // if the target is generic wrapper (container) and the object is a local
+         if (object.kind == okLocal && test(targetInfo.header.flags, elWrapper)) {
+            // allocate a temporal object
+            _writer.newVariable(*scope.tape, targetClassReference, ObjectInfo(okAccumulator));
+            unboxing = true;
+
+            return ObjectInfo(okAccumulator, 0, 0, target_type);
+         }
+
          // if type mismatch
          // call typecast method
          mismatch = true;
 
          // the parameter should be boxed before
-         boxObject(scope, object, boxed, unboxing);
+         bool dummy = false;
+         boxObject(scope, object, boxed, dummy);
 
          _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
          _writer.typecast(*scope.tape);
@@ -4326,6 +4361,15 @@ void Compiler :: reserveSpace(CodeScope& scope, int size)
 
       methodScope->reserved += size;
    }
+}
+
+void Compiler :: allocateLocal(CodeScope& scope, ObjectInfo& exprOperand)
+{
+   exprOperand.kind = okLocalAddress;
+   exprOperand.param = scope.newSpace(1);
+
+   // allocate
+   reserveSpace(scope, 1);
 }
 
 bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand, bool presavedAccumulator)
@@ -5178,6 +5222,12 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 
             if (typeRef != 0)
                scope.info.fieldTypes.add(offset, typeRef);
+
+            // byref variable may have only one field
+            if (test(scope.info.header.flags, elWrapper)) {
+               if (scope.info.fields.Count() > 1)
+                  scope.raiseError(errIllegalField, member.Terminal());
+            }
          }
       }
       else {

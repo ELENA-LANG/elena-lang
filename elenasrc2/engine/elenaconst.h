@@ -282,6 +282,7 @@ namespace _ELENA_
    const int elStructureRole       = 0x00000008;
    const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
+   const int elWrapper             = 0x00001040;
    const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
@@ -450,6 +451,7 @@ namespace _ELENA_
    #define HINT_STRUCT             "struct"
    #define HINT_INTEGER_NUMBER     "integer"
    #define HINT_FLOAT_NUMBER       "floating"
+   #define HINT_VARIABLE           "variable"
    #define HINT_BINARY             "stringof"
    #define HINT_DYNAMIC            "dynamic"
    #define HINT_POINTER            "pointer"

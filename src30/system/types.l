@@ -5,6 +5,8 @@
  
 // === basic primitive types ===
 
+#subject(class:system'Variable)     ref.
+
 #subject(class:system'ByteNumber)   byte.
 #subject(class:system'ShortNumber)  short.
 #subject(class:system'IntNumber)    int.

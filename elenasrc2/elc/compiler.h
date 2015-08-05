@@ -710,7 +710,7 @@ protected:
 
    void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 
-   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo target, size_t type_ref, bool& enforced, bool& boxed, bool& unboxing);
+   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo& target, size_t type_ref, bool& enforced, bool& boxed, bool& unboxing);
 
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
@@ -788,6 +788,7 @@ protected:
 
    void reserveSpace(CodeScope& scope, int size);
    bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand, bool presavedAccumulator = false);
+   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
 
    ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);

@@ -7,6 +7,10 @@
                              What's New in 1.9.21
 ******************************************************************************
 
+[ELENA]
+[+] new "variable" hint
+[+] "ByRef" parameters are supported
+
 [ELC]
 [-] issue #47 fixed
 [-] issue #22 fixed

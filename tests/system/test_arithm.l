@@ -13,9 +13,8 @@
 #symbol XTester =
 {
     test            
-    [        
-        UnboxTest eval.
-    ]    
+    [
+    ]        
 }.
 
 #symbol XTest =
@@ -700,7 +699,15 @@
     [
         aRetVal << 2.
     ]
+    
+    #method exchange &ref:anObject1 &ref:anObject2
+    [
+        #var tmp := anObject1 value.
+        anObject1 << (anObject2 value).
+        anObject2 << tmp.
+    ]    
 }
+
 #symbol UnboxTest =
 [        
     #var(type:int)n := 1.
@@ -724,4 +731,15 @@
     
     (0FFC08070h == r)
         ? [ console writeLine:"Unboxing object works". ].
+].
+
+#symbol RefTest =
+[
+    #var a := 2.
+    #var b := "hello".
+    
+    BoxerHelper new exchange &ref:a &ref:b.
+    
+    ((a == "hello")and:(b == 2))
+        ? [ console writeLine:"ByRef routine works". ].
 ].

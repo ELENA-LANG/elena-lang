@@ -212,6 +212,7 @@ public:
    void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+   void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
    void newDynamicObject(CommandTape& tape);
 
    void loadObject(CommandTape& tape, ObjectInfo object);

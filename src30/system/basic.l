@@ -2570,7 +2570,7 @@
 /// A generic variable. 
 ///
 /// Extends an assigned value
-#class Variable
+#class(variable) Variable
 {
     #field theValue.
     
