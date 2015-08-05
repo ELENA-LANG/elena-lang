@@ -2986,9 +2986,9 @@ void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
          if (param.level >= 0) {
             _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
 
-            int size = scope.moduleScope->defineTypeSize(param.info.type);
+            int size = scope.moduleScope->defineStructSize(param.info.extraparam);
             // if it is a stack allocated object
-            if (size > 0) {
+            if (size != 0) {
                _writer.loadBase(*scope.tape, param.info);
 
                //!! for small objects (~4) use appropriate byte commands

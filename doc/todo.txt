@@ -22,11 +22,14 @@ Currently:
 ------                                                                                         
 
               xdev - general development                                                                                            
-                       * get rid of all warnings
+                       * fix system test : open args
+                       * fix DTOToStructTest
+                       * fix UnboxTest (object unboxing)
+                                  
                        * full test
 
-                       * fix system test : open args
-                       * fix call info for system libraries
+              xdev - general implementation
+                       * fix stack info for system libraries #68
 
               xdev - byte code optimization                               
                        * review system_test code
