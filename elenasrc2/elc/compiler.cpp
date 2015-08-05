@@ -2271,13 +2271,14 @@ ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxe
    else if (object.kind == okLocalAddress) {
       // use the provided type if the variable was already typecasted
       // to deal with the special case when the local is used for the wrapper
-      ref_t type = object.type;
-      if (!type) {
-         type = scope.moduleScope->typeHints.get(object.extraparam);
-      }
 
       ref_t classRef = 0;
-      int size = scope.moduleScope->defineTypeSize(type, classRef, unboxing);
+      if (object.type != 0) {
+         classRef = scope.moduleScope->typeHints.get(object.type);
+      }
+      else classRef = object.extraparam;
+
+      int size = scope.moduleScope->defineStructSize(classRef, unboxing);
       if (size != 0) {
          boxed = true;
 

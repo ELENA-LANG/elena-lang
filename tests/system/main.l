@@ -43,4 +43,5 @@
     ConstructorTest eval.
     DTOToStructTest eval.
     UnboxTest eval.
+    ByRefTest eval.
 ].

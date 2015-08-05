@@ -140,7 +140,7 @@
         ^ aValue.
     ]
     
-    add &int:aValue
+    #method(stacksafe) add &int:aValue
     [
         ^ aValue.
     ]
@@ -733,7 +733,7 @@
         ? [ console writeLine:"Unboxing object works". ].
 ].
 
-#symbol RefTest =
+#symbol ByRefTest =
 [
     #var a := 2.
     #var b := "hello".
