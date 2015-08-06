@@ -3139,8 +3139,14 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
       // if stack allocated operands were used
       // bad lack - have to recompile once again
+      // !! should be refactored!!
       if (info.kind == okUnknown && checkIfBoxingRequired(scope, callStack)) {
          _writer.trimTape(bm, *scope.tape);
+
+         // HOT FIX : to reimplement any sub expression
+         for (int i = 1; i < callStack.parameters.Count(); i++) {
+            (*callStack.parameters.getIt(i)).info.kind = okUnknown;
+         }
 
          compileMessageParameters(callStack, scope, false);
       }

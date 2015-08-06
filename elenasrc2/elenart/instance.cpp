@@ -115,8 +115,8 @@ int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
    if (initSubjectSection(subjectSection)) {
       MemoryReader reader(&subjectSection);
 
-      ref_t subject;
-      int verb, count;
+      ref_t verb, subject;
+      int count;
       decodeMessage(subjectRef, subject, verb, count);
 
       return manager.readSubjectName(reader, subject, buffer, length);

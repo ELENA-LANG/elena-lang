@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7D64C701-DDAA-467C-96BA-513438A1DE42}</ProjectGuid>
+    <ProjectGuid>{895D3762-6397-468A-8984-779C1A9E5C0D}</ProjectGuid>
     <RootNamespace>elenavm</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

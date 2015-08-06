@@ -66,8 +66,8 @@ static size_t __getClassName(Instance* instance, void* vmtAddress, ident_c* buff
 
 static size_t __getSubjectName(Instance* instance, void* subjectRef, ident_c* buffer, size_t maxLength)
 {
-   size_t subj_id;
-   int verb_id, param_count;
+   size_t verb_id, subj_id;
+   int param_count;
    decodeMessage((size_t)subjectRef, subj_id, verb_id, param_count);
 
    ident_t subjectName = instance->getSubject((ref_t)subj_id);
