@@ -140,6 +140,30 @@ protected:
    {
       _controller->doUnComment();
    }
+   void on_menu_project_include()
+   {
+      _controller->doInclude();
+   }
+   void on_menu_project_exclude()
+   {
+      _controller->doExclude();
+   }
+   void on_menu_project_compile()
+   {
+      _controller->doCompileProject();
+   }
+   void on_menu_project_cleanup()
+   {
+      _controller->cleanUpProject();
+   }
+   void on_menu_project_forwards()
+   {
+      _controller->doSetProjectForwards();
+   }
+   void on_menu_project_options()
+   {
+      _controller->doSetProjectSettings();
+   }
 
    void populateMenu();
    void populateToolbar();

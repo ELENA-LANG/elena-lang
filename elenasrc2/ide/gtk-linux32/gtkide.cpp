@@ -100,6 +100,16 @@ static Glib::ustring ui_info =
         "      <menuitem action='EditComment'/>"
         "      <menuitem action='EditUncomment'/>"
         "    </menu>"
+        "    <menu action='ProjectMenu'>"
+        "      <menuitem action='ProjectInclude'/>"
+        "      <menuitem action='ProjectExclude'/>"
+        "      <separator/>"
+        "      <menuitem action='ProjectCompile'/>"
+        "      <menuitem action='ProjectCleanup'/>"
+        "      <separator/>"
+        "      <menuitem action='ProjectForwards'/>"
+        "      <menuitem action='ProjectOptions'/>"
+        "    </menu>"
         "  </menubar>"
 //        "  <toolbar  name='ToolBar'>"
 //        "    <toolitem action='FileNewStandard'/>"
@@ -114,6 +124,7 @@ void MainWindow :: populateMenu()
    //File menu:
    _refActionGroup->add( Gtk::Action::create("FileMenu", "_File") );
    _refActionGroup->add( Gtk::Action::create("EditMenu", "_Edit") );
+   _refActionGroup->add( Gtk::Action::create("ProjectMenu", "_Project") );
 
    _refActionGroup->add( Gtk::Action::create("FileNew", "New") );
    _refActionGroup->add( Gtk::Action::create("FileNewSource", "Source"), sigc::mem_fun(*this, &MainWindow::on_menu_file_new_source));
@@ -146,6 +157,13 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("EditLower", "To lower case"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_lower));
    _refActionGroup->add( Gtk::Action::create("EditComment", "Block comment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_comment));
    _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_uncomment));
+
+   _refActionGroup->add( Gtk::Action::create("ProjectInclude", "Include"), sigc::mem_fun(*this, &MainWindow::on_menu_project_include));
+   _refActionGroup->add( Gtk::Action::create("ProjectExclude", "Exclude"), sigc::mem_fun(*this, &MainWindow::on_menu_project_exclude));
+   _refActionGroup->add( Gtk::Action::create("ProjectCompile", "Compile"), sigc::mem_fun(*this, &MainWindow::on_menu_project_compile));
+   _refActionGroup->add( Gtk::Action::create("ProjectCleanup", "Clean up"), sigc::mem_fun(*this, &MainWindow::on_menu_project_cleanup));
+   _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_forwards));
+   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_options));
 
    loadUI(ui_info, "/MenuBar");
 }

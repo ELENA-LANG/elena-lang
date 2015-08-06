@@ -339,7 +339,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    boolType = module->mapSubject(project->resolveForward(BOOL_FORWARD), false);
 
    defaultNs.add(module->Name());
-   
+
    loadTypes(module);
    loadExtensions(TerminalInfo(), module);
 }
@@ -623,7 +623,7 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
       return 0;
 
    MemoryReader reader(metaData);
-   
+
    if (!headerOnly && argModule != module) {
       ClassInfo copy;
       copy.load(&reader, headerOnly);
@@ -716,7 +716,7 @@ int Compiler::ModuleScope::defineStructSize(ref_t classReference, bool& variable
       variable = !test(classInfo.header.flags, elReadOnlyRole);
 
       return classInfo.size;
-   }      
+   }
 
    return 0;
 }
@@ -1802,7 +1802,8 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       _writer.callMethod(*scope.tape, 0, 1);
 
       bool mismatch = false;
-      compileTypecast(scope, ObjectInfo(okAccumulator), scope.moduleScope->boolType, mismatch, boxed, dummy);
+      ObjectInfo acc(okAccumulator);
+      compileTypecast(scope, acc, scope.moduleScope->boolType, mismatch, boxed, dummy);
 
       endDebugExpression(scope);
 
@@ -1876,7 +1877,7 @@ void Compiler :: compileContentAssignment(DNode node, CodeScope& scope, ObjectIn
          else if ((size == 2 || size == 1) && variableInfo.kind == okLocal) {
             _writer.saveInt(*scope.tape, variableInfo);
          }
-         // HOTFIX: assign a float-point numeric result 
+         // HOTFIX: assign a float-point numeric result
          else if ((size == 8) && classReference == scope.moduleScope->realReference) {
             _writer.saveReal(*scope.tape, variableInfo);
          }
@@ -2853,7 +2854,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          _writer.selectByAcc(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
       }
       else _writer.selectByAcc(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
-      
+
       return ObjectInfo(okAccumulator, 0, 0, scope.moduleScope->boolType);
    }
 
@@ -3058,7 +3059,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          // presave the structure offset before boxing / copying locally it
          param.structOffset = param.info.param;
       }
-          
+
       loadObject(scope, param.info, param.unboxing);
 
       // if type is mismatch - typecast
@@ -3399,7 +3400,7 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
          }
       }
       if (role.kind == okSubject) {
-         // if subject variable is used         
+         // if subject variable is used
          role = ObjectInfo(okSubjectDispatcher, role.param);
       }
       // if the symbol VMT can be used as an external role
@@ -3860,7 +3861,7 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref
          return ObjectInfo(okAccumulator, 0, 0, target_type);
       }
    }
-   
+
    return object;
 }
 
@@ -3932,7 +3933,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
 {
-   // if primitive data operation can be used   
+   // if primitive data operation can be used
    if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
       // if it is an assignment operation (e.g. a := a + b <=> a += b)
       // excluding structure fields (except the first one)
@@ -4658,7 +4659,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 
                _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
 
-               boxStructureField(codeScope, 
+               boxStructureField(codeScope,
                   ObjectInfo(okFieldAddress, offset, 0, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), dummy, HINT_HEAP_MODE);
 
                _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
@@ -4771,7 +4772,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
    bool dummy = false;
    boxObject(scope, target, boxed, dummy);
    if (boxed)
-      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());      
+      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 
    _writer.loadObject(*scope.tape, target);
 
@@ -4954,7 +4955,8 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
             bool mismatch = false;
             bool boxed = false;
             bool dummy = false;
-            compileTypecast(codeScope, ObjectInfo(okAccumulator), classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed, dummy);
+            ObjectInfo acc(okAccumulator);
+            compileTypecast(codeScope, acc, classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed, dummy);
             if (mismatch)
                scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
             if (boxed)
@@ -5265,7 +5267,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
       if (type == 0 && fieldType != 0) {
          scope.info.header.flags |= elStructureWrapper;
          scope.info.header.flags |= fieldType;
-      }      
+      }
    }
 }
 
@@ -5387,7 +5389,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
 
          if (methodScope.include() && closed)
             scope.raiseError(errClosedParent, member.Terminal());
-         
+
       }
       member = member.nextNode();
    }
@@ -5405,7 +5407,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    int flagCopy = scope.info.header.flags;
    scope.compileClassHints(hints);
- 
+
    compileFieldDeclarations(member, scope);
 
    declareVMT(member, scope, nsMethod, test(flagCopy, elClosed));
@@ -5433,15 +5435,15 @@ void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
 
    DNode member = node.firstChild();
    compileVMT(member, scope);
-   
+
    _writer.endClass(scope.tape);
-   
+
    // compile explicit symbol
    compileSymbolCode(scope);
-   
+
    // optimize
    optimizeTape(scope.tape);
-   
+
    // create byte code sections
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
@@ -5473,16 +5475,16 @@ void Compiler :: declareSingletonAction(ClassScope& scope, ActionScope& methodSc
 void Compiler::compileSingletonClass(DNode node, ClassScope& scope)
 {
    _writer.declareClass(scope.tape, scope.reference);
-   
+
    DNode member = node.firstChild();
-   
+
    compileVMT(member, scope);
 
    _writer.endClass(scope.tape);
 
    // optimize
    optimizeTape(scope.tape);
-   
+
    // create byte code sections
    _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
@@ -5554,7 +5556,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
       SymbolExpressionInfo info;
       info.expressionTypeRef = scope.typeRef;
       info.constant = scope.constant;
-   
+
       // save class meta data
       MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
       info.save(&metaWriter);
@@ -5635,7 +5637,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       endDebugExpression(codeScope);
    }
    _writer.loadObject(*codeScope.tape, retVal);
-   
+
    // create constant if required
    if (scope.constant) {
       // static symbol cannot be constant
@@ -5809,9 +5811,9 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
-   
+
       TerminalInfo name = member.Terminal();
-   
+
       switch (member) {
          case nsType:
             compileType(member, scope, hints);
@@ -5819,7 +5821,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
          case nsClass:
          {
             ref_t reference = scope.mapTerminal(name);
-   
+
             // check for duplicate declaration
             if (scope.module->mapSection(reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
@@ -5842,13 +5844,13 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
          case nsStatic:
          {
             ref_t reference = scope.mapTerminal(name);
-   
+
             // check for duplicate declaration
             if (scope.module->mapSection(reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
 
             scope.module->mapSection(reference | mskSymbolRef, false);
-   
+
             SymbolScope symbolScope(&scope, reference);
             compileSymbolDeclaration(member, symbolScope, hints);
             break;
