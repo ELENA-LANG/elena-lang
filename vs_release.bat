@@ -100,6 +100,7 @@ copy %1\bin\winstub.ex_ bin
 copy %1\bin\syntax.dat bin
 copy %1\bin\rules.dat bin
 copy %1\bin\elc.cfg bin
+copy %1\bin\elcx.cfg bin
 copy %1\bin\elenavm.cfg bin
 
 echo copying bin\templates files

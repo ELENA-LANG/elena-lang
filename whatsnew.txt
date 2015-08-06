@@ -10,10 +10,13 @@
 [ELENA]
 [+] new "variable" hint
 [+] "ByRef" parameters are supported
+[+] console_mt (corex) is operational once again
 
 [ELC]
 [-] issue #47 fixed
 [-] issue #22 fixed
+[-] issue #68 fixed
+[-] issue #67 fixed
 
 [LIB]
 [+]system'collections: Stack, Queue

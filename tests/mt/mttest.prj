@@ -1,7 +1,5 @@
 ﻿[project]
 executable=mttest.exe
-vmpath=..\..\bin
-options=-xembed-
 namespace=mttest
 template=console_mt
 debuginfo=-1

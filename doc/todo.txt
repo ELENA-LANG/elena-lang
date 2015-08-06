@@ -21,12 +21,24 @@ v  - vm script
 Currently:
 ------                                                                                         
 
+              xdev - multithreading       
+                       * there should be two root config - elc.cfg / elcx.cfg - compiler should load default config basing on
+                         project/template settings (if settings is missed - use default one - elc.cfg / elc.config) 
+                       * port the code
 
-<==>                         
+              srev - console samples
+                       * implement rosetta code sample
+                       
+               xdev - script engine
+                       * move to vm_console platform
+                       * calculator : console (simple operations + - * /) - move state machine logic to external script file
 
               adev - lib30     
                        * fix graph sample
 
+<==>                         
+
+              adev - lib30     
                        * implement new functionality : MemoryStream, BitArray, SortedList, SortedArrayList
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * implement: exp constant
@@ -62,10 +74,7 @@ Currently:
                        * read key
                        * port console samples                                                                               
                        * port rosetta samples                                                                               
-
-               xdev - script engine
-                       * calculator : console (simple operations + - * /) - move state machine logic to external script file
-
+                       
               xdev - byte code optimization                               
                        * review system_test code
                                                   
@@ -98,9 +107,6 @@ Currently:
                        * simplify goods (Record.get&Literal implementation)
                        * rewrite pi sample to use stack allocated variables / parallel calculating
                        * matrix: use Pair in matrix sample
-                       * textdb: dynamically unserialize subject
-                       * matrix: test matrix operations
-                       * matrix: multiply - should use realnumber rather than real
                        * migrate calc, interpreter samples
                        * vmconsole
                        
