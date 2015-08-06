@@ -22,18 +22,11 @@ Currently:
 ------                                                                                         
 
               xdev - general development                                                                                            
-                       * fix system test : open args
-                       * fix DTOToStructTest
-                       * fix UnboxTest (object unboxing)
-                                  
                        * full test
 
               xdev - general implementation
                        * fix stack info for system libraries #68
 
-              xdev - byte code optimization                               
-                       * review system_test code
-                                                  
 <==>                         
 
               adev - lib30     
@@ -78,6 +71,9 @@ Currently:
                xdev - script engine
                        * calculator : console (simple operations + - * /) - move state machine logic to external script file
 
+              xdev - byte code optimization                               
+                       * review system_test code
+                                                  
                adev - web support
                        * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
                        * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C

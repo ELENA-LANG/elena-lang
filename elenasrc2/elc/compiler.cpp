@@ -3030,6 +3030,17 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
 
    ByteCodeIterator bm = scope.tape->end();
 
+   // if open argument list should be unboxed
+   if (callStack.oargUnboxing) {
+      MessageScope::ParamInfo param = callStack.parameters.get(count - 1);
+
+      // unbox the argument list and return the object saved before the list
+      _writer.loadObject(*scope.tape, compileExpression(param.node, scope, 0));
+      _writer.unboxArgList(*scope.tape);
+
+      count--;
+   }
+
    // if direct order is not possible the space should be allocated first,
    // to garantee the correct order of parameter evaluation
    if (!callStack.directOrder)
@@ -3051,51 +3062,44 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
           
       loadObject(scope, param.info, param.unboxing);
 
-      // if open argument list should be unboxed
-      if (callStack.oargUnboxing && param.unboxing && scope.moduleScope->typeHints.exist(param.subj_ref, scope.moduleScope->paramsReference)) {
-         // unbox the argument list and return the object saved before the list
-         _writer.unboxArgList(*scope.tape);
+      // if type is mismatch - typecast
+      bool mismatch = false;
+      bool boxed = false;
+      compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, param.unboxing);
+
+      // check if boxing required
+      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
+         boxObject(scope, param.info, boxed, param.unboxing);
+
+      if (mismatch)
+         scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
+
+      if (boxed)
+         scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
+
+      // save boxed object if required
+      if (param.unboxing) {
+         // resever the space for temporal varialbe
+         bm = _writer.insertCommand(bm, *scope.tape, bcPushN, 0);
+         param.level = callStack.level;
+
+         // assign the boxed object to the temporal variable
+         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, (callStack.directOrder ? i : count) + param.level ));
+
+         callStack.level++;
+         callStack.paramUnboxing = true;
+
+         scope.raiseWarning(4, wrnUnboxinging, param.node.FirstTerminal());
       }
-      else {
-         // if type is mismatch - typecast
-         bool mismatch = false;
-         bool boxed = false;
-         compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, param.unboxing);
 
-         // check if boxing required
-         if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
-            boxObject(scope, param.info, boxed, param.unboxing);
-
-         if (mismatch)
-            scope.raiseWarning(2, wrnTypeMismatch, param.node.FirstTerminal());
-
-         if (boxed)
-            scope.raiseWarning(4, wrnBoxingCheck, param.node.FirstTerminal());
-
-         // save boxed object if required
-         if (param.unboxing) {
-            // resever the space for temporal varialbe
-            bm = _writer.insertCommand(bm, *scope.tape, bcPushN, 0);
-            param.level = callStack.level;
-
-            // assign the boxed object to the temporal variable
-            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, (callStack.directOrder ? i : count) + param.level ));
-
-            callStack.level++;
-            callStack.paramUnboxing = true;
-
-            scope.raiseWarning(4, wrnUnboxinging, param.node.FirstTerminal());
-         }
-
-         // save into the stack
-         if (callStack.directOrder) {
-            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-         }
-         else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i));
-
-         // save changes to call stack
-         *(callStack.parameters.getIt(callStack.directOrder ? (count - i - 1) : i)) = param;
+      // save into the stack
+      if (callStack.directOrder) {
+         _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
       }
+      else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i));
+
+      // save changes to call stack
+      *(callStack.parameters.getIt(callStack.directOrder ? (count - i - 1) : i)) = param;
    }
 }
 
@@ -3733,6 +3737,9 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref
       }
       else if (object.extraparam != 0 && object.kind == okConstantSymbol) {
          sourceClassReference = object.extraparam;
+      }
+      else if (object.kind == okSubject) {
+         sourceClassReference = scope.moduleScope->signatureReference;
       }
    }
 

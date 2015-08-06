@@ -51,7 +51,7 @@
         // looking for the current subject
         #var(type:int)anIndex := 0.
         #var(type:int)aLength.
-        #var aNotFound := true.
+        #var(type:bool) aNotFound := true.
         
         $classControl readLength:theStruct &vint:aLength.
         #loop ((anIndex < aLength)and:aNotFound) ?
@@ -68,7 +68,7 @@
         [                                    
             theStruct := theStruct::arrayOp reallocate &int:(aLength + 2).
 
-            theStruct::classROp setField &int:anIndex &object:$subject.
+            theStruct::classROp setField &int:anIndex &object:(Signature new &subject:$subject).
         ].
 
         // set the content for the appropriate field
