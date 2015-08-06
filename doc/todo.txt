@@ -22,7 +22,7 @@ Currently:
 ------                                                                                         
 
               xdev - general development                                                                                            
-                       * full test
+                       * fix graph
 
               xdev - general implementation
                        * fix stack info for system libraries #68

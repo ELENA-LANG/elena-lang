@@ -2440,10 +2440,6 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, MessageScope& callSta
             paramCount += OPEN_ARG_COUNT;
             if (paramCount > 0x0F)
                scope.raiseError(errNotApplicable, subject);
-
-            // open argument list should be last one
-            if(arg.nextNode() != nsNone)
-               scope.raiseError(errNotApplicable, subject);
          }
          else {
             callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
@@ -2796,6 +2792,7 @@ bool Compiler :: compileInlineReferOperator(CodeScope& scope, int operator_id, O
    }
    else {
       if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+         result.kind = okAccumulator;
          result.param = moduleScope->intReference;
 
          allocateStructure(scope, 0, result);
@@ -2803,6 +2800,8 @@ bool Compiler :: compileInlineReferOperator(CodeScope& scope, int operator_id, O
          _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
 
          _writer.doIntArrayOperation(*scope.tape, operator_id);
+
+         return true;
       }
       else if (loperand.kind == okParams && rflag == elDebugDWORD) {
          _writer.popObject(*scope.tape, ObjectInfo(okBase));
@@ -3759,9 +3758,10 @@ ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref
 
    // if types misnatch - should be typecasted
    if (target_type != source_type) {
-      object.type = target_type;
-
       if (moduleScope->typeHints.exist(target_type)) {
+         // overwrite the type only for strong types
+         object.type = target_type;
+
          // typecast literal constant
          if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
             return object;
