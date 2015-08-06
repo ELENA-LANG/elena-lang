@@ -21,15 +21,12 @@ v  - vm script
 Currently:
 ------                                                                                         
 
-              xdev - general development                                                                                            
-                       * fix graph
-
-              xdev - general implementation
-                       * fix stack info for system libraries #68
 
 <==>                         
 
               adev - lib30     
+                       * fix graph sample
+
                        * implement new functionality : MemoryStream, BitArray, SortedList, SortedArrayList
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
                        * implement: exp constant
@@ -54,8 +51,6 @@ Currently:
                        * fix anagram rosetta examples
                        
               xdev - linux:
-                       * exception stack info : source code information is absent - #68
-                       * fix textdb sample - #67
                        * implement DateTime / Timespan classes
                        * linux date / time operations
                        * test load class by name
@@ -79,10 +74,10 @@ Currently:
                        * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
                        
               idev - linux:              
-                       * menu option - project
                        * project compilation / clean / run
                        * save last open path (should be saved in the current path??)
                        * fix outdent / uncomment / trim / eraseLine - some general bug in removing
+                       * menu option - project - forwards
                        * recent open files / projects
                        * window list, switching
                        * status bar
