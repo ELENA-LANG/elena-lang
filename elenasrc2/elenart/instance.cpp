@@ -97,6 +97,7 @@ bool Instance :: initSubjectSection(ImageSection& subjectSection)
 {
    void* ptr = _debugSection.get(_debugSection.Length());
    int size = *((int*)ptr);
+
    if (size > 0) {
       subjectSection.init(ptr, size + 8);
 

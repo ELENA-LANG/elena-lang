@@ -77,6 +77,9 @@ _ELC_::Project :: Project()
 
    _tabSize = 4;
    _encoding = _ELENA_::feUTF8;
+
+   // !! temporally
+   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
 }
 
 void _ELC_::Project :: raiseError(const char* msg, const char* path, int row, int column, const char* s)
