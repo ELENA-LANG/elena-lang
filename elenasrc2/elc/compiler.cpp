@@ -3123,6 +3123,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
       // constructors are always sealed
       callType = tpSealed;
    }
+   else if (target.kind == okSuper) {
+      // parent methods are always sealed
+      callType = tpSealed;
+   }
 
    // save parameters
    if (test(mode, HINT_INLINE)) {

@@ -44,4 +44,5 @@
     DTOToStructTest eval.
     UnboxTest eval.
     ByRefTest eval.
+    SuperTest eval.
 ].
