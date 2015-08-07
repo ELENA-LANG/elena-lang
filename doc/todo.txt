@@ -22,7 +22,6 @@ Currently:
 ------                                                                                         
 
               srev - console samples
-                       * implement rosetta code sample : 100 doors
                        * implement rosetta code sample : 24 game
                        
                xdev - script engine

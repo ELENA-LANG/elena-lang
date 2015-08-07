@@ -28,9 +28,9 @@
     #method => system'internal'handle_selector.
 }
 
-// --- DynamicStruct ---
+// --- Dynamic ---
 
-#class DynamicStruct
+#class Dynamic
 {
     #field theStruct.
     
@@ -75,5 +75,28 @@
         theStruct::classROp setField &int:(anIndex + 1) &object:anObject.
     ]
     
+    #method(generic) if
+    [
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        
+        $classControl readLength:theStruct &vint:aLength.
+        #loop (anIndex < aLength) ?
+        [
+            #var aCurrent := theStruct::classROp getField &int:anIndex.
+            
+            ($subject::subjectROp $equalSubject:aCurrent)
+                ? [ ^ true. ].
+                
+            anIndex := anIndex + 2.                
+        ].
+        
+        ^ false.
+    ]
+    
     #method => theStruct.
 }
+
+// --- obsolete ---
+
+#symbol DynamicStruct = Dynamic.

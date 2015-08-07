@@ -25,3 +25,4 @@
 ..\bin\elc -cbullscows\bullscows.prj
 ..\bin\elc -ccalendar\calendar.prj
 ..\bin\elc -cdoors\doors.prj
+..\bin\elc -ctwentyfour\twentyfour.prj

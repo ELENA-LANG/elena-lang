@@ -594,6 +594,10 @@ md rosetta\doors
 copy %1\rosetta\doors\*.l rosetta\doors
 copy %1\rosetta\doors\*.prj rosetta\doors
 
+md rosetta\twentyfour
+copy %1\rosetta\twentyfour\*.l rosetta\twentyfour
+copy %1\rosetta\twentyfour\*.prj rosetta\twentyfour
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj

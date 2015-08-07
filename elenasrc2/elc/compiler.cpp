@@ -3159,7 +3159,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
    // load target
    if (target.kind == okConstantRole) {
-      _writer.loadObject(*scope.tape, target);
+      _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, target.param));
    }
    else if (target.kind == okRole) {
       _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
