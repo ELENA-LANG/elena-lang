@@ -63,4 +63,6 @@
 #symbol program =
 [
     #var exp := ExpressionTree new:"2+3".
+    
+    #var r := exp value.
 ].
