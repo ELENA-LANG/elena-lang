@@ -21,11 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
 
-              xdev - multithreading       
-                       * there should be two root config - elc.cfg / elcx.cfg - compiler should load default config basing on
-                         project/template settings (if settings is missed - use default one - elc.cfg / elc.config) 
-                       * port the code
-
               srev - console samples
                        * implement rosetta code sample
                        

@@ -10,7 +10,7 @@
 [ELENA]
 [+] new "variable" hint
 [+] "ByRef" parameters are supported
-[+] console_mt (corex) is operational once again
+[+] project template console_mt (corex) is operational once again
 
 [ELC]
 [-] issue #47 fixed
