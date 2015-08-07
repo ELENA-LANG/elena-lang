@@ -14,12 +14,6 @@
 {
     test            
     [
-        #var a := 2.3r.
-        #var b := 1.2r.
-        
-        #var o := { operation = %add. }.
-        
-        #var c := a::(o operation) eval:b.
     ]        
 }.
 

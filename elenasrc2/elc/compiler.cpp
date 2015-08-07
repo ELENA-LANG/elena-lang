@@ -3437,7 +3437,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
 
    // put the target
    bool genericRole = false;
-   if (role.kind == okAccumulator && role.kind == okSymbol && role.kind == okBase) {
+   if (role.kind == okAccumulator || role.kind == okSymbol || role.kind == okBase) {
       // if generic role is used, put into the call stack before the target object
       callStack.parameters.add(0, MessageScope::ParamInfo(0, role));
       callStack.parameters.add(1, MessageScope::ParamInfo(0, object));
