@@ -414,6 +414,9 @@
     /// Returns the value as a real number
     #method real = RealNumber new &short:$self.
     
+    #method(stacksafe)read &vint:n
+        => system'internal'int_save.
+    
     /// Compares the value
     #method(type:bool,stacksafe) equal &int:anOperand 
         => system'internal'int_equal.

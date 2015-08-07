@@ -156,7 +156,7 @@
     ]
  
     #method setCaret:p
-        <= setCaret &point:(p point).
+        <= setCaret &coord:(p coord).
         
     #method setCaret &int:x &int:y
     [
@@ -168,7 +168,7 @@
         theHDC moveTo &int:(x int) &int:(y int).
     ]
  
-    #method setCaret &point:p
+    #method setCaret &coord:p
     [
         #var(type:int)x.
         #var(type:int)y.
@@ -188,9 +188,9 @@
     ]
  
     #method lineCaretTo:p
-        <= lineCaretTo &point:(p point).
+        <= lineCaretTo &coord:(p coord).
         
-    #method lineCaretTo &point:p
+    #method lineCaretTo &coord:p
     [
         #var(type:int)x.
         #var(type:int)y.

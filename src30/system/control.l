@@ -7,6 +7,8 @@
     #method then : aTrueAction &else:aFalseAction = $nil.
 
     #method else : aTrueAction = $nil.
+    
+    #method iif:aTrueValue:aFalseValue = $nil.
 
     #method(type:bool) or : anExpr = $nil.
 
@@ -45,6 +47,8 @@
     /// Always returns nil.
     #method else : aTrueAction = $nil.
 
+    #method iif:aTrueValue:aFalseValue = aTrueValue.
+    
     /// Executes logical OR operation
     ///
     /// Always return true
@@ -96,6 +100,8 @@
 
     /// Executes the action
     #method else : aFalseAction = aFalseAction eval.
+
+    #method iif:aTrueValue:aFalseValue = aFalseValue.
 
     /// Executes logical OR operation
     #method(type:bool) or : anExpr = anExpr bool.

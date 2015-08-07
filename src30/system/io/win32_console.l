@@ -25,14 +25,34 @@
 
     #method(stacksafe) readSize &coord:aCoord
     [
-        aCoord write &coord:dwSize.
+        #var(type:short)sx.
+        #var(type:short)sy.
+        dwSize readX &vshort:sx.
+        dwSize readY &vshort:sy.
+        
+        #var(type:int)x.
+        #var(type:int)y.
+        sx read &vint:x.
+        sy read &vint:y.
+        
+        aCoord write &int:x &int:y.
     ]
 
     #method(stacksafe) readCursorPosition &coord:aCoord
     [
         #var(type:win_coord)aCopy := dwCursorPosition.
         
-        aCoord write &coord:aCopy.
+        #var(type:short)sx.
+        #var(type:short)sy.
+        aCopy readX &vshort:sx.
+        aCopy readY &vshort:sy.
+        
+        #var(type:int)x.
+        #var(type:int)y.
+        sx read &vint:x.
+        sy read &vint:y.
+        
+        aCoord write &int:x &int:y.
     ]
 }
 

@@ -23,11 +23,17 @@
     #method to:aMaxValue &doEach:aFunction
         = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
         
-    #method to:aMaxValue &seekEach:aFunction
-        = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
-        
     #method to:aMaxValue &by:aStep &doEach:aFunction
         = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
+        
+    #method till:aMaxValue &doEach:aFunction
+        = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue).
+        
+    #method till:aMaxValue &by:aStep &doEach:aFunction
+        = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue &by:aStep).
+        
+    #method to:aMaxValue &seekEach:aFunction
+        = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
         
     #method to:aMaxValue &by:aStep &seekEach:aFunction
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).

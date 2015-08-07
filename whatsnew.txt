@@ -20,6 +20,10 @@
 
 [LIB]
 [+]system'collections: Stack, Queue
+[+]bool inline if : iif[2]
+
+[Samples]
+[+]rosetta code sample : 100 doors
 
 [IDE]
 [-] issue #7 fixed

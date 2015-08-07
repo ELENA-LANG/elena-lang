@@ -24,3 +24,4 @@
 ..\bin\elc -ccombinations\combinations.prj
 ..\bin\elc -cbullscows\bullscows.prj
 ..\bin\elc -ccalendar\calendar.prj
+..\bin\elc -cdoors\doors.prj

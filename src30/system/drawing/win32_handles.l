@@ -36,7 +36,7 @@
     #method write : anObject
         <= write &win_coord:(anObject win_coord).
     
-    #method write &win_coord:aValue
+    #method(stacksafe) write &win_coord:aValue
     [
         #var(type:short)tmp.
         

@@ -590,7 +590,14 @@ md rosetta\calendar
 copy %1\rosetta\calendar\*.l rosetta\calendar
 copy %1\rosetta\calendar\*.prj rosetta\calendar
 
-rebuild.bat 
+md rosetta\doors
+copy %1\rosetta\doors\*.l rosetta\doors
+copy %1\rosetta\doors\*.prj rosetta\doors
+
+bin\elc -csrc30\system\system.prj
+bin\elc -csrc30\extensions\extensions.prj
+bin\elc -csrc30\forms\forms.prj
+bin\elc -csrc30\sqlite\sqlite.prj
 
 goto:eof
 ::ERRORS

@@ -22,7 +22,8 @@ Currently:
 ------                                                                                         
 
               srev - console samples
-                       * implement rosetta code sample
+                       * implement rosetta code sample : 100 doors
+                       * implement rosetta code sample : 24 game
                        
                xdev - script engine
                        * move to vm_console platform

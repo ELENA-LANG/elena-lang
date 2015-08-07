@@ -1,7 +1,7 @@
 #define system.
 
 // --- common types ---
-#subject(class:system'drawing'Point)point.
+#subject(class:system'drawing'Point)coord.
 #subject(class:system'drawing'Dimension)dimension.
 #subject(class:system'drawing'Region)region.
 
@@ -30,11 +30,11 @@
         theY := anY.
     ]
     
-    #method point = $self.
+    #method coord = $self.
     
-    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &point:$self.
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &coord:$self.
     
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &point:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &coord:$self.
     
     #method clone = Point new &x:theX &y:theY.
     
@@ -74,7 +74,7 @@
         anY << theY.
     ]
     
-    #method(type:bool) equal &point:aPoint
+    #method(type:bool) equal &coord:aPoint
     [
         #var(type:int)anX.
         #var(type:int)anY.
@@ -85,7 +85,7 @@
         ^ (theX == anX) and:(theY == anY).
     ]
     
-    #method(type:bool) less &point:aPoint
+    #method(type:bool) less &coord:aPoint
     [
         #var(type:int)anX.
         #var(type:int)anY.
@@ -102,7 +102,7 @@
         ^ false.            
     ]
     
-    #method add &point:aPoint
+    #method add &coord:aPoint
     [
         #var(type:int)anX.
         #var(type:int)anY.
@@ -113,7 +113,7 @@
         ^ Point new &int:(theX + anX) &int:(theY + anY).
     ] 
     
-    #method subtract &point:aPoint
+    #method subtract &coord:aPoint
     [
         #var(type:int)anX.
         #var(type:int)anY.
