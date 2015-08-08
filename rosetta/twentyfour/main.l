@@ -11,17 +11,21 @@
     
     #constructor new : aLiteral
     [
+        #var aLevel := Integer new:0.
+        
         aLiteral run &each: ch
         [
             #var node := Dynamic new.
             
             ch =>
-                #43 ? [ node set &level:2 set &operation:%add. ]       // +
-                #45 ? [ node set &level:2 set &operation:%subtract. ]  // -
-                #42 ? [ node set &level:1 set &operation:%multiply. ]  // *
-                #47 ? [ node set &level:1 set &operation:%divide. ]    // /
+                #43 ? [ node set &level:(aLevel + 1) set &operation:%add. ]       // +
+                #45 ? [ node set &level:(aLevel + 1) set &operation:%subtract. ]  // -
+                #42 ? [ node set &level:(aLevel + 2) set &operation:%multiply. ]  // *
+                #47 ? [ node set &level:(aLevel + 2) set &operation:%divide. ]    // /
+                #40 ? [ aLevel += 10. ^ $self. ] // (
+                #41 ? [ aLevel -= 10. ^ $self. ] // )
                 ! [
-                    node set &leaf:(ch literal toReal) set &level:3.
+                    node set &leaf:(ch literal toReal) set &level:((aLevel + 3)).
                 ].
                     
             ($nil == theTree)
@@ -34,9 +38,13 @@
                             theTree := node.
                         ]
                         ! [
-                            node set &left:(theTree right).
+                            #var aTop := theTree.
+                            #loop (($nil != aTop right)and:[aTop right level < node level] )
+                                ? [ aTop := aTop right. ].
                             
-                            theTree set &right:node.
+                            node set &left:(aTop right) set &right:$nil.
+                            
+                            aTop set &right:node.
                         ].
                 ].
         ].
@@ -62,7 +70,7 @@
 
 #symbol program =
 [
-    #var exp := ExpressionTree new:"2+3".
+    #var exp := ExpressionTree new:"4-(2-1)".
     
     #var r := exp value.
 ].
