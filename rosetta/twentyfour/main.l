@@ -68,6 +68,9 @@
         
     #method readLeaves : aList &at:aNode
     [
+        ($nil == aNode)
+            ? [ #throw InvalidArgumentException new. ].
+        
         (aNode if &leaf)
             ? [ aList += aNode leaf. ]
             ! [
@@ -155,7 +158,7 @@
                     ? [ console writeLine:"Skipping this puzzle". self newPuzzle. ]
                     ! [
                         self resolve:aLine
-                            | if &Error:
+                            | if &Error: e
                                 [
                                     console writeLine:"An error occurred.  Check your input and try again.".
                                 ].
