@@ -1078,6 +1078,9 @@ end
 // --- System Core Functions --
 
 procedure % INIT
+  // ; initialize fpu
+  finit
+
   // GCXT: initialize signal
   xor  ebx, ebx
   mov  [data : %CORE_GC_TABLE + gc_signal], ebx

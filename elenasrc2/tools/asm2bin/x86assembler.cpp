@@ -2064,6 +2064,14 @@ void x86Assembler :: compileFNSTSW(TokenInfo& token, ProcedureInfo& info, Memory
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler :: compileFINIT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0x9B);
+   code->writeWord(0xE3DB);
+
+   token.read();
+}
+
 void x86Assembler :: compileFSTCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
@@ -2456,7 +2464,11 @@ bool x86Assembler :: compileCommandE(TokenInfo& token)
 }
 bool x86Assembler :: compileCommandF(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-	if (token.check("fldz")) {
+   if (token.check("finit")) {
+      compileFINIT(token, info, &writer);
+      return true;
+   }
+   else if (token.check("fldz")) {
 		compileFLDZ(token, info, &writer);
       return true;
 	}

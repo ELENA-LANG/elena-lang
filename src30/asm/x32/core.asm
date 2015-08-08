@@ -902,6 +902,9 @@ end
 // --- System Core Functions --
 
 procedure % INIT
+  // ; initialize fpu
+  finit
+
   // ; initialize
   mov  ecx, [data : %CORE_STAT_COUNT]
   mov  edi, data : %CORE_STATICROOT

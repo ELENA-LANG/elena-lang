@@ -583,7 +583,7 @@ procedure coreapi'strtoreal
   mov   edi, esp
   stosd
   stosd
-  mov   word ptr [edi], ax
+  mov   [edi], eax
   mov   ecx, 19
 
 atof1:
@@ -761,7 +761,17 @@ laststep1:
   jmp   short laststep2
 
 laststep:
+
   mov   ah, dh
+/*  
+      push  eax               //;reserve space on stack
+      fstcw word ptr [esp]             // ;get current control word
+      pop   eax
+      or    eax,0300h          // ;code it for truncating
+      push  eax
+      fldcw word ptr [esp]             // ;change rounding code of FPU to truncate
+      pop   eax
+*/    
   xor   edx, edx
   fbld  [esp]
   sub   cl, 1

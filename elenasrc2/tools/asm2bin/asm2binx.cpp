@@ -15,7 +15,7 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#define REVISION_NUMBER   3
+#define REVISION_NUMBER   4
 
 int main(int argc, char* argv[])
 {

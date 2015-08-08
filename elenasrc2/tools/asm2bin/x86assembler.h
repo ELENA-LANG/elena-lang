@@ -157,6 +157,7 @@ protected:
 
 	void fixJump(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper);
 
+   void compileFINIT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFLDZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFLDL2T(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFLDLG2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
