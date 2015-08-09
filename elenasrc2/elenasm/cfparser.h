@@ -158,6 +158,7 @@ public:
       rtScope,
       rtVariable,
       rtNewVariable,
+      rtNewIdleVariable,
 //      rtAny,
       rtEps,
       rtEof

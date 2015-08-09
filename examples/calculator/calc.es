@@ -31,5 +31,5 @@
              }
    },
 
-   start : function(machine) { machine.state0 }
+   start_state : function(machine) { machine.state0 }
 }

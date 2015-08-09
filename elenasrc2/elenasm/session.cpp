@@ -198,7 +198,7 @@ int Session :: translate(path_t path, int encoding, bool autoDetect, bool standa
       if (path[0] == '~') {
          scriptPath.combine(path + 2);
       }
-      else scriptPath.combine(path);
+      else scriptPath.copy(path);
 
       TextFileReader reader(scriptPath, encoding, autoDetect);
 

@@ -14,7 +14,7 @@
    #define call       ::= <= ^ => msg args;
    #define msg        ::= $identifier;
    #define args       ::= <= ( => "(" expr next_arg <= ) =>;
-   #define args       ::= $eps;
+   #define args       ::= <= ( => $eps <= ) =>;
    #define next_arg   ::= "," expr next_arg;
    #define next_arg   ::= ")";
    #define eol        ::= ";";
@@ -23,7 +23,8 @@
    #define field_exp  ::= <= [ => ":" expr <= ] =>;
    #define next_field ::= "," fields;
    #define next_field ::= "}";
-   #define func       ::= $scope func_body;
+   #define func       ::= $scope func_r;
+   #define func_r     ::= $new func_body;
    #define func_body  ::= xparams tape ;
    #define xparams    ::= "(" new_var next_xprm;
    #define next_xprm  ::= "," new_var next_xprm;
@@ -43,7 +44,7 @@
    #define xops       ::= $eps; 
    #define xcall      ::= <= & => msg xargs;
    #define xargs      ::= <= ( => "(" xexpr next_xarg <= ) =>;
-   #define xargs      ::= $eps;
+   #define xargs      ::= <= ( => $eps <= ) =>;
    #define next_xarg  ::= "," xexpr next_xarg;
    #define next_xarg  ::= ")";
    #define new_var    ::= $newvar;

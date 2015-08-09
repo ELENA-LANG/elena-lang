@@ -4584,15 +4584,14 @@ procedure handle_tape
   dsavefi -2
   
   pushn 0
-  dcopye
-  bcopyf -5
-
-// ; copy message
+  
+  bcopyf -6
+  
+// ; copy message + self
 labNextParam:
   get
   pusha
-  dec
-  elsen labNextParam 0
+  next labNextParam
 
   bloadfi 1
 

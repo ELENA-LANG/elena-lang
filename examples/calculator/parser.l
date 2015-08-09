@@ -3,6 +3,9 @@
 #define system'dynamic.
 #define extensions'dynamic.
 
+#static esonScript
+    = scriptEngine load &path:"~\scripts\eson.es".
+
 #class(extension) lexicalOp
 {
     #method lexicalType
@@ -119,69 +122,69 @@
     
     #method $loadBuiltinStatemachine
     [
-        //scriptEngine load &path:"~\scripts\eson.es".
+        theStatemachine := esonScript eval &path:"calc.es".
         
-        #var aNumberStratagy := 
-            {
-                order = 0.
-                
-                evalToken : aToken = realConvertor convert:aToken.
-            }.    
-
-        #var aSumStratagy := 
-            {
-                order = 2.
-                
-                evalNode : aLeftToken : aRightToken = aLeftToken + aRightToken.
-            }.    
-            
-        //{ digit : aChar : aTree [ aTree append:(TreeLeaf new:aNumberStratagy append:aChar). ^ aState1. ] }.
-
-//        { plus : aChar : aTree [ aTree append:(TreeNode new:aSumStratagy). ^ aState0. ] 
-//          digit : aChar : aTree [ aTree last_node append:aChar. ^ aState1. ]}.
-        theStatemachine := Struct
-        (
-            %state0,
-            Struct 
-            (
-                %digit,
-                Tape(
-                    2, tapeControl, %(getAt&args)(1),
-                    aNumberStratagy, TreeLeaf, 
-                    %(new)(1), 
-                    %(append)(1),
-                    1, tapeControl, %(getAt&args)(1),
-                    %(append)(1),
-                    3, tapeControl, %(getAt&args)(1),
-                    %(get&state1)(0))
-            ),
-            %state1,
-            Struct
-            (
-                %digit,
-                Tape(
-                    2, tapeControl, %(getAt&args)(1),
-                    1, tapeControl, %(getAt&args)(1),
-                    %(get&last_node)(0),
-                    %(append)(1),
-                    3, tapeControl, %(getAt&args)(1),
-                    %(get&state1)(0)),
-                    
-                %plus,
-                Tape(
-                    aSumStratagy, TreeNode,
-                    %(new)(1),
-                    1, tapeControl, %(getAt&args)(1),
-                    %(append)(1),
-                    3, tapeControl, %(getAt&args)(1),
-                    %(get&state0)(0))
-            ),
-            
-            %start_state,
-            Tape(
-                    1, tapeControl, %(getAt&args)(1),
-                    %(get&state0)(0))            
-        ).
+//        #var aNumberStratagy := 
+//            {
+//                order = 0.
+//                
+//                evalToken : aToken = realConvertor convert:aToken.
+//            }.    
+//
+//        #var aSumStratagy := 
+//            {
+//                order = 2.
+//                
+//                evalNode : aLeftToken : aRightToken = aLeftToken + aRightToken.
+//            }.    
+//            
+//        //{ digit : aChar : aTree [ aTree append:(TreeLeaf new:aNumberStratagy append:aChar). ^ aState1. ] }.
+//
+////        { plus : aChar : aTree [ aTree append:(TreeNode new:aSumStratagy). ^ aState0. ] 
+////          digit : aChar : aTree [ aTree last_node append:aChar. ^ aState1. ]}.
+//        theStatemachine := Struct
+//        (
+//            %state0,
+//            Struct 
+//            (
+//                %digit,
+//                Tape(
+//                    3, tapeControl, %(getAt&args)(1),
+//                    aNumberStratagy, TreeLeaf, 
+//                    %(new)(1), 
+//                    %(append)(1),
+//                    4, tapeControl, %(getAt&args)(1),
+//                    %(append)(1),
+//                    2, tapeControl, %(getAt&args)(1),
+//                    %(get&state1)(0))
+//            ),
+//            %state1,
+//            Struct
+//            (
+//                %digit,
+//                Tape(
+//                    3, tapeControl, %(getAt&args)(1),
+//                    4, tapeControl, %(getAt&args)(1),
+//                    %(get&last_node)(0),
+//                    %(append)(1),
+//                    2, tapeControl, %(getAt&args)(1),
+//                    %(get&state1)(0)),
+//                    
+//                %plus,
+//                Tape(
+//                    aSumStratagy, TreeNode,
+//                    %(new)(1),
+//                    4, tapeControl, %(getAt&args)(1),
+//                    %(append)(1),
+//                    2, tapeControl, %(getAt&args)(1),
+//                    %(get&state0)(0))
+//            ),
+//            
+//            %start_state,
+//            Tape(
+//                    1, tapeControl, %(getAt&args)(1),
+//                    %(get&state0)(0))            
+//        ).
 
         theCurrentState := theStatemachine start_state:theStatemachine.
     ]

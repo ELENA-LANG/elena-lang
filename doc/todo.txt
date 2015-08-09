@@ -21,8 +21,14 @@ v  - vm script
 Currently:
 ------                                                                                         
 
+tree
+ch
+machine
+self
+
+
+
                xdev - script engine
-                       * move to vm_console platform
                        * calculator : console (simple operations + - * /) - move state machine logic to external script file
 
               adev - lib30     
@@ -30,6 +36,14 @@ Currently:
 
 <==>                         
 
+              fdev - eldoc
+                       * design
+                       * implement
+
+              fdev - upndown
+                       * port to lib30
+                       * switch to mt platform
+                       
               adev - lib30     
                        * implement new functionality : MemoryStream, BitArray, SortedList, SortedArrayList
                        * redesign upper / lower case functionality, make it locale dependant like in c#+
@@ -153,10 +167,6 @@ Currently:
                        * use script generate code
                        * current implementation is done in two passes, simplify to one
                        
-              fdev - eldoc
-                       * design
-                       * implement
-
               xdev - general implementation
                        * why : #var anImage := theImages getAt &index:(theIndex int). //#field(type:int)theIndex.
 
@@ -186,10 +196,6 @@ Currently:
                        
                        * optimize output code: system'BaseFunction2
 
-              fdev - upndown
-                       * port to lib30
-                       * switch to mt platform
-                       
               idev - usability
                        * call stack line info
                        * set into "#var(type:int)r." is invalid

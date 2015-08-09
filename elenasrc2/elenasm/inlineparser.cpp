@@ -392,6 +392,7 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, MemoryDump& line
             cache.writeDWord(pos + 1, statement_length);
          }
 
+         (*scopes.start()).level++;
          reader.read();
       }
       else if (StringHelper::compare(reader.token, "}")) {

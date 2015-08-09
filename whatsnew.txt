@@ -25,6 +25,7 @@
 
 [Samples]
 [+]rosetta code sample : 100 doors
+[+]rosetta code sample : 24 game
 
 [IDE]
 [-] issue #7 fixed

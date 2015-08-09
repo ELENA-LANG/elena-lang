@@ -37,8 +37,13 @@
     evaluate : aScript
         = $self evaluateScript &literal:(aScript literal).
         
+    evaluate &path:aPath
+        = $self loadScriptFile &literal:(aPath literal) &int:0 &int:-1.
+        
     load &path:aPath
-        <= %loadScriptFile &literal:(aPath literal) &int:0 &int:-1.
+    [
+        $self loadScriptFile &literal:(aPath literal) &int:0 &int:-1.
+    ]
 }.
 
 //// --- globlas ---

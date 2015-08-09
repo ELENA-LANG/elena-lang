@@ -20,6 +20,7 @@ using namespace _ELENA_TOOL_;
 #define SCOPE_KEYWORD         "$scope"
 #define VAR_KEYWORD           "$var"
 #define MAPPING_KEYWORD       "$newvar"
+#define IDLE_MAPPING_KEYWORD  "$new"
 //#define ANY_KEYWORD           "$any"
 
 //const char* dfaSymbolic[4] =
@@ -133,6 +134,30 @@ bool scopeNonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& tok
    bool ret = applyNonterminalDSA(rule, token, reader);
 
    token.mapping = old;
+
+   if (ret) {
+      if (rule.postfixPtr)
+         rule.applyPostfixDSARule(token);
+
+      return true;
+   }
+   else return false;
+
+   return ret;
+}
+
+bool newNonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   token.mapping->add(NULL, token.mapping->Count() + 1);
+
+   return applyNonterminal(rule, token, reader);
+}
+
+bool newNonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
+{
+   token.mapping->add(NULL, token.mapping->Count() + 1);
+
+   bool ret = applyNonterminalDSA(rule, token, reader);
 
    if (ret) {
       if (rule.postfixPtr)
@@ -474,6 +499,9 @@ void CFParser :: defineApplyRule(Rule& rule, RuleType type)
       case rtScope:
          rule.apply = dsaRule ? scopeNonterminalApplyRuleDSA : scopeNonterminalApplyRule;
          break;
+      case rtNewIdleVariable:
+         rule.apply = dsaRule ? newNonterminalApplyRuleDSA : newNonterminalApplyRule;
+         break;
       case rtVariable:
          rule.apply = dsaRule ? variableApplyRuleDSA : variableApplyRule;
          break;
@@ -631,7 +659,10 @@ void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule
             else if (StringHelper::compare(token.value, SCOPE_KEYWORD)) {
                type = rtScope;
             }
-            else if (StringHelper::compare(token.value,  VAR_KEYWORD)) {
+            else if (StringHelper::compare(token.value, IDLE_MAPPING_KEYWORD)) {
+               type = rtNewIdleVariable;
+            }
+            else if (StringHelper::compare(token.value, VAR_KEYWORD)) {
                type = rtVariable;
             }
             else if (StringHelper::compare(token.value, MAPPING_KEYWORD)) {
