@@ -21,9 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
 
-              srev - console samples
-                       * implement rosetta code sample : 24 game
-                       
                xdev - script engine
                        * move to vm_console platform
                        * calculator : console (simple operations + - * /) - move state machine logic to external script file

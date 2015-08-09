@@ -176,14 +176,4 @@
     #var aGame := TwentyFourGame new help.
     
     #loop (aGame prompt playRound:(console readLine)) ? [].
-
-//    
-//    #var exp := ExpressionTree new:"4-(2-1)".
-//    
-//    #var r := exp value.
-//    
-//    #var aLeaves := ArrayList new.
-//    exp readLeaves:aLeaves.
-//    
-//    #var aSorted := aLeaves ascendant.
 ].

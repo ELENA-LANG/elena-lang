@@ -1204,7 +1204,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
             value[length] = 0;
             watch->write(this, value);
          }
-         else if (type == elDebugDWORD) {
+         else if (type == elDebugDWORD || type == elDebugSubject) {
             char value[4];
             getValue(selfPtr, value, 4);
 

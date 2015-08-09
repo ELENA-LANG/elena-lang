@@ -3,7 +3,7 @@ package=calc
 vmpath=..\..\bin
 executable=calc.exe
 namespace=calc
-template=console
+template=vm_console
 debuginfo=-1
 warn:unresolved=-1
 
