@@ -263,8 +263,6 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleNa
 
 size_t DebugController :: findNearestAddress(_Module* module, ident_t path, size_t row)
 {
-   path = path + StringHelper::find(path, PATH_SEPARATOR) + 1;
-
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
    _Memory* strings = module->mapSection(DEBUG_STRINGS_ID, true);
 

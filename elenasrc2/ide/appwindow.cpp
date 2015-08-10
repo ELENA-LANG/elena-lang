@@ -2066,8 +2066,10 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
       if (!_ELENA_::emptystr(root) && _ELENA_::Path::comparePaths(fullPath, root, rootLength)) {
          name.pathToName(fullPath + rootLength + 1);
 
-         // skip the root path
-         path.copy(path + rootLength + 1);
+         // skip the root path + root namespace
+         int rootNs = _ELENA_::StringHelper::find(path + rootLength + 1, PATH_SEPARATOR) + rootLength + 1;
+
+         path.copy(path + rootNs + 1);
       }
       else {
          _ELENA_::FileName fileName(fullPath);
