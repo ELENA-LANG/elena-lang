@@ -1321,7 +1321,7 @@ void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
 
 void ByteCodeWriter :: writeNewBlock(MemoryWriter* debug)
 {
-   DebugLineInfo symbolInfo(dsVirtualBlock, 0, 0, 0);
+   DebugLineInfo symbolInfo(dsVirtualBlock, 0, 0, -1);
 
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }

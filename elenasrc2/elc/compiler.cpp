@@ -1950,8 +1950,11 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       }
 
       DNode assigning = node.firstChild();
-      if (assigning != nsNone)
+      if (assigning != nsNone) {
+         openDebugExpression(scope);
          compileAssigningExpression(node, assigning, scope, variable);
+         endDebugExpression(scope);
+      }         
 
       if (variable.kind == okLocal) {
          scope.mapLocal(node.Terminal(), variable.param, type);
@@ -4108,9 +4111,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          }
          case nsVariable:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            openDebugExpression(scope);
             compileVariable(statement, scope, hints);
-            endDebugExpression(scope);
             break;
          case nsCodeEnd:
             needVirtualEnd = false;

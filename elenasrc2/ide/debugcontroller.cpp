@@ -212,7 +212,7 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
    return NULL;
 }
 
-DebugLineInfo* DebugController::seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
+DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
    ident_t &methodName, ident_t &procPath)
 {
    ModuleMap::Iterator it = _modules.start();
@@ -241,7 +241,11 @@ DebugLineInfo* DebugController::seekLineInfo(size_t address, ident_t &moduleName
                // if it is a exact match
                if (info[i].addresses.step.address == address) {
                   if (info[i].row < 0) {
-                     return info + i - 1;
+                     // search for the lastest row info
+                     while (i > 0 && info[i].row < 0)
+                        i--;
+
+                     return info + i;
                   }
                   else return info + i;
                }
@@ -289,14 +293,6 @@ size_t DebugController :: findNearestAddress(_Module* module, ident_t path, size
             if (info[i].row == row)
                break;
          }
-
-         //if (row == info[i].row) {
-         //   int lineCol = info[i].col & 0xFFFF;
-         //   if (nearestCol == -1 || ( (size_t)lineCol >= col && lineCol < nearestCol)) {
-         //      nearestCol = lineCol;
-         //      address = info[i].addresses.step.address;
-         //   }
-         //}
       }
    }
    return address;

@@ -26,9 +26,11 @@
 [Samples]
 [+]rosetta code sample : 100 doors
 [+]rosetta code sample : 24 game
+[*]calc is using script engine now
 
 [IDE]
 [-] issue #7 fixed
+[-] issue #74 fixed
 
 ******************************************************************************
                              What's New in 1.9.20

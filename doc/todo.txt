@@ -21,15 +21,8 @@ v  - vm script
 Currently:
 ------                                                                                         
 
-tree
-ch
-machine
-self
-
-
-
-              adev - lib30     
-                       * fix graph sample
+              idev - usability
+                       * call stack line info : #74
 
               fdev - upndown
                        * port to lib30
@@ -199,8 +192,6 @@ self
 
               idev - usability
                        * fix #83
-                       * call stack line info
-                       * set into "#var(type:int)r." is invalid
                        * project view
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception

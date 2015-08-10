@@ -13,7 +13,7 @@
 #symbol XTester =
 {
     test            
-    [
+    [        
     ]        
 }.
 
