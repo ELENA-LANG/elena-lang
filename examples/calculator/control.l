@@ -5,6 +5,8 @@
 
 #symbol control =
 {
+    greeting = "Enter the expression to evaluate (e.g. 2+2) or -q to exit".
+    
     prompt = ">".
     
     proceed : aLine

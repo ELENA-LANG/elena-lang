@@ -17,6 +17,10 @@
     
     #method eval
     [
+        // if grettings is not defined - do nothing
+        console writeLine:(theControl greeting)
+            | if &Error:e [].
+        
         #var aPrompt := theControl prompt.
         
         #loop theActive?
