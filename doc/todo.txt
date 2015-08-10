@@ -28,19 +28,17 @@ self
 
 
 
-               xdev - script engine
-                       * calculator : console (simple operations + - * /)
-                       * calculator : show error message if the expression cannot be evaluated
-
               adev - lib30     
                        * fix graph sample
 
+              fdev - upndown
+                       * port to lib30
 <==>                         
 
               fdev - eldoc
                        * design
                        * implement
-
+                       
               fdev - upndown
                        * port to lib30
                        * switch to mt platform
@@ -121,6 +119,7 @@ self
                        * gui vm client
                        
                xdev - script engine
+                       * calculator : parse -2+3
                        * calculator : operations with brackets
                        * calculator : move lexicalOp to the script
                        * calculator : gui

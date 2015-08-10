@@ -3949,7 +3949,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          // if assigning was already done - do nothing
       }
       else {
-         _writer.loadObject(*scope.tape, info);
+         bool dummy = false;
+         loadObject(scope, info, dummy);
 
          compileContentAssignment(node, scope, target, info);
       }

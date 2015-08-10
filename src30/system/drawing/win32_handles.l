@@ -260,6 +260,8 @@
     #method(stacksafe) copy &int:destX &int:destY &int:width &int:height &hdc:dc &int:sourX &int:sourY &int:Flags
     [
         system'external'GDI32 BitBlt &handle:theHandle &int:destX &int:destY &int:width &int:height &handle:dc &int:sourX &int:sourY &int:Flags.
+        
+        #var(type:int) err := system'external'KERNEL32 GetLastError.
     ]        
 
     #method(stacksafe) moveTo &int:anX &int:anY
@@ -316,7 +318,7 @@
         
     #method select &hdc:aHandle
     [
-        system'external'GDI32 SelectObject &handle:aHandle &handle:theHandle.
+        #var(type:int)aRetVal := system'external'GDI32 SelectObject &handle:aHandle &handle:theHandle.
     ]        
     
     #method free
