@@ -2,36 +2,15 @@
 #define system.
 #define forms.
 
-////#define std'dictionary'*.
-////#define std'patterns'*.
-//#define gui'dictionary'*.
-////s#define gui'common'*.
-////#define ext'gui'controls'*.
-//
-//// --- namespace shortcuts ---
-////#define dialogs'*  = gui'dialogs'*.
-////#define ctrl'*     = std'patterns'*.
-//#define forms'*    = gui'forms'*.
-//#define controls'* = gui'controls'*.
-//
-////#define engine'*   = cardgame'engine'*.
-////#define config'*   = cardgame'config'*.
-////#define player'*   = cardgame'players'*.
-////
-////#define cardgame'dictionary'*.
-//
 //// --- private subjects
 //#subject $onGameVariantChange.
-//
-////// --- Control IDs ---
-////#symbol SecondPlayerID = 1.
-////#symbol ThirdPlayerID  = 2.
-////#symbol ForthPlayerID  = 3.
-////#symbol GameVariantID  = 4.
-////#symbol UserNameID     = 5.
-//
-//#symbol Stopping
-//    = 'program stop. 
+
+//// --- Control IDs ---
+//#symbol SecondPlayerID = 1.
+//#symbol ThirdPlayerID  = 2.
+//#symbol ForthPlayerID  = 3.
+//#symbol GameVariantID  = 4.
+//#symbol UserNameID     = 5.
 
 // --- Dialog ---
 
@@ -40,86 +19,127 @@
     #field theForm.
     #field theUI.
     
-//    // --- Controls ---
-//    #field cmdQuit.
-//    #field cmdStart.
-//    #field cmdLoad.
-//    #field cmdConnect.
-//    #field cmdSearch.
-//   	#field cmdAccept.
-//    #field cmdDeny.
-//    #field cmdShowStat.
-//
-//    #field rbgConnectType.
-//    #field pnlClient.
-//    #field pnlHost.
-//    #field GroupBox1.
-//    #field GroupBox2.
-//	#field GameVariant.
-//	#field PlayersPanel.
-//
-//    #field txtUserName.
-//    #field txtPassword.
-//	#field HostIP.
-//	#field HostName.
-//	#field SPLabel.
-//    #field TPLabel.
-//    #field FPLabel.
-//    #field SecondPlayer.
-//    #field ThirdPlayer.
-//    #field FourthPlayer.
-//
-//    #field Label1.
-//    #field Label2.
-//	#field Label5.
-//	#field NoConnectNotification.
-//	#field ConnectingNotification.
-//	#field ConnectNotification.
+    // --- Controls ---
+    #field cmdQuit.
+    #field cmdStart.
+    #field cmdLoad.
+    #field cmdConnect.
+    #field cmdSearch.
+   	#field cmdAccept.
+    #field cmdDeny.
+    #field cmdShowStat.
+
+    #field rbgConnectType.
+    #field pnlClient.
+    #field pnlHost.
+    #field GroupBox1.
+    #field GroupBox2.
+	#field GameVariant.
+	#field PlayersPanel.
+
+    #field txtUserName.
+    #field txtPassword.
+	#field HostIP.
+	#field HostName.
+	#field SPLabel.
+    #field TPLabel.
+    #field FPLabel.
+    #field SecondPlayer.
+    #field ThirdPlayer.
+    #field FourthPlayer.
+
+    #field Label1.
+    #field Label2.
+	#field Label5.
+	#field NoConnectNotification.
+	#field ConnectingNotification.
+	#field ConnectNotification.
 
     #constructor new &parent:aParent
     [
         theUI := aParent.
         
         theForm := ChildForm new &parent:aParent.
-//
-//        // --- Create controls ---
-//        cmdQuit   := controls'Button::self.
-//        cmdStart  := controls'Button::self.
-//
-//        rbgConnectType := controls'radioButtonGroup::self.
-//		pnlClient := controls'Panel::self.
-//		pnlHost   := controls'Panel::self.
-//        GroupBox1 := controls'Panel::self.
-//
-//		Label1 := controls'StaticLabel::GroupBox1.
-//		Label2 := controls'StaticLabel::GroupBox1.
-//        txtUserName := controls'Edit::(GroupBox1/*~EInjector::EID::UserNameID*/).
-//
-//		txtPassword := controls'Edit::GroupBox1.
-//
-//        cmdSearch := controls'Button::pnlHost.
-//		cmdAccept := controls'Button::pnlHost.
-//		cmdDeny := controls'Button::pnlHost.
-//		cmdShowStat := controls'Button::pnlHost.
-//
-//        cmdConnect := controls'Button::pnlClient.
-//		GroupBox2 := controls'Panel::pnlClient.
-//		Label5 := controls'StaticLabel::pnlClient.
-//		HostIP := controls'Edit::pnlClient.
-//
-//		NoConnectNotification := controls'StaticLabel::GroupBox2.
-//		ConnectingNotification := controls'StaticLabel::GroupBox2.
-//		ConnectNotification := controls'StaticLabel::GroupBox2.
-//		HostName := controls'StaticLabel::GroupBox2.
-//        GameVariant := controls'radioButtonGroup::(pnlHost/*~EInjector::EID::GameVariantID*/).
-//		PlayersPanel := controls'Panel::pnlHost.
-//
-//		SPLabel := controls'StaticLabel::PlayersPanel.						
-//        TPLabel := controls'StaticLabel::PlayersPanel.
-//		FPLabel := controls'StaticLabel::PlayersPanel.
-//        SecondPlayer := controls'ComboBox::(PlayersPanel/*~EInjector::EID::SecondPlayerID*/).
-//		ThirdPlayer  := controls'ComboBox::(PlayersPanel/*~EInjector::EID::ThirdPlayerID*/).
-//		FourthPlayer := controls'ComboBox::(PlayersPanel/*~EInjector::EID::ForthPlayerID*/).
+
+        // --- Create controls ---
+        cmdQuit   := Button new.
+        cmdStart  := Button new.
+
+        rbgConnectType := RadioButtonGroup new.
+        pnlClient := Panel new.
+        pnlHost   := Panel new.
+        GroupBox1 := Panel new.
+
+		Label1 := StaticLabel new.
+		Label2 := StaticLabel new.
+        txtUserName := Edit new.
+        txtPassword := Edit new.
+        
+        cmdSearch   := Button new.
+        cmdAccept   := Button new.
+        cmdDeny     := Button new.
+        cmdShowStat := Button new.
+
+        cmdConnect := Button new.
+		GroupBox2 := Panel new.
+		Label5 := StaticLabel new.
+		HostIP := Edit new.
+
+		NoConnectNotification := StaticLabel new.
+		ConnectingNotification := StaticLabel new.
+		ConnectNotification := StaticLabel new.
+		HostName := StaticLabel new.
+        GameVariant := RadioButtonGroup new.
+		PlayersPanel := Panel new.
+
+		SPLabel := StaticLabel new.						
+        TPLabel := StaticLabel new.
+		FPLabel := StaticLabel new.
+        SecondPlayer := Combobox new.
+		ThirdPlayer  := Combobox new.
+		FourthPlayer := Combobox new.
+    
+        PlayersPanel controls
+            append:SPLabel
+            append:TPLabel
+            append:FPLabel
+            append:SecondPlayer
+            append:ThirdPlayer
+            append:FourthPlayer.
+
+        GroupBox2 controls
+            append:NoConnectNotification
+            append:ConnectingNotification
+            append:ConnectNotification
+            append:HostName.
+    
+        GroupBox1 controls
+            append:Label1
+            append:txtUserName
+            append:Label2
+            append:txtPassword.
+
+        pnlHost controls
+            append:GameVariant
+            append:PlayersPanel
+            append:cmdSearch
+            append:cmdAccept
+            append:cmdDeny
+            append:cmdShowStat.
+
+        pnlClient controls
+            append:cmdConnect
+            append:GroupBox2
+            append:Label5
+            append:HostIP.
+                
+        theForm controls 
+            append:rbgConnectType
+            append:GroupBox1
+            append:pnlHost
+            append:pnlClient
+            append:cmdStart
+            append:cmdQuit.
 
         // Form
         theForm
@@ -127,191 +147,203 @@
             set &width:560 &height:375
             set &caption: "Up'N'Down: Establish connections with other players".
 
-//        // cmdQuit
-//        cmdQuit
-//            coordinates'set &x:379 &y:322 dimensions'set &width:145 &height:25
-//            caption'set: "Quit Game"
-//            open.
-//
-//        // cmdStart
-//        cmdStart
-//            coordinates'set &x:13 &y:322 dimensions'set &width:145 &height:25
-//            caption'set: "Start Game"
-//            enabled'set:false
-//            open.
-//
-//		// rbgConnectType
-//        rbgConnectType
-//            coordinates'set &x:7 &y:1 dimensions'set &width:522 &height:60
-//            caption'set: " Begin game as... "
-//            control_item'append &caption:"&Host" 
-//            control_item'append &caption:"&Client"
-//            enabled'set:false
-//            open.
-//
-//        rbgConnectType << 0.
-//
-//		// GroupBox1
-//        GroupBox1
-//            coordinates'set &x:7 &y:62 dimensions'set &width:522 &height:49
-//            caption'set: " Player specification "
-//            open.
-//
-//		// --- pnlClient
-//        pnlClient
-//            coordinates'set &x:7 &y:110 dimensions'set &width:522 &height:207
-//            caption'set: " Client panel ".
-//
-//		// --- pnlHost
-//        pnlHost
-//            coordinates'set &x:7 &y:110 dimensions'set &width:522 &height:207
-//            caption'set: " Host panel "
-//            open.
-//
-//		// Label1
-//        Label1
-//            coordinates'set &x:16 &y:20 dimensions'set &width:79 &height:20
-//            caption'set: "Your Name:"
-//            open.
-//
-//		// Label2
-//        Label2
-//            coordinates'set &x:263 &y:20 dimensions'set &width:95 &height:20
-//            caption'set: "Your log-in:"
-//            open.
-//
-//		// txtUserName
-//        txtUserName
-//            coordinates'set &x:98 &y:20 dimensions'set &width:157 &height:24
-//            open.
-//
-//		// txtPassword
-//        txtPassword
-//            coordinates'set &x:377 &y:20 dimensions'set &width:115 &height:24
-//            open.
-//
-//        // cmdSearch
-//        cmdSearch
-//            coordinates'set &x:300 &y:149 dimensions'set &width:145 &height:25
-//            caption'set: "Search players"
-//            enabled'set:false
-//            open.
-//
-//		// cmdAccept
-//        cmdAccept
-//            coordinates'set &x:300 &y:178 dimensions'set &width:145 &height:25
-//            caption'set: "Accept players"
-//            enabled'set:false
-//            open.
-//
-//		// cmdDeny
-//        cmdDeny
-//            coordinates'set &x:300 &y:178 dimensions'set &width:145 &height:25
-//            caption'set: "Refuse players".
-//
-//		// cmdShowStat
-//        cmdShowStat
-//            coordinates'set &x:7 &y:176 dimensions'set &width:171 &height:25
-//            caption'set: "Show All-Game Statistics".
-//
-//        // cmdConnect
-//        cmdConnect
-//            coordinates'set &x:290 &y:18 dimensions'set &width:177 &height:25
-//            caption'set: "Try to connect"
-//            enabled'set:false
-//            open.
-//
-//		// GroupBox2
-//        GroupBox2
-//            coordinates'set &x:48 &y:48 dimensions'set &width:369 &height:105
-//            caption'set: "Connection status "
-//            open.
-//
-//		// Label5
-//        Label5
-//            coordinates'set &x:25 &y:22 dimensions'set &width:95 &height:20
-//            caption'set: "Enter Host IP:"
-//            open.
-//
-//		// HostIP
-//        HostIP
-//            coordinates'set &x:124 &y:20 dimensions'set &width:108 &height:24
-//            open.
-//
-//		// NoConnectNotification
-//        NoConnectNotification
-//            coordinates'set &x:32 &y:21 dimensions'set &width:241 &height:20
-//            caption'set: "Client not connected to anyone"
-//            open.
-//
-//		// ConnectingNotification
-//        ConnectingNotification
-//            coordinates'set &x:32 &y:45 dimensions'set &width:241 &height:20
-//            caption'set: "Client searching for any host".
-//
-//		// ConnectNotification
-//        ConnectNotification
-//            coordinates'set &x:32 &y:69 dimensions'set &width:241 &height:20
-//            caption'set: "Client has connected with:".
-//
-//		// HostName
-//        HostName
-//            coordinates'set &x:244 &y:69 dimensions'set &width:73 &height:20
-//            caption'set: "HostName".
-//
-//		// PlayersPanel
-//        PlayersPanel
-//            coordinates'set &x:215 &y:21 dimensions'set &width:274 &height:122
-//            caption'set: "Choose players"
-//            open.
-//
-//		// GameVariant
-//        GameVariant
-//            coordinates'set &x:10 &y:21 dimensions'set &width:191 &height:121
-//            caption'set: " Choose game variant "
-//            control_item'append &caption:"Two players"
-//            control_item'append &caption:"Three players"
-//            control_item'append &caption:"Four players"
-//            open.
-//            
-//        GameVariant << 2.
-//
-//        SPLabel
-//            coordinates'set &x:14 &y:25 dimensions'set &width:100 &height:20
-//            caption'set: "Second player"
-//            open.
-//
-//        TPLabel
-//            coordinates'set &x:14 &y:54 dimensions'set &width:100 &height:20
-//            caption'set: "Third player"
-//            open.
-//
-//        FPLabel
-//            coordinates'set &x:14 &y:85 dimensions'set &width:100 &height:20
-//            caption'set: "Fourth player"
-//            open.
-//
-//		// SecondPlayer
-//        SecondPlayer
-//            coordinates'set &x:122 &y:25 dimensions'set &width:141 &height:120
-//            open.
-//            
-//		// ThirdPlayer
-//        ThirdPlayer
-//            coordinates'set &x:122 &y:54 dimensions'set &width:141 &height:129
-//            open.
-//
-//		// FourthPlayer
-//        FourthPlayer
-//            coordinates'set &x:122 &y:85 dimensions'set &width:141 &height:120
-//            open.
-//
-//        // event handlers		
-//        cmdQuit event_handle'append:
-//        { 
-//            clicking : Args = self forms'dialog_result'set:#symbol Stopping.
-//        }.
-//        
+        // cmdQuit
+        cmdQuit
+            set &x:379 &y:312 
+            set &width:145 &height:25
+            set &caption: "Quit Game".
+
+        // cmdStart
+        cmdStart
+            set &x:13 &y:312 
+            set &width:145 &height:25
+            set &caption: "Start Game"
+            set &enabled:false.
+
+		// rbgConnectType
+        rbgConnectType
+            set &x:7 &y:1 
+            set &width:522 &height:60
+            set &caption: " Begin game as... "
+            set &enabled:false
+            items
+                append:"&Host"
+                append:"&Client".
+
+        rbgConnectType set &selected_index:0.
+
+		// GroupBox1
+        GroupBox1
+            set &x:7 &y:62 
+            set &width:522 &height:49
+            set &caption: " Player specification ".
+
+		// --- pnlClient
+        pnlClient
+            set &x:7 &y:110 
+            set &width:522 &height:197
+            set &caption: " Client panel "
+            set &visible:false.
+
+		// --- pnlHost
+        pnlHost
+            set &x:7 &y:110 
+            set &width:522 &height:197
+            set &caption: " Host panel ".
+
+		// Label1
+        Label1
+            set &x:16 &y:20 
+            set &width:79 &height:20
+            set &caption: "Your Name:".
+
+		// Label2
+        Label2
+            set &x:263 &y:20 
+            set &width:95 &height:20
+            set &caption: "Your log-in:".
+
+		// txtUserName
+        txtUserName
+            set &x:98 &y:20 
+            set &width:157 &height:24.
+
+		// txtPassword
+        txtPassword
+            set &x:377 &y:20 
+            set &width:115 &height:24.
+
+        // cmdSearch
+        cmdSearch
+            set &x:300 &y:139 
+            set &width:145 &height:25
+            set &caption: "Search players"
+            set &enabled:false.
+
+		// cmdAccept
+        cmdAccept
+            set &x:300 &y:168 
+            set &width:145 &height:25
+            set &caption: "Accept players"
+            set &enabled:false.
+
+		// cmdDeny
+        cmdDeny
+            set &x:300 &y:168 
+            set &width:145 &height:25
+            set &caption: "Refuse players"
+            set &visible:false.
+
+		// cmdShowStat
+        cmdShowStat
+            set &x:7 &y:168
+            set &width:171 &height:25
+            set &caption: "Show All-Game Statistics"
+            set &visible:false.
+
+        // cmdConnect
+        cmdConnect
+            set &x:290 &y:18 
+            set &width:177 &height:25
+            set &caption: "Try to connect"
+            set &enabled:false.
+
+		// GroupBox2
+        GroupBox2
+            set &x:48 &y:48 
+            set &width:369 &height:105
+            set &caption: "Connection status ".
+
+		// Label5
+        Label5
+            set &x:25 &y:22 
+            set &width:95 &height:20
+            set &caption: "Enter Host IP:".
+
+		// HostIP
+        HostIP
+            set &x:124 &y:20 
+            set &width:108 &height:24.
+
+		// NoConnectNotification
+        NoConnectNotification
+            set &x:32 &y:21 
+            set &width:241 &height:20
+            set &caption: "Client not connected to anyone".
+
+		// ConnectingNotification
+        ConnectingNotification
+            set &x:32 &y:45 
+            set &width:241 &height:20
+            set &caption: "Client searching for any host"
+            set &visible:false.
+
+		// ConnectNotification
+        ConnectNotification
+            set &x:32 &y:69 
+            set &width:241 &height:20
+            set &caption: "Client has connected with:"
+            set &visible:false.
+
+		// HostName
+        HostName
+            set &x:244 &y:69 
+            set &width:73 &height:20
+            set &caption: "HostName"
+            set &visible:false.
+
+		// PlayersPanel
+        PlayersPanel
+            set &x:215 &y:18
+            set &width:274 &height:118
+            set &caption: "Choose players".
+
+		// GameVariant
+        GameVariant
+            set &x:10 &y:18 
+            set &width:191 &height:118
+            set &caption: " Choose game variant "
+            items
+                append:"Two players"
+                append:"Three players"
+                append:"Four players".
+            
+        GameVariant set &selected_index:2.
+
+        SPLabel
+            set &x:14 &y:25 
+            set &width:100 &height:20
+            set &caption: "Second player".
+
+        TPLabel
+            set &x:14 &y:54 
+            set &width:100 &height:20
+            set &caption: "Third player".
+
+        FPLabel
+            set &x:14 &y:85 
+            set &width:100 &height:20
+            set &caption: "Fourth player".
+
+		// SecondPlayer
+        SecondPlayer
+            set &x:122 &y:25 
+            set &width:141 &height:120.
+            
+		// ThirdPlayer
+        ThirdPlayer
+            set &x:122 &y:54 
+            set &width:141 &height:129.
+
+		// FourthPlayer
+        FourthPlayer
+            set &x:122 &y:85 
+            set &width:141 &height:120.
+
+        // event handlers		
+        cmdQuit set &onClick: args
+            [ theForm close. 'program stop. ].
+
 ////        rbgConnectType~eevents += 
 ////        {
 ////            onindex_changed &selected_index:anIndex = self $onConnectTypeChange:anIndex. 

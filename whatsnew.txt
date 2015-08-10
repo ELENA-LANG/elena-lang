@@ -22,6 +22,7 @@
 [+]system'collections: Stack, Queue
 [+]bool inline if : iif[2]
 [*]system'dynamic'DynamicStruct is renamed into system'dynamic'Dynamic
+[+]forms : Combobox
 
 [Samples]
 [+]rosetta code sample : 100 doors

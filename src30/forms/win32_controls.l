@@ -701,6 +701,82 @@
     ]
 }
 
+// --- BaseList ---
+
+#class BaseList :: BaseWinControl
+{
+    #method(stacksafe) $updateStyles &vint:aRetVal
+    [
+        #var(type:int)Styles := 0.
+        
+        theVisible
+            ? [ Styles := Styles || WS_VISIBLE. ].
+        theTabStop
+            ? [ Styles := Styles || WS_TABSTOP. ].
+            
+        aRetVal << (aRetVal || Styles).
+    ]
+}
+
+// --- Combobox ---
+
+#class ICombobox :: IControl
+{
+    #field(type:combobox)theCombobox.
+    
+    #constructor new &combobox:aCombobox
+    [
+        theCombobox := aCombobox.
+    ]
+    
+    #method object = theCombobox.
+ 
+    #method open [ theCombobox open. ]
+          
+    #method retrieve &hwnd:aHandle = theCombobox retrieve &hwnd:aHandle.
+    
+    #method setDimension &int:aWidth &int:aHeight [ theCombobox setDimension &int:aWidth &int:aHeight. ]
+    
+    #method setLocation &int:aWidth &int:aHeight [ theCombobox setLocation &int:aWidth &int:aHeight. ]
+    
+    #method readDimension &vint:aWidth &vint:aHeight [ theCombobox readDimension &vint:aWidth &vint:aHeight. ]
+    
+    #method readLocation &vint:aWidth &vint:aHeight [ theCombobox readLocation &vint:aWidth &vint:aHeight. ]
+    
+    #method => theCombobox.
+}
+
+#class(sealed) Combobox :: BaseList
+{
+    #constructor new
+        <= (new)
+    [
+    ]
+
+    #method control = ICombobox new &combobox:$self.
+    
+    #method $createHandle
+    [
+        #var(type:hwnd)aParent := theParent hwnd.
+        
+        #var(type:int)Styles := 0.
+        Styles := (WS_CHILD || CBS_DROPDOWNLIST).
+        $self $updateStyles &vint:Styles.
+                
+        #var(type:int)anX.
+        #var(type:int)anY.
+        #var(type:int)aWidth.
+        #var(type:int)aHeight.
+        
+        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        
+        theHandle := WindowHandle new &int:0
+                        &wide:ComboboxClass &wide:emptyWideLiteralValue &int:Styles
+                        &int:anX &int:anY &int:aWidth &int:aHeight 
+                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+    ]
+}
+
 // --- Paintbox ---
 
 #class PaintboxListener :: WindowCallback

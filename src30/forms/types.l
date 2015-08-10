@@ -10,6 +10,7 @@
 #subject(class:forms'Memo)              memo.
 #subject(class:forms'Button)            button.
 #subject(class:forms'RadioButton)       radiobutton.
+#subject(class:forms'Combobox)          combobox.
 #subject(class:forms'Paintbox)          paintbox.
 #subject(class:forms'Panel)             panel.
 #subject(class:forms'RadioButtonGroup)  radiogroup.

@@ -38,9 +38,9 @@
 #symbol(const,type:int)BST_CHECKED             = 1.
 #symbol(const,type:int)BST_UNCHECKED           = 0.
 
-//// --- combobox styles ---
-//#symbol(const,type:int)CBS_DROPDOWNLIST        = 3.
-//#symbol(const,type:int)CBS_DROPDOWN            = 2.
+// --- combobox styles ---
+#symbol(const,type:int)CBS_DROPDOWNLIST        = 3.
+#symbol(const,type:int)CBS_DROPDOWN            = 2.
 
 #symbol(const,type:int)ES_MULTILINE         = 0004h.
 #symbol(const,type:int)ES_AUTOVSCROLL       = 0040h.

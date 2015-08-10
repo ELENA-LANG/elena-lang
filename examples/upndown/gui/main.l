@@ -2,39 +2,16 @@
 #define system.
 #define forms.
 
-////#define std'patterns'*.
-////#define std'routines'*.
-//#define sys'dynamics'*.
-////#define gui'common'*.
-////#define ext'gui'controls'*.
-////
-////#define std'collections'*.
-//#define gui'dictionary'*.
-////#define cardgame'dictionary'*.
+//// --- gui subjects ---
+//#subject player_labels, player_desk.
 //
-//// --- namespace shortcuts ---
-////#define factory'*   = std'basic'factory'*.
-//#define forms'*     = gui'forms'*.
-////#define controls'*  = gui'controls'*.
-////#define graph'*     = gui'graphics'*.
-////#define dialogs'*   = gui'dialogs'*.
+//#subject player_label/*, player_card*/.
+//#subject player_status, turn_status.
 //
-//#define main'*      = cardgame'gui'main'*.
-//#define connector'* = cardgame'gui'connector'*.
-//#define config'*    = cardgame'config'*.
-////#define player'*    = cardgame'players'*.
-////#define cards'*     = cardgame'cards'*.
-////
-////// --- gui subjects ---
-////#subject player_labels, player_desk.
-////
-////#subject player_label/*, player_card*/.
-////#subject player_status, turn_status.
-////
-////// --- gui events ---
-////
-////#subject onPlayGroundPaint, onDeskHit.
-////
+//// --- gui events ---
+//
+//#subject onPlayGroundPaint, onDeskHit.
+//
 ////// --- PlayerInfo ---
 ////
 ////#class PlayerInfo
