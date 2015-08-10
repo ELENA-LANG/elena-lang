@@ -1,5 +1,7 @@
-//// --- default namespaces ---
-//#define std'basic'*.
+// --- default namespaces ---
+#define system.
+#define forms.
+
 ////#define std'dictionary'*.
 ////#define std'patterns'*.
 //#define gui'dictionary'*.
@@ -30,11 +32,14 @@
 //
 //#symbol Stopping
 //    = 'program stop. 
-//
-//// --- Dialog ---
-//
-//#class Dialog (forms'Dialog)
-//{
+
+// --- Dialog ---
+
+#class Connector
+{
+    #field theForm.
+    #field theUI.
+    
 //    // --- Controls ---
 //    #field cmdQuit.
 //    #field cmdStart.
@@ -70,10 +75,12 @@
 //	#field NoConnectNotification.
 //	#field ConnectingNotification.
 //	#field ConnectNotification.
-//
-//    #method initializing : Args
-//    [
-//        super initializing:Args.
+
+    #constructor new &parent:aParent
+    [
+        theUI := aParent.
+        
+        theForm := ChildForm new &parent:aParent.
 //
 //        // --- Create controls ---
 //        cmdQuit   := controls'Button::self.
@@ -113,12 +120,13 @@
 //        SecondPlayer := controls'ComboBox::(PlayersPanel/*~EInjector::EID::SecondPlayerID*/).
 //		ThirdPlayer  := controls'ComboBox::(PlayersPanel/*~EInjector::EID::ThirdPlayerID*/).
 //		FourthPlayer := controls'ComboBox::(PlayersPanel/*~EInjector::EID::ForthPlayerID*/).
-//
-//        // Form
-//        self
-//            coordinates'set &x:100 &y:100 dimensions'set &width:560 &height:375
-//            caption'set: "Up'N'Down: Establish connections with other players".
-//
+
+        // Form
+        theForm
+            set &x:100 &y:100 
+            set &width:560 &height:375
+            set &caption: "Up'N'Down: Establish connections with other players".
+
 //        // cmdQuit
 //        cmdQuit
 //            coordinates'set &x:379 &y:322 dimensions'set &width:145 &height:25
@@ -338,8 +346,8 @@
 ////        {
 ////            onClick'eval = self $denyPlayers. 
 ////        }.
-//    ]
-//
+    ]
+
 ////    #method $onPlayerSelect 
 ////    [
 ////        #var aCheck := { 
@@ -430,4 +438,6 @@
 ////            ^ nil.
 ////        ]).
 ////    ]
-//}
+
+    #method => theForm.
+}

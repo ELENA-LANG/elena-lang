@@ -62,6 +62,13 @@
 {
     #field theMenu.
     
+    #field(type:func1)theOpenEvent.
+    
+    #method set &onOpen:aFunction
+    [
+        theOpenEvent := aFunction func1.
+    ]
+    
     #method sdiform = $self.
     
     #method set &menu:aMenu
@@ -91,6 +98,14 @@
                         &hwnd:(WindowHandle min) 
                         &hinstance:CurrentInstance 
                         &object:(SDIWindowListener new &sdiform:$self).
+    ]
+    
+    #method open
+    [
+        $super open.
+        
+        ($nil != theOpenEvent)
+            ? [ theOpenEvent eval:self. ].
     ]
 }
 

@@ -171,11 +171,9 @@
 ////        lblPlayer1
 ////            set &x:182 &y:433 set &width:200 &height:15.
 //
-//        self event_handle'append:
-//        {
-//            openning : Args [ main'Connector::self forms'modal'open evaluate. ]
-//        }.
-//
+        theForm
+            set &onOpen:aSender [ Connector new &parent:aSender run. ].
+
 ////        thePaintbox~eevents +=
 ////        {
 ////            onPaint &canvas:aCanvas [ theEvents onPlayGroundPaint:aCanvas. ]
