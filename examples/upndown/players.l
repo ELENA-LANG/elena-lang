@@ -1,21 +1,12 @@
-//// --- namespace shortcuts ---
-//#define std'basic'*.
-//#define std'patterns'*.
-////#define list'*     = std'collections'*.
-////#define patterns'* = ext'patterns'*.
-//
-//#define std'dictionary'*.
-//#define cardgame'dictionary'*.
-//
-//#define cards'*    = cardgame'cards'*.
-////#define players'*  = cardgame'players'*.
+// --- namespace shortcuts ---
+#define system.
 //
 //#subject id, name, hand.
-//
-//// --- Base ---
-//
-//#class Base
-//{
+
+// --- BasePlayer ---
+
+#class BasePlayer
+{
 //    #field theName.
 //    #field theHand.
 //    #field theTrump.
@@ -71,8 +62,8 @@
 //    
 //        theTrump := 0.
 //    ]
-//}
-//
+}
+
 //// --- Human ---
 //
 //#class Human (Base)

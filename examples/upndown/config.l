@@ -1,7 +1,16 @@
-//// --- default namespaces ---
-//#define sys'dynamics'*.
-////#define cardgame'dictionary'*.
-//
+// --- default namespaces ---
+#define system.
+
+// --- configuator ---
+
+#symbol configuator =
+{
+    configConnector : aConnector
+    [
+        aConnector addPlayer:(upndown'BasePlayer new).
+    ]
+}.
+
 ////// --- namespace shortcuts ---
 ////#define upndown'ai'*  = cardgame'upndown'ai'*.
 ////#define engine'*      = cardgame'engine'*.

@@ -1,18 +1,5 @@
-//// --- namespace shortcuts ---
-//#define std'dictionary'*.
-//#define std'basic'*.
-//#define std'patterns'*.
-//#define gui'dictionary'*.
-//#define ext'gui'controls'*.
-//#define utils'* = ext'utils'*.
-//
-//#define connector'* = cardgame'gui'connector'*.
-//#define ai'*        = cardgame'upndown'ai'*.
-//#define player'*    = cardgame'players'*.
-//#define cards'*     = cardgame'cards'*.
-//
-//#define cardgame'dictionary'*.
-//#define cardgame'dictionary'upndown'*.
+// --- namespace shortcuts ---
+#define system.
 //
 //#symbol JokerOptions = (cards'Big_Card, cards'Diamonds_Min, cards'Hearts_Min, cards'Clubs_Min, cards'Spades_Min).
 //

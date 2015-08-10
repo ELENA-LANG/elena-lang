@@ -21,10 +21,10 @@ v  - vm script
 Currently:
 ------                                                                                         
 
-              adev - gui
-                       * new controls: combo box
-
               fdev - upndown
+                       * think over configuration
+                       * play with chaotic computer player
+                       * add network players
                        * port to lib30
 <==>                         
 
