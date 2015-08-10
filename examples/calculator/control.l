@@ -1,21 +1,21 @@
 #define system.
 #define extensions.
 
-//// --- controller ---
-//
-//#symbol control =
-//{
-//    prompt = ">".
-//    
-//    proceed : aLine
-//    [
-//        ("-q" == aLine)
-//            ? [ 'program stop. ^emptyLiteralValue. ]
-//            ! [
-//                ^ aLine evaluated.
-//            ].
-//    ]    
-//}.
+// --- controller ---
+
+#symbol control =
+{
+    prompt = ">".
+    
+    proceed : aLine
+    [
+        ("-q" == aLine)
+            ? [ 'program stop. ^emptyLiteralValue. ]
+            ! [
+                ^ aLine evaluated.
+            ].
+    ]    
+}.
 
 // --- testCase ---
 

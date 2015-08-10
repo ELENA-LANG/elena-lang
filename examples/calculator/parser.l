@@ -4,7 +4,7 @@
 #define extensions'dynamic.
 
 #static esonScript
-    = scriptEngine load &path:"~\scripts\eson.es".
+    = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
 
 #class(extension) lexicalOp
 {
@@ -15,6 +15,15 @@
 
         (self == #43)
             ? [ ^ %plus. ].
+
+        (self == #45)
+            ? [ ^ %minus. ].
+            
+        (self == #42)
+            ? [ ^ %star. ].
+            
+        (self == #47)
+            ? [ ^ %slash. ].
             
         ^ %unknown.            
     ]
@@ -52,7 +61,7 @@
     
     #method add : aNode
     [
-        (self order > aNode order)?
+        (self order < aNode order)?
         [
             self += aNode.
             
@@ -84,7 +93,16 @@
             ].
     ]
     
-    #method value = theStrategy evalNode:(theLeft value):(theRight value).
+    #method value
+    [
+        ($nil == theLeft)
+            ? [ #throw InvalidArgumentException new. ].
+        
+        ($nil == theRight)
+            ? [ #throw InvalidArgumentException new. ].
+        
+        ^ theStrategy evalNode:(theLeft value):(theRight value).
+    ]
     
     #constructor new : aStrategy
     [
@@ -122,69 +140,7 @@
     
     #method $loadBuiltinStatemachine
     [
-        theStatemachine := esonScript eval &path:"calc.es".
-        
-//        #var aNumberStratagy := 
-//            {
-//                order = 0.
-//                
-//                evalToken : aToken = realConvertor convert:aToken.
-//            }.    
-//
-//        #var aSumStratagy := 
-//            {
-//                order = 2.
-//                
-//                evalNode : aLeftToken : aRightToken = aLeftToken + aRightToken.
-//            }.    
-//            
-//        //{ digit : aChar : aTree [ aTree append:(TreeLeaf new:aNumberStratagy append:aChar). ^ aState1. ] }.
-//
-////        { plus : aChar : aTree [ aTree append:(TreeNode new:aSumStratagy). ^ aState0. ] 
-////          digit : aChar : aTree [ aTree last_node append:aChar. ^ aState1. ]}.
-//        theStatemachine := Struct
-//        (
-//            %state0,
-//            Struct 
-//            (
-//                %digit,
-//                Tape(
-//                    3, tapeControl, %(getAt&args)(1),
-//                    aNumberStratagy, TreeLeaf, 
-//                    %(new)(1), 
-//                    %(append)(1),
-//                    4, tapeControl, %(getAt&args)(1),
-//                    %(append)(1),
-//                    2, tapeControl, %(getAt&args)(1),
-//                    %(get&state1)(0))
-//            ),
-//            %state1,
-//            Struct
-//            (
-//                %digit,
-//                Tape(
-//                    3, tapeControl, %(getAt&args)(1),
-//                    4, tapeControl, %(getAt&args)(1),
-//                    %(get&last_node)(0),
-//                    %(append)(1),
-//                    2, tapeControl, %(getAt&args)(1),
-//                    %(get&state1)(0)),
-//                    
-//                %plus,
-//                Tape(
-//                    aSumStratagy, TreeNode,
-//                    %(new)(1),
-//                    4, tapeControl, %(getAt&args)(1),
-//                    %(append)(1),
-//                    2, tapeControl, %(getAt&args)(1),
-//                    %(get&state0)(0))
-//            ),
-//            
-//            %start_state,
-//            Tape(
-//                    1, tapeControl, %(getAt&args)(1),
-//                    %(get&state0)(0))            
-//        ).
+        theStatemachine := esonScript.
 
         theCurrentState := theStatemachine start_state:theStatemachine.
     ]
@@ -196,6 +152,11 @@
         $self $loadBuiltinStatemachine.
     ]
 
+    #method invalidate
+    [
+        theDerivationTree := $nil.
+    ]
+
     #method func1 = (:aChar)
     [
         #var aType := aChar lexicalType.
@@ -203,7 +164,19 @@
         theCurrentState := theCurrentState::aType eval:theStatemachine:aChar:theDerivationTree.
     ].
 
-    #method value => theDerivationTree.
+    #method value
+    [
+        #var aValue := $nil.
+        
+        ($nil == theDerivationTree)
+            ? [ aValue := "Invalid expression". ]
+            ! [
+                aValue := theDerivationTree value
+                    | back:"Invalid expression".
+            ].
+            
+        ^ aValue.
+    ]
 }
 
 // --- parserOp ---
@@ -214,7 +187,10 @@
     [
         #var aStateMachine := StateMachine new.
         
-        self run &each:(aStateMachine func1).
+        self run &each:(aStateMachine func1)
+            | if &Error: e [
+                aStateMachine invalidate.
+            ].
         
         ^ aStateMachine value.
     ]

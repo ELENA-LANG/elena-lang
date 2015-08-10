@@ -29,7 +29,8 @@ self
 
 
                xdev - script engine
-                       * calculator : console (simple operations + - * /) - move state machine logic to external script file
+                       * calculator : console (simple operations + - * /)
+                       * calculator : show error message if the expression cannot be evaluated
 
               adev - lib30     
                        * fix graph sample
@@ -119,8 +120,9 @@ self
               xdev - general implementation
                        * gui vm client
                        
-              xdev - script engine
-                       * calculator : sub expression
+               xdev - script engine
+                       * calculator : operations with brackets
+                       * calculator : move lexicalOp to the script
                        * calculator : gui
                        * reimplement script samples: interpreter, helloworld, vmconsole
                        * get rid of reverse command
@@ -197,6 +199,7 @@ self
                        * optimize output code: system'BaseFunction2
 
               idev - usability
+                       * fix #83
                        * call stack line info
                        * set into "#var(type:int)r." is invalid
                        * project view

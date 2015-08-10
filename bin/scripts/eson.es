@@ -38,7 +38,7 @@
    #define xobj       ::= $literal;
    #define xobj       ::= $numeric;
    #define xobj       ::= <= system'dynamic'tapeControl &getAt&args ( => $var <= ) =>;   
-   #define xobj       ::= <= *system'dynamic'Struct { => "{" fields <= } =>;
+   #define xobj       ::= <= system'dynamic'Dynamic &new() => "{" xfields <=  =>;
    #define xobj       ::= <= *system'dynamic'Tape { => "function" func <= } =>;   
    #define xops       ::= "." xcall xops;
    #define xops       ::= $eps; 
@@ -47,5 +47,10 @@
    #define xargs      ::= <= ( => $eps <= ) =>;
    #define next_xarg  ::= "," xexpr next_xarg;
    #define next_xarg  ::= ")";
-   #define new_var    ::= $newvar;
+   #define new_var    ::= $newvar;   
+   #define xfields    ::= xfield xfield_exp next_xfield;
+   #define xfield      ::= <= &set& => $identifier;
+   #define xfield_exp  ::= <= ( => ":" xexpr <= ) =>;   
+   #define next_xfield ::= "," xfields;
+   #define next_xfield ::= "}";   
 ]]
