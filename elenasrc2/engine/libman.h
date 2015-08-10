@@ -56,7 +56,7 @@ public:
       Path::loadPath(ext, extension);
 
       // if the module belongs to the current project package
-      if (StringHelper::compare(moduleName, _package))
+      if (NamespaceName::isIncluded(_package, moduleName))
       {
          path.copy(_packagePath);
          path.nameToPath(moduleName, ext);

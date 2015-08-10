@@ -326,6 +326,18 @@ public:
 //      return (StringHelper::findLast(reference, '\'', -1) != -1);
 //   }
 
+   static bool isIncluded(ident_t root, ident_t ns)
+   {
+      size_t length = getlength(root);
+      if (getlength(ns) <= length) {
+         return StringHelper::compare(root, ns);
+      }
+      else if (ns[length]=='\'') {
+         return StringHelper::compare(root, ns, length);
+      }
+      else return false;
+   }
+
    NamespaceName(ident_t reference)
    {
       int pos = StringHelper::findLast(reference, '\'', 0);

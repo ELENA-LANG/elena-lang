@@ -1806,7 +1806,7 @@ bool IDEController :: loadModule(text_t ns, text_t source)
    if (!_debugController.isStarted())
       return false;
 
-   if (_ELENA_::StringHelper::compare(ns, TextString(_project.getPackage()))) {
+   if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
       _ELENA_::Path path(_model->project.path);
       path.combine(source);
 

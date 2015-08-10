@@ -21,9 +21,6 @@ v  - vm script
 Currently:
 ------                                                                                         
 
-              idev - usability
-                       * call stack line info : #74
-
               fdev - upndown
                        * port to lib30
 <==>                         
@@ -120,8 +117,8 @@ Currently:
                        * get rid of reverse command
                                                                                                                              
               xdev - multithreading       
-                       * implement basic functionality
                        * implement lock / unlock
+                       * implement basic functionality
                        * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
                        * threadhandle - remove the object from the reference table on closing
                        * reference table should be created on the program start for multy thread version
