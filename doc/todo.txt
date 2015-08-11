@@ -21,31 +21,113 @@ v  - vm script
 Currently:
 ------                                                                                         
 
+              xmaint - elc
+                       * update command line option help, a lot of not supported option, show new ones
+
 <==>                         
-
-              adev - lib30     
-                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
-                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
-                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
-                       * expanding lib30
-                       * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
-                       * review lib30 warnings, try to get rid of most of them
-      
-              fdev - upndown
-                       * configuration
-                       * play with chaotic computer player
-                       * add network players
-                       * port to lib30
-                       * port to lib30
-                       * switch to mt platform
-
-              fdev - evolution
-                       * game of life
                        
-              adev - lib30     
-                       * implement 
-                       * fix anagram rosetta examples
+              xdev - general implementation
+                       * review all system warnings
+                       * variable: no need to store nil if the variable statement has initializing part
+                       * constant array
+                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
+                       * loop should contain snop
+                       * external call: stack should be excluded only if the method is marked as threadsafe
+                       * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
+                         one for single constant #10 and another for several constant or literal + constant - #10#13)
+                       * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
+                       * if more than 11 parameters are passed, open argument list should be used automatically??
+                       * no need to provide exclude command for every external call, special hint to ignore it?
+                       * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
+                       * cast should be called directly, make sure it is always after dispatch
+                       * gui vm client
+                       * handle access vialation exception : exception handler should be called
+
+                       * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
+
+                       * review graph sample, get rid of warnings
+
+                       * constant symbols should be used directly
+                       * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
+                       * refactoring : declareParameterDebugInfo - use debug hint flags
+                       * refactoring : do we need to use paramsReference ditectly??
+                       * refactoring : do we need to use trueReference / falseReference ditectly??
+                       * unboxing : for small objects (~4) use appropriate byte commands
+                       * refactoring : create a single procedure to typecast acc, should be used every time
+                         typecasting required
+    
+              xdev - generic development
+                       * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
+                       * begin / end should be verbs?
+                       * free should be method to free the resoures (must be a verb)
+                       * probably we should not directly call any coreapi functions, all functionality be implemented as byte codes ?
+                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
+                       * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
+                       * shoud is verb always return boolean?
+                       * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
+                       * default dynamic constructor
+                       * example of variable, array ; should be easy to declare (only inherits the base class)
+                       * example of by ref parameters
+                       * try to minimize the list of type forwards
+                       * fix bugs
+                       * can we get rid of bool type forwaring?
+                       * try to get rid of most external code
+                       * heap mg size should reserved but not committed and can grow
+                       * out of memory exception should be correctly raised
+                       * destructors
+                       * MT: TLS table should be used to store exception information,
+                         rather than global variable like in single thread version
+                       * compile as multi-threading stand-alone
+                       * compile as multi-threading vm client
                        
+              xdev - byte code optimization                               
+                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
+                         better to compare value ?? (if it is true / false constants for example)
+                       * direct parameter allocation can be used for open argument list : e.g. OpenArgTester testParamsCopy &args:1:"a":3
+                       * optimized switch statement implementation (e.g. ordered ??)                       
+                       * optimize !=, <= and >= implementation
+                       * optimize index operation (literal / array) ; indexer should use more optimize algorithm
+                       * compiler should replace and:action / and in virtual statement with
+                         appropriate inline code
+                       * review system for possible byte code optimization                       
+                       * review extensions for possible byte code optimization                       
+                       * review samples for possible byte code optimization                       
+                       * review rosetta samples for possible byte code optimization                       
+                       * review internal core_routines
+                       * optimize primitive operator implementations
+
+                       * review system_test code
+                       * review / optimize SDIApplication.start
+                       * call to $super should be direct
+                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+
+                       * optimize ByteCodeWriter::copyStructure                       
+
+                       * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
+                       * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
+                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
+                       
+                       * optimize output code: system'BaseFunction2
+
+              xdev - native code optimization
+                       * optimize hook / unhook commands
+                       * should ret be followed with several nops?
+                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
+                       * review commands : use conditional moving
+                       * review core
+                       * starts to use Pentium commands: we need to introduce the mode for
+                         i686 (cmov is not supported for older CPU, so we have to have two
+                         set of commands)
+                       * hook: maybe offset should exclude call command size, so no need
+                         in adjucment
+
+              xdev - general optimization                               
+                       * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
+                       * GC: card table scanning; could we optimize it ?                       
+                       * could we simplify stack allocated object check
+                       * review all the code and maximally simplify / reduce boxing operations
+
               xdev - linux:
                        * implement DateTime / Timespan classes
                        * linux date / time operations
@@ -57,53 +139,6 @@ Currently:
                        * consoleReader should check if the char is multibyte
                        * read key
                        * port console samples                                                                               
-                       * port rosetta samples                                                                               
-                       
-              xdev - byte code optimization                               
-                       * review system_test code
-                                                  
-               adev - web support
-                       * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
-                       * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
-                       
-              idev - linux:              
-                       * project compilation / clean / run
-                       * save last open path (should be saved in the current path??)
-                       * fix outdent / uncomment / trim / eraseLine - some general bug in removing
-                       * menu option - project - forwards
-                       * recent open files / projects
-                       * window list, switching
-                       * status bar
-                       * menu option - view
-                       * menu option - search
-                       * menu option - tools
-                       * menu option - windows
-                       * menu option - help
-                       * add tool bar items
-                       * add hot keys
-                       * enabling / disabling menu options,...
-                       * TextView: cursor blinking
-                       * IDE UI : facelifting, tuning
-                       * test : new project, new file, include, exclude, save, ...
-                       
-              srev - console samples
-                       * implement rosetta code samples
-                       * simplify goods (Record.get&Literal implementation)
-                       * rewrite pi sample to use stack allocated variables / parallel calculating
-                       * matrix: use Pair in matrix sample
-                       * migrate calc, interpreter samples
-                       * vmconsole
-                       
-              xdev - general implementation
-                       * gui vm client
-                       
-               xdev - script engine
-                       * calculator : parse -2+3
-                       * calculator : operations with brackets
-                       * calculator : move lexicalOp to the script
-                       * calculator : gui
-                       * reimplement script samples: interpreter, helloworld, vmconsole
-                       * get rid of reverse command
                                                                                                                              
               xdev - multithreading       
                        * implement lock / unlock
@@ -121,8 +156,17 @@ Currently:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        * compile anagram with mt
-
-              xdev - script engine
+                       * port rosetta samples                                                                               
+                       
+               xdev - script engine
+                       * calculator : parse -2+3
+                       * calculator : operations with brackets
+                       * calculator : move lexicalOp to the script
+                       * calculator : gui
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+                       * get rid of reverse command
+                       * migrate calc, interpreter samples
+                       * vmconsole
                        * cfparser : there should be two mappings so we could support both local and function variables
                        * cfparser : implement support variables
                        * cfparser : methods variable
@@ -147,230 +191,9 @@ Currently:
                        * use script to parse
                        * use script generate code
                        * current implementation is done in two passes, simplify to one
-                       
-              xdev - general implementation
-                       * handle access vialation exception : exception handler should be called
-
-                       * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
-
-                       * review graph sample, get rid of warnings
-
-                       * constant symbols should be used directly
-                       * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
-                       * refactoring : declareParameterDebugInfo - use debug hint flags
-                       * refactoring : do we need to use paramsReference ditectly??
-                       * refactoring : do we need to use trueReference / falseReference ditectly??
-                       * unboxing : for small objects (~4) use appropriate byte commands
-                       
-              xdev - byte code optimization                               
-                       * review / optimize SDIApplication.start
-                       * call to $super should be direct
-                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
-
-                       * optimize ByteCodeWriter::copyStructure                       
-
-                       * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
-                       * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
-                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
-                       
-                       * optimize output code: system'BaseFunction2
-
-              idev - usability
-                       * fix #83
-                       * project view
-                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
-                       * recognize out of memory exception
-                       * error: more accurate error messages
-                       * library explorer: make possible to navigate and disassemble ELENA API
-                       * test compilation with a very long identifier names                       
-                       * class view - make possible to browse the class methods
-    
-              xdev - general development
-                       * literals
-                       * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
-                       
-                       * default dynamic constructor
-
-                       * example of variable, array ; should be easy to declare (only inherits the base class)
-                       * example of by ref parameters
-
-                       * try to minimize the list of type forwards
-
-                       * fix bugs
-                       * can we get rid of bool type forwaring?
-
-                       * try to get rid of most external code
-
-              xdev - general implementation
-                       * refactoring : create a single procedure to typecast acc, should be used every time
-                         typecasting required
-
-<=================> 
-                                                                                                                            
-2.0.0
------                                                                
-              adev - lib30 optimization
-                       * review system'calendar implementation
-                       * reivew system'winforms'SDIApplication.start, optimize the main loop
-                       * review $ConsoleWriter.write&literal[1]
-                       * TextBuffer.delete&index&length : reimplement the method to avoid unnecessary literal creation
-                       * review Literal.get&length and try to simplify internal implementation (get rid of extra type casting, boxing, ...)
-                       * optimize output code: system'Object 
-                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
-                       
-                       * support all primitive arithmetic operations with different types: int x long, int x real, long x real
-
-                       * BoolValues and InvertedBoolValues should be used for branching primitive implementation,
-                         modify the code, from reading bool values from stack to constant array
-                       * review Array.add&array - make sure new objects are not created for length operations and inside loops with indexes                      
-                       * review ws_insert function (in assembler), try to simplify it
-                       * Real#class.new&int[1] - optimize
-                       * ByteArray.fill&index&length&byte
-                       * optimize typed list
-                       * optimize TextBuffer.indexOf&index&literal&vint
-                       * optimize TextBuffer.indexOf&index&char&vint
-                       * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
-                       * get rid of all warnings in lib30
-
-               adev - console operations:  
-                       * read / write operation: complex types
-                       * write formatted numbers
-                       * write formatted string (with parameters)
-                       
-              srev - gui samples
-                       * notepad: add status bar
-                       * notepad: add open / save
-                       * notepad: show the current cursor position
-                       * notepad: find / replace
-                       * migrate timer
-
-              adev - gui
-                       * make possible to set / change / get the control color
-                       * make possible to set / change / get the control font                       
-                       * gui stand-alone, gui mt stand-alone
-                       * support default button style
-                       * new controls: check box, status bar, timer, updown, memo, list box
-                       * make sure all windows resources (hbitmap, hdc, ..) are properly released
-                       * example with buttons, edit on panel
-                       
-              sdev - c# samples
-                       * try to implement c# reflection samples
-                       * try to implement c# lamda examples (lists)
-                       * parse an object to xml and back
-
-              xdev - elenasm
-                       * redesign ScriptVMCompiler, right now it simply store the text and parse it again, more effective way can be used
-                       * inline script improve error handling
-                       * make possible to declare pseudo variables (associate the stack content with identifier) ??                                                
-                       
-              sdev - prime project
-                       * interpreter : execute simple sample3.txt
-                       * interpreter : execute sample1.txt
-                       * interpreter : execute sample2.txt
-                       * interpreter : find out why the debugger does not work after script engine call
-
-              sdev - elenasm
-                       * elenasm: cannot parse the following expression: 2.add(3)  - reads as 2.
-                       * using script engine from ELENA program - return the result
-                       * using script engine from ELENA program - error handling
-                       * support several grammar rules
-                       * methods - variables
-                       * methods - roles
-                       * if
-                       * if in the method
-                       * while
-                       * while in the method
-                       * method - clear stack after the last operation?
-                       * extends the object with dynamic code
-                       * raise an error if the expression structure is not correct (e.g. .add(xx xx, ff))
-
-              sdev - prime project
-                       * simple calculator
-                       * vm console
-                       * calculator
-                       
-                       * game of life : space (new space region should ask the owner for neighbours ; e.g Space.new&x&y&west:anOwner, anOwner should be asked
-                         for all neighbours)
-                         
-              sdev - rosetta samples              
-                       * Call a function
-                       * Call an object method
-                       * Canny edge detector
-                       * Carmichael 3 strong pseudoprimes
-                       * Casting out nines
-                       * C samples
-                       * Averages/Pythagorean means
-                       * D samples
-                       * Catalan numbers
-                       * Brownian tree
-                       * E samples
-                       * Catmull       * Atomic updates
-                       * Cholesky decomposition
-                       * Animate pendium
-                       * Animation
-                       * Binary strings
-                       * Bulls and cows/Player
-                       * Chat server 
-                       * Checkpoint synchronization
-                       * ...
-
-              sdev - interpreter
-                       * fix interpreter.bat (should start vm somehow)                       
-
-              fdev - virtual workshop
-                       * create a new object interactively
-                       * send a message / test it
-
-              sdev - vmconsole
-                       * migrate
-
-              sdoc - tutorials
-                       * post sum sample
-                       
-              sdev - visualizer
-                       * build hello world sample by constructing / view / edit
-                         tape
-
-              sdev - script engine
-                       * trace could print the result directly to console?? (so it will simplify script debugging)
-                       * will it be possible to configurate the script engine, e.g. implicitly allow operations, so script configuration
-                         cannot be abused for nasty injection
                        * redesign cfparser, to use breadth-first model (current one - deep first)
-                                                         
-              sdev - prime project
-                       * eldoc: dynamic parser
-                       * upndown
-                       * script program - calculator
 
-              xdev - script engine
-                       * branching
-                       * looping
-                       
-              sdev - samples
-                       * migrate all script samples
-
-              xdev - ide
-                       * ide : test with utf8, win1252, ...
-                       * elc : test with utf8, win1252, ...
-
-              xmaint - package
-                       * create installation package
-                       * release : compile / copy elenart
-
-              xmaint - scripts
-                       * use echo to say what project is compiled, or display this info in tool
-                       * if the compilation with an error go to an error label and stop
-
-              imaint - test
-                       * debugger does not show the integer value content correctly:
-                            #var n := Integer new.
-                            #var l := n long.
-                         after the second operation it says n content is 20h
-
-              xmaint - elc
-                       * update command line option help, a lot of not supported option, show new ones
-
-              xmaint - test
+              xdev - test
                        * test math functions
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
@@ -389,199 +212,6 @@ Currently:
                        * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
                          script, so we could check if the caller stack is included correctly)
 
-            smaint - testing
-                       * extend realtest with comparision operation test
-                       * modify system test, it should raise an exception if any of the tests fails
-                       * think over lib30 automatic testing based on script, e.g. write automatic test sequences which can be applied
-                         to any object
-
-               xdev - advanced concepts
-                       * it should not be hard coded ; some template mechanism ; we could actively use extensions
-                       
-                       * property
-
-                          #subject property.
-
-                          #class MyStructure
-                          {
-                              #field theValue.
-
-                              #method property = theValue.
-
-                              #method set &property : aValue [ theValue := aValue. ]
-                          }
-
-
-                          #class MyAltStructure
-                          {
-                             #field(prop:property)theValue.
-                          }
-                                                
-                          #class MyAltStructure2
-                          {
-                              #prop property.
-                          }
-
-                       * properties (stack allocated / typed / generic)
-                       * typedcasted containers
-                       * dispatching
-                       * loops
-                       * operators
-                       
-               xdev - general implementation
-                       * use compiler magic for all complicated code : typedcasted containers, stack allocated objects, dispatching
-
-                       * stack allocated operation : target should be known ? can we dispatch operation depending on the key ; as a result
-                         the key is known??  what about unknown target in that case - use non optimized get&hash_code method
-
-                       * two line per initializing - some extension to simplify the assigning
-                         #var(type:int)code := ????.                         
-
-                       * work with stack allocated objects ; it is not possible to use stack allocated objects with generic objects ;
-                         complicated system with int and vint ; to read a length, at least two line of the code should be written, ...
-                         two methods should be implemented for every such property
-
-
-                       #var(type:int)code.
-                       key readHashCode &vint:code.  // key should be known ; two line per the code2
-
-                       * typed containers - support templates
-
-                       * optimize hash table filling (use special function for literal hash code)
-                       
-                       * system'calendar: review SystemTime / Date / TimeSpan constructors, optimize their implementations 
-                         (reduce number of created dynamic objects), simplify the code
-
-              idev - unicode
-                       * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
-                       
-              xdev - generic development
-                       * support fixed array : #field(type:shortarray,size:260)cFileName.
-                       
-                       * simplify syntax to create a property - get / set / read methods
-
-                       * special hint to prevent the variable from been stack allocated, it means there should be additional check to make sure
-                         the variable is stack allocated 
-                         
-                       * if the array is declared without size - raise an error?
-
-                       * declaring stack allocated object without providing default value
-                          #var(type:int)n.
-                          #var(type:bytearray,size:5)fa.
-
-                         stack allocated types should be filled with zeros.
-
-                       * declaring stack allocated object without providing default value                       
-                          #var(type:bytearray)fa. - an empty object should be automatically created with 0 length
-                          
-                       * check the operation with nil (as a wrapper around $nil) 
-                       
-                       * structural types : you may specify the type of sructural class: integer, real, pointer, stringof (integer), subject, message
-                         implement primitive operations : + - * / += -= *= /= << == != < > >= <= @ @:= for all possible situations
-
-                       * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
-                       * begin / end should be verbs?
-                       * initializing stack allocated variables
-                       * fixed sized data array (see system'winforms'PAINTSTRUCT)
-                       * free should be method to free the resoures (must be a verb)
-                       * typed list ; possible implementation (see forms package)
-                       * method redirect to sealed / closed object - should be direct as well ; simplify forms package code using this feature
-                         (control adapters could be created directly in the code without need to explicitly declare them) ; otherwise if the call
-                         unknown box the variables if reuqired
-                       * should it be possible to typecast shortarray as byte array? (for stack allocated ones)
-                       * for variable stack allocated object if boxing was made, after the operation end - unboxing should be
-                         implemented
-                       * wide literal constant
-                       * operation with extension should be directly resolved, should boxing be impmenented with a target? anf if
-                         not, than the operation with self should be boxed?
-                       * probably we should not directly call any coreapi functions, all functionality be implemented as byte codes ?
-                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
-                       * every action code is a new class, is it possible to design it so no need to create a new class for every sub code?
-                         (e.g. reference to the symbol code, known problem : mixing outer field with code reference) 
-                       * system'Signature should qualify only generic message with one parameter, there should be flag to indicate if it is strong
-                         one or not ; if it is the strong one the object should implicitly send typecasting message to the parameter
-
-                       * private / protected / internal methods / internal type
-                       
-                       * constant symbols should be sealed / closed ?
-                       
-                       * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
-
-                       * constructor may return constant objects as well (see min / max)
-                       * strong types may have reserved range, so special table will be created - pairing class reference with, or alternatively
-                         strong type may be used as message id + subject mask (what about Linux in this case - rdata should be located in 4FFFFFFF range)
-
-                       * critical bug with dynamic signature : signature class should validate strong types - signature code should have
-                         reserved bit to indicate it is a strong one, so typecasting should be executed - this will not help with multy subject
-                         signature
-                       * break the loop
-                       * make posible to declare symbol which value can be defined in the project, e.g. constant forward (and typed constant forward)
-                       * show / hide should be verbs
-                       * stack allocated variable : support dynamic byte array size (when size is not provided) - should be possible to allocate
-                         dynamically for external operation
-                       * shoud is verb always return boolean?
-                       * it should be possible to inizialize stack allocated structure without actually creating the object, 
-                         e.g. BaseControl : theRegion := Region new.
-                       * operation with $self in normal class is resolved by binaray search. After the class is limited or sealed, such operations
-                         could be implemented directly, is there any other way to achieve this without duplicating source code?
-                       * think over pattern similar to bool ? value1 : value2
-                       * primitive operation : copy one structure to another one
-                         
-              xdev - general implementation
-                       * review all system warnings
-                       * WS_CHILD || SS_SIMPLE || WS_VISIBLE should supported (see system'winforms)
-                       * HInstance new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0), should be implicitly typecasted without warning
-                         (e.g. temporal object allocated and valie copied there)
-                       * win32 linker : should stat + bss be combined into single section?
-                       * probably for arithmetic and referring operation classes should be checked rather than debug flags (i.e. it is not possible
-                         to tell apart chararray from shortarray or getAt / setAt will be executed directly for any dynamic array) 
-                       * impelement array getat & setat operator
-                       * it should be possible to implement primitive operation with shortarray, chararray and bytearray
-                       * variable: no need to store nil if the variable statement has initializing part
-                       * constant array
-                       * StreamWriter::writeWideLiteral(char) - invalid code, it should be possible that the sub string ends inside char group,
-                         so the actualy read size should be reduced to match the valid group
-                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
-                       * loop should contain snop
-                       * external call: stack should be excluded only if the method is marked as threadsafe
-                       * reimplement || operator : a msg1 || msg2  - if "a" does not support msg1, msg2 is invoked
-                       * try to avoid duplciate checks (for example check for methods / types)
-                       * boxing : object saving should be done only if the object was boxed
-                       * hook and unhook consume stack, it should be reflected in bytecodewriter::save
-                       * probably we have to caching type wrapper, so no need to load every time                      
-                       * compileMessageParameter : no need to pass count as a reference, it can be increased in compilemessageparameters as well                       
-                       * ModuleScope::getClassType - cache the results to optimize the type retrieving ??
-                       * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
-                         one for single constant #10 and another for several constant or literal + constant - #10#13)
-                       * primitive arithmetic / comparision operation with implicit typecasting should be allowed : int vs long, int vs real, long vs real
-                       * get rid of ByteCodeWriter::typecast, it should be replaced with pushObject and CallMessage operation                       
-                       * literal constant should be converted into utf8 if it is passed as utf8_literal
-                       * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
-                       * if more than 11 parameters are passed, open argument list should be used automatically??
-                       * system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &object:$self - it should be possible to pass a constant
-                         symbols as an argument
-                       * cache type checks
-                       * implicit variables (allocated for arithmetic or typecasting operations) should not be permanent
-                       * if the nested class owner is sealed / limited - direct operation should be used
-                       * no need to provide exclude command for every external call, special hint to ignore it?
-                       * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
-                       * invalid error for the following invalid code : #var(type:int)Styles.
-
-                       * direct call / virtual call : try to eliminate nil check when it is possible, for example, if the compiler
-                         detect early type check, when additional ones are not necessary
-                                                                                                        
-                       * it should be possible to inherit private classes (see for example BaseBoolValue), currently if private class is used there are
-                         a lot of typecasting warnings
-                       * cast should be called directly, make sure it is always after dispatch
-                       
-              xdev - byte code optimization                               
-                       * review system for possible byte code optimization                       
-                       * review extensions for possible byte code optimization                       
-                       * review samples for possible byte code optimization                       
-                       * review rosetta samples for possible byte code optimization                       
-                       * review internal core_routines
-                       * optimize primitive operator implementations
-
               xdev - linux
                        * implement debugger
                        * port multi-threading
@@ -593,13 +223,24 @@ Currently:
                        * port elenasm to linux
                        * port elt to linux
 
-              idev - linux:
-                       * make sure textview is really deleted when the page is closed
-                       
-              idev - script engine
-                       * build-in script into IDE
+              xdev - x64
+                      * think over general architecture
+                      * asm2bin64 - compile x64 bit opcodes
+                      * create x64 elena vm
+
+              idev - usability
+                       * fix #83
+                       * project view
+                       * it should be possible to turn-off deleting compiled modules if one of the project module fails
+                       * recognize out of memory exception
+                       * error: more accurate error messages
+                       * library explorer: make possible to navigate and disassemble ELENA API
+                       * test compilation with a very long identifier names                       
+                       * class view - make possible to browse the class methods
 
               idev - generic development                                          
+                       * ide : test with utf8, win1252, ...
+                       * elc : test with utf8, win1252, ...
                        * linux : debugger
                        * show the file encoding
                        * refresh / reload documents after changing encoding ??
@@ -607,594 +248,103 @@ Currently:
                          utf-16 for windows?
                        * chinese (or others two or more UTF8 ) characters should take two columns (similar like tab)
                        * wintextview : reimplement the cursor locating code if it is not a monofont
-
+                       * test with small page size intensive insert / delete operations
+                       * test ide: goto error if the file is not opened
+                       
+              idev - unicode
+                       * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
+                       
+              idev - linux:              
+                       * project compilation / clean / run
+                       * save last open path (should be saved in the current path??)
+                       * fix outdent / uncomment / trim / eraseLine - some general bug in removing
+                       * menu option - project - forwards
+                       * recent open files / projects
+                       * window list, switching
+                       * status bar
+                       * menu option - view
+                       * menu option - search
+                       * menu option - tools
+                       * menu option - windows
+                       * menu option - help
+                       * add tool bar items
+                       * add hot keys
+                       * enabling / disabling menu options,...
+                       * TextView: cursor blinking
+                       * IDE UI : facelifting, tuning
+                       * test : new project, new file, include, exclude, save, ...
+                       * make sure textview is really deleted when the page is closed
+                       
               idev - debugger
                        * if an expression raises an exception, debugger should switch into step mode
                        * show data variables (currently only int / short are displayed)
                        * fix debugger to correctly show stack allocated objects: custom type (e.g. __win_systemtime)
-
                        * get rid of dsProcedureStep, and check mode
-                                              
-              idev - debugger - call stack
-                       * call list : correctly show symbol call, sometimes symbol is not correctly displayed - optimization??
-                       
-              xdev - general optimization                               
-                       * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
-                       * GC: card table scanning; could we optimize it ?                       
-
-              xdev - boxing optimization
-                       * could we simplify stack allocated object check
-                       * review all the code and maximally simplify / reduce boxing operations
-
-              xdev - dynamic programming                                             
-                       * implement trace mode
-                       * it should be possible Tape to debug  (see 1.x implementation)
-                       
-              idev - debugger
                        * debug script
                        * implement watch
                        * show built-in variable $subject
+                       * support thread list
+                       * implement watch
+
+               adev - web support
+                       * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
+                       * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
                        
               adev - gui
+                       * make possible to set / change / get the control color
+                       * make possible to set / change / get the control font                       
+                       * gui stand-alone, gui mt stand-alone
+                       * support default button style
+                       * new controls: check box, status bar, timer, updown, memo, list box
+                       * make sure all windows resources (hbitmap, hdc, ..) are properly released
+                       * example with buttons, edit on panel
                        * IControl.retrieve&hwnd - probably should always return control?
                        * a lot of operations with controls should be implemented directly
-
-              adev - linux lib30:
-                       * review console operation, optimize the code
-
-              sdev - console samples:
-                       * create a sample which will create, update and delete JSON typed object into the file, should work both as stand-alone and
-                         vm client
-
-              adev - reflection:
-                       * think over serilizing / deserialing the object
-                       * to serilize the object we could ask for all the object properties - 
                        
-              xdev - elenavm
-                       * should open / close frame override stack_bottom pointer? looks like it is not necessary
-                       * elenavm: use reverse instead of set of swaps
-
-              xdev - GC
-                       * heap mg size should reserved but not committed and can grow
-                       * out of memory exception should be correctly raised
-                       * destructors
+              adev - lib30     
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
+                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
+                       * fix anagram rosetta examples
+                       * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
+                       * expanding lib30
+                       * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
+                       * review lib30 warnings, try to get rid of most of them
                        
-              xdev - generic development
-                       * private class - could we declare one class inside another (so it will be accessible only within its owner)
+              adev - lib30 optimization
+                       * reivew system'winforms'SDIApplication.start, optimize the main loop
+                       * review $ConsoleWriter.write&literal[1]
 
-                       * should code block be called witout the method name e.g. (see Accumulator sample)
-                          x eval:3  <-> x:3
-
-                       * switch to xml config files
-
-                       * asm2binx: correctly map parameters with a stack, should frame setting
-                         and clearing be preprogrammed?
-                       * constant refering to itself in VMT ; currently HOTFIX is implemented ; think over mor elegant way to resolve
-                         that type of situation
-                       * a lot of operations with intNumber, longNumber and realNumber look
-                         alike, can we try to generalize them?
-                       * could typed subjects be reserved for every module? So they have the
-                         same ids in every module? (so we could get rid of long list of cached
-                         values)
-                       * to move all the code from core_routines into coreapi, implement coreapi in ecodes, get rid of import statement in the
-                         code
-
-              xdev - general implementation
-                       * message/subject should be constant which is boxed when it is required ??
-                       * message reference - could we simply pass the message id (which is always negative, so no problem with GC reference
-                         recognition), instead of symbol reference?
-                       * e.g. extensions'text'ReaderEnumerator.next
-
-                         raise unnessessary typecasting warning for the following ending code:
-
-                          (nil equal:theLine)
-                              ? [  theReader close. ^ false. ]
-                              ! [ ^ true. ].
-                          (cannot predict that both branches return boolean value, so no need in an extra typecast)                          
-
-                       * warn if number of subjects / verbs are overflown
-
-              xdev - stack allocated variable
-                       * long
-                       * real
-                       * bytearray
-              xdev - script engine
-                       * refactor / optimize script engine
-
-              xdev - byte code optimization                               
-                       * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
-                         better to compare value ?? (if it is true / false constants for example)
-                       * direct parameter allocation can be used for open argument list : e.g. OpenArgTester testParamsCopy &args:1:"a":3
-                       * optimized switch statement implementation (e.g. ordered ??)                       
-                       * optimize !=, <= and >= implementation
-                       * optimize index operation (literal / array) ; indexer should use more optimize algorithm
-                       * compiler should replace and:action / and in virtual statement with
-                         appropriate inline code
-                       * Compiler::compileMessageDispatch - if only message was changed (with the same parameter) - only
-                         message should be changed and resend further
-
-              xdev - native code optimization
-                       * optimize hook / unhook commands
-                       * should ret be followed with several nops?
-                       * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel
-                       * review commands, try to optimize, reduce number of jumps / commands, make them parallel
-                       * review commands : use conditional moving
-                       * review core
-                       * starts to use Pentium commands: we need to introduce the mode for
-                         i686 (cmov is not supported for older CPU, so we have to have two
-                         set of commands)
-                       * hook: maybe offset should exclude call command size, so no need
-                         in adjucment
+                       * optimize output code: system'Object 
+                       * convertor.toLiteral(1) : better to use classOp.respondsTo(1)?
                        
-              xdev - script support
-                       * should be possible to debug vm scripts
+                       * Real#class.new&int[1] - optimize
+                       * ByteArray.fill&index&length&byte
+                       * optimize TextBuffer.indexOf&index&literal&vint
+                       * optimize TextBuffer.indexOf&index&char&vint
+                       * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
+                       * linux : review console operation, optimize the code
 
-              idev - debugger
-                       * implement watch
-                         
-              adev - lib30
-                       * $ConsoleReader read &type'widestr &type'length:aLength
-                          - currently additional method is used to pass the type of the parameter to external type,
-                            local variable with provided type should be used instead:
-                                #var(type:widestr) aLiteral := LiteralValue new &type'length:aLength. 
-                       * extensions - review the code, can it be simplified?
-                       * LiteralValue.add - currently three extra new objects are created, try
-                         to optimize
-                       * consolereader.readchar: review assembler code, try to simplify it
-                       * comutator: could commutator be used to modify incoming message subject
-                       * TextReader - the current design creates a new literal for each line is read, could we try to reuse it, e.g.
-                         convert to another buffer (it will make three of them ???)
-                       * TextBuffer: optimize: read, get, delete operations, try to minimize new object creation (using stack allocated
-                         objects)                         
-                       * pi sample: iteration algorithm, review existing FOR pattern
-                       * review extensions'math'Matrix, simplify / optimize the code
+              sdev - rosetta code samples
+                       * implement
+      
+              sdev - gui samples
+                       * notepad: add status bar
+                       * notepad: add open / save
+                       * notepad: show the current cursor position
+                       * notepad: find / replace
+                       * migrate timer
 
-            xmaint - code base
-                       * remove src27
+              fdev - upndown
+                       * configuration
+                       * play with chaotic computer player
+                       * add network players
+                       * port to lib30
+                       * port to lib30
+                       * switch to mt platform
 
-            smaint - documentation
-                       * Review code: create a dictionary                       
+              fdev - eldoc
+                       * design
+                       * implement
 
-
-2.1.0
------                                                                
-              xdev - x64
-                      * think over general architecture
-                      * asm2bin64 - compile x64 bit opcodes
-                      * create x64 elena vm
-
-              idev - usability
-                       * ide: the files in subfolder should include path in its name?
-              xdev - GCX
-                       * MT: TLS table should be used to store exception information,
-                         rather than global variable like in single thread version
-                       * compile as multi-threading stand-alone
-                       * compile as multi-threading vm client
-              idev - usability
-                       * it should be possible to change the order of source files in the project
-                       * elide: new window - vmconsole to interact with the code directly                       
-
-<================>
-stack:
-            xmaint - code base
-                       * get rid of comment warnings (starting with !!)
-            imaint - ide2
-                      * test with small page size intensive insert / delete operations
-                      * test ide: goto error if the file is not opened
-            xmaint - gcx
-                       * test pi, anagram, notepad, upndown on gcxt platform
-              xdev - optimization
-                       * optimization: nested objects should be allocated after
-                         all its members, so no need to use write barrier
-
-                       * jump to another jump should be replaced by a single
-                         jump
-
-          xprj    - x project phase4:
-                       * safe points: in method entry (??), is it enough to have
-                         them in external call and loop?
-                       * sync: make sure the object is not a constant
-              idev - linux ide2
-                      * gtktextview: fix scroller implementation
-                      * gtktextview: mouse support
-                      * gtktextview: blink cursor
-                      * migrate gtktextview to gtkmm
-                      * gtktextview: delete / select
-                      * make sure cursor is turned off for not active page 
-                      * display document 
-                      * move toolbar to gtkmm
-                      * switch to gtkmm
-                      * remove unused code in gtkideconst.h (and the file itself if it
-                        is empty)
-
-                      * source file including / excluding
-                      * context menu
-                      * editor settings
-                      * turn on / off syntax highlight
-                      * onTabSizeChange should be called for every document after tab
-                        size is changed
-                      * comment / uncomment
-                      * two color scheme
-                      * listview
-                      * messagelog
-                      * implement lower function
-                      * mouse wheel
-                      * make possible to provide path to vm in IDE
-                      * should be possible to provide path to src folder
-
-              fdev - gameplay
-                      * network game
-                      * make possible to hide / open table (so the form is expanded
-                        shrinked)
-                      * display the player score in front of the label
-                      * gamemaster should prevent invalid use of joker (for ai)
-                      * play the longest possible game (two players)
-                      * there are too many duplicate code, doing actually the same
-                        passing the event, probably one generic method is required;
-                        think over how to reuse as much as possible
-                      * play game with reduced memory size to watch possible
-                        data leaks
-                      * remove temporal code from core primitives
-                      * check why the game is crashed time to time
-                      * play network, review maintenance, review Stack
-                      * do not display joker dialog on trumpless stage
-                      * test game with two, three, four players
-                      * start to work on tcp/ip connection
-                      * could we think over another architecture which allow
-                        to optimize the property overriding (at the moment too many
-                        proxy objects are created)
-
-            imaint - linux ide2
-                       * find out there are two columns instead of one in
-                         the search dialog comboboxes
-                       * cursor function is called when the window is closing
-                       * the current doc in window list should be marked
-                       * after several ctrl+tab ide hung up
-                       * ctrl+shift+tab doesn't work
-                       * test syntax highlighting
-                       * fix warning:no scrollable widget
-          xprj    - gcx
-                       * probably better to use already precalculated and rounded
-                         (to 32) values for heap size(mg + yg, probably better to have
-                         two constants yg_size, mg_size), it will simplify core_init
-                         function (no need to calcuate and round sizes)
-              idev - debugger
-                       * support thread list
-                       * debugger should load appropriate dnl modules for
-                         loaded module
-                       * warn if source code is not found by debug controller
-            xmaint - usability
-                       * make sure that collection class is not a structure
-
---------------------------------
-[oooo] Complex System Development:
---------------------------------
- 0) Upndown
-    - should we disable minimal tramp suit for joker dialog
-    - add support for tcp/ip mutli player mode
-    - play a basic round with a remote player
-    - add possibility to scroll through the score table
-    - develop ai player (aggresive, cautious)
-    - in ideal solution, game'player'hand'enum may be called only be game master.
-      Main form should be able to call it only for its player
-   - repeat socket read until temporal buffer is not empty (it is possible
-     two simultanius command will be combined on read operation)
-   - the game could not be released from the memory if it waiting for the result;
-     fix it
-   - test if random generator generates actually a random numbers
-   - continue move to ELENA: show the card on the table using the mask to make
-     cards look oval
-   - host panel should display the current IP address
-   - the playground background color should be green
-   - hide the cards when F5 pressed
-   - make not possible to press any key inside edit box of Ordering dialog
-   - unsynchronized prepare command could block the program exit (on close of main
-     window should class onstop application event)
-   - continue move to ELENA: show statistics
-   - continue move to ELENA: load / save game
-   - on connect make sure that clients and the host use the same program version
-   - if makeorder or getcard is failed in gamemaster code it should try to send the
-     command once again
-   - use original colors
-   - disable accept button on start.
-   - disable search button after pressing.
-   - !! check if frmConnector is destroyed and removed from referencepool
-     after game start
-   - close all unused connection after the game start
-   - use buttons with original glyphs
-   - modify the code to make possible any card game
-   - use upndown sample as a testbed for the code optimization
-
--------------------------------
-[x] ELENA Language Development:
--------------------------------
-    - is there should be special hints to be thread unsafe?
-
---------------------------
-[o] ELENA API Development:
---------------------------
-    - work with windows registry
-    - make possible to truncate existing files
-    - make possible to select system colors / brushes on the gui level
-    - fcomip could be used only for pentium
-    - make possible to execute another exe?
-    - use createcomatibledc for every draw operation looks too expensive;can
-      we modify paintboxhandler / imagehandler to do it only once?
-    - make sure bitmap / hdc are properly released from the memory
-    - for Image / PaintBox handle Paintstruct could be created as local one
-      (no need to keep it on class level)
-    - modify all float-oriented code to be correct, error handling,
-      (should we save the float registers before operations?)
-    - 'value' classes should support: min, max, succ, pred (int32value, real64value, ansichar)
-    - is it possible to automize the process of data transfer over sockets?
-    - automatic code writing / reading from stream
-    - optimize implement integer / longinteger modulus implementation in assembelr
-    - basic'intnumber / longnumber / real should support method "in" to validate range
-    - ext'utilities'Date should contain time in milliseconds since 1 Jan 1900
-      rather then in milisecond since January 1, 1970 (UTC)
-
------------------------------
-[o] ELENA Sample Development:
------------------------------
-     - TextDB sample: load, save, search, add, delete records
-     - calcgui should provide the list of calculation - in Listbox -> so we could select previous result
-     - calcgui two modes: calculator like and the current one with the list of
-       last operations
-     - calc: make possible to declare constants
-     - continue to work on graph sample: make possible to specify different
-       functions, write your own ones, provide scaling and borders
-     - new sample - expert system (prolog like sample)
-     - new sample - logical game
-    - regional time
-    - examples to work with FileWriter
-
--------------------------
-[xo] Compiler development:
--------------------------
-    - weak references
-    - get rid of comment warnings (starting with !!)
-    - two compile mode - debug / release (we actually could have two
-      sets of sections - with and without debug)
-    - compile module only if it was  changed
-       - probably we need to always use long jumps for bytecode jump command, it will
-         simplify JIT compiler code
-       - cosntant collections / groups / casts
-       - optimize group / annex routine
-       - shl / shr commands considered to be not optimal
-       - if inline object depends only on its class it should be created only once
-         and saved as a hidden object field
-       - support strong references (both protected messages and classes), linker
-         should check if they are valid
-       - Remoting
-
-       - make strong link to the parent class? (!!)
-       - make possible to change basic linker options (opImageBase, and so on)
-       - look like opGCHeapSize and opSizeOfHeapCommit are connected with each other
-       - should codeBase is always 0x1000?; maybe should be customized (see !!
-         remark in linker)
-       - writeNtHeader: stack size and similar parameters is constant; maybe should
-         be possible to customize (see !! remark in linker)
-       - support resources in exe file
-
-       - try to optimize the parser table (less number of symbols)
-       - inline classes can be created at the first reference to it and exists
-         until the next GC call.
-       - localization
-       - support the following types of unicode source files:little endian, UTF-8?
-       - new option target CPU: 386 / 686
-       - add new coder: 686Coder whic override x86Coder
-       - optimize the most critical code parts like send / redirect / cast routines
-         using pentium commands
-       - get rid of wait command for float-base operations?
-
-       - try to use pairing instructions
-       - MMX, SSE, SSE2 commands; could we start to use these commands?
-       - PREFETCH command could be useful
-       - compiler option which specifies the target CPU
-    - relative fixup works incorrectly if the reference has an offset
-
-    - optimize the code using profiler
-    - check for memory leaking (either profiler or simple check on the start
-      and on the finish)
-    - optimize hash table filling for ParserTable
-    - check for all invalid / valid combination (russia characters)
-    - check the debugger behavior in the case of system exception
-      (does event EXIT_PROCESS_DEBUG_EVENT occur in this case);
-
---------------------
-[o] IDE development:
---------------------
-    - should search history be saved, where (in the project / ide config / and so on)
-    - implements new features: quick short cut
-    - review known bugs
-    - improve debugger
-    - create simple version of ELENA Code Wizard which add new menu item
-    - continue localization
-    - give more useful error message if forward symbol is not declared
-    - raise an exception if debug module not found by debug controller
-    - debugger should use engine's LibraryManager
-    - review and refactor elc output redirect routine
-    - move fast short cut to autoform plugin
-    - show the list of possible messages
-    - auto add shortcuts
-    - clear keyboard buffer before the program run
-    - auto trim for tailing whitespaces (space and tab) - the idea is not to save
-      whitespace until the user not to insert any character
-    - open all recent files
-    - option to ignore unresolved references warning within the project namespace
-    - display current file encoding in the status bar
-    - ctrl+F8 go to the next statement
-    - investigate stepping over / into annex inline symbols (e.g. $createHandle)
-    - prevent from slowing down on the program exit (make possible to inidicate
-      to the sistem that this step is the last in the program)
-    - optimize debugger step collection access (use some kind of hash table,
-      divide the code range into several bands and before direct search use
-      it to narrow collection)
-    - we do not need stop over inline symbols (except at the symbol beginning)
-    - try to deal with the slowing debugger when it goes through the window
-      system code in trap mode (e.g. in case of failed method in GUI application
-      which terminates the application - is it correct?)
-      (try to use breakpoint for any external code call to skip the step mode
-      inside external written code - in fact no sense to do it)
-    - gui applications are not released from the memory after debugging
-    - test Undo / Redo operations for the small capacity (~40 or 50);
-    - test operations with tab both virtual and real;
-    - refactor dialogs module
-    - too many duplicate code in editframe (toLowercase, toUpperCase, trim and
-      so on), could we get rid of it?
-    - maybe use CP_OEMCP then CP_ACP?
-    - optimize (Styler)
-    - check if window child created handles are destroyed (destroy method)
-    - try to use DFA class for IDE sourcedoc class
-    - possible problem when coping ascii text through clipboad - test with russian text
-    - undo in overwrite mode works a bit strange
-    - why if we have an error we do not see the warnings in messages window?
-    - Plugins - and display message when selected
-    - highlight the current line
-    - new ide settings dialog: autocomp
-    - debug watch should be able to display the longest possible identifer
-      with the longest possible type e.g. IDENTIFIER_LEN * 2
-    - show escape symbols
-    - should not be possible close / open / compile project during debug -
-      either break the debug or stop the operation
-    - debugwatch should indicate if the object plays a role (shifted mode)
-    - convert encoding routines
-    - make possible not to load some source files (to simplify the debugging)
-    - before start debugging make sure debug module is up to date
-    - indent / outdent should align the selected code rather then simply
-      move it (like in VS IDE)
-    - find out optimal page size / history buffer capacity
-    - tune up horizontal and vertical scrollers (like it's done in NP++)
-    - set read only (?)
-    - hide status bar (?)
-    - display correct messages when the project is not compiled (missing
-      exe / source files)
-    - save the last active document / cursor position (?)
-    - shows the number of warnings
-    - source code assisten plug-in written with ELENA
-    - configurable styles: colors / fonts
-    - Outlining
-    - Class Wizard
-    - Auto complete?
-    - Code patterns?
-    - Message dictionary
-    - error recovering (several errors)
-    - make possible to change all tabs to spaces
-    - code patterns like in VS (type short cut and press tab-tab)
-    - Print
-    - add Add Watch menu option
-    - full screen mode
-    - "find in files" function
-    - Two editor panels like in NPP
-    - clone current view
-    - macros
-    - autoformat
-    - zoom in / zoom out
-    - try to bring as much functionality as in notepad++
-    - an icon on tab page?
-    - make possible to treat the object as an array of bytes
-    - make sure in the case of crash saveAllAsDraft and saveSettings are called
-    - should we add the path to the recent history right after the project
-      was open (or save the project even the program is crashed)
-    - try to minimize the number of repaint (after pressing F8 repaint is invoked
-      two times instead of one)
-    - introduce project templates (with basic forwards)
-    - make possible not to close the console window after the program finishing
-    - add the editor option controlling this feature
-    - tips?
-    - new short-cut to got to message / output window
-    - remove the code to import old style project file (project\projecttype)
-    - why we create the string every time in EditFrame::paint function?
-
---------------------------
-[oo] Cross-platform support:
---------------------------
-   - create IDE for Linux
-   - create compiler for Linux
-    - start to port the code to Linux: compilator
-    - start to port the code to Linux: linker
-    - resolve all postponed linux oriented issues (!! todo:linux)
-    - at the moment on every cursor blink the whole screen is redrawn, think over
-      optimization
-
---------------------------
-Documentation
---------------------------
-    - update script blog posts
-    - new post: sun two numbers (using lx script) 
-    - documentation: vm hook
-
-    - next tutorial blog post: operation with strings
-    - next tutorial blog post: dynamic creating objects
-
-    - publish combination sample after 1.7.6 release
-
-    - describe statemachin on calc sample
-    - new sample to demostrate group objects (publish in code project)
-    - update project web page, get rid of tutorials page, they will be in blog
-    - post tutorial 1: hello world
-    - post what's next: systems with open architecture: dynamic code without reflection
-      (interpreter sample)
-    - full language description
-
-    - rewrite Getting started
-
-    - blog post: object model: extended version
-
-    - blog post: bsort example (work with arrays)
-    - blog post: open calc
-    - blog post: tiny language, print, argithmetic operations, if, loop
-    - context-dependent roles
-    - continue to desrcibe the language terms
-    - provide samples
-    - rewrite ELENA specification
-    - rewrite tutorials
-    - rewrite ELENA API
-    - localize documentation
-    - review old documentations and copy the actual info
-    - review ELENA API - is there enough info to use the object without looking
-      into source code?
-    - add samples
-    - add long description
-    - create a documentation describing the current Coder implemtation with
-      known restrinction
-    - documentation is not up to date and too laconic
-    - ELENA compiler / language technical documentation should be reviewed
-      and enhanced
-    - creates a documentation describing the handlers and events used by
-      gui package
-    - make possible to provide the symbol parameter protocol for property symbols
-    - add class full descriptions
-    - add class roles
-    - add class events
-    - goes through the public message list and assigns the expected functionality
-    - review that these messages are used in comply with these protocol list
-    - update VMT structure (including hash table) info
-    - provide the full list of language features
-    - re-read / correct ELENA API
-    - API index link to $elena module
-    - Adds the long description to be shown on the main page (shortdescr would be
-      used only in index page)
-    - read, correct and extend API descriptions. (now it's too short)
-    - add new method descriptions for all classes
-    - list of object roles?
-    - code samples?
-    - list the class protocols separated by comma
-    - example of work with arrays
-    - example of work with files
-    - Calculator
-     - continue to formulate ELENA paradigm.
-    - write the article Power Of VMT
-    - document ELENA syntax
-    - dl, dnl file structure
-    - byte code description
-    - document ELENA byte code
-    - document ELENA internal structures
-    - document ELENA file structures
-
---------------------------
-Tools
---------------------------
-    - ASM2BINX: clear labelhelper after each entry compiled
-    - ASM2BINX: Warn on unresolved labels
-    - Installation package
+              fdev - evolution
+                       * game of life
