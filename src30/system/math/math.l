@@ -135,7 +135,7 @@
     [
         #var(type:short)aWord := self short.
         aWord := aWord && 0FF00h.
-        aWord := aWord shift &index:8.
+        aWord := aWord shift &int:8.
         
         ^ byteConvertor convert &short:aWord.
     ]
@@ -225,7 +225,7 @@
     [
         #var(type:int)aWord := self int.
         aWord := aWord && 0FFFF0000h.
-        aWord := aWord shift &index:16.
+        aWord := aWord shift &int:16.
         
         ^ shortConvertor convert &int:aWord.
     ]
@@ -312,7 +312,7 @@
     [
         #var(type:long)aWord := self long.
         aWord := aWord && -4294967296l.
-        aWord := aWord shift &index:32.
+        aWord := aWord shift &int:32.
         
         ^ intConvertor convert &long:aWord.
     ]

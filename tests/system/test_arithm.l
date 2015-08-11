@@ -13,7 +13,11 @@
 #symbol XTester =
 {
     test            
-    [        
+    [
+        #var(type:byte)a := 1.
+        #var(type:long)b := 1099511627776l.
+        
+        #var c := a or:b.
     ]        
 }.
 

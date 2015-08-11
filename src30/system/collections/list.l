@@ -629,7 +629,7 @@
         #var(type:int)size := 32.
         #loop (size < aHashLength)?
         [
-            size := size shift &index:-1.
+            size := size shift &int:-1.
         ].
         
         size := size - 1.

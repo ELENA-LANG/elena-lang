@@ -93,7 +93,7 @@
             ? [
                 #var(type:int)width := lParam && 0FFFFh.
                 #var(type:int)height.
-                lParam shift &index:16 &vint:height.
+                lParam shift &int:16 &vint:height.
         
                 $self onsize &hwnd:anHWND &int:width &int:height &vint:aRetVal.
                 

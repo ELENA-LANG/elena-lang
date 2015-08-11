@@ -325,18 +325,24 @@
 
     /// Returns the result of bitwise AND operation
     #method(type:long,stacksafe) and &long:anOperand
-        => system'internal'long_and.
+        = LongNumber new &byte:$self and &long:anOperand.
 
     /// Returns the result of bitwise OR operation
     #method(type:long,stacksafe) or &long:anOperand
-        => system'internal'long_or.
+        = LongNumber new &byte:$self or &long:anOperand.
 
     /// Returns the result of bitwise XOR operation
     #method(type:long,stacksafe) xor &long:anOperand
-        => system'internal'long_xor.
+        = LongNumber new &byte:$self xor &long:anOperand.
 
+    #method shift : anOrder
+        <= shift &int:(anOrder int).
+    
     /// Bitwise shift operation
-    #method(type:byte,stacksafe) shift &index:anOrder
+    #method(type:byte) shift &index:anOrder
+        <= shift &int:(anOrder int).
+    
+    #method(type:byte,stacksafe) shift &int:anOrder
         => system'internal'byte_shift.
 
     /// Returns the literal presentation
@@ -586,8 +592,14 @@
         = LongNumber new &short:$self xor &long:anOperand.        
 
     /// Bitwise shift operation
-    #method(type:short,stacksafe) shift &index:anOrder
+    #method(type:short,stacksafe) shift &int:anOrder
         => system'internal'short_shift.
+
+    #method shift:anOrder
+        <= shift &int:(anOrder int).
+
+    #method(type:short) shift &index:anOrder
+        <= shift &int:(anOrder int).
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &short:$self.
@@ -841,12 +853,18 @@
     #method(stacksafe) xor &long:anOperand
         = LongNumber new &int:$self xor &long:anOperand.
 
+    #method shift:anOrder
+        <= shift &int:(anOrder int).
+    
     /// Bitwise shift operation
-    #method(type:int,stacksafe) shift &index:anOrder
+    #method(type:int) shift &index:anOrder
+        <= shift &int:(anOrder int).
+    
+    #method(type:int,stacksafe) shift &int:anOrder
         => system'internal'int_shift.
 
     /// Bitwise shift operation
-    #method(stacksafe) shift &index:anOrder &vint:aResult
+    #method(stacksafe) shift &int:anOrder &vint:aResult
         => system'internal'int_shift2.
 
     /// Returns the literal presentation
@@ -1104,8 +1122,14 @@
     #method(stacksafe) xor &byte:anOperand
         = $self xor &long:(system'LongNumber new &byte:anOperand).
 
+    #method shift:anOrder
+        <= shift &int:(anOrder int).
+    
     /// Returns the result of bitwise shift operation
-    #method(type:long,stacksafe) shift &index:anOrder
+    #method(type:long) shift &index:anOrder
+        <= shift &int:(anOrder int).
+    
+    #method(type:long,stacksafe) shift &int:anOrder
         => system'internal'long_shift.
 
     /// Returns the literal presentation

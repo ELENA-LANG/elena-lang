@@ -34,7 +34,6 @@ Currently:
                          cases
                        * operation with upper / lower case implementing
                        * support: primitive operation int + long, long + int
-                       * bytenumber : bitwise operation with long number - incorrect code
                        * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
                        * controlTape should verify the range
                        * Iterator.get&index - current implementation is looks like a short circite, though due to optimization it is correctly implemented

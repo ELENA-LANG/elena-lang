@@ -477,7 +477,7 @@
         #var(type:int)aBinLen.
         theBinaryArray readLength &vint:aBinLen.
         
-        aBinLen shift &index:3.
+        aBinLen shift &int:3.
         
         aLength << aBinLen.
     ]
@@ -532,7 +532,7 @@
     /// Writes a real value at the specified position
     #method(stacksafe) write &int:anIndex &real:aValue
     [
-        #var(type:int)aBinIndex := anIndex shift &index:(-3).
+        #var(type:int)aBinIndex := anIndex shift &int:(-3).
         
         theBinaryArray write &int:aBinIndex &real:aValue.
     ]
@@ -540,7 +540,7 @@
     /// Reads a real value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vreal:aReal
     [
-        #var(type:int)aBinIndex := anIndex shift &index:(-3).
+        #var(type:int)aBinIndex := anIndex shift &int:(-3).
         
         theBinaryArray read &int:aBinIndex &vreal:aReal.
     ]
@@ -606,7 +606,7 @@
     [
         #var(type:int)anIndex := i * theColumns + j.
         
-        anIndex := anIndex shift &index:(-3).
+        anIndex := anIndex shift &int:(-3).
         
         theArray write &int:anIndex &real:aValue.
     ]
@@ -616,7 +616,7 @@
     [
         #var(type:int)anIndex := i * theColumns + j.
         
-        anIndex := anIndex shift &index:(-3).
+        anIndex := anIndex shift &int:(-3).
         
         theArray read &int:anIndex &vreal:aValue.
     ]
