@@ -63,6 +63,8 @@
 #symbol(const,type:int)BM_SETCHECK      = 00F1h.
 #symbol(const,type:int)BM_GETCHECK      = 00F0h.
 
+#symbol(const,type:int)CB_ADDSTRING     = 0143h.
+
 //// --- Notifications ---
 //#symbol(const,type:int)BN_CLICKED       = 0.
 //

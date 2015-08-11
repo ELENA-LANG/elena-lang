@@ -19,15 +19,16 @@
 [-] issue #67 fixed
 
 [LIB]
-[+]system'collections: Stack, Queue
-[+]bool inline if : iif[2]
-[*]system'dynamic'DynamicStruct is renamed into system'dynamic'Dynamic
-[+]forms : Combobox
+[+] system'collections: Stack, Queue
+[+] system'dynamic: CastOver
+[+] bool inline if : iif[2]
+[+] forms : Combobox
+[*] system'dynamic'DynamicStruct is renamed into system'dynamic'Dynamic
 
 [Samples]
-[+]rosetta code sample : 100 doors
-[+]rosetta code sample : 24 game
-[*]calc is using script engine now
+[+] rosetta code sample : 100 doors
+[+] rosetta code sample : 24 game
+[*] calc is using script engine now
 
 [IDE]
 [-] issue #7 fixed

@@ -107,7 +107,12 @@
                 ^ aCaption.
             ].
     ]
-    
+
+    #method sendMessage &int:aMessage &int:aWParam &wide:aLParam
+    [
+        system'external'USER32 SendMessageW &handle:theHandle &int:aMessage &int:aWParam &wide:aLParam.            
+    ]
+            
     #method refresh
     [
         system'external'USER32 InvalidateRect &handle:theHandle &int:0 &int:1.

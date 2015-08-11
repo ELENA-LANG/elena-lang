@@ -21,6 +21,9 @@ v  - vm script
 Currently:
 ------                                                                                         
 
+              adev - lib30     
+                       * cast operation which is executed the message for every member of the collection
+
               fdev - upndown
                        * think over configuration
                        * play with chaotic computer player

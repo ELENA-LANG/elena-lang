@@ -2654,6 +2654,8 @@
         theObject := anObject.
     ]
     
+    #method keyvalue = $self.
+    
     /// Returns the key
     #method key = theKey.
     

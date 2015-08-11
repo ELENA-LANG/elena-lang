@@ -1,15 +1,10 @@
 // --- default namespaces ---
 #define system.
+#define system'dynamic.
 
 // --- configuator ---
 
-#symbol configuator =
-{
-    configConnector : aConnector
-    [
-        aConnector addPlayer:(upndown'BasePlayer new).
-    ]
-}.
+#static configuator = CastOver new &args:upndown'ai'aiConfiguarator.
 
 ////// --- namespace shortcuts ---
 ////#define upndown'ai'*  = cardgame'upndown'ai'*.

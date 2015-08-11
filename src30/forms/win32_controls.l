@@ -705,6 +705,24 @@
 
 #class BaseList :: BaseWinControl
 {
+    #field(type:array_list)theList.
+    
+    #constructor new
+        <= (new)
+    [
+        theList := ArrayList new.
+    ]
+    
+    #method items =
+    {
+        append : anObject &as:aCaption
+        [
+            theList append:(KeyValue new &key:aCaption &object:anObject).
+            
+            $self $appendItem &wide:(aCaption wide).
+        ]
+    }.
+    
     #method(stacksafe) $updateStyles &vint:aRetVal
     [
         #var(type:int)Styles := 0.
@@ -755,6 +773,28 @@
 
     #method control = ICombobox new &combobox:$self.
     
+    #method $appendItem &wide:aCaption
+    [
+        ($nil == theHandle)
+            ? [ ^ $self. ].
+        
+        theHandle sendMessage &int:CB_ADDSTRING &int:0 &wide:aCaption.
+    ]
+    
+    #method $loadStrings
+    [
+        #var(type:int)aLength.
+        theList readLength &vint:aLength.
+        
+        #var(type:int)i := 0.
+        #loop (i < aLength)?
+        [
+            #var aKeyValue := theList getAt &int:i.
+            
+            theHandle sendMessage &int:CB_ADDSTRING &int:0 &wide:(aKeyValue key wide).
+        ].
+    ]
+    
     #method $createHandle
     [
         #var(type:hwnd)aParent := theParent hwnd.
@@ -774,6 +814,8 @@
                         &wide:ComboboxClass &wide:emptyWideLiteralValue &int:Styles
                         &int:anX &int:anY &int:aWidth &int:aHeight 
                         &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+                        
+        $self $loadStrings.                        
     ]
 }
 

@@ -87,3 +87,13 @@
 ////        ^ $next order'save:anAgent.
 ////    ]
 ////}
+
+// --- aiConfiguarator ---
+
+#symbol aiConfiguarator =
+{
+    configConnector : aConnector
+    [
+        aConnector addPlayer:(upndown'BasePlayer new).
+    ]
+}.

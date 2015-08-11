@@ -5092,3 +5092,77 @@ procedure long_save
   quitn 2
 
 end
+
+procedure handle_castover
+
+  bsredirect  
+
+  open 5
+  reserve 2
+
+  dcopye
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+
+  pusha
+
+  hook labNotFound
+
+// ; define the message length
+  dloadfi -3
+  ecopyd
+  dcopycount
+  inc
+  
+// ; copy message
+  bcopyf -5
+labNextParam:
+  get
+  pusha
+  dec
+  elsen labNextParam 0
+
+  bloadfi 1
+
+labNext:
+  len
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  dloadfi -3
+  ecopyd
+  acallvi 0
+
+  close
+  pop
+  bloadfi 1
+  jump labNext
+
+labNotFound:  
+  dloadsi 3
+  address labReturn
+  else labContinueError
+  
+  close
+  pop
+  bloadfi 1
+  jump labNext
+
+labContinueError:
+  unhook
+  throw
+                         
+labEnd:
+  unhook
+  dloadfi -3
+  ecopyd
+  restore 4
+  close
+
+  equit
+        
+end
