@@ -6,7 +6,7 @@
 #class(group) CastOver :: BaseArray
 {
     #constructor new &args:aMembers
-        <= (new &int:(aMembers length))
+        <= (new &int:(aMembers length int))
     [
         #var(type:int)i := 0.
         #var(type:int)l := aMembers length.

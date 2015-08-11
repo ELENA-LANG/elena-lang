@@ -2380,6 +2380,51 @@
     /// Returns the numeric value
     #method int = intConvertor convert &char:$self.
     
+    #method add : anObject
+        = anObject cast:%eval &to:
+            {
+                eval:aChar &int:n
+                    = aChar add &int:n.
+                    
+                eval:aChar &short:n
+                    = aChar add &int:(n int).
+                    
+                eval:aChar &byte:n
+                    = aChar add &int:(n int).
+                    
+                eval:aChar &literal:aLiteral
+                    = aChar literal add &literal:aLiteral.
+            }
+            &with:$self.
+        
+    #method subtract : anObject
+        = anObject cast:%eval &to:
+            {
+                eval:aChar &int:n
+                    = aChar subtract &int:n.
+                    
+                eval:aChar &short:n
+                    = aChar subtract &int:(n int).
+                    
+                eval:aChar &byte:n
+                    = aChar subtract &int:(n int).
+            }
+            &with:$self.
+        
+    #method add &int:aNumber
+    [
+        #var(type:int)n := $self.
+        
+        ^ CharValue new &int:(n + aNumber).
+    ]
+        
+    #method subtract &int:aNumber
+    [
+        #var(type:int)n := $self.
+        
+        ^ CharValue new &int:(n - aNumber).
+    ]
+    
     /// Compares values
     #method(stacksafe) equal &char:anOperand 
         => system'internal'int_equal.
