@@ -1,0 +1,5 @@
+// --- tester ---
+
+#symbol tester =
+[
+].
