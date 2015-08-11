@@ -9,6 +9,9 @@ mkdir -p ./new/elenasrc2/common/
 mkdir -p ./new/elenasrc2/elc/codeblocks/
 mkdir -p ./new/elenasrc2/elc/linux32/
 mkdir -p ./new/elenasrc2/engine/
+mkdir -p ./new/elenasrc2/elenart/
+mkdir -p ./new/elenasrc2/elenart/codeblocks/
+mkdir -p ./new/elenasrc2/elenart/linux32/
 mkdir -p ./new/elenasrc2/tools/asm2bin/codeblocks/
 mkdir -p ./new/elenasrc2/tools/sg/codeblocks/
 mkdir -p ./new/elenasrc2/tools/sg/linux32/
@@ -68,6 +71,11 @@ cp ../elenasrc2/elc/linux32/*.cpp new/elenasrc2/elc/linux32/
 cp ../elenasrc2/elc/linux32/*.h new/elenasrc2/elc/linux32/
 cp ../elenasrc2/engine/*.cpp new/elenasrc2/engine/
 cp ../elenasrc2/engine/*.h new/elenasrc2/engine/
+cp ../elenasrc2/elenart/*.cpp new/elenasrc2/elenart/
+cp ../elenasrc2/elenart/*.h new/elenasrc2/elenart/
+cp ../elenasrc2/elenart/linux32/*.cpp new/elenasrc2/elenart/linux32/
+cp ../elenasrc2/elenart/linux32/*.h new/elenasrc2/elenart/linux32/
+cp ../elenasrc2/elenart/codeblocks/elenart_lnx32.cbp new/elenasrc2/elenart/codeblocks/
 cp ../elenasrc2/tools/asm2bin/*.cpp new/elenasrc2/tools/asm2bin/
 cp ../elenasrc2/tools/asm2bin/*.h new/elenasrc2/tools/asm2bin/
 cp ../elenasrc2/tools/asm2bin/codeblocks/asm2bin_lnx.cbp new/elenasrc2/tools/asm2bin/codeblocks/
