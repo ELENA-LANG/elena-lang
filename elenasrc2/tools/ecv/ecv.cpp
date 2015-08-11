@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -344,7 +344,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
    size_t signRef = 0;
-   int verb = 0;
+   size_t verb = 0;
    int paramCount = 0;
    decodeMessage(reference, signRef, verb, paramCount);
 
