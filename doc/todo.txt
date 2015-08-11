@@ -24,63 +24,15 @@ Currently:
 <==>                         
 
               adev - lib30     
-                       * if we need to store wide literal directly, we have to convert it into chararray and then convert into 
-                         byte array, can we do it directly?
-                       * OutOfRangeException - should be two - OutOfRangeException and IndexOutOfRangeException
-                       * scriptControl.load&literal - raise an error if the result is broken
-                       * group object : Wrap(a, %Even[ even value ])  - does not work, because get property use dispatch handler, think over
-                         another group object - Group (a, %Even[ even value ]), which will works correctly
-                       * implement Dispatcher : e.g. self~(Dispatcher(%int,%(int&to),%long,%(long&to) eval::sour) save:sour:dest ; think over the possible use
-                         cases
-                       * operation with upper / lower case implementing
-                       * support: primitive operation int + long, long + int
-                       * LiteralValue / String / TextBuffer : support appendLine?? (e.g. maybe in extension)
-                       * controlTape should verify the range
-                       * Iterator.get&index - current implementation is looks like a short circite, though due to optimization it is correctly implemented
-                       * Should stream protocol support reset, clone methods?
-                       * LiteralValue#class : new&length&shortarray  - should the array be verified?
-                       * WideLiteralValue#class : new&length&bytearray  - should the array be verified?
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
-                       * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char - optimize implementation
-                       * rename win32_handler to handler, it has no OS dependant code
-                       * it should be possible to return all object messages matching a pattern , e.g. by a verb and subject namespace
-                       * think over object serialization, for example - save the object into file and load back
-                       * serialization to and from : xml, binary
-                       * system'text : along with TextBuffer, it should be LiteralBuilder and WideBuilder - to be internally utf-8 and utf-16
-                       * LiteralBuffer, WideBuffer
-                       * date: custom presenter / formatter / custom formatter
-                       * implement analog of String.Format
-                       * calender: custom formatting
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
-                       * generic list interface supported by List, Dictionary, RadioButtonGroup.items and so on  (apeend, delete, getat, setat, enumerator,...)
-                       * encoders : make code similar to c#, it should be possible to save literal / wide as
-                         bytearray and visa versa (currently we have to convert literal / wide to chararray and then save
-                         in appropriate encoding, could we simplify the routine?)
                        * expanding lib30
-                       * system'$consolehandler: if the returning handler is -1
-                       * system'$consolewriter - the exception should be raised if the operation
-                         is unsuccessful
-                       * classOp : test if object is subclass of ??
-                       * Date : convert to utc and back
-                       * literalvalue.add&type'short -> rewrite code to append char without creating a new temporal literal
-                       * literal / wide : chararray
-                       * shortarray, intarray, chararray, literal and wide should return bytearray (save / get)?
-
-              arev - lib30 review
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
                        * review lib30 warnings, try to get rid of most of them
-                       * ShortNumber.less&short - review current implementation, it may not work correctly with negative short values if
-                         hiword == 0 (it is presumed that for negative word, hiword = -1, which is not always the case)
-                       * bsort example, sortRange method : variable is used because of loop implementation
-                       * goods : Record.get&literal : 
-                                  #method literal = ("Name:" + theName + " Price:" + thePrice literal) literal.             
       
-              fdev - eldoc
-                       * design
-                       * implement
-                       
               fdev - upndown
-                       * think over configuration
+                       * configuration
                        * play with chaotic computer player
                        * add network players
                        * port to lib30
@@ -91,27 +43,7 @@ Currently:
                        * game of life
                        
               adev - lib30     
-                       * implement new functionality : MemoryStream, BitArray, SortedList, SortedArrayList
-                       * redesign upper / lower case functionality, make it locale dependant like in c#+
-                       * implement: exp constant
-                       * implement: infinity
-                       * implement: not-a-number
-                       * implement: base 10 logarithm
-                       * implement: logarithm with specified base
-                       * implement: floor of the log
-                       * implement: round to specified decimal places
-                       * implement: truncate to specified decimal places
-                       * implement: factorial
-                       * implement: integer divide rounded toward zero
-                       * implement: integer remainder rounded toward zero
-                       * implement: greatest common denominator
-                       * implement: least common multiple
-                       * implement: get maximum of two numbers
-                       * implement: get minimum of two numbers
-                       * get rid of all warnings in extension / sqlite / winforms packages
-                       * review system'collections, try to use more strong typed code
-                       * used strong typed event handlers
-                       * implement file search
+                       * implement 
                        * fix anagram rosetta examples
                        
               xdev - linux:

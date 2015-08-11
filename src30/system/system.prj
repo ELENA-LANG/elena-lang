@@ -17,7 +17,6 @@ extensions.l
 exceptions.l
 console.l
 win32_pointers.l
-win32_handler.l
 win32_app.l
 win32_strings.l
 collections\list.l

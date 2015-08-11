@@ -118,6 +118,19 @@
         <= %new &literal:(aMessage literal) &subject: %OutOfRangeError.
 }
 
+// --- IndexOutOfRangeException ---
+
+#class IndexOutOfRangeException :: Exception
+{
+    /// Creates the exception
+    #constructor new
+        <= %new &literal:"An index is out of range" &subject: %IndexOutOfRangeError.
+        
+    /// Creates the exception
+    #constructor new:aMessage
+        <= %new &literal:(aMessage literal) &subject: %IndexOutOfRangeError.
+}
+
 // --- InvalidArgumentException ---
 
 #class InvalidArgumentException :: Exception
