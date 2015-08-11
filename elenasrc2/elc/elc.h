@@ -97,7 +97,7 @@
 #define ELC_WARNING_COMPILATION     "Compiled with warnings\n"
 #define ELC_UNSUCCESSFUL            "Compiled with errors\n"
 #define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
-#define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -e<symbol> - resolves the entry forward symbol\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -wun       - sets on the unresolved warnings\n      -xguit     - sets GUI application type\n"
+#define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
 
 // --- ELC error messages ---
 #define ELC_ERR_INVALID_OPTION	   "elc: error 401: Invalid command line parameter '%c'\n"

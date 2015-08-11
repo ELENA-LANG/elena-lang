@@ -1,33 +1,12 @@
-week x:                 
-
-x  - compiler                                                                                                                                        
-i  - ide
-a  - api
-
-l  - language                                                                                   
-s  - samples
-f  - flagship project (up to 2)                                                                                                   
-t  - tools                                                                                 
-v  - vm script                                                                                            
-                                                                                                                 
-- dev                                                                                                      
-- maint                                                                                                                                          
-- rev                                                                                                                  
-- opt
-- port
-- doc
-                                                                               
 ------                                 
-Currently:
+In development:
 ------                                                                                         
 
-              xmaint - elc
-                       * update command line option help, a lot of not supported option, show new ones
 
-<==>                         
-                       
+------                                 
+Pipeline:
+------                                                                                         
               xdev - general implementation
-                       * review all system warnings
                        * variable: no need to store nil if the variable statement has initializing part
                        * constant array
                        * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
@@ -42,11 +21,8 @@ Currently:
                        * cast should be called directly, make sure it is always after dispatch
                        * gui vm client
                        * handle access vialation exception : exception handler should be called
-
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
-
                        * review graph sample, get rid of warnings
-
                        * constant symbols should be used directly
                        * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
                        * refactoring : declareParameterDebugInfo - use debug hint flags
@@ -128,17 +104,16 @@ Currently:
                        * could we simplify stack allocated object check
                        * review all the code and maximally simplify / reduce boxing operations
 
-              xdev - linux:
-                       * implement DateTime / Timespan classes
-                       * linux date / time operations
-                       * test load class by name
-                       * linux32 : implement console clear
-                       * reimplement consolewriter.write&literal - use printf instead of putchar
-                       * migrate rosetta samples
-                       * core : implement INIT_RND
-                       * consoleReader should check if the char is multibyte
-                       * read key
-                       * port console samples                                                                               
+             xdev - linux
+                       * implement debugger
+                       * port multi-threading
+                       * port elc to linux
+                       * port ecv to linux
+                       * review deployment mechanism
+                       * port elenavm to linux
++                       * port elide to linux
+                       * port elenasm to linux
+                       * port elt to linux
                                                                                                                              
               xdev - multithreading       
                        * implement lock / unlock
@@ -211,17 +186,6 @@ Currently:
                        * test operation with stack allocated binaray array (write / read / length / getAt)
                        * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
                          script, so we could check if the caller stack is included correctly)
-
-              xdev - linux
-                       * implement debugger
-                       * port multi-threading
-                       * port elc to linux
-                       * port ecv to linux
-                       * review deployment mechanism
-                       * port elenavm to linux
-                       * port elide to linux
-                       * port elenasm to linux
-                       * port elt to linux
 
               xdev - x64
                       * think over general architecture
@@ -309,6 +273,18 @@ Currently:
                        * expanding lib30
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
                        * review lib30 warnings, try to get rid of most of them
+              
+             adev - linux
+                       * implement DateTime / Timespan classes
+                       * linux date / time operations
+                       * test load class by name
+                       * linux32 : implement console clear
+                       * reimplement consolewriter.write&literal - use printf instead of putchar
+                       * migrate rosetta samples
+                       * core : implement INIT_RND
+                       * consoleReader should check if the char is multibyte
+                       * read key
+                       * port console samples                                                                               
                        
               adev - lib30 optimization
                        * reivew system'winforms'SDIApplication.start, optimize the main loop
