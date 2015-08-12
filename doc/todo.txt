@@ -5,18 +5,24 @@ In development:
               xdev - byte code optimization                               
                        * review system_test code
 
+              xdev - milestones
+                       * issue #8, bytearray, ..., messagearray, dynamic and stack allocated
+
               idev - linux:              
                        * project compile
                        * project run
-
-              xdev - milestones
-                       * implementing 2.0.0 issues (1)
 
               xdev - generic development
                        * free should be method to free the resoures (must be a verb)
 
                xdev - script engine
                        * fix #57 issue
+
+              adev - lib30     
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
+
+             adev - linux
+                       * implement DateTime / Timespan classes
 
 ------                                 
 Pipeline:
@@ -262,15 +268,14 @@ Pipeline:
                        * a lot of operations with controls should be implemented directly
                        
               adev - lib30     
-                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?                       
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
                        * expanding lib30
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
                        * review lib30 warnings, try to get rid of most of them
               
-             adev - linux
-                       * implement DateTime / Timespan classes
+              adev - lib30     
+                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
                        * linux date / time operations
                        * test load class by name
                        * linux32 : implement console clear

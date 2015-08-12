@@ -891,9 +891,11 @@ end
 // ; --- HOOK ---
 // ; in: ecx - catch offset
 procedure %HOOK
-                          
-  add  ecx, [esp]
-  sub  ecx, 5             // ; call command size should be excluded
+
+  mov  edx, [esp]       
+  lea  ecx, [edx + ecx - 5]               
+  // ; add  ecx, [esp]
+  // ; sub  ecx, 5             // ; call command size should be excluded
   ret
 
 end
