@@ -35,8 +35,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define CALC_SIZE            0x1001E
 #define SET_COUNT            0x1001F
 #define GET_COUNT            0x10020
-#define LOCK                 0x10021
-#define UNLOCK               0x10022
+#define THREAD_WAIT          0x10021
 #define LOAD_ADDRESSINFO     0x10023
 #define LOAD_CALLSTACK       0x10024
 #define NEW_HEAP             0x10025
@@ -64,17 +63,17 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 28;
+const int coreFunctionNumber = 27;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
-   CALC_SIZE, SET_COUNT, GET_COUNT, LOCK, UNLOCK, LOAD_ADDRESSINFO,
+   CALC_SIZE, SET_COUNT, GET_COUNT, LOAD_ADDRESSINFO, THREAD_WAIT,
    LOAD_CALLSTACK, PREPARE, LOAD_SUBJECT, LOAD_SUBJECTNAME, LOAD_SYMBOL, NEW_EVENT
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 125;
+const int gcCommandNumber = 128;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -91,8 +90,8 @@ const int gcCommands[gcCommandNumber] =
    bcNSub, bcNMul, bcNDiv, bcDReserve, bcDRestore,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
-   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI,
-   bcNAnd, bcNOr, bcNXor,
+   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcNop,
+   bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
    bcLCopy, bcLEqual, bcLLess, bcLAdd,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
    bcLXor, bcNShift, bcNNot, bcLShift,
@@ -110,14 +109,14 @@ const int gcCommands[gcCommandNumber] =
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
-   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &compileNop, &compilePushE, &compileDCopyVerb, &loadOneByteOp,
+   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &compileDCopyVerb, &loadOneByteOp,
    &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDCopySubj,
 
    &compileNot, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteOp, &compileNop, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
-   &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,

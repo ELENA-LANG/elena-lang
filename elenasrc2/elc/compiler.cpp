@@ -4067,6 +4067,63 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
    //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 }
 
+void Compiler :: compileTry(DNode node, CodeScope& scope)
+{
+   // declare try catch block
+   _writer.declareTry(*scope.tape);
+
+   // implement try expression
+   compileExpression(node.firstChild(), scope, 0);
+
+   // implement finally block
+   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+
+   // declare catch
+   _writer.declareCatch(*scope.tape);
+
+   // implement finally block
+   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
+   if (catchNode != nsNone) {
+      // implement catch message
+      compileMessage(catchNode, scope, ObjectInfo(okAccumulator));
+   }
+   // or throw the exception further
+   else _writer.throwCurrent(*scope.tape);
+
+   _writer.endCatch(*scope.tape);
+}
+
+void Compiler :: compileLock(DNode node, CodeScope& scope)
+{
+   // implement the expression to be locked
+   ObjectInfo object = compileExpression(node.firstChild(), scope, 0);
+
+   _writer.loadObject(*scope.tape, object);
+   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+   _writer.tryLock(*scope.tape);
+   _writer.declareTry(*scope.tape);
+
+   // implement critical section
+   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+
+   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+   _writer.freeLock(*scope.tape);
+
+   // finally block - should free the lock if the exception was thrown
+   _writer.declareCatch(*scope.tape);
+
+   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+   _writer.freeLock(*scope.tape);
+
+   _writer.throwCurrent(*scope.tape);
+
+   _writer.endCatch(*scope.tape);
+}
+
 ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 {
    ObjectInfo retVal;
@@ -4096,6 +4153,14 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsLoop:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileLoop(statement, scope);
+            break;
+         case nsTry:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileTry(statement, scope);
+            break;
+         case nsLock:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileLock(statement, scope);
             break;
          case nsRetStatement:
          {

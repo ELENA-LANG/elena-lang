@@ -17,8 +17,7 @@ define EXIT                 1001Dh
 define CALC_SIZE            1001Eh
 define SET_COUNT            1001Fh
 define GET_COUNT            10020h
-define LOCK                 10021h
-define UNLOCK               10022h
+define THREAD_WAIT          10021h
 define LOAD_ADDRESSINFO     10023h
 define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
@@ -1151,6 +1150,12 @@ procedure % CLOSETHREAD
   
 end
 
+procedure % THREAD_WAIT
+
+  ret
+  
+end
+
 // ; ebx - a new length
 procedure % CALC_SIZE
 
@@ -1184,19 +1189,6 @@ procedure % GET_COUNT
 
   mov  esi, [eax - elCountOffset]
   shr  esi, 2
-  ret
-
-end
-
-procedure % LOCK
-
-  ret
-
-end
-
-// ; does not affect esi
-procedure % UNLOCK
-
   ret
 
 end
@@ -1311,6 +1303,13 @@ labEnd:
 end
 
 // ; ==== Command Set ==
+
+// ; snop
+inline % 4
+
+  nop
+
+end
 
 // ; throw
 inline % 7
@@ -1474,6 +1473,20 @@ inline % 26h
                                                        
   push ebp     
   mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
+
+end
+
+// ; trylock
+inline % 27h
+
+  nop
+
+end
+
+// ; freelock
+inline % 28h
+
+  nop
 
 end
 

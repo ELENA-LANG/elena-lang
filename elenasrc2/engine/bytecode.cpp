@@ -14,14 +14,14 @@
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", "pushb", "pop", "unknown", "pushe", "dcopyverb", "throw",
+   "nop", "breakpoint", "pushb", "pop", "snop", "pushe", "dcopyverb", "throw",
    "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
    "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "unknown", "unhook", "add", "create",
 
-   "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "exclude", "unknown",
-   "unknown", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
+   "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "exclude", "trylock",
+   "freelock", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
    "xlen", "blen", "wlen", "flag", "nlen", "unknown", "class", "mindex",
    "call", "acallvd", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",

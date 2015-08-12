@@ -2451,3 +2451,24 @@ void ByteCodeWriter::loadSymbolReference(CommandTape& tape, ref_t reference)
    // acopyr reference
    tape.write(bcACopyR, reference | mskInternalRef);
 }
+
+void ByteCodeWriter :: tryLock(CommandTape& tape)
+{
+   // labWait:
+   // snop
+   // trylock
+   // then labWait
+
+   int labWait = tape.newLabel();
+   tape.setLabel();
+   tape.write(bcSNop);
+   tape.write(bcTryLock);
+   tape.write(bcElseN, labWait, 0);
+}
+
+void ByteCodeWriter::freeLock(CommandTape& tape)
+{
+   // freelock index
+   tape.write(bcFreeLock);
+}
+

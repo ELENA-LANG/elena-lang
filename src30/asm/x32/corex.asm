@@ -17,8 +17,7 @@ define EXIT                 1001Dh
 define CALC_SIZE            1001Eh
 define SET_COUNT            1001Fh
 define GET_COUNT            10020h
-define LOCK                 10021h
-define UNLOCK               10022h
+define THREAD_WAIT          10021h
 define LOAD_ADDRESSINFO     10023h
 define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
@@ -1522,6 +1521,54 @@ lErr:
   
 end
 
+// --- THREAD_WAIT ---
+// GCXT: it is presumed that gc lock is on, edx - contains the collecting thread event handle
+
+procedure % THREAD_WAIT
+
+  push eax
+  push edi
+
+  push 0FFFFFFFFh // -1     // WaitForSingleObject::dwMilliseconds
+  push edx                  // hHandle
+
+  // ; find the current thread entry
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+
+  mov  eax, [edx+eax*4]
+
+  mov  esi, [eax+4]         // ; get current thread event
+  mov  eax, [eax]           // ; get current frame
+  mov  edx, eax
+
+  // ; lock frame
+  sub  edx, esp
+  lea  edx, [edx-0Ch]        // ; to skip ret point and waitforsingleobject params
+  mov  [eax], edx
+
+  // ; signal the collecting thread that it is stopped
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  push esi
+
+  // ; signal the collecting thread that it is stopped
+  call extern 'dlls'kernel32.SetEvent
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  // ; stop until GC is ended
+  call extern 'dlls'kernel32.WaitForSingleObject
+
+  pop  edi
+  pop  eax
+
+  ret
+
+end
+
 // ; ebx - a new length
 procedure % CALC_SIZE
 
@@ -1555,19 +1602,6 @@ procedure % GET_COUNT
 
   mov  esi, [eax - elCountOffset]
   shr  esi, 2
-  ret
-
-end
-
-procedure % LOCK
-
-  ret
-
-end
-
-// ; does not affect esi
-procedure % UNLOCK
-
   ret
 
 end
@@ -1682,6 +1716,35 @@ labEnd:
 end
 
 // ; ==== Command Set ==
+
+// ; snop
+inline % 4
+
+  // ; set lock
+  mov  ebx, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[ebx], edx
+  jnz  short labWait
+
+  // ; safe point
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  test edx, edx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  call code : %THREAD_WAIT            // ; waits until the GC is stopped
+  nop
+  nop
+  jmp  short labEnd
+
+labConinue:
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [esi], ebx
+
+labEnd:
+
+end
 
 // ; throw
 inline % 7
@@ -1857,6 +1920,29 @@ inline % 26h
   mov  eax, [edx+eax*4]
   push ebp     
   mov  [eax + tls_stack_frame], esp
+
+end
+
+// ; trylock
+inline % 27h
+
+  // ; GCXT: try to lock
+  lea ebx, [eax - elSyncOffset]
+  mov edx, 1
+  xor esi, esi
+  lock cmpxchg dword ptr[ebx], edx
+  cmovnz esi, edx
+
+end
+
+// ; freelock
+inline % 28h
+
+  mov  edx, -1
+  lea  ebx, [eax - elSyncOffset]
+
+  // ; free lock
+  lock xadd [ebx], edx
 
 end
 

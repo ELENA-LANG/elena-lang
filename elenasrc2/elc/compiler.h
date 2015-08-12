@@ -782,6 +782,8 @@ protected:
 
    void compileLoop(DNode node, CodeScope& scope);
    void compileThrow(DNode node, CodeScope& scope, int mode);
+   void compileTry(DNode node, CodeScope& scope);
+   void compileLock(DNode node, CodeScope& scope);
 
    void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
    void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);

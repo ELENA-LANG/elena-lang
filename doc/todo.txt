@@ -2,13 +2,16 @@
 In development:
 ------                                                                                         
 
+              idev - usability
+                       * project view : #13
+
 ------                                 
 Pipeline:
 ------                                                                                         
               xdev - general implementation
                        * variable: no need to store nil if the variable statement has initializing part
                        * constant array
-                       * messages should start with 0x80000000 for windows and from 0xC000000 for linux or always with 0xC0000000 ?
+                       * drop message flag for message ids, messages should be saved in raw data stack frame
                        * loop should contain snop
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
@@ -102,20 +105,20 @@ Pipeline:
                        * GC: card table scanning; could we optimize it ?                       
                        * could we simplify stack allocated object check
                        * review all the code and maximally simplify / reduce boxing operations
-
+                       
              xdev - linux
+                       * start to use GCC 5
+                       * port elide to linux
                        * implement debugger
                        * port multi-threading
                        * port elc to linux
                        * port ecv to linux
                        * review deployment mechanism
                        * port elenavm to linux
-+                       * port elide to linux
                        * port elenasm to linux
                        * port elt to linux
                                                                                                                              
               xdev - multithreading       
-                       * implement lock / unlock
                        * design basic classes / routines to implement multi-threading applications (events, semaphors, locks, threads, ...)
                        * implement basic functionality
                        * should the lock field copied as well during the object reallocating? (see core_mt'reallocate)
@@ -193,7 +196,6 @@ Pipeline:
 
               idev - usability
                        * fix #83
-                       * project view
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
                        * error: more accurate error messages
@@ -266,8 +268,7 @@ Pipeline:
                        
               adev - lib30     
                        * redesign upper / lower case functionality, make it locale dependant like in c#+                       
-                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?
-                       * fix anagram rosetta examples
+                       * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?                       
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
                        * expanding lib30
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)

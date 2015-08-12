@@ -11,6 +11,12 @@
     /// Returns the parameter        
     #method back : anObject = anObject.
 
+    #method evalSelf &func1:aFunction
+        = aFunction eval:self.
+
+    #method evalSelf:aFunction
+        = aFunction eval:self.
+
     /// Returns true if the object is nil
     #method is &nil
         = nil == self.
