@@ -134,12 +134,14 @@ void Settings :: load(Model* model, _ELENA_::IniConfigFile& config)
    loadSetting(config.getSetting(SETTINGS_SECTION, TAB_USING_SETTING), model->tabCharUsing);
    loadSetting(config.getSetting(SETTINGS_SECTION, MAXIMIZED_SETTING), model->appMaximized);
    loadSetting(config.getSetting(SETTINGS_SECTION, OUTPUT_SETTING), model->compilerOutput);
+   loadSetting(config.getSetting(SETTINGS_SECTION, PROJECTVIEW_SETTING), model->projectView);
    loadSetting(config.getSetting(SETTINGS_SECTION, CALLSTACK_SETTING), model->callStack);
    loadSetting(config.getSetting(SETTINGS_SECTION, MESSAGES_SETTING), model->messages);
    loadSetting(config.getSetting(SETTINGS_SECTION, PATH_REMEMBER_SETTING), model->lastPathRemember);
    loadSetting(config.getSetting(SETTINGS_SECTION, PROJECT_REMEMBER_SETTING), model->lastProjectRemember);
    loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_DETECTING_SETTING), model->autoDetecting);
    loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_RECOMPILE_SETTING), model->autoRecompile);
+   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_PROJECT_LOAD_SETTING), model->autoProjectLoad);
    //loadSetting(config.getSetting(SETTINGS_SECTION, DEBUG_TAPE_SETTING), model->debugTape);
 
    loadSetting(config.getSetting(SETTINGS_SECTION, TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
@@ -164,10 +166,12 @@ void Settings :: save(Model* model, _ELENA_::IniConfigFile& config)
    saveSetting(config, SETTINGS_SECTION, TAB_USING_SETTING, model->tabCharUsing, false);
    saveSetting(config, SETTINGS_SECTION, MAXIMIZED_SETTING, model->appMaximized, true);
    saveSetting(config, SETTINGS_SECTION, OUTPUT_SETTING, model->compilerOutput, true);
+   saveSetting(config, SETTINGS_SECTION, PROJECTVIEW_SETTING, model->projectView, true);
    saveSetting(config, SETTINGS_SECTION, CALLSTACK_SETTING, model->callStack, true);
    saveSetting(config, SETTINGS_SECTION, MESSAGES_SETTING, model->messages, true);
    saveSetting(config, SETTINGS_SECTION, PATH_REMEMBER_SETTING, model->lastPathRemember, true);
    saveSetting(config, SETTINGS_SECTION, PROJECT_REMEMBER_SETTING, model->lastProjectRemember, true);
+   saveSetting(config, SETTINGS_SECTION, AUTO_PROJECT_LOAD_SETTING, model->autoProjectLoad, true);
    saveSetting(config, SETTINGS_SECTION, AUTO_DETECTING_SETTING, model->autoDetecting, true);
    saveSetting(config, SETTINGS_SECTION, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
    //saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, model->debugTape, false);

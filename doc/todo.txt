@@ -2,12 +2,28 @@
 In development:
 ------                                                                                         
 
-              idev - usability
-                       * project view : #13
+              xdev - byte code optimization                               
+                       * review system_test code
+
+              idev - linux:              
+                       * project compile
+                       * project run
+
+              xdev - milestones
+                       * implementing 2.0.0 issues (1)
+
+              xdev - generic development
+                       * free should be method to free the resoures (must be a verb)
+
+               xdev - script engine
+                       * fix #57 issue
 
 ------                                 
 Pipeline:
 ------                                                                                         
+              xdev - milestones
+                       * implementing 2.0.0 issues
+
               xdev - general implementation
                        * variable: no need to store nil if the variable statement has initializing part
                        * constant array
@@ -37,22 +53,15 @@ Pipeline:
               xdev - generic development
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
                        * begin / end should be verbs?
-                       * free should be method to free the resoures (must be a verb)
                        * probably we should not directly call any coreapi functions, all functionality be implemented as byte codes ?
                        * split hook into two : address , hook ; or use internal function for exception raising / handling?
                        * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
-                       * shoud is verb always return boolean?
-                       * primitive wrappers : stringof, struct, variableof, arrayof (can be stack allocated, changable)
+                       * shoud "is" verb always return boolean?
                        * default dynamic constructor
-                       * example of variable, array ; should be easy to declare (only inherits the base class)
-                       * example of by ref parameters
                        * try to minimize the list of type forwards
-                       * fix bugs
-                       * can we get rid of bool type forwaring?
                        * try to get rid of most external code
                        * heap mg size should reserved but not committed and can grow
                        * out of memory exception should be correctly raised
-                       * destructors
                        * MT: TLS table should be used to store exception information,
                          rather than global variable like in single thread version
                        * compile as multi-threading stand-alone
@@ -72,9 +81,7 @@ Pipeline:
                        * review samples for possible byte code optimization                       
                        * review rosetta samples for possible byte code optimization                       
                        * review internal core_routines
-                       * optimize primitive operator implementations
-
-                       * review system_test code
+                       * optimize primitive operator implementations                       
                        * review / optimize SDIApplication.start
                        * call to $super should be direct
                        * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
@@ -136,21 +143,9 @@ Pipeline:
                        * port rosetta samples                                                                               
                        
                xdev - script engine
-                       * calculator : parse -2+3
-                       * calculator : operations with brackets
-                       * calculator : move lexicalOp to the script
-                       * calculator : gui
-                       * reimplement script samples: interpreter, helloworld, vmconsole
-                       * get rid of reverse command
-                       * migrate calc, interpreter samples
-                       * vmconsole
                        * cfparser : there should be two mappings so we could support both local and function variables
-                       * cfparser : implement support variables
                        * cfparser : methods variable
                        * support if, foreach, while constructions,
-                       * overwriding the object (just in place mutation)
-
-                       * should be able to parse 2.add(3) - currently dot is considered as part of real number
 
                        * if the script contains only grammar, virtual machine should not be called
 
@@ -220,7 +215,6 @@ Pipeline:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               idev - linux:              
-                       * project compilation / clean / run
                        * save last open path (should be saved in the current path??)
                        * fix outdent / uncomment / trim / eraseLine - some general bug in removing
                        * menu option - project - forwards
@@ -239,6 +233,7 @@ Pipeline:
                        * IDE UI : facelifting, tuning
                        * test : new project, new file, include, exclude, save, ...
                        * make sure textview is really deleted when the page is closed
+                       * project clean
                        
               idev - debugger
                        * if an expression raises an exception, debugger should switch into step mode
@@ -303,7 +298,15 @@ Pipeline:
               sdev - rosetta code samples
                        * implement
       
-              sdev - gui samples
+              sdev - samples
+                       * calculator : parse -2+3
+                       * calculator : operations with brackets
+                       * calculator : move lexicalOp to the script
+                       * calculator : gui
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+                       * get rid of reverse command
+                       * migrate calc, interpreter samples
+                       * vmconsole
                        * notepad: add status bar
                        * notepad: add open / save
                        * notepad: show the current cursor position

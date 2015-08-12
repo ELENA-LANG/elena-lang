@@ -283,20 +283,40 @@ bool IDEController :: openProject(_ELENA_::path_t path)
    if (_model->lastPathRemember)
       _model->paths.lastPath.copySubPath(path);
 
-   _ELENA_::Path sourcePath;
-   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
-   while (!it.Eof()) {
-      _ELENA_::Path::loadPath(sourcePath, it.key());
-      Paths::resolveRelativePath(sourcePath, _model->project.path);
+   if (_model->autoProjectLoad) {
+      _ELENA_::Path sourcePath;
+      _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
+      while (!it.Eof()) {
+         _ELENA_::Path::loadPath(sourcePath, it.key());
+         Paths::resolveRelativePath(sourcePath, _model->project.path);
 
-      if (!openFile(sourcePath))
-         _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
+         if (!openFile(sourcePath))
+            _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
 
-      it++;
+         it++;
+      }
    }
    onProjectOpen();
 
    return true;
+}
+
+void IDEController :: selectProjectFile(int index)
+{
+   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
+   while (index > 0) {
+      index--;
+      it++;
+   }
+
+   _ELENA_::Path sourcePath;
+   _ELENA_::Path::loadPath(sourcePath, it.key());
+   Paths::resolveRelativePath(sourcePath, _model->project.path);
+
+   if (!openFile(sourcePath)) {
+      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
+   }
+   else onChange();
 }
 
 bool IDEController :: openFile(_ELENA_::path_t path)
@@ -763,6 +783,8 @@ void IDEController :: doInclude()
 
       _ELENA_::path_t path = _model->getDocumentPath(index);
       _project.includeSource(path);
+
+      _view->reloadProjectView(&_project);
    }
    onDocIncluded();
 }
@@ -775,6 +797,8 @@ void IDEController :: doExclude()
 
       _ELENA_::path_t path = _model->getDocumentPath(index);
       _project.excludeSource(path);
+
+      _view->reloadProjectView(&_project);
    }
    onDocIncluded();
 }
@@ -1237,6 +1261,22 @@ bool IDEController :: doCompileProject(int postponedAction)
    return true;
 }
 
+void IDEController :: doShowProjectView(bool checked, bool forced)
+{
+   if (_model->projectView != checked || forced) {
+      _model->projectView = checked;
+
+      _view->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _model->projectView);
+
+      if (checked) {
+         _view->openProjectView();
+      }
+      else _view->closeProjectView();
+
+      _view->refresh(false);
+   }
+}
+
 void IDEController :: doShowCompilerOutput(bool checked, bool forced)
 {
    if (_model->compilerOutput != checked || forced) {
@@ -1302,6 +1342,7 @@ void IDEController :: doShowDebugWatch(bool visible)
 
 void IDEController :: onIDEInit()
 {
+   doShowProjectView(_model->projectView, true);
    doShowCallStack(_model->callStack, true);
    doShowCompilerOutput(_model->compilerOutput, true);
    doShowMessages(_model->messages, true);
@@ -1402,7 +1443,7 @@ void IDEController :: onUIChange()
    _model->previousState = _model->state;
 }
 
-void IDEController::onDocIncluded()
+void IDEController :: onDocIncluded()
 {
 	if (_model->currentDoc != NULL) {
       _view->enableMenuItemById(IDM_PROJECT_INCLUDE, !_model->currentDoc->status.included, false);
@@ -1546,6 +1587,8 @@ void IDEController :: onProjectOpen()
 {
    setCaption(_model->project.name);
 
+   _view->reloadProjectView(&_project);
+
    _model->state |= uiProjectActive;
 }
 
@@ -1560,6 +1603,8 @@ void IDEController :: onProjectClose()
 //      _messageList->clear();
 
    _model->state &= ~uiProjectActive;
+
+   _view->reloadProjectView(&_project);
 
 //   ((Output*)_output)->clear();
 }

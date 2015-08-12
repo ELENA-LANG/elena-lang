@@ -397,6 +397,16 @@ public:
       appWindow.clearMessageList();
    }
 
+   virtual void openProjectView()
+   {
+      appWindow.openProjectView();
+   }
+
+   virtual void closeProjectView()
+   {
+      appWindow.closeProjectView();
+   }
+
    virtual bool compileProject(_ProjectManager* project, int postponedAction)
    {
       return appWindow.compileProject(project, postponedAction);
@@ -450,6 +460,11 @@ public:
    virtual void onStart()
    {
       appWindow._notify(IDE_DEBUGGER_START);
+   }
+
+   virtual void reloadProjectView(_ProjectManager* project)
+   {
+      appWindow.reloadProjectView(project);
    }
 
    Win32IDEView(HINSTANCE hInstance, _Controller* controller, Model* model)

@@ -182,6 +182,8 @@ class _ProjectManager
 public:
    virtual _ELENA_::path_t getAppPath() = 0;
 
+   virtual _ELENA_::ConfigCategoryIterator SourceFiles() = 0;
+
    virtual int getDebugMode() = 0;
 
    virtual void retrievePath(_ELENA_::ident_t name, _ELENA_::Path & path, _ELENA_::path_t extension) = 0;
@@ -238,11 +240,13 @@ public:
    bool compilerOutput;
    bool callStack;
    bool messages;
+   bool projectView;
 
    // policy
    bool lastProjectRemember;
    bool lastPathRemember;
    bool autoRecompile;
+   bool autoProjectLoad;
 
    // editor
    Point  lastCaret;
@@ -395,7 +399,9 @@ public:
 
       lastProjectRemember = true;
       lastPathRemember = true;
+      autoProjectLoad = true;
 
+      projectView = true;
       compilerOutput = true;
       callStack = true;
       messages = true;
@@ -483,6 +489,7 @@ public:
    virtual void doDebugRunTo() = 0;
 
    virtual void doShowCompilerOutput(bool checked, bool forced = false) = 0;
+   virtual void doShowProjectView(bool checked, bool forced = false) = 0;
    virtual void doShowMessages(bool checked, bool forced = false) = 0;
    virtual void doShowDebugWatch(bool visible) = 0;
    virtual void doShowCallStack(bool checked, bool forced = false) = 0;
@@ -492,6 +499,7 @@ public:
    virtual void doGotoSource() = 0;
 
    virtual void highlightMessage(MessageBookmark* bookmark, int bandStyle) = 0;
+   virtual void selectProjectFile(int index) = 0;
 
    virtual void doDebugRun() = 0;
    virtual void onDebuggerVMHook() = 0;
@@ -574,6 +582,9 @@ public:
    virtual void openDebugWatch() = 0;
    virtual void closeDebugWatch() = 0;
 
+   virtual void openProjectView() = 0;
+   virtual void closeProjectView() = 0;
+
    virtual void openCallList() = 0;
    virtual void closeCallList() = 0;
 
@@ -582,6 +593,8 @@ public:
    virtual void refreshDebugWindows(_ELENA_::_DebugController* debugController) = 0;
    virtual void browseWatch(_ELENA_::_DebugController* debugController, void* node) = 0;
    virtual void browseWatch(_ELENA_::_DebugController* debugController) = 0;
+
+   virtual void reloadProjectView(_ProjectManager* project) = 0;
 
    virtual ~_View() {}
 };

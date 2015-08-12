@@ -87,6 +87,8 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
+        MENUITEM "&ProjectView",                    IDM_VIEW_PROJECTVIEW
+        MENUITEM SEPARATOR
         MENUITEM "&Compiler output",                IDM_VIEW_OUTPUT
         MENUITEM "&Messages",                       IDM_VIEW_MESSAGES
         MENUITEM "&Debug watch",                    IDM_VIEW_WATCH

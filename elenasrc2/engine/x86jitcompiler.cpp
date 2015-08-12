@@ -90,7 +90,7 @@ const int gcCommands[gcCommandNumber] =
    bcNSub, bcNMul, bcNDiv, bcDReserve, bcDRestore,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
-   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcNop,
+   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
    bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
    bcLCopy, bcLEqual, bcLLess, bcLAdd,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,

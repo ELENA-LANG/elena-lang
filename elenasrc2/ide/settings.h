@@ -30,9 +30,11 @@
 #define SCHEME_SETTING           "scheme"
 #define TABSCORE_SETTING         "tabscore"
 #define OUTPUT_SETTING           "compileroutput"
+#define PROJECTVIEW_SETTING      "projectview"
 #define CALLSTACK_SETTING        "callstack"
 #define MESSAGES_SETTING         "messages"
 #define AUTO_RECOMPILE_SETTING   "autocomp"
+#define AUTO_PROJECT_LOAD_SETTING "autoload"
 #define DEBUG_TAPE_SETTING       "debugtape"
 #define FONTSIZE_SETTING         "font_size"
 

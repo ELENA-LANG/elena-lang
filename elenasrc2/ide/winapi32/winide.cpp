@@ -29,6 +29,7 @@ using namespace _GUI_;
 #define CTRL_BSPLITTER     10
 #define CTRL_HSPLITTER     11
 #define CTRL_CONTEXTBOWSER 12
+#define CTRL_PROJECTVIEW   13
 
 int AppToolBarButtonNumber = 19;
 
@@ -414,6 +415,9 @@ void MainWindow :: _onNotify(NMHDR* notification)
          ::MessageBox(getHandle(), message, APP_NAME, MB_OK | MB_ICONERROR); // !!
          break;
       }
+      case TVN_SELCHANGED:
+         onIndexChange(notification);
+         break;
       case NM_DBLCLK:
          onDoubleClick(notification);
          break;
@@ -653,6 +657,9 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_EDIT_SWAP:
          _controller->doSwap();
          break;
+      case IDM_VIEW_PROJECTVIEW:
+         _controller->doShowProjectView(!_model->projectView);
+         break;
       case IDM_VIEW_OUTPUT:
          _controller->doShowCompilerOutput(!_model->compilerOutput);
          break;
@@ -867,6 +874,18 @@ void MainWindow :: onDoubleClick(NMHDR* notification)
    }
 }
 
+void MainWindow :: onIndexChange(NMHDR* notification)
+{
+   if (checkControlHandle(CTRL_PROJECTVIEW, notification->hwndFrom)) {
+      TreeView* tree = (TreeView*)_controls[CTRL_PROJECTVIEW];
+
+      int index = tree->getParam(tree->getCurrent());
+      if (index != -1) {
+         _controller->selectProjectFile(index);
+      }
+   }
+}
+
 void MainWindow :: onRClick(NMHDR* notification)
 {
    if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
@@ -1003,7 +1022,7 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _model = model;
    _tabTTHandle = NULL;
 
-   _controlCount = 13;
+   _controlCount = 14;
    _controls = (_BaseControl**)malloc(_controlCount << 2);
 
    _controls[0] = NULL;
@@ -1026,12 +1045,13 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
-   _controls[CTRL_CONTEXTBOWSER] = new TreeView(this);
-   _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_CONTEXTBOWSER], true, IDM_LAYOUT_CHANGED);
+   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR]);
+   _controls[CTRL_PROJECTVIEW] = new TreeView(this);
+   _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_PROJECTVIEW], true, IDM_LAYOUT_CHANGED);
 
    ((Control*)_controls[CTRL_TABBAR])->_setHeight(120);
    ((Control*)_controls[CTRL_BSPLITTER])->_setConstraint(60, 100);
-   ((Control*)_controls[CTRL_CONTEXTBOWSER])->_setWidth(200);
+   ((Control*)_controls[CTRL_PROJECTVIEW])->_setWidth(200);
 
    _statusBar = (StatusBar*)_controls[CTRL_STATUSBAR];
 
@@ -1049,6 +1069,8 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    frame->init(model);
 
    showControls(CTRL_STATUSBAR, CTRL_EDITFRAME);
+
+   showControls(CTRL_PROJECTVIEW, CTRL_PROJECTVIEW);
 }
 
 MainWindow :: ~MainWindow()
@@ -1067,6 +1089,11 @@ void MainWindow :: setTop(int index)
 void MainWindow :: setLeft(int index)
 {
    _layoutManager.setAsLeft((Control*)_controls[index]);
+}
+
+void MainWindow :: setRight(int index)
+{
+   _layoutManager.setAsRight((Control*)_controls[index]);
 }
 
 void MainWindow::setBottom(int index)
@@ -1260,6 +1287,16 @@ void MainWindow::closeCallList()
    }
 }
 
+void MainWindow :: openProjectView()
+{
+   showControls(CTRL_PROJECTVIEW, CTRL_PROJECTVIEW);
+}
+
+void MainWindow :: closeProjectView()
+{
+   hideControl(CTRL_PROJECTVIEW);
+}
+
 bool MainWindow :: compileProject(_ProjectManager* project, int postponedAction)
 {
    _ELENA_::Path path(_model->project.path);
@@ -1371,13 +1408,29 @@ void MainWindow :: refreshDebugWindows(_ELENA_::_DebugController* debugControlle
 
 void MainWindow :: openDebugWatch()
 {
-   showControls(CTRL_CONTEXTBOWSER, CTRL_CONTEXTBOWSER);
+   if (!isControlVisible(CTRL_CONTEXTBOWSER)) {
+      TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+      tabBar->addTabChild(WATCH_TAB, (Control*)_controls[CTRL_CONTEXTBOWSER]);
+      tabBar->selectTabChild((Control*)_controls[CTRL_CONTEXTBOWSER]);
+      tabBar->show();
+
+      showControls(CTRL_CONTEXTBOWSER, CTRL_CONTEXTBOWSER);
+   }
    refreshControl(CTRL_CONTEXTBOWSER);
    refresh();
 }
 
 void MainWindow :: closeDebugWatch()
 {
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+   tabBar->removeTabChild((Control*)_controls[CTRL_CONTEXTBOWSER]);
+   if (tabBar->getTabCount() == 0) {
+      tabBar->hide();
+   }
+   else tabBar->selectLastTabChild();
+
    hideControl(CTRL_CONTEXTBOWSER);
    refresh();
 }
@@ -1400,4 +1453,53 @@ void MainWindow :: onDebuggerStop(bool broken)
       ::ShowWindowAsync(_handle, _model->appMaximized ? SW_MAXIMIZE : SW_SHOWNORMAL);
 
    _controller->onDebuggerStop(broken);
+}
+
+void MainWindow :: reloadProjectView(_ProjectManager* project)
+{
+   TreeView* projectView = (TreeView*)_controls[CTRL_PROJECTVIEW];
+
+   projectView->clear(NULL);
+
+   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1);
+
+   _ELENA_::ConfigCategoryIterator it = project->SourceFiles();
+   int index = 0;
+   _ELENA_::wide_c buffer[0x100];
+   while (!it.Eof()) {
+      _ELENA_::ident_t name = it.key();
+
+      TreeViewItem parent = root;
+      int start = 0;      
+      while (true) {
+         int end = _ELENA_::StringHelper::find(name + start, PATH_SEPARATOR);
+
+         _ELENA_::WideString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
+
+         TreeViewItem current = projectView->getChild(parent);
+         while (current != NULL) {
+            projectView->getCaption(current, buffer, 0x100);
+
+            if (!nodeName.compare(buffer)) {
+               current = projectView->getNext(current);
+            }
+            else break;
+         }
+
+         if (current == NULL) {
+            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1);
+         }
+         parent = current;
+
+         if (end != -1) {
+            start = end + 1;
+         }
+         else break;
+      }
+
+      it++;
+      index++;
+   }
+
+   projectView->expand(root);
 }

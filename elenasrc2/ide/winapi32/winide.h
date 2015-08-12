@@ -86,6 +86,7 @@ protected:
    RecentList     _recentProjects;
 
    void setLeft(int index);
+   void setRight(int index);
    void setTop(int index);
    void setClient(int index);
    void setBottom(int index);
@@ -104,6 +105,7 @@ protected:
    void onTabChanged(HWND wnd, int index);
    void onContextMenu(ContextMenuNMHDR* notification); 
    void onDoubleClick(NMHDR* notification);
+   void onIndexChange(NMHDR* notification);
    void onRClick(NMHDR* notification);
    void onDebuggerStep(LineInfoNMHDR* notification);
    void onDebuggerStop(bool failed);
@@ -180,6 +182,9 @@ public:
    void openCallList();
    void closeCallList();
 
+   void openProjectView();
+   void closeProjectView();
+
    bool compileProject(_ProjectManager* manager, int postponedAction);
 
    void _notify(int code);
@@ -193,6 +198,8 @@ public:
    void browseWatch(_ELENA_::_DebugController* debugController, void* watchNode);
    void browseWatch(_ELENA_::_DebugController* debugController);
    
+   void reloadProjectView(_ProjectManager* project);
+
    MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller* controller, Model* model);
    virtual ~MainWindow();
 };
