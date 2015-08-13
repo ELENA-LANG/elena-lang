@@ -503,6 +503,16 @@ public:
       //appWindow.closeDebugWatch();
    }
 
+   virtual void openProjectView()
+   {
+      //appWindow.openDebugWatch();
+   }
+
+   virtual void closeProjectView()
+   {
+      //appWindow.closeDebugWatch();
+   }
+
    virtual void openCallList()
    {
       //appWindow.openCallList();
@@ -573,6 +583,10 @@ public:
    virtual void onStart()
    {
       //appWindow._notify(IDE_DEBUGGER_START);
+   }
+
+   virtual void reloadProjectView(_ProjectManager* project)
+   {
    }
 
    GTKIDEView(_Controller* controller, Model* model)
