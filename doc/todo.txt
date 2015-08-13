@@ -1,13 +1,6 @@
 ------                                 
 In development:
 ------                                                                                         
-              idev - linux:              
-                       * project compile
-                       * project run
-
-              xdev - generic development
-                       * free should be method to free the resoures (must be a verb)
-
                xdev - script engine
                        * fix #57 issue
 
@@ -98,7 +91,7 @@ Pipeline:
                          in adjucment
                        
              xdev - linux
-                       * start to use GCC 5
+                       * create debian package
                        * port elide to linux
                        * implement debugger
                        * port multi-threading
@@ -199,6 +192,9 @@ Pipeline:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               idev - linux:              
+                       * start to use GCC 5
+                       * project compile
+                       * project run
                        * save last open path (should be saved in the current path??)
                        * fix outdent / uncomment / trim / eraseLine - some general bug in removing
                        * menu option - project - forwards

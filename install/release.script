@@ -35,6 +35,7 @@ mkdir -p ./new/src30/system/routines/
 mkdir -p ./new/src30/system/math/
 mkdir -p ./new/src30/system/io/
 mkdir -p ./new/src30/system/dynamic/
+mkdir -p ./new/src30/system/calendar/
 mkdir -p ./new/src30/extensions/
 mkdir -p ./new/src30/extensions/math/
 mkdir -p ./new/src30/extensions/routines/
@@ -133,6 +134,7 @@ cp ../src30/system/io/*.l new/src30/system/io/
 cp ../src30/system/math/*.l new/src30/system/math/
 cp ../src30/system/routines/*.l new/src30/system/routines/
 cp ../src30/system/text/*.l new/src30/system/text/
+cp ../src30/system/calendar/*.l new/src30/system/calendar/
 
 cp ../src30/extensions/*.l new/src30/extensions/
 cp ../src30/extensions/math/*.l new/src30/extensions/math/
