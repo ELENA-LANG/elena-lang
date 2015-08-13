@@ -21,6 +21,7 @@ asavesi := 1 aloadsi := 1 => asavesi nop;
 pushfi pop => nop nop;
 pusha popa => nop nop;
 pushb popa => acopyb nop;
+acopyf bcopya newn => bcopyf nop newn;
 
 // m = $self
 open pusha aloadfi := 1 close quitn => nop nop nop nop quitn;

@@ -101,9 +101,13 @@ ELENA byte codes (or ecodes)
                   
  copy                       - {base} << {acc}, base.Length
 
+ copyb                      - {base} >> {acc}, base.Length
+
  get                        - acc <= base[index] ;
  
  ncopy                      - int[base] << int[acc]
+ 
+ ncopyb                     - int[base] >> int[acc]
  
  nload                      - int[acc] >> index
   
@@ -358,6 +362,8 @@ ELENA byte codes (or ecodes)
  land                       - long[base] && long[acc]
  
  lcopy                      - long[base] << long[acc]
+
+ lcopyb                     - long[base] >> long[acc]
 
  ldiv                       - long[base] /= long[acc]
  

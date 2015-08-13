@@ -787,9 +787,7 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
    // ifheap labSkip
    // bcopya
    // newn vmt, size
-   // bswap
-   // copy
-   // acopyb
+   // copyb
    // labSkip:
 
    if (!alwaysBoxing) {
@@ -802,38 +800,34 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.write(bcBCopyA);
       tape.write(bcACopyR, vmtReference | mskVMTRef);
       tape.write(bcNCreate);
-      tape.write(bcBSwap);
-      tape.write(bcCopy);
+      tape.write(bcCopyB);
    }
    else if (size == -2) {
       tape.write(bcWLen);
       tape.write(bcBCopyA);
       tape.write(bcACopyR, vmtReference | mskVMTRef);
       tape.write(bcWCreate);
-      tape.write(bcBSwap);
-      tape.write(bcCopy);
+      tape.write(bcCopyB);
    }
    else if (size < 0) {
       tape.write(bcBLen);
       tape.write(bcBCopyA);
       tape.write(bcACopyR, vmtReference | mskVMTRef);
       tape.write(bcBCreate);
-      tape.write(bcBSwap);
-      tape.write(bcCopy);
+      tape.write(bcCopyB);
    }
    else {
       tape.write(bcBCopyA);
       tape.write(bcNewN, vmtReference | mskVMTRef, size);
-      tape.write(bcBSwap);
 
       if (size >0 && size <= 4) {
-         tape.write(bcNLoad);
-         tape.write(bcNSave);
+         tape.write(bcNCopyB);
       }
-      else tape.write(bcCopy);
+      else if (size == 8) {
+         tape.write(bcLCopyB);
+      }
+      else tape.write(bcCopyB);
    }
-
-   tape.write(bcACopyB);
 
    if (!alwaysBoxing)
       tape.setLabel();

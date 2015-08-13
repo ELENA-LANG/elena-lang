@@ -5,6 +5,27 @@ In development:
               xdev - byte code optimization                               
                        * review system_test code
 
+    9C FFFFFFFD                acopyf fp:-3
+    12                         bcopya
+    F1 41000003 00000008       newn system'LongNumber, 8
+    2D                         bswap
+    70                         lcopy
+    0C                         acopyb
+    0A                         pusha
+
+    newn
+    bswap
+    lcopy
+    acopyb
+    pusha
+
+    newn
+    lcopyb
+    pusha
+
+
+
+
               xdev - milestones
                        * issue #8, bytearray, ..., messagearray, dynamic and stack allocated
 
@@ -99,6 +120,7 @@ Pipeline:
                        * make sure intvar can be passed as int without major overhead (no explicit typecasting)
                        
                        * optimize output code: system'BaseFunction2
+                       * if $self/fields are not used - do not store eax
 
               xdev - native code optimization
                        * optimize hook / unhook commands

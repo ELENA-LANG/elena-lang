@@ -1803,6 +1803,41 @@ inline % 4Fh
 
 end
 
+// ; ncopyb (src, tgt)
+inline % 50h
+
+  mov  ebx, [edi]
+  mov  [eax], ebx
+    
+end
+
+// ; lcopyb
+inline % 51h
+
+  mov  ecx, [edi]
+  mov  ebx, [edi+4]
+  mov  [eax], ecx
+  mov  [eax+4], ebx
+    
+end
+
+// ; copyb
+
+inline % 52h
+
+  mov  ecx, [edi-8]
+  mov  esi, edi
+  mov  ebx, eax
+labCopy:
+  mov  edx, [esi]
+  mov  [ebx], edx
+  lea  esi, [esi+4]
+  lea  ebx, [ebx+4]
+  add  ecx, 4
+  js   short labCopy
+
+end
+
 // ; wread
 inline % 59h
 
