@@ -1722,7 +1722,7 @@ void ByteCodeWriter :: compileProcedure(ByteCodeIterator& it, Scope& scope)
                // if it is a variable containing reference to the primitive value
                writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsByteArrayLocal, frameLevel);
             }
-            // else it is a primitice variable
+            // else it is a primitive variable
             else writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsByteArrayLocalPtr, 0);
             break;
          case bdShortArrayLocal:

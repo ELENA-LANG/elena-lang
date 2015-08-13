@@ -1,15 +1,6 @@
 ------                                 
 In development:
 ------                                                                                         
-
-              xdev - byte code optimization                               
-                       * jump over breakpoint should be idle
-
-                       * review system_test code
-
-              xdev - milestones
-                       * issue #8, bytearray, ..., messagearray, dynamic and stack allocated
-
               idev - linux:              
                        * project compile
                        * project run
@@ -22,6 +13,7 @@ In development:
 
               adev - lib30     
                        * redesign upper / lower case functionality, make it locale dependant like in c#+                       
+                       * implement #33 (tcp/ip socket)
 
              adev - linux
                        * implement DateTime / Timespan classes
@@ -63,6 +55,7 @@ Pipeline:
                        * default dynamic constructor
                        
               xdev - byte code optimization                               
+                       * review system_test code : $Console (ControlTest)
                        * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
                          better to compare value ?? (if it is true / false constants for example)
                        * direct parameter allocation can be used for open argument list : e.g. OpenArgTester testParamsCopy &args:1:"a":3
@@ -89,8 +82,9 @@ Pipeline:
                        
                        * optimize output code: system'BaseFunction2
                        * if $self/fields are not used - do not store eax
-
+                       
               xdev - native code optimization
+                       * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
                        * optimize hook / unhook commands
                        * should ret be followed with several nops?
                        * review bssearch implementation, try to optimize, reduce number of jumps / commands, make them parallel

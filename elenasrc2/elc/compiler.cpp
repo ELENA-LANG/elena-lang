@@ -1152,7 +1152,10 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
             info.fieldTypes.add(-1, type);
             info.size = -moduleScope->defineTypeSize(type);
-            if (info.size <= 0)
+            if (info.size == -4) {
+               info.header.flags |= elDebugIntegers;
+            }
+            else if ((int)info.size > 0)
                raiseError(wrnInvalidHint, value.Terminal());
          }
          else raiseWarning(1, wrnUnknownHint, terminal);

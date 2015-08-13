@@ -1101,7 +1101,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
             readByteArray(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
-         else if (lineInfo[index].symbol == dsByteArrayLocal) {
+         else if (lineInfo[index].symbol == dsByteArrayLocalPtr) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 

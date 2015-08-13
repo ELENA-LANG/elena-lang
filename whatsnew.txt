@@ -13,6 +13,7 @@
 
 [ELC]
 [*] output code optimization
+[-] issue #8 fixed
 
 [IDE]
 [+] issue #13 implemented : Project View
