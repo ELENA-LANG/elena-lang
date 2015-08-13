@@ -540,6 +540,7 @@ struct CommandTape
 
    void import(_Memory* section, bool withHeader = false);
 
+   static bool optimizeIdleBreakpoints(CommandTape& tape);
    static bool optimizeJumps(CommandTape& tape);
    static bool import(ByteCommand& command, _Module* sour, _Module* dest);
 

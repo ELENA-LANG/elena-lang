@@ -9,7 +9,18 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-                                    
+                    
+#symbol $Test =
+{
+    #method(type:handle) new
+    [ 
+        #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle/* &int:(anAttributes int)*/.
+        
+        ^ Handle new &handle:aHandle.
+    ]
+}.
+
+                                                                    
 #symbol XTester =
 {
     test            

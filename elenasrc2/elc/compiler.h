@@ -683,6 +683,7 @@ protected:
 
    // optmimization routines
    bool applyRules(CommandTape& tape);
+   bool optimizeIdleBreakpoints(CommandTape& tape);
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 

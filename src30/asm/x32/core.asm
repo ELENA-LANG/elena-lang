@@ -2563,6 +2563,8 @@ end
 
 inline % 92h
 
+  nop
+  nop
   add  ebp, __arg1
   
 end

@@ -3,28 +3,9 @@ In development:
 ------                                                                                         
 
               xdev - byte code optimization                               
+                       * jump over breakpoint should be idle
+
                        * review system_test code
-
-    9C FFFFFFFD                acopyf fp:-3
-    12                         bcopya
-    F1 41000003 00000008       newn system'LongNumber, 8
-    2D                         bswap
-    70                         lcopy
-    0C                         acopyb
-    0A                         pusha
-
-    newn
-    bswap
-    lcopy
-    acopyb
-    pusha
-
-    newn
-    lcopyb
-    pusha
-
-
-
 
               xdev - milestones
                        * issue #8, bytearray, ..., messagearray, dynamic and stack allocated
@@ -48,10 +29,8 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
-              xdev - milestones
-                       * implementing 2.0.0 issues
-
               xdev - general implementation
+                       * implementing 2.0.0 issues
                        * variable: no need to store nil if the variable statement has initializing part
                        * constant array
                        * drop message flag for message ids, messages should be saved in raw data stack frame
@@ -80,19 +59,8 @@ Pipeline:
               xdev - generic development
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
                        * begin / end should be verbs?
-                       * probably we should not directly call any coreapi functions, all functionality be implemented as byte codes ?
-                       * split hook into two : address , hook ; or use internal function for exception raising / handling?
-                       * it should be possible to call explicitly code declared in system'routine : system'internal'intptr eval &literal:x ...
                        * shoud "is" verb always return boolean?
                        * default dynamic constructor
-                       * try to minimize the list of type forwards
-                       * try to get rid of most external code
-                       * heap mg size should reserved but not committed and can grow
-                       * out of memory exception should be correctly raised
-                       * MT: TLS table should be used to store exception information,
-                         rather than global variable like in single thread version
-                       * compile as multi-threading stand-alone
-                       * compile as multi-threading vm client
                        
               xdev - byte code optimization                               
                        * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
@@ -134,12 +102,6 @@ Pipeline:
                          set of commands)
                        * hook: maybe offset should exclude call command size, so no need
                          in adjucment
-
-              xdev - general optimization                               
-                       * can we resolve cast&to directly (e.g. second VMT entry is always cast&to)
-                       * GC: card table scanning; could we optimize it ?                       
-                       * could we simplify stack allocated object check
-                       * review all the code and maximally simplify / reduce boxing operations
                        
              xdev - linux
                        * start to use GCC 5

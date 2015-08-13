@@ -487,6 +487,32 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
    return modified;
 }
 
+bool CommandTape :: optimizeIdleBreakpoints(CommandTape& tape)
+{
+   bool modified = false;
+   bool idle = false;
+
+   ByteCodeIterator it = tape.start();
+   while (!it.Eof()) {
+      int code = (*it).code;
+
+      if (code == bcJump)
+         idle = true;
+      else if (code == bcBreakpoint) {
+         if (idle) {
+            (*it).code = bcNone;
+         }
+      }
+      else if (code <= bcReserved && code >= bcNop) {
+         idle = false;
+      }
+
+      it++;
+   }
+
+   return modified;
+}
+
 bool CommandTape :: optimizeJumps(CommandTape& tape)
 {
    bool modified = false;

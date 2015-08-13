@@ -1528,6 +1528,11 @@ void Compiler :: loadRules(StreamReader* optimization)
    _rules.load(optimization);
 }
 
+bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
+{
+   return CommandTape::optimizeIdleBreakpoints(tape);
+}
+
 bool Compiler :: optimizeJumps(CommandTape& tape)
 {
    //if (!test(_optFlag, optJumps))
@@ -1551,7 +1556,10 @@ bool Compiler :: applyRules(CommandTape& tape)
 
 void Compiler :: optimizeTape(CommandTape& tape)
 {
-   // optimize unsued and idle jumps
+   // HOTFIX : remove all breakpoints which follows jumps
+   while (optimizeIdleBreakpoints(tape));
+
+   // optimize unused and idle jumps
    while (optimizeJumps(tape));
 
    // optimize the code
