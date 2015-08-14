@@ -1,5 +1,4 @@
 #define system. 
-#define system'routines. 
 
 #symbol(const,type:int)$TextPageSize = 128.
 

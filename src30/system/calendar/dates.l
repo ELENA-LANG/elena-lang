@@ -1,5 +1,4 @@
 #define system.
-#define system'math.
 
 #subject(class:system'calendar'Date) datetime.
 #subject(class:system'calendar'TimeSpan) timespan.

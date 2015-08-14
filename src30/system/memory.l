@@ -140,6 +140,37 @@
     [
         $self write &int:(anIndex int) &byte:(aValue byte).
     ]
+    
+    /// Concatinates the arrays    
+    #method(stacksafe,type:bytearray) add &int:aLength2 &bytearray:anArray
+    [
+        #var(type:int)aLength1.
+        
+        $self readLength &vint:aLength1.        
+        
+        #var(type:bytearray)aRetVal := ByteArray new &int:(aLength1 + aLength2).
+
+        #var(type:byte)tmp.
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength1) ?
+        [
+            $self read &int:anIndex &vbyte:tmp.
+            aRetVal write &int:anIndex &byte:tmp.
+            
+            anIndex := anIndex + 1.
+        ].
+
+        anIndex := 0.
+        #loop (anIndex < aLength2) ?
+        [
+            anArray read &int:anIndex &vbyte:tmp.
+            aRetVal write &int:(aLength1 + anIndex) &byte:tmp.
+            
+            anIndex := anIndex + 1.
+        ].
+            
+        ^ aRetVal.
+    ]    
                         
     /// Creates the object copy
     #method clone = ByteArray new &bytearray:$self.
@@ -215,7 +246,7 @@
     #method(stacksafe) read &int:anIndex &int:aLength &shortarray:anArray
         => system'internal'sa_read.
 
-    /// Copies the short array at the specified position        
+    /// Copies the short array at the specified position   
     #method(stacksafe) write &int:anIndex &int:aLength &shortarray:anArray
         => system'internal'sa_write.
 

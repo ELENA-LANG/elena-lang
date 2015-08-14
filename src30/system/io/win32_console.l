@@ -1,5 +1,4 @@
 #define system.
-#define system'drawing.
 
 #subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
 
@@ -23,36 +22,26 @@
         dwSize readY &vshort:aRetVal.
     ]
 
-    #method(stacksafe) readSize &coord:aCoord
+    #method(stacksafe) readSize &win_coord:aCoord
     [
-        #var(type:short)sx.
-        #var(type:short)sy.
-        dwSize readX &vshort:sx.
-        dwSize readY &vshort:sy.
+        #var(type:short)x.
+        #var(type:short)y.
+        dwSize readX &vshort:x.
+        dwSize readY &vshort:y.
         
-        #var(type:int)x.
-        #var(type:int)y.
-        sx read &vint:x.
-        sy read &vint:y.
-        
-        aCoord write &int:x &int:y.
+        aCoord write &short:x &short:y.
     ]
 
-    #method(stacksafe) readCursorPosition &coord:aCoord
+    #method(stacksafe) readCursorPosition &win_coord:aCoord
     [
         #var(type:win_coord)aCopy := dwCursorPosition.
         
-        #var(type:short)sx.
-        #var(type:short)sy.
-        aCopy readX &vshort:sx.
-        aCopy readY &vshort:sy.
+        #var(type:short)x.
+        #var(type:short)y.
+        aCopy readX &vshort:x.
+        aCopy readY &vshort:y.
         
-        #var(type:int)x.
-        #var(type:int)y.
-        sx read &vint:x.
-        sy read &vint:y.
-        
-        aCoord write &int:x &int:y.
+        aCoord write &short:x &short:y.
     ]
 }
 

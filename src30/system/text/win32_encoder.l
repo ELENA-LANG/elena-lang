@@ -35,7 +35,7 @@
             ].
         
         aConverted := aConverted * 2.
-        UTF16Encoding $convert &int:0 &int:aConverted &shortarray:temp_buf &chararray:anOutput &vint:anOutputLength.
+        UTF16Encoding convert &int:0 &int:aConverted &shortarray:temp_buf &chararray:anOutput &vint:anOutputLength.
     ]
 
     #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength 

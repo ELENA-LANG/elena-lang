@@ -1,13 +1,31 @@
 ------                                 
 In development:
 ------                                                                                         
+              adev - lib30                                                          
+                       * implement upper / lower cases for this locale
+                      
               adev - lib30     
-                       * redesign upper / lower case functionality, make it locale dependant like in c#+                       
                        * implement #33 (tcp/ip socket)
 
              adev - linux
                        * implement DateTime / Timespan classes
 
+              fdev - eldoc
+                       * design
+                       * implement basic parsing : only classes
+
+              sdev - rosetta code samples
+                       * implement two rosetta code samples
+      
+              fdev - upndown
+                       * configuration
+                       * implementing
+
+              sdev - samples
+                       * calculator : parse -2+3
+                       * calculator : operations with brackets
+                       * test all samples
+                       * test all rosetta samples
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -239,13 +257,12 @@ Pipeline:
                        * a lot of operations with controls should be implemented directly
                        
               adev - lib30     
+                       * implement sorting for locale
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?                       
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
                        * expanding lib30
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
                        * review lib30 warnings, try to get rid of most of them
-              
-              adev - lib30     
                        * redesign upper / lower case functionality, make it locale dependant like in c#+                       
                        * linux date / time operations
                        * test load class by name
@@ -275,8 +292,6 @@ Pipeline:
                        * implement
       
               sdev - samples
-                       * calculator : parse -2+3
-                       * calculator : operations with brackets
                        * calculator : move lexicalOp to the script
                        * calculator : gui
                        * reimplement script samples: interpreter, helloworld, vmconsole
@@ -290,7 +305,6 @@ Pipeline:
                        * migrate timer
 
               fdev - upndown
-                       * configuration
                        * play with chaotic computer player
                        * add network players
                        * port to lib30
@@ -298,7 +312,6 @@ Pipeline:
                        * switch to mt platform
 
               fdev - eldoc
-                       * design
                        * implement
 
               fdev - evolution
