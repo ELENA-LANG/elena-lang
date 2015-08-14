@@ -195,8 +195,6 @@ void SDIWindow :: exit()
 
 bool SDIWindow :: _onSetCursor()
 {
-   wchar_t* t = LOCALE_NAME_INVARIANT;
-
    _setCursor(CURSOR_ARROW);
 
    return true;
