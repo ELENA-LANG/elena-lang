@@ -31,6 +31,7 @@ const char dfaFullIdentifier = 'p';
 const char dfaPrivate        = 'q';
 const char dfaQuote          = 's';
 const char dfaMinusLA        = '-';
+const char dfaDotLA          = '$';
 
 class TextSourceReader : public _ELENA_::_TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {

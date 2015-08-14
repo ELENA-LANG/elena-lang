@@ -21,7 +21,7 @@ const char* DFA_table[21] =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbaaaababbbbbbbbbbbbbbbbbbbbbbbbbbaaaab",
         "*********cc*********************c***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapaaaaaaaaddddddddddaaaaaaaddddddddddddddddddddddddddaaaadaddddddddddddddddddddddddddaaaad",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiaeeeeeeeeeeaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaffffffagaaahaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$aeeeeeeeeeeaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaffffffagaaahaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaffffffffffaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaffffffagaaahaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -69,10 +69,13 @@ LineInfo TextSourceReader :: read(ident_c* token, size_t length)
          info.state = dfaEOF;
          info.length = 0;
          break;
+      case dfaDotLA:
+         if (isDigit(_line[_position]))
+            readLineInfo(dfaReal, info);
+         break;
       case dfaMinusLA:
          if (_position < 2 || !isDigit(_line[_position - 2]))
             readLineInfo(dfaInteger, info);
-
          break;
    }
 

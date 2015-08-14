@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   2
+#define ELT_BUILD_NUMBER   1
  
 // global variables
 int   _encoding = feAnsi;

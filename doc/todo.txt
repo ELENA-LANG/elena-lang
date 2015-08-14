@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                                                                                         
-               xdev - script engine
-                       * fix #57 issue
-
               adev - lib30     
                        * redesign upper / lower case functionality, make it locale dependant like in c#+                       
                        * implement #33 (tcp/ip socket)
@@ -192,7 +189,7 @@ Pipeline:
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
               idev - linux:              
-                       * start to use GCC 5
+                       * output window
                        * project compile
                        * project run
                        * save last open path (should be saved in the current path??)
