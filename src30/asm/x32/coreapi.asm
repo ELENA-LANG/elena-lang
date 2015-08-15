@@ -3321,15 +3321,15 @@ labNext:
   mov  bl, byte ptr [eax]
   add  eax, 1
   cmp  ebx, 00000080h
-  jl   short lab1
+  jl   lab1
   cmp  ebx, 000000C2h
   jl   err2
   cmp  ebx, 000000E0h
   jl   short lab2
   cmp  ebx, 000000F0h
-  jl   short lab3
+  jl   lab3
   cmp  ebx, 000000F5h
-  jl   short lab4
+  jl   lab4
 
 lab2:  
   sub  ecx, 2
@@ -3348,7 +3348,7 @@ lab2:
   
 lab3:
   sub  ecx, 3
-  jb   short err
+  jb   err
   mov  esi, ebx
   mov  bl, byte ptr [eax]
   add  eax, 1

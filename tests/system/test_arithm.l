@@ -6,6 +6,7 @@
 #define system'text.
 #define system'io.
 #define system'math.
+#define system'culture.
 #define extensions.
 #define extensions'math.
 #define extensions'text.
@@ -14,6 +15,10 @@
 {
     test            
     [
+        #var s := "привет мир!!".
+        
+        #var us := s toUpper &locale:invariantLocale.
+        #var ls := us toLower &locale:invariantLocale.
     ]        
 }.
 

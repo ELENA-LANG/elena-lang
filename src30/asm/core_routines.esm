@@ -4084,7 +4084,7 @@ procedure s_encode
   popd
   sub    
 
-  bloadsi 6
+  bloadsi 3
   nsave
   aloadsi 1
   
@@ -4122,7 +4122,7 @@ procedure ws_encode
   popd
   sub    
 
-  bloadsi 6
+  bloadsi 3
   nsave
   aloadsi 1
   
@@ -4151,20 +4151,9 @@ procedure sa_encode
   callr api : coreapi'ws_encode
   ifr labErr 0
 
-  pushd
   dcopye  
-  bloadsi 7
-  nsave
-
-  aloadsi 3
-  nload
-  ecopyd
-  popd
-  sub    
-
   bloadsi 6
   nsave
-  aloadsi 1
   
   quitn 6
 
@@ -4229,7 +4218,7 @@ procedure ws_decode
 
   pushd
   dcopye  
-  aloadsi 7
+  bloadsi 7
   nsave
 
   aloadsi 3
@@ -5220,20 +5209,9 @@ procedure sa_decode
   callr api : coreapi'ws_decode
   ifr labErr 0
 
-  pushd
   dcopye  
-  aloadsi 7
+  bloadsi 6
   nsave
-
-  aloadsi 3
-  nload
-  ecopyd
-  popd
-  sub    
-
-  bloadsi 3
-  nsave
-  aloadsi 1
   
   quitn 6
 

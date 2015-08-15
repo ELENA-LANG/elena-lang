@@ -2,7 +2,7 @@
 In development:
 ------                                                                                         
               adev - lib30                                                          
-                       * implement upper / lower cases for this locale
+                       * test upper / lower cases for this locale
                       
               adev - lib30     
                        * implement #33 (tcp/ip socket)

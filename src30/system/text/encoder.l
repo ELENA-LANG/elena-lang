@@ -233,7 +233,7 @@
         
         UTF8Encoding convert &int:anIndex &vint:aSize &literal:aLiteral &chararray:temp &vint:temp_len.
         
-        $self convert &int:0 &int:aSize &chararray:temp &shortarray:anOutput &vint:anOutputLength.            
+        $self convert &int:0 &int:temp_len &chararray:temp &shortarray:anOutput &vint:anOutputLength.            
     ]
         
     #method(stacksafe,type:literal)toLiteral &int:anIndex &int:aSize &shortarray:anInput
