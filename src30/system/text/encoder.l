@@ -186,7 +186,10 @@
     #method(stacksafe) toLiteral &int:anIndex &int:aLength &bytearray:anArray
         = LiteralValue $new &int:anIndex &int:aLength &bytearray:anArray.
         
-    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    #method(stacksafe) convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+        => system'internal's_encode.   
+        
+    #method(stacksafe) convert &int:anIndex &vint:aLength &literal:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'internal's_encode.   
 }.
 
@@ -220,4 +223,26 @@
         
     #method(stacksafe)convert &int:anIndex &int:aSize &chararray:aByteArray &shortarray:anOutput &vint:anOutputLength
         => system'internal'sa_decode.
+        
+    #method(stacksafe)convert &int:anIndex &vint:aSize &literal:aLiteral &shortarray:anOutput &vint:anOutputLength
+    [
+        #var(type:chararray,size:64)temp.
+        #var(type:int)temp_len := 64.
+        (temp_len < aSize)
+            ? [ aSize << temp_len. ].
+        
+        UTF8Encoding convert &int:anIndex &vint:aSize &literal:aLiteral &chararray:temp &vint:temp_len.
+        
+        $self convert &int:0 &int:aSize &chararray:temp &shortarray:anOutput &vint:anOutputLength.            
+    ]
+        
+    #method(stacksafe,type:literal)toLiteral &int:anIndex &int:aSize &shortarray:anInput
+    [
+        #var(type:chararray,size:64)temp.
+        #var(type:int)temp_len := 64.
+        
+        $self convert &int:anIndex &int:aSize &shortarray:anInput &chararray:temp &vint:temp_len.
+        
+        ^ LiteralValue new &int:0 &int:temp_len &chararray:temp.
+    ]
 }.

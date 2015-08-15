@@ -57,6 +57,7 @@ Pipeline:
                          typecasting required
     
               xdev - generic development
+                       * review multi-method implementation in clojure
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
                        * begin / end should be verbs?
                        * shoud "is" verb always return boolean?
