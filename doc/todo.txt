@@ -1,10 +1,11 @@
 ------                                 
 In development:
 ------                                                                                         
-              adev - lib30                                                          
-                       * test upper / lower cases for this locale
-                      
               adev - lib30     
+                       * support arrayof hint - used for typed array
+                       * support direct operation with array
+
+                       * global initialization / finialization
                        * implement #33 (tcp/ip socket)
 
              adev - linux

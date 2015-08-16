@@ -470,6 +470,10 @@ md src30\extensions
 xcopy %1\src30\extensions\*.l src30\extensions /s
 xcopy %1\src30\extensions\*.prj src30\extensions /s
 
+md src30\net
+xcopy %1\src30\net\*.l src30\net /s
+xcopy %1\src30\net\*.prj src30\net /s
+
 md src30\forms
 xcopy %1\src30\forms\*.l src30\forms /s
 xcopy %1\src30\forms\*.prj src30\forms /s

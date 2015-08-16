@@ -10,6 +10,7 @@
 [ELENA]
 [+] new statement: #try (<expr>) [<final-block>] | <optional-catch-expression>
 [+] new statement: #lock (<expr>) [<critical-section-code>]
+[+] new hint : arrayof
 
 [ELC]
 [*] output code optimization
@@ -21,6 +22,7 @@
 [LIB]
 [*] some house keeping
 [+] culture'Locale
+[+] new package net
                                                                                                   
 ******************************************************************************
                              What's New in 1.9.21

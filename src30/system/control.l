@@ -1039,4 +1039,3 @@
     /// Redirects the other messages to the boolean value            
     #method => theValue.
 }
-

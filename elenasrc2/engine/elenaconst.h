@@ -453,7 +453,8 @@ namespace _ELENA_
    #define HINT_FLOAT_NUMBER       "floating"
    #define HINT_VARIABLE           "variable"
    #define HINT_BINARY             "stringof"
-   #define HINT_DYNAMIC            "dynamic"
+   #define HINT_XDYNAMIC           "dynamic"      // obsolete, arrayof should be used
+   #define HINT_DYNAMIC            "arrayof"
    #define HINT_POINTER            "pointer"
    #define HINT_STRING             "string"
    #define HINT_WIDESTRING         "widestring"

@@ -2388,6 +2388,10 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoad);
          tape.write(bcGet);
          break;
+      case SET_REFER_MESSAGE_ID:
+         // set
+         tape.write(bcSet);
+         break;
       default:
          break;
    }

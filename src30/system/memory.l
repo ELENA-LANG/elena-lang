@@ -2144,3 +2144,73 @@
     #method get
         = theArray getAt &int:theIndex.
 }
+
+// --- Func1Group ---
+
+#subject(class:system'Func1Array)func1array.
+
+#class(arrayof:func1) Func1Array
+{
+    #constructor(stacksafe) new &int:aLength
+        => system'internal'arr_create.
+        
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'arr_getlen.
+
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    #method(stacksafe) getAt &int:anIndex
+        => system'internal'arr_getat.
+
+    #method setAt:anIndex:anObject
+    [
+        $self setAt &int:(anIndex int) &object:anObject.
+    ]
+    
+    #method(stacksafe) setAt &int:anIndex &object:anObject
+        => system'internal'arr_setat.
+
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]        
+}
+
+#class Func1Group :: BaseFunction1
+{
+    #field(type:func1array) theHandlers.
+    
+    #constructor new &args:Handlers
+    [
+        #var(type:int)i.
+        #var(type:int)len.
+        Handlers readLength &vint:len.
+        
+        theHandlers := Func1Array new &int:len.
+        
+        #loop (i < len)?
+        [
+            theHandlers@i := (Handlers@i) func1.
+            
+            i := i + 1.
+        ].
+    ]
+    
+    #method eval : anObject
+    [
+        #var(type:int)i.
+        #var(type:int)len.
+        theHandlers readLength &vint:len.
+        
+        #loop (i < len)?
+        [
+            theHandlers@i eval:anObject.
+            
+            i := i + 1.
+        ].
+    ]
+}

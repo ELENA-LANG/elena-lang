@@ -1162,12 +1162,22 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
       }
-      else if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
+      else if (StringHelper::compare(terminal, HINT_XDYNAMIC) || StringHelper::compare(terminal, HINT_DYNAMIC)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
             raiseError(wrnInvalidHint, terminal);
 
          info.header.flags |= elDynamicRole;
          info.header.flags |= elDebugArray;
+         if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
+            DNode value = hints.select(nsHintValue);
+            if (value != nsNone) {
+               size_t type = moduleScope->mapType(value.Terminal());
+               if (type == 0)
+                  raiseError(errUnknownSubject, value.Terminal());
+
+               info.fieldTypes.add(-1, type);
+            }
+         }
       }
       else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
          info.header.flags |= elNonStructureRole;
@@ -2225,11 +2235,8 @@ ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo& object, int offs
    return ObjectInfo(okCurrent, 0, 0, object.type);
 }
 
-bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, ref_t argType, int mode)
+bool Compiler :: checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode)
 {
-   //if (test(mode, HINT_DIRECT_CALL) && resolveStrongType(type_ref)) {
-   //   return false;
-   //}
    if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam == -1) {
       int size = scope.moduleScope->defineTypeSize(object.type);
 
@@ -2803,6 +2810,45 @@ bool Compiler :: compileInlineReferOperator(CodeScope& scope, int operator_id, O
 
          _writer.doIntArrayOperation(*scope.tape, operator_id);
       }
+      else if (lflag == elDebugArray && rflag == elDebugDWORD) {
+         // check if it is typed array
+         ref_t classReference = resolveObjectReference(scope, loperand);
+         ref_t type = 0;
+         if (classReference != 0) {
+            ClassInfo info;
+            scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference), false);
+            type = info.fieldTypes.get(-1);
+         }
+         if (type != 0) {
+            bool mismatch = false;
+            bool boxed = false;
+            bool dummy = false;
+
+            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
+            compileTypecast(scope, roperand2, type, mismatch, boxed, dummy);
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
+
+         }
+         // check if the ropeand2 should be boxed
+         else if (checkIfBoxingRequired(scope, roperand2, 0)) {
+            bool boxed = false;
+            bool dummy = false;
+
+            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 2));
+            boxObject(scope, roperand2, boxed, dummy);
+            _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, 2));
+         }
+
+         _writer.popObject(*scope.tape, ObjectInfo(okBase));
+
+         // load index
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+         _writer.loadInt(*scope.tape, ObjectInfo(okLocal)); 
+
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+         _writer.doArrayOperation(*scope.tape, operator_id);
+
+      }
       else return false;
    }
    else {
@@ -2823,6 +2869,20 @@ bool Compiler :: compileInlineReferOperator(CodeScope& scope, int operator_id, O
          _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
 
          _writer.doArrayOperation(*scope.tape, operator_id);
+      }
+      else if (lflag == elDebugArray && rflag == elDebugDWORD) {
+         _writer.popObject(*scope.tape, ObjectInfo(okBase));
+         _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+
+         _writer.doArrayOperation(*scope.tape, operator_id);
+
+         // check if it is typed array
+         ref_t classReference = resolveObjectReference(scope, loperand);
+         if (classReference != 0) {
+            ClassInfo info;
+            scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference), false);
+            result.type = info.fieldTypes.get(-1);
+         }
       }
       else return false;
    }
@@ -3082,7 +3142,7 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
       compileTypecast(scope, param.info, param.subj_ref, mismatch, boxed, param.unboxing);
 
       // check if boxing required
-      if (checkIfBoxingRequired(scope, param.info, param.subj_ref, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
+      if (checkIfBoxingRequired(scope, param.info, stacksafe ? HINT_STACKSAFE_CALL : 0) && !boxed)
          boxObject(scope, param.info, boxed, param.unboxing);
 
       if (mismatch)
@@ -3608,7 +3668,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
-         if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
+         if (checkIfBoxingRequired(ownerScope, info, mode)) {
             _writer.loadObject(*ownerScope.tape, info);
             boxObject(ownerScope, info, dummy, dummy2);
             _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
@@ -3641,7 +3701,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
             _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
          }
          else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
-            if (checkIfBoxingRequired(ownerScope, info, 0, mode)) {
+            if (checkIfBoxingRequired(ownerScope, info, mode)) {
                _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
                toFree++;
             }
