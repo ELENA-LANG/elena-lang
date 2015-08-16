@@ -11,6 +11,7 @@
 [+] new statement: #try (<expr>) [<final-block>] | <optional-catch-expression>
 [+] new statement: #lock (<expr>) [<critical-section-code>]
 [+] new hint : arrayof
+[+] issue #123 implemented : fixed size array field
 
 [ELC]
 [*] output code optimization

@@ -2180,7 +2180,7 @@
     ]        
 }
 
-#class Func1Group :: BaseFunction1
+#class Function1Group :: BaseFunction1
 {
     #field(type:func1array) theHandlers.
     

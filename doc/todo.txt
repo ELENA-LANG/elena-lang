@@ -2,6 +2,7 @@
 In development:
 ------                                                                                         
               adev - lib30     
+                       * implement #123
                        * global initialization / finialization
                        * implement #33 (tcp/ip socket)
 
@@ -29,6 +30,7 @@ Pipeline:
 ------                                                                                         
               xdev - general implementation
                        * implementing 2.0.0 issues
+                       * vm console should use startUp symbol
                        * variable: no need to store nil if the variable statement has initializing part
                        * constant array
                        * drop message flag for message ids, messages should be saved in raw data stack frame

@@ -1221,6 +1221,23 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
          }
          else raiseWarning(1, wrnInvalidHint, terminal);
       }
+      else if (StringHelper::compare(terminal, HINT_SIZE)) {
+         if (size < 0) {
+            TerminalInfo sizeValue = hints.firstChild().Terminal();
+            if (size < 0 && sizeValue.symbol == tsInteger) {
+               size = -size;
+
+               size = StringHelper::strToInt(sizeValue.value) * size;
+            }
+            else if (size < 0 && sizeValue.symbol == tsHexInteger) {
+               size = -size;
+
+               size = StringHelper::strToLong(sizeValue.value, 16) * size;
+            }
+            else raiseWarning(1, wrnUnknownHint, terminal);
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+      }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
@@ -2330,9 +2347,22 @@ ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, Obj
    ref_t type = field.type;
    int size = scope.moduleScope->defineTypeSize(field.type, classReference, unboxing);
 
-   if (test(mode, HINT_HEAP_MODE) || size > 8) {
+   if (test(mode, HINT_HEAP_MODE) || size > 8 || size < 0) {
       if (presavedAcc)
          _writer.pushObject(*scope.tape, thisParam);
+
+      // if it is a fixed array field
+      if (size < 0) {
+         ClassInfo info;
+         scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference));
+         
+         ClassInfo::FieldMap::Iterator it = retrieveIt(info.fields.start(), (int)field.param);
+         it++;
+         if (it.Eof()) {
+            size = (info.size - field.param) * (-size);
+         }
+         else size = (*it - field.param) * (-size);
+      }
 
       // otherwise create a dynamic object and copy the content
       _writer.newStructure(*scope.tape, size, classReference);

@@ -21,21 +21,21 @@ sudo bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
 sudo bin/elc2 -csrc30/system/system.project
 sudo bin/elc2 -csrc30/extensions/extensions.project
 
-bin/elc2 -cexamples/helloworld/u_helloworld.project
-bin/elc2 -cexamples/sum/intsum.project
-bin/elc2 -cexamples/sum/realsum.project
-bin/elc2 -cexamples/binary/binary.project
-bin/elc2 -cexamples/words/words.project
-bin/elc2 -cexamples/bsort/bsort.project
-bin/elc2 -cexamples/replace/replace.project
-bin/elc2 -cexamples/matrix/matrix.project
-bin/elc2 -cexamples/trans/tanslit.project
-bin/elc2 -cexamples/textfile/textfile.project
-bin/elc2 -cexamples/goods/goods.project
-bin/elc2 -cexamples/textdb/textdb.project
+bin/elc2 -cexamples/console/helloworld/u_helloworld.project
+bin/elc2 -cexamples/console/sum/intsum.project
+bin/elc2 -cexamples/console/sum/realsum.project
+bin/elc2 -cexamples/console/binary/binary.project
+bin/elc2 -cexamples/console/words/words.project
+bin/elc2 -cexamples/console/bsort/bsort.project
+bin/elc2 -cexamples/console/replace/replace.project
+bin/elc2 -cexamples/console/matrix/matrix.project
+bin/elc2 -cexamples/console/trans/tanslit.project
+bin/elc2 -cexamples/files/textfile/textfile.project
+bin/elc2 -cexamples/console/goods/goods.project
+bin/elc2 -cexamples/files/textdb/textdb.project
 
-bin/elc2 -crosetta/accumulator/accumulator.project
-bin/elc2 -crosetta/ackermann/ackerman.project
-bin/elc2 -crosetta/addfield/addfield.project
+bin/elc2 -cexamples/rosetta/accumulator/accumulator.project
+bin/elc2 -cexamples/rosetta/ackermann/ackerman.project
+bin/elc2 -cexamples/rosetta/addfield/addfield.project
 
 exit 0

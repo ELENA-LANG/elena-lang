@@ -76,14 +76,23 @@
 
 #static program = SDIApplication new.
 
-#symbol startUp =
+#class $GUIStartUp :: StartUp
 {
     #method start
     [
         'program start
-            | if &Error: e
-            [
-                messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
-            ].
+            | on:
+            {
+                Abort = e [].
+                
+                ! = e 
+                    [ 
+                        messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
+                    ].
+            }.
+            
+        $self $onStop:nil.
     ]
-}.
+}
+
+#static startUp = $GUIStartUp new.

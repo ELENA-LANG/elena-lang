@@ -16,17 +16,17 @@ mkdir -p ./new/elenasrc2/tools/asm2bin/codeblocks/
 mkdir -p ./new/elenasrc2/tools/sg/codeblocks/
 mkdir -p ./new/elenasrc2/tools/sg/linux32/
 mkdir -p ./new/elenasrc2/tools/og/codeblocks/
-mkdir -p ./new/examples/binary/
-mkdir -p ./new/examples/bsort/
-mkdir -p ./new/examples/helloworld/
-mkdir -p ./new/examples/replace/
-mkdir -p ./new/examples/sum/
-mkdir -p ./new/examples/words/
-mkdir -p ./new/examples/matrix/
-mkdir -p ./new/examples/trans/
-mkdir -p ./new/examples/textfile/
-mkdir -p ./new/examples/textdb/
-mkdir -p ./new/examples/goods/
+mkdir -p ./new/examples/console/binary/
+mkdir -p ./new/examples/console/bsort/
+mkdir -p ./new/examples/console/helloworld/
+mkdir -p ./new/examples/console/replace/
+mkdir -p ./new/examples/console/sum/
+mkdir -p ./new/examples/console/words/
+mkdir -p ./new/examples/console/matrix/
+mkdir -p ./new/examples/console/trans/
+mkdir -p ./new/examples/files/textfile/
+mkdir -p ./new/examples/files/textdb/
+mkdir -p ./new/examples/console/goods/
 mkdir -p ./new/src30/asm/x32/
 mkdir -p ./new/src30/system/
 mkdir -p ./new/src30/system/text/
@@ -41,9 +41,9 @@ mkdir -p ./new/src30/extensions/math/
 mkdir -p ./new/src30/extensions/routines/
 mkdir -p ./new/src30/extensions/text/
 
-mkdir -p ./new/rosetta/accumulator/
-mkdir -p ./new/rosetta/ackermann/
-mkdir -p ./new/rosetta/addfield/
+mkdir -p ./new/examples/rosetta/accumulator/
+mkdir -p ./new/examples/rosetta/ackermann/
+mkdir -p ./new/examples/rosetta/addfield/
 
 cp ../bin/elc2 new/bin/
 cp ../bin/asm2binx new/bin/
@@ -90,36 +90,36 @@ cp ../elenasrc2/tools/og/codeblocks/og_lnx32.cbp new/elenasrc2/tools/og/codebloc
 
 echo copying examples files
 
-cp ../examples/binary/*.l new/examples/binary/
-cp ../examples/binary/*.project new/examples/binary/
-cp ../examples/bsort/*.l new/examples/bsort/
-cp ../examples/bsort/*.project new/examples/bsort/
-cp ../examples/helloworld/*.l new/examples/helloworld/
-cp ../examples/helloworld/*.project new/examples/helloworld/
-cp ../examples/replace/*.l new/examples/replace/
-cp ../examples/replace/*.project new/examples/replace/
-cp ../examples/sum/*.l new/examples/sum/
-cp ../examples/sum/*.project new/examples/sum/
-cp ../examples/words/*.l new/examples/words/
-cp ../examples/words/*.project new/examples/words/
-cp ../examples/matrix/*.l new/examples/matrix/
-cp ../examples/matrix/*.project new/examples/matrix/
-cp ../examples/trans/*.l new/examples/trans/
-cp ../examples/trans/*.project new/examples/trans/
-cp ../examples/textfile/*.l new/examples/textfile/
-cp ../examples/textfile/*.project new/examples/textfile/
-cp ../examples/goods/*.l new/examples/goods/
-cp ../examples/goods/*.project new/examples/goods/
-cp ../examples/textdb/*.l new/examples/textdb/
-cp ../examples/textdb/*.project new/examples/textdb/
+cp ../examples/console/binary/*.l new/examples/console/binary/
+cp ../examples/console/binary/*.project new/examples/console/binary/
+cp ../examples/console/bsort/*.l new/examples/console/bsort/
+cp ../examples/console/bsort/*.project new/examples/console/bsort/
+cp ../examples/console/helloworld/*.l new/examples/console/helloworld/
+cp ../examples/console/helloworld/*.project new/examples/console/helloworld/
+cp ../examples/console/replace/*.l new/examples/console/replace/
+cp ../examples/console/replace/*.project new/examples/console/replace/
+cp ../examples/console/sum/*.l new/examples/console/sum/
+cp ../examples/console/sum/*.project new/examples/console/sum/
+cp ../examples/console/words/*.l new/examples/console/words/
+cp ../examples/console/words/*.project new/examples/console/words/
+cp ../examples/console/matrix/*.l new/examples/console/matrix/
+cp ../examples/console/matrix/*.project new/examples/console/matrix/
+cp ../examples/console/trans/*.l new/examples/console/trans/
+cp ../examples/console/trans/*.project new/examples/console/trans/
+cp ../examples/files/textfile/*.l new/examples/files/textfile/
+cp ../examples/files/textfile/*.project new/examples/files/textfile/
+cp ../examples/console/goods/*.l new/examples/console/goods/
+cp ../examples/console/goods/*.project new/examples/console/goods/
+cp ../examples/files/textdb/*.l new/examples/files/textdb/
+cp ../examples/files/textdb/*.project new/examples/files/textdb/
 
 echo copying rosetta examples files
-cp ../rosetta/accumulator/*.l new/rosetta/accumulator/
-cp ../rosetta/accumulator/*.project new/rosetta/accumulator/
-cp ../rosetta/ackermann/*.l new/rosetta/ackermann/
-cp ../rosetta/ackermann/*.project new/rosetta/ackermann/
-cp ../rosetta/addfield/*.l new/rosetta/addfield/
-cp ../rosetta/addfield/*.project new/rosetta/addfield/
+cp ../examples/rosetta/accumulator/*.l new/examples/rosetta/accumulator/
+cp ../examples/rosetta/accumulator/*.project new/examples/rosetta/accumulator/
+cp ../examples/rosetta/ackermann/*.l new/examples/rosetta/ackermann/
+cp ../examples/rosetta/ackermann/*.project new/examples/rosetta/ackermann/
+cp ../examples/rosetta/addfield/*.l new/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project new/examples/rosetta/addfield/
 
 echo coping src3 files
 
