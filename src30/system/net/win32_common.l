@@ -38,6 +38,18 @@
         #var(type:int)aRetVal :=  system'external'WS2_32 WSAStartup 
             &short:wVersionRequested
             &wsadata:$self.
+            
+        (0 == aRetVal)
+            ! [ #throw SocketException new:"Cannot start socket service" &error_code:(IntNumber new &int:aRetVal). ].
+            
+        'startUp set &onAppEnd: arg [ $self close ].
+    ]
+    
+    #method wsadata = $self.
+    
+    #method close
+    [
+        system'external'WS2_32 WSACleanup.
     ]
 }
 

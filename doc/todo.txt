@@ -2,8 +2,6 @@
 In development:
 ------                                                                                         
               adev - lib30     
-                       * implement #123
-                       * global initialization / finialization
                        * implement #33 (tcp/ip socket)
 
              adev - linux
