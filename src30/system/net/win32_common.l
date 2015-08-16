@@ -3,6 +3,21 @@
 // --- types ---
 
 #subject(class:system'net'Socket)socket.
+#subject(class:system'net'WSADATA)wsadata.
+
+// --- WSAException ---
+
+#class SocketException :: Exception
+{
+    #field theCode.
+    
+    /// Creates the exception
+    #constructor new:aMessage &error_code:aCode
+        <= (%new &literal:(aMessage literal) &subject: %SocketError)
+    [
+        theCode := aCode.
+    ]
+}
 
 // --- WSAStartUp ---
 
@@ -16,9 +31,14 @@
     #field(type:short) iMaxUdpDg.
     #field(type:int)   lpVendorInfo.
     
-    #constructor init &short:aVersion &short:aHighVersion
+    #constructor init &byte:aVersion &byte:aHighVersion
     [
+        #var(type:short)wVersionRequested := aVersion * 10h + aHighVersion.
+
+        #var(type:int)aRetVal :=  system'external'WS2_32 WSAStartup 
+            &short:wVersionRequested
+            &wsadata:$self.
     ]
 }
 
-#static WSAStartUp22 = WSADATA init &short:2 &short:2.
+#static WSAStartUp22 = WSADATA init &byte:2 &byte:2.
