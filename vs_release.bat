@@ -307,49 +307,49 @@ echo copying examples files
 
 md examples 
 
-md examples\agenda
-copy %1\examples\agenda\*.l examples\agenda
-copy %1\examples\agenda\*.prj examples\agenda
+md examples\gui\agenda
+copy %1\examples\gui\agenda\*.l examples\gui\agenda
+copy %1\examples\gui\agenda\*.prj examples\gui\agenda
 
-md examples\binary 
-copy %1\examples\binary\*.l examples\binary
-copy %1\examples\binary\*.prj examples\binary
+md examples\console\binary 
+copy %1\examples\console\binary\*.l examples\console\binary
+copy %1\examples\console\binary\*.prj examples\console\binary
 
-md examples\bsort
-copy %1\examples\bsort\*.l examples\bsort
-copy %1\examples\bsort\*.prj examples\bsort
+md examples\console\bsort
+copy %1\examples\console\bsort\*.l examples\console\bsort
+copy %1\examples\console\bsort\*.prj examples\console\bsort
 
-md examples\c_a_g
-copy %1\examples\c_a_g\*.l examples\c_a_g
-copy %1\examples\c_a_g\*.prj examples\c_a_g
+md examples\gui\c_a_g
+copy %1\examples\gui\c_a_g\*.l examples\gui\c_a_g
+copy %1\examples\gui\c_a_g\*.prj examples\gui\c_a_g
 
-md examples\c_a_g\formulas
+md examples\gui\c_a_g\formulas
 
-md examples\c_a_g\formulas\Circulo
-copy %1\examples\c_a_g\formulas\Circulo\*.bmp examples\c_a_g\formulas\Circulo
+md examples\gui\c_a_g\formulas\Circulo
+copy %1\examples\gui\c_a_g\formulas\Circulo\*.bmp examples\gui\c_a_g\formulas\Circulo
 
-md examples\c_a_g\formulas\Paralelogramos 
-copy %1\examples\c_a_g\formulas\Paralelogramos\*.bmp examples\c_a_g\formulas\Paralelogramos 
+md examples\gui\c_a_g\formulas\Paralelogramos 
+copy %1\examples\gui\c_a_g\formulas\Paralelogramos\*.bmp examples\gui\c_a_g\formulas\Paralelogramos 
 
-md examples\c_a_g\formulas\Trapezio 
-copy %1\examples\c_a_g\formulas\Trapezio\*.bmp examples\c_a_g\formulas\Trapezio
+md examples\gui\c_a_g\formulas\Trapezio 
+copy %1\examples\gui\c_a_g\formulas\Trapezio\*.bmp examples\gui\c_a_g\formulas\Trapezio
 
-md examples\c_a_g\formulas\Triangulos 
-copy %1\examples\c_a_g\formulas\Triangulos\*.bmp examples\c_a_g\formulas\Triangulos 
+md examples\c_a_g\gui\formulas\Triangulos 
+copy %1\examples\gui\c_a_g\formulas\Triangulos\*.bmp examples\gui\c_a_g\formulas\Triangulos 
 
-md examples\c_a_g\inf
-md examples\c_a_g\obj
-md examples\c_a_g\bin
+md examples\gui\c_a_g\inf
+md examples\gui\c_a_g\obj
+md examples\gui\c_a_g\bin
 
-md examples\calculator 
-copy %1\examples\calculator\*.l examples\calculator 
-copy %1\examples\calculator\*.prj examples\calculator 
+md examples\script\calculator 
+copy %1\examples\script\calculator\*.l examples\script\calculator 
+copy %1\examples\script\calculator\*.prj examples\script\calculator 
 rem copy %1\examples\calculator\calc.vl2 examples\calculator 
-copy %1\examples\calculator\*.es examples\calculator 
+copy %1\examples\script\calculator\*.es examples\script\calculator 
 
-md examples\datetime 
-copy %1\examples\datetime\*.l examples\datetime 
-copy %1\examples\datetime\*.prj examples\datetime  
+md examples\console\datetime 
+copy %1\examples\console\datetime\*.l examples\console\datetime 
+copy %1\examples\console\datetime\*.prj examples\console\datetime  
 
 rem md examples\dices
 rem copy %1\examples\dices\*.l examples\dices
@@ -362,18 +362,18 @@ rem md examples\eldoc
 rem copy %1\examples\eldoc\*.l examples\eldoc
 rem copy %1\examples\eldoc\*.prj examples\eldoc
 
-md examples\goods 
-copy %1\examples\goods\*.l examples\goods 
-copy %1\examples\goods\*.txt examples\goods 
-copy %1\examples\goods\*.prj examples\goods 
+md examples\console\goods 
+copy %1\examples\console\goods\*.l examples\console\goods 
+copy %1\examples\console\goods\*.txt examples\console\goods 
+copy %1\examples\console\goods\*.prj examples\console\goods 
 
-md examples\graphs
-copy %1\examples\graphs\*.l examples\graphs
-copy %1\examples\graphs\*.prj examples\graphs
+md examples\gui\graphs
+copy %1\examples\gui\graphs\*.l examples\gui\graphs
+copy %1\examples\gui\graphs\*.prj examples\gui\graphs
 
-md examples\helloworld 
-copy %1\examples\helloworld\*.l examples\helloworld
-copy %1\examples\helloworld\*.prj examples\helloworld
+md examples\console\helloworld 
+copy %1\examples\console\helloworld\*.l examples\console\helloworld
+copy %1\examples\console\helloworld\*.prj examples\console\helloworld
 rem copy %1\examples\helloworld\*.es examples\helloworld
 
 rem md examples\interpreter
@@ -383,39 +383,39 @@ rem copy %1\examples\interpreter\*.txt examples\interpreter
 rem copy %1\examples\interpreter\*.bat examples\interpreter
 rem copy %1\examples\interpreter\*.es examples\interpreter
 
-md examples\matrix 
-copy %1\examples\matrix\*.l examples\matrix 
-copy %1\examples\matrix\*.prj examples\matrix 
+md examples\console\matrix 
+copy %1\examples\console\matrix\*.l examples\console\matrix 
+copy %1\examples\console\matrix\*.prj examples\console\matrix 
 
 rem md examples\opencalc
 rem copy %1\examples\opencalc\*.bat examples\opencalc
 rem copy %1\examples\opencalc\*.vl examples\opencalc
 
-md examples\pi
-copy %1\examples\pi\*.l examples\pi
-copy %1\examples\pi\*.prj examples\pi
+md examples\console\pi
+copy %1\examples\console\pi\*.l examples\console\pi
+copy %1\examples\console\pi\*.prj examples\console\pi
 
-md examples\replace
-copy %1\examples\replace\*.l examples\replace
-copy %1\examples\replace\*.prj examples\replace
+md examples\console\replace
+copy %1\examples\console\replace\*.l examples\console\replace
+copy %1\examples\console\replace\*.prj examples\console\replace
 
-md examples\sum
-copy %1\examples\sum\*.l examples\sum
-copy %1\examples\sum\*.prj examples\sum
+md examples\console\sum
+copy %1\examples\console\sum\*.l examples\console\sum
+copy %1\examples\console\sum\*.prj examples\console\sum
 
-md examples\textdb
-copy %1\examples\textdb\*.l examples\textdb
-copy %1\examples\textdb\*.prj examples\textdb
-copy %1\examples\textdb\*.txt examples\textdb
+md examples\files\textdb
+copy %1\examples\files\textdb\*.l examples\files\textdb
+copy %1\examples\files\textdb\*.prj examples\files\textdb
+copy %1\examples\files\textdb\*.txt examples\files\textdb
 
-md examples\textfile
-copy %1\examples\textfile\*.l examples\textfile
-copy %1\examples\textfile\*.prj examples\textfile
-copy %1\examples\textfile\*.txt examples\textfile
+md examples\files\textfile
+copy %1\examples\files\textfile\*.l examples\files\textfile
+copy %1\examples\files\textfile\*.prj examples\files\textfile
+copy %1\examples\files\textfile\*.txt examples\files\textfile
 
-md examples\words
-copy %1\examples\words\*.l examples\words
-copy %1\examples\words\*.prj examples\words
+md examples\console\words
+copy %1\examples\console\words\*.l examples\console\words
+copy %1\examples\console\words\*.prj examples\console\words
 
 rem md examples\upndown 
 rem md examples\upndown\bin
@@ -431,14 +431,14 @@ rem copy %1\examples\upndown\upndown\*.l examples\upndown\upndown
 rem md examples\upndown\dictionary
 rem copy %1\examples\upndown\dictionary\*.l examples\upndown\dictionary
 
-md examples\notepad 
-md examples\notepad\bin
-copy %1\examples\notepad\*.l examples\notepad
-copy %1\examples\notepad\*.prj examples\notepad 
+md examples\gui\notepad 
+md examples\gui\notepad\bin
+copy %1\examples\gui\notepad\*.l examples\gui\notepad
+copy %1\examples\gui\notepad\*.prj examples\gui\notepad 
 
-md examples\trans
-copy %1\examples\trans\*.l examples\trans
-copy %1\examples\trans\*.prj examples\trans
+md examples\console\trans
+copy %1\examples\console\trans\*.l examples\console\trans
+copy %1\examples\console\trans\*.prj examples\console\trans
 
 rem md examples\vmconsole
 rem copy %1\examples\vmconsole\*.l examples\vmconsole
@@ -448,9 +448,9 @@ rem md examples\timer
 rem copy %1\examples\timer\*.l examples\timer
 rem copy %1\examples\timer\*.prj examples\timer
 
-md examples\sqlite
-copy %1\examples\sqlite\*.l examples\sqlite
-copy %1\examples\sqlite\*.prj examples\sqlite
+md examples\db\sqlite
+copy %1\examples\db\sqlite\*.l examples\db\sqlite
+copy %1\examples\db\sqlite\*.prj examples\db\sqlite
 
 echo copying src3 files
 
@@ -488,119 +488,119 @@ copy %1\*.txt
 
 echo copying rosetta files
 
-md rosetta
-md rosetta\accumulator
-copy %1\rosetta\accumulator\*.l rosetta\accumulator
-copy %1\rosetta\accumulator\*.prj rosetta\accumulator
+md examples\rosetta
+md examples\rosetta\accumulator
+copy %1\examples\rosetta\accumulator\*.l examples\rosetta\accumulator
+copy %1\examples\rosetta\accumulator\*.prj examples\rosetta\accumulator
 
-md rosetta\ackermann 
-copy %1\rosetta\ackermann\*.l rosetta\ackermann
-copy %1\rosetta\ackermann\*.prj rosetta\ackermann
+md examples\rosetta\ackermann 
+copy %1\examples\rosetta\ackermann\*.l examples\rosetta\ackermann
+copy %1\examples\rosetta\ackermann\*.prj examples\rosetta\ackermann
 
-md rosetta\addfield
-copy %1\rosetta\addfield\*.l rosetta\addfield 
-copy %1\rosetta\addfield\*.prj rosetta\addfield 
+md examples\rosetta\addfield
+copy %1\examples\rosetta\addfield\*.l examples\rosetta\addfield 
+copy %1\examples\rosetta\addfield\*.prj examples\rosetta\addfield 
 
-md rosetta\amb 
-copy %1\rosetta\amb\*.l rosetta\amb
-copy %1\rosetta\amb\*.prj rosetta\amb
+md examples\rosetta\amb 
+copy %1\examples\rosetta\amb\*.l examples\rosetta\amb
+copy %1\examples\rosetta\amb\*.prj examples\rosetta\amb
 
-md rosetta\aplusb
-copy %1\rosetta\aplusb\*.l rosetta\aplusb
-copy %1\rosetta\aplusb\*.prj rosetta\aplusb
+md examples\rosetta\aplusb
+copy %1\examples\rosetta\aplusb\*.l examples\rosetta\aplusb
+copy %1\examples\rosetta\aplusb\*.prj examples\rosetta\aplusb
 
-md rosetta\applycallback 
-copy %1\rosetta\applycallback\*.l rosetta\applycallback 
-copy %1\rosetta\applycallback\*.prj rosetta\applycallback 
+md examples\rosetta\applycallback 
+copy %1\examples\rosetta\applycallback\*.l examples\rosetta\applycallback 
+copy %1\examples\rosetta\applycallback\*.prj examples\rosetta\applycallback 
 
-md rosetta\arithmeticint
-copy %1\rosetta\arithmeticint\*.l rosetta\arithmeticint
-copy %1\rosetta\arithmeticint\*.prj rosetta\arithmeticint
+md examples\rosetta\arithmeticint
+copy %1\examples\rosetta\arithmeticint\*.l examples\rosetta\arithmeticint
+copy %1\examples\rosetta\arithmeticint\*.prj examples\rosetta\arithmeticint
 
-md rosetta\arithmmean
-copy %1\rosetta\arithmmean\*.l rosetta\arithmmean 
-copy %1\rosetta\arithmmean\*.prj rosetta\arithmmean 
+md examples\rosetta\arithmmean
+copy %1\examples\rosetta\arithmmean\*.l examples\rosetta\arithmmean 
+copy %1\examples\rosetta\arithmmean\*.prj examples\rosetta\arithmmean 
 
-md rosetta\associativearrays
-copy %1\rosetta\associativearrays\*.l rosetta\associativearrays
-copy %1\rosetta\associativearrays\*.prj rosetta\associativearrays
+md examples\rosetta\associativearrays
+copy %1\examples\rosetta\associativearrays\*.l examples\rosetta\associativearrays
+copy %1\examples\rosetta\associativearrays\*.prj examples\rosetta\associativearrays
 
-md rosetta\arithmeval
-copy %1\rosetta\arithmeval\*.l rosetta\arithmeval
-copy %1\rosetta\arithmeval\*.prj rosetta\arithmeval
+md examples\rosetta\arithmeval
+copy %1\examples\rosetta\arithmeval\*.l examples\rosetta\arithmeval
+copy %1\examples\rosetta\arithmeval\*.prj examples\rosetta\arithmeval
 
-md rosetta\arrays 
-copy %1\arrays\*.l rosetta\arrays
-copy %1\arrays\*.prj rosetta\arrays
+md examples\rosetta\arrays 
+copy %1\examples\rosetta\arrays\*.l examples\rosetta\arrays
+copy %1\examples\rosetta\arrays\*.prj examples\rosetta\arrays
 
-md rosetta\arrayconcat
-copy %1\rosetta\arrayconcat\*.l rosetta\arrayconcat
-copy %1\rosetta\arrayconcat\*.prj rosetta\arrayconcat
+md examples\rosetta\arrayconcat
+copy %1\examples\rosetta\arrayconcat\*.l examples\rosetta\arrayconcat
+copy %1\examples\rosetta\arrayconcat\*.prj examples\rosetta\arrayconcat
 
-md rosetta\smavg 
-copy %1\rosetta\smavg\*.l rosetta\smavg 
-copy %1\rosetta\smavg\*.prj rosetta\smavg 
+md examples\rosetta\smavg 
+copy %1\examples\rosetta\smavg\*.l examples\rosetta\smavg 
+copy %1\examples\rosetta\smavg\*.prj examples\rosetta\smavg 
 
-md rosetta\arraymode
-copy %1\rosetta\arraymode\*.l rosetta\arraymode
-copy %1\rosetta\arraymode\*.prj rosetta\arraymode
+md examples\rosetta\arraymode
+copy %1\examples\rosetta\arraymode\*.l examples\rosetta\arraymode
+copy %1\examples\rosetta\arraymode\*.prj examples\rosetta\arraymode
 
-md rosetta\anonymrec
-copy %1\rosetta\anonymrec\*.l rosetta\anonymrec
-copy %1\rosetta\anonymrec\*.prj rosetta\anonymrec
+md examples\rosetta\anonymrec
+copy %1\examples\rosetta\anonymrec\*.l examples\rosetta\anonymrec
+copy %1\examples\rosetta\anonymrec\*.prj examples\rosetta\anonymrec
 
-md rosetta\median
-copy %1\rosetta\median\*.l rosetta\median
-copy %1\rosetta\median\*.prj rosetta\median
+md examples\rosetta\median
+copy %1\examples\rosetta\median\*.l examples\rosetta\median
+copy %1\examples\rosetta\median\*.prj examples\rosetta\median
 
-md rosetta\bitwise
-copy %1\rosetta\bitwise\*.l rosetta\bitwise
-copy %1\rosetta\bitwise\*.prj rosetta\bitwise
+md examples\rosetta\bitwise
+copy %1\examples\rosetta\bitwise\*.l examples\rosetta\bitwise
+copy %1\examples\rosetta\bitwise\*.prj examples\rosetta\bitwise
 
-md rosetta\anagram
-copy %1\rosetta\anagram\*.l rosetta\anagram
-copy %1\rosetta\anagram\*.prj rosetta\anagram
-copy %1\rosetta\anagram\*.txt rosetta\anagram
+md examples\rosetta\anagram
+copy %1\examples\rosetta\anagram\*.l examples\rosetta\anagram
+copy %1\examples\rosetta\anagram\*.prj examples\rosetta\anagram
+copy %1\examples\rosetta\anagram\*.txt examples\rosetta\anagram
 
-md rosetta\brackets
-copy %1\rosetta\brackets\*.l rosetta\brackets
-copy %1\rosetta\brackets\*.prj rosetta\brackets
+md examples\rosetta\brackets
+copy %1\examples\rosetta\brackets\*.l examples\rosetta\brackets
+copy %1\examples\rosetta\brackets\*.prj examples\rosetta\brackets
 
-md rosetta\bestshuffle 
-copy %1\rosetta\bestshuffle\*.l rosetta\bestshuffle
-copy %1\rosetta\bestshuffle\*.prj rosetta\bestshuffle
+md examples\rosetta\bestshuffle 
+copy %1\examples\rosetta\bestshuffle\*.l examples\rosetta\bestshuffle
+copy %1\examples\rosetta\bestshuffle\*.prj examples\rosetta\bestshuffle
 
-md rosetta\bullscows
-copy %1\rosetta\bullscows\*.l rosetta\bullscows
-copy %1\rosetta\bullscows\*.prj rosetta\bullscows
+md examples\rosetta\bullscows
+copy %1\examples\rosetta\bullscows\*.l examples\rosetta\bullscows
+copy %1\examples\rosetta\bullscows\*.prj examples\rosetta\bullscows
 
-md rosetta\binary
-copy %1\rosetta\binary\*.l rosetta\binary
-copy %1\rosetta\binary\*.prj rosetta\binary
+md examples\rosetta\binary
+copy %1\examples\rosetta\binary\*.l examples\rosetta\binary
+copy %1\examples\rosetta\binary\*.prj examples\rosetta\binary
 
-md rosetta\caesar
-copy %1\rosetta\caesar\*.l rosetta\caesar
-copy %1\rosetta\caesar\*.prj rosetta\caesar
+md examples\rosetta\caesar
+copy %1\examples\rosetta\caesar\*.l examples\rosetta\caesar
+copy %1\examples\rosetta\caesar\*.prj examples\rosetta\caesar
 
-md rosetta\charmatch
-copy %1\rosetta\charmatch\*.l rosetta\charmatch
-copy %1\rosetta\charmatch\*.prj rosetta\charmatch
+md examples\rosetta\charmatch
+copy %1\examples\rosetta\charmatch\*.l examples\rosetta\charmatch
+copy %1\examples\rosetta\charmatch\*.prj examples\rosetta\charmatch
 
-md rosetta\combinations
-copy %1\rosetta\combinations\*.l rosetta\combinations
-copy %1\rosetta\combinations\*.prj rosetta\combinations
+md examples\rosetta\combinations
+copy %1\examples\rosetta\combinations\*.l examples\rosetta\combinations
+copy %1\examples\rosetta\combinations\*.prj examples\rosetta\combinations
 
-md rosetta\calendar
-copy %1\rosetta\calendar\*.l rosetta\calendar
-copy %1\rosetta\calendar\*.prj rosetta\calendar
+md examples\rosetta\calendar
+copy %1\examples\rosetta\calendar\*.l examples\rosetta\calendar
+copy %1\examples\rosetta\calendar\*.prj examples\rosetta\calendar
 
-md rosetta\doors
-copy %1\rosetta\doors\*.l rosetta\doors
-copy %1\rosetta\doors\*.prj rosetta\doors
+md examples\rosetta\doors
+copy %1\examples\rosetta\doors\*.l examples\rosetta\doors
+copy %1\examples\rosetta\doors\*.prj examples\rosetta\doors
 
-md rosetta\twentyfour
-copy %1\rosetta\twentyfour\*.l rosetta\twentyfour
-copy %1\rosetta\twentyfour\*.prj rosetta\twentyfour
+md examples\rosetta\twentyfour
+copy %1\examples\rosetta\twentyfour\*.l examples\rosetta\twentyfour
+copy %1\examples\rosetta\twentyfour\*.prj examples\rosetta\twentyfour
 
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj

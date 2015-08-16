@@ -23,6 +23,9 @@
 [*] some house keeping
 [+] culture'Locale
 [+] new package net
+
+[Misc]
+[*]rearranging examples
                                                                                                   
 ******************************************************************************
                              What's New in 1.9.21
