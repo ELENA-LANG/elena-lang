@@ -2,8 +2,6 @@
 
 // --- AddrInfo ---
 
-#subject(class:AddrInfo)addrinfo.
-
 #class(sealed,struct:embeddable) AddrInfo
 {
     #field(type:int) ai_flags.
@@ -16,6 +14,38 @@
     #field(type:dirty_ptr) ai_next.
     
     #method addrinfo = $self.
+    
+    #method(stacksafe)setFlags &int:aValue
+    [
+        ai_flags := aValue.
+    ]
+    
+    #method(stacksafe)setFamily &int:aValue
+    [
+        ai_family := aValue.
+    ]
+    
+    #method(stacksafe)setSocketType &int:aValue
+    [
+        ai_socktype := aValue.
+    ]
+    
+    #method(stacksafe)setProtocol &int:aValue
+    [
+        ai_protocol := aValue.
+    ]
+    
+    #method(stacksafe)setAddressLen &int:aValue
+    [
+        ai_addrlen := aValue.
+    ]
+    
+    #method(stacksafe) clear
+    [
+        system'external'KERNEL32 ZeroMemory
+            &addrinfo:$self
+            &int:32.
+    ]
 }
 
 // --- AddrInfoReader ---
@@ -52,6 +82,9 @@
 #class(sealed,integer:4)Socket
 {
     #constructor(stacksafe) $new &int:aSocket
+        => system'internal'int_copy.
+    
+    #constructor(stacksafe) new &socket:aSocket
         => system'internal'int_copy.
     
     #constructor(stacksafe) new &int:anAdressFamily &int:aType &int:aProtocol

@@ -40,7 +40,7 @@ enum ObjectKind
    okFieldAddress,                 // param - field offset
    okOuter,                        // param - field offset
    okOuterField,                   // param - field offset, extraparam - outer field offset
-   okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable
+   okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
    okParam,                        // param - parameter offset
    okSubject,                      // param - parameter offset
    okSubjectDispatcher,
@@ -204,6 +204,9 @@ public:
    void removeLastBreakpoint(CommandTape& tape);
    void declareStatement(CommandTape& tape);
    void declareBlock(CommandTape& tape);
+
+   void tryEmbeddable(CommandTape& tape);
+   void endEmbeddable(CommandTape& tape);
 
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);

@@ -2,6 +2,10 @@
 In development:
 ------                                                                                         
               adev - lib30     
+                       * initializing stack allocated structure, issue #10 ;
+                         if the method is embeddable than call it with acc=0,
+                         otherwise create an object and copy its content
+
                        * implement #33 (tcp/ip socket)
 
              adev - linux

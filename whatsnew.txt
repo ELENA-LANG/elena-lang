@@ -12,7 +12,8 @@
 [+] new statement: #lock (<expr>) [<critical-section-code>]
 [+] new hint : arrayof
 [+] issue #123 implemented : fixed size array field
-[*] #143 issue : #import statement will be used for module namespace importing
+[*] #143 issue : #import statement will be used for namespace importing
+[+] issue #10 : initializing stack allocated object
 
 [ELC]
 [*] output code optimization

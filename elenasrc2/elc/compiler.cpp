@@ -28,6 +28,7 @@ using namespace _ELENA_;
 #define HINT_HEAP_MODE        0x00400000
 #define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 #define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
+#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
 #define HINT_ACTION           0x00020000
 #define HINT_EXTERNAL_CALL    0x00010000
 
@@ -1331,6 +1332,9 @@ int Compiler::MethodScope :: compileHints(DNode hints)
       else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
          hint |= tpStackSafe;
       }
+      else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
+         hint |= tpEmbeddable;
+      }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
@@ -1988,11 +1992,39 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       }
 
       DNode assigning = node.firstChild();
-      if (assigning != nsNone) {
+      if (assigning == nsAssigning) {
          openDebugExpression(scope);
          compileAssigningExpression(node, assigning, scope, variable);
          endDebugExpression(scope);
-      }         
+      }
+      else if (assigning != nsResendExpression) {
+         if (classReference == 0)
+            scope.raiseError(errNotApplicable, node.Terminal());
+
+         variable.extraparam = classReference;
+
+         openDebugExpression(scope);
+         ObjectInfo retVal = compileMessage(node, scope, variable, HINT_INITIALIZING);
+
+         // if actual constructor was called
+         // save the result into variable
+         if (retVal.kind == okAccumulator) {
+            if (size > 0) {
+               compileContentAssignment(node, scope, variable, retVal);
+            }
+            else {
+               bool boxed = false;
+               bool dummy = false;
+               bool mismatch = false;
+               compileTypecast(scope, retVal, variable.type, mismatch, boxed, dummy);
+               if (mismatch)
+                  scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
+
+               compileAssignment(node, scope, variable);
+            }
+         }
+         endDebugExpression(scope);
+      }
 
       if (variable.kind == okLocal) {
          scope.mapLocal(node.Terminal(), variable.param, type);
@@ -3222,6 +3254,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    ref_t classReference = resolveObjectReference(scope, target);
    bool classFound = false;
    bool dispatchCall = false;
+   bool varInitCall = false;
    int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
    int callType = methodHint & tpMask;
 
@@ -3265,7 +3298,15 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    }
    else compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
 
-   // load target
+   // HOTFIX : put 0 into acc to signal the embeddable constructor 
+   // that it is variable implicit initialization
+   if (test(mode, HINT_INITIALIZING) && (test(methodHint, tpEmbeddable)) && target.extraparam != 0) {
+      callType = tpSealed;
+      varInitCall = true;
+
+      classReference = target.extraparam;
+   }
+   // otherwise load target
    if (target.kind == okConstantRole) {
       _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, target.param));
    }
@@ -3340,6 +3381,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
 
       retVal.extraparam = scope.moduleScope->boolType;
    }
+   else if (varInitCall) {
+      retVal.kind = okIdle;
+   }
 
    return retVal;
 }
@@ -3354,7 +3398,7 @@ void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
    else _writer.releaseObject(*scope.tape, spaceToRelease);
 }
 
-ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
 {
    MessageScope callStack;
 
@@ -3363,7 +3407,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
    ref_t messageRef = mapMessage(node, scope, callStack);
 
-   ref_t extensionRef = mapExtension(scope, messageRef, object);
+   // HOTFIX : extension should not be used for variable imnplicit intialization
+   ref_t extensionRef = test(mode, HINT_INITIALIZING) ? 0 : mapExtension(scope, messageRef, object);
 
    // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
    if (object.kind == okAccumulator) {
@@ -3374,7 +3419,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
    }
 
-   ObjectInfo retVal = compileMessage(node, scope, callStack, object, messageRef, 0);
+   ObjectInfo retVal = compileMessage(node, scope, callStack, object, messageRef, mode);
 
    int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
    if (spaceToRelease != 0) {
@@ -5159,7 +5204,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 //      _writer.declareSafePoint(*codeScope.tape);
 }
 
-void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope)
+void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, bool embeddable)
 {
    CodeScope codeScope(&scope);
 
@@ -5173,17 +5218,29 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    _writer.declareMethod(*codeScope.tape, scope.message, false, false);
 
    bool withFrame = false;
+
+   // if the constructor is embeddable
+   // check if acc is zero than skip the default / resend code
+
+   _writer.tryEmbeddable(*codeScope.tape);
+
    if (resendBody != nsNone) {
       compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
+
+      // HOT FIX : raise an error if the frame was open
+      if (withFrame && embeddable)
+         scope.raiseError(errIllegalConstructor, node.Terminal());
    }
    // if no redirect statement - call virtual constructor implicitly
    else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
-      // HOTFIX: -1 indicates the stack is not consumed by the constructor
+      // HOTFIX: -1 indicates the stack is not cconsumed by the constructor
       _writer.callMethod(*codeScope.tape, 1, -1);
    }
    // if it is a dynamic object implicit constructor call is not possible
    else if (dispatchBody == nsNone)
       scope.raiseError(errIllegalConstructor, node.Terminal());
+
+   _writer.endEmbeddable(*codeScope.tape);
 
    if (dispatchBody != nsNone) {
       compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
@@ -5510,9 +5567,10 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
 
          declareArgumentList(member, methodScope);
-         methodScope.stackSafe = test(classClassScope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+         int hint = classClassScope.info.methodHints.get(methodScope.message).hint;
+         methodScope.stackSafe = test(hint, tpStackSafe);
 
-         compileConstructor(member, methodScope, classClassScope);
+         compileConstructor(member, methodScope, classClassScope, test(hint, tpEmbeddable));
       }
       member = member.nextNode();
    }

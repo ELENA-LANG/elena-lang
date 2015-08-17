@@ -79,6 +79,7 @@ protected:
       tpNormal     = 0x03,
       tpDispatcher = 0x04,
       tpStackSafe  = 0x10,
+      tpEmbeddable = 0x20,
    };
 
    struct Unresolved
@@ -768,7 +769,7 @@ protected:
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode = 0);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
    void compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
@@ -823,7 +824,7 @@ protected:
    void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
-   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope);
+   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, bool embeddable);
 
    void compileSymbolCode(ClassScope& scope);
 

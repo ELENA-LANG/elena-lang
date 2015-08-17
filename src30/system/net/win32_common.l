@@ -3,10 +3,15 @@
 #symbol(type:int,const) INVALID_SOCKET = -1.
 #symbol(type:int,const) SOCKET_ERROR   = -1.
 
+#symbol(type:int,const) AF_UNSPEC   = 0.
+#symbol(type:int,const) SOCK_STREAM = 1.
+#symbol(type:int,const) IPPROTO_TCP = 6.
+
 // --- types ---
 
-#subject(class:system'net'Socket)socket.
-#subject(class:system'net'WSADATA)wsadata.
+#subject(class:system'net'Socket)  socket.
+#subject(class:system'net'WSADATA) wsadata.
+#subject(class:AddrInfo)           addrinfo.
 
 // --- WSAException ---
 

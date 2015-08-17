@@ -15,6 +15,7 @@
 {
     test            
     [
+        EmbedConstTest eval.    
     ]        
 }.
 
@@ -771,4 +772,20 @@
     #var o := Child new.
     
     o test.
+].
+
+#subject(class:TestVar)test_var.
+#class(sealed,struct:embeddable) TestVar
+{
+    #field(type:int)theValue.
+    
+    #constructor(stacksafe,embeddable) new &int:aValue
+    [
+        theValue := aValue.
+    ]
+}
+
+#symbol EmbedConstTest
+[
+    #var(type:test_var)var <= new &int:2.
 ].

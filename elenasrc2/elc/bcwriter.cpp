@@ -2470,3 +2470,19 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
    tape.write(bcFreeLock);
 }
 
+void ByteCodeWriter :: tryEmbeddable(CommandTape& tape)
+{
+   // ifr 0 labSkip
+   tape.newLabel();
+   tape.write(bcIfR, baCurrentLabel);
+}
+
+void ByteCodeWriter :: endEmbeddable(CommandTape& tape)
+{
+   // asavesi 1
+   // labSkip:
+   // aloadsi 1
+   tape.write(bcASaveSI, 1);
+   tape.setLabel();
+   tape.write(bcALoadSI, 1);
+}
