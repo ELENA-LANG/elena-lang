@@ -63,7 +63,54 @@
     
     #method socket = $self.
     
-    #method close
+    #method(stacksafe) open &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
+        #var(type:int)aRetVal := system'external'WS2_32 connect 
+            &socket:$self
+            &dirty_ptr:aSockAddrPtr
+            &int:aNameLen.
+            
+        (SOCKET_ERROR == $self)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe)write &bytearray:aBuffer &int:aLength &int:aFlags
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 send 
+            &socket:$self
+            &bytearray:aBuffer
+            &int:aLength
+            &int:aFlags.
+            
+        (SOCKET_ERROR == $self)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe) read &bytearray:aBuffer &int:aLength &int:aFlags
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 recv
+            &socket:$self
+            &bytearray:aBuffer
+            &int:aLength
+            &int:aFlags.
+            
+        (SOCKET_ERROR == $self)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe) shutdown &int:aType
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 shutdown
+            &socket:$self
+            &int:aType.
+            
+        (SOCKET_ERROR == $self)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe) close
+    [
+        system'external'WS2_32 closesocket
+            &socket:$self.
     ]
 }

@@ -1,6 +1,7 @@
 #define system.
 
 #symbol(type:int,const) INVALID_SOCKET = -1.
+#symbol(type:int,const) SOCKET_ERROR   = -1.
 
 // --- types ---
 

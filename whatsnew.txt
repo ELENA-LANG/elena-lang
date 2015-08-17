@@ -12,6 +12,7 @@
 [+] new statement: #lock (<expr>) [<critical-section-code>]
 [+] new hint : arrayof
 [+] issue #123 implemented : fixed size array field
+[*] #143 issue : #import statement will be used for module namespace importing
 
 [ELC]
 [*] output code optimization
