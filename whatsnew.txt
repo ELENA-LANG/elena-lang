@@ -24,7 +24,8 @@
 [LIB]
 [*] some house keeping
 [+] culture'Locale
-[+] new package net
+[+] new package net / system'net (issue #33)
+[+] system'net :  Socket, AddrInfo, AddrInfoReader
 
 [Misc]
 [*]rearranging examples

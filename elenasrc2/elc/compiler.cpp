@@ -6086,7 +6086,12 @@ void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
             if (member.firstChild() == nsForward) {
                compileForward(member, scope, hints);
             }
+            // NOTE: obsolete, used for backward compatibility
+            //       should be removed in 2.1.x
             else compileIncludeModule(member, scope, hints);
+            break;
+         case nsImport:
+            compileIncludeModule(member, scope, hints);
             break;
          default:
             // due to current syntax we need to reset hints back, otherwise they will be skipped

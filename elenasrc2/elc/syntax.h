@@ -73,6 +73,7 @@ enum Symbol
    nsInlineExpression           = 0x01032,
    nsMessageReference           = 0x01033,
    nsThrow                      = 0x01034,
+   nsImport                     = 0x01035,
    nsDispatchHandler            = 0x01036,
    nsLock                       = 0x01037,
    nsSwitching                  = 0x0103B,

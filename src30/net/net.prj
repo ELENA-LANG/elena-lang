@@ -8,4 +8,5 @@ warn:unresolved=-1
 
 [files]
 common.l
+win32_client.l
 
