@@ -2224,6 +2224,10 @@ ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object, bool& un
       }
       else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), unboxing, 0);
    }
+   else if (object.kind == okIndexAccumulator) {
+      bool dummy, dummy2;
+      object = boxObject(scope, object, dummy, dummy2);
+   }
 
    _writer.loadObject(*scope.tape, object);
 
@@ -4568,10 +4572,11 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
       classReference = exprOperand.param;
       size = scope.moduleScope->defineStructSize(classReference);
    }
+   else if (exprOperand.kind == okIndexAccumulator && exprOperand.type == 0) {
+      // typecast index to int if no type provided
+      classReference = scope.moduleScope->intReference;
+   }
    else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
-
-   if (size == 0)
-      return false;
 
    if (size < 0) {
       bytearray = true;
@@ -4581,6 +4586,9 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
    }
    else if (exprOperand.kind == okIndexAccumulator) {
       size = 1;
+   }
+   else if (size == 0) {
+      return false;
    }
    else size = (size + 3) >> 2;
 

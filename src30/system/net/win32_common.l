@@ -1,5 +1,7 @@
 #define system.
 
+#symbol(type:int,const) INVALID_SOCKET = -1.
+
 // --- types ---
 
 #subject(class:system'net'Socket)socket.
@@ -16,6 +18,12 @@
         <= (%new &literal:(aMessage literal) &subject: %SocketError)
     [
         theCode := aCode.
+    ]
+    
+    #constructor(stacksafe) new:aMessage
+        <= (%new &literal:(aMessage literal) &subject: %SocketError)
+    [
+        theCode := IntNumber new &int:(system'external'WS2_32 WSAGetLastError).
     ]
 }
 

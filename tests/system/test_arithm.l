@@ -10,15 +10,11 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-
+    
 #symbol XTester =
 {
     test            
     [
-        #var s := "привет мир!!".
-        
-        #var us := s toUpper &locale:invariantLocale.
-        #var ls := us toLower &locale:invariantLocale.
     ]        
 }.
 
