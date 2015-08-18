@@ -89,6 +89,14 @@
     
     #method(stacksafe) write &bytearray:anArray
         => system'internal'dptr_copy.
+        
+    #method(stacksafe) write &dirty_ptr:aPointer
+    [
+        #var(type:int)tmp.
+        aPointer read &vint:tmp.
+        
+        thePointer := tmp.
+    ]            
 
     #method(stacksafe) read &vint:aPointer
         => system'internal'dptr_readint.
@@ -124,6 +132,9 @@
         
         ^ aLiteral.
     ]
+    
+    #method(stacksafe,type:bool)is &empty
+        = 0 == thePointer.
     
     /// Dispatches the verb to the target object with handle subject
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dirty_ptr:$self.

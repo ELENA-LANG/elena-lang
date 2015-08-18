@@ -40,6 +40,26 @@
         ai_addrlen := aValue.
     ]
     
+    #method(stacksafe)readInfo &vint:aFamily &vint:aSocketType &vint:aProtocol &vint:aLen
+    [
+        aFamily << ai_family.
+        aSocketType << ai_socktype.
+        aProtocol << ai_protocol.
+        aLen << ai_addrlen.
+    ]
+    
+    #method(stacksafe)readAddrLen &vint:aLen
+    [
+        aLen << ai_addrlen.
+    ]
+    
+    #method(stacksafe)readAddrPtr &dirty_ptr:aPointer
+    [
+        #var(type:dirty_ptr)ptr := ai_addr.
+        
+        aPointer write &dirty_ptr:ptr.
+    ]
+    
     #method(stacksafe) clear
     [
         system'external'KERNEL32 ZeroMemory
@@ -55,8 +75,9 @@
 #class(sealed,struct:embeddable) AddrInfoReader
 {
     #field(type:dirty_ptr)paddrinfo.
+    #field(type:dirty_ptr)prootinfo.
     
-    #constructor new &wide:aNode &wide:aService &addrinfo:aHint
+    #constructor(stacksafe,embeddable) new &wide:aNode &wide:aService &addrinfo:aHint
     [
         #var(type:int)aRetVal := system'external'WS2_32 GetAddrInfoW
             &wide:aNode
@@ -66,12 +87,33 @@
             
         (0 == aRetVal)
             ! [ #throw SocketException new:"GetAddrInfoW failed" &error_code:(IntNumber new &int:aRetVal). ].
+            
+        prootinfo := paddrinfo.
     ]
     
-    #method close
+    #method(stacksafe,type:bool)is &available
+        = paddrinfo is &empty not.
+    
+    #method(stacksafe) next
+    [
+        #var(type:dirty_ptr)ptr := paddrinfo.
+        ptr append &int:28.
+        
+        paddrinfo := ptr.
+    ]
+    
+    #method(stacksafe)read &addrinfo:anInfo
+    [
+        system'external'KERNEL32 CopyMemory 
+            &addrinfo:anInfo
+            &int:paddrinfo
+            &int:32. 
+    ]
+    
+    #method(stacksafe) close
     [
         system'external'WS2_32 FreeAddrInfoW
-            &int:paddrinfo.
+            &int:prootinfo.
     ]
     
     #method addr_reader = $self.
@@ -103,8 +145,18 @@
             &dirty_ptr:aSockAddrPtr
             &int:aNameLen.
             
-        (SOCKET_ERROR == $self)
+        (SOCKET_ERROR == aRetVal)
             ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe,type:bool) tryOpen &dirty_ptr:aSockAddrPtr &int:aNameLen
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 connect 
+            &socket:$self
+            &dirty_ptr:aSockAddrPtr
+            &int:aNameLen.
+            
+        ^ (SOCKET_ERROR != aRetVal).
     ]
 
     #method(stacksafe)write &bytearray:aBuffer &int:aLength &int:aFlags

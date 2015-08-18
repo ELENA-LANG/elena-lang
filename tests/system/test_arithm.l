@@ -11,11 +11,19 @@
 #define extensions'math.
 #define extensions'text.
 
+#class(sealed,struct:embeddable) AddrInfoReader
+{
+    #field(type:dirty_ptr)paddrinfo.
+    
+    #method(stacksafe,type:bool)is &available
+        = paddrinfo is &empty not.
+}        
+        
 #symbol XTester =
 {
     test            
     [
-    ]        
+    ]
 }.
 
 #symbol XTest =

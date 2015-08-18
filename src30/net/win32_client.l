@@ -5,6 +5,8 @@
 
 #class(sealed) TcpClient
 {
+    #field(type:socket)theSocket.
+    
     #constructor new &ip:anAddress &port:aPort
     [
         // winsock start up
@@ -19,7 +21,35 @@
         addrinfo setSocketType &int:SOCK_STREAM.
         addrinfo setProtocol &int:IPPROTO_TCP.
         
+        #var(type:addr_reader)aReader := AddrInfoReader new &wide:(anAddress wide) &wide:(aPort wide).
+        #loop (aReader is &available)?
+        [
+            aReader read &addrinfo:addrinfo.
+            
+            #var(type:int)ai_family.
+            #var(type:int)ai_socktype.
+            #var(type:int)ai_protocol.
+            #var(type:int)ai_addrlen.
+            #var(type:dirty_ptr)ai_addrptr.
+            addrinfo readInfo &vint:ai_family &vint:ai_socktype &vint:ai_protocol &vint:ai_addrlen.
+            
+            theSocket := Socket new &int:ai_family &int:ai_socktype &int:ai_protocol.
+            
+            addrinfo readAddrPtr &dirty_ptr:ai_addrptr.
+            
+            (theSocket tryOpen &dirty_ptr:ai_addrptr &int:ai_addrlen)
+                ? [
+                    aReader close.
+                    
+                    ^ $self.
+                ].
+            
+            aReader next.
+        ].
         
+        aReader close.
+        
+        #throw TcpClientException new:"Unable to connect to server".
     ]
     
     #method tcp_client = $self.
