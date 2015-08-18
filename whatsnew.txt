@@ -13,7 +13,9 @@
 [+] new hint : arrayof
 [+] issue #123 implemented : fixed size array field
 [*] #143 issue : #import statement will be used for namespace importing
-[+] issue #10 : initializing stack allocated object
+[+] issue #10 : initializing stack allocated object without creating a dynamic 
+    one
+[+] issue #48 : A proper method should have a precedence over an extension one
 
 [ELC]
 [*] output code optimization

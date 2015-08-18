@@ -2,9 +2,7 @@
 In development:
 ------                                                                                         
               adev - lib30     
-                       * initializing stack allocated structure, issue #10 ;
-                         if the method is embeddable than call it with acc=0,
-                         otherwise create an object and copy its content
+                       * issue #48 : A proper method should have a precedence over an extension one
 
                        * implement #33 (tcp/ip socket)
 

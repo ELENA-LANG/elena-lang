@@ -3393,7 +3393,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
    ref_t messageRef = mapMessage(node, scope, callStack);
 
-   // HOTFIX : extension should not be used for variable imnplicit intialization
    ref_t extensionRef = mapExtension(scope, messageRef, object);
 
    // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
@@ -3402,7 +3401,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    }
 
    if (extensionRef != 0) {
-      object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+      //HOTFIX: A proper method should have a precedence over an extension one
+      if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
+         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+      }
    }
 
    ObjectInfo retVal = compileMessage(node, scope, callStack, object, messageRef, 0);
