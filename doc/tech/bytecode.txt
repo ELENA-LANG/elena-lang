@@ -287,6 +287,8 @@ ELENA byte codes (or ecodes)
                                out: acc contains the class instance
 
  nlen                       - [acc].Length >> index / 4 ; where acc is a object
+
+ validate                   - validates if acc is not zero, otherwise break the code
                                                                                                                                                 
  wcreate                    - create the object with size=index*2 and vmt=acc, out : acc  
  

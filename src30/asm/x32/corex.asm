@@ -2095,6 +2095,14 @@ inline % 039h
 
 end
 
+// ; validate
+
+inline % 03Ah
+
+  cmp [eax], eax
+
+end
+
 // ; nequal
 
 inline % 40h
@@ -3389,7 +3397,6 @@ end
 // xcallrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh
 
-   cmp [eax], eax
    call code : __arg1
 
 end

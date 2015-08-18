@@ -46,19 +46,22 @@ inline bool isReturnExpression(DNode expr)
    return (expr == nsExpression && expr.nextNode() == nsNone);
 }
 
-//inline bool isSimpleExpression(DNode expr)
-//{
-//   if (expr == nsObject) {
-//      expr = expr.nextNode();
-//      if (expr == nsMessageOperation) {
-//         expr = expr.nextNode();
-//
-//         return expr == nsNone;
-//      }
-//   }
-//
-//   return false;
-//}
+inline bool isSimpleExpression(DNode expr)
+{
+   if (expr == nsObject) {
+      if (expr.firstChild() != nsNone)
+         return false;
+
+      expr = expr.nextNode();
+      if (expr == nsMessageOperation) {
+         expr = expr.nextNode();
+
+         return expr == nsNone;
+      }
+   }
+
+   return false;
+}
 
 inline bool isSingleStatement(DNode expr)
 {
@@ -744,6 +747,18 @@ int Compiler::ModuleScope :: getClassFlags(ref_t reference)
       return 0;
 
    return classInfo.header.flags;
+}
+
+ref_t Compiler::ModuleScope :: getClassClassReference(ref_t reference)
+{
+   if (reference == 0)
+      return 0;
+
+   ClassInfo classInfo;
+   if (loadClassInfo(classInfo, module->resolveReference(reference), true) == 0)
+      return 0;
+
+   return classInfo.classClassRef;
 }
 
 int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
@@ -1994,35 +2009,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       DNode assigning = node.firstChild();
       if (assigning == nsAssigning) {
          openDebugExpression(scope);
-         compileAssigningExpression(node, assigning, scope, variable);
-         endDebugExpression(scope);
-      }
-      else if (assigning != nsResendExpression) {
-         if (classReference == 0)
-            scope.raiseError(errNotApplicable, node.Terminal());
-
-         variable.extraparam = classReference;
-
-         openDebugExpression(scope);
-         ObjectInfo retVal = compileMessage(node, scope, variable, HINT_INITIALIZING);
-
-         // if actual constructor was called
-         // save the result into variable
-         if (retVal.kind == okAccumulator) {
-            if (size > 0) {
-               compileContentAssignment(node, scope, variable, retVal);
-            }
-            else {
-               bool boxed = false;
-               bool dummy = false;
-               bool mismatch = false;
-               compileTypecast(scope, retVal, variable.type, mismatch, boxed, dummy);
-               if (mismatch)
-                  scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-
-               compileAssignment(node, scope, variable);
-            }
-         }
+         compileAssigningExpression(node, assigning, scope, variable, size > 0 ? HINT_INITIALIZING : 0);         
          endDebugExpression(scope);
       }
 
@@ -3254,7 +3241,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    ref_t classReference = resolveObjectReference(scope, target);
    bool classFound = false;
    bool dispatchCall = false;
-   bool varInitCall = false;
+   bool varInitCall = test(mode, HINT_INITIALIZING);
    int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
    int callType = methodHint & tpMask;
 
@@ -3298,14 +3285,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    }
    else compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
 
-   // HOTFIX : put 0 into acc to signal the embeddable constructor 
-   // that it is variable implicit initialization
-   if (test(mode, HINT_INITIALIZING) && (test(methodHint, tpEmbeddable)) && target.extraparam != 0) {
-      callType = tpSealed;
-      varInitCall = true;
-
-      classReference = target.extraparam;
-   }
    // otherwise load target
    if (target.kind == okConstantRole) {
       _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, target.param));
@@ -3340,7 +3319,14 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope
    openDebugExpression(scope);
 
    // send message
-   if (dispatchCall) {
+   if (varInitCall) {
+      // HOTFIX : put 0 into acc to signal the embeddable constructor 
+      // that it is variable implicit initialization
+      _writer.loadObject(*scope.tape, ObjectInfo(okNil));
+
+      _writer.callResolvedMethod(*scope.tape, classReference, messageRef, false);
+   }
+   else if (dispatchCall) {
       _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
    }
    else if (callType == tpClosed) {
@@ -3398,7 +3384,7 @@ void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
    else _writer.releaseObject(*scope.tape, spaceToRelease);
 }
 
-ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
 {
    MessageScope callStack;
 
@@ -3408,7 +3394,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    ref_t messageRef = mapMessage(node, scope, callStack);
 
    // HOTFIX : extension should not be used for variable imnplicit intialization
-   ref_t extensionRef = test(mode, HINT_INITIALIZING) ? 0 : mapExtension(scope, messageRef, object);
+   ref_t extensionRef = mapExtension(scope, messageRef, object);
 
    // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
    if (object.kind == okAccumulator) {
@@ -3419,7 +3405,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
    }
 
-   ObjectInfo retVal = compileMessage(node, scope, callStack, object, messageRef, mode);
+   ObjectInfo retVal = compileMessage(node, scope, callStack, object, messageRef, 0);
 
    int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
    if (spaceToRelease != 0) {
@@ -3600,6 +3586,20 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
    else callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
 
    ref_t messageRef = mapMessage(node, scope, callStack);
+
+   // if it is embeddable constructor call
+   if (test(mode, HINT_INITIALIZING)) {
+      // check if it is allowed
+      ref_t classReference = resolveObjectReference(scope, role);
+      bool embeddable = test(scope.moduleScope->checkMethod(classReference, messageRef), tpEmbeddable);
+
+      if (!embeddable) {
+         // if not, make standart constructor call
+         (*callStack.parameters.getIt(0)).info = role;
+            
+         mode &= ~HINT_INITIALIZING;
+      }         
+   }
 
    // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
    if (object.kind == okAccumulator) {
@@ -4084,15 +4084,31 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    return objectInfo;
 }
 
-ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target)
-{
+ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
+{   
    // if primitive data operation can be used
    if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
-      // if it is an assignment operation (e.g. a := a + b <=> a += b)
-      // excluding structure fields (except the first one)
-      int assignMode = ((target.kind != okFieldAddress || target.param == 0) && isAssignOperation(node, assigning)) ? HINT_ASSIGN_MODE : 0;
+      ObjectInfo info;
 
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, assignMode);
+      // check if embeddable constructor can me called
+      if (test(mode, HINT_INITIALIZING) && isSimpleExpression(assigning.firstChild().firstChild())) {
+         DNode assignExpr = assigning.firstChild().firstChild();
+
+         ObjectInfo role = compileTerminal(assignExpr, scope, 0);
+
+         if (role.kind == okConstantClass && role.param == target.extraparam) {
+            // try to call it
+            info = compileExtensionMessage(assignExpr.nextNode(), scope, target, role, HINT_INITIALIZING);
+         }
+      }
+
+      if (info.kind == okUnknown) {
+         // if it is an assignment operation (e.g. a := a + b <=> a += b)
+         // excluding structure fields (except the first one)
+         int assignMode = ((target.kind != okFieldAddress || target.param == 0) && isAssignOperation(node, assigning)) ? HINT_ASSIGN_MODE : 0;
+
+         info = compileExpression(assigning.firstChild(), scope, assignMode);
+      }
 
       if (info.kind == okIndexAccumulator) {
          // if it is a primitive operation

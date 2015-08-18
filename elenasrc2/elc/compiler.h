@@ -256,6 +256,7 @@ protected:
       ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);
+      ref_t getClassClassReference(ref_t reference);
 
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -769,7 +770,7 @@ protected:
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int mode = 0);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
    void compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
@@ -778,7 +779,7 @@ protected:
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target);
+   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
    ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
 

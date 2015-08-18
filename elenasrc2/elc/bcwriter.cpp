@@ -1021,9 +1021,13 @@ void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, 
    tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
 }
 
-void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
 {
+   // validate
    // xcallrm r, m
+
+   if(withValidattion)
+      tape.write(bcValidate);
 
    tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
 

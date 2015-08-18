@@ -10,12 +10,12 @@
 #define extensions.
 #define extensions'math.
 #define extensions'text.
-    
+
 #symbol XTester =
 {
     test            
     [
-        EmbedConstTest eval.    
+        EmbedConstTest eval.
     ]        
 }.
 
@@ -785,7 +785,7 @@
     ]
 }
 
-#symbol EmbedConstTest
+#symbol EmbedConstTest =
 [
-    #var(type:test_var)var <= new &int:2.
+    #var(type:test_var)var := TestVar new &int:2.
 ].

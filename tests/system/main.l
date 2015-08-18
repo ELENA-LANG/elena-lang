@@ -45,4 +45,5 @@
     UnboxTest eval.
     ByRefTest eval.
     SuperTest eval.
+    EmbedConstTest eval.
 ].

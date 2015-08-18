@@ -71,6 +71,7 @@ enum ByteCode
    bcMIndex          = 0x37,
    bcCall            = 0x38,
    bcACallVD         = 0x39,
+   bcValidate        = 0x3A,
 
    bcNEqual          = 0x40,
    bcNLess           = 0x41,
