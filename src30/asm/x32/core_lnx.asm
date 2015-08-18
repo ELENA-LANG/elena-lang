@@ -23,6 +23,7 @@ define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
+define NEW_EVENT            10101h
 
 define CORE_OS_TABLE        20009h
 
@@ -100,5 +101,11 @@ procedure % EXIT
   mov  eax, 1
   mov  ebx, 0
   int  80h
+
+end
+
+procedure % NEW_EVENT
+
+  ret
 
 end
