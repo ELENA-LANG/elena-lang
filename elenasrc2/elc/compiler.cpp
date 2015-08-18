@@ -5237,8 +5237,8 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
    // if the constructor is embeddable
    // check if acc is zero than skip the default / resend code
-
-   _writer.tryEmbeddable(*codeScope.tape);
+   if (embeddable)
+      _writer.tryEmbeddable(*codeScope.tape);
 
    if (resendBody != nsNone) {
       compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
@@ -5256,7 +5256,8 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    else if (dispatchBody == nsNone)
       scope.raiseError(errIllegalConstructor, node.Terminal());
 
-   _writer.endEmbeddable(*codeScope.tape);
+   if (embeddable)
+      _writer.endEmbeddable(*codeScope.tape);
 
    if (dispatchBody != nsNone) {
       compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);

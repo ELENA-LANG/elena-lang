@@ -15,7 +15,6 @@
 {
     test            
     [
-        EmbedConstTest eval.
     ]        
 }.
 
