@@ -2,6 +2,7 @@
 
 // --- types ---
 #subject(class:net'TcpClient)tcp_client.
+#subject(class:net'TcpServer)tcp_server.
 
 #class TcpClientException :: Exception
 {

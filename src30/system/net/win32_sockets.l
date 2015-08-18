@@ -149,6 +149,27 @@
             ! [ #throw SocketException new:"Error at socket". ].
     ]
 
+    #method(stacksafe) bind &dirty_ptr:aSockAddrPtr &int:aNameLen
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 bind 
+            &socket:$self
+            &dirty_ptr:aSockAddrPtr
+            &int:aNameLen.
+            
+        (SOCKET_ERROR == aRetVal)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe) listen &int:aBackLog
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 listen 
+            &socket:$self
+            &int:aBackLog.
+            
+        (SOCKET_ERROR == aRetVal)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
     #method(stacksafe,type:bool) tryOpen &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
         #var(type:int)aRetVal := system'external'WS2_32 connect 
@@ -181,6 +202,20 @@
             
         (SOCKET_ERROR == aRetVal)
             ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method accept
+    [
+        #var(type:socket)aSocket := system'external'WS2_32 accept
+            &socket:$self
+            &int:0
+            &int:0.
+            
+        (INVALID_SOCKET != aSocket)
+            ? [
+                ^ Socket new &socket:aSocket.
+            ]
+            ! [ ^ $nil. ].
     ]
 
     #method(stacksafe) shutdown &int:aType

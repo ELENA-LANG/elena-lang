@@ -3,13 +3,17 @@
 #symbol(type:int,const) INVALID_SOCKET = -1.
 #symbol(type:int,const) SOCKET_ERROR   = -1.
 
+#symbol(type:int,const) AI_PASSIVE  = 1.
 #symbol(type:int,const) AF_UNSPEC   = 0.
+#symbol(type:int,const) AF_INET     = 2.
 #symbol(type:int,const) SOCK_STREAM = 1.
 #symbol(type:int,const) IPPROTO_TCP = 6.
 
 #symbol(type:int,const) TCP_NODELAY = 1. 
 
 #symbol(type:int,const) FIONBIO = 8004667Eh.
+
+#symbol(type:int,const) SOMAXCONN = 5.
 
 // --- types ---
 
