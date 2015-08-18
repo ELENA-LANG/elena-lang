@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 // --- Constants ---
 #symbol(type:int,const) LCMAP_LOWERCASE = 00000100h.  // lower case letters

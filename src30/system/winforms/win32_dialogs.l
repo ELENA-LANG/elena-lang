@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 #symbol(const,type:int)OFN_PATHMUSTEXIST = 00000800h.
 #symbol(const,type:int)OFN_EXPLORER      = 00080000h.

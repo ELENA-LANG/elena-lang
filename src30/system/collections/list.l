@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 #subject(class:system'collections'ListItem)   list_item.
 

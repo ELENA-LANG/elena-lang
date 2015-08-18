@@ -1,5 +1,5 @@
-#define system.
-#define system'collections.
+#import system.
+#import system'collections.
 
 // --- literalSplitOp ---
 

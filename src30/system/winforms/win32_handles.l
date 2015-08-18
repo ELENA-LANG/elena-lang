@@ -1,5 +1,5 @@
-#define system.
-#define system'drawing.
+#import system.
+#import system'drawing.
 
 // --- HInstance ---
 

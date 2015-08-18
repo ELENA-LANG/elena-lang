@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 // === types ===
 #subject(class:system'collections'Stack)stack.

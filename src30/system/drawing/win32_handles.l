@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 // data structure wrappers
 #subject(class:system'drawing'HDC)         hdc.

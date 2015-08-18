@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 #subject(class:system'calendar'SystemTime)    __time.
 #subject(class:system'calendar'SystemTimeVar) __vtime.

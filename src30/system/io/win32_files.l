@@ -1,5 +1,5 @@
-#define system.
-#define system'text.
+#import system.
+#import system'text.
 
 // --- File Access Modes ---
 #symbol(const,type:int) $FILE_READ_DATA     = 00000001h.

@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 #symbol(const,type:int)GWL_USERDATA            = -21.
 

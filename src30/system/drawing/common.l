@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 // --- common types ---
 #subject(class:system'drawing'Point)coord.

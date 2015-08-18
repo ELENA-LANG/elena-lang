@@ -1,5 +1,5 @@
-#define system.
-#define system'text.
+#import system.
+#import system'text.
 
 // --- BinaryWriter ---
 

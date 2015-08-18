@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 #subject(class:system'drawing'Pen)    pen.
 #subject(class:system'drawing'Brush)  brush.

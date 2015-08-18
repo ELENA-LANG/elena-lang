@@ -1,5 +1,5 @@
-#define system.
-#define system'routines.
+#import system.
+#import system'routines.
 
 // --- CastOver ---
 

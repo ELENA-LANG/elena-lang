@@ -1,4 +1,4 @@
-#define system. 
+#import system. 
 
 // === basic interfaces ===
 #subject(class:system'text'Encoder)encoder.

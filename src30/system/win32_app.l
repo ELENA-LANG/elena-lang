@@ -1,5 +1,3 @@
-#define system.
-
 // --- CommandLine ---
 
 #symbol $CommandLineFactory =

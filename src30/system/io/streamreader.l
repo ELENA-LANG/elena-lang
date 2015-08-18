@@ -1,6 +1,6 @@
-#define system.
-#define system'routines.
-#define system'text.
+#import system.
+#import system'routines.
+#import system'text.
 
 // --- BinaryReader ---
 

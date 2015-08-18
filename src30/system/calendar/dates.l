@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 #subject(class:system'calendar'Date) datetime.
 #subject(class:system'calendar'TimeSpan) timespan.

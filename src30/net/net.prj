@@ -9,4 +9,5 @@ warn:unresolved=0
 [files]
 common.l
 win32_client.l
+win32_server.l
 
