@@ -7,6 +7,10 @@
 #symbol(type:int,const) SOCK_STREAM = 1.
 #symbol(type:int,const) IPPROTO_TCP = 6.
 
+#symbol(type:int,const) TCP_NODELAY = 1. 
+
+#symbol(type:int,const) FIONBIO = 8004667Eh.
+
 // --- types ---
 
 #subject(class:system'net'Socket)  socket.

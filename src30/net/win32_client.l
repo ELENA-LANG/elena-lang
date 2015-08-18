@@ -52,5 +52,30 @@
         #throw TcpClientException new:"Unable to connect to server".
     ]
     
+    #method set &blocking:aValue
+    [
+        #var(type:int)aMode.
+        
+        aValue 
+            ? [
+                aMode := 0.
+            ]
+            ! [
+                aMode := 1.
+            ].
+
+        theSocket iocommand &int:FIONBIO &vint:aMode.
+    ]
+    
+    #method set &nodelay:aValue
+    [
+        theSocket option &int:IPPROTO_TCP &int:TCP_NODELAY &bool:(aValue bool).
+    ]
+    
+    #method close
+    [
+        theSocket close.
+    ]
+    
     #method tcp_client = $self.
 }

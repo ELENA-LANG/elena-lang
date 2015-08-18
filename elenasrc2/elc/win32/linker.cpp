@@ -517,6 +517,8 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 
 void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)
 {
+   int n = TCP_NODELAY;
+
    // allocate tls section
    MemoryWriter tlsWriter(image.getTLSSection());
    tlsWriter.writeDWord(0);   // stack frame pointer

@@ -167,7 +167,7 @@
             &int:aLength
             &int:aFlags.
             
-        (SOCKET_ERROR == $self)
+        (SOCKET_ERROR == aRetVal)
             ! [ #throw SocketException new:"Error at socket". ].
     ]
 
@@ -179,7 +179,7 @@
             &int:aLength
             &int:aFlags.
             
-        (SOCKET_ERROR == $self)
+        (SOCKET_ERROR == aRetVal)
             ! [ #throw SocketException new:"Error at socket". ].
     ]
 
@@ -189,7 +189,33 @@
             &socket:$self
             &int:aType.
             
-        (SOCKET_ERROR == $self)
+        (SOCKET_ERROR == aRetVal)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe) iocommand &int:aCommand &vint:aParameter
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 ioctlsocket
+            &socket:$self
+            &int:aCommand
+            &vint:aParameter.
+            
+        (SOCKET_ERROR == aRetVal)
+            ! [ #throw SocketException new:"Error at socket". ].
+    ]
+
+    #method(stacksafe) option &int:aLevel &int:anOption &bool:aValue
+    [
+        #var(type:int)n := aValue iif:1:0.
+        
+        #var(type:int)aRetVal := system'external'WS2_32 setsockopt
+            &socket:$self
+            &int:aLevel
+            &int:anOption
+            &vint:n
+            &int:1.
+            
+        (SOCKET_ERROR == aRetVal)
             ! [ #throw SocketException new:"Error at socket". ].
     ]
 

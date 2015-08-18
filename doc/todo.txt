@@ -2,8 +2,6 @@
 In development:
 ------                                                                                         
               adev - lib30     
-                       * issue #48 : A proper method should have a precedence over an extension one
-
                        * implement #33 (tcp/ip socket)
 
              adev - linux
