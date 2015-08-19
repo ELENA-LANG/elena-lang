@@ -1,0 +1,16 @@
+﻿[project]
+projecttype=1
+package=date
+executable=dtcalculator
+namespace=datetime
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+control.l
+
+[forwards]
+'program=extensions'programLoop
+'program'control=datetime'control
+

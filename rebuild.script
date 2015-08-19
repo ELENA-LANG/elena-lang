@@ -33,6 +33,7 @@ bin/elc2 -cexamples/console/trans/tanslit.project
 bin/elc2 -cexamples/files/textfile/textfile.project
 bin/elc2 -cexamples/console/goods/goods.project
 bin/elc2 -cexamples/files/textdb/textdb.project
+bin/elc2 -cexamples/console/datetime/dtcalculator.project
 
 bin/elc2 -cexamples/rosetta/accumulator/accumulator.project
 bin/elc2 -cexamples/rosetta/ackermann/ackerman.project

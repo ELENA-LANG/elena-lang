@@ -41,7 +41,7 @@
     
     #method(stacksafe) read &__vtime : aRetVal
     [
-        aRetVal << theValue.
+        aRetVal write &__time:theValue.
     ]
 
     #method __time = SystemTime new &__time:theValue.
@@ -119,12 +119,16 @@
     
     #method add &timespan:aSpan
     [
-        #var(type:__time)aValue.
-        aSpan read &__vtime:aValue.
+        #var(type:__time)aTime.
+        aSpan read &__vtime:aTime.
                 
-        aValue := aValue + theValue.
-        
-        ^ TimeSpan new &__time:aValue.
+        #var(type:long)aValue.
+        aTime read &vlong:aValue.
+
+        #var(type:long)aCurrentValue.
+        theValue read &vlong:aCurrentValue.
+
+        ^ TimeSpan new &__time:(SystemTime $new &long:(aValue + aCurrentValue)).
     ]
 
     #method subtract &timespan:aSpan
@@ -209,7 +213,7 @@
 
     #method(stacksafe) read &__vtime : aRetVal
     [
-        aRetVal << theValue.
+        aRetVal write &__time:theValue.
     ]
    
     #method equal &datetime:aDate

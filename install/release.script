@@ -24,6 +24,7 @@ mkdir -p ./new/examples/console/sum/
 mkdir -p ./new/examples/console/words/
 mkdir -p ./new/examples/console/matrix/
 mkdir -p ./new/examples/console/trans/
+mkdir -p ./new/examples/console/datetime/
 mkdir -p ./new/examples/files/textfile/
 mkdir -p ./new/examples/files/textdb/
 mkdir -p ./new/examples/console/goods/
@@ -106,6 +107,8 @@ cp ../examples/console/matrix/*.l new/examples/console/matrix/
 cp ../examples/console/matrix/*.project new/examples/console/matrix/
 cp ../examples/console/trans/*.l new/examples/console/trans/
 cp ../examples/console/trans/*.project new/examples/console/trans/
+cp ../examples/console/datetime/*.l new/examples/console/datetime/
+cp ../examples/console/datetime/*.project new/examples/console/datetime/
 cp ../examples/files/textfile/*.l new/examples/files/textfile/
 cp ../examples/files/textfile/*.project new/examples/files/textfile/
 cp ../examples/console/goods/*.l new/examples/console/goods/
