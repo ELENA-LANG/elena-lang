@@ -693,6 +693,19 @@ procedure long_copyint
 
 end
 
+procedure long_convertint
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
 procedure long_copystruct
 
   bcopya

@@ -19,7 +19,7 @@
         #var(type:__time_st)tm.        
         tm writeUTC &__time:time.
 
-        tm read &__time:time.
+        tm read &__vtime:time.
         
         ^ SystemTime new &__time:time.
     ]
@@ -48,7 +48,7 @@
     [
         #var(type:long)secs := nanosec / 1000000000l.
         
-        #var(type:lonf)rem := nanosec - secs * 1000000000l.
+        #var(type:long)rem := nanosec - secs * 1000000000l.
         rem := rem / 1000l.
                         
         #var(type:int)tmp.
@@ -77,13 +77,12 @@
     #method(stacksafe) read &vlong:aRetVal
     [
         #var(type:long)l.
-        longConvertor convert:tv_sec &vlong:l.
+        longConvertor convert &int:tv_sec &vlong:l.
         
         l := l * 1000000000l.
-        l := l + 
         
         #var(type:long)l2.
-        longConvertor convert:tv_usec &vlong:l2.
+        longConvertor convert &int:tv_usec &vlong:l2.
         l2 := l2 * 1000l.
         
         l := l + l2.
@@ -114,12 +113,12 @@
     
     #method __vtime = $self.
     
-    #method(stackstafe) write &__time:aValue
+    #method(stacksafe) write &__time:aValue
     [
         theValue := aValue.
     ]
     
-    #method(stackstafe) read &__vtime:aVariable
+    #method(stacksafe) read &__vtime:aVariable
     [
         aVariable << theValue.
     ]
@@ -129,15 +128,15 @@
 
 #class(struct:embeddable,sealed) TimeStruct
 {
-    #field(type:int) tm_sec;         /* seconds */
-    #field(type:int) tm_min;         /* minutes */
-    #field(type:int) tm_hour;        /* hours */
-    #field(type:int) tm_mday;        /* day of the month */
-    #field(type:int) tm_mon;         /* month */
-    #field(type:int) tm_year;        /* year */
-    #field(type:int) tm_wday;        /* day of the week */
-    #field(type:int) tm_yday;        /* day in the year */
-    #field(type:int) tm_isdst;       /* daylight saving time */
+    #field(type:int) tm_sec.         /* seconds */
+    #field(type:int) tm_min.         /* minutes */
+    #field(type:int) tm_hour.        /* hours */
+    #field(type:int) tm_mday.        /* day of the month */
+    #field(type:int) tm_mon.         /* month */
+    #field(type:int) tm_year.        /* year */
+    #field(type:int) tm_wday.        /* day of the week */
+    #field(type:int) tm_yday.        /* day in the year */
+    #field(type:int) tm_isdst.       /* daylight saving time */
     
     #field(type:int) tm_usec.
     
@@ -167,12 +166,12 @@
         aRetVal << tm_year.
     ]
 
-    #method(stacksafe) readMonth vint:aRetVal
+    #method(stacksafe) readMonth &vint:aRetVal
     [
         aRetVal << tm_mon.
     ]
 
-    #method(stacksafe) readDayOfWeek vint:aRetVal
+    #method(stacksafe) readDayOfWeek &vint:aRetVal
     [
         aRetVal << tm_wday.
     ]
@@ -187,17 +186,17 @@
         aRetVal << tm_hour.
     ]
 
-    #method(stacksafe) readMinute vint:aRetVal
+    #method(stacksafe) readMinute &vint:aRetVal
     [
         aRetVal << tm_min.
     ]
 
-    #method(stacksafe) readSecond vint:aRetVal
+    #method(stacksafe) readSecond &vint:aRetVal
     [
         aRetVal << tm_sec.
     ]
 
-    #method(stacksafe) readMillisecond vint:aRetVal
+    #method(stacksafe) readMillisecond &vint:aRetVal
     [
         #var(type:int)n := tm_usec.
         n := n / 1000. 

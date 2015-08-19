@@ -3167,6 +3167,9 @@
     #method(stacksafe)convert &wide:aValue &vlong:aRetVal
         => system'internal'long_copywstr.
 
+    #method(stacksafe)convert &int:aValue &vlong:aRetVal
+        => system'internal'long_convertint.
+
     /// Converts a real number into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &real:aValue &vlong:aRetVal
         => system'internal'long_copyreal.
