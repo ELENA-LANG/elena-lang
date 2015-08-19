@@ -13,6 +13,7 @@ In development:
       
               fdev - upndown
                        * configuration
+                       * move to corex
                        * network game
                        * implementing
                        * "chaotic" player
