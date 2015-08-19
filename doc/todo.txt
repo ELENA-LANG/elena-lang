@@ -1,8 +1,11 @@
 ------                                 
 In development:
 ------                                                                                         
-             adev - linux
-                       * implement DateTime / Timespan classes
+              idev - usability
+                       * after clicking on node in solution view, select top one / do not persist node selection
+
+              xdev - test
+                       * fix system test : datetest
 
               fdev - eldoc
                        * design
@@ -10,6 +13,9 @@ In development:
 
               sdev - rosetta code samples
                        * implement two rosetta code samples
+
+              idev - usability
+                       * fix #142
       
               fdev - upndown
                        * configuration
@@ -23,8 +29,15 @@ In development:
                        * test all samples
                        * test all rosetta samples
                        
+             adev - linux
+                       * implement DateTime / Timespan classes
+
               fdev - workshop
                        * script
+
+              xdev - test
+                       * test system / tape / mt
+                       * test all samples
 ------                                 
 Pipeline:
 ------                                                                                         

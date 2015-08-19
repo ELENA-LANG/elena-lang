@@ -1203,9 +1203,11 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       }
       else if (StringHelper::compare(terminal, HINT_STRING)) {
          info.header.flags |= elDebugLiteral;
+         info.header.flags |= elStructureRole;
       }
       else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
          info.header.flags |= elDebugWideLiteral;
+         info.header.flags |= elStructureRole;
       }
       else if (StringHelper::compare(terminal, HINT_VARIABLE)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
@@ -5461,7 +5463,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
          scope.compileFieldHints(hints, sizeValue, typeRef);
 
          // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-         if (!testany(scope.info.header.flags, elStructureRole | elNonStructureRole | elDynamicRole) && !findSymbol(member.nextNode(), nsField)
+         if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
             && test(scope.info.header.flags, elSealed) && sizeValue != 0)
          {
             scope.info.header.flags |= elStructureWrapper;
