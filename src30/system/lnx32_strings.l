@@ -1,8 +1,6 @@
-//
-//
-//// --- characterController ---
-//
-//#symbol characterController =
+// --- characterController ---
+
+//#symbol $characterController =
 //{
 //    // !! should be corrected
 //    isUpperCase &char:aValue
@@ -48,12 +46,12 @@
 //    ]
 //}.
 
-// --- caseLitrealOp ---
-
-#class(extension:literal)caseLiteralOp
-{
-    #method upperCase
-    [
+//// --- caseLitrealOp ---
+//
+//#class(extension:literal)caseLiteralOp
+//{
+//    #method upperCase
+//    [
 //        #var(type:literal)aLiteral := self literal.
 //        
 //        #var(type:literal)aRetVal := emptyLiteralValue.        
@@ -70,7 +68,7 @@
 //            aLiteral read &int:anIndex &vchar:aCurrent.
 //            aCurrent readLength &vint:aCurrentLen.
 //            
-//            characterController toUpperCase &char:aCurrent &vchar:aConverted.
+//            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
 //            
 //            aRetVal := aRetVal add &char:aConverted.
 //            
@@ -78,10 +76,10 @@
 //        ].
 //            
 //        ^ aRetVal.
-    ]
-
-    #method lowerCase
-    [
+//    ]
+//
+//    #method lowerCase
+//    [
 //        #var(type:literal)aLiteral := self literal.
 //        
 //        #var(type:literal)aRetVal := emptyLiteralValue.        
@@ -98,7 +96,7 @@
 //            aLiteral read &int:anIndex &vchar:aCurrent.
 //            aCurrent readLength &vint:aCurrentLen.
 //            
-//            characterController toLowerCase &char:aCurrent &vchar:aConverted.
+//            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
 //            
 //            aRetVal := aRetVal add &char:aConverted.
 //            
@@ -106,15 +104,15 @@
 //        ].
 //            
 //        ^ aRetVal.
-    ]    
-}
-
-// --- caseLitrealOp ---
-
-#class(extension:wide)caseWideOp
-{
-    #method upperCase
-    [
+//    ]    
+//}
+//
+//// --- caseLitrealOp ---
+//
+//#class(extension:wide)caseWideOp
+//{
+//    #method upperCase
+//    [
 //        #var(type:wide)aLiteral := self wide.
 //        
 //        #var(type:wide)aRetVal := emptyWideLiteralValue.        
@@ -131,7 +129,7 @@
 //            aLiteral read &int:anIndex &vchar:aCurrent.
 //            aCurrent readLength &vint:aCurrentLen.
 //            
-//            characterController toUpperCase &char:aCurrent &vchar:aConverted.
+//            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
 //            
 //            aRetVal := aRetVal add &char:aConverted.
 //            
@@ -139,10 +137,10 @@
 //        ].
 //            
 //        ^ aRetVal.
-    ]
-
-    #method lowerCase
-    [
+//    ]
+//
+//    #method lowerCase
+//    [
 //        #var(type:wide)aLiteral := self wide.
 //        
 //        #var(type:wide)aRetVal := emptyWideLiteralValue.        
@@ -159,7 +157,7 @@
 //            aLiteral read &int:anIndex &vchar:aCurrent.
 //            aCurrent readLength &vint:aCurrentLen.
 //            
-//            characterController toLowerCase &char:aCurrent &vchar:aConverted.
+//            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
 //            
 //            aRetVal := aRetVal add &char:aConverted.
 //            
@@ -167,5 +165,5 @@
 //        ].
 //            
 //        ^ aRetVal.
-    ]
-}
+//    ]
+//}

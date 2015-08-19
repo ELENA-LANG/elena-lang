@@ -1,6 +1,6 @@
 // --- namespace shortcuts ---
-#define system.
-#define forms.
+#import system.
+#import forms.
 
 //// --- gui subjects ---
 //#subject player_labels, player_desk.

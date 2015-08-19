@@ -1,5 +1,5 @@
 // --- namespace shortcuts ---
-#define system.
+#import system.
 //
 //#subject id, name, hand.
 

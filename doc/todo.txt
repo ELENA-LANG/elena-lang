@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                                                                                         
-              adev - lib30     
-                       * implement #33 (tcp/ip socket)
-
              adev - linux
                        * implement DateTime / Timespan classes
 
@@ -16,13 +13,18 @@ In development:
       
               fdev - upndown
                        * configuration
+                       * network game
                        * implementing
+                       * "chaotic" player
 
               sdev - samples
                        * calculator : parse -2+3
                        * calculator : operations with brackets
                        * test all samples
                        * test all rosetta samples
+                       
+              fdev - workshop
+                       * script
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -256,6 +258,7 @@ Pipeline:
                        * a lot of operations with controls should be implemented directly
                        
               adev - lib30     
+                       * implement #33 (tcp/ip socket)
                        * implement sorting for locale
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?                       
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
@@ -263,8 +266,9 @@ Pipeline:
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
                        * review lib30 warnings, try to get rid of most of them
                        * redesign upper / lower case functionality, make it locale dependant like in c#+                       
-                       * linux date / time operations
                        * test load class by name
+                       * linux32 : upper / lowe cases
+                       * linux32 : file stream - length, index
                        * linux32 : implement console clear
                        * reimplement consolewriter.write&literal - use printf instead of putchar
                        * migrate rosetta samples
@@ -315,3 +319,5 @@ Pipeline:
 
               fdev - evolution
                        * game of life
+
+              fdev - workshop

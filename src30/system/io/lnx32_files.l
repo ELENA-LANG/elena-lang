@@ -46,6 +46,35 @@
         aLength << n.
     ]
 
+//    #method readIndex &vint:anIndex
+//    [
+//        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
+//            &handle : theHandle
+//            &int    : 0
+//            &int    : 0
+//            &int    : $FILE_CURRENT.
+//            
+//        anIndex << ret.
+//    ] 
+//    
+//    #method writeIndex &int:anIndex
+//    [
+//        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
+//            &handle : theHandle
+//            &int    : anIndex
+//            &int    : 0
+//            &int    : $FILE_BEGIN.
+//    ] 
+//    
+//    #method readLength &vint:aLength 
+//    [ 
+//        #var(type:int)n := system'external'KERNEL32 GetFileSize
+//            &handle : theHandle
+//            &int:0.
+//    
+//        aLength << n. 
+//    ]
+    
     #method close
     [
         system'external'libc fclose &handle:theHandle.

@@ -1,8 +1,8 @@
 // --- default namespaces ---
-#define system.
-#define forms.
+#import system.
+#import forms.
 
-#define upndown.
+#import upndown.
 
 //// --- Control IDs ---
 //#symbol SecondPlayerID = 1.

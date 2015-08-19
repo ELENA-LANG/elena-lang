@@ -1076,6 +1076,9 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
       else if (StringHelper::compare(terminal, HINT_SEALED)) {
          info.header.flags |= elSealed;
       }
+      else if (StringHelper::compare(terminal, HINT_CONSTANT)) {
+         info.header.flags |= elReadOnlyRole;
+      }
       else if (StringHelper::compare(terminal, HINT_LIMITED)) {
          info.header.flags |= elClosed;
       }

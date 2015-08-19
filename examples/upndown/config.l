@@ -1,10 +1,10 @@
 // --- default namespaces ---
-#define system.
-#define system'dynamic.
+#import system.
+#import system'dynamic.
 
 // --- configuator ---
 
-#static configuator = CastOver new &args:upndown'ai'aiConfiguarator.
+#static configuator = CastOver new &args:upndown'testConfigurator/*:upndown'ai'aiConfigurator*/.
 
 ////// --- namespace shortcuts ---
 ////#define upndown'ai'*  = cardgame'upndown'ai'*.

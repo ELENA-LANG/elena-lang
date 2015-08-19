@@ -73,12 +73,12 @@
     
     #method __vtime = $self.
     
-    #method write &__time:aValue
+    #method(stackstafe) write &__time:aValue
     [
         theValue := aValue.
     ]
     
-    #method read &__vtime:aVariable
+    #method(stackstafe) read &__vtime:aVariable
     [
         aVariable << theValue.
     ]

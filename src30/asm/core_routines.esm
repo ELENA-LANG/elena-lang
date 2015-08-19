@@ -693,6 +693,20 @@ procedure long_copyint
 
 end
 
+procedure long_copystruct
+
+  bcopya
+  aloadsi 2
+  nload
+  nsave
+  aloadsi 3
+  nload
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
 procedure long_equal
 
   bloadsi 2
@@ -5118,6 +5132,15 @@ procedure long_save
 
   bloadsi 2
   lcopy
+  quitn 2
+
+end
+
+procedure long_savehi
+
+  bloadsi 2
+  nloadi 1
+  nsave
   quitn 2
 
 end

@@ -89,3 +89,11 @@
 //        ^ $next open &gui'forms'modal.
 //    ]
 //}.
+// --- aiConfigurator ---
+
+#symbol testConfigurator =
+{
+    configConnector : aConnector
+    [
+    ]
+}.

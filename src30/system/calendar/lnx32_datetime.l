@@ -1,14 +1,8 @@
-#define system.
+#import system.
 
 #subject(class:system'calendar'SystemTime)    __time.
 #subject(class:system'calendar'SystemTimeVar) __vtime.
 #subject(class:system'calendar'TimeStruct)    __time_st.
-
-#subject(class:system'IntNumber) int_time_attributes.
-#subject(class:system'IntNumber) int_date_attributes.
-
-#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
-#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
 
 // --- SystemTime ---
 
@@ -16,32 +10,56 @@
 {
     #method(type:__time) utcNow
     [
-        #var(type:__time)aTime.
+        #var(type:__time)time.
+                      
+        system'external'libc gettimeofday 
+            &__time:time
+            &int:0.
+
+        #var(type:__time_st)tm.        
+        tm writeUTC &__time:time.
+
+        tm read &__time:time.
         
-//        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-        
-        ^ SystemTime new &__time:aTime.
+        ^ SystemTime new &__time:time.
     ]
     
     #method(type:__time) now
     [
-        #var(type:__time)aTime.
-        #var(type:__time)aLocalTime.
+        #var(type:__time)time.
+                      
+        system'external'libc gettimeofday 
+            &__time:time
+            &int:0.
         
-//        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-        
-//        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__vtime:aLocalTime.
-        
-        ^ SystemTime new &__time:aLocalTime.
+        ^ SystemTime new &__time:time.
     ]
 }.
 
-#class(sealed,integer:8) SystemTime :: BaseValue
+#class(sealed,struct:embeddable,const) SystemTime :: BaseValue
 {
-    #constructor new &__time:aValue
-        => system'internal'long_copy.
+    #field(type:int)tv_sec.
+    #field(type:int)tv_usec.
 
-    #constructor $new &long:aValue
+    #constructor(stacksafe,embeddable) $new &int:sec &int:usec
+        => system'internal'long_copystruct.
+
+    #constructor(stacksafe,embeddable) $new &long:nanosec
+    [
+        #var(type:long)secs := nanosec / 1000000000l.
+        
+        #var(type:lonf)rem := nanosec - secs * 1000000000l.
+        rem := rem / 1000l.
+                        
+        #var(type:int)tmp.
+        intConvertor convert &long:secs &vint:tmp.
+        tv_sec := tmp.
+        
+        intConvertor convert &long:rem &vint:tmp.
+        tv_usec := tmp.        
+    ]
+
+    #constructor new &__time:aValue
         => system'internal'long_copy.
 
     #constructor now
@@ -50,19 +68,39 @@
     #constructor utcNow
         <= new &__time:($factory utcNow).
                         
-    #method(type:bool) equal &__time:anOperand
+    #method(stacksafe,type:bool) equal &__time:anOperand
         => system'internal'long_equal.
         
-    #method(type:bool) less &__time:anOperand
+    #method(stacksafe,type:bool) less &__time:anOperand
         => system'internal'long_less.
     
-    #method read &vlong:aRetVal
-        => system'internal'long_save.
+    #method(stacksafe) read &vlong:aRetVal
+    [
+        #var(type:long)l.
+        longConvertor convert:tv_sec &vlong:l.
         
-    #method(type:__time) subtract &__time:anOperand
+        l := l * 1000000000l.
+        l := l + 
+        
+        #var(type:long)l2.
+        longConvertor convert:tv_usec &vlong:l2.
+        l2 := l2 * 1000l.
+        
+        l := l + l2.
+        
+        aRetVal << l.
+    ]
+        
+    #method(stacksafe) read &vint:aRetVal
+        => system'internal'int_save.
+        
+    #method(stacksafe) readMSecs &vint:aRetVal
+        => system'internal'long_savehi.
+        
+    #method(stacksafe,type:__time) subtract &__time:anOperand
         => system'internal'long_sub.
         
-    #method(type:__time) add &__time:anOperand
+    #method(stacksafe,type:__time) add &__time:anOperand
         => system'internal'long_add.
     
     #method __time = $self.
@@ -76,12 +114,12 @@
     
     #method __vtime = $self.
     
-    #method write &__time:aValue
+    #method(stackstafe) write &__time:aValue
     [
         theValue := aValue.
     ]
     
-    #method read &__vtime:aVariable
+    #method(stackstafe) read &__vtime:aVariable
     [
         aVariable << theValue.
     ]
@@ -91,158 +129,151 @@
 
 #class(struct:embeddable,sealed) TimeStruct
 {
-    #field(type:short)theYear.
-    #field(type:short)theMonth.
-    #field(type:short)theDayOfWeek.
-    #field(type:short)theDay.
-    #field(type:short)theHour.
-    #field(type:short)theMinute.
-    #field(type:short)theSecond.
-    #field(type:short)theMillisecond.
+    #field(type:int) tm_sec;         /* seconds */
+    #field(type:int) tm_min;         /* minutes */
+    #field(type:int) tm_hour;        /* hours */
+    #field(type:int) tm_mday;        /* day of the month */
+    #field(type:int) tm_mon;         /* month */
+    #field(type:int) tm_year;        /* year */
+    #field(type:int) tm_wday;        /* day of the week */
+    #field(type:int) tm_yday;        /* day in the year */
+    #field(type:int) tm_isdst;       /* daylight saving time */
+    
+    #field(type:int) tm_usec.
     
     #constructor new
         => system'internal'dlong_empty.
     
     #method __time_st = $self.
     
-    #method year = IntNumber new &short:theYear.
+    #method year = IntNumber new &int:tm_year.
+    
+    #method month = IntNumber new &int:tm_mon.
 
-    #method month = IntNumber new &short:theMonth.
+    #method dayOfWeek = IntNumber new &int:tm_wday.
+  
+    #method day = IntNumber new &int:tm_mday.
 
-    #method dayOfWeek = IntNumber new &short:theDayOfWeek.
+    #method hour = IntNumber new &int:tm_hour.
 
-    #method day = IntNumber new &short:theDay.
+    #method minute = IntNumber new &int:tm_min.
 
-    #method hour = IntNumber new &short:theHour.
+    #method second = IntNumber new &int:tm_sec.
 
-    #method minute = IntNumber new &short:theMinute.
+    #method millisecond = IntNumber new &int:(tm_usec / 1000).
 
-    #method second = IntNumber new &short:theSecond.
-
-    #method millisecond = IntNumber new &short:theMillisecond.
-
-    #method readYear &vshort:aRetVal
+    #method(stacksafe) readYear &vint:aRetVal
     [
-        aRetVal << theYear.
+        aRetVal << tm_year.
     ]
 
-    #method readMonth &vshort:aRetVal
+    #method(stacksafe) readMonth vint:aRetVal
     [
-        aRetVal << theMonth.
+        aRetVal << tm_mon.
     ]
 
-    #method readDayOfWeek &vshort:aRetVal
+    #method(stacksafe) readDayOfWeek vint:aRetVal
     [
-        aRetVal << theDayOfWeek.
+        aRetVal << tm_wday.
+    ]
+    
+    #method(stacksafe) readDay &vint:aRetVal
+    [
+        aRetVal << tm_mday.
     ]
 
-    #method readDay &vshort:aRetVal
+    #method(stacksafe) readHour &vint:aRetVal
     [
-        aRetVal << theDay.
+        aRetVal << tm_hour.
     ]
 
-    #method readHour &vshort:aRetVal
+    #method(stacksafe) readMinute vint:aRetVal
     [
-        aRetVal << theHour.
+        aRetVal << tm_min.
     ]
 
-    #method readMinute &vshort:aRetVal
+    #method(stacksafe) readSecond vint:aRetVal
     [
-        aRetVal << theMinute.
+        aRetVal << tm_sec.
     ]
 
-    #method readSecond &vshort:aRetVal
+    #method(stacksafe) readMillisecond vint:aRetVal
     [
-        aRetVal << theSecond.
+        #var(type:int)n := tm_usec.
+        n := n / 1000. 
+
+        aRetVal << n.
     ]
 
-    #method readMillisecond &vshort:aRetVal
-    [
-        aRetVal << theMillisecond.
-    ]
-
-    #method set &year:aValue 
+    #method(stacksafe) writeYear &int:aValue
     [ 
-        theYear := aValue short.
+        tm_year := aValue.
     ]
-
-    #method set &month:aValue 
+    
+    #method(stacksafe) writeMonth &int:aValue 
     [ 
-        theMonth := aValue short.
+        tm_mon := aValue.
     ]
 
-    #method set &day:aValue 
+    #method(stacksafe) writeDay &int:aValue 
     [ 
-        theDay := aValue short.
+        tm_mday := aValue.
     ]
 
-    #method set &hour:aValue 
+    #method(stacksafe) writeHour &int:aValue 
     [ 
-        theHour := aValue short.
+        tm_hour := aValue.
     ]
 
-    #method set &minute:aValue 
+    #method(stacksafe) writeMinute &int:aValue 
     [ 
-        theMinute := aValue short.
+        tm_min := aValue.
     ]
 
-    #method set &second:aValue 
+    #method(stacksafe) writeSecond &int:aValue 
     [ 
-        theSecond := aValue short.
+        tm_sec := aValue.
     ]
 
-    #method set &millisecond:aValue 
+    #method(stacksafe) writeMillisecond &int:aValue 
     [ 
-        theMillisecond := aValue short.
-    ]
+        #var(type:int)n := aValue.
+        n := n * 1000. 
 
+        tm_usec := n.
+    ]
+    
     #method read &__vtime:aRetVal
     [
-//        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__vtime:aRetVal.
+       #var(type:int)tm_sec := system'external'libc mktime &__time_st:$self.
+       #var(type:__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
+
+       aRetVal write &__time:tm. 
     ]    
     
-    #method write &__time:aFileTime
+    #method write &__time:aTime
     [
-//        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
-    ]
-      
-    #method toWide &int_date_attributes:Flags
-    [
-/*        #var(type:shortarray,size:127)aBuffer.
+       #var(type:dirty_ptr)ptr := system'external'libc localtime &__vtime:aTime.
 
-        #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
-            &int:0
-            &int:Flags
-            &__time_st:$self
-            &int:0
-            &shortarray:aBuffer
-            &int:255
-            &int:0
-            | raise:(FormatException new:"Invalid date").
+       system'external'libc memcpy &__time_st:$self &dirty_ptr:ptr &int:36.
 
-        ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                */
+       aTime readMSecs &vint:tm_usec.
     ]
     
-    #method toWide &int_time_attributes:Flags
+    #method writeUTC &__time:aTime                                     
     [
-/*        #var(type:shortarray,size:127)aBuffer.
+       #var(type:dirty_ptr)ptr := system'external'libc gmtime &__vtime:aTime.
 
-        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
-            &int:0
-            &int:Flags
-            &__time_st:$self
-            &int:0
-            &shortarray:aBuffer
-            &int:255
-            &int:0
-            | raise:(FormatException new:"Invalid time").
-
-        ^ WideLiteralValue $new &length:(aLength - 1) &index:0 &shortarray:aBuffer.                */
+       system'external'libc memcpy &__time_st:$self &dirty_ptr:ptr &int:36.
+    ]
+     
+    #method(stacksafe) toShortDate
+    [
+        ^ tm_mday literal + "." tm_mon literal + "." + tm_year literal.
     ]
 
-    #method toShortDate
-        <= %toWide &int_date_attributes:DATE_SHORTDATE.
-
-    #method toShortTime
-        <= %toWide &int_time_attributes:0.
+    #method(stacksafe) toShortTime
+    [
+        ^ tm_hour literal + ":" tm_min literal + ":" + tm_sec literal.
+    ]
 }

@@ -88,9 +88,9 @@
 ////    ]
 ////}
 
-// --- aiConfiguarator ---
+// --- aiConfigurator ---
 
-#symbol aiConfiguarator =
+#symbol aiConfigurator =
 {
     configConnector : aConnector
     [

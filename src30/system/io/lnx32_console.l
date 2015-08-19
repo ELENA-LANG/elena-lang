@@ -138,14 +138,6 @@
         ^ anOutput.
     ]
 
-  /*  
-    #method int
-    [
-        #var(type:int)aRetVal := $self int.
-        
-        ^ IntNumber new &int:aRetVal.
-    ]
-*/ 
     #method read &vchar:aRetVal
     [
        #var(type:byte)ch.
