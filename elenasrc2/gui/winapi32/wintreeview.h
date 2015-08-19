@@ -41,7 +41,7 @@ public:
    void clear(TreeViewItem item);
    void erase(TreeViewItem item);
 
-   TreeView(Control* owner);
+   TreeView(Control* owner, bool persistentSelection);
 };
 
 } // _GUI_

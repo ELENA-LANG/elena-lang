@@ -10,13 +10,17 @@ using namespace _GUI_;
 
 // --- TreeView ---
 
-TreeView :: TreeView(Control* owner)
+TreeView :: TreeView(Control* owner, bool persistentSelection)
    : Control(0, 0, 800, 20) // !! temporal
 {
    HINSTANCE instance = ((Control*)owner)->_getInstance();
 
+   int styles = WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS;
+   if (persistentSelection)
+      styles |= TVS_SHOWSELALWAYS;
+
    _handle = ::CreateWindowEx(
-      0, WC_TREEVIEW, NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS | TVS_SHOWSELALWAYS,
+      0, WC_TREEVIEW, NULL, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, instance, (LPVOID)this);
 }
 

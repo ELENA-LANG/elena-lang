@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                                                                                         
-              idev - usability
-                       * after clicking on node in solution view, select top one / do not persist node selection
-
               xdev - test
                        * fix system test : datetest
 
