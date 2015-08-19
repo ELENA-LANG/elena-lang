@@ -23,6 +23,7 @@
 
 [IDE]
 [+] issue #13 implemented : Project View
+[-] issue #142 fixed
 
 [LIB]
 [*] some house keeping

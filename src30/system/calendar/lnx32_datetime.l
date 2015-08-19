@@ -256,6 +256,18 @@
 
        system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
 
+       // ------------------ temp -------------------
+       #var(type:int)tmp2.     
+       ptr read &vint:tmp2.
+       console writeLine:tmp2.
+       ptr append &int:4.
+       ptr read &vint:tmp2.
+       console writeLine:tmp2.
+       ptr append &int:4.
+       ptr read &vint:tmp2.
+       console writeLine:tmp2.
+       // ------------------------------------------
+
        #var(type:int)tmp.     
        aTime readMSecs &vint:tmp.
        tm_usec := tmp.

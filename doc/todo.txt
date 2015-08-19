@@ -3,14 +3,15 @@ In development:
 ------                                                                                         
              adev - linux
                        * implement DateTime / Timespan classes
-
-              sdev - rosetta code samples
-                       * 9 bil names
-                       * 99 Bottles of Beer
+                       * fix textdb
 
               idev - usability
                        * fix #142
       
+              sdev - rosetta code samples
+                       * 9 bil names
+                       * 99 Bottles of Beer
+
               fdev - upndown
                        * configuration
                        * move to corex
