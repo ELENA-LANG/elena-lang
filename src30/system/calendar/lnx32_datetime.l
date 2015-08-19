@@ -120,7 +120,7 @@
     
     #method(stacksafe) read &__vtime:aVariable
     [
-        aVariable << theValue.
+        aVariable write &__time:theValue.
     ]
 }
 
@@ -252,27 +252,29 @@
     
     #method write &__time:aTime
     [
-       #var(type:dirty_ptr)ptr := system'external'libc localtime &__vtime:aTime.
+       #var(type:dirty_ptr)ptr := system'external'libc localtime &__time:aTime.
 
-       system'external'libc memcpy &__time_st:$self &dirty_ptr:ptr &int:36.
+       system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
 
-       aTime readMSecs &vint:tm_usec.
+       #var(type:int)tmp.     
+       aTime readMSecs &vint:tmp.
+       tm_usec := tmp.
     ]
     
     #method writeUTC &__time:aTime                                     
     [
-       #var(type:dirty_ptr)ptr := system'external'libc gmtime &__vtime:aTime.
+       #var(type:dirty_ptr)ptr := system'external'libc gmtime &__time:aTime.
 
-       system'external'libc memcpy &__time_st:$self &dirty_ptr:ptr &int:36.
+       system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
     ]
      
     #method(stacksafe) toShortDate
     [
-        ^ tm_mday literal + "." tm_mon literal + "." + tm_year literal.
+        ^ tm_mday literal + "." + tm_mon literal + "." + tm_year literal.
     ]
 
     #method(stacksafe) toShortTime
     [
-        ^ tm_hour literal + ":" tm_min literal + ":" + tm_sec literal.
+        ^ tm_hour literal + ":" + tm_min literal + ":" + tm_sec literal.
     ]
 }

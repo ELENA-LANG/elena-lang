@@ -1,18 +1,9 @@
-#define system.
+#import system.
+#import system'calendar. 
 
 #symbol Program =
 [
-		  /*#var(type:byte)aRetVal.
-        #var(type:int) ch := system'external'libc getchar.
+   #var d := Date now.
 
-        byteConvertor convert &int:ch &vbyte:aRetVal.
-        console write:aRetVal. 
-
-        ch := system'external'libc getchar.
-        byteConvertor convert &int:ch &vbyte:aRetVal.
-        console write:aRetVal.*/
-
-   #var l := console readLine.
-
-   console write:l.
+   console writeLine:d.
 ].
