@@ -269,6 +269,10 @@
        #var(type:dirty_ptr)ptr := system'external'libc gmtime &__time:aTime.
 
        system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
+
+       #var(type:int)tmp.     
+       aTime readMSecs &vint:tmp.
+       tm_usec := tmp.
     ]
      
     #method(stacksafe) toShortDate

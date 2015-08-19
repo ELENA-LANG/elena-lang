@@ -6,4 +6,6 @@
    #var d := Date now.
 
    console writeLine:d.
+
+   console writeLine:(utcNow literal).
 ].

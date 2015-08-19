@@ -379,8 +379,9 @@
     [
         #var(type:__time_st)aStruct.
         aStruct write &__time:theValue.
-        
+
         #var aTimeValue := aStruct toShortTime literal.
+        
         #var aDateValue := aStruct toShortDate literal.
 
         ^ (aDateValue + " " + aTimeValue) literal.
