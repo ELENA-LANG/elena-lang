@@ -131,8 +131,7 @@
         
         theHDC setTextColor &int:(aPen color int).
         
-        #var(type:hpen)temp := thePen.
-        theHDC select &hpen:temp.
+        theHDC select &hpen:thePen.
     ]    
     
     #method set &brush:aBrush

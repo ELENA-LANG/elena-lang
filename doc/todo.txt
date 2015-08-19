@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                                                                                         
-              xdev - test
-                       * fix system test : datetest
-
               fdev - eldoc
                        * design
                        * implement basic parsing : only classes

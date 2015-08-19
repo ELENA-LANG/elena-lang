@@ -5464,7 +5464,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 
          // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
          if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
-            && test(scope.info.header.flags, elSealed) && sizeValue != 0)
+            && test(scope.info.header.flags, elSealed) && sizeValue != 0 && scope.info.fields.Count() == 0)
          {
             scope.info.header.flags |= elStructureWrapper;
             scope.info.size = sizeValue;
