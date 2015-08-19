@@ -163,12 +163,15 @@
 
     #method(stacksafe) readYear &vint:aRetVal
     [
-        aRetVal << tm_year.
+        #var(type:int)aYear := tm_year.
+        aYear := aYear + 1900.
+
+        aRetVal << aYear.
     ]
 
     #method(stacksafe) readMonth &vint:aRetVal
     [
-        aRetVal << tm_mon.
+        aRetVal << (tm_mon + 1).
     ]
 
     #method(stacksafe) readDayOfWeek &vint:aRetVal
@@ -206,12 +209,12 @@
 
     #method(stacksafe) writeYear &int:aValue
     [ 
-        tm_year := aValue.
+        tm_year := aValue - 1900.
     ]
     
     #method(stacksafe) writeMonth &int:aValue 
     [ 
-        tm_mon := aValue.
+        tm_mon := aValue - 1.
     ]
 
     #method(stacksafe) writeDay &int:aValue 
@@ -242,7 +245,7 @@
         tm_usec := n.
     ]
     
-    #method read &__vtime:aRetVal
+    #method(stacksafe) read &__vtime:aRetVal
     [
        #var(type:int)tm_sec := system'external'libc mktime &__time_st:$self.
        #var(type:__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
@@ -250,30 +253,18 @@
        aRetVal write &__time:tm. 
     ]    
     
-    #method write &__time:aTime
+    #method(stacksafe) write &__time:aTime
     [
        #var(type:dirty_ptr)ptr := system'external'libc localtime &__time:aTime.
 
        system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
-
-       // ------------------ temp -------------------
-       #var(type:int)tmp2.     
-       ptr read &vint:tmp2.
-       console writeLine:tmp2.
-       ptr append &int:4.
-       ptr read &vint:tmp2.
-       console writeLine:tmp2.
-       ptr append &int:4.
-       ptr read &vint:tmp2.
-       console writeLine:tmp2.
-       // ------------------------------------------
 
        #var(type:int)tmp.     
        aTime readMSecs &vint:tmp.
        tm_usec := tmp.
     ]
     
-    #method writeUTC &__time:aTime                                     
+    #method(stacksafe) writeUTC &__time:aTime                                     
     [
        #var(type:dirty_ptr)ptr := system'external'libc gmtime &__time:aTime.
 
@@ -282,7 +273,12 @@
      
     #method(stacksafe) toShortDate
     [
-        ^ tm_mday literal + "." + tm_mon literal + "." + tm_year literal.
+        #var(type:int)aYear.
+        #var(type:int)aMonth.
+        $self readYear &vint:aYear.
+        $self readMonth &vint:aMonth. 
+
+        ^ tm_mday literal + "." + aMonth literal + "." + aYear literal.
     ]
 
     #method(stacksafe) toShortTime
