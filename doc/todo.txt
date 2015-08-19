@@ -1,12 +1,12 @@
 ------                                 
 In development:
 ------                                                                                         
-              fdev - eldoc
-                       * design
-                       * implement basic parsing : only classes
+             adev - linux
+                       * implement DateTime / Timespan classes
 
               sdev - rosetta code samples
-                       * implement two rosetta code samples
+                       * 9 bil names
+                       * 99 Bottles of Beer
 
               idev - usability
                        * fix #142
@@ -15,6 +15,7 @@ In development:
                        * configuration
                        * move to corex
                        * network game
+
                        * implementing
                        * "chaotic" player
 
@@ -24,11 +25,12 @@ In development:
                        * test all samples
                        * test all rosetta samples
                        
-             adev - linux
-                       * implement DateTime / Timespan classes
-
               fdev - workshop
                        * script
+
+              fdev - eldoc
+                       * design
+                       * implement basic parsing : only classes
 
               xdev - test
                        * test system / tape / mt

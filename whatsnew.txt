@@ -30,6 +30,9 @@
 [+] new package net / system'net (issue #33)
 [+] system'net :  Socket, AddrInfo, AddrInfoReader
 
+[Samples]
+[+]rosetta sample: 9 billion names
+
 [Misc]
 [*]rearranging examples
                                                                                                   
