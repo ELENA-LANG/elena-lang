@@ -30,9 +30,11 @@
 [+] culture'Locale
 [+] new package net / system'net (issue #33)
 [+] system'net :  Socket, AddrInfo, AddrInfoReader
+[+] linux: support calendar routines
 
 [Samples]
 [+]rosetta sample: 9 billion names
+[+]linux : datetime sample migrated
 
 [Misc]
 [*]rearranging examples

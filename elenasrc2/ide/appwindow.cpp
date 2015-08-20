@@ -537,11 +537,9 @@ void IDEController :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
 
       removeAllDocumentMarker(bandStyle);
 
-      int index = _model->getDocumentIndex(docPath);
-      if (index != -1) {
-         _view->selectDocument(index);
-
-         addDocumentMarker(index, hi, bandStyle, bandStyle);
+      if(openFile(docPath)) {
+         addDocumentMarker(-1, hi, bandStyle, bandStyle);
+         onChange();
 
          _model->state |= uiHighlight;
       }
