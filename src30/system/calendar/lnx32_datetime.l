@@ -16,7 +16,7 @@
             &__time:time
             &int:0.
 
-        #var(type:__time_st)tm.        
+        #var(type:__time_st)tm.
         tm writeUTC &__time:time.
 
         tm read &__vtime:time.
@@ -137,29 +137,21 @@
     #field(type:int) tm_wday.        /* day of the week */
     #field(type:int) tm_yday.        /* day in the year */
     #field(type:int) tm_isdst.       /* daylight saving time */
+
+    #field(type:int) tmp1.
+    #field(type:int) tmp2.
     
     #field(type:int) tm_usec.
     
     #constructor new
         => system'internal'dlong_empty.
     
+    #constructor new &__time:aTime
+    [
+        $self write &__time:aTime.
+    ]
+
     #method __time_st = $self.
-    
-    #method year = IntNumber new &int:tm_year.
-    
-    #method month = IntNumber new &int:tm_mon.
-
-    #method dayOfWeek = IntNumber new &int:tm_wday.
-  
-    #method day = IntNumber new &int:tm_mday.
-
-    #method hour = IntNumber new &int:tm_hour.
-
-    #method minute = IntNumber new &int:tm_min.
-
-    #method second = IntNumber new &int:tm_sec.
-
-    #method millisecond = IntNumber new &int:(tm_usec / 1000).
 
     #method(stacksafe) readYear &vint:aRetVal
     [
@@ -266,7 +258,7 @@
     
     #method(stacksafe) writeUTC &__time:aTime                                     
     [
-       #var(type:dirty_ptr)ptr := system'external'libc gmtime &__time:aTime.
+       #var(type:int)ptr := system'external'libc gmtime &__time:aTime.
 
        system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
 

@@ -3,9 +3,9 @@
 
 #symbol Program =
 [
-   #var d := Date now.
+   //#var d := Date now.
 
-   console writeLine:d.
+   //console writeLine:d.
 
    console writeLine:(utcNow literal).
 ].
