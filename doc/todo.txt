@@ -1,8 +1,7 @@
 ------                                 
 In development:
 ------                                                                                         
-              xdev - test
-                       * test all samples
+
 ------                                 
 Pipeline:
 ------                                                                                         
