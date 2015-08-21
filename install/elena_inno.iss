@@ -37,7 +37,6 @@ Source: "..\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs cr
 Source: "..\elenasrc2\*"; DestDir: "{app}\elenasrc2"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\lib30\*"; DestDir: "{app}\lib30"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\rosetta\*"; DestDir: "{app}\rosetta"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\src30\*"; DestDir: "{app}\src30"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\license.txt"; DestDir: "{app}";
 Source: "..\readme.txt"; DestDir: "{app}"; Flags: isreadme

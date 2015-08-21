@@ -34,7 +34,6 @@
 [+] linux: support calendar routines
 
 [Samples]
-[+]rosetta sample: 9 billion names
 [+]linux : datetime sample migrated
 
 [Misc]
