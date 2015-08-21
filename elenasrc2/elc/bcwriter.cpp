@@ -793,6 +793,13 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
    }
 }
 
+void ByteCodeWriter :: exchange(CommandTape& tape, ObjectInfo object)
+{
+   if (object.kind == okBase) {
+      tape.write(bcBSwap);
+   }
+}
+
 void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing)
 {
    // ifheap labSkip

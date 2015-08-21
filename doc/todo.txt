@@ -2,14 +2,7 @@
 In development:
 ------                                                                                         
               xdev - test
-                       * corex - lock should be used before saving something into static allocated variable
-
-                       * test mt
                        * test all samples
-                       
-             adev - linux
-                       * fix textdb
-
 ------                                 
 Pipeline:
 ------                                                                                         

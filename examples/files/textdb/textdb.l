@@ -79,6 +79,8 @@
                 #var aValue := aKeyValue@1.
 
                 // update field
+                #var aSubj := aName Unserialized.
+                
                 aDB last :: (aName Unserialized) set:aValue.
             ].
     ].

@@ -3192,7 +3192,10 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          param.structOffset = param.info.param;
       }
 
-      loadObject(scope, param.info, param.unboxing);
+      if (param.info.kind == okBase) {
+         _writer.exchange(*scope.tape, param.info);
+      }
+      else loadObject(scope, param.info, param.unboxing);
 
       // if type is mismatch - typecast
       bool mismatch = false;
@@ -3229,6 +3232,10 @@ void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& sc
          _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
       }
       else _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, i));
+
+      if (param.info.kind == okBase) {
+         _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+      }
 
       // save changes to call stack
       *(callStack.parameters.getIt(callStack.directOrder ? (count - i - 1) : i)) = param;
@@ -3560,7 +3567,8 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
       // if the target object should be presaved
       if (object.kind == okAccumulator) {
          _writer.pushObject(*scope.tape, object);
-         role = compileObject(roleNode, scope, 0);
+         role = compileObject(roleNode, scope, 0);         
+         _writer.loadObject(*scope.tape, role);
          _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
          _writer.popObject(*scope.tape, object);
 

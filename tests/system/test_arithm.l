@@ -15,9 +15,6 @@
 {
     test            
     [
-        #var aDate := now.
-    
-        #var aYear := aDate year.    
     ]
 }.
         

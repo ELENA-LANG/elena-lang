@@ -224,6 +224,7 @@ public:
    void pushObject(CommandTape& tape, ObjectInfo object);
    void saveObject(CommandTape& tape, ObjectInfo object);
    void popObject(CommandTape& tape, ObjectInfo object);
+   void exchange(CommandTape& tape, ObjectInfo object);
 
    void loadBase(CommandTape& tape, ObjectInfo object);
    void initBase(CommandTape& tape, int fieldCount);
