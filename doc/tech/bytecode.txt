@@ -314,6 +314,12 @@ ELENA byte codes (or ecodes)
 
  unhook                     - remove the current exception handler
 
+ snop                       - thread safe nop operation
+ 
+ trylock                    - try to lock [esp], if not eax - 0
+ 
+ freelock                   - free eax
+
 
  Frame operations:
  -----------------              

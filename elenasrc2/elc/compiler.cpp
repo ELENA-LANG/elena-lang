@@ -5884,6 +5884,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       _writer.declareStaticSymbol(scope.tape, scope.reference);
 
       _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
+      _writer.pushObject(scope.tape, ObjectInfo(okAccumulator));
       _writer.tryLock(scope.tape);
       _writer.declareTry(scope.tape);
 
@@ -5989,20 +5990,22 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    }
 
    if (isStatic) {
-      _writer.pushObject(scope.tape, ObjectInfo(okAccumulator));
-      _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
-      _writer.freeLock(scope.tape);
-      _writer.popObject(scope.tape, ObjectInfo(okAccumulator));
-
       // finally block - should free the lock if the exception was thrown
       _writer.declareCatch(scope.tape);
 
-      _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
+      _writer.loadBase(scope.tape, ObjectInfo(okAccumulator));
+      _writer.popObject(scope.tape, ObjectInfo(okAccumulator));
       _writer.freeLock(scope.tape);
+      _writer.loadObject(scope.tape, ObjectInfo(okBase));
 
       _writer.throwCurrent(scope.tape);
 
       _writer.endCatch(scope.tape);
+
+      _writer.loadBase(scope.tape, ObjectInfo(okAccumulator));
+      _writer.popObject(scope.tape, ObjectInfo(okAccumulator));
+      _writer.freeLock(scope.tape);
+      _writer.loadObject(scope.tape, ObjectInfo(okBase));
 
       // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
       _writer.exitStaticSymbol(scope.tape, scope.reference);

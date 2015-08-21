@@ -106,6 +106,7 @@
 
 #symbol NewThreadTest =
 [
+    console writeLine:"Main thread started".
     #var aThread := threadControl start &func:
         [ 
             console writeLine:"New thread started. Press any key".

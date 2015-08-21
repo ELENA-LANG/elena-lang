@@ -2,42 +2,13 @@
 In development:
 ------                                                                                         
               xdev - test
-                       * lock / snop should be used for accessing static variable
-                       * lock / snop should be used for allocating / freeing rt table
-
                        * corex - lock should be used before saving something into static allocated variable
 
                        * test mt
                        * test all samples
-
-              fdev - upndown
-                       * configuration
-                       * move to corex
-                       * network game
-
-                       * implementing
-                       * "chaotic" player
-
-              sdev - rosetta code samples
-                       * 9 bil names
-                       * 99 Bottles of Beer
-
-              sdev - samples
-                       * calculator : parse -2+3
-                       * calculator : operations with brackets
-                       * test all samples
-                       * test all rosetta samples
                        
-              fdev - workshop
-                       * script
-
-              fdev - eldoc
-                       * design
-                       * implement basic parsing : only classes
-
              adev - linux
                        * fix textdb
-                       * migrate two rosetta samples to linux
 
 ------                                 
 Pipeline:
@@ -306,10 +277,17 @@ Pipeline:
                        * linux : review console operation, optimize the code
 
               sdev - rosetta code samples
+                       * linux : migrate two rosetta samples to linux
+                       * 9 bil names
+                       * 99 Bottles of Beer
                        * implement
                        * migrate to linux
       
               sdev - samples
+                       * calculator : parse -2+3
+                       * calculator : operations with brackets
+                       * test all samples
+                       * test all rosetta samples
                        * migrate to linux
                        * calculator : move lexicalOp to the script
                        * calculator : gui
@@ -324,16 +302,21 @@ Pipeline:
                        * migrate timer
 
               fdev - upndown
+                       * configuration
+                       * move to corex
+                       * network game
+                       * implementing
                        * play with chaotic computer player
                        * add network players
-                       * port to lib30
-                       * port to lib30
-                       * switch to mt platform
 
               fdev - eldoc
+                       * design
+                       * implement basic parsing : only classes
+
                        * implement
 
               fdev - evolution
                        * game of life
 
               fdev - workshop
+                       * script

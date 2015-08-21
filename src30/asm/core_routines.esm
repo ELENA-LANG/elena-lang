@@ -3606,20 +3606,23 @@ procedure api_alloc_index
   pusha
 
   callr system'rt_sync
+  pusha
 labWait:
   snop
   trylock
-  elsen labWait 0 
+  elser labWait 0 
 
   callr api : coreapi'alloc_index
   bcopya
-  aloadsi 3
+  aloadsi 4
   set  
+
+  popa
+  freelock
+
   popb
   nsave
   acopyb
-
-  freelock
 
   quitn 2
 

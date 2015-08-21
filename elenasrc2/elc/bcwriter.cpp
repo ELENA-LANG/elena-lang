@@ -2473,13 +2473,13 @@ void ByteCodeWriter :: tryLock(CommandTape& tape)
    // labWait:
    // snop
    // trylock
-   // elsen labWait
+   // elser labWait
 
    int labWait = tape.newLabel();
    tape.setLabel(true);
    tape.write(bcSNop);
    tape.write(bcTryLock);
-   tape.write(bcElseN, labWait, 0);
+   tape.write(bcElseR, labWait, 0);
    tape.releaseLabel();
 }
 

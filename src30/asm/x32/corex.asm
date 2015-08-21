@@ -1726,7 +1726,7 @@ inline % 4
   mov  ebx, data : %CORE_GC_TABLE + gc_lock
 labWait:
   mov edx, 1
-  xor eax, eax
+  xor eax, eax  
   lock cmpxchg dword ptr[ebx], edx
   jnz  short labWait
 
@@ -1734,15 +1734,15 @@ labWait:
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   test edx, edx                       // ; if it is a collecting thread, waits
   jz   short labConinue               // ; otherwise goes on
-
+  nop  
   call code : %THREAD_WAIT            // ; waits until the GC is stopped
   nop
   nop
   jmp  short labEnd
 
 labConinue:
-  mov  ebx, 0FFFFFFFFh
-  lock xadd [esi], ebx
+  mov  edx, 0FFFFFFFFh
+  lock xadd [ebx], edx
 
 labEnd:
 
@@ -1929,11 +1929,11 @@ end
 inline % 27h
 
   // ; GCXT: try to lock
-  lea ebx, [eax - elSyncOffset]
+  mov ecx, [esp]
+  xor eax, eax
   mov edx, 1
-  xor esi, esi
-  lock cmpxchg dword ptr[ebx], edx
-  cmovnz esi, edx
+  lea ecx, [ecx - elSyncOffset]
+  lock cmpxchg dword ptr[ecx], edx
 
 end
 
@@ -3106,7 +3106,6 @@ inline % 0A6h
   mov  ebx, [edx+ebx*4]
 
   call code : %HOOK
-  push ebp
   push [ebx + tls_catch_addr]
   push [ebx + tls_catch_frame]
   push [ebx + tls_catch_level]  
