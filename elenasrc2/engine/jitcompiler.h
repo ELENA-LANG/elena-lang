@@ -45,7 +45,7 @@ class _JITCompiler
 public:
    virtual bool isWithDebugInfo() const = 0;
 
-   virtual void prepareCore(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata, _Memory* code) = 0;
+   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader) = 0;
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 

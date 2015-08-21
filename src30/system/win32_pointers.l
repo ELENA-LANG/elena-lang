@@ -25,6 +25,8 @@
 
 // --- RTPointer ---
 
+#static rt_sync = Object new.
+
 #class(sealed,struct:embeddable) RTPointer
 {
     #field(type:int)theIndex.

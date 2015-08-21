@@ -259,7 +259,7 @@ namespace _ELENA_
       ptWin32Console     = 0x00001,
       ptVMWin32GUI       = 0x01001,
       ptVMWin32Console   = 0x00101,
-      ptWin32ConsoleMT   = 0x10001,
+      ptWin32ConsoleX    = 0x10001,
       ptLinux32Console   = 0x00002,
    };
 
@@ -338,7 +338,6 @@ namespace _ELENA_
 
   // --- ELENA core module names ---
   #define CORE_ALIAS                "core"          // Core functionality
-  // #define CORE_VM_MODULE           "core_vm"       // core vm client functionality
   #define IMPORT_FORWARD            "'$import"
 
   // --- ELENA verb messages ---
@@ -488,6 +487,7 @@ namespace _ELENA_
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
    #define PACKAGE_KEY              "$elena'@package"                // The project namespace
+   #define STATIC_SYNC              "$elena@static"
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
@@ -504,7 +504,6 @@ namespace _ELENA_
    #define MESSAGE_FORWARD          "'$message"
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
-   #define GETPROPERTY_FORWARD      "'$getProperty"
    #define ARRAY_FORWARD            "'$array"
    #define PARAMS_FORWARD           "'$params"
    #define BOOL_FORWARD             "'$bool"

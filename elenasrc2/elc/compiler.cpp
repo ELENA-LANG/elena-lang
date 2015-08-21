@@ -5882,6 +5882,14 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    // compile symbol into byte codes
    if (isStatic) {
       _writer.declareStaticSymbol(scope.tape, scope.reference);
+
+      _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
+      _writer.tryLock(scope.tape);
+      _writer.declareTry(scope.tape);
+
+      // check if the symbol was not created while in the lock
+      _writer.loadStatic(scope.tape, scope.reference);
+      _writer.jumpIfNotEqual(scope.tape, 0, true);
    }
    else _writer.declareSymbol(scope.tape, scope.reference);
 
@@ -5981,6 +5989,21 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    }
 
    if (isStatic) {
+      _writer.pushObject(scope.tape, ObjectInfo(okAccumulator));
+      _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
+      _writer.freeLock(scope.tape);
+      _writer.popObject(scope.tape, ObjectInfo(okAccumulator));
+
+      // finally block - should free the lock if the exception was thrown
+      _writer.declareCatch(scope.tape);
+
+      _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
+      _writer.freeLock(scope.tape);
+
+      _writer.throwCurrent(scope.tape);
+
+      _writer.endCatch(scope.tape);
+
       // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
       _writer.exitStaticSymbol(scope.tape, scope.reference);
    }

@@ -43,6 +43,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 #define PREPARE              0x10027
 #define LOAD_SUBJECT         0x10028
 #define LOAD_SUBJECTNAME     0x10029
+#define EXITTHREAD           0x1002A
 #define NEW_EVENT            0x10101
 
 #define CORE_EXCEPTION_TABLE 0x20001
@@ -63,12 +64,12 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 27;
+const int coreFunctionNumber = 28;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
-   CALC_SIZE, SET_COUNT, GET_COUNT, LOAD_ADDRESSINFO, THREAD_WAIT,
+   CALC_SIZE, SET_COUNT, GET_COUNT, LOAD_ADDRESSINFO, THREAD_WAIT, EXITTHREAD,
    LOAD_CALLSTACK, PREPARE, LOAD_SUBJECT, LOAD_SUBJECTNAME, LOAD_SYMBOL, NEW_EVENT
 };
 
@@ -1359,12 +1360,22 @@ void x86JITCompiler :: writeCoreReference(x86JITScope& scope, ref_t reference, i
    _ELENA_::writeCoreReference(scope, reference, position, offset, code);
 }
 
-void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _Memory* data, _Memory* rdata, _Memory* sdata, _Memory* code)
+void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 {
+   // preload core data
+   _Memory* data = loader->getTargetSection((ref_t)mskDataRef);
+   _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+   _Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
+   _Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
+
    MemoryWriter dataWriter(data);
    MemoryWriter rdataWriter(rdata);
    MemoryWriter sdataWriter(sdata);
    MemoryWriter codeWriter(code);
+
+   // declare sync dummy object
+   dataWriter.writeBytes(0, helper.getLinkerConstant(lnObjectSize));
+   loader->mapReference(STATIC_SYNC, (void*)(dataWriter.Position() | mskDataRef), (ref_t)mskDataRef);
 
    x86JITScope dataScope(NULL, &dataWriter, &helper, this);
    for (int i = 0 ; i < coreVariableNumber ; i++) {
@@ -1460,7 +1471,7 @@ void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumb
    _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
 }
 
-int x86JITCompiler::allocateTLSVariable(_JITLoader* loader)
+int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
 {
    MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
 

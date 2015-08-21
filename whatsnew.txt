@@ -16,6 +16,7 @@
 [+] issue #10 : initializing stack allocated object without creating a dynamic 
     one
 [+] issue #48 : A proper method should have a precedence over an extension one
+[!] static symbols are stack-safe
 
 [ELC]
 [*] output code optimization

@@ -1481,7 +1481,7 @@ end
 // ; trylock
 inline % 27h
 
-  nop
+  xor  esi, esi
 
 end
 

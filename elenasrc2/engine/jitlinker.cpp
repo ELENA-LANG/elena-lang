@@ -890,14 +890,8 @@ void JITLinker :: prepareCompiler()
    References      references(RefInfo(0, NULL));
    ReferenceHelper helper(this, NULL, &references);
 
-   // preload core data
-   _Memory* data = _loader->getTargetSection((ref_t)mskDataRef);
-   _Memory* rdata = _loader->getTargetSection((ref_t)mskRDataRef);
-   _Memory* sdata = _loader->getTargetSection((ref_t)mskStatRef);
-   _Memory* code = _loader->getTargetSection((ref_t)mskCodeRef);
-
-   _compiler->prepareCore(helper, data, rdata, sdata, code);
+   _compiler->prepareCore(helper, _loader);
 
    // fix not loaded references
-   fixReferences(references, code);
+   fixReferences(references, _loader->getTargetSection((ref_t)mskCodeRef));
 }

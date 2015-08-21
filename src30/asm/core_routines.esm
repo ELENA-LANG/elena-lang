@@ -3604,6 +3604,13 @@ end
 procedure api_alloc_index
 
   pusha
+
+  callr system'rt_sync
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
   callr api : coreapi'alloc_index
   bcopya
   aloadsi 3
@@ -3612,8 +3619,28 @@ procedure api_alloc_index
   nsave
   acopyb
 
+  freelock
+
   quitn 2
 
+end
+
+procedure api_free_index
+                      
+  callr system'rt_sync
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  aloadsi 1
+  nload
+  callr api : coreapi'free_index
+
+  freelock
+
+  quitn 2
+  
 end
 
 procedure save_int
@@ -3669,15 +3696,6 @@ procedure dptr_readbytearray
   
   quitn 3
 
-end
-
-procedure api_free_index
-                      
-  aloadsi 1
-  nload
-  callr api : coreapi'free_index
-  quitn 2
-  
 end
 
 procedure dptr_ret_double

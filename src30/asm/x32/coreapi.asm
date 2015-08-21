@@ -15,13 +15,12 @@ define EXIT              1001Dh
 define CALC_SIZE         1001Eh
 define SET_COUNT         1001Fh
 define GET_COUNT         10020h
-define LOCK              10021h
-define UNLOCK            10022h
 define LOAD_ADDRESSINFO  10023h
 define LOAD_CALLSTACK    10024h
 define PREPARE           10027h
 define LOAD_SUBJECT      10028h
 define LOAD_SUBJECTNAME  10029h
+define EXITTHREAD        1002Ah
 
 define CORE_OS_TABLE     20009h
 
@@ -82,6 +81,13 @@ procedure coreapi'default_handler
 
   // ; exit code
   call code : % EXIT
+
+end
+
+procedure coreapi'default_thread_handler
+
+  // ; exit code
+  call code : % EXITTHREAD
 
 end
 
@@ -161,6 +167,7 @@ procedure coreapi'alloc_index
 
   mov  ebx, 020h
   call code : %CALC_SIZE
+  nop
   call code : %GC_ALLOC  
   xor  esi, esi
   call code : %SET_COUNT 
@@ -168,9 +175,6 @@ procedure coreapi'alloc_index
   mov  [stat : "$elena'@referencetable"], eax
 
 labStart:
-  // ; lock the reference table
-  call code : %LOCK
-  
   // ; try to increase eax
   call code : %GET_COUNT  
   add  esi, 1  
@@ -210,7 +214,6 @@ labIndex:
   sub  esi, 1
   mov  [eax + esi * 4], const : "system'nil"
 labEnd:
-  call code : %UNLOCK
 
   ret
 
@@ -258,17 +261,18 @@ procedure coreapi'start_thread
   test eax, eax
   jz   short lErr
 
+  mov  ebx, code : "$native'coreapi'default_thread_handler"
   call code : % INIT_ET
 
   push  eax
   mov   ecx, EXEC_MESSAGE_ID
   mov   esi, [eax - 4]
   call [esi + 4]
-
+  
   // ; close thread
   call code : % CLOSETHREAD
 
-  xor  ecx, ecx
+  xor  eax, eax
 
 lErr:
   

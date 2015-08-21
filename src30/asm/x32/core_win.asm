@@ -23,6 +23,7 @@ define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
+define EXITTHREAD           1002Ah
 define NEW_EVENT            10101h
 
 define CORE_OS_TABLE        20009h
@@ -84,11 +85,23 @@ procedure % INIT_RND
 end
 
 procedure % EXIT
-  
+    
   mov  eax, 0                         
   push eax
   // ; exit
   call extern 'dlls'KERNEL32.ExitProcess     
+
+end
+
+procedure % EXITTHREAD
+  
+  // ; close thread
+  call code : % CLOSETHREAD
+
+  mov  eax, 0FFFFFFFFh
+  push eax
+  // ; exit
+  call extern 'dlls'KERNEL32.ExitThread
 
 end
 

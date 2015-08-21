@@ -1,6 +1,15 @@
 ------                                 
 In development:
 ------                                                                                         
+              xdev - test
+                       * lock / snop should be used for accessing static variable
+                       * lock / snop should be used for allocating / freeing rt table
+
+                       * corex - lock should be used before saving something into static allocated variable
+
+                       * test mt
+                       * test all samples
+
               fdev - upndown
                        * configuration
                        * move to corex
@@ -30,9 +39,6 @@ In development:
                        * fix textdb
                        * migrate two rosetta samples to linux
 
-              xdev - test
-                       * test system / tape / mt
-                       * test all samples
 ------                                 
 Pipeline:
 ------                                                                                         

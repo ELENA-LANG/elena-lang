@@ -218,6 +218,8 @@ public:
    void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
    void newDynamicObject(CommandTape& tape);
 
+   void loadPrimitive(CommandTape& tape, ref_t reference);
+   void loadStatic(CommandTape& tape, ref_t reference);
    void loadObject(CommandTape& tape, ObjectInfo object);
    void pushObject(CommandTape& tape, ObjectInfo object);
    void saveObject(CommandTape& tape, ObjectInfo object);
@@ -251,7 +253,7 @@ public:
 
 //   int declareLabel(CommandTape& tape);
    void jumpIfEqual(CommandTape& tape, ref_t ref);
-   void jumpIfNotEqual(CommandTape& tape, ref_t ref);
+   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
 //   void jumpIfNotEqualN(CommandTape& tape, int value);
    void jump(CommandTape& tape, bool previousLabel = false);
 

@@ -79,7 +79,7 @@ void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticRefere
    // symbol-begin:
 
    // aloadr static
-   // athen procedure-end
+   // elser procedure-end
 
    tape.newLabel();     // declare symbol-end label
 
@@ -626,6 +626,17 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, ObjectInfo object)
    }
 }
 
+void ByteCodeWriter :: loadStatic(CommandTape& tape, ref_t reference)
+{
+   // aloadr static
+   tape.write(bcALoadR, reference | mskStatSymbolRef);
+}
+
+void ByteCodeWriter :: loadPrimitive(CommandTape& tape, ref_t reference)
+{
+   tape.write(bcACopyR, reference | mskDataRef);
+}
+
 void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
 {
    switch (object.kind) {
@@ -1114,10 +1125,13 @@ void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
    tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
 }
 
-void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef)
+void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd)
 {
    // elser then-end, r
-   tape.write(bcElseR, baCurrentLabel, comparingRef | mskConstantRef);
+   if (comparingRef == 0) {
+      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
+   }
+   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
 }
 
 //void ByteCodeWriter :: jumpIfNotEqualN(CommandTape& tape, int value)
@@ -2459,13 +2473,14 @@ void ByteCodeWriter :: tryLock(CommandTape& tape)
    // labWait:
    // snop
    // trylock
-   // then labWait
+   // elsen labWait
 
    int labWait = tape.newLabel();
-   tape.setLabel();
+   tape.setLabel(true);
    tape.write(bcSNop);
    tape.write(bcTryLock);
    tape.write(bcElseN, labWait, 0);
+   tape.releaseLabel();
 }
 
 void ByteCodeWriter::freeLock(CommandTape& tape)
