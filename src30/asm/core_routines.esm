@@ -5195,6 +5195,11 @@ procedure handle_castover
 
   hook labNotFound
 
+labNext:
+  len
+  dloadfi -2
+  if labEnd
+
 // ; define the message length
   dloadfi -3
   ecopyd
@@ -5210,11 +5215,7 @@ labNextParam:
   elsen labNextParam 0
 
   bloadfi 1
-
-labNext:
-  len
   dloadfi -2
-  if labEnd
   get
   inc
   dsavefi -2
@@ -5222,9 +5223,7 @@ labNext:
   dloadfi -3
   ecopyd
   acallvi 0
-
-  close
-  pop
+  
   bloadfi 1
   jump labNext
 

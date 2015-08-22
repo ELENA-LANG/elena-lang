@@ -160,6 +160,7 @@ Pipeline:
                       * create x64 elena vm
 
               idev - usability
+                       * properly refresh call stack window before opening, #75
                        * fix #83
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
