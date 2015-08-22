@@ -285,6 +285,13 @@ class IDEController : public _Controller
    }
    bool onDebugAction(int action, bool stepMode);
 
+   virtual void refreshDebuggerInfo()
+   {
+      if (_debugController.isStarted()) {
+         _view->refreshDebugWindows(&_debugController);
+      }
+   }
+
    virtual void doStepOver()
    {
       if (!_ELENA_::test(_model->state, uiIDEBusy)) {

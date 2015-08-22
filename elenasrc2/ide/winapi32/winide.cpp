@@ -810,6 +810,11 @@ void MainWindow :: onTabChanged(HWND wnd, int index)
    else if (checkControlHandle(CTRL_TABBAR, wnd)) {
       ((TabBar*)_controls[CTRL_TABBAR])->onTabChange(index);
 
+      // HOT FIX : refresh call stack
+      if (isControlVisible(CTRL_CALLLIST)) {
+         _controller->refreshDebuggerInfo();
+      }
+
       _controller->onFrameChange();
    }
 }
@@ -1267,7 +1272,7 @@ void MainWindow :: closeMessageList()
    }
 }
 
-void MainWindow::openCallList()
+void MainWindow :: openCallList()
 {
    TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
 

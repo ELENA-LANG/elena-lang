@@ -5,9 +5,6 @@ In development:
               fdev - upndown
                        * move to corex
 
-              idev - usability
-                       * properly refresh call stack window before opening, #75
-
              xdev - linux
                        * create debian package
 

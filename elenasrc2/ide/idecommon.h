@@ -500,6 +500,7 @@ public:
 
    virtual void highlightMessage(MessageBookmark* bookmark, int bandStyle) = 0;
    virtual void selectProjectFile(int index) = 0;
+   virtual void refreshDebuggerInfo() = 0;
 
    virtual void doDebugRun() = 0;
    virtual void onDebuggerVMHook() = 0;
