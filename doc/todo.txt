@@ -2,6 +2,19 @@
 In development:
 ------                                                                                         
 
+              fdev - upndown
+                       * move to corex
+
+              idev - usability
+                       * properly refresh call stack window before opening, #75
+
+             xdev - linux
+                       * create debian package
+
+             idev - linux
+                       * redirect output to the window
+                       * output window
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -160,7 +173,6 @@ Pipeline:
                       * create x64 elena vm
 
               idev - usability
-                       * properly refresh call stack window before opening, #75
                        * fix #83
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
@@ -185,7 +197,6 @@ Pipeline:
               idev - unicode
                        * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
                        
-              idev - linux:              
                        * output window
                        * project compile
                        * project run
@@ -295,8 +306,6 @@ Pipeline:
                        * migrate timer
 
               fdev - upndown
-                       * configuration
-                       * move to corex
                        * network game
                        * implementing
                        * play with chaotic computer player

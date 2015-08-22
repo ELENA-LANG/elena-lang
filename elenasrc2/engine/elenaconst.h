@@ -257,9 +257,10 @@ namespace _ELENA_
 
       ptLibrary          = 0x00000,
       ptWin32Console     = 0x00001,
-      ptVMWin32GUI       = 0x01001,
+      ptWin32GUI         = 0x01001,
       ptVMWin32Console   = 0x00101,
       ptWin32ConsoleX    = 0x10001,
+      ptWin32GUIX        = 0x11001,
       ptLinux32Console   = 0x00002,
    };
 

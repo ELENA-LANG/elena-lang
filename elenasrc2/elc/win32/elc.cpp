@@ -575,7 +575,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMWin32GUI) {
+      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32GUI) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker;
@@ -585,6 +585,17 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
+      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32GUIX) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker);
+         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         linker.run(project, image, helper.tls_directory);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      else print(ELC_UNKNOWN_PLATFORM);
    }
    catch(_ELENA_::InternalError& e) {
       print(_ELENA_::WideString(ELC_INTERNAL_ERROR), (const wchar_t*)_ELENA_::WideString(e.message));

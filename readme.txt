@@ -87,13 +87,10 @@ There you also can find Getting Started tutorial
 Suggestions, Help ...
 ---------------------
 http://github.com/ELENA-LANG/elena-lang/issues
-    - tickets / issues
+    - tickets / issues / questions
 
 http://elenalang.blogspot.com/
-    - blog devoted to the language
-    
-http://www.elcdev.smffy.com/
-    - ELENA forum
+    - tutorials
 
 ****************************************************************************
 * ELENA Language modules and programs
